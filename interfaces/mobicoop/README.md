@@ -1,6 +1,8 @@
 CoviRide
 =======
 
+![Logo Coviride](logo.png)
+
 
 <p align="center">
   <a href="https://www.gnu.org/licenses/agpl-3.0" ><img alt="License: AGPL v3" src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg"/></a>
