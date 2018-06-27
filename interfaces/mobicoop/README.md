@@ -1,7 +1,7 @@
 CoviRide
 =======
 
-![Logo Coviride](logo.png)
+![Logo Coviride](logo.jpg)
 
 
 <p align="center">
