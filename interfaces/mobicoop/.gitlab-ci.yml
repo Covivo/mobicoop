@@ -1,5 +1,15 @@
 image: alpine:latest
 
+before_script:
+  - apt-get update
+  - apt-get install zip unzip
+  - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+  - php composer-setup.php
+  - php -r "unlink('composer-setup.php');"
+
+script:
+  - npm test
+
 pages:
   stage: deploy
   script:
