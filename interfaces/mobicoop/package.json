@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "vendor/bin/kahlan"
+    "test": "vendor/bin/kahlan --cc=true --reporter=verbose"
   },
   "repository": {
     "type": "git",
