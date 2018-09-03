@@ -7,8 +7,9 @@ before_script:
   - php composer-setup.php
   - php -r "unlink('composer-setup.php');"
 
-script:
-  - npm test
+test:coviride:
+    script:
+      - npm test
 
 pages:
   stage: deploy
