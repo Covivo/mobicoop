@@ -12,6 +12,7 @@ before_script:
   - docker-php-ext-enable xdebug
   - composer install
   - npm install
+  - npx encore dev
 
 test:coviride:
     script:
