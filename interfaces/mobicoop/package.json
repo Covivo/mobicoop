@@ -9,7 +9,7 @@
   "scripts": {
     "start": "php -S 127.0.0.1:8000 -t public",
     "test": "vendor/bin/kahlan --cc=true --reporter=verbose",
-    "testAndCoverage": "vendor/bin/kahlan --cc=true --coverage=4 --no-colors=true"
+    "testAndCoverage": "vendor/bin/kahlan --cc=true --coverage=4 --no-colors=true --reporter=verbose"
   },
   "repository": {
     "type": "git",
