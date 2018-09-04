@@ -20,11 +20,13 @@
   "bugs": {
     "url": "https://gitlab.com/covivo/CoviRide/issues"
   },
+  "browserslist": [ "last 2 versions", "ios >= 8" ],
   "homepage": "https://gitlab.com/covivo/CoviRide#README",
   "devDependencies": {
     "@symfony/webpack-encore": "^0.20.1",
     "jquery": "^3.3.1",
     "node-sass": "^4.9.3",
+    "postcss-loader": "^3.0.0",
     "sass-loader": "^7.1.0",
     "webpack-notifier": "^1.6.0"
   }

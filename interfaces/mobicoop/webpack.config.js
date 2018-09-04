@@ -36,6 +36,8 @@ Encore
 
     // enables Sass/SCSS support
     .enableSassLoader()
+    // This will add compatibility for old nav
+    .enablePostCssLoader()
 
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()
