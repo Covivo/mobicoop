@@ -19,7 +19,7 @@ Interface which displays carpools available on a territory and allows connection
 
 - PHP: =>7.1
 - Composer =>1.7
-- Node.js => 8.11
+- Node.js => 10
 
 
 ### Install
@@ -41,6 +41,15 @@ We use [Kahlan](https://kahlan.github.io/docs/) to create unit/functionnals test
 `vendor/bin/kahlan --cc=true --reporter=verbose`
 Or
 `npm test`
+
+### Start
+
+
+To start the application simply enter :
+
+`npm start`
+
+& just go [http://localhost:8000](http://localhost:8000) 
 
 
 ### Developpement
