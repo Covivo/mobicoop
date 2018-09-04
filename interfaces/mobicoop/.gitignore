@@ -302,4 +302,4 @@ extras/documentation
 #Node.js & compilation for webpack
 node_modules
 public/build/*
-public/build!gitignore
+!public/build/gitignore
