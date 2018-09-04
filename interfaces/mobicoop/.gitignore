@@ -299,3 +299,5 @@ extras/documentation
 /.web-server-pid
 ###< symfony/web-server-bundle ###
 
+#Node.js
+node_modules
