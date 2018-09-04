@@ -6,24 +6,25 @@ before_script:
   - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
   - php composer-setup.php
   - php -r "unlink('composer-setup.php');"
-  # Install Xdebug
-  - pecl install xdebug
-  # Enable Xdebug
-  - docker-php-ext-enable xdebug
-  - composer install
-  - npm install
-  - npx encore dev
 
 test:coviride:
+    before_script:
+      # Install Xdebug
+      - pecl install xdebug
+      # Enable Xdebug
+      - docker-php-ext-enable xdebug
+      - composer install
+      - npm install
+      - npx encore dev
     script:
       - npm run testAndCoverage
 
-pages:
-  stage: deploy
-  script:
-  - echo 'Nothing to do...'
-  artifacts:
-    paths:
-    - public
-  only:
-  - master
+# pages:
+#   stage: deploy
+#   script:
+#   - echo 'Nothing to do...'
+#   artifacts:
+#     paths:
+#     - public
+#   only:
+#   - master
