@@ -14,7 +14,7 @@ before_script:
 
 test:coviride:
     script:
-      - npm testAndCoverage
+      - npm run testAndCoverage
 
 pages:
   stage: deploy
