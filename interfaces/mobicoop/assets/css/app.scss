@@ -1,0 +1,11 @@
+/*
+* Welcome to Coviride main SASS file, this file require all the sub-elements
+*/
+
+@import '_variables';
+@import '_header';
+
+body {
+  background-color: $mainBackgroundColor;
+  color: $mainFontColor;
+}
