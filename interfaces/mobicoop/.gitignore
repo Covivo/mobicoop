@@ -299,5 +299,7 @@ extras/documentation
 /.web-server-pid
 ###< symfony/web-server-bundle ###
 
-#Node.js
+#Node.js & compilation for webpack
 node_modules
+public/build/*
+public/build!gitignore
