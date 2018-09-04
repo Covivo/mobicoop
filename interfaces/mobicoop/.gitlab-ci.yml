@@ -11,6 +11,7 @@ before_script:
   # Enable Xdebug
   - docker-php-ext-enable xdebug
   - composer install
+  - npm install
 
 test:coviride:
     script:
