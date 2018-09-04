@@ -31,7 +31,7 @@ Interface which displays carpools available on a territory and allows connection
 `cd CoviRide`
 
 - Install symfony dependencies & npm dependencies
-`composer install && npm install`
+`composer install && npm install && npx encore dev`
 
 
 ### Tests
