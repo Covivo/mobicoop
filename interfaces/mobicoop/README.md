@@ -69,7 +69,12 @@ We use webpack-encore with babel, if you need to use some new fun stuf in js you
 
 ### Contribute Guideline
 
-Please check [JS GuideLine](https://github.com/airbnb/javascript#whitespace) and [contributor covenant](https://www.contributor-covenant.org)
+Please check:
+
+- [JS GuideLine](https://github.com/airbnb/javascript#whitespace) 
+- [Symfony GuideLine](https://symfony.com/doc/current/contributing/code/standards.html)
+
+and [contributor covenant](https://www.contributor-covenant.org)
 
 
 ### Licence
