@@ -9,7 +9,9 @@
   "scripts": {
     "start": "php -S 127.0.0.1:8000 -t public",
     "test": "vendor/bin/kahlan --cc=true --reporter=verbose",
-    "testAndCoverage": "vendor/bin/kahlan --cc=true --coverage=4 --no-colors=true --reporter=verbose"
+    "testAndCoverage": "vendor/bin/kahlan --cc=true --coverage=4 --no-colors=true --reporter=verbose",
+    "compile": "encore dev",
+    "compileAndWatch": "encore dev --watch"
   },
   "repository": {
     "type": "git",
@@ -20,14 +22,19 @@
   "bugs": {
     "url": "https://gitlab.com/covivo/CoviRide/issues"
   },
-  "browserslist": [ "last 2 versions", "ios >= 8" ],
   "homepage": "https://gitlab.com/covivo/CoviRide#README",
   "devDependencies": {
     "@symfony/webpack-encore": "^0.20.1",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-stage-3": "^6.24.1",
     "jquery": "^3.3.1",
     "node-sass": "^4.9.3",
     "postcss-loader": "^3.0.0",
     "sass-loader": "^7.1.0",
     "webpack-notifier": "^1.6.0"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.0.0",
+    "remove": "^0.1.5"
   }
 }

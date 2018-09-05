@@ -42,8 +42,8 @@ We use [Kahlan](https://kahlan.github.io/docs/) to create unit/functionnals test
 Or
 `npm test`
 
-### Start
 
+### Start
 
 To start the application simply enter :
 
@@ -58,9 +58,13 @@ To contribute to the Coviride application, please do the following:
 
 1. Create a branch by feature or fork the repo if you are not in dev team
 2. Start the dev tools (necesary to watch js/css/sass):
-	`npx encore dev --watch`
+	`npm run compileAndWatch`
 3. Add some Unit Tests and/or functionnals test and check if build passed
-3. Create a pull request & set reviewver before merge
+4. Create a pull request & set reviewver before merge
+
+#### Javascript
+
+We use webpack-encore with babel, if you need to use some new fun stuf in js you can [check stage](http://kangax.github.io/compat-table/esnext/)(babel 6 part) install & require the [right plugin](https://babeljs.io/docs/en/6.26.3/plugins) in [webpack config](webpack.config.js)
 
 
 ### Contribute Guideline

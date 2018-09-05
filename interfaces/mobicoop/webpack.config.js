@@ -38,6 +38,15 @@ Encore
     .enableSassLoader()
     // This will add compatibility for old nav
     .enablePostCssLoader()
+    .configureBabel(function(babelConfig) {
+        // add additional presets
+        babelConfig.plugins.push('transform-class-properties');
+        babelConfig.presets.push('stage-3');
+        babelConfig.presets.push('env');
+
+        // no plugins are added by default, but you can add some
+        // babelConfig.plugins.push('styled-jsx/babel');
+    })
 
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()
