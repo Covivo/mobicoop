@@ -66,6 +66,11 @@ To contribute to the Coviride application, please do the following:
 
 We use webpack-encore with babel, if you need to use some new fun stuf in js you can [check stage](http://kangax.github.io/compat-table/esnext/)(babel 6 part) install & require the [right plugin](https://babeljs.io/docs/en/6.26.3/plugins) in [webpack config](webpack.config.js)
 
+💄 We use [esLint rules](https://eslint.org/docs/rules/) to check code linting,if some rules are too restricted you can disable them or make the warning only in [.eslintrc.json](.eslintrc.json)
+
+*For some mistakes as bad indent, spaces .. a fix is automaticaly applied !*
+
+
 
 ### Contribute Guideline
 

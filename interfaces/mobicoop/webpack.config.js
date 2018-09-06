@@ -1,4 +1,4 @@
-var Encore = require('@symfony/webpack-encore');
+const Encore = require('@symfony/webpack-encore');
 
 Encore
     // directory where compiled assets will be stored
@@ -29,23 +29,28 @@ Encore
      * https://symfony.com/doc/current/frontend.html#adding-more-features
      */
     .cleanupOutputBeforeBuild()
-    .enableBuildNotifications()
+    // .enableBuildNotifications()
     .enableSourceMaps(!Encore.isProduction())
     // enables hashed filenames (e.g. app.abc123.css)
     .enableVersioning(Encore.isProduction())
 
     // enables Sass/SCSS support
     .enableSassLoader()
+    .addLoader({
+        test: /\.js$/,
+        enforce: 'pre',
+        loader: 'eslint-loader',
+        exclude: ['/node_modules/','/vendor','/public'],
+        options: {
+          fix: true
+        }
+    })
     // This will add compatibility for old nav
-    .enablePostCssLoader()
+    // .enablePostCssLoader()
     .configureBabel(function(babelConfig) {
         // add additional presets
         babelConfig.plugins.push('transform-class-properties');
         babelConfig.presets.push('stage-3');
-        babelConfig.presets.push('env');
-
-        // no plugins are added by default, but you can add some
-        // babelConfig.plugins.push('styled-jsx/babel');
     })
 
     // uncomment if you use TypeScript

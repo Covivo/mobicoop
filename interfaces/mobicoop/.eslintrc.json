@@ -1,0 +1,15 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "eslint-config-prettier"
+  ],
+  "parser": "babel-eslint",
+  "rules": {
+    "no-unused-vars": ["error", { "args": "none" }],
+    "indent": [2, 2]
+  },
+  "env": {
+    "es6": true,
+    "browser": true
+  }
+}
