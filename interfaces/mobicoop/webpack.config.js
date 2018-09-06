@@ -1,4 +1,5 @@
 const Encore = require('@symfony/webpack-encore');
+const StyleLintPlugin = require('stylelint-webpack-plugin');
 
 Encore
     // directory where compiled assets will be stored
@@ -33,9 +34,6 @@ Encore
     .enableSourceMaps(!Encore.isProduction())
     // enables hashed filenames (e.g. app.abc123.css)
     .enableVersioning(Encore.isProduction())
-
-    // enables Sass/SCSS support
-    .enableSassLoader()
     .addLoader({
         test: /\.js$/,
         enforce: 'pre',
@@ -45,13 +43,23 @@ Encore
           fix: true
         }
     })
-    // This will add compatibility for old nav
-    // .enablePostCssLoader()
+    .addPlugin(new StyleLintPlugin({
+      failOnWarning: false,
+      failOnError: false,
+      testing: false,
+      fix: true,
+      emitErrors: false,
+      syntax : 'scss'
+    }))
+    // enables Sass/SCSS support
+    .enableSassLoader()
     .configureBabel(function(babelConfig) {
         // add additional presets
         babelConfig.plugins.push('transform-class-properties');
         babelConfig.presets.push('stage-3');
     })
+    // This will add compatibility for old nav
+    .enablePostCssLoader()
 
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()

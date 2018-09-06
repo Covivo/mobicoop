@@ -39,6 +39,7 @@
     "sass-lint": "^1.12.1",
     "sass-lint-webpack": "^1.0.0",
     "sass-loader": "^7.1.0",
+    "stylelint-webpack-plugin": "^0.10.5",
     "webpack-notifier": "^1.6.0"
   },
   "dependencies": {
@@ -49,6 +50,9 @@
     "eslint-loader": "^2.1.0",
     "faker": "^4.1.0",
     "postcss-sass": "^0.3.3",
-    "remove": "^0.1.5"
+    "remove": "^0.1.5",
+    "sasslint-loader": "0.0.1",
+    "stylelint": "^9.5.0",
+    "stylelint-config-standard": "^18.2.0"
   }
 }
