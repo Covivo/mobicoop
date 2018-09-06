@@ -3,13 +3,13 @@
 */
 
 nav{
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 100vw;
-	height: 80px;
-	background: $secondBackgroundColor; 
-	h1{
-		color: $mainFontColor;
-	}
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 80px;
+  background: $secondBackgroundColor; 
+  h1{
+    color: $mainFontColor;
+  }
 }

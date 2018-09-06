@@ -1,10 +1,25 @@
 'use strict';
 
 // any CSS you require will output into a single css file (app.css in this case)
-require('../css/app.scss');
+import '../css/app.scss';
+import 'babel-polyfill';
 
-const $ = require('jquery');
-const siteNameStr = require('./src/sitename');
+import $ from 'jquery';
+import siteNameStr from './src/sitename';
 
 // add h2 to body
 $('body').append(`<h2> & hello to ${siteNameStr('CoviRide')} too </h2>`);
+
+
+async function f() {
+
+  let p = new Promise((resolve, reject) => {
+    setTimeout(() => resolve("done!"), 1000);
+  });
+
+  let result = await p; // wait till the promise resolves (*)
+
+  alert(result); // "done!"
+}
+
+f();
