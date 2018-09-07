@@ -11,7 +11,8 @@
     "test": "vendor/bin/kahlan --cc=true --reporter=verbose",
     "testAndCoverage": "vendor/bin/kahlan --cc=true --coverage=4 --no-colors=true --reporter=verbose",
     "compile": "encore dev",
-    "compileAndWatch": "encore dev --watch"
+    "compileAndWatch": "encore dev --watch",
+    "postinstall": "config/postinstall.js"
   },
   "repository": {
     "type": "git",
@@ -51,6 +52,8 @@
     "faker": "^4.1.0",
     "postcss-sass": "^0.3.3",
     "remove": "^0.1.5",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5",
     "sasslint-loader": "0.0.1",
     "stylelint": "^9.5.0",
     "stylelint-config-standard": "^18.2.0"
