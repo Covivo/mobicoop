@@ -31,7 +31,14 @@ Interface which displays carpools available on a territory and allows connection
 `cd CoviRide`
 
 - Install symfony dependencies & npm dependencies
-`composer install && npm install && npm run compile`
+`composer install && npm install`
+
+-Build assets files 
+`npm run compile`
+
+-Download tools for dev 
+`npm run postinstall`
+
 
 
 ### Tests
@@ -61,6 +68,18 @@ To contribute to the Coviride application, please do the following:
 	`npm run compileAndWatch`
 3. Add some Unit Tests and/or functionnals test and check if build passed
 4. Create a pull request & set reviewver before merge
+
+
+### Documentation
+
+A developer doc is available [here](https://covivo.gitlab.io/CoviRide/build/doc) (it is generated automatically afetr each release), in order to generate the doc just do:
+`npm run generateDoc`
+
+
+### Database
+
+You will find a documentation about the database [here](https://covivo.gitlab.io/CoviRide/database/)
+
 
 #### Javascript
 

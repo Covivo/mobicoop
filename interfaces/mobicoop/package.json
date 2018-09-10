@@ -12,7 +12,8 @@
     "testAndCoverage": "vendor/bin/kahlan --cc=true --coverage=4 --no-colors=true --reporter=verbose",
     "compile": "encore dev",
     "compileAndWatch": "encore dev --watch",
-    "postinstall": "config/postinstall.js"
+    "generateDoc": "php vendor/bin/phpDocumentor.phar -d src -t public/build/doc --title Coviride",
+    "postinstall": "wget http://www.phpdoc.org/phpDocumentor.phar -P vendor/bin && wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O vendor/bin/php-cs-fixer.phar"
   },
   "repository": {
     "type": "git",
