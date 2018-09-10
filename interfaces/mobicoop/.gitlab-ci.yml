@@ -23,9 +23,9 @@ build:linux:
     - composer install
     - npm install
     - npm run postinstall
-    - npm run generateDoc
   script:
     - npx encore dev
+    - npm run generateDoc
   artifacts:
     paths:
       - public
