@@ -3,6 +3,7 @@ image: tetraweb/php
 stages:
   - build
   - test
+  - deploy
 
 # Cache modules in between jobs
 cache:
@@ -42,6 +43,7 @@ test:linux:
     - build:linux
       
 pages:
+  stage: deploy
   script:
     - echo 'Deploying the doc...'
     - ls -alh
