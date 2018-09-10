@@ -23,6 +23,7 @@ build:linux:
     - composer install
     - npm install
     - npm run postinstall
+    - npm run generateDoc
   script:
     - npx encore dev
   artifacts:
@@ -44,7 +45,9 @@ test:linux:
 pages:
   stage: deploy
   script:
-    - npm run generateDoc
+    - echo 'Deploying the doc...'
+    - ls -alh
+    - ls -alh vendor/bin
   dependencies:
     - build:linux
   artifacts:
