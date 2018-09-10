@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "php -S 127.0.0.1:8000 -t public",
-    "test": "vendor/bin/kahlan --cc=true --reporter=verbose",
+    "test": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src && vendor/bin/kahlan --cc=true --reporter=verbose",
     "testAndCoverage": "vendor/bin/kahlan --cc=true --coverage=4 --no-colors=true --reporter=verbose",
     "compile": "encore dev",
     "compileAndWatch": "encore dev --watch",
@@ -53,6 +53,7 @@
     "postcss-sass": "^0.3.3",
     "remove": "^0.1.5",
     "request": "^2.88.0",
+    "request-promise": "^4.2.2",
     "request-promise-native": "^1.0.5",
     "sasslint-loader": "0.0.1",
     "stylelint": "^9.5.0",

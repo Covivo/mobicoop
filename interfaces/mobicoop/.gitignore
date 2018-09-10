@@ -303,3 +303,5 @@ extras/documentation
 node_modules
 public/build/*
 !public/build/gitignore
+
+.php_cs.cache
