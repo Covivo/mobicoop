@@ -5,7 +5,7 @@ stages:
   - test
   - deploy
 
-job 1:
+build:linux:
   stage: build
   before_script:
     - apt-get update -qq
@@ -22,17 +22,26 @@ job 1:
     - npm run postinstall
   script:
     - npx encore dev
+  artifacts:
+    paths:
+      - vendor
+      - node_modules
+      - public
 
-job 2:
+test:linux:
   stage: test
   script:
     - npm run testAndCoverage
+  dependencies:
+    - build:linux
       
 job 3:
   stage: deploy
   script:
     - npm run postinstall
     - npm run generateDoc
+  dependencies:
+    - build:linux
   artifacts:
     paths:
     - public
