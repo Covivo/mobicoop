@@ -5,6 +5,13 @@ stages:
   - test
   - deploy
 
+# Cache modules in between jobs
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - node_modules
+  - vendor
+
 build:linux:
   stage: build
   before_script:
@@ -13,10 +20,6 @@ build:linux:
     - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
     - php composer-setup.php
     - php -r "unlink('composer-setup.php');"
-    # Install Xdebug
-    - pecl install xdebug
-    # Enable Xdebug
-    - docker-php-ext-enable xdebug
     - composer install
     - npm install
     - npm run postinstall
@@ -24,21 +27,23 @@ build:linux:
     - npx encore dev
   artifacts:
     paths:
-      - vendor
-      - node_modules
       - public
 
 test:linux:
   stage: test
+  before_script:
+    # Install Xdebug
+    - pecl install xdebug
+    # Enable Xdebug
+    - docker-php-ext-enable xdebug
   script:
     - npm run testAndCoverage
   dependencies:
     - build:linux
       
-job 3:
+pages:
   stage: deploy
   script:
-    - npm run postinstall
     - npm run generateDoc
   dependencies:
     - build:linux
