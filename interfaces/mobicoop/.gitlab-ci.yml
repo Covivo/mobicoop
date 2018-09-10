@@ -9,8 +9,8 @@ before_script:
 
 test:coviride:
     before_script:
-      - apt-get update
-      - apt-get install wget
+      - apt-get update -qq
+      - apt-get install -y wget
       # Install Xdebug
       - pecl install xdebug
       # Enable Xdebug
