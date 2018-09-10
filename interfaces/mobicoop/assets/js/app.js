@@ -18,7 +18,8 @@ async function f() {
   });
 
   let result = await p; // wait till the promise resolves (*)
-
+  let a =42;
+  console.log(a);
   alert(result); // "done!"
 }
 
