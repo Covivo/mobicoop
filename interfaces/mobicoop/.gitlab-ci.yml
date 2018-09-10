@@ -1,28 +1,33 @@
 image: tetraweb/php
 
-before_script:
-  - apt-get update
-  - apt-get install zip unzip wget
-  - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-  - php composer-setup.php
-  - php -r "unlink('composer-setup.php');"
+stages:
+  - build
+  - test
+  - deploy
 
-test:coviride:
-    before_script:
-      - apt-get update -qq
-      - apt-get install -y wget
-      # Install Xdebug
-      - pecl install xdebug
-      # Enable Xdebug
-      - docker-php-ext-enable xdebug
-      - composer install
-      - npm install
-      - npm run postinstall
-      - npx encore dev
-    script:
-      - npm run testAndCoverage
+job 1:
+  stage: build
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y zip unzip wget
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php composer-setup.php
+    - php -r "unlink('composer-setup.php');"
+    # Install Xdebug
+    - pecl install xdebug
+    # Enable Xdebug
+    - docker-php-ext-enable xdebug
 
-pages:
+job 2:
+  stage: test
+  script:
+    - composer install
+    - npm install
+    - npm run postinstall
+    - npx encore dev
+    - npm run testAndCoverage
+      
+job 3:
   stage: deploy
   script:
     - npm run postinstall
@@ -31,4 +36,4 @@ pages:
     paths:
     - public
   only:
-  - tags
+  - branches
