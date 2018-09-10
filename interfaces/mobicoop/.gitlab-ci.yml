@@ -17,14 +17,15 @@ job 1:
     - pecl install xdebug
     # Enable Xdebug
     - docker-php-ext-enable xdebug
+    - composer install
+    - npm install
+    - npm run postinstall
+  script:
+    - npx encore dev
 
 job 2:
   stage: test
   script:
-    - composer install
-    - npm install
-    - npm run postinstall
-    - npx encore dev
     - npm run testAndCoverage
       
 job 3:
