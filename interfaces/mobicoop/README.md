@@ -1,4 +1,4 @@
-CoviRide
+MobiCoop
 =======
 
 ![Logo Coviride](logo.jpg)
