@@ -13,13 +13,14 @@ describe('DefaultController', function () {
             $status = $response->getStatusCode();
             $crawler = new Crawler($response->getContent());
             $h1 = trim($crawler->filter('body h1')->text());
-            $splitedH1 = explode('Hello',$h1);
-            $nb = $splitedH1[1];
+            $h2 = trim($crawler->filter('body h2')->text());
+            $splitedH2 = explode('The random number send form controller is ',$h2);
+            $nb = $splitedH2[1];
 
 
             expect($status)->toEqual(200);
-            expect($h1)->toContain('Hello');
-            expect($splitedH1)->toHaveLength(2);
+            expect($h1)->toContain('Coviride');
+            expect($splitedH2)->toHaveLength(2);
             expect($nb)->toBeGreaterThan(0);
             expect($nb)->toBeLessThan(26);
             expect($h1)->not->toContain('gloups');

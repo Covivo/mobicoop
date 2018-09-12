@@ -4,11 +4,20 @@
 
 {% block body %}
 
-<nav>
-    <h1>Hello {{ nb }}!</h1>
-</nav>
+<section class="hero is-primary">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title">
+        Coviride Demo application
+      </h1>
+      <h2 class="subtitle">
+        The random number send form controller is {{nb}}
+      </h2>
+    </div>
+  </div>
+</section>
 
-<section id="calculator">
+<section id="calculator" class="container">
   <webcalculator></webcalculator>
   <parrot></parrot>
 </section>

@@ -32,10 +32,17 @@ export default {
  
  <!-- & You can create style for components ONLY 😇 -->
 <style scoped lang="scss">
+  // Import Bulma and Buefy styles
+  @import '~bulma';
+  @import '~buefy/src/scss/buefy';
+  $code-family: "Helvetica";
   #tets{
     text-align: center !important;
   }
   .parrotSection{
     background: lightgreen;
+    p{
+      color: $orange;
+    }
   }
 </style>

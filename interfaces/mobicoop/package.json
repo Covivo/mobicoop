@@ -57,6 +57,7 @@
     "casual": "^1.5.19",
     "eslint-config-prettier": "^3.0.1",
     "faker": "^4.1.0",
+    "font-awesome": "^4.7.0",
     "postcss-sass": "^0.3.3",
     "remove": "^0.1.5",
     "request": "^2.88.0",

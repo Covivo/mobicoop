@@ -69,6 +69,24 @@ To contribute to the Coviride application, please do the following:
 3. Add some Unit Tests and/or functionnals test and check if build passed
 4. Create a pull request & set reviewver before merge
 
+#### Javascript/Vue-js
+
+The main library for javascript used is [vue-js](https://fr.vuejs.org/index.html), everything about them are in [components](assets/js/components)
+
+We use webpack-encore with babel, if you need to use some new fun stuf in js you can [check stage](http://kangax.github.io/compat-table/esnext/)(babel 6 part) install & require the [right plugin](https://babeljs.io/docs/en/6.26.3/plugins) in [webpack config](webpack.config.js)
+
+💄 We use [esLint rules](https://eslint.org/docs/rules/) to check code linting,if some rules are too restricted you can disable them or make the warning only in [.eslintrc.json](.eslintrc.json)
+
+*For some mistakes as bad indent, spaces .. a fix is automaticaly applied !*
+
+#### Bulma/buefy
+
+We use buefy which is a vue adaptation of bulma as a front-end scss framework, you can:
+
+- Check the [buefy doc](https://buefy.github.io/documentation/layout) to find elements you want to use, such as modal, layou ..
+- Change any default [bulma variables](https://bulma.io/documentation/customize/variables/) in [variable.scss](assets/css/_variables.scss) such as [mobile variables](https://bulma.io/documentation/overview/responsiveness/#variables)
+- Use bulma variable inside vue-js components as in the [parrot sample](assets/js/components/Parrot.vue)
+
 
 ### Documentation
 
@@ -81,13 +99,6 @@ A developer doc is available [here](https://covivo.gitlab.io/CoviRide/build/doc)
 You will find a documentation about the database [here](https://covivo.gitlab.io/CoviRide/database/)
 
 
-#### Javascript
-
-We use webpack-encore with babel, if you need to use some new fun stuf in js you can [check stage](http://kangax.github.io/compat-table/esnext/)(babel 6 part) install & require the [right plugin](https://babeljs.io/docs/en/6.26.3/plugins) in [webpack config](webpack.config.js)
-
-💄 We use [esLint rules](https://eslint.org/docs/rules/) to check code linting,if some rules are too restricted you can disable them or make the warning only in [.eslintrc.json](.eslintrc.json)
-
-*For some mistakes as bad indent, spaces .. a fix is automaticaly applied !*
 
 
 
