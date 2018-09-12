@@ -88,6 +88,11 @@ We use buefy which is a vue adaptation of bulma as a front-end scss framework, y
 - Use bulma variable inside vue-js components as in the [parrot sample](assets/js/components/Parrot.vue)
 
 
+#### Mapbox
+
+We are using [Mapbox-glue](https://www.npmjs.com/package/mapbox-gl-vue#setup) for route information & calcs, please check [mapbox-gl api](https://www.mapbox.com/mapbox-gl-js/api/)
+
+
 ### Documentation
 
 A developer doc is available [here](https://covivo.gitlab.io/CoviRide/build/doc) (it is generated automatically afetr each release), in order to generate the doc just do:

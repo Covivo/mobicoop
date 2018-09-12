@@ -10,18 +10,28 @@
         >
       </div>
     </div>
-    <p>Le message est : {{ message | Upper }}</p>
+    <p>Destination selectionnée : {{ message | Upper }}</p>
+    <mapbox 
+      access-token="pk.eyJ1IjoiY29udGFjdC1jb3Zpdm8iLCJhIjoiY2pqeWU3aTBjYWxtajN3cDEzbWFuYm40bCJ9.a2YJ0ZzW2AOWIeefE88OHg"
+      :map-options="{
+        style: 'mapbox://styles/mapbox/streets-v9',
+        center: [6.1768515,48.6937863],
+        zoom: 13
+      }"
+    />
   </section>
 </template>
  
 <script>
-console.log('jojo')
-
+import Mapbox from 'mapbox-gl-vue';
 /*
   * Ok the code under this is the main componant !!
   */
 export default {
-  name: "Parrot", //Component name for identifiation of course
+  name: "Parrot",
+  components: {
+    'mapbox': Mapbox
+  },
   filters: {
     // Filter definitions
     Upper(value) {
@@ -30,7 +40,7 @@ export default {
   },
   data () {
     return {
-      message: '' // very important, binding variable should be initialized ☢️
+      message: '', // very important, binding variable should be initialized ☢️
     }
   },
 }
@@ -42,8 +52,9 @@ export default {
   @import '~bulma';
   @import '~buefy/src/scss/buefy';
   $code-family: "Helvetica";
-  #tets{
-    text-align: center !important;
+  #map{
+    width: 100%;
+    height: 350px;
   }
   .parrotSection{
     font-size: 25px;

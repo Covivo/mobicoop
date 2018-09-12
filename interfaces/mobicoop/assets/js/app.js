@@ -15,12 +15,13 @@ import Parrot from './components/Parrot';
 // add h2 to body
 // $('body').append(`<h2> & hello to ${siteNameStr('CoviRide')} too </h2>`);
 
+
 let app = new Vue({
   el: '#app',
   components: {Webcalculator,Parrot}
 });
 
-
+// this is a sample async function to show modern way to code in js ..
 async function f() {
 
   let p = new Promise((resolve, reject) => {
