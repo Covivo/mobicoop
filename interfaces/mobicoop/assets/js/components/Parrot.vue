@@ -3,10 +3,11 @@
     <div class="field">
       <div class="control">
         <input 
-          v-model="message" 
+          v-model="message"
           class="input is-info" 
           type="text" 
-          placeholder="Adresse départ"
+          placeholder="Adresse départ" 
+          @keyup.enter="showTownNotWorking"
         >
       </div>
     </div>
@@ -41,6 +42,20 @@ export default {
   data () {
     return {
       message: '', // very important, binding variable should be initialized ☢️
+    }
+  },
+  methods: {
+    showTownNotWorking(){
+      console.log(this)
+      console.log(this.$dialog)
+      this.$dialog.alert({
+        title: 'Erreur',
+        message: `Maheuresement ${this.message} n'est pas encore une ville que nous deservons`,
+        type: 'is-danger',
+        hasIcon: true,
+        icon: 'times-circle',
+        iconPack: 'fa'
+      })
     }
   },
 }

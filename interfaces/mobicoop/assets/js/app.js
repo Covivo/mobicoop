@@ -15,7 +15,7 @@ import Parrot from './components/Parrot';
 // add h2 to body
 // $('body').append(`<h2> & hello to ${siteNameStr('CoviRide')} too </h2>`);
 
-
+Vue.use(Buefy);
 let app = new Vue({
   el: '#app',
   components: {Webcalculator,Parrot}
