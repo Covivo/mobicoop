@@ -4,6 +4,8 @@
 import '../css/app.scss';
 import 'babel-polyfill';
 import Vue from 'vue';
+import Buefy from 'buefy'
+import 'buefy/dist/buefy.css'
  
 import Webcalculator from './components/Webcalculator';
 import Parrot from './components/Parrot';
@@ -19,8 +21,6 @@ let app = new Vue({
   components: {Webcalculator,Parrot}
 });
 
-
-console.log(app);
 
 async function f() {
 

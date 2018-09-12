@@ -4,90 +4,141 @@
       <span>{{ valueDisplayed }}</span>
     </div>
     <div id="pad">
-      <div class="btn" id="clear" @click="clear">C</div>
-      <div class="btn" @click="handleOp('/')">/</div>
-      <div class="btn" @click="handleDigit(7)">7</div>
-      <div class="btn" @click="handleDigit(8)">8</div>
-      <div class="btn" @click="handleDigit(9)">9</div>
-      <div class="btn" @click="handleOp('x')">x</div>
-      <div class="btn" @click="handleDigit(4)">4</div>
-      <div class="btn" @click="handleDigit(5)">5</div>
-      <div class="btn" @click="handleDigit(6)">6</div>
-      <div class="btn" @click="handleOp('-')">-</div>
-      <div class="btn" @click="handleDigit(1)">1</div>
-      <div class="btn" @click="handleDigit(2)">2</div>
-      <div class="btn" @click="handleDigit(3)">3</div>
-      <div class="btn" @click="handleOp('+')">+</div>
-      <div id="zero" class="btn" @click="handleDigit(0)">0</div>
-      <div id="equal" class="btn" @click="handleOp('=')">=</div>
+      <div 
+        id="clear" 
+        class="btn" 
+        @click="clear"
+      >C</div>
+      <div 
+        class="btn" 
+        @click="handleOp('/')"
+      >/</div>
+      <div 
+        class="btn" 
+        @click="handleDigit(7)"
+      >7</div>
+      <div 
+        class="btn" 
+        @click="handleDigit(8)"
+      >8</div>
+      <div 
+        class="btn" 
+        @click="handleDigit(9)"
+      >9</div>
+      <div 
+        class="btn" 
+        @click="handleOp('x')"
+      >x</div>
+      <div 
+        class="btn" 
+        @click="handleDigit(4)"
+      >4</div>
+      <div 
+        class="btn" 
+        @click="handleDigit(5)"
+      >5</div>
+      <div 
+        class="btn" 
+        @click="handleDigit(6)"
+      >6</div>
+      <div 
+        class="btn" 
+        @click="handleOp('-')"
+      >-</div>
+      <div 
+        class="btn" 
+        @click="handleDigit(1)"
+      >1</div>
+      <div 
+        class="btn" 
+        @click="handleDigit(2)"
+      >2</div>
+      <div 
+        class="btn" 
+        @click="handleDigit(3)"
+      >3</div>
+      <div 
+        class="btn" 
+        @click="handleOp('+')"
+      >+</div>
+      <div 
+        id="zero" 
+        class="btn" 
+        @click="handleDigit(0)"
+      >0</div>
+      <div 
+        id="equal" 
+        class="btn" 
+        @click="handleOp('=')"
+      >=</div>
     </div>
   </div>
 </template>
  
 <script>
-  /*
+/*
   * Ok the code under this is the main componant !!
   */
-  export default {
-    data () {
-      return {
-        currentValue: 0,
-        savedValue: false,
-        currentOp: false
-      }
+export default {
+  name: "Webcalculator",
+  data () {
+    return {
+      currentValue: 0,
+      savedValue: false,
+      currentOp: false
+    }
+  },
+  computed: {
+    valueDisplayed () {
+      return this.savedValue ? 
+        this.currentValue ? 
+          this.currentValue : this.savedValue
+        : this.currentValue
+    }
+  },
+  methods: {
+    clear () {
+      this.currentValue = 0
+      this.savedValue = false
+      this.currentOp = false
     },
-    methods: {
-      clear () {
-        this.currentValue = 0
+    handleDigit (digit) {
+      if (this.currentOp === '=') {
         this.savedValue = false
-        this.currentOp = false
-      },
-      handleDigit (digit) {
-        if (this.currentOp === '=') {
-          this.savedValue = false
-        }
-        this.currentValue = this.currentValue * 10 + digit
-      },
-      handleOp (op){
-        if (this.currentOp) {
-          this.process()
-        }
-        else {
-          this.savedValue = this.currentValue
-        }
-        this.currentValue = 0
-        this.currentOp = op      
-      },
-      process() {
-        if (this.currentOp === '+') {
-          this.savedValue += this.currentValue
-        }
-        else if (this.currentOp === '-') {
-          this.savedValue -= this.currentValue
-        }
-        else if (this.currentOp === 'x') {
-          this.savedValue *= this.currentValue
-        }
-        else if (this.currentOp === '/') {
-          this.savedValue /= this.currentValue
-        }
-        else if (this.currentOp === '=' && this.currentValue) {
-          this.savedValue = this.currentValue
-        }
-        this.currentValue = 0
-        this.currentOp = false
       }
+      this.currentValue = this.currentValue * 10 + digit
     },
-    computed: {
-      valueDisplayed () {
-        return this.savedValue ? 
-          this.currentValue ? 
-            this.currentValue : this.savedValue
-          : this.currentValue
+    handleOp (op){
+      if (this.currentOp) {
+        this.process()
       }
+      else {
+        this.savedValue = this.currentValue
+      }
+      this.currentValue = 0
+      this.currentOp = op      
     },
-    name: "webcalculator"
-  }
+    process() {
+      if (this.currentOp === '+') {
+        this.savedValue += this.currentValue
+      }
+      else if (this.currentOp === '-') {
+        this.savedValue -= this.currentValue
+      }
+      else if (this.currentOp === 'x') {
+        this.savedValue *= this.currentValue
+      }
+      else if (this.currentOp === '/') {
+        this.savedValue /= this.currentValue
+      }
+      else if (this.currentOp === '=' && this.currentValue) {
+        this.savedValue = this.currentValue
+      }
+      this.currentValue = 0
+      this.currentOp = false
+    }
+  },
+}
 </script>
  
  <!-- & You can create style for components ONLY 😇 -->

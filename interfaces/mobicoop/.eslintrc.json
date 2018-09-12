@@ -1,9 +1,17 @@
 {
   "extends": [
     "eslint:recommended",
-    "eslint-config-prettier"
+    "eslint-config-prettier",
+    "plugin:vue/recommended"
   ],
-  "parser": "babel-eslint",
+  "parserOptions": {
+    "parser": "babel-eslint",
+    "ecmaVersion": 2017,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "vue"
+  ],
   "rules": {
     "no-unused-vars": ["warn", { "args": "none", "vars": "local" }],
     "indent": [2, 2],

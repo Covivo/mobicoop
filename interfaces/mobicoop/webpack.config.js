@@ -35,7 +35,7 @@ Encore
     // enables hashed filenames (e.g. app.abc123.css)
     .enableVersioning(Encore.isProduction())
     .addLoader({
-        test: /\.js$/,
+        test: /\.(js|vue)$/,
         enforce: 'pre',
         loader: 'eslint-loader',
         exclude: ['/node_modules/','/vendor','/public'],
