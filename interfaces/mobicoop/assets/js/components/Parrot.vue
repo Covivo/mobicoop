@@ -1,9 +1,15 @@
 <template>
   <section class="parrotSection">
-    <input 
-      v-model="message" 
-      placeholder="modifiez-moi"
-    >
+    <div class="field">
+      <div class="control">
+        <input 
+          v-model="message" 
+          class="input is-info" 
+          type="text" 
+          placeholder="Adresse départ"
+        >
+      </div>
+    </div>
     <p>Le message est : {{ message | Upper }}</p>
   </section>
 </template>
@@ -40,9 +46,9 @@ export default {
     text-align: center !important;
   }
   .parrotSection{
-    background: lightgreen;
+    font-size: 25px;
     p{
-      color: $orange;
+      color: $white;
     }
   }
 </style>

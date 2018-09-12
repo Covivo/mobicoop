@@ -16,7 +16,7 @@ import Parrot from './components/Parrot';
 // $('body').append(`<h2> & hello to ${siteNameStr('CoviRide')} too </h2>`);
 
 let app = new Vue({
-  el: '#calculator',
+  el: '#app',
   components: {Webcalculator,Parrot}
 });
 
