@@ -8,8 +8,8 @@
   },
   "scripts": {
     "start": "php -S 127.0.0.1:8000 -t public",
-    "test": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src && vendor/bin/kahlan --cc=true --reporter=verbose",
-    "testAndCoverage": "vendor/bin/kahlan --cc=true --coverage=4 --no-colors=true --reporter=verbose",
+    "test": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src && ./vendor/bin/kahlan --cc=true --reporter=verbose",
+    "testAndCoverage": "./vendor/bin/kahlan --cc=true --coverage=4 --no-colors=true --reporter=verbose",
     "compile": "encore dev",
     "compileAndWatch": "encore dev-server",
     "compileAndWatchVue": "encore dev-server --hot",
