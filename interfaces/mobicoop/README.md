@@ -21,6 +21,7 @@ Interface which displays carpools available on a territory and allows connection
 - Composer =>1.7
 - Node.js => 10
 
+- for Windows check the [windows requirement](#windows-requirements) part
 
 ### Install
 
@@ -38,6 +39,8 @@ Interface which displays carpools available on a territory and allows connection
 
 -Download tools for dev 
 `npm run postinstall`
+
+
 
 
 
@@ -119,3 +122,22 @@ and [contributor covenant](https://www.contributor-covenant.org)
 
 ### Licence
 [AGPL-3](https://www.gnu.org/licenses/agpl-3.0)
+
+
+
+##### Windows Requirements
+
+Please use powershell with our project, in requirement you will need:
+
+*BE SURE TO BE IN AN ADMIN CONSOLE MOD !*
+
+- Install windows package manager[chocolatey](https://chocolatey.org/install)
+- Restart powershell
+- Install php: `choco install php`
+- Install composer: `choco install composer`
+- Install nodejs: `choco install nodejs.install`
+- Install python3: `choco install python`
+- Install python2: `choco install python2`
+- Install wget: `choco install wget`
+- Install windows dev tools: `npm install --global --production windows-build-tools`
+- ... then you can follow the [install section](#install)
