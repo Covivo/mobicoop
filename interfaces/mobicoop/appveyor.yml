@@ -1,0 +1,21 @@
+os: Visual Studio 2017
+environment:
+  matrix:
+    - nodejs_version: 10.10
+      platform: x64
+cache:
+  - '%APPDATA%\npm-cache'
+install:
+  - cinst php
+  - cinst composer
+  - cinst nodejs.install
+  - cinst python
+  - cinst python2
+  - cinst wget
+  - npm install --global --production windows-build-tools
+  - npm install
+
+build_script:
+  - npm run compile
+test: 
+  - npm test
