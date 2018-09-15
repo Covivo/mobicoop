@@ -49,9 +49,11 @@ Interface which displays carpools available on a territory and allows connection
 
 We use [Kahlan](https://kahlan.github.io/docs/) to create unit/functionnals tests, you cna launch them easily with:
 
-`vendor/bin/kahlan --cc=true --reporter=verbose`
-Or
-`npm test`
+`vendor\bin\kahlan --cc=true --reporter=verbose` for cmd/powershell
+
+Or just:
+
+`npm test` On unix systems
 
 
 ### Start

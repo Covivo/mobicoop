@@ -18,4 +18,4 @@ build_script:
   - npm run compile
 
 test_script: 
-  - npm test
+  - vendor\bin\kahlan
