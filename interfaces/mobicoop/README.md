@@ -8,6 +8,7 @@ MobiCoop
   <a href="https://www.gnu.org/licenses/agpl-3.0" ><img alt="License: AGPL v3" src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg"/></a>
   <a href="https://gitlab.com/covivo/CoviRide/-/jobs"><img alt="Build Status" src="https://gitlab.com/covivo/CoviRide/badges/master/build.svg"></a>
   <a href="https://gitlab.com/covivo/CoviRide/commits/master"><img alt="coverage report" src="https://gitlab.com/covivo/CoviRide/badges/master/coverage.svg" /></a>
+  <a href="https://ci.appveyor.com/project/MatthD/coviride/branch/master"><img src="https://ci.appveyor.com/api/projects/status/lxrhumbiss1s084h/branch/dev?svg=true"></a>
 </p>
 
 ### ABout CoviRide
