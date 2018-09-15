@@ -9,7 +9,6 @@ install:
   - cinst php
   - cinst composer
   - cinst nodejs.install
-  - cinst python
   - cinst python2
   - cinst wget
   - npm install --global --production windows-build-tools
@@ -17,6 +16,6 @@ install:
 
 build_script:
   - npm run compile
-  
+
 test_script: 
   - npm test
