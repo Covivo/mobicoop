@@ -11,6 +11,7 @@ install:
   - cinst nodejs.install
   - cinst python2
   - cinst wget
+  - composer install
   - npm install --global --production windows-build-tools
   - npm install
 
