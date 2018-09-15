@@ -1,4 +1,4 @@
-image: tetraweb/php
+image: misterio92/ci-php-node
 
 stages:
   - build
@@ -15,11 +15,6 @@ cache:
 build:linux:
   stage: build
   before_script:
-    - apt-get update -qq
-    - apt-get install -y zip unzip wget
-    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-    - php composer-setup.php
-    - php -r "unlink('composer-setup.php');"
     - composer install
     - npm install
     - npm run postinstall
@@ -32,11 +27,6 @@ build:linux:
 
 test:linux:
   stage: test
-  before_script:
-    # Install Xdebug
-    - pecl install xdebug
-    # Enable Xdebug
-    - docker-php-ext-enable xdebug
   script:
     - npm run testAndCoverage
   dependencies:
