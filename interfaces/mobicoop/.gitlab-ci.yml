@@ -20,7 +20,6 @@ build:linux:
     - npm run postinstall
   script:
     - npx encore dev
-    - npm run generateDoc
   artifacts:
     paths:
       - public
@@ -28,7 +27,7 @@ build:linux:
 test:linux:
   stage: test
   script:
-    - npm run testAndCoverage
+    - npm run testFixAndCoverage
   dependencies:
     - build:linux
 
@@ -102,6 +101,7 @@ dependency_scanning:
 pages:
   stage: deploy
   script:
+    - npm run generateDoc
     - echo 'Deploying the doc...'
     - ls -alh
     - ls -alh vendor/bin
