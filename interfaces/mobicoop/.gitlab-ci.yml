@@ -6,11 +6,11 @@ stages:
   - deploy
 
 # Cache modules in between jobs
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-  - node_modules
-  - vendor
+# cache:
+#   key: ${CI_COMMIT_REF_SLUG}
+#   paths:
+#   - node_modules
+#   - vendor
 
 build:linux:
   stage: build
@@ -23,6 +23,8 @@ build:linux:
   artifacts:
     paths:
       - public
+      - node_modules
+      - vendor
 
 test:linux:
   stage: test
@@ -32,6 +34,7 @@ test:linux:
     - build:linux
 
 code_quality:
+  stage: test
   image: docker:stable
   variables:
     DOCKER_DRIVER: overlay2
