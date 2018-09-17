@@ -129,16 +129,13 @@ test_deploy:
   environment:
     name: test
     url: http://v2.test.covivo.eu
-  artifacts:
-    paths:
-      - build/
   only:
     - dev
   script:
     - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
     - chmod 700 id_rsa
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - rsync -hrvz --delete  -e 'ssh -o StrictHostKeyChecking=no -i id_rsa' ./ ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:~/
+    - rsync -hrvz --delete  -e 'ssh -o StrictHostKeyChecking=no -i id_rsa' ./ ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:/var/www/v2test
 
 
 deploy_prod:
@@ -147,7 +144,7 @@ deploy_prod:
     - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa
     - chmod 700 id_rsa
     - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - rsync -hrvz --delete -e 'ssh -o StrictHostKeyChecking=no -i id_rsa' ./ ${DEPLOYMENT_PROD_SERVER_USER}@${DEPLOYMENT_PROD_SERVER_IP}:~/
+    - rsync -hrvz --delete -e 'ssh -o StrictHostKeyChecking=no -i id_rsa' ./ ${DEPLOYMENT_PROD_SERVER_USER}@${DEPLOYMENT_PROD_SERVER_IP}:/var/www/v2prod
 
   environment:
     name: prod
