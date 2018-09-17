@@ -137,7 +137,6 @@ test_deploy:
   script:
     - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
     - chmod 700 id_rsa
-    - mkdir "${HOME}/.ssh"
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
     - rsync -hrvz --delete --exclude=_ -e 'ssh -o StrictHostKeyChecking=no -i id_rsa' ./ ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:~/
 
