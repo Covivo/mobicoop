@@ -50,6 +50,8 @@ code_quality:
         "registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION" /code
   artifacts:
     paths: [gl-code-quality-report.json]
+  only:
+    - master
 
 
 ### This should be cool but it currently does not work for us ? why ..
@@ -72,7 +74,7 @@ code_quality:
 #     paths: [gl-license-management-report.json]
 
 sast:
-  stage: build
+  stage: test
   image: docker:stable
   variables:
     DOCKER_DRIVER: overlay2
@@ -88,6 +90,8 @@ sast:
         "registry.gitlab.com/gitlab-org/security-products/sast:$SP_VERSION" /app/bin/run /code
   artifacts:
     paths: [gl-sast-report.json]
+  only:
+    - master
 
 dependency_scanning:
   image: docker:stable
@@ -120,6 +124,9 @@ pages:
   - master
 
 test_deploy:
+  environment:
+    name: test
+    url: http://v2.test.covivo.eu
   artifacts:
     paths:
       - build/
@@ -128,16 +135,16 @@ test_deploy:
   before_script:
    - apt-get update -y && apt-get install sshpass
   script:
-    - sshpass -p "${V2_TEST_PASS}" rsync --progress -avz -e ssh ./  ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:/chemin/vers/cible
+    - sshpass -p "${V2_TEST_PASS}" rsync --progress -avz -e ssh -o StrictHostKeyChecking=no ./  ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:~/
 
 
 deploy_prod:
   stage: deploy
   script:
-    - echo "Deploy to production server"
+    - sshpass -p "${V2_PROD_PASS}" rsync --progress -avz -e ssh -o StrictHostKeyChecking=no ./  ${DEPLOYMENT_PROD_SERVER_USER}@${DEPLOYMENT_PROD_SERVER_IP}:~/
   environment:
-    name: production
-    url: https://example.com
+    name: prod
+    url: http://v2.prod.covivo.eu
   when: manual
   only:
   - master
