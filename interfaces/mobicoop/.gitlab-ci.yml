@@ -129,4 +129,4 @@ test_deploy:
   before_script:
    - apt-get update -y && apt-get install sshpass
   script:
-    - sshpass -p "${V2_TEST_PASS}" scp -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no . ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:~/
+    - sshpass -p "${V2_TEST_PASS}" scp -r -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no ./ ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:~/
