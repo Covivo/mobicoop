@@ -128,7 +128,7 @@ test_deploy:
   before_script:
    - apt-get update -y && apt-get install sshpass
   script:
-    - sshpass -p "${V2_TEST_PASS}" rsync -e ssh -avz ./  ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:/chemin/vers/cible
+    - sshpass -p "${V2_TEST_PASS}" rsync --progress -avz -e ssh ./  ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:/chemin/vers/cible
 
 
 deploy_prod:
