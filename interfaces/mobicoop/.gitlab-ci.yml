@@ -132,8 +132,6 @@ test_deploy:
       - build/
   only:
     - dev
-  before_script:
-   - apt-get update -y && apt-get install sshpass
   script:
     - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
     - chmod 700 id_rsa
