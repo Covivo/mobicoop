@@ -34,7 +34,7 @@ test:linux:
     - build:linux
 
 code_quality:
-  stage: test
+  stage: build
   image: docker:stable
   variables:
     DOCKER_DRIVER: overlay2
@@ -51,25 +51,28 @@ code_quality:
   artifacts:
     paths: [gl-code-quality-report.json]
 
-license_management:
-  image: docker:stable
-  stage: test
-  variables:
-    DOCKER_DRIVER: overlay2
-  allow_failure: true
-  services:
-    - docker:stable-dind
-  script:
-    - ls -alh
-    - ls -alh node_modules
-    - export LICENSE_MANAGEMENT_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
-    - docker run
-        --volume "$PWD:/code"
-        "registry.gitlab.com/gitlab-org/security-products/license-management:$LICENSE_MANAGEMENT_VERSION" analyze /code
-  artifacts:
-    paths: [gl-license-management-report.json]
+
+### This should be cool but it currently does not work for us ? why ..
+# license_management:
+#   image: docker:stable
+#   stage: build
+#   variables:
+#     DOCKER_DRIVER: overlay2
+#   allow_failure: true
+#   services:
+#     - docker:stable-dind
+#   script:
+#     - ls -alh
+#     - ls -alh node_modules
+#     - export LICENSE_MANAGEMENT_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+#     - docker run
+#         --volume "$PWD:/code"
+#         "registry.gitlab.com/gitlab-org/security-products/license-management:$LICENSE_MANAGEMENT_VERSION" analyze /code
+#   artifacts:
+#     paths: [gl-license-management-report.json]
 
 sast:
+  stage: build
   image: docker:stable
   variables:
     DOCKER_DRIVER: overlay2
@@ -108,10 +111,6 @@ pages:
   script:
     - npm run generateDoc
     - echo 'Deploying the doc...'
-    - ls -alh
-    - ls -alh vendor/bin
-    - ls -alh public/build
-    - ls -alh public/build/doc
   dependencies:
     - build:linux
   artifacts:
@@ -129,4 +128,16 @@ test_deploy:
   before_script:
    - apt-get update -y && apt-get install sshpass
   script:
-    - sshpass -p "${V2_TEST_PASS}" scp -r -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no ./ ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:~/
+    - sshpass -p "${V2_TEST_PASS}" rsync -e ssh -avz ./  ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:/chemin/vers/cible
+
+
+deploy_prod:
+  stage: deploy
+  script:
+    - echo "Deploy to production server"
+  environment:
+    name: production
+    url: https://example.com
+  when: manual
+  only:
+  - master
