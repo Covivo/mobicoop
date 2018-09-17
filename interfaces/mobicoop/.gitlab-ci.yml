@@ -60,6 +60,8 @@ license_management:
   services:
     - docker:stable-dind
   script:
+    - ls -alh
+    - ls -alh node_modules
     - export LICENSE_MANAGEMENT_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
     - docker run
         --volume "$PWD:/code"
@@ -117,3 +119,14 @@ pages:
     - public
   only:
   - master
+
+test_deploy:
+  artifacts:
+    paths:
+      - build/
+  only:
+    - dev
+  before_script:
+   - apt-get update -y && apt-get install sshpass
+  script:
+    - sshpass -p "${V2_TEST_PASS}" scp -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no . ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:~/
