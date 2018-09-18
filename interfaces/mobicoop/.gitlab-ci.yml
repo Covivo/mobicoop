@@ -112,7 +112,7 @@ test_deploy:
   only:
     - dev
   before_script: # This if require to send the prod type no dev, since it creates errors
-    - php bin/console cache:clear --env=prod --no-debug
+    #- php bin/console cache:clear --env=prod --no-debug
     - composer install --no-dev --optimize-autoloader
   script:
     - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
