@@ -11,6 +11,7 @@
         >
       </div>
     </div>
+    <p />
     <p>Destination selectionnée : {{ message | Upper }}</p>
     <mapbox 
       access-token="pk.eyJ1IjoiY29udGFjdC1jb3Zpdm8iLCJhIjoiY2pqeWU3aTBjYWxtajN3cDEzbWFuYm40bCJ9.a2YJ0ZzW2AOWIeefE88OHg"
@@ -28,7 +29,8 @@ import Mapbox from 'mapbox-gl-vue';
 /*
   * Ok the code under this is the main componant !!
   */
-export default {
+export default 
+{
   name: "Parrot",
   components: {
     'mapbox': Mapbox

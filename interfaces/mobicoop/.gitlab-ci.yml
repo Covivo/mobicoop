@@ -1,4 +1,4 @@
-image: tetraweb/php
+image: misterio92/ci-php-node
 
 stages:
   - build
@@ -6,54 +6,139 @@ stages:
   - deploy
 
 # Cache modules in between jobs
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-  - node_modules
-  - vendor
+# cache:
+#   key: ${CI_COMMIT_REF_SLUG}
+#   paths:
+#   - node_modules
+#   - vendor
 
 build:linux:
   stage: build
   before_script:
-    - apt-get update -qq
-    - apt-get install -y zip unzip wget
-    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-    - php composer-setup.php
-    - php -r "unlink('composer-setup.php');"
     - composer install
     - npm install
     - npm run postinstall
   script:
     - npx encore dev
-    - npm run generateDoc
   artifacts:
     paths:
       - public
+      - node_modules
+      - vendor
 
 test:linux:
   stage: test
-  before_script:
-    # Install Xdebug
-    - pecl install xdebug
-    # Enable Xdebug
-    - docker-php-ext-enable xdebug
   script:
-    - npm run testAndCoverage
+    - npm run testFixAndCoverage
   dependencies:
     - build:linux
-      
+
+code_quality:
+  stage: build
+  image: docker:stable
+  variables:
+    DOCKER_DRIVER: overlay2
+  allow_failure: true
+  services:
+    - docker:stable-dind
+  script:
+    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+    - docker run
+        --env SOURCE_CODE="$PWD"
+        --volume "$PWD":/code
+        --volume /var/run/docker.sock:/var/run/docker.sock
+        "registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION" /code
+  artifacts:
+    paths: [gl-code-quality-report.json]
+  only:
+    - master
+sast:
+  stage: test
+  image: docker:stable
+  variables:
+    DOCKER_DRIVER: overlay2
+  allow_failure: true
+  services:
+    - docker:stable-dind
+  script:
+    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+    - docker run
+        --env SAST_CONFIDENCE_LEVEL="${SAST_CONFIDENCE_LEVEL:-3}"
+        --volume "$PWD:/code"
+        --volume /var/run/docker.sock:/var/run/docker.sock
+        "registry.gitlab.com/gitlab-org/security-products/sast:$SP_VERSION" /app/bin/run /code
+  artifacts:
+    paths: [gl-sast-report.json]
+  only:
+    - master
+
+dependency_scanning:
+  image: docker:stable
+  variables:
+    DOCKER_DRIVER: overlay2
+  allow_failure: true
+  services:
+    - docker:stable-dind
+  script:
+    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+    - docker run
+        --env DEP_SCAN_DISABLE_REMOTE_CHECKS="${DEP_SCAN_DISABLE_REMOTE_CHECKS:-false}"
+        --volume "$PWD:/code"
+        --volume /var/run/docker.sock:/var/run/docker.sock
+        "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:$SP_VERSION" /code
+  artifacts:
+    paths: [gl-dependency-scanning-report.json]
+  only:
+    - master
+
 pages:
   stage: deploy
   script:
+    - npm run generateDoc
     - echo 'Deploying the doc...'
-    - ls -alh
-    - ls -alh vendor/bin
-    - ls -alh public/build
-    - ls -alh public/build/doc
   dependencies:
     - build:linux
   artifacts:
     paths:
     - public
+  only:
+  - master
+
+test_deploy:
+  stage: deploy
+  environment:
+    name: test
+    url: http://v2.test.covivo.eu
+  only:
+    - dev
+  variables:
+    APP_ENV: prod # improtant because symfony use it
+  before_script: # This if require to send the prod type no dev, since it creates errors
+    - composer install --no-dev --optimize-autoloader
+    - php bin/console cache:clear --env=prod --no-debug
+  script:
+    - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
+    - chmod 700 id_rsa
+    - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
+    - rsync -hrvz --delete  -e 'ssh -o StrictHostKeyChecking=no -i id_rsa' ./ ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:/var/www/v2test
+
+
+deploy_prod:
+  stage: deploy
+  before_script: # This if require to send the prod type no dev, since it creates errors
+    - composer install --no-dev --optimize-autoloader
+    - php bin/console cache:clear --env=prod --no-debug
+  variables:
+    APP_ENV: prod # improtant because symfony use it
+  script:
+    - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa
+    - chmod 700 id_rsa
+    - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
+    - rsync -hrvz --delete -e 'ssh -o StrictHostKeyChecking=no -i id_rsa' ./ ${DEPLOYMENT_PROD_SERVER_USER}@${DEPLOYMENT_PROD_SERVER_IP}:/var/www/v2prod
+
+  environment:
+    name: prod
+    url: http://v2.prod.covivo.eu
+  when: manual
   only:
   - master
