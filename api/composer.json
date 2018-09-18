@@ -12,7 +12,8 @@
         "symfony/yaml": "*"
     },
     "require-dev": {
-        "symfony/dotenv": "*"
+        "symfony/dotenv": "*",
+        "symfony/web-server-bundle": "*"
     },
     "config": {
         "preferred-install": {
