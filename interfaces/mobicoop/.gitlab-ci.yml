@@ -52,27 +52,6 @@ code_quality:
     paths: [gl-code-quality-report.json]
   only:
     - master
-
-
-### This should be cool but it currently does not work for us ? why ..
-# license_management:
-#   image: docker:stable
-#   stage: build
-#   variables:
-#     DOCKER_DRIVER: overlay2
-#   allow_failure: true
-#   services:
-#     - docker:stable-dind
-#   script:
-#     - ls -alh
-#     - ls -alh node_modules
-#     - export LICENSE_MANAGEMENT_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
-#     - docker run
-#         --volume "$PWD:/code"
-#         "registry.gitlab.com/gitlab-org/security-products/license-management:$LICENSE_MANAGEMENT_VERSION" analyze /code
-#   artifacts:
-#     paths: [gl-license-management-report.json]
-
 sast:
   stage: test
   image: docker:stable
@@ -126,11 +105,15 @@ pages:
   - master
 
 test_deploy:
+  stage: deploy
   environment:
     name: test
     url: http://v2.test.covivo.eu
   only:
     - dev
+  before_script: # This if require to send the prod type no dev, since it creates errors
+    - composer install --no-dev --optimize-autoloader
+    - php bin/console cache:clear --env=prod --no-debug
   script:
     - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
     - chmod 700 id_rsa
@@ -140,6 +123,9 @@ test_deploy:
 
 deploy_prod:
   stage: deploy
+  before_script: # This if require to send the prod type no dev, since it creates errors
+    - composer install --no-dev --optimize-autoloader
+    - php bin/console cache:clear --env=prod --no-debug
   script:
     - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa
     - chmod 700 id_rsa
