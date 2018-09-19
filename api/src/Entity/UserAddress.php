@@ -4,66 +4,102 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * A user address.
  *
  * @ORM\Entity
- * @ApiResource
+ * @ORM\Table(
+ *      uniqueConstraints={@ORM\UniqueConstraint(columns={"name", "user_id"})}
+ * )
+ * @UniqueEntity({"name","user"})
+ * @ApiResource(
+ *      attributes={
+ *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"write"}}
+ *      },
+ *      collectionOperations={"get","post"},
+ *      itemOperations={"get","put","delete"}
+ * )
  */
 Class UserAddress
 {
     /**
-     * @var string The name of the address for the user.
+     * @var int The id of this user address.
      *
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     * @Groups("read")
+     */
+    private $id;
+    
+    /**
+     * @var string $name The name of the address for the user.
+     *
+     * @Assert\NotBlank
      * @ORM\Column(type="string", length=45)
+     * @Groups({"read","write"})
      */
     private $name;
 
     /**
      * @var User The user that uses the address.
      * 
-     * @ORM\Id
+     * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="User", inversedBy="userAddresses")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
     private $user;
     
     /**
      * @var Address The address used.
      *
-     * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Address", inversedBy="userAddresses")
-     * @ORM\JoinColumn(name="address_id", referencedColumnName="id")
+     * @Assert\NotBlank
+     * @ORM\ManyToOne(targetEntity="Address", inversedBy="userAddresses", cascade={"persist","remove"})
+     * @ORM\JoinColumn(name="address_id", referencedColumnName="id", nullable=false)
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
     private $address;
     
-    public function getName ()
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+    
+    public function getName (): string
     {
         return $this->name;
     }
 
-    public function getUser ()
+    public function getUser (): User
     {
         return $this->user;
     }
 
-    public function getAddress ()
+    public function getAddress (): Address
     {
         return $this->address;
     }
 
-    public function setName ($name)
+    public function setName (string $name)
     {
         $this->name = $name;
     }
 
-    public function setUser ($user)
+    public function setUser (User $user)
     {
         $this->user = $user;
     }
 
-    public function setAddress ($address)
+    public function setAddress (Address $address)
     {
         $this->address = $address;
     }
