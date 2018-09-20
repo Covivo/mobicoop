@@ -1,3 +1,13 @@
 api_platform:
+
+    # The title of the API.
+    title: 'Coviride API'
+
+    # The description of the API.
+    description: 'The carpooling API.'
+
+    # The version of the API.
+    version: '0.1.0'
+
     mapping:
         paths: ['%kernel.project_dir%/src/Entity']
