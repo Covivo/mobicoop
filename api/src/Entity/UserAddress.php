@@ -52,7 +52,7 @@ Class UserAddress
      * 
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="User", inversedBy="userAddresses")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -63,7 +63,7 @@ Class UserAddress
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="Address", inversedBy="userAddresses", cascade={"persist","remove"})
-     * @ORM\JoinColumn(name="address_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="address_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */

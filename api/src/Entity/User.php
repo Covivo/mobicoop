@@ -6,10 +6,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Doctrine\ORM\PersistentCollection;
 
 /**
  * A user.
@@ -25,6 +29,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
  * )
+ * @ApiFilter(NumericFilter::class, properties={"id"})
+ * @ApiFilter(SearchFilter::class, properties={"email":"exact"})
  */
 class User
 {
@@ -137,7 +143,7 @@ class User
     private $maxDeviationDistance;
     
     /**
-     * @var UserAddress[] A user may have many names addresses.
+     * @var UserAddress[]|null A user may have many names addresses.
      *
      * @ORM\OneToMany(targetEntity="UserAddress", mappedBy="user", cascade={"persist","remove"})
      * @Groups({"read","write"})
@@ -205,7 +211,7 @@ class User
         return $this->maxDeviationDistance;
     }
 
-    public function getUserAddresses (): ?array
+    public function getUserAddresses ()
     {
         return $this->userAddresses;
     }

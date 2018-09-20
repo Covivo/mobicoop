@@ -95,7 +95,7 @@ Class Address
     private $elevation;
     
     /**
-     * @var UserAddress[] An address may have many users.
+     * @var UserAddress[]|null An address may have many users.
      *
      * @ORM\OneToMany(targetEntity="UserAddress", mappedBy="address", cascade={"persist","remove"})
      * @Groups({"read","write"})
@@ -147,7 +147,7 @@ Class Address
         return $this->elevation;
     }
 
-    public function getUserAddresses (): ?array
+    public function getUserAddresses ()
     {
         return $this->userAddresses;
     }
