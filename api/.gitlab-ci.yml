@@ -5,12 +5,12 @@ stages:
   - test
   - deploy
 
-Cache modules in between jobs
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-  - node_modules
-  - vendor
+#Cache modules in between jobs
+# cache:
+#   key: ${CI_COMMIT_REF_SLUG}
+#   paths:
+#   - node_modules
+#   - vendor
 
 build:linux:
   stage: build
@@ -42,12 +42,12 @@ code_quality:
   only:
     - master
 
-#test:linux:
-#  stage: test
-#  script:
-#    - npm run testFixAndCoverage
-#  dependencies:
-#    - build:linux
+test:linux:
+ stage: test
+ script:
+   - npm run testFixAndCoverage
+ dependencies:
+   - build:linux
 
 
 sast:
