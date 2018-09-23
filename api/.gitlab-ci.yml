@@ -112,6 +112,7 @@ test_deploy:
   variables:
     APP_ENV: prod # important because symfony use it
   before_script: # This is required to send the prod type no dev, since it creates errors
+    - ap install -yq iputils-ping
     - composer install --no-dev --optimize-autoloader
     - php bin/console cache:clear --env=prod --no-debug
   script:
