@@ -121,7 +121,7 @@ test_deploy:
     - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
     - ls -alh .
-    - ls -alh .ssh
+    - ls -alh ${HOME}/.ssh
     - ping -c 5 ${DEPLOYMENT_TEST_SERVER_IP}
     - ssh -t -v -o StrictHostKeyChecking=no -i id_rsa ${DEPLOYMENT_PROD_SERVER_USER}@${DEPLOYMENT_PROD_SERVER_IP} "cd /var/www/test/api; mkdir test"
     - rsync -hrvz --delete  -e 'ssh -v -o StrictHostKeyChecking=no -i id_rsa' ./ ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:/var/www/test/api
