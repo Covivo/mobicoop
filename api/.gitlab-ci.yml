@@ -120,13 +120,9 @@ test_deploy:
     - chmod 700 id_rsa
     - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - ls -alh .
-    - ls -alh ${HOME}/.ssh
-    # - ssh-add ${HOME}/.ssh/id_rsa
-    - ping -c 5 ${DEPLOYMENT_TEST_SERVER_IP}
     - ssh -t -v -o StrictHostKeyChecking=no test@167.114.236.57 "cd /var/www/test/api; mkdir test"
     - rsync -hrvz --delete  -e 'ssh -v -o StrictHostKeyChecking=no' ./ test@167.114.236.57:/var/www/test/api
-    # - ssh -o StrictHostKeyChecking=no -i id_rsa ${DEPLOYMENT_PROD_SERVER_USER}@${DEPLOYMENT_PROD_SERVER_IP}:/var/www/prod/api php bin/console doctrine:migrations:migrate -n
+    - ssh -o StrictHostKeyChecking=no -i id_rsa test@167.114.236.57:/var/www/prod/api php bin/console doctrine:migrations:migrate -n
 
 deploy_prod:
   stage: deploy
@@ -139,8 +135,8 @@ deploy_prod:
     - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa
     - chmod 700 id_rsa
     - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - rsync -hrvz --delete -e 'ssh -o StrictHostKeyChecking=no -i id_rsa' ./ ${DEPLOYMENT_PROD_SERVER_USER}@${DEPLOYMENT_PROD_SERVER_IP}:/var/www/prod/api
-    - ssh -o StrictHostKeyChecking=no -i id_rsa ${DEPLOYMENT_PROD_SERVER_USER}@${DEPLOYMENT_PROD_SERVER_IP}:/var/www/prod/api php bin/console doctrine:migrations:migrate -n
+    - rsync -hrvz --delete -e 'ssh -o StrictHostKeyChecking=no -i id_rsa' ./ prod@167.114.236.57:/var/www/prod/api
+    - ssh -o StrictHostKeyChecking=no -i id_rsa prod@167.114.236.57:/var/www/prod/api php bin/console doctrine:migrations:migrate -n
 
   environment:
     name: prod
