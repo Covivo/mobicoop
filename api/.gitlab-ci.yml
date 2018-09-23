@@ -116,7 +116,7 @@ test_deploy:
     - php bin/console cache:clear --env=prod --no-debug
   script:
     - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
-    - chmod 700 id_rsa
+    - chmod 700 id_rsa # try other variables
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
     - rsync -hrvz --delete  -e 'ssh -v -o StrictHostKeyChecking=no -i id_rsa' ./ ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:/var/www/test/api
     - ssh -o StrictHostKeyChecking=no -i id_rsa ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:/var/www/test/api php bin/console doctrine:migrations:migrate -n
