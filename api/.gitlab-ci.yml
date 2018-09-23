@@ -1,106 +1,106 @@
 image: misterio92/ci-php-node
 
 stages:
-  # - build
-  # - test
+  - build
+  - test
   - deploy
 
-# Cache modules in between jobs
-# cache:
-#   key: ${CI_COMMIT_REF_SLUG}
-#   paths:
-#   - node_modules
-#   - vendor
+Cache modules in between jobs
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - node_modules
+  - vendor
 
-# build:linux:
-#   stage: build
-#   script:
-#     - composer install
-# #    - npm install
-#   artifacts:
-#     paths:
-#       - public
-#       - vendor
+build:linux:
+  stage: build
+  script:
+    - composer install
+#    - npm install
+  artifacts:
+    paths:
+      - public
+      - vendor
       
-# code_quality:
-#   stage: build
-#   image: docker:stable
-#   variables:
-#     DOCKER_DRIVER: overlay2
-#   allow_failure: true
-#   services:
-#     - docker:stable-dind
-#   script:
-#     - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
-#     - docker run
-#         --env SOURCE_CODE="$PWD"
-#         --volume "$PWD":/code
-#         --volume /var/run/docker.sock:/var/run/docker.sock
-#         "registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION" /code
-#   artifacts:
-#     paths: [gl-code-quality-report.json]
-#   only:
-#     - master
+code_quality:
+  stage: build
+  image: docker:stable
+  variables:
+    DOCKER_DRIVER: overlay2
+  allow_failure: true
+  services:
+    - docker:stable-dind
+  script:
+    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+    - docker run
+        --env SOURCE_CODE="$PWD"
+        --volume "$PWD":/code
+        --volume /var/run/docker.sock:/var/run/docker.sock
+        "registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION" /code
+  artifacts:
+    paths: [gl-code-quality-report.json]
+  only:
+    - master
 
-# #test:linux:
-# #  stage: test
-# #  script:
-# #    - npm run testFixAndCoverage
-# #  dependencies:
-# #    - build:linux
-
-
-# sast:
-#   stage: test
-#   image: docker:stable
-#   variables:
-#     DOCKER_DRIVER: overlay2
-#   allow_failure: true
-#   services:
-#     - docker:stable-dind
-#   script:
-#     - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
-#     - docker run
-#         --env SAST_CONFIDENCE_LEVEL="${SAST_CONFIDENCE_LEVEL:-3}"
-#         --volume "$PWD:/code"
-#         --volume /var/run/docker.sock:/var/run/docker.sock
-#         "registry.gitlab.com/gitlab-org/security-products/sast:$SP_VERSION" /app/bin/run /code
-#   artifacts:
-#     paths: [gl-sast-report.json]
-#   only:
-#     - master
-
-# dependency_scanning:
-#   image: docker:stable
-#   variables:
-#     DOCKER_DRIVER: overlay2
-#   allow_failure: true
-#   services:
-#     - docker:stable-dind
-#   script:
-#     - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
-#     - docker run
-#         --env DEP_SCAN_DISABLE_REMOTE_CHECKS="${DEP_SCAN_DISABLE_REMOTE_CHECKS:-false}"
-#         --volume "$PWD:/code"
-#         --volume /var/run/docker.sock:/var/run/docker.sock
-#         "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:$SP_VERSION" /code
-#   artifacts:
-#     paths: [gl-dependency-scanning-report.json]
-#   only:
-#     - master
-
-#pages:
-#  stage: deploy
+#test:linux:
+#  stage: test
 #  script:
-#    - npm run generateDoc
-#    - echo 'Deploying the doc...'
+#    - npm run testFixAndCoverage
 #  dependencies:
 #    - build:linux
-#  artifacts:
-#    paths:
-#    - public
-#  only:
-#  - master
+
+
+sast:
+  stage: test
+  image: docker:stable
+  variables:
+    DOCKER_DRIVER: overlay2
+  allow_failure: true
+  services:
+    - docker:stable-dind
+  script:
+    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+    - docker run
+        --env SAST_CONFIDENCE_LEVEL="${SAST_CONFIDENCE_LEVEL:-3}"
+        --volume "$PWD:/code"
+        --volume /var/run/docker.sock:/var/run/docker.sock
+        "registry.gitlab.com/gitlab-org/security-products/sast:$SP_VERSION" /app/bin/run /code
+  artifacts:
+    paths: [gl-sast-report.json]
+  only:
+    - master
+
+dependency_scanning:
+  image: docker:stable
+  variables:
+    DOCKER_DRIVER: overlay2
+  allow_failure: true
+  services:
+    - docker:stable-dind
+  script:
+    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+    - docker run
+        --env DEP_SCAN_DISABLE_REMOTE_CHECKS="${DEP_SCAN_DISABLE_REMOTE_CHECKS:-false}"
+        --volume "$PWD:/code"
+        --volume /var/run/docker.sock:/var/run/docker.sock
+        "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:$SP_VERSION" /code
+  artifacts:
+    paths: [gl-dependency-scanning-report.json]
+  only:
+    - master
+
+pages:
+ stage: deploy
+ script:
+   - npm run generateDoc
+   - echo 'Deploying the doc...'
+ dependencies:
+   - build:linux
+ artifacts:
+   paths:
+   - public
+ only:
+ - master
 
 test_deploy:
   stage: deploy
@@ -122,7 +122,7 @@ test_deploy:
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
     - ssh -t -v -o StrictHostKeyChecking=no test@167.114.236.57 "cd /var/www/test/api; mkdir test"
     - rsync -hrvz --delete  -e 'ssh -v -o StrictHostKeyChecking=no' ./ test@167.114.236.57:/var/www/test/api
-    - ssh -o StrictHostKeyChecking=no test@167.114.236.57:/var/www/prod/api php bin/console doctrine:migrations:migrate -n
+    - ssh -o StrictHostKeyChecking=no test@167.114.236.57 "cd /var/www/prod/api; php bin/console doctrine:migrations:migrate -n"
 
 deploy_prod:
   stage: deploy
