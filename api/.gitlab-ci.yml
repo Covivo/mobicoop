@@ -42,12 +42,12 @@ code_quality:
   only:
     - master
 
-test:linux:
- stage: test
- script:
-   - npm run testFixAndCoverage
- dependencies:
-   - build:linux
+# test:linux:
+#  stage: test
+#  script:
+#    - npm run testFixAndCoverage
+#  dependencies:
+#    - build:linux
 
 
 sast:
