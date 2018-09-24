@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * A user.
@@ -23,16 +24,22 @@ class User
     
     /**
      * @var string|null The first name of the user.
+     * 
+     * @Groups("create")
      */
     private $givenName;
     
     /**
      * @var string|null The family name of the user.
+     * 
+     * @Groups("create")
      */
     private $familyName;
     
     /**
      * @var string The email of the user.
+     * 
+     * @Groups("create")
      *
      * @Assert\NotBlank
      * @Assert\Email()
@@ -41,21 +48,29 @@ class User
     
     /**
      * @var string|null The encoded password of the user.
+     * 
+     * @Groups("create")
      */
     private $password;
     
     /**
      * @var string|null The gender of the user.
+     * 
+     * @Groups("create")
      */
     private $gender;
     
     /**
      * @var string|null The nationality of the user.
+     * 
+     * @Groups("create")
      */
     private $nationality;
     
     /**
      * @var \DateTimeInterface|null The birth date of the user.
+     * 
+     * @Groups("create")
      *
      * @Assert\Date()
      */
@@ -63,23 +78,35 @@ class User
     
     /**
      * @var string|null The telephone number of the user.
+     * 
+     * @Groups("create")
      */
     private $telephone;
     
     /**
      * @var int|null The maximum deviation time (in seconds) as a driver to accept a request proposal.
+     * 
+     * @Groups("create")
      */
     private $maxDeviationTime;
     
     /**
      * @var int|null The maximum deviation distance (in metres) as a driver to accept a request proposal.
+     * 
+     * @Groups("create")
      */
     private $maxDeviationDistance;
     
     /**
      * @var UserAddress[]|null A user may have many names addresses.
+     * 
+     * @Groups("create")
      */
     private $userAddresses;
+    
+    public function __construct() {
+        $this->userAddresses = new ArrayCollection();
+    }
         
     public function getId(): ?int
     {
@@ -101,7 +128,7 @@ class User
         return $this->familyName;
     }
     
-    public function getEmail (): string
+    public function getEmail (): ?string
     {
         return $this->email;
     }
@@ -209,6 +236,18 @@ class User
     public function setUserAddresses (?array $userAddresses)
     {
         $this->userAddresses = $userAddresses;
+    }
+    
+    public function addUserAddress(UserAddress $userAddress)
+    {
+        $userAddress->setUser($this);
+        $this->userAddresses->add($userAddress);
+    }
+    
+    public function removeUserAddress(UserAddress $userAddress)
+    {
+        $this->userAddresses->removeElement($userAddress);
+        $userAddress->setUser(null);
     }
     
 }

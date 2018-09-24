@@ -11,6 +11,26 @@
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
+    	<nav class="navbar is-primary">
+            <div class="container">
+            <div class="navbar-brand">
+                  <a class="navbar-item" href="/" style="font-weight:bold;">
+                    Coviride
+                  </a>
+                  <span class="navbar-burger burger" data-target="navMenu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </span>
+                </div>
+            <div id="navMenu" class="navbar-menu">
+                <div class="navbar-end">
+                    <a href="/" class="navbar-item"><i class="fas fa-home"></i></a>
+                    <a href="/users" class="navbar-item"><i class="fas fa-users"></i></a>
+                </div>
+            </div>
+            </div>
+        </nav>
         <div id="app">
           {% block body %}{% endblock %}
         </div>

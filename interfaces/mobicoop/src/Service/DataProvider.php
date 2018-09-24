@@ -11,6 +11,12 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Doctrine\Common\Inflector\Inflector;
 
+use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
+use Doctrine\Common\Annotations\AnnotationReader;
+use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
+use GuzzleHttp\RequestOptions;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+
 /**
  * Data provider service.
  * Uses an API to retrieve/send data.
@@ -34,8 +40,11 @@ class DataProvider
                 'base_uri' => $uri
         ]);
         
+        $classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
+        
         $encoders = array(new JsonEncoder());
-        $normalizers = array(new ObjectNormalizer());
+        // we use our custom Object Normalizer to remove unwanted null values from the json
+        $normalizers = array(new DateTimeNormalizer(), new RemoveNullObjectNormalizer($classMetadataFactory));
         $this->serializer = new Serializer($normalizers, $encoders);
         $this->deserializer = $deserializer;
     }
@@ -87,6 +96,22 @@ class DataProvider
         return self::treatHydraCollection($response->getBody());
     }
     
+    /**
+     * Post collection operation
+     *
+     * @param object $object An object representing the resource to post
+     *
+     * @return @return object The item posted.
+     */
+    public function post($object)
+    {
+        $response = $this->client->post($this->resource,[
+                RequestOptions::JSON => json_decode($this->serializer->serialize($object,self::SERIALIZER_ENCODER,['groups'=>['create']]),true)
+        ]);
+        return $this->deserializer->deserialize($this->class, json_decode((string) $response->getBody(),true));
+    }
+    
+    
     private function treatHydraCollection($data) 
     {   
         // $data comes from a GuzzleHttp request; it's a json hydra collection so when need to parse the json to an array
@@ -135,4 +160,16 @@ class DataProvider
         return Inflector::pluralize(Inflector::tableize($name));
     }
     
+}
+
+class RemoveNullObjectNormalizer extends ObjectNormalizer
+{
+    public function normalize($object, $format = null, array $context = [])
+    {
+        $data = parent::normalize($object, $format, $context);
+        
+        return array_filter($data, function ($value) {
+            return (null !== $value) && (!empty($value));
+        });
+    }
 }
