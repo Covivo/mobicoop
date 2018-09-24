@@ -11,10 +11,10 @@
         "symfony/console": "*",
         "symfony/flex": "^1.1",
         "symfony/framework-bundle": "*",
+        "symfony/dotenv": "*",
         "symfony/yaml": "*"
     },
     "require-dev": {
-        "symfony/dotenv": "*",
         "symfony/web-server-bundle": "*"
     },
     "config": {

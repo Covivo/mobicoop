@@ -1,0 +1,24 @@
+{
+  "name": "coviride-api",
+  "version": "1.0.0",
+  "description": "Coviride API ",
+  "main": "public/index.php",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/covivo/coviride-api.git"
+  },
+  "keywords": [
+    "COVIRIDE",
+    "MOBICOOP",
+    "ROUTE"
+  ],
+  "author": "Sylvain Briat",
+  "license": "SEE LICENCE IN LICENCE",
+  "bugs": {
+    "url": "https://gitlab.com/covivo/coviride-api/issues"
+  },
+  "homepage": "https://gitlab.com/covivo/coviride-api#README"
+}
