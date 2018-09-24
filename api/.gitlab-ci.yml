@@ -121,8 +121,8 @@ test_deploy:
     - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
     - ssh -t -v -o StrictHostKeyChecking=no test@167.114.236.57 "cd /var/www/test/api; mkdir test"
-    - rsync -hrvz --delete  -e 'ssh -v -o StrictHostKeyChecking=no' ./ test@167.114.236.57:/var/www/test/api
-    - ssh -o StrictHostKeyChecking=no test@167.114.236.57 "cd /var/www/prod/api; php bin/console doctrine:migrations:migrate -n"
+    - rsync -hrvz --group=www-data --delete --exclude=/.env -e 'ssh -v -o StrictHostKeyChecking=no' ./ test@167.114.236.57:/var/www/test/api
+    - ssh -o StrictHostKeyChecking=no test@167.114.236.57 "cd /var/www/test/api; php bin/console doctrine:migrations:migrate -n"
 
 deploy_prod:
   stage: deploy
@@ -134,9 +134,10 @@ deploy_prod:
   script:
     - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa
     - chmod 700 id_rsa
+    - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - rsync -hrvz --delete -e 'ssh -o StrictHostKeyChecking=no -i id_rsa' ./ prod@167.114.236.57:/var/www/prod/api
-    - ssh -o StrictHostKeyChecking=no prod@167.114.236.57:/var/www/prod/api php bin/console doctrine:migrations:migrate -n
+    - rsync -hrvz --group=www-data --delete --exclude=/.env -e 'ssh -o StrictHostKeyChecking=no' ./ prod@167.114.236.57:/var/www/prod/api
+    - ssh -o StrictHostKeyChecking=no prod@167.114.236.57 "cd /var/www/prod/api; php bin/console doctrine:migrations:migrate -n"
 
   environment:
     name: prod
