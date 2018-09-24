@@ -1,20 +1,42 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello {{ controller_name }}{% endblock %}
+{% block title %}Hello{% endblock %}
 
 {% block body %}
 
 <section class="hero is-primary">
-  <div class="hero-body">
-    <div class="container">
-      <h1 class="title">
-        Coviride Demo application
-      </h1>
-      <h2 class="subtitle">
-        The users are <pre>{{users}}</pre>
-      </h2>
-    </div>
-  </div>
+	<div class="hero-body">
+    	<div class="container">
+      		<h1 class="title">
+        		Coviride Demo application - Users <a href="/user/create"><i class="fas fa-user-plus"></i></a>
+      		</h1>
+    	</div>
+  	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+      	<table class="table">
+          	<tr>
+          		<th>#</th>
+          		<th>givenName</th>
+          		<th>familyName</th>
+          		<th>email</th>
+          		<th>birthDate</th>
+          		<th>Action</th>
+          	</tr>
+          	{% for user in hydra.member %}
+          	<tr>
+          		<td>{{ user.id }}</td>
+          		<td>{{ user.givenName }}</td>
+          		<td>{{ user.familyName }}</td>
+          		<td>{{ user.email }}</td>
+          		<td>{{ user.birthDate ? user.birthDate|date('Y-m-d') }}</td>
+          		<td><a href="{{ path('user',{'id':user.id}) }}"><i class="fas fa-search"></i></a></td>
+          	</tr>
+      	    {% endfor %}
+      	</table>
+  	</div>
 </section>
 
 {% endblock %}

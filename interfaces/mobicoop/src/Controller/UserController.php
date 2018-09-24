@@ -5,6 +5,11 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service\UserManager;
+use Symfony\Component\HttpFoundation\Request;
+use App\Entity\User;
+use App\Entity\Address;
+use App\Entity\UserAddress;
+use App\Form\UserCreateForm;
 
 /**
  * Controller class for user related actions.
@@ -22,9 +27,8 @@ class UserController extends AbstractController
      */
     public function user($id, UserManager $userManager)
     {
-        return $this->render('user/index.html.twig', [
-            'controller_name' => 'UserController',
-            'users' => print_r($userManager->getUser($id),true)
+        return $this->render('user/detail.html.twig', [
+            'user' => $userManager->getUser($id)
         ]);
     }
     
@@ -37,8 +41,29 @@ class UserController extends AbstractController
     public function users(UserManager $userManager)
     {
         return $this->render('user/index.html.twig', [
-            'controller_name' => 'UserController',
-            'users' => print_r($userManager->getUsers(),true)
+            'hydra' => $userManager->getUsers()
+        ]);
+    }
+    
+    /**
+     * Create a user.
+     *
+     * @Route("/user/create", name="user_create")
+     *
+     */
+    public function userCreate(UserManager $userManager, Request $request)
+    {
+        $user = new User();
+        
+        $form = $this->createForm(UserCreateForm::class, $user);
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($userManager->createUser($user)) return $this->redirectToRoute('users');
+        }
+        
+        return $this->render('user/create.html.twig', [
+                'form' => $form->createView(),
         ]);
     }
 }

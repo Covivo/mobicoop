@@ -40,4 +40,16 @@ class UserManager
         return $this->dataProvider->getCollection();
     }
     
+    /**
+     * Create a user
+     *
+     * @param User $user The user to create
+     *
+     * @return User|null The user created or false if error.
+     */
+    public function createUser(User $user)
+    {
+        return $this->dataProvider->post($user);
+    }
+    
 }
