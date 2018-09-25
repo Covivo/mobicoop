@@ -129,8 +129,9 @@ test_deploy:
   script:
     - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
     - chmod 700 id_rsa
+    - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - rsync --group=www-data -hrvz --exclude=/.env --delete  -e 'ssh -o StrictHostKeyChecking=no -i id_rsa' ./ ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:/var/www/test/mobicoop
+    - rsync --group=www-data -hrvz --exclude=/.env --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:/var/www/test/mobicoop
 
 
 deploy_prod:
@@ -143,8 +144,9 @@ deploy_prod:
   script:
     - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa
     - chmod 700 id_rsa
+    - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - rsync --exclude=/.env -hrvz --group=www-data --delete -e 'ssh -o StrictHostKeyChecking=no -i id_rsa' ./ ${DEPLOYMENT_PROD_SERVER_USER}@${DEPLOYMENT_PROD_SERVER_IP}:/var/www/prod/mobicoop
+    - rsync --exclude=/.env -hrvz --group=www-data --delete -e 'ssh -o StrictHostKeyChecking=no' ./ ${DEPLOYMENT_PROD_SERVER_USER}@${DEPLOYMENT_PROD_SERVER_IP}:/var/www/prod/mobicoop
   environment:
     name: prod
     url: http://mobicoop.io
