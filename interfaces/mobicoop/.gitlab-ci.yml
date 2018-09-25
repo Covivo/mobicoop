@@ -5,13 +5,72 @@ stages:
   - test
   - deploy
 
-# Cache modules in between jobs
-# cache:
-#   key: ${CI_COMMIT_REF_SLUG}
-#   paths:
-#   - node_modules
-#   - vendor
+###############################################################################################
+############# Everything under this is execute for all push (branch) ##########################
+###############################################################################################
 
+build&Test:
+  stage: test
+  variables:
+    APP_ENV: dev # improtant because symfony use it
+  before_script:
+    - composer install
+    - npm install
+    - npm run postinstall
+  script:
+    - npx encore dev
+    - npm run testFixAndCoverage
+    - php bin/console cache:clear --env=test --no-debug
+    - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
+    - chmod 700 id_rsa
+    - mv id_rsa ${HOME}/.ssh
+    - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
+    - rsync --group=www-data -hrvz --exclude=/.env --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:/var/www/test/mobicoop
+  only:
+    - pushes
+  except:
+    - tags
+    - dev
+    - master
+    - $CI_COMMIT_MESSAGE =~ /skip/
+    - $CI_COMMIT_MESSAGE =~ /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
+
+###############################################################################################
+############# Everything under this is execute only for Test (dev) ############################
+###############################################################################################
+
+buildTest&Deploy:
+  stage: deploy
+  environment:
+    name: test
+    url: http://test.mobicoop.io
+  only:
+    - dev
+  variables:
+    APP_ENV: test # improtant because symfony use it
+  before_script:
+    - composer install --optimize-autoloader
+    - npm install
+    - npm run postinstall
+  script:
+    - npx encore dev
+    - npm run testFixAndCoverage
+    - php bin/console cache:clear --env=test --no-debug
+    - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
+    - chmod 700 id_rsa
+    - mv id_rsa ${HOME}/.ssh
+    - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
+    - rsync --group=www-data -hrvz --exclude=/.env --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:/var/www/test/mobicoop
+  only:
+    - dev
+  except:
+    - tags
+    - $CI_COMMIT_MESSAGE =~ /skip/
+    - $CI_COMMIT_MESSAGE =~ /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
+
+###############################################################################################
+############# Everything under this is execute only for production (MASTER) ###################
+###############################################################################################
 build:linux:
   stage: build
   before_script:
@@ -25,9 +84,15 @@ build:linux:
       - public
       - node_modules
       - vendor
+  only:
+    branches:
+      - master
   except:
+    tags:
+      - /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
     variables:
       - $CI_COMMIT_MESSAGE =~ /skip/
+      - $CI_COMMIT_MESSAGE =~ /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
 
 test:linux:
   stage: test
@@ -35,9 +100,15 @@ test:linux:
     - npm run testFixAndCoverage
   dependencies:
     - build:linux
+  only:
+    branches:
+      - master
   except:
+    tags:
+      - /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
     variables:
       - $CI_COMMIT_MESSAGE =~ /skip/
+      - $CI_COMMIT_MESSAGE =~ /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
 
 code_quality:
   stage: build
@@ -57,7 +128,14 @@ code_quality:
   artifacts:
     paths: [gl-code-quality-report.json]
   only:
-    - master
+    branches:
+      - master
+  except:
+    tags:
+      - /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /skip/
+      - $CI_COMMIT_MESSAGE =~ /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
 
 sast:
   stage: test
@@ -77,7 +155,14 @@ sast:
   artifacts:
     paths: [gl-sast-report.json]
   only:
-    - master
+    branches:
+      - master
+  except:
+    tags:
+      - /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /skip/
+      - $CI_COMMIT_MESSAGE =~ /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
 
 dependency_scanning:
   image: docker:stable
@@ -96,7 +181,14 @@ dependency_scanning:
   artifacts:
     paths: [gl-dependency-scanning-report.json]
   only:
-    - master
+    branches:
+      - master
+  except:
+    tags:
+      - /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /skip/
+      - $CI_COMMIT_MESSAGE =~ /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
 
 pages:
   stage: deploy
@@ -109,30 +201,14 @@ pages:
     paths:
     - public
   only:
-  - master
-
-test_deploy:
-  stage: deploy
-  environment:
-    name: test
-    url: http://test.mobicoop.io
-  only:
-    - dev
+    branches:
+      - master
   except:
+    tags:
+      - /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
     variables:
       - $CI_COMMIT_MESSAGE =~ /skip/
-  variables:
-    APP_ENV: test # improtant because symfony use it
-  before_script: # This if require to send the prod type no dev, since it creates errors
-    - composer install --optimize-autoloader
-    - php bin/console cache:clear --env=test --no-debug
-  script:
-    - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
-    - chmod 700 id_rsa
-    - mv id_rsa ${HOME}/.ssh
-    - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - rsync --group=www-data -hrvz --exclude=/.env --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:/var/www/test/mobicoop
-
+      - $CI_COMMIT_MESSAGE =~ /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
 
 deploy_prod:
   stage: deploy
