@@ -11,6 +11,7 @@
         "symfony/asset": "*",
         "symfony/console": "*",
         "symfony/dom-crawler": "*",
+        "symfony/dotenv": "*",
         "symfony/expression-language": "*",
         "symfony/flex": "^1.1",
         "symfony/form": "*",
@@ -26,7 +27,6 @@
         "symfony/twig-bundle": "*",
         "symfony/validator": "*",
         "symfony/web-link": "*",
-        "symfony/dotenv": "*",
         "symfony/yaml": "*"
     },
     "require-dev": {
