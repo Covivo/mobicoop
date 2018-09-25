@@ -27,7 +27,9 @@ class UserManager
      */
     public function getUser($id)
     {
-        return $this->dataProvider->getItem($id);
+        $response = $this->dataProvider->getItem($id);
+        if ($response->getCode() == 200) return $response->getValue();
+        return null;
     }
     
     /**
@@ -37,7 +39,9 @@ class UserManager
      */
     public function getUsers()
     {
-        return $this->dataProvider->getCollection();
+        $response = $this->dataProvider->getCollection();
+        if ($response->getCode() == 200) return $response->getValue();
+        return null;
     }
     
     /**
@@ -45,11 +49,41 @@ class UserManager
      *
      * @param User $user The user to create
      *
-     * @return User|null The user created or false if error.
+     * @return User|null The user created or null if error.
      */
     public function createUser(User $user)
     {
-        return $this->dataProvider->post($user);
+        $response = $this->dataProvider->post($user);
+        if ($response->getCode() == 201) return $response->getValue();
+        return null;
+    }
+    
+    /**
+     * Update a user
+     *
+     * @param User $user The user to update
+     *
+     * @return User|null The user updated or null if error.
+     */
+    public function updateUser(User $user)
+    {
+        $response = $this->dataProvider->put($user);
+        if ($response->getCode() == 200) return $response->getValue();
+        return null;
+    }
+    
+    /**
+     * Delete a user
+     *
+     * @param int $id The id of the user to delete
+     *
+     * @return boolean The result of the deletion.
+     */
+    public function deleteUser(int $id)
+    {
+        $response = $this->dataProvider->delete($id);
+        if ($response->getCode() == 204) return true;
+        return false;
     }
     
 }

@@ -4,11 +4,12 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\Resource;
 
 /**
  * A postal address.
  */
-Class Address
+Class Address implements Resource
 {
     /**
      * @var int The id of this address.
@@ -119,7 +120,7 @@ Class Address
         return $this->userAddresses;
     }
     
-    public function setId ($id)
+    public function setId (int $id)
     {
         $this->id = $id;
     }

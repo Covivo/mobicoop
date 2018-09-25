@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Entity\User;
 use App\Entity\Address;
 use App\Entity\UserAddress;
-use App\Form\UserCreateForm;
+use App\Form\UserForm;
 
 /**
  * Controller class for user related actions.
@@ -55,15 +55,63 @@ class UserController extends AbstractController
     {
         $user = new User();
         
-        $form = $this->createForm(UserCreateForm::class, $user);
+        $form = $this->createForm(UserForm::class, $user);
         $form->handleRequest($request);
+        $error = false;
         
         if ($form->isSubmitted() && $form->isValid()) {
             if ($userManager->createUser($user)) return $this->redirectToRoute('users');
+            $error = true;
         }
         
         return $this->render('user/create.html.twig', [
                 'form' => $form->createView(),
+                'error' => $error
         ]);
+    }
+    
+    /**
+     * Update a user.
+     *
+     * @Route("/user/{id}/update", name="user_update", requirements={"id"="\d+"})
+     *
+     */
+    public function userUpdate($id, UserManager $userManager, Request $request)
+    {
+        
+        $user = $userManager->getUser($id); 
+        
+        $form = $this->createForm(UserForm::class, $user);
+        $form->handleRequest($request);
+        $error = false;
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($userManager->updateUser($user)) return $this->redirectToRoute('users');
+            $error = true;
+        }
+        
+        return $this->render('user/update.html.twig', [
+                'form' => $form->createView(),
+                'user' => $user,
+                'error' => $error
+        ]);
+    }
+    
+    /**
+     * Delete a user.
+     *
+     * @Route("/user/{id}/delete", name="user_delete", requirements={"id"="\d+"})
+     *
+     */
+    public function userDelete($id, UserManager $userManager)
+    {
+        if ($userManager->deleteUser($id)) {
+            return $this->redirectToRoute('users');
+        } else {
+            return $this->render('user/index.html.twig', [
+                    'hydra' => $userManager->getUsers(),
+                    'error' => 'An error occured'
+            ]);
+        }
     }
 }
