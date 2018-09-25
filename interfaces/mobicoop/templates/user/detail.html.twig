@@ -16,6 +16,7 @@
 
 <section class="section">
 	<div class="container">
+		{% if user %}
     	<table class="table">
           	<tr><th>#</th><td>{{ user.id }}</td></tr>
           	<tr><th>givenName</th><td>{{ user.givenName }}</td></tr>
@@ -41,6 +42,9 @@
           		{% endfor %}
           	</td>
       	</table>
+      	{% else %}
+      	<span class="tag is-danger">User not found.</span>
+      	{% endif %}
 	</div>
 </section>
 

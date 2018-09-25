@@ -2,20 +2,23 @@
 
 namespace App\Service;
 
-use GuzzleHttp\Client;
+use App\Entity\Resource;
+use App\Entity\Response;
 use App\Entity\Hydra;
 use App\Entity\HydraView;
 
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Doctrine\Common\Inflector\Inflector;
-
-use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
+
+use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
-use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use GuzzleHttp\Exception\TransferException;
 
 /**
  * Data provider service.
@@ -27,7 +30,7 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 class DataProvider
 {
     const SERIALIZER_ENCODER = 'json';
-    
+        
     private $client;
     private $resource;
     private $class;
@@ -58,28 +61,34 @@ class DataProvider
     /**
      * Get item operation
      *
-     * @param String    $id         The id of the item
+     * @param int       $id         The id of the item
      * @param Boolean   $asArray    Return the result as an array instead of an object
      *
-     * @return object|array|null The item found or null if not found.
+     * @return Response The response of the operation.
      */
-    public function getItem(string $id, bool $asArray = false)
+    public function getItem(int $id, bool $asArray = false): Response
     {
-        $response = $this->client->get($this->resource."/".$id);
-        
-        if ($asArray) return json_decode((string) $response->getBody(),true);
-        
         /*
          * deserialization of nested array of objects doesn't work...
          * only the root object deserialization works...
          * see https://medium.com/@rebolon/the-symfony-serializer-a-great-but-complex-component-fbc09baa65a0
          */
-        /* 
-        return $this->serializer->deserialize((string) $response->getBody(), $this->class, self::SERIALIZER_ENCODER);
-        */
+        /*
+         return $this->serializer->deserialize((string) $response->getBody(), $this->class, self::SERIALIZER_ENCODER);
+         */
         
-       return $this->deserializer->deserialize($this->class, json_decode((string) $response->getBody(),true));
-        
+        try {
+            $clientResponse = $this->client->get($this->resource."/".$id);
+            if ($asArray) {
+                $value = json_decode((string) $clientResponse->getBody(),true);
+            } else {
+                $value = $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(),true));
+            }
+            if ($clientResponse->getStatusCode() == 200) return new Response($clientResponse->getStatusCode(), $value);
+        } catch (TransferException $e) {
+            return new Response($e->getCode());
+        }
+        return new Response();
     }
     
     /**
@@ -87,30 +96,78 @@ class DataProvider
      *
      * @param array|null $params An array of parameters
      *
-     * @return Hydra The hydra collection found or null if not found.
+     * @return Response The response of the operation.
      */
-    public function getCollection(array $params=null): ?Hydra
+    public function getCollection(array $params=null): Response
     {
         // @todo : send the params to the request in the json body of the request
-        $response = $this->client->get($this->resource);
-        return self::treatHydraCollection($response->getBody());
+        
+        try {
+            $clientResponse = $this->client->get($this->resource);
+            if ($clientResponse->getStatusCode() == 200) return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody()));
+        } catch (TransferException $e) {
+            return new Response($e->getCode());
+        }
+        return new Response();
     }
     
     /**
      * Post collection operation
      *
-     * @param object $object An object representing the resource to post
+     * @param Resource $object An object representing the resource to post
      *
-     * @return @return object The item posted.
+     * @return Response The response of the operation.
      */
-    public function post($object)
+    public function post(Resource $object): Response
     {
-        $response = $this->client->post($this->resource,[
-                RequestOptions::JSON => json_decode($this->serializer->serialize($object,self::SERIALIZER_ENCODER,['groups'=>['create']]),true)
-        ]);
-        return $this->deserializer->deserialize($this->class, json_decode((string) $response->getBody(),true));
+        try {
+            $clientResponse = $this->client->post($this->resource,[
+                    RequestOptions::JSON => json_decode($this->serializer->serialize($object,self::SERIALIZER_ENCODER,['groups'=>['post']]),true)
+            ]);
+            if ($clientResponse->getStatusCode() == 201) return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(),true)));
+        } catch (TransferException $e) {
+            return new Response($e->getCode());
+        }
+        return new Response();        
     }
     
+    /**
+     * Put item operation
+     *
+     * @param object $object An object representing the resource to put
+     *
+     * @return Response The response of the operation.
+     */
+    public function put(Resource $object): Response
+    {
+        try {
+            $clientResponse = $this->client->put($this->resource."/".$object->getId(),[
+                    RequestOptions::JSON => json_decode($this->serializer->serialize($object,self::SERIALIZER_ENCODER,['groups'=>['put']]),true)
+            ]);
+            if ($clientResponse->getStatusCode() == 200) return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(),true)));
+        } catch (TransferException $e) {
+            return new Response($e->getCode());
+        }
+        return new Response();
+    }
+    
+    /**
+     * Delete item operation
+     *
+     * @param int $id The id of the object representing the resource to delete
+     *
+     * @return Response The response of the operation.
+     */
+    public function delete(int $id): Response
+    {
+        try {
+            $clientResponse = $this->client->delete($this->resource."/".$id);
+            if ($clientResponse->getStatusCode() == 204) return new Response($clientResponse->getStatusCode());
+        } catch (TransferException $e) {
+            return new Response($e->getCode());
+        }
+        return new Response();
+    }
     
     private function treatHydraCollection($data) 
     {   
@@ -162,6 +219,12 @@ class DataProvider
     
 }
 
+/**
+ * This class permits to remove null values or empty arrays when normalizing.
+ * 
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ *
+ */
 class RemoveNullObjectNormalizer extends ObjectNormalizer
 {
     public function normalize($object, $format = null, array $context = [])

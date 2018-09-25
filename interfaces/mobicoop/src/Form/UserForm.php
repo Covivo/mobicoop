@@ -10,11 +10,11 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
 /**
- * Create user form.
+ * User form.
  * 
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class UserCreateForm extends AbstractType
+class UserForm extends AbstractType
 {
     
     public function buildForm(FormBuilderInterface $builder, array $options)

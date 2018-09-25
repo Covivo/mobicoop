@@ -5,11 +5,12 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
+use App\Entity\Resource;
 
 /**
  * A user.
  */
-class User
+class User implements Resource
 {
     
     /**
@@ -25,21 +26,21 @@ class User
     /**
      * @var string|null The first name of the user.
      * 
-     * @Groups("create")
+     * @Groups({"post","put"})
      */
     private $givenName;
     
     /**
      * @var string|null The family name of the user.
      * 
-     * @Groups("create")
+     * @Groups({"post","put"})
      */
     private $familyName;
     
     /**
      * @var string The email of the user.
      * 
-     * @Groups("create")
+     * @Groups({"post","put"})
      *
      * @Assert\NotBlank
      * @Assert\Email()
@@ -49,28 +50,28 @@ class User
     /**
      * @var string|null The encoded password of the user.
      * 
-     * @Groups("create")
+     * @Groups({"post","put"})
      */
     private $password;
     
     /**
      * @var string|null The gender of the user.
      * 
-     * @Groups("create")
+     * @Groups({"post","put"})
      */
     private $gender;
     
     /**
      * @var string|null The nationality of the user.
      * 
-     * @Groups("create")
+     * @Groups({"post","put"})
      */
     private $nationality;
     
     /**
      * @var \DateTimeInterface|null The birth date of the user.
      * 
-     * @Groups("create")
+     * @Groups({"post","put"})
      *
      * @Assert\Date()
      */
@@ -79,28 +80,26 @@ class User
     /**
      * @var string|null The telephone number of the user.
      * 
-     * @Groups("create")
+     * @Groups({"post","put"})
      */
     private $telephone;
     
     /**
      * @var int|null The maximum deviation time (in seconds) as a driver to accept a request proposal.
      * 
-     * @Groups("create")
+     * @Groups({"post","put"})
      */
     private $maxDeviationTime;
     
     /**
      * @var int|null The maximum deviation distance (in metres) as a driver to accept a request proposal.
      * 
-     * @Groups("create")
+     * @Groups({"post","put"})
      */
     private $maxDeviationDistance;
     
     /**
      * @var UserAddress[]|null A user may have many names addresses.
-     * 
-     * @Groups("create")
      */
     private $userAddresses;
     
@@ -173,7 +172,7 @@ class User
         return $this->userAddresses;
     }
     
-    public function setId ($id)
+    public function setId (int $id)
     {
         $this->id = $id;
     }

@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\Resource;
 
 /**
  * A user address.
  */
-Class UserAddress
+Class UserAddress implements Resource
 {
     /**
      * @var int The id of this user address.
@@ -64,7 +65,7 @@ Class UserAddress
         return $this->address;
     }
     
-    public function setId ($id)
+    public function setId (int $id)
     {
         $this->id = $id;
     }
