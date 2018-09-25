@@ -75,6 +75,8 @@ To contribute to the Coviride application, please do the following:
 3. Add some Unit Tests and/or functionnals test and check if build passed
 4. Create a pull request & set reviewver before merge
 
+** In developpement mode we use .env file, but not in production following [symfony spec](https://symfony.com/doc/current/deployment.html#common-post-deployment-tasks)
+
 #### Javascript/Vue-js
 
 The main library for javascript used is [vue-js](https://fr.vuejs.org/index.html), everything about them are in [components](assets/js/components)
@@ -91,25 +93,24 @@ We use buefy which is a vue adaptation of bulma as a front-end scss framework, y
 
 - Check the [buefy doc](https://buefy.github.io/documentation/layout) to find elements you want to use, such as modal, layou ..
 - Change any default [bulma variables](https://bulma.io/documentation/customize/variables/) in [variable.scss](assets/css/_variables.scss) such as [mobile variables](https://bulma.io/documentation/overview/responsiveness/#variables)
-- Use bulma variable inside vue-js components as in the [parrot sample](assets/js/components/Parrot.vue)
+- Use bulma variables inside vue-js components as in the [parrot sample](assets/js/components/Parrot.vue)
 
 
 #### Mapbox
 
-We are using [Mapbox-glue](https://www.npmjs.com/package/mapbox-gl-vue#setup) for route information & calcs, please check [mapbox-gl api](https://www.mapbox.com/mapbox-gl-js/api/)
+We are using [Mapbox-glue](https://www.npmjs.com/package/mapbox-gl-vue#setup) for route informations & calcs, please check [mapbox-gl api](https://www.mapbox.com/mapbox-gl-js/api/)
 
 
 ### Documentation
 
-A developer doc is available [here](https://covivo.gitlab.io/CoviRide/build/doc) (it is generated automatically afetr each release), in order to generate the doc just do:
+A developer doc is available [here](https://covivo.gitlab.io/CoviRide/build/doc) (it is generated automatically after each production release), in order to generate the doc just do:
+
 `npm run generateDoc`
 
 
 ### Database
 
 You will find a documentation about the database [here](https://covivo.gitlab.io/CoviRide/database/)
-
-
 
 
 
