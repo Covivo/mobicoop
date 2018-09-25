@@ -2,7 +2,7 @@ image: misterio92/ci-php-node
 
 stages:
   - build
-  # - test
+  - test
   - deploy
 
 #Cache modules in between jobs
@@ -21,6 +21,9 @@ build:linux:
     paths:
       - public
       - vendor
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /skip/
       
 code_quality:
   stage: build
@@ -109,12 +112,15 @@ test_deploy:
     url: http://api.test.mobicoop.io
   only:
     - dev
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /skip/
   variables:
-    APP_ENV: prod # important because symfony use it
-  before_script: # This is required to send the prod type no dev, since it creates errors
+    APP_ENV: test # important because symfony use it
+  before_script: # This is required to send the test type no dev, since it creates errors
     - apt install -yq iputils-ping
     - composer install --no-dev --optimize-autoloader
-    - php bin/console cache:clear --env=prod --no-debug
+    - php bin/console cache:clear --env=test --no-debug
   script:
     - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
     - chmod 700 id_rsa
@@ -138,10 +144,9 @@ deploy_prod:
     - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
     - rsync -hrvz --group=www-data --delete --exclude=/.env -e 'ssh -o StrictHostKeyChecking=no' ./ prod@167.114.236.57:/var/www/prod/api
     - ssh -o StrictHostKeyChecking=no prod@167.114.236.57 "cd /var/www/prod/api; php bin/console doctrine:migrations:migrate -n"
-
   environment:
     name: prod
     url: http://api.mobicoop.io
   when: manual
   only:
-  - master
+    - master

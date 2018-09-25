@@ -9,9 +9,9 @@
         "doctrine/doctrine-migrations-bundle": "^1.3",
         "doctrine/migrations": "^1.8",
         "symfony/console": "*",
+        "symfony/dotenv": "*",
         "symfony/flex": "^1.1",
         "symfony/framework-bundle": "*",
-        "symfony/dotenv": "*",
         "symfony/yaml": "*"
     },
     "require-dev": {
