@@ -124,7 +124,7 @@ test_deploy:
   variables:
     APP_ENV: test # improtant because symfony use it
   before_script: # This if require to send the prod type no dev, since it creates errors
-    - composer install --no-dev --optimize-autoloader
+    - composer install --optimize-autoloader
     - php bin/console cache:clear --env=test --no-debug
   script:
     - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
@@ -137,7 +137,7 @@ test_deploy:
 deploy_prod:
   stage: deploy
   before_script: # This if require to send the prod type no dev, since it creates errors
-    - composer install --no-dev --optimize-autoloader
+    - composer install--optimize-autoloader
     - php bin/console cache:clear --env=prod --no-debug
   variables:
     APP_ENV: prod # improtant because symfony use it
