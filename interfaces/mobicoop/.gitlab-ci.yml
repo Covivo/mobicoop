@@ -25,6 +25,9 @@ build:linux:
       - public
       - node_modules
       - vendor
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /skip/
 
 test:linux:
   stage: test
@@ -32,6 +35,9 @@ test:linux:
     - npm run testFixAndCoverage
   dependencies:
     - build:linux
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /skip/
 
 code_quality:
   stage: build
@@ -52,6 +58,7 @@ code_quality:
     paths: [gl-code-quality-report.json]
   only:
     - master
+
 sast:
   stage: test
   image: docker:stable
@@ -111,16 +118,19 @@ test_deploy:
     url: http://test.mobicoop.io
   only:
     - dev
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /skip/
   variables:
-    APP_ENV: prod # improtant because symfony use it
+    APP_ENV: test # improtant because symfony use it
   before_script: # This if require to send the prod type no dev, since it creates errors
     - composer install --no-dev --optimize-autoloader
-    - php bin/console cache:clear --env=prod --no-debug
+    - php bin/console cache:clear --env=test --no-debug
   script:
     - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
     - chmod 700 id_rsa
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - rsync -hrvz --delete  -e 'ssh -o StrictHostKeyChecking=no -i id_rsa' ./ ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:/var/www/test/mobicoop
+    - rsync --group=www-data -hrvz --exclude=/.env --delete  -e 'ssh -o StrictHostKeyChecking=no -i id_rsa' ./ ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:/var/www/test/mobicoop
 
 
 deploy_prod:
@@ -134,8 +144,7 @@ deploy_prod:
     - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa
     - chmod 700 id_rsa
     - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - rsync -hrvz --delete -e 'ssh -o StrictHostKeyChecking=no -i id_rsa' ./ ${DEPLOYMENT_PROD_SERVER_USER}@${DEPLOYMENT_PROD_SERVER_IP}:/var/www/prod/mobicoop
-
+    - rsync --exclude=/.env -hrvz --group=www-data --delete -e 'ssh -o StrictHostKeyChecking=no -i id_rsa' ./ ${DEPLOYMENT_PROD_SERVER_USER}@${DEPLOYMENT_PROD_SERVER_IP}:/var/www/prod/mobicoop
   environment:
     name: prod
     url: http://mobicoop.io

@@ -26,6 +26,7 @@
         "symfony/twig-bundle": "*",
         "symfony/validator": "*",
         "symfony/web-link": "*",
+        "symfony/dotenv": "*",
         "symfony/yaml": "*"
     },
     "require-dev": {
@@ -33,7 +34,6 @@
         "kahlan/kahlan": "^4.0",
         "symfony/browser-kit": "*",
         "symfony/debug-pack": "*",
-        "symfony/dotenv": "*",
         "symfony/maker-bundle": "^1.0",
         "symfony/profiler-pack": "*",
         "symfony/test-pack": "*",
