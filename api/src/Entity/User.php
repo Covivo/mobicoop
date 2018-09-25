@@ -216,12 +216,12 @@ class User
         return $this->userAddresses;
     }
 
-    public function setGivenName (string $givenName)
+    public function setGivenName (?string $givenName)
     {
         $this->givenName = $givenName;
     }
 
-    public function setFamilyName (string $familyName)
+    public function setFamilyName (?string $familyName)
     {
         $this->familyName = $familyName;
     }
@@ -231,42 +231,42 @@ class User
         $this->email = $email;
     }
 
-    public function setPassword (string $password)
+    public function setPassword (?string $password)
     {
         $this->password = $password;
     }
 
-    public function setGender (string $gender)
+    public function setGender (?string $gender)
     {
         $this->gender = $gender;
     }
 
-    public function setNationality (string $nationality)
+    public function setNationality (?string $nationality)
     {
         $this->nationality = $nationality;
     }
 
-    public function setBirthDate (\DateTimeInterface $birthDate)
+    public function setBirthDate (?\DateTimeInterface $birthDate)
     {
         $this->birthDate = $birthDate;
     }
 
-    public function setTelephone (string $telephone)
+    public function setTelephone (?string $telephone)
     {
         $this->telephone = $telephone;
     }
 
-    public function setMaxDeviationTime (int $maxDeviationTime)
+    public function setMaxDeviationTime (?int $maxDeviationTime)
     {
         $this->maxDeviationTime = $maxDeviationTime;
     }
 
-    public function setMaxDeviationDistance (int $maxDeviationDistance)
+    public function setMaxDeviationDistance (?int $maxDeviationDistance)
     {
         $this->maxDeviationDistance = $maxDeviationDistance;
     }
 
-    public function setUserAddresses (array $userAddresses)
+    public function setUserAddresses (?array $userAddresses)
     {
         $this->userAddresses = $userAddresses;
     }

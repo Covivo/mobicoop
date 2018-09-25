@@ -157,7 +157,7 @@ Class Address
         $this->streetAddress = $streetAddress;
     }
 
-    public function setPostalCode (string $postalCode)
+    public function setPostalCode (?string $postalCode)
     {
         $this->postalCode = $postalCode;
     }
@@ -172,22 +172,22 @@ Class Address
         $this->addressCountry = $addressCountry;
     }
 
-    public function setLatitude (float $latitude)
+    public function setLatitude (?float $latitude)
     {
         $this->latitude = $latitude;
     }
 
-    public function setLongitude (float $longitude)
+    public function setLongitude (?float $longitude)
     {
         $this->longitude = $longitude;
     }
 
-    public function setElevation (int $elevation)
+    public function setElevation (?int $elevation)
     {
         $this->elevation = $elevation;
     }
 
-    public function setUserAddresses (array $userAddresses)
+    public function setUserAddresses (?array $userAddresses)
     {
         $this->userAddresses = $userAddresses;
     }
