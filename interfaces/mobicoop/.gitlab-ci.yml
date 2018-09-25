@@ -85,14 +85,7 @@ build:linux:
       - node_modules
       - vendor
   only:
-    branches:
-      - master
-  except:
-    tags:
-      - /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
-    variables:
-      - $CI_COMMIT_MESSAGE =~ /skip/
-      - $CI_COMMIT_MESSAGE =~ /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
+    - master
 
 test:linux:
   stage: test
@@ -101,14 +94,7 @@ test:linux:
   dependencies:
     - build:linux
   only:
-    branches:
-      - master
-  except:
-    tags:
-      - /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
-    variables:
-      - $CI_COMMIT_MESSAGE =~ /skip/
-      - $CI_COMMIT_MESSAGE =~ /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
+    - master
 
 code_quality:
   stage: build
@@ -128,14 +114,7 @@ code_quality:
   artifacts:
     paths: [gl-code-quality-report.json]
   only:
-    branches:
-      - master
-  except:
-    tags:
-      - /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
-    variables:
-      - $CI_COMMIT_MESSAGE =~ /skip/
-      - $CI_COMMIT_MESSAGE =~ /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
+    - master
 
 sast:
   stage: test
@@ -155,14 +134,7 @@ sast:
   artifacts:
     paths: [gl-sast-report.json]
   only:
-    branches:
-      - master
-  except:
-    tags:
-      - /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
-    variables:
-      - $CI_COMMIT_MESSAGE =~ /skip/
-      - $CI_COMMIT_MESSAGE =~ /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
+    - master
 
 dependency_scanning:
   image: docker:stable
@@ -181,14 +153,7 @@ dependency_scanning:
   artifacts:
     paths: [gl-dependency-scanning-report.json]
   only:
-    branches:
-      - master
-  except:
-    tags:
-      - /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
-    variables:
-      - $CI_COMMIT_MESSAGE =~ /skip/
-      - $CI_COMMIT_MESSAGE =~ /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
+    - master
 
 pages:
   stage: deploy
@@ -201,14 +166,7 @@ pages:
     paths:
     - public
   only:
-    branches:
-      - master
-  except:
-    tags:
-      - /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
-    variables:
-      - $CI_COMMIT_MESSAGE =~ /skip/
-      - $CI_COMMIT_MESSAGE =~ /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
+    - master
 
 deploy_prod:
   stage: deploy
@@ -228,4 +186,4 @@ deploy_prod:
     url: http://mobicoop.io
   when: manual
   only:
-  - master
+    - master
