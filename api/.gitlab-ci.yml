@@ -2,7 +2,7 @@ image: misterio92/ci-php-node
 
 stages:
   - build
-  - test
+  # - test
   - deploy
 
 #Cache modules in between jobs
