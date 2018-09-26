@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Entity;
 
@@ -33,54 +33,53 @@ class HydraView
      */
     private $next;
     
-    public function getId ()
+    public function getId()
     {
         return $this->id;
     }
 
-    public function getType ()
+    public function getType()
     {
         return $this->type;
     }
 
-    public function getFirst ()
+    public function getFirst()
     {
         return $this->first;
     }
 
-    public function getLast ()
+    public function getLast()
     {
         return $this->last;
     }
 
-    public function getNext ()
+    public function getNext()
     {
         return $this->next;
     }
 
-    public function setId ($id)
+    public function setId($id)
     {
         $this->id = $id;
     }
 
-    public function setType ($type)
+    public function setType($type)
     {
         $this->type = $type;
     }
 
-    public function setFirst ($first)
+    public function setFirst($first)
     {
         $this->first = $first;
     }
 
-    public function setLast ($last)
+    public function setLast($last)
     {
         $this->last = $last;
     }
 
-    public function setNext ($next)
+    public function setNext($next)
     {
         $this->next = $next;
     }
-    
 }

@@ -16,7 +16,7 @@ use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
  * Custom deserializer service.
  * Used because deserialization of nested array of objects doesn't work yet...
  * Should be dumped when deserialization will work !
- * 
+ *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  *
  */
@@ -27,7 +27,7 @@ class Deserializer
 
     /**
      * Deserialize an object.
-     * 
+     *
      * @param string $class The expected class of the object
      * @param array $data   The array to deserialize
      * @return User|UserAddress|Address|null
@@ -35,13 +35,13 @@ class Deserializer
     public function deserialize(string $class, array $data)
     {
         switch ($class) {
-            case User::class :  
+            case User::class:
                 return self::deserializeUser($data);
                 break;
-            case UserAddress::class :  
+            case UserAddress::class:
                 return self::deserializeUserAddress($data);
                 break;
-            case Address::class :  
+            case Address::class:
                 return self::deserializeAddress($data);
                 break;
             default:
@@ -54,7 +54,9 @@ class Deserializer
     {
         $user = new User();
         $user = self::autoSet($user, $data);
-        if (isset($data["@id"])) $user->setIri($data["@id"]);
+        if (isset($data["@id"])) {
+            $user->setIri($data["@id"]);
+        }
         if (isset($data["userAddresses"])) {
             $userAddresses = [];
             foreach ($data["userAddresses"] as $userAddress) {
@@ -69,7 +71,9 @@ class Deserializer
     {
         $userAddress = new UserAddress();
         $userAddress = self::autoSet($userAddress, $data);
-        if (isset($data["@id"])) $userAddress->setIri($data["@id"]);
+        if (isset($data["@id"])) {
+            $userAddress->setIri($data["@id"]);
+        }
         if (isset($data["address"])) {
             $userAddress->setAddress(self::deserializeAddress($data["address"]));
         }
@@ -80,11 +84,13 @@ class Deserializer
     {
         $address = new Address();
         $address = self::autoSet($address, $data);
-        if (isset($data["@id"]))$address->setIri($data["@id"]);
+        if (isset($data["@id"])) {
+            $address->setIri($data["@id"]);
+        }
         return $address;
     }
     
-    private function autoSet($object,$data) 
+    private function autoSet($object, $data)
     {
         $phpDocExtractor = new PhpDocExtractor();
         $reflectionExtractor = new ReflectionExtractor();
@@ -115,10 +121,9 @@ class Deserializer
                         switch ($type) {
                             case "DateTimeInterface":
                                 try {
-                                    $catchedValue = \DateTime::createFromFormat(self::DATETIME_FORMAT,$data[$property]);
+                                    $catchedValue = \DateTime::createFromFormat(self::DATETIME_FORMAT, $data[$property]);
                                     $object->$setter($catchedValue);
                                 } catch (\Error $e) {
-                                    
                                 }
                                 break;
                             default: break;
@@ -129,5 +134,4 @@ class Deserializer
         }
         return $object;
     }
-     
 }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Entity;
 
@@ -38,64 +38,63 @@ class Hydra
      */
     private $view;
         
-    public function getId ()
+    public function getId()
     {
         return $this->id;
     }
 
-    public function getContext ()
+    public function getContext()
     {
         return $this->context;
     }
 
-    public function getType ()
+    public function getType()
     {
         return $this->type;
     }
 
-    public function getMember ()
+    public function getMember()
     {
         return $this->member;
     }
 
-    public function getTotalItems ()
+    public function getTotalItems()
     {
         return $this->totalItems;
     }
 
-    public function getView ()
+    public function getView()
     {
         return $this->view;
     }
 
-    public function setId ($id)
+    public function setId($id)
     {
         $this->id = $id;
     }
 
-    public function setContext ($context)
+    public function setContext($context)
     {
         $this->context = $context;
     }
 
-    public function setType ($type)
+    public function setType($type)
     {
         $this->type = $type;
     }
 
-    public function setMember ($member)
+    public function setMember($member)
     {
         $this->member = $member;
     }
     
-    public function setTotalItems ($totalItems)
+    public function setTotalItems($totalItems)
     {
         $this->totalItems = $totalItems;
     }
 
-    public function setView ($view)
+    public function setView($view)
     {
         $this->view = $view;
     }
-        
 }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Entity;
 
@@ -9,7 +9,7 @@ use App\Entity\Resource;
 /**
  * A postal address.
  */
-Class Address implements Resource
+class Address implements Resource
 {
     /**
      * @var int The id of this address.
@@ -66,7 +66,8 @@ Class Address implements Resource
      */
     private $userAddresses;
     
-    public function __construct() {
+    public function __construct()
+    {
         $this->userAddresses = new ArrayCollection();
     }
     
@@ -75,97 +76,97 @@ Class Address implements Resource
         return $this->id;
     }
     
-    public function getIri ()
+    public function getIri()
     {
         return $this->iri;
     }
     
-    public function getStreetAddress (): string
+    public function getStreetAddress(): string
     {
         return $this->streetAddress;
     }
 
-    public function getPostalCode (): ?string
+    public function getPostalCode(): ?string
     {
         return $this->postalCode;
     }
 
-    public function getAddressLocality (): string
+    public function getAddressLocality(): string
     {
         return $this->addressLocality;
     }
 
-    public function getAddressCountry (): string
+    public function getAddressCountry(): string
     {
         return $this->addressCountry;
     }
 
-    public function getLatitude (): ?float
+    public function getLatitude(): ?float
     {
         return $this->latitude;
     }
 
-    public function getLongitude (): ?float
+    public function getLongitude(): ?float
     {
         return $this->longitude;
     }
 
-    public function getElevation (): ?int
+    public function getElevation(): ?int
     {
         return $this->elevation;
     }
 
-    public function getUserAddresses ()
+    public function getUserAddresses()
     {
         return $this->userAddresses;
     }
     
-    public function setId (int $id)
+    public function setId(int $id)
     {
         $this->id = $id;
     }
     
-    public function setIri ($iri)
+    public function setIri($iri)
     {
         $this->iri = $iri;
     }
 
-    public function setStreetAddress (string $streetAddress)
+    public function setStreetAddress(string $streetAddress)
     {
         $this->streetAddress = $streetAddress;
     }
 
-    public function setPostalCode (string $postalCode)
+    public function setPostalCode(string $postalCode)
     {
         $this->postalCode = $postalCode;
     }
 
-    public function setAddressLocality (string $addressLocality)
+    public function setAddressLocality(string $addressLocality)
     {
         $this->addressLocality = $addressLocality;
     }
 
-    public function setAddressCountry (string $addressCountry)
+    public function setAddressCountry(string $addressCountry)
     {
         $this->addressCountry = $addressCountry;
     }
 
-    public function setLatitude (?float $latitude)
+    public function setLatitude(?float $latitude)
     {
         $this->latitude = $latitude;
     }
 
-    public function setLongitude (?float $longitude)
+    public function setLongitude(?float $longitude)
     {
         $this->longitude = $longitude;
     }
 
-    public function setElevation (?int $elevation)
+    public function setElevation(?int $elevation)
     {
         $this->elevation = $elevation;
     }
 
-    public function setUserAddresses (array $userAddresses)
+    public function setUserAddresses(array $userAddresses)
     {
         $this->userAddresses = $userAddresses;
     }
@@ -181,5 +182,4 @@ Class Address implements Resource
         $this->userAddresses->removeElement($userAddress);
         $userAddress->setAddress(null);
     }
-        
 }

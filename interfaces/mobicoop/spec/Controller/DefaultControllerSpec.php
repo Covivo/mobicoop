@@ -1,6 +1,7 @@
-<?php 
+<?php
 
 namespace App\Spec\Controller;
+
 use Symfony\Component\DomCrawler\Crawler;
 
 /* This is a sample functionnal Test */
@@ -14,7 +15,7 @@ describe('DefaultController', function () {
             $crawler = new Crawler($response->getContent());
             $h1 = trim($crawler->filter('body h1')->text());
             $h2 = trim($crawler->filter('body h2')->text());
-            $splitedH2 = explode('The random number send form controller is ',$h2);
+            $splitedH2 = explode('The random number send form controller is ', $h2);
             $nb = $splitedH2[1];
 
 
@@ -27,6 +28,3 @@ describe('DefaultController', function () {
         });
     });
 });
-
-
- ?>

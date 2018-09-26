@@ -14,7 +14,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class UserAddressCreateForm extends AbstractType
 {
-    
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -26,7 +25,6 @@ class UserAddressCreateForm extends AbstractType
                 'error_bubbling' => false,
         ])
         ;
-        
     }
     
     public function configureOptions(OptionsResolver $resolver)
@@ -35,5 +33,4 @@ class UserAddressCreateForm extends AbstractType
                 'data_class' => 'App\Entity\UserAddress',
         ));
     }
-    
 }

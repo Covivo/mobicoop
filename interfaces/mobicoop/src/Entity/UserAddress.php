@@ -1,13 +1,14 @@
 <?php
 
 namespace App\Entity;
+
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Entity\Resource;
 
 /**
  * A user address.
  */
-Class UserAddress implements Resource
+class UserAddress implements Resource
 {
     /**
      * @var int The id of this user address.
@@ -28,7 +29,7 @@ Class UserAddress implements Resource
 
     /**
      * @var User The user that uses the address.
-     * 
+     *
      * @Assert\NotBlank
      */
     private $user;
@@ -45,50 +46,48 @@ Class UserAddress implements Resource
         return $this->id;
     }
     
-    public function getIri ()
+    public function getIri()
     {
         return $this->iri;
     }
     
-    public function getName (): ?string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function getUser (): User
+    public function getUser(): User
     {
         return $this->user;
     }
 
-    public function getAddress (): Address
+    public function getAddress(): Address
     {
         return $this->address;
     }
     
-    public function setId (int $id)
+    public function setId(int $id)
     {
         $this->id = $id;
     }
     
-    public function setIri ($iri)
+    public function setIri($iri)
     {
         $this->iri = $iri;
     }
 
-    public function setName (string $name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
 
-    public function setUser (User $user)
+    public function setUser(User $user)
     {
         $this->user = $user;
     }
 
-    public function setAddress (Address $address)
+    public function setAddress(Address $address)
     {
         $this->address = $address;
     }
-    
 }
-

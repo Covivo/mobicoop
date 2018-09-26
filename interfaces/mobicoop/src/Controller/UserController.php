@@ -13,7 +13,7 @@ use App\Form\UserForm;
 
 /**
  * Controller class for user related actions.
- * 
+ *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  *
  */
@@ -21,9 +21,9 @@ class UserController extends AbstractController
 {
     /**
      * Retrieve a user.
-     * 
+     *
      * @Route("/user/{id}", name="user", requirements={"id"="\d+"})
-     * 
+     *
      */
     public function user($id, UserManager $userManager)
     {
@@ -60,7 +60,9 @@ class UserController extends AbstractController
         $error = false;
         
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($userManager->createUser($user)) return $this->redirectToRoute('users');
+            if ($userManager->createUser($user)) {
+                return $this->redirectToRoute('users');
+            }
             $error = true;
         }
         
@@ -78,15 +80,16 @@ class UserController extends AbstractController
      */
     public function userUpdate($id, UserManager $userManager, Request $request)
     {
-        
-        $user = $userManager->getUser($id); 
+        $user = $userManager->getUser($id);
         
         $form = $this->createForm(UserForm::class, $user);
         $form->handleRequest($request);
         $error = false;
         
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($userManager->updateUser($user)) return $this->redirectToRoute('users');
+            if ($userManager->updateUser($user)) {
+                return $this->redirectToRoute('users');
+            }
             $error = true;
         }
         

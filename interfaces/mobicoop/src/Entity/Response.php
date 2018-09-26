@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Entity;
 
@@ -19,29 +19,29 @@ class Response
      */
     private $value;
     
-    public function __construct(int $code=self::DEFAULT_CODE, $value=null) {
+    public function __construct(int $code=self::DEFAULT_CODE, $value=null)
+    {
         $this->setCode($code);
         $this->setValue($value);
     }
     
-    public function getCode (): int
+    public function getCode(): int
     {
         return $this->code;
     }
 
-    public function getValue ()
+    public function getValue()
     {
         return $this->value;
     }
 
-    public function setCode (int $code)
+    public function setCode(int $code)
     {
         $this->code = $code;
     }
 
-    public function setValue ($value)
+    public function setValue($value)
     {
         $this->value = $value;
     }
-   
 }

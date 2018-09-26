@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Spec\Service;
 
@@ -9,7 +9,6 @@ use App\Entity\Address;
 describe('DeserializerService', function () {
     describe('deserializeSimpleUser', function () {
         it('deserializeSimpleUser should return a simple user object', function () {
-
             $jsonUser = <<<JSON
 {
   "@context": "/api/contexts/User",
@@ -22,7 +21,7 @@ describe('DeserializerService', function () {
 JSON;
             
             $deserializer = new Deserializer();
-            $user = $deserializer->deserialize(User::class,json_decode($jsonUser,true));
+            $user = $deserializer->deserialize(User::class, json_decode($jsonUser, true));
             
             expect($user)->toBeAnInstanceOf(User::class);
             expect($user->getGivenName())->toBe('Jean');
@@ -33,7 +32,6 @@ JSON;
     
     describe('deserializeComplexUser', function () {
         it('deserializeComplexUser should return a complex user object with nested UserAddress', function () {
-            
             $jsonUser = <<<JSON
 {
   "@context": "/api/contexts/User",
@@ -77,7 +75,7 @@ JSON;
 JSON;
                 
             $deserializer = new Deserializer();
-            $user = $deserializer->deserialize(User::class,json_decode($jsonUser,true));
+            $user = $deserializer->deserialize(User::class, json_decode($jsonUser, true));
             
             expect($user)->toBeAnInstanceOf(User::class);
             expect($user->getGivenName())->toBe('Jean');
@@ -89,7 +87,4 @@ JSON;
             expect($user->getUserAddresses()[0]->getAddress()->getLatitude())->toBeNull();
         });
     });
-    
 });
-
-?>

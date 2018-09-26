@@ -23,7 +23,7 @@ use GuzzleHttp\Exception\TransferException;
 /**
  * Data provider service.
  * Uses an API to retrieve/send data.
- * 
+ *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  *
  */
@@ -37,7 +37,7 @@ class DataProvider
     private $serializer;
     private $deserializer;
     
-    public function __construct($uri,Deserializer $deserializer)
+    public function __construct($uri, Deserializer $deserializer)
     {
         $this->client = new Client([
                 'base_uri' => $uri
@@ -80,11 +80,13 @@ class DataProvider
         try {
             $clientResponse = $this->client->get($this->resource."/".$id);
             if ($asArray) {
-                $value = json_decode((string) $clientResponse->getBody(),true);
+                $value = json_decode((string) $clientResponse->getBody(), true);
             } else {
-                $value = $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(),true));
+                $value = $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true));
             }
-            if ($clientResponse->getStatusCode() == 200) return new Response($clientResponse->getStatusCode(), $value);
+            if ($clientResponse->getStatusCode() == 200) {
+                return new Response($clientResponse->getStatusCode(), $value);
+            }
         } catch (TransferException $e) {
             return new Response($e->getCode());
         }
@@ -104,7 +106,9 @@ class DataProvider
         
         try {
             $clientResponse = $this->client->get($this->resource);
-            if ($clientResponse->getStatusCode() == 200) return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody()));
+            if ($clientResponse->getStatusCode() == 200) {
+                return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody()));
+            }
         } catch (TransferException $e) {
             return new Response($e->getCode());
         }
@@ -121,14 +125,16 @@ class DataProvider
     public function post(Resource $object): Response
     {
         try {
-            $clientResponse = $this->client->post($this->resource,[
-                    RequestOptions::JSON => json_decode($this->serializer->serialize($object,self::SERIALIZER_ENCODER,['groups'=>['post']]),true)
+            $clientResponse = $this->client->post($this->resource, [
+                    RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]), true)
             ]);
-            if ($clientResponse->getStatusCode() == 201) return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(),true)));
+            if ($clientResponse->getStatusCode() == 201) {
+                return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
+            }
         } catch (TransferException $e) {
             return new Response($e->getCode());
         }
-        return new Response();        
+        return new Response();
     }
     
     /**
@@ -141,10 +147,12 @@ class DataProvider
     public function put(Resource $object): Response
     {
         try {
-            $clientResponse = $this->client->put($this->resource."/".$object->getId(),[
-                    RequestOptions::JSON => json_decode($this->serializer->serialize($object,self::SERIALIZER_ENCODER,['groups'=>['put']]),true)
+            $clientResponse = $this->client->put($this->resource."/".$object->getId(), [
+                    RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['put']]), true)
             ]);
-            if ($clientResponse->getStatusCode() == 200) return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(),true)));
+            if ($clientResponse->getStatusCode() == 200) {
+                return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
+            }
         } catch (TransferException $e) {
             return new Response($e->getCode());
         }
@@ -162,22 +170,32 @@ class DataProvider
     {
         try {
             $clientResponse = $this->client->delete($this->resource."/".$id);
-            if ($clientResponse->getStatusCode() == 204) return new Response($clientResponse->getStatusCode());
+            if ($clientResponse->getStatusCode() == 204) {
+                return new Response($clientResponse->getStatusCode());
+            }
         } catch (TransferException $e) {
             return new Response($e->getCode());
         }
         return new Response();
     }
     
-    private function treatHydraCollection($data) 
-    {   
+    private function treatHydraCollection($data)
+    {
         // $data comes from a GuzzleHttp request; it's a json hydra collection so when need to parse the json to an array
-        $data = json_decode($data,true);
+        $data = json_decode($data, true);
         $hydra = new Hydra();
-        if (isset($data['@context'])) $hydra->setContext($data['@context']);
-        if (isset($data['@id'])) $hydra->setId($data['@id']);
-        if (isset($data['@type'])) $hydra->setType($data['@type']);
-        if (isset($data['hydra:totalItems'])) $hydra->setTotalItems($data['hydra:totalItems']);
+        if (isset($data['@context'])) {
+            $hydra->setContext($data['@context']);
+        }
+        if (isset($data['@id'])) {
+            $hydra->setId($data['@id']);
+        }
+        if (isset($data['@type'])) {
+            $hydra->setType($data['@type']);
+        }
+        if (isset($data['hydra:totalItems'])) {
+            $hydra->setTotalItems($data['hydra:totalItems']);
+        }
         if (isset($data['hydra:member'])) {
             /*
              * deserialization of nested array of objects doesn't work...
@@ -196,17 +214,27 @@ class DataProvider
 
             $members = [];
             foreach ($data["hydra:member"] as $key=>$value) {
-                $members[] = $this->deserializer->deserialize($this->class,$value);
+                $members[] = $this->deserializer->deserialize($this->class, $value);
             }
-            $hydra->setMember($members);            
+            $hydra->setMember($members);
         }
         if (isset($data['hydra:view'])) {
             $hydraView = new HydraView();
-            if (isset($data['hydra:view']['@id'])) $hydraView->setId($data['hydra:view']['@id']);
-            if (isset($data['hydra:view']['@type'])) $hydraView->setId($data['hydra:view']['@type']);
-            if (isset($data['hydra:view']['hydra:first'])) $hydraView->setId($data['hydra:view']['hydra:first']);
-            if (isset($data['hydra:view']['hydra:last'])) $hydraView->setId($data['hydra:view']['hydra:last']);
-            if (isset($data['hydra:view']['hydra:next'])) $hydraView->setId($data['hydra:view']['hydra:next']);
+            if (isset($data['hydra:view']['@id'])) {
+                $hydraView->setId($data['hydra:view']['@id']);
+            }
+            if (isset($data['hydra:view']['@type'])) {
+                $hydraView->setId($data['hydra:view']['@type']);
+            }
+            if (isset($data['hydra:view']['hydra:first'])) {
+                $hydraView->setId($data['hydra:view']['hydra:first']);
+            }
+            if (isset($data['hydra:view']['hydra:last'])) {
+                $hydraView->setId($data['hydra:view']['hydra:last']);
+            }
+            if (isset($data['hydra:view']['hydra:next'])) {
+                $hydraView->setId($data['hydra:view']['hydra:next']);
+            }
             $hydra->setView($hydraView);
         }
         return $hydra;
@@ -216,12 +244,11 @@ class DataProvider
     {
         return Inflector::pluralize(Inflector::tableize($name));
     }
-    
 }
 
 /**
  * This class permits to remove null values or empty arrays when normalizing.
- * 
+ *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  *
  */

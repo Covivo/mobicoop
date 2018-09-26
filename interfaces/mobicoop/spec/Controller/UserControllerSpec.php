@@ -1,6 +1,7 @@
-<?php 
+<?php
 
 namespace App\Spec\Controller;
+
 use Symfony\Component\DomCrawler\Crawler;
 
 /* This is a sample functionnal Test */
@@ -16,5 +17,3 @@ describe('UserController', function () {
         });
     });
 });
-
-?>

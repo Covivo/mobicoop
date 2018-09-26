@@ -28,7 +28,9 @@ class UserManager
     public function getUser($id)
     {
         $response = $this->dataProvider->getItem($id);
-        if ($response->getCode() == 200) return $response->getValue();
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
         return null;
     }
     
@@ -40,7 +42,9 @@ class UserManager
     public function getUsers()
     {
         $response = $this->dataProvider->getCollection();
-        if ($response->getCode() == 200) return $response->getValue();
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
         return null;
     }
     
@@ -54,7 +58,9 @@ class UserManager
     public function createUser(User $user)
     {
         $response = $this->dataProvider->post($user);
-        if ($response->getCode() == 201) return $response->getValue();
+        if ($response->getCode() == 201) {
+            return $response->getValue();
+        }
         return null;
     }
     
@@ -68,7 +74,9 @@ class UserManager
     public function updateUser(User $user)
     {
         $response = $this->dataProvider->put($user);
-        if ($response->getCode() == 200) return $response->getValue();
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
         return null;
     }
     
@@ -82,8 +90,9 @@ class UserManager
     public function deleteUser(int $id)
     {
         $response = $this->dataProvider->delete($id);
-        if ($response->getCode() == 204) return true;
+        if ($response->getCode() == 204) {
+            return true;
+        }
         return false;
     }
-    
 }

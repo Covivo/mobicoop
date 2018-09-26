@@ -11,12 +11,11 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
 /**
  * User form.
- * 
+ *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
 class UserForm extends AbstractType
 {
-    
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -24,10 +23,10 @@ class UserForm extends AbstractType
         ->add('familyName')
         ->add('givenName')
         ->add('email')
-        ->add('password',PasswordType::class)
+        ->add('password', PasswordType::class)
         ->add('gender')
         ->add('nationality')
-        ->add('birthDate',BirthdayType::class)
+        ->add('birthDate', BirthdayType::class)
         ->add('telephone')
         ->add('maxDeviationTime')
         ->add('maxDeviationDistance')
@@ -39,7 +38,5 @@ class UserForm extends AbstractType
         ])*/
         ->add('submit', SubmitType::class)
         ;
-        
     }
-
 }

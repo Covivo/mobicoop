@@ -12,7 +12,6 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class AddressCreateForm extends AbstractType
 {
-    
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -24,7 +23,5 @@ class AddressCreateForm extends AbstractType
         ->add('longitude')
         ->add('elevation')
         ;
-        
     }
-    
 }
