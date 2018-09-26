@@ -1,15 +1,15 @@
 {
   "name": "coviride",
   "version": "1.3.0",
-  "description": "CoviRide =======",
-  "main": "index.js",
+  "description": "Mobicoop front-end app",
+  "main": "public/index.php",
   "directories": {
     "doc": "docs"
   },
   "scripts": {
-    "start": "php -S 127.0.0.1:8000 -t public",
+    "start": "bin/console server:run 127.0.0.1:8081",
     "test": "./vendor/bin/kahlan --cc=true --reporter=verbose",
-    "testFixAndCoverage": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src && ./vendor/bin/kahlan --cc=true --coverage=4 --no-colors=true --reporter=verbose",
+    "testFixAndCoverage": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src &&  php vendor/bin/php-cs-fixer.phar fix --using-cache=false spec && ./vendor/bin/kahlan --cc=true --coverage=4 --no-colors=true --reporter=verbose",
     "compile": "encore dev",
     "compileAndWatch": "encore dev-server",
     "compileAndWatchVue": "encore dev-server --hot",
