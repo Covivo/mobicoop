@@ -33,7 +33,6 @@ build&Test:
     - dev
     - master
     - $CI_COMMIT_MESSAGE =~ /skip/
-    - $CI_COMMIT_MESSAGE =~ /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
 
 ###############################################################################################
 ############# Everything under this is execute only for Test (dev) ############################
@@ -65,7 +64,6 @@ buildTest&Deploy:
     - dev
   except:
     - tags
-    - $CI_COMMIT_MESSAGE =~ /skip/
     - $CI_COMMIT_MESSAGE =~ /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
 
 ###############################################################################################
