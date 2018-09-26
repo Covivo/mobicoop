@@ -24,10 +24,12 @@ build&Test:
   only:
     - pushes
   except:
-    - tags
-    - dev
-    - master
-    - $CI_COMMIT_MESSAGE =~ /skip/
+    refs:
+      - tags
+      - dev
+      - master
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /skip/
 
 ###############################################################################################
 ############# Everything under this is execute only for Test (dev) ############################
@@ -58,8 +60,10 @@ buildTest&Deploy:
   only:
     - dev
   except:
-    - tags
-    - $CI_COMMIT_MESSAGE =~ /skip/
+    refs:
+      - tags
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /skip/
 
 ###############################################################################################
 ############# Everything under this is execute only for production (MASTER) ###################
