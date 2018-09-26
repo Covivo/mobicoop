@@ -51,7 +51,11 @@ Simple API based on [api-plateform](https://api-platform.com), which is a symfon
 
 ### Start
 
-`npm start` will run the server on a specifiq port (_read what the console said_), you can then access it from http://localhost:portNb
+To start the application simply enter :
+
+`npm start`
+
+& just go [http://localhost:8080](http://localhost:8080) 
 
 
 ##### Stuff for devs
