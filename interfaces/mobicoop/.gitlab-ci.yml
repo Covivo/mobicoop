@@ -59,7 +59,7 @@ buildTest&Deploy:
     - dev
   except:
     - tags
-    - $CI_COMMIT_MESSAGE =~ /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
+    - $CI_COMMIT_MESSAGE =~ /skip/
 
 ###############################################################################################
 ############# Everything under this is execute only for production (MASTER) ###################
