@@ -58,6 +58,7 @@ To start the application simply enter :
 & just go [http://localhost:8080](http://localhost:8080) 
 
 
+
 ##### Stuff for devs
 
 If you are in developpement mod, after `composer install` you could see a new `.env` file which is an instance of [.env.dist](.env.dist), *this file is not versionned*, be sure to update this file to indicate the *right ENV variables*
