@@ -63,6 +63,7 @@ If you are in developpement mod, after `composer install` you could see a new `.
 
 *IF YOU NEED TO ADD OTHER ENV VARIABLES ADD IT TO [.env.dist](.env.dist), not just .env*
 
+When you push on this repo, pipeline are automatically trigerred, if you do not want that, please add the message `skip` into your commit; for eg: `git commit -m"update readme, skip"`
 
 ##### Update Schema Database
 
