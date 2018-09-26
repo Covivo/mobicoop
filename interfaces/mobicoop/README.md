@@ -17,6 +17,8 @@ Interface which displays carpools available on a territory and allows connection
 
 *This app is useless without any api behind it 🤯* don't forget to install & configure our [api](https://gitlab.com/mobicoop/mobicoop-api)
 
+![Technos used](public/tech.png)
+
 ### Requirements 💻
 
 - PHP: =>7.1
