@@ -1,6 +1,6 @@
 # Mobicoop-api
 
-![Logo Mobicoop](logo.jpg)
+![Logo Mobicoop](logo.png)
 
 
 
