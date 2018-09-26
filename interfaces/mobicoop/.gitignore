@@ -305,3 +305,23 @@ public/build/*
 !public/build/gitignore
 
 .php_cs.cache
+
+### Eclipse ###
+
+.metadata
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+
+# PDT-specific (PHP Development Tools)
+.buildpath
+
+### Eclipse Patch ###
+# Eclipse Core
+.project

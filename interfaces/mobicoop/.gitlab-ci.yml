@@ -5,13 +5,65 @@ stages:
   - test
   - deploy
 
-# Cache modules in between jobs
-# cache:
-#   key: ${CI_COMMIT_REF_SLUG}
-#   paths:
-#   - node_modules
-#   - vendor
+###############################################################################################
+############# Everything under this is execute for all push (branch) ##########################
+###############################################################################################
 
+build&Test:
+  stage: test
+  variables:
+    APP_ENV: dev # improtant because symfony use it
+  before_script:
+    - composer install
+    - npm install
+    - npm run postinstall
+  script:
+    - npx encore dev
+    - npm run testFixAndCoverage
+    - php bin/console cache:clear --env=test --no-debug
+  only:
+    - pushes
+  except:
+    - tags
+    - dev
+    - master
+    - $CI_COMMIT_MESSAGE =~ /skip/
+
+###############################################################################################
+############# Everything under this is execute only for Test (dev) ############################
+###############################################################################################
+
+buildTest&Deploy:
+  stage: deploy
+  environment:
+    name: test
+    url: http://test.mobicoop.io
+  only:
+    - dev
+  variables:
+    APP_ENV: test # improtant because symfony use it
+  before_script:
+    - composer install --optimize-autoloader
+    - npm install
+    - npm run postinstall
+  script:
+    - npx encore dev
+    - npm run testFixAndCoverage
+    - php bin/console cache:clear --env=test --no-debug
+    - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
+    - chmod 700 id_rsa
+    - mv id_rsa ${HOME}/.ssh
+    - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
+    - rsync --group=www-data -hrvz --exclude=/.env --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ test@167.114.236.57:/var/www/test/mobicoop
+  only:
+    - dev
+  except:
+    - tags
+    - $CI_COMMIT_MESSAGE =~ /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
+
+###############################################################################################
+############# Everything under this is execute only for production (MASTER) ###################
+###############################################################################################
 build:linux:
   stage: build
   before_script:
@@ -25,6 +77,8 @@ build:linux:
       - public
       - node_modules
       - vendor
+  only:
+    - master
 
 test:linux:
   stage: test
@@ -32,6 +86,8 @@ test:linux:
     - npm run testFixAndCoverage
   dependencies:
     - build:linux
+  only:
+    - master
 
 code_quality:
   stage: build
@@ -52,6 +108,7 @@ code_quality:
     paths: [gl-code-quality-report.json]
   only:
     - master
+
 sast:
   stage: test
   image: docker:stable
@@ -102,43 +159,24 @@ pages:
     paths:
     - public
   only:
-  - master
-
-test_deploy:
-  stage: deploy
-  environment:
-    name: test
-    url: http://v2.test.covivo.eu
-  only:
-    - dev
-  variables:
-    APP_ENV: prod # improtant because symfony use it
-  before_script: # This if require to send the prod type no dev, since it creates errors
-    - composer install --no-dev --optimize-autoloader
-    - php bin/console cache:clear --env=prod --no-debug
-  script:
-    - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
-    - chmod 700 id_rsa
-    - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - rsync -hrvz --delete  -e 'ssh -o StrictHostKeyChecking=no -i id_rsa' ./ ${DEPLOYMENT_TEST_SERVER_USER}@${DEPLOYMENT_TEST_SERVER_IP}:/var/www/v2test
-
+    - master
 
 deploy_prod:
   stage: deploy
   before_script: # This if require to send the prod type no dev, since it creates errors
-    - composer install --no-dev --optimize-autoloader
+    - composer install--optimize-autoloader
     - php bin/console cache:clear --env=prod --no-debug
   variables:
     APP_ENV: prod # improtant because symfony use it
   script:
     - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa
     - chmod 700 id_rsa
+    - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - rsync -hrvz --delete -e 'ssh -o StrictHostKeyChecking=no -i id_rsa' ./ ${DEPLOYMENT_PROD_SERVER_USER}@${DEPLOYMENT_PROD_SERVER_IP}:/var/www/v2prod
-
+    - rsync --exclude=/.env -hrvz --group=www-data --delete -e 'ssh -o StrictHostKeyChecking=no' ./ prod@167.114.236.57:/var/www/prod/mobicoop
   environment:
     name: prod
-    url: http://v2.prod.covivo.eu
+    url: http://mobicoop.io
   when: manual
   only:
-  - master
+    - master
