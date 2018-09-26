@@ -2,6 +2,8 @@
  
 use App\Kernel;
 use Kahlan\Filter\Filters;
+use Symfony\Component\Debug\Debug;
+use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Request;
  
 Filters::apply($this, 'bootstrap', function($next) {
@@ -10,6 +12,8 @@ Filters::apply($this, 'bootstrap', function($next) {
  
     $root = $this->suite()->root();
     $root->beforeAll(function () {
+        (new Dotenv())->load(__DIR__.'/.env');
+        $env = $_SERVER['APP_ENV'] ?? 'dev';
         $this->request = Request::createFromGlobals();
         $this->kernel  = new Kernel('test', false);
     });
