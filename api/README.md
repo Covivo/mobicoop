@@ -25,21 +25,57 @@ Simple API based on [api-plateform](https://api-platform.com), which is a symfon
 
 - for Windows check the [windows requirement](#windows-requirements) part
 
+- MariaDB Databses with access user connection with an [already existing bu empty](https://dev.mysql.com/doc/refman/8.0/en/creating-database.html) database for api
+
 ### Install
 
 - Clone the repo
 
-`git clone https://gitlab.com/mobicoop-company/mobicoop-api`
+`git clone https://gitlab.com/mobicoop/mobicoop-api`
 
 `cd mobicoop-api`
 
-- Install symfony dependencies & npm dependencies
-`composer install`
+- Install symfony dependencies: `composer install`
+
+- Download dev requirements `npm run postinstall`
+
+- On unix systems: `chmod 775 bin/*`
+
+- Edit [.env](.env) file (check [Stuff for devs Section](#stuff-for-devs))
+
+- [Update Schema Database](#update-schema-database) if it's the first time you start the app
+
+
+### Test
+ this section if clearly empty ... 🙁
+
+### Start
+
+`npm start` will run the server on a specifiq port (_read what the console said_), you can then access it from http://localhost:portNb
+
+
+##### Stuff for devs
+
+If you are in developpement mod, after `composer install` you could see a new `.env` file which is an instance of [.env.dist](.env.dist), *this file is not versionned*, be sure to update this file to indicate the *right ENV variables*
+
+- APP_ENV=dev *used to indicate you are in developpement mod*
+- DATABASE_URL=mysql://db_user:db_password@127.0.0.1:3306/db_name *used to connect to mysql DB*
+
+*IF YOU NEED TO ADD OTHER ENV VARIABLES ADD IT TO [.env.dist](.env.dist), not just .env*
+
+
+##### Update Schema Database
+
+- `npm run updateDb`, will start migration with new schema if need, if i'ts the first install, it will create the schema in the empty database.
+
+
+### Conventions
+
+Some conventions are used by api-plateform such as [schema.org](https://schema.org) & [JSON-LD](https://json-ld.org)
 
 
 ### Licence
 [AGPL-3](https://www.gnu.org/licenses/agpl-3.0)
-
 
 
 ##### Windows Requirements
