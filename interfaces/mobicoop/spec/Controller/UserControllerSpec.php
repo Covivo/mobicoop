@@ -2,8 +2,6 @@
 
 namespace App\Spec\Controller;
 
-use Symfony\Component\DomCrawler\Crawler;
-
 /* Functional tests */
 describe('UserController', function () {
     describe('/users', function () {
