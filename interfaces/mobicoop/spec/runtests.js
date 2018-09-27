@@ -11,7 +11,7 @@ program
   .parse(process.argv);
 
 /*We try to check if we are on unix || windows & apply the right path to execute */
-let kahlanPath= os.platform() === 'win32' ? 'vendor/bin/kahlan.bat' : 'vendor/bin/kahlan';
+let kahlanPath= os.platform() === 'win32' ? 'vendor\\bin\\kahlan.bat' : 'vendor/bin/kahlan';
 
 // Start test only, or with coverage if asked
 let options = ['--reporter=verbose'];
