@@ -29,7 +29,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
  */
-Class UserAddress
+class UserAddress
 {
     /**
      * @var int The id of this user address.
@@ -52,7 +52,7 @@ Class UserAddress
 
     /**
      * @var User The user that uses the address.
-     * 
+     *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="User", inversedBy="userAddresses")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
@@ -77,35 +77,33 @@ Class UserAddress
         return $this->id;
     }
     
-    public function getName (): string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getUser (): User
+    public function getUser(): User
     {
         return $this->user;
     }
 
-    public function getAddress (): Address
+    public function getAddress(): Address
     {
         return $this->address;
     }
 
-    public function setName (string $name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
 
-    public function setUser (User $user)
+    public function setUser(User $user)
     {
         $this->user = $user;
     }
 
-    public function setAddress (Address $address)
+    public function setAddress(Address $address)
     {
         $this->address = $address;
     }
-    
 }
-

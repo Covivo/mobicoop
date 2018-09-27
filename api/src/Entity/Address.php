@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Entity;
 
@@ -26,7 +26,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "streetAddress", "postalCode", "addressLocality", "addressCountry"}, arguments={"orderParameterName"="order"})
  */
-Class Address
+class Address
 {
     /**
      * @var int The id of this address.
@@ -75,7 +75,7 @@ Class Address
     
     /**
      * @var string The latitude of the address.
-     * 
+     *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      * @Groups({"read","write"})
      */
@@ -83,7 +83,7 @@ Class Address
     
     /**
      * @var string The longitude of the address.
-     * 
+     *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      * @Groups({"read","write"})
      */
@@ -106,7 +106,8 @@ Class Address
      */
     private $userAddresses;
     
-    public function __construct() {
+    public function __construct()
+    {
         $this->userAddresses = new ArrayCollection();
     }
     
@@ -115,82 +116,82 @@ Class Address
         return $this->id;
     }
     
-    public function getStreetAddress (): string
+    public function getStreetAddress(): string
     {
         return $this->streetAddress;
     }
 
-    public function getPostalCode (): ?string
+    public function getPostalCode(): ?string
     {
         return $this->postalCode;
     }
 
-    public function getAddressLocality (): string
+    public function getAddressLocality(): string
     {
         return $this->addressLocality;
     }
 
-    public function getAddressCountry (): string
+    public function getAddressCountry(): string
     {
         return $this->addressCountry;
     }
 
-    public function getLatitude (): ?float
+    public function getLatitude(): ?float
     {
         return $this->latitude;
     }
 
-    public function getLongitude (): ?float
+    public function getLongitude(): ?float
     {
         return $this->longitude;
     }
 
-    public function getElevation (): ?int
+    public function getElevation(): ?int
     {
         return $this->elevation;
     }
 
-    public function getUserAddresses ()
+    public function getUserAddresses()
     {
         return $this->userAddresses;
     }
 
-    public function setStreetAddress (string $streetAddress)
+    public function setStreetAddress(string $streetAddress)
     {
         $this->streetAddress = $streetAddress;
     }
 
-    public function setPostalCode (?string $postalCode)
+    public function setPostalCode(?string $postalCode)
     {
         $this->postalCode = $postalCode;
     }
 
-    public function setAddressLocality (string $addressLocality)
+    public function setAddressLocality(string $addressLocality)
     {
         $this->addressLocality = $addressLocality;
     }
 
-    public function setAddressCountry (string $addressCountry)
+    public function setAddressCountry(string $addressCountry)
     {
         $this->addressCountry = $addressCountry;
     }
 
-    public function setLatitude (?float $latitude)
+    public function setLatitude(?float $latitude)
     {
         $this->latitude = $latitude;
     }
 
-    public function setLongitude (?float $longitude)
+    public function setLongitude(?float $longitude)
     {
         $this->longitude = $longitude;
     }
 
-    public function setElevation (?int $elevation)
+    public function setElevation(?int $elevation)
     {
         $this->elevation = $elevation;
     }
 
-    public function setUserAddresses (?array $userAddresses)
+    public function setUserAddresses(?array $userAddresses)
     {
         $this->userAddresses = $userAddresses;
     }
@@ -206,5 +207,4 @@ Class Address
         $this->userAddresses->removeElement($userAddress);
         $userAddress->setAddress(null);
     }
-    
 }

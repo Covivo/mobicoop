@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Entity;
 
@@ -85,7 +85,7 @@ class User
      *
      * @ORM\Column(type="string", length=30, nullable=true)
      * @Groups({"read","write"})
-     * 
+     *
      * @ApiProperty(
      *     attributes={
      *         "swagger_context"={
@@ -111,7 +111,7 @@ class User
      * @Assert\Date()
      * @ORM\Column(type="date", nullable=true)
      * @Groups({"read","write"})
-     * 
+     *
      * @ApiProperty(
      *     attributes={
      *         "swagger_context"={"type"="string", "format"="date"}
@@ -150,11 +150,12 @@ class User
      * @ORM\OneToMany(targetEntity="UserAddress", mappedBy="user", cascade={"persist","remove"})
      * @Groups({"read","write"})
      * @MaxDepth(1)
-     * 
+     *
      */
     private $userAddresses;
     
-    public function __construct() {
+    public function __construct()
+    {
         $this->userAddresses = new ArrayCollection();
     }
     
@@ -163,112 +164,112 @@ class User
         return $this->id;
     }
     
-    public function getGivenName (): ?string
+    public function getGivenName(): ?string
     {
         return $this->givenName;
     }
 
-    public function getFamilyName (): ?string
+    public function getFamilyName(): ?string
     {
         return $this->familyName;
     }
     
-    public function getEmail (): string
+    public function getEmail(): string
     {
         return $this->email;
     }
 
-    public function getPassword (): ?string
+    public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    public function getGender (): ?string
+    public function getGender(): ?string
     {
         return $this->gender;
     }
 
-    public function getNationality (): ?string
+    public function getNationality(): ?string
     {
         return $this->nationality;
     }
 
-    public function getBirthDate (): ?\DateTimeInterface
+    public function getBirthDate(): ?\DateTimeInterface
     {
         return $this->birthDate;
     }
 
-    public function getTelephone (): ?string
+    public function getTelephone(): ?string
     {
         return $this->telephone;
     }
 
-    public function getMaxDeviationTime (): ?int
+    public function getMaxDeviationTime(): ?int
     {
         return $this->maxDeviationTime;
     }
 
-    public function getMaxDeviationDistance (): ?int
+    public function getMaxDeviationDistance(): ?int
     {
         return $this->maxDeviationDistance;
     }
 
-    public function getUserAddresses ()
+    public function getUserAddresses()
     {
         return $this->userAddresses;
     }
 
-    public function setGivenName (?string $givenName)
+    public function setGivenName(?string $givenName)
     {
         $this->givenName = $givenName;
     }
 
-    public function setFamilyName (?string $familyName)
+    public function setFamilyName(?string $familyName)
     {
         $this->familyName = $familyName;
     }
     
-    public function setEmail (string $email)
+    public function setEmail(string $email)
     {
         $this->email = $email;
     }
 
-    public function setPassword (?string $password)
+    public function setPassword(?string $password)
     {
         $this->password = $password;
     }
 
-    public function setGender (?string $gender)
+    public function setGender(?string $gender)
     {
         $this->gender = $gender;
     }
 
-    public function setNationality (?string $nationality)
+    public function setNationality(?string $nationality)
     {
         $this->nationality = $nationality;
     }
 
-    public function setBirthDate (?\DateTimeInterface $birthDate)
+    public function setBirthDate(?\DateTimeInterface $birthDate)
     {
         $this->birthDate = $birthDate;
     }
 
-    public function setTelephone (?string $telephone)
+    public function setTelephone(?string $telephone)
     {
         $this->telephone = $telephone;
     }
 
-    public function setMaxDeviationTime (?int $maxDeviationTime)
+    public function setMaxDeviationTime(?int $maxDeviationTime)
     {
         $this->maxDeviationTime = $maxDeviationTime;
     }
 
-    public function setMaxDeviationDistance (?int $maxDeviationDistance)
+    public function setMaxDeviationDistance(?int $maxDeviationDistance)
     {
         $this->maxDeviationDistance = $maxDeviationDistance;
     }
 
-    public function setUserAddresses (?array $userAddresses)
+    public function setUserAddresses(?array $userAddresses)
     {
         $this->userAddresses = $userAddresses;
     }
