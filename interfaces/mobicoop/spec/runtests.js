@@ -5,6 +5,7 @@ const os = require('os');
 const program = require('commander');
 const path = require('path');
 
+// Get programm options args
 program
   .option('-c, --coverage', 'Add peppers')
   .parse(process.argv);
