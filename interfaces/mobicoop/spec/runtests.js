@@ -1,27 +1,27 @@
 'use strict';
 
-const { spawn } = require('child_process');
+const { spawn,execFile } = require('child_process');
 const os = require('os');
+const program = require('commander');
 const path = require('path');
-const kuler = require('kuler');
+
+program
+  .option('-c, --coverage', 'Add peppers')
+  .parse(process.argv);
 
 /*We try to check if we are on unix || windows & apply the right path to execute */
 let kahlanPath= os.platform() === 'win32' ? 'vendor/bin/kahlan.bat' : 'vendor/bin/kahlan';
 
-if(os.platform() !== 'win32'){
-  let kahlan = spawn(kahlanPath,['--cc=true','--coverage=4','--reporter=verbose'],{ stdio: 'inherit'});
-  kahlan.stdout.on('data', (data) => {
-    console.log(data.toString());
-  });
-
-  kahlan.stderr.on('data', (data) => {
-    console.log(kuler(data.toString(),'orange'));
-  });
-
-  kahlan.on('exit', (code) => {
-    console.log(kuler(`Child exited with code ${code}`,'red'));
-  });
+// Start test only, or with coverage if asked
+let options = ['--reporter=verbose'];
+if(program.coverage){
+  options = [...options, '--cc=true','--coverage=4'];
 }
-else{
-  let kahlan = spawn('cmd.exe', ['/c', kahlanPath, '--cc=true','--coverage=4','--reporter=verbose'], { stdio: 'inherit'});
-}
+
+// We execute the file needed following the OS environnement
+execFile(kahlanPath,options, (error, stdout, stderr) => {
+  if (error) {
+    console.error(error);
+  }
+  console.log(stdout);
+})
