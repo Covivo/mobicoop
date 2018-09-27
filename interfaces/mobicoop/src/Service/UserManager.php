@@ -37,7 +37,7 @@ class UserManager
     /**
      * Get all users
      *
-     * @return User[]|null The users found or null if not found.
+     * @return array|null The users found or null if not found.
      */
     public function getUsers()
     {
