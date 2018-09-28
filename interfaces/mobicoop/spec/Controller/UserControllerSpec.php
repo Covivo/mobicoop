@@ -33,8 +33,8 @@ describe('UserController', function () {
             
             $status = $response->getStatusCode();
             $crawler = new Crawler($response->getContent(),'http://localhost:8081/user/create');
-            $crawler = $crawler->filter('form');
-            expect($status)->toEqual(200);
+            $form = $crawler->filter('form')->form();
+            expect($form->has('user_form[givenName]'))->toBe(true);
             // expect($form->has('#user_form_givenName'));
         });
     });
