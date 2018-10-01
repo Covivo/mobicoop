@@ -89,6 +89,9 @@
             "ref": "1fee84e00c71edee81aa54b470260779a890c9c6"
         }
     },
+    "nikic/php-parser": {
+        "version": "v4.0.4"
+    },
     "ocramius/package-versions": {
         "version": "1.3.0"
     },
@@ -184,6 +187,15 @@
     },
     "symfony/inflector": {
         "version": "v4.1.4"
+    },
+    "symfony/maker-bundle": {
+        "version": "1.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "1.0",
+            "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
+        }
     },
     "symfony/polyfill-mbstring": {
         "version": "v1.9.0"

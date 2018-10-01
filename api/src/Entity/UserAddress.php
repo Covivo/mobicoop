@@ -42,7 +42,7 @@ class UserAddress
     private $id;
     
     /**
-     * @var string $name The name of the address for the user.
+     * @var string The name of the address for the user.
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=45)
