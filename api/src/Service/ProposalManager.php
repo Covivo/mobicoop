@@ -22,6 +22,7 @@ class ProposalManager
     public function createProposal(Proposal $proposal)
     {
         $this->entityManager->persist($proposal);
+        // here we should launch the matching analyzer to compute matching proposals and save them in the matching entity
     }
     
 }
