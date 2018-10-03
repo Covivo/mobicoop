@@ -14,6 +14,8 @@ build&Test:
   variables:
     APP_ENV: dev # improtant because symfony use it
   before_script:
+    - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    - apt-get -yq install google-chrome-stable_current_amd64.deb
     - composer install
     - npm install
     - npm run postinstall
@@ -45,6 +47,8 @@ buildTest&Deploy:
   variables:
     APP_ENV: test # improtant because symfony use it
   before_script:
+    - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    - apt-get -yq install google-chrome-stable_current_amd64.deb
     - composer install --optimize-autoloader
     - npm install
     - npm run postinstall
@@ -71,6 +75,8 @@ buildTest&Deploy:
 build:linux:
   stage: build
   before_script:
+    - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    - apt-get -yq install google-chrome-stable_current_amd64.deb
     - composer install
     - npm install
     - npm run postinstall
@@ -86,6 +92,9 @@ build:linux:
 
 test:linux:
   stage: test
+  before_script:
+    - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    - apt-get -yq install google-chrome-stable_current_amd64.deb
   script:
     - npm run testFixAndCoverage
   dependencies:
@@ -168,6 +177,8 @@ pages:
 deploy_prod:
   stage: deploy
   before_script: # This if require to send the prod type no dev, since it creates errors
+    - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    - apt-get -yq install google-chrome-stable_current_amd64.deb
     - composer install--optimize-autoloader
     - php bin/console cache:clear --env=prod --no-debug
   variables:

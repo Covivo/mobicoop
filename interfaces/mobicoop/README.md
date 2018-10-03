@@ -24,6 +24,7 @@ Interface which displays carpools available on a territory and allows connection
 - Composer =>1.7
 - Node.js => 10
 - xdebug (needed for code-coverage)
+- Google Chrome (for funcitonnals tests)
 
 - for Windows check the [windows requirement](#windows-requirements) part
 
@@ -50,11 +51,10 @@ Interface which displays carpools available on a territory and allows connection
 
 
 
-
-
 ### Tests 🎰
 
-We use [Kahlan](https://kahlan.github.io/docs/) to create unit/functionnals tests, you cna launch them easily with:
+-We use [Kahlan](https://kahlan.github.io/docs/) to create units/functionnals tests, you can launch them easily with:
+-For functionnals tests you can do it via 3 ways, with [kernels](https://api.symfony.com/4.1/Symfony/Component/HttpKernel/Kernel.html) (limited--), with [client](https://api.symfony.com/4.1/Symfony/Component/HttpKernel/Client.html) (limited), with [panther](https://github.com/symfony/panther) for a real browser testing (click,form ..)
 
 `vendor\bin\kahlan --cc=true --reporter=verbose` for cmd/powershell
 
@@ -101,6 +101,9 @@ We use buefy which is a vue adaptation of bulma as a front-end scss framework, y
 - Check the [buefy doc](https://buefy.github.io/documentation/layout) to find elements you want to use, such as modal, layou ..
 - Change any default [bulma variables](https://bulma.io/documentation/customize/variables/) in [variable.scss](assets/css/_variables.scss) such as [mobile variables](https://bulma.io/documentation/overview/responsiveness/#variables)
 - Use bulma variables inside vue-js components as in the [parrot sample](assets/js/components/Parrot.vue)
+
+#### End2End (functionnals tests)
+for 
 
 
 #### Mapbox
