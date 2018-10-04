@@ -1,0 +1,32 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}Update a user{% endblock %}
+
+{% block body %}
+
+<section class="hero is-primary">
+	<div class="hero-body">
+    	<div class="container">
+      		<h1 class="title">
+        		Coviride Demo application - User #{{ user.id }} update
+      		</h1>
+    	</div>
+  	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+	    {% if user %}
+    		{% if error %}
+    		<span class="tag is-danger">An error occured.</span>
+    		{% endif %}
+            {{ form_start(form) }}
+            {{ form_errors(form) }}
+            {{ form_end(form) }}
+    	{% else %}
+      		<span class="tag is-danger">User not found.</span>
+      	{% endif %}
+    </div>
+</section>
+
+{% endblock %}

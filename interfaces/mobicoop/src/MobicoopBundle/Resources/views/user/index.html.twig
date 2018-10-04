@@ -1,0 +1,53 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}Hello{% endblock %}
+
+{% block body %}
+
+<section class="hero is-primary">
+	<div class="hero-body">
+    	<div class="container">
+      		<h1 class="title">
+        		Coviride Demo application - Users <a href="/user/create"><i class="fas fa-user-plus"></i></a>
+      		</h1>
+    	</div>
+  	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+	    {% if error is defined %}
+		<span class="tag is-danger">{{ error }}</span>
+		{% endif %}
+		{% if hydra %}
+      	<table class="table">
+          	<tr>
+          		<th>#</th>
+          		<th>givenName</th>
+          		<th>familyName</th>
+          		<th>email</th>
+          		<th>birthDate</th>
+          		<th>Action</th>
+          	</tr>
+          	{% for user in hydra.member %}
+          	<tr>
+          		<td>{{ user.id }}</td>
+          		<td>{{ user.givenName }}</td>
+          		<td>{{ user.familyName }}</td>
+          		<td>{{ user.email }}</td>
+          		<td>{{ user.birthDate ? user.birthDate|date('Y-m-d') }}</td>
+          		<td>
+          			<a href="{{ path('user',{'id':user.id}) }}"><i class="fas fa-search"></i></a>
+          			<a href="{{ path('user_update',{'id':user.id}) }}"><i class="fas fa-edit"></i></a>
+          			<a href="{{ path('user_delete',{'id':user.id}) }}"><i class="fas fa-trash"></i></a>
+          		</td>
+          	</tr>
+      	    {% endfor %}
+      	</table>
+      	{% else %}
+      	<span class="tag is-warning">No users found.</span>
+      	{% endif %}
+  	</div>
+</section>
+
+{% endblock %}

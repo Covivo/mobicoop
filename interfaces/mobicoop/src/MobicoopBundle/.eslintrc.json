@@ -1,0 +1,24 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "eslint-config-prettier",
+    "plugin:vue/recommended"
+  ],
+  "parserOptions": {
+    "parser": "babel-eslint",
+    "ecmaVersion": 2017,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "vue"
+  ],
+  "rules": {
+    "no-unused-vars": ["warn", { "args": "none", "vars": "local" }],
+    "indent": [2, 2],
+    "no-console": 1  
+  },
+  "env": {
+    "es6": true,
+    "browser": true
+  }
+}
