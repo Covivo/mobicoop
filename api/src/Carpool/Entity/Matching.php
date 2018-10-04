@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Entity;
+namespace App\Carpool\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -42,8 +42,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={},
+ *      itemOperations={}
  * )
  */
 Class Matching 
@@ -93,9 +93,9 @@ Class Matching
      * @var Proposal The offer proposal.
      * 
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Entity\Proposal", inversedBy="matchingOffers")
+     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Proposal", inversedBy="matchingOffers")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"read"})
      * @MaxDepth(1)
      */
     private $proposalOffer;
@@ -104,9 +104,9 @@ Class Matching
      * @var Proposal The request proposal.
      * 
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Entity\Proposal", inversedBy="matchingRequests")
+     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Proposal", inversedBy="matchingRequests")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"read"})
      * @MaxDepth(1)
      */
     private $proposalRequest;
@@ -114,8 +114,8 @@ Class Matching
     /**
      * @var Point|null Starting point of the offer proposal used for the matching.
      * 
-     * @ORM\ManyToOne(targetEntity="App\Entity\Point", inversedBy="matchingOffers")
-     * @Groups({"read","write"})
+     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Point", inversedBy="matchingOffers")
+     * @Groups({"read"})
      * @MaxDepth(1)
      */
     private $pointOfferFrom;
@@ -123,8 +123,8 @@ Class Matching
     /**
      * @var Point|null Ending point of the offer proposal used for the matching.
      * 
-     * @ORM\ManyToOne(targetEntity="App\Entity\Point", inversedBy="matchingOffersTo")
-     * @Groups({"read","write"})
+     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Point", inversedBy="matchingOffersTo")
+     * @Groups({"read"})
      * @MaxDepth(1)
      */
     private $pointOfferTo;
@@ -132,8 +132,8 @@ Class Matching
     /**
      * @var Point Starting point of the request used for the matching (if multimodal travel, otherwise it's always the starting point).
      * 
-     * @ORM\ManyToOne(targetEntity="App\Entity\Point", inversedBy="matchingRequestsFrom")
-     * @Groups({"read","write"})
+     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Point", inversedBy="matchingRequestsFrom")
+     * @Groups({"read"})
      * @MaxDepth(1)
      */
     private $pointRequestFrom;
@@ -141,8 +141,8 @@ Class Matching
     /**
      * @var Solicitation[]|null The solicitations created with this matching as a source.
      * 
-     * @ORM\OneToMany(targetEntity="App\Entity\Solicitation", mappedBy="matching")
-     * @Groups({"read","write"})
+     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Solicitation", mappedBy="matching")
+     * @Groups({"read"})
      * @MaxDepth(1)
      */
     private $solicitations;
@@ -151,9 +151,9 @@ Class Matching
      * @var Criteria The criteria applied to this solicitation.
      * 
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="App\Entity\Criteria", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     * @Groups({"read"})
      * @MaxDepth(1)
      */
     private $criteria;

@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Entity;
+namespace App\Address\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -32,6 +32,8 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use App\Carpool\Entity\Point;
+use App\User\Entity\UserAddress;
 
 /**
  * A postal address.
@@ -43,8 +45,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={},
+ *      itemOperations={"get"}
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "streetAddress", "postalCode", "addressLocality", "addressCountry"}, arguments={"orderParameterName"="order"})
  */
@@ -118,51 +120,7 @@ class Address
      * @Groups({"read","write"})
      */
     private $elevation;
-    
-    /**
-     * @var UserAddress[]|null An address may have many users.
-     *
-     * @ORM\OneToMany(targetEntity="UserAddress", mappedBy="address", cascade={"persist","remove"})
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $userAddresses;
-
-    /**
-     * @var Point[]|null The points where the address is referenced.
-     * 
-     * @ORM\OneToMany(targetEntity="App\Entity\Point", mappedBy="address", orphanRemoval=true)
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $points;
-
-    /**
-     * @var Solicitation[]|null The solicitations where the address is set as a starting.
-     * 
-     * @ORM\OneToMany(targetEntity="App\Entity\Solicitation", mappedBy="addressFrom")
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $solicitationsFrom;
-
-    /**
-     * @var Solicitation[]|null The solicitations where the address is set as a destination.
-     * 
-     * @ORM\OneToMany(targetEntity="App\Entity\Solicitation", mappedBy="addressTo")
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $solicitationsTo;
-    
-    public function __construct()
-    {
-        $this->userAddresses = new ArrayCollection();
-        $this->points = new ArrayCollection();
-        $this->solicitationsFrom = new ArrayCollection();
-        $this->solicitationsTo = new ArrayCollection();
-    }
-    
+        
     public function getId(): ?int
     {
         return $this->id;
@@ -203,9 +161,9 @@ class Address
         return $this->elevation;
     }
 
-    public function getUserAddresses()
+    public function getUserAddress()
     {
-        return $this->userAddresses;
+        return $this->userAddress;
     }
 
     public function setStreetAddress(string $streetAddress)
@@ -242,114 +200,11 @@ class Address
     {
         $this->elevation = $elevation;
     }
-
-    public function setUserAddresses(?array $userAddresses)
-    {
-        $this->userAddresses = $userAddresses;
-    }
     
-    public function addUserAddress(UserAddress $userAddress)
+    public function setUserAddress(?UserAddress $userAddress)
     {
         $userAddress->setAddress($this);
-        $this->userAddresses->add($userAddress);
+        $this->userAddress = $userAddress;
     }
     
-    public function removeUserAddress(UserAddress $userAddress)
-    {
-        $this->userAddresses->removeElement($userAddress);
-        $userAddress->setAddress(null);
-    }
-
-    /**
-     * @return Collection|Point[]
-     */
-    public function getPoints(): Collection
-    {
-        return $this->points;
-    }
-
-    public function addPoint(Point $point): self
-    {
-        if (!$this->points->contains($point)) {
-            $this->points[] = $point;
-            $point->setAddress($this);
-        }
-
-        return $this;
-    }
-
-    public function removePoint(Point $point): self
-    {
-        if ($this->points->contains($point)) {
-            $this->points->removeElement($point);
-            // set the owning side to null (unless already changed)
-            if ($point->getAddress() === $this) {
-                $point->setAddress(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Solicitation[]
-     */
-    public function getSolicitationsFrom(): Collection
-    {
-        return $this->solicitationsFrom;
-    }
-
-    public function addSolicitationsFrom(Solicitation $solicitationsFrom): self
-    {
-        if (!$this->solicitationsFrom->contains($solicitationsFrom)) {
-            $this->solicitationsFrom[] = $solicitationsFrom;
-            $solicitationsFrom->setAddressFrom($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSolicitationsFrom(Solicitation $solicitationsFrom): self
-    {
-        if ($this->solicitationsFrom->contains($solicitationsFrom)) {
-            $this->solicitationsFrom->removeElement($solicitationsFrom);
-            // set the owning side to null (unless already changed)
-            if ($solicitationsFrom->getAddressFrom() === $this) {
-                $solicitationsFrom->setAddressFrom(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Solicitation[]
-     */
-    public function getSolicitationsTo(): Collection
-    {
-        return $this->solicitationsTo;
-    }
-
-    public function addSolicitationsTo(Solicitation $solicitationsTo): self
-    {
-        if (!$this->solicitationsTo->contains($solicitationsTo)) {
-            $this->solicitationsTo[] = $solicitationsTo;
-            $solicitationsTo->setAddressTo($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSolicitationsTo(Solicitation $solicitationsTo): self
-    {
-        if ($this->solicitationsTo->contains($solicitationsTo)) {
-            $this->solicitationsTo->removeElement($solicitationsTo);
-            // set the owning side to null (unless already changed)
-            if ($solicitationsTo->getAddressTo() === $this) {
-                $solicitationsTo->setAddressTo(null);
-            }
-        }
-
-        return $this;
-    }
 }

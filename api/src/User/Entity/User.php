@@ -21,17 +21,20 @@
  *    LICENSE
  **************************/
 
-namespace App\Entity;
+namespace App\User\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use App\Carpool\Entity\Proposal;
+use App\Carpool\Entity\Solicitation;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -172,6 +175,7 @@ class User
      * @ORM\OneToMany(targetEntity="UserAddress", mappedBy="user", cascade={"persist","remove"})
      * @Groups({"read","write"})
      * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
      *
      */
     private $userAddresses;
@@ -179,36 +183,32 @@ class User
     /**
      * @var Proposal[]|null The proposals made by this user.
      * 
-     * @ORM\OneToMany(targetEntity="App\Entity\Proposal", mappedBy="user")
-     * @Groups({"read"})
-     * @MaxDepth(1)
+     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Proposal", mappedBy="user")
+     * @ApiSubresource(maxDepth=1)
      */
     private $proposals;
 
     /**
      * @var Solicitation[]|null The solicitations made by this user.
      * 
-     * @ORM\OneToMany(targetEntity="App\Entity\Solicitation", mappedBy="user")
-     * @Groups({"read"})
-     * @MaxDepth(1)
+     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Solicitation", mappedBy="user")
+     * @ApiSubresource(maxDepth=1)
      */
     private $solicitations;
 
     /**
      * @var Solicitation[]|null The solicitations where the user is involved as a driver.
      * 
-     * @ORM\OneToMany(targetEntity="App\Entity\Solicitation", mappedBy="userOffer")
-     * @Groups({"read"})
-     * @MaxDepth(1)
+     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Solicitation", mappedBy="userOffer")
+     * @ApiSubresource(maxDepth=1)
      */
     private $solicitationsOffer;
 
     /**
      * @var Solicitation[]|null The solicitations where the user is involved as a passenger.
      * 
-     * @ORM\OneToMany(targetEntity="App\Entity\Solicitation", mappedBy="userRequest")
-     * @Groups({"read"})
-     * @MaxDepth(1)
+     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Solicitation", mappedBy="userRequest")
+     * @ApiSubresource(maxDepth=1)
      */
     private $solicitationsRequest;
     

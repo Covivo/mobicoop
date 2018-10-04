@@ -21,13 +21,13 @@
  *    LICENSE
  **************************/
 
-namespace App\Controller;
+namespace App\Carpool\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Service\MatchingAnalyzer;
+use App\Carpool\Service\MatchingAnalyzer;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\Proposal;
+use App\Carpool\Entity\Proposal;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

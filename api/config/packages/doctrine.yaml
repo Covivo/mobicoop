@@ -27,3 +27,21 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
+            Carpool:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Carpool/Entity'
+                prefix: 'App\Carpool\Entity'
+                alias: Carpool
+            User:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/User/Entity'
+                prefix: 'App\User\Entity'
+                alias: User
+            Address:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Address/Entity'
+                prefix: 'App\Address\Entity'
+                alias: Address

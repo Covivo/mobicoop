@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Entity;
+namespace App\Carpool\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -37,7 +37,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      attributes={
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *      },
- *      collectionOperations={"get"},
+ *      collectionOperations={},
  *      itemOperations={"get"}
  * )
  */
@@ -84,7 +84,7 @@ Class Path
      * @var Point The starting point of the path.
      * 
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Entity\Point")
+     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Point", inversedBy="pathStart")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
      * @MaxDepth(1)
@@ -95,7 +95,7 @@ Class Path
      * @var Point The destination point of the path.
      * 
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Entity\Point")
+     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Point", inversedBy="pathDestination")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
      * @MaxDepth(1)
@@ -105,7 +105,7 @@ Class Path
     /**
      * @var TravelMode The travel mode of the path.
      * 
-     * @ORM\ManyToOne(targetEntity="App\Entity\TravelMode")
+     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\TravelMode")
      * @Groups({"read"})
      * @MaxDepth(1)
      */

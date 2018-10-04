@@ -21,12 +21,12 @@
  *    LICENSE
  **************************/
 
-namespace App\Controller;
+namespace App\Carpool\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
-use App\Service\ProposalManager;
-use App\Entity\Proposal;
-use App\Service\MatchingAnalyzer;
+use App\Carpool\Service\ProposalManager;
+use App\Carpool\Entity\Proposal;
+use App\Carpool\Service\MatchingAnalyzer;
 
 /**
  * Controller class for proposal post.
@@ -36,18 +36,15 @@ use App\Service\MatchingAnalyzer;
 class ProposalPost
 {
     private $proposalManager;
-    private $matchingAnalyzer;
 
-    public function __construct(ProposalManager $proposalManager, MatchingAnalyzer $matchingAnalyzer)
+    public function __construct(ProposalManager $proposalManager)
     {
         $this->proposalManager = $proposalManager;
-        $this->matchingAnalyzer = $matchingAnalyzer;
     }
 
     public function __invoke(Proposal $data): Proposal
     {
         $this->proposalManager->createProposal($data);
-        $this->matchingAnalyzer->findMatchingProposals($data);
         return $data;
     }
     

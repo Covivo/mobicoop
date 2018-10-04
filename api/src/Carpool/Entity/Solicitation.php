@@ -21,13 +21,15 @@
  *    LICENSE
  **************************/
 
-namespace App\Entity;
+namespace App\Carpool\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Events;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Address\Entity\Address;
+use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -42,7 +44,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
+ *      collectionOperations={"post"},
  *      itemOperations={"get","put","delete"}
  * )
  */
@@ -111,7 +113,7 @@ Class Solicitation
      * @var Address The starting point address.
      * 
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Entity\Address", inversedBy="solicitationsFrom")
+     * @ORM\OneToOne(targetEntity="App\Address\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -122,7 +124,7 @@ Class Solicitation
      * @var Address The destination address.
      * 
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Entity\Address", inversedBy="solicitationsTo")
+     * @ORM\OneToOne(targetEntity="App\Address\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -133,7 +135,7 @@ Class Solicitation
      * @var User The user that creates the solicitation.
      * 
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="solicitations")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="solicitations")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -144,7 +146,7 @@ Class Solicitation
      * @var User The user that created the offer (= shortcut to the driver)
      * 
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="solicitationsOffer")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="solicitationsOffer")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -155,7 +157,7 @@ Class Solicitation
      * @var User The user that created the request (= shortcut to the passenger)
      * 
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="solicitationsRequest")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="solicitationsRequest")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -166,7 +168,7 @@ Class Solicitation
      * @var Matching The matching at the origin of the solicitation.
      * 
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Entity\Matching", inversedBy="solicitations")
+     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Matching", inversedBy="solicitations")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -176,37 +178,22 @@ Class Solicitation
     /**
      * @var Solicitation|null The linked solicitation.
      * 
-     * @ORM\ManyToOne(targetEntity="App\Entity\Solicitation", inversedBy="linkedSolicitation")
-     * @Groups({"read","write"})
-     * @MaxDepth(1)
-     */
-    private $solicitationLinked;
-    
-    /**
-     * @var Solicitation[]|null (Reverse) The linked solicitation.
-     *
-     * @ORM\OneToMany(targetEntity="App\Entity\Solicitation", mappedBy="linkedSolicitation")
+     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Solicitation")
      * @Groups({"read"})
      * @MaxDepth(1)
      */
-    private $linkedSolicitations;
-    
+    private $solicitationLinked;    
 
     /**
      * @var Criteria The criteria applied to the solicitation.
      * 
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="App\Entity\Criteria", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
     private $criteria;
-
-    public function __construct()
-    {
-        $this->linkedSolicitations = new ArrayCollection();
-    }
     
     public function getId(): ?int
     {
@@ -372,37 +359,6 @@ Class Solicitation
             $solicitationLinked->setSolicitationLinked($newSolicitationLinked);
         }
 
-        return $this;
-    }
-    
-    /**
-     * @return Collection|Solicitation[]
-     */
-    public function getLinkedSolicitations(): Collection
-    {
-        return $this->linkedSolicitations;
-    }
-    
-    public function addLinkedSolicitation(Solicitation $linkedSolicitation): self
-    {
-        if (!$this->linkedSolicitations->contains($linkedSolicitation)) {
-            $this->linkedSolicitations[] = $linkedSolicitationl;
-            $linkedSolicitation->setSolicitationLinked($this);
-        }
-        
-        return $this;
-    }
-    
-    public function removeLinkedSolicitation(Solicitation $linkedSolicitation): self
-    {
-        if ($this->linkedSolicitations->contains($linkedSolicitation)) {
-            $this->linkedSolicitations->removeElement($linkedSolicitation);
-            // set the owning side to null (unless already changed)
-            if ($linkedSolicitation->getSolicitationLinked() === $this) {
-                $linkedSolicitation->setSolicitationLinked(null);
-            }
-        }
-        
         return $this;
     }
 
