@@ -22,7 +22,7 @@ if(program.coverage){
 // We execute the file needed following the OS environnement
 execFile(kahlanPath,options, (error, stdout, stderr) => {
   if (error) {
-    console.error(error);
+    console.error(error.toString(), stderr);
   }
   console.log(stdout);
 })
