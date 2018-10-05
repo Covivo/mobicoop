@@ -21,22 +21,25 @@
  *    LICENSE
  **************************/
 
-namespace App\Entity;
+namespace App\Carpool\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Events;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Controller\ProposalPost;
+use App\Carpool\Controller\ProposalPost;
+use App\User\Entity\User;
 
 /**
  * Carpooling : proposal (offer from a driver / request from a passenger).
  * 
- * @ORM\Entity(repositoryClass="App\Repository\ProposalRepository")
+ * @ORM\Entity(repositoryClass="App\Carpool\Repository\ProposalRepository")
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
@@ -44,7 +47,6 @@ use App\Controller\ProposalPost;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "get",
  *          "post"={
  *              "method"="POST",
  *              "path"="/proposals",
@@ -130,63 +132,37 @@ Class Proposal
     private $cape;
 
     /**
-     * @var Proposal[]|null Linked proposal for an offer AND request proposal (= request linked for an offer proposal, offer linked for a request proposal).
+     * @var Proposal|null Linked proposal for an offer AND request proposal (= request linked for an offer proposal, offer linked for a request proposal).
      * 
-     * @ORM\ManyToOne(targetEntity="App\Entity\Proposal", inversedBy="linkedProposals")
+     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Proposal")
      * @Groups({"read"})
      * @MaxDepth(1)
+     * 
      */
     private $proposalLinked;
     
     /**
-     * @var Proposal[]|null (Reverse) Linked proposal for an offer AND request proposal (= request linked for an offer proposal, offer linked for a request proposal).
+     * @var Proposal|null Linked proposal for a round trip (return or outward journey).
      *
-     * @ORM\OneToMany(targetEntity="App\Entity\Proposal", mappedBy="proposalLinked")
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $linkedProposals;
-    
-    /**
-     * @var Proposal[]|null Linked proposal for a round trip (return or outward journey).
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Proposal", inversedBy="linkedProposalJourneys")
+     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Proposal")
      * @Groups({"read"})
      * @MaxDepth(1)
      */
     private $proposalLinkedJourney;
     
     /**
-     * @var Proposal[]|null (Reverse) Linked proposal for a round trip (return or outward journey).
+     * @var Proposal|null Original proposal if calculated proposal.
      *
-     * @ORM\OneToMany(targetEntity="App\Entity\Proposal", mappedBy="proposalLinkedJourney")
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $linkedProposalJourneys;
-    
-    /**
-     * @var Proposal[]|null Original proposal if calculated proposal.
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Proposal", inversedBy="originProposals")
+     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Proposal")
      * @Groups({"read"})
      * @MaxDepth(1)
      */
     private $proposalOrigin;
     
     /**
-     * @var Proposal[]|null (Reverse) Original proposal if calculated proposal.
-     *
-     * @ORM\OneToMany(targetEntity="App\Entity\Proposal", mappedBy="proposalOrigin")
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $originProposals;
-
-    /**
      * @var User|null User who submits the proposal.
      * 
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="proposals")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="proposals")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -196,16 +172,17 @@ Class Proposal
      * @var Point[] The points of the proposal.
      * 
      * @Assert\NotBlank
-     * @ORM\OneToMany(targetEntity="App\Entity\Point", mappedBy="proposal", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Point", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
      * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
      */
     private $points;
 
     /**
      * @var TravelMode[]|null The travel modes accepted if the proposal is a request.
      * 
-     * @ORM\ManyToMany(targetEntity="App\Entity\TravelMode", inversedBy="proposals")
+     * @ORM\ManyToMany(targetEntity="App\Carpool\Entity\TravelMode")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -214,18 +191,16 @@ Class Proposal
     /**
      * @var Matching[]|null The matching of the proposal (if proposal is an offer).
      * 
-     * @ORM\OneToMany(targetEntity="App\Entity\Matching", mappedBy="proposalOffer")
-     * @Groups({"read"})
-     * @MaxDepth(1)
+     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Matching", mappedBy="proposalOffer")
+     * @ApiSubresource(maxDepth=1)
      */
     private $matchingOffers;
 
     /**
      * @var Matching[]|null The matching of the proposal (if proposal is a request).
      * 
-     * @ORM\OneToMany(targetEntity="App\Entity\Matching", mappedBy="proposalRequest")
-     * @Groups({"read"})
-     * @MaxDepth(1)
+     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Matching", mappedBy="proposalRequest")
+     * @ApiSubresource(maxDepth=1)
      */
     private $matchingRequests;
 
@@ -233,8 +208,8 @@ Class Proposal
      * @var Criteria The criteria applied to the proposal.
      * 
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="App\Entity\Criteria", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -246,9 +221,6 @@ Class Proposal
         $this->travelModes = new ArrayCollection();
         $this->matchingOffers = new ArrayCollection();
         $this->matchingRequests = new ArrayCollection();
-        $this->linkedProposals = new ArrayCollection();
-        $this->linkedProposalJourneys = new ArrayCollection();
-        $this->originProposals = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -340,135 +312,60 @@ Class Proposal
         return $this;
     }
     
-    public function getProposalLinked(): ?Proposal
+    public function getProposalLinked(): ?self
     {
         return $this->proposalLinked;
     }
     
-    public function setProposalLinked(?Proposal $proposalLinked): self
+    public function setProposalLinked(?self $proposalLinked): self
     {
         $this->proposalLinked = $proposalLinked;
         
-        return $this;
-    }
-    
-    /**
-     * @return Collection|Proposal[]
-     */
-    public function getLinkedProposals(): Collection
-    {
-        return $this->linkedProposals;
-    }
-    
-    public function addLinkedProposal(Proposal $linkedProposal): self
-    {
-        if (!$this->linkedProposals->contains($linkedProposal)) {
-            $this->linkedProposals[] = $linkedProposal;
-            $linkedProposal->setProposalLinked($this);
+        // set (or unset) the owning side of the relation if necessary
+        $newProposalLinked = $proposalLinked === null ? null : $this;
+        if ($newProposalLinked !== $proposalLinked->getProposalLinked()) {
+            $proposalLinked->setProposalLinked($newProposalLinked);
         }
         
         return $this;
     }
     
-    public function removeLinkedProposal(Proposal $linkedProposal): self
-    {
-        if ($this->linkedProposals->contains($linkedProposal)) {
-            $this->linkedProposals->removeElement($linkedProposal);
-            // set the owning side to null (unless already changed)
-            if ($linkedProposal->getProposalLinked() === $this) {
-                $linkedProposal->setProposalLinked(null);
-            }
-        }
-        
-        return $this;
-    }
-    
-    public function getProposalLinkedJourney(): ?Proposal
+    public function getProposalLinkedJourney(): ?self
     {
         return $this->proposalLinkedJourney;
     }
     
-    public function setProposalLinkedJourney(?Proposal $proposalLinkedJourney): self
+    public function setProposalLinkedJourney(?self $proposalLinkedJourney): self
     {
         $this->proposalLinkedJourney = $proposalLinkedJourney;
         
-        return $this;
-    }
-    
-    /**
-     * @return Collection|Proposal[]
-     */
-    public function getLinkedProposalJourneys(): Collection
-    {
-        return $this->linkedProposalJourneys;
-    }
-    
-    public function addLinkedProposalJourney(Proposal $linkedProposalJourney): self
-    {
-        if (!$this->linkedProposalJourneys->contains($linkedProposalJourney)) {
-            $this->linkedProposalJourneys[] = $linkedProposalJourney;
-            $linkedProposalJourney->setProposalLinkedJourney($this);
+        // set (or unset) the owning side of the relation if necessary
+        $newProposalLinkedJourney = $proposalLinkedJourney === null ? null : $this;
+        if ($newProposalLinkedJourney !== $proposalLinkedJourney->getProposalLinkedJourney()) {
+            $proposalLinkedJourney->setProposalLinkedJourney($newProposalLinkedJourney);
         }
         
         return $this;
     }
     
-    public function removeLinkedProposalJourney(Proposal $linkedProposalJourney): self
-    {
-        if ($this->linkedProposalJourneys->contains($linkedProposalJourney)) {
-            $this->linkedProposalJourneys->removeElement($linkedProposalJourney);
-            // set the owning side to null (unless already changed)
-            if ($linkedProposalJourney->getProposalLinkedJourney() === $this) {
-                $linkedProposalJourney->setProposalLinkedJourney(null);
-            }
-        }
-        
-        return $this;
-    }
-    
-    public function getProposalOrigin(): ?Proposal
+    public function getProposalOrigin(): ?self
     {
         return $this->proposalOrigin;
     }
     
-    public function setProposalOrigin(?Proposal $proposalOrigin): self
+    public function setProposalOrigin(?self $proposalOrigin): self
     {
         $this->proposalOrigin = $proposalOrigin;
         
-        return $this;
-    }
-    
-    /**
-     * @return Collection|Proposal[]
-     */
-    public function getOriginProposals(): Collection
-    {
-        return $this->originProposals;
-    }
-    
-    public function addOriginProposal(Proposal $originProposal): self
-    {
-        if (!$this->originProposals->contains($originProposal)) {
-            $this->originProposals[] = $originProposal;
-            $originProposal->setProposalOrigin($this);
+        // set (or unset) the owning side of the relation if necessary
+        $newProposalOrigin = $proposalOrigind === null ? null : $this;
+        if ($newProposalOrigin !== $proposalOrigin->getProposalOrigin()) {
+            $proposalOrigin->setProposalOrigin($newProposalOrigin);
         }
         
         return $this;
     }
     
-    public function removeOriginProposal(Proposal $originProposal): self
-    {
-        if ($this->originProposals->contains($originProposal)) {
-            $this->originProposals->removeElement($originProposal);
-            // set the owning side to null (unless already changed)
-            if ($originProposal->getProposalOrigin() === $this) {
-                $originProposal->setProposalOrigin(null);
-            }
-        }
-        
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;

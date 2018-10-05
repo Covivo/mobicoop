@@ -21,9 +21,9 @@
  *    LICENSE
  **************************/
 
-namespace App\Repository;
+namespace App\Carpool\Repository;
 
-use App\Entity\Proposal;
+use App\Carpool\Entity\Proposal;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 

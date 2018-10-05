@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Entity;
+namespace App\User\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -31,6 +31,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use App\Address\Entity\Address;
 
 /**
  * A user address.
@@ -45,7 +46,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
+ *      collectionOperations={"post"},
  *      itemOperations={"get","put","delete"}
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
@@ -86,7 +87,7 @@ class UserAddress
      * @var Address The address used.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="Address", inversedBy="userAddresses", cascade={"persist","remove"})
+     * @ORM\OneToOne(targetEntity="App\Address\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(name="address_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)

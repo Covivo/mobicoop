@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Entity;
+namespace App\Carpool\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -37,8 +37,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={},
+ *      itemOperations={"get"}
  * )
  */
 Class Criteria 

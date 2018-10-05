@@ -21,12 +21,13 @@
  *    LICENSE
  **************************/
 
-namespace App\Entity;
+namespace App\Carpool\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Address\Entity\Address;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -40,8 +41,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={},
+ *      itemOperations={"get"}
  * )
  */
 Class Point 
@@ -102,19 +103,37 @@ Class Point
      * @var Proposal The proposal that created the point.
      * 
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Entity\Proposal", inversedBy="points")
+     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Proposal", inversedBy="points")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
-     * @MaxDepth(1)
      */
     private $proposal;
+    
+    /**
+     * @var Path The path associated with the point as a start.
+     *
+     * @Assert\NotBlank
+     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Path", mappedBy="point1", orphanRemoval=true)
+     * @Groups({"read"})
+     * @MaxDepth(1)
+     */
+    private $pathStart;
+    
+    /**
+     * @var Path The path associated with the point as a destination.
+     *
+     * @Assert\NotBlank
+     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Path", mappedBy="point2", orphanRemoval=true)
+     * @Groups({"read"})
+     * @MaxDepth(1)
+     */
+    private $pathDestination;
 
     /**
      * @var Address The address of the point.
      * 
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Entity\Address", inversedBy="points", cascade={"persist","remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\OneToOne(targetEntity="App\Address\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -123,45 +142,11 @@ Class Point
     /**
      * @var TravelMode|null The travel mode used from the point to the next point.
      *  
-     * @ORM\ManyToOne(targetEntity="App\Entity\TravelMode")
+     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\TravelMode")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
     private $travelMode;
-
-    /**
-     * @var Matching[]|null The offer matchings where this point is used as a starting point.
-     * 
-     * @ORM\OneToMany(targetEntity="App\Entity\Matching", mappedBy="pointOfferFrom")
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $matchingOffersFrom;
-
-    /**
-     * @var Matching[]|null The offer matchings where this point is used as an ending point.
-     * 
-     * @ORM\OneToMany(targetEntity="App\Entity\Matching", mappedBy="pointOfferTo")
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $matchingOffersTo;
-
-    /**
-     * @var Matching[]|null The request matchings where this point is used as a starting point.
-     * 
-     * @ORM\OneToMany(targetEntity="App\Entity\Matching", mappedBy="pointRequestFrom")
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $matchingRequestsFrom;
-
-    public function __construct()
-    {
-        $this->matchingOffersFrom = new ArrayCollection();
-        $this->matchingOffersTo = new ArrayCollection();
-        $this->matchingRequestsFrom = new ArrayCollection();
-    }
     
     public function getId(): ?int
     {
@@ -260,99 +245,6 @@ Class Point
     public function setTravelMode(?TravelMode $travelMode): self
     {
         $this->travelMode = $travelMode;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Matching[]
-     */
-    public function getMatchingOffersFrom(): Collection
-    {
-        return $this->matchingOffersFrom;
-    }
-
-    public function addMatchingOfferFrom(Matching $matchingOfferFrom): self
-    {
-        if (!$this->matchingOffersFrom->contains($matchingOfferFrom)) {
-            $this->matchingOffersFrom[] = $matchingOfferFrom;
-            $matchingOfferFrom->setPointOfferFrom($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMatchingOfferFrom(Matching $matchingOfferFrom): self
-    {
-        if ($this->matchingOffersFrom->contains($matchingOfferFrom)) {
-            $this->matchingOffersFrom->removeElement($matchingOfferFrom);
-            // set the owning side to null (unless already changed)
-            if ($matchingOfferFrom->getPointOfferFrom() === $this) {
-                $matchingOfferFrom->setPointOfferFrom(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Matching[]
-     */
-    public function getMatchingOffersTo(): Collection
-    {
-        return $this->matchingOffersTo;
-    }
-
-    public function addMatchingOffersTo(Matching $matchingOffersTo): self
-    {
-        if (!$this->matchingOffersTo->contains($matchingOffersTo)) {
-            $this->matchingOffersTo[] = $matchingOffersTo;
-            $matchingOffersTo->setPointOfferTo($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMatchingOffersTo(Matching $matchingOffersTo): self
-    {
-        if ($this->matchingOffersTo->contains($matchingOffersTo)) {
-            $this->matchingOffersTo->removeElement($matchingOffersTo);
-            // set the owning side to null (unless already changed)
-            if ($matchingOffersTo->getPointOfferTo() === $this) {
-                $matchingOffersTo->setPointOfferTo(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Matching[]
-     */
-    public function getMatchingRequestsFrom(): Collection
-    {
-        return $this->matchingRequestsFrom;
-    }
-
-    public function addMatchingRequestsFrom(Matching $matchingRequestsFrom): self
-    {
-        if (!$this->matchingRequestsFrom->contains($matchingRequestsFrom)) {
-            $this->matchingRequestsFrom[] = $matchingRequestsFrom;
-            $matchingRequestsFrom->setPointRequestFrom($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMatchingRequestsFrom(Matching $matchingRequestsFrom): self
-    {
-        if ($this->matchingRequestsFrom->contains($matchingRequestsFrom)) {
-            $this->matchingRequestsFrom->removeElement($matchingRequestsFrom);
-            // set the owning side to null (unless already changed)
-            if ($matchingRequestsFrom->getPointRequestFrom() === $this) {
-                $matchingRequestsFrom->setPointRequestFrom(null);
-            }
-        }
 
         return $this;
     }

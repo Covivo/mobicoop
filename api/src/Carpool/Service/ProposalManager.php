@@ -21,28 +21,31 @@
  *    LICENSE
  **************************/
 
-namespace App\Service;
+namespace App\Carpool\Service;
 
+use App\Carpool\Entity\Proposal;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\Proposal;
 
 /**
- * Matching analyzer service.
+ * Proposal manager service.
  * 
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class MatchingAnalyzer
+class ProposalManager
 {
     private $entityManager;
+    private $matchingAnalyzer;
     
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, MatchingAnalyzer $matchingAnalyzer)
     {
         $this->entityManager = $entityManager;
+        $this->matchingAnalyzer = $matchingAnalyzer;
     }
     
-    public function findMatchingProposals(Proposal $proposal)
+    public function createProposal(Proposal $proposal)
     {
-        return $this->entityManager->getRepository(Proposal::class)->findMatchingProposals($proposal);
+        $this->entityManager->persist($proposal);
+        $this->matchingAnalyzer->findMatchingProposals($proposal);
     }
-
+    
 }

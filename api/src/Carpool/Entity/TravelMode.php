@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Entity;
+namespace App\Carpool\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -40,8 +40,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={"get"},
+ *      itemOperations={"get"}
  * )
  */
 Class TravelMode 
@@ -65,20 +65,6 @@ Class TravelMode
      */
     private $name;
 
-    /**
-     * @var Proposal[]|null The proposals that use this travel mode.
-     * 
-     * @ORM\ManyToMany(targetEntity="App\Entity\Proposal", mappedBy="travelModes")
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $proposals;
-
-    public function __construct()
-    {
-        $this->proposals = new ArrayCollection();
-    }
-
     public function getId(): ?int
     {
         return $this->id;
@@ -96,31 +82,4 @@ Class TravelMode
         return $this;
     }
 
-    /**
-     * @return Collection|Proposal[]
-     */
-    public function getProposals(): Collection
-    {
-        return $this->proposals;
-    }
-
-    public function addProposal(Proposal $proposal): self
-    {
-        if (!$this->proposals->contains($proposal)) {
-            $this->proposals[] = $proposal;
-            $proposal->addTravelMode($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProposal(Proposal $proposal): self
-    {
-        if ($this->proposals->contains($proposal)) {
-            $this->proposals->removeElement($proposal);
-            $proposal->removeTravelMode($this);
-        }
-
-        return $this;
-    }
 }
