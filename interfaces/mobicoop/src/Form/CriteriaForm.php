@@ -25,25 +25,27 @@ namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use App\Entity\Criteria;
 
 /**
- * Create user address form.
+ * Criteria form.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class UserAddressCreateForm extends AbstractType
+class CriteriaForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        ->add('name')
-        ->add('address', CollectionType::class, [
-                'entry_type' => AddressCreateForm::class,
-                'allow_add' => true,
-                'by_reference' => false,
-                'error_bubbling' => false,
+        ->add('frequency',ChoiceType::class, [
+                'choices'  => Criteria::FREQUENCY
+        ])
+        ->add('seats')
+        ->add('fromDate', DateType::class, [
+                'data' => new \DateTime()
         ])
         ;
     }
@@ -51,7 +53,7 @@ class UserAddressCreateForm extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-                'data_class' => 'App\Entity\UserAddress',
+                'data_class' => Criteria::class,
         ));
     }
 }

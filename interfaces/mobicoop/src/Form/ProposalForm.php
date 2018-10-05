@@ -25,24 +25,38 @@ namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use App\Entity\Proposal;
 
 /**
- * Create address form.
+ * Point form.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class AddressCreateForm extends AbstractType
+class ProposalForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        ->add('streetAddress')
-        ->add('postalCode')
-        ->add('addressLocality')
-        ->add('addressCountry')
-        ->add('latitude')
-        ->add('longitude')
-        ->add('elevation')
+        ->add('proposalType',ChoiceType::class, [
+                'choices'  => Proposal::PROPOSAL_TYPE
+        ])
+        ->add('journeyType',ChoiceType::class, [
+                'choices'  => Proposal::JOURNEY_TYPE
+        ])
+        ->add('criteria',CriteriaForm::class)
+        ->add('start', PointForm::class)
+        ->add('destination',PointForm::class)
+        ->add('submit', SubmitType::class)
         ;
+    }
+    
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+                'data_class' => Proposal::class,
+        ));
     }
 }

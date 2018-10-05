@@ -31,6 +31,12 @@ use App\Entity\User;
 use App\Entity\Address;
 use App\Entity\UserAddress;
 use App\Form\UserForm;
+use App\Service\ProposalManager;
+use App\Entity\Proposal;
+use App\Entity\Point;
+use App\Entity\Criteria;
+use Symfony\Component\HttpFoundation\Response;
+use App\Form\ProposalForm;
 
 /**
  * Controller class for user related actions.
@@ -137,5 +143,38 @@ class UserController extends AbstractController
                     'error' => 'An error occured'
             ]);
         }
+    }
+    
+    /**
+     * Create a proposal for a user.
+     *
+     * @Route("/user/{id}/proposal/create", name="user_proposal_create", requirements={"id"="\d+"})
+     *
+     */
+    public function userProposalCreate($id, ProposalManager $proposalManager, Request $request)
+    {
+        $proposal = new Proposal();
+        $proposal->setUser(new User($id));
+        
+        $form = $this->createForm(ProposalForm::class, $proposal);
+        $form->handleRequest($request);
+        $error = false;
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            // for now we add the starting end ending points, 
+            // in the future we will need to have dynamic fields 
+            $proposal->addPoint($proposal->getStart());
+            $proposal->addPoint($proposal->getDestination());
+            if ($proposalManager->createProposal($proposal)) {
+                return $this->redirectToRoute('users');
+            }
+            $error = true;
+        }
+        
+        return $this->render('proposal/create.html.twig', [
+                'form' => $form->createView(),
+                'error' => $error
+        ]);
+                
     }
 }

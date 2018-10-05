@@ -8,7 +8,7 @@
 	<div class="hero-body">
     	<div class="container">
       		<h1 class="title">
-        		Coviride Demo application - Users <a href="/user/create"><i class="fas fa-user-plus"></i></a>
+        		Coviride Demo application - Users <a href="{{ path('user_create') }}"><i class="fas fa-user-plus"></i></a>
       		</h1>
     	</div>
   	</div>
@@ -40,6 +40,7 @@
           			<a href="{{ path('user',{'id':user.id}) }}"><i class="fas fa-search"></i></a>
           			<a href="{{ path('user_update',{'id':user.id}) }}"><i class="fas fa-edit"></i></a>
           			<a href="{{ path('user_delete',{'id':user.id}) }}"><i class="fas fa-trash"></i></a>
+          			<a href="{{ path('user_proposal_create',{'id':user.id}) }}"><i class="fas fa-car-side"></i></a>
           		</td>
           	</tr>
       	    {% endfor %}

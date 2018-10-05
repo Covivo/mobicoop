@@ -24,6 +24,7 @@
 namespace App\Service;
 
 use App\Entity\Address;
+use App\Entity\Proposal;
 use App\Entity\User;
 use App\Entity\UserAddress;
 
@@ -32,6 +33,9 @@ use TypeError;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
+use App\Entity\Criteria;
+use App\Entity\Point;
+use App\Entity\TravelMode;
 
 /**
  * Custom deserializer service.
@@ -64,6 +68,9 @@ class Deserializer
                 break;
             case Address::class:
                 return self::deserializeAddress($data);
+                break;
+            case Proposal::class:
+                return self::deserializeProposal($data);
                 break;
             default:
                 break;
@@ -109,6 +116,68 @@ class Deserializer
             $address->setIri($data["@id"]);
         }
         return $address;
+    }
+    
+    private function deserializeProposal(array $data): ?Proposal
+    {
+        $proposal = new Proposal();
+        $proposal = self::autoSet($proposal, $data);
+        if (isset($data["@id"])) {
+            $proposal->setIri($data["@id"]);
+        }
+        if (isset($data["user"])) {
+            $proposal->setUser(self::deserializeUser($data['user']));
+        }
+        if (isset($data["points"])) {
+            foreach ($data["points"] as $point) {
+                $proposal->addPoint(self::deserializePoint($point));
+            }
+        }
+        if (isset($data["travelModes"])) {
+            foreach ($data["travelModes"] as $travelMode) {
+                $proposal->addTravelMode(self::deserializeTravelMode($travelMode));
+            }
+        }
+        if (isset($data["criteria"])) {
+            $proposal->setCriteria(self::deserializeCriteria($data['criteria']));
+        }        
+        return $proposal;
+    }
+    
+    private function deserializePoint(array $data): ?Point
+    {
+        $point = new Point();
+        $point = self::autoSet($point, $data);
+        if (isset($data["@id"])) {
+            $point->setIri($data["@id"]);
+        }
+        if (isset($data["address"])) {
+            $point->setAddress(self::deserializeAddress($data['address']));
+        }
+        if (isset($data["travelMode"])) {
+            $point->setTravelMode(self::deserializeTravelMode($data['travelMode']));
+        }
+        return $point;
+    }
+    
+    private function deserializeTravelMode(array $data): ?TravelMode
+    {
+        $travelMode = new TravelMode();
+        $travelMode = self::autoSet($travelMode, $data);
+        if (isset($data["@id"])) {
+            $travelMode->setIri($data["@id"]);
+        }
+        return $travelMode;
+    }
+    
+    private function deserializeCriteria(array $data): ?Criteria
+    {
+        $criteria = new Criteria();
+        $criteria = self::autoSet($criteria, $data);
+        if (isset($data["@id"])) {
+            $criteria->setIri($data["@id"]);
+        }
+        return $criteria;
     }
     
     private function autoSet($object, $data)
