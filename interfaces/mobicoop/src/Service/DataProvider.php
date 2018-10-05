@@ -117,11 +117,12 @@ class DataProvider
     /**
      * Get collection operation
      *
-     * @param array|null $params An array of parameters
+     * @param string|null   $subResource    The name of the subresource to get instead of the resource  
+     * @param array|null    $params         An array of parameters
      *
      * @return Response The response of the operation.
      */
-    public function getCollection(array $params=null): Response
+    public function getCollection(string $subResource=null, array $params=null): Response
     {
         // @todo : send the params to the request in the json body of the request
         
@@ -129,6 +130,30 @@ class DataProvider
             $clientResponse = $this->client->get($this->resource);
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody()));
+            }
+        } catch (TransferException $e) {
+            return new Response($e->getCode());
+        }
+        return new Response();
+    }
+    
+    /**
+     * Get sub collection operation
+     *
+     * @param int           $id             The id of the item
+     * @param string        $subClassName   The classname of the subresource
+     * @param array|null    $params         An array of parameters
+     *
+     * @return Response The response of the operation.
+     */
+    public function getSubCollection(int $id, string $subClassName, array $params=null): Response
+    {
+        // @todo : send the params to the request in the json body of the request
+        
+        try {
+            $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.self::pluralize((new \ReflectionClass($subClassName))->getShortName()));
+            if ($clientResponse->getStatusCode() == 200) {
+                return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody(),$subClassName));
             }
         } catch (TransferException $e) {
             return new Response($e->getCode());
@@ -200,8 +225,11 @@ class DataProvider
         return new Response();
     }
     
-    private function treatHydraCollection($data)
+    private function treatHydraCollection($data,$class=null)
     {
+        // if $class is defined, it's because our request concerns a subresource
+        if (!$class) $class = $this->class;
+        
         // $data comes from a GuzzleHttp request; it's a json hydra collection so when need to parse the json to an array
         $data = json_decode($data, true);
         $hydra = new Hydra();
@@ -235,7 +263,7 @@ class DataProvider
 
             $members = [];
             foreach ($data["hydra:member"] as $key=>$value) {
-                $members[] = $this->deserializer->deserialize($this->class, $value);
+                $members[] = $this->deserializer->deserialize($class, $value);
             }
             $hydra->setMember($members);
         }

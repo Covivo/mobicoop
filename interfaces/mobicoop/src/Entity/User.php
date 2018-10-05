@@ -146,11 +146,18 @@ class User implements Resource
      * @var Solicitation[]|null The solicitations where the user is involved as a passenger.
      */
     private $solicitationsRequest;
-    
+        
     public function __construct($id=null)
     {
-        if ($id) $this->setIri("/users/".$id);
+        if ($id) {
+            $this->setId($id);
+            $this->setIri("/users/".$id);
+        }
         $this->userAddresses = new ArrayCollection();
+        $this->proposals = new ArrayCollection();
+        $this->solicitations = new ArrayCollection();
+        $this->solicitationsOffer = new ArrayCollection();
+        $this->solicitationsRequest = new ArrayCollection();
     }
         
     public function getId(): ?int

@@ -24,6 +24,7 @@
 namespace App\Service;
 
 use App\Entity\Proposal;
+use App\Entity\User;
 
 /**
  * Proposal management service.
@@ -50,6 +51,22 @@ class ProposalManager
     {
         $response = $this->dataProvider->post($proposal);
         if ($response->getCode() == 201) {
+            return $response->getValue();
+        }
+        return null;
+    }
+    
+    /**
+     * Get all proposals for a user
+     *
+     * @return array|null The proposals found or null if not found.
+     */
+    public function getProposals(User $user)
+    {
+        // we will make the request on the User instead of the Proposal
+        $this->dataProvider->setClass(User::class);
+        $response = $this->dataProvider->getSubCollection($user->getId(),Proposal::class);
+        if ($response->getCode() == 200) {
             return $response->getValue();
         }
         return null;

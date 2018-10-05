@@ -40,7 +40,9 @@ class PointForm extends AbstractType
     {
         $builder
         ->add('position')
-        ->add('lastPoint', CheckboxType::class)
+        ->add('lastPoint', CheckboxType::class, [
+                'required' => false
+        ])
         ->add('address', AddressForm::class)
         ;
     }

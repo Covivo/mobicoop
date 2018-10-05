@@ -8,7 +8,7 @@
 	<div class="hero-body">
     	<div class="container">
       		<h1 class="title">
-        		Coviride Demo application - Users <a href="{{ path('user_create') }}"><i class="fas fa-user-plus"></i></a>
+        		Coviride Demo application - Users
       		</h1>
     	</div>
   	</div>
@@ -19,6 +19,7 @@
 	    {% if error is defined %}
 		<span class="tag is-danger">{{ error }}</span>
 		{% endif %}
+		<a class="button is-primary" href="{{ path('user_create') }}">Add user</a>
 		{% if hydra %}
       	<table class="table">
           	<tr>
@@ -37,10 +38,10 @@
           		<td>{{ user.email }}</td>
           		<td>{{ user.birthDate ? user.birthDate|date('Y-m-d') }}</td>
           		<td>
-          			<a href="{{ path('user',{'id':user.id}) }}"><i class="fas fa-search"></i></a>
-          			<a href="{{ path('user_update',{'id':user.id}) }}"><i class="fas fa-edit"></i></a>
-          			<a href="{{ path('user_delete',{'id':user.id}) }}"><i class="fas fa-trash"></i></a>
-          			<a href="{{ path('user_proposal_create',{'id':user.id}) }}"><i class="fas fa-car-side"></i></a>
+          			<a class="button is-primary" href="{{ path('user',{'id':user.id}) }}"> Detail</a>
+          			<a class="button is-warning" href="{{ path('user_update',{'id':user.id}) }}"> Edit</a>
+          			<a class="button is-danger" href="{{ path('user_delete',{'id':user.id}) }}"> Delete</a>
+          			<a class="button is-link" href="{{ path('user_proposals',{'id':user.id}) }}"> Proposals</a>
           		</td>
           	</tr>
       	    {% endfor %}
