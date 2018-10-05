@@ -166,7 +166,7 @@ class UserController extends AbstractController
             $proposal->addPoint($proposal->getStart());
             $proposal->addPoint($proposal->getDestination());
             if ($proposalManager->createProposal($proposal)) {
-                return $this->redirectToRoute('users');
+                return $this->redirectToRoute('user_proposal',['id'=>$id]);
             }
             $error = true;
         }
@@ -176,5 +176,20 @@ class UserController extends AbstractController
                 'error' => $error
         ]);
                 
+    }
+    
+    /**
+     * Retrieve all proposals for a user.
+     *
+     * @Route("/user/{id}/proposals", name="user_proposals", requirements={"id"="\d+"})
+     *
+     */
+    public function userProposals($id, ProposalManager $proposalManager)
+    {
+        $user = new User($id);
+        return $this->render('proposal/index.html.twig', [
+                'user' => $user,
+                'hydra' => $proposalManager->getProposals($user)
+        ]);
     }
 }
