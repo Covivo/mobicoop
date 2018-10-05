@@ -265,10 +265,12 @@ class DataProvider
     {
         return Inflector::pluralize(Inflector::tableize($name));
     }
+    
 }
 
 /**
  * This class permits to remove null values or empty arrays when normalizing.
+ * It also permits to replace object values by their IRI if set.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  *
@@ -279,8 +281,48 @@ class RemoveNullObjectNormalizer extends ObjectNormalizer
     {
         $data = parent::normalize($object, $format, $context);
         
-        return array_filter($data, function ($value) {
-            return (null !== $value) && (!empty($value));
-        });
+        return self::replaceIris(array_filter($data, function ($value) {
+            return (null !== $value) && (!(empty($value) && is_array($value)));
+        }));
+    }
+    
+    /**
+     * This function replaces each value in an array by its IRI value if IRI key exists.
+     * (recursive function)
+     * 
+     * eg:
+     * 
+     * [
+     *      "id"    => 1,
+     *      "user"  => [
+     *          "id"    => 2,
+     *          "name"  => "John",
+     *          "iri"   => "/users/2"
+     *      ]
+     * ]
+     *  
+     *  will be replaced by : 
+
+     * [
+     *      "id"    => 1,
+     *      "user"  => "/users/2"
+     * ]
+     * 
+     */ 
+    private function replaceIris(array $array): array 
+    {
+        $replacedArray = [];
+        foreach ($array as $key=>$value) {
+            if (is_array($value)) {
+                if (isset($value['iri']) && !is_null($value['iri'])) {
+                    $replacedArray[$key] = $value['iri'];
+                } else {
+                    $replacedArray[$key] = self::replaceIris($value);
+                }
+            } else {
+                $replacedArray[$key] = $value;
+            }
+        }
+        return $replacedArray;
     }
 }

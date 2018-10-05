@@ -23,6 +23,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -41,6 +42,8 @@ class User implements Resource
     
     /**
      * @var string|null The iri of this user.
+     * 
+     * @Groups({"post","put"})
      */
     private $iri;
     
@@ -124,8 +127,29 @@ class User implements Resource
      */
     private $userAddresses;
     
-    public function __construct()
+    /**
+     * @var Proposal[]|null The proposals made by this user.
+     */
+    private $proposals;
+    
+    /**
+     * @var Solicitation[]|null The solicitations made by this user.
+     */
+    private $solicitations;
+    
+    /**
+     * @var Solicitation[]|null The solicitations where the user is involved as a driver.
+     */
+    private $solicitationsOffer;
+    
+    /**
+     * @var Solicitation[]|null The solicitations where the user is involved as a passenger.
+     */
+    private $solicitationsRequest;
+    
+    public function __construct($id=null)
     {
+        if ($id) $this->setIri("/users/".$id);
         $this->userAddresses = new ArrayCollection();
     }
         
@@ -269,5 +293,129 @@ class User implements Resource
     {
         $this->userAddresses->removeElement($userAddress);
         $userAddress->setUser(null);
+    }
+    
+    /**
+     * @return Collection|Proposal[]
+     */
+    public function getProposals(): Collection
+    {
+        return $this->proposals;
+    }
+    
+    public function addProposal(Proposal $proposal): self
+    {
+        if (!$this->proposals->contains($proposal)) {
+            $this->proposals[] = $proposal;
+            $proposal->setUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeProposal(Proposal $proposal): self
+    {
+        if ($this->proposals->contains($proposal)) {
+            $this->proposals->removeElement($proposal);
+            // set the owning side to null (unless already changed)
+            if ($proposal->getUser() === $this) {
+                $proposal->setUser(null);
+            }
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * @return Collection|Solicitation[]
+     */
+    public function getSolicitations(): Collection
+    {
+        return $this->solicitations;
+    }
+    
+    public function addSolicitation(Solicitation $solicitation): self
+    {
+        if (!$this->solicitations->contains($solicitation)) {
+            $this->solicitations[] = $solicitation;
+            $solicitation->setUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeSolicitation(Solicitation $solicitation): self
+    {
+        if ($this->solicitations->contains($solicitation)) {
+            $this->solicitations->removeElement($solicitation);
+            // set the owning side to null (unless already changed)
+            if ($solicitation->getUser() === $this) {
+                $solicitation->setUser(null);
+            }
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * @return Collection|Solicitation[]
+     */
+    public function getSolicitationsOffer(): Collection
+    {
+        return $this->solicitationsOffer;
+    }
+    
+    public function addSolicitationsOffer(Solicitation $solicitationsOffer): self
+    {
+        if (!$this->solicitationsOffer->contains($solicitationsOffer)) {
+            $this->solicitationsOffer[] = $solicitationsOffer;
+            $solicitationsOffer->setUserOffer($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeSolicitationsOffer(Solicitation $solicitationsOffer): self
+    {
+        if ($this->solicitationsOffer->contains($solicitationsOffer)) {
+            $this->solicitationsOffer->removeElement($solicitationsOffer);
+            // set the owning side to null (unless already changed)
+            if ($solicitationsOffer->getUserOffer() === $this) {
+                $solicitationsOffer->setUserOffer(null);
+            }
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * @return Collection|Solicitation[]
+     */
+    public function getSolicitationsRequest(): Collection
+    {
+        return $this->solicitationsRequest;
+    }
+    
+    public function addSolicitationsRequest(Solicitation $solicitationsRequest): self
+    {
+        if (!$this->solicitationsRequest->contains($solicitationsRequest)) {
+            $this->solicitationsRequest[] = $solicitationsRequest;
+            $solicitationsRequest->setUserRequest($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeSolicitationsRequest(Solicitation $solicitationsRequest): self
+    {
+        if ($this->solicitationsRequest->contains($solicitationsRequest)) {
+            $this->solicitationsRequest->removeElement($solicitationsRequest);
+            // set the owning side to null (unless already changed)
+            if ($solicitationsRequest->getUserRequest() === $this) {
+                $solicitationsRequest->setUserRequest(null);
+            }
+        }
+        
+        return $this;
     }
 }
