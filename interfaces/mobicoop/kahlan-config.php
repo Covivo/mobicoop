@@ -35,10 +35,10 @@ Filters::apply($this, 'bootstrap', function($next) {
         $this->request = Request::createFromGlobals();
         $this->kernel  = new Kernel('test', false);
         $panther = new ExtendedPanther();
-        //$client = new Client($this->kernel);
+        $client = new Client($this->kernel);
         // Create webserver for functionnals advanced test
         $this->panther = $panther::createWebServer();
-        // $this->client = $client;
+         $this->client = $client;
     });
 
     return $next();
