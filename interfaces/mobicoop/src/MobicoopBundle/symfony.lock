@@ -296,6 +296,9 @@
             "ref": "1a47f76dcd9d5d4da1fab54fb15450bae3704c5e"
         }
     },
+    "symfony/polyfill-ctype": {
+        "version": "v1.9.0"
+    },
     "symfony/polyfill-intl-icu": {
         "version": "v1.9.0"
     },

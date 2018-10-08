@@ -21,11 +21,11 @@
  *    LICENSE
  **************************/
 
-namespace App\Spec\Service;
+namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
 
-use App\Service\Deserializer;
-use App\Entity\User;
-use App\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Service\Deserializer;
+use Mobicoop\Bundle\MobicoopBundle\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\Entity\Address;
 
 describe('DeserializerService', function () {
     describe('deserializeSimpleUser', function () {

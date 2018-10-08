@@ -21,9 +21,9 @@
  *    LICENSE
  **************************/
 
-namespace App\Spec\Util;
+namespace Mobicoop\Bundle\MobicoopBundle\Spec\Util;
 
-use App\Util\Calculator;
+use Mobicoop\Bundle\MobicoopBundle\Util\Calculator;
 
 /* This is a sample Unit Test  */
 describe('CalculatorUtil', function () {

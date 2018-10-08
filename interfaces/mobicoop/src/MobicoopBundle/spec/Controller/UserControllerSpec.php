@@ -21,7 +21,8 @@
  *    LICENSE
  **************************/
 
-namespace App\Spec\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\Spec\Controller;
+
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 

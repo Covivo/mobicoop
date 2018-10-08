@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Spec\Service;
+namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
 
 describe('UserManagerService', function () {
 });
