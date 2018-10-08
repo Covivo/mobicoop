@@ -47,6 +47,7 @@ use App\User\Entity\User;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
+ *          "get",
  *          "post"={
  *              "method"="POST",
  *              "path"="/proposals",
@@ -194,7 +195,7 @@ Class Proposal
      * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Matching", mappedBy="proposalOffer")
      * @ApiSubresource(maxDepth=1)
      */
-    private $matchingOffers;
+    private $matchingRequests;
 
     /**
      * @var Matching[]|null The matching of the proposal (if proposal is a request).
@@ -202,7 +203,7 @@ Class Proposal
      * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Matching", mappedBy="proposalRequest")
      * @ApiSubresource(maxDepth=1)
      */
-    private $matchingRequests;
+    private $matchingOffers;
 
     /**
      * @var Criteria The criteria applied to the proposal.
@@ -447,7 +448,7 @@ Class Proposal
     {
         if (!$this->matchingOffers->contains($matchingOffer)) {
             $this->matchingOffers[] = $matchingOffer;
-            $matchingOffer->setProposalOffer($this);
+            $matchingOffer->setProposalRequest($this);
         }
 
         return $this;
@@ -458,8 +459,8 @@ Class Proposal
         if ($this->matchingOffers->contains($matchingOffer)) {
             $this->matchingOffers->removeElement($matchingOffer);
             // set the owning side to null (unless already changed)
-            if ($matchingOffer->getProposalOffer() === $this) {
-                $matchingOffer->setProposalOffer(null);
+            if ($matchingOffer->getProposalRequest() === $this) {
+                $matchingOffer->setProposalRequest(null);
             }
         }
 
@@ -478,7 +479,7 @@ Class Proposal
     {
         if (!$this->matchingRequests->contains($matchingRequest)) {
             $this->matchingRequests[] = $matchingRequest;
-            $matchingRequest->setProposalRequest($this);
+            $matchingRequest->setProposalOffer($this);
         }
 
         return $this;
@@ -489,8 +490,8 @@ Class Proposal
         if ($this->matchingRequests->contains($matchingRequest)) {
             $this->matchingRequests->removeElement($matchingRequest);
             // set the owning side to null (unless already changed)
-            if ($matchingRequest->getProposalRequest() === $this) {
-                $matchingRequest->setProposalRequest(null);
+            if ($matchingRequest->getProposalOffer() === $this) {
+                $matchingRequest->setProposalOffer(null);
             }
         }
 

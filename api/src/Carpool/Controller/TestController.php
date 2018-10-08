@@ -83,4 +83,23 @@ class TestController extends AbstractController
         }
         return new Response();
     }
+    
+    /**
+     * Create matching proposals for all proposals.
+     *
+     * @Route("/matcher/all", name="matcher_all")
+     *
+     */
+    public function matcherAll(EntityManagerInterface $entityManager, MatchingAnalyzer $matchingAnalyzer)
+    {
+        $proposals = $entityManager->getRepository(Proposal::class)->findAll();
+        echo "Finding matching for " . count($proposals) . " proposals.";
+        echo "<ul>";
+        foreach ($proposals as $proposal) {
+            echo "<li>Creating matchings for proposals #" . $proposal->getId() . "</li>"; 
+            $matchingAnalyzer->createMatchingsForProposal($proposal);
+        }
+        echo "</ul>";
+        return new Response();
+    }
 }
