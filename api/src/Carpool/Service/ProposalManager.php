@@ -42,10 +42,15 @@ class ProposalManager
         $this->matchingAnalyzer = $matchingAnalyzer;
     }
     
+    /**
+     * Create a proposal.
+     * 
+     * @param Proposal $proposal
+     */
     public function createProposal(Proposal $proposal)
     {
         $this->entityManager->persist($proposal);
-        $this->matchingAnalyzer->findMatchingProposals($proposal);
+        $this->matchingAnalyzer->createMatchingsForProposal($proposal);
     }
     
 }

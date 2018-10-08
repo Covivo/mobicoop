@@ -43,7 +43,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={},
- *      itemOperations={}
+ *      itemOperations={"get"}
  * )
  */
 Class Matching 
@@ -93,7 +93,7 @@ Class Matching
      * @var Proposal The offer proposal.
      * 
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Proposal", inversedBy="matchingOffers")
+     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Proposal", inversedBy="matchingRequests")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
      * @MaxDepth(1)
@@ -104,7 +104,7 @@ Class Matching
      * @var Proposal The request proposal.
      * 
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Proposal", inversedBy="matchingRequests")
+     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Proposal", inversedBy="matchingOffers")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
      * @MaxDepth(1)
@@ -114,7 +114,7 @@ Class Matching
     /**
      * @var Point|null Starting point of the offer proposal used for the matching.
      * 
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Point", inversedBy="matchingOffers")
+     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Point")
      * @Groups({"read"})
      * @MaxDepth(1)
      */
@@ -123,7 +123,7 @@ Class Matching
     /**
      * @var Point|null Ending point of the offer proposal used for the matching.
      * 
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Point", inversedBy="matchingOffersTo")
+     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Point")
      * @Groups({"read"})
      * @MaxDepth(1)
      */
@@ -132,7 +132,7 @@ Class Matching
     /**
      * @var Point Starting point of the request used for the matching (if multimodal travel, otherwise it's always the starting point).
      * 
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Point", inversedBy="matchingRequestsFrom")
+     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Point")
      * @Groups({"read"})
      * @MaxDepth(1)
      */
