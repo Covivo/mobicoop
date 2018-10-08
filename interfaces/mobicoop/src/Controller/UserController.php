@@ -165,8 +165,8 @@ class UserController extends AbstractController
             // in the future we will need to have dynamic fields 
             $proposal->addPoint($proposal->getStart());
             $proposal->addPoint($proposal->getDestination());
-            if ($proposalManager->createProposal($proposal)) {
-                return $this->redirectToRoute('user_proposal',['id'=>$id]);
+            if ($proposal = $proposalManager->createProposal($proposal)) {
+                return $this->redirectToRoute('user_proposal_matchings',['id'=>$id,'idProposal'=>$proposal->getId()]);
             }
             $error = true;
         }
@@ -190,6 +190,23 @@ class UserController extends AbstractController
         return $this->render('proposal/index.html.twig', [
                 'user' => $user,
                 'hydra' => $proposalManager->getProposals($user)
+        ]);
+    }
+    
+    /**
+     * Retrieve all matchings for a proposal.
+     *
+     * @Route("/user/{id}/proposal/{idProposal}/matchings", name="user_proposal_matchings", requirements={"id"="\d+","idProposal"="\d+"})
+     *
+     */
+    public function userProposalMatchings($id, $idProposal, ProposalManager $proposalManager)
+    {
+        $user = new User($id);
+        $proposal = $proposalManager->getProposal($idProposal);
+        return $this->render('proposal/matchings.html.twig', [
+                'user' => $user,
+                'proposal' => $proposal,
+                'hydra' => $proposalManager->getMatchings($proposal)
         ]);
     }
 }

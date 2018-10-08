@@ -1,0 +1,169 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello{% endblock %}
+
+{% block body %}
+
+<section class="hero is-primary">
+	<div class="hero-body">
+    	<div class="container">
+      		<h1 class="title">
+        		Mobicoop - Matchings for the proposal #{{ proposal.id }} of the user #{{ user.id }}
+      		</h1>
+    	</div>
+  	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+	    {% if error is defined %}
+		<span class="tag is-danger">{{ error }}</span>
+		{% endif %}
+		<div class="content">
+    		<h2>Proposal #{{ proposal.id }}</h2>
+    		<ul>
+    			<li>user : {{ proposal.user.email }}</li>
+    			<li>proposalType : 
+    			    {% if proposal.proposalType == constant('App\\Entity\\Proposal::PROPOSAL_TYPE_OFFER') %}
+              		Offer
+              		{% else %}
+              		Request
+              	    {% endif %}
+              	</li>
+          		<li>journeyType : 
+          			{% if proposal.journeyType == constant('App\\Entity\\Proposal::JOURNEY_TYPE_ONE_WAY') %}
+          			One way
+          			{% else %}
+          			Return trip
+          			{% endif %}
+          		</li>
+          		<li>start : 
+          			{% for point in proposal.points %}
+          				{% if point.position == 0 %}
+          				    {{ point.address.streetAddress }} {{ point.address.postalCode }} {{ point.address.addressLocality }}
+          				{% endif %}
+          			{% endfor %}	
+          		</li>
+          		<li>destination : 
+          			{% for point in proposal.points %}
+          				{% if point.lastPoint %}
+          				    {{ point.address.streetAddress }} {{ point.address.postalCode }} {{ point.address.addressLocality }}
+          				{% endif %}
+          			{% endfor %}	
+          		</li>
+          		<li>frequency : 
+          			{% if proposal.criteria.frequency == constant('App\\Entity\\Criteria::FREQUENCY_PUNCTUAL') %}
+          			Punctual
+          			{% else %}
+          			Regular
+          			{% endif %}
+          		</li>
+          		<li>fromDate : {{ proposal.criteria.fromDate|date('Y-m-d') }}</li>
+            </ul>
+        </div>
+		{% if hydra and hydra.member|length>0  %}
+		<table class="table">
+          	<tr>
+          		<th>#</th>
+          		<th>user</th>
+          		<th>proposalType</th>
+          		<th>journeyType</th>
+          		<th>start</th>
+          		<th>destination</th>
+          		<th>frequency</th>
+          		<th>fromDate</th>
+          	</tr>
+          	{% for matching in hydra.member %}
+          	<tr>
+          		<td>{{ matching.id }}</td>
+          		<td>
+          			{% if matching.proposalOffer.id == proposal.id %}
+          				{{ matching.proposalRequest.user.email }}
+          			{% else %}
+          			    {{ matching.proposalOffer.user.email }}
+          			{% endif %}
+          		</td>
+          		<td>
+          			{% if matching.proposalOffer.id == proposal.id %}
+                        Request
+          			{% else %}
+          				Offer
+          			{% endif %}
+          		</td>
+          		<td>
+          			{% if matching.proposalOffer.id == proposal.id %}
+          				{% if matching.proposalRequest.journeyType == constant('App\\Entity\\Proposal::JOURNEY_TYPE_ONE_WAY') %}
+          					One way
+          			    {% else %}
+          					Return trip
+          			    {% endif %}
+          			{% else %}
+          			    {% if matching.proposalOffer.journeyType == constant('App\\Entity\\Proposal::JOURNEY_TYPE_ONE_WAY') %}
+          					One way
+          			    {% else %}
+          					Return trip
+          			    {% endif %}
+          			{% endif %}
+          		</td>
+          		<td>
+          			{% if matching.proposalOffer.id == proposal.id %}
+              			{% for point in matching.proposalRequest.points %}
+              				{% if point.position == 0 %}
+              				    {{ point.address.streetAddress }} {{ point.address.postalCode }} {{ point.address.addressLocality }}
+              				{% endif %}
+              			{% endfor %}	
+              		{% else %}
+              		    {% for point in matching.proposalOffer.points %}
+              				{% if point.position == 0 %}
+              				    {{ point.address.streetAddress }} {{ point.address.postalCode }} {{ point.address.addressLocality }}
+              				{% endif %}
+              			{% endfor %}	
+              		{% endif %}
+          		</td>
+          		<td>
+          		    {% if matching.proposalOffer.id == proposal.id %}
+              			{% for point in matching.proposalRequest.points %}
+              				{% if point.lastPoint %}
+              				    {{ point.address.streetAddress }} {{ point.address.postalCode }} {{ point.address.addressLocality }}
+              				{% endif %}
+              			{% endfor %}	
+              		{% else %}
+              		    {% for point in matching.proposalOffer.points %}
+              				{% if point.lastPoint %}
+              				    {{ point.address.streetAddress }} {{ point.address.postalCode }} {{ point.address.addressLocality }}
+              				{% endif %}
+              			{% endfor %}
+              		{% endif %}
+          		</td>
+          		<td>
+          		    {% if matching.proposalOffer.id == proposal.id %}
+              			{% if matching.proposalRequest.criteria.frequency == constant('App\\Entity\\Criteria::FREQUENCY_PUNCTUAL') %}
+              				Punctual
+              			{% else %}
+              				Regular
+              			{% endif %}
+              		{% else %}
+              		    {% if matching.proposalOffer.criteria.frequency == constant('App\\Entity\\Criteria::FREQUENCY_PUNCTUAL') %}
+              				Punctual
+              			{% else %}
+              				Regular
+              			{% endif %}
+              		{% endif %}
+          		</td>
+          		<td>
+          			{% if matching.proposalOffer.id == proposal.id %}
+	          		    {{ matching.proposalRequest.criteria.fromDate|date('Y-m-d') }}
+	          		{% else %}
+	          		    {{ matching.proposalOffer.criteria.fromDate|date('Y-m-d') }}
+	          		{% endif %}
+          		</td>
+          	</tr>
+      	    {% endfor %}
+      	</table>
+      	{% else %}
+      	<span class="tag is-warning">No matchings found.</span>
+      	{% endif %}
+  	</div>
+</section>
+
+{% endblock %}

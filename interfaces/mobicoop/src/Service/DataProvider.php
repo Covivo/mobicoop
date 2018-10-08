@@ -117,12 +117,11 @@ class DataProvider
     /**
      * Get collection operation
      *
-     * @param string|null   $subResource    The name of the subresource to get instead of the resource  
      * @param array|null    $params         An array of parameters
      *
      * @return Response The response of the operation.
      */
-    public function getCollection(string $subResource=null, array $params=null): Response
+    public function getCollection(array $params=null): Response
     {
         // @todo : send the params to the request in the json body of the request
         
@@ -142,16 +141,20 @@ class DataProvider
      *
      * @param int           $id             The id of the item
      * @param string        $subClassName   The classname of the subresource
+     * @param string        $subClassRoute  The class route of the subresource (used for custom routes, if not provided the route will be the subClassName pluralized)
      * @param array|null    $params         An array of parameters
      *
      * @return Response The response of the operation.
      */
-    public function getSubCollection(int $id, string $subClassName, array $params=null): Response
+    public function getSubCollection(int $id, string $subClassName, string $subClassRoute=null, array $params=null): Response
     {
         // @todo : send the params to the request in the json body of the request
         
+        $route = $subClassRoute;
+        if (is_null($route)) $route = self::pluralize((new \ReflectionClass($subClassName))->getShortName());
+        
         try {
-            $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.self::pluralize((new \ReflectionClass($subClassName))->getShortName()));
+            $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route);
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody(),$subClassName));
             }

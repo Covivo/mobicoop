@@ -25,6 +25,7 @@ namespace App\Service;
 
 use App\Entity\Proposal;
 use App\Entity\User;
+use App\Entity\Matching;
 
 /**
  * Proposal management service.
@@ -66,6 +67,40 @@ class ProposalManager
         // we will make the request on the User instead of the Proposal
         $this->dataProvider->setClass(User::class);
         $response = $this->dataProvider->getSubCollection($user->getId(),Proposal::class);
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
+    
+    /**
+     * Get a proposal for a user
+     *
+     * @param int $id
+     * @return Proposal|null The proposal found or null if not found.
+     */
+    public function getProposal(int $id)
+    {
+        $response = $this->dataProvider->getItem($id);
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
+    
+    /**
+     * Get all matchings for a user proposal
+     *
+     * @return array|null The matchings found or null if not found.
+     */
+    public function getMatchings(Proposal $proposal)
+    {
+        // we will make the request on the Matching instead of the Proposal
+        if ($proposal->getProposalType() == Proposal::PROPOSAL_TYPE_OFFER) {
+            $response = $this->dataProvider->getSubCollection($proposal->getId(),Matching::class,"matching_requests");
+        } else {
+            $response = $this->dataProvider->getSubCollection($proposal->getId(),Matching::class,"matching_offers");
+        }
         if ($response->getCode() == 200) {
             return $response->getValue();
         }
