@@ -36,6 +36,7 @@ use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use App\Entity\Criteria;
 use App\Entity\Point;
 use App\Entity\TravelMode;
+use App\Entity\Matching;
 
 /**
  * Custom deserializer service.
@@ -71,6 +72,9 @@ class Deserializer
                 break;
             case Proposal::class:
                 return self::deserializeProposal($data);
+                break;
+            case Matching::class:
+                return self::deserializeMatching($data);
                 break;
             default:
                 break;
@@ -178,6 +182,34 @@ class Deserializer
             $criteria->setIri($data["@id"]);
         }
         return $criteria;
+    }
+    
+    private function deserializeMatching(array $data): ?Matching
+    {
+        $matching = new Matching();
+        $matching = self::autoSet($matching, $data);
+        if (isset($data["@id"])) {
+            $matching->setIri($data["@id"]);
+        }
+        if (isset($data["proposalOffer"])) {
+            $matching->setProposalOffer(self::deserializeProposal($data['proposalOffer']));
+        }
+        if (isset($data["proposalRequest"])) {
+            $matching->setProposalRequest(self::deserializeProposal($data['proposalRequest']));
+        }
+        if (isset($data["pointOfferFrom"])) {
+            $matching->setPointOfferFrom(self::deserializePoint($data['pointOfferFrom']));
+        }
+        if (isset($data["pointOfferTo"])) {
+            $matching->setPointOfferTo(self::deserializePoint($data['pointOfferTo']));
+        }
+        if (isset($data["pointRequestFrom"])) {
+            $matching->setPointRequestFrom(self::deserializePoint($data['pointRequestFrom']));
+        }
+        if (isset($data["criteria"])) {
+            $matching->setCriteria(self::deserializeCriteria($data['criteria']));
+        }
+        return $matching;
     }
     
     private function autoSet($object, $data)

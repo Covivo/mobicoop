@@ -36,6 +36,11 @@ Class Matching
      * @var int The id of this matching.
      */
     private $id;
+    
+    /**
+     * @var string|null The iri of this user.
+     */
+    private $iri;
 
     /**
      * @var int|null Real distance in metres of the matching route.
@@ -99,6 +104,21 @@ Class Matching
     public function getId(): ?int
     {
         return $this->id;
+    }
+    
+    public function getIri()
+    {
+        return $this->iri;
+    }
+    
+    public function setId(int $id)
+    {
+        $this->id = $id;
+    }
+    
+    public function setIri($iri)
+    {
+        $this->iri = $iri;
     }
 
     public function getDistanceReal(): ?int

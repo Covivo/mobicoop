@@ -8,7 +8,7 @@
 	<div class="hero-body">
     	<div class="container">
       		<h1 class="title">
-        		Coviride Demo application - Proposals for the user #{{ user.id }}
+        		Mobicoop - Proposals for the user #{{ user.id }}
       		</h1>
     	</div>
   	</div>
@@ -72,6 +72,7 @@
           		</td>
           		<td>{{ proposal.criteria.fromDate|date('Y-m-d') }}</td>
           		<td>
+          			<a class="button is-link" href="{{ path('user_proposal_matchings',{'id':user.id,'idProposal':proposal.id}) }}"> Matchings</a>
           		</td>
           	</tr>
       	    {% endfor %}

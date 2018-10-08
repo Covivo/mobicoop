@@ -155,8 +155,12 @@ Class Proposal implements Resource
     private $start;
     private $destination;
 
-    public function __construct()
+    public function __construct($id=null)
     {
+        if ($id) {
+            $this->setId($id);
+            $this->setIri("/proposals/".$id);
+        }
         $this->points = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
         $this->matchingOffers = new ArrayCollection();
