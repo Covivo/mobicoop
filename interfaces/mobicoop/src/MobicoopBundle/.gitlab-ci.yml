@@ -12,7 +12,7 @@ stages:
 build&Test:
   stage: test
   variables:
-    APP_ENV: dev # improtant because symfony use it
+    APP_ENV: dev # important because symfony use it
   before_script:
     - apt-get -yq update
     - apt-get -yq install chromium-browser
@@ -45,7 +45,7 @@ buildTest&Deploy:
   only:
     - dev
   variables:
-    APP_ENV: test # improtant because symfony use it
+    APP_ENV: test # important because symfony use it
   before_script:
     - apt-get -yq update
     - apt-get -yq install chromium-browser
