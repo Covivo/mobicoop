@@ -51,7 +51,7 @@ class ProposalPost
      */
     public function __invoke(Proposal $data): Proposal
     {
-        $this->proposalManager->createProposal($data);
+        $data = $this->proposalManager->createProposal($data);
         return $data;
     }
     
