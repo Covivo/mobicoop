@@ -21,7 +21,7 @@ build&Test:
     - npm run postinstall
   script:
     - npx encore dev
-    - npm run testFixAndCoverage
+    - npm run test
     - php bin/console cache:clear --env=test --no-debug
   only:
     - pushes
