@@ -50,6 +50,7 @@ class ProposalManager
     public function createProposal(Proposal $proposal)
     {
         $this->entityManager->persist($proposal);
+        $this->entityManager->flush();
         $this->matchingAnalyzer->createMatchingsForProposal($proposal);
     }
     
