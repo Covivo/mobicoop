@@ -92,10 +92,9 @@ Interface which displays carpools available on a territory and allows connection
 
 - first add this to your controllers (where you have written all your routes) :
 
-
-    use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+        use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
     
-
+    
 - & then you can write down in Routes.yaml :
 
     
@@ -121,6 +120,7 @@ If your template.html.twig is in *MobicoopBundle/Resources/views* you should ret
 
 
     cd src/MobicoopBundle
+    
     
 - Build assets files 
 
