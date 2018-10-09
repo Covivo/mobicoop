@@ -15,9 +15,12 @@ install:
   - composer install
   - npm install --global --production windows-build-tools
   - npm install
+  - cd src\MobicoopBundle
+  - npm install
+  - cd ..\..
 
 build_script:
   - npm run compile
 
-test_script: 
-  - vendor\bin\kahlan
+test_script:
+  - vendor\bin\kahlan --spec=src/MobicoopBundle/spec --src=src/mobicoopBundle --cc=true --reporter=verbose

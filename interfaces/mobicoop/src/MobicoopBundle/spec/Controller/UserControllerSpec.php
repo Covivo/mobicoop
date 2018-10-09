@@ -48,14 +48,14 @@ describe('UserController', function () {
             $request = $this->request->create('/', 'GET');
             $response = $this->kernel->handle($request);
             $status = $response->getStatusCode();
-            $crawler = new Crawler($response->getContent(),LOCAL_URL);
+            $crawler = new Crawler($response->getContent(), LOCAL_URL);
             $link = $crawler->selectLink('Users')->link();
             $uri = $link->getUri();
 
             expect($uri)->toEqual(LOCAL_URL . '/users');
             expect($uri)->not->toEqual(LOCAL_URL . '/random');
         });
-        it('Should be able to access /users pages with a client', function(){
+        it('Should be able to access /users pages with a client', function () {
             $realCrawler = $this->client->request('GET', LOCAL_URL . '/users');
             $link = $realCrawler->selectLink('Users')->link();
             $realCrawler = $this->client->click($link);
@@ -66,7 +66,7 @@ describe('UserController', function () {
             expect(trim($h1))->toBe('Coviride Demo application - Users');
         });
         // This test is used for functionnal with a real navigator tests
-        it('Should be able to really access /users pages with a navigator', function(){
+        it('Should be able to really access /users pages with a navigator', function () {
             $realCrawler = $this->panther->request('GET', LOCAL_URL . '/users');
             $link = $realCrawler->selectLink('Users')->link();
             $realCrawler = $this->panther->click($link);
@@ -91,7 +91,7 @@ describe('UserController', function () {
             $request = $this->request->create('/user/create', 'GET');
             $response = $this->kernel->handle($request);
             $status = $response->getStatusCode();
-            $crawler = new Crawler($response->getContent(),LOCAL_URL.'/user/create');
+            $crawler = new Crawler($response->getContent(), LOCAL_URL.'/user/create');
             $form = $crawler->filter('form')->form();
 
             expect($form->has('user_form[givenName]'))->toBe(true);

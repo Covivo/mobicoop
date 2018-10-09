@@ -9,7 +9,7 @@
   "scripts": {
     "start": "bin/console server:run 127.0.0.1:8081",
     "test": "node spec/runtests.js",
-    "testFixAndCoverage": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src &&  php vendor/bin/php-cs-fixer.phar fix --using-cache=false spec && node spec/runtests.js -c",
+    "testFixAndCoverage": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src &&  php vendor/bin/php-cs-fixer.phar fix --using-cache=false spec && node src/MobicoopBundle/spec/runtests.js -c",
     "compile": "encore dev",
     "compileAndWatch": "encore dev-server",
     "compileAndWatchVue": "encore dev-server --hot",
