@@ -73,6 +73,7 @@
           		<td>{{ proposal.criteria.fromDate|date('Y-m-d') }}</td>
           		<td>
           			<a class="button is-link" href="{{ path('user_proposal_matchings',{'id':user.id,'idProposal':proposal.id}) }}"> Matchings</a>
+          			<a class="button is-danger" href="{{ path('user_proposal_delete',{'id':user.id,'idProposal':proposal.id}) }}"> Delete</a>
           		</td>
           	</tr>
       	    {% endfor %}
