@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\Client;
 //use Symfony\Component\
 use Symfony\Component\Panther\PantherTestCaseTrait;
 
-// Use use a panther trait  & add a public class to access protected method outside
+// Use a panther trait  & add a public class to access protected method outside
 class ExtendedPanther {
     use PantherTestCaseTrait;
     static public function createWebServer(){

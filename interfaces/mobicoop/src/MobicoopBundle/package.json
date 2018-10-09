@@ -2,7 +2,7 @@
   "name": "mobicoop",
   "version": "1.3.0",
   "description": "Mobicoop front-end app",
-  "main": "public/index.php",
+  "main": "Resources/public/index.php",
   "directories": {
     "doc": "docs"
   },

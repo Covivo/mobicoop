@@ -285,7 +285,7 @@ extras/documentation
 
 ###> symfony/framework-bundle ###
 /.env
-/public/bundles/
+/Resources/public/bundles/
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
@@ -301,8 +301,8 @@ extras/documentation
 
 #Node.js & compilation for webpack
 node_modules
-public/build/*
-!public/build/gitignore
+Resources/public/build/*
+!Resources/public/build/gitignore
 
 .php_cs.cache
 
