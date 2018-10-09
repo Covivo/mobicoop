@@ -118,14 +118,12 @@ If your template.html.twig is in *MobicoopBundle/Resources/views* you should ret
 
 - Go into your bundle directory
 
-
     cd src/MobicoopBundle
     
     
 - Build assets files 
 
-
-    npm run build
+    npm run compile
     
     
 - And finally push your build into your public's project directory (will be stored in : /public/bundles/mobicoop/) :
