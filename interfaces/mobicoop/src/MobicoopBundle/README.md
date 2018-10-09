@@ -84,7 +84,7 @@ Interface which displays carpools available on a territory and allows connection
 ##### **/config/bundles.php**
 
 
-    Covivo\Bundle\Mobicoop\CovivoMobicoopBundle::class => ['all' => true],
+`Covivo\Bundle\Mobicoop\CovivoMobicoopBundle::class => ['all' => true],`
     
 
 ##### **/config/routes.yaml** 
