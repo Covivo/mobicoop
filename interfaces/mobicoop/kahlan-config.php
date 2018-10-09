@@ -14,7 +14,6 @@ use Symfony\Component\Panther\PantherTestCaseTrait;
 class ExtendedPanther {
     use PantherTestCaseTrait;
     static public function createWebServer(){
-        var_dump('BEFORE BUG');
 
         return self::createPantherClient('127.0.0.1',4242);
 
@@ -24,8 +23,6 @@ class ExtendedPanther {
 Filters::apply($this, 'bootstrap', function($next) {
 
     require __DIR__ . '/vendor/autoload.php';
-
-    var_dump('should passed here');
 
     $root = $this->suite()->root();
 
@@ -38,7 +35,7 @@ Filters::apply($this, 'bootstrap', function($next) {
         $client = new Client($this->kernel);
         // Create webserver for functionnals advanced test
         $this->panther = $panther::createWebServer();
-         $this->client = $client;
+        $this->client = $client;
     });
 
     return $next();
