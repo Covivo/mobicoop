@@ -35,13 +35,15 @@ Class Proposal implements Resource
 {
     CONST PROPOSAL_TYPE_OFFER = 1;
     CONST PROPOSAL_TYPE_REQUEST = 2;
+    CONST PROPOSAL_TYPE_BOTH = 3;
     CONST JOURNEY_TYPE_ONE_WAY = 1;
     CONST JOURNEY_TYPE_OUTWARD = 2;
     CONST JOURNEY_TYPE_RETURN = 3;
     
     const PROPOSAL_TYPE = [
             "offer"=>self::PROPOSAL_TYPE_OFFER,
-            "request"=>self::PROPOSAL_TYPE_REQUEST
+            "request"=>self::PROPOSAL_TYPE_REQUEST,
+            "both"=>self::PROPOSAL_TYPE_BOTH
     ];
     
     const JOURNEY_TYPE = [

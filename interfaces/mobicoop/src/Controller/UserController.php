@@ -209,4 +209,24 @@ class UserController extends AbstractController
                 'hydra' => $proposalManager->getMatchings($proposal)
         ]);
     }
+    
+    /**
+     * Delete a proposal of a user.
+     *
+     * @Route("/user/{id}/proposal/{idProposal}/delete", name="user_proposal_delete", requirements={"id"="\d+","idProposal"="\d+"})
+     *
+     */
+    public function userProposalDelete($id, $idProposal, ProposalManager $proposalManager)
+    {
+        if ($proposalManager->deleteProposal($idProposal)) {
+            return $this->redirectToRoute('user_proposals', ['id'=>$id]);
+        } else {
+            $user = new User($id);
+            return $this->render('proposal/index.html.twig', [
+                    'user' => $user,
+                    'hydra' => $proposalManager->getProposals($user),
+                    'error' => 'An error occured'
+            ]);
+        }
+    }
 }
