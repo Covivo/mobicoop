@@ -92,7 +92,7 @@ Interface which displays carpools available on a territory and allows connection
 
 - first add this to your controllers (where you have written all your routes) :
 
-        use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+`use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;`
     
     
 - & then you can write down in Routes.yaml :
@@ -109,7 +109,7 @@ Interface which displays carpools available on a territory and allows connection
 If your template.html.twig is in *MobicoopBundle/Resources/views* you should return this in your controller :
 
 
-        return $this->render('@Mobicoop/template.html.twig');   
+`return $this->render('@Mobicoop/template.html.twig');` 
 
 
 ##### **Console** 
@@ -118,12 +118,12 @@ If your template.html.twig is in *MobicoopBundle/Resources/views* you should ret
 
 - Go into your bundle directory
 
-    cd src/MobicoopBundle
+`cd src/MobicoopBundle`
     
     
 - Build assets files 
 
-    npm run compile
+`npm run compile`
     
     
 - And finally push your build into your public's project directory (will be stored in : /public/bundles/mobicoop/) :
@@ -131,19 +131,19 @@ If your template.html.twig is in *MobicoopBundle/Resources/views* you should ret
 *In order to add all Bundle resources in the public directory of the project*
 
 
-    bin/console assets:install
+`bin/console assets:install`
     
 
 *If you don't want to make this every time add attribute --symlink*
 
 
-    php app/console assets:install --symlink
+`php app/console assets:install --symlink`
 
 
 *If you get the error "Attempted to load class " Bundle" from namespace "Name\Bundle\Name". Did you forget a "use" statement for another namespace?"*
 
 
-    composer dump-autoload
+`composer dump-autoload`
 
 
 ### **Routing**
@@ -151,7 +151,7 @@ If your template.html.twig is in *MobicoopBundle/Resources/views* you should ret
 If your index.html.twig is in *Your_Bundle/Resources/views*
 
 
-    return $this->render('@NameName/index.html.twig');
+`return $this->render('@NameName/index.html.twig');`
 
 
 ### Tests 🎰
