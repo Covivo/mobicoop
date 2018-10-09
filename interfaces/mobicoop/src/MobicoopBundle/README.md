@@ -1,4 +1,4 @@
-Mobicoop
+Mobicoop Bundle
 =======
 
 ![Logo mobicoop](logo.jpg)
@@ -24,25 +24,36 @@ Interface which displays carpools available on a territory and allows connection
 - Composer =>1.7
 - Node.js => 10
 - xdebug (needed for code-coverage)
-- Google Chrome (for funcitonnals tests)
+- Google Chrome (for functionnals tests)
 
 - for Windows check the [windows requirement](#windows-requirements) part
+- Have at least a Symfony skeleton project
 
 ### Install 🤖
 
+- Move to src of your project
+
+`cd src`
+
 - Clone the repo
 
-`git clone https://gitlab.com/mobicoop/mobicoop`
+`git clone https://gitlab.com/mobicoop/mobicoop` /!\ HAS TO BE DEFINED BECAUSE OF MONOREPO
 
-`cd mobicoop`
+`cd MobicoopBundle`
 
 - Install symfony dependencies & npm dependencies
 `composer install && npm install`
 
--Build assets files 
+- Build assets files 
 `npm run compile`
 
--Download tools for dev 
+- Go back to root
+`cd ../..`
+
+- Install symfony dependencies & npm dependencies again
+`composer install && npm install`
+
+- Download tools for dev 
 `npm run postinstall`
 
 - On unix systems: `chmod 775 bin/*`
@@ -50,17 +61,113 @@ Interface which displays carpools available on a territory and allows connection
 - Edit [.env](.env) file (check [Stuff for devs Section](#stuff-for-devs))
 
 
+### Configuring your bundle ⚙
+
+**Add all of theses things to your Symfony project**
+
+##### **/composer.json of the project**
+
+
+        "autoload": {
+            "psr-4": {
+                [...],
+                "Covivo\\Bundle\\Mobicoop\\":"vendor/covivo/mobicoop"
+            }
+        },
+        "autoload-dev": {
+            "psr-4": {
+                [...],
+                "Covivo\\Bundle\\Mobicoop\\":"vendor/covivo/mobicoop"
+            }
+            
+
+##### **/config/bundles.php**
+
+
+    Covivo\Bundle\Mobicoop\CovivoMobicoopBundle::class => ['all' => true],
+    
+
+##### **/config/routes.yaml** 
+*in order to link annotations of the bundle controllers to the project*
+
+- first add this to your controllers (where you have written all your routes) :
+
+
+    use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+    
+
+- & then you can write down in Routes.yaml :
+
+    
+        app_annotations:
+            # loads routes from the PHP annotations of the controllers found in that directory
+            resource: '../src/MobicoopBundle/Controller/'
+            type:     annotation
+
+
+### **Routing**
+
+If your template.html.twig is in *MobicoopBundle/Resources/views* you should return this in your controller :
+
+
+        return $this->render('@Mobicoop/template.html.twig');   
+
+
+##### **Console** 
+
+*If you want to build css and jss of your bundle follow theses instructions*
+
+- Go into your bundle directory
+
+
+    cd src/MobicoopBundle
+    
+- Build assets files 
+
+
+    npm run build
+    
+    
+- And finally push your build into your public's project directory (will be stored in : /public/bundles/mobicoop/) :
+
+*In order to add all Bundle resources in the public directory of the project*
+
+
+    bin/console assets:install
+    
+
+*If you don't want to make this every time add attribute --symlink*
+
+
+    php app/console assets:install --symlink
+
+
+*If you get the error "Attempted to load class " Bundle" from namespace "Name\Bundle\Name". Did you forget a "use" statement for another namespace?"*
+
+
+    composer dump-autoload
+
+
+### **Routing**
+
+If your index.html.twig is in *Your_Bundle/Resources/views*
+
+
+    return $this->render('@NameName/index.html.twig');
+
 
 ### Tests 🎰
 
 -We use [Kahlan](https://kahlan.github.io/docs/) to create units/functionnals tests, you can launch them easily with:
 -For functionnals tests you can do it via 3 ways, with [kernels](https://api.symfony.com/4.1/Symfony/Component/HttpKernel/Kernel.html) (limited--), with [client](https://api.symfony.com/4.1/Symfony/Component/HttpKernel/Client.html) (limited), with [panther](https://github.com/symfony/panther) for a real browser testing (click,form ..)
 
-`vendor\bin\kahlan --cc=true --reporter=verbose` for cmd/powershell
+`vendor\bin\kahlan --cc=true --reporter=verbose` for cmd/powershell in order to test your project
+
+`vendor/bin/kahlan --spec=src/MobicoopBundle/spec --src=src/mobicoopBundle --cc=true --reporter=verbose` for cmd/powershell/bash in order to test your bundle
 
 Or just:
 
-`npm test` On unix systems
+`npm test` On unix systems (work only when testing the project)
 
 
 ### Start 🚀
@@ -69,7 +176,7 @@ To start the application simply enter :
 
 `npm start`
 
-& just go [http://localhost:8081](http://localhost:8001) 
+& just go [http://localhost:8000](http://localhost:8000) 
 
 
 ### Developpement
