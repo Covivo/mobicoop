@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Entity\UserAddress;
 
@@ -32,6 +33,10 @@ use TypeError;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
+use Mobicoop\Bundle\MobicoopBundle\Entity\Criteria;
+use Mobicoop\Bundle\MobicoopBundle\Entity\Point;
+use Mobicoop\Bundle\MobicoopBundle\Entity\TravelMode;
+use Mobicoop\Bundle\MobicoopBundle\Entity\Matching;
 
 /**
  * Custom deserializer service.
@@ -64,6 +69,12 @@ class Deserializer
                 break;
             case Address::class:
                 return self::deserializeAddress($data);
+                break;
+            case Proposal::class:
+                return self::deserializeProposal($data);
+                break;
+            case Matching::class:
+                return self::deserializeMatching($data);
                 break;
             default:
                 break;
@@ -109,6 +120,96 @@ class Deserializer
             $address->setIri($data["@id"]);
         }
         return $address;
+    }
+    
+    private function deserializeProposal(array $data): ?Proposal
+    {
+        $proposal = new Proposal();
+        $proposal = self::autoSet($proposal, $data);
+        if (isset($data["@id"])) {
+            $proposal->setIri($data["@id"]);
+        }
+        if (isset($data["user"])) {
+            $proposal->setUser(self::deserializeUser($data['user']));
+        }
+        if (isset($data["points"])) {
+            foreach ($data["points"] as $point) {
+                $proposal->addPoint(self::deserializePoint($point));
+            }
+        }
+        if (isset($data["travelModes"])) {
+            foreach ($data["travelModes"] as $travelMode) {
+                $proposal->addTravelMode(self::deserializeTravelMode($travelMode));
+            }
+        }
+        if (isset($data["criteria"])) {
+            $proposal->setCriteria(self::deserializeCriteria($data['criteria']));
+        }        
+        return $proposal;
+    }
+    
+    private function deserializePoint(array $data): ?Point
+    {
+        $point = new Point();
+        $point = self::autoSet($point, $data);
+        if (isset($data["@id"])) {
+            $point->setIri($data["@id"]);
+        }
+        if (isset($data["address"])) {
+            $point->setAddress(self::deserializeAddress($data['address']));
+        }
+        if (isset($data["travelMode"])) {
+            $point->setTravelMode(self::deserializeTravelMode($data['travelMode']));
+        }
+        return $point;
+    }
+    
+    private function deserializeTravelMode(array $data): ?TravelMode
+    {
+        $travelMode = new TravelMode();
+        $travelMode = self::autoSet($travelMode, $data);
+        if (isset($data["@id"])) {
+            $travelMode->setIri($data["@id"]);
+        }
+        return $travelMode;
+    }
+    
+    private function deserializeCriteria(array $data): ?Criteria
+    {
+        $criteria = new Criteria();
+        $criteria = self::autoSet($criteria, $data);
+        if (isset($data["@id"])) {
+            $criteria->setIri($data["@id"]);
+        }
+        return $criteria;
+    }
+    
+    private function deserializeMatching(array $data): ?Matching
+    {
+        $matching = new Matching();
+        $matching = self::autoSet($matching, $data);
+        if (isset($data["@id"])) {
+            $matching->setIri($data["@id"]);
+        }
+        if (isset($data["proposalOffer"])) {
+            $matching->setProposalOffer(self::deserializeProposal($data['proposalOffer']));
+        }
+        if (isset($data["proposalRequest"])) {
+            $matching->setProposalRequest(self::deserializeProposal($data['proposalRequest']));
+        }
+        if (isset($data["pointOfferFrom"])) {
+            $matching->setPointOfferFrom(self::deserializePoint($data['pointOfferFrom']));
+        }
+        if (isset($data["pointOfferTo"])) {
+            $matching->setPointOfferTo(self::deserializePoint($data['pointOfferTo']));
+        }
+        if (isset($data["pointRequestFrom"])) {
+            $matching->setPointRequestFrom(self::deserializePoint($data['pointRequestFrom']));
+        }
+        if (isset($data["criteria"])) {
+            $matching->setCriteria(self::deserializeCriteria($data['criteria']));
+        }
+        return $matching;
     }
     
     private function autoSet($object, $data)

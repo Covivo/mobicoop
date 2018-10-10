@@ -24,8 +24,8 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Resource;
 
 /**
  * A postal address.
@@ -36,34 +36,44 @@ class Address implements Resource
      * @var int The id of this address.
      */
     private $id;
-    
+
     /**
      * @var string|null The iri of this user.
+     *
+     * @Groups({"post","put"})
      */
     private $iri;
-    
+
     /**
      * @var string The street address.
      * @Assert\NotBlank
+     *
+     * @Groups({"post","put"})
      */
     private $streetAddress;
-    
+
     /**
      * @var string|null The postal code of the address.
+     *
+     * @Groups({"post","put"})
      */
     private $postalCode;
-    
+
     /**
      * @var string The locality of the address.
      *
      * @Assert\NotBlank
+     *
+     * @Groups({"post","put"})
      */
     private $addressLocality;
-    
+
     /**
      * @var string The country of the address.
      *
      * @Assert\NotBlank
+     *
+     * @Groups({"post","put"})
      */
     private $addressCountry;
     
@@ -102,7 +112,7 @@ class Address implements Resource
         return $this->iri;
     }
     
-    public function getStreetAddress(): string
+    public function getStreetAddress(): ?string
     {
         return $this->streetAddress;
     }
@@ -112,12 +122,12 @@ class Address implements Resource
         return $this->postalCode;
     }
 
-    public function getAddressLocality(): string
+    public function getAddressLocality(): ?string
     {
         return $this->addressLocality;
     }
 
-    public function getAddressCountry(): string
+    public function getAddressCountry(): ?string
     {
         return $this->addressCountry;
     }

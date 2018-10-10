@@ -117,7 +117,7 @@ class DataProvider
     /**
      * Get collection operation
      *
-     * @param array|null $params An array of parameters
+     * @param array|null    $params         An array of parameters
      *
      * @return Response The response of the operation.
      */
@@ -129,6 +129,34 @@ class DataProvider
             $clientResponse = $this->client->get($this->resource);
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody()));
+            }
+        } catch (TransferException $e) {
+            return new Response($e->getCode());
+        }
+        return new Response();
+    }
+    
+    /**
+     * Get sub collection operation
+     *
+     * @param int           $id             The id of the item
+     * @param string        $subClassName   The classname of the subresource
+     * @param string        $subClassRoute  The class route of the subresource (used for custom routes, if not provided the route will be the subClassName pluralized)
+     * @param array|null    $params         An array of parameters
+     *
+     * @return Response The response of the operation.
+     */
+    public function getSubCollection(int $id, string $subClassName, string $subClassRoute=null, array $params=null): Response
+    {
+        // @todo : send the params to the request in the json body of the request
+        
+        $route = $subClassRoute;
+        if (is_null($route)) $route = self::pluralize((new \ReflectionClass($subClassName))->getShortName());
+        
+        try {
+            $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route);
+            if ($clientResponse->getStatusCode() == 200) {
+                return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody(),$subClassName));
             }
         } catch (TransferException $e) {
             return new Response($e->getCode());
@@ -200,8 +228,11 @@ class DataProvider
         return new Response();
     }
     
-    private function treatHydraCollection($data)
+    private function treatHydraCollection($data,$class=null)
     {
+        // if $class is defined, it's because our request concerns a subresource
+        if (!$class) $class = $this->class;
+        
         // $data comes from a GuzzleHttp request; it's a json hydra collection so when need to parse the json to an array
         $data = json_decode($data, true);
         $hydra = new Hydra();
@@ -235,7 +266,7 @@ class DataProvider
 
             $members = [];
             foreach ($data["hydra:member"] as $key=>$value) {
-                $members[] = $this->deserializer->deserialize($this->class, $value);
+                $members[] = $this->deserializer->deserialize($class, $value);
             }
             $hydra->setMember($members);
         }
@@ -265,10 +296,12 @@ class DataProvider
     {
         return Inflector::pluralize(Inflector::tableize($name));
     }
+    
 }
 
 /**
  * This class permits to remove null values or empty arrays when normalizing.
+ * It also permits to replace object values by their IRI if set.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  *
@@ -279,8 +312,48 @@ class RemoveNullObjectNormalizer extends ObjectNormalizer
     {
         $data = parent::normalize($object, $format, $context);
         
-        return array_filter($data, function ($value) {
-            return (null !== $value) && (!empty($value));
-        });
+        return self::replaceIris(array_filter($data, function ($value) {
+            return (null !== $value) && (!(empty($value) && is_array($value)));
+        }));
+    }
+    
+    /**
+     * This function replaces each value in an array by its IRI value if IRI key exists.
+     * (recursive function)
+     * 
+     * eg:
+     * 
+     * [
+     *      "id"    => 1,
+     *      "user"  => [
+     *          "id"    => 2,
+     *          "name"  => "John",
+     *          "iri"   => "/users/2"
+     *      ]
+     * ]
+     *  
+     *  will be replaced by : 
+
+     * [
+     *      "id"    => 1,
+     *      "user"  => "/users/2"
+     * ]
+     * 
+     */ 
+    private function replaceIris(array $array): array 
+    {
+        $replacedArray = [];
+        foreach ($array as $key=>$value) {
+            if (is_array($value)) {
+                if (isset($value['iri']) && !is_null($value['iri'])) {
+                    $replacedArray[$key] = $value['iri'];
+                } else {
+                    $replacedArray[$key] = self::replaceIris($value);
+                }
+            } else {
+                $replacedArray[$key] = $value;
+            }
+        }
+        return $replacedArray;
     }
 }

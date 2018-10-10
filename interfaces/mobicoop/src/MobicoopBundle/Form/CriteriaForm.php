@@ -25,49 +25,35 @@ namespace Mobicoop\Bundle\MobicoopBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
-//use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Mobicoop\Bundle\MobicoopBundle\Entity\User;
-
+use Mobicoop\Bundle\MobicoopBundle\Entity\Criteria;
 
 /**
- * User form.
+ * Criteria form.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class UserForm extends AbstractType
+class CriteriaForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        ->add('givenName')
-        ->add('familyName')
-        ->add('givenName')
-        ->add('email')
-        ->add('password', PasswordType::class)
-        ->add('gender')
-        ->add('nationality')
-        ->add('birthDate', BirthdayType::class)
-        ->add('telephone')
-        ->add('maxDeviationTime')
-        ->add('maxDeviationDistance')
-        /*->add('userAddresses', CollectionType::class, [
-                'entry_type' => UserAddressCreateForm::class,
-                'allow_add' => true,
-                'by_reference' => false,
-                'error_bubbling' => false,
-        ])*/
-        ->add('submit', SubmitType::class)
+        ->add('frequency',ChoiceType::class, [
+                'choices'  => Criteria::FREQUENCY
+        ])
+        ->add('seats')
+        ->add('fromDate', DateType::class, [
+                'data' => new \DateTime()
+        ])
         ;
     }
-
+    
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => User::class,
+                'data_class' => Criteria::class,
         ));
     }
 }

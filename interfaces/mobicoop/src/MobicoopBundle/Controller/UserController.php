@@ -25,13 +25,22 @@ namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Mobicoop\Bundle\MobicoopBundle\Service\UserManager;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+
+
+use Mobicoop\Bundle\MobicoopBundle\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Entity\UserAddress;
 use Mobicoop\Bundle\MobicoopBundle\Form\UserForm;
+use Mobicoop\Bundle\MobicoopBundle\Service\ProposalManager;
+use Mobicoop\Bundle\MobicoopBundle\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\Entity\Point;
+use Mobicoop\Bundle\MobicoopBundle\Entity\Criteria;
+use Mobicoop\Bundle\MobicoopBundle\Form\ProposalForm;
+
 
 /**
  * Controller class for user related actions.
@@ -139,4 +148,90 @@ class UserController extends AbstractController
             ]);
         }
     }
+
+    /**
+     * Create a proposal for a user.
+     *
+     * @Route("/user/{id}/proposal/create", name="user_proposal_create", requirements={"id"="\d+"})
+     *
+     */
+    public function userProposalCreate($id, ProposalManager $proposalManager, Request $request)
+    {
+        $proposal = new Proposal();
+        $proposal->setUser(new User($id));
+
+        $form = $this->createForm(ProposalForm::class, $proposal);
+        $form->handleRequest($request);
+        $error = false;
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // for now we add the starting end ending points,
+            // in the future we will need to have dynamic fields
+            $proposal->addPoint($proposal->getStart());
+            $proposal->addPoint($proposal->getDestination());
+            if ($proposal = $proposalManager->createProposal($proposal)) {
+                return $this->redirectToRoute('user_proposal_matchings',['id'=>$id,'idProposal'=>$proposal->getId()]);
+            }
+            $error = true;
+        }
+
+        return $this->render('@Mobicoop/proposal/create.html.twig', [
+            'form' => $form->createView(),
+            'error' => $error
+        ]);
+
+    }
+
+    /**
+     * Retrieve all proposals for a user.
+     *
+     * @Route("/user/{id}/proposals", name="user_proposals", requirements={"id"="\d+"})
+     *
+     */
+    public function userProposals($id, ProposalManager $proposalManager)
+    {
+        $user = new User($id);
+        return $this->render('@Mobicoop/proposal/index.html.twig', [
+            'user' => $user,
+            'hydra' => $proposalManager->getProposals($user)
+        ]);
+    }
+
+    /**
+     * Retrieve all matchings for a proposal.
+     *
+     * @Route("/user/{id}/proposal/{idProposal}/matchings", name="user_proposal_matchings", requirements={"id"="\d+","idProposal"="\d+"})
+     *
+     */
+    public function userProposalMatchings($id, $idProposal, ProposalManager $proposalManager)
+    {
+        $user = new User($id);
+        $proposal = $proposalManager->getProposal($idProposal);
+        return $this->render('@Mobicoop/proposal/matchings.html.twig', [
+            'user' => $user,
+            'proposal' => $proposal,
+            'hydra' => $proposalManager->getMatchings($proposal)
+        ]);
+    }
+
+    /**
+     * Delete a proposal of a user.
+     *
+     * @Route("/user/{id}/proposal/{idProposal}/delete", name="user_proposal_delete", requirements={"id"="\d+","idProposal"="\d+"})
+     *
+     */
+    public function userProposalDelete($id, $idProposal, ProposalManager $proposalManager)
+    {
+        if ($proposalManager->deleteProposal($idProposal)) {
+            return $this->redirectToRoute('user_proposals', ['id'=>$id]);
+        } else {
+            $user = new User($id);
+            return $this->render('@Mobicoop/proposal/index.html.twig', [
+                'user' => $user,
+                'hydra' => $proposalManager->getProposals($user),
+                'error' => 'An error occured'
+            ]);
+        }
+    }
+
 }

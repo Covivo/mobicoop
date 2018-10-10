@@ -25,33 +25,32 @@ namespace Mobicoop\Bundle\MobicoopBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Mobicoop\Bundle\MobicoopBundle\Entity\Point;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 /**
- * Create user address form.
+ * Point form.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class UserAddressCreateForm extends AbstractType
+class PointForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        ->add('name')
-        ->add('address', CollectionType::class, [
-                'entry_type' => AddressCreateForm::class,
-                'allow_add' => true,
-                'by_reference' => false,
-                'error_bubbling' => false,
+        ->add('position')
+        ->add('lastPoint', CheckboxType::class, [
+                'required' => false
         ])
+        ->add('address', AddressForm::class)
         ;
     }
     
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-                'data_class' => 'App\Entity\UserAddress',
+                'data_class' => Point::class,
         ));
     }
 }

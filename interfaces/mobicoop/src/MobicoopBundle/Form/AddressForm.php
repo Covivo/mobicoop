@@ -25,13 +25,15 @@ namespace Mobicoop\Bundle\MobicoopBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Mobicoop\Bundle\MobicoopBundle\Entity\Address;
 
 /**
- * Create address form.
+ * Address form.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class AddressCreateForm extends AbstractType
+class AddressForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -44,5 +46,12 @@ class AddressCreateForm extends AbstractType
         ->add('longitude')
         ->add('elevation')
         ;
+    }
+    
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+                'data_class' => Address::class,
+        ));
     }
 }
