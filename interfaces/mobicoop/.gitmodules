@@ -1,0 +1,3 @@
+[submodule "src/MobicoopBundle"]
+	path = src/MobicoopBundle
+	url = https://gitlab.com/mobicoop/MobicoopBundle
