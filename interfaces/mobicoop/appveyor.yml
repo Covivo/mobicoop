@@ -18,7 +18,7 @@ install:
   - cd src\MobicoopBundle
   - npm install
   - cd ..\..
-  -
+  - php bin/console assets:install
 
 build_script:
   - npm run compile

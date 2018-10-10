@@ -63,7 +63,7 @@ describe('UserController', function () {
             // $this->http->takeScreenshot('screen.png'); //I let this here for an exemple 🤪
 
             expect($realCrawler->getUri())->toBe(LOCAL_URL.'/users');
-            expect(trim($h1))->toBe('Coviride Demo application - Users');
+            expect(trim($h1))->toBe('Mobicoop - Users');
         });
         // This test is used for functionnal with a real navigator tests
         it('Should be able to really access /users pages with a navigator', function () {
@@ -74,7 +74,7 @@ describe('UserController', function () {
             $this->panther->takeScreenshot('screen.png'); //I let this here for an exemple 🤪
 
             expect($realCrawler->getUri())->toBe(LOCAL_URL.'/users');
-            expect(trim($h1))->toBe('Coviride Demo application - Users');
+            expect(trim($h1))->toBe('Mobicoop - Users');
         });
     });
     describe('/user', function () {
