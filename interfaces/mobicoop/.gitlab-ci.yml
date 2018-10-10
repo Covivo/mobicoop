@@ -22,7 +22,7 @@ build&Test:
     - cd src/MobicoopBundle
     - npm install
     - cd ../..
-    - bin/console assets:install
+    - php bin/console assets:install
   script:
     - npx encore dev
     - npm run test
