@@ -19,10 +19,6 @@ build&Test:
     - composer install
     - npm install
     - npm run postinstall
-    - cd src/MobicoopBundle
-    - npm install
-    - cd ../..
-    - php bin/console assets:install
   script:
     - npx encore dev
     - npm run test
