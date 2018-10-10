@@ -18,6 +18,7 @@ install:
   - cd src\MobicoopBundle
   - npm install
   - cd ..\..
+  -
 
 build_script:
   - npm run compile
