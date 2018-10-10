@@ -12,6 +12,8 @@ install:
   - cinst python2
   - cinst wget
   - C:\ProgramData\chocolatey\bin\RefreshEnv
+  - git submodule init
+  - git submodule update
   - composer install
   - npm install --global --production windows-build-tools
   - npm install

@@ -79,6 +79,8 @@ build:linux:
   before_script:
     - apt-get -yq update
     - apt-get -yq install chromium-browser
+    - git submodule init
+    - git submodule update
     - composer install
     - npm install
     - npm run postinstall
@@ -89,6 +91,7 @@ build:linux:
       - public
       - node_modules
       - vendor
+      - src/MobicoopBundle
   only:
     - master
 
