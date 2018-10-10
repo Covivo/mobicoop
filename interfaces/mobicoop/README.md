@@ -1,8 +1,4 @@
-﻿   
-
-
-
-Mobicoop
+﻿Mobicoop
 =======
 
 ![Logo mobicoop](logo.jpg)
