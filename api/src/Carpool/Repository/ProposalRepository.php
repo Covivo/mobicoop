@@ -71,6 +71,10 @@ class ProposalRepository extends ServiceEntityRepository
         ->join('startPoint.address', 'startAddress')
         ->join('endPoint.address', 'endAddress');
         
+        // we exclude the user itself
+        $query->andWhere('p.user != :user')
+        ->setParameter('user', $proposal->getUser());
+        
         // we search for the opposite proposal type (offer => requests // request => offers)
         $query->andWhere('p.proposalType = :proposalType')
         ->setParameter('proposalType', ($proposal->getProposalType() == Proposal::PROPOSAL_TYPE_OFFER ? Proposal::PROPOSAL_TYPE_REQUEST : Proposal::PROPOSAL_TYPE_OFFER));

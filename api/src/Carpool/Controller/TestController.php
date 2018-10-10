@@ -102,4 +102,28 @@ class TestController extends AbstractController
         echo "</ul>";
         return new Response();
     }
+    
+    /**
+     * Show points (and reverse) of a proposal.
+     *
+     * @Route("/proposal/{id}/points", name="proposal_points", requirements={"id"="\d+"})
+     *
+     */
+    public function proposalPoints($id, EntityManagerInterface $entityManager)
+    {
+        $proposal = $entityManager->getRepository(Proposal::class)->find($id);
+        echo "Points for proposal #$id";
+        echo "<ul>";
+        foreach ($proposal->getPoints() as $point) {
+            echo "<li>Point #" . $point->getId() . ", position " . $point->getPosition() . "</li>";
+        }
+        echo "</ul>";
+        echo "Reverse points for proposal #$id";
+        echo "<ul>";
+        foreach ($proposal->getReversePoints() as $point) {
+            echo "<li>Point #" . $point->getId() . ", position " . $point->getPosition() . "</li>";
+        }
+        echo "</ul>";
+        return new Response();
+    }
 }

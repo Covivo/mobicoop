@@ -61,6 +61,7 @@ Class Proposal
 {
     CONST PROPOSAL_TYPE_OFFER = 1;
     CONST PROPOSAL_TYPE_REQUEST = 2;
+    CONST PROPOSAL_TYPE_BOTH = 3;
     CONST JOURNEY_TYPE_ONE_WAY = 1;
     CONST JOURNEY_TYPE_OUTWARD = 2;
     CONST JOURNEY_TYPE_RETURN = 3;
@@ -135,7 +136,8 @@ Class Proposal
     /**
      * @var Proposal|null Linked proposal for an offer AND request proposal (= request linked for an offer proposal, offer linked for a request proposal).
      * 
-     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Proposal")
+     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Proposal", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read"})
      * @MaxDepth(1)
      * 
@@ -145,7 +147,8 @@ Class Proposal
     /**
      * @var Proposal|null Linked proposal for a round trip (return or outward journey).
      *
-     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Proposal")
+     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Proposal", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read"})
      * @MaxDepth(1)
      */
@@ -174,12 +177,13 @@ Class Proposal
      * 
      * @Assert\NotBlank
      * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Point", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"read","write"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
     private $points;
-
+    
     /**
      * @var TravelMode[]|null The travel modes accepted if the proposal is a request.
      * 
@@ -218,6 +222,14 @@ Class Proposal
 
     public function __construct()
     {
+        $this->points = new ArrayCollection();
+        $this->travelModes = new ArrayCollection();
+        $this->matchingOffers = new ArrayCollection();
+        $this->matchingRequests = new ArrayCollection();
+    }
+    
+    public function __clone() {
+        // when we clone a Proposal we keep only the basic properties, we re-initialize all the collections
         $this->points = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
         $this->matchingOffers = new ArrayCollection();
@@ -408,8 +420,8 @@ Class Proposal
         }
 
         return $this;
-    }
-
+    }    
+    
     /**
      * @return Collection|TravelMode[]
      */
