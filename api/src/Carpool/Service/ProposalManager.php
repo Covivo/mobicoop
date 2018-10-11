@@ -49,7 +49,7 @@ class ProposalManager
      */
     public function createProposal(Proposal $proposal)
     {
-        // we will have to analyze the proposal to check if there's more work to do than simply persist the Proposal entity
+        // we will have to analyze the proposal to check the work to do (instead of simply persist the Proposal entity)
         // - proposalType : offer ? request ? both ?
         // - journeyType : one-way ? return trip ?
         
@@ -88,7 +88,7 @@ class ProposalManager
             }
         }
         
-        // link between offer outward and request outward
+        // link between offer outward and request outward ?
         if (!is_null($proposalOfferOutward) && !is_null($proposalRequestOutward)) $proposalOfferOutward->setProposalLinked($proposalRequestOutward);
         
         // Journey Type
@@ -155,11 +155,16 @@ class ProposalManager
         if (!is_null($proposalRequestOutward)) $this->entityManager->persist($proposalRequestOutward);
         if (!is_null($proposalRequestReturn)) $this->entityManager->persist($proposalRequestReturn);
         $this->entityManager->flush();
+        
+        // matching analyze 
+        // => should be replaced by path analyzer when it's created
+        // => the analyze would be asked when all paths are analyzed and returned
         if (!is_null($proposalOfferOutward)) $this->matchingAnalyzer->createMatchingsForProposal($proposalOfferOutward);
         if (!is_null($proposalOfferReturn)) $this->matchingAnalyzer->createMatchingsForProposal($proposalOfferReturn);
         if (!is_null($proposalRequestOutward)) $this->matchingAnalyzer->createMatchingsForProposal($proposalRequestOutward);
         if (!is_null($proposalRequestReturn)) $this->matchingAnalyzer->createMatchingsForProposal($proposalRequestReturn);
         
+        // return the proposal (not really necessary, but good practice ?)
         if (!is_null($proposalOfferOutward)) return $proposalOfferOutward;
         if (!is_null($proposalRequestOutward)) return $proposalRequestOutward;
     }
