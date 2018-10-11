@@ -144,7 +144,10 @@ and [contributor covenant](https://www.contributor-covenant.org)
 
 
 ### Licence
-[AGPL-3](https://www.gnu.org/licenses/agpl-3.0)
+Mobicoop software is owned by Mobicoop cooperative. Mobicoop cooperative is opened to any individual, company or public authority who wish to become a shareholder.
+In order to increase the impact of our platform to any sort of clients whatever type of contractual relationship theyu require, Mobicoop software is dual-licensed:
+ - [AGPL-3](https://www.gnu.org/licenses/agpl-3.0)
+ - proprietary software
 
 
 
