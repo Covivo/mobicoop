@@ -1,4 +1,4 @@
-Mobicoop
+﻿Mobicoop
 =======
 
 ![Logo mobicoop](logo.jpg)
@@ -35,6 +35,11 @@ Interface which displays carpools available on a territory and allows connection
 `git clone https://gitlab.com/mobicoop/mobicoop`
 
 `cd mobicoop`
+
+- Install submodule bundle
+
+`git submodule init`
+`git submodule update`
 
 - Install symfony dependencies & npm dependencies
 `composer install && npm install`

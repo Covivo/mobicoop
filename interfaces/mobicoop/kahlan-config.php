@@ -1,5 +1,5 @@
 <?php // kahlan-config.php 
- 
+
 use App\Kernel;
 use Kahlan\Filter\Filters;
 use Symfony\Component\Debug\Debug;
@@ -10,21 +10,22 @@ use Symfony\Component\HttpKernel\Client;
 //use Symfony\Component\
 use Symfony\Component\Panther\PantherTestCaseTrait;
 
-// Use use a panther trait  & add a public class to access protected method outside
+// Use a panther trait  & add a public class to access protected method outside
 class ExtendedPanther {
     use PantherTestCaseTrait;
     static public function createWebServer(){
+
         return self::createPantherClient('127.0.0.1',4242);
+
     }
 }
- 
+
 Filters::apply($this, 'bootstrap', function($next) {
- 
+
     require __DIR__ . '/vendor/autoload.php';
 
-    var_dump('should passed here');
- 
     $root = $this->suite()->root();
+
     $root->beforeAll(function () {
         (new Dotenv())->load(__DIR__.'/.env');
         $env = $_SERVER['APP_ENV'] ?? 'dev';
@@ -35,11 +36,8 @@ Filters::apply($this, 'bootstrap', function($next) {
         // Create webserver for functionnals advanced test
         $this->panther = $panther::createWebServer();
         $this->client = $client;
-        $this->request = Request::createFromGlobals();
-        $this->kernel  = new Kernel('test', false);
-
     });
 
     return $next();
- 
+
 });

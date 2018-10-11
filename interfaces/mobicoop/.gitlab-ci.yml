@@ -12,16 +12,18 @@ stages:
 build&Test:
   stage: test
   variables:
-    APP_ENV: dev # improtant because symfony use it
+    APP_ENV: dev # important because symfony use it
   before_script:
     - apt-get -yq update
     - apt-get -yq install chromium-browser
+    - git submodule init
+    - git submodule update
     - composer install
     - npm install
     - npm run postinstall
   script:
     - npx encore dev
-    - npm run testFixAndCoverage
+    - npm run test
     - php bin/console cache:clear --env=test --no-debug
   only:
     - pushes
@@ -45,10 +47,12 @@ buildTest&Deploy:
   only:
     - dev
   variables:
-    APP_ENV: test # improtant because symfony use it
+    APP_ENV: test # important because symfony use it
   before_script:
     - apt-get -yq update
     - apt-get -yq install chromium-browser
+    - git submodule init
+    - git submodule update
     - composer install --optimize-autoloader
     - npm install
     - npm run postinstall
@@ -61,8 +65,6 @@ buildTest&Deploy:
     - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
     - rsync --group=www-data -hrvz --exclude=/.env --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ test@167.114.236.57:/var/www/test/mobicoop
-  only:
-    - dev
   except:
     refs:
       - tags
@@ -77,6 +79,8 @@ build:linux:
   before_script:
     - apt-get -yq update
     - apt-get -yq install chromium-browser
+    - git submodule init
+    - git submodule update
     - composer install
     - npm install
     - npm run postinstall
@@ -87,6 +91,7 @@ build:linux:
       - public
       - node_modules
       - vendor
+      - src/MobicoopBundle
   only:
     - master
 
@@ -182,7 +187,7 @@ deploy_prod:
     - composer install--optimize-autoloader
     - php bin/console cache:clear --env=prod --no-debug
   variables:
-    APP_ENV: prod # improtant because symfony use it
+    APP_ENV: prod # important because symfony use it
   script:
     - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa
     - chmod 700 id_rsa

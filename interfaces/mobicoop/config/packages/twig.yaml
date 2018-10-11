@@ -4,4 +4,4 @@ twig:
     strict_variables: '%kernel.debug%'
     cache: false
     form_themes:
-        - 'form/bulma.html.twig'
+    - '@Mobicoop/form/bulma.html.twig'
