@@ -30,11 +30,15 @@ use Doctrine\ORM\Events;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Controller\ProposalPost;
 use App\User\Entity\User;
+use App\Carpool\Filter\LocalityFilter;
 
 /**
  * Carpooling : proposal (offer from a driver / request from a passenger).
@@ -56,6 +60,9 @@ use App\User\Entity\User;
  *      },
  *      itemOperations={"get","put","delete"}
  * )
+ * @ApiFilter(LocalityFilter::class, properties={"startLocality","destinationLocality"})
+ * @ApiFilter(NumericFilter::class, properties={"proposalType"})
+ * @ApiFilter(DateFilter::class, properties={"criteria.fromDate"})
  */
 Class Proposal 
 {
@@ -219,7 +226,10 @@ Class Proposal
      * @MaxDepth(1)
      */
     private $criteria;
-
+    
+    private $startLocality;
+    private $destinationLocality;
+    
     public function __construct()
     {
         $this->points = new ArrayCollection();
@@ -522,6 +532,26 @@ Class Proposal
         return $this;
     }
     
+    public function getStartLocality ()
+    {
+        return $this->startLocality;
+    }
+
+    public function setStartLocality ($startLocality)
+    {
+        $this->startLocality = $startLocality;
+    }
+    
+    public function getDestinationLocality ()
+    {
+        return $this->destinationLocality;
+    }
+
+    public function setDestinationLocality ($destinationLocality)
+    {
+        $this->destinationLocality = $destinationLocality;
+    }
+
     // DOCTRINE EVENTS
     
     /**
