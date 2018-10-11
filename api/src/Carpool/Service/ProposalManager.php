@@ -168,5 +168,5 @@ class ProposalManager
         if (!is_null($proposalOfferOutward)) return $proposalOfferOutward;
         if (!is_null($proposalRequestOutward)) return $proposalRequestOutward;
     }
-    
+        
 }
