@@ -26,6 +26,7 @@ namespace App\Carpool\Repository;
 use App\Carpool\Entity\Proposal;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use App\Carpool\Entity\Criteria;
 
 /**
  * @method Proposal|null find($id, $lockMode = null, $lockVersion = null)
@@ -51,7 +52,31 @@ class ProposalRepository extends ServiceEntityRepository
         // LIMITATIONS : 
         // - only punctual journeys
         // - only 2 points : starting point and destination
-        // - only one-way trip
+        
+        switch ($proposal->getCriteria()->getFrequency()) {
+            case Criteria::FREQUENCY_PUNCTUAL : 
+                return $this->findMatchingForPunctualProposal($proposal);
+                break;
+            case Criteria::FREQUENCY_REGULAR : 
+                return $this->findMatchingForRegularProposal($proposal);
+                break;
+        }
+        
+        return null;
+        
+    }
+    
+    /**
+     * Search matchings for a punctual proposal.
+     * 
+     * @param Proposal $proposal
+     * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
+     */
+    private function findMatchingForPunctualProposal(Proposal $proposal)
+    {
+        // LIMITATIONS :
+        // - only 2 points : starting point and destination
+        // - the matching is made only on the locality, for the same day
         
         // we search for the starting and ending point of the proposal
         $startLocality = null;
@@ -79,10 +104,10 @@ class ProposalRepository extends ServiceEntityRepository
         $query->andWhere('p.proposalType = :proposalType')
         ->setParameter('proposalType', ($proposal->getProposalType() == Proposal::PROPOSAL_TYPE_OFFER ? Proposal::PROPOSAL_TYPE_REQUEST : Proposal::PROPOSAL_TYPE_OFFER));
         
-        // for now we limit the search to the same day 
+        // we limit the search to the same day
         $query->andWhere('c.fromDate = :fromDate')
         ->setParameter('fromDate', $proposal->getCriteria()->getFromDate()->format('Y-m-d'));
-       
+        
         // we limit the search to the starting and ending point locality
         $query->andWhere('startPoint.position = 0')
         ->andWhere('endPoint.lastPoint = 1');
@@ -93,7 +118,17 @@ class ProposalRepository extends ServiceEntityRepository
         
         // we launch the request and return the result
         return $query->getQuery()->getResult();
-        
+    }
+    
+    /**
+     * Search matchings for a regular proposal.
+     *
+     * @param Proposal $proposal
+     * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
+     */
+    private function findMatchingForRegularProposal(Proposal $proposal)
+    {
+        return null;
     }
         
 }

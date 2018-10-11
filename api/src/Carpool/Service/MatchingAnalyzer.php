@@ -105,7 +105,7 @@ class MatchingAnalyzer
             
             $matchingCriteria = new Criteria();
             // for now we just clone some properties of the proposal criteria
-            // in the future when the algorythm will be more efficient we will create a criteria based on most matching properties between the proposals
+            // in the future when the algorythm will be more efficient we will create a criteria based on most matching properties between the proposals criteria
             $matchingCriteria->clone($proposal->getCriteria());
             $matching->setCriteria($matchingCriteria);
             $this->entityManager->persist($matching);
