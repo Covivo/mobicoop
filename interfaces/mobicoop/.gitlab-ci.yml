@@ -18,6 +18,8 @@ build&Test:
     - apt-get -yq install chromium-browser
     - git submodule init
     - git submodule update
+    - cd src/MobicoopBundle && git checkout ${CI_COMMIT_REF_SLUG}
+    - cd ../..
     - composer install
     - npm install
     - npm run postinstall
@@ -49,10 +51,13 @@ buildTest&Deploy:
   variables:
     APP_ENV: test # important because symfony use it
   before_script:
+    - echo ${CI_COMMIT_REF_SLUG}
     - apt-get -yq update
     - apt-get -yq install chromium-browser
     - git submodule init
     - git submodule update
+    - cd src/MobicoopBundle && git checkout ${CI_COMMIT_REF_SLUG} && git pull
+    - cd ../..
     - composer install --optimize-autoloader
     - npm install
     - npm run postinstall
@@ -81,6 +86,8 @@ build:linux:
     - apt-get -yq install chromium-browser
     - git submodule init
     - git submodule update
+    - cd src/MobicoopBundle && git checkout master
+    - cd ../..
     - composer install
     - npm install
     - npm run postinstall
