@@ -44,7 +44,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"post"},
+ *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
  * )
  */
