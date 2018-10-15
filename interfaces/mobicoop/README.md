@@ -39,6 +39,7 @@ Interface which displays carpools available on a territory and allows connection
 - Install submodule bundle
 
 `git submodule init`
+
 `git submodule update`
 
 - Install symfony dependencies & npm dependencies
