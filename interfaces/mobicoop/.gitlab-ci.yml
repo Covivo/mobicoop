@@ -14,8 +14,6 @@ build&Test:
   variables:
     APP_ENV: dev # important because symfony use it
   before_script:
-    - apt-get -yq update
-    - apt-get -yq install chromium-browser
     - git submodule init
     - git submodule update
     - cd src/MobicoopBundle && git checkout ${CI_COMMIT_REF_SLUG} && git pull
@@ -51,8 +49,6 @@ buildTest&Deploy:
   variables:
     APP_ENV: test # important because symfony use it
   before_script:
-    - apt-get -yq update
-    - apt-get -yq install chromium-browser
     - git submodule init
     - git submodule update
     - cd src/MobicoopBundle && git checkout ${CI_COMMIT_REF_SLUG} && git pull
@@ -62,7 +58,7 @@ buildTest&Deploy:
     - npm run postinstall
   script:
     - npx encore dev
-    - npm run testFixAndCoverage
+    - npm run testAndCoverage
     - php bin/console cache:clear --env=test --no-debug
     - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
     - chmod 700 id_rsa
@@ -81,8 +77,6 @@ buildTest&Deploy:
 build:linux:
   stage: build
   before_script:
-    - apt-get -yq update
-    - apt-get -yq install chromium-browser
     - git submodule init
     - git submodule update
     - cd src/MobicoopBundle && git checkout ${CI_COMMIT_REF_SLUG} && git pull
@@ -103,11 +97,8 @@ build:linux:
 
 test:linux:
   stage: test
-  before_script:
-    - apt-get -yq update
-    - apt-get -yq install chromium-browser
   script:
-    - npm run testFixAndCoverage
+    - npm run testAndCoverage
   dependencies:
     - build:linux
   only:
@@ -188,8 +179,6 @@ pages:
 deploy_prod:
   stage: deploy
   before_script: # This if require to send the prod type no dev, since it creates errors
-    - apt-get -yq update
-    - apt-get -yq install chromium-browser
     - composer install--optimize-autoloader
     - php bin/console cache:clear --env=prod --no-debug
   variables:
