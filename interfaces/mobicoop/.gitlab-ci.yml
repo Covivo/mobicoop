@@ -1,4 +1,4 @@
-image: misterio92/ci-php-node
+image: mobicoop/php-node-chromium
 
 stages:
   - build
