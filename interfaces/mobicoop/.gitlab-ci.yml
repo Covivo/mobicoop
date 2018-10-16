@@ -1,0 +1,197 @@
+image: mobicoop/php-node-chromium
+
+stages:
+  - build
+  - test
+  - deploy
+
+###############################################################################################
+############# Everything under this is execute for all push (branch) ##########################
+###############################################################################################
+
+build&Test:
+  stage: test
+  variables:
+    APP_ENV: dev # important because symfony use it
+  before_script:
+    - git submodule init
+    - git submodule update
+    - cd src/MobicoopBundle && git checkout ${CI_COMMIT_REF_SLUG} && git pull
+    - cd ../..
+    - composer install
+    - npm install
+    - npm run postinstall
+  script:
+    - npx encore dev
+    - npm run test
+    - php bin/console cache:clear --env=test --no-debug
+  only:
+    - pushes
+  except:
+    refs:
+      - tags
+      - dev
+      - master
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /skip/
+
+###############################################################################################
+############# Everything under this is execute only for Test (dev) ############################
+###############################################################################################
+
+buildTest&Deploy:
+  stage: deploy
+  environment:
+    name: test
+    url: http://test.mobicoop.io
+  only:
+    - dev
+  variables:
+    APP_ENV: test # important because symfony use it
+  before_script:
+    - git submodule init
+    - git submodule update
+    - cd src/MobicoopBundle && git checkout ${CI_COMMIT_REF_SLUG} && git pull
+    - cd ../..
+    - composer install --optimize-autoloader
+    - npm install
+    - npm run postinstall
+  script:
+    - npx encore dev
+    - npm run testAndCoverage
+    - php bin/console cache:clear --env=test --no-debug
+    - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
+    - chmod 700 id_rsa
+    - mv id_rsa ${HOME}/.ssh
+    - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
+    - rsync --group=www-data -hrvz --exclude=/.env --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ test@167.114.236.57:/var/www/test/mobicoop
+  except:
+    refs:
+      - tags
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /skip/
+
+###############################################################################################
+############# Everything under this is execute only for production (MASTER) ###################
+###############################################################################################
+build:linux:
+  stage: build
+  before_script:
+    - git submodule init
+    - git submodule update
+    - cd src/MobicoopBundle && git checkout ${CI_COMMIT_REF_SLUG} && git pull
+    - cd ../..
+    - composer install
+    - npm install
+    - npm run postinstall
+  script:
+    - npx encore dev
+  artifacts:
+    paths:
+      - public
+      - node_modules
+      - vendor
+      - src/MobicoopBundle
+  only:
+    - master
+
+test:linux:
+  stage: test
+  script:
+    - npm run testAndCoverage
+  dependencies:
+    - build:linux
+  only:
+    - master
+
+code_quality:
+  stage: build
+  image: docker:stable
+  variables:
+    DOCKER_DRIVER: overlay2
+  allow_failure: true
+  services:
+    - docker:stable-dind
+  script:
+    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+    - docker run
+        --env SOURCE_CODE="$PWD"
+        --volume "$PWD":/code
+        --volume /var/run/docker.sock:/var/run/docker.sock
+        "registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION" /code
+  artifacts:
+    paths: [gl-code-quality-report.json]
+  only:
+    - master
+
+sast:
+  stage: test
+  image: docker:stable
+  variables:
+    DOCKER_DRIVER: overlay2
+  allow_failure: true
+  services:
+    - docker:stable-dind
+  script:
+    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+    - docker run
+        --env SAST_CONFIDENCE_LEVEL="${SAST_CONFIDENCE_LEVEL:-3}"
+        --volume "$PWD:/code"
+        --volume /var/run/docker.sock:/var/run/docker.sock
+        "registry.gitlab.com/gitlab-org/security-products/sast:$SP_VERSION" /app/bin/run /code
+  artifacts:
+    paths: [gl-sast-report.json]
+  only:
+    - master
+
+dependency_scanning:
+  image: docker:stable
+  variables:
+    DOCKER_DRIVER: overlay2
+  allow_failure: true
+  services:
+    - docker:stable-dind
+  script:
+    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+    - docker run
+        --env DEP_SCAN_DISABLE_REMOTE_CHECKS="${DEP_SCAN_DISABLE_REMOTE_CHECKS:-false}"
+        --volume "$PWD:/code"
+        --volume /var/run/docker.sock:/var/run/docker.sock
+        "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:$SP_VERSION" /code
+  artifacts:
+    paths: [gl-dependency-scanning-report.json]
+  only:
+    - master
+
+pages:
+  stage: deploy
+  script:
+    - npm run generateDoc
+    - echo 'Deploying the doc...'
+  dependencies:
+    - build:linux
+  artifacts:
+    paths:
+    - public
+  only:
+    - master
+
+deploy_prod:
+  stage: deploy
+  before_script: # This if require to send the prod type no dev, since it creates errors
+    - composer install--optimize-autoloader
+    - php bin/console cache:clear --env=prod --no-debug
+  variables:
+    APP_ENV: prod # important because symfony use it
+  script:
+    - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa
+    - chmod 700 id_rsa
+    - mv id_rsa ${HOME}/.ssh
+    - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
+    - rsync --exclude=/.env -hrvz --group=www-data --delete -e 'ssh -o StrictHostKeyChecking=no' ./ prod@167.114.236.57:/var/www/prod/mobicoop
+  environment:
+    name: prod
+    url: http://mobicoop.io
+  when: manual
+  only:
+    - master

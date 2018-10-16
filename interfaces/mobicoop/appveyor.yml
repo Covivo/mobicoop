@@ -1,0 +1,25 @@
+os: Visual Studio 2017
+environment:
+  matrix:
+    - nodejs_version: 10.10
+      platform: x64
+cache:
+  - '%APPDATA%\npm-cache'
+install:
+  - cinst php
+  - cinst composer
+  - cinst nodejs.install
+  - cinst python2
+  - cinst wget
+  - C:\ProgramData\chocolatey\bin\RefreshEnv
+  - git submodule init
+  - git submodule update
+  - composer install
+  - npm install --global --production windows-build-tools
+  - npm install
+
+build_script:
+  - npm run compile
+
+test_script:
+  - vendor\bin\kahlan --spec=src/MobicoopBundle/spec --src=src/mobicoopBundle --cc=true --reporter=verbose
