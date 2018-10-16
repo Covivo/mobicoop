@@ -1,8 +1,7 @@
-Mobicoop
+﻿Mobicoop
 =======
 
 ![Logo mobicoop](logo.jpg)
-
 
 <p align="center">
   <a href="https://www.gnu.org/licenses/agpl-3.0" ><img alt="License: AGPL v3" src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg"/></a>
@@ -25,6 +24,7 @@ Interface which displays carpools available on a territory and allows connection
 - Composer =>1.7
 - Node.js => 10
 - xdebug (needed for code-coverage)
+- Google Chrome (for funcitonnals tests)
 
 - for Windows check the [windows requirement](#windows-requirements) part
 
@@ -35,6 +35,12 @@ Interface which displays carpools available on a territory and allows connection
 `git clone https://gitlab.com/mobicoop/mobicoop`
 
 `cd mobicoop`
+
+- Install submodule bundle
+
+`git submodule init`
+
+`git submodule update`
 
 - Install symfony dependencies & npm dependencies
 `composer install && npm install`
@@ -51,11 +57,10 @@ Interface which displays carpools available on a territory and allows connection
 
 
 
-
-
 ### Tests 🎰
 
-We use [Kahlan](https://kahlan.github.io/docs/) to create unit/functionnals tests, you cna launch them easily with:
+-We use [Kahlan](https://kahlan.github.io/docs/) to create units/functionnals tests, you can launch them easily with:
+-For functionnals tests you can do it via 3 ways, with [kernels](https://api.symfony.com/4.1/Symfony/Component/HttpKernel/Kernel.html) (limited--), with [client](https://api.symfony.com/4.1/Symfony/Component/HttpKernel/Client.html) (limited), with [panther](https://github.com/symfony/panther) for a real browser testing (click,form ..)
 
 `vendor\bin\kahlan --cc=true --reporter=verbose` for cmd/powershell
 
@@ -103,6 +108,9 @@ We use buefy which is a vue adaptation of bulma as a front-end scss framework, y
 - Change any default [bulma variables](https://bulma.io/documentation/customize/variables/) in [variable.scss](assets/css/_variables.scss) such as [mobile variables](https://bulma.io/documentation/overview/responsiveness/#variables)
 - Use bulma variables inside vue-js components as in the [parrot sample](assets/js/components/Parrot.vue)
 
+#### End2End (functionnals tests)
+for 
+
 
 #### Mapbox
 
@@ -137,7 +145,10 @@ and [contributor covenant](https://www.contributor-covenant.org)
 
 
 ### Licence
-[AGPL-3](https://www.gnu.org/licenses/agpl-3.0)
+Mobicoop software is owned by Mobicoop cooperative. Mobicoop cooperative is opened to any individual, company or public authority who wish to become a shareholder.
+In order to increase the impact of our platform to any sort of clients whatever type of contractual relationship theyu require, Mobicoop software is dual-licensed:
+ - [AGPL-3](https://www.gnu.org/licenses/agpl-3.0)
+ - proprietary software
 
 
 

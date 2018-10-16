@@ -1,4 +1,4 @@
-image: misterio92/ci-php-node
+image: mobicoop/php-node-chromium
 
 stages:
   - build
@@ -12,22 +12,28 @@ stages:
 build&Test:
   stage: test
   variables:
-    APP_ENV: dev # improtant because symfony use it
+    APP_ENV: dev # important because symfony use it
   before_script:
+    - git submodule init
+    - git submodule update
+    - cd src/MobicoopBundle && git checkout ${CI_COMMIT_REF_SLUG} && git pull
+    - cd ../..
     - composer install
     - npm install
     - npm run postinstall
   script:
     - npx encore dev
-    - npm run testFixAndCoverage
+    - npm run test
     - php bin/console cache:clear --env=test --no-debug
   only:
     - pushes
   except:
-    - tags
-    - dev
-    - master
-    - $CI_COMMIT_MESSAGE =~ /skip/
+    refs:
+      - tags
+      - dev
+      - master
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /skip/
 
 ###############################################################################################
 ############# Everything under this is execute only for Test (dev) ############################
@@ -41,25 +47,29 @@ buildTest&Deploy:
   only:
     - dev
   variables:
-    APP_ENV: test # improtant because symfony use it
+    APP_ENV: test # important because symfony use it
   before_script:
+    - git submodule init
+    - git submodule update
+    - cd src/MobicoopBundle && git checkout ${CI_COMMIT_REF_SLUG} && git pull
+    - cd ../..
     - composer install --optimize-autoloader
     - npm install
     - npm run postinstall
   script:
     - npx encore dev
-    - npm run testFixAndCoverage
+    - npm run testAndCoverage
     - php bin/console cache:clear --env=test --no-debug
     - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
     - chmod 700 id_rsa
     - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
     - rsync --group=www-data -hrvz --exclude=/.env --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ test@167.114.236.57:/var/www/test/mobicoop
-  only:
-    - dev
   except:
-    - tags
-    - $CI_COMMIT_MESSAGE =~ /^v(\d+\.)?(\d+\.)?(\*|\d+)$/
+    refs:
+      - tags
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /skip/
 
 ###############################################################################################
 ############# Everything under this is execute only for production (MASTER) ###################
@@ -67,6 +77,10 @@ buildTest&Deploy:
 build:linux:
   stage: build
   before_script:
+    - git submodule init
+    - git submodule update
+    - cd src/MobicoopBundle && git checkout ${CI_COMMIT_REF_SLUG} && git pull
+    - cd ../..
     - composer install
     - npm install
     - npm run postinstall
@@ -77,13 +91,14 @@ build:linux:
       - public
       - node_modules
       - vendor
+      - src/MobicoopBundle
   only:
     - master
 
 test:linux:
   stage: test
   script:
-    - npm run testFixAndCoverage
+    - npm run testAndCoverage
   dependencies:
     - build:linux
   only:
@@ -167,7 +182,7 @@ deploy_prod:
     - composer install--optimize-autoloader
     - php bin/console cache:clear --env=prod --no-debug
   variables:
-    APP_ENV: prod # improtant because symfony use it
+    APP_ENV: prod # important because symfony use it
   script:
     - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa
     - chmod 700 id_rsa

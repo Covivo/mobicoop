@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-        <link rel="stylesheet" href="{{ asset('build/app.css') }}">
+        <link rel="stylesheet" href="{{ asset('/build/mobicoop.css') }}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.48.0/mapbox-gl.js'></script>
         <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.48.0/mapbox-gl.css' rel='stylesheet' />
@@ -26,7 +26,7 @@
             <div id="navMenu" class="navbar-menu">
                 <div class="navbar-end">
                     <a href="/" class="navbar-item"><i class="fas fa-home"></i></a>
-                    <a href="/users" class="navbar-item"><i class="fas fa-users"></i></a>
+                    <a href="{{path('users')}}" class="navbar-item" name='Access users pages'>Users</a>
                 </div>
             </div>
             </div>
@@ -34,7 +34,7 @@
         <div id="app">
           {% block body %}{% endblock %}
         </div>
-        <script src="{{ asset('build/app.js') }}"></script>
+        <script src="{{ asset('/build/mobicoop.js') }}"></script>
         {% block javascripts %}{% endblock %}
     </body>
     <footer class="footer">

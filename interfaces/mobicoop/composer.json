@@ -27,14 +27,17 @@
         "symfony/twig-bundle": "*",
         "symfony/validator": "*",
         "symfony/web-link": "*",
-        "symfony/yaml": "*"
+        "symfony/yaml": "*",
+        "wikimedia/composer-merge-plugin": "^1.4"
     },
     "require-dev": {
         "elephantly/kahlan-bundle": "^0.9.8",
         "kahlan/kahlan": "^4.0",
         "symfony/browser-kit": "*",
+        "symfony/css-selector": "*",
         "symfony/debug-pack": "*",
         "symfony/maker-bundle": "^1.0",
+        "symfony/panther": "^0.2.0",
         "symfony/profiler-pack": "*",
         "symfony/test-pack": "*",
         "symfony/web-server-bundle": "*"
@@ -47,12 +50,14 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "App\\": "src/",
+            "Mobicoop\\Bundle\\MobicoopBundle\\": "src/MobicoopBundle"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\Tests\\": "tests/"
+            "App\\Tests\\": "tests/",
+            "Mobicoop\\Bundle\\MobicoopBundle\\": "src/MobicoopBundle"
         }
     },
     "replace": {
@@ -82,6 +87,18 @@
         "symfony": {
             "allow-contrib": false,
             "require": "4.1.*"
+        },
+        "merge-plugin": {
+            "include": [
+                "src/mobicoop/composer.json"
+            ],
+            "recurse": true,
+            "replace": false,
+            "ignore-duplicates": true,
+            "merge-dev": true,
+            "merge-extra": false,
+            "merge-extra-deep": false,
+            "merge-scripts": true
         }
     }
 }
