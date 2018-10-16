@@ -15,7 +15,8 @@
     "compileAndWatch": "encore dev-server",
     "compileAndWatchVue": "encore dev-server --hot",
     "generateDoc": "php vendor/bin/phpDocumentor.phar -d src -t public/build/doc --title Coviride",
-    "postinstall": "wget http://www.phpdoc.org/phpDocumentor.phar -P vendor/bin && wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O vendor/bin/php-cs-fixer.phar && npm run compile"
+    "downloadTools": "wget http://www.phpdoc.org/phpDocumentor.phar -P vendor/bin && wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O vendor/bin/php-cs-fixer.phar",
+    "postinstall": "composer install && npm run compile"
   },
   "repository": {
     "type": "git",

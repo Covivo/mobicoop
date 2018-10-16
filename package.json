@@ -1,0 +1,35 @@
+{
+  "name": "mobicoop",
+  "version": "1.0.0",
+  "description": "API, Front & admin mobicoop carpool app",
+  "main": "package.json",
+  "scripts": {
+    "install": "git submodule init && git submodule update && npm run install-api && npm run install-admin && npm run install-mobicoop",
+    "install-api": "cd api && npm i",
+    "install-admin": "cd interfaces/admin && npm i",
+    "install-mobicoop": "cd interfaces/mobicoop && npm i",
+    "postinstall": "wget http://www.phpdoc.org/phpDocumentor.phar -P bin && wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O bin/php-cs-fixer.phar",
+    "test": "npm run test-api && npm run test-mobicoop",
+    "test-api": "cd api && npm run test",
+    "test-admin": "cd interfaces/admin && npm run test",
+    "test-mobicoop": "cd interfaces/mobicoop && npm run test",
+    "start" : "npm-run-all --parallel compileAndWatch start-api start-admin start-mobicoop",
+    "start-api": "cd api && npm start",
+    "start-admin": "cd interfaces/admin && npm start",
+    "start-mobicoop": "cd interfaces/mobicoop && npm start",
+    "compileAndWatch": "cd interfaces/mobicoop && npm run compileAndWatch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/mobicoop/mobicoop.git"
+  },
+  "author": "MatthD",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://gitlab.com/mobicoop/mobicoop/issues"
+  },
+  "homepage": "https://gitlab.com/mobicoop/mobicoop#README",
+  "dependencies": {
+    "npm-run-all": "^4.1.3"
+  }
+}

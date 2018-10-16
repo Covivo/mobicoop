@@ -1,0 +1,4 @@
+[submodule "interfaces/mobicoop/src/MobicoopBundle"]
+	path = interfaces/mobicoop/src/MobicoopBundle
+	url = https://gitlab.com/mobicoop/MobicoopBundle
+	branch = master
