@@ -15,6 +15,7 @@
         "symfony/yaml": "*"
     },
     "require-dev": {
+        "symfony/maker-bundle": "^1.7",
         "symfony/web-server-bundle": "*"
     },
     "config": {
