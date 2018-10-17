@@ -24,7 +24,6 @@ try{
   let commitMsg = fs.readFileSync(commitMsgPath).toString();
   bundleGit
   .status(function(err,status){
-    console.log(err,status)
     // if there is an error while status we stop here
     if(err){
       console.error(kuler(error,'red'));
@@ -35,17 +34,18 @@ try{
       console.error(kuler('cannot status bundle properties','red'));
       process.exit(1);
     }
-    if(!status.created.length || !status.deleted.length 
-      || !status.modified.length || !status.not_added.length){
+    if(!status.created.length && !status.deleted.length 
+      && !status.modified.length && !status.not_added.length){
       console.log(kuler('Nothing to add/commit in the bundle','yellow'));
       return;
     }
     // Ok if we are here we need to add then commit into bundle
     bundleGit
-      .add('./*')
-      .commit(commitMsg);
-    console.log('Commited files into bundle too','green')
-    process.exit(1);
+      .add('.')
+      .commit(commitMsg, function(err, result){
+        console.log(err,result)
+        console.log(kuler('Commited files into bundle too 🚀','green'))
+      });
   })
 }catch(error){
   console.error(kuler('Cannot read commit_msg file','red'));
