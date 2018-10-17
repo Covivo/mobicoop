@@ -21,7 +21,8 @@
   },
   "config": {
     "ghooks": {
-      "commit-msg": "node check-git-integrity.js $2",
+      "pre-commit": "node check-git-integrity.js php bin/php-cs-fixer.phar fix --using-cache=false api/src &&  php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src && php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src/MobicoopBundle/spec",
+      "commit-msg": "node commit-hooks.js $2",
       "pre-push": "npm test"
     }
   },
@@ -37,6 +38,7 @@
   "homepage": "https://gitlab.com/mobicoop/mobicoop#README",
   "dependencies": {
     "commander": "^2.19.0",
+    "git-command-line": "^0.1.5",
     "git-repo-info": "^2.0.0",
     "kuler": "^1.0.1",
     "npm-run-all": "^4.1.3"
