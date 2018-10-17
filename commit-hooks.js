@@ -23,7 +23,8 @@ let commitMsgPath = path.resolve(__dirname,program.args[0]);
 try{
   let commitMsg = fs.readFileSync(commitMsgPath).toString();
   bundleGit
-    .status(function(err,status){
+  .status(function(err,status){
+    console.log(error,status)
     // if there is an error while status we stop here
     if(err){
       console.error(kuler(error,'red'));
@@ -44,6 +45,7 @@ try{
       .add('./*')
       .commit(commitMsg);
     console.log('Commited files into bundle too','green')
+    process.exit(1);
   })
 }catch(error){
   console.error(kuler('Cannot read commit_msg file','red'));
