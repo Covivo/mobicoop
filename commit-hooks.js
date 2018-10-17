@@ -25,7 +25,6 @@ try{
   bundleGit
     .status(function(err,status){
     // if there is an error while status we stop here
-    console.log(kuler(err,status))
     if(err){
       console.error(kuler(error,'red'));
       process.exit(1);
