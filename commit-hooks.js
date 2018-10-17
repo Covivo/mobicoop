@@ -24,7 +24,7 @@ try{
   let commitMsg = fs.readFileSync(commitMsgPath).toString();
   bundleGit
   .status(function(err,status){
-    console.log(error,status)
+    console.log(err,status)
     // if there is an error while status we stop here
     if(err){
       console.error(kuler(error,'red'));
