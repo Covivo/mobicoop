@@ -19,3 +19,5 @@ if(infoRoot.branch !== infoMobicoopBundle.branch){
 }
 console.log(kuler('Root & bundle are ont the same branch', 'green'));
 console.log(info.branch);
+
+process.exit(1);

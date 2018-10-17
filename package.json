@@ -21,8 +21,7 @@
   },
   "config": {
     "ghooks": {
-      "pre-commit": "node check-git-integrity.js php bin/php-cs-fixer.phar fix --using-cache=false api/src &&  php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src && php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/spec",
-      "commit_msg": "node check-git-integrity.js $2",
+      "commit-msg": "node check-git-integrity.js $2",
       "pre-push": "npm test"
     }
   },
