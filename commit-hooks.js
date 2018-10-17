@@ -6,9 +6,7 @@ const path = require('path');
 const kuler = require('kuler');
 const cp = require('child_process');
 const bundlePath = path.resolve(__dirname, 'interfaces/mobicoop/src/MobicoopBundle');
-const bundleGit
-   add('.')= re
-   .commit()quire('simple-git')(bundlePath);
+const bundleGit = require('simple-git')(bundlePath);
 
 // Get the commit_msg path ($2)
 program
@@ -25,15 +23,15 @@ let commitMsgPath = path.resolve(__dirname,program.args[0]);
 try{
   let commitMsg = fs.readFileSync(commitMsgPath).toString();
   bundleGit
-    .add('.')st
-    .commit()atus(function(err,status){
+    .status(function(err,status){
     // if there is an error while status we stop here
+    console.log(kuler(err,status))
     if(err){
       console.error(kuler(error,'red'));
       process.exit(1);
     }
-    if(!status.hasOwnproperty('created') || !status.hasOwnproperty('deleted') 
-      || !status.hasOwnproperty('modified') || !status.hasOwnproperty('not_added')){
+    if(!status.hasOwnProperty('created') || !status.hasOwnProperty('deleted') 
+      || !status.hasOwnProperty('modified') || !status.hasOwnProperty('not_added')){
       console.error(kuler('cannot status bundle properties','red'));
       process.exit(1);
     }
@@ -44,7 +42,7 @@ try{
     }
     // Ok if we are here we need to add then commit into bundle
     bundleGit
-      .add('.')
+      .add('./*')
       .commit(commitMsg);
     console.log('Commited files into bundle too','green')
   })
