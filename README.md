@@ -14,6 +14,12 @@ Mobicoop
 
 Carpools apps available on a territory and allows connection between carpoolers making the same trip daily or punctually.
 
+For more informations, check their readme:
+
+- [Api](/api)
+- [Admin](/interfaces/admin)
+- [Mobicoop](/interfaces/mobicoop)
+
 ### Requirements 💻
 
 - PHP: =>7.1
@@ -36,18 +42,18 @@ Carpools apps available on a territory and allows connection between carpoolers 
 
 `npm install` will install api vendor, mobicoop vendor+node_modules+build assets, admin node_modules, download tools binaries
 
-- On unix systems: `chmod 775 bin/*`
+- Sometimes you will ne on unix systems: `chmod 775 bin/*`
 
-- Edit [.env](.env) file (check [Stuff for devs Section](#stuff-for-devs))
+- Edit [.env api](api/.env.dist) [.env mobicoop](interfaces/mobicoop/.env.dist) files (*do not edit the dist file*)
 
 
 
 ### Tests 🎰
 
+`npm test` will test the three apps
+
 -We use [Kahlan](https://kahlan.github.io/docs/) to create units/functionnals tests, you can launch them easily with:
 -For functionnals tests you can do it via 3 ways, with [kernels](https://api.symfony.com/4.1/Symfony/Component/HttpKernel/Kernel.html) (limited--), with [client](https://api.symfony.com/4.1/Symfony/Component/HttpKernel/Client.html) (limited), with [panther](https://github.com/symfony/panther) for a real browser testing (click,form ..)
-
-`npm test` will test the three apps
 
 
 ### Start 🚀
@@ -66,7 +72,7 @@ To start the application simply enter :
 To contribute to the mobicoop application, please do the following:
 
 1. Create a branch by feature or fork the repo if you are not in dev team
-2. Start the dev tools (necesary to watch js/css/sass):
+2. [Start](#start) the 3 apps  (necesary to watch js/css/sass):
   `npm run compileAndWatch`
 3. Add some Unit Tests and/or functionnals test and check if build passed
 4. Create a pull request & set reviewver before merge

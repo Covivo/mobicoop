@@ -30,41 +30,20 @@ Interface which displays carpools available on a territory and allows connection
 
 ### Install 🤖
 
-- Clone the repo
+`npm install` will do the job
 
-`git clone https://gitlab.com/mobicoop/mobicoop`
-
-`cd mobicoop`
-
-- Install submodule bundle
-
-`git submodule init`
-
-`git submodule update`
-
-- Install symfony dependencies & npm dependencies
-`composer install && npm install`
-
--Build assets files 
+- if you need to compile assets:
 `npm run compile`
-
--Download tools for dev 
-`npm run postinstall`
-
-- On unix systems: `chmod 775 bin/*`
 
 - Edit [.env](.env) file (check [Stuff for devs Section](#stuff-for-devs))
 
+Mobicoop is using gitsubmodule for his main source-code [bundle](http://gitlab.com/mobicoop/MobicoopBundle)
 
 
 ### Tests 🎰
 
 -We use [Kahlan](https://kahlan.github.io/docs/) to create units/functionnals tests, you can launch them easily with:
 -For functionnals tests you can do it via 3 ways, with [kernels](https://api.symfony.com/4.1/Symfony/Component/HttpKernel/Kernel.html) (limited--), with [client](https://api.symfony.com/4.1/Symfony/Component/HttpKernel/Client.html) (limited), with [panther](https://github.com/symfony/panther) for a real browser testing (click,form ..)
-
-`vendor\bin\kahlan --cc=true --reporter=verbose` for cmd/powershell
-
-Or just:
 
 `npm test` On unix systems
 
@@ -75,20 +54,7 @@ To start the application simply enter :
 
 `npm start`
 
-& just go [http://localhost:8081](http://localhost:8001) 
-
-
-### Developpement
-
-To contribute to the mobicoop application, please do the following:
-
-1. Create a branch by feature or fork the repo if you are not in dev team
-2. Start the dev tools (necesary to watch js/css/sass):
-	`npm run compileAndWatch`
-3. Add some Unit Tests and/or functionnals test and check if build passed
-4. Create a pull request & set reviewver before merge
-
-** In developpement mode we use .env file, but not in production following [symfony spec](https://symfony.com/doc/current/deployment.html#common-post-deployment-tasks)
+& just go [http://localhost:8081](http://localhost:8081) 
 
 #### Javascript/Vue-js
 
@@ -115,19 +81,6 @@ for
 #### Mapbox
 
 We are using [Mapbox-glue](https://www.npmjs.com/package/mapbox-gl-vue#setup) for route informations & calcs, please check [mapbox-gl api](https://www.mapbox.com/mapbox-gl-js/api/)
-
-
-### Documentation
-
-A developer doc is available [here](https://mobicoop.gitlab.io/mobicoop/build/doc) (it is generated automatically after each production release), in order to generate the doc just do:
-
-`npm run generateDoc`
-
-
-### Database
-
-You will find a documentation about the database [here](https://mobicoop.gitlab.io/mobicoop/database/)
-
 
 
 ### Contribute Guideline 📖📚

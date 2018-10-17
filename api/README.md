@@ -2,8 +2,6 @@
 
 ![Logo Mobicoop](logo.png)
 
-
-
 <p align="center">
   <a href="https://www.gnu.org/licenses/agpl-3.0" ><img alt="License: AGPL v3" src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg"/></a>
   <a href="https://gitlab.com/mobicoop/mobicoop-api/-/jobs"><img alt="Build Status" src="https://gitlab.com/mobicoop/mobicoop-api/badges/master/build.svg"></a>
@@ -25,29 +23,14 @@ Simple API based on [api-plateform](https://api-platform.com), which is a symfon
 
 - for Windows check the [windows requirement](#windows-requirements) part
 
-- MariaDB Databses with access user connection with an [already existing bu empty](https://dev.mysql.com/doc/refman/8.0/en/creating-database.html) database for api
+- MariaDB Database with access user connection with an [already existing bu empty](https://dev.mysql.com/doc/refman/8.0/en/creating-database.html) database for api
 
 ### Install
 
-- Clone the repo
-
-`git clone https://gitlab.com/mobicoop/mobicoop-api`
-
-`cd mobicoop-api`
-
-- Install symfony dependencies: `composer install`
-
-- Download dev requirements `npm run postinstall`
-
-- On unix systems: `chmod 775 bin/*`
-
-- Edit [.env](.env) file (check [Stuff for devs Section](#stuff-for-devs))
-
-- [Update Schema Database](#update-schema-database) if it's the first time you start the app
-
+`npm install` will do the necessary jobs
 
 ### Test
- this section if clearly empty ... 🙁
+ for the moment there is no any tests yet..
 
 ### Start
 
@@ -69,6 +52,12 @@ If you are in developpement mod, after `composer install` you could see a new `.
 
 When you push on this repo, pipeline are automatically trigerred, if you do not want that, please add the message `skip` into your commit; for eg: `git commit -m"update readme, skip"`
 
+
+### Database
+
+You will find a documentation about the database [here](https://mobicoop.gitlab.io/mobicoop/database/)
+
+
 ##### Update Schema Database
 
 - `npm run updateDb`, will start migration with new schema if need, if i'ts the first install, it will create the schema in the empty database.
@@ -80,23 +69,7 @@ Some conventions are used by api-plateform such as [schema.org](https://schema.o
 
 
 ### Licence
-[AGPL-3](https://www.gnu.org/licenses/agpl-3.0)
-
-
-##### Windows Requirements
-
-Please use powershell with our project, in requirement you will need:
-
-*BE SURE TO BE IN AN ADMIN CONSOLE MOD !*
-
-- Install windows package manager[chocolatey](https://chocolatey.org/install)
-- Restart powershell
-- Install php: `choco install php`
-- Install composer: `choco install composer`
-- Install nodejs: `choco install nodejs.install`
-- Install python3: `choco install python`
-- Install python2: `choco install python2`
-- Install wget: `choco install wget`
-- Install [xdebug](https://burhandodhy.me/2017/08/29/how-to-install-xdebug-on-windows/) & link it to you php.ini 
-- Install windows dev tools: `npm install --global --production windows-build-tools`
-- ... then you can follow the [install section](#install)
+Mobicoop software is owned by Mobicoop cooperative. Mobicoop cooperative is opened to any individual, company or public authority who wish to become a shareholder.
+In order to increase the impact of our platform to any sort of clients whatever type of contractual relationship theyu require, Mobicoop software is dual-licensed:
+ - [AGPL-3](https://www.gnu.org/licenses/agpl-3.0)
+ - proprietary software
