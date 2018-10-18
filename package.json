@@ -25,7 +25,7 @@
       "pre-commit": "node helpers/hooks/check-git-integrity.js && php bin/php-cs-fixer.phar fix --using-cache=false api/src &&  php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src && php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src/MobicoopBundle/spec",
       "commit-msg": "node helpers/hooks/commit-hooks.js $2",
       "post-checkout": "node helpers/hooks/check-git-integrity.js || helpers/hooks/node checkout-branch.js",
-      "pre-push": "node helpers/hooks/check-git-integrity.js && npm test && helpers/hooks/push.js"
+      "pre-push": "node helpers/hooks/check-git-integrity.js && npm test && node helpers/hooks/push.js"
     }
   },
   "repository": {
