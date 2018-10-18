@@ -4,7 +4,8 @@
   "description": "API, Front & admin mobicoop carpool app",
   "main": "package.json",
   "scripts": {
-    "install": "git submodule init && git submodule update && npm run install-api && npm run install-admin && npm run install-mobicoop",
+    "preinstall": "node helpers/hooks/download-bundle.js",
+    "install": "npm run install-api && npm run install-admin && npm run install-mobicoop",
     "install-api": "cd api && npm i",
     "install-admin": "cd interfaces/admin && npm i",
     "install-mobicoop": "cd interfaces/mobicoop && npm i",
@@ -17,14 +18,14 @@
     "start-api": "cd api && npm start",
     "start-admin": "cd interfaces/admin && npm start",
     "start-mobicoop": "cd interfaces/mobicoop && npm start",
-    "compileAndWatch": "cd interfaces/mobicoop && npm run compileAndWatch",
-    "mescouillessurtonez": "node commit-hooks.js"
+    "compileAndWatch": "cd interfaces/mobicoop && npm run compileAndWatch"
   },
   "config": {
     "ghooks": {
-      "pre-commit": "node check-git-integrity.js php bin/php-cs-fixer.phar fix --using-cache=false api/src &&  php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src && php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src/MobicoopBundle/spec",
-      "prepare-commit-msg": "node commit-hooks.js $2",
-      "pre-push": "npm test"
+      "pre-commit": "node helpers/hooks/check-git-integrity.js && php bin/php-cs-fixer.phar fix --using-cache=false api/src &&  php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src && php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src/MobicoopBundle/spec",
+      "commit-msg": "node helpers/hooks/commit-hooks.js $2",
+      "post-checkout": "node helpers/hooks/check-git-integrity.js || helpers/hooks/node checkout-branch.js",
+      "pre-push": "node helpers/hooks/check-git-integrity.js && npm test && helpers/hooks/push.js"
     }
   },
   "repository": {

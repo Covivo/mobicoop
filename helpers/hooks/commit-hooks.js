@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const kuler = require('kuler');
 const cp = require('child_process');
-const bundlePath = path.resolve(__dirname, 'interfaces/mobicoop/src/MobicoopBundle');
+const bundlePath = path.resolve(__dirname, '../../interfaces/mobicoop/src/MobicoopBundle');
 const bundleGit = require('simple-git')(bundlePath);
 
 // Get the commit_msg path ($2)
@@ -18,7 +18,7 @@ if(!program.args[0]){
 }
 
 // The commit message is stocked into the file path sent via hook
-let commitMsgPath = path.resolve(__dirname,program.args[0]);
+let commitMsgPath = path.resolve(__dirname,'../../',program.args[0]);
 
 try{
   let commitMsg = fs.readFileSync(commitMsgPath).toString();

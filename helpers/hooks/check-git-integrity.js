@@ -3,7 +3,7 @@
 const getRepoInfo = require('git-repo-info');
 const kuler = require('kuler');
 
-const infoMobicoopBundle = getRepoInfo('interfaces/mobicoop/src/MobicoopBundle');
+const infoMobicoopBundle = getRepoInfo('../../interfaces/mobicoop/src/MobicoopBundle');
 const infoRoot = getRepoInfo();
 
 // branch have differents name, so it's a big error.
