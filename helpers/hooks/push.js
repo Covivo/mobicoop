@@ -11,8 +11,6 @@ const bundleGit = require('simple-git')(bundlePath);
 let branchRoot = getRepoInfo().branch;
 let branchBundle = getRepoInfo(bundlePath).branch;
 
-console.log(branchBundle);
-
 // try to push bundle to remote
 bundleGit
 .silent(true)
