@@ -4,12 +4,12 @@
   "description": "API, Front & admin mobicoop carpool app",
   "main": "package.json",
   "scripts": {
-    "preinstall": "node helpers/hooks/download-bundle.js",
-    "install": "npm run install-api && npm run install-admin && npm run install-mobicoop",
+    "download-bundle": "node helpers/hooks/download-bundle.js",
+    "install": "npm run download-bundle && npm run install-api && npm run install-admin && npm run install-mobicoop && npm run download-tools",
     "install-api": "cd api && npm i",
     "install-admin": "cd interfaces/admin && npm i",
     "install-mobicoop": "cd interfaces/mobicoop && npm i",
-    "postinstall": "wget http://www.phpdoc.org/phpDocumentor.phar -P bin && wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O bin/php-cs-fixer.phar",
+    "download-tools": "wget http://www.phpdoc.org/phpDocumentor.phar -P bin && wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O bin/php-cs-fixer.phar",
     "test": "npm run test-api && npm run test-mobicoop",
     "test-api": "cd api && npm run test",
     "test-admin": "cd interfaces/admin && npm run test",
@@ -26,7 +26,7 @@
       "commit-msg": "node helpers/hooks/commit-hooks.js $2",
       "post-checkout": "node helpers/hooks/check-git-integrity.js || helpers/hooks/node checkout-branch.js",
       "pre-push": "node helpers/hooks/check-git-integrity.js && npm test && node helpers/hooks/push.js",
-      "post-merge" : "node helpers/hooks/pull.js"
+      "post-merge": "node helpers/hooks/pull.js"
     }
   },
   "repository": {
