@@ -31,7 +31,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Carpooling : travel path between 2 points.
- * 
+ *
  * @ORM\Entity
  * @ApiResource(
  *      attributes={
@@ -41,7 +41,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      itemOperations={"get"}
  * )
  */
-Class Path 
+class Path
 {
     /**
      * @var int The id of this path.
@@ -55,7 +55,7 @@ Class Path
 
     /**
      * @var int Position number of the current part in the whole path.
-     * 
+     *
      * @Assert\NotBlank
      * @ORM\Column(type="integer")
      * @Groups({"read"})
@@ -64,7 +64,7 @@ Class Path
 
     /**
      * @var string Path detail.
-     * 
+     *
      * @Assert\NotBlank
      * @ORM\Column(type="text")
      * @Groups({"read"})
@@ -73,7 +73,7 @@ Class Path
 
     /**
      * @var int Encoding format (1 = json; 2 = xml)
-     * 
+     *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
      * @Groups({"read"})
@@ -82,7 +82,7 @@ Class Path
 
     /**
      * @var Point The starting point of the path.
-     * 
+     *
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Point", inversedBy="pathStart")
      * @ORM\JoinColumn(nullable=false)
@@ -93,7 +93,7 @@ Class Path
 
     /**
      * @var Point The destination point of the path.
-     * 
+     *
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Point", inversedBy="pathDestination")
      * @ORM\JoinColumn(nullable=false)
@@ -104,7 +104,7 @@ Class Path
 
     /**
      * @var TravelMode The travel mode of the path.
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\TravelMode")
      * @Groups({"read"})
      * @MaxDepth(1)

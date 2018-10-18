@@ -206,5 +206,4 @@ class Address
         $userAddress->setAddress($this);
         $this->userAddress = $userAddress;
     }
-    
 }

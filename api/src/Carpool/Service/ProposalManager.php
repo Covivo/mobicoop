@@ -28,7 +28,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Proposal manager service.
- * 
+ *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
 class ProposalManager
@@ -44,7 +44,7 @@ class ProposalManager
     
     /**
      * Create a proposal.
-     * 
+     *
      * @param Proposal $proposal
      */
     public function createProposal(Proposal $proposal)
@@ -89,7 +89,9 @@ class ProposalManager
         }
         
         // link between offer outward and request outward ?
-        if (!is_null($proposalOfferOutward) && !is_null($proposalRequestOutward)) $proposalOfferOutward->setProposalLinked($proposalRequestOutward);
+        if (!is_null($proposalOfferOutward) && !is_null($proposalRequestOutward)) {
+            $proposalOfferOutward->setProposalLinked($proposalRequestOutward);
+        }
         
         // Journey Type
         // one way or outward/return ?
@@ -122,7 +124,9 @@ class ProposalManager
                 $point->setLastPoint(false);
                 // address
                 $point->setAddress(clone $proposalPoint->getAddress());
-                if ($pos == ($nbPoints-1)) $point->setLastPoint(true);
+                if ($pos == ($nbPoints-1)) {
+                    $point->setLastPoint(true);
+                }
                 $proposalOfferReturn->addPoint($point);
             }
             $proposalOfferOutward->setProposalLinkedJourney($proposalOfferReturn);
@@ -140,33 +144,56 @@ class ProposalManager
                 $point->setLastPoint(false);
                 // address
                 $point->setAddress(clone $proposalPoint->getAddress());
-                if ($pos == ($nbPoints-1)) $point->setLastPoint(true);
+                if ($pos == ($nbPoints-1)) {
+                    $point->setLastPoint(true);
+                }
                 $proposalRequestReturn->addPoint($point);
             }
             $proposalRequestOutward->setProposalLinkedJourney($proposalRequestReturn);
         }
         
         // link between offer return and request return
-        if (!is_null($proposalOfferReturn) && !is_null($proposalRequestReturn)) $proposalOfferReturn->setProposalLinked($proposalRequestReturn);
+        if (!is_null($proposalOfferReturn) && !is_null($proposalRequestReturn)) {
+            $proposalOfferReturn->setProposalLinked($proposalRequestReturn);
+        }
         
         // persistence
-        if (!is_null($proposalOfferOutward)) $this->entityManager->persist($proposalOfferOutward);
-        if (!is_null($proposalOfferReturn)) $this->entityManager->persist($proposalOfferReturn);
-        if (!is_null($proposalRequestOutward)) $this->entityManager->persist($proposalRequestOutward);
-        if (!is_null($proposalRequestReturn)) $this->entityManager->persist($proposalRequestReturn);
+        if (!is_null($proposalOfferOutward)) {
+            $this->entityManager->persist($proposalOfferOutward);
+        }
+        if (!is_null($proposalOfferReturn)) {
+            $this->entityManager->persist($proposalOfferReturn);
+        }
+        if (!is_null($proposalRequestOutward)) {
+            $this->entityManager->persist($proposalRequestOutward);
+        }
+        if (!is_null($proposalRequestReturn)) {
+            $this->entityManager->persist($proposalRequestReturn);
+        }
         $this->entityManager->flush();
         
-        // matching analyze 
+        // matching analyze
         // => should be replaced by path analyzer when it's created
         // => the analyze would be asked when all paths are analyzed and returned
-        if (!is_null($proposalOfferOutward)) $this->matchingAnalyzer->createMatchingsForProposal($proposalOfferOutward);
-        if (!is_null($proposalOfferReturn)) $this->matchingAnalyzer->createMatchingsForProposal($proposalOfferReturn);
-        if (!is_null($proposalRequestOutward)) $this->matchingAnalyzer->createMatchingsForProposal($proposalRequestOutward);
-        if (!is_null($proposalRequestReturn)) $this->matchingAnalyzer->createMatchingsForProposal($proposalRequestReturn);
+        if (!is_null($proposalOfferOutward)) {
+            $this->matchingAnalyzer->createMatchingsForProposal($proposalOfferOutward);
+        }
+        if (!is_null($proposalOfferReturn)) {
+            $this->matchingAnalyzer->createMatchingsForProposal($proposalOfferReturn);
+        }
+        if (!is_null($proposalRequestOutward)) {
+            $this->matchingAnalyzer->createMatchingsForProposal($proposalRequestOutward);
+        }
+        if (!is_null($proposalRequestReturn)) {
+            $this->matchingAnalyzer->createMatchingsForProposal($proposalRequestReturn);
+        }
         
         // return the proposal (not really necessary, but good practice ?)
-        if (!is_null($proposalOfferOutward)) return $proposalOfferOutward;
-        if (!is_null($proposalRequestOutward)) return $proposalRequestOutward;
+        if (!is_null($proposalOfferOutward)) {
+            return $proposalOfferOutward;
+        }
+        if (!is_null($proposalRequestOutward)) {
+            return $proposalRequestOutward;
+        }
     }
-        
 }

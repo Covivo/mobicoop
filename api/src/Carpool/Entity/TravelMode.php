@@ -33,7 +33,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Carpooling : travel mode.
- * 
+ *
  * @ORM\Entity
  * @ApiResource(
  *      attributes={
@@ -44,7 +44,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      itemOperations={"get"}
  * )
  */
-Class TravelMode 
+class TravelMode
 {
     /**
      * @var int The id of this travel mode.
@@ -58,7 +58,7 @@ Class TravelMode
 
     /**
      * @var string Name of the travel mode.
-     * 
+     *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
      * @Groups({"read","write"})
@@ -81,5 +81,4 @@ Class TravelMode
 
         return $this;
     }
-
 }
