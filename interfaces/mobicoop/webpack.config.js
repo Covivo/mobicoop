@@ -63,7 +63,8 @@ Encore
     // This will add compatibility for old nav
     .enablePostCssLoader()
     .enableVueLoader()
-
+    //fixed dev-server
+    .setManifestKeyPrefix('/build')
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()
 

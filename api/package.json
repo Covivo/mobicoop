@@ -5,7 +5,7 @@
   "main": "public/index.php",
   "scripts": {
     "test": "echo \" no test specified\" && exit 0",
-    "start": "bin/console server:run 127.0.0.1:8080",
+    "start": "php bin/console server:run 127.0.0.1:8080",
     "updateDb": "bin/console doctrine:migrations:migrate -n",
     "testFixAndCoverage": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src && ./vendor/bin/kahlan --cc=true --coverage=4 --no-colors=true --reporter=verbose",
     "install": "composer install"
