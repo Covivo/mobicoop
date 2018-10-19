@@ -1,4 +1,8 @@
+## Ignore bundle & private reprository used in this monorepo & config SHOULD NEVER BE COMMITED
 interfaces/mobicoop/src/MobicoopBundle
+private/*
+!private/.gitkeep
+config.json
 # Created by https://www.gitignore.io/api/vim,osx,node,macos,linux,windows,symfony,eclipse,netbeans,composer,jetbrains,sublimetext,phpstorm+all
 
 ### Composer ###
