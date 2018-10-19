@@ -36,9 +36,9 @@ For more informations, check their readme:
 
 `git clone https://gitlab.com/mobicoop/mobicoop`
 
-`cd mobicoop`
+*DUPLICATE THE [config.json.dist](config.json.dist) INTO A `config.json` FILE*
 
-- Install submodule bundle
+`cd mobicoop`
 
 `npm install` will install api vendor, mobicoop vendor+node_modules+build assets, admin node_modules, download tools binaries
 
