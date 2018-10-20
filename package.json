@@ -17,6 +17,7 @@
     "start-api": "cd api && npm start",
     "start-admin": "cd interfaces/admin && npm start",
     "start-mobicoop": "cd interfaces/mobicoop && npm start",
+    "generateDocs" : "php bin/phpDocumentor.phar -d interfaces/mobicoop/src -t interfaces/mobicoop/public/build/doc --title Mobicoop",
     "compileAndWatch": "cd interfaces/mobicoop && npm run compileAndWatch"
   },
   "config": {

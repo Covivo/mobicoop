@@ -14,8 +14,6 @@
     "compile": "encore dev",
     "compileAndWatch": "encore dev-server --port 8079",
     "compileAndWatchVue": "encore dev-server --hot --port 8079",
-    "generateDoc": "php vendor/bin/phpDocumentor.phar -d src -t public/build/doc --title Mobicoop",
-    "downloadTools": "wget http://www.phpdoc.org/phpDocumentor.phar -P vendor/bin && wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O vendor/bin/php-cs-fixer.phar",
     "postinstall": "composer install && npm run compile"
   },
   "repository": {
