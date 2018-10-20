@@ -1,0 +1,87 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}Hello{% endblock %}
+
+{% block body %}
+
+<section class="hero is-primary">
+	<div class="hero-body">
+    	<div class="container">
+      		<h1 class="title">
+        		Mobicoop - Proposals for the user #{{ user.id }}
+      		</h1>
+    	</div>
+  	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+	    {% if error is defined %}
+		<span class="tag is-danger">{{ error }}</span>
+		{% endif %}
+		<a class="button is-primary" href="{{ path('user_proposal_create',{'id':user.id}) }}">Add proposal</a>
+		{% if hydra %}
+      	<table class="table">
+          	<tr>
+          		<th>#</th>
+          		<th>proposalType</th>
+          		<th>journeyType</th>
+          		<th>start</th>
+          		<th>destination</th>
+          		<th>frequency</th>
+          		<th>fromDate</th>
+          		<th>Action</th>
+          	</tr>
+          	{% for proposal in hydra.member %}
+          	<tr>
+          		<td>{{ proposal.id }}</td>
+          		<td>
+          			{% if proposal.proposalType == constant('Mobicoop\\Bundle\\MobicoopBundle\\Entity\\Proposal::PROPOSAL_TYPE_OFFER') %}
+          			Offer
+          			{% else %}
+          			Request
+          			{% endif %}
+          		</td>
+          		<td>
+          			{% if proposal.journeyType == constant('Mobicoop\\Bundle\\MobicoopBundle\\Entity\\Proposal::JOURNEY_TYPE_ONE_WAY') %}
+          			One way
+          			{% else %}
+          			Return trip
+          			{% endif %}
+          		</td>
+          		<td>
+          			{% for point in proposal.points %}
+          				{% if point.position == 0 %}
+          				    {{ point.address.streetAddress }} {{ point.address.postalCode }} {{ point.address.addressLocality }}
+          				{% endif %}
+          			{% endfor %}	
+          		</td>
+          		<td>
+          			{% for point in proposal.points %}
+          				{% if point.lastPoint %}
+          				    {{ point.address.streetAddress }} {{ point.address.postalCode }} {{ point.address.addressLocality }}
+          				{% endif %}
+          			{% endfor %}	
+          		</td>
+          		<td>
+          			{% if proposal.criteria.frequency == constant('Mobicoop\\Bundle\\MobicoopBundle\\Entity\\Criteria::FREQUENCY_PUNCTUAL') %}
+          			Punctual
+          			{% else %}
+          			Regular
+          			{% endif %}
+          		</td>
+          		<td>{{ proposal.criteria.fromDate|date('Y-m-d') }}</td>
+          		<td>
+          			<a class="button is-link" href="{{ path('user_proposal_matchings',{'id':user.id,'idProposal':proposal.id}) }}"> Matchings</a>
+          			<a class="button is-danger" href="{{ path('user_proposal_delete',{'id':user.id,'idProposal':proposal.id}) }}"> Delete</a>
+          		</td>
+          	</tr>
+      	    {% endfor %}
+      	</table>
+      	{% else %}
+      	<span class="tag is-warning">No proposals found.</span>
+      	{% endif %}
+  	</div>
+</section>
+
+{% endblock %}
