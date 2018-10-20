@@ -30,6 +30,7 @@ For more informations, check their readme:
 
 - for Windows check the [windows requirement](#windows-requirements) part
 
+
 ### Install 🤖
 
 - Clone the repo
@@ -38,13 +39,20 @@ For more informations, check their readme:
 
 `cd mobicoop`
 
-- Install submodule bundle
+`npm install` will perfom:
+ - Api vendor
+ - Mobicoop vendor+node_modules+build assets 
+ - Admin node_modules 
+ - Download tools binaries (php-cs-fixer & phpdocumentor)
 
-`npm install` will install api vendor, mobicoop vendor+node_modules+build assets, admin node_modules, download tools binaries
+- Sometimes if tools do not work you will ne on unix systems: `chmod 775 bin/*`
 
-- Sometimes you will ne on unix systems: `chmod 775 bin/*`
+- Duplicate, rename without .dist & edit some env & config files:
+    - [.env api](api/.env.dist)  
+    - [config.json api](api/config.json.dist)
+    - [.env mobicoop](interfaces/mobicoop/.env.dist) 
 
-- Edit [.env api](api/.env.dist) [.env mobicoop](interfaces/mobicoop/.env.dist) files (*do not edit the dist file*)
+*do not edit the dist file with your config info*
 
 
 
@@ -58,12 +66,12 @@ For more informations, check their readme:
 
 ### Start 🚀
 
-To start the application simply enter :
+To start the application simply run :
 
 `npm start`
 
 & just go to [http://localhost:8080](http://localhost:8080) for API 
-& just go to [http://localhost:8081](http://localhost:8081)  for mobicoop app
+& just go to [http://localhost:8081](http://localhost:8081) for mobicoop app
 & just go to [http://localhost:8082](http://localhost:8082) for admin 
 
 
@@ -73,12 +81,8 @@ To contribute to the mobicoop application, please do the following:
 
 1. Create a branch by feature or fork the repo if you are not in dev team
 2. [Start](#start) the 3 apps  (necesary to watch js/css/sass):
-  `npm run compileAndWatch`
 3. Add some Unit Tests and/or functionnals test and check if build passed
 4. Create a pull request & set reviewver before merge
-
-** In developpement mode we use .env file, but not in production following [symfony spec](https://symfony.com/doc/current/deployment.html#common-post-deployment-tasks)
-
 
 ### Documentation
 
@@ -95,9 +99,14 @@ Please check:
 
 and [contributor covenant](https://www.contributor-covenant.org)
 
-*To check & fix your code*, just do:
 
-`npm run testFixAndCoverage`
+### Hooks
+
+There is some git hooks implemented in this app:
+
+- Run test before any push
+- Run php-cs-fixer before any commit
+- Run npm install after each pull
 
 
 ### Licence
@@ -105,7 +114,6 @@ Mobicoop software is owned by Mobicoop cooperative. Mobicoop cooperative is open
 In order to increase the impact of our platform to any sort of clients whatever type of contractual relationship theyu require, Mobicoop software is dual-licensed:
  - [AGPL-3](https://www.gnu.org/licenses/agpl-3.0)
  - proprietary software
-
 
 
 ##### Windows Requirements
