@@ -68,7 +68,7 @@ test:test:
 ############# Everything under this is execute only for production (MASTER) ###################
 ###############################################################################################
 test:prod:
-  stage: build
+  stage: test
   variables:
     APP_ENV: prod # important because symfony use it
   before_script:
@@ -111,5 +111,5 @@ deploy_prod:
     name: prod
     url: http://mobicoop.io
   when: manual
-  only: master
+  only:
     - master
