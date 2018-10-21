@@ -37,13 +37,14 @@ For more informations, check their readme:
 
 `git clone https://gitlab.com/mobicoop/mobicoop`
 
-`cd mobicoop`
+*DUPLICATE THE [config.json.dist](config.json.dist) INTO A `config.json` FILE*
 
 `npm install` will perfom:
  - Api vendor
  - Mobicoop vendor+node_modules+build assets 
  - Admin node_modules 
  - Download tools binaries (php-cs-fixer & phpdocumentor)
+
 
 - Sometimes if tools do not work you will ne on unix systems: `chmod 775 bin/*`
 
