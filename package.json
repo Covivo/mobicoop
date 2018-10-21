@@ -17,8 +17,9 @@
     "start-api": "cd api && npm start",
     "start-admin": "cd interfaces/admin && npm start",
     "start-mobicoop": "cd interfaces/mobicoop && npm start",
-    "generateDocs" : "php bin/phpDocumentor.phar -d interfaces/mobicoop/src -t interfaces/mobicoop/public/build/doc --title Mobicoop",
-    "compileAndWatch": "cd interfaces/mobicoop && npm run compileAndWatch"
+    "generateDocs": "php bin/phpDocumentor.phar -d interfaces/mobicoop/src -t interfaces/mobicoop/public/build/doc --title Mobicoop",
+    "compileAndWatch": "cd interfaces/mobicoop && npm run compileAndWatch",
+    "create-front-canvas": "node helpers/createFrontCanvas.js -d $1"
   },
   "config": {
     "ghooks": {
@@ -38,7 +39,9 @@
   },
   "homepage": "https://gitlab.com/mobicoop/mobicoop#README",
   "dependencies": {
+    "await-to-js": "^2.0.1",
     "commander": "^2.19.0",
+    "fs-extra": "^7.0.0",
     "git-command-line": "^0.1.5",
     "git-repo-info": "^2.0.0",
     "kuler": "^1.0.1",

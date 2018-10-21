@@ -1,5 +1,5 @@
 {
-  "name": "covivo/mobicoop",
+  "name": "mobicoop/mobicoop-bundle",
 	"type": "vcs",
   "url" : "https://gitlab.com/mobicoop/mobicoop-bundle",
   "license": "proprietary",

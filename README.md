@@ -109,6 +109,18 @@ There is some git hooks implemented in this app:
 - Run npm install after each pull
 
 
+### How to create my own front application
+
+Because Mobicoop is a monorepo, you can ask yourself you to create & dev on you own front-end application.
+Monicoop comes with a simple script to run, it will create a canvas skeletton based on mobicoop front-end & link the main bundle to it.
+
+`mkdir -p ../path/to/newFront`
+
+`npm run create-front-canvas ../path/to/newFront`
+
+☢️ *Do not forget to commit into monorepo  ( & create branch if needed) when you edit bundle files* ☣️ 
+
+
 ### Licence
 Mobicoop software is owned by Mobicoop cooperative. Mobicoop cooperative is opened to any individual, company or public authority who wish to become a shareholder.
 In order to increase the impact of our platform to any sort of clients whatever type of contractual relationship theyu require, Mobicoop software is dual-licensed:
