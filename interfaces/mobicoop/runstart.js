@@ -13,7 +13,7 @@ program
 /*We try to check if we are on unix || windows & apply the right path to execute */
 let command= os.platform() === 'win32' ? 'cmd.exe' :  'php';
 // Start test only, or with coverage if asked
-let host = program.args[0] ? `127.0.0.1:${program.args[0]}` : '127.0.0.1:8089';
+let host = program.args[0] ? `127.0.0.1:${program.args[0]}` : '127.0.0.1:8081';
 let options = [pathStart,'server:run', host];
 
 

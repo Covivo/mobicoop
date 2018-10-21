@@ -53,6 +53,12 @@ To start the application simply enter :
 
 & just go [http://localhost:8081](http://localhost:8081) 
 
+OR for another front start
+
+`npm start $port`
+
+& just go [http://localhost:$port](http://localhost:$port) 
+
 #### Javascript/Vue-js
 
 The main library for javascript used is [vue-js](https://fr.vuejs.org/index.html), everything about them are in [components](assets/js/components)
