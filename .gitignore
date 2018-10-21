@@ -11,7 +11,8 @@ composer.phar
 ### Eclipse ###
 
 .metadata
-bin/
+bin/*
+!bin/.gitkeep
 tmp/
 *.tmp
 *.bak
@@ -408,8 +409,6 @@ GitHub.sublime-settings
 # Managed by Composer
 /app/bootstrap.php.cache
 /var/bootstrap.php.cache
-/bin
-/bin/*
 !bin/console
 !bin/symfony_requirements
 
