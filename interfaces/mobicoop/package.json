@@ -7,15 +7,13 @@
     "doc": "docs"
   },
   "scripts": {
-    "start": "php bin/console server:run 127.0.0.1:8081",
+    "start": "node runstart.js $1",
     "test": "node src/MobicoopBundle/spec/runtests.js",
     "testAndCoverage": "node src/MobicoopBundle/spec/runtests.js -c",
     "testFixAndCoverage": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src &&  php vendor/bin/php-cs-fixer.phar fix --using-cache=false src/MobicoopBundle/spec && node src/MobicoopBundle/spec/runtests.js -c",
     "compile": "encore dev",
     "compileAndWatch": "encore dev-server --port 8079",
     "compileAndWatchVue": "encore dev-server --hot --port 8079",
-    "generateDoc": "php vendor/bin/phpDocumentor.phar -d src -t public/build/doc --title Mobicoop",
-    "downloadTools": "wget http://www.phpdoc.org/phpDocumentor.phar -P vendor/bin && wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O vendor/bin/php-cs-fixer.phar",
     "postinstall": "composer install && npm run compile"
   },
   "repository": {

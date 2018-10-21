@@ -1,7 +1,17 @@
 image: mobicoop/php-node-chromium
 
+# Cache modules in between jobs
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - node_modules/
+  - api/node_modules/
+  - api/vendor/
+  - interfaces/mobicoop/node_modules/
+  - interfaces/mobicoop/vendor/
+  - interfaces/admin/node_modules/
+
 stages:
-  - build
   - test
   - deploy
 
@@ -9,22 +19,14 @@ stages:
 ############# Everything under this is execute for all push (branch) ##########################
 ###############################################################################################
 
-test:
+test:dev:
   stage: test
   variables:
     APP_ENV: dev # important because symfony use it
   before_script:
-    - git submodule init
-    - git submodule update
-    - cd interfaces/mobicoop/src/MobicoopBundle && git checkout ${CI_COMMIT_REF_SLUG} && git pull
-    - cd -
-    - composer install
     - npm install
-    - npm run postinstall
   script:
-    - npx encore dev
-    - npm run test
-    - php bin/console cache:clear --env=test --no-debug
+    - npm test
   only:
     - pushes
   except:
@@ -39,7 +41,7 @@ test:
 ############# Everything under this is execute only for Test (dev) ############################
 ###############################################################################################
 
-test&Deploy:
+test:test:
   stage: deploy
   environment:
     name: test
@@ -49,78 +51,53 @@ test&Deploy:
   variables:
     APP_ENV: test # important because symfony use it
   before_script:
-    - git submodule init
-    - git submodule update
-    - cd src/MobicoopBundle && git checkout ${CI_COMMIT_REF_SLUG} && git pull
-    - cd ../..
-    - composer install --optimize-autoloader
     - npm install
-    - npm run postinstall
   script:
-    - npx encore dev
-    - npm run testAndCoverage
+    - npm test
     - php bin/console cache:clear --env=test --no-debug
     - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
     - chmod 700 id_rsa
     - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - rsync --group=www-data -hrvz --exclude=/.env --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ test@167.114.236.57:/var/www/test/mobicoop
+    - rsync --group=www-data -hrvz --exclude=/.env --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/test
   except:
     refs:
       - tags
-    variables:
-      - $CI_COMMIT_MESSAGE =~ /skip/
 
 ###############################################################################################
 ############# Everything under this is execute only for production (MASTER) ###################
 ###############################################################################################
-build:linux:
+test:prod:
   stage: build
+  variables:
+    APP_ENV: prod # important because symfony use it
   before_script:
-    - git submodule init
-    - git submodule update
-    - cd src/MobicoopBundle && git checkout ${CI_COMMIT_REF_SLUG} && git pull
-    - cd ../..
-    - composer install
     - npm install
-    - npm run postinstall
   script:
-    - npx encore dev
+    - npm test
   artifacts:
     paths:
-      - public
-      - node_modules
-      - vendor
-      - src/MobicoopBundle
-  only:
-    - master
-
-test:linux:
-  stage: test
-  script:
-    - npm run testAndCoverage
-  dependencies:
-    - build:linux
+    - interfaces/mobicoop/public/doc
   only:
     - master
 
 pages:
   stage: deploy
   script:
-    - npm run generateDoc
     - echo 'Deploying the doc...'
+    - npm run generateDocs
   dependencies:
-    - build:linux
+    - test:prod
   artifacts:
     paths:
-    - public
+    - interfaces/mobicoop/public/doc
   only:
     - master
 
 deploy_prod:
   stage: deploy
   before_script: # This if require to send the prod type no dev, since it creates errors
-    - composer install--optimize-autoloader
+    - npm install
     - php bin/console cache:clear --env=prod --no-debug
   variables:
     APP_ENV: prod # important because symfony use it
@@ -129,10 +106,10 @@ deploy_prod:
     - chmod 700 id_rsa
     - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - rsync --exclude=/.env -hrvz --group=www-data --delete -e 'ssh -o StrictHostKeyChecking=no' ./ prod@167.114.236.57:/var/www/prod/mobicoop
+    - rsync --exclude=/.env -hrvz --group=www-data --delete -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/prod
   environment:
     name: prod
     url: http://mobicoop.io
   when: manual
-  only:
+  only: master
     - master

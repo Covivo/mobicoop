@@ -4,29 +4,27 @@
   "description": "API, Front & admin mobicoop carpool app",
   "main": "package.json",
   "scripts": {
-    "download-bundle": "node helpers/hooks/download-bundle.js",
-    "install": "npm run download-bundle && npm run install-api && npm run install-admin && npm run install-mobicoop && npm run download-tools",
+    "install": "npm run install-api && npm run install-admin && npm run install-mobicoop && npm run download-tools",
     "install-api": "cd api && npm i",
     "install-admin": "cd interfaces/admin && npm i",
     "install-mobicoop": "cd interfaces/mobicoop && npm i",
-    "download-tools": "wget http://www.phpdoc.org/phpDocumentor.phar -P bin && wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O bin/php-cs-fixer.phar",
+    "download-tools": "wget http://www.phpdoc.org/phpDocumentor.phar -O bin/phpDocumentor.phar && wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O bin/php-cs-fixer.phar",
     "test": "npm run test-api && npm run test-mobicoop",
     "test-api": "cd api && npm run test",
     "test-admin": "cd interfaces/admin && npm run test",
     "test-mobicoop": "cd interfaces/mobicoop && npm run test",
-    "start": "npm-run-all --parallel compileAndWatch start-api start-admin start-mobicoop",
+    "start": "npm-run-all --parallel start-api start-admin start-mobicoop",
     "start-api": "cd api && npm start",
     "start-admin": "cd interfaces/admin && npm start",
     "start-mobicoop": "cd interfaces/mobicoop && npm start",
-    "compileAndWatch": "cd interfaces/mobicoop && npm run compileAndWatch"
+    "generateDocs": "php bin/phpDocumentor.phar -d interfaces/mobicoop/src -t interfaces/mobicoop/public/build/doc --title Mobicoop",
+    "create-front-canvas": "node helpers/createFrontCanvas.js -d $1"
   },
   "config": {
     "ghooks": {
-      "pre-commit": "node helpers/hooks/check-git-integrity.js && php bin/php-cs-fixer.phar fix --using-cache=false api/src &&  php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src && php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src/MobicoopBundle/spec",
-      "commit-msg": "node helpers/hooks/commit-hooks.js $2",
-      "post-checkout": "node helpers/hooks/check-git-integrity.js || node helpers/hooks/checkout-branch.js",
-      "pre-push": "node helpers/hooks/check-git-integrity.js && npm test && node helpers/hooks/push.js",
-      "post-merge": "node helpers/hooks/pull.js"
+      "pre-commit": "php bin/php-cs-fixer.phar fix --using-cache=false api/src &&  php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src && php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src/MobicoopBundle/spec",
+      "pre-push": "npm test",
+      "post-merge": "npm install"
     }
   },
   "repository": {
@@ -40,7 +38,9 @@
   },
   "homepage": "https://gitlab.com/mobicoop/mobicoop#README",
   "dependencies": {
+    "await-to-js": "^2.0.1",
     "commander": "^2.19.0",
+    "fs-extra": "^7.0.0",
     "git-command-line": "^0.1.5",
     "git-repo-info": "^2.0.0",
     "kuler": "^1.0.1",

@@ -9,12 +9,6 @@ import Buefy from 'buefy';
 import Webcalculator from './components/Webcalculator';
 import Parrot from './components/Parrot';
 
-// import $ from 'jquery';
-// import siteNameStr from './src/sitename';
-
-// add h2 to body
-// $('body').append(`<h2> & hello to ${siteNameStr('CoviRide')} too </h2>`);
-
 Vue.use(Buefy);
 let app = new Vue({
   el: '#app',
@@ -23,7 +17,6 @@ let app = new Vue({
 
 // this is a sample async function to show modern way to code in js ..
 async function f() {
-
   let p = new Promise((resolve, reject) => {
     setTimeout(() => resolve("done!"), 1000);
   });
