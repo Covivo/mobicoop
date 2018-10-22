@@ -10,6 +10,16 @@ const program = require('commander');
 const path = require('path');
 const to = require('await-to-js').default;
 
+/*//path to bundle
+const bundle = path.resolve(__dirname, '../interfaces/mobicoop/src/MobicoopBundle');
+//filter so that we don't need to copy Bundle
+  const filter = {
+    filter:path => {
+      if (path === bundle){return false;}
+      else{return true;}
+    }
+  }*/
+
 program
   .version('0.1.0')
   .option('-d, --destination  <dir>', 'Path to copy canvas to')
@@ -34,27 +44,29 @@ async function createCanvas () {
     return;
   }
   // Copy mobicoop files to sent path
+
   let pathToMobicoop = path.resolve(__dirname, '../interfaces/mobicoop');
   let pathToMobicoopBundle = path.resolve(pathToMobicoop, 'src/MobicoopBundle');
   let pathToCopiedBundle = path.resolve(destination, 'src/MobicoopBundle');
+  //filter so that we don't need to copy Bundle
+  const filter = {
+    filter: function(path){
+      console.log(path)
+      if (path === pathToMobicoopBundle){return false;}
+      return true;
+    }
+  }
   process.stdout.write(kuler(`Copying files to ${destination}\n`,'green'));
-  [err,success] = await to(fs.copy(pathToMobicoop, destination));
+  [err,success] = await to(fs.copy(pathToMobicoop, destination,filter));
   if(err){
     process.stderr.write(kuler('Cannot copy to specified path!\n','red'))
     console.error(err);
     return;
   }
   process.stdout.write(kuler(`Canvas had been create in ${destination}\n`,'green'));
-  // we try to deleted the copied bundle
-  [err,success] = await to(fs.remove(pathToCopiedBundle));
-  if(err){
-    process.stderr.write(kuler('Cannot deleted the copied bundle\n','red'))
-    console.error(err);
-    return;
-  }
+  
   // We link bundle to new created folder
-  process.stdout.write(kuler('Copied bundle deleted ...\n','green'));
-  [err,success] = await to(fs.symlink(pathToMobicoopBundle,pathToCopiedBundle))
+  [err,success] = await to(fs.symlink(pathToMobicoopBundle,pathToCopiedBundle,'dir'))
    if(err){
     process.stderr.write(kuler('Cannot create symlink bundle\n','red'))
     console.error(err);
