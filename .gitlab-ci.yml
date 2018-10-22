@@ -54,12 +54,14 @@ test:test:
     - npm install --unsafe-perm
   script:
     - npm test
-    - php bin/console cache:clear --env=test --no-debug
+    - php interfaces/mobicoop/bin/console cache:clear --env=test --no-debug
+    - php api/bin/console cache:clear --env=test --no-debug
     - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
     - chmod 700 id_rsa
     - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - rsync --group=www-data -hrvz --exclude=/.env --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/test
+    - rsync --group=www-data -hrvz --exclude=.env --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/test
+    - ssh -o StrictHostKeyChecking=no ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/test/api; php bin/console doctrine:migrations:migrate -n"
   except:
     refs:
       - tags
