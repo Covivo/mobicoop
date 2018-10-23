@@ -77,6 +77,12 @@ To start the application simply run :
 & just go to [http://localhost:8081](http://localhost:8081) for mobicoop app
 & just go to [http://localhost:8082](http://localhost:8082) for admin 
 
+⚠️ Don't forget to setup your SQL before !
+
+- Create a new schema
+- Configure environment variable DATABASE_URL in /api/.env
+- Migrate all tables using : `php bin/console doctrine:migrations:migrate -n`
+- You're finally ready to simply run it !
 
 ### Developpement
 
