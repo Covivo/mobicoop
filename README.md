@@ -77,6 +77,8 @@ To start the application simply run :
 & just go to [http://localhost:8081](http://localhost:8081) for mobicoop app
 & just go to [http://localhost:8082](http://localhost:8082) for admin 
 
+If you want to check that you are up-to-date in your SQL schema : `npm run updateDb` 
+
 ⚠️ Don't forget to setup your SQL before !
 
 - Create a new schema
