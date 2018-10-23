@@ -55,6 +55,8 @@ For more informations, check their readme:
 
 *do not edit the dist file with your config info*
 
+- If you have missing modules during installation check this docker file
+and install all its php extensions : [Docker file](https://github.com/vyuldashev/docker-ci-php-node/blob/master/Dockerfile)
 
 
 ### Tests 🎰
