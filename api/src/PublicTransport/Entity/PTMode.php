@@ -40,12 +40,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class PTMode
 {
-    CONST PT_MODE_BUS = "BUS";
-    CONST PT_MODE_TRAIN = "TRAIN";
-    CONST PT_MODE_BIKE = "BIKE";
-    CONST PT_MODE_WALK = "WALK";
+    const PT_MODE_BUS = "BUS";
+    const PT_MODE_TRAIN = "TRAIN";
+    const PT_MODE_BIKE = "BIKE";
+    const PT_MODE_WALK = "WALK";
 
-    private CONST PT_MODES = [
+    private const PT_MODES = [
             self::PT_MODE_BUS => 1,
             self::PT_MODE_TRAIN => 2,
             self::PT_MODE_BIKE => 3,
@@ -70,24 +70,23 @@ class PTMode
         $this->setName($mode);
     }
     
-    public function getId ()
+    public function getId()
     {
         return $this->id;
     }
     
-    public function setId ($id)
+    public function setId($id)
     {
         $this->id = $id;
     }
     
-    public function getName ()
+    public function getName()
     {
         return $this->name;
     }
     
-    public function setName ($name)
+    public function setName($name)
     {
         $this->name = $name;
     }
-    
 }

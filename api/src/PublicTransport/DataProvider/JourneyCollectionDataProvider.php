@@ -47,7 +47,7 @@ final class JourneyCollectionDataProvider implements CollectionDataProviderInter
         return Journey::class === $resourceClass;
     }
     
-    public function getCollection(string $resourceClass, string $operationName = null): ?Array
+    public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         return $this->dataProvider->getJourneys(
                 $this->request->get("provider"),
@@ -57,6 +57,6 @@ final class JourneyCollectionDataProvider implements CollectionDataProviderInter
                 $this->request->get("destination_latitude"),
                 $this->request->get("destination_longitude"),
                 $this->request->get("date")
-                );        
+                );
     }
 }

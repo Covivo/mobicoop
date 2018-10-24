@@ -113,154 +113,153 @@ class Journey
         $this->sections = new ArrayCollection();
     }
     
-    public function getDistance ()
+    public function getDistance()
     {
         return $this->distance;
     }
 
-    public function getDuration ()
+    public function getDuration()
     {
         return $this->duration;
     }
 
-    public function getPrice ()
+    public function getPrice()
     {
         return $this->price;
     }
 
-    public function getCo2 ()
+    public function getCo2()
     {
         return $this->co2;
     }
     
-    public function getDeparture ()
+    public function getDeparture()
     {
         return $this->departure;
     }
     
-    public function getArrival ()
+    public function getArrival()
     {
         return $this->arrival;
     }
     
-    public function setDistance ($distance)
+    public function setDistance($distance)
     {
         $this->distance = $distance;
     }
 
-    public function setDuration ($duration)
+    public function setDuration($duration)
     {
         $this->duration = $duration;
     }
     
-    public function setPrice ($price)
+    public function setPrice($price)
     {
         $this->price = $price;
     }
 
-    public function setCo2 ($co2)
+    public function setCo2($co2)
     {
         $this->co2 = $co2;
     }
     
-    public function setDeparture ($departure)
+    public function setDeparture($departure)
     {
         $this->departure = $departure;
     }
     
-    public function setArrival ($arrival)
+    public function setArrival($arrival)
     {
         $this->arrival = $arrival;
     }
     
-    public function getSections ()
+    public function getSections()
     {
         return $this->sections;
     }
 
-    public function getOrigin_latitude ()
+    public function getOrigin_latitude()
     {
         return $this->origin_latitude;
     }
 
-    public function getOrigin_longitude ()
+    public function getOrigin_longitude()
     {
         return $this->origin_longitude;
     }
 
-    public function getDestination_latitude ()
+    public function getDestination_latitude()
     {
         return $this->destination_latitude;
     }
 
-    public function getDestination_longitude ()
+    public function getDestination_longitude()
     {
         return $this->destination_longitude;
     }
 
-    public function getDate ()
+    public function getDate()
     {
         return $this->date;
     }
 
-    public function setSections ($sections)
+    public function setSections($sections)
     {
         $this->sections = $sections;
     }
 
-    public function setOrigin_latitude ($origin_latitude)
+    public function setOrigin_latitude($origin_latitude)
     {
         $this->origin_latitude = $origin_latitude;
     }
     
-    public function setOrigin_longitude ($origin_longitude)
+    public function setOrigin_longitude($origin_longitude)
     {
         $this->origin_longitude = $origin_longitude;
     }
     
-    public function setDestination_latitude ($destination_latitude)
+    public function setDestination_latitude($destination_latitude)
     {
         $this->destination_latitude = $destination_latitude;
     }
     
-    public function setDestination_longitude ($destination_longitude)
+    public function setDestination_longitude($destination_longitude)
     {
         $this->destination_longitude = $destination_longitude;
     }
 
-    public function setDate ($date)
+    public function setDate($date)
     {
         $this->date = $date;
     }
     
-    public function getId ()
+    public function getId()
     {
         return $this->id;
     }
 
-    public function setId ($id)
+    public function setId($id)
     {
         $this->id = $id;
     }
     
-    public function getProvider ()
+    public function getProvider()
     {
         return $this->provider;
     }
 
-    public function getApikey ()
+    public function getApikey()
     {
         return $this->apikey;
     }
 
-    public function setProvider ($provider)
+    public function setProvider($provider)
     {
         $this->provider = $provider;
     }
 
-    public function setApikey ($apikey)
+    public function setApikey($apikey)
     {
         $this->apikey = $apikey;
     }
-    
 }

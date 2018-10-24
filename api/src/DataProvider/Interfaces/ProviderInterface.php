@@ -33,5 +33,5 @@ interface ProviderInterface
 {
     public function getCollection(string $class, string $apikey, array $params);
     public function getItem(string $class, string $apikey, array $params);
-    function deserialize(string $class, array $data);
+    public function deserialize(string $class, array $data);
 }

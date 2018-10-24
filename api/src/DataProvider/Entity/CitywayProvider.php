@@ -34,15 +34,15 @@ use App\PublicTransport\Entity\PTMode;
 /**
  * Cityway data provider.
  */
-Class CitywayProvider implements ProviderInterface 
+class CitywayProvider implements ProviderInterface
 {
-    CONST CW_PT_MODE_BUS = "BUS";
-    CONST CW_PT_MODE_TRAIN = "TRAIN";
-    CONST CW_PT_MODE_BIKE = "BIKE";
-    CONST CW_PT_MODE_WALK = "WALK";
+    const CW_PT_MODE_BUS = "BUS";
+    const CW_PT_MODE_TRAIN = "TRAIN";
+    const CW_PT_MODE_BIKE = "BIKE";
+    const CW_PT_MODE_WALK = "WALK";
     
-    private CONST URI = "http://preprod.tsvc.grandest.cityway.fr/api/";
-    private CONST DATETIME_FORMAT = "d/m/Y H:i:s";
+    private const URI = "http://preprod.tsvc.grandest.cityway.fr/api/";
+    private const DATETIME_FORMAT = "d/m/Y H:i:s";
     private $collection;
     
     public function __construct()
@@ -50,7 +50,7 @@ Class CitywayProvider implements ProviderInterface
         $this->collection = [];
     }
     
-    public function getCollection (string $class, string $apikey, array $params)
+    public function getCollection(string $class, string $apikey, array $params)
     {
         switch ($class) {
             case Journey::class:
@@ -69,13 +69,23 @@ Class CitywayProvider implements ProviderInterface
                 $response = $dataProvider->getCollection($getParams);
                 if ($response->getCode() == 200) {
                     $data = json_decode($response->getValue(), true);
-                    if (!isset($data["StatusCode"])) return $this->collection;
-                    if ($data["StatusCode"] <> 200) return $this->collection;
-                    if (!isset($data["Data"])) return $this->collection;
-                    if (!isset($data["Data"][0]["response"])) break;
-                    if (!isset($data["Data"][0]["response"]["trips"]["Trip"])) break;
+                    if (!isset($data["StatusCode"])) {
+                        return $this->collection;
+                    }
+                    if ($data["StatusCode"] <> 200) {
+                        return $this->collection;
+                    }
+                    if (!isset($data["Data"])) {
+                        return $this->collection;
+                    }
+                    if (!isset($data["Data"][0]["response"])) {
+                        break;
+                    }
+                    if (!isset($data["Data"][0]["response"]["trips"]["Trip"])) {
+                        break;
+                    }
                     foreach ($data["Data"][0]["response"]["trips"]["Trip"] as $trip) {
-                        $this->collection[] = self::deserialize($class,$trip);
+                        $this->collection[] = self::deserialize($class, $trip);
                     }
                     return $this->collection;
                 }
@@ -85,12 +95,11 @@ Class CitywayProvider implements ProviderInterface
         }
     }
 
-    public function getItem (string $class, string $apikey, array $params)
+    public function getItem(string $class, string $apikey, array $params)
     {
-        
     }
     
-    function deserialize (string $class, array $data)
+    public function deserialize(string $class, array $data)
     {
         switch ($class) {
             case Journey::class:
@@ -104,8 +113,12 @@ Class CitywayProvider implements ProviderInterface
     private function deserializeJourney($data)
     {
         $journey = new Journey(count($this->collection)+1);
-        if (isset($data["Distance"])) $journey->setDistance($data["Distance"]);
-        if (isset($data["Duration"])) $journey->setDuration($data["Duration"]);
+        if (isset($data["Distance"])) {
+            $journey->setDistance($data["Distance"]);
+        }
+        if (isset($data["Duration"])) {
+            $journey->setDuration($data["Duration"]);
+        }
         if (isset($data["DepartureTime"])) {
             $departure = new Departure(1);
             $departure->setDate(\DateTime::createFromFormat(self::DATETIME_FORMAT, $data["DepartureTime"]));
@@ -119,14 +132,14 @@ Class CitywayProvider implements ProviderInterface
         if (isset($data["sections"]["Section"])) {
             $sections = [];
             foreach ($data["sections"]["Section"] as $section) {
-                $sections[] = self::deserializeSection($section,count($sections)+1);
+                $sections[] = self::deserializeSection($section, count($sections)+1);
             }
             $journey->setSections($sections);
         }
         return $journey;
     }
     
-    private function deserializeSection($data,$num)
+    private function deserializeSection($data, $num)
     {
         $section = new Section($num);
         if (isset($data["Leg"]) && !is_null($data["Leg"])) {
@@ -134,7 +147,6 @@ Class CitywayProvider implements ProviderInterface
             $section->setPtmode($ptmode);
             if (isset($data["Leg"]["pathLinks"]["PathLink"])) {
                 foreach ($data["Leg"]["pathLinks"]["PathLink"] as $pathLink) {
-                    
                 }
             }
         }
@@ -146,5 +158,4 @@ Class CitywayProvider implements ProviderInterface
         }
         return $section;
     }
-       
 }

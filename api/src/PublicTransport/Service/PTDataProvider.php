@@ -28,25 +28,27 @@ use App\DataProvider\Entity\CitywayProvider;
 
 /**
  * Public transport DataProvider.
- * 
- * To add a provider : 
+ *
+ * To add a provider :
  * - write the custom Provider class
  * - complete the PROVIDERS array with the new provider
- * 
+ *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
 class PTDataProvider
 {
-    CONST PROVIDERS = [
+    const PROVIDERS = [
         "cityway" => CitywayProvider::class
     ];
         
-    public function getJourneys($provider,$apikey,$origin_latitude,$origin_longitude,$destination_latitude,$destination_longitude,$date) 
-    {   
-        if (!array_key_exists($provider, self::PROVIDERS)) return null; 
+    public function getJourneys($provider, $apikey, $origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date)
+    {
+        if (!array_key_exists($provider, self::PROVIDERS)) {
+            return null;
+        }
         $providerClass = self::PROVIDERS[$provider];
         $providerInstance = new $providerClass();
-        return call_user_func_array([$providerInstance,"getCollection"],[Journey::class,$apikey,[
+        return call_user_func_array([$providerInstance,"getCollection"], [Journey::class,$apikey,[
                 "origin_latitude" => $origin_latitude,
                 "origin_longitude" => $origin_longitude,
                 "destination_latitude" => $destination_latitude,
@@ -54,5 +56,4 @@ class PTDataProvider
                 "date" => $date
         ]]);
     }
-    
 }

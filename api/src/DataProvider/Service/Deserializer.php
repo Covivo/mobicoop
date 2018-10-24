@@ -52,7 +52,7 @@ class Deserializer
     {
         switch ($class) {
             case Journey::class:
-                return call_user_func_array([$this,PTDataProvider::PROVIDERS[$this->provider]["deserialize_method"]],[$data]);
+                return call_user_func_array([$this,PTDataProvider::PROVIDERS[$this->provider]["deserialize_method"]], [$data]);
                 break;
             default:
                 break;
@@ -62,7 +62,8 @@ class Deserializer
     
     private function deserializeCitywayJourney(array $data): ?Journey
     {
-        var_dump($data);exit;
+        var_dump($data);
+        exit;
         /*$journey = new Journey(0);
         $journey = self::autoSet($journey, $data);
         if (isset($data["userAddresses"])) {

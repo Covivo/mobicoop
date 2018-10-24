@@ -41,13 +41,12 @@ class DataProvider
     private $client;
     private $resource;
     
-    public function __construct($uri,$resource)
+    public function __construct($uri, $resource)
     {
         $this->client = new Client([
                 'base_uri' => $uri
         ]);
         $this->resource = $resource;
-        
     }
     
     /**
@@ -61,14 +60,13 @@ class DataProvider
     {
         // @todo : send the params to the request in the json body of the request
         try {
-            $clientResponse = $this->client->get($this->resource,['query'=>$params]);
+            $clientResponse = $this->client->get($this->resource, ['query'=>$params]);
             if ($clientResponse->getStatusCode() == 200) {
-                return new Response($clientResponse->getStatusCode(),$clientResponse->getBody());
+                return new Response($clientResponse->getStatusCode(), $clientResponse->getBody());
             }
         } catch (TransferException $e) {
             return new Response($e->getCode());
         }
         return new Response();
     }
-    
 }

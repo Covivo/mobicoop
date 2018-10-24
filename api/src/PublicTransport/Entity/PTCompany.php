@@ -46,12 +46,12 @@ class PTCompany
      */
     private $name;
     
-    public function getName ()
+    public function getName()
     {
         return $this->name;
     }
     
-    public function setName ($name)
+    public function setName($name)
     {
         $this->name = $name;
     }

@@ -48,7 +48,6 @@ final class SearchFilter implements FilterInterface
         $properties = $this->properties;
         
         foreach ($properties as $property => $strategy) {
-            
             $filterParameterNames = [
                     $property
             ];
@@ -65,5 +64,4 @@ final class SearchFilter implements FilterInterface
         
         return $description;
     }
-    
 }

@@ -72,44 +72,43 @@ class Arrival
         $this->id = $id;
     }
     
-    public function getId ()
+    public function getId()
     {
         return $this->id;
     }
     
-    public function setId ($id)
+    public function setId($id)
     {
         $this->id = $id;
     }
     
-    public function getName ()
+    public function getName()
     {
         return $this->name;
     }
 
-    public function getDate ()
+    public function getDate()
     {
         return $this->date;
     }
 
-    public function getAddress ()
+    public function getAddress()
     {
         return $this->address;
     }
 
-    public function setName ($name)
+    public function setName($name)
     {
         $this->name = $name;
     }
 
-    public function setDate ($date)
+    public function setDate($date)
     {
         $this->date = $date;
     }
 
-    public function setAddress ($address)
+    public function setAddress($address)
     {
         $this->address = $address;
     }
-    
 }

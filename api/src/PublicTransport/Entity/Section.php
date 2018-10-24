@@ -121,114 +121,113 @@ class Section
         $this->setPos($id);
     }
     
-    public function getId ()
+    public function getId()
     {
         return $this->id;
     }
     
-    public function setId ($id)
+    public function setId($id)
     {
         $this->id = $id;
     }
     
-    public function getIndication ()
+    public function getIndication()
     {
         return $this->indication;
     }
 
-    public function getDistance ()
+    public function getDistance()
     {
         return $this->distance;
     }
 
-    public function getPos ()
+    public function getPos()
     {
         return $this->pos;
     }
 
-    public function isLast ()
+    public function isLast()
     {
         return $this->last;
     }
 
-    public function getJourney ()
+    public function getJourney()
     {
         return $this->journey;
     }
 
-    public function getDeparture ()
+    public function getDeparture()
     {
         return $this->departure;
     }
 
-    public function getArrival ()
+    public function getArrival()
     {
         return $this->arrival;
     }
 
-    public function getPtmode ()
+    public function getPtmode()
     {
         return $this->ptmode;
     }
 
-    public function getPtline ()
+    public function getPtline()
     {
         return $this->ptline;
     }
 
-    public function getDirection ()
+    public function getDirection()
     {
         return $this->direction;
     }
 
-    public function setIndication ($indication)
+    public function setIndication($indication)
     {
         $this->indication = $indication;
     }
 
-    public function setDistance ($distance)
+    public function setDistance($distance)
     {
         $this->distance = $distance;
     }
 
-    public function setPos ($pos)
+    public function setPos($pos)
     {
         $this->pos = $pos;
     }
 
-    public function setLast ($last)
+    public function setLast($last)
     {
         $this->last = $last;
     }
 
-    public function setJourney ($journey)
+    public function setJourney($journey)
     {
         $this->journey = $journey;
     }
 
-    public function setDeparture ($departure)
+    public function setDeparture($departure)
     {
         $this->departure = $departure;
     }
 
-    public function setArrival ($arrival)
+    public function setArrival($arrival)
     {
         $this->arrival = $arrival;
     }
 
-    public function setPtmode ($ptmode)
+    public function setPtmode($ptmode)
     {
         $this->ptmode = $ptmode;
     }
 
-    public function setPtline ($ptline)
+    public function setPtline($ptline)
     {
         $this->ptline = $ptline;
     }
 
-    public function setDirection ($direction)
+    public function setDirection($direction)
     {
         $this->direction = $direction;
     }
-    
 }

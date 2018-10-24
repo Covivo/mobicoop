@@ -67,44 +67,43 @@ class PTLine
      */
     private $ptcompany;
     
-    public function getName ()
+    public function getName()
     {
         return $this->name;
     }
 
-    public function getOrigin ()
+    public function getOrigin()
     {
         return $this->origin;
     }
 
-    public function getDestination ()
+    public function getDestination()
     {
         return $this->destination;
     }
 
-    public function getPtcompany ()
+    public function getPtcompany()
     {
         return $this->ptcompany;
     }
 
-    public function setName ($name)
+    public function setName($name)
     {
         $this->name = $name;
     }
 
-    public function setOrigin ($origin)
+    public function setOrigin($origin)
     {
         $this->origin = $origin;
     }
 
-    public function setDestination ($destination)
+    public function setDestination($destination)
     {
         $this->destination = $destination;
     }
 
-    public function setPtcompany ($ptcompany)
+    public function setPtcompany($ptcompany)
     {
         $this->ptcompany = $ptcompany;
     }
-    
 }

@@ -42,10 +42,10 @@ class ProposalPost
 
     /**
      * This method is invoked when a new proposal is posted.
-     * It returns the new proposal created : 
+     * It returns the new proposal created :
      * we don't return the matching proposals as we could expect, as it's maybe not a good practice to return another resource than the one that was created.
      * If the sender needs the matching results, he should send another request.
-     * 
+     *
      * @param Proposal $data
      * @return Proposal
      */
@@ -54,5 +54,4 @@ class ProposalPost
         $data = $this->proposalManager->createProposal($data);
         return $data;
     }
-    
 }

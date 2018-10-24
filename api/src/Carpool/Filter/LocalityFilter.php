@@ -9,10 +9,9 @@ use Doctrine\ORM\QueryBuilder;
 final class LocalityFilter extends AbstractContextAwareFilter
 {
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
-    {      
-        
+    {
         switch ($property) {
-            case 'startLocality' :
+            case 'startLocality':
                 $queryBuilder
                 ->join('o.points', 'startPoint')
                 ->join('startPoint.address', 'startAddress')
@@ -41,7 +40,7 @@ final class LocalityFilter extends AbstractContextAwareFilter
         $description = [];
         foreach ($this->properties as $property => $strategy) {
             switch ($property) {
-                case 'startLocality' :
+                case 'startLocality':
                     $description["startLocality"] = [
                             'property' => $property,
                             'type' => 'string',
