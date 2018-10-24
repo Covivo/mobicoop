@@ -30,7 +30,7 @@ use App\Carpool\Entity\Criteria;
 
 /**
  * Matching analyzer service.
- *
+ * 
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
 class MatchingAnalyzer
@@ -44,7 +44,7 @@ class MatchingAnalyzer
     
     /**
      * Find matching proposals for a proposal.
-     *
+     * 
      * @param Proposal $proposal
      * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
      */
@@ -55,10 +55,10 @@ class MatchingAnalyzer
     
     /**
      * Create Matching proposal entities for a proposal.
-     *
+     *  
      * @param Proposal $proposal    The proposal for which we want the matchings
      */
-    public function createMatchingsForProposal(Proposal $proposal)
+    public function createMatchingsForProposal(Proposal $proposal) 
     {
         $proposals = $this->findMatchingProposals($proposal);
         foreach ($proposals as $matchingProposal) {
@@ -70,17 +70,11 @@ class MatchingAnalyzer
                 if (!is_null($this->entityManager->getRepository(Matching::class)->findOneBy([
                         'proposalOffer'     => $proposal,
                         'proposalRequest'   => $matchingProposal
-                ]))) {
-                    break;
-                }
+                ]))) break;
                 // for now we just set the points to the start and destination points
                 foreach ($proposal->getPoints() as $point) {
-                    if ($point->getPosition() == 0) {
-                        $matching->setPointOfferFrom($point);
-                    }
-                    if ($point->getLastPoint()) {
-                        $matching->setPointOfferTo($point);
-                    }
+                    if ($point->getPosition() == 0) $matching->setPointOfferFrom($point);
+                    if ($point->getLastPoint()) $matching->setPointOfferTo($point);
                 }
                 foreach ($matchingProposal->getPoints() as $point) {
                     if ($point->getPosition() == 0) {
@@ -95,17 +89,11 @@ class MatchingAnalyzer
                 if (!is_null($this->entityManager->getRepository(Matching::class)->findOneBy([
                         'proposalOffer'     => $matchingProposal,
                         'proposalRequest'   => $proposal
-                ]))) {
-                    break;
-                }
+                ]))) break;
                 // for now we just set the points to the start and destination points
                 foreach ($matchingProposal->getPoints() as $point) {
-                    if ($point->getPosition() == 0) {
-                        $matching->setPointOfferFrom($point);
-                    }
-                    if ($point->getLastPoint()) {
-                        $matching->setPointOfferTo($point);
-                    }
+                    if ($point->getPosition() == 0) $matching->setPointOfferFrom($point);
+                    if ($point->getLastPoint()) $matching->setPointOfferTo($point);
                 }
                 foreach ($proposal->getPoints() as $point) {
                     if ($point->getPosition() == 0) {
@@ -124,4 +112,5 @@ class MatchingAnalyzer
         }
         $this->entityManager->flush();
     }
+
 }

@@ -21,65 +21,73 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Entity;
+namespace App\PublicTransport\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Carpooling : travel mode.
- * 
- * @ORM\Entity
+ * A public transport mode.
+ *
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"pt"}, "enable_max_depth"="true"},
  *      },
- *      collectionOperations={"get"},
+ *      collectionOperations={},
  *      itemOperations={"get"}
  * )
  */
-Class TravelMode 
+class PTMode
 {
+    CONST PT_MODE_BUS = "BUS";
+    CONST PT_MODE_TRAIN = "TRAIN";
+    CONST PT_MODE_BIKE = "BIKE";
+    CONST PT_MODE_WALK = "WALK";
+
+    private CONST PT_MODES = [
+            self::PT_MODE_BUS => 1,
+            self::PT_MODE_TRAIN => 2,
+            self::PT_MODE_BIKE => 3,
+            self::PT_MODE_WALK => 4
+    ];
+        
     /**
-     * @var int The id of this travel mode.
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @ApiProperty(identifier=true)
      */
     private $id;
-
+    
     /**
-     * @var string Name of the travel mode.
-     * 
-     * @Assert\NotBlank
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @var string The name of this mode.
+     *
+     * @Groups("pt")
      */
     private $name;
-
-    public function getId(): ?int
+    
+    public function __construct($mode)
+    {
+        $this->setId(self::PT_MODES[$mode]);
+        $this->setName($mode);
+    }
+    
+    public function getId ()
     {
         return $this->id;
     }
     
-    public function getName(): ?string
+    public function setId ($id)
+    {
+        $this->id = $id;
+    }
+    
+    public function getName ()
     {
         return $this->name;
     }
-
-    public function setName(string $name): self
+    
+    public function setName ($name)
     {
         $this->name = $name;
-
-        return $this;
     }
-
+    
 }

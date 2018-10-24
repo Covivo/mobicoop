@@ -34,7 +34,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Carpooling : travel point for a journey.
- *
+ * 
  * @ORM\Entity
  * @ApiResource(
  *      attributes={
@@ -45,7 +45,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      itemOperations={"get"}
  * )
  */
-class Point
+Class Point 
 {
     /**
      * @var int The id of this point.
@@ -59,7 +59,7 @@ class Point
 
     /**
      * @var int Position number of the point in the whole journey.
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
      * @Groups({"read","write"})
@@ -68,7 +68,7 @@ class Point
 
     /**
      * @var boolean The point is the last point of the whole journey.
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\Column(type="boolean")
      * @Groups({"read","write"})
@@ -77,7 +77,7 @@ class Point
 
     /**
      * @var int|null Real distance to next point in metres.
-     *
+     * 
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read"})
      */
@@ -85,7 +85,7 @@ class Point
 
     /**
      * @var int|null Flying distance to next point in metres.
-     *
+     * 
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read"})
      */
@@ -93,7 +93,7 @@ class Point
 
     /**
      * @var int|null Duration to the next point in seconds (based on real distance).
-     *
+     * 
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read"})
      */
@@ -101,7 +101,7 @@ class Point
 
     /**
      * @var Proposal The proposal that created the point.
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Proposal", inversedBy="points")
      * @ORM\JoinColumn(nullable=false)
@@ -130,7 +130,7 @@ class Point
 
     /**
      * @var Address The address of the point.
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="App\Address\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -141,7 +141,7 @@ class Point
 
     /**
      * @var TravelMode|null The travel mode used from the point to the next point.
-     *
+     *  
      * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\TravelMode")
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -248,4 +248,5 @@ class Point
 
         return $this;
     }
+
 }

@@ -42,7 +42,7 @@ use App\User\Entity\UserAddress;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"read","pt"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={},
@@ -67,7 +67,7 @@ class Address
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","pt"})
      */
     private $streetAddress;
     
@@ -75,7 +75,7 @@ class Address
      * @var string|null The postal code of the address.
      *
      * @ORM\Column(type="string", length=15, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","pt"})
      */
     private $postalCode;
     
@@ -84,7 +84,7 @@ class Address
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=100)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","pt"})
      */
     private $addressLocality;
     
@@ -93,7 +93,7 @@ class Address
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=100)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","pt"})
      */
     private $addressCountry;
     
@@ -101,7 +101,7 @@ class Address
      * @var string The latitude of the address.
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","pt"})
      */
     private $latitude;
     
@@ -109,7 +109,7 @@ class Address
      * @var string The longitude of the address.
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","pt"})
      */
     private $longitude;
     
@@ -117,7 +117,7 @@ class Address
      * @var int|null The elevation of the address in metres.
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","pt"})
      */
     private $elevation;
         
@@ -206,4 +206,5 @@ class Address
         $userAddress->setAddress($this);
         $this->userAddress = $userAddress;
     }
+    
 }

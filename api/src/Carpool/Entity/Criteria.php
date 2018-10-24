@@ -30,7 +30,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Carpooling : criteria (restriction for an offer / selection for a request).
- *
+ * 
  * @ORM\Entity
  * @ApiResource(
  *      attributes={
@@ -41,10 +41,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      itemOperations={"get"}
  * )
  */
-class Criteria
+Class Criteria 
 {
-    const FREQUENCY_PUNCTUAL = 1;
-    const FREQUENCY_REGULAR = 2;
+    CONST FREQUENCY_PUNCTUAL = 1;
+    CONST FREQUENCY_REGULAR = 2;
     
     /**
      * @var int The id of this criteria.
@@ -58,7 +58,7 @@ class Criteria
 
     /**
      * @var int The proposal frequency (1 = punctual; 2 = regular).
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
      * @Groups({"read","write"})
@@ -67,7 +67,7 @@ class Criteria
 
     /**
      * @var int The number of available seats.
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\Column(type="integer")
      * @Groups({"read","write"})
@@ -76,7 +76,7 @@ class Criteria
 
     /**
      * @var \DateTimeInterface The starting date (= proposal date if punctual).
-     *
+     * 
      * @Assert\NotBlank
      * @Assert\Date()
      * @ORM\Column(type="date")
@@ -86,7 +86,7 @@ class Criteria
 
     /**
      * @var \DateTimeInterface|null The starting time.
-     *
+     * 
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"read","write"})
@@ -95,7 +95,7 @@ class Criteria
 
     /**
      * @var \DateTimeInterface|null The end date if regular proposal.
-     *
+     * 
      * @Assert\Date()
      * @ORM\Column(type="date", nullable=true)
      * @Groups({"read","write"})
@@ -104,7 +104,7 @@ class Criteria
 
     /**
      * @var boolean|null The proposal is available on mondays (if regular).
-     *
+     * 
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
@@ -112,7 +112,7 @@ class Criteria
 
     /**
      * @var boolean|null The proposal is available on tuesdays (if regular).
-     *
+     * 
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
@@ -120,7 +120,7 @@ class Criteria
 
     /**
      * @var boolean|null The proposal is available on wednesdays (if regular).
-     *
+     * 
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
@@ -128,7 +128,7 @@ class Criteria
 
     /**
      * @var boolean|null The proposal is available on thursdays (if regular).
-     *
+     * 
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
@@ -136,7 +136,7 @@ class Criteria
 
     /**
      * @var boolean|null The proposal is available on fridays (if regular).
-     *
+     * 
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
@@ -144,7 +144,7 @@ class Criteria
 
     /**
      * @var boolean|null The proposal is available on saturdays (if regular).
-     *
+     * 
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
@@ -152,7 +152,7 @@ class Criteria
 
     /**
      * @var boolean|null The proposal is available on sundays (if regular).
-     *
+     * 
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
@@ -160,7 +160,7 @@ class Criteria
 
     /**
      * @var \DateTimeInterface|null Mondays starting time (if regular).
-     *
+     * 
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"read","write"})
@@ -169,7 +169,7 @@ class Criteria
 
     /**
      * @var \DateTimeInterface|null Tuesdays starting time (if regular).
-     *
+     * 
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"read","write"})
@@ -178,7 +178,7 @@ class Criteria
 
     /**
      * @var \DateTimeInterface|null Wednesdays starting time (if regular).
-     *
+     * 
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"read","write"})
@@ -187,7 +187,7 @@ class Criteria
 
     /**
      * @var \DateTimeInterface|null Thursdays starting time (if regular).
-     *
+     * 
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"read","write"})
@@ -196,7 +196,7 @@ class Criteria
 
     /**
      * @var \DateTimeInterface|null Fridays starting time (if regular).
-     *
+     * 
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"read","write"})
@@ -205,7 +205,7 @@ class Criteria
 
     /**
      * @var \DateTimeInterface|null Saturdays starting time (if regular).
-     *
+     * 
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"read","write"})
@@ -214,7 +214,7 @@ class Criteria
 
     /**
      * @var \DateTimeInterface|null Sunadays starting time (if regular).
-     *
+     * 
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"read","write"})
@@ -223,7 +223,7 @@ class Criteria
 
     /**
      * @var int Accepted margin for starting time in seconds.
-     *
+     * 
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
@@ -483,4 +483,5 @@ class Criteria
         $this->setFromTime($criteria->getFromTime());
         $this->setToDate($criteria->getToDate());
     }
+    
 }

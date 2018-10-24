@@ -182,7 +182,7 @@ class User
 
     /**
      * @var Proposal[]|null The proposals made by this user.
-     *
+     * 
      * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Proposal", mappedBy="user")
      * @ApiSubresource(maxDepth=1)
      */
@@ -190,7 +190,7 @@ class User
 
     /**
      * @var Solicitation[]|null The solicitations made by this user.
-     *
+     * 
      * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Solicitation", mappedBy="user")
      * @ApiSubresource(maxDepth=1)
      */
@@ -198,7 +198,7 @@ class User
 
     /**
      * @var Solicitation[]|null The solicitations where the user is involved as a driver.
-     *
+     * 
      * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Solicitation", mappedBy="userOffer")
      * @ApiSubresource(maxDepth=1)
      */
@@ -206,7 +206,7 @@ class User
 
     /**
      * @var Solicitation[]|null The solicitations where the user is involved as a passenger.
-     *
+     * 
      * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Solicitation", mappedBy="userRequest")
      * @ApiSubresource(maxDepth=1)
      */

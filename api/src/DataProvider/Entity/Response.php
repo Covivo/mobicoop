@@ -21,38 +21,48 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Controller;
-
-use App\Carpool\Service\ProposalManager;
-use App\Carpool\Entity\Proposal;
+namespace App\DataProvider\Entity;
 
 /**
- * Controller class for proposal post.
- *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * A DataProvider response.
  */
-class ProposalPost
+class Response
 {
-    private $proposalManager;
-
-    public function __construct(ProposalManager $proposalManager)
-    {
-        $this->proposalManager = $proposalManager;
-    }
-
+    const DEFAULT_CODE = 404;
+    
     /**
-     * This method is invoked when a new proposal is posted.
-     * It returns the new proposal created : 
-     * we don't return the matching proposals as we could expect, as it's maybe not a good practice to return another resource than the one that was created.
-     * If the sender needs the matching results, he should send another request.
-     * 
-     * @param Proposal $data
-     * @return Proposal
+     * @var int $code The response code.
      */
-    public function __invoke(Proposal $data): Proposal
+    private $code;
+    
+    /**
+     * @var object|array $value The value of the response.
+     */
+    private $value;
+    
+    public function __construct(int $code=self::DEFAULT_CODE, $value=null)
     {
-        $data = $this->proposalManager->createProposal($data);
-        return $data;
+        $this->setCode($code);
+        $this->setValue($value);
     }
     
+    public function getCode(): int
+    {
+        return $this->code;
+    }
+
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    public function setCode(int $code)
+    {
+        $this->code = $code;
+    }
+
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
 }

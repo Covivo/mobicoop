@@ -21,38 +21,17 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Controller;
-
-use App\Carpool\Service\ProposalManager;
-use App\Carpool\Entity\Proposal;
+namespace App\DataProvider\Interfaces;
 
 /**
- * Controller class for proposal post.
+ * Provider interface.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ *
  */
-class ProposalPost
+interface ProviderInterface
 {
-    private $proposalManager;
-
-    public function __construct(ProposalManager $proposalManager)
-    {
-        $this->proposalManager = $proposalManager;
-    }
-
-    /**
-     * This method is invoked when a new proposal is posted.
-     * It returns the new proposal created : 
-     * we don't return the matching proposals as we could expect, as it's maybe not a good practice to return another resource than the one that was created.
-     * If the sender needs the matching results, he should send another request.
-     * 
-     * @param Proposal $data
-     * @return Proposal
-     */
-    public function __invoke(Proposal $data): Proposal
-    {
-        $data = $this->proposalManager->createProposal($data);
-        return $data;
-    }
-    
+    public function getCollection(string $class, string $apikey, array $params);
+    public function getItem(string $class, string $apikey, array $params);
+    function deserialize(string $class, array $data);
 }

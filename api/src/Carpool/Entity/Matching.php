@@ -34,7 +34,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Carpooling : matching between an offer and a request.
- *
+ * 
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
@@ -46,7 +46,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      itemOperations={"get"}
  * )
  */
-class Matching
+Class Matching 
 {
     /**
      * @var int The id of this matching.
@@ -60,14 +60,14 @@ class Matching
 
     /**
      * @var \DateTimeInterface Creation date of the matching.
-     *
+     * 
      * @ORM\Column(type="datetime")
      */
     private $createdDate;
 
     /**
      * @var int|null Real distance in metres of the matching route.
-     *
+     * 
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read"})
      */
@@ -75,7 +75,7 @@ class Matching
 
     /**
      * @var int|null Flying distance in metres of the matching route.
-     *
+     * 
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read"})
      */
@@ -83,7 +83,7 @@ class Matching
 
     /**
      * @var int|null Duration in seconds of the matching route (based on real distance).
-     *
+     * 
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read"})
      */
@@ -91,7 +91,7 @@ class Matching
 
     /**
      * @var Proposal The offer proposal.
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Proposal", inversedBy="matchingRequests")
      * @ORM\JoinColumn(nullable=false)
@@ -102,7 +102,7 @@ class Matching
 
     /**
      * @var Proposal The request proposal.
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Proposal", inversedBy="matchingOffers")
      * @ORM\JoinColumn(nullable=false)
@@ -113,7 +113,7 @@ class Matching
 
     /**
      * @var Point|null Starting point of the offer proposal used for the matching.
-     *
+     * 
      * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Point")
      * @Groups({"read"})
      * @MaxDepth(1)
@@ -122,7 +122,7 @@ class Matching
 
     /**
      * @var Point|null Ending point of the offer proposal used for the matching.
-     *
+     * 
      * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Point")
      * @Groups({"read"})
      * @MaxDepth(1)
@@ -131,7 +131,7 @@ class Matching
 
     /**
      * @var Point Starting point of the request used for the matching (if multimodal travel, otherwise it's always the starting point).
-     *
+     * 
      * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Point")
      * @Groups({"read"})
      * @MaxDepth(1)
@@ -140,7 +140,7 @@ class Matching
 
     /**
      * @var Solicitation[]|null The solicitations created with this matching as a source.
-     *
+     * 
      * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Solicitation", mappedBy="matching")
      * @Groups({"read"})
      * @MaxDepth(1)
@@ -149,7 +149,7 @@ class Matching
 
     /**
      * @var Criteria The criteria applied to this solicitation.
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")

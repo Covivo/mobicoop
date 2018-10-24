@@ -42,7 +42,7 @@ use App\Carpool\Filter\LocalityFilter;
 
 /**
  * Carpooling : proposal (offer from a driver / request from a passenger).
- *
+ * 
  * @ORM\Entity(repositoryClass="App\Carpool\Repository\ProposalRepository")
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
@@ -64,14 +64,14 @@ use App\Carpool\Filter\LocalityFilter;
  * @ApiFilter(NumericFilter::class, properties={"proposalType"})
  * @ApiFilter(DateFilter::class, properties={"criteria.fromDate"})
  */
-class Proposal
+Class Proposal 
 {
-    const PROPOSAL_TYPE_OFFER = 1;
-    const PROPOSAL_TYPE_REQUEST = 2;
-    const PROPOSAL_TYPE_BOTH = 3;
-    const JOURNEY_TYPE_ONE_WAY = 1;
-    const JOURNEY_TYPE_OUTWARD = 2;
-    const JOURNEY_TYPE_RETURN = 3;
+    CONST PROPOSAL_TYPE_OFFER = 1;
+    CONST PROPOSAL_TYPE_REQUEST = 2;
+    CONST PROPOSAL_TYPE_BOTH = 3;
+    CONST JOURNEY_TYPE_ONE_WAY = 1;
+    CONST JOURNEY_TYPE_OUTWARD = 2;
+    CONST JOURNEY_TYPE_RETURN = 3;
     
     /**
      * @var int The id of this proposal.
@@ -85,7 +85,7 @@ class Proposal
 
     /**
      * @var int The proposal type (1 = offer (as a driver); 2 = request (as a passenger)).
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
      * @Groups({"read","write"})
@@ -94,7 +94,7 @@ class Proposal
 
     /**
      * @var int The journey type (1 = one way trip; 2 = outward of a round trip; 3 = return of a round trip)).
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
      * @Groups({"read","write"})
@@ -103,14 +103,14 @@ class Proposal
 
     /**
      * @var \DateTimeInterface Creation date of the proposal.
-     *
+     * 
      * @ORM\Column(type="datetime")
      */
     private $createdDate;
 
     /**
      * @var int|null Real distance of the full journey in metres.
-     *
+     * 
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read"})
      */
@@ -118,7 +118,7 @@ class Proposal
 
     /**
      * @var int|null Flying distance of the full journey in metres.
-     *
+     * 
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read"})
      */
@@ -126,7 +126,7 @@ class Proposal
 
     /**
      * @var int|null Estimated duration of the full journey in seconds (based on real distance).
-     *
+     * 
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read"})
      */
@@ -134,7 +134,7 @@ class Proposal
 
     /**
      * @var string|null Main cape of the journey (N/S/E/W)
-     *
+     * 
      * @ORM\Column(type="string", length=3, nullable=true)
      * @Groups({"read"})
      */
@@ -142,12 +142,12 @@ class Proposal
 
     /**
      * @var Proposal|null Linked proposal for an offer AND request proposal (= request linked for an offer proposal, offer linked for a request proposal).
-     *
+     * 
      * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Proposal", cascade={"persist", "remove"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read"})
      * @MaxDepth(1)
-     *
+     * 
      */
     private $proposalLinked;
     
@@ -172,7 +172,7 @@ class Proposal
     
     /**
      * @var User|null User who submits the proposal.
-     *
+     * 
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="proposals")
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -181,7 +181,7 @@ class Proposal
 
     /**
      * @var Point[] The points of the proposal.
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Point", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
@@ -193,7 +193,7 @@ class Proposal
     
     /**
      * @var TravelMode[]|null The travel modes accepted if the proposal is a request.
-     *
+     * 
      * @ORM\ManyToMany(targetEntity="App\Carpool\Entity\TravelMode")
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -202,7 +202,7 @@ class Proposal
 
     /**
      * @var Matching[]|null The matching of the proposal (if proposal is an offer).
-     *
+     * 
      * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Matching", mappedBy="proposalOffer")
      * @ApiSubresource(maxDepth=1)
      */
@@ -210,7 +210,7 @@ class Proposal
 
     /**
      * @var Matching[]|null The matching of the proposal (if proposal is a request).
-     *
+     * 
      * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Matching", mappedBy="proposalRequest")
      * @ApiSubresource(maxDepth=1)
      */
@@ -218,7 +218,7 @@ class Proposal
 
     /**
      * @var Criteria The criteria applied to the proposal.
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -238,8 +238,7 @@ class Proposal
         $this->matchingRequests = new ArrayCollection();
     }
     
-    public function __clone()
-    {
+    public function __clone() {
         // when we clone a Proposal we keep only the basic properties, we re-initialize all the collections
         $this->points = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
@@ -431,7 +430,7 @@ class Proposal
         }
 
         return $this;
-    }
+    }    
     
     /**
      * @return Collection|TravelMode[]
@@ -533,22 +532,22 @@ class Proposal
         return $this;
     }
     
-    public function getStartLocality()
+    public function getStartLocality ()
     {
         return $this->startLocality;
     }
 
-    public function setStartLocality($startLocality)
+    public function setStartLocality ($startLocality)
     {
         $this->startLocality = $startLocality;
     }
     
-    public function getDestinationLocality()
+    public function getDestinationLocality ()
     {
         return $this->destinationLocality;
     }
 
-    public function setDestinationLocality($destinationLocality)
+    public function setDestinationLocality ($destinationLocality)
     {
         $this->destinationLocality = $destinationLocality;
     }
@@ -564,4 +563,5 @@ class Proposal
     {
         $this->setCreatedDate(new \Datetime());
     }
+
 }

@@ -43,32 +43,32 @@ class ProposalRepository extends ServiceEntityRepository
     
     /**
      * Find proposals matching the proposal passed as an argument.
-     *
+     * 
      * @param Proposal $proposal
      * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
      */
-    public function findMatchingProposals(Proposal $proposal)
-    {
+    public function findMatchingProposals(Proposal $proposal) {
         
-        // LIMITATIONS :
+        // LIMITATIONS : 
         // - only punctual journeys
         // - only 2 points : starting point and destination
         
         switch ($proposal->getCriteria()->getFrequency()) {
-            case Criteria::FREQUENCY_PUNCTUAL:
+            case Criteria::FREQUENCY_PUNCTUAL : 
                 return $this->findMatchingForPunctualProposal($proposal);
                 break;
-            case Criteria::FREQUENCY_REGULAR:
+            case Criteria::FREQUENCY_REGULAR : 
                 return $this->findMatchingForRegularProposal($proposal);
                 break;
         }
         
         return null;
+        
     }
     
     /**
      * Search matchings for a punctual proposal.
-     *
+     * 
      * @param Proposal $proposal
      * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
      */
@@ -82,15 +82,9 @@ class ProposalRepository extends ServiceEntityRepository
         $startLocality = null;
         $endLocality = null;
         foreach ($proposal->getPoints() as $point) {
-            if ($point->getPosition() == 0) {
-                $startLocality = $point->getAddress()->getAddressLocality();
-            }
-            if ($point->getLastPoint()) {
-                $endLocality = $point->getAddress()->getAddressLocality();
-            }
-            if (!is_null($startLocality) && !is_null($endLocality)) {
-                break;
-            }
+            if ($point->getPosition() == 0) $startLocality = $point->getAddress()->getAddressLocality();
+            if ($point->getLastPoint()) $endLocality = $point->getAddress()->getAddressLocality();
+            if (!is_null($startLocality) && !is_null($endLocality)) break;
         }
         
         // we search the matchings in the proposal entity
@@ -136,4 +130,5 @@ class ProposalRepository extends ServiceEntityRepository
     {
         return null;
     }
+        
 }

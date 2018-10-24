@@ -36,7 +36,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Carpooling : solicitation from/to a driver and/or a passenger (after a matching between an offer and a request).
- *
+ * 
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
@@ -48,7 +48,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      itemOperations={"get","put","delete"}
  * )
  */
-class Solicitation
+Class Solicitation
 {
     /**
      * @var int The id of this solicitation.
@@ -62,7 +62,7 @@ class Solicitation
 
     /**
      * @var int Solicitation status (0 = waiting; 1 = accepted; 2 = declined).
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
      * @Groups({"read","write"})
@@ -71,7 +71,7 @@ class Solicitation
 
     /**
      * @var int The journey type (1 = one way trip; 2 = outward of a round trip; 3 = return of a round trip)).
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
      * @Groups({"read","write"})
@@ -80,14 +80,14 @@ class Solicitation
 
     /**
      * @var \DateTimeInterface Creation date of the solicitation.
-     *
+     * 
      * @ORM\Column(type="datetime")
      */
     private $createdDate;
 
     /**
      * @var int|null Real distance of the matching journey in metres.
-     *
+     * 
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read"})
      */
@@ -95,7 +95,7 @@ class Solicitation
 
     /**
      * @var int|null Flying distance of the matching journey in metres.
-     *
+     * 
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read"})
      */
@@ -103,7 +103,7 @@ class Solicitation
 
     /**
      * @var int|null Estimated duration of the matching journey in seconds (based on real distance).
-     *
+     * 
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read"})
      */
@@ -111,7 +111,7 @@ class Solicitation
 
     /**
      * @var Address The starting point address.
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="App\Address\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false)
@@ -122,7 +122,7 @@ class Solicitation
 
     /**
      * @var Address The destination address.
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="App\Address\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false)
@@ -133,7 +133,7 @@ class Solicitation
 
     /**
      * @var User The user that creates the solicitation.
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="solicitations")
      * @ORM\JoinColumn(nullable=false)
@@ -144,7 +144,7 @@ class Solicitation
 
     /**
      * @var User The user that created the offer (= shortcut to the driver)
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="solicitationsOffer")
      * @ORM\JoinColumn(nullable=false)
@@ -155,7 +155,7 @@ class Solicitation
 
     /**
      * @var User The user that created the request (= shortcut to the passenger)
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="solicitationsRequest")
      * @ORM\JoinColumn(nullable=false)
@@ -166,7 +166,7 @@ class Solicitation
 
     /**
      * @var Matching The matching at the origin of the solicitation.
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Matching", inversedBy="solicitations")
      * @ORM\JoinColumn(nullable=false)
@@ -177,16 +177,16 @@ class Solicitation
 
     /**
      * @var Solicitation|null The linked solicitation.
-     *
+     * 
      * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Solicitation")
      * @Groups({"read"})
      * @MaxDepth(1)
      */
-    private $solicitationLinked;
+    private $solicitationLinked;    
 
     /**
      * @var Criteria The criteria applied to the solicitation.
-     *
+     * 
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")

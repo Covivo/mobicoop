@@ -21,65 +21,90 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Entity;
+namespace App\PublicTransport\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Carpooling : travel mode.
- * 
- * @ORM\Entity
+ * A public transport line.
+ *
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"pt"}, "enable_max_depth"="true"},
  *      },
- *      collectionOperations={"get"},
+ *      collectionOperations={},
  *      itemOperations={"get"}
  * )
  */
-Class TravelMode 
+class PTLine
 {
     /**
-     * @var int The id of this travel mode.
+     * @var string The name of this line.
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @Groups("read")
-     */
-    private $id;
-
-    /**
-     * @var string Name of the travel mode.
-     * 
-     * @Assert\NotBlank
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups("pt")
      */
     private $name;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
     
-    public function getName(): ?string
+    /**
+     * @var string The origin of this line.
+     *
+     * @Groups("pt")
+     */
+    private $origin;
+    
+    /**
+     * @var string The destination of this line.
+     *
+     * @Groups("pt")
+     */
+    private $destination;
+    
+    /**
+     * @var PTCompany The company that manage this line.
+     *
+     * @Groups("pt")
+     */
+    private $ptcompany;
+    
+    public function getName ()
     {
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function getOrigin ()
     {
-        $this->name = $name;
-
-        return $this;
+        return $this->origin;
     }
 
+    public function getDestination ()
+    {
+        return $this->destination;
+    }
+
+    public function getPtcompany ()
+    {
+        return $this->ptcompany;
+    }
+
+    public function setName ($name)
+    {
+        $this->name = $name;
+    }
+
+    public function setOrigin ($origin)
+    {
+        $this->origin = $origin;
+    }
+
+    public function setDestination ($destination)
+    {
+        $this->destination = $destination;
+    }
+
+    public function setPtcompany ($ptcompany)
+    {
+        $this->ptcompany = $ptcompany;
+    }
+    
 }

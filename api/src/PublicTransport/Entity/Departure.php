@@ -21,65 +21,96 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Entity;
+namespace App\PublicTransport\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
+use App\Address\Entity\Address;
 
 /**
- * Carpooling : travel mode.
- * 
- * @ORM\Entity
+ * A departure.
+ *
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "normalization_context"={"groups"={"pt"}, "enable_max_depth"="true"},
  *      },
- *      collectionOperations={"get"},
+ *      collectionOperations={},
  *      itemOperations={"get"}
  * )
  */
-Class TravelMode 
+class Departure
 {
+    
     /**
-     * @var int The id of this travel mode.
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @ApiProperty(identifier=true)
      */
     private $id;
-
+    
     /**
-     * @var string Name of the travel mode.
-     * 
-     * @Assert\NotBlank
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @var string The name of this departure.
+     *
+     * @Groups("pt")
      */
     private $name;
-
-    public function getId(): ?int
+    
+    /**
+     * @var \DateTime The date and time of this departure.
+     *
+     * @Groups("pt")
+     */
+    private $date;
+   
+    /**
+     * @var Address The address of this departure.
+     *
+     * @Groups("pt")
+     */
+    private $address;
+    
+    public function __construct($id)
+    {
+        $this->id = $id;
+    }
+    
+    public function getId ()
     {
         return $this->id;
     }
     
-    public function getName(): ?string
+    public function setId ($id)
+    {
+        $this->id = $id;
+    }
+    
+    public function getName ()
     {
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function getDate ()
+    {
+        return $this->date;
+    }
+
+    public function getAddress ()
+    {
+        return $this->address;
+    }
+
+    public function setName ($name)
     {
         $this->name = $name;
+    }
 
-        return $this;
+    public function setDate ($date)
+    {
+        $this->date = $date;
+    }
+
+    public function setAddress ($address)
+    {
+        $this->address = $address;
     }
 
 }
