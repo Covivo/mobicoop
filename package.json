@@ -18,7 +18,7 @@
     "start-admin": "cd interfaces/admin && npm start",
     "start-mobicoop": "cd interfaces/mobicoop && npm start",
     "generateDocs": "php bin/phpDocumentor.phar -d interfaces/mobicoop/src -t interfaces/mobicoop/public/build/doc --title Mobicoop",
-    "create-front-canvas": "node helpers/createFrontCanvas.js -d $1"
+    "create-front-canvas": "node helpers/createFrontCanvas.js -d"
   },
   "config": {
     "ghooks": {

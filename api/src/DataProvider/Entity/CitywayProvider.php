@@ -23,9 +23,9 @@
 
 namespace App\DataProvider\Entity;
 
-use App\PublicTransport\Entity\Journey;
 use App\DataProvider\Interfaces\ProviderInterface;
 use App\DataProvider\Service\DataProvider;
+use App\PublicTransport\Entity\Journey;
 use App\PublicTransport\Entity\Arrival;
 use App\PublicTransport\Entity\Departure;
 use App\PublicTransport\Entity\Section;

@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "start": "node runstart.js $1",
+    "start": "node runstart.js",
     "test": "node src/MobicoopBundle/spec/runtests.js",
     "testAndCoverage": "node src/MobicoopBundle/spec/runtests.js -c",
     "testFixAndCoverage": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src &&  php vendor/bin/php-cs-fixer.phar fix --using-cache=false src/MobicoopBundle/spec && node src/MobicoopBundle/spec/runtests.js -c",
