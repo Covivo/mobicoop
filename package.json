@@ -18,13 +18,13 @@
     "start-admin": "cd interfaces/admin && npm start",
     "start-mobicoop": "cd interfaces/mobicoop && npm start",
     "generateDocs": "php bin/phpDocumentor.phar -d interfaces/mobicoop/src -t interfaces/mobicoop/public/build/doc --title Mobicoop",
-    "create-front-canvas": "node helpers/createFrontCanvas.js -d"
+    "create-front-canvas": "node helpers/createFrontCanvas.js -d",
+    "link-bundle" : "node helpers/linkBundle.js -d"
   },
   "config": {
     "ghooks": {
       "pre-commit": "php bin/php-cs-fixer.phar fix --using-cache=false api/src &&  php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src && php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src/MobicoopBundle/spec",
-      "pre-push": "npm test",
-      "post-merge": "npm install"
+      "pre-push": "npm test"
     }
   },
   "repository": {

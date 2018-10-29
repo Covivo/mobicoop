@@ -26,6 +26,19 @@ Simple API based on [api-plateform](https://api-platform.com), which is a symfon
 
 `npm install` will do the necessary jobs
 
+
+#### Install Databases needs
+
+⚠️ Don't forget to setup your SQL before !
+
+- Create a new database schema needed for api based on the name you gave in .env file
+- Configure environment variable DATABASE_URL in .env
+- Migrate all tables using : `php bin/console doctrine:migrations:migrate -n`
+- You're finally ready to simply run it !
+
+If you want to check that you are up-to-date in your SQL schema : `npm run updateDb`
+
+
 ### Test
  for the moment there is no any tests yet..
 
