@@ -33,6 +33,10 @@ use App\PublicTransport\Entity\PTMode;
 
 /**
  * Cityway data provider.
+ * 
+ * Implements all the methods needed to retrieve data from CityWay :
+ * - get collection and item
+ * - deserialize to populate Public Transport entities  
  */
 class CitywayProvider implements ProviderInterface
 {
@@ -112,7 +116,7 @@ class CitywayProvider implements ProviderInterface
     
     private function deserializeJourney($data)
     {
-        $journey = new Journey(count($this->collection)+1);
+        $journey = new Journey(count($this->collection)+1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
         if (isset($data["Distance"])) {
             $journey->setDistance($data["Distance"]);
         }
@@ -120,12 +124,12 @@ class CitywayProvider implements ProviderInterface
             $journey->setDuration($data["Duration"]);
         }
         if (isset($data["DepartureTime"])) {
-            $departure = new Departure(1);
+            $departure = new Departure(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
             $departure->setDate(\DateTime::createFromFormat(self::DATETIME_FORMAT, $data["DepartureTime"]));
             $journey->setDeparture($departure);
         }
         if (isset($data["ArrivalTime"])) {
-            $arrival = new Arrival(1);
+            $arrival = new Arrival(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
             $arrival->setDate(\DateTime::createFromFormat(self::DATETIME_FORMAT, $data["ArrivalTime"]));
             $journey->setArrival($arrival);
         }

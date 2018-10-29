@@ -25,6 +25,8 @@ namespace App\DataProvider\Interfaces;
 
 /**
  * Provider interface.
+ * 
+ * A provider entity class must implement all these methods in order to retrieve data and populate Public Transport entities. 
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  *
