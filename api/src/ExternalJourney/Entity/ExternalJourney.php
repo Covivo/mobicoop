@@ -1,6 +1,7 @@
 <?php
 
 namespace App\ExternalJourney\Entity;
+
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 
@@ -18,14 +19,17 @@ class ExternalJourney
     */
     private $id;
 
-    public function __construct(){
+    public function __construct()
+    {
     }
 
-    public function getid(){
-      return $this->id;
+    public function getid()
+    {
+        return $this->id;
     }
 
-    public function setid($id){
-      return $this->id = $id;
+    public function setid($id)
+    {
+        return $this->id = $id;
     }
 }
