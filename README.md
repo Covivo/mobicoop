@@ -27,6 +27,8 @@ For more informations, check their readme:
 - Node.js => 10
 - xdebug (needed for code-coverage)
 - Google Chrome (for functionnals tests)
+- If you have missing modules during installation check this docker file
+install & enable in you .ini all its php extensions : [Docker file](https://github.com/vyuldashev/docker-ci-php-node/blob/master/Dockerfile)
 
 - for Windows check the [windows requirement](#windows-requirements) part
 
@@ -39,12 +41,14 @@ For more informations, check their readme:
 
 *DUPLICATE THE [config.json.dist](config.json.dist) INTO A `config.json` FILE*
 
+
+#### For all apps
+
 `npm install` will perfom:
  - Api vendor
  - Mobicoop vendor+node_modules+build assets 
  - Admin node_modules 
  - Download tools binaries (php-cs-fixer & phpdocumentor)
-
 
 - Sometimes if tools do not work you will ne on unix systems: `chmod 775 bin/*`
 
@@ -57,6 +61,10 @@ For more informations, check their readme:
 
 - If you have missing modules during installation check this docker file
 and install all its php extensions : [Docker file](https://github.com/vyuldashev/docker-ci-php-node/blob/master/Dockerfile)
+
+#### API
+
+There are some needs for api database , check them [/api](/api)
 
 
 ### Tests 🎰
@@ -77,14 +85,6 @@ To start the application simply run :
 & just go to [http://localhost:8081](http://localhost:8081) for mobicoop app
 & just go to [http://localhost:8082](http://localhost:8082) for admin 
 
-If you want to check that you are up-to-date in your SQL schema : `npm run updateDb` 
-
-⚠️ Don't forget to setup your SQL before !
-
-- Create a new schema
-- Configure environment variable DATABASE_URL in /api/.env
-- Migrate all tables using : `php bin/console doctrine:migrations:migrate -n`
-- You're finally ready to simply run it !
 
 ### Developpement
 
