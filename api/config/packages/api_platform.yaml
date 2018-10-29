@@ -10,9 +10,10 @@ api_platform:
     version: '0.1.0'
 
     mapping:
-        paths: ['%kernel.project_dir%/src/Entity','%kernel.project_dir%/src/Address/Entity','%kernel.project_dir%/src/Carpool/Entity','%kernel.project_dir%/src/User/Entity']
+        paths: ['%kernel.project_dir%/src/Entity','%kernel.project_dir%/src/Address/Entity','%kernel.project_dir%/src/Carpool/Entity','%kernel.project_dir%/src/User/Entity','%kernel.project_dir%/src/PublicTransport/Entity']
     resource_class_directories:
         - '%kernel.project_dir%/src/Entity'
         - '%kernel.project_dir%/src/Address/Entity'
         - '%kernel.project_dir%/src/Carpool/Entity'
         - '%kernel.project_dir%/src/User/Entity'
+        - '%kernel.project_dir%/src/PublicTransport/Entity'
