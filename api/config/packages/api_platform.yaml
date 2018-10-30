@@ -17,3 +17,4 @@ api_platform:
         - '%kernel.project_dir%/src/Address/Entity'
         - '%kernel.project_dir%/src/Carpool/Entity'
         - '%kernel.project_dir%/src/User/Entity'
+        - '%kernel.project_dir%/src/ExternalJourney/Entity'

@@ -11,7 +11,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
 {
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return "Journey::class === $resourceClass";
+        return "ExternalJourney::class === $resourceClass";
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): array
@@ -53,7 +53,8 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
 
         //Request the url
         $data = file_get_contents($signedUrl);
-        echo(gettype(json_decode($data)));
-        return json_decode($data);
+
+        //echo(gettype(json_decode($data)));
+        return json_decode( preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $data), true );
     }
 }
