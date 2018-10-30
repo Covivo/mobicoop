@@ -27,6 +27,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -59,6 +60,7 @@ class Address
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Groups("read")
+     * @ApiProperty(identifier=true)
      */
     private $id;
     
@@ -166,6 +168,11 @@ class Address
         return $this->userAddress;
     }
 
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+    
     public function setStreetAddress(string $streetAddress)
     {
         $this->streetAddress = $streetAddress;
