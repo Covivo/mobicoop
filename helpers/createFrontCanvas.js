@@ -51,7 +51,6 @@ async function createCanvas () {
   //filter so that we don't need to copy Bundle
   const filter = {
     filter: function(path){
-      console.log(path)
       if (path === pathToMobicoopBundle){return false;}
       return true;
     }
