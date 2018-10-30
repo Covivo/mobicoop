@@ -26,10 +26,10 @@ namespace App\PublicTransport\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\ArrayCollection;
+use App\Address\Entity\Address;
 
 /**
- * A section of a journey.
+ * A public transport step (by walk or public transport).
  *
  * @ApiResource(
  *      attributes={
@@ -39,7 +39,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      itemOperations={"get"}
  * )
  */
-class Section
+class PTStep
 {
     /**
      * @ApiProperty(identifier=true)
@@ -47,35 +47,28 @@ class Section
     private $id;
     
     /**
-     * @var string The indication of this section.
-     *
-     * @Groups("pt")
-     */
-    private $indication;
-    
-    /**
-     * @var int The distance of this section.
+     * @var int The distance of this step.
      *
      * @Groups("pt")
      */
     private $distance;
     
     /**
-     * @var int The duration of this section.
+     * @var int The duration of this step.
      *
      * @Groups("pt")
      */
     private $duration;
     
     /**
-     * @var int The position of this section.
+     * @var int The position of this step.
      *
      * @Groups("pt")
      */
     private $pos;
     
     /**
-     * @var bool The section is the last section of the journey.
+     * @var bool The step is the last step of the section.
      *
      * @Groups("pt")
      */
@@ -94,61 +87,32 @@ class Section
      * @Groups("pt")
      */
     private $relativeDirection;
-    
+   
     /**
-     * @var Journey The parent journey of this section.
+     * @var Section The parent section of this step.
      *
      * @Groups("pt")
      */
-    private $journey;
+    private $section;
     
     /**
-     * @var Departure The departure of this section.
+     * @var Departure The departure of this step.
      *
      * @Groups("pt")
      */
     private $departure;
     
     /**
-     * @var Arrival The arrival of this section.
+     * @var Arrival The arrival of this step.
      *
      * @Groups("pt")
      */
     private $arrival;
     
-    /**
-     * @var PTMode The transport mode of this section.
-     *
-     * @Groups("pt")
-     */
-    private $ptmode;
-    
-    /**
-     * @var PTLine The public transport line of this section.
-     *
-     * @Groups("pt")
-     */
-    private $ptline;
-    
-    /**
-     * @var string The direction of the public transport line of this section.
-     *
-     * @Groups("pt")
-     */
-    private $direction;
-    
-    /**
-     * @var PTStep[] The steaps of this section.
-     *
-     * @Groups("pt")
-     */
-    private $ptsteps;
-    
     public function __construct($id)
     {
         $this->id = $id;
         $this->setPos($id);
-        $this->ptsteps = new ArrayCollection();
     }
     
     public function getId()
@@ -161,143 +125,93 @@ class Section
         $this->id = $id;
     }
     
-    public function getIndication()
-    {
-        return $this->indication;
-    }
-
-    public function getDistance()
+    public function getDistance ()
     {
         return $this->distance;
     }
-    
+
     public function getDuration ()
     {
         return $this->duration;
     }
 
-    public function getPos()
+    public function getPos ()
     {
         return $this->pos;
     }
 
-    public function isLast()
+    public function isLast ()
     {
         return $this->last;
     }
 
-    public function getJourney()
+    public function getSection ()
     {
-        return $this->journey;
+        return $this->section;
     }
 
-    public function getDeparture()
+    public function getDeparture ()
     {
         return $this->departure;
     }
 
-    public function getArrival()
+    public function getArrival ()
     {
         return $this->arrival;
     }
 
-    public function getPtmode()
-    {
-        return $this->ptmode;
-    }
-
-    public function getPtline()
-    {
-        return $this->ptline;
-    }
-
-    public function getDirection()
-    {
-        return $this->direction;
-    }
-
-    public function setIndication($indication)
-    {
-        $this->indication = $indication;
-    }
-
-    public function setDistance($distance)
+    public function setDistance ($distance)
     {
         $this->distance = $distance;
     }
-    
+
     public function setDuration ($duration)
     {
         $this->duration = $duration;
     }
 
-    public function setPos($pos)
+    public function setPos ($pos)
     {
         $this->pos = $pos;
     }
 
-    public function setLast($last)
+    public function setLast ($last)
     {
         $this->last = $last;
     }
 
-    public function setJourney($journey)
+    public function setSection ($section)
     {
-        $this->journey = $journey;
+        $this->section = $section;
     }
 
-    public function setDeparture($departure)
+    public function setDeparture ($departure)
     {
         $this->departure = $departure;
     }
 
-    public function setArrival($arrival)
+    public function setArrival ($arrival)
     {
         $this->arrival = $arrival;
     }
 
-    public function setPtmode($ptmode)
-    {
-        $this->ptmode = $ptmode;
-    }
-
-    public function setPtline($ptline)
-    {
-        $this->ptline = $ptline;
-    }
-
-    public function setDirection($direction)
-    {
-        $this->direction = $direction;
-    }
-    
     public function getMagneticDirection ()
     {
         return $this->magneticDirection;
     }
-
+    
     public function getRelativeDirection ()
     {
         return $this->relativeDirection;
     }
-
+    
     public function setMagneticDirection ($magneticDirection)
     {
         $this->magneticDirection = $magneticDirection;
     }
-
+    
     public function setRelativeDirection ($relativeDirection)
     {
         $this->relativeDirection = $relativeDirection;
     }
-    public function getPtsteps ()
-    {
-        return $this->ptsteps;
-    }
-
-    public function setPtsteps ($ptsteps)
-    {
-        $this->ptsteps = $ptsteps;
-    }
-
 }

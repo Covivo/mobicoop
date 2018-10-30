@@ -24,6 +24,7 @@
 namespace App\PublicTransport\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -40,11 +41,23 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class PTLine
 {
     /**
+     * @ApiProperty(identifier=true)
+     */
+    private $id;
+    
+    /**
      * @var string The name of this line.
      *
      * @Groups("pt")
      */
     private $name;
+    
+    /**
+     * @var string The number of this line.
+     *
+     * @Groups("pt")
+     */
+    private $number;
     
     /**
      * @var string The origin of this line.
@@ -67,9 +80,29 @@ class PTLine
      */
     private $ptcompany;
     
+    public function __construct($id)
+    {
+        $this->id = $id;
+    }
+    
+    public function getId()
+    {
+        return $this->id;
+    }
+    
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+    
     public function getName()
     {
         return $this->name;
+    }
+    
+    public function getNumber ()
+    {
+        return $this->number;
     }
 
     public function getOrigin()
@@ -90,6 +123,11 @@ class PTLine
     public function setName($name)
     {
         $this->name = $name;
+    }
+    
+    public function setNumber ($number)
+    {
+        $this->number = $number;
     }
 
     public function setOrigin($origin)
