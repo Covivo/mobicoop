@@ -11,7 +11,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
 {
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return "ExternalJourney::class === $resourceClass";
+        return ExternalJourney::class === $resourceClass;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): array
