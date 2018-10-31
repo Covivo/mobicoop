@@ -20,6 +20,10 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
         $apiKey= 'rdex_mobicoop';//public apikey
         $privateKey = 'rdex_mobicoop_uijdhdh4822444;jhduudd854128AJSjhhh-42';
 
+        //$apiUrl = 'http://www.covivo.eu';
+        //$apiKey= 'rdex_itinisere';//public apikey
+        //$privateKey = 'rdex_itinisere_&aer-açàuhb2-/!.1a51a-541?!auigyzur-42';
+
         $searchParameters  = [
             'driver'  => [
                 'state'   => 1

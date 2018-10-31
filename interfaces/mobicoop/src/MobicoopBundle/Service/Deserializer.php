@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Entity\ExternalJourney;
 use Mobicoop\Bundle\MobicoopBundle\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Entity\UserAddress;
@@ -77,6 +78,9 @@ class Deserializer
                 return self::deserializeMatching($data);
                 break;
             default:
+                break;
+            case ExternalJourney::class:
+                return $data;
                 break;
         }
         return null;

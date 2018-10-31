@@ -44,12 +44,12 @@ class ExternalJourney
     {
     }
 
-    public function getid()
+    public function getId()
     {
         return $this->id;
     }
 
-    public function setid($id)
+    public function setId($id)
     {
         return $this->id = $id;
     }
