@@ -46,7 +46,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
            'p'         => $searchParameters //optional if POST
         );
 
-        // Construct the requested url 
+        // Construct the requested url
         $url = $apiUrl.'/restapi/journeys.json?'.http_build_query($data);
         $signature = hash_hmac('sha256', $url, $privateKey);
         $signedUrl = $url.'&signature='.$signature;
@@ -55,6 +55,6 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
         $data = file_get_contents($signedUrl);
 
         //echo(gettype(json_decode($data)));
-        return json_decode( preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $data), true );
+        return json_decode($data,true);
     }
 }

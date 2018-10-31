@@ -36,7 +36,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 class ExternalJourney
 {
     /**
-    * @var int $id of 
+    * @var int $id of
     */
     private $id;
 
