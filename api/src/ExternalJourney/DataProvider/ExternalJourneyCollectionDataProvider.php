@@ -59,6 +59,6 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
         $data = file_get_contents($signedUrl);
 
         //echo(gettype(json_decode($data)));
-        return json_decode($data,true);
+        return json_decode($data, true);
     }
 }

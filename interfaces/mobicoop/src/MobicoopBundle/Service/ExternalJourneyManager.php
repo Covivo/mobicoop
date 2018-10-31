@@ -10,10 +10,8 @@ namespace Mobicoop\Bundle\MobicoopBundle\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Entity\ExternalJourney;
 
-
 class ExternalJourneyManager
 {
-
     private $dataProvider;
 
     public function __construct(DataProvider $dataProvider)
@@ -30,5 +28,4 @@ class ExternalJourneyManager
         }
         return null;
     }
-
 }

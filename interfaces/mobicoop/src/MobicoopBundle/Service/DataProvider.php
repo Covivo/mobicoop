@@ -273,7 +273,6 @@ class DataProvider
                 $members[] = $this->deserializer->deserialize($class, $value);
             }
             $hydra->setMember($members);
-
         }
         if (isset($data['hydra:view'])) {
             $hydraView = new HydraView();

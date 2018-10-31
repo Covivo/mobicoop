@@ -3,13 +3,12 @@
 {% block title %}HI{% endblock %}
 
 {% block body %}
-    {% if hydra %}
-    {% endif %}
 
-    {% if hydra %}
 
-    {{ dump(hydra)}}
 
-    {% endif %}
+    {{ dump(externaljourney['hydra:member'].0) }}
+    {{ dump(externaljourney['hydra:member'].6) }}
+
+
 
 {% endblock %}

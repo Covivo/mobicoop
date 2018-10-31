@@ -24,7 +24,7 @@ class ExternalJourneyController extends AbstractController
      * @Route("/ext")
      *
      */
-    public function ExternalJourney(ExternalJourneyManager $externalJourneyManager)
+    public function externalJourney(ExternalJourneyManager $externalJourneyManager)
     {
         $hydra = $externalJourneyManager->getExternalJourney();
 
@@ -38,22 +38,24 @@ class ExternalJourneyController extends AbstractController
      * @Route("/tes")
      *
      */
-    public function testapi(Request $request)
+    public function testApi(Request $request)
     {
 
         //initialize client API
         $client = new Client([
             'base_uri' => $_ENV['API_URI'],
+            //20s because i'm working on a long request but you can change it
             'timeout'  => 20.0,
         ]);
 
 
         //request to API
-        $dataBooks = $client->request('GET', 'external_journeys');
-        $hydra = $dataBooks->getBody()->getContents();
-        var_dump($hydra);
-        return $this->render('@Mobicoop/default/external.html.twig', [
-            'hydra' => $hydra
+        $dataexternaljourney = $client->request('GET', 'external_journeys');
+        $externaljourney = $dataexternaljourney->getBody()->getContents();
+        $externaljourney = json_decode($externaljourney,true);
+        //var_dump($externaljourney);
+        return $this->render('@Mobicoop/default/external2.html.twig', [
+            'externaljourney' => $externaljourney
         ]);
     }
 }
