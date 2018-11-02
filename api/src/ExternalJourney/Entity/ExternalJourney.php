@@ -65,54 +65,63 @@ class ExternalJourney
         return $this->id = $id;
     }
 
-    public function getdriver(){
+    public function getdriver()
+    {
         return $this->driver;
     }
 
-    public function setdriver($driver){
+    public function setdriver($driver)
+    {
         return $this->driver= $driver;
     }
 
-    public function getpassenger(){
+    public function getpassenger()
+    {
         return $this->passenger;
     }
 
-    public function setpassenger($passenger){
+    public function setpassenger($passenger)
+    {
         return $this->passenger= $passenger;
     }
 
-    public function getfrom_latitude(){
+    public function getfrom_latitude()
+    {
         return $this->from_latitude;
     }
 
-    public function setfrom_latitude($from_latitude){
+    public function setfrom_latitude($from_latitude)
+    {
         return $this->from_latitude= $from_latitude;
     }
 
-        public function getfrom_longitude(){
+    public function getfrom_longitude()
+    {
         return $this->from_longitude;
     }
 
-    public function setfrom_longitude($from_longitude){
+    public function setfrom_longitude($from_longitude)
+    {
         return $this->from_longitude= $from_longitude;
     }
 
-    public function getto_latitude(){
+    public function getto_latitude()
+    {
         return $this->to_latitude;
     }
 
-    public function setto_latitude($to_latitude){
+    public function setto_latitude($to_latitude)
+    {
         return $this->to_latitude= $to_latitude;
     }
 
-    public function getto_longitude(){
+    public function getto_longitude()
+    {
         return $this->to_longitude;
     }
 
-    public function setto_longitude($to_longitude){
+    public function setto_longitude($to_longitude)
+    {
         return $this->to_longitude= $to_longitude;
     }
-
-
-    
 }

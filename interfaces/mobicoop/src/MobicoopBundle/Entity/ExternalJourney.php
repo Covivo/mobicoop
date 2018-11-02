@@ -23,7 +23,6 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Entity;
 
-
 /**
  * An external journey
  */
@@ -52,6 +51,4 @@ class ExternalJourney implements Resource
     {
         $this->id = $id;
     }
-
-
 }
