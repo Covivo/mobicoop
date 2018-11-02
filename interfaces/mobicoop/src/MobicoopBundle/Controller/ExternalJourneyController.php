@@ -24,7 +24,7 @@ class ExternalJourneyController extends AbstractController
      * @Route("/ext")
      *
      */
-    public function externalJourney(ExternalJourneyManager $externalJourneyManager)
+    public function hydraExternalJourney(ExternalJourneyManager $externalJourneyManager)
     {
         $hydra = $externalJourneyManager->getExternalJourney();
 
@@ -38,7 +38,7 @@ class ExternalJourneyController extends AbstractController
      * @Route("/tes")
      *
      */
-    public function testApi(Request $request)
+    public function guzzleRequestExternalJourney(Request $request)
     {
 
         //initialize client API
