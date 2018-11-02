@@ -1,14 +1,43 @@
 <?php
 
+/**
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * This project is dual licensed under AGPL and proprietary licence.
+ ***************************
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Affero General Public License as
+ *    published by the Free Software Foundation, either version 3 of the
+ *    License, or (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Affero General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Affero General Public License
+ *    along with this program.  If not, see <gnu.org/licenses>.
+ ***************************
+ *    Licence MOBICOOP described in the file
+ *    LICENSE
+ **************************/
+
 namespace App\ExternalJourney\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\ExternalJourney\Entity\ExternalJourney;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 final class ExternalJourneyCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
+    protected $request;
+    
+    public function __construct(RequestStack $requestStack)
+    {
+        $this->request = $requestStack->getCurrentRequest();
+    }
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return ExternalJourney::class === $resourceClass;
@@ -24,20 +53,28 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
         $apiKey= 'rdex_itinisere';//public apikey
         $privateKey = 'rdex_itinisere_&aer-açàuhb2-/!.1a51a-541?!auigyzur-42';*/
 
+        //We get parameters here
+        $this->request->get("driver");
+        $this->request->get("passenger");
+        $this->request->get("from_latitude");
+        $this->request->get("from_longitude");
+        $this->request->get("to_latitude");
+        $this->request->get("to_longitude");
+        //then we set these parameters
         $searchParameters  = [
             'driver'  => [
-                'state'   => 1
+                'state'   => $this->request->get("driver") //1
             ],
             'passenger' => [
-                'state'   => 1
+                'state'   => $this->request->get("passenger") //1
             ],
             'from'    => [
-                'latitude'  =>48.69278,//Nancy
-                'longitude' => 6.18361
+                'latitude'  => $this->request->get("from_latitude"), //Nancy=48.69278
+                'longitude' => $this->request->get("from_longitude") //6.18361
             ],
             'to'    => [
-                'latitude'  => 49.11972,//Metz
-                'longitude' => 6.17694
+                'latitude'  => $this->request->get("to_latitude"),//Metz=49.11972
+                'longitude' => $this->request->get("to_longitude")//6.17694
             ],
             //optional
             //'frequency' => 'regular',
@@ -57,9 +94,8 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
 
         //Request the url
         $data = file_get_contents($signedUrl);
-
+        //echo ($driver);
         //echo(gettype(json_decode($data)));
         return json_decode($data, true);
-
     }
 }

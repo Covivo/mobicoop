@@ -41,16 +41,25 @@ class ExternalJourneyController extends AbstractController
     public function guzzleRequestExternalJourney(Request $request)
     {
 
+        $driver = 1;
+        $passenger = 1;
+        $from_latitude = 48.69278;
+        $from_longitude = 6.18361;
+        $to_latitude = 49.11972;
+        $to_longitude = 6.17694;
+
         //initialize client API
         $client = new Client([
             'base_uri' => $_ENV['API_URI'],
             //10s because i'm working on a long request but you can change it
             'timeout'  => 10.0,
         ]);
-
+        //example of the request url to api
+        //http://localhost:8080/external_journeys?driver=1&passenger=1&from_latitude=48.69278&from_longitude=6.18361&to_latitude=49.11972&to_longitude=6.17694
 
         //request to API
-        $dataexternaljourney = $client->request('GET', 'external_journeys');
+        $dataexternaljourney = $client->request('GET',
+    'external_journeys?driver='.$driver.'&passenger='.$passenger.'&from_latitude='.$from_latitude.'&from_longitude='.$from_longitude.'&to_latitude='.$to_latitude.'&to_longitude='.$to_longitude);
         //pass  data to string
         $externaljourney = $dataexternaljourney->getBody()->getContents();
         //pass string to json
