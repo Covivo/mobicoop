@@ -44,15 +44,17 @@ class ExternalJourneyController extends AbstractController
         //initialize client API
         $client = new Client([
             'base_uri' => $_ENV['API_URI'],
-            //20s because i'm working on a long request but you can change it
-            'timeout'  => 20.0,
+            //10s because i'm working on a long request but you can change it
+            'timeout'  => 10.0,
         ]);
 
 
         //request to API
         $dataexternaljourney = $client->request('GET', 'external_journeys');
+        //pass  data to string
         $externaljourney = $dataexternaljourney->getBody()->getContents();
-        $externaljourney = json_decode($externaljourney,true);
+        //pass string to json
+        $externaljourney = json_decode($externaljourney, true);
         //var_dump($externaljourney);
         return $this->render('@Mobicoop/default/external2.html.twig', [
             'externaljourney' => $externaljourney

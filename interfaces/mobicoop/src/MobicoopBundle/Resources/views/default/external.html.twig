@@ -8,7 +8,10 @@
 
     {% if hydra %}
 
-    {{ dump(hydra)}}
+
+        {{ dump(hydra.getmember().0.journeys.uuid) }}
+        {{ dump(hydra.getmember().0.journeys) }}
+
 
     {% endif %}
 
