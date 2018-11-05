@@ -5,7 +5,7 @@
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
-
+config.json
 
 # Created by https://www.gitignore.io/api/node,linux,macos,windows,eclipse,netbeans,phpstorm,sublimetext
 

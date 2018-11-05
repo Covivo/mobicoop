@@ -45,57 +45,64 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
 
     public function getCollection(string $resourceClass, string $operationName = null): array
     {
-        $apiUrl = 'http://api.test.ouestgo.fr';
-        $apiKey= 'rdex_mobicoop';//public apikey
-        $privateKey = 'rdex_mobicoop_uijdhdh4822444;jhduudd854128AJSjhhh-42';
-
-        /*$apiUrl = 'http://www.covivo.eu';
-        $apiKey= 'rdex_itinisere';//public apikey
-        $privateKey = 'rdex_itinisere_&aer-açàuhb2-/!.1a51a-541?!auigyzur-42';*/
-
-        //We get parameters here
-        $this->request->get("driver");
-        $this->request->get("passenger");
-        $this->request->get("from_latitude");
-        $this->request->get("from_longitude");
-        $this->request->get("to_latitude");
-        $this->request->get("to_longitude");
+        //We collect search parameters here
+        $driver = $this->request->get("driver");
+        $passenger = $this->request->get("passenger");
+        $from_latitude = $this->request->get("from_latitude");
+        $from_longitude = $this->request->get("from_longitude");
+        $to_latitude = $this->request->get("to_latitude");
+        $to_longitude = $this->request->get("to_longitude");
         //then we set these parameters
         $searchParameters  = [
             'driver'  => [
-                'state'   => $this->request->get("driver") //1
+                'state'   => $driver //1
             ],
             'passenger' => [
-                'state'   => $this->request->get("passenger") //1
+                'state'   => $passenger //1
             ],
             'from'    => [
-                'latitude'  => $this->request->get("from_latitude"), //Nancy=48.69278
-                'longitude' => $this->request->get("from_longitude") //6.18361
+                'latitude'  => $from_latitude, //Nancy=48.69278
+                'longitude' => $from_longitude //6.18361
             ],
             'to'    => [
-                'latitude'  => $this->request->get("to_latitude"),//Metz=49.11972
-                'longitude' => $this->request->get("to_longitude")//6.17694
-            ],
-            //optional
-            //'frequency' => 'regular',
-            'outward' => []
+                'latitude'  => $to_latitude,//Metz=49.11972
+                'longitude' => $to_longitude//6.17694
+            ]
         ];
 
-        $data = array(
-           'timestamp' => time(),
-           'apikey'    => $apiKey,
-           'p'         => $searchParameters //optional if POST
-        );
+        //if config.json exists we collect its parameters and request all apis
+        if (file_exists("../config.json")){
+            $apiList = json_decode(file_get_contents("../config.json"),true);
+            $rdexApi = &$apiList["rdexApi"];
+            $dataArray = array();
+            foreach ($rdexApi as $key => $api) {
+                //echo($api["apiUrl"]);
+                $apiUrl = $api["apiUrl"];
+                $apiKey = $api["apiKey"];
+                $privateKey = $api["privateKey"];
 
-        // Construct the requested url
-        $url = $apiUrl.'/restapi/journeys.json?'.http_build_query($data);
-        $signature = hash_hmac('sha256', $url, $privateKey);
-        $signedUrl = $url.'&signature='.$signature;
+                $query = array(
+                'timestamp' => time(),
+                'apikey'    => $apiKey,
+                'p'         => $searchParameters //optional if POST
+                );
 
-        //Request the url
-        $data = file_get_contents($signedUrl);
-        //echo ($driver);
+                // Construct the requested url
+                $url = $apiUrl.'/restapi/journeys.json?'.http_build_query($query);
+                $signature = hash_hmac('sha256', $url, $privateKey);
+                $signedUrl = $url.'&signature='.$signature;
+
+                //Request the url
+                $data = file_get_contents($signedUrl);
+                $dataArray = array_merge($dataArray,json_decode($data,true));
+                sleep(2);
+            }
+        }
+
         //echo(gettype(json_decode($data)));
-        return json_decode($data, true);
+        
+        //$data = array_merge(json_decode($data,true),json_decode($data2,true));
+
+        return $dataArray;
     }
 }

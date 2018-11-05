@@ -27,7 +27,7 @@ class ExternalJourneyController extends AbstractController
     public function hydraExternalJourney(ExternalJourneyManager $externalJourneyManager)
     {
         $hydra = $externalJourneyManager->getExternalJourney();
-
+        
         return $this->render('@Mobicoop/default/external.html.twig', [
             'hydra' => $hydra
         ]);
@@ -80,7 +80,7 @@ class ExternalJourneyController extends AbstractController
     {
         //url example : http://localhost:8082/external_journeys/driver=1&passenger=1&from_latitude=48.69278&from_longitude=6.18361&to_latitude=49.11972&to_longitude=6.17694
 
-        //Journey search from nancy to metz
+        //Journey search from Nancy to Metz
         /*$driver = 1;
         $passenger = 1;
         $from_latitude = 48.69278;
@@ -94,8 +94,6 @@ class ExternalJourneyController extends AbstractController
             //10s because i'm working on a long request but you can change it
             'timeout'  => 10.0,
         ]);
-        //example of the request url to api
-        //http://localhost:8080/external_journeys?driver=1&passenger=1&from_latitude=48.69278&from_longitude=6.18361&to_latitude=49.11972&to_longitude=6.17694
 
         //request to API
         $dataexternaljourney = $client->request(

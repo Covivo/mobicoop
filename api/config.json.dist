@@ -1,0 +1,9 @@
+{
+  "rdexApi":[
+    {
+      "apiUrl": "url of the api",
+      "apiKey": "key of the api",
+      "privateKey": "private key of the api"
+    }
+  ] 
+}
