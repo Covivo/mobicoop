@@ -71,8 +71,8 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
         ];
 
         //if config.json exists we collect its parameters and request all apis
-        if (file_exists("../config.json")){
-            $apiList = json_decode(file_get_contents("../config.json"),true);
+        if (file_exists("../config.json")) {
+            $apiList = json_decode(file_get_contents("../config.json"), true);
             $rdexApi = &$apiList["rdexApi"];
             $dataArray = array();
             foreach ($rdexApi as $key => $api) {
@@ -94,8 +94,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
 
                 //Request the url
                 $data = file_get_contents($signedUrl);
-                $dataArray = array_merge($dataArray,json_decode($data,true));
-                sleep(2);
+                $dataArray = array_merge($dataArray, json_decode($data, true));
             }
         }
 
