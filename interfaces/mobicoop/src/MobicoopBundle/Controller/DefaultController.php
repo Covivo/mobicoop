@@ -40,6 +40,7 @@ class DefaultController extends AbstractController
         // Generate a square randomed value between min-max
         $calculs = new Calculator();
         $nb = $calculs->randAndSquare(1, 5);
+        
         return $this->render('@Mobicoop/default/index.html.twig', [
             'controller_name' => 'DefaultController',
             'nb' => $nb

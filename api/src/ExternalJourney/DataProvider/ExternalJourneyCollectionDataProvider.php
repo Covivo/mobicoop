@@ -26,13 +26,17 @@ namespace App\ExternalJourney\DataProvider;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
-use App\ExternalJourney\Entity\ExternalJourney;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Request;
+use GuzzleHttp\Client;
+
+use App\ExternalJourney\Entity\ExternalJourney;
+
 
 final class ExternalJourneyCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $request;
-    
+
     public function __construct(RequestStack $requestStack)
     {
         $this->request = $requestStack->getCurrentRequest();
@@ -45,6 +49,13 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
 
     public function getCollection(string $resourceClass, string $operationName = null): array
     {
+        //initialize client API
+        $client = new Client([
+            //10s because i'm working on a long request but you can change it
+            'timeout'  => 10.0,
+        ]);
+
+
         //We collect search parameters here
         $driver = $this->request->get("driver");
         $passenger = $this->request->get("passenger");
@@ -76,15 +87,14 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
             $rdexApi = &$apiList["rdexApi"];
             $dataArray = array();
             foreach ($rdexApi as $key => $api) {
-                //echo($api["apiUrl"]);
                 $apiUrl = $api["apiUrl"];
                 $apiKey = $api["apiKey"];
                 $privateKey = $api["privateKey"];
 
                 $query = array(
-                'timestamp' => time(),
-                'apikey'    => $apiKey,
-                'p'         => $searchParameters //optional if POST
+                    'timestamp' => time(),
+                    'apikey'    => $apiKey,
+                    'p'         => $searchParameters //optional if POST
                 );
 
                 // Construct the requested url
@@ -93,15 +103,18 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
                 $signedUrl = $url.'&signature='.$signature;
 
                 //Request the url
-                $data = file_get_contents($signedUrl);
+                //$data = file_get_contents($signedUrl);
+                $data = $client->request(
+                    'GET', $signedUrl
+                );
+                $data = $data->getBody()->getContents();
                 $dataArray = array_merge($dataArray, json_decode($data, true));
             }
+            return $dataArray;
         }
 
         //echo(gettype(json_decode($data)));
-        
-        //$data = array_merge(json_decode($data,true),json_decode($data2,true));
-
-        return $dataArray;
+        $nullArray = [];
+        return $nullArray;
     }
 }
