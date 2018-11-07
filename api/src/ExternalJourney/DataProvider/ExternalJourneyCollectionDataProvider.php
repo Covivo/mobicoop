@@ -29,9 +29,9 @@ use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Request;
 use GuzzleHttp\Client;
+use GuzzleHttp\Promise;
 
 use App\ExternalJourney\Entity\ExternalJourney;
-
 
 final class ExternalJourneyCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -49,7 +49,8 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
 
     public function getCollection(string $resourceClass, string $operationName = null): array
     {
-        //initialize client API
+        $urlPromises = [];
+        //initialize client API for any request
         $client = new Client([
             //10s because i'm working on a long request but you can change it
             'timeout'  => 10.0,
@@ -102,19 +103,20 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
                 $signature = hash_hmac('sha256', $url, $privateKey);
                 $signedUrl = $url.'&signature='.$signature;
 
-                //Request the url
-                //$data = file_get_contents($signedUrl);
-                $data = $client->request(
-                    'GET', $signedUrl
-                );
-                $data = $data->getBody()->getContents();
-                $dataArray = array_merge($dataArray, json_decode($data, true));
+                $urlPromises[$api["apiKey"]] = $client->getAsync($signedUrl)
+                    ->then(function ($res){
+                    return json_decode($res->getBody()->getContents(),true);
+                },
+                function(){
+                    return null;
+                });
+
             }
-            return $dataArray;
+            $results = Promise\settle($urlPromises)-> wait();
+            return $results;
         }
 
-        //echo(gettype(json_decode($data)));
-        $nullArray = [];
-        return $nullArray;
+
+        return [];
     }
 }

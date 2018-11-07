@@ -21,20 +21,6 @@ class ExternalJourneyController extends AbstractController
 
     /**
      *
-     * @Route("/ext")
-     *
-     */
-    public function hydraExternalJourney(ExternalJourneyManager $externalJourneyManager)
-    {
-        $hydra = $externalJourneyManager->getExternalJourney();
-        
-        return $this->render('@Mobicoop/default/external.html.twig', [
-            'hydra' => $hydra
-        ]);
-    }
-
-    /**
-     *
      * @Route("/tes")
      *
      */
@@ -65,8 +51,7 @@ class ExternalJourneyController extends AbstractController
         $externaljourney = $dataexternaljourney->getBody()->getContents();
         //pass string to json
         $externaljourney = json_decode($externaljourney, true);
-        //var_dump($externaljourney);
-        return $this->render('@Mobicoop/default/external2.html.twig', [
+        return $this->render('@Mobicoop/default/externalAsync.html.twig', [
             'externaljourney' => $externaljourney
         ]);
     }
@@ -79,16 +64,7 @@ class ExternalJourneyController extends AbstractController
     public function guzzleCustomRequestExternalJourney($driver, $passenger, $from_latitude, $from_longitude, $to_latitude, $to_longitude, Request $request)
     {
         //url example : http://localhost:8081/external_journeys/driver=1&passenger=1&from_latitude=48.69278&from_longitude=6.18361&to_latitude=49.11972&to_longitude=6.17694
-
-        //Journey search from Nancy to Metz
-        /*$driver = 1;
-        $passenger = 1;
-        $from_latitude = 48.69278;
-        $from_longitude = 6.18361;
-        $to_latitude = 49.11972;
-        $to_longitude = 6.17694;*/
-
-        //initialize client API
+                //initialize client API
         $client = new Client([
             'base_uri' => $_ENV['API_URI'],
             //10s because i'm working on a long request but you can change it
@@ -105,7 +81,7 @@ class ExternalJourneyController extends AbstractController
         //pass string to json
         $externaljourney = json_decode($externaljourney, true);
         //var_dump($externaljourney);
-        return $this->render('@Mobicoop/default/external2.html.twig', [
+        return $this->render('@Mobicoop/default/externalAsync.html.twig', [
             'externaljourney' => $externaljourney
         ]);
     }

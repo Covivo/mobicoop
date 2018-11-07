@@ -2,15 +2,26 @@
 @import '_variables';
 @import '_header';
 @import '~bulma/sass/utilities/_all';
-body {
-  background-color: $mainBackgroundColor;
-  color: $mainFontColor;
-  font-size: 45px;
-  h1 {
-    font-size: 75px;
-  }
-}
-
 // Import Bulma and Buefy styles
 @import '~bulma';
 @import '~buefy/src/scss/buefy';
+body {
+  background-color: $mainBackgroundColor;
+  color: $mainFontColor;
+  //font-size: 45px;
+  h1 {
+    // font-size: 75px;
+  }
+}
+.tag[alt='www.roulezmalin.com'] {
+  box-shadow: 0 0 0 2px rgba(54, 81, 255, 1);
+}
+.tag[alt='covoiturage-libre.fr'] {
+  box-shadow: 0 0 0 2px rgba(255, 223, 211, 0.7);
+}
+.tag[alt='www.tedicov.fr'] {
+  box-shadow: 0 0 0 2px rgba(102, 255, 76, 0.7);
+}
+.tag[alt='test.ouestgo.fr'] {
+  box-shadow: 0 0 0 2px rgba(217, 0, 255, 1);
+}
