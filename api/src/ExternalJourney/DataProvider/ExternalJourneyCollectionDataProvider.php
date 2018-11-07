@@ -92,7 +92,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
 
             $dataArray = [];
             foreach ($provider_list["rdexApi"] as $key => $provider) {
-                if($key == $provider_name){
+                if ($key == $provider_name) {
                     //Collect provider's parameters
                     $apiUrl = $provider["apiUrl"];
                     $apiKey = $provider["apiKey"];
