@@ -25,17 +25,68 @@ namespace App\ExternalJourney\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use App\ExternalJourney\Filter\SearchFilter;
 
 /**
  * An arrival.
  *
  * @ApiResource(
- *     collectionOperations={"get"={"method"="GET"}},
+ *     collectionOperations={"get"={
+ *      "swagger_context"={
+ *           "parameters"={
+ *              {
+ *                  "name" = "provider_name",
+ *                  "in" = "query",
+ *                  "required" = "true",
+ *                  "type" = "string",
+ *                  "description" = "name of the provider"
+ *              },
+ *              {
+ *                  "name" = "driver",
+ *                  "in" = "query",
+ *                  "required" = "true",
+ *                  "type" = "string",
+ *                  "description" = "1 if you want to display drivers journeys, 0 instead"
+                },
+                {
+ *                  "name" = "passenger",
+ *                  "in" = "query",
+ *                  "required" = "true",
+ *                  "type" = "string",
+ *                  "description" = "1 if you want to display passengers journeys, 0 instead"
+                },
+ *              {
+ *                  "name" = "from_latitude",
+ *                  "in" = "query",
+ *                  "required" = "true",
+ *                  "type" = "string",
+ *                  "description" = "from -> latitude"
+ *              },
+ *              {
+ *                  "name" = "from_longitude",
+ *                  "in" = "query",
+ *                  "required" = "true",
+ *                  "type" = "string",
+ *                  "description" = "from -> longitude"
+ *              },
+ *              {
+ *                  "name" = "to_latitude",
+ *                  "in" = "query",
+ *                  "required" = "true",
+ *                  "type" = "string",
+ *                  "description" = "to -> latitude"
+ *              },
+ *              {
+ *                  "name" = "to_longitude",
+ *                  "in" = "query",
+ *                  "required" = "true",
+ *                  "type" = "string",
+ *                  "description" = "to -> longitude"
+ *              }
+ *           }
+ *      }
+ *    }},
  *     itemOperations={"get"={"method"="GET"}}
  * )
- * @ApiFilter(SearchFilter::class, properties={"driver","passenger","from_latitude","from_longitude","to_latitude","to_longitude"})
  */
 class ExternalJourney
 {
