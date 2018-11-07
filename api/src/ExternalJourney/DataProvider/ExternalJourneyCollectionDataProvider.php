@@ -52,12 +52,13 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
         $urlPromises = [];
         //initialize client API for any request
         $client = new Client([
-            //10s because i'm working on a long request but you can change it
+            //10s because i'm working on long requests but you can change it
             'timeout'  => 10.0,
         ]);
 
 
         //We collect search parameters here
+        $provider_name = $this->request->get("provider_name");
         $driver = $this->request->get("driver");
         $passenger = $this->request->get("passenger");
         $from_latitude = $this->request->get("from_latitude");
@@ -83,41 +84,39 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
         ];
 
         //if config.json exists we collect its parameters and request all apis
-        if (file_exists("../config.json")) {
-            $apiList = json_decode(file_get_contents("../config.json"), true);
-            $rdexApi = &$apiList["rdexApi"];
-            $dataArray = array();
-            foreach ($rdexApi as $key => $api) {
-                $apiUrl = $api["apiUrl"];
-                $apiKey = $api["apiKey"];
-                $privateKey = $api["privateKey"];
+        $path = "../config.json";
+        if (file_exists($path)) {
+            //Read config.json
+            $provider_list = json_decode(file_get_contents($path), true);
+            $truc = array_keys($provider_list["rdexApi"]);
 
-                $query = array(
-                    'timestamp' => time(),
-                    'apikey'    => $apiKey,
-                    'p'         => $searchParameters //optional if POST
-                );
+            $dataArray = [];
+            foreach ($provider_list["rdexApi"] as $key => $provider) {
+                if($key == $provider_name){
+                    //Collect provider's parameters
+                    $apiUrl = $provider["apiUrl"];
+                    $apiKey = $provider["apiKey"];
+                    $privateKey = $provider["privateKey"];
 
-                // Construct the requested url
-                $url = $apiUrl.'/restapi/journeys.json?'.http_build_query($query);
-                $signature = hash_hmac('sha256', $url, $privateKey);
-                $signedUrl = $url.'&signature='.$signature;
-
-                $urlPromises[$api["apiKey"]] = $client->getAsync($signedUrl)
-                    ->then(
-                        function ($res) {
-                            return json_decode($res->getBody()->getContents(), true);
-                        },
-                function () {
-                    return null;
-                }
+                    $query = array(
+                        'timestamp' => time(),
+                        'apikey'    => $apiKey,
+                        'p'         => $searchParameters //optional if POST
                     );
+
+                    //Construct the requested url
+                    $url = $apiUrl.'/restapi/journeys.json?'.http_build_query($query);
+                    $signature = hash_hmac('sha256', $url, $privateKey);
+                    $signedUrl = $url.'&signature='.$signature;
+
+                    //Request url
+                    $data = $client->request('GET', $signedUrl);
+                    $data = $data->getBody()->getContents();
+                    $dataArray = array_merge($dataArray, json_decode($data, true));
+                }
             }
-            $results = Promise\settle($urlPromises)-> wait();
-            return $results;
+            return $dataArray;
         }
-
-
-        return [];
+        return ["no config.json found"];
     }
 }

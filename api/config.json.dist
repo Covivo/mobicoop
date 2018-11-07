@@ -1,9 +1,15 @@
 {
-  "rdexApi":[
-    {
-      "apiUrl": "url of the api",
-      "apiKey": "key of the api",
-      "privateKey": "private key of the api"
-    }
-  ]
+  	"rdexApi":{
+      "api_name" : {
+	      "apiUrl": "url of the api",
+	      "apiKey": "key of the api",
+	      "privateKey": "private key of the api"
+      },
+      "api_name2":{
+	      "apiUrl": "url of the api",
+	      "apiKey": "key of the api",
+	      "privateKey": "private key of the api"
+      }
+  	}
 }
+

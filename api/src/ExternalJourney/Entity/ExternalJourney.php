@@ -44,6 +44,7 @@ class ExternalJourney
     */
     private $id;
 
+    private $provider_name;
     private $driver;
     private $passenger;
     private $from_latitude;
@@ -63,6 +64,16 @@ class ExternalJourney
     public function setId($id)
     {
         return $this->id = $id;
+    }
+
+    public function getProvider_Name()
+    {
+        return $this->provider_name;
+    }
+
+    public function setProvider_Name($provider_name)
+    {
+        return $this->provider_name = $provider_name;
     }
 
     public function getdriver()
