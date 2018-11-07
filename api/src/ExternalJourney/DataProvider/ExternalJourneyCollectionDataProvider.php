@@ -104,13 +104,14 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
                 $signedUrl = $url.'&signature='.$signature;
 
                 $urlPromises[$api["apiKey"]] = $client->getAsync($signedUrl)
-                    ->then(function ($res){
-                    return json_decode($res->getBody()->getContents(),true);
-                },
-                function(){
+                    ->then(
+                        function ($res) {
+                            return json_decode($res->getBody()->getContents(), true);
+                        },
+                function () {
                     return null;
-                });
-
+                }
+                    );
             }
             $results = Promise\settle($urlPromises)-> wait();
             return $results;
