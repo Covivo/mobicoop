@@ -115,7 +115,7 @@ class PTLine
         return $this->destination;
     }
 
-    public function getPtcompany()
+    public function getPTCompany()
     {
         return $this->ptcompany;
     }
@@ -140,7 +140,7 @@ class PTLine
         $this->destination = $destination;
     }
 
-    public function setPtcompany($ptcompany)
+    public function setPTCompany($ptcompany)
     {
         $this->ptcompany = $ptcompany;
     }

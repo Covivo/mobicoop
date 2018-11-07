@@ -25,8 +25,7 @@ namespace App\PublicTransport\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
-use App\PublicTransport\Entity\Journey;
+use App\PublicTransport\Entity\PTJourney;
 use App\PublicTransport\Service\PTDataProvider;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -52,7 +51,7 @@ final class JourneyCollectionDataProvider implements CollectionDataProviderInter
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Journey::class === $resourceClass;
+        return PTJourney::class === $resourceClass;
     }
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
@@ -64,7 +63,8 @@ final class JourneyCollectionDataProvider implements CollectionDataProviderInter
                 $this->request->get("origin_longitude"),
                 $this->request->get("destination_latitude"),
                 $this->request->get("destination_longitude"),
-                $this->request->get("date")
+                \DateTime::createFromFormat(PTDataProvider::DATETIME_FORMAT,$this->request->get("date")),
+                $this->request->get("dateType")
                 );
     }
 }

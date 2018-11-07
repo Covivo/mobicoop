@@ -89,25 +89,25 @@ class PTStep
     private $relativeDirection;
    
     /**
-     * @var Section The parent section of this step.
+     * @var PTSection The parent section of this step.
      *
      * @Groups("pt")
      */
-    private $section;
+    private $ptsection;
     
     /**
-     * @var Departure The departure of this step.
+     * @var PTDeparture The departure of this step.
      *
      * @Groups("pt")
      */
-    private $departure;
+    private $ptdeparture;
     
     /**
-     * @var Arrival The arrival of this step.
+     * @var PTArrival The arrival of this step.
      *
      * @Groups("pt")
      */
-    private $arrival;
+    private $ptarrival;
     
     public function __construct($id)
     {
@@ -145,19 +145,19 @@ class PTStep
         return $this->last;
     }
 
-    public function getSection ()
+    public function getPTSection ()
     {
-        return $this->section;
+        return $this->ptsection;
     }
 
-    public function getDeparture ()
+    public function getPTDeparture ()
     {
-        return $this->departure;
+        return $this->ptdeparture;
     }
 
-    public function getArrival ()
+    public function getPTArrival ()
     {
-        return $this->arrival;
+        return $this->ptarrival;
     }
 
     public function setDistance ($distance)
@@ -180,19 +180,19 @@ class PTStep
         $this->last = $last;
     }
 
-    public function setSection ($section)
+    public function setPTSection ($ptsection)
     {
-        $this->section = $section;
+        $this->ptsection = $ptsection;
     }
 
-    public function setDeparture ($departure)
+    public function setPTDeparture ($ptdeparture)
     {
-        $this->departure = $departure;
+        $this->ptdeparture = $ptdeparture;
     }
 
-    public function setArrival ($arrival)
+    public function setPTArrival ($ptarrival)
     {
-        $this->arrival = $arrival;
+        $this->ptarrival = $ptarrival;
     }
 
     public function getMagneticDirection ()

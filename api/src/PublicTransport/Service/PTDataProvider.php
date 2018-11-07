@@ -23,14 +23,14 @@
 
 namespace App\PublicTransport\Service;
 
-use App\PublicTransport\Entity\Journey;
+use App\PublicTransport\Entity\PTJourney;
 use App\DataProvider\Entity\CitywayProvider;
 
 /**
  * Public transport DataProvider.
  *
  * To add a provider :
- * - write the custom Provider class
+ * - write the custom Provider class in src/DataProvider/Entity/
  * - complete the PROVIDERS array with the new provider
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
@@ -40,20 +40,48 @@ class PTDataProvider
     const PROVIDERS = [
         "cityway" => CitywayProvider::class
     ];
-        
-    public function getJourneys($provider, $apikey, $origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date)
+    
+    const DATETIME_FORMAT = \DateTime::RFC3339;
+    
+    const DATETYPE_DEPARTURE = "departure";
+    const DATETYPE_ARRIVAL = "arrival";
+      
+    /**
+     * Get journeys from an external Public Transport data provider.
+     * 
+     * @param string $provider                  The name of the provider
+     * @param string $apikey                    The API Key for the provider
+     * @param string $origin_latitude           The latitude of the origin point
+     * @param string $origin_longitude          The longitude of the origin point
+     * @param string $destination_latitude      The latitude of the destination point
+     * @param string $destination_longitude     The longitude of the destination point
+     * @param \Datetime $date                   The datetime of the trip
+     * @param string $dateType                  The date type of the trip (departure or arrival)
+     * @return NULL|array                       The journeys found or null if 
+     */
+    public function getJourneys(
+            string $provider, 
+            string $apikey, 
+            string $origin_latitude, 
+            string $origin_longitude, 
+            string $destination_latitude, 
+            string $destination_longitude, 
+            \Datetime $date,
+            string $dateType
+            ): ?array
     {
         if (!array_key_exists($provider, self::PROVIDERS)) {
             return null;
         }
         $providerClass = self::PROVIDERS[$provider];
         $providerInstance = new $providerClass();
-        return call_user_func_array([$providerInstance,"getCollection"], [Journey::class,$apikey,[
+        return call_user_func_array([$providerInstance,"getCollection"], [PTJourney::class,$apikey,[
                 "origin_latitude" => $origin_latitude,
                 "origin_longitude" => $origin_longitude,
                 "destination_latitude" => $destination_latitude,
                 "destination_longitude" => $destination_longitude,
-                "date" => $date
+                "date" => $date,
+                "dateType" => $dateType
         ]]);
     }
 }
