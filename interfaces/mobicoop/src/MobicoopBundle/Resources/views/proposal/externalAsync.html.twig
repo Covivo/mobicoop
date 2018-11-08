@@ -1,20 +1,15 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}HI{% endblock %}
+{% block title %}Your result for search journey{% endblock %}
 
 {% block body %}
+    <Journey  :api-uri="'{!! $baseUri !!}'"></Journey>
     <p class="title is-1 is-spaced is-centered">List of externals journeys</p>
-    {% if externaljourney %}
         <div class="columns is-multiline">
-            {% for api in externaljourney['hydra:member'] %}
-                {% if api.state == "fulfilled" %}
-                    {% if api.value == null %}
                         <div class="notification is-warning">
                             <button class="delete"></button>
                             <strong> No route found for this api</strong>
                         </div>
-                    {% endif %}
-                    {% for journey in api.value %}
 
                         <div class="column is-one-quarter">
                             <div class="box">
@@ -26,8 +21,8 @@
                                     </div>
                                     <div class="media-content">
                                         <div class="content">
-                                            <strong>{{ journey.journeys.driver.alias }}</strong> <small>{{journey.journeys.driver.gender}}</small>
-                                            <span class="tag">{{ journey.journeys.outward.mindate }} - {{ journey.journeys.outward.maxdate }}</span>
+                                            <strong>DRIVER alias</strong> <small>driver.gender</small>
+                                            <span class="tag">mindate  - maxdate</span>
                                             <div class="columns">
                                                 <div class="column is-2">
                                                     <div style="line-height: 1.8;">
@@ -44,14 +39,14 @@
                                                 </div>
                                                 <div class="column">
                                                     <div style="line-height: 1.8">
-                                                        {{ journey.journeys.from.city }}
+                                                        .city
                                                         <br>
-                                                        {{ journey.journeys.to.city }}
+                                                        city
                                                         <br>
-                                                        {{ journey.journeys.details }}
+                                                        details
                                                         <br>
-                                                        <span class="tag" alt="{{ journey.journeys.origin }}">
-                                                            <a href="http://{{ journey.journeys.origin }}">{{ journey.journeys.origin }}</a>
+                                                        <span class="tag" alt=".origin">
+                                                            <a href=".origin ">origin</a>
                                                         </span>
                                                     </div>
                                                 </div>
@@ -61,17 +56,15 @@
                                 </article>
                             </div>
                         </div>
-                    {% endfor %}
-                {% else %}
                     <div class="notification is-warning">
                         <button class="delete"></button>
                         <strong>API STATE NOT FULFILLED</strong>
                     </div>
-                {% endif %}
-            {% endfor %}
         </div>
-    {% else %}
         <span class="tag is-warning">No external journey found.</span>
-    {% endif %}
-
 {% endblock %}
+
+{% block javascripts %}
+    <!-- <script type="text/javascript" src="{{ asset('/build/externalJourney.js') }}"></script> -->
+{% endblock %}
+

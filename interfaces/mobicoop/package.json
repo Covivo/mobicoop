@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
+    "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
     "buefy": "^0.6.7",
     "casual": "^1.5.19",
@@ -66,6 +67,7 @@
     "vue": "^2.5.17",
     "vue-loader": "^14.2.3",
     "vue-mapbox": "0.0.34",
+    "vue-resource": "^1.5.1",
     "vue-template-compiler": "^2.5.17"
   }
 }
