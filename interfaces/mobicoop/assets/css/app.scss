@@ -14,14 +14,25 @@ body {
   }
 }
 .tag[alt='www.roulezmalin.com'] {
-  box-shadow: 0 0 0 2px rgba(54, 81, 255, 1);
+  box-shadow: 0 0 0 2px rgba(217, 0, 0, 0.5);
 }
 .tag[alt='covoiturage-libre.fr'] {
-  box-shadow: 0 0 0 2px rgba(255, 223, 211, 0.7);
+  box-shadow: 0 0 0 2px rgba(255, 223, 211, 1);
 }
 .tag[alt='www.tedicov.fr'] {
-  box-shadow: 0 0 0 2px rgba(102, 255, 76, 0.7);
+  box-shadow: 0 0 0 2px rgba(102, 255, 76, 0.5);
 }
 .tag[alt='test.ouestgo.fr'] {
-  box-shadow: 0 0 0 2px rgba(217, 0, 255, 1);
+  box-shadow: 0 0 0 2px rgba(54, 81, 255, 0.5);
+}
+.externalJourney {
+  .spinerDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .fulfilling-bouncing-circle-spinner {
+      position: absolute;
+      z-index: 2;
+    }
+  }
 }

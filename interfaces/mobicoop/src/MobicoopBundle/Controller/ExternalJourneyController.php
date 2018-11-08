@@ -31,9 +31,8 @@ use Mobicoop\Bundle\MobicoopBundle\Service\ExternalJourneyManager;
 
 use GuzzleHttp\Client;
 
-
 /**
- * Controller class to display external Journey (rdexAPI) 
+ * Controller class to display external Journey (rdexAPI)
  *
  */
 class ExternalJourneyController extends AbstractController
@@ -45,7 +44,6 @@ class ExternalJourneyController extends AbstractController
     public function truc($value='')
     {
         $baseUri = $_ENV['API_URI'];
-        return $this->render('@Mobicoop/proposal/externalAsync.html.twig',['baseUri' => $baseUri]);
-    } 
-
+        return $this->render('@Mobicoop/proposal/externalAsync.html.twig', ['baseUri' => $baseUri]);
+    }
 }
