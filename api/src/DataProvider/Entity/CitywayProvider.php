@@ -25,14 +25,15 @@ namespace App\DataProvider\Entity;
 
 use App\DataProvider\Interfaces\ProviderInterface;
 use App\DataProvider\Service\DataProvider;
-use App\PublicTransport\Entity\Journey;
-use App\PublicTransport\Entity\Arrival;
-use App\PublicTransport\Entity\Departure;
-use App\PublicTransport\Entity\Section;
+use App\PublicTransport\Entity\PTJourney;
+use App\PublicTransport\Entity\PTArrival;
+use App\PublicTransport\Entity\PTDeparture;
+use App\PublicTransport\Entity\PTSection;
 use App\PublicTransport\Entity\PTMode;
 use App\Address\Entity\Address;
 use App\PublicTransport\Entity\PTStep;
 use App\PublicTransport\Entity\PTLine;
+use App\PublicTransport\Service\PTDataProvider;
 
 /**
  * Cityway data provider.
@@ -69,19 +70,30 @@ use App\PublicTransport\Entity\PTLine;
  * - a second PTRide, 
  * - and finally a second Leg    
  * 
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * 
  */
 class CitywayProvider implements ProviderInterface
 {
-    const CW_PT_MODE_BUS = "BUS";
-    const CW_PT_MODE_TRAIN = "TRAIN";
-    const CW_PT_MODE_BIKE = "BIKE";
-    const CW_PT_MODE_WALK = "WALK";
+    private const CW_PT_MODE_BUS = "BUS";
+    private const CW_PT_MODE_TRAIN = "TRAIN";
+    private const CW_PT_MODE_BIKE = "BIKE";
+    private const CW_PT_MODE_WALK = "WALK";
     
-    const CW_COUNTRY = "France";
-    const CW_NC = "NC";
+    private const CW_COUNTRY = "France";
+    private const CW_NC = "NC";
     
     private const URI = "http://preprod.tsvc.grandest.cityway.fr/api/";
-    private const DATETIME_FORMAT = "d/m/Y H:i:s";
+    private const COLLECTION_RESOURCE = "journeyplanner/opt/PlanTrips/json";
+    
+    private const DATETIME_OUTPUT_FORMAT = "d/m/Y H:i:s";
+    private const DATETIME_INPUT_FORMAT = "Y-m-d_H-i";
+    
+    private const DATETYPES = [
+            PTDataProvider::DATETYPE_DEPARTURE => "DEPARTURE",
+            PTDataProvider::DATETYPE_ARRIVAL => "ARRIVAL"
+    ];
+    
     private $collection;
     
     public function __construct()
@@ -92,14 +104,16 @@ class CitywayProvider implements ProviderInterface
     public function getCollection(string $class, string $apikey, array $params)
     {
         switch ($class) {
-            case Journey::class:
-                $dataProvider = new DataProvider(self::URI, 'journeyplanner/opt/PlanTrips/json');
+            case PTJourney::class:
+                $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESOURCE);
                 $getParams = [
                         "DepartureType" => "COORDINATES",
                         "ArrivalType" => "COORDINATES",
                         "DateType" => "DEPARTURE",
                         "TripModes" => "PT",
-                        "Date" => $params["date"],
+                        "Algorithm" => "FASTEST",
+                        "Date" => $params["date"]->format(self::DATETIME_INPUT_FORMAT),
+                        "DateType" => self::DATETYPES[$params["dateType"]],
                         "DepartureLatitude" => $params["origin_latitude"],
                         "DepartureLongitude" => $params["origin_longitude"],
                         "ArrivalLatitude" => $params["destination_latitude"],
@@ -141,7 +155,7 @@ class CitywayProvider implements ProviderInterface
     public function deserialize(string $class, array $data)
     {
         switch ($class) {
-            case Journey::class:
+            case PTJourney::class:
                 return self::deserializeJourney($data);
                 break;
             default:
@@ -151,7 +165,7 @@ class CitywayProvider implements ProviderInterface
     
     private function deserializeJourney($data)
     {
-        $journey = new Journey(count($this->collection)+1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
+        $journey = new PTJourney(count($this->collection)+1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
         if (isset($data["Distance"])) {
             $journey->setDistance($data["Distance"]);
         }
@@ -159,8 +173,8 @@ class CitywayProvider implements ProviderInterface
             $journey->setDuration($data["Duration"]);
         }
         if (isset($data["DepartureTime"])) {
-            $departure = new Departure(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
-            $departure->setDate(\DateTime::createFromFormat(self::DATETIME_FORMAT, $data["DepartureTime"]));
+            $departure = new PTDeparture(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
+            $departure->setDate(\DateTime::createFromFormat(self::DATETIME_OUTPUT_FORMAT, $data["DepartureTime"]));
             if (isset($data["Departure"]["Site"])) {
                 $departureAddress = new Address();
                 $departureAddress->setId(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
@@ -173,11 +187,11 @@ class CitywayProvider implements ProviderInterface
                 if (isset($data["Departure"]["Site"]["Position"]["Long"]) && !is_null($data["Departure"]["Site"]["Position"]["Long"])) $departureAddress->setLongitude($data["Departure"]["Site"]["Position"]["Long"]);
                 $departure->setAddress($departureAddress);
             }
-            $journey->setDeparture($departure);
+            $journey->setPTDeparture($departure);
         }
         if (isset($data["ArrivalTime"])) {
-            $arrival = new Arrival(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
-            $arrival->setDate(\DateTime::createFromFormat(self::DATETIME_FORMAT, $data["ArrivalTime"]));
+            $arrival = new PTArrival(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
+            $arrival->setDate(\DateTime::createFromFormat(self::DATETIME_OUTPUT_FORMAT, $data["ArrivalTime"]));
             if (isset($data["Arrival"]["Site"])) {
                 $arrivalAddress = new Address();
                 $arrivalAddress->setId(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
@@ -190,14 +204,14 @@ class CitywayProvider implements ProviderInterface
                 if (isset($data["Arrival"]["Site"]["Position"]["Long"]) && !is_null($data["Arrival"]["Site"]["Position"]["Long"])) $arrivalAddress->setLongitude($data["Arrival"]["Site"]["Position"]["Long"]);
                 $arrival->setAddress($arrivalAddress);
             }
-            $journey->setArrival($arrival);
+            $journey->setPTArrival($arrival);
         }
         if (isset($data["sections"]["Section"])) {
             $sections = [];
             foreach ($data["sections"]["Section"] as $section) {
                 $sections[] = self::deserializeSection($section, count($sections)+1);
             }
-            $journey->setSections($sections);
+            $journey->setPTSections($sections);
         }
         if (isset($data["CarbonFootprint"]["TripCO2"])) $journey->setCo2($data["CarbonFootprint"]["TripCO2"]);
         return $journey;
@@ -205,34 +219,34 @@ class CitywayProvider implements ProviderInterface
         
     private function deserializeSection($data, $num)
     {
-        $section = new Section($num);
+        $section = new PTSection($num);
         if (isset($data["Leg"]) && !is_null($data["Leg"])) {
             // walk mode
             $ptmode = new PTMode(PTMode::PT_MODE_WALK);
-            $section->setPtmode($ptmode);
+            $section->setPTmode($ptmode);
             if (isset($data["Leg"]["Duration"]) && !is_null($data["Leg"]["Duration"])) $section->setDuration($data["Leg"]["Duration"]);
             if (isset($data["Leg"]["pathLinks"]["PathLink"])) {
                 $ptsteps = [];
                 foreach ($data["Leg"]["pathLinks"]["PathLink"] as $pathLink) {
                     $ptsteps[] = self::deserializePTStep($pathLink, count($ptsteps)+1);
                 }
-                $section->setPtsteps($ptsteps);
+                $section->setPTSteps($ptsteps);
             }
         }
         if (isset($data["PTRide"]) && !is_null($data["PTRide"])) {
             if ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_BUS) {
                 // bus mode
                 $ptmode = new PTMode(PTMode::PT_MODE_BUS);
-                $section->setPtmode($ptmode);
+                $section->setPTMode($ptmode);
             }
             if ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TRAIN) {
                 // train mode
                 $ptmode = new PTMode(PTMode::PT_MODE_TRAIN);
-                $section->setPtmode($ptmode);
+                $section->setPTMode($ptmode);
             }
             if (isset($data["PTRide"]["Departure"])) {
-                $departure = new Departure(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
-                if (isset($data["PTRide"]["Departure"]["Time"])) $departure->setDate(\DateTime::createFromFormat(self::DATETIME_FORMAT, $data["PTRide"]["Departure"]["Time"]));
+                $departure = new PTDeparture(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
+                if (isset($data["PTRide"]["Departure"]["Time"])) $departure->setDate(\DateTime::createFromFormat(self::DATETIME_OUTPUT_FORMAT, $data["PTRide"]["Departure"]["Time"]));
                 if (isset($data["PTRide"]["Departure"]["StopPlace"])) {
                     $departureAddress = new Address();
                     $departureAddress->setId(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
@@ -245,11 +259,11 @@ class CitywayProvider implements ProviderInterface
                     if (isset($data["PTRide"]["Departure"]["StopPlace"]["Position"]["Long"]) && !is_null($data["PTRide"]["Departure"]["StopPlace"]["Position"]["Long"])) $departureAddress->setLongitude($data["PTRide"]["Departure"]["StopPlace"]["Position"]["Long"]);
                     $departure->setAddress($departureAddress);
                 }
-                $section->setDeparture($departure);
+                $section->setPTDeparture($departure);
             }
             if (isset($data["PTRide"]["Arrival"])) {
-                $arrival = new Arrival(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
-                if (isset($data["PTRide"]["Arrival"]["Time"])) $arrival->setDate(\DateTime::createFromFormat(self::DATETIME_FORMAT, $data["PTRide"]["Arrival"]["Time"]));
+                $arrival = new PTArrival(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
+                if (isset($data["PTRide"]["Arrival"]["Time"])) $arrival->setDate(\DateTime::createFromFormat(self::DATETIME_OUTPUT_FORMAT, $data["PTRide"]["Arrival"]["Time"]));
                 if (isset($data["PTRide"]["Arrival"]["StopPlace"])) {
                     $arrivalAddress = new Address();
                     $arrivalAddress->setId(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
@@ -262,7 +276,7 @@ class CitywayProvider implements ProviderInterface
                     if (isset($data["PTRide"]["Arrival"]["StopPlace"]["Position"]["Long"]) && !is_null($data["PTRide"]["Arrival"]["StopPlace"]["Position"]["Long"])) $arrivalAddress->setLongitude($data["PTRide"]["Arrival"]["StopPlace"]["Position"]["Long"]);
                     $arrival->setAddress($arrivalAddress);
                 }
-                $section->setArrival($arrival);
+                $section->setPTArrival($arrival);
             }
             if (isset($data["PTRide"]["Distance"]) && !is_null($data["PTRide"]["Distance"])) $section->setDistance($data["PTRide"]["Distance"]);
             if (isset($data["PTRide"]["Duration"]) && !is_null($data["PTRide"]["Duration"])) $section->setDuration($data["PTRide"]["Duration"]);
@@ -271,7 +285,7 @@ class CitywayProvider implements ProviderInterface
                 if (isset($data["PTRide"]["Line"]["Name"])) $ptline->setName($data["PTRide"]["Line"]["Name"]);
                 if (isset($data["PTRide"]["Line"]["Number"])) $ptline->setNumber($data["PTRide"]["Line"]["Number"]);
                 if (isset($data["PTRide"]["Line"]["Direction"]["Name"])) $section->setDirection($data["PTRide"]["Line"]["Direction"]["Name"]);
-                $section->setPtline($ptline);
+                $section->setPTLine($ptline);
             }
             if (isset($data["PTRide"]["Direction"]["Name"])) $section->setDirection($data["PTRide"]["Direction"]["Name"]);
             if (isset($data["PTRide"]["steps"]["Step"])) {
@@ -279,7 +293,7 @@ class CitywayProvider implements ProviderInterface
                 foreach ($data["PTRide"]["steps"]["Step"] as $step) {
                     $ptsteps[] = self::deserializePTStep($step, count($ptsteps)+1);
                 }
-                $section->setPtsteps($ptsteps);
+                $section->setPTSteps($ptsteps);
             }
         }
         return $section;
@@ -289,8 +303,8 @@ class CitywayProvider implements ProviderInterface
     {
         $ptstep = new PTStep($num);
         if (isset($data["Departure"])) {
-            $departure = new Departure(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
-            if (isset($data["Departure"]["Time"])) $departure->setDate(\DateTime::createFromFormat(self::DATETIME_FORMAT, $data["Departure"]["Time"]));
+            $departure = new PTDeparture(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
+            if (isset($data["Departure"]["Time"])) $departure->setDate(\DateTime::createFromFormat(self::DATETIME_OUTPUT_FORMAT, $data["Departure"]["Time"]));
             if (isset($data["Departure"]["Site"])) {
                 $departureAddress = new Address();
                 $departureAddress->setId(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
@@ -303,11 +317,11 @@ class CitywayProvider implements ProviderInterface
                 if (isset($data["Departure"]["Site"]["Position"]["Long"]) && !is_null($data["Departure"]["Site"]["Position"]["Long"])) $departureAddress->setLongitude($data["Departure"]["Site"]["Position"]["Long"]);
                 $departure->setAddress($departureAddress);
             }
-            $ptstep->setDeparture($departure);
+            $ptstep->setPTDeparture($departure);
         }
         if (isset($data["Arrival"])) {
-            $arrival = new Arrival(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
-            if (isset($data["Arrival"]["Time"])) $arrival->setDate(\DateTime::createFromFormat(self::DATETIME_FORMAT, $data["Arrival"]["Time"]));
+            $arrival = new PTArrival(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
+            if (isset($data["Arrival"]["Time"])) $arrival->setDate(\DateTime::createFromFormat(self::DATETIME_OUTPUT_FORMAT, $data["Arrival"]["Time"]));
             if (isset($data["Arrival"]["Site"])) {
                 $arrivalAddress = new Address();
                 $arrivalAddress->setId(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
@@ -320,7 +334,7 @@ class CitywayProvider implements ProviderInterface
                 if (isset($data["Arrival"]["Site"]["Position"]["Long"]) && !is_null($data["Arrival"]["Site"]["Position"]["Long"])) $arrivalAddress->setLongitude($data["Arrival"]["Site"]["Position"]["Long"]);
                 $arrival->setAddress($arrivalAddress);
             }
-            $ptstep->setArrival($arrival);
+            $ptstep->setPTArrival($arrival);
         }
         if (isset($data["Distance"]) && !is_null($data["Distance"])) $ptstep->setDistance($data["Distance"]);
         if (isset($data["Duration"]) && !is_null($data["Duration"])) $ptstep->setDuration($data["Duration"]);

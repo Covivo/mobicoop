@@ -29,7 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use App\Address\Entity\Address;
 
 /**
- * An arrival.
+ * A departure.
  *
  * @ApiResource(
  *      attributes={
@@ -39,29 +39,30 @@ use App\Address\Entity\Address;
  *      itemOperations={"get"}
  * )
  */
-class Arrival
+class PTDeparture
 {
+    
     /**
      * @ApiProperty(identifier=true)
      */
     private $id;
     
     /**
-     * @var string The name of this arrival.
+     * @var string The name of this departure.
      *
      * @Groups("pt")
      */
     private $name;
     
     /**
-     * @var \DateTime The date and time of this arrival.
+     * @var \DateTime The date and time of this departure.
      *
      * @Groups("pt")
      */
     private $date;
    
     /**
-     * @var Address The address of this arrival.
+     * @var Address The address of this departure.
      *
      * @Groups("pt")
      */

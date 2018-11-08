@@ -39,7 +39,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      itemOperations={"get"}
  * )
  */
-class Section
+class PTSection
 {
     /**
      * @ApiProperty(identifier=true)
@@ -96,25 +96,25 @@ class Section
     private $relativeDirection;
     
     /**
-     * @var Journey The parent journey of this section.
+     * @var PTJourney The parent journey of this section.
      *
      * @Groups("pt")
      */
-    private $journey;
+    private $ptjourney;
     
     /**
-     * @var Departure The departure of this section.
+     * @var PTDeparture The departure of this section.
      *
      * @Groups("pt")
      */
-    private $departure;
+    private $ptdeparture;
     
     /**
-     * @var Arrival The arrival of this section.
+     * @var PTArrival The arrival of this section.
      *
      * @Groups("pt")
      */
-    private $arrival;
+    private $ptarrival;
     
     /**
      * @var PTMode The transport mode of this section.
@@ -138,7 +138,7 @@ class Section
     private $direction;
     
     /**
-     * @var PTStep[] The steaps of this section.
+     * @var PTStep[] The steps of this section.
      *
      * @Groups("pt")
      */
@@ -186,27 +186,27 @@ class Section
         return $this->last;
     }
 
-    public function getJourney()
+    public function getPTJourney()
     {
-        return $this->journey;
+        return $this->ptjourney;
     }
 
-    public function getDeparture()
+    public function getPTDeparture()
     {
-        return $this->departure;
+        return $this->ptdeparture;
     }
 
-    public function getArrival()
+    public function getPTArrival()
     {
-        return $this->arrival;
+        return $this->ptarrival;
     }
 
-    public function getPtmode()
+    public function getPTMode()
     {
         return $this->ptmode;
     }
 
-    public function getPtline()
+    public function getPTLine()
     {
         return $this->ptline;
     }
@@ -241,27 +241,27 @@ class Section
         $this->last = $last;
     }
 
-    public function setJourney($journey)
+    public function setPTJourney($ptjourney)
     {
-        $this->journey = $journey;
+        $this->ptjourney = $ptjourney;
     }
 
-    public function setDeparture($departure)
+    public function setPTDeparture($ptdeparture)
     {
-        $this->departure = $departure;
+        $this->ptdeparture = $ptdeparture;
     }
 
-    public function setArrival($arrival)
+    public function setPTArrival($ptarrival)
     {
-        $this->arrival = $arrival;
+        $this->ptarrival = $ptarrival;
     }
 
-    public function setPtmode($ptmode)
+    public function setPTMode($ptmode)
     {
         $this->ptmode = $ptmode;
     }
 
-    public function setPtline($ptline)
+    public function setPTLine($ptline)
     {
         $this->ptline = $ptline;
     }
@@ -290,12 +290,13 @@ class Section
     {
         $this->relativeDirection = $relativeDirection;
     }
-    public function getPtsteps ()
+    
+    public function getPTSteps ()
     {
         return $this->ptsteps;
     }
 
-    public function setPtsteps ($ptsteps)
+    public function setPTSteps ($ptsteps)
     {
         $this->ptsteps = $ptsteps;
     }
