@@ -1,49 +1,53 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-        <link rel="stylesheet" href="{{ asset('/build/app.css') }}">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.48.0/mapbox-gl.js'></script>
-        <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.48.0/mapbox-gl.css' rel='stylesheet' />
-        {% block stylesheets %}{% endblock %}
-    </head>
-    <body>
-    	<nav class="navbar is-primary">
-            <div class="container">
-            <div class="navbar-brand">
-                  <a class="navbar-item" href="/" style="font-weight:bold;">
-                    Coviride
-                  </a>
-                  <span class="navbar-burger burger" data-target="navMenu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </span>
-                </div>
-            <div id="navMenu" class="navbar-menu">
-                <div class="navbar-end">
-                    <a href="/" class="navbar-item"><i class="fas fa-home"></i></a>
-                    <a href="{{path('users')}}" class="navbar-item" name='Access users pages'>Users</a>
-                </div>
-            </div>
-            </div>
-        </nav>
-        <div id="app">
-          {% block body %}{% endblock %}
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Welcome!{% endblock %}</title>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+  <!-- <link rel="stylesheet" href="{{ asset('/build/app.css') }}"> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% block stylesheets %}{% endblock %}
+</head>
+<body>
+  <nav class="navbar has-shadow commonNav">
+    <div class="container">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="../">
+          <img class="logo" src="{{asset('images/logo.jpg')}}" alt="Bulma: a modern CSS framework based on Flexbox"/>
+        </a>
+        <div class="navbar-burger burger" data-target="navMenu">
+          <span></span><span></span><span></span>
         </div>
-        <script src="{{ asset('/build/app.js') }}"></script>
-        {% block javascripts %}{% endblock %}
-    </body>
-    <footer class="footer">
-      <div class="content has-text-centered">
-        <p>
-          <strong>Covivo</strong> by <a href="https://roulezmalin.fr">Covivo team</a>. The source code is licensed
-          <a href="#">AGPL3</a>. The website content
-          is licensed <a href="#">AGPL3 too</a>.
-        </p>
       </div>
-    </footer>
+      <div class="navbar-menu" id="navMenu">
+        <div class="navbar-end">
+          <div class="navbar-item has-dropdown is-hoverable"><a class="navbar-link">Account</a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item">Dashboard</a>
+              <a href="{{path('users')}}" class="navbar-item">Profile</a>
+              <a class="navbar-item">Settings</a>
+              <hr class="navbar-divider" />
+              <div class="navbar-item">Logout</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div id="app">
+    {% block body %}{% endblock %}
+  </div>
+<!--   <script src="{{ asset('/build/app.js') }}"></script>
+ -->  
+ {% block javascripts %}{% endblock %}
+</body>
+<footer class="footer">
+  <div class="content has-text-centered">
+    <p>
+      <strong>Covivo</strong> by <a href="https://roulezmalin.fr">Covivo team</a>. The source code is licensed
+      <a href="#">AGPL3</a>. The website content
+      is licensed <a href="#">AGPL3 too</a>.
+    </p>
+  </div>
+</footer>
 </html>

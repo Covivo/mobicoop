@@ -1,10 +1,10 @@
 /* Welcome to Coviride main SASS file, this file require all the sub-elements */
-@import '_variables';
-@import '_header';
-@import '~bulma/sass/utilities/_all';
 // Import Bulma and Buefy styles
+// @import '~bulma/sass/utilities/_all'; // not sure if this is usefull
 @import '~bulma';
 @import '~buefy/src/scss/buefy';
+@import '_variables';
+@import '_header';
 body {
   background-color: $mainBackgroundColor;
   color: $mainFontColor;
@@ -12,27 +12,9 @@ body {
   h1 {
     // font-size: 75px;
   }
-}
-.tag[alt='www.roulezmalin.com'] {
-  box-shadow: 0 0 0 2px rgba(217, 0, 0, 0.5);
-}
-.tag[alt='covoiturage-libre.fr'] {
-  box-shadow: 0 0 0 2px rgba(255, 223, 211, 1);
-}
-.tag[alt='www.tedicov.fr'] {
-  box-shadow: 0 0 0 2px rgba(102, 255, 76, 0.5);
-}
-.tag[alt='test.ouestgo.fr'] {
-  box-shadow: 0 0 0 2px rgba(54, 81, 255, 0.5);
-}
-.externalJourney {
-  .spinerDiv {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    .fulfilling-bouncing-circle-spinner {
-      position: absolute;
-      z-index: 2;
+  .commonNav {
+    .logo {
+      max-height: 4rem;
     }
   }
 }

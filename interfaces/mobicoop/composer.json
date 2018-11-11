@@ -27,6 +27,7 @@
         "symfony/twig-bundle": "*",
         "symfony/validator": "*",
         "symfony/web-link": "*",
+        "symfony/webpack-encore-bundle": "^1.0",
         "symfony/yaml": "*",
         "wikimedia/composer-merge-plugin": "^1.4"
     },

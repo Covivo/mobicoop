@@ -53,7 +53,7 @@
                       :id="`${indexApi}Checkbox`" 
                       v-model="selectedPlateform" 
                       class="is-checkradio" 
-                      type="checkbox" 
+                      type="checkbox"
                       :name="`${indexApi}Checkbox`"
                     >
                     <label :for="`${indexApi}Checkbox`">{{ indexApi }}</label>
@@ -63,7 +63,7 @@
             </li>
           </ul>
           <p class="menu-label">
-            Prix
+            Price
           </p>
           <ul class="menu-list">
             <li>
