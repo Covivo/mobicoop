@@ -21,75 +21,97 @@
  *    LICENSE
  **************************/
 
-namespace App\PublicTransport\Entity;
+namespace App\Rdex\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * A public transport mode.
+ * An RDEX Day time.
  *
  * @ApiResource(
- *      routePrefix="/public_transport",
+ *      routePrefix="/rdex",
  *      attributes={
- *          "normalization_context"={"groups"={"pt"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"rdex"}, "enable_max_depth"="true"},
  *      },
  *      collectionOperations={},
- *      itemOperations={"get"={"path"="/modes/{id}"}}
+ *      itemOperations={"get"={"path"="/day_time/{id}"}}
  * )
  * 
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class PTMode
+class RdexDayTime
 {
-    const PT_MODE_BUS = "BUS";
-    const PT_MODE_TRAIN = "TRAIN";
-    const PT_MODE_BIKE = "BIKE";
-    const PT_MODE_WALK = "WALK";
-
-    private const PT_MODES = [
-            self::PT_MODE_BUS => 1,
-            self::PT_MODE_TRAIN => 2,
-            self::PT_MODE_BIKE => 3,
-            self::PT_MODE_WALK => 4
-    ];
-        
     /**
      * @ApiProperty(identifier=true)
      */
     private $id;
     
     /**
-     * @var string The name of this mode.
+     * @var string The min time.
      *
-     * @Groups("pt")
+     * @Groups("rdex")
      */
-    private $name;
+    private $mintime;
     
-    public function __construct($mode)
-    {
-        $this->setId(self::PT_MODES[$mode]);
-        $this->setName($mode);
-    }
+    /**
+     * @var string The max time.
+     *
+     * @Groups("rdex")
+     */
+    private $maxtime;
     
-    public function getId()
-    {
-        return $this->id;
-    }
-    
-    public function setId($id)
+    public function __construct($id)
     {
         $this->id = $id;
     }
     
-    public function getName()
+    /**
+     * @return mixed
+     */
+    public function getId()
     {
-        return $this->name;
+        return $this->id;
     }
-    
-    public function setName($name)
+
+    /**
+     * @return string
+     */
+    public function getMintime()
     {
-        $this->name = $name;
+        return $this->mintime;
     }
+
+    /**
+     * @return string
+     */
+    public function getMaxtime()
+    {
+        return $this->maxtime;
+    }
+
+    /**
+     * @param mixed $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @param string $mintime
+     */
+    public function setMintime($mintime)
+    {
+        $this->mintime = $mintime;
+    }
+
+    /**
+     * @param string $maxtime
+     */
+    public function setMaxtime($maxtime)
+    {
+        $this->maxtime = $maxtime;
+    }    
 }

@@ -23,7 +23,6 @@
 
 namespace App\PublicTransport\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -33,11 +32,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * A public transport journey.
  *
  * @ApiResource(
+ *      routePrefix="/public_transport",
  *      attributes={
  *          "normalization_context"={"groups"={"pt"}, "enable_max_depth"="true"},
  *      },
  *      collectionOperations={
  *          "get"={
+ *              "path"="/journeys",
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -109,8 +110,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              }
  *          }
  *      },
- *      itemOperations={"get"}
+ *      itemOperations={"get"={"path"="/journeys/{id}"}}
  * )
+ * 
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
 class PTJourney
 {

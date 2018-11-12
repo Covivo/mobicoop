@@ -21,75 +21,120 @@
  *    LICENSE
  **************************/
 
-namespace App\PublicTransport\Entity;
+namespace App\Rdex\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * A public transport mode.
+ * An RDEX Vehicle.
  *
  * @ApiResource(
- *      routePrefix="/public_transport",
+ *      routePrefix="/rdex",
  *      attributes={
- *          "normalization_context"={"groups"={"pt"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"rdex"}, "enable_max_depth"="true"},
  *      },
  *      collectionOperations={},
- *      itemOperations={"get"={"path"="/modes/{id}"}}
+ *      itemOperations={"get"={"path"="/vehicles/{id}"}}
  * )
  * 
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class PTMode
+class RdexVehicle
 {
-    const PT_MODE_BUS = "BUS";
-    const PT_MODE_TRAIN = "TRAIN";
-    const PT_MODE_BIKE = "BIKE";
-    const PT_MODE_WALK = "WALK";
-
-    private const PT_MODES = [
-            self::PT_MODE_BUS => 1,
-            self::PT_MODE_TRAIN => 2,
-            self::PT_MODE_BIKE => 3,
-            self::PT_MODE_WALK => 4
-    ];
-        
     /**
      * @ApiProperty(identifier=true)
      */
     private $id;
     
     /**
-     * @var string The name of this mode.
+     * @var string The image of the vehicle.
      *
-     * @Groups("pt")
+     * @Groups("rdex")
      */
-    private $name;
+    private $vehicle_image;
     
-    public function __construct($mode)
-    {
-        $this->setId(self::PT_MODES[$mode]);
-        $this->setName($mode);
-    }
+    /**
+     * @var string The model of the vehicle.
+     *
+     * @Groups("rdex")
+     */
+    private $model;
     
-    public function getId()
-    {
-        return $this->id;
-    }
+    /**
+     * @var string The color of the vehicle.
+     *
+     * @Groups("rdex")
+     */
+    private $color;
     
-    public function setId($id)
+    public function __construct($id)
     {
         $this->id = $id;
     }
     
-    public function getName()
+    /**
+     * @return mixed
+     */
+    public function getId()
     {
-        return $this->name;
+        return $this->id;
     }
-    
-    public function setName($name)
+
+    /**
+     * @return string
+     */
+    public function getVehicle_image()
     {
-        $this->name = $name;
+        return $this->vehicle_image;
     }
+
+    /**
+     * @return string
+     */
+    public function getModel()
+    {
+        return $this->model;
+    }
+
+    /**
+     * @return string
+     */
+    public function getColor()
+    {
+        return $this->color;
+    }
+
+    /**
+     * @param mixed $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @param string $vehicle_image
+     */
+    public function setVehicle_image($vehicle_image)
+    {
+        $this->vehicle_image = $vehicle_image;
+    }
+
+    /**
+     * @param string $model
+     */
+    public function setModel($model)
+    {
+        $this->model = $model;
+    }
+
+    /**
+     * @param string $color
+     */
+    public function setColor($color)
+    {
+        $this->color = $color;
+    }    
 }

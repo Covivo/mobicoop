@@ -23,7 +23,7 @@
 
 namespace App\DataProvider\Service;
 
-use App\PublicTransport\Entity\Journey;
+use App\PublicTransport\Entity\PTJourney;
 use App\PublicTransport\Service\PTDataProvider;
 
 /**
@@ -46,12 +46,12 @@ class Deserializer
      *
      * @param string $class The expected class of the object
      * @param array $data   The array to deserialize
-     * @return Journey|null
+     * @return PTJourney|null
      */
     public function deserialize(string $class, array $data)
     {
         switch ($class) {
-            case Journey::class:
+            case PTJourney::class:
                 return call_user_func_array([$this,PTDataProvider::PROVIDERS[$this->provider]["deserialize_method"]], [$data]);
                 break;
             default:
@@ -60,7 +60,7 @@ class Deserializer
         return null;
     }
     
-    private function deserializeCitywayJourney(array $data): ?Journey
+    private function deserializeCitywayJourney(array $data): ?PTJourney
     {
         var_dump($data);
         exit;

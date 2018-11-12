@@ -32,12 +32,15 @@ use App\Address\Entity\Address;
  * A public transport step (by walk or public transport).
  *
  * @ApiResource(
+ *      routePrefix="/public_transport",
  *      attributes={
  *          "normalization_context"={"groups"={"pt"}, "enable_max_depth"="true"},
  *      },
  *      collectionOperations={},
- *      itemOperations={"get"}
+ *      itemOperations={"get"={"path"="/steps/{id}"}}
  * )
+ * 
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
 class PTStep
 {

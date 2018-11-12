@@ -21,50 +21,43 @@
  *    LICENSE
  **************************/
 
-namespace App\PublicTransport\DataProvider;
+namespace App\Rdex\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\PublicTransport\Entity\PTJourney;
-use App\PublicTransport\Service\PTDataProvider;
+use App\Rdex\Entity\RdexJourney;
 use Symfony\Component\HttpFoundation\RequestStack;
+use App\Rdex\Service\RdexManager;
 
 /**
- * Collection data provider for Public Transport Journey entity.
+ * Collection data provider for Rdex Journey entity.
  *
- * Automatically associated to Public Transport Journey entity thanks to autowiring (see 'supports' method).
+ * Automatically associated to Rdex Journey entity thanks to autowiring (see 'supports' method).
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  *
  */
 final class JourneyCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    private $dataProvider;
+    private $rdexManager;
     protected $request;
     
-    public function __construct(RequestStack $requestStack, PTDataProvider $dataProvider)
+    public function __construct(RequestStack $requestStack, RdexManager $rdexManager)
     {
-        $this->dataProvider = $dataProvider;
+        $this->rdexManager = $rdexManager;
         $this->request = $requestStack->getCurrentRequest();
     }
     
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return PTJourney::class === $resourceClass;
+        return RdexJourney::class === $resourceClass;
     }
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->dataProvider->getJourneys(
-                $this->request->get("provider"),
-                $this->request->get("apikey"),
-                $this->request->get("origin_latitude"),
-                $this->request->get("origin_longitude"),
-                $this->request->get("destination_latitude"),
-                $this->request->get("destination_longitude"),
-                \DateTime::createFromFormat(PTDataProvider::DATETIME_FORMAT, $this->request->get("date")),
-                $this->request->get("dateType")
-                );
+        if ($result = $this->rdexManager->validate($this->request)) return [];
+        
+        return $this->rdexManager->getJourneys($this->request->get("p"));
     }
 }

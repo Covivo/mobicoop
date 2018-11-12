@@ -196,4 +196,50 @@ class ProposalManager
             return $proposalRequestOutward;
         }
     }
+    
+    /**
+     * Returns all proposals matching the parameters.
+     * 
+     * @param bool $offer
+     * @param bool $request
+     * @param float $from_longitude
+     * @param float $from_latitude
+     * @param float $to_longitude
+     * @param float $to_latitude
+     * @param string $frequency
+     * @param \DateTime $outward_mindate
+     * @param \DateTime $outward_maxdate
+     * @param string $outward_monday_mintime
+     * @param string $outward_monday_maxtime
+     * @param string $outward_tuesday_mintime
+     * @param string $outward_tuesday_maxtime
+     * @param string $outward_wednesday_mintime
+     * @param string $outward_wednesday_maxtime
+     * @param string $outward_thursday_mintime
+     * @param string $outward_thursday_maxtime
+     * @param string $outward_friday_mintime
+     * @param string $outward_friday_maxtime
+     * @param string $outward_saturday_mintime
+     * @param string $outward_saturday_maxtime
+     * @param string $outward_sunday_mintime
+     * @param string $outward_sunday_maxtime
+     */
+    public function getProposals(
+        bool $offer, bool $request, 
+        float $from_longitude, float $from_latitude, 
+        float $to_longitude, float $to_latitude,
+        string $frequency = null,
+        \DateTime $outward_mindate = null, \DateTime $outward_maxdate = null,
+        string $outward_monday_mintime = null, string $outward_monday_maxtime = null,
+        string $outward_tuesday_mintime = null, string $outward_tuesday_maxtime = null,
+        string $outward_wednesday_mintime = null, string $outward_wednesday_maxtime = null,
+        string $outward_thursday_mintime = null, string $outward_thursday_maxtime = null,
+        string $outward_friday_mintime = null, string $outward_friday_maxtime = null,
+        string $outward_saturday_mintime = null, string $outward_saturday_maxtime = null,
+        string $outward_sunday_mintime = null, string $outward_sunday_maxtime = null
+        )
+    {
+        // test : we return all proposals
+        return $this->entityManager->getRepository(Proposal::class)->findAll();        
+    }
 }
