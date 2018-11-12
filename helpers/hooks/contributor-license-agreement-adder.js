@@ -38,7 +38,8 @@ if(repoName.sync() == "mobicoop"){
                             reader.close();
                             completed = true
                             //continue push
-                            return;
+                            process.exit(0);
+;
                         }
                         console.log(kuler(`\nCancelling push ...`,'red'))
                         reader.close();
@@ -48,7 +49,6 @@ if(repoName.sync() == "mobicoop"){
             });
         });
     });
-    process.exit(0);
 }
 
 function finalResultToShow(country, date, name, surname, gitEmail, gitUserName){
