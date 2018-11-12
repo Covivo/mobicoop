@@ -23,12 +23,12 @@ agreementSample = function(country, date, name, surname, gitEmail, gitUserName){
 
 exports.addContributor = function(fileName, country, date, name, surname, gitEmail, gitUserName){
 
-	fs.writeFile('ContributorLicenseAgreement/' + fileName, agreementSample(country,date,name,surname,gitEmail,gitUserName), (err) => {
-  		if (err) {
-        throw err;
-        process.exit(1);
-    	}
-  		console.log('The file has been saved!');
-	});
+    fs.writeFile('ContributorLicenseAgreement/' + fileName, agreementSample(country,date,name,surname,gitEmail,gitUserName), (err) => {
+        if (err) {
+            throw err;
+            process.exit(1);
+        }
+        console.log('The file has been saved!');
+    });
 }
 

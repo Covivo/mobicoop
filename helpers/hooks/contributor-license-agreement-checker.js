@@ -5,8 +5,8 @@ const gitUserName = require('git-user-name');
 const repoName = require('git-repo-name');
 const readline = require('readline');
 const reader = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
+    input: process.stdin,
+    output: process.stdout
 });
 
 const claWriter = require('./contributor-license-agreement-writer.js')
@@ -36,7 +36,7 @@ if(repoName.sync() == "mobicoop"){
                             claWriter.addContributor(gitUserName() + '_Agreement.txt', country, date, name, surname, gitEmail, gitUserName())
                             reader.close();
                             //continue push
-                            return;
+                            
                         }
                         console.log(kuler(`\nCancelling push ...`,'red'))
                         reader.close();
