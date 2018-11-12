@@ -1,78 +1,27 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}Hello {{ controller_name }}{% endblock %}
+{% block title %}{{ metaDescription }}{% endblock %}
+{% block stylesheets %}
+  {{ encore_entry_link_tags('home') }}
+{% endblock %}
 
 {% block body %}
 
-<section class="hero is-primary">
-  <div class="hero-body">
-    <div class="container">
-      <h1 class="title">
-        Coviride Demo application
-      </h1>
-      <h2 class="subtitle">
-        The random number send form controller is {{nb}}
-      </h2>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container">
-    <div class="tile is-ancestor">
-      <div class="tile is-vertical is-8">
-        <div class="tile">
-          <div class="tile is-parent is-vertical">
-            <article class="tile is-child notification is-primary">
-              <p class="title">Mobicoop...</p>
-              <p class="subtitle">Une société dans le vent ...💨</p>
-            </article>
-            <article class="tile is-child notification is-warning">
-              <p class="title">...bloc X</p>
-              <p class="subtitle">le block inconnu</p>
-            </article>
-          </div>
-          <div class="tile is-parent">
-            <article class="tile is-child notification is-info">
-              <p class="title"> <i class="fas fa-route"></i> Trajets</p>
-              <p class="subtitle">Entrez une addresse de départ et d'arrivée</p>
-              <parrot></parrot>
-            </article>
-          </div>
-        </div>
-        <div class="tile is-parent">
-          <article class="tile is-child notification is-danger">
-            <p class="title">Fork us <i class="fab fa-gitlab"></i> </p>
-            <p class="subtitle">We love open-source, just fork us on <a href="http://gitlab.com/covivo/CoviRide/">gitlab</a> </p>
-            <div class="content">
-              <!-- Content -->
-            </div>
-          </article>
-        </div>
-      </div>
-      <div class="tile is-parent">
-        <article class="tile is-child notification is-success">
-          <div class="content">
-            <p class="title">À propos de mobicoop</p>
-            <p class="subtitle">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-            proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-            <div class="content">
-              <!-- Content -->
-            </div>
-          </div>
-        </article>
+<main class="homePage">
+  <section class="hero is-info header">
+    <div class="hero-body">
+      <div class="container">
+        <Searchgeocoding :geo-infos="geoInfos" :search-user="searchUser"></Searchgeocoding>
       </div>
     </div>
-  </div>
-  
-</section>
+  </section>
+  <section id="journeyResult" class="journeyResult">
+    <Journey :api-uri="'{{ baseUri }}'" :geo-infos="geoInfos" :search-user="searchUser"></Journey>
+  </section>
+</main>
 
-<section id="calculator" class="container">
-  <webcalculator></webcalculator>
-</section>
+{% endblock %}
 
+{% block javascripts %}
+  {{ encore_entry_script_tags('home') }}
 {% endblock %}

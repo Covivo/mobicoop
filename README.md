@@ -44,7 +44,7 @@ install & enable in you .ini all its php extensions : [Docker file](https://gith
 
 #### For all apps
 
-`npm install` will perfom:
+`npm install --no-save` will perfom:
  - Api vendor
  - Mobicoop vendor+node_modules+build assets 
  - Admin node_modules 

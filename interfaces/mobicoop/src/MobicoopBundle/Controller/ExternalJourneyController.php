@@ -26,23 +26,24 @@ namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Mobicoop\Bundle\MobicoopBundle\Service\ExternalJourneyManager;
 
-class DefaultController extends AbstractController
+use GuzzleHttp\Client;
+
+/**
+ * Controller class to display external Journey (rdexAPI)
+ *
+ */
+class ExternalJourneyController extends AbstractController
 {
+
     /**
-     * HomePage
-     * @Route("/")
-     *
+     * @Route("/externaljourney")
      */
-    public function index()
+    public function truc($value='')
     {
         $baseUri = $_ENV['API_URI'];
-        return $this->render(
-            '@Mobicoop/default/index.html.twig',
-            [
-                'baseUri' => $baseUri,
-                'metaDescription' => 'Homepage of Mobicoop'
-            ]
-        );
+        return $this->render('@Mobicoop/proposal/externalAsync.html.twig', ['baseUri' => $baseUri]);
     }
 }

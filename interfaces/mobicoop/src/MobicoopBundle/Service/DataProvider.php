@@ -135,7 +135,7 @@ class DataProvider
         }
         return new Response();
     }
-    
+
     /**
      * Get sub collection operation
      *
@@ -149,12 +149,12 @@ class DataProvider
     public function getSubCollection(int $id, string $subClassName, string $subClassRoute=null, array $params=null): Response
     {
         // @todo : send the params to the request in the json body of the request
-        
+
         $route = $subClassRoute;
         if (is_null($route)) {
             $route = self::pluralize((new \ReflectionClass($subClassName))->getShortName());
         }
-        
+
         try {
             $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route);
             if ($clientResponse->getStatusCode() == 200) {

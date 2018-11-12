@@ -30,10 +30,6 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    #Mobicoop\Bundle\MobicoopBundle\Controller\UserController :
-    #Mobicoop\Bundle\MobicoopBundle\Service\UserManager :
-    #Mobicoop\Bundle\MobicoopBundle\Service\Deserializer :
-
     # Envoi de l'uri par défaut de l'api au service DataProvider
     Mobicoop\Bundle\MobicoopBundle\Service\DataProvider :
         arguments:

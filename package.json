@@ -5,9 +5,9 @@
   "main": "package.json",
   "scripts": {
     "install": "npm run install-api && npm run install-admin && npm run install-mobicoop && npm run download-tools",
-    "install-api": "cd api && npm i",
-    "install-admin": "cd interfaces/admin && npm i",
-    "install-mobicoop": "cd interfaces/mobicoop && npm i",
+    "install-api": "cd api && npm i --no-save",
+    "install-admin": "cd interfaces/admin && npm i --no-save",
+    "install-mobicoop": "cd interfaces/mobicoop && npm i --no-save",
     "download-tools": "wget http://www.phpdoc.org/phpDocumentor.phar -O bin/phpDocumentor.phar && wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O bin/php-cs-fixer.phar",
     "test": "npm run test-api && npm run test-mobicoop",
     "test-api": "cd api && npm run test",
@@ -23,8 +23,7 @@
   },
   "config": {
     "ghooks": {
-      "pre-commit": "php bin/php-cs-fixer.phar fix --using-cache=false api/src &&  php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src && php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src/MobicoopBundle/spec",
-      "pre-push": "npm test"
+      "pre-commit": "php bin/php-cs-fixer.phar fix --using-cache=false api/src &&  php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src && php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src/MobicoopBundle/spec"
     }
   },
   "repository": {

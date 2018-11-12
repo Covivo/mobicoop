@@ -1,16 +1,20 @@
 /* Welcome to Coviride main SASS file, this file require all the sub-elements */
+// Import Bulma and Buefy styles
+// @import '~bulma/sass/utilities/_all'; // not sure if this is usefull
+@import '~bulma';
+@import '~buefy/src/scss/buefy';
 @import '_variables';
 @import '_header';
-@import '~bulma/sass/utilities/_all';
 body {
   background-color: $mainBackgroundColor;
   color: $mainFontColor;
-  font-size: 45px;
+  //font-size: 45px;
   h1 {
-    font-size: 75px;
+    // font-size: 75px;
+  }
+  .commonNav {
+    .logo {
+      max-height: 4rem;
+    }
   }
 }
-
-// Import Bulma and Buefy styles
-@import '~bulma';
-@import '~buefy/src/scss/buefy';

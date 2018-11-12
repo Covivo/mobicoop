@@ -21,28 +21,37 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Controller;
+namespace App\ExternalJourney\Entity;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\Routing\Annotation\Route;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 
-class DefaultController extends AbstractController
+/**
+ * An arrival.
+ *
+ * @ApiResource(
+ *     collectionOperations={"get"={"method"="GET"}},
+ *     itemOperations={"get"={"method"="GET"}}
+ * )
+ */
+class ExternalJourneyProvider
 {
     /**
-     * HomePage
-     * @Route("/")
-     *
-     */
-    public function index()
+    * @var int $id of
+    */
+    private $id;
+
+    public function __construct()
     {
-        $baseUri = $_ENV['API_URI'];
-        return $this->render(
-            '@Mobicoop/default/index.html.twig',
-            [
-                'baseUri' => $baseUri,
-                'metaDescription' => 'Homepage of Mobicoop'
-            ]
-        );
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function setId($id)
+    {
+        return $this->id = $id;
     }
 }
