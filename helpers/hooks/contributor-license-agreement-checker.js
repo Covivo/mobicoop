@@ -8,7 +8,7 @@ const reader = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
-
+var completed = false
 const claWriter = require('./contributor-license-agreement-writer.js')
 const claFolderPath = path.resolve(__dirname, '../../ContributorLicenseAgreement');
 const claPath = path.resolve(__dirname, '../../ContributorLicenseAgreement/ContributorLicenseAgreement.txt');
@@ -35,6 +35,7 @@ if(repoName.sync() == "mobicoop"){
                         if (validAnswer.includes(answer)){
                             claWriter.addContributor(gitUserName() + '_Agreement.txt', country, date, name, surname, gitEmail, gitUserName())
                             reader.close();
+                            completed = true
                             //continue push
                             return;
                         }
@@ -47,8 +48,16 @@ if(repoName.sync() == "mobicoop"){
         });
     });
     // process.exit(0);
+  
 }
 
+ let interval = setInterval(function(message){
+    if(completed){ 
+        clearInterval(interval)
+        process.exit(0);
+
+    }
+   },2000)
 
 function finalResultToShow(country, date, name, surname, gitEmail, gitUserName){
 
