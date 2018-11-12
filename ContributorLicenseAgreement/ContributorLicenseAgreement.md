@@ -1,3 +1,5 @@
+#Mobicoop Contributor License Agreement
+
 *************************************************************************************
    Copyright (c) 2018, MOBICOOP. All rights reserved.
    This project is dual licensed under AGPL and proprietary licence.
@@ -19,7 +21,7 @@
 *************************************************************************************
 
 
-<country>, <date>
+*country*, *date*
 
 I hereby agree to the terms of the Mobicoop Contributor License
 Agreement.
@@ -29,15 +31,9 @@ declaration.
 
 Signed,
 
-<name> <surname>
-<git_email> | <login>
+*name* *surname*
+
+*git_email* | *login*
 
 
-This List of contributors is listing the individual contributors who agreed the entire text above:
-
-* `<country>`: France
-* `<date>`: 2018/11/08
-* `<username>`: sofiane belaribitest
-* `<name>`: sofiane
-* `<surname>`: belaribi
-* `<git_email>`: sofiane.belaribi@etu.univ-lyon1.fr
+###**This folder is listing the individual contributors who agreed the entire text above**

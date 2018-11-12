@@ -1,38 +1,68 @@
-const program = require('commander');
 const fs = require('fs');
 const path = require('path');
 const kuler = require('kuler');
 const gitUserName = require('git-user-name');
-const readline = require('readline');
-const reader = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
+var repoName = require('git-repo-name');
 
-console.log("*************************************************************************************\r \n",
-   "Copyright (c) 2018, MOBICOOP. All rights reserved.\r \n",
-   "This project is dual licensed under AGPL and proprietary licence.\r \n",
-"\r \n",
-   "This program is free software: you can redistribute it and/or modify\r \n",
-   "it under the terms of the GNU Affero General Public License as\r \n",
-   "published by the Free Software Foundation, either version 3 of the\r \n",
-   "License, or (at your option) any later version.\r \n",
-"\r \n",
-   "This program is distributed in the hope that it will be useful,\r \n",
-   "but WITHOUT ANY WARRANTY; without even the implied warranty of\r \n",
-   "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\r \n",
-   "GNU Affero General Public License for more details.\r \n",
-"\r \n",
-   "You should have received a copy of the GNU Affero General Public License\r \n",
-   "along with this program.  If not, see <gnu.org/licenses>.\r \n",
-"\r \n",
-   "Licence MOBICOOP described in the file LICENSE\r \n",
-"*************************************************************************************\r \n")
-console.log(gitUserName())
+const claWriter = require('./contributor-license-agreement-writer.js')
+const claFolderPath = path.resolve(__dirname, '../../ContributorLicenseAgreement');
+const claPath = path.resolve(__dirname, '../../ContributorLicenseAgreement/ContributorLicenseAgreement.txt');
+const copyright = fs.readFileSync(path.resolve(__dirname, '../copyright.txt'))
+
+//CHECK IF AM ON MOBICOOP's REPO
+if(repoName.sync() == "mobicoop"){
+    if(fs.existsSync(claFolderPath + "/" + gitUserName() + "_Agreement.txt")){
+        console.log(kuler(`Contributor License Agreement already accepted 😊 `,'green'))
+        return;
+    }
+    console.log(kuler(` It seems that you have not accepted our Contributor License Agreement yet.\r \n If you want to contribute to Mobicoop, you first need to accept this statement :\n`,"red"))
+    console.log(kuler(copyright, 'fdd000'));
+    console.log("\nPlease fill the following informations : ");
+    reader.question('<Your Country> : ', (country) => {
+        reader.question('<Your Surname> : ', (surname) => {
+            reader.question('<Your Name> : ', (name) => {
+                reader.question('<Your Git Email> : ', (gitEmail) => {
+                    let date =new Date(Date.now()).toLocaleString();
+                    console.log(kuler(finalResultToShow(country, date, name, surname, gitEmail, gitUserName())).style('fdd000'));
+                    console.log('This will be saved in /ContributorLicenseAgreement/' + gitUserName() + '_Agreement.txt' + '\n');
+                    reader.question('Would you like to sign this agreement ? (Y/n)', (answer) => {
+                        let validAnswer = ['yes','Y','y',''];
+                        if (validAnswer.includes(answer)){
+                            claWriter.addContributor(gitUserName() + '_Agreement.txt', country, date, name, surname, gitEmail, gitUserName())
+                            reader.close();
+                            //continue push
+                            return;
+                        }
+                        console.log('sad')
+                        reader.close();
+                        process.exit(0);
+                    });
+                });
+            });
+        });
+    });
+    // process.exit(0);
+}
 
 
+function finalResultToShow(country, date, name, surname, gitEmail, gitUserName){
 
+    return `*************************************************************************************
 
-console.log("Your git username is not registrered on the contributor list")
+    ${country} | ${date}
 
-console.log("YYYY-MM-DD")
+    I hereby agree to the terms of the Mobicoop Contributor License
+    Agreement.
+
+    I declare that I am authorized and able to make this agreement and sign
+    this declaration.
+
+    Signed,
+
+    ${name} ${surname}
+    ${gitEmail} | ${gitUserName}
+
+*************************************************************************************`;
+
+}
+process.exit(0);
