@@ -2,7 +2,12 @@ const fs = require('fs');
 const path = require('path');
 const kuler = require('kuler');
 const gitUserName = require('git-user-name');
-var repoName = require('git-repo-name');
+const repoName = require('git-repo-name');
+const readline = require('readline');
+const reader = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
 const claWriter = require('./contributor-license-agreement-writer.js')
 const claFolderPath = path.resolve(__dirname, '../../ContributorLicenseAgreement');
@@ -24,7 +29,7 @@ if(repoName.sync() == "mobicoop"){
                 reader.question('<Your Git Email> : ', (gitEmail) => {
                     let date =new Date(Date.now()).toLocaleString();
                     console.log(kuler(finalResultToShow(country, date, name, surname, gitEmail, gitUserName())).style('fdd000'));
-                    console.log('This will be saved in /ContributorLicenseAgreement/' + gitUserName() + '_Agreement.txt' + '\n');
+                    console.log('\nThis will be saved in /ContributorLicenseAgreement/' + gitUserName() + '_Agreement.txt');
                     reader.question('Would you like to sign this agreement ? (Y/n)', (answer) => {
                         let validAnswer = ['yes','Y','y',''];
                         if (validAnswer.includes(answer)){
@@ -33,7 +38,7 @@ if(repoName.sync() == "mobicoop"){
                             //continue push
                             return;
                         }
-                        console.log('sad')
+                        console.log(kuler(`\nCancelling push ...`,'red'))
                         reader.close();
                         process.exit(0);
                     });
@@ -47,8 +52,7 @@ if(repoName.sync() == "mobicoop"){
 
 function finalResultToShow(country, date, name, surname, gitEmail, gitUserName){
 
-    return `*************************************************************************************
-
+    return `\n*************************************************************************************
     ${country} | ${date}
 
     I hereby agree to the terms of the Mobicoop Contributor License
@@ -61,8 +65,6 @@ function finalResultToShow(country, date, name, surname, gitEmail, gitUserName){
 
     ${name} ${surname}
     ${gitEmail} | ${gitUserName}
-
 *************************************************************************************`;
 
 }
-process.exit(0);
