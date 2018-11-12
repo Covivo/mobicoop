@@ -125,92 +125,92 @@ class PTStep
         $this->id = $id;
     }
     
-    public function getDistance ()
+    public function getDistance()
     {
         return $this->distance;
     }
 
-    public function getDuration ()
+    public function getDuration()
     {
         return $this->duration;
     }
 
-    public function getPos ()
+    public function getPos()
     {
         return $this->pos;
     }
 
-    public function isLast ()
+    public function isLast()
     {
         return $this->last;
     }
 
-    public function getPTSection ()
+    public function getPTSection()
     {
         return $this->ptsection;
     }
 
-    public function getPTDeparture ()
+    public function getPTDeparture()
     {
         return $this->ptdeparture;
     }
 
-    public function getPTArrival ()
+    public function getPTArrival()
     {
         return $this->ptarrival;
     }
 
-    public function setDistance ($distance)
+    public function setDistance($distance)
     {
         $this->distance = $distance;
     }
 
-    public function setDuration ($duration)
+    public function setDuration($duration)
     {
         $this->duration = $duration;
     }
 
-    public function setPos ($pos)
+    public function setPos($pos)
     {
         $this->pos = $pos;
     }
 
-    public function setLast ($last)
+    public function setLast($last)
     {
         $this->last = $last;
     }
 
-    public function setPTSection ($ptsection)
+    public function setPTSection($ptsection)
     {
         $this->ptsection = $ptsection;
     }
 
-    public function setPTDeparture ($ptdeparture)
+    public function setPTDeparture($ptdeparture)
     {
         $this->ptdeparture = $ptdeparture;
     }
 
-    public function setPTArrival ($ptarrival)
+    public function setPTArrival($ptarrival)
     {
         $this->ptarrival = $ptarrival;
     }
 
-    public function getMagneticDirection ()
+    public function getMagneticDirection()
     {
         return $this->magneticDirection;
     }
     
-    public function getRelativeDirection ()
+    public function getRelativeDirection()
     {
         return $this->relativeDirection;
     }
     
-    public function setMagneticDirection ($magneticDirection)
+    public function setMagneticDirection($magneticDirection)
     {
         $this->magneticDirection = $magneticDirection;
     }
     
-    public function setRelativeDirection ($relativeDirection)
+    public function setRelativeDirection($relativeDirection)
     {
         $this->relativeDirection = $relativeDirection;
     }

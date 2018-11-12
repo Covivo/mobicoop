@@ -171,7 +171,7 @@ class PTSection
         return $this->distance;
     }
     
-    public function getDuration ()
+    public function getDuration()
     {
         return $this->duration;
     }
@@ -226,7 +226,7 @@ class PTSection
         $this->distance = $distance;
     }
     
-    public function setDuration ($duration)
+    public function setDuration($duration)
     {
         $this->duration = $duration;
     }
@@ -271,34 +271,33 @@ class PTSection
         $this->direction = $direction;
     }
     
-    public function getMagneticDirection ()
+    public function getMagneticDirection()
     {
         return $this->magneticDirection;
     }
 
-    public function getRelativeDirection ()
+    public function getRelativeDirection()
     {
         return $this->relativeDirection;
     }
 
-    public function setMagneticDirection ($magneticDirection)
+    public function setMagneticDirection($magneticDirection)
     {
         $this->magneticDirection = $magneticDirection;
     }
 
-    public function setRelativeDirection ($relativeDirection)
+    public function setRelativeDirection($relativeDirection)
     {
         $this->relativeDirection = $relativeDirection;
     }
     
-    public function getPTSteps ()
+    public function getPTSteps()
     {
         return $this->ptsteps;
     }
 
-    public function setPTSteps ($ptsteps)
+    public function setPTSteps($ptsteps)
     {
         $this->ptsteps = $ptsteps;
     }
-
 }

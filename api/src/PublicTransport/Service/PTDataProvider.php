@@ -48,7 +48,7 @@ class PTDataProvider
       
     /**
      * Get journeys from an external Public Transport data provider.
-     * 
+     *
      * @param string $provider                  The name of the provider
      * @param string $apikey                    The API Key for the provider
      * @param string $origin_latitude           The latitude of the origin point
@@ -57,19 +57,18 @@ class PTDataProvider
      * @param string $destination_longitude     The longitude of the destination point
      * @param \Datetime $date                   The datetime of the trip
      * @param string $dateType                  The date type of the trip (departure or arrival)
-     * @return NULL|array                       The journeys found or null if 
+     * @return NULL|array                       The journeys found or null if
      */
     public function getJourneys(
-            string $provider, 
-            string $apikey, 
-            string $origin_latitude, 
-            string $origin_longitude, 
-            string $destination_latitude, 
-            string $destination_longitude, 
+            string $provider,
+            string $apikey,
+            string $origin_latitude,
+            string $origin_longitude,
+            string $destination_latitude,
+            string $destination_longitude,
             \Datetime $date,
             string $dateType
-            ): ?array
-    {
+            ): ?array {
         if (!array_key_exists($provider, self::PROVIDERS)) {
             return null;
         }

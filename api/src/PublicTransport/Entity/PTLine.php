@@ -100,7 +100,7 @@ class PTLine
         return $this->name;
     }
     
-    public function getNumber ()
+    public function getNumber()
     {
         return $this->number;
     }
@@ -125,7 +125,7 @@ class PTLine
         $this->name = $name;
     }
     
-    public function setNumber ($number)
+    public function setNumber($number)
     {
         $this->number = $number;
     }

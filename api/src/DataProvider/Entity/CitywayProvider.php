@@ -37,13 +37,13 @@ use App\PublicTransport\Service\PTDataProvider;
 
 /**
  * Cityway data provider.
- * 
+ *
  * Implements all the methods needed to retrieve data from CityWay :
  * - get collection and item
- * - deserialize to populate Public Transport entities  
- * 
- * With CityWay : 
- * - the Journey consists in one or more Trips 
+ * - deserialize to populate Public Transport entities
+ *
+ * With CityWay :
+ * - the Journey consists in one or more Trips
  * - each Trip is an alternative to reach the destination from the departure
  * - a Trip has a departure and arrival time, a duration, a distance...
  * - a Trip consists in one or more Sections
@@ -55,23 +55,23 @@ use App\PublicTransport\Service\PTDataProvider;
  * - a PTRide is the name for a public transport ride, it can be by bus, train, bike...
  * - a PTRide consists in one or more Steps
  * - typically, a step is a path between two consecutive stops, for example two consecutive stops of the same bus line
- * 
- * Eg : 
- * 
- * if a trip consist in : 
- * - a walk, 
- * - then a bus ride, 
- * - then another bus ride on another line, 
- * - then a walk, 
- * 
+ *
+ * Eg :
+ *
+ * if a trip consist in :
+ * - a walk,
+ * - then a bus ride,
+ * - then another bus ride on another line,
+ * - then a walk,
+ *
  * we will have :
- * - one Leg, 
- * - a first PTRide, 
- * - a second PTRide, 
- * - and finally a second Leg    
- * 
+ * - one Leg,
+ * - a first PTRide,
+ * - a second PTRide,
+ * - and finally a second Leg
+ *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
- * 
+ *
  */
 class CitywayProvider implements ProviderInterface
 {
@@ -181,10 +181,18 @@ class CitywayProvider implements ProviderInterface
                 $departureAddress->setAddressCountry(self::CW_COUNTRY);
                 $departureAddress->setAddressLocality(self::CW_NC);
                 $departureAddress->setStreetAddress(self::CW_NC);
-                if (isset($data["Departure"]["Site"]["CityName"]) && !is_null($data["Departure"]["Site"]["CityName"])) $departureAddress->setAddressLocality($data["Departure"]["Site"]["CityName"]);
-                if (isset($data["Departure"]["Site"]["Name"]) && !is_null($data["Departure"]["Site"]["Name"])) $departureAddress->setStreetAddress($data["Departure"]["Site"]["Name"]);
-                if (isset($data["Departure"]["Site"]["Position"]["Lat"]) && !is_null($data["Departure"]["Site"]["Position"]["Lat"])) $departureAddress->setLatitude($data["Departure"]["Site"]["Position"]["Lat"]);
-                if (isset($data["Departure"]["Site"]["Position"]["Long"]) && !is_null($data["Departure"]["Site"]["Position"]["Long"])) $departureAddress->setLongitude($data["Departure"]["Site"]["Position"]["Long"]);
+                if (isset($data["Departure"]["Site"]["CityName"]) && !is_null($data["Departure"]["Site"]["CityName"])) {
+                    $departureAddress->setAddressLocality($data["Departure"]["Site"]["CityName"]);
+                }
+                if (isset($data["Departure"]["Site"]["Name"]) && !is_null($data["Departure"]["Site"]["Name"])) {
+                    $departureAddress->setStreetAddress($data["Departure"]["Site"]["Name"]);
+                }
+                if (isset($data["Departure"]["Site"]["Position"]["Lat"]) && !is_null($data["Departure"]["Site"]["Position"]["Lat"])) {
+                    $departureAddress->setLatitude($data["Departure"]["Site"]["Position"]["Lat"]);
+                }
+                if (isset($data["Departure"]["Site"]["Position"]["Long"]) && !is_null($data["Departure"]["Site"]["Position"]["Long"])) {
+                    $departureAddress->setLongitude($data["Departure"]["Site"]["Position"]["Long"]);
+                }
                 $departure->setAddress($departureAddress);
             }
             $journey->setPTDeparture($departure);
@@ -198,10 +206,18 @@ class CitywayProvider implements ProviderInterface
                 $arrivalAddress->setAddressCountry(self::CW_COUNTRY);
                 $arrivalAddress->setAddressLocality(self::CW_NC);
                 $arrivalAddress->setStreetAddress(self::CW_NC);
-                if (isset($data["Arrival"]["Site"]["CityName"]) && !is_null($data["Arrival"]["Site"]["CityName"])) $arrivalAddress->setAddressLocality($data["Arrival"]["Site"]["CityName"]);
-                if (isset($data["Arrival"]["Site"]["Name"]) && !is_null($data["Arrival"]["Site"]["Name"])) $arrivalAddress->setStreetAddress($data["Arrival"]["Site"]["Name"]);
-                if (isset($data["Arrival"]["Site"]["Position"]["Lat"]) && !is_null($data["Arrival"]["Site"]["Position"]["Lat"])) $arrivalAddress->setLatitude($data["Arrival"]["Site"]["Position"]["Lat"]);
-                if (isset($data["Arrival"]["Site"]["Position"]["Long"]) && !is_null($data["Arrival"]["Site"]["Position"]["Long"])) $arrivalAddress->setLongitude($data["Arrival"]["Site"]["Position"]["Long"]);
+                if (isset($data["Arrival"]["Site"]["CityName"]) && !is_null($data["Arrival"]["Site"]["CityName"])) {
+                    $arrivalAddress->setAddressLocality($data["Arrival"]["Site"]["CityName"]);
+                }
+                if (isset($data["Arrival"]["Site"]["Name"]) && !is_null($data["Arrival"]["Site"]["Name"])) {
+                    $arrivalAddress->setStreetAddress($data["Arrival"]["Site"]["Name"]);
+                }
+                if (isset($data["Arrival"]["Site"]["Position"]["Lat"]) && !is_null($data["Arrival"]["Site"]["Position"]["Lat"])) {
+                    $arrivalAddress->setLatitude($data["Arrival"]["Site"]["Position"]["Lat"]);
+                }
+                if (isset($data["Arrival"]["Site"]["Position"]["Long"]) && !is_null($data["Arrival"]["Site"]["Position"]["Long"])) {
+                    $arrivalAddress->setLongitude($data["Arrival"]["Site"]["Position"]["Long"]);
+                }
                 $arrival->setAddress($arrivalAddress);
             }
             $journey->setPTArrival($arrival);
@@ -213,7 +229,9 @@ class CitywayProvider implements ProviderInterface
             }
             $journey->setPTSections($sections);
         }
-        if (isset($data["CarbonFootprint"]["TripCO2"])) $journey->setCo2($data["CarbonFootprint"]["TripCO2"]);
+        if (isset($data["CarbonFootprint"]["TripCO2"])) {
+            $journey->setCo2($data["CarbonFootprint"]["TripCO2"]);
+        }
         return $journey;
     }
         
@@ -224,7 +242,9 @@ class CitywayProvider implements ProviderInterface
             // walk mode
             $ptmode = new PTMode(PTMode::PT_MODE_WALK);
             $section->setPTmode($ptmode);
-            if (isset($data["Leg"]["Duration"]) && !is_null($data["Leg"]["Duration"])) $section->setDuration($data["Leg"]["Duration"]);
+            if (isset($data["Leg"]["Duration"]) && !is_null($data["Leg"]["Duration"])) {
+                $section->setDuration($data["Leg"]["Duration"]);
+            }
             if (isset($data["Leg"]["pathLinks"]["PathLink"])) {
                 $ptsteps = [];
                 foreach ($data["Leg"]["pathLinks"]["PathLink"] as $pathLink) {
@@ -246,48 +266,80 @@ class CitywayProvider implements ProviderInterface
             }
             if (isset($data["PTRide"]["Departure"])) {
                 $departure = new PTDeparture(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
-                if (isset($data["PTRide"]["Departure"]["Time"])) $departure->setDate(\DateTime::createFromFormat(self::DATETIME_OUTPUT_FORMAT, $data["PTRide"]["Departure"]["Time"]));
+                if (isset($data["PTRide"]["Departure"]["Time"])) {
+                    $departure->setDate(\DateTime::createFromFormat(self::DATETIME_OUTPUT_FORMAT, $data["PTRide"]["Departure"]["Time"]));
+                }
                 if (isset($data["PTRide"]["Departure"]["StopPlace"])) {
                     $departureAddress = new Address();
                     $departureAddress->setId(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
                     $departureAddress->setAddressCountry(self::CW_COUNTRY);
                     $departureAddress->setAddressLocality(self::CW_NC);
                     $departureAddress->setStreetAddress(self::CW_NC);
-                    if (isset($data["PTRide"]["Departure"]["StopPlace"]["CityName"]) && !is_null($data["PTRide"]["Departure"]["StopPlace"]["CityName"])) $departureAddress->setAddressLocality($data["PTRide"]["Departure"]["StopPlace"]["CityName"]);
-                    if (isset($data["PTRide"]["Departure"]["StopPlace"]["Name"]) && !is_null($data["PTRide"]["Departure"]["StopPlace"]["Name"])) $departure->setName($data["PTRide"]["Departure"]["StopPlace"]["Name"]);
-                    if (isset($data["PTRide"]["Departure"]["StopPlace"]["Position"]["Lat"]) && !is_null($data["PTRide"]["Departure"]["StopPlace"]["Position"]["Lat"])) $departureAddress->setLatitude($data["PTRide"]["Departure"]["StopPlace"]["Position"]["Lat"]);
-                    if (isset($data["PTRide"]["Departure"]["StopPlace"]["Position"]["Long"]) && !is_null($data["PTRide"]["Departure"]["StopPlace"]["Position"]["Long"])) $departureAddress->setLongitude($data["PTRide"]["Departure"]["StopPlace"]["Position"]["Long"]);
+                    if (isset($data["PTRide"]["Departure"]["StopPlace"]["CityName"]) && !is_null($data["PTRide"]["Departure"]["StopPlace"]["CityName"])) {
+                        $departureAddress->setAddressLocality($data["PTRide"]["Departure"]["StopPlace"]["CityName"]);
+                    }
+                    if (isset($data["PTRide"]["Departure"]["StopPlace"]["Name"]) && !is_null($data["PTRide"]["Departure"]["StopPlace"]["Name"])) {
+                        $departure->setName($data["PTRide"]["Departure"]["StopPlace"]["Name"]);
+                    }
+                    if (isset($data["PTRide"]["Departure"]["StopPlace"]["Position"]["Lat"]) && !is_null($data["PTRide"]["Departure"]["StopPlace"]["Position"]["Lat"])) {
+                        $departureAddress->setLatitude($data["PTRide"]["Departure"]["StopPlace"]["Position"]["Lat"]);
+                    }
+                    if (isset($data["PTRide"]["Departure"]["StopPlace"]["Position"]["Long"]) && !is_null($data["PTRide"]["Departure"]["StopPlace"]["Position"]["Long"])) {
+                        $departureAddress->setLongitude($data["PTRide"]["Departure"]["StopPlace"]["Position"]["Long"]);
+                    }
                     $departure->setAddress($departureAddress);
                 }
                 $section->setPTDeparture($departure);
             }
             if (isset($data["PTRide"]["Arrival"])) {
                 $arrival = new PTArrival(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
-                if (isset($data["PTRide"]["Arrival"]["Time"])) $arrival->setDate(\DateTime::createFromFormat(self::DATETIME_OUTPUT_FORMAT, $data["PTRide"]["Arrival"]["Time"]));
+                if (isset($data["PTRide"]["Arrival"]["Time"])) {
+                    $arrival->setDate(\DateTime::createFromFormat(self::DATETIME_OUTPUT_FORMAT, $data["PTRide"]["Arrival"]["Time"]));
+                }
                 if (isset($data["PTRide"]["Arrival"]["StopPlace"])) {
                     $arrivalAddress = new Address();
                     $arrivalAddress->setId(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
                     $arrivalAddress->setAddressCountry(self::CW_COUNTRY);
                     $arrivalAddress->setAddressLocality(self::CW_NC);
                     $arrivalAddress->setStreetAddress(self::CW_NC);
-                    if (isset($data["PTRide"]["Arrival"]["StopPlace"]["CityName"]) && !is_null($data["PTRide"]["Arrival"]["StopPlace"]["CityName"])) $arrivalAddress->setAddressLocality($data["PTRide"]["Arrival"]["StopPlace"]["CityName"]);
-                    if (isset($data["PTRide"]["Arrival"]["StopPlace"]["Name"]) && !is_null($data["PTRide"]["Arrival"]["StopPlace"]["Name"])) $arrival->setName($data["PTRide"]["Arrival"]["StopPlace"]["Name"]);
-                    if (isset($data["PTRide"]["Arrival"]["StopPlace"]["Position"]["Lat"]) && !is_null($data["PTRide"]["Arrival"]["StopPlace"]["Position"]["Lat"])) $arrivalAddress->setLatitude($data["PTRide"]["Arrival"]["StopPlace"]["Position"]["Lat"]);
-                    if (isset($data["PTRide"]["Arrival"]["StopPlace"]["Position"]["Long"]) && !is_null($data["PTRide"]["Arrival"]["StopPlace"]["Position"]["Long"])) $arrivalAddress->setLongitude($data["PTRide"]["Arrival"]["StopPlace"]["Position"]["Long"]);
+                    if (isset($data["PTRide"]["Arrival"]["StopPlace"]["CityName"]) && !is_null($data["PTRide"]["Arrival"]["StopPlace"]["CityName"])) {
+                        $arrivalAddress->setAddressLocality($data["PTRide"]["Arrival"]["StopPlace"]["CityName"]);
+                    }
+                    if (isset($data["PTRide"]["Arrival"]["StopPlace"]["Name"]) && !is_null($data["PTRide"]["Arrival"]["StopPlace"]["Name"])) {
+                        $arrival->setName($data["PTRide"]["Arrival"]["StopPlace"]["Name"]);
+                    }
+                    if (isset($data["PTRide"]["Arrival"]["StopPlace"]["Position"]["Lat"]) && !is_null($data["PTRide"]["Arrival"]["StopPlace"]["Position"]["Lat"])) {
+                        $arrivalAddress->setLatitude($data["PTRide"]["Arrival"]["StopPlace"]["Position"]["Lat"]);
+                    }
+                    if (isset($data["PTRide"]["Arrival"]["StopPlace"]["Position"]["Long"]) && !is_null($data["PTRide"]["Arrival"]["StopPlace"]["Position"]["Long"])) {
+                        $arrivalAddress->setLongitude($data["PTRide"]["Arrival"]["StopPlace"]["Position"]["Long"]);
+                    }
                     $arrival->setAddress($arrivalAddress);
                 }
                 $section->setPTArrival($arrival);
             }
-            if (isset($data["PTRide"]["Distance"]) && !is_null($data["PTRide"]["Distance"])) $section->setDistance($data["PTRide"]["Distance"]);
-            if (isset($data["PTRide"]["Duration"]) && !is_null($data["PTRide"]["Duration"])) $section->setDuration($data["PTRide"]["Duration"]);
+            if (isset($data["PTRide"]["Distance"]) && !is_null($data["PTRide"]["Distance"])) {
+                $section->setDistance($data["PTRide"]["Distance"]);
+            }
+            if (isset($data["PTRide"]["Duration"]) && !is_null($data["PTRide"]["Duration"])) {
+                $section->setDuration($data["PTRide"]["Duration"]);
+            }
             if (isset($data["PTRide"]["Line"])) {
                 $ptline = new PTLine(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
-                if (isset($data["PTRide"]["Line"]["Name"])) $ptline->setName($data["PTRide"]["Line"]["Name"]);
-                if (isset($data["PTRide"]["Line"]["Number"])) $ptline->setNumber($data["PTRide"]["Line"]["Number"]);
-                if (isset($data["PTRide"]["Line"]["Direction"]["Name"])) $section->setDirection($data["PTRide"]["Line"]["Direction"]["Name"]);
+                if (isset($data["PTRide"]["Line"]["Name"])) {
+                    $ptline->setName($data["PTRide"]["Line"]["Name"]);
+                }
+                if (isset($data["PTRide"]["Line"]["Number"])) {
+                    $ptline->setNumber($data["PTRide"]["Line"]["Number"]);
+                }
+                if (isset($data["PTRide"]["Line"]["Direction"]["Name"])) {
+                    $section->setDirection($data["PTRide"]["Line"]["Direction"]["Name"]);
+                }
                 $section->setPTLine($ptline);
             }
-            if (isset($data["PTRide"]["Direction"]["Name"])) $section->setDirection($data["PTRide"]["Direction"]["Name"]);
+            if (isset($data["PTRide"]["Direction"]["Name"])) {
+                $section->setDirection($data["PTRide"]["Direction"]["Name"]);
+            }
             if (isset($data["PTRide"]["steps"]["Step"])) {
                 $ptsteps = [];
                 foreach ($data["PTRide"]["steps"]["Step"] as $step) {
@@ -304,42 +356,70 @@ class CitywayProvider implements ProviderInterface
         $ptstep = new PTStep($num);
         if (isset($data["Departure"])) {
             $departure = new PTDeparture(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
-            if (isset($data["Departure"]["Time"])) $departure->setDate(\DateTime::createFromFormat(self::DATETIME_OUTPUT_FORMAT, $data["Departure"]["Time"]));
+            if (isset($data["Departure"]["Time"])) {
+                $departure->setDate(\DateTime::createFromFormat(self::DATETIME_OUTPUT_FORMAT, $data["Departure"]["Time"]));
+            }
             if (isset($data["Departure"]["Site"])) {
                 $departureAddress = new Address();
                 $departureAddress->setId(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
                 $departureAddress->setAddressCountry(self::CW_COUNTRY);
                 $departureAddress->setAddressLocality(self::CW_NC);
                 $departureAddress->setStreetAddress(self::CW_NC);
-                if (isset($data["Departure"]["Site"]["CityName"]) && !is_null($data["Departure"]["Site"]["CityName"])) $departureAddress->setAddressLocality($data["Departure"]["Site"]["CityName"]);
-                if (isset($data["Departure"]["Site"]["Name"]) && !is_null($data["Departure"]["Site"]["Name"])) $departureAddress->setStreetAddress($data["Departure"]["Site"]["Name"]);
-                if (isset($data["Departure"]["Site"]["Position"]["Lat"]) && !is_null($data["Departure"]["Site"]["Position"]["Lat"])) $departureAddress->setLatitude($data["Departure"]["Site"]["Position"]["Lat"]);
-                if (isset($data["Departure"]["Site"]["Position"]["Long"]) && !is_null($data["Departure"]["Site"]["Position"]["Long"])) $departureAddress->setLongitude($data["Departure"]["Site"]["Position"]["Long"]);
+                if (isset($data["Departure"]["Site"]["CityName"]) && !is_null($data["Departure"]["Site"]["CityName"])) {
+                    $departureAddress->setAddressLocality($data["Departure"]["Site"]["CityName"]);
+                }
+                if (isset($data["Departure"]["Site"]["Name"]) && !is_null($data["Departure"]["Site"]["Name"])) {
+                    $departureAddress->setStreetAddress($data["Departure"]["Site"]["Name"]);
+                }
+                if (isset($data["Departure"]["Site"]["Position"]["Lat"]) && !is_null($data["Departure"]["Site"]["Position"]["Lat"])) {
+                    $departureAddress->setLatitude($data["Departure"]["Site"]["Position"]["Lat"]);
+                }
+                if (isset($data["Departure"]["Site"]["Position"]["Long"]) && !is_null($data["Departure"]["Site"]["Position"]["Long"])) {
+                    $departureAddress->setLongitude($data["Departure"]["Site"]["Position"]["Long"]);
+                }
                 $departure->setAddress($departureAddress);
             }
             $ptstep->setPTDeparture($departure);
         }
         if (isset($data["Arrival"])) {
             $arrival = new PTArrival(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
-            if (isset($data["Arrival"]["Time"])) $arrival->setDate(\DateTime::createFromFormat(self::DATETIME_OUTPUT_FORMAT, $data["Arrival"]["Time"]));
+            if (isset($data["Arrival"]["Time"])) {
+                $arrival->setDate(\DateTime::createFromFormat(self::DATETIME_OUTPUT_FORMAT, $data["Arrival"]["Time"]));
+            }
             if (isset($data["Arrival"]["Site"])) {
                 $arrivalAddress = new Address();
                 $arrivalAddress->setId(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
                 $arrivalAddress->setAddressCountry(self::CW_COUNTRY);
                 $arrivalAddress->setAddressLocality(self::CW_NC);
                 $arrivalAddress->setStreetAddress(self::CW_NC);
-                if (isset($data["Arrival"]["Site"]["CityName"]) && !is_null($data["Arrival"]["Site"]["CityName"])) $arrivalAddress->setAddressLocality($data["Arrival"]["Site"]["CityName"]);
-                if (isset($data["Arrival"]["Site"]["Name"]) && !is_null($data["Arrival"]["Site"]["Name"])) $arrivalAddress->setStreetAddress($data["Arrival"]["Site"]["Name"]);
-                if (isset($data["Arrival"]["Site"]["Position"]["Lat"]) && !is_null($data["Arrival"]["Site"]["Position"]["Lat"])) $arrivalAddress->setLatitude($data["Arrival"]["Site"]["Position"]["Lat"]);
-                if (isset($data["Arrival"]["Site"]["Position"]["Long"]) && !is_null($data["Arrival"]["Site"]["Position"]["Long"])) $arrivalAddress->setLongitude($data["Arrival"]["Site"]["Position"]["Long"]);
+                if (isset($data["Arrival"]["Site"]["CityName"]) && !is_null($data["Arrival"]["Site"]["CityName"])) {
+                    $arrivalAddress->setAddressLocality($data["Arrival"]["Site"]["CityName"]);
+                }
+                if (isset($data["Arrival"]["Site"]["Name"]) && !is_null($data["Arrival"]["Site"]["Name"])) {
+                    $arrivalAddress->setStreetAddress($data["Arrival"]["Site"]["Name"]);
+                }
+                if (isset($data["Arrival"]["Site"]["Position"]["Lat"]) && !is_null($data["Arrival"]["Site"]["Position"]["Lat"])) {
+                    $arrivalAddress->setLatitude($data["Arrival"]["Site"]["Position"]["Lat"]);
+                }
+                if (isset($data["Arrival"]["Site"]["Position"]["Long"]) && !is_null($data["Arrival"]["Site"]["Position"]["Long"])) {
+                    $arrivalAddress->setLongitude($data["Arrival"]["Site"]["Position"]["Long"]);
+                }
                 $arrival->setAddress($arrivalAddress);
             }
             $ptstep->setPTArrival($arrival);
         }
-        if (isset($data["Distance"]) && !is_null($data["Distance"])) $ptstep->setDistance($data["Distance"]);
-        if (isset($data["Duration"]) && !is_null($data["Duration"])) $ptstep->setDuration($data["Duration"]);
-        if (isset($data["MagneticDirection"]) && !is_null($data["MagneticDirection"])) $ptstep->setMagneticDirection($data["MagneticDirection"]);
-        if (isset($data["RelativeDirection"]) && !is_null($data["RelativeDirection"])) $ptstep->setRelativeDirection($data["RelativeDirection"]);
+        if (isset($data["Distance"]) && !is_null($data["Distance"])) {
+            $ptstep->setDistance($data["Distance"]);
+        }
+        if (isset($data["Duration"]) && !is_null($data["Duration"])) {
+            $ptstep->setDuration($data["Duration"]);
+        }
+        if (isset($data["MagneticDirection"]) && !is_null($data["MagneticDirection"])) {
+            $ptstep->setMagneticDirection($data["MagneticDirection"]);
+        }
+        if (isset($data["RelativeDirection"]) && !is_null($data["RelativeDirection"])) {
+            $ptstep->setRelativeDirection($data["RelativeDirection"]);
+        }
         return $ptstep;
     }
 }

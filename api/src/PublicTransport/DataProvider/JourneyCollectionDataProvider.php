@@ -31,9 +31,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Collection data provider for Journey entity.
- * 
+ *
  * Automatically associated to Journey entity thanks to autowiring (see 'supports' method).
- * 
+ *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  *
  */
@@ -63,7 +63,7 @@ final class JourneyCollectionDataProvider implements CollectionDataProviderInter
                 $this->request->get("origin_longitude"),
                 $this->request->get("destination_latitude"),
                 $this->request->get("destination_longitude"),
-                \DateTime::createFromFormat(PTDataProvider::DATETIME_FORMAT,$this->request->get("date")),
+                \DateTime::createFromFormat(PTDataProvider::DATETIME_FORMAT, $this->request->get("date")),
                 $this->request->get("dateType")
                 );
     }
