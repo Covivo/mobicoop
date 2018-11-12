@@ -27,7 +27,7 @@ if(repoName.sync() == "mobicoop"){
         reader.question('<Your Surname> : ', (surname) => {
             reader.question('<Your Name> : ', (name) => {
                 reader.question('<Your Git Email> : ', (gitEmail) => {
-                    let date =new Date(Date.now()).toLocaleString();
+                    let date = new Date(Date.now()).toLocaleString();
                     console.log(kuler(finalResultToShow(country, date, name, surname, gitEmail, gitUserName())).style('fdd000'));
                     console.log('\nThis will be saved in /ContributorLicenseAgreement/' + gitUserName() + '_Agreement.txt');
                     reader.question('Would you like to sign this agreement ? (Y/n)', (answer) => {
@@ -36,7 +36,7 @@ if(repoName.sync() == "mobicoop"){
                             claWriter.addContributor(gitUserName() + '_Agreement.txt', country, date, name, surname, gitEmail, gitUserName())
                             reader.close();
                             //continue push
-                            
+                            return;
                         }
                         console.log(kuler(`\nCancelling push ...`,'red'))
                         reader.close();
