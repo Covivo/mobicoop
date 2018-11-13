@@ -57,7 +57,7 @@ install & enable in you .ini all its php extensions : [Docker file](https://gith
     - [config.json api](api/config.json.dist)
     - [.env mobicoop](interfaces/mobicoop/.env.dist) 
 
-*do not edit the dist file with your config info*
+*Do not edit the dist file with your config info*
 
 - If you have missing modules during installation check this docker file
 and install all its php extensions : [Docker file](https://github.com/vyuldashev/docker-ci-php-node/blob/master/Dockerfile)
