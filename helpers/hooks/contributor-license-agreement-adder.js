@@ -32,15 +32,18 @@ if(repoName.sync() == "mobicoop"){
                     reader.question('Would you like to sign this agreement ? (Y/n)', (answer) => {
                         let validAnswer = ['yes','Y','y',''];
                         if (answer.includes(answer)){
-                            claWriter.addContributor(gitUserName() + '_Agreement.txt', country, date, name, surname, gitEmail, gitUserName())
+                            let hasBeenWritten = claWriter.addContributor(gitUserName() + '_Agreement.txt', country, date, name, surname, gitEmail, gitUserName())
                             reader.close();
-                            process.exit(0);
+                            if(hasBeenWritten){
+                                console.log(kuler(`The file has been saved!`,'green')
+                                process.exit(0)
+                            }
+                            console.log(kuler(`The file has not been saved!`,'red')
+                            process.exit(1)
                         }
-                        else {
                         console.log(kuler(`\nCancelling...`,'red'))
                         reader.close();
                         process.exit(0);
-                        }
                     });
                 });
             });

@@ -19,8 +19,8 @@
     "start-mobicoop": "cd interfaces/mobicoop && npm start",
     "generateDocs": "php bin/phpDocumentor.phar -d interfaces/mobicoop/src -t interfaces/mobicoop/public/build/doc --title Mobicoop",
     "create-front-canvas": "node helpers/createFrontCanvas.js -d",
-    "cla-checker": "node helpers/hooks/contributor-license-agreement-checker.js",
-    "cla" : "node helpers/hooks/contributor-license-agreement-adder.js"
+    "contributor-checker": "node helpers/hooks/contributor-license-agreement-checker.js",
+    "contribute" : "node helpers/hooks/contributor-license-agreement-adder.js"
   },
   "config": {
     "ghooks": {
