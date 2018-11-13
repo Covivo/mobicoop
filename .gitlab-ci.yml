@@ -60,7 +60,7 @@ test:test:
     - chmod 700 id_rsa
     - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - rsync --stats --quiet --group=www-data -hrvz --exclude=.env --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/test
+    - rsync --stats --quiet --group=www-data -hrvz --exclude=.env --exclude=/api/config.json --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/test
     - ssh -o StrictHostKeyChecking=no ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/test/api; php bin/console doctrine:migrations:migrate -n"
   except:
     refs:
