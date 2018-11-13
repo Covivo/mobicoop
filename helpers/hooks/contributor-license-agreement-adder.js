@@ -13,7 +13,7 @@ const claWriter = require('./contributor-license-agreement-writer.js')
 const claFolderPath = path.resolve(__dirname, '../../ContributorLicenseAgreement');
 const claPath = path.resolve(__dirname, '../../ContributorLicenseAgreement/ContributorLicenseAgreement.txt');
 const copyright = fs.readFileSync(path.resolve(__dirname, '../copyright.txt'))
-    var readlineSync = require('readline-sync');
+var readlineSync = require('readline-sync');
 
 //CHECK IF AM ON MOBICOOP's REPO
 if(repoName.sync() == "mobicoop"){
@@ -37,11 +37,10 @@ if(repoName.sync() == "mobicoop"){
                             claWriter.addContributor(gitUserName() + '_Agreement.txt', country, date, name, surname, gitEmail, gitUserName())
                             reader.close();
                             completed = true
-                            //continue push
                             process.exit(0);
 ;
                         }
-                        console.log(kuler(`\nCancelling push ...`,'red'))
+                        console.log(kuler(`\nCancelling...`,'red'))
                         reader.close();
                         process.exit(0);
                     });
