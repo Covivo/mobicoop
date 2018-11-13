@@ -35,7 +35,7 @@ if(repoName.sync() == "mobicoop"){
                             let hasBeenWritten = claWriter.addContributor(gitUserName() + '_Agreement.txt', country, date, name, surname, gitEmail, gitUserName())
                             reader.close();
                             if(hasBeenWritten){
-                                console.log(kuler(`The file has been saved!`,'green'))
+                                console.log(kuler(`The file has been saved! Don't forget to git add your Contribution Agreement file`,'green'))
                                 process.exit(0)
                             }
                             console.log(kuler(`The file has not been saved!`,'red'))
