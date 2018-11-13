@@ -26,6 +26,7 @@ exports.addContributor = function(fileName, country, date, name, surname, gitEma
     fs.writeFile('ContributorLicenseAgreement/' + fileName, agreementSample(country,date,name,surname,gitEmail,gitUserName), (err) => {
         if (err) {
             throw err;
+            console.log("err")
             process.exit(1);
         }
         console.log('The file has been saved!');

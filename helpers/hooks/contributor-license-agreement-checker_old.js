@@ -8,12 +8,8 @@ const reader = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
-var completed = false
-const claWriter = require('./contributor-license-agreement-writer.js')
 const claFolderPath = path.resolve(__dirname, '../../ContributorLicenseAgreement');
-const claPath = path.resolve(__dirname, '../../ContributorLicenseAgreement/ContributorLicenseAgreement.txt');
 const copyright = fs.readFileSync(path.resolve(__dirname, '../copyright.txt'))
-    var readlineSync = require('readline-sync');
 
 //CHECK IF AM ON MOBICOOP's REPO
 if(repoName.sync() == "mobicoop"){

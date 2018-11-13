@@ -31,13 +31,13 @@ if(repoName.sync() == "mobicoop"){
                     console.log('\nThis will be saved in /ContributorLicenseAgreement/' + gitUserName() + '_Agreement.txt');
                     reader.question('Would you like to sign this agreement ? (Y/n)', (answer) => {
                         let validAnswer = ['yes','Y','y',''];
-                        if (validAnswer.includes(answer)){
+                        if (answer.includes(answer)){
                             claWriter.addContributor(gitUserName() + '_Agreement.txt', country, date, name, surname, gitEmail, gitUserName())
                             reader.close();
-                            //continue push
-                            return;
+                            process.exit(0);
                         }
-                        else{console.log(kuler(`\nCancelling push ...`,'red'))
+                        else {
+                        console.log(kuler(`\nCancelling...`,'red'))
                         reader.close();
                         process.exit(0);
                         }
@@ -46,7 +46,6 @@ if(repoName.sync() == "mobicoop"){
             });
         });
     });
-    //process.exit(0);
 }
 
 function finalResultToShow(country, date, name, surname, gitEmail, gitUserName){
