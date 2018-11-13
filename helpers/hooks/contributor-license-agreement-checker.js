@@ -23,6 +23,6 @@ if(repoName.sync() == "mobicoop"){
     }
     console.log(kuler(` It seems that you have not accepted our Contributor License Agreement yet.\r \n If you want to contribute to Mobicoop, you first need to accept this statement :\n`,"red"))
     console.log(kuler(copyright, 'fdd000'));
-    console.log(kuler(`Please run 'npm run cla' in order to be sign our Contributor License Agreement`,'red'));
+    console.log(kuler(`Please run 'npm run cla' in order to sign our Contributor License Agreement`,'red'));
     process.exit(1)
 }
