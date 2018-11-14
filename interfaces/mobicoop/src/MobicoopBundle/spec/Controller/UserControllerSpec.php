@@ -60,7 +60,7 @@ describe('UserController', function () {
             $link = $realCrawler->selectLink('Profile')->link();
             $realCrawler = $this->client->click($link);
             $h1 = $realCrawler->filter('h1.title')->text();
-            // $this->http->takeScreenshot('screen.png'); //I let this here for an exemple 🤪
+            // $this->http->takeScreenshot('screen.png'); //I let this here for an example 🤪
 
             expect($realCrawler->getUri())->toBe(LOCAL_URL.'/users');
             expect(trim($h1))->toBe('Mobicoop - Users');
@@ -68,10 +68,11 @@ describe('UserController', function () {
         //This test is used for functionnal with a real navigator tests
         it('Should be able to really access /users pages with a navigator', function () {
             $realCrawler = $this->panther->request('GET', LOCAL_URL . '/users');
+            $accountMenu = $realCrawler->filter('#accountMenu')->click();
             $link = $realCrawler->selectLink('Profile')->link();
             $realCrawler = $this->panther->click($link);
             $h1 = $realCrawler->filter('h1.title')->text();
-            // $this->panther->takeScreenshot('screen.png'); //I let this here for an exemple 🤪
+            // $this->panther->takeScreenshot('screen.png'); //I let this here for an example 🤪
 
             expect($realCrawler->getUri())->toBe(LOCAL_URL.'/users');
             expect(trim($h1))->toBe('Mobicoop - Users');
