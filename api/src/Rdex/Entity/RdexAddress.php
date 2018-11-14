@@ -23,85 +23,42 @@
 
 namespace App\Rdex\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-
 /**
  * An RDEX Address.
  *
- * @ApiResource(
- *      routePrefix="/rdex",
- *      attributes={
- *          "normalization_context"={"groups"={"rdex"}, "enable_max_depth"="true"}
- *      },
- *      collectionOperations={},
- *      itemOperations={"get"={"path"="/addresses/{id}"}}
- * )
- * 
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class RdexAddress
-{
-    /**
-     * @ApiProperty(identifier=true)
-     */
-    private $id;
-    
+class RdexAddress implements \JsonSerializable
+{ 
     /**
      * @var string The address.
-     *
-     * @Groups("rdex")
      */
     private $address;
 
     /**
      * @var string The city.
-     *
-     * @Groups("rdex")
      */
     private $city;
     
     /**
      * @var string The postal code.
-     *
-     * @Groups("rdex")
      */
     private $postalcode;
     
     /**
      * @var string The country.
-     *
-     * @Groups("rdex")
      */
     private $country;
     
     /**
      * @var float The latitude.
-     *
-     * @Groups("rdex")
      */
     private $latitude;
     
     /**
      * @var float The longitude.
-     *
-     * @Groups("rdex")
      */
     private $longitude;
-    
-    public function __construct($id)
-    {
-        $this->id = $id;
-    }
-    
-    /**
-     * @return mixed
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * @return string
@@ -152,14 +109,6 @@ class RdexAddress
     }
 
     /**
-     * @param mixed $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
      * @param string $address
      */
     public function setAddress($address)
@@ -205,5 +154,18 @@ class RdexAddress
     public function setLongitude($longitude)
     {
         $this->longitude = $longitude;
+    }
+    
+    public function jsonSerialize()
+    {
+        return
+        [
+            'address'       => $this->getAddress(),
+            'city'          => $this->getCity(),
+            'postalcode'    => $this->getPostalcode(),
+            'country'       => $this->getCountry(),
+            'latitude'      => $this->getLatitude(),
+            'longitude'     => $this->getLongitude()            
+        ];
     }
 }

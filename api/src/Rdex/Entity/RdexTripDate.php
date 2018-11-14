@@ -23,107 +23,58 @@
 
 namespace App\Rdex\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-
 /**
  * An RDEX Trip Date.
  *
- * @ApiResource(
- *      routePrefix="/rdex",
- *      attributes={
- *          "normalization_context"={"groups"={"rdex"}, "enable_max_depth"="true"},
- *      },
- *      collectionOperations={},
- *      itemOperations={"get"={"path"="/trip_dates/{id}"}}
- * )
- * 
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class RdexTripDate
+class RdexTripDate implements \JsonSerializable
 {
     /**
-     * @ApiProperty(identifier=true)
-     */
-    private $id;
-    
-    /**
      * @var \DateTime The min date.
-     *
-     * @Groups("rdex")
      */
     private $mindate;
     
     /**
      * @var \DateTime The max date.
-     *
-     * @Groups("rdex")
      */
     private $maxdate;
     
     /**
      * @var RdexDayTime The day time for monday.
-     *
-     * @Groups("rdex")
      */
     private $monday;
     
     /**
      * @var RdexDayTime The day time for tuesday.
-     *
-     * @Groups("rdex")
      */
     private $tuesday;
     
     /**
      * @var RdexDayTime The day time for wednesday.
-     *
-     * @Groups("rdex")
      */
     private $wednesday;
     
     /**
      * @var RdexDayTime The day time for thursday.
-     *
-     * @Groups("rdex")
      */
     private $thursday;
     
     /**
      * @var RdexDayTime The day time for friday.
-     *
-     * @Groups("rdex")
      */
     private $friday;
     
     /**
      * @var RdexDayTime The day time for saturday.
-     *
-     * @Groups("rdex")
      */
     private $saturday;
     
     /**
      * @var RdexDayTime The day time for sunday.
-     *
-     * @Groups("rdex")
      */
     private $sunday;
     
-    public function __construct($id)
-    {
-        $this->id = $id;
-    }
-    
-    /**
-     * @return mixed
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
     /**
      * @return \DateTime
      */
@@ -197,14 +148,6 @@ class RdexTripDate
     }
 
     /**
-     * @param mixed $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
      * @param \DateTime $mindate
      */
     public function setMindate($mindate)
@@ -274,5 +217,21 @@ class RdexTripDate
     public function setSunday($sunday)
     {
         $this->sunday = $sunday;
+    }
+    
+    public function jsonSerialize()
+    {
+        return
+        [
+            'mindate'   => $this->getMindate(),
+            'maxdate'   => $this->getMaxdate(),
+            'monday'    => $this->getMonday(),
+            'tuesday'   => $this->getTuesday(),
+            'wednesday' => $this->getWednesday(),
+            'thursday'  => $this->getThursday(),
+            'friday'    => $this->getFriday(),
+            'saturday'  => $this->getSaturday(),
+            'sunday'    => $this->getSunday()
+        ];
     }
 }

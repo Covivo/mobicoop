@@ -112,7 +112,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      },
  *      itemOperations={"get"={"path"="/journeys/{id}"}}
  * )
- * 
+ *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
 class PTJourney

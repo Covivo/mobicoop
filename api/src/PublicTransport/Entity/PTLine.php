@@ -38,7 +38,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      collectionOperations={},
  *      itemOperations={"get"={"path"="/lines/{id}"}}
  * )
- * 
+ *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
 class PTLine

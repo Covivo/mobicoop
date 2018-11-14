@@ -23,67 +23,40 @@
 
 namespace App\Rdex\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-
 /**
  * An RDEX Driver.
  *
- * @ApiResource(
- *      routePrefix="/rdex",
- *      attributes={
- *          "normalization_context"={"groups"={"rdex"}, "enable_max_depth"="true"},
- *      },
- *      collectionOperations={},
- *      itemOperations={"get"={"path"="/drivers/{uuid}"}}
- * )
- * 
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class RdexDriver
+class RdexDriver implements \JsonSerializable
 {
     /**
-     * @ApiProperty(identifier=true)
-     * 
      * @var string The uuid of the driver.
-     * 
-     * @Groups("rdex")
      */
     private $uuid;
     
     /**
      * @var string The pseudonym of the driver.
-     *
-     * @Groups("rdex")
      */
     private $alias;
     
     /**
      * @var string The image of the driver.
-     *
-     * @Groups("rdex")
      */
     private $image;
     
     /**
      * @var string The gender of the driver.
-     *
-     * @Groups("rdex")
      */
     private $gender;
     
     /**
      * @var int The number of available seats.
-     *
-     * @Groups("rdex")
      */
     private $seats;
     
     /**
-     * @var bool The state of the driver.
-     *
-     * @Groups("rdex")
+     * @var int The state of the driver.
      */
     private $state;
 
@@ -133,7 +106,7 @@ class RdexDriver
     }
 
     /**
-     * @return boolean
+     * @return number
      */
     public function getState()
     {
@@ -181,12 +154,23 @@ class RdexDriver
     }
 
     /**
-     * @param boolean $state
+     * @param number $state
      */
     public function setState($state)
     {
         $this->state = $state;
     }
-
     
+    public function jsonSerialize()
+    {
+        return
+        [
+            'uuid'      => $this->getUuid(),
+            'alias'     => $this->getAlias(),
+            'image'     => $this->getImage(),
+            'gender'    => $this->getGender(),
+            'seats'     => $this->getSeats(),
+            'state'     => $this->getState()
+        ];
+    }
 }

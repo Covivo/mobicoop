@@ -23,95 +23,61 @@
 
 namespace App\Rdex\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-
 /**
  * An RDEX Day.
  *
- * @ApiResource(
- *      routePrefix="/rdex",
- *      attributes={
- *          "normalization_context"={"groups"={"rdex"}, "enable_max_depth"="true"},
- *      },
- *      collectionOperations={},
- *      itemOperations={"get"={"path"="/days/{id}"}}
- * )
- * 
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class RdexDay
+class RdexDay implements \JsonSerializable
 {
     /**
-     * @ApiProperty(identifier=true)
-     */
-    private $id;
-    
-    /**
-     * @var bool The state for monday.
-     *
-     * @Groups("rdex")
+     * @var int The state for monday.
      */
     private $monday;
     
     /**
-     * @var bool The state for tuesday.
-     *
-     * @Groups("rdex")
+     * @var int The state for tuesday.
      */
     private $tuesday;
     
     /**
-     * @var bool The state for wednesday.
-     *
-     * @Groups("rdex")
+     * @var int The state for wednesday.
      */
     private $wednesday;
     
     /**
-     * @var bool The state for thursday.
-     *
-     * @Groups("rdex")
+     * @var int The state for thursday.
      */
     private $thursday;
     
     /**
-     * @var bool The state for friday.
-     *
-     * @Groups("rdex")
+     * @var int The state for friday.
      */
     private $friday;
     
     /**
-     * @var bool The state for saturday.
-     *
-     * @Groups("rdex")
+     * @var int The state for saturday.
      */
     private $saturday;
     
     /**
-     * @var bool The state for sunday.
-     *
-     * @Groups("rdex")
+     * @var int The state for sunday.
      */
     private $sunday;
     
-    public function __construct($id)
+    public function __construct()
     {
-        $this->id = $id;
+        $this->monday = 0;
+        $this->tuesday = 0;
+        $this->wednesday = 0;
+        $this->thursday = 0;
+        $this->friday = 0;
+        $this->saturday = 0;
+        $this->sunday = 0;
     }
     
     /**
-     * @return mixed
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @return boolean
+     * @return number
      */
     public function getMonday()
     {
@@ -119,7 +85,7 @@ class RdexDay
     }
 
     /**
-     * @return boolean
+     * @return number
      */
     public function getTuesday()
     {
@@ -127,7 +93,7 @@ class RdexDay
     }
 
     /**
-     * @return boolean
+     * @return number
      */
     public function getWednesday()
     {
@@ -135,7 +101,7 @@ class RdexDay
     }
 
     /**
-     * @return boolean
+     * @return number
      */
     public function getThursday()
     {
@@ -143,7 +109,7 @@ class RdexDay
     }
 
     /**
-     * @return boolean
+     * @return number
      */
     public function getFriday()
     {
@@ -151,7 +117,7 @@ class RdexDay
     }
 
     /**
-     * @return boolean
+     * @return number
      */
     public function getSaturday()
     {
@@ -159,7 +125,7 @@ class RdexDay
     }
 
     /**
-     * @return boolean
+     * @return number
      */
     public function getSunday()
     {
@@ -167,15 +133,7 @@ class RdexDay
     }
 
     /**
-     * @param mixed $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @param boolean $monday
+     * @param number $monday
      */
     public function setMonday($monday)
     {
@@ -183,7 +141,7 @@ class RdexDay
     }
 
     /**
-     * @param boolean $tuesday
+     * @param number $tuesday
      */
     public function setTuesday($tuesday)
     {
@@ -191,7 +149,7 @@ class RdexDay
     }
 
     /**
-     * @param boolean $wednesday
+     * @param number $wednesday
      */
     public function setWednesday($wednesday)
     {
@@ -199,7 +157,7 @@ class RdexDay
     }
 
     /**
-     * @param boolean $thursday
+     * @param number $thursday
      */
     public function setThursday($thursday)
     {
@@ -207,7 +165,7 @@ class RdexDay
     }
 
     /**
-     * @param boolean $friday
+     * @param number $friday
      */
     public function setFriday($friday)
     {
@@ -215,7 +173,7 @@ class RdexDay
     }
 
     /**
-     * @param boolean $saturday
+     * @param number $saturday
      */
     public function setSaturday($saturday)
     {
@@ -223,10 +181,24 @@ class RdexDay
     }
 
     /**
-     * @param boolean $sunday
+     * @param number $sunday
      */
     public function setSunday($sunday)
     {
         $this->sunday = $sunday;
+    }
+    
+    public function jsonSerialize()
+    {
+        return
+        [
+            'monday'    => $this->getMonday(),
+            'tuesday'   => $this->getTuesday(),
+            'wednesday' => $this->getWednesday(),
+            'thursday'  => $this->getThursday(),
+            'friday'    => $this->getFriday(),
+            'saturday'  => $this->getSaturday(),
+            'sunday'    => $this->getSunday()
+        ];
     }
 }

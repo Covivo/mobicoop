@@ -23,117 +23,66 @@
 
 namespace App\Rdex\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-
 /**
  * An RDEX Waypoint.
  *
- * @ApiResource(
- *      routePrefix="/rdex",
- *      attributes={
- *          "normalization_context"={"groups"={"rdex"}, "enable_max_depth"="true"},
- *      },
- *      collectionOperations={},
- *      itemOperations={"get"={"path"="/waypoints/{id}"}}
- * )
- * 
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class RdexWaypoint
+class RdexWaypoint implements \JsonSerializable
 {
-    CONST TYPE_PICK_UP = "pick-up";
-    CONST TYPE_DROP_OFF = "drop-off";
-    
-    /**
-     * @ApiProperty(identifier=true)
-     */
-    private $id;
+    const TYPE_PICK_UP = "pick-up";
+    const TYPE_DROP_OFF = "drop-off";
     
     /**
      * @var string The address.
-     *
-     * @Groups("rdex")
      */
     private $address;
     
     /**
      * @var string The city.
-     *
-     * @Groups("rdex")
      */
     private $city;
     
     /**
      * @var string The postal code.
-     *
-     * @Groups("rdex")
      */
     private $postalcode;
     
     /**
      * @var string The country.
-     *
-     * @Groups("rdex")
      */
     private $country;
     
     /**
      * @var float The latitude.
-     *
-     * @Groups("rdex")
      */
     private $latitude;
     
     /**
      * @var float The longitude.
-     *
-     * @Groups("rdex")
      */
     private $longitude;
     
     /**
      * @var int The distance of the step.
-     *
-     * @Groups("rdex")
      */
     private $step_distance;
     
     /**
      * @var int The duration of the step.
-     *
-     * @Groups("rdex")
      */
     private $step_duration;
     
     /**
      * @var string The type of the step.
-     *
-     * @Groups("rdex")
      */
     private $type;
     
     /**
      * @var bool The step is mandatory.
-     *
-     * @Groups("rdex")
      */
     private $mandatory;
     
-    public function __construct($id)
-    {
-        $this->id = $id;
-    }
-    
-    /**
-     * @return mixed
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
     /**
      * @return string
      */
@@ -215,14 +164,6 @@ class RdexWaypoint
     }
 
     /**
-     * @param mixed $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
      * @param string $address
      */
     public function setAddress($address)
@@ -300,5 +241,22 @@ class RdexWaypoint
     public function setMandatory($mandatory)
     {
         $this->mandatory = $mandatory;
-    }    
+    }
+    
+    public function jsonSerialize()
+    {
+        return
+        [
+            'address'       => $this->getAddress(),
+            'city'          => $this->getCity(),
+            'postalcode'    => $this->getPostalcode(),
+            'country'       => $this->getCountry(),
+            'latitude'      => $this->getLatitude(),
+            'longitude'     => $this->getLongitude(),
+            'step_distance' => $this->getStep_distance(),
+            'step_duration' => $this->getStep_duration(),
+            'type'          => $this->getType(),
+            'mandatory'     => $this->getMandatory()
+        ];
+    }
 }

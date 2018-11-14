@@ -37,7 +37,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      collectionOperations={},
  *      itemOperations={"get"={"path"="/companies/{id}"}}
  * )
- * 
+ *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
 class PTCompany

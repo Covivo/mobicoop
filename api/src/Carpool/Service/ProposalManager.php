@@ -25,6 +25,11 @@ namespace App\Carpool\Service;
 
 use App\Carpool\Entity\Proposal;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Carpool\Entity\Criteria;
+use App\Address\Entity\Address;
+use App\Carpool\Entity\Point;
+use App\Rdex\Entity\RdexJourney;
+use App\User\Entity\User;
 
 /**
  * Proposal manager service.
@@ -199,7 +204,8 @@ class ProposalManager
     
     /**
      * Returns all proposals matching the parameters.
-     * 
+     * Used for RDEX export.
+     *
      * @param bool $offer
      * @param bool $request
      * @param float $from_longitude
@@ -224,22 +230,61 @@ class ProposalManager
      * @param string $outward_sunday_mintime
      * @param string $outward_sunday_maxtime
      */
-    public function getProposals(
-        bool $offer, bool $request, 
-        float $from_longitude, float $from_latitude, 
-        float $to_longitude, float $to_latitude,
+    public function getProposalsForRdex(
+        bool $offer,
+        bool $request,
+        float $from_longitude,
+        float $from_latitude,
+        float $to_longitude,
+        float $to_latitude,
         string $frequency = null,
-        \DateTime $outward_mindate = null, \DateTime $outward_maxdate = null,
-        string $outward_monday_mintime = null, string $outward_monday_maxtime = null,
-        string $outward_tuesday_mintime = null, string $outward_tuesday_maxtime = null,
-        string $outward_wednesday_mintime = null, string $outward_wednesday_maxtime = null,
-        string $outward_thursday_mintime = null, string $outward_thursday_maxtime = null,
-        string $outward_friday_mintime = null, string $outward_friday_maxtime = null,
-        string $outward_saturday_mintime = null, string $outward_saturday_maxtime = null,
-        string $outward_sunday_mintime = null, string $outward_sunday_maxtime = null
-        )
+        \DateTime $outward_mindate = null,
+        \DateTime $outward_maxdate = null,
+        string $outward_monday_mintime = null,
+        string $outward_monday_maxtime = null,
+        string $outward_tuesday_mintime = null,
+        string $outward_tuesday_maxtime = null,
+        string $outward_wednesday_mintime = null,
+        string $outward_wednesday_maxtime = null,
+        string $outward_thursday_mintime = null,
+        string $outward_thursday_maxtime = null,
+        string $outward_friday_mintime = null,
+        string $outward_friday_maxtime = null,
+        string $outward_saturday_mintime = null,
+        string $outward_saturday_maxtime = null,
+        string $outward_sunday_mintime = null,
+        string $outward_sunday_maxtime = null
+        ) 
     {
         // test : we return all proposals
-        return $this->entityManager->getRepository(Proposal::class)->findAll();        
+        // we create a proposal with the parameters
+        $proposal = new Proposal();
+        // warning : usually we search for matching proposal after a proposal post, so we usually search for opposite proposals (it is made automatically inside the matchingProposal method of the repository)
+        // in rdex protocol we already indicate the final proposal type, so we need to switch here ! 
+        $proposal->setProposalType($offer ? Proposal::PROPOSAL_TYPE_REQUEST : Proposal::PROPOSAL_TYPE_OFFER);
+        $proposal->setJourneyType(Proposal::JOURNEY_TYPE_ONE_WAY);
+        $addressFrom = new Address();
+        $addressFrom->setLongitude($from_longitude);
+        $addressFrom->setLatitude($from_latitude);
+        $addressFrom->setAddressLocality("Nancy");
+        $addressTo = new Address();
+        $addressTo->setLongitude($to_longitude);
+        $addressTo->setLatitude($to_latitude);
+        $addressTo->setAddressLocality("Metz");
+        $pointFrom = new Point();
+        $pointFrom->setAddress($addressFrom);
+        $pointFrom->setPosition(0);
+        $pointFrom->setLastPoint(false);
+        $pointTo = new Point();
+        $pointTo->setAddress($addressTo);
+        $pointTo->setPosition(1);
+        $pointTo->setLastPoint(true);
+        $criteria = new Criteria();
+        $criteria->setFrequency($frequency == RdexJourney::FREQUENCY_REGULAR ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL);
+        $criteria->setFromDate(new \DateTime());
+        $proposal->setCriteria($criteria);
+        $proposal->addPoint($pointFrom);
+        $proposal->addPoint($pointTo);
+        return $this->entityManager->getRepository(Proposal::class)->findMatchingProposals($proposal,false);
     }
 }

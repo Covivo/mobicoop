@@ -44,22 +44,24 @@ class ProposalRepository extends ServiceEntityRepository
     /**
      * Find proposals matching the proposal passed as an argument.
      *
-     * @param Proposal $proposal
+     * @param Proposal $proposal        The proposal to match
+     * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
      * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
      */
-    public function findMatchingProposals(Proposal $proposal)
+    public function findMatchingProposals(Proposal $proposal, bool $excludeProposalUser=true)
     {
         
         // LIMITATIONS :
         // - only punctual journeys
         // - only 2 points : starting point and destination
+        // - only for the same day
         
         switch ($proposal->getCriteria()->getFrequency()) {
             case Criteria::FREQUENCY_PUNCTUAL:
-                return $this->findMatchingForPunctualProposal($proposal);
+                return $this->findMatchingForPunctualProposal($proposal,$excludeProposalUser);
                 break;
             case Criteria::FREQUENCY_REGULAR:
-                return $this->findMatchingForRegularProposal($proposal);
+                return $this->findMatchingForRegularProposal($proposal,$e);
                 break;
         }
         
@@ -68,11 +70,12 @@ class ProposalRepository extends ServiceEntityRepository
     
     /**
      * Search matchings for a punctual proposal.
-     *
-     * @param Proposal $proposal
+     * 
+     * @param Proposal $proposal        The proposal to match
+     * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
      * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
      */
-    private function findMatchingForPunctualProposal(Proposal $proposal)
+    private function findMatchingForPunctualProposal(Proposal $proposal, bool $excludeProposalUser=true)
     {
         // LIMITATIONS :
         // - only 2 points : starting point and destination
@@ -103,8 +106,10 @@ class ProposalRepository extends ServiceEntityRepository
         ->join('endPoint.address', 'endAddress');
         
         // we exclude the user itself
-        $query->andWhere('p.user != :user')
-        ->setParameter('user', $proposal->getUser());
+        if ($excludeProposalUser) {
+            $query->andWhere('p.user != :user')
+            ->setParameter('user', $proposal->getUser());
+        }
         
         // we search for the opposite proposal type (offer => requests // request => offers)
         $query->andWhere('p.proposalType = :proposalType')
@@ -136,4 +141,5 @@ class ProposalRepository extends ServiceEntityRepository
     {
         return null;
     }
+    
 }

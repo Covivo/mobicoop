@@ -19,7 +19,7 @@
     "start-mobicoop": "cd interfaces/mobicoop && npm start",
     "generateDocs": "php bin/phpDocumentor.phar -d interfaces/mobicoop/src -t interfaces/mobicoop/public/build/doc --title Mobicoop",
     "create-front-canvas": "node helpers/createFrontCanvas.js -d",
-    "link-bundle" : "node helpers/linkBundle.js -d"
+    "link-bundle": "node helpers/linkBundle.js -d"
   },
   "config": {
     "ghooks": {

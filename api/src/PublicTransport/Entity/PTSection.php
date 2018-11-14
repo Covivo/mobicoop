@@ -39,7 +39,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      collectionOperations={},
  *      itemOperations={"get"={"path"="/sections/{id}"}}
  * )
- * 
+ *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
 class PTSection

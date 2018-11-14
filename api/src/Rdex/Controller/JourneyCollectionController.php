@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -21,43 +20,49 @@
  *    LICENSE
  **************************/
 
-namespace App\Rdex\DataProvider;
+namespace App\Rdex\Controller;
 
-use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Rdex\Entity\RdexJourney;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use App\Rdex\Service\RdexManager;
+use App\Rdex\Entity\RdexError;
+use App\Rdex\Entity\RdexJourney;
 
 /**
- * Collection data provider for Rdex Journey entity.
- *
- * Automatically associated to Rdex Journey entity thanks to autowiring (see 'supports' method).
+ * Controller class for Rdex Journey collection.
+ * We use a controller instead of a data provider because we need to send a custom http status code if an error occurs.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
- *
  */
-final class JourneyCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+class JourneyCollectionController
 {
     private $rdexManager;
     protected $request;
     
     public function __construct(RequestStack $requestStack, RdexManager $rdexManager)
     {
-        $this->rdexManager = $rdexManager;
         $this->request = $requestStack->getCurrentRequest();
+        $this->rdexManager = $rdexManager;
     }
     
-    
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    /**
+     * This method is invoked when a Journey collection is requested.
+     *
+     * @param RdexJourney $data
+     * @return Response
+     */
+    public function __invoke(array $data): Response
     {
-        return RdexJourney::class === $resourceClass;
-    }
-    
-    public function getCollection(string $resourceClass, string $operationName = null): ?array
-    {
-        if ($result = $this->rdexManager->validate($this->request)) return [];
-        
-        return $this->rdexManager->getJourneys($this->request->get("p"));
+        $response = new Response();
+        $validation = $this->rdexManager->validate($this->request);
+        // if validation is an RdexError, we send an error array
+        if (is_a($validation, RdexError::class)) {
+            $error = $this->rdexManager->createError($validation);
+            $response->setContent($error['error']);
+            $response->setStatusCode($error['code']);
+        } else {
+            $response->setContent(json_encode($this->rdexManager->getJourneys($this->request->get("p"))));
+        }
+        return $response;
     }
 }

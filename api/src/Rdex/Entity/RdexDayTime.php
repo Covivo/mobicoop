@@ -23,58 +23,23 @@
 
 namespace App\Rdex\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-
 /**
  * An RDEX Day time.
  *
- * @ApiResource(
- *      routePrefix="/rdex",
- *      attributes={
- *          "normalization_context"={"groups"={"rdex"}, "enable_max_depth"="true"},
- *      },
- *      collectionOperations={},
- *      itemOperations={"get"={"path"="/day_time/{id}"}}
- * )
- * 
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class RdexDayTime
+class RdexDayTime implements \JsonSerializable
 {
     /**
-     * @ApiProperty(identifier=true)
-     */
-    private $id;
-    
-    /**
      * @var string The min time.
-     *
-     * @Groups("rdex")
      */
     private $mintime;
     
     /**
      * @var string The max time.
-     *
-     * @Groups("rdex")
      */
     private $maxtime;
     
-    public function __construct($id)
-    {
-        $this->id = $id;
-    }
-    
-    /**
-     * @return mixed
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
     /**
      * @return string
      */
@@ -92,14 +57,6 @@ class RdexDayTime
     }
 
     /**
-     * @param mixed $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
      * @param string $mintime
      */
     public function setMintime($mintime)
@@ -113,5 +70,14 @@ class RdexDayTime
     public function setMaxtime($maxtime)
     {
         $this->maxtime = $maxtime;
-    }    
+    }
+    
+    public function jsonSerialize()
+    {
+        return
+        [
+            'mintime'   => $this->getMintime(),
+            'maxtime'   => $this->getMaxtime()
+        ];
+    }
 }

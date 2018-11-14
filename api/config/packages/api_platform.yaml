@@ -22,3 +22,9 @@ api_platform:
         - '%kernel.project_dir%/src/PublicTransport/Entity'
         - '%kernel.project_dir%/src/ExternalJourney/Entity'
         - '%kernel.project_dir%/src/Rdex/Entity'
+        
+    formats:
+        jsonld:   ['application/ld+json']
+        json:     ['application/json']
+        xml:      ['application/xml', 'text/xml']
+        html:     ['text/html']

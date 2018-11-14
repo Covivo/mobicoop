@@ -213,7 +213,7 @@ class Criteria
     private $satTime;
 
     /**
-     * @var \DateTimeInterface|null Sunadays starting time (if regular).
+     * @var \DateTimeInterface|null Sundays starting time (if regular).
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)

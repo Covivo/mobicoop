@@ -23,58 +23,23 @@
 
 namespace App\Rdex\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-
 /**
  * An RDEX Cost.
  *
- * @ApiResource(
- *      routePrefix="/rdex",
- *      attributes={
- *          "normalization_context"={"groups"={"rdex"}, "enable_max_depth"="true"},
- *      },
- *      collectionOperations={},
- *      itemOperations={"get"={"path"="/costs/{id}"}}
- * )
- * 
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class RdexCost
+class RdexCost implements \JsonSerializable
 {
     /**
-     * @ApiProperty(identifier=true)
-     */
-    private $id;
-    
-    /**
      * @var float The fixed cost.
-     *
-     * @Groups("rdex")
      */
     private $fixed;
     
     /**
      * @var float The variable cost.
-     *
-     * @Groups("rdex")
      */
     private $variable;
     
-    public function __construct($id)
-    {
-        $this->id = $id;
-    }
-    
-    /**
-     * @return mixed
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
     /**
      * @return number
      */
@@ -92,14 +57,6 @@ class RdexCost
     }
 
     /**
-     * @param mixed $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
      * @param number $fixed
      */
     public function setFixed($fixed)
@@ -113,5 +70,14 @@ class RdexCost
     public function setVariable($variable)
     {
         $this->variable = $variable;
+    }
+    
+    public function jsonSerialize()
+    {
+        return
+        [
+            'fixed'     => $this->getFixed(),
+            'variable'  => $this->getVariable()
+        ];
     }
 }

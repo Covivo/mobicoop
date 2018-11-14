@@ -27,6 +27,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
+use App\Rdex\Controller\JourneyCollectionController;
 
 /**
  * An RDEX Journey.
@@ -34,11 +35,13 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ApiResource(
  *      routePrefix="/rdex",
  *      attributes={
+ *          "formats"={"xml", "jsonld", "json"},
  *          "normalization_context"={"groups"={"rdex"}, "enable_max_depth"="true"},
  *      },
  *      collectionOperations={
  *          "get"={
  *              "path"="/journeys",
+ *              "controller"=JourneyCollectionController::class,
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -63,6 +66,41 @@ use Doctrine\Common\Collections\ArrayCollection;
  *                          "description" = "Search for drivers"
  *                      },
  *                      {
+ *                          "name" = "p[passenger]",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "string",
+ *                          "description" = "Search for passengers"
+ *                      },
+ *                      {
+ *                          "name" = "p[from][longitude]",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "string",
+ *                          "description" = "Origin longitude"
+ *                      },
+ *                      {
+ *                          "name" = "p[from][latitude]",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "string",
+ *                          "description" = "Origin latitude"
+ *                      },
+ *                      {
+ *                          "name" = "p[to][longitude]",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "string",
+ *                          "description" = "Destination longitude"
+ *                      },
+ *                      {
+ *                          "name" = "p[to][latitude]",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "string",
+ *                          "description" = "Destination latitude"
+ *                      },
+ *                      {
  *                          "name" = "signature",
  *                          "in" = "query",
  *                          "required" = "true",
@@ -73,30 +111,30 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              },
  *          }
  *      },
- *      itemOperations={"get"={"path"="/journeys/{id}"}}
+ *      itemOperations={}
  * )
- * 
+ *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class RdexJourney
+class RdexJourney implements \JsonSerializable
 {
     
     /* @todo : put OPERATOR, ORIGIN and URL in a config file */
-    CONST OPERATOR = "mobicoop";
-    CONST ORIGIN = "mobicoop.io";
-    CONST URL = "https://www.mobicoop.io/";
+    const OPERATOR = "mobicoop";
+    const ORIGIN = "mobicoop.io";
+    const URL = "https://www.mobicoop.io/";
     
-    CONST FREQUENCY_PUNCTUAL = "punctual";
-    CONST FREQUENCY_REGULAR = "regular";
+    const FREQUENCY_PUNCTUAL = "punctual";
+    const FREQUENCY_REGULAR = "regular";
 
-    CONST TYPE_ONE_WAY = "one-way";
-    CONST TYPE_ROUND_TRIP = "round-trip";
+    const TYPE_ONE_WAY = "one-way";
+    const TYPE_ROUND_TRIP = "round-trip";
     
     /**
      * @ApiProperty(identifier=true)
-     * 
+     *
      * @var string The uuid of the journey.
-     * 
+     *
      * @Groups("rdex")
      */
     private $uuid;
@@ -358,7 +396,7 @@ class RdexJourney
     }
 
     /**
-     * @return multitype:\App\Rdex\Entity\RdexWaypoint 
+     * @return multitype:\App\Rdex\Entity\RdexWaypoint
      */
     public function getWaypoints()
     {
@@ -628,5 +666,34 @@ class RdexJourney
     {
         $this->return = $return;
     }
-   
+    
+    public function jsonSerialize()
+    {
+        return
+        [
+            'uuid'      => $this->getUuid(),
+            'operator'  => $this->getOperator(),
+            'origin'    => $this->getOrigin(),
+            'url'       => $this->getUrl(),      
+            'driver'    => $this->getDriver(),
+            'passenger' => $this->getPassenger(),
+            'from'      => $this->getFrom(),
+            'to'        => $this->getTo(),
+            'distance'  => $this->getDistance(),
+            'duration'  => $this->getDuration(),
+            'route'     => $this->getRoute(),
+            'number_of_waypoints'   => $this->getNumberOfWaypoints(),
+            'waypoints' => $this-> getWaypoints(),
+            'cost'      => $this->getCost(),
+            'details'   => $this->getDetails() ,
+            'vehicle'   => $this->getVehicle(),
+            'frequency' => $this->getFrequency(),
+            'type'      => $this->getType(),
+            'real_time' => $this->isRealTime(),
+            'stopped'   => $this->isStopped(),
+            'days'      => $this->getDays(),
+            'outward'   => $this->getOutward(),
+            'return'    => $this->getReturn()
+        ];
+    }
 }

@@ -39,7 +39,7 @@ use App\Address\Entity\Address;
  *      collectionOperations={},
  *      itemOperations={"get"={"path"="/departures/{id}"}}
  * )
- * 
+ *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
 class PTDeparture

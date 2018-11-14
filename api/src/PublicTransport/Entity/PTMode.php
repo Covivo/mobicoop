@@ -38,7 +38,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      collectionOperations={},
  *      itemOperations={"get"={"path"="/modes/{id}"}}
  * )
- * 
+ *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
 class PTMode

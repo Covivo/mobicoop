@@ -23,67 +23,40 @@
 
 namespace App\Rdex\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-
 /**
  * An RDEX Passenger.
  *
- * @ApiResource(
- *      routePrefix="/rdex",
- *      attributes={
- *          "normalization_context"={"groups"={"rdex"}, "enable_max_depth"="true"},
- *      },
- *      collectionOperations={},
- *      itemOperations={"get"={"path"="/passengers/{uuid}"}}
- * )
- * 
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class RdexPassenger
+class RdexPassenger implements \JsonSerializable
 {
     /**
-     * @ApiProperty(identifier=true)
-     * 
      * @var string The uuid of the passenger.
-     * 
-     * @Groups("rdex")
      */
     private $uuid;
     
     /**
      * @var string The pseudonym of the passenger.
-     *
-     * @Groups("rdex")
      */
     private $alias;
     
     /**
      * @var string The image of the passenger.
-     *
-     * @Groups("rdex")
      */
     private $image;
     
     /**
      * @var string The gender of the driver.
-     *
-     * @Groups("rdex")
      */
     private $gender;
     
     /**
      * @var int The number of persons.
-     *
-     * @Groups("rdex")
      */
     private $persons;
     
     /**
-     * @var bool The state of the passenger.
-     *
-     * @Groups("rdex")
+     * @var int The state of the passenger.
      */
     private $state;
     
@@ -133,7 +106,7 @@ class RdexPassenger
     }
 
     /**
-     * @return boolean
+     * @return number
      */
     public function getState()
     {
@@ -181,11 +154,23 @@ class RdexPassenger
     }
 
     /**
-     * @param boolean $state
+     * @param number $state
      */
     public function setState($state)
     {
         $this->state = $state;
     }
     
+    public function jsonSerialize()
+    {
+        return
+        [
+            'uuid'      => $this->getUuid(),
+            'alias'     => $this->getAlias(),
+            'image'     => $this->getImage(),
+            'gender'    => $this->getGender(),
+            'persons'   => $this->getPersons(),
+            'state'     => $this->getState()
+        ];
+    }
 }
