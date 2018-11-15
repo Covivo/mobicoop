@@ -103,7 +103,7 @@ class RdexError
      */
     private $field;
     
-    public function __construct(string $field=null, string $error, string $message_debug=null, string $message_user=null) 
+    public function __construct(string $field=null, string $error, string $message_debug=null, string $message_user=null)
     {
         $this->setName($error);
         $this->setField($field);
@@ -191,5 +191,4 @@ class RdexError
     {
         $this->field = $field;
     }
-    
 }

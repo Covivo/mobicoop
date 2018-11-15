@@ -32,6 +32,9 @@ use App\ExternalJourney\Entity\ExternalJourneyProvider;
 
 final class ExternalJourneyProviderCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
+    private const EXTERNAL_JOURNEY_CONFIG_FILE = "../config.json";
+    private const EXTERNAL_JOURNEY_API_KEY = "rdexApi";
+    
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return ExternalJourneyProvider::class === $resourceClass;
@@ -39,10 +42,9 @@ final class ExternalJourneyProviderCollectionDataProvider implements CollectionD
 
     public function getCollection(string $resourceClass, string $operationName = null): array
     {
-        if (file_exists("../config.json")) {
-            $apiList = json_decode(file_get_contents("../config.json"), true);
-            $rdexApi = array_keys($apiList["rdexApi"]);
-            //$dataArray = [];
+        if (file_exists(self::EXTERNAL_JOURNEY_CONFIG_FILE)) {
+            $apiList = json_decode(file_get_contents(self::EXTERNAL_JOURNEY_CONFIG_FILE), true);
+            $rdexApi = array_keys($apiList[self::EXTERNAL_JOURNEY_API_KEY]);
             return $rdexApi;
         }
         return [];

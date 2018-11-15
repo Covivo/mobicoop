@@ -27,14 +27,16 @@ use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Request;
 use GuzzleHttp\Client;
-use GuzzleHttp\Promise;
 
 use App\ExternalJourney\Entity\ExternalJourney;
 
 final class ExternalJourneyCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
+    private const EXTERNAL_JOURNEY_CONFIG_FILE = "../config.json";
+    private const EXTERNAL_JOURNEY_API_KEY = "rdexApi";
+    private const EXTERNAL_JOURNEY_HASH = "sha256";         // hash algorithm
+    
     protected $request;
 
     public function __construct(RequestStack $requestStack)
@@ -49,15 +51,12 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
 
     public function getCollection(string $resourceClass, string $operationName = null): array
     {
-        $urlPromises = [];
-        //initialize client API for any request
+        // initialize client API for any request
         $client = new Client([
             //10s because i'm working on long requests but you can change it
             'timeout'  => 10.0,
         ]);
-
-
-        //We collect search parameters here
+        // we collect search parameters here
         $provider_name = $this->request->get("provider_name");
         $driver = $this->request->get("driver");
         $passenger = $this->request->get("passenger");
@@ -65,7 +64,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
         $from_longitude = $this->request->get("from_longitude");
         $to_latitude = $this->request->get("to_latitude");
         $to_longitude = $this->request->get("to_longitude");
-        //then we set these parameters
+        // then we set these parameters
         $searchParameters  = [
             'driver'  => [
                 'state'   => $driver //1
@@ -83,15 +82,15 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
             ]
         ];
 
-        //if config.json exists we collect its parameters and request all apis
-        $path = "../config.json";
-        if (file_exists($path)) {
-            //Read config.json
-            $provider_list = json_decode(file_get_contents($path), true);
-            $truc = array_keys($provider_list["rdexApi"]);
+        // @todo check the following to remove the foreach as we search for only one provider
+        // @todo see if the resource path ('/restapi/journeys.json') should be in the config.json
+        // if config.json exists we collect its parameters and request all apis
+        if (file_exists(self::EXTERNAL_JOURNEY_CONFIG_FILE)) {
+            // read config.json
+            $provider_list = json_decode(file_get_contents(self::EXTERNAL_JOURNEY_CONFIG_FILE), true);
 
             $dataArray = [];
-            foreach ($provider_list["rdexApi"] as $key => $provider) {
+            foreach ($provider_list[self::EXTERNAL_JOURNEY_API_KEY] as $key => $provider) {
                 if ($key == $provider_name) {
                     //Collect provider's parameters
                     $apiUrl = $provider["apiUrl"];
@@ -106,7 +105,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
 
                     //Construct the requested url
                     $url = $apiUrl.'/restapi/journeys.json?'.http_build_query($query);
-                    $signature = hash_hmac('sha256', $url, $privateKey);
+                    $signature = hash_hmac(self::EXTERNAL_JOURNEY_HASH, $url, $privateKey);
                     $signedUrl = $url.'&signature='.$signature;
 
                     //Request url

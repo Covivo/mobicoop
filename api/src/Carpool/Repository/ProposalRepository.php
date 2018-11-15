@@ -58,10 +58,10 @@ class ProposalRepository extends ServiceEntityRepository
         
         switch ($proposal->getCriteria()->getFrequency()) {
             case Criteria::FREQUENCY_PUNCTUAL:
-                return $this->findMatchingForPunctualProposal($proposal,$excludeProposalUser);
+                return $this->findMatchingForPunctualProposal($proposal, $excludeProposalUser);
                 break;
             case Criteria::FREQUENCY_REGULAR:
-                return $this->findMatchingForRegularProposal($proposal,$e);
+                return $this->findMatchingForRegularProposal($proposal);
                 break;
         }
         
@@ -70,7 +70,7 @@ class ProposalRepository extends ServiceEntityRepository
     
     /**
      * Search matchings for a punctual proposal.
-     * 
+     *
      * @param Proposal $proposal        The proposal to match
      * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
      * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
@@ -105,7 +105,7 @@ class ProposalRepository extends ServiceEntityRepository
         ->join('startPoint.address', 'startAddress')
         ->join('endPoint.address', 'endAddress');
         
-        // we exclude the user itself
+        // do we exclude the user itself ?
         if ($excludeProposalUser) {
             $query->andWhere('p.user != :user')
             ->setParameter('user', $proposal->getUser());
@@ -115,11 +115,18 @@ class ProposalRepository extends ServiceEntityRepository
         $query->andWhere('p.proposalType = :proposalType')
         ->setParameter('proposalType', ($proposal->getProposalType() == Proposal::PROPOSAL_TYPE_OFFER ? Proposal::PROPOSAL_TYPE_REQUEST : Proposal::PROPOSAL_TYPE_OFFER));
         
-        // we limit the search to the same day
-        $query->andWhere('c.fromDate = :fromDate')
+        // dates
+        // we limit the search to the days after the fromDate and before toDate if it's defined
+        // @todo limit automatically the search to the x next days if toDate is not defined ?
+        $query->andWhere('c.fromDate >= :fromDate')
         ->setParameter('fromDate', $proposal->getCriteria()->getFromDate()->format('Y-m-d'));
+        if (!is_null($proposal->getCriteria()->getToDate())) {
+            $query->andWhere('c.fromDate <= :toDate')
+            ->setParameter('toDate', $proposal->getCriteria()->getToDate()->format('Y-m-d'));
+        }
         
         // we limit the search to the starting and ending point locality
+        // @todo use the coordinates
         $query->andWhere('startPoint.position = 0')
         ->andWhere('endPoint.lastPoint = 1');
         $query->andWhere('startAddress.addressLocality = :startLocality')
@@ -141,5 +148,4 @@ class ProposalRepository extends ServiceEntityRepository
     {
         return null;
     }
-    
 }

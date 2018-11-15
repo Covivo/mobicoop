@@ -254,18 +254,19 @@ class ProposalManager
         string $outward_saturday_maxtime = null,
         string $outward_sunday_mintime = null,
         string $outward_sunday_maxtime = null
-        ) 
-    {
+        ) {
         // test : we return all proposals
         // we create a proposal with the parameters
         $proposal = new Proposal();
         // warning : usually we search for matching proposal after a proposal post, so we usually search for opposite proposals (it is made automatically inside the matchingProposal method of the repository)
-        // in rdex protocol we already indicate the final proposal type, so we need to switch here ! 
+        // in rdex protocol we already indicate the final proposal type we want, so we need to switch here !
         $proposal->setProposalType($offer ? Proposal::PROPOSAL_TYPE_REQUEST : Proposal::PROPOSAL_TYPE_OFFER);
         $proposal->setJourneyType(Proposal::JOURNEY_TYPE_ONE_WAY);
         $addressFrom = new Address();
         $addressFrom->setLongitude($from_longitude);
         $addressFrom->setLatitude($from_latitude);
+        // for now we don't search with coordinates, we force the localities for testing purpose
+        // @todo delete the locality search only
         $addressFrom->setAddressLocality("Nancy");
         $addressTo = new Address();
         $addressTo->setLongitude($to_longitude);
@@ -281,10 +282,19 @@ class ProposalManager
         $pointTo->setLastPoint(true);
         $criteria = new Criteria();
         $criteria->setFrequency($frequency == RdexJourney::FREQUENCY_REGULAR ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL);
-        $criteria->setFromDate(new \DateTime());
+        if (!is_null($outward_mindate)) {
+            $criteria->setFromDate($outward_mindate);
+        } else {
+            $criteria->setFromDate(new \DateTime());
+        }
+        if (!is_null($outward_maxdate)) {
+            $criteria->setToDate($outward_maxdate);
+        }
         $proposal->setCriteria($criteria);
         $proposal->addPoint($pointFrom);
         $proposal->addPoint($pointTo);
-        return $this->entityManager->getRepository(Proposal::class)->findMatchingProposals($proposal,false);
+        // for now we don't use the time parameters
+        // @todo add the time parameters
+        return $this->entityManager->getRepository(Proposal::class)->findMatchingProposals($proposal, false);
     }
 }

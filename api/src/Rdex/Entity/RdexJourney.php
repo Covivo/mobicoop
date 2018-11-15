@@ -674,7 +674,7 @@ class RdexJourney implements \JsonSerializable
             'uuid'      => $this->getUuid(),
             'operator'  => $this->getOperator(),
             'origin'    => $this->getOrigin(),
-            'url'       => $this->getUrl(),      
+            'url'       => $this->getUrl(),
             'driver'    => $this->getDriver(),
             'passenger' => $this->getPassenger(),
             'from'      => $this->getFrom(),

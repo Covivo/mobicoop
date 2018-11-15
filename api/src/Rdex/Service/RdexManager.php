@@ -42,11 +42,13 @@ use App\Rdex\Entity\RdexDayTime;
  */
 class RdexManager
 {
-    private const RDEX_CONFIG_FILE = "../config.json"; 
+    private const RDEX_CONFIG_FILE = "../config.json";
     private const RDEX_CLIENT_KEY = "rdexClient";
     private const RDEX_HASH = "sha256";         // hash algorithm
     private const MIN_TIMESTAMP_MINUTES = 60;   // accepted minutes for timestamp in the past
     private const MAX_TIMESTAMP_MINUTES = 60;   // accepted minutes for timestamp in the future
+    // for testing purpose only
+    private const CHECK_SIGNATURE = false;
     
     private $proposalManager;
     
@@ -59,7 +61,7 @@ class RdexManager
      * Validates the parameters of a request.
      *
      * @param object $request
-     * @return mixed True if validation is ok, error if not 
+     * @return mixed True if validation is ok, error if not
      */
     public function validate(object $request)
     {
@@ -80,11 +82,11 @@ class RdexManager
         $apikey = $request->get("apikey");
         $signature = $request->get("signature");
         $p = $request->get("p");
-        if (!isset($p['driver'])) {
-            return new RdexError("p[driver]", RdexError::ERROR_MISSING_MANDATORY_FIELD);
+        if (!isset($p['driver']['state'])) {
+            return new RdexError("p[driver][state]", RdexError::ERROR_MISSING_MANDATORY_FIELD);
         }
-        if (!isset($p['passenger'])) {
-            return new RdexError("p[passenger]", RdexError::ERROR_MISSING_MANDATORY_FIELD);
+        if (!isset($p['passenger']['state'])) {
+            return new RdexError("p[passenger][state]", RdexError::ERROR_MISSING_MANDATORY_FIELD);
         }
         if (!isset($p['from']['longitude'])) {
             return new RdexError("p[from][longitude]", RdexError::ERROR_MISSING_MANDATORY_FIELD);
@@ -106,39 +108,74 @@ class RdexManager
         $maxTime->add(new \DateInterval("PT".self::MAX_TIMESTAMP_MINUTES."M"));
         $DTTimestamp = new \DateTime();
         $DTTimestamp->setTimestamp($timestamp);
-        if ($DTTimestamp<$minTime || $DTTimestamp>$maxTime) return new RdexError("timestamp", RdexError::ERROR_TIMESTAMP_TOO_SKEWED);
+        if ($DTTimestamp<$minTime || $DTTimestamp>$maxTime) {
+            return new RdexError("timestamp", RdexError::ERROR_TIMESTAMP_TOO_SKEWED);
+        }
 
         // we verify the signature
-        if (!file_exists(self::RDEX_CONFIG_FILE)) return new RdexError(null, RdexError::ERROR_INTERNAL_ERROR);
-        $config = json_decode(file_get_contents(self::RDEX_CONFIG_FILE), true);
-        $clientList = $config[self::RDEX_CLIENT_KEY];
-        $apikeyFound = false;
-        foreach ($clientList as $keys) {
-            if (array_key_exists("publicKey", $keys) && array_key_exists("privateKey", $keys) && $keys["publicKey"] == $apikey) {
-                $url = $request->getUri();
-                // we search if the signature is not the first parameter 
-                $posSignature = strpos($url, "&signature="); 
-                if ($posSignature === false) {
-                    // the signature is the first parameter
-                    $posSignature = strpos($url, "signature="); 
+        if (self::CHECK_SIGNATURE) {
+            if (!file_exists(self::RDEX_CONFIG_FILE)) {
+                return new RdexError(null, RdexError::ERROR_INTERNAL_ERROR);
+            }
+            $config = json_decode(file_get_contents(self::RDEX_CONFIG_FILE), true);
+            $clientList = $config[self::RDEX_CLIENT_KEY];
+            $apikeyFound = false;
+            foreach ($clientList as $keys) {
+                if (array_key_exists("publicKey", $keys) && array_key_exists("privateKey", $keys) && $keys["publicKey"] == $apikey) {
+                    $url = $request->getUri();
+                    // we search if the signature is not the first parameter
+                    $posSignature = strpos($url, "&signature=");
+                    if ($posSignature === false) {
+                        // the signature is the first parameter
+                        $posSignature = strpos($url, "signature=");
+                    }
+                    // we search for the end of the signature (we add 1 to avoid getting the current &)
+                    $posEndSignature = strpos($url, "&", $posSignature+1);
+                    if ($posEndSignature !== false) {
+                        $unsignedUrl = substr_replace($url, '', $posSignature, ($posEndSignature-$posSignature));
+                    } else {
+                        $unsignedUrl = substr_replace($url, '', $posSignature);
+                    }
+                    $expectedSignature = hash_hmac(self::RDEX_HASH, $unsignedUrl, $keys["privateKey"]);
+                    //echo $expectedSignature;exit;
+                    if ($expectedSignature != $signature) {
+                        return new RdexError("signature", RdexError::ERROR_SIGNATURE_MISMATCH, "Invalid signature");
+                    }
+                    $apikeyFound = true;
+                    break;
                 }
-                // we search for the end of the signature (we add 1 to avoid getting the current &)
-                $posEndSignature = strpos($url, "&",$posSignature+1);
-                if ($posEndSignature !== false) {
-                    $unsignedUrl = substr_replace($url, '', $posSignature, ($posEndSignature-$posSignature));
-                } else {
-                    $unsignedUrl = substr_replace($url, '', $posSignature);
-                }
-                $expectedSignature = hash_hmac(self::RDEX_HASH, $unsignedUrl, $keys["privateKey"]);
-                //echo $expectedSignature;exit;
-                if ($expectedSignature != $signature) return new RdexError("signature", RdexError::ERROR_SIGNATURE_MISMATCH,"Invalid signature");
-                $apikeyFound = true;
-                break;
+            }
+            if (!$apikeyFound) {
+                return new RdexError("apikey", RdexError::ERROR_ACCESS_DENIED, "Invalid apikey");
             }
         }
-        if (!$apikeyFound) return new RdexError("apikey", RdexError::ERROR_ACCESS_DENIED,"Invalid apikey");
         
-        // @todo : complete the checkings
+        $now = new \DateTime("midnight"); // we use 'midnight' to set the time to 0, as createFromFormat below sets the time to 0 if no time is provided
+        // verification of outward min date
+        if (isset($p['outward']['mindate'])) {
+            $mindate = \DateTime::createFromFormat("Y-m-d",$p["outward"]["mindate"]);
+            if ($mindate<$now) {
+                return new RdexError("p[outward][mindate]", RdexError::ERROR_INVALID_INPUT, "Mindate must be greater than or equal to the current date");
+            }
+        }
+        // verification of outward max date
+        if (isset($p['outward']['maxdate'])) {
+            $maxdate = \DateTime::createFromFormat("Y-m-d",$p["outward"]["maxdate"]);
+            if ($maxdate<$now) {
+                return new RdexError("p[outward][maxdate]", RdexError::ERROR_INVALID_INPUT, "Maxdate must be greater than or equal to the current date");
+            }
+        }
+        // verification of outward min date / outward max date
+        if (isset($p['outward']['mindate']) && isset($p['outward']['maxdate'])) {
+            $mindate = \DateTime::createFromFormat("Y-m-d",$p["outward"]["mindate"]);
+            $maxdate = \DateTime::createFromFormat("Y-m-d",$p["outward"]["maxdate"]);
+            if ($mindate>$maxdate) {
+                return new RdexError("p[outward][maxdate]", RdexError::ERROR_INVALID_INPUT, "Maxdate must be greater than or equal to mindate");
+            }
+        }
+        
+        // @todo : complete the checkings if needed
+        
         return true;
     }
     
@@ -172,15 +209,15 @@ class RdexManager
         $returnArray = [];
         
         $proposals = $this->proposalManager->getProposalsForRdex(
-            $parameters["driver"],
-            $parameters["passenger"],
+            $parameters["driver"]["state"],
+            $parameters["passenger"]["state"],
             $parameters["from"]["longitude"],
             $parameters["from"]["latitude"],
             $parameters["to"]["longitude"],
             $parameters["to"]["latitude"],
             isset($parameters["frequency"]) ? $parameters["frequency"] : null,
-            isset($parameters["outward"]["mindate"]) ? $parameters["outward"]["mindate"] : null,
-            isset($parameters["outward"]["maxdate"]) ? $parameters["outward"]["maxdate"] : null,
+            isset($parameters["outward"]["mindate"]) ? \DateTime::createFromFormat("Y-m-d",$parameters["outward"]["mindate"]) : null,
+            isset($parameters["outward"]["maxdate"]) ? \DateTime::createFromFormat("Y-m-d",$parameters["outward"]["maxdate"]) : null,
             isset($parameters["outward"]["monday"]["mintime"]) ? $parameters["outward"]["monday"]["mintime"] : null,
             isset($parameters["outward"]["monday"]["maxtime"]) ? $parameters["outward"]["monday"]["maxtime"] : null,
             isset($parameters["outward"]["tuesday"]["mintime"]) ? $parameters["outward"]["tuesday"]["mintime"] : null,
@@ -205,9 +242,11 @@ class RdexManager
             $journey->setUrl(RdexJourney::URL);
             // by default the type is one-way
             // if the proposal is the return of a round trip, it is considered as a one-way
-            // the type will be round trip only if the proposal type is outward  
+            // the type will be round trip only if the proposal type is outward
             $journey->setType(RdexJourney::TYPE_ONE_WAY);
-            if ($proposal->getJourneyType() == Proposal::JOURNEY_TYPE_OUTWARD) $journey->setType(RdexJourney::TYPE_ROUND_TRIP);
+            if ($proposal->getJourneyType() == Proposal::JOURNEY_TYPE_OUTWARD) {
+                $journey->setType(RdexJourney::TYPE_ROUND_TRIP);
+            }
             $driver = new RdexDriver($proposal->getUSer()->getId());
             // @todo : add alias to user entity
             $driver->setAlias($proposal->getUser()->getGivenName());
@@ -249,7 +288,9 @@ class RdexManager
                     $journey->setTo($to);
                 }
                 // if we have 'from' and 'to' we don't check for any other point
-                if (!is_null($journey->getFrom()) && !is_null($journey->getTo())) break;
+                if (!is_null($journey->getFrom()) && !is_null($journey->getTo())) {
+                    break;
+                }
             }
             $days = new RdexDay();
             // there's always an outward
@@ -268,25 +309,25 @@ class RdexManager
                 $daytime->setMintime($mintime->format('H:i:s'));
                 $daytime->setMaxtime($maxtime->format('H:i:s'));
                 switch ($proposal->getCriteria()->getFromDate()->format('w')) {
-                    case 0 :    $days->setSunday(1);
+                    case 0:    $days->setSunday(1);
                                 $outward->setSunday($daytime);
                                 break;
-                    case 1 :    $days->setMonday(1);
+                    case 1:    $days->setMonday(1);
                                 $outward->setMonday($daytime);
                                 break;
-                    case 2 :    $days->setTuesday(1);
+                    case 2:    $days->setTuesday(1);
                                 $outward->setTuesday($daytime);
                                 break;
-                    case 3 :    $days->setWednesday(1);
+                    case 3:    $days->setWednesday(1);
                                 $outward->setWednesday($daytime);
                                 break;
-                    case 4 :    $days->setThursday(1);
+                    case 4:    $days->setThursday(1);
                                 $outward->setThursday($daytime);
                                 break;
-                    case 5 :    $days->setFriday(1);
+                    case 5:    $days->setFriday(1);
                                 $outward->setFriday($daytime);
                                 break;
-                    case 6 :    $days->setSaturday(1);
+                    case 6:    $days->setSaturday(1);
                                 $outward->setSaturday($daytime);
                                 break;
                 }
@@ -395,7 +436,7 @@ class RdexManager
             $journey->setDays($days);
             $journey->setOutward($outward);
             if ($journey->getType() == RdexJourney::TYPE_ROUND_TRIP) {
-                // creation of the return 
+                // creation of the return
                 // we use the proposalLinkedJourney of the proposal
                 $return = new RdexTripDate();
                 $return->setMindate($proposal->getProposalLinkedJourney()->getCriteria()->getFromDate()->format("Y-m-d"));
@@ -411,19 +452,19 @@ class RdexManager
                     $daytime->setMintime($mintime->format('H:i:s'));
                     $daytime->setMaxtime($maxtime->format('H:i:s'));
                     switch ($proposal->getCriteria()->getFromDate()->format('w')) {
-                        case 0 :    $return->setSunday($daytime);
+                        case 0:    $return->setSunday($daytime);
                                     break;
-                        case 1 :    $return->setMonday($daytime);
+                        case 1:    $return->setMonday($daytime);
                                     break;
-                        case 2 :    $return->setTuesday($daytime);
+                        case 2:    $return->setTuesday($daytime);
                                     break;
-                        case 3 :    $return->setWednesday($daytime);
+                        case 3:    $return->setWednesday($daytime);
                                     break;
-                        case 4 :    $return->setThursday($daytime);
+                        case 4:    $return->setThursday($daytime);
                                     break;
-                        case 5 :    $return->setFriday($daytime);
+                        case 5:    $return->setFriday($daytime);
                                     break;
-                        case 6 :    $return->setSaturday($daytime);
+                        case 6:    $return->setSaturday($daytime);
                                     break;
                     }
                 } else {
@@ -534,4 +575,3 @@ class RdexManager
         return $returnArray;
     }
 }
-

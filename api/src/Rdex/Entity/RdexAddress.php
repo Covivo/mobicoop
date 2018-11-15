@@ -29,7 +29,7 @@ namespace App\Rdex\Entity;
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
 class RdexAddress implements \JsonSerializable
-{ 
+{
     /**
      * @var string The address.
      */
@@ -165,7 +165,7 @@ class RdexAddress implements \JsonSerializable
             'postalcode'    => $this->getPostalcode(),
             'country'       => $this->getCountry(),
             'latitude'      => $this->getLatitude(),
-            'longitude'     => $this->getLongitude()            
+            'longitude'     => $this->getLongitude()
         ];
     }
 }

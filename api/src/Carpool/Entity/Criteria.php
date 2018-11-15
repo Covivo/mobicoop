@@ -94,7 +94,7 @@ class Criteria
     private $fromTime;
 
     /**
-     * @var \DateTimeInterface|null The end date if regular proposal.
+     * @var \DateTimeInterface|null The end date if regular proposal, the last accepted date if punctual.
      *
      * @Assert\Date()
      * @ORM\Column(type="date", nullable=true)
