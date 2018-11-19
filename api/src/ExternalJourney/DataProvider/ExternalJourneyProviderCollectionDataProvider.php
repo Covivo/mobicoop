@@ -30,6 +30,14 @@ use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 
 use App\ExternalJourney\Entity\ExternalJourneyProvider;
 
+/**
+ * Collection data provider for External Journey Provider entity.
+ *
+ * Automatically associated to External Journey Provider entity thanks to autowiring (see 'supports' method).
+ *
+ * @author Sofiane Belaribi <sofiane.belaribi@covivo.eu>
+ *
+ */
 final class ExternalJourneyProviderCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private const EXTERNAL_JOURNEY_CONFIG_FILE = "../config.json";

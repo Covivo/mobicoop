@@ -27,7 +27,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 
 /**
- * An arrival.
+ * An external journey.
  *
  * @ApiResource(
  *     collectionOperations={"get"={

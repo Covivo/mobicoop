@@ -31,6 +31,14 @@ use GuzzleHttp\Client;
 
 use App\ExternalJourney\Entity\ExternalJourney;
 
+/**
+ * Collection data provider for External Journey entity.
+ *
+ * Automatically associated to External Journey entity thanks to autowiring (see 'supports' method).
+ *
+ * @author Sofiane Belaribi <sofiane.belaribi@covivo.eu>
+ *
+ */
 final class ExternalJourneyCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private const EXTERNAL_JOURNEY_CONFIG_FILE = "../config.json";

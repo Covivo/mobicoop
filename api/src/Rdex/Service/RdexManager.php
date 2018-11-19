@@ -153,22 +153,22 @@ class RdexManager
         $now = new \DateTime("midnight"); // we use 'midnight' to set the time to 0, as createFromFormat below sets the time to 0 if no time is provided
         // verification of outward min date
         if (isset($p['outward']['mindate'])) {
-            $mindate = \DateTime::createFromFormat("Y-m-d",$p["outward"]["mindate"]);
+            $mindate = \DateTime::createFromFormat("Y-m-d", $p["outward"]["mindate"]);
             if ($mindate<$now) {
                 return new RdexError("p[outward][mindate]", RdexError::ERROR_INVALID_INPUT, "Mindate must be greater than or equal to the current date");
             }
         }
         // verification of outward max date
         if (isset($p['outward']['maxdate'])) {
-            $maxdate = \DateTime::createFromFormat("Y-m-d",$p["outward"]["maxdate"]);
+            $maxdate = \DateTime::createFromFormat("Y-m-d", $p["outward"]["maxdate"]);
             if ($maxdate<$now) {
                 return new RdexError("p[outward][maxdate]", RdexError::ERROR_INVALID_INPUT, "Maxdate must be greater than or equal to the current date");
             }
         }
         // verification of outward min date / outward max date
         if (isset($p['outward']['mindate']) && isset($p['outward']['maxdate'])) {
-            $mindate = \DateTime::createFromFormat("Y-m-d",$p["outward"]["mindate"]);
-            $maxdate = \DateTime::createFromFormat("Y-m-d",$p["outward"]["maxdate"]);
+            $mindate = \DateTime::createFromFormat("Y-m-d", $p["outward"]["mindate"]);
+            $maxdate = \DateTime::createFromFormat("Y-m-d", $p["outward"]["maxdate"]);
             if ($mindate>$maxdate) {
                 return new RdexError("p[outward][maxdate]", RdexError::ERROR_INVALID_INPUT, "Maxdate must be greater than or equal to mindate");
             }
@@ -216,8 +216,8 @@ class RdexManager
             $parameters["to"]["longitude"],
             $parameters["to"]["latitude"],
             isset($parameters["frequency"]) ? $parameters["frequency"] : null,
-            isset($parameters["outward"]["mindate"]) ? \DateTime::createFromFormat("Y-m-d",$parameters["outward"]["mindate"]) : null,
-            isset($parameters["outward"]["maxdate"]) ? \DateTime::createFromFormat("Y-m-d",$parameters["outward"]["maxdate"]) : null,
+            isset($parameters["outward"]["mindate"]) ? \DateTime::createFromFormat("Y-m-d", $parameters["outward"]["mindate"]) : null,
+            isset($parameters["outward"]["maxdate"]) ? \DateTime::createFromFormat("Y-m-d", $parameters["outward"]["maxdate"]) : null,
             isset($parameters["outward"]["monday"]["mintime"]) ? $parameters["outward"]["monday"]["mintime"] : null,
             isset($parameters["outward"]["monday"]["maxtime"]) ? $parameters["outward"]["monday"]["maxtime"] : null,
             isset($parameters["outward"]["tuesday"]["mintime"]) ? $parameters["outward"]["tuesday"]["mintime"] : null,
