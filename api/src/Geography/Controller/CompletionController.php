@@ -23,6 +23,7 @@
 namespace App\Geography\Controller;
 
 use Geocoder\Geocoder;
+use Geocoder\Model\AddressCollection;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -32,15 +33,12 @@ use App\Geography\Entity\Completion;
 use Geocoder\Query\GeocodeQuery;
 use Geocoder\Query\ReverseQuery;
 use Geocoder\Query\Query;
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Bazinga\GeocoderBundle\ProviderFactory\AbstractFactory;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
 
 /**
  * Controller class for Rdex Journey collection.
@@ -49,7 +47,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
 class CompletionController
-{   
+{
     protected $request;
 
     public function __construct(RequestStack $requestStack)
@@ -57,24 +55,25 @@ class CompletionController
         $this->request = $requestStack->getCurrentRequest();
     }
     
-    public function __invoke(array $data): array/*Response*/
+    public function __invoke(array $data): array /*Response*/
     {
+        $input = $this->request->get("input");
+
         $apiID = "0hvZ9UtgpnIyM4FgDr2g";
         $apiKey = "2HqIaNrm92pBk4rJraHrxg";
 
         $httpClient = new \Http\Adapter\Guzzle6\Client();
-        $provider = new \Geocoder\Provider\Here\Here($httpClient,$apiID,$apiKey);
+        $provider = new \Geocoder\Provider\Here\Here($httpClient, $apiID, $apiKey);
         $geocoder = new \Geocoder\StatefulGeocoder($provider, 'en');
-        $location = $geocoder->geocodeQuery(GeocodeQuery::create('Nancy France'))->all();
+        $location = $geocoder->geocodeQuery(GeocodeQuery::create($input))->all();
 
-        //pass to GeoJSON format
-        /*$dumper = new \Geocoder\Dumper\GeoJson();
+       /* //pass to GeoJSON format
+        $dumper = new \Geocoder\Dumper\GeoJson();
         $geojson = $dumper->dump($location);
-        var_dump($geojson);*/
+        var_dump($geojson);
 
-        /*$response = new Response();
-        $response->setContent($location);*/
-
+        $response = new Response();
+        $response->setContent($geojson);*/
 
         return $location;
     }

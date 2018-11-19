@@ -36,7 +36,18 @@ use App\Geography\Controller\CompletionController;
  *      collectionOperations={
  *          "get"={
  *              "path"="/completions",
- *              "controller"=CompletionController::class
+ *              "controller"=CompletionController::class,
+ *              "swagger_context"={
+ *                  "parameters"={
+ *                     {
+ *                         "name" = "input",
+ *                         "in" = "query",
+ *                         "required" = "true",
+ *                         "type" = "string",
+ *                         "description" = "user's input"
+ *                     }
+ *                   }
+ *              }
  *          }
  *      },
  *      itemOperations={"get"}
@@ -50,12 +61,12 @@ class Completion
      * @ApiProperty(identifier=true)
      */
     private $id;
-    
+
     public function __construct($id)
     {
         $this->id = $id;
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;

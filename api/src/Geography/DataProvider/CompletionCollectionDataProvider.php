@@ -41,7 +41,6 @@ use App\Geography\Entity\Completion;
  */
 final class CompletionCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Completion::class === $resourceClass;
@@ -49,8 +48,7 @@ final class CompletionCollectionDataProvider implements CollectionDataProviderIn
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-
         $data = file_get_contents('https://maps.googleapis.com/maps/api/place/autocomplete/json?input=1600+Amphitheatre&key=%3CAPI_KEY%3E&sessiontoken=1234567890');
-        return json_decode($data,true);
+        return json_decode($data, true);
     }
 }
