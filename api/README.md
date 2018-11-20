@@ -26,6 +26,7 @@ Simple API based on [api-plateform](https://api-platform.com), which is a symfon
 
 `npm install` will do the necessary jobs
 
+*DUPLICATE THE [config.json.dist](config.json.dist) INTO A `config.json` FILE IF YOU WANT TO ADD ANY EXTERNAL PROVIDER*
 
 #### Install Databases needs
 

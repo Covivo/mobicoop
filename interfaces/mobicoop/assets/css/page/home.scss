@@ -1,5 +1,5 @@
 /*******************
-      HOMEPAGE          
+      HOMEPAGE
 *******************/
 
 @import '../app.scss';
@@ -18,7 +18,7 @@
   .tag[alt='#{$tmpVar}'] {
     box-shadow: 0 0 0 2px map-get($partnerVal, base);
   }
-  .is-#{$partnerId}:not(body) {
+  .is-#{$partnerId}:not( body ) {
     color: #FFF;
     background: map-get($partnerVal, base);
   }

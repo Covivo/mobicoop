@@ -1,7 +1,9 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
 {% block title %}Hello{% endblock %}
-
+{% block stylesheets %}
+  {{ encore_entry_link_tags('users') }}
+{% endblock %}
 {% block body %}
 
     <section class="hero is-primary">
@@ -52,4 +54,8 @@
         </div>
     </section>
 
+{% endblock %}
+
+{% block javascripts %}
+  {{ encore_entry_script_tags('users') }}
 {% endblock %}
