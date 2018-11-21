@@ -21,37 +21,63 @@
  *    LICENSE
  **************************/
 
-namespace App\ExternalJourney\Entity;
-
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
+namespace App\Rdex\Entity;
 
 /**
- * An external journey provider.
+ * An RDEX Day time.
  *
- * @ApiResource(
- *     collectionOperations={"get"={"method"="GET"}},
- *     itemOperations={"get"={"method"="GET"}}
- * )
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class ExternalJourneyProvider
+class RdexDayTime implements \JsonSerializable
 {
     /**
-    * @var int $id of
-    */
-    private $id;
-
-    public function __construct()
+     * @var string The min time.
+     */
+    private $mintime;
+    
+    /**
+     * @var string The max time.
+     */
+    private $maxtime;
+    
+    /**
+     * @return string
+     */
+    public function getMintime()
     {
+        return $this->mintime;
     }
 
-    public function getId()
+    /**
+     * @return string
+     */
+    public function getMaxtime()
     {
-        return $this->id;
+        return $this->maxtime;
     }
 
-    public function setId($id)
+    /**
+     * @param string $mintime
+     */
+    public function setMintime($mintime)
     {
-        return $this->id = $id;
+        $this->mintime = $mintime;
+    }
+
+    /**
+     * @param string $maxtime
+     */
+    public function setMaxtime($maxtime)
+    {
+        $this->maxtime = $maxtime;
+    }
+    
+    public function jsonSerialize()
+    {
+        return
+        [
+            'mintime'   => $this->getMintime(),
+            'maxtime'   => $this->getMaxtime()
+        ];
     }
 }

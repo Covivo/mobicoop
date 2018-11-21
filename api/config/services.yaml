@@ -33,6 +33,10 @@ services:
         resource: '../src/Carpool/Controller'
         tags: ['controller.service_arguments']
         
+    App\Rdex\Controller\:
+        resource: '../src/Rdex/Controller'
+        tags: ['controller.service_arguments']
+        
     'App\Carpool\Filter\LocalityFilter':
         # Uncomment only if autoconfiguration isn't enabled
         #tags: [ 'api_platform.filter' ]
