@@ -90,39 +90,35 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
             ]
         ];
 
-        // @todo check the following to remove the foreach as we search for only one provider
-        // @todo see if the resource path ('/restapi/journeys.json') should be in the config.json
+        // @todo error management (api not responding, bad parameters...)
         // if config.json exists we collect its parameters and request all apis
         if (file_exists(self::EXTERNAL_JOURNEY_CONFIG_FILE)) {
             // read config.json
             $providerList = json_decode(file_get_contents(self::EXTERNAL_JOURNEY_CONFIG_FILE), true);
-
-            $dataArray = [];
-            foreach ($providerList[self::EXTERNAL_JOURNEY_API_KEY] as $key => $provider) {
-                if ($key == $providerName) {
-                    //Collect provider's parameters
-                    $apiUrl = $provider["apiUrl"];
-                    $apiKey = $provider["apiKey"];
-                    $privateKey = $provider["privateKey"];
-
-                    $query = array(
-                        'timestamp' => time(),
-                        'apikey'    => $apiKey,
-                        'p'         => $searchParameters //optional if POST
-                    );
-
-                    //Construct the requested url
-                    $url = $apiUrl.'/restapi/journeys.json?'.http_build_query($query);
-                    $signature = hash_hmac(self::EXTERNAL_JOURNEY_HASH, $url, $privateKey);
-                    $signedUrl = $url.'&signature='.$signature;
-
-                    //Request url
-                    $data = $client->request('GET', $signedUrl);
-                    $data = $data->getBody()->getContents();
-                    $dataArray = array_merge($dataArray, json_decode($data, true));
-                }
-            }
-            return $dataArray;
+            if (isset($providerList[self::EXTERNAL_JOURNEY_API_KEY][$providerName])) {
+                $provider = $providerList[self::EXTERNAL_JOURNEY_API_KEY][$providerName];
+                $apiUrl = $provider["apiUrl"];
+                $apiResource = $provider["apiResource"];
+                $apiKey = $provider["apiKey"];
+                $privateKey = $provider["privateKey"];
+                
+                $query = array(
+                    'timestamp' => time(),
+                    'apikey'    => $apiKey,
+                    'p'         => $searchParameters //optional if POST
+                );
+                
+                // construct the requested url
+                $url = $apiUrl.$apiResource.'?'.http_build_query($query);
+                $signature = hash_hmac(self::EXTERNAL_JOURNEY_HASH, $url, $privateKey);
+                $signedUrl = $url.'&signature='.$signature;
+                
+                // request url
+                $data = $client->request('GET', $signedUrl);
+                $data = $data->getBody()->getContents();
+                return json_decode($data, true);
+            }  
+            return [];
         }
         return ["no config.json found"];
     }

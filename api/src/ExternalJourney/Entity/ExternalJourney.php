@@ -59,34 +59,36 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *                  "in" = "query",
  *                  "required" = "true",
  *                  "type" = "string",
- *                  "description" = "from -> latitude"
+ *                  "description" = "Latitude of the origin point"
  *              },
  *              {
  *                  "name" = "from_longitude",
  *                  "in" = "query",
  *                  "required" = "true",
  *                  "type" = "string",
- *                  "description" = "from -> longitude"
+ *                  "description" = "Longitude of the origin point"
  *              },
  *              {
  *                  "name" = "to_latitude",
  *                  "in" = "query",
  *                  "required" = "true",
  *                  "type" = "string",
- *                  "description" = "to -> latitude"
+ *                  "description" = "Latitude of the destination point"
  *              },
  *              {
  *                  "name" = "to_longitude",
  *                  "in" = "query",
  *                  "required" = "true",
  *                  "type" = "string",
- *                  "description" = "to -> longitude"
+ *                  "description" = "Longitude of the destination point"
  *              }
  *           }
  *      }
  *    }},
- *     itemOperations={"get"={"method"="GET"}}
+ *      itemOperations={}
  * )
+ * 
+ * @author Sofiane Belaribi <sofiane.belaribi@covivo.eu>
  */
 class ExternalJourney
 {

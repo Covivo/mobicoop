@@ -31,13 +31,17 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *
  * @ApiResource(
  *     collectionOperations={"get"={"method"="GET"}},
- *     itemOperations={"get"={"method"="GET"}}
+ *     itemOperations={}
  * )
+ * 
+ * @todo: complete the provider with useful informations : name, url, logo, description...
+ * 
+ * @author Sofiane Belaribi <sofiane.belaribi@covivo.eu>
  */
 class ExternalJourneyProvider
 {
     /**
-    * @var int $id of
+    * @var int $id  The id of the provider
     */
     private $id;
 
