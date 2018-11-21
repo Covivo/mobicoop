@@ -47,7 +47,7 @@ class CompletionController
      * @param Container $container
      * @param PluginProvider $chain
      */
-    public function __construct(RequestStack $requestStack,Container $container, PluginProvider $chain)
+    public function __construct(RequestStack $requestStack, Container $container, PluginProvider $chain)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->container = $container;
