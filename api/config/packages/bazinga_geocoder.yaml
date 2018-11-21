@@ -1,8 +1,30 @@
-# See the docs at https://github.com/geocoder-php/BazingaGeocoderBundle
 bazinga_geocoder:
-    # The local IP (127.0.0.1) will be replaced by the fake_ip
-    # see https://github.com/geocoder-php/BazingaGeocoderBundle/blob/5.0.0/Resources/doc/index.md#fake-local-ip
-    providers:
-      acme:
-        factory: Bazinga\GeocoderBundle\ProviderFactory\GoogleMapsFactory
-    #fake_ip: 123.123.123.123
+  providers:
+
+    opencage:
+      factory: Bazinga\GeocoderBundle\ProviderFactory\OpenCageFactory
+      aliases:
+        - OpenCage
+      options:
+        api_key: '%env(API_KEY_OPEN_CAGE)%'
+
+    bing:
+      factory: Bazinga\GeocoderBundle\ProviderFactory\BingMapsFactory
+      aliases:
+        - Bing
+      options:
+        api_key: '%env(API_KEY_BING_MAPS_DEV)%'
+
+    locationiq:
+      factory: App\Geography\ProviderFactory\LocationIQFactory
+      aliases:
+        - LocationIQ
+      options:
+        api_key: '%env(API_KEY_LOCATION_IQ)%'
+
+    # List of providers
+    chain:
+      factory: Bazinga\GeocoderBundle\ProviderFactory\ChainFactory
+      options:
+        # This is the order in which Providers will be called. Note that it stops its iteration when a provider returns a result.
+        services: ['@LocationIQ','@OpenCage', '@Bing']

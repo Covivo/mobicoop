@@ -22,59 +22,50 @@
 
 namespace App\Geography\Controller;
 
-use Geocoder\Geocoder;
-use Geocoder\Model\AddressCollection;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 
-use Bazinga\GeocoderBundle\BazingaGeocoderBundle;
-use Bazinga\GeocoderBundle\ProviderFactory\GoogleMapsFactory;
-use App\Geography\Entity\Completion;
+use Geocoder\Plugin\PluginProvider;
 use Geocoder\Query\GeocodeQuery;
-use Geocoder\Query\ReverseQuery;
-use Geocoder\Query\Query;
-use Bazinga\GeocoderBundle\ProviderFactory\AbstractFactory;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
- * Controller class for Rdex Journey collection.
- * We use a controller instead of a data provider because we need to send a custom http status code if an error occurs.
+ * CompletionController.php
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
+ * Date: 16/11/2018
+ * Time: 9:25
+ *
  */
 class CompletionController
 {
     protected $request;
+    protected $container;
 
-    public function __construct(RequestStack $requestStack)
+    /**
+     * CompletionController constructor.
+     * @param RequestStack $requestStack
+     * @param Container $container
+     * @param PluginProvider $chain
+     */
+    public function __construct(RequestStack $requestStack,Container $container, PluginProvider $chain)
     {
         $this->request = $requestStack->getCurrentRequest();
+        $this->container = $container;
+        $this->container = $chain;
     }
-    
-    public function __invoke(array $data): array /*Response*/
+
+    /**
+     * This method is invoked when autocomplete function is called.
+     * @param array $data
+     * @return array
+     * @throws \Geocoder\Exception\Exception
+     */
+    public function __invoke(array $data): array
     {
         $input = $this->request->get("input");
+        $result= $this->container
+            ->geocodeQuery(GeocodeQuery::create($input))->all();
 
-        $apiID = "0hvZ9UtgpnIyM4FgDr2g";
-        $apiKey = "2HqIaNrm92pBk4rJraHrxg";
-
-        $httpClient = new \Http\Adapter\Guzzle6\Client();
-        $provider = new \Geocoder\Provider\Here\Here($httpClient, $apiID, $apiKey);
-        $geocoder = new \Geocoder\StatefulGeocoder($provider, 'en');
-        $location = $geocoder->geocodeQuery(GeocodeQuery::create($input))->all();
-
-       /* //pass to GeoJSON format
-        $dumper = new \Geocoder\Dumper\GeoJson();
-        $geojson = $dumper->dump($location);
-        var_dump($geojson);
-
-        $response = new Response();
-        $response->setContent($geojson);*/
-
-        return $location;
+        return $result;
     }
 }

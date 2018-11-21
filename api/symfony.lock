@@ -80,6 +80,9 @@
     "doctrine/reflection": {
         "version": "v1.0.0"
     },
+    "geocoder-php/bing-maps-provider": {
+        "version": "4.0.0"
+    },
     "geocoder-php/chain-provider": {
         "version": "4.0.0"
     },
@@ -91,6 +94,12 @@
     },
     "geocoder-php/here-provider": {
         "version": "0.1.0"
+    },
+    "geocoder-php/locationiq-provider": {
+        "version": "1.0.0"
+    },
+    "geocoder-php/open-cage-provider": {
+        "version": "4.0.0"
     },
     "geocoder-php/plugin": {
         "version": "1.1.0"
