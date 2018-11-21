@@ -117,7 +117,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
                 $data = $client->request('GET', $signedUrl);
                 $data = $data->getBody()->getContents();
                 return json_decode($data, true);
-            }  
+            }
             return [];
         }
         return ["no config.json found"];

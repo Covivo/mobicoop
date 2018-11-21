@@ -87,7 +87,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *    }},
  *      itemOperations={}
  * )
- * 
+ *
  * @author Sofiane Belaribi <sofiane.belaribi@covivo.eu>
  */
 class ExternalJourney

@@ -33,9 +33,9 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *     collectionOperations={"get"={"method"="GET"}},
  *     itemOperations={}
  * )
- * 
+ *
  * @todo: complete the provider with useful informations : name, url, logo, description...
- * 
+ *
  * @author Sofiane Belaribi <sofiane.belaribi@covivo.eu>
  */
 class ExternalJourneyProvider
