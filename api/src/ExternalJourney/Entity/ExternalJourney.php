@@ -95,13 +95,13 @@ class ExternalJourney
     */
     private $id;
 
-    private $provider_name;
+    private $providerName;
     private $driver;
     private $passenger;
-    private $from_latitude;
-    private $from_longitude;
-    private $to_latitude;
-    private $to_longitude;
+    private $fromLatitude;
+    private $fromLongitude;
+    private $toLatitude;
+    private $toLongitude;
 
     public function __construct()
     {
@@ -117,73 +117,73 @@ class ExternalJourney
         return $this->id = $id;
     }
 
-    public function getProvider_Name()
+    public function getProviderName()
     {
         return $this->provider_name;
     }
 
-    public function setProvider_Name($provider_name)
+    public function setProviderName($providerName)
     {
-        return $this->provider_name = $provider_name;
+        return $this->providerName = $providerName;
     }
 
-    public function getdriver()
+    public function getDriver()
     {
         return $this->driver;
     }
 
-    public function setdriver($driver)
+    public function setDriver($driver)
     {
         return $this->driver= $driver;
     }
 
-    public function getpassenger()
+    public function getPassenger()
     {
         return $this->passenger;
     }
 
-    public function setpassenger($passenger)
+    public function setPassenger($passenger)
     {
         return $this->passenger= $passenger;
     }
 
-    public function getfrom_latitude()
+    public function getFromLatitude()
     {
-        return $this->from_latitude;
+        return $this->fromLatitude;
     }
 
-    public function setfrom_latitude($from_latitude)
+    public function setFromLatitude($fromLatitude)
     {
-        return $this->from_latitude= $from_latitude;
+        return $this->fromLatitude= $fromLatitude;
     }
 
-    public function getfrom_longitude()
+    public function getFromLongitude()
     {
-        return $this->from_longitude;
+        return $this->fromLongitude;
     }
 
-    public function setfrom_longitude($from_longitude)
+    public function setFromLongitude($fromLongitude)
     {
-        return $this->from_longitude= $from_longitude;
+        return $this->fromLongitude= $fromLongitude;
     }
 
-    public function getto_latitude()
+    public function getToLatitude()
     {
-        return $this->to_latitude;
+        return $this->toLatitude;
     }
 
-    public function setto_latitude($to_latitude)
+    public function setToLatitude($toLatitude)
     {
-        return $this->to_latitude= $to_latitude;
+        return $this->toLatitude= $toLatitude;
     }
 
-    public function getto_longitude()
+    public function getToLongitude()
     {
-        return $this->to_longitude;
+        return $this->toLongitude;
     }
 
-    public function setto_longitude($to_longitude)
+    public function setToLongitude($toLongitude)
     {
-        return $this->to_longitude= $to_longitude;
+        return $this->toLongitude= $toLongitude;
     }
 }

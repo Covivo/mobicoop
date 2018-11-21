@@ -65,13 +65,13 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
             'timeout'  => 10.0,
         ]);
         // we collect search parameters here
-        $provider_name = $this->request->get("provider_name");
+        $providerName = $this->request->get("provider_name");
         $driver = $this->request->get("driver");
         $passenger = $this->request->get("passenger");
-        $from_latitude = $this->request->get("from_latitude");
-        $from_longitude = $this->request->get("from_longitude");
-        $to_latitude = $this->request->get("to_latitude");
-        $to_longitude = $this->request->get("to_longitude");
+        $fromLatitude = $this->request->get("from_latitude");
+        $fromLongitude = $this->request->get("from_longitude");
+        $toLatitude = $this->request->get("to_latitude");
+        $toLongitude = $this->request->get("to_longitude");
         // then we set these parameters
         $searchParameters  = [
             'driver'  => [
@@ -81,12 +81,12 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
                 'state'   => $passenger //1
             ],
             'from'    => [
-                'latitude'  => $from_latitude, //Nancy=48.69278
-                'longitude' => $from_longitude //6.18361
+                'latitude'  => $fromLatitude, //Nancy=48.69278
+                'longitude' => $fromLongitude //6.18361
             ],
             'to'    => [
-                'latitude'  => $to_latitude,//Metz=49.11972
-                'longitude' => $to_longitude//6.17694
+                'latitude'  => $toLatitude,//Metz=49.11972
+                'longitude' => $toLongitude//6.17694
             ]
         ];
 
@@ -95,11 +95,11 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
         // if config.json exists we collect its parameters and request all apis
         if (file_exists(self::EXTERNAL_JOURNEY_CONFIG_FILE)) {
             // read config.json
-            $provider_list = json_decode(file_get_contents(self::EXTERNAL_JOURNEY_CONFIG_FILE), true);
+            $providerList = json_decode(file_get_contents(self::EXTERNAL_JOURNEY_CONFIG_FILE), true);
 
             $dataArray = [];
-            foreach ($provider_list[self::EXTERNAL_JOURNEY_API_KEY] as $key => $provider) {
-                if ($key == $provider_name) {
+            foreach ($providerList[self::EXTERNAL_JOURNEY_API_KEY] as $key => $provider) {
+                if ($key == $providerName) {
                     //Collect provider's parameters
                     $apiUrl = $provider["apiUrl"];
                     $apiKey = $provider["apiKey"];
