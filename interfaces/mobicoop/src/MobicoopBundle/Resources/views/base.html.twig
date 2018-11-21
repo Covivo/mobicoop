@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>{% block title %}Welcome!{% endblock %}</title>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-  <!-- <link rel="stylesheet" href="{{ asset('/build/app.css') }}"> -->
+   {{encore_entry_link_tags('app') }}
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% block stylesheets %}{% endblock %}
 </head>
@@ -21,7 +21,7 @@
       </div>
       <div class="navbar-menu" id="navMenu">
         <div class="navbar-end">
-          <div class="navbar-item has-dropdown is-hoverable"><a class="navbar-link">Account</a>
+          <div class="navbar-item has-dropdown is-hoverable" id="accountMenu"><a class="navbar-link">Account</a>
             <div class="navbar-dropdown">
               <a class="navbar-item">Dashboard</a>
               <a href="{{path('users')}}" class="navbar-item">Profile</a>
@@ -37,9 +37,8 @@
   <div id="app">
     {% block body %}{% endblock %}
   </div>
-<!--   <script src="{{ asset('/build/app.js') }}"></script>
- -->  
- {% block javascripts %}{% endblock %}
+
+ 
 </body>
 <footer class="footer">
   <div class="content has-text-centered">
@@ -50,4 +49,6 @@
     </p>
   </div>
 </footer>
+  {{ encore_entry_script_tags('app') }}"
+{% block javascripts %}{% endblock %}
 </html>
