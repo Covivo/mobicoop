@@ -27,6 +27,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 
 use App\Geography\Controller\GeoSearchController;
+
 /**
  * GeoSearch.php
  * Entity for GeoSearchController.php
