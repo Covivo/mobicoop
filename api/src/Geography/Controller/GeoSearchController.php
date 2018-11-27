@@ -65,8 +65,7 @@ class GeoSearchController
         $input = $this->request->get("input");
         $result= $this->container
             ->geocodeQuery(GeocodeQuery::create($input))->all();
-
-
+        
         return $result;
     }
 }
