@@ -24,7 +24,7 @@ if(repoName.sync() == "mobicoop"){
     console.log("\nPlease fill the following informations : ");
     reader.question('<Your Country> : ', (country) => {
         reader.question('<Your Surname> : ', (surname) => {
-            reader.question('<Your Name> : ', (name) => {
+            reader.question('<Your First name> : ', (name) => {
                 reader.question('<Your Git Email> : ', (gitEmail) => {
                     let date = new Date(Date.now()).toLocaleString();
                     console.log(kuler(finalResultToShow(country, date, name, surname, gitEmail, gitUserName())).style('fdd000'));

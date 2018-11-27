@@ -23,11 +23,19 @@
 
 namespace App\Geography\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 
-use App\Geography\Controller\CompletionController;
+use App\Geography\Controller\GeoSearchController;
+/**
+ * GeoSearch.php
+ * Entity for GeoSearchController.php
+ *
+ * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
+ * Date: 16/11/2018
+ * Time: 9:25
+ *
+ */
 
 /**
  * A completed address from string
@@ -35,8 +43,8 @@ use App\Geography\Controller\CompletionController;
  * @ApiResource(
  *      collectionOperations={
  *          "get"={
- *              "path"="/completions",
- *              "controller"=CompletionController::class,
+ *              "path"="/GeoSearch",
+ *              "controller"=GeoSearchController::class,
  *              "swagger_context"={
  *                  "parameters"={
  *                     {
@@ -53,7 +61,7 @@ use App\Geography\Controller\CompletionController;
  *      itemOperations={"get"}
  * )
  */
-class Completion
+class GeoSearch
 {
     /**
      * @var int The id of this completion.

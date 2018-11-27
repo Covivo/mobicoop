@@ -10,15 +10,20 @@ import '../../css/page/home.scss';
 
 // Vue components
 import Journey from '../components/Journey';
-//import Searchgeocoding from '../components/Searchgeocoding';
-import autocomplete from '../components/autocomplete';
+import Searchgeocoding from '../components/Searchgeocoding';
 Vue.use(Affix);
 Vue.use(Buefy);
 
 let app = new Vue({
-  el: '#app',
-  components: {Journey,autocomplete},
-  data: {
-    searchUser: ""
-  }
+    el: '#app',
+    components: {Journey,Searchgeocoding},
+    data: {
+        geoInfos:{
+            longStart: null,
+            longEnd: null,
+            latStart: null,
+            latEnd: null
+        },
+        searchUser: ""
+    }
 });

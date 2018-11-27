@@ -29,20 +29,20 @@ use Geocoder\Plugin\PluginProvider;
 use Geocoder\Query\GeocodeQuery;
 
 /**
- * CompletionController.php
- *
+ * GeoSearchController.php
+ * Controller that requests a provider list
  * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
  * Date: 16/11/2018
  * Time: 9:25
  *
  */
-class CompletionController
+class GeoSearchController
 {
     protected $request;
     protected $container;
 
     /**
-     * CompletionController constructor.
+     * GeoSearchController constructor.
      * @param RequestStack $requestStack
      * @param Container $container
      * @param PluginProvider $chain
@@ -65,6 +65,7 @@ class CompletionController
         $input = $this->request->get("input");
         $result= $this->container
             ->geocodeQuery(GeocodeQuery::create($input))->all();
+
 
         return $result;
     }

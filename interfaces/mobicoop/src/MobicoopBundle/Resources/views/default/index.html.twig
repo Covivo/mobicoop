@@ -1,29 +1,27 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
 {% block title %}{{ metaDescription }}{% endblock %}
-  {% block stylesheets %}
+{% block stylesheets %}
     {{ encore_entry_link_tags('home') }}
-  {% endblock %}
+{% endblock %}
 
-  {% block body %}
+{% block body %}
 
-    <autocomplete :items="[ 'Apple', 'Banana', 'Orange', 'Mango', 'Pear', 'Peach', 'Grape', 'Tangerine', 'Pineapple']" />
-    <au
-    <main class="homePage">
-      <section class="hero is-info header">
-        <div class="hero-body">
-          <div class="container">
-            <div id="app">
-            </div>
-          </div>
+  <main class="homePage">
+    <section class="hero is-info header">
+      <div class="hero-body">
+        <div class="container">
+          <Searchgeocoding :geo-infos="geoInfos" :search-user="searchUser"></Searchgeocoding>
         </div>
-      </section>
-      <section id="journeyResult" class="journeyResult">
-      </section>
-    </main>
+      </div>
+    </section>
+    <section id="journeyResult" class="journeyResult">
+      <Journey :api-uri="'{{ baseUri }}'" :geo-infos="geoInfos" :search-user="searchUser"></Journey>
+    </section>
+  </main>
 
-  {% endblock %}
+{% endblock %}
 
-  {% block javascripts %}
+{% block javascripts %}
     {{ encore_entry_script_tags('home') }}
-  {% endblock %}
+{% endblock %}

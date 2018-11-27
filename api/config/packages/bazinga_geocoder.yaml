@@ -3,6 +3,7 @@ bazinga_geocoder:
 
     opencage:
       factory: Bazinga\GeocoderBundle\ProviderFactory\OpenCageFactory
+      locale: 'fr'
       aliases:
         - OpenCage
       options:
@@ -10,6 +11,7 @@ bazinga_geocoder:
 
     bing:
       factory: Bazinga\GeocoderBundle\ProviderFactory\BingMapsFactory
+      locale: 'fr'
       aliases:
         - Bing
       options:
@@ -17,6 +19,7 @@ bazinga_geocoder:
 
     locationiq:
       factory: App\Geography\ProviderFactory\LocationIQFactory
+      locale: 'fr'
       aliases:
         - LocationIQ
       options:
