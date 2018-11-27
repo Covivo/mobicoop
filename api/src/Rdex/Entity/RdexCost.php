@@ -21,37 +21,63 @@
  *    LICENSE
  **************************/
 
-namespace App\ExternalJourney\Entity;
-
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
+namespace App\Rdex\Entity;
 
 /**
- * An external journey provider.
+ * An RDEX Cost.
  *
- * @ApiResource(
- *     collectionOperations={"get"={"method"="GET"}},
- *     itemOperations={"get"={"method"="GET"}}
- * )
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class ExternalJourneyProvider
+class RdexCost implements \JsonSerializable
 {
     /**
-    * @var int $id of
-    */
-    private $id;
-
-    public function __construct()
+     * @var float The fixed cost.
+     */
+    private $fixed;
+    
+    /**
+     * @var float The variable cost.
+     */
+    private $variable;
+    
+    /**
+     * @return number
+     */
+    public function getFixed()
     {
+        return $this->fixed;
     }
 
-    public function getId()
+    /**
+     * @return number
+     */
+    public function getVariable()
     {
-        return $this->id;
+        return $this->variable;
     }
 
-    public function setId($id)
+    /**
+     * @param number $fixed
+     */
+    public function setFixed($fixed)
     {
-        return $this->id = $id;
+        $this->fixed = $fixed;
+    }
+
+    /**
+     * @param number $variable
+     */
+    public function setVariable($variable)
+    {
+        $this->variable = $variable;
+    }
+    
+    public function jsonSerialize()
+    {
+        return
+        [
+            'fixed'     => $this->getFixed(),
+            'variable'  => $this->getVariable()
+        ];
     }
 }

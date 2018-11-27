@@ -30,9 +30,9 @@ use App\PublicTransport\Service\PTDataProvider;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Collection data provider for Journey entity.
+ * Collection data provider for Public Transport Journey entity.
  *
- * Automatically associated to Journey entity thanks to autowiring (see 'supports' method).
+ * Automatically associated to Public Transport Journey entity thanks to autowiring (see 'supports' method).
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  *
