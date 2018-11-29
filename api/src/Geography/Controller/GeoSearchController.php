@@ -23,7 +23,6 @@
 namespace App\Geography\Controller;
 
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 
 use Geocoder\Plugin\PluginProvider;
 use Geocoder\Query\GeocodeQuery;
@@ -47,10 +46,9 @@ class GeoSearchController
      * @param Container $container
      * @param PluginProvider $chain
      */
-    public function __construct(RequestStack $requestStack, Container $container, PluginProvider $chain)
+    public function __construct(RequestStack $requestStack, PluginProvider $chain)
     {
         $this->request = $requestStack->getCurrentRequest();
-        $this->container = $container;
         $this->container = $chain;
     }
 
