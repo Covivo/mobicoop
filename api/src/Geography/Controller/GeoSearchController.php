@@ -43,7 +43,6 @@ class GeoSearchController
     /**
      * GeoSearchController constructor.
      * @param RequestStack $requestStack
-     * @param Container $container
      * @param PluginProvider $chain
      */
     public function __construct(RequestStack $requestStack, PluginProvider $chain)
