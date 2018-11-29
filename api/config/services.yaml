@@ -40,3 +40,10 @@ services:
     'App\Carpool\Filter\LocalityFilter':
         # Uncomment only if autoconfiguration isn't enabled
         #tags: [ 'api_platform.filter' ]
+
+    App\Geography\Controller\:
+        resource: '../src/Geography/Controller'
+        tags: ['controller.service_arguments']
+
+    # alias to allow this type to be autowired
+    Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'

@@ -15,15 +15,15 @@ Vue.use(Affix);
 Vue.use(Buefy);
 
 let app = new Vue({
-  el: '#app',
-  components: {Journey,Searchgeocoding},
-  data: {
-    geoInfos:{
-      longStart: null,
-      longEnd: null,
-      latStart: null,
-      latEnd: null
-    },
-    searchUser: ""
-  }
+    el: '#app',
+    components: {Journey,Searchgeocoding},
+    data: {
+        geoInfos:{
+            longStart: null,
+            longEnd: null,
+            latStart: null,
+            latEnd: null
+        },
+        searchUser: ""
+    }
 });
