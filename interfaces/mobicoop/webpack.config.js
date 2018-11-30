@@ -18,6 +18,7 @@ Encore
      * Each entry will result in one JavaScript file (e.g. app.js)
      * and one CSS file (e.g. app.css) if you JavaScript imports CSS.
      */
+     .addEntry('autocomplete', './assets/js/page/autocomplete.js')
      .addEntry('app', './assets/js/app.js')
      .addEntry('home', './assets/js/page/home.js')
      .addEntry('users', './assets/js/page/users.js')

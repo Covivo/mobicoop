@@ -14,6 +14,7 @@ import Searchgeocoding from '../components/Searchgeocoding';
 Vue.use(Affix);
 Vue.use(Buefy);
 
+// eslint-disable-next-line
 let app = new Vue({
     el: '#app',
     components: {Journey,Searchgeocoding},

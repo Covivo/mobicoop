@@ -71,6 +71,9 @@ class Deserializer
             case Address::class:
                 return self::deserializeAddress($data);
                 break;
+            /*case Address::class:
+                return self::deserializeAddress($data);
+                break;*/
             case Proposal::class:
                 return self::deserializeProposal($data);
                 break;

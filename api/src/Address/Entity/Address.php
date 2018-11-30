@@ -122,7 +122,12 @@ class Address
      * @Groups({"read","write","pt"})
      */
     private $elevation;
-        
+
+    public function __construct($id)
+    {
+        $this->id = $id;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -138,7 +143,7 @@ class Address
         return $this->postalCode;
     }
 
-    public function getAddressLocality(): string
+    public function getAddressLocality(): ?string
     {
         return $this->addressLocality;
     }
@@ -183,7 +188,7 @@ class Address
         $this->postalCode = $postalCode;
     }
 
-    public function setAddressLocality(string $addressLocality)
+    public function setAddressLocality(?string $addressLocality)
     {
         $this->addressLocality = $addressLocality;
     }

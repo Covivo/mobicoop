@@ -23,8 +23,8 @@
 namespace App\Geography\Controller;
 
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 
+use App\Address\Entity\Address;
 use Geocoder\Plugin\PluginProvider;
 use Geocoder\Query\GeocodeQuery;
 
@@ -44,13 +44,11 @@ class GeoSearchController
     /**
      * GeoSearchController constructor.
      * @param RequestStack $requestStack
-     * @param Container $container
      * @param PluginProvider $chain
      */
-    public function __construct(RequestStack $requestStack, Container $container, PluginProvider $chain)
+    public function __construct(RequestStack $requestStack, PluginProvider $chain)
     {
         $this->request = $requestStack->getCurrentRequest();
-        $this->container = $container;
         $this->container = $chain;
     }
 
@@ -65,7 +63,23 @@ class GeoSearchController
         $input = $this->request->get("input");
         $result= $this->container
             ->geocodeQuery(GeocodeQuery::create($input))->all();
-        
-        return $result;
+
+        $resultArray = [];
+        foreach ($result as $value){
+            $address = new Address(1);
+            $address->setLatitude($value->getCoordinates()->getLatitude());
+            $address->setLongitude($value->getCoordinates()->getLongitude()) ;
+
+            $streetNumber = $value->getStreetNumber();
+            $streetName = $value->getStreetName();
+            $address->setStreetAddress($streetNumber.' '.$streetName);
+            $address->setAddressLocality($value->getLocality());
+            $address->setPostalCode($value->getPostalCode());
+            $address->setAddressCountry($value->getCountry()->getName());
+
+            $resultArray[] = $address;
+        }
+
+        return $resultArray;
     }
 }

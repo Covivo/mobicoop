@@ -41,7 +41,7 @@ class ExternalJourneyController extends AbstractController
     /**
      * @Route("/externaljourney")
      */
-    public function truc($value='')
+    public function ExternalJourneyIndex()
     {
         $baseUri = $_ENV['API_URI'];
         return $this->render('@Mobicoop/proposal/externalAsync.html.twig', ['baseUri' => $baseUri]);
