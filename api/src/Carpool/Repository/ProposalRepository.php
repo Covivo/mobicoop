@@ -44,19 +44,21 @@ class ProposalRepository extends ServiceEntityRepository
     /**
      * Find proposals matching the proposal passed as an argument.
      *
-     * @param Proposal $proposal
+     * @param Proposal $proposal        The proposal to match
+     * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
      * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
      */
-    public function findMatchingProposals(Proposal $proposal)
+    public function findMatchingProposals(Proposal $proposal, bool $excludeProposalUser=true)
     {
         
         // LIMITATIONS :
         // - only punctual journeys
         // - only 2 points : starting point and destination
+        // - only for the same day
         
         switch ($proposal->getCriteria()->getFrequency()) {
             case Criteria::FREQUENCY_PUNCTUAL:
-                return $this->findMatchingForPunctualProposal($proposal);
+                return $this->findMatchingForPunctualProposal($proposal, $excludeProposalUser);
                 break;
             case Criteria::FREQUENCY_REGULAR:
                 return $this->findMatchingForRegularProposal($proposal);
@@ -69,10 +71,11 @@ class ProposalRepository extends ServiceEntityRepository
     /**
      * Search matchings for a punctual proposal.
      *
-     * @param Proposal $proposal
+     * @param Proposal $proposal        The proposal to match
+     * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
      * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
      */
-    private function findMatchingForPunctualProposal(Proposal $proposal)
+    private function findMatchingForPunctualProposal(Proposal $proposal, bool $excludeProposalUser=true)
     {
         // LIMITATIONS :
         // - only 2 points : starting point and destination
@@ -102,19 +105,28 @@ class ProposalRepository extends ServiceEntityRepository
         ->join('startPoint.address', 'startAddress')
         ->join('endPoint.address', 'endAddress');
         
-        // we exclude the user itself
-        $query->andWhere('p.user != :user')
-        ->setParameter('user', $proposal->getUser());
+        // do we exclude the user itself ?
+        if ($excludeProposalUser) {
+            $query->andWhere('p.user != :user')
+            ->setParameter('user', $proposal->getUser());
+        }
         
         // we search for the opposite proposal type (offer => requests // request => offers)
         $query->andWhere('p.proposalType = :proposalType')
         ->setParameter('proposalType', ($proposal->getProposalType() == Proposal::PROPOSAL_TYPE_OFFER ? Proposal::PROPOSAL_TYPE_REQUEST : Proposal::PROPOSAL_TYPE_OFFER));
         
-        // we limit the search to the same day
-        $query->andWhere('c.fromDate = :fromDate')
+        // dates
+        // we limit the search to the days after the fromDate and before toDate if it's defined
+        // @todo limit automatically the search to the x next days if toDate is not defined ?
+        $query->andWhere('c.fromDate >= :fromDate')
         ->setParameter('fromDate', $proposal->getCriteria()->getFromDate()->format('Y-m-d'));
+        if (!is_null($proposal->getCriteria()->getToDate())) {
+            $query->andWhere('c.fromDate <= :toDate')
+            ->setParameter('toDate', $proposal->getCriteria()->getToDate()->format('Y-m-d'));
+        }
         
         // we limit the search to the starting and ending point locality
+        // @todo use the coordinates
         $query->andWhere('startPoint.position = 0')
         ->andWhere('endPoint.lastPoint = 1');
         $query->andWhere('startAddress.addressLocality = :startLocality')

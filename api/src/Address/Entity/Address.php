@@ -67,7 +67,6 @@ class Address
     /**
      * @var string The street address.
      *
-     * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
      * @Groups({"read","write","pt"})
      */
@@ -84,7 +83,6 @@ class Address
     /**
      * @var string The locality of the address.
      *
-     * @Assert\NotBlank
      * @ORM\Column(type="string", length=100)
      * @Groups({"read","write","pt"})
      */
@@ -93,7 +91,6 @@ class Address
     /**
      * @var string The country of the address.
      *
-     * @Assert\NotBlank
      * @ORM\Column(type="string", length=100)
      * @Groups({"read","write","pt"})
      */
@@ -133,7 +130,7 @@ class Address
         return $this->id;
     }
     
-    public function getStreetAddress(): string
+    public function getStreetAddress(): ?string
     {
         return $this->streetAddress;
     }
@@ -148,7 +145,7 @@ class Address
         return $this->addressLocality;
     }
 
-    public function getAddressCountry(): string
+    public function getAddressCountry(): ?string
     {
         return $this->addressCountry;
     }
