@@ -44,7 +44,8 @@ class TestAutoCompleteController extends AbstractController
      */
     public function AutoCompleteIndex()
     {
-        return $this->render('@Mobicoop/autocomplete/index.html.twig'
+        return $this->render(
+            '@Mobicoop/autocomplete/index.html.twig'
         /*, [
             'GeoSearch' => $GeoSearchManager->getGeoSearch()
         ]*/

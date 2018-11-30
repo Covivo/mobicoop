@@ -65,7 +65,7 @@ class GeoSearchController
             ->geocodeQuery(GeocodeQuery::create($input))->all();
 
         $resultArray = [];
-        foreach ($result as $value){
+        foreach ($result as $value) {
             $address = new Address(1);
             $address->setLatitude($value->getCoordinates()->getLatitude());
             $address->setLongitude($value->getCoordinates()->getLongitude()) ;
