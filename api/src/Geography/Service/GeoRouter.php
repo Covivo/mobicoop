@@ -39,10 +39,11 @@ class GeoRouter
     /**
      * Get the routes between two or more addresses.
      *
-     * @param array $addresses[]    The array of addresses 
+     * @param array $addresses[]    The array of addresses
      * @return array                The routes found
      */
-    public function getRoutes(array $addresses): ?array {
+    public function getRoutes(array $addresses): ?array
+    {
         $routes = [];
         $georouter = new GeoRouterProvider();
         $params = [];

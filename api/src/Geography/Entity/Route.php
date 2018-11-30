@@ -49,7 +49,7 @@ class Route
      */
     private $ascend;
     
-        /**
+    /**
      * @var int The total descend of the route in meter.
      */
     private $descend;
@@ -149,7 +149,7 @@ class Route
     }
 
     /**
-     * @return multitype:\App\Address\Entity\Address 
+     * @return multitype:\App\Address\Entity\Address
      */
     public function getPoints()
     {
@@ -234,7 +234,7 @@ class Route
     public function setPoints($points)
     {
         $this->points = $points;
-    }    
+    }
     
     /**
      * @param multitype:\App\Address\Entity\Address  $waypoints
@@ -242,5 +242,5 @@ class Route
     public function setWaypoints($waypoints)
     {
         $this->waypoints = $waypoints;
-    }    
+    }
 }

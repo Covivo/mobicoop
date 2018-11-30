@@ -35,7 +35,7 @@ interface ProviderInterface
 {
     /**
      * Returns a collection of items.
-     * 
+     *
      * @param string $class     The name of the class associated with the collection.
      * @param string $apikey    The apikey used for the provider.
      * @param array $params     The params to send to the request.
@@ -44,7 +44,7 @@ interface ProviderInterface
     
     /**
      * Returns a single item.
-     * 
+     *
      * @param string $class     The name of the class associated with the item.
      * @param string $apikey    The apikey used for the provider.
      * @param array $params     The params to send to the request.
@@ -53,7 +53,7 @@ interface ProviderInterface
     
     /**
      * Deserializes the data returned by the provider.
-     * 
+     *
      * @param string $class     The name of the class to desereialize.
      * @param array $data       The data to deserialize.
      */

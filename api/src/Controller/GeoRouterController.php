@@ -31,9 +31,9 @@ use App\Address\Entity\Address;
 
 /**
  * FOR TESTING PURPOSE ONLY
- * 
+ *
  * Test of GeoRouter services.
- * 
+ *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  *
  */

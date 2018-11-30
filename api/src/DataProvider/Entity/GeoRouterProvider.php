@@ -73,13 +73,13 @@ class GeoRouterProvider implements ProviderInterface
             case Route::class:
                 $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESOURCE);
                 $getParams = "";
-                foreach ($params['points'] as $address) {                   
+                foreach ($params['points'] as $address) {
                     $getParams .= "point=" . $address->getLatitude() . "," . $address->getLongitude() . "&";
                 }
-                $getParams .= "locale=" . self::GR_LOCALE . 
-                    "&vehicle=" . self::GR_MODE_CAR . 
-                    "&weighting=" . self::GR_WEIGHTING . 
-                    "&instructions=" . self::GR_INSTRUCTIONS . 
+                $getParams .= "locale=" . self::GR_LOCALE .
+                    "&vehicle=" . self::GR_MODE_CAR .
+                    "&weighting=" . self::GR_WEIGHTING .
+                    "&instructions=" . self::GR_INSTRUCTIONS .
                     "&points_encoded=".self::GR_POINTS_ENCODED .
                     "&elevation=" . self::GR_ELEVATION;
                 $response = $dataProvider->getCollection($getParams);
@@ -119,7 +119,7 @@ class GeoRouterProvider implements ProviderInterface
     
     private function deserializePath($data)
     {
-        $route = new Route(); 
+        $route = new Route();
         if (isset($data["distance"])) {
             $route->setDistance($data["distance"]);
         }
@@ -133,29 +133,37 @@ class GeoRouterProvider implements ProviderInterface
             $route->setDescend($data["descend"]);
         }
         if (isset($data["bbox"])) {
-            if (isset($data["bbox"][0])) $route->setBbox_minLon($data["bbox"][0]);
-            if (isset($data["bbox"][1])) $route->setBbox_minLat($data["bbox"][1]);
-            if (isset($data["bbox"][2])) $route->setBbox_maxLon($data["bbox"][2]);
-            if (isset($data["bbox"][3])) $route->setBbox_maxLat($data["bbox"][3]);
+            if (isset($data["bbox"][0])) {
+                $route->setBbox_minLon($data["bbox"][0]);
+            }
+            if (isset($data["bbox"][1])) {
+                $route->setBbox_minLat($data["bbox"][1]);
+            }
+            if (isset($data["bbox"][2])) {
+                $route->setBbox_maxLon($data["bbox"][2]);
+            }
+            if (isset($data["bbox"][3])) {
+                $route->setBbox_maxLat($data["bbox"][3]);
+            }
         }
         if (isset($data['points'])) {
             if (isset($data['points_encoded']) && $data['points_encoded'] === false) {
-                $route->setPoints($this->deserializePoints($data['points'],false,filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
+                $route->setPoints($this->deserializePoints($data['points'], false, filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
             } else {
-                $route->setPoints($this->deserializePoints($data['points'],true,filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
+                $route->setPoints($this->deserializePoints($data['points'], true, filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
             }
         }
         if (isset($data['snapped_waypoints'])) {
             if (isset($data['points_encoded']) && $data['points_encoded'] === false) {
-                $route->setWaypoints($this->deserializePoints($data['snapped_waypoints'],false,false));
+                $route->setWaypoints($this->deserializePoints($data['snapped_waypoints'], false, false));
             } else {
-                $route->setWaypoints($this->deserializePoints($data['snapped_waypoints'],true,false));
+                $route->setWaypoints($this->deserializePoints($data['snapped_waypoints'], true, false));
             }
         }
         return $route;
     }
     
-    private function deserializePoints($data,$encoded,$is3D) 
+    private function deserializePoints($data, $encoded, $is3D)
     {
         $addresses = [];
         if ($encoded) {
@@ -173,7 +181,7 @@ class GeoRouterProvider implements ProviderInterface
     }
     
     // Graphhopper path decoding function (see the points_encoded doc in https://github.com/graphhopper/graphhopper/blob/0.11/docs/web/api-doc.md)
-    private function decodePath($encoded,$is3D) 
+    private function decodePath($encoded, $is3D)
     {
         $length = strlen($encoded);
         $index = 0;
@@ -187,7 +195,7 @@ class GeoRouterProvider implements ProviderInterface
             $shift = 0;
             $result = 0;
             do {
-                $b = self::charCodeAt($encoded,$index++) - 63;
+                $b = self::charCodeAt($encoded, $index++) - 63;
                 $result = $result | ($b & 0x1f) << $shift;
                 $shift += 5;
             } while ($b >= 0x20);
@@ -197,7 +205,7 @@ class GeoRouterProvider implements ProviderInterface
             $shift = 0;
             $result = 0;
             do {
-                $b = self::charCodeAt($encoded,$index++) - 63;
+                $b = self::charCodeAt($encoded, $index++) - 63;
                 $result = $result | ($b & 0x1f) << $shift;
                 $shift += 5;
             } while ($b >= 0x20);
@@ -208,7 +216,7 @@ class GeoRouterProvider implements ProviderInterface
                 $shift = 0;
                 $result = 0;
                 do {
-                    $b = self::charCodeAt($encoded,$index++) - 63;
+                    $b = self::charCodeAt($encoded, $index++) - 63;
                     $result = $result | ($b & 0x1f) << $shift;
                     $shift += 5;
                 } while ($b >= 0x20);
@@ -229,17 +237,23 @@ class GeoRouterProvider implements ProviderInterface
         return $decoded;
     }
     
-    private function charCodeAt($str, $i){
+    private function charCodeAt($str, $i)
+    {
         return ord(substr($str, $i, 1));
     }
     
     private function createAddress($coordinate)
     {
         $address = new Address();
-        if (isset($coordinate[0])) $address->setLongitude($coordinate[0]);
-        if (isset($coordinate[1])) $address->setLatitude($coordinate[1]);
-        if (isset($coordinate[2])) $address->setElevation($coordinate[2]); 
+        if (isset($coordinate[0])) {
+            $address->setLongitude($coordinate[0]);
+        }
+        if (isset($coordinate[1])) {
+            $address->setLatitude($coordinate[1]);
+        }
+        if (isset($coordinate[2])) {
+            $address->setElevation($coordinate[2]);
+        }
         return $address;
     }
-        
 }
