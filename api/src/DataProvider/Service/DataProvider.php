@@ -52,13 +52,12 @@ class DataProvider
     /**
      * Get collection operation
      *
-     * @param array|null    $params         An array of parameters
+     * @param mixed|null    $params         An array or string of parameters
      *
      * @return Response The response of the operation.
      */
-    public function getCollection(array $params=null): Response
+    public function getCollection($params=null): Response
     {
-        // @todo : send the params to the request in the json body of the request
         try {
             $clientResponse = $this->client->get($this->resource, ['query'=>$params]);
             if ($clientResponse->getStatusCode() == 200) {
