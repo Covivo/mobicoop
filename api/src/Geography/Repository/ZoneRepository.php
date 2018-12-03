@@ -25,7 +25,7 @@ class ZoneRepository extends ServiceEntityRepository
      * @param int $longitude    The longitude
      * @return mixed|NULL|\Doctrine\DBAL\Driver\Statement|array     The zone found
      */
-    public function findOneByLatitudeLongitude($latitude,$longitude)
+    public function findOneByLatitudeLongitude($latitude, $longitude)
     {
         $query = $this->createQueryBuilder('z')
         ->andWhere('z.fromLat <= :lat')

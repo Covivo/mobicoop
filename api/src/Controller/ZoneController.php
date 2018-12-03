@@ -69,13 +69,21 @@ class ZoneController extends AbstractController
         // TRUNCATE TABLES
         $time_start = microtime(true);
         $sql = 'SET foreign_key_checks = 0;';
-        if (!$res = $conn->query($sql)) echo $conn->error;
+        if (!$res = $conn->query($sql)) {
+            echo $conn->error;
+        }
         $sql = 'TRUNCATE near;';
-        if (!$res = $conn->query($sql)) echo $conn->error;
+        if (!$res = $conn->query($sql)) {
+            echo $conn->error;
+        }
         $sql = 'TRUNCATE zone;';
-        if (!$res = $conn->query($sql)) echo $conn->error;
+        if (!$res = $conn->query($sql)) {
+            echo $conn->error;
+        }
         $sql = 'SET foreign_key_checks = 1;';
-        if (!$res = $conn->query($sql)) echo $conn->error;
+        if (!$res = $conn->query($sql)) {
+            echo $conn->error;
+        }
         $time_end = microtime(true);
         $time = $time_end - $time_start;
         echo 'Execution time for truncate : '.$time.' seconds<br />';
@@ -105,7 +113,7 @@ class ZoneController extends AbstractController
                 }
                 $sql .= "($fromLat, $toLat, $fromLon, $toLon),";
             }
-            $sql = rtrim($sql,",");
+            $sql = rtrim($sql, ",");
             $res = $conn->query($sql);
         }
         $time_end = microtime(true);
@@ -129,7 +137,7 @@ class ZoneController extends AbstractController
         
         $nbrows = 0;
         if ($result->num_rows > 0) {
-            while($row = $result->fetch_assoc()) {
+            while ($row = $result->fetch_assoc()) {
                 $nbrows = $row["nb"];
             }
         }
@@ -140,7 +148,9 @@ class ZoneController extends AbstractController
         $batchSize = 100;   // on va insérer les valeurs en base par batch pour optimiser le temps de traitement
         $sql = "";
         for ($i=1;$i<=$nbrows;$i++) {
-            if ($sql == "") $sql = "INSERT INTO near (zone1_id,zone2_id) VALUES ";
+            if ($sql == "") {
+                $sql = "INSERT INTO near (zone1_id,zone2_id) VALUES ";
+            }
             
             // cas génériques (milieu de grille)
             $x1 = $i-1-$nbLon;
@@ -189,24 +199,40 @@ class ZoneController extends AbstractController
                 $x8 = $i+1;
             }
             
-            if ($x1>0) $sql .= "($i,$x1),";
-            if ($x2>0) $sql .= "($i,$x2),";
-            if ($x3>0) $sql .= "($i,$x3),";
-            if ($x4>0) $sql .= "($i,$x4),";
-            if ($x5>0) $sql .= "($i,$x5),";
-            if ($x6>0) $sql .= "($i,$x6),";
-            if ($x7>0) $sql .= "($i,$x7),";
-            if ($x8>0) $sql .= "($i,$x8),";
+            if ($x1>0) {
+                $sql .= "($i,$x1),";
+            }
+            if ($x2>0) {
+                $sql .= "($i,$x2),";
+            }
+            if ($x3>0) {
+                $sql .= "($i,$x3),";
+            }
+            if ($x4>0) {
+                $sql .= "($i,$x4),";
+            }
+            if ($x5>0) {
+                $sql .= "($i,$x5),";
+            }
+            if ($x6>0) {
+                $sql .= "($i,$x6),";
+            }
+            if ($x7>0) {
+                $sql .= "($i,$x7),";
+            }
+            if ($x8>0) {
+                $sql .= "($i,$x8),";
+            }
             
             if (($i % $batchSize) === 0) {
-                $sql = rtrim($sql,",");
+                $sql = rtrim($sql, ",");
                 $conn->query($sql);
                 $sql = "";
             }
         }
         
         if ($sql != "") {
-            $sql = rtrim($sql,",");
+            $sql = rtrim($sql, ",");
             $res = $conn->query($sql);
         }
         

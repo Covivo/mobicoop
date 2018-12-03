@@ -181,7 +181,7 @@ class GeoRouterProvider implements ProviderInterface
     }
     
     // Graphhopper path decoding function
-    // This function is transposed from the JS function found in the points_encoded doc 
+    // This function is transposed from the JS function found in the points_encoded doc
     // (see https://github.com/graphhopper/graphhopper/blob/0.11/docs/web/api-doc.md)
     private function decodePath($encoded, $is3D)
     {

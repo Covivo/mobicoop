@@ -31,7 +31,7 @@ use App\Geography\Entity\Zone;
  * This entity gives a list of nearby zones.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- * 
+ *
  * @ORM\Entity
  */
 class Near

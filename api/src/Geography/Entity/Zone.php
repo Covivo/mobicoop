@@ -32,7 +32,7 @@ use Doctrine\ORM\Mapping as ORM;
  * This entity delimits a geographic zone by a minimum and maximum longitude and latitude.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- * 
+ *
  * @ORM\Entity(repositoryClass="App\Geography\Repository\ZoneRepository")
  */
 class Zone
@@ -76,7 +76,9 @@ class Zone
 
     public function __construct($id=null)
     {
-        if (!is_null($id)) $this->id = $id;
+        if (!is_null($id)) {
+            $this->id = $id;
+        }
         $this->nears1 = new ArrayCollection();
         $this->nears2 = new ArrayCollection();
     }
@@ -195,5 +197,4 @@ class Zone
 
         return $this;
     }
-
 }

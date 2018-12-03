@@ -65,7 +65,7 @@ class ZoneManager
             if (($baseAddressLatitude <> $baseLatitude) || ($baseAddressLongitude <> $baseLongitude)) {
                 $baseLongitude = $baseAddressLongitude;
                 $baseLatitude = $baseAddressLatitude;
-                $zones = $this->getZonesForAddress($address,$deep);
+                $zones = $this->getZonesForAddress($address, $deep);
             }
         }
         $return = [];
@@ -77,7 +77,7 @@ class ZoneManager
     
     /**
      * Get the zones for an address.
-     * 
+     *
      * @param Address $address  The address
      * @param int $deep         The deepness of near zones to retrieve (0 = only the zone, not the near zones)
      * @return array|NULL       The zones concerned by the address
@@ -85,19 +85,19 @@ class ZoneManager
     public function getZonesForAddress(Address $address, int $deep = 0): ?array
     {
         $zones = [];
-        $zone = $this->entityManager->getRepository(Zone::class)->findOneByLatitudeLongitude($address->getLatitude(),$address->getLongitude());
+        $zone = $this->entityManager->getRepository(Zone::class)->findOneByLatitudeLongitude($address->getLatitude(), $address->getLongitude());
         $zones[] = $zone;
         if ($deep == 0) {
             return $zones;
         } else {
             $nearbyZones = $this->getNear($zone->getId(), $deep);
-            return array_merge($zones,$nearbyZones);
+            return array_merge($zones, $nearbyZones);
         }
     }
     
     /**
      * Get near zones.
-     * 
+     *
      * @param int $id       The id of the zone
      * @param int $deep     The deepness of the search (1 = direct nearby zones, 2 = nearby zone and their nearby zones, etc...)
      * @return array|NULL   The list of nearby zones.
@@ -106,14 +106,14 @@ class ZoneManager
     {
         if ($zone = $this->entityManager->getRepository(Zone::class)->find($id)) {
             $azones = [];
-            $near = self::near($zone, $azones,$deep);
+            $near = self::near($zone, $azones, $deep);
             ksort($near);
             return $near;
         }
         return null;
     }
     
-    private function near(Zone $zone, array $azones, int $deep): array 
+    private function near(Zone $zone, array $azones, int $deep): array
     {
         $azones[$zone->getId()] = $zone;
         if ($deep>0) {
@@ -121,7 +121,7 @@ class ZoneManager
                 'zone1' => $zone
             ]);
             foreach ($nearZones as $near) {
-                $azones = self::near($near->getZone2(), $azones,$deep-1);
+                $azones = self::near($near->getZone2(), $azones, $deep-1);
             }
         }
         return $azones;
@@ -132,9 +132,10 @@ class ZoneManager
     // eg. for a 0.5 step, the base value of 48.123543 is 48.000000
     // eg. for a 0.5 step, the base value of 48.823543 is 48.500000
     // @todo : see how to "globalize" the step value, that is chosen when we populate the zones
-    private function getBase($value,$step=0.5) {
-        if ($step == 0.5) return floor($value * 2) / 2;
+    private function getBase($value, $step=0.5)
+    {
+        if ($step == 0.5) {
+            return floor($value * 2) / 2;
+        }
     }
-    
-    
 }
