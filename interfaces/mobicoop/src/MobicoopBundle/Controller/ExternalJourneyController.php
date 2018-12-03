@@ -32,8 +32,9 @@ use Mobicoop\Bundle\MobicoopBundle\Service\ExternalJourneyManager;
 use GuzzleHttp\Client;
 
 /**
+ * Class ExternalJourneyController
  * Controller class to display external Journey (rdexAPI)
- *
+ * @package Mobicoop\Bundle\MobicoopBundle\Controller
  */
 class ExternalJourneyController extends AbstractController
 {

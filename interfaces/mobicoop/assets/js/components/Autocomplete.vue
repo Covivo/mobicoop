@@ -53,7 +53,7 @@
                     return
                 }
                 this.isFetching = true
-                this.$http.get(`http://localhost:8080/GeoSearch?input=${this.name}`)
+                this.$http.get(`http://localhost:8080/geo_search?input=${this.name}`)
                     .then(({ data }) => {
                         this.data = []
                         data['hydra:member'].forEach((item) => this.data.push(item))

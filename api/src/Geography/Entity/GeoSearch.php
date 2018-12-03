@@ -44,7 +44,7 @@ use App\Geography\Controller\GeoSearchController;
  * @ApiResource(
  *      collectionOperations={
  *          "get"={
- *              "path"="/GeoSearch",
+ *              "path"="/geo_search",
  *              "controller"=GeoSearchController::class,
  *              "swagger_context"={
  *                  "parameters"={
@@ -59,7 +59,7 @@ use App\Geography\Controller\GeoSearchController;
  *              }
  *          }
  *      },
- *      itemOperations={"get"}
+ *      itemOperations={}
  * )
  */
 class GeoSearch

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,41 +21,30 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Service;
+namespace Mobicoop\Bundle\MobicoopBundle\Entity;
 
-use Mobicoop\Bundle\MobicoopBundle\Entity\GeoSearch;
 
 /**
- * GeoSearchManager.php
- * Geopoint search management service.
+ * GeoSearch.php
+ * Entity for GeoSearchController.php
+ *
  * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 29/11/2018
- * Time: 16:38
+ * Date: 16/11/2018
+ * Time: 9:25
  *
  */
 
-class GeoSearchManager
+class GeoSearch
 {
-    private $dataProvider;
-    private $deserializer;
+    private $id;
 
-    public function __construct(DataProvider $dataProvider, Deserializer $deserializer)
+    public function __construct($id)
     {
-        $this->dataProvider = $dataProvider;
-        $this->dataProvider->setClass(GeoSearch::class,'geo_search');
+        $this->id = $id;
     }
 
-    /**
-     * Get all Geosearch results
-     *
-     * @return array|GeoSearch|null
-     */
-    public function getGeoSearch(array $params)
+    public function getId(): ?int
     {
-        $response = $this->dataProvider->getCollection($params);
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
-        return null;
+        return $this->id;
     }
 }

@@ -23,6 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\Service\GeoSearchManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
@@ -36,19 +37,20 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  */
 
-class TestAutoCompleteController extends AbstractController
+class AutoCompleteController extends AbstractController
 {
 
     /**
+     * Retrieve all geosearch results of an input
+     *
      * @Route("/aut")
      */
-    public function AutoCompleteIndex()
+    public function AutoCompleteIndex(GeoSearchManager $geoSearchManager)
     {
         return $this->render(
-            '@Mobicoop/autocomplete/index.html.twig'
-        /*, [
-            'GeoSearch' => $GeoSearchManager->getGeoSearch()
-        ]*/
+            '@Mobicoop/autocomplete/index.html.twig', [
+                'GeoSearch' => $geoSearchManager->getGeoSearch(['input'=>'Nancy'])
+            ]
         );
     }
 }
