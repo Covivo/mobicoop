@@ -100,7 +100,10 @@ class CitywayProvider implements ProviderInterface
     {
         $this->collection = [];
     }
-    
+
+    /**
+     * {@inheritdoc}
+     */
     public function getCollection(string $class, string $apikey, array $params)
     {
         switch ($class) {
@@ -148,10 +151,16 @@ class CitywayProvider implements ProviderInterface
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getItem(string $class, string $apikey, array $params)
     {
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function deserialize(string $class, array $data)
     {
         switch ($class) {
