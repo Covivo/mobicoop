@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Geography\Service\GeoRouter;
 use App\Address\Entity\Address;
+use App\Geography\Service\ZoneManager;
 
 /**
  * FOR TESTING PURPOSE ONLY
@@ -180,6 +181,64 @@ class GeoRouterController extends AbstractController
         echo "Route 5 // duration = $duration5 minutes, distance = $distance5 kms<br />";
         echo "Route 6 // duration = $duration6 minutes, distance = $distance6 kms<br />";
         echo "Route 7 // duration = $duration7 minutes, distance = $distance7 kms<br />";
+        echo "Calculation duration = $time_elapsed_secs s";
+        exit;
+    }
+    
+    /**
+     * @Route("/georouter/zones")
+     */
+    public function zones(GeoRouter $geoRouter, ZoneManager $zoneManager)
+    {
+        // test paris => nancy // reims => verdun
+        $address1 = new Address(1);
+        $address1->setLatitude(48.45523);
+        $address1->setLongitude(2.367379);
+        $address2 = new Address(2);
+        $address2->setLatitude(48.89873);
+        $address2->setLongitude(6.174560);
+        $address3 = new Address(3);
+        $address3->setLatitude(49.12909);
+        $address3->setLongitude(4.037836);
+        $address4 = new Address(4);
+        $address4->setLatitude(48.45365);
+        $address4->setLongitude(5.588119);
+        
+        $addresses1 = [
+            $address1,
+            $address2
+        ];
+        
+        $addresses2 = [
+            $address1,
+            $address3,
+            $address4,
+            $address2
+        ];
+        
+        $start = microtime(true);
+        $routes1 = $geoRouter->getRoutes($addresses1);
+        $routes2 = $geoRouter->getRoutes($addresses2);
+        $time_elapsed_secs = microtime(true) - $start;
+        
+        $route1 = $routes1[0];
+        $route2 = $routes2[0];
+        
+        $duration1 = $route1->getTime()/1000/60;
+        $duration2 = $route2->getTime()/1000/60;
+        
+        $distance1 = $route1->getDistance()/1000;
+        $distance2 = $route2->getDistance()/1000;
+        
+        $zones1 = $zoneManager->getZonesForAddresses($route1->getPoints());
+        
+        echo "Route 1 // duration = $duration1 minutes, distance = $distance1 kms<br />";
+        echo "Zones 1 // ";
+        foreach ($zones1 as $zone) {
+            echo $zone . " - ";
+        }
+        echo "<br />";
+        echo "Route 2 // duration = $duration2 minutes, distance = $distance2 kms<br />";
         echo "Calculation duration = $time_elapsed_secs s";
         exit;
     }

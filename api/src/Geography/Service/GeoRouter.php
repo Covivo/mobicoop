@@ -37,7 +37,7 @@ class GeoRouter
 {
       
     /**
-     * Get the routes between two or more addresses.
+     * Get the routes alternative between two or more addresses.
      *
      * @param array $addresses[]    The array of addresses
      * @return array                The routes found

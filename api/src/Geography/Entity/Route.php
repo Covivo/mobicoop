@@ -75,7 +75,7 @@ class Route
     private $bbox_maxLat;
     
     /**
-     * @var Address[] The points that describe the route.
+     * @var Address[] The points (i.e. addresses) that describe the route.
      */
     private $points;
     
