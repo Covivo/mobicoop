@@ -48,7 +48,8 @@ class AutoCompleteController extends AbstractController
     public function AutoCompleteIndex(GeoSearchManager $geoSearchManager)
     {
         return $this->render(
-            '@Mobicoop/autocomplete/index.html.twig', [
+            '@Mobicoop/autocomplete/index.html.twig',
+            [
                 'GeoSearch' => $geoSearchManager->getGeoSearch(['input'=>'Nancy'])
             ]
         );

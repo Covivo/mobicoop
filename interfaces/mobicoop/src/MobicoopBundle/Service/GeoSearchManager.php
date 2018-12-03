@@ -41,7 +41,7 @@ class GeoSearchManager
     public function __construct(DataProvider $dataProvider, Deserializer $deserializer)
     {
         $this->dataProvider = $dataProvider;
-        $this->dataProvider->setClass(GeoSearch::class,'geo_search');
+        $this->dataProvider->setClass(GeoSearch::class, 'geo_search');
     }
 
     /**

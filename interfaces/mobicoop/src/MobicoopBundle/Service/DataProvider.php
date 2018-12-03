@@ -81,10 +81,11 @@ class DataProvider
     public function setClass(string $class, $resource=null)
     {
         $this->class = $class;
-        if($resource != null){
+        if ($resource != null) {
             $this->resource = $resource;
+        } else {
+            $this->resource = self::pluralize((new \ReflectionClass($class))->getShortName());
         }
-        else{$this->resource = self::pluralize((new \ReflectionClass($class))->getShortName());}
     }
     
     /**

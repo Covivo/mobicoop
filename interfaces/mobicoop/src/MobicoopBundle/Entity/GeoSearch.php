@@ -23,7 +23,6 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Entity;
 
-
 /**
  * GeoSearch.php
  * Entity for GeoSearchController.php
