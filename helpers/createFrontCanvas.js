@@ -19,17 +19,15 @@ const bundle = path.resolve(__dirname, '../interfaces/mobicoop/src/MobicoopBundl
       else{return true;}
     }
   }*/
+if (!program.destination)  {
+  process.stderr.write(kuler('You did not specify a path to copy canvas to .. ','orange'));
+  return;
+}
 
 program
   .version('0.1.0')
   .option('-d, --destination  <dir>', 'Path to copy canvas to')
   .parse(process.argv);
-
-
-if (!program.destination)  {
-  process.stderr.write(kuler('You did not specify a path to copy canvas to .. ','orange'));
-  return;
-}
 
 
 // This function check copy to path sent & link to bunlde
