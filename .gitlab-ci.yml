@@ -49,7 +49,7 @@ test:test:
   only:
     - dev
   variables:
-    APP_ENV: test # important because symfony use it
+    APP_ENV: testAndCoverage # important because symfony use it
   before_script:
     - npm install --unsafe-perm
   script:
