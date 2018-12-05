@@ -53,7 +53,9 @@ sast:
       --volume /var/run/docker.sock:/var/run/docker.sock
       "registry.gitlab.com/gitlab-org/security-products/sast:$SP_VERSION" /app/bin/run /code
   artifacts:
-    paths: [gl-sast-report.json]
+    reports:
+      sast: gl-sast-report.json
+
 
 dependency_scanning:
   stage: test
@@ -72,7 +74,7 @@ dependency_scanning:
       "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:$SP_VERSION" /code
   artifacts:
     paths: [gl-dependency-scanning-report.json]
-    
+
 test:dev:
   stage: test
   variables:
