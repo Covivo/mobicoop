@@ -49,11 +49,11 @@ test:test:
   only:
     - dev
   variables:
-    APP_ENV: testAndCoverage # important because symfony use it
+    APP_ENV: test # important because symfony use it
   before_script:
     - npm install --unsafe-perm
   script:
-    - npm test
+    - npm testAndCoverage
     - php interfaces/mobicoop/bin/console cache:clear --env=test --no-debug
     - php api/bin/console cache:clear --env=test --no-debug
     - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
