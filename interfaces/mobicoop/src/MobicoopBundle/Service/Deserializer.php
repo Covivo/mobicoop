@@ -23,12 +23,14 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Service;
 
+use Mobicoop\Bundle\MobicoopBundle\Entity\GeoSearch;
 use Mobicoop\Bundle\MobicoopBundle\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Entity\ExternalJourney;
 use Mobicoop\Bundle\MobicoopBundle\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Entity\UserAddress;
 
+use phpDocumentor\Reflection\Types\Self_;
 use TypeError;
 
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
@@ -77,11 +79,16 @@ class Deserializer
             case Matching::class:
                 return self::deserializeMatching($data);
                 break;
+            case GeoSearch::class:
+                return self::deserializeGeoSearch($data);
+                break;
             default:
                 break;
             case ExternalJourney::class:
                 return $data;
                 break;
+
+
         }
         return null;
     }
@@ -117,6 +124,16 @@ class Deserializer
     }
     
     private function deserializeAddress(array $data): ?Address
+    {
+        $address = new Address();
+        $address = self::autoSet($address, $data);
+        if (isset($data["@id"])) {
+            $address->setIri($data["@id"]);
+        }
+        return $address;
+    }
+
+    private function deserializeGeoSearch(array $data): ?Address
     {
         $address = new Address();
         $address = self::autoSet($address, $data);

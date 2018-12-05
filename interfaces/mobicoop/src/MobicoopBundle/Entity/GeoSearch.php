@@ -21,12 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Geography\Entity;
-
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-
-use App\Geography\Controller\GeoSearchController;
+namespace Mobicoop\Bundle\MobicoopBundle\Entity;
 
 /**
  * GeoSearch.php
@@ -38,37 +33,8 @@ use App\Geography\Controller\GeoSearchController;
  *
  */
 
-/**
- * A completed address from string
- *
- * @ApiResource(
- *      collectionOperations={
- *          "get"={
- *              "path"="/geo_search",
- *              "controller"=GeoSearchController::class,
- *              "swagger_context"={
- *                  "parameters"={
- *                     {
- *                         "name" = "input",
- *                         "in" = "query",
- *                         "required" = "true",
- *                         "type" = "string",
- *                         "description" = "user's input"
- *                     }
- *                   }
- *              }
- *          }
- *      },
- *      itemOperations={}
- * )
- */
 class GeoSearch
 {
-    /**
-     * @var int The id of this completion.
-     *
-     * @ApiProperty(identifier=true)
-     */
     private $id;
 
     public function __construct($id)

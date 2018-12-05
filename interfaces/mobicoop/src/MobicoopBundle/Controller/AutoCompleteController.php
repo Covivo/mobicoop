@@ -23,28 +23,35 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\Service\GeoSearchManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Request;
-use Mobicoop\Bundle\MobicoopBundle\Service\ExternalJourneyManager;
-
-use GuzzleHttp\Client;
 
 /**
- * Class ExternalJourneyController
- * Controller class to display external Journey (rdexAPI)
- * @package Mobicoop\Bundle\MobicoopBundle\Controller
+ * TestAutoCompleteController.php
+ * Class
+ * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
+ * Date: 27/11/2018
+ * Time: 13:23
+ *
  */
-class ExternalJourneyController extends AbstractController
+
+class AutoCompleteController extends AbstractController
 {
 
     /**
-     * @Route("/externaljourney")
+     * Retrieve all geosearch results of an input
+     *
+     * @Route("/aut")
      */
-    public function ExternalJourneyIndex()
+    public function AutoCompleteIndex(GeoSearchManager $geoSearchManager)
     {
-        $baseUri = $_ENV['API_URI'];
-        return $this->render('@Mobicoop/proposal/externalAsync.html.twig', ['baseUri' => $baseUri]);
+        return $this->render(
+            '@Mobicoop/autocomplete/index.html.twig',
+            [
+                'GeoSearch' => $geoSearchManager->getGeoSearch(['input'=>'Nancy'])
+            ]
+        );
     }
 }

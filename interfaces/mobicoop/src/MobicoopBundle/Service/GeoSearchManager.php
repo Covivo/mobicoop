@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -21,30 +20,41 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\Service;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Request;
-use Mobicoop\Bundle\MobicoopBundle\Service\ExternalJourneyManager;
-
-use GuzzleHttp\Client;
+use Mobicoop\Bundle\MobicoopBundle\Entity\GeoSearch;
 
 /**
- * Class ExternalJourneyController
- * Controller class to display external Journey (rdexAPI)
- * @package Mobicoop\Bundle\MobicoopBundle\Controller
+ * GeoSearchManager.php
+ * Geopoint search management service.
+ * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
+ * Date: 29/11/2018
+ * Time: 16:38
+ *
  */
-class ExternalJourneyController extends AbstractController
+
+class GeoSearchManager
 {
+    private $dataProvider;
+    private $deserializer;
+
+    public function __construct(DataProvider $dataProvider, Deserializer $deserializer)
+    {
+        $this->dataProvider = $dataProvider;
+        $this->dataProvider->setClass(GeoSearch::class, 'geo_search');
+    }
 
     /**
-     * @Route("/externaljourney")
+     * Get all Geosearch results
+     *
+     * @return array|GeoSearch|null
      */
-    public function ExternalJourneyIndex()
+    public function getGeoSearch(array $params)
     {
-        $baseUri = $_ENV['API_URI'];
-        return $this->render('@Mobicoop/proposal/externalAsync.html.twig', ['baseUri' => $baseUri]);
+        $response = $this->dataProvider->getCollection($params);
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
     }
 }
