@@ -117,7 +117,7 @@ test:prod:
   before_script:
     - npm install --unsafe-perm
   script:
-    - npm test
+    - npm run testAndCoverage
   only:
     - master
 
