@@ -4,17 +4,25 @@
   "private": true,
   "dependencies": {
     "@api-platform/admin": "^0.5.1",
-    "react": "^16.5.2",
-    "react-dom": "^16.5.2",
-    "react-scripts": "1.1.5"
+    "ajv": "^6.0.0",
+    "dotenv": "^6.1.0",
+    "react": "^16.3.0",
+    "react-dom": "^16.3.0",
+    "react-scripts": "^2.1.1"
   },
   "scripts": {
-    "start": "cross-env PORT=8082 FORCE_COLOR=true node runstart.js",
+    "start": "cross-env PORT=8082 FORCE_COLOR=true BROWSER=none NODE_ENV=dev node runstart.js",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
   "devDependencies": {
     "cross-env": "^5.2.0"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }

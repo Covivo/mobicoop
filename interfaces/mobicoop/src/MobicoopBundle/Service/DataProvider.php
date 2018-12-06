@@ -72,11 +72,20 @@ class DataProvider
         $this->serializer = new Serializer($normalizers, $encoders);
         $this->deserializer = $deserializer;
     }
-    
-    public function setClass(string $class)
+
+    /**
+     * @param string $class
+     * @param routename|null $resource
+     * @throws \ReflectionException
+     */
+    public function setClass(string $class, $resource=null)
     {
         $this->class = $class;
-        $this->resource = self::pluralize((new \ReflectionClass($class))->getShortName());
+        if ($resource != null) {
+            $this->resource = $resource;
+        } else {
+            $this->resource = self::pluralize((new \ReflectionClass($class))->getShortName());
+        }
     }
     
     /**
@@ -126,7 +135,7 @@ class DataProvider
         // @todo : send the params to the request in the json body of the request
         
         try {
-            $clientResponse = $this->client->get($this->resource);
+            $clientResponse = $this->client->get($this->resource, ['query'=>$params]);
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody()));
             }
@@ -135,7 +144,7 @@ class DataProvider
         }
         return new Response();
     }
-    
+
     /**
      * Get sub collection operation
      *
@@ -149,12 +158,12 @@ class DataProvider
     public function getSubCollection(int $id, string $subClassName, string $subClassRoute=null, array $params=null): Response
     {
         // @todo : send the params to the request in the json body of the request
-        
+
         $route = $subClassRoute;
         if (is_null($route)) {
             $route = self::pluralize((new \ReflectionClass($subClassName))->getShortName());
         }
-        
+
         try {
             $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route);
             if ($clientResponse->getStatusCode() == 200) {

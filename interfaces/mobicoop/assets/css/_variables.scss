@@ -7,3 +7,21 @@ $mainFontColor: #000;
 $mainBackgroundColor: #FFF;
 $secondBackgroundColor: #0FF;
 $footer-background-color: #FFF;
+$partners: (
+  mobicoop: (
+    base: rgba(217, 0, 0, 0.5),
+    url: 'www.roulezmalin.com'
+  ),
+  ouestgo: (
+    base: rgba(54, 81, 255, 0.5),
+    url: 'test.ouestgo.fr'
+  ),
+  itinisere: (
+    base: rgba(102, 255, 76, 0.5),
+    url: 'www.tedicov.fr'
+  ),
+  tictactrip: (
+    base: rgba(255, 223, 211, 1),
+    url: 'covoiturage-libre.fr'
+  )
+);

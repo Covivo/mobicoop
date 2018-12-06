@@ -4,10 +4,10 @@ Mobicoop
 ![Logo mobicoop](logo.jpg)
 
 <p align="center">
-  <a href="https://www.gnu.org/licenses/agpl-3.0" ><img alt="License: AGPL v3" src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg"/></a>
-  <a href="https://gitlab.com/mobicoop/mobicoop/-/jobs"><img alt="Build Status" src="https://gitlab.com/mobicoop/mobicoop/badges/master/build.svg"></a>
-  <a href="https://gitlab.com/mobicoop/mobicoop/commits/master"><img alt="coverage report" src="https://gitlab.com/mobicoop/mobicoop/badges/master/coverage.svg" /></a>
-  <a href="https://ci.appveyor.com/project/MatthD/mobicoop/branch/master"><img src="https://ci.appveyor.com/api/projects/status/lxrhumbiss1s084h/branch/dev?svg=true"></a>
+  <a href="https://codeclimate.com/github/Covivo/mobicoop/maintainability"><img src="https://api.codeclimate.com/v1/badges/a9393c639d5627da3883/maintainability" /></a>  <a href="https://www.gnu.org/licenses/agpl-3.0" ><img alt="License: AGPL v3" src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg"/></a>
+  <a href="https://gitlab.com/mobicoop/mobicoop/pipelines"><img alt="Build Status" src="https://gitlab.com/mobicoop/mobicoop/badges/dev/build.svg"></a>
+  <a href="https://gitlab.com/mobicoop/mobicoop/commits/dev"><img alt="coverage report" src="https://gitlab.com/mobicoop/mobicoop/badges/dev/coverage.svg" /></a>
+  <a href="https://ci.appveyor.com/project/MatthD/mobicoop/branch/dev"><img src="https://ci.appveyor.com/api/projects/status/lxrhumbiss1s084h/branch/dev?svg=true"></a>
 </p>
 
 ### About mobicoop
@@ -27,6 +27,8 @@ For more informations, check their readme:
 - Node.js => 10
 - xdebug (needed for code-coverage)
 - Google Chrome (for functionnals tests)
+- If you have missing modules during installation check this docker file
+install & enable in you .ini all its php extensions : [Docker file](https://github.com/vyuldashev/docker-ci-php-node/blob/master/Dockerfile)
 
 - for Windows check the [windows requirement](#windows-requirements) part
 
@@ -39,12 +41,14 @@ For more informations, check their readme:
 
 *DUPLICATE THE [config.json.dist](config.json.dist) INTO A `config.json` FILE*
 
-`npm install` will perfom:
+
+#### For all apps
+
+`npm install --no-save` will perfom:
  - Api vendor
  - Mobicoop vendor+node_modules+build assets 
  - Admin node_modules 
  - Download tools binaries (php-cs-fixer & phpdocumentor)
-
 
 - Sometimes if tools do not work you will ne on unix systems: `chmod 775 bin/*`
 
@@ -53,8 +57,14 @@ For more informations, check their readme:
     - [config.json api](api/config.json.dist)
     - [.env mobicoop](interfaces/mobicoop/.env.dist) 
 
-*do not edit the dist file with your config info*
+*Do not edit the dist file with your config info*
 
+- If you have missing modules during installation check this docker file
+and install all its php extensions : [Docker file](https://github.com/vyuldashev/docker-ci-php-node/blob/master/Dockerfile)
+
+#### API
+
+There are some needs for api database , check them [/api](/api)
 
 
 ### Tests 🎰

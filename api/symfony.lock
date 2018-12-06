@@ -11,6 +11,9 @@
             "ref": "18727d8f229306860b46955f438e1897421da689"
         }
     },
+    "clue/stream-filter": {
+        "version": "v1.4.0"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
@@ -77,6 +80,39 @@
     "doctrine/reflection": {
         "version": "v1.0.0"
     },
+    "geocoder-php/bing-maps-provider": {
+        "version": "4.0.0"
+    },
+    "geocoder-php/chain-provider": {
+        "version": "4.0.0"
+    },
+    "geocoder-php/common-http": {
+        "version": "4.1.0"
+    },
+    "geocoder-php/google-maps-provider": {
+        "version": "4.2.0"
+    },
+    "geocoder-php/here-provider": {
+        "version": "0.1.0"
+    },
+    "geocoder-php/locationiq-provider": {
+        "version": "1.0.0"
+    },
+    "geocoder-php/open-cage-provider": {
+        "version": "4.0.0"
+    },
+    "geocoder-php/plugin": {
+        "version": "1.1.0"
+    },
+    "guzzlehttp/guzzle": {
+        "version": "6.3.3"
+    },
+    "guzzlehttp/promises": {
+        "version": "v1.3.1"
+    },
+    "guzzlehttp/psr7": {
+        "version": "1.4.2"
+    },
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
     },
@@ -98,6 +134,24 @@
     "ocramius/proxy-manager": {
         "version": "2.1.1"
     },
+    "php-http/discovery": {
+        "version": "1.4.0"
+    },
+    "php-http/guzzle6-adapter": {
+        "version": "v2.0.0"
+    },
+    "php-http/httplug": {
+        "version": "v1.1.0"
+    },
+    "php-http/message": {
+        "version": "1.7.2"
+    },
+    "php-http/message-factory": {
+        "version": "v1.0.2"
+    },
+    "php-http/promise": {
+        "version": "v1.0.0"
+    },
     "phpdocumentor/reflection-common": {
         "version": "1.0.1"
     },
@@ -112,6 +166,12 @@
     },
     "psr/container": {
         "version": "1.0.0"
+    },
+    "psr/http-client": {
+        "version": "1.0.0"
+    },
+    "psr/http-message": {
+        "version": "1.0.1"
     },
     "psr/log": {
         "version": "1.0.2"
@@ -197,6 +257,9 @@
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
     },
+    "symfony/options-resolver": {
+        "version": "v4.1.7"
+    },
     "symfony/polyfill-mbstring": {
         "version": "v1.9.0"
     },
@@ -280,6 +343,18 @@
     },
     "webmozart/assert": {
         "version": "1.3.0"
+    },
+    "willdurand/geocoder": {
+        "version": "4.2.0"
+    },
+    "willdurand/geocoder-bundle": {
+        "version": "5.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "5.0",
+            "ref": "b272ad4fbfcd45a20e7cbfdc4ad1b0e27a62fd3b"
+        }
     },
     "willdurand/negotiation": {
         "version": "v2.3.1"

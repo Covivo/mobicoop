@@ -27,6 +27,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -42,7 +43,7 @@ use App\User\Entity\UserAddress;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"read","pt"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={},
@@ -59,15 +60,15 @@ class Address
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Groups("read")
+     * @ApiProperty(identifier=true)
      */
     private $id;
     
     /**
      * @var string The street address.
      *
-     * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","pt"})
      */
     private $streetAddress;
     
@@ -75,25 +76,23 @@ class Address
      * @var string|null The postal code of the address.
      *
      * @ORM\Column(type="string", length=15, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","pt"})
      */
     private $postalCode;
     
     /**
      * @var string The locality of the address.
      *
-     * @Assert\NotBlank
      * @ORM\Column(type="string", length=100)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","pt"})
      */
     private $addressLocality;
     
     /**
      * @var string The country of the address.
      *
-     * @Assert\NotBlank
      * @ORM\Column(type="string", length=100)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","pt"})
      */
     private $addressCountry;
     
@@ -101,7 +100,7 @@ class Address
      * @var string The latitude of the address.
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","pt"})
      */
     private $latitude;
     
@@ -109,7 +108,7 @@ class Address
      * @var string The longitude of the address.
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","pt"})
      */
     private $longitude;
     
@@ -117,16 +116,21 @@ class Address
      * @var int|null The elevation of the address in metres.
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","pt"})
      */
     private $elevation;
-        
+
+    public function __construct($id)
+    {
+        $this->id = $id;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
     
-    public function getStreetAddress(): string
+    public function getStreetAddress(): ?string
     {
         return $this->streetAddress;
     }
@@ -136,12 +140,12 @@ class Address
         return $this->postalCode;
     }
 
-    public function getAddressLocality(): string
+    public function getAddressLocality(): ?string
     {
         return $this->addressLocality;
     }
 
-    public function getAddressCountry(): string
+    public function getAddressCountry(): ?string
     {
         return $this->addressCountry;
     }
@@ -166,6 +170,11 @@ class Address
         return $this->userAddress;
     }
 
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+    
     public function setStreetAddress(string $streetAddress)
     {
         $this->streetAddress = $streetAddress;
@@ -176,7 +185,7 @@ class Address
         $this->postalCode = $postalCode;
     }
 
-    public function setAddressLocality(string $addressLocality)
+    public function setAddressLocality(?string $addressLocality)
     {
         $this->addressLocality = $addressLocality;
     }

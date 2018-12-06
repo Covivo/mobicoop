@@ -45,3 +45,10 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Address/Entity'
                 prefix: 'App\Address\Entity'
                 alias: Address
+            Geography:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Geography/Entity'
+                prefix: 'App\Geography\Entity'
+                alias: Geography
+                

@@ -7,7 +7,7 @@ Encore
     // public path used by the web server to access the output path
     .setPublicPath('/build')
     // only needed for CDN's or sub-directory deploy
-    //.setManifestKeyPrefix('build/')
+    // .setManifestKeyPrefix('build/')
 
     /*
      * ENTRY CONFIG
@@ -18,7 +18,11 @@ Encore
      * Each entry will result in one JavaScript file (e.g. app.js)
      * and one CSS file (e.g. app.css) if you JavaScript imports CSS.
      */
+     .addEntry('autocomplete', './assets/js/page/autocomplete.js')
      .addEntry('app', './assets/js/app.js')
+     .addEntry('home', './assets/js/page/home.js')
+     .addEntry('users', './assets/js/page/users.js')
+     .splitEntryChunks()
 
     /*
      * FEATURE CONFIG
@@ -36,7 +40,7 @@ Encore
         test: /\.(js|vue)$/,
         enforce: 'pre',
         loader: 'eslint-loader',
-        exclude: ['node_modules','/node_modules','/vendor','/public'],
+        exclude: ['/node_modules','/vendor','/public'],
         options: {
           fix: true
         }
@@ -54,7 +58,7 @@ Encore
     .configureBabel(function(babelConfig) {
         // add additional presets
         babelConfig.plugins.push('transform-class-properties');
-        babelConfig.presets.push('stage-3');
+        // babelConfig.presets.push('stage-3');
     })
     // This will add compatibility for old nav
     .enablePostCssLoader()

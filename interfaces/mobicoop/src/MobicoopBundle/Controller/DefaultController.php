@@ -26,23 +26,23 @@ namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
-use Mobicoop\Bundle\MobicoopBundle\Util\Calculator;
 
 class DefaultController extends AbstractController
 {
     /**
-     *
+     * HomePage
      * @Route("/")
      *
      */
     public function index()
     {
-        // Generate a square randomed value between min-max
-        $calculs = new Calculator();
-        $nb = $calculs->randAndSquare(1, 5);
-        return $this->render('@Mobicoop/default/index.html.twig', [
-            'controller_name' => 'DefaultController',
-            'nb' => $nb
-        ]);
+        $baseUri = $_ENV['API_URI'];
+        return $this->render(
+            '@Mobicoop/default/index.html.twig',
+            [
+                'baseUri' => $baseUri,
+                'metaDescription' => 'Homepage of Mobicoop'
+            ]
+        );
     }
 }
