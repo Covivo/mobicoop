@@ -36,6 +36,7 @@
 
     // I need to use VueResource for $http.
     Vue.use(VueResource)
+    const API_URI = 'api.mobicoop.io'
 
     export default {
         data() {
@@ -53,7 +54,7 @@
                     return
                 }
                 this.isFetching = true
-                this.$http.get(`http://localhost:8080/geo_search?input=${this.name}`)
+                this.$http.get(`http://${API_URI}/geo_search?input=${this.name}`)
                     .then(({ data }) => {
                         this.data = []
                         data['hydra:member'].forEach((item) => this.data.push(item))

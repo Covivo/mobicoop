@@ -13,10 +13,8 @@ import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
 import Autocomplete from '../components/Autocomplete';
 
 
-
 Vue.use(Affix);
 Vue.use(Buefy);
-
 new Vue({
     el: '#app',
     components: { Autocomplete, VueBootstrapTypeahead},
