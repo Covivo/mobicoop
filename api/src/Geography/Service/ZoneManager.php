@@ -37,16 +37,16 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class ZoneManager
 {
-    CONST ZONE_STEP = 0.25;         // la finesse de la grille en degré : 0.5 correspond à 0.5° de latitude et longitude
-    CONST ZONE_MIN_LAT = -55;       // sud chili
-    CONST ZONE_MAX_LAT = 71;        // nord norvege
-    CONST ZONE_MIN_LON = -180;
-    CONST ZONE_MAX_LON = 180;
-    CONST ZONE_FINE = 0.000001;     // la précision des valeurs de longitude et latitude stockées en base : 
-                                    // par exemple pour une latitude 48, pour une précision de 0.000001 et un pas de 0.5 
-                                    // => de 48.000000 à 48.499999, de 48.500000 à 48.999999 etc...
+    const ZONE_STEP = 0.25;         // la finesse de la grille en degré : 0.5 correspond à 0.5° de latitude et longitude
+    const ZONE_MIN_LAT = -55;       // sud chili
+    const ZONE_MAX_LAT = 71;        // nord norvege
+    const ZONE_MIN_LON = -180;
+    const ZONE_MAX_LON = 180;
+    const ZONE_FINE = 0.000001;     // la précision des valeurs de longitude et latitude stockées en base :
+    // par exemple pour une latitude 48, pour une précision de 0.000001 et un pas de 0.5
+    // => de 48.000000 à 48.499999, de 48.500000 à 48.999999 etc...
     
-    CONST ZONE_EXCLUSION = [
+    const ZONE_EXCLUSION = [
         'south_atlantic' => [
             "-5.370941 -32.981277",
             "-53.671561 -51.196775",
@@ -115,7 +115,7 @@ class ZoneManager
             "-20.416770 -177.355128"
         ]
     ];
-    CONST EXCLUDE_ZONES = true;         // exclude zones when creating
+    const EXCLUDE_ZONES = true;         // exclude zones when creating
     
     private $entityManager;
     
@@ -145,9 +145,8 @@ class ZoneManager
             if (($baseAddressLatitude <> $baseLatitude) || ($baseAddressLongitude <> $baseLongitude)) {
                 $baseLongitude = $baseAddressLongitude;
                 $baseLatitude = $baseAddressLatitude;
-                $zones = array_merge($zones,$this->getZonesForAddress($address, $deep));
+                $zones = array_merge($zones, $this->getZonesForAddress($address, $deep));
             }
-            
         }
         $return = [];
         foreach ($zones as $zone) {
@@ -216,12 +215,18 @@ class ZoneManager
     // eg. for a 0.25 step, the base value of 48.823543 is 48.75
     public function getBase($value, $step=null)
     {
-        if (is_null($step)) $step = self::ZONE_STEP;
+        if (is_null($step)) {
+            $step = self::ZONE_STEP;
+        }
         $nbstep = 1/$step;
         $base = intval($value);
         for ($i=1;$i<=$nbstep;$i++) {
-            if ($base+($step*$i)>$value && $value>=0) return $base+($step*($i-1));
-            if ($base-($step*$i)<$value && $value<0) return $base-($step*($i-1));
+            if ($base+($step*$i)>$value && $value>=0) {
+                return $base+($step*($i-1));
+            }
+            if ($base-($step*$i)<$value && $value<0) {
+                return $base-($step*($i-1));
+            }
         }
         
         /*if ($step == self::ZONE_STEP) {
@@ -231,10 +236,10 @@ class ZoneManager
     
     /**
      * FOR R&D PURPOSE ONLY
-     * 
+     *
      * Creation of geographic zones in th database.
      */
-    public function createZones() 
+    public function createZones()
     {
         // Create connection
         $conn = new \mysqli(
@@ -252,7 +257,7 @@ class ZoneManager
         $MAX_LAT = self::ZONE_MAX_LAT;
         $MIN_LON = self::ZONE_MIN_LON;
         $MAX_LON = self::ZONE_MAX_LON;
-        $step = self::ZONE_STEP;   
+        $step = self::ZONE_STEP;
         $fine = self::ZONE_FINE;
         $delta = $step - $fine;
         $zones = [];
@@ -411,28 +416,28 @@ class ZoneManager
             }
             
             // pour chaque zone on va aussi vérifier qu'elle a effectivement été créée : il pourrait s'agir d'une zone exclue (océan)
-            if (($x1>0) && ((self::EXCLUDE_ZONES && in_array($x1,$zones)) || (!self::EXCLUDE_ZONES))) {
+            if (($x1>0) && ((self::EXCLUDE_ZONES && in_array($x1, $zones)) || (!self::EXCLUDE_ZONES))) {
                 $sql .= "($i,$x1),";
             }
-            if (($x2>0) && ((self::EXCLUDE_ZONES && in_array($x2,$zones)) || (!self::EXCLUDE_ZONES))) {
+            if (($x2>0) && ((self::EXCLUDE_ZONES && in_array($x2, $zones)) || (!self::EXCLUDE_ZONES))) {
                 $sql .= "($i,$x2),";
             }
-            if (($x3>0) && ((self::EXCLUDE_ZONES && in_array($x3,$zones)) || (!self::EXCLUDE_ZONES))) {
+            if (($x3>0) && ((self::EXCLUDE_ZONES && in_array($x3, $zones)) || (!self::EXCLUDE_ZONES))) {
                 $sql .= "($i,$x3),";
             }
-            if (($x4>0) && ((self::EXCLUDE_ZONES && in_array($x4,$zones)) || (!self::EXCLUDE_ZONES))) {
+            if (($x4>0) && ((self::EXCLUDE_ZONES && in_array($x4, $zones)) || (!self::EXCLUDE_ZONES))) {
                 $sql .= "($i,$x4),";
             }
-            if (($x5>0) && ((self::EXCLUDE_ZONES && in_array($x5,$zones)) || (!self::EXCLUDE_ZONES))) {
+            if (($x5>0) && ((self::EXCLUDE_ZONES && in_array($x5, $zones)) || (!self::EXCLUDE_ZONES))) {
                 $sql .= "($i,$x5),";
             }
-            if (($x6>0) && ((self::EXCLUDE_ZONES && in_array($x6,$zones)) || (!self::EXCLUDE_ZONES))) {
+            if (($x6>0) && ((self::EXCLUDE_ZONES && in_array($x6, $zones)) || (!self::EXCLUDE_ZONES))) {
                 $sql .= "($i,$x6),";
             }
-            if (($x7>0) && ((self::EXCLUDE_ZONES && in_array($x7,$zones)) || (!self::EXCLUDE_ZONES))) {
+            if (($x7>0) && ((self::EXCLUDE_ZONES && in_array($x7, $zones)) || (!self::EXCLUDE_ZONES))) {
                 $sql .= "($i,$x7),";
             }
-            if (($x8>0) && ((self::EXCLUDE_ZONES && in_array($x8,$zones)) || (!self::EXCLUDE_ZONES))) {
+            if (($x8>0) && ((self::EXCLUDE_ZONES && in_array($x8, $zones)) || (!self::EXCLUDE_ZONES))) {
                 $sql .= "($i,$x8),";
             }
             
@@ -456,13 +461,16 @@ class ZoneManager
     }
 }
 
-class pointLocation {
-    var $pointOnVertex = true; // Vérifier si le point est exactement sur un sommet ?
+class pointLocation
+{
+    public $pointOnVertex = true; // Vérifier si le point est exactement sur un sommet ?
     
-    function pointLocation() {
+    public function pointLocation()
+    {
     }
     
-    function pointInPolygon($point, $polygon, $pointOnVertex = true) {
+    public function pointInPolygon($point, $polygon, $pointOnVertex = true)
+    {
         $this->pointOnVertex = $pointOnVertex;
         
         // Transformer chaque couple de coordonnées en un tableau de 2 valeurs (x et y)
@@ -505,19 +513,18 @@ class pointLocation {
         }
     }
     
-    function pointOnVertex($point, $vertices) {
-        foreach($vertices as $vertex) {
+    public function pointOnVertex($point, $vertices)
+    {
+        foreach ($vertices as $vertex) {
             if ($point == $vertex) {
                 return true;
             }
         }
-        
     }
     
-    function pointStringToCoordinates($pointString) {
+    public function pointStringToCoordinates($pointString)
+    {
         $coordinates = explode(" ", $pointString);
         return array("x" => $coordinates[0], "y" => $coordinates[1]);
     }
-    
 }
-

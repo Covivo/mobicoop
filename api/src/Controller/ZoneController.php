@@ -49,5 +49,4 @@ class ZoneController extends AbstractController
         $zoneManager->createZones();
         exit;
     }
-    
 }

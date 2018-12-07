@@ -252,7 +252,7 @@ class GeoRouterController extends AbstractController
         $distance2 = $route2->getDistance()/1000;
         
         $zones1 = $zoneManager->getZonesForAddresses($route1->getPoints());
-        $zones2 = $zoneManager->getZonesForAddresses($route1->getPoints(),1);
+        $zones2 = $zoneManager->getZonesForAddresses($route1->getPoints(), 1);
         
         $time_elapsed_secs = microtime(true) - $start;
         
@@ -271,5 +271,4 @@ class GeoRouterController extends AbstractController
         echo "Calculation duration = $time_elapsed_secs s";
         exit;
     }
-    
 }
