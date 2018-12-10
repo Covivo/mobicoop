@@ -256,7 +256,7 @@ class Deserializer
         if (isset($data["ptlegs"])) {
             $ptlegs = [];
             foreach ($data["ptlegs"] as $ptleg) {
-                $ptlegs[] = self::deserializePTLeg($ptleg,count($ptlegs));
+                $ptlegs[] = self::deserializePTLeg($ptleg, count($ptlegs));
             }
             $PTJourney->setPTLegs($ptlegs);
         }
@@ -302,7 +302,7 @@ class Deserializer
         if (isset($data["ptsteps"])) {
             $ptsteps = [];
             foreach ($data["ptsteps"] as $ptstep) {
-                $ptsteps[] = self::deserializePTStep($ptstep,count($ptstep));
+                $ptsteps[] = self::deserializePTStep($ptstep, count($ptstep));
             }
             $PTLeg->setPTSteps($ptsteps);
         }

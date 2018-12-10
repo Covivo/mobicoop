@@ -45,5 +45,5 @@ class DefaultController extends AbstractController
                 'metaDescription' => 'Homepage of Mobicoop'
             ]
         );
-    }    
+    }
 }

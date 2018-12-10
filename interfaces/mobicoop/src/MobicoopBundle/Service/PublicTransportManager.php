@@ -37,7 +37,7 @@ class PublicTransportManager
     public function __construct(DataProvider $dataProvider, Deserializer $deserializer)
     {
         $this->dataProvider = $dataProvider;
-        $this->dataProvider->setClass(PTJourney::class,"public_transport/journeys");
+        $this->dataProvider->setClass(PTJourney::class, "public_transport/journeys");
     }
     
     /**
@@ -54,8 +54,7 @@ class PublicTransportManager
         float $destination_longitude,
         string $date,
         string $dateType
-        )
-    {
+        ) {
         $response = $this->dataProvider->getCollection([
             'provider'              => $provider,
             'apikey'                => $apikey,
@@ -71,5 +70,4 @@ class PublicTransportManager
         }
         return null;
     }
-    
 }
