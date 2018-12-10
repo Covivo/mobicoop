@@ -21,29 +21,27 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\Entity;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\Routing\Annotation\Route;
-use Mobicoop\Bundle\MobicoopBundle\Service\PublicTransportManager;
-
-class DefaultController extends AbstractController
+/**
+ * A public transport company.
+ *
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ */
+class PTCompany
 {
     /**
-     * HomePage
-     * @Route("/")
-     *
+     * @var string The name of this company.
      */
-    public function index()
+    private $name;
+    
+    public function getName()
     {
-        $baseUri = $_ENV['API_URI'];
-        return $this->render(
-            '@Mobicoop/default/index.html.twig',
-            [
-                'baseUri' => $baseUri,
-                'metaDescription' => 'Homepage of Mobicoop'
-            ]
-        );
-    }    
+        return $this->name;
+    }
+    
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 }
