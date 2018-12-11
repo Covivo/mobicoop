@@ -1,5 +1,5 @@
 <html><head>
-<title>Schema Report for database: modele_v2</title>
+<title>Schema Report for database: mobicoop</title>
 <style>
         td,th {
         text-align:left;
@@ -29,90 +29,34 @@
         </style>
       </head>
      <body>
-<h1>Schema Report for database: modele_v2</h1>
+<h1>Schema Report for database: mobicoop</h1>
 <a id="home">Table List </a><br /><ul>
 <li><a href="#user">user </a></li>
-<li><a href="#vehicle">vehicle </a></li>
-<li><a href="#client">client </a></li>
-<li><a href="#language">language </a></li>
-<li><a href="#client_language">client_language </a></li>
 <li><a href="#proposal">proposal </a></li>
-<li><a href="#solicitation">solicitation </a></li>
-<li><a href="#registers">registers </a></li>
-<li><a href="#userAddress">userAddress </a></li>
-<li><a href="#manifestation">manifestation </a></li>
-<li><a href="#community">community </a></li>
-<li><a href="#community_user">community_user </a></li>
-<li><a href="#relayPoint">relayPoint </a></li>
-<li><a href="#community_proposal">community_proposal </a></li>
-<li><a href="#notification">notification </a></li>
-<li><a href="#article">article </a></li>
-<li><a href="#article_client">article_client </a></li>
-<li><a href="#payment">payment </a></li>
-<li><a href="#map">map </a></li>
-<li><a href="#ressource">ressource </a></li>
-<li><a href="#article_language">article_language </a></li>
-<li><a href="#currency">currency </a></li>
-<li><a href="#client_currency">client_currency </a></li>
-<li><a href="#permission">permission </a></li>
+<li><a href="#ask">ask </a></li>
 <li><a href="#matching">matching </a></li>
-<li><a href="#crew">crew </a></li>
-<li><a href="#user_crew">user_crew </a></li>
-<li><a href="#community_crew">community_crew </a></li>
-<li><a href="#step">step </a></li>
-<li><a href="#evaluation">evaluation </a></li>
-<li><a href="#quota">quota </a></li>
-<li><a href="#day">day </a></li>
+<li><a href="#waypoint">waypoint </a></li>
 <li><a href="#criteria">criteria </a></li>
 <li><a href="#address">address </a></li>
-<li><a href="#community_moderate">community_moderate </a></li>
-<li><a href="#communityType">communityType </a></li>
-<li><a href="#carousel">carousel </a></li>
 <li><a href="#mode">mode </a></li>
-<li><a href="#picto">picto </a></li>
-<li><a href="#relayPointGroup">relayPointGroup </a></li>
-<li><a href="#town">town </a></li>
-<li><a href="#authItem">authItem </a></li>
-<li><a href="#authItemChild">authItemChild </a></li>
-<li><a href="#ressource_user_client">ressource_user_client </a></li>
-<li><a href="#path">path </a></li>
-<li><a href="#stop">stop </a></li>
-<li><a href="#wallet">wallet </a></li>
-<li><a href="#movement">movement </a></li>
-<li><a href="#device">device </a></li>
-<li><a href="#action">action </a></li>
-<li><a href="#key">key </a></li>
-<li><a href="#image">image </a></li>
-<li><a href="#imageType">imageType </a></li>
-<li><a href="#thumbnail">thumbnail </a></li>
-<li><a href="#size">size </a></li>
-<li><a href="#sponsor">sponsor </a></li>
-<li><a href="#realized">realized </a></li>
+<li><a href="#route">route </a></li>
 <li><a href="#proposal_mode">proposal_mode </a></li>
-<li><a href="#user_device">user_device </a></li>
-<li><a href="#os">os </a></li>
-<li><a href="#software">software </a></li>
-<li><a href="#notificationType">notificationType </a></li>
-<li><a href="#event_type">event_type </a></li>
-<li><a href="#notificationSend">notificationSend </a></li>
-<li><a href="#map_address">map_address </a></li>
-<li><a href="#userValidation">userValidation </a></li>
-<li><a href="#userAddressType">userAddressType </a></li>
-<li><a href="#module">module </a></li>
-<li><a href="#relayPointType">relayPointType </a></li>
-<li><a href="#relayPoint_relayPointType">relayPoint_relayPointType </a></li>
-<li><a href="#picto_relayPointType">picto_relayPointType </a></li>
-<li><a href="#event">event </a></li>
-<li><a href="#expense">expense </a></li>
-<li><a href="#gamification">gamification </a></li>
-<li><a href="#gamification_event">gamification_event </a></li>
-<li><a href="#event_user_client">event_user_client </a></li>
-<li><a href="#gamification_user">gamification_user </a></li>
-<li><a href="#prize">prize </a></li>
-<li><a href="#point">point </a></li>
+<li><a href="#user_address">user_address </a></li>
+<li><a href="#ptjourney">ptjourney </a></li>
+<li><a href="#ptdeparture">ptdeparture </a></li>
+<li><a href="#ptarrival">ptarrival </a></li>
+<li><a href="#ptleg">ptleg </a></li>
+<li><a href="#ptmode">ptmode </a></li>
+<li><a href="#ptline">ptline </a></li>
+<li><a href="#ptcompany">ptcompany </a></li>
+<li><a href="#ptstep">ptstep </a></li>
+<li><a href="#car">car </a></li>
+<li><a href="#zone">zone </a></li>
+<li><a href="#near">near </a></li>
+<li><a href="#route_zone">route_zone </a></li>
 </ul>
 <a id="user"></a><table style="width:100%"><caption>Table: user </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des utilisateurs de l'application</td></tr>
+<tr><td>Table Comments</td><td colspan="6">User table</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -123,150 +67,41 @@
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Status d'inscription : 
-
-1 : actif
-2 : inscription minimale
-3 : désinscrit
-
-autre ?</td></tr>
-<tr><td>givenName</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Prénom</td></tr>
-<tr><td>familyName</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Nom</td></tr>
-<tr><td>email</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Email</td></tr>
-<tr><td>verifiedEmail</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date de vérification initiale de l'email</td></tr>
-<tr><td>identifier</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Identifiant (pseudo)</td></tr>
-<tr><td>password</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Mot de passe</td></tr>
-<tr><td>gender</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Genre
-1 : homme
-2 : femme</td></tr>
-<tr><td>nationality</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Pays</td></tr>
-<tr><td>birthDate</td><td>DATE</td><td>No</td><td>No</td><td>No</td><td></td><td>Date de naissance</td></tr>
-<tr><td>telephone</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>N° de téléphone</td></tr>
-<tr><td>message</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Message</td></tr>
-<tr><td>verifiedTelephone</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date de vérification initiale du numéro de téléphone</td></tr>
-<tr><td>FacebookId</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>ID Facebook</td></tr>
-<tr><td>GoogleId</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Id Google</td></tr>
-<tr><td>FranceConnectId</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>ID France Connect</td></tr>
-<tr><td>prefSmoke</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Fumeur : 
-0 : non
-1 : oui
-2 : pas en voiture</td></tr>
-<tr><td>prefMusic</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Musique : 
-0 : non
-1 : oui</td></tr>
-<tr><td>music</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Styles de musique</td></tr>
-<tr><td>prefSpeak</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Bavard  : 
-0 : non
-1 : oui</td></tr>
-<tr><td>speak</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Sujets de bavardage</td></tr>
-<tr><td>isSolidarityUser</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Demandeur solidaire</td></tr>
-<tr><td>solidarityDriver</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Conducteur solidaire : 
-0 : non
-1 : oui
-2 : exclusif</td></tr>
-<tr><td>isSolidarityPhone</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Accepter d'être contacté par téléphone pour un covoiturage solidaire</td></tr>
-<tr><td>solidarityStruct</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Structure accompagnant le demandeur solidaire</td></tr>
-<tr><td>idimage</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Image (photo)</td></tr>
-<tr><td>idlanguage</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Dernier langage choisi</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="vehicle"></a><table style="width:100%"><caption>Table: vehicle </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des véhicules</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idvehicle</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>brand</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Marque</td></tr>
-<tr><td>color</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Couleur</td></tr>
-<tr><td>model</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Modèle</td></tr>
-<tr><td>plate</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Plaque d'immatriculation</td></tr>
-<tr><td>seats</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Nombre de places disponibles habituellement</td></tr>
-<tr><td>critair</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Vignette critair</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Utilisateur</td></tr>
-<tr><td>idimage</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Image</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="client"></a><table style="width:100%"><caption>Table: client </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des clients</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom</td></tr>
-<tr><td>domain</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Domaine</td></tr>
-<tr><td>idimage</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Image (logo)</td></tr>
-<tr><td>idmap</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Cartographie</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="language"></a><table style="width:100%"><caption>Table: language </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des langues</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idlanguage</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom de la langue</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="client_language"></a><table style="width:100%"><caption>Table: client_language </caption>
-<tr><td>Table Comments</td><td colspan="6">Liste des langues acceptées par un client </td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Client</td></tr>
-<tr><td>idlanguage</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Langue</td></tr>
-<tr><td>isDefault</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Langue par défaut pour le client</td></tr>
-<tr><td>url</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Url par défaut dans la langue</td></tr>
-<tr><td>position</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Endroit où on indique la langue (url, sous-domaine...)</td></tr>
-<tr><td>name</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Nom du site dans la langue</td></tr>
-<tr><td>contactEmail</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Email de contact</td></tr>
-<tr><td>replyEmail</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Email de réponse</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>givenName</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>First name</td></tr>
+<tr><td>familyName</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Family name</td></tr>
+<tr><td>email</td><td>VARCHAR(100)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Email</td></tr>
+<tr><td>password</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Password</td></tr>
+<tr><td>gender</td><td>VARCHAR(30)</td><td>No</td><td>No</td><td>No</td><td></td><td>Gender
+</td></tr>
+<tr><td>nationality</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Nationality</td></tr>
+<tr><td>birthDate</td><td>DATE</td><td>No</td><td>No</td><td>No</td><td></td><td>B‏irth date</td></tr>
+<tr><td>telephone</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Telephone number</td></tr>
+<tr><td>maxDeviationTime</td><td>INT</td><td>No</td><td>No</td><td>No</td><td>600</td><td>Maximum deviation time (in seconds) as a driver to accept a request proposal</td></tr>
+<tr><td>maxDeviationDistance</td><td>INT</td><td>No</td><td>No</td><td>No</td><td>5000</td><td>Maximum deviation length (in metres) as a driver to accept a request proposal</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="proposal"></a><table style="width:100%"><caption>Table: proposal </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des propositions (offres et demandes) de covoiturage : 
-- soit un passager qui demande un trajet 
-- soit un conducteur qui propose un trajet
+<tr><td>Table Comments</td><td colspan="6">Proposal table :
 
-Une offre de trajet est composé de 2 étapes ou plus : 
-- une étape d'origine
-- une étape de destination
-- éventuellement des étapes intermédiaires
+- an offer from a driver
+- a request from a passenger
 
-L'étape d'origine est numérotée 0, les autres étapes sont numérotées incrémentalement.
+An offer consists in 2 or more points : 
+- an origin point
+- a destination point
+- zero or more middle points
 
-Une demande de trajet est initialement composée de 2 étapes : 
-- une étape d'origine
-- une étape de destination
+The origin point is numbered 0, other points are incremented.
 
-L'étape d'origine est numérotée 0, l'étape de destination est numérotée 1.
+A request is initially composed of 2 points : 
+- an origin point
+- a destination point
 
-En cas de trajet multimodal, la proposition originale est enregistrée, et une proposition calculée est générée. Cette proposition peut être composée d'étapes supplémentaires utilisant d'autres modes de transport (piéton, bus, tram...).
+The origin point is numbered 0, the destination point is numbered 1.
 
-La proposition est liée à un ensemble de critères de sélection (demande) ou de restriction (offre) qui se trouvent dans la table criteria.
+In the event of a multimodal route, the original proposal is saved and a calculated route is made. This calculated route may be composed of additional points linked with other travel modes than carpooling.
+
+The proposal is linked with offer or request criteria.
 
 </td></tr>
 <tr><td colspan="7">Columns</td></tr>
@@ -279,59 +114,24 @@ La proposition est liée à un ensemble de critères de sélection (demande) ou 
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>idproposal</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Client</td></tr>
-<tr><td>idcriteria</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Critères de sélection (si recherche) ou de restriction (si offre)</td></tr>
-<tr><td>idcurrency</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Monnaie</td></tr>
-<tr><td>idproposalLinked</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Proposition liée : retour d'un aller, aller d'un retour</td></tr>
-<tr><td>idproposalOpposite</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Proposition opposée liée : si un utilisateur dépose un trajet en tant que conducteur et passager</td></tr>
-<tr><td>idproposalOrigin</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Proposition d'origine si la proposition est une proposition calculée (cf multimodal)</td></tr>
-<tr><td>idproposalSimple</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Proposition d'origine si cette proposition d'origine est une recherche simple</td></tr>
-<tr><td>idvehicle</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Véhicule</td></tr>
-<tr><td>idmanifestation</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Evènement</td></tr>
-<tr><td>iduser</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Utilisateur qui dépose la proposition (vide si recherche simple, non connecté)</td></tr>
-<tr><td>proposalType</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Type de proposition : 
-1 : offre (conducteur)
-2 : demande (passager)</td></tr>
-<tr><td>tripType</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Type de trajet : 
-1 : aller simple
-2 : aller d'un aller/retour
-3 : retour d'un aller/retour</td></tr>
-<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date de création de la proposition</td></tr>
-<tr><td>origin</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Origine de la proposition : 
-0 : site
-1 : app iOS
-2 : app Android</td></tr>
-<tr><td>isSimple</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>La proposition est une recherche simple</td></tr>
-<tr><td>distanceReal</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Distance réelle calculée en mètres</td></tr>
-<tr><td>distanceFly</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Distance à vol d'oiseau en mètres</td></tr>
-<tr><td>duration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Durée réelle du trajet en secondes</td></tr>
-<tr><td>cape</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Cap (direction principale : N, S, E, O)</td></tr>
-<tr><td>hasHighway</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Le trajet emprunte l'autoroute</td></tr>
-<tr><td>hasToll</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Le trajet emprunte une route à péage</td></tr>
-<tr><td>amountCalculated</td><td>DECIMAL(10,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Coût du trajet estimé</td></tr>
-<tr><td>amountAsked</td><td>DECIMAL(10,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Coût du trajet demandé</td></tr>
-<tr><td>comment</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Commentaire sur la proposition</td></tr>
-<tr><td>isCommunitiesOnly</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Limité aux communautés choisies</td></tr>
-<tr><td>tripStyle</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Trajet : 
-0 : professionnel
-1 : autre</td></tr>
-<tr><td>isSolidarity</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Proposition solidaire</td></tr>
-<tr><td>solidarityObject</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Objet du déplacement si solidaire</td></tr>
-<tr><td>publishPhone</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Numéro de téléphone visible : 
-0 : dès la publication de l'annonce
-1 : dès la publication de l'annonce pour les communautés
-2 : après acceptation</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>idcriteria</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Request or offer criteria
+</td></tr>
+<tr><td>idproposalLinked</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Linked proposal for a round trip (return or outward journey)</td></tr>
+<tr><td>idproposalOrigin</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Original proposal if calculated proposal</td></tr>
+<tr><td>iduser</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>User who submits the proposal</td></tr>
+<tr><td>journeyType</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Journey type : 
+1 : one way trip
+2 : outward of a round trip
+3 : return of a round trip</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date of the proposal</td></tr>
+<tr><td>distance</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Distance of the full journey in metres</td></tr>
+<tr><td>duration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Estimated duration of the full journey in seconds (based on real distance)</td></tr>
+<tr><td>idcar</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td></td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="solicitation"></a><table style="width:100%"><caption>Table: solicitation </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des sollicitations suite à une offre ou une demande : 
-- soit un passager qui sollicite un conducteur qui a déposé une offre
-- soit un conducteur qui sollicite un passager qui a déposé une demande
-
-Notes pour un passager :  
-- la fréquence de la sollicitation peut être différente de la fréquence de la demande (ex : un passager demande un trajet régulier, et décide de ne répondre à une offre que pour un trajet ponctuel même si l'offre peut correspondre à sa demande régulière)
-- le trajet peut être différent de celui de l'offre et de la demande initiale (ex: une offre avec plusieurs étapes, une offre qui ne correspond pas exactement à la demande)
-- l'heure de départ peut être différente de celle de l'offre et de la demande : en fonction de la marge définie, on peut avoir une heure de départ calculée au mieux entre l'heure de départ souhaitée et celle proposée</td></tr>
+<a id="ask"></a><table style="width:100%"><caption>Table: ask </caption>
+<tr><td>Table Comments</td><td colspan="6">An ask made by a user (as a driver or passenger) after matching between an offer and a request.
+The user that creates the ask is either the driver or the passenger.</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -342,425 +142,31 @@ Notes pour un passager :
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>idsolicitation</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>idaddressFrom</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Adresse de départ</td></tr>
-<tr><td>idaddressTo</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Adresse de destination</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Utilisateur qui crée la sollicitation</td></tr>
-<tr><td>iduserOffer</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Conducteur (raccourci)</td></tr>
-<tr><td>iduserSearch</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Passager (raccourci)</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Client</td></tr>
-<tr><td>idmatching</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Matching correspondant</td></tr>
-<tr><td>idcriteria</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Critères de sélection (si recherche) ou de restriction (si offre)</td></tr>
-<tr><td>idcurrency</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Monnaie</td></tr>
-<tr><td>idsolicitationLinked</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Sollicitation liée (retour d'un aller, aller d'un retour)</td></tr>
-<tr><td>idrelayPointFrom</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Point relais de départ</td></tr>
-<tr><td>idrelayPointTo</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Point relais de destination</td></tr>
-<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Status de la sollicitation : 
-0 - en attente
-1 - acceptée
-2 - refusée</td></tr>
-<tr><td>tripType</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>1 : aller simple
-2 : aller d'un aller/retour
-3 : retour d'un aller/retour</td></tr>
-<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date de création de la sollicitation</td></tr>
-<tr><td>origin</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Origine de la sollicitation : 
-0 : site
-1 : app iOS
-2 : app Android</td></tr>
-<tr><td>distanceReal</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Distance réelle calculée en mètres</td></tr>
-<tr><td>duration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Durée du trajet en secondes</td></tr>
-<tr><td>amountCalculated</td><td>DECIMAL(10,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Coût du trajet estimé</td></tr>
-<tr><td>amountProposed</td><td>DECIMAL(10,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Coût du trajet proposé</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="registers"></a><table style="width:100%"><caption>Table: registers </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des inscriptions</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Utilisateur</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Client</td></tr>
-<tr><td>idlanguage</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Langue</td></tr>
-<tr><td>role</td><td>VARCHAR(64)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Rôle</td></tr>
-<tr><td>iddevice</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Device</td></tr>
-<tr><td>idsoftware</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Software</td></tr>
-<tr><td>idmanifestation</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Evènement à l'origine de l'inscription</td></tr>
-<tr><td>firstDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date de première connexion</td></tr>
-<tr><td>lastDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date de dernière connexion</td></tr>
-<tr><td>isDefault</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Client par défaut (=client d'inscription)</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="userAddress"></a><table style="width:100%"><caption>Table: userAddress </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des adresses utilisateur</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>iduserAddress</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom de l'adresse</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Utilisateur</td></tr>
-<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Adresse</td></tr>
-<tr><td>iduserAddressType</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Type d'adresse</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="manifestation"></a><table style="width:100%"><caption>Table: manifestation </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des évènements utilisateur</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idmanifestation</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom</td></tr>
-<tr><td>isPublic</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Evènement public</td></tr>
-<tr><td>isExclusive</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Evènement exclusif au client</td></tr>
-<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Status (actif/inactif)</td></tr>
-<tr><td>description</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Description courte</td></tr>
-<tr><td>fullDescription</td><td>TEXT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Description complète</td></tr>
-<tr><td>fromDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date de début</td></tr>
-<tr><td>toDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date de fin</td></tr>
-<tr><td>fromTime</td><td>TIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Heure de début</td></tr>
-<tr><td>toTime</td><td>TIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Heure de fin</td></tr>
-<tr><td>url</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Url</td></tr>
-<tr><td>type</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Type d'évènement</td></tr>
-<tr><td>permalink</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Permalien</td></tr>
-<tr><td>idimage</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Image</td></tr>
-<tr><td>idrelayPoint</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Point relais</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Utilisateur qui a déposé l'évènement</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Client</td></tr>
-<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Adresse de l'évènement</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="community"></a><table style="width:100%"><caption>Table: community </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des communautés</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idcommunity</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom</td></tr>
-<tr><td>isPublic</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Communauté publique</td></tr>
-<tr><td>isExclusive</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Communauté exclusive au client</td></tr>
-<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Status (actif/inactif/en attente)</td></tr>
-<tr><td>validation</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Type de validation : 
-0 = automatique
-1 = manuelle</td></tr>
-<tr><td>restriction</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Restriction du domaine</td></tr>
-<tr><td>idimage</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Image (logo)</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Client</td></tr>
-<tr><td>idcommunityType</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Type de communauté</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="community_user"></a><table style="width:100%"><caption>Table: community_user </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des utilisateurs d'une communauté</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idcommunity</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Communauté</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Utilisateur</td></tr>
-<tr><td>date</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date d'inscription</td></tr>
-<tr><td>status</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Status d'inscription</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="relayPoint"></a><table style="width:100%"><caption>Table: relayPoint </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des points-relais</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idrelayPoint</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Client</td></tr>
-<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Adresse</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Créateur</td></tr>
-<tr><td>idpicto</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Pictogramme</td></tr>
-<tr><td>idrelayPointGroup</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Groupe</td></tr>
-<tr><td>idcommunity</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Communauté</td></tr>
-<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom</td></tr>
-<tr><td>description</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Descriptif</td></tr>
-<tr><td>more</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Service supplémentaire</td></tr>
-<tr><td>isPublic</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Point-relais public</td></tr>
-<tr><td>isExclusive</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Point-relais exclusif à un client</td></tr>
-<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Status (actif/inactif/en attente)</td></tr>
-<tr><td>nbPlaces</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Nombre de places</td></tr>
-<tr><td>nbPlacesDisabled</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Nombre de places handicapés</td></tr>
-<tr><td>isFree</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Point-relais gratuit</td></tr>
-<tr><td>isSecured</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Point-relais sécurisé</td></tr>
-<tr><td>isOfficial</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Point-relais officiel</td></tr>
-<tr><td>isSuggested</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Le point-relais est proposé lors de l'autocomplétion dans la recherche</td></tr>
-<tr><td>permalink</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Permalien</td></tr>
-<tr><td>idimage</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Image</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="community_proposal"></a><table style="width:100%"><caption>Table: community_proposal </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des communautés d'une proposition</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idcommunity</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Communauté</td></tr>
-<tr><td>idproposal</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Proposition</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="notification"></a><table style="width:100%"><caption>Table: notification </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des notifications</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idnotification</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>subject</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Sujet du message si message interne</td></tr>
-<tr><td>message</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Corps du message si message interne</td></tr>
-<tr><td>idnotificationSource</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>ID de la notification d'origine</td></tr>
-<tr><td>idsolicitation</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Solicitation liée</td></tr>
-<tr><td>iduserFrom</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>From</td></tr>
-<tr><td>iduserTo</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>To</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Client</td></tr>
-<tr><td>idevent</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Evènement</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="article"></a><table style="width:100%"><caption>Table: article </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des articles</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idarticle</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>Article</td></tr>
-<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="article_client"></a><table style="width:100%"><caption>Table: article_client </caption>
-<tr><td>Table Comments</td><td colspan="6">Paramétrage de l'article pour un client</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idarticle</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Article</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Client</td></tr>
-<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Status : 
-0 = brouillon
-1 = actif</td></tr>
-<tr><td>datePublished</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date de publication</td></tr>
-<tr><td>dateDepublished</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date de dépublication</td></tr>
-<tr><td>isSeoActive</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Référencement actif</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="payment"></a><table style="width:100%"><caption>Table: payment </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des paiements
-
-Un paiement peut concerner un ou plusieurs trajets effectués. S'il ne concerne qu'une fraction de plusieurs trajets, les trajets les plus anciens sont considérés comme payés en premier.
-
-Ex : 30 trajets effectués du 1/1/2018 au 30/1/2018, paiement de 15 trajets, on va marquer les trajets du 1 au 15 comme payés.</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idpayment</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>status</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Status du paiement</td></tr>
-<tr><td>amount</td><td>DECIMAL(10,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Montant</td></tr>
-<tr><td>paymentMethod</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Moyen de paiement
-
-1 : espèce
-2 : cb</td></tr>
-<tr><td>carpoolingNumber</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nombre de trajets en covoiturage payés</td></tr>
-<tr><td>createdDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date de création du paiement</td></tr>
-<tr><td>paidDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date de paiement</td></tr>
-<tr><td>idsolicitation</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Solicitation à l'origine du paiement</td></tr>
-<tr><td>iduserFrom</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Payeur (raccourci)</td></tr>
-<tr><td>iduserTo</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Receveur (raccourci)</td></tr>
-<tr><td>idcurrency</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Monnaie</td></tr>
-<tr><td>idwallet</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Porte monnaie ayant servi au paiement</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="map"></a><table style="width:100%"><caption>Table: map </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des types de cartographies (Google Maps, OSM)</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idmap</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>type</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Type de carte</td></tr>
-<tr><td>key</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Clé d'api</td></tr>
-<tr><td>url</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>URL</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="ressource"></a><table style="width:100%"><caption>Table: ressource </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des ressources</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idressource</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom de la ressource</td></tr>
-<tr><td>clientGet</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Accès get autorisé par défaut pour un client</td></tr>
-<tr><td>clientPost</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Accès post autorisé par défaut pour un client</td></tr>
-<tr><td>clientPut</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Accès put autorisé par défaut pour un client</td></tr>
-<tr><td>clientDelete</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Accès delete autorisé par défaut pour un client</td></tr>
-<tr><td>userGet</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Accès get autorisé par défaut pour un utilisateur</td></tr>
-<tr><td>userPost</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Accès post autorisé par défaut pour un utilisateur</td></tr>
-<tr><td>userPut</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Accès put autorisé par défaut pour un utilisateur</td></tr>
-<tr><td>userDelete</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Accès delete autorisé par défaut pour un utilisateur</td></tr>
-<tr><td>quota</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Quota par défaut toutes ressources confondues</td></tr>
-<tr><td>quota_get</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Quota par défaut sur la ressource get</td></tr>
-<tr><td>quota_post</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Quota par défaut sur la ressource post</td></tr>
-<tr><td>quota_put</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Quota par défaut sur la ressource put</td></tr>
-<tr><td>quota_delete</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Quota par défaut sur la ressource delete</td></tr>
-<tr><td>idmodule</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Module</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="article_language"></a><table style="width:100%"><caption>Table: article_language </caption>
-<tr><td>Table Comments</td><td colspan="6">Paramétrage d'un article pour une langue</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idarticle</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Article</td></tr>
-<tr><td>idlanguage</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Langue</td></tr>
-<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Titre</td></tr>
-<tr><td>menuName</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Titre dans le menu</td></tr>
-<tr><td>articleBody</td><td>TEXT</td><td>No</td><td>No</td><td>No</td><td></td><td>Contenu</td></tr>
-<tr><td>isMenuVisible</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Apparaît dans le menu : 
-0 = non
-1 = oui</td></tr>
-<tr><td>uniqueName</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Nom unique = identifiant de l'article apparaissant dans l'url</td></tr>
-<tr><td>meta</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Meta description</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="currency"></a><table style="width:100%"><caption>Table: currency </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des monnaies</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idcurrency</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom de la monnaie</td></tr>
-<tr><td>symbol</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Symbole</td></tr>
-<tr><td>km</td><td>DECIMAL(6,2)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Valeur kilométrique par défaut dans la monnaie</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="client_currency"></a><table style="width:100%"><caption>Table: client_currency </caption>
-<tr><td>Table Comments</td><td colspan="6">Liste des monnaies acceptées par un client</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idcurrency</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Monnaie</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Client</td></tr>
-<tr><td>isDefault</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Monnaie par défaut pour le client</td></tr>
-<tr><td>km</td><td>DECIMAL(6,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Valeur kilométrique</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="permission"></a><table style="width:100%"><caption>Table: permission </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des permissions client</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idpermission</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID
-
-Nécessaire car la clé primaire devrait être idressource + idclient + idclientAffiliated, mais idclientAffiliated pourrait être NULL (et on ne peut pas avoir NULL comme composant de la clé primaire)</td></tr>
-<tr><td>idressource</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Ressource</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Client</td></tr>
-<tr><td>idkey</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Clé d'API</td></tr>
-<tr><td>idclientAffiliated</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Client affilié si permission pour un autre client</td></tr>
-<tr><td>get</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Accès GET autorisé sur la ressource</td></tr>
-<tr><td>post</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Accès POST autorisé sur la ressource</td></tr>
-<tr><td>put</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Accès PUT autorisé sur la ressource</td></tr>
-<tr><td>delete</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Accès DELETE autorisé sur la ressource</td></tr>
-<tr><td>quota</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Quota toutes ressources confondues</td></tr>
-<tr><td>quota_get</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Quota sur la ressource get</td></tr>
-<tr><td>quota_post</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Quota sur la ressource post</td></tr>
-<tr><td>quota_put</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Quota sur la ressource put</td></tr>
-<tr><td>quota_delete</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Quota sur la ressource delete</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>idaddressOrigin</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Origin address</td></tr>
+<tr><td>idaddressDestination</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Destination address</td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>User that creates the solicitation</td></tr>
+<tr><td>iduserOffer</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Driver (shortcut)</td></tr>
+<tr><td>iduserRequest</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Passenger (shortcut)</td></tr>
+<tr><td>idmatching</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Matching</td></tr>
+<tr><td>idcriteria</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Criteria</td></tr>
+<tr><td>idaskLinked</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Linked ask if the user that responds proposes another ask</td></tr>
+<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Solicitation status : 
+0 : waiting
+1 : accepted
+2 : declined</td></tr>
+<tr><td>journeyType</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Journey type : 
+1 : one way trip
+2 : outward of a round trip
+3 : return of a round trip</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date of the solicitation</td></tr>
+<tr><td>distance</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Distance in metres</td></tr>
+<tr><td>duration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Duration in seconds</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="matching"></a><table style="width:100%"><caption>Table: matching </caption>
-<tr><td>Table Comments</td><td colspan="6">Table de matching entre offre et demande (enrichie à chaque ajout de proposition par un utilisateur)
-Le matching peut être partiel (sur une ou plusieurs étapes notamment)</td></tr>
+<tr><td>Table Comments</td><td colspan="6">Matching between offer and request
+Must be computed after each proposal add
+Matching may be partial (only between certain points)</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -771,108 +177,23 @@ Le matching peut être partiel (sur une ou plusieurs étapes notamment)</td></tr
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>idmatching</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID (créé pour faciliter la relation avec la sollicitation, pour éviter de faire le lien sur le couple idproposalOffer / idproposalSearch)</td></tr>
-<tr><td>idaddressFrom</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Adresse de départ</td></tr>
-<tr><td>idaddressTo</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Adresse de destination</td></tr>
-<tr><td>idproposalOffer</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Proposition de type offre</td></tr>
-<tr><td>idproposalSearch</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Proposition de type demande</td></tr>
-<tr><td>idcriteria</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Critères utilisés pour le matching (peuvent être une combinaison des critères de l'offre et de la demande)</td></tr>
-<tr><td>idrelayPointFrom</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Point relais de départ</td></tr>
-<tr><td>idrelayPointTo</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Point relais de destination</td></tr>
-<tr><td>idstepOfferFrom</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Etape d'origine du matching si le matching se fait à partir d'une certaine étape de l'offre</td></tr>
-<tr><td>idstepOfferTo</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Etape de destination du matching si le matching se fait jusqu'à une certaine étape de l'offre</td></tr>
-<tr><td>idstepSearchFrom</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Etape d'origine du matching si le matching se fait à partir d'une certaine étape de la demande (si multimodal)</td></tr>
-<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date de calcul du matching</td></tr>
-<tr><td>distanceReal</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Distance réelle calculée en mètres</td></tr>
-<tr><td>distanceFly</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Distance à vol d'oiseau en mètres</td></tr>
-<tr><td>duration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Durée réelle du trajet en secondes</td></tr>
-<tr><td>hasHighway</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Le trajet emprunte l'autoroute</td></tr>
-<tr><td>hasToll</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Le trajet emprunte une route à péage</td></tr>
-<tr><td>amountCalculated</td><td>DECIMAL(10,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Coût du trajet estimé</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID (créé pour faciliter la relation avec la sollicitation, pour éviter de faire le lien sur le couple idproposalOffer / idproposalSearch)</td></tr>
+<tr><td>idproposalOffer</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Offer proposal</td></tr>
+<tr><td>idproposalRequest</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Request proposal</td></tr>
+<tr><td>idcriteria</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Criteria used for the matching (may be a combination of offer and request criteria)</td></tr>
+<tr><td>idwaypointOfferOrigin</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Starting point of the offer proposal used for the matching</td></tr>
+<tr><td>idwaypointOfferDestination</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Ending point of the offer proposal used for the matching</td></tr>
+<tr><td>idwaypointRequestOrigin</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Starting point of the request used for the matching (if multimodal travel, otherwise it's always the starting point)</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date of the matching</td></tr>
+<tr><td>distance</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Distance in metres</td></tr>
+<tr><td>duration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Duration in seconds</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="crew"></a><table style="width:100%"><caption>Table: crew </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des équipages
+<a id="waypoint"></a><table style="width:100%"><caption>Table: waypoint </caption>
+<tr><td>Table Comments</td><td colspan="6">Table of points for a journey
 
-On part du principe qu'un équipage est lié à un trajet : tout ce qui concerne le trajet sera donc stocké dans la proposition liée (trajet, jours...)</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idcrew</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom</td></tr>
-<tr><td>turnover</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Alternance de conducteur : 
-1 : quotidienne
-2 : habdomadaire</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Client</td></tr>
-<tr><td>idproposal</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Proposition</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="user_crew"></a><table style="width:100%"><caption>Table: user_crew </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des rôle et des préférences des membres d'un équipage</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Utilisateur</td></tr>
-<tr><td>idcrew</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Equipage</td></tr>
-<tr><td>role</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Rôle de l'utilisateur dans l'équipage : 
-1 : admin
-2 : utilisateur</td></tr>
-<tr><td>monStatus</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Status du lundi : 
-1 : conducteur
-2 : passager
-3 : absent
-4 : solo
-5 : teletravail
-6 : présent (conducteur ou passager)</td></tr>
-<tr><td>tueStatus</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Status du mardi</td></tr>
-<tr><td>wedStatus</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Status du mercredi</td></tr>
-<tr><td>thuStatus</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Status du jeudi</td></tr>
-<tr><td>friStatus</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Status du vendredi</td></tr>
-<tr><td>satStatus</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Status du samedi</td></tr>
-<tr><td>sunStatus</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Status du dimanche</td></tr>
-<tr><td>seats</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Nombre de places habituellement</td></tr>
-<tr><td>monSeats</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Nombre de places le lundi</td></tr>
-<tr><td>tueSeats</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Nombre de places le mardi</td></tr>
-<tr><td>wedSeats</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Nombre de places le mercredi</td></tr>
-<tr><td>thuSeats</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Nombre de places le jeudi</td></tr>
-<tr><td>friSeats</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Nombre de places le vendredi</td></tr>
-<tr><td>satSeats</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Nombre de places le samedi</td></tr>
-<tr><td>sunSeats</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Nombre de places le dimanche</td></tr>
-<tr><td>idvehicle</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Véhicule habituel</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="community_crew"></a><table style="width:100%"><caption>Table: community_crew </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des communautés d'un équipage</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idcommunity</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Communauté</td></tr>
-<tr><td>idcrew</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Equipage</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="step"></a><table style="width:100%"><caption>Table: step </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des étapes d'un trajet
-
-Une étape peut être créée : 
-- pour une offre, par un utilisateur qui propose un trajet de covoiturage, et qui souhaite passer par x points précis
-- pour une demande, par l'algorithme de matching en cas de covoiturages multiples successifs, ou de transport multimodal
+A point may be created : 
+- by a user who offers a journey, and who wants to travel by certain points
+- by the matching algorythm for a request in case of a multimodal travel, or for successive carpooling rides
 </td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
@@ -884,88 +205,17 @@ Une étape peut être créée :
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>idstep</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>idproposal</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Proposition (offre)</td></tr>
-<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Adresse</td></tr>
-<tr><td>idrelayPoint</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Point relais correspondant</td></tr>
-<tr><td>idmode</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Mode de locomotion si alternatif</td></tr>
-<tr><td>position</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Numéro d'ordre</td></tr>
-<tr><td>isLast</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Si l'étape est la dernière étape (=destination, permet un accès direct depuis la proposition)</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="evaluation"></a><table style="width:100%"><caption>Table: evaluation </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des évaluations utilisateur</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idevaluation</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>idsolicitation</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Solicitation</td></tr>
-<tr><td>iduserOffer</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Conducteur (raccourci)</td></tr>
-<tr><td>iduserSearch</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Passager (raccourci)</td></tr>
-<tr><td>evaluationSearch</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Evaluation du passager par le conducteur</td></tr>
-<tr><td>commentSearch</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Commentaire sur le passager par le conducteur</td></tr>
-<tr><td>dateSearch</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date de dépôt de l'évaluation du passager par le conducteur</td></tr>
-<tr><td>evaluationOffer</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Evaluation du conducteur par le passager</td></tr>
-<tr><td>commentOffer</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Commentaire sur le conducteur par le passager</td></tr>
-<tr><td>dateOffer</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date de dépôt de l'évaluation du conducteur par le passager</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="quota"></a><table style="width:100%"><caption>Table: quota </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des quotas sur les ressources par client</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idressource</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Ressource</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Client</td></tr>
-<tr><td>date</td><td>DATE</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>Date de la statistique</td></tr>
-<tr><td>value_get</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Nombre de requêtes effectuées en get pour la date</td></tr>
-<tr><td>value_post</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Nombre de requêtes effectuées en post pour la date</td></tr>
-<tr><td>value_put</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Nombre de requêtes effectuées en put pour la date</td></tr>
-<tr><td>value_delete</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Nombre de requêtes effectuées en delete pour la date</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="day"></a><table style="width:100%"><caption>Table: day </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des jours des plannings d'équipages
-
-Peut être calculé par avance</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idcrew</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Equipage</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Utilisateur concerné</td></tr>
-<tr><td>date</td><td>DATE</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>Date du jour concerné</td></tr>
-<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Status de l'utilisateur pour le jour : 
-1 : conducteur
-2 : passager
-3 : absent
-4 : solo
-5 : teletravail
-6 : présent (conducteur ou passager)</td></tr>
-<tr><td>seats</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Nombre de places disponibles si conducteur</td></tr>
-<tr><td>idvehicle</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Véhicule</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>idproposal</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Proposal</td></tr>
+<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Address of the point</td></tr>
+<tr><td>idmode</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Travel mode</td></tr>
+<tr><td>position</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Position number</td></tr>
+<tr><td>isDestination</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>True if it's the last point</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="criteria"></a><table style="width:100%"><caption>Table: criteria </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des critères de recherche
- - pour les propositions de type offre, on a un ensemble de critères de restriction
- - pour les propositions de type demande, on a un ensemble de critères de sélection</td></tr>
+<tr><td>Table Comments</td><td colspan="6">Criteria table : 
+- for an offer : restriction criteria
+- for a request : select criteria</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -976,42 +226,34 @@ Peut être calculé par avance</td></tr>
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>idcriteria</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>frequency</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Fréquence de la proposition : 
-1 : ponctuelle
-2 : régulière</td></tr>
-<tr><td>seats</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Nombre de places</td></tr>
-<tr><td>fromDate</td><td>DATE</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date de début de la proposition (= date du covoiturage si proposition ponctuelle)</td></tr>
-<tr><td>fromTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Heure de départ</td></tr>
-<tr><td>toDate</td><td>DATE</td><td>No</td><td>No</td><td>No</td><td></td><td>Date de fin de la proposition si proposition régulière</td></tr>
-<tr><td>isMonCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Si covoiturage régulier : trajet le lundi</td></tr>
-<tr><td>isTueCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Si covoiturage régulier : trajet le mardi</td></tr>
-<tr><td>isWedCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Si covoiturage régulier : trajet le mercredi</td></tr>
-<tr><td>isThuCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Si covoiturage régulier : trajet le jeudi</td></tr>
-<tr><td>isFriCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Si covoiturage régulier : trajet le vendredi</td></tr>
-<tr><td>isSatCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Si covoiturage régulier : trajet le samedi</td></tr>
-<tr><td>isSunCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Si covoiturage régulier : trajet le dimanche</td></tr>
-<tr><td>monTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Si covoiturage régulier : horaire du lundi</td></tr>
-<tr><td>tueTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Si covoiturage régulier : horaire du mardi</td></tr>
-<tr><td>wedTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Si covoiturage régulier : horaire du mercredi</td></tr>
-<tr><td>thuTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Si covoiturage régulier : horaire du jeudi</td></tr>
-<tr><td>friTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Si covoiturage régulier : horaire du vendredi</td></tr>
-<tr><td>satTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Si covoiturage régulier : horaire du samedi</td></tr>
-<tr><td>sunTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Si covoiturage régulier : horaire du dimanche</td></tr>
-<tr><td>marginTime</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Marge acceptée en secondes</td></tr>
-<tr><td>gender</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Limiter la proposition à une civilité : 
-1 : femmes
-2 : hommes</td></tr>
-<tr><td>evaluation</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Limiter la proposition aux utilisateurs ayant au minimum cette évaluation</td></tr>
-<tr><td>isPhoneVisible</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Limiter la proposition aux utilisateurs ayant leur numéro de téléphone visible</td></tr>
-<tr><td>isPhotoVisible</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Limiter la proposition aux utilisateurs ayant leur photo visible</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>isDriver</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>isPassenger</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>frequency</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Proposal frequency : 
+1 : punctual
+2 : regular</td></tr>
+<tr><td>seats</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Number of seats available</td></tr>
+<tr><td>fromDate</td><td>DATE</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Starting date (=proposal date if punctual)</td></tr>
+<tr><td>fromTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Starting time</td></tr>
+<tr><td>toDate</td><td>DATE</td><td>No</td><td>No</td><td>No</td><td></td><td>End date if regular proposal</td></tr>
+<tr><td>isMonCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on mondays (if regular)</td></tr>
+<tr><td>isTueCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on tuesdays (if regular)</td></tr>
+<tr><td>isWedCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on wednesdays (if regular)</td></tr>
+<tr><td>isThuCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on thursdays (if regular)</td></tr>
+<tr><td>isFriCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on fridays (if regular)</td></tr>
+<tr><td>isSatCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on saturdays (if regular)</td></tr>
+<tr><td>isSunCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on sundays (if regular)</td></tr>
+<tr><td>monTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Mondays starting time (if regular)</td></tr>
+<tr><td>tueTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Tuesdays starting time (if regular)</td></tr>
+<tr><td>wedTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Wednesdays starting time (if regular)</td></tr>
+<tr><td>thuTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Thursday starting time (if regular)</td></tr>
+<tr><td>friTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Fridays starting time (if regular)</td></tr>
+<tr><td>satTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Saturdays starting time (if regular)</td></tr>
+<tr><td>sunTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Sundays starting time (if regular)</td></tr>
+<tr><td>marginTime</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Accepted margin for starting time in seconds</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="address"></a><table style="width:100%"><caption>Table: address </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des adresses
-
-Toutes les adresses de l'application sont stockées dans cette table.
-
-Une adresse peut être composée d'une adresse "réelle" c'est à dire numéro, rue, code postal, ville, pays et/ou de coordonnées GPS. L'un et l'autre pourront être complétés par des requêtes vers des serveurs de geocoding.</td></tr>
+<tr><td>Table Comments</td><td colspan="6">Address table</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -1022,66 +264,17 @@ Une adresse peut être composée d'une adresse "réelle" c'est à dire numéro, 
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>streetAddress</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Adresse</td></tr>
-<tr><td>postalCode</td><td>VARCHAR(15)</td><td>No</td><td>No</td><td>No</td><td></td><td>Code postal</td></tr>
-<tr><td>addressLocality</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Ville</td></tr>
-<tr><td>addressCountry</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Pays</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>streetAddress</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Street address</td></tr>
+<tr><td>postalCode</td><td>VARCHAR(15)</td><td>No</td><td>No</td><td>No</td><td></td><td>Postal code</td></tr>
+<tr><td>addressLocality</td><td>VARCHAR(100)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Locality</td></tr>
+<tr><td>addressCountry</td><td>VARCHAR(100)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Country</td></tr>
 <tr><td>longitude</td><td>DECIMAL(9,6)</td><td>No</td><td>No</td><td>No</td><td></td><td>Longitude</td></tr>
 <tr><td>latitude</td><td>DECIMAL(9,6)</td><td>No</td><td>No</td><td>No</td><td></td><td>Latitude</td></tr>
-<tr><td>elevation</td><td>DECIMAL(8,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Altitude</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="community_moderate"></a><table style="width:100%"><caption>Table: community_moderate </caption>
-<tr><td>Table Comments</td><td colspan="6">Modérateurs d'une communauté</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idcommunity</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Communauté</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Modérateur</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="communityType"></a><table style="width:100%"><caption>Table: communityType </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des types de communautés</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idcommunityType</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="carousel"></a><table style="width:100%"><caption>Table: carousel </caption>
-<tr><td>Table Comments</td><td colspan="6">Image du carousel pour une langue donnée</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Client</td></tr>
-<tr><td>idlanguage</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Langue</td></tr>
-<tr><td>position</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>Position de l'image dans le carousel</td></tr>
-<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Titre de l'image</td></tr>
-<tr><td>url</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Lien</td></tr>
-<tr><td>idimage</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Image</td></tr>
+<tr><td>elevation</td><td>DECIMAL(8,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Elevation in metres</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="mode"></a><table style="width:100%"><caption>Table: mode </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des modes de transport</td></tr>
+<tr><td>Table Comments</td><td colspan="6">Travel mode </td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -1092,120 +285,13 @@ Une adresse peut être composée d'une adresse "réelle" c'est à dire numéro, 
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>idmode</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name of the travel mode</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="picto"></a><table style="width:100%"><caption>Table: picto </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des pictogrammes des point-relais</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idpicto</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(100)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom</td></tr>
-<tr><td>idimage</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Image</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="relayPointGroup"></a><table style="width:100%"><caption>Table: relayPointGroup </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des groupes des point-relais</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idrelayPointGroup</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>idclient</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Client</td></tr>
-<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom du groupe</td></tr>
-<tr><td>isPublic</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Groupe public</td></tr>
-<tr><td>isExclusive</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Groupe exclusif à un client</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="town"></a><table style="width:100%"><caption>Table: town </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des communes</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idtown</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Adresse</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Client</td></tr>
-<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom unique</td></tr>
-<tr><td>description</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Description</td></tr>
-<tr><td>position</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Position</td></tr>
-<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Status (actif/inactif/en attente)</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="authItem"></a><table style="width:100%"><caption>Table: authItem </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des items d'autorisation</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>name</td><td>VARCHAR(64)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>Nom</td></tr>
-<tr><td>type</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Type : 
-1 : role
-2 : action</td></tr>
-<tr><td>descr</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Description</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="authItemChild"></a><table style="width:100%"><caption>Table: authItemChild </caption>
-<tr><td>Table Comments</td><td colspan="6">Table de hiérarchie des items</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>parent</td><td>VARCHAR(64)</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Parent</td></tr>
-<tr><td>child</td><td>VARCHAR(64)</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Enfant</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="ressource_user_client"></a><table style="width:100%"><caption>Table: ressource_user_client </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des permissions sur les ressources d'un client pour un utilisateur</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Utilisateur</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Client</td></tr>
-<tr><td>idressource</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Ressource</td></tr>
-<tr><td>get</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Accès get autorisé</td></tr>
-<tr><td>post</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Accès post autorisé</td></tr>
-<tr><td>put</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Accès put autorisé</td></tr>
-<tr><td>delete</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Accès delete autorisé</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="path"></a><table style="width:100%"><caption>Table: path </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des chemins entre 2 étapes
+<a id="route"></a><table style="width:100%"><caption>Table: route </caption>
+<tr><td>Table Comments</td><td colspan="6">Table of routes between 2 points
 
-Il peut y avoir plusieurs chemins entre 2 étapes (une chemin préférentiel et des chemins alternatifs)</td></tr>
+A journey may have multiple routes : one main route and many alternative routes</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -1216,264 +302,20 @@ Il peut y avoir plusieurs chemins entre 2 étapes (une chemin préférentiel et 
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>idpath</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>idstep1</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Etape d'origine</td></tr>
-<tr><td>idstep2</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Etape de destination</td></tr>
-<tr><td>position</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Numéro d'ordre du chemin</td></tr>
-<tr><td>detail</td><td>TEXT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Le détail du chemin</td></tr>
-<tr><td>encodeFormat</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Encodage du chemin
-
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>idwaypointOrigin</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Starting point</td></tr>
+<tr><td>idwaypointDestination</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Destination point</td></tr>
+<tr><td>position</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Position number</td></tr>
+<tr><td>distanceReal</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Distance in metres</td></tr>
+<tr><td>duration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Duration in seconds (based on real distance)</td></tr>
+<tr><td>detail</td><td>TEXT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Route detail</td></tr>
+<tr><td>encodeFormat</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Encoding format 
 1 : JSON
 2 : XML</td></tr>
-<tr><td>idmap</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Source de calcul du chemin</td></tr>
-<tr><td>idmode</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Mode de transport</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="stop"></a><table style="width:100%"><caption>Table: stop </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des arrêts "virtuels" possibles sur un trajet
-
-Permet d'exporter une liste d'arrêts afin d'alimenter une base pour un calcul de trajet multi-modal
-
-Dans la pratique, on calculera ces arrêts en fonction des arrêts de transport en commun à proximité du trajet (il faudra définir cette *proximité* : distance, temps de marche ?)
-
-Deux possibilités pour le calcul : soit faire appel à un service externe (type OTP), soit importer tous les arrêts de TEC dans une table de la base et lancer un calcul lors de l'ajout d'un trajet (limiter par exemple à une zone autour du trajet pour lmiter le calcul).
-
-A voir comment faire pour du temps réel...</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idstop</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>position</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Numéro d'ordre de l'arrêt dans le trajet</td></tr>
-<tr><td>isPT</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>L'arrêt est un arrêt de transport en commun</td></tr>
-<tr><td>idpath</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Chemin</td></tr>
-<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Adresse</td></tr>
-<tr><td>idrelayPoint</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Point relais</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="wallet"></a><table style="width:100%"><caption>Table: wallet </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des porte monnaies</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idwallet</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>balance</td><td>DECIMAL(10,2)</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Solde</td></tr>
-<tr><td>isExclusive</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Porte monnaie exclusif au client</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Utilisateur</td></tr>
-<tr><td>idcurrency</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Monnaie</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Client</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="movement"></a><table style="width:100%"><caption>Table: movement </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des mouvements sur un porte monnaie</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idwallet</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Porte monnaie</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Utilisateur</td></tr>
-<tr><td>date</td><td>DATETIME</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>Date</td></tr>
-<tr><td>amount</td><td>DECIMAL(10,2)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Montant du mouvement (positif : versement ou négatif : retrait)</td></tr>
-<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Status
-
-0 : en cours
-1 : validé
-2 : refusé</td></tr>
-<tr><td>idcurrency</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Monnaie</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="device"></a><table style="width:100%"><caption>Table: device </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des devices (mobiles et desktop)</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>iddevice</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>manufacturer</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Fabricant</td></tr>
-<tr><td>modelCode</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Code du modèle</td></tr>
-<tr><td>modelName</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Nom du modèle</td></tr>
-<tr><td>isMobile</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Le device est un appareil mobile (smartphone, tablette)</td></tr>
-<tr><td>idos</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>OS</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="action"></a><table style="width:100%"><caption>Table: action </caption>
-<tr><td>Table Comments</td><td colspan="6">Historique des actions (=historique des évènements déclenchés)</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idaction</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Utilisateur</td></tr>
-<tr><td>idevent</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Evènement</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Client</td></tr>
-<tr><td>iddevice</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Device</td></tr>
-<tr><td>idsoftware</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Software</td></tr>
-<tr><td>date</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date de l'action</td></tr>
-<tr><td>value</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Valeur numérique associée à l'action (ex: nombre de kilomètres)</td></tr>
-<tr><td>iduserRep</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Utilisateur qui déclenche l'action si différent de l'utilisateur concerné (ex : admin)</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="key"></a><table style="width:100%"><caption>Table: key </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des clés d'API</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idkey</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>key</td><td>VARCHAR(100)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Clé d'API</td></tr>
-<tr><td>name</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Nom de la clé</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Client</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="image"></a><table style="width:100%"><caption>Table: image </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des images
-
-Chaque image possède un type d'image; en fonction du type on saura où la photo est stockée et quels sont les diférents formats disponibles.</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idimage</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Nom</td></tr>
-<tr><td>contentUrl</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom du fichier</td></tr>
-<tr><td>encodingFormat</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Format du fichier</td></tr>
-<tr><td>idimageType</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Type d'image</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="imageType"></a><table style="width:100%"><caption>Table: imageType </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des types d'image</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idimageType</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom</td></tr>
-<tr><td>folder</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Dossier</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="thumbnail"></a><table style="width:100%"><caption>Table: thumbnail </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des thumbnails possibles</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idthumbnail</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Nom</td></tr>
-<tr><td>size</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Taille max du plus grand côté</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="size"></a><table style="width:100%"><caption>Table: size </caption>
-<tr><td>Table Comments</td><td colspan="6">Liste des thumbnails possibles par type d'image</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idimageType</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Type d'image</td></tr>
-<tr><td>idthumbnail</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Thumbnail</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="sponsor"></a><table style="width:100%"><caption>Table: sponsor </caption>
-<tr><td>Table Comments</td><td colspan="6">Table du parrainage</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idsponsor</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>iduserSponsor</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Parrain</td></tr>
-<tr><td>iduserSponsored</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Filleul</td></tr>
-<tr><td>email</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Email du filleul</td></tr>
-<tr><td>dateProposal</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date de proposition</td></tr>
-<tr><td>dateAccepted</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date d'acceptation</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="realized"></a><table style="width:100%"><caption>Table: realized </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des trajets réalisés
-
-Pourra être alimenté par une tâche cron, ou directement par les apps</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idrealized</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>idsolicitation</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Sollicitation</td></tr>
-<tr><td>date</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date du trajet réalisé</td></tr>
-<tr><td>offerFromDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date de certification de la prise en charge par le conducteur</td></tr>
-<tr><td>offerToDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date de certification de la dépose par le conducteur</td></tr>
-<tr><td>searchFromDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date de certification de la prise en charge par le passager</td></tr>
-<tr><td>searchToDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date de certification de la dépose par le passager</td></tr>
-<tr><td>idaddressOfferFrom</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Adresse de certification de prise en charge (gps fourni par l'app) par le conducteur</td></tr>
-<tr><td>idaddressOfferTo</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Adresse de certification de dépose (gps fourni par l'app) par le conducteur</td></tr>
-<tr><td>idaddressSearchFrom</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Adresse de certification de prise en charge (gps fourni par l'app) par le passager</td></tr>
-<tr><td>idaddressSearchTo</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Adresse de certification de dépose (gps fourni par l'app) par le passager</td></tr>
-<tr><td>iddeviceOfferFrom</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Device ayant servi à certifier la prise en charge par le conducteur</td></tr>
-<tr><td>iddeviceOfferTo</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Device ayant servi à certifier la dépose par le conducteur</td></tr>
-<tr><td>iddeviceSearchFrom</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Device ayant servi à certifier la prise en charge par le passager</td></tr>
-<tr><td>iddeviceSearchTo</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Device ayant servi à certifier la dépose par le passager</td></tr>
-<tr><td>idpayment</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Paiement</td></tr>
+<tr><td>idmode</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Travel mode for this path</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="proposal_mode"></a><table style="width:100%"><caption>Table: proposal_mode </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des modes de transport acceptés si demande (=multimodal)</td></tr>
+<tr><td>Table Comments</td><td colspan="6">Table of travel modes accepted for a request</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -1484,11 +326,11 @@ Pourra être alimenté par une tâche cron, ou directement par les apps</td></tr
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>idproposal</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Proposition (demande)</td></tr>
-<tr><td>idmode</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Mode de transport</td></tr>
+<tr><td>idproposal</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Proposal</td></tr>
+<tr><td>idmode</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Travel mode</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="user_device"></a><table style="width:100%"><caption>Table: user_device </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des devices d'un utilisateur</td></tr>
+<a id="user_address"></a><table style="width:100%"><caption>Table: user_address </caption>
+<tr><td>Table Comments</td><td colspan="6">User addresses table</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -1499,12 +341,13 @@ Pourra être alimenté par une tâche cron, ou directement par les apps</td></tr
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Utilisateur</td></tr>
-<tr><td>iddevice</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Device</td></tr>
-<tr><td>isLast</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Le device est le dernier utilisé par l'utilisateur</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>name</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Name of the address</td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>User</td></tr>
+<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Address</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="os"></a><table style="width:100%"><caption>Table: os </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des OS</td></tr>
+<a id="ptjourney"></a><table style="width:100%"><caption>Table: ptjourney </caption>
+<tr><td>Table Comments</td><td colspan="6">Public transport journey</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -1515,12 +358,16 @@ Pourra être alimenté par une tâche cron, ou directement par les apps</td></tr
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>idos</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom</td></tr>
-<tr><td>version</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Version</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>distance</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Distance in metres</td></tr>
+<tr><td>duration</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Duration in seconds</td></tr>
+<tr><td>price</td><td>DECIMAL(4,2)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Price</td></tr>
+<tr><td>co2</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>CO2</td></tr>
+<tr><td>idptdeparture</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Departure</td></tr>
+<tr><td>idptarrival</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Arrival</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="software"></a><table style="width:100%"><caption>Table: software </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des softwares</td></tr>
+<a id="ptdeparture"></a><table style="width:100%"><caption>Table: ptdeparture </caption>
+<tr><td>Table Comments</td><td colspan="6">Public transport departure</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -1531,14 +378,13 @@ Pourra être alimenté par une tâche cron, ou directement par les apps</td></tr
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>idsoftware</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom</td></tr>
-<tr><td>version</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Version</td></tr>
-<tr><td>build</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Numéro de build</td></tr>
-<tr><td>idos</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>OS</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>name</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Name</td></tr>
+<tr><td>date</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date</td></tr>
+<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Address</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="notificationType"></a><table style="width:100%"><caption>Table: notificationType </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des types de notification (messagerie interne, mail, sms, push)</td></tr>
+<a id="ptarrival"></a><table style="width:100%"><caption>Table: ptarrival </caption>
+<tr><td>Table Comments</td><td colspan="6">Public transport arrival</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -1549,11 +395,13 @@ Pourra être alimenté par une tâche cron, ou directement par les apps</td></tr
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>idnotificationType</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>name</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Name</td></tr>
+<tr><td>date</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date</td></tr>
+<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Address</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="event_type"></a><table style="width:100%"><caption>Table: event_type </caption>
-<tr><td>Table Comments</td><td colspan="6">Table recensant les types de notifications envoyées par évènement et par langue</td></tr>
+<a id="ptleg"></a><table style="width:100%"><caption>Table: ptleg </caption>
+<tr><td>Table Comments</td><td colspan="6">Public transport leg</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -1564,22 +412,22 @@ Pourra être alimenté par une tâche cron, ou directement par les apps</td></tr
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>ideventType</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>idevent</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Evènement</td></tr>
-<tr><td>idnotificationType</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Type de notification</td></tr>
-<tr><td>idlanguage</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Langue</td></tr>
-<tr><td>idclient</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Surcharge pour un client (si client = null et user = null => il s'agit d'un modèle par défaut)</td></tr>
-<tr><td>iduser</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Surcharge utilisateur (si client = null et user = null => il s'agit d'un modèle par défaut)</td></tr>
-<tr><td>ideventTypeOrigin</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Enregistrement d'origine si surcharge client ou utilisateur</td></tr>
-<tr><td>layoutFolder</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Dossier contenant le layout</td></tr>
-<tr><td>layoutFileName</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Fichier contenant le layout</td></tr>
-<tr><td>templateFolder</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Dossier contenant le template</td></tr>
-<tr><td>templateFileName</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Fichier contenant le template</td></tr>
-<tr><td>isActive</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Type de notification active ou non (utile pour la surcharge client ou utilisateur)</td></tr>
-<tr><td>isEditable</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Modifiable par l'utilisateur pour le client donné</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>indication</td><td>TEXT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Textual indication</td></tr>
+<tr><td>distance</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Distance in metres</td></tr>
+<tr><td>duration</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Duration in seconds</td></tr>
+<tr><td>pos</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Position in the journey</td></tr>
+<tr><td>lastLeg</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Last leg of the journey</td></tr>
+<tr><td>magneticDirection</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Magentic direction</td></tr>
+<tr><td>relativeDirection</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Relative direction</td></tr>
+<tr><td>idptjourney</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Journey</td></tr>
+<tr><td>idptdeparture</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Departure</td></tr>
+<tr><td>idptarrival</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Arrival</td></tr>
+<tr><td>idptmode</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Transport mode</td></tr>
+<tr><td>idptline</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Line</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="notificationSend"></a><table style="width:100%"><caption>Table: notificationSend </caption>
-<tr><td>Table Comments</td><td colspan="6">Table de l'état de l'envoi d'une notification par type</td></tr>
+<a id="ptmode"></a><table style="width:100%"><caption>Table: ptmode </caption>
+<tr><td>Table Comments</td><td colspan="6">Public transport mode</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -1590,16 +438,11 @@ Pourra être alimenté par une tâche cron, ou directement par les apps</td></tr
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>idnotification</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Notification</td></tr>
-<tr><td>idnotificationType</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Type</td></tr>
-<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Status : 
-0 : en attente
-1 : envoyée</td></tr>
-<tr><td>sentDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date d'envoi</td></tr>
-<tr><td>readDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date de lecture par le destinataire</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="map_address"></a><table style="width:100%"><caption>Table: map_address </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des identifiants d'adresses pour un système de cartographie</td></tr>
+<a id="ptline"></a><table style="width:100%"><caption>Table: ptline </caption>
+<tr><td>Table Comments</td><td colspan="6">Public transport line</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -1610,12 +453,15 @@ Pourra être alimenté par une tâche cron, ou directement par les apps</td></tr
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>idmap</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Carte</td></tr>
-<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Adresse</td></tr>
-<tr><td>addressId</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Id de l'adresse dans le système de cartographie</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name</td></tr>
+<tr><td>from</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Origin</td></tr>
+<tr><td>to</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Destination</td></tr>
+<tr><td>number</td><td>VARCHAR(10)</td><td>No</td><td>No</td><td>No</td><td></td><td>Line number</td></tr>
+<tr><td>idptcompany</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Company</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="userValidation"></a><table style="width:100%"><caption>Table: userValidation </caption>
-<tr><td>Table Comments</td><td colspan="6">Validation utilisateur (email, téléphone, perte de mot de passe...)</td></tr>
+<a id="ptcompany"></a><table style="width:100%"><caption>Table: ptcompany </caption>
+<tr><td>Table Comments</td><td colspan="6">Public transport company</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -1626,28 +472,11 @@ Pourra être alimenté par une tâche cron, ou directement par les apps</td></tr
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>iduserValidation</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>reason</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Raison de la validation : 
-1 = inscription initiale
-2 = oubli de mot de passe
-3 = changement d'email
-4 = changement de numéro de téléphone
-5 = inscription automatique par covimatch
-6 = inscription automatique lors d'un parrainage</td></tr>
-<tr><td>dateAsked</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date de la demande</td></tr>
-<tr><td>dateValid</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date de la validation</td></tr>
-<tr><td>dateExpires</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date d'expiration</td></tr>
-<tr><td>type</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Type de champ à valider : 
-1 = mot de passe
-2 = email
-3 = téléphone</td></tr>
-<tr><td>toValidate</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Chaine à valider (email, numéro de téléphone)</td></tr>
-<tr><td>token</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Token de validation (exemple : chaine aléatoire pour email, code à 6 chiffres pour téléphone)</td></tr>
-<tr><td>url</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Url de validation si email ou mot de passe</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Utilisateur</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="userAddressType"></a><table style="width:100%"><caption>Table: userAddressType </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des types d'adresses (domicile, travail...)</td></tr>
+<a id="ptstep"></a><table style="width:100%"><caption>Table: ptstep </caption>
+<tr><td>Table Comments</td><td colspan="6">Public transport step</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -1658,11 +487,19 @@ Pourra être alimenté par une tâche cron, ou directement par les apps</td></tr
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>iduserAddressType</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom du type d'adresse</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>distance</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Distance in metres</td></tr>
+<tr><td>duration</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Duration in seconds</td></tr>
+<tr><td>pos</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Position of the step in the leg</td></tr>
+<tr><td>lastStep</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Last step of the leg</td></tr>
+<tr><td>magneticDirection</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Magnetic direction</td></tr>
+<tr><td>relativeDirection</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Relative direction</td></tr>
+<tr><td>idptleg</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Leg</td></tr>
+<tr><td>idptdeparture</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Departure</td></tr>
+<tr><td>idptarrival</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Arrival</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="module"></a><table style="width:100%"><caption>Table: module </caption>
-<tr><td>Table Comments</td><td colspan="6">Tables des modules (=groupe de ressources)</td></tr>
+<a id="car"></a><table style="width:100%"><caption>Table: car </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -1673,11 +510,18 @@ Pourra être alimenté par une tâche cron, ou directement par les apps</td></tr
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>idmodule</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(100)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>brand</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Brand</td></tr>
+<tr><td>model</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Model</td></tr>
+<tr><td>color</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Color</td></tr>
+<tr><td>siv</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Identification of the vehicle</td></tr>
+<tr><td>seats</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Number of seats in the car (excluding the driver seat)</td></tr>
+<tr><td>seatsAvailable</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Number of seats available for carpooling</td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>User</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="relayPointType"></a><table style="width:100%"><caption>Table: relayPointType </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des types de point-relais (auto-partage, taxi, velo-partage...)</td></tr>
+<a id="zone"></a><table style="width:100%"><caption>Table: zone </caption>
+<tr><td>Table Comments</td><td colspan="6">Table of geographic zones
+The planet is subdivided into zones; each zone is bounded by a min and max lat/lon</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -1688,11 +532,14 @@ Pourra être alimenté par une tâche cron, ou directement par les apps</td></tr
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>idrelayPointType</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(100)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>fromLat</td><td>DECIMAL(10,6)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Minimum latitude of the zone</td></tr>
+<tr><td>toLat</td><td>DECIMAL(10,6)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Maximum latitude of the zone</td></tr>
+<tr><td>fromLon</td><td>DECIMAL(10,6)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Minimum longitude of the zone</td></tr>
+<tr><td>toLon</td><td>DECIMAL(10,6)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Maximum longitude of the zone</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="relayPoint_relayPointType"></a><table style="width:100%"><caption>Table: relayPoint_relayPointType </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des types pour un point-relais</td></tr>
+<a id="near"></a><table style="width:100%"><caption>Table: near </caption>
+<tr><td>Table Comments</td><td colspan="6">Table of near zones : a zone is near other zones (between 5 and 8)</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -1703,11 +550,11 @@ Pourra être alimenté par une tâche cron, ou directement par les apps</td></tr
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>idrelayPoint</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Point-relais</td></tr>
-<tr><td>idrelayPointType</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Type de point-relais</td></tr>
+<tr><td>idzone1</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Zone 1</td></tr>
+<tr><td>idzone2</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Zone 2</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="picto_relayPointType"></a><table style="width:100%"><caption>Table: picto_relayPointType </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des pictogrammes des types de point-relais par client</td></tr>
+<a id="route_zone"></a><table style="width:100%"><caption>Table: route_zone </caption>
+<tr><td>Table Comments</td><td colspan="6">Link table between routes and zones</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -1718,156 +565,7 @@ Pourra être alimenté par une tâche cron, ou directement par les apps</td></tr
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>idpicto</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Pictogramme</td></tr>
-<tr><td>idrelayPointType</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Type de point-relais</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Client</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="event"></a><table style="width:100%"><caption>Table: event </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des évènements internes (inscription, connexion, recherche, calcul de matching...)</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idevent</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom</td></tr>
-<tr><td>description</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Description</td></tr>
-<tr><td>code</td><td>VARCHAR(100)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Code</td></tr>
-<tr><td>type</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Type d'évènement : 
-1 : déclenché suite à une action utilisateur (inscription, connexion...)
-2 : déclenché par le système (matching, calcul de cumul...)</td></tr>
-<tr><td>isRecoverable</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>L'évènement peut être valorisable (= on peut y associer une valeur autre qu'une unité, par exemple un nombre de kilomètres)</td></tr>
-<tr><td>isCron</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>L'évènement est déclenché par une tâche cron</td></tr>
-<tr><td>frequency</td><td>INT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Fréquence de déclenchement si cron</td></tr>
-<tr><td>ideventParent</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Evènement parent (permet de grouper plusieurs évènement afin de les gérer simultanément, cf notifications)</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="expense"></a><table style="width:100%"><caption>Table: expense </caption>
-<tr><td>Table Comments</td><td colspan="6">Table du soldes des points par utilisateur et par client</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idexpense</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Utilisateur</td></tr>
-<tr><td>idprize</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Récompense</td></tr>
-<tr><td>points</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Points dépensés</td></tr>
-<tr><td>datetime</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date de la dépense</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="gamification"></a><table style="width:100%"><caption>Table: gamification </caption>
-<tr><td>Table Comments</td><td colspan="6">Table de la gamification par client (gain de points liés aux évènements)</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idgamification</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom de la gamification (ex : "gain de 100 points")</td></tr>
-<tr><td>points</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nombre de points à gagner</td></tr>
-<tr><td>isUnique</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>La gamification est unique pour un utilisateur</td></tr>
-<tr><td>isActive</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>La gamification est active</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Client</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="gamification_event"></a><table style="width:100%"><caption>Table: gamification_event </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des liste d'évènements permettant de valider une gamification</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idgamification</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Gamification</td></tr>
-<tr><td>idevent</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Evènement</td></tr>
-<tr><td>thresholdUnit</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Seuil d'unités déclenchant la validation de la gamification (ex : 3)</td></tr>
-<tr><td>thresholdValue</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Seuil valorisé déclenchant la validation de la gamification (ex : un nombre de kilomètres)</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="event_user_client"></a><table style="width:100%"><caption>Table: event_user_client </caption>
-<tr><td>Table Comments</td><td colspan="6">Compte des évènements déclenchés par un utilisateur pour un client</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idevent</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Evènement</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Utilisateur</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Client</td></tr>
-<tr><td>count</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Compte d'unité d'évènements</td></tr>
-<tr><td>sum</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Cumul de valeur associée à l'évènement</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="gamification_user"></a><table style="width:100%"><caption>Table: gamification_user </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des gamifications obtenues par un utilisateur</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idgamificationUser</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>idgamification</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Gamification</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Utilisateur</td></tr>
-<tr><td>idaction</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Action</td></tr>
-<tr><td>date</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date du gain</td></tr>
-<tr><td>points</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Points obtenus par la gamification</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="prize"></a><table style="width:100%"><caption>Table: prize </caption>
-<tr><td>Table Comments</td><td colspan="6">Table des récompenses liées aux points de la gamification</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idprize</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nom</td></tr>
-<tr><td>points</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Nombre de points nécessaires</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Client</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="point"></a><table style="width:100%"><caption>Table: point </caption>
-<tr><td>Table Comments</td><td colspan="6">Table du solde de points pour un utilisateur pour un client</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Utilisateur</td></tr>
-<tr><td>idclient</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Client</td></tr>
-<tr><td>points</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Solde</td></tr>
+<tr><td>idzone</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Zone</td></tr>
+<tr><td>idroute</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Route</td></tr>
 </table><a href="#home">Table List </a></br>
 </body></html>
