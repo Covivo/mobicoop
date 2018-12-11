@@ -33,9 +33,8 @@ use Mobicoop\Bundle\MobicoopBundle\Entity\Matching;
 class ProposalManager
 {
     private $dataProvider;
-    private $deserializer;
     
-    public function __construct(DataProvider $dataProvider, Deserializer $deserializer)
+    public function __construct(DataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Proposal::class);

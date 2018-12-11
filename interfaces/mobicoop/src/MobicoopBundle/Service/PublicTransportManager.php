@@ -31,10 +31,14 @@ use Mobicoop\Bundle\MobicoopBundle\Entity\Hydra;
  */
 class PublicTransportManager
 {
-    private $dataProvider;
-    private $deserializer;
+    const PROVIDER_CITYWAY = "cityway";
     
-    public function __construct(DataProvider $dataProvider, Deserializer $deserializer)
+    const DATETYPE_DEPARTURE = "departure";
+    const DATETYPE_ARRIVAL = "arrival";
+    
+    private $dataProvider;
+    
+    public function __construct(DataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(PTJourney::class, "public_transport/journeys");
