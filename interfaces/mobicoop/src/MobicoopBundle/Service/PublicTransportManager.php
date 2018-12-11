@@ -43,6 +43,14 @@ class PublicTransportManager
     /**
      * Get public transport journeys
      *
+     * @param string    $provider                   The name of the provider
+     * @param string    $apikey                     The apikey
+     * @param float     $origin_latitude            The latitude of the origin point
+     * @param float     $origin_longitude           The longitude of the origin point
+     * @param float     $destination_latitude       The latitude of the destination point
+     * @param float     $destination_longitude      The longitude of the destination point
+     * @param string    $date                       The date of the journey
+     * @param string    $dateType                   The date type (departure or arrival)
      * @return Hydra|null The journeys found (as an Hydra object) or null if not found.
      */
     public function getJourneys(
