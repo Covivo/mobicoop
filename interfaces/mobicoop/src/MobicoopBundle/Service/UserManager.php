@@ -31,9 +31,8 @@ use Mobicoop\Bundle\MobicoopBundle\Entity\User;
 class UserManager
 {
     private $dataProvider;
-    private $deserializer;
     
-    public function __construct(DataProvider $dataProvider, Deserializer $deserializer)
+    public function __construct(DataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(User::class);

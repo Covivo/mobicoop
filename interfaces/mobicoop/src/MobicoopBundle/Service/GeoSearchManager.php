@@ -36,9 +36,8 @@ use Mobicoop\Bundle\MobicoopBundle\Entity\GeoSearch;
 class GeoSearchManager
 {
     private $dataProvider;
-    private $deserializer;
 
-    public function __construct(DataProvider $dataProvider, Deserializer $deserializer)
+    public function __construct(DataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(GeoSearch::class, 'geo_search');
