@@ -45,7 +45,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      itemOperations={"get"}
  * )
  */
-class Point
+class Waypoint
 {
     /**
      * @var int The id of this point.
@@ -58,7 +58,7 @@ class Point
     private $id;
 
     /**
-     * @var int Position number of the point in the whole journey.
+     * @var int Position number of the point in the whole route.
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
@@ -67,37 +67,13 @@ class Point
     private $position;
 
     /**
-     * @var boolean The point is the last point of the whole journey.
+     * @var boolean The point is the last point of the whole route.
      *
      * @Assert\NotBlank
      * @ORM\Column(type="boolean")
      * @Groups({"read","write"})
      */
-    private $lastPoint;
-
-    /**
-     * @var int|null Real distance to next point in metres.
-     *
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read"})
-     */
-    private $distanceNextReal;
-
-    /**
-     * @var int|null Flying distance to next point in metres.
-     *
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read"})
-     */
-    private $distanceNextFly;
-
-    /**
-     * @var int|null Duration to the next point in seconds (based on real distance).
-     *
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read"})
-     */
-    private $durationNext;
+    private $isDestination;
 
     /**
      * @var Proposal The proposal that created the point.
@@ -109,24 +85,24 @@ class Point
     private $proposal;
     
     /**
-     * @var Path The path associated with the point as a start.
+     * @var Route The route associated with the point as an origin.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Path", mappedBy="point1", orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Route", mappedBy="waypointOrigin", orphanRemoval=true)
      * @Groups({"read"})
      * @MaxDepth(1)
      */
-    private $pathStart;
+    private $routeOrigin;
     
     /**
-     * @var Path The path associated with the point as a destination.
+     * @var Route The route associated with the point as a destination.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Path", mappedBy="point2", orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Route", mappedBy="waypointDestination", orphanRemoval=true)
      * @Groups({"read"})
      * @MaxDepth(1)
      */
-    private $pathDestination;
+    private $routeDestination;
 
     /**
      * @var Address The address of the point.
@@ -165,50 +141,14 @@ class Point
         return $this;
     }
 
-    public function getLastPoint(): ?bool
+    public function isDestination(): ?bool
     {
-        return $this->lastPoint;
+        return $this->isDestination;
     }
 
-    public function setLastPoint(bool $lastPoint): self
+    public function setIsDestination(bool $isDestination): self
     {
-        $this->lastPoint = $lastPoint;
-
-        return $this;
-    }
-
-    public function getDistanceNextReal(): ?int
-    {
-        return $this->distanceNextReal;
-    }
-
-    public function setDistanceNextReal(?int $distanceNextReal): self
-    {
-        $this->distanceNextReal = $distanceNextReal;
-
-        return $this;
-    }
-
-    public function getDistanceNextFly(): ?int
-    {
-        return $this->distanceNextFly;
-    }
-
-    public function setDistanceNextFly(?int $distanceNextFly): self
-    {
-        $this->distanceNextFly = $distanceNextFly;
-
-        return $this;
-    }
-
-    public function getDurationNext(): ?int
-    {
-        return $this->durationNext;
-    }
-
-    public function setDurationNext(?int $durationNext): self
-    {
-        $this->durationNext = $durationNext;
+        $this->isDestination = $isDestination;
 
         return $this;
     }

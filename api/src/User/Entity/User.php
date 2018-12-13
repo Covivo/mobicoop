@@ -34,7 +34,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use App\Carpool\Entity\Proposal;
-use App\Carpool\Entity\Solicitation;
+use App\Carpool\Entity\Ask;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -189,36 +189,36 @@ class User
     private $proposals;
 
     /**
-     * @var Solicitation[]|null The solicitations made by this user.
+     * @var Ask[]|null The asks made by this user.
      *
-     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Solicitation", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Ask", mappedBy="user")
      * @ApiSubresource(maxDepth=1)
      */
-    private $solicitations;
+    private $asks;
 
     /**
-     * @var Solicitation[]|null The solicitations where the user is involved as a driver.
+     * @var Ask[]|null The asks where the user is involved as a driver.
      *
-     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Solicitation", mappedBy="userOffer")
+     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Ask", mappedBy="userOffer")
      * @ApiSubresource(maxDepth=1)
      */
-    private $solicitationsOffer;
+    private $asksOffer;
 
     /**
-     * @var Solicitation[]|null The solicitations where the user is involved as a passenger.
+     * @var Ask[]|null The asks where the user is involved as a passenger.
      *
-     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Solicitation", mappedBy="userRequest")
+     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Ask", mappedBy="userRequest")
      * @ApiSubresource(maxDepth=1)
      */
-    private $solicitationsRequest;
+    private $asksRequest;
     
     public function __construct()
     {
         $this->userAddresses = new ArrayCollection();
         $this->proposals = new ArrayCollection();
-        $this->solicitations = new ArrayCollection();
-        $this->solicitationsOffer = new ArrayCollection();
-        $this->solicitationsRequest = new ArrayCollection();
+        $this->asks = new ArrayCollection();
+        $this->asksOffer = new ArrayCollection();
+        $this->asksRequest = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -380,30 +380,30 @@ class User
     }
 
     /**
-     * @return Collection|Solicitation[]
+     * @return Collection|Ask[]
      */
-    public function getSolicitations(): Collection
+    public function getAsks(): Collection
     {
-        return $this->solicitations;
+        return $this->asks;
     }
 
-    public function addSolicitation(Solicitation $solicitation): self
+    public function addAsk(Ask $ask): self
     {
-        if (!$this->solicitations->contains($solicitation)) {
-            $this->solicitations[] = $solicitation;
-            $solicitation->setUser($this);
+        if (!$this->asks->contains($ask)) {
+            $this->asks[] = $ask;
+            $ask->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeSolicitation(Solicitation $solicitation): self
+    public function removeAsk(Ask $ask): self
     {
-        if ($this->solicitations->contains($solicitation)) {
-            $this->solicitations->removeElement($solicitation);
+        if ($this->asks->contains($ask)) {
+            $this->asks->removeElement($ask);
             // set the owning side to null (unless already changed)
-            if ($solicitation->getUser() === $this) {
-                $solicitation->setUser(null);
+            if ($ask->getUser() === $this) {
+                $ask->setUser(null);
             }
         }
 
@@ -411,30 +411,30 @@ class User
     }
 
     /**
-     * @return Collection|Solicitation[]
+     * @return Collection|Ask[]
      */
-    public function getSolicitationsOffer(): Collection
+    public function getAsksOffer(): Collection
     {
-        return $this->solicitationsOffer;
+        return $this->asksOffer;
     }
 
-    public function addSolicitationsOffer(Solicitation $solicitationsOffer): self
+    public function addAsksOffer(Ask $asksOffer): self
     {
-        if (!$this->solicitationsOffer->contains($solicitationsOffer)) {
-            $this->solicitationsOffer[] = $solicitationsOffer;
-            $solicitationsOffer->setUserOffer($this);
+        if (!$this->asksOffer->contains($asksOffer)) {
+            $this->asksOffer[] = $asksOffer;
+            $asksOffer->setUserOffer($this);
         }
 
         return $this;
     }
 
-    public function removeSolicitationsOffer(Solicitation $solicitationsOffer): self
+    public function removeAsksOffer(Ask $asksOffer): self
     {
-        if ($this->solicitationsOffer->contains($solicitationsOffer)) {
-            $this->solicitationsOffer->removeElement($solicitationsOffer);
+        if ($this->asksOffer->contains($asksOffer)) {
+            $this->asksOffer->removeElement($asksOffer);
             // set the owning side to null (unless already changed)
-            if ($solicitationsOffer->getUserOffer() === $this) {
-                $solicitationsOffer->setUserOffer(null);
+            if ($asksOffer->getUserOffer() === $this) {
+                $asksOffer->setUserOffer(null);
             }
         }
 
@@ -442,30 +442,30 @@ class User
     }
 
     /**
-     * @return Collection|Solicitation[]
+     * @return Collection|Ask[]
      */
-    public function getSolicitationsRequest(): Collection
+    public function getAsksRequest(): Collection
     {
-        return $this->solicitationsRequest;
+        return $this->asksRequest;
     }
 
-    public function addSolicitationsRequest(Solicitation $solicitationsRequest): self
+    public function addAsksRequest(Ask $asksRequest): self
     {
-        if (!$this->solicitationsRequest->contains($solicitationsRequest)) {
-            $this->solicitationsRequest[] = $solicitationsRequest;
-            $solicitationsRequest->setUserRequest($this);
+        if (!$this->asksRequest->contains($asksRequest)) {
+            $this->asksRequest[] = $asksRequest;
+            $asksRequest->setUserRequest($this);
         }
 
         return $this;
     }
 
-    public function removeSolicitationsRequest(Solicitation $solicitationsRequest): self
+    public function removeAsksRequest(Ask $asksRequest): self
     {
-        if ($this->solicitationsRequest->contains($solicitationsRequest)) {
-            $this->solicitationsRequest->removeElement($solicitationsRequest);
+        if ($this->asksRequest->contains($asksRequest)) {
+            $this->asksRequest->removeElement($asksRequest);
             // set the owning side to null (unless already changed)
-            if ($solicitationsRequest->getUserRequest() === $this) {
-                $solicitationsRequest->setUserRequest(null);
+            if ($asksRequest->getUserRequest() === $this) {
+                $asksRequest->setUserRequest(null);
             }
         }
 

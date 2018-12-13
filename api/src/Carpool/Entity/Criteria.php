@@ -57,6 +57,22 @@ class Criteria
     private $id;
 
     /**
+     * @var boolean The user can be a driver.
+     *
+     * @ORM\Column(type="boolean")
+     * @Groups({"read","write"})
+     */
+    private $isDriver;
+
+    /**
+     * @var boolean The user can be a passenger.
+     *
+     * @ORM\Column(type="boolean")
+     * @Groups({"read","write"})
+     */
+    private $isPassenger;
+    
+    /**
      * @var int The proposal frequency (1 = punctual; 2 = regular).
      *
      * @Assert\NotBlank
@@ -232,6 +248,30 @@ class Criteria
     public function getId(): ?int
     {
         return $this->id;
+    }
+    
+    public function isDriver(): bool
+    {
+        return $this->isDriver;
+    }
+    
+    public function setIsDriver(bool $isDriver): self
+    {
+        $this->isDriver = $isDriver;
+        
+        return $this;
+    }
+    
+    public function isPassenger(): bool
+    {
+        return $this->isPassenger;
+    }
+    
+    public function setIsPassenger(bool $isPassenger): self
+    {
+        $this->isPassenger = $isPassenger;
+        
+        return $this;
     }
 
     public function getFrequency(): ?int

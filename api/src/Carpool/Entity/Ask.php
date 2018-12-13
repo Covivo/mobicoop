@@ -35,7 +35,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Carpooling : solicitation from/to a driver and/or a passenger (after a matching between an offer and a request).
+ * Carpooling : ask from/to a driver and/or a passenger (after a matching between an offer and a request).
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -48,10 +48,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      itemOperations={"get","put","delete"}
  * )
  */
-class Solicitation
+class Ask
 {
     /**
-     * @var int The id of this solicitation.
+     * @var int The id of this ask.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -61,7 +61,7 @@ class Solicitation
     private $id;
 
     /**
-     * @var int Solicitation status (0 = waiting; 1 = accepted; 2 = declined).
+     * @var int Ask status (0 = waiting; 1 = accepted; 2 = declined).
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
@@ -70,13 +70,13 @@ class Solicitation
     private $status;
 
     /**
-     * @var int The journey type (1 = one way trip; 2 = outward of a round trip; 3 = return of a round trip)).
+     * @var int The ask type (1 = one way trip; 2 = outward of a round trip; 3 = return of a round trip)).
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
      * @Groups({"read","write"})
      */
-    private $journeyType;
+    private $type;
 
     /**
      * @var \DateTimeInterface Creation date of the solicitation.
@@ -86,20 +86,12 @@ class Solicitation
     private $createdDate;
 
     /**
-     * @var int|null Real distance of the matching journey in metres.
+     * @var int|null Distance of the matching journey in metres.
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read"})
      */
-    private $distanceReal;
-
-    /**
-     * @var int|null Flying distance of the matching journey in metres.
-     *
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read"})
-     */
-    private $distanceFly;
+    private $distance;
 
     /**
      * @var int|null Estimated duration of the matching journey in seconds (based on real distance).
@@ -118,7 +110,7 @@ class Solicitation
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
-    private $addressFrom;
+    private $origin;
 
     /**
      * @var Address The destination address.
@@ -129,13 +121,13 @@ class Solicitation
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
-    private $addressTo;
+    private $destination;
 
     /**
-     * @var User The user that creates the solicitation.
+     * @var User The user that creates the ask.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="solicitations")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="asks")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -146,7 +138,7 @@ class Solicitation
      * @var User The user that created the offer (= shortcut to the driver)
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="solicitationsOffer")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="asksOffer")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -157,7 +149,7 @@ class Solicitation
      * @var User The user that created the request (= shortcut to the passenger)
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="solicitationsRequest")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="asksRequest")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -165,10 +157,10 @@ class Solicitation
     private $userRequest;
 
     /**
-     * @var Matching The matching at the origin of the solicitation.
+     * @var Matching The matching at the origin of the ask.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Matching", inversedBy="solicitations")
+     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Matching", inversedBy="asks")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -176,16 +168,16 @@ class Solicitation
     private $matching;
 
     /**
-     * @var Solicitation|null The linked solicitation.
+     * @var Ask|null The linked ask.
      *
-     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Solicitation")
+     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Ask")
      * @Groups({"read"})
      * @MaxDepth(1)
      */
-    private $solicitationLinked;
+    private $askLinked;
 
     /**
-     * @var Criteria The criteria applied to the solicitation.
+     * @var Criteria The criteria applied to the ask.
      *
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
@@ -212,14 +204,14 @@ class Solicitation
         return $this;
     }
 
-    public function getJourneyType(): ?int
+    public function getType(): ?int
     {
-        return $this->journeyType;
+        return $this->type;
     }
 
-    public function setJourneyType(int $journeyType): self
+    public function setType(int $type): self
     {
-        $this->journeyType = $journeyType;
+        $this->type = $type;
 
         return $this;
     }
@@ -236,26 +228,14 @@ class Solicitation
         return $this;
     }
 
-    public function getDistanceReal(): ?int
+    public function getDistance(): ?int
     {
-        return $this->distanceReal;
+        return $this->distance;
     }
 
-    public function setDistanceReal(?int $distanceReal): self
+    public function setDistance(?int $distance): self
     {
-        $this->distanceReal = $distanceReal;
-
-        return $this;
-    }
-
-    public function getDistanceFly(): ?int
-    {
-        return $this->distanceFly;
-    }
-
-    public function setDistanceFly(?int $distanceFly): self
-    {
-        $this->distanceFly = $distanceFly;
+        $this->distance = $distance;
 
         return $this;
     }
@@ -272,26 +252,26 @@ class Solicitation
         return $this;
     }
 
-    public function getAddressFrom(): ?Address
+    public function getOrigin(): ?Address
     {
-        return $this->addressFrom;
+        return $this->origin;
     }
 
-    public function setAddressFrom(?Address $addressFrom): self
+    public function setOrigin(?Address $origin): self
     {
-        $this->addressFrom = $addressFrom;
+        $this->origin = $origin;
 
         return $this;
     }
 
-    public function getAddressTo(): ?Address
+    public function getDestination(): ?Address
     {
-        return $this->addressTo;
+        return $this->destination;
     }
 
-    public function setAddressTo(?Address $addressTo): self
+    public function setDestination(?Address $destination): self
     {
-        $this->addressTo = $addressTo;
+        $this->destination = $destination;
 
         return $this;
     }
@@ -344,19 +324,19 @@ class Solicitation
         return $this;
     }
 
-    public function getSolicitationLinked(): ?self
+    public function getAskLinked(): ?self
     {
-        return $this->solicitationLinked;
+        return $this->askLinked;
     }
 
-    public function setSolicitationLinked(?self $solicitationLinked): self
+    public function setAskLinked(?self $askLinked): self
     {
-        $this->solicitationLinked = $solicitationLinked;
+        $this->askLinked = $askLinked;
 
         // set (or unset) the owning side of the relation if necessary
-        $newSolicitationLinked = $solicitationLinked === null ? null : $this;
-        if ($newSolicitationLinked !== $solicitationLinked->getSolicitationlLinked()) {
-            $solicitationLinked->setSolicitationLinked($newSolicitationLinked);
+        $newAskLinked = $askLinked === null ? null : $this;
+        if ($newAskLinked !== $askLinked->getAsklLinked()) {
+            $askLinked->setAskLinked($newAskLinked);
         }
 
         return $this;

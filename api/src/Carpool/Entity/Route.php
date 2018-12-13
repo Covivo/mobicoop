@@ -30,7 +30,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Carpooling : travel path between 2 points.
+ * Carpooling : a route path between 2 waypoints.
  *
  * @ORM\Entity
  * @ApiResource(
@@ -41,10 +41,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      itemOperations={"get"}
  * )
  */
-class Path
+class Route
 {
     /**
-     * @var int The id of this path.
+     * @var int The id of this route.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -52,15 +52,6 @@ class Path
      * @Groups("read")
      */
     private $id;
-
-    /**
-     * @var int Position number of the current part in the whole path.
-     *
-     * @Assert\NotBlank
-     * @ORM\Column(type="integer")
-     * @Groups({"read"})
-     */
-    private $position;
 
     /**
      * @var string Path detail.
@@ -81,26 +72,42 @@ class Path
     private $encodeFormat;
 
     /**
-     * @var Point The starting point of the path.
+     * @var Waypoint The starting point of the path.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Point", inversedBy="pathStart")
+     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Waypoint", inversedBy="routeOrigin")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
      * @MaxDepth(1)
      */
-    private $point1;
+    private $waypointOrigin;
 
     /**
-     * @var Point The destination point of the path.
+     * @var Waypoint The destination point of the route.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Point", inversedBy="pathDestination")
+     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Waypoint", inversedBy="routeDestination")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
      * @MaxDepth(1)
      */
-    private $point2;
+    private $waypointDestination;
+    
+    /**
+     * @var int|null Distance of the route in metres.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read"})
+     */
+    private $distance;
+    
+    /**
+     * @var int|null Estimated duration of the route in seconds (based on real distance).
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read"})
+     */
+    private $duration;
 
     /**
      * @var TravelMode The travel mode of the path.
@@ -114,18 +121,6 @@ class Path
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getPosition(): ?int
-    {
-        return $this->position;
-    }
-
-    public function setPosition(int $position): self
-    {
-        $this->position = $position;
-
-        return $this;
     }
 
     public function getDetail(): ?string
@@ -152,27 +147,51 @@ class Path
         return $this;
     }
 
-    public function getPoint1(): ?Point
+    public function getWaypointOrigin(): ?Waypoint
     {
-        return $this->point1;
+        return $this->waypointOrigin;
     }
 
-    public function setPoint1(?Point $point1): self
+    public function setWaypointOrigin(?Waypoint $waypointOrigin): self
     {
-        $this->point1 = $point1;
+        $this->waypointOrigin = $waypointOrigin;
 
         return $this;
     }
 
-    public function getPoint2(): ?Point
+    public function getWaypointDestination(): ?Waypoint
     {
-        return $this->point2;
+        return $this->waypointDestination;
     }
 
-    public function setPoint2(?Point $point2): self
+    public function setWaypointDestination(?Waypoint $waypointDestination): self
     {
-        $this->point2 = $point2;
+        $this->waypointDestination = $waypointDestination;
 
+        return $this;
+    }
+    
+    public function getDistance(): ?int
+    {
+        return $this->distance;
+    }
+    
+    public function setDistance(?int $distance): self
+    {
+        $this->distance = $distance;
+        
+        return $this;
+    }
+    
+    public function getDuration(): ?int
+    {
+        return $this->duration;
+    }
+    
+    public function setDuration(?int $duration): self
+    {
+        $this->duration = $duration;
+        
         return $this;
     }
 
