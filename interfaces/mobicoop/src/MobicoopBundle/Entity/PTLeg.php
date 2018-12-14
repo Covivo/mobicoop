@@ -21,129 +21,89 @@
  *    LICENSE
  **************************/
 
-namespace App\PublicTransport\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * A section of a journey.
- *
- * @ApiResource(
- *      routePrefix="/public_transport",
- *      attributes={
- *          "normalization_context"={"groups"={"pt"}, "enable_max_depth"="true"},
- *      },
- *      collectionOperations={},
- *      itemOperations={"get"={"path"="/sections/{id}"}}
- * )
+ * A leg of a journey.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class PTSection
+class PTLeg
 {
     /**
-     * @ApiProperty(identifier=true)
+     * @var int The id of this leg.
      */
     private $id;
     
     /**
-     * @var string The indication of this section.
-     *
-     * @Groups("pt")
+     * @var string The indication of this leg.
      */
     private $indication;
     
     /**
-     * @var int The distance of this section.
-     *
-     * @Groups("pt")
+     * @var int The distance of this leg.
      */
     private $distance;
     
     /**
-     * @var int The duration of this section.
-     *
-     * @Groups("pt")
+     * @var int The duration of this leg.
      */
     private $duration;
     
     /**
-     * @var int The position of this section.
-     *
-     * @Groups("pt")
+     * @var int The position of this leg.
      */
     private $pos;
     
     /**
-     * @var bool The section is the last section of the journey.
-     *
-     * @Groups("pt")
+     * @var bool The leg is the last leg of the journey.
      */
     private $last;
     
     /**
-     * @var string The magnetic direction of this section.
-     *
-     * @Groups("pt")
+     * @var string The magnetic direction of this leg.
      */
     private $magneticDirection;
     
     /**
-     * @var string The relative direction of this section.
-     *
-     * @Groups("pt")
+     * @var string The relative direction of this leg.
      */
     private $relativeDirection;
     
     /**
-     * @var PTJourney The parent journey of this section.
-     *
-     * @Groups("pt")
+     * @var PTJourney The parent journey of this leg.
      */
     private $ptjourney;
     
     /**
-     * @var PTDeparture The departure of this section.
-     *
-     * @Groups("pt")
+     * @var PTDeparture The departure of this leg.
      */
     private $ptdeparture;
     
     /**
-     * @var PTArrival The arrival of this section.
-     *
-     * @Groups("pt")
+     * @var PTArrival The arrival of this leg.
      */
     private $ptarrival;
     
     /**
-     * @var PTMode The transport mode of this section.
-     *
-     * @Groups("pt")
+     * @var PTMode The transport mode of this leg.
      */
     private $ptmode;
     
     /**
-     * @var PTLine The public transport line of this section.
-     *
-     * @Groups("pt")
+     * @var PTLine The public transport line of this leg.
      */
     private $ptline;
     
     /**
-     * @var string The direction of the public transport line of this section.
-     *
-     * @Groups("pt")
+     * @var string The direction of the public transport line of this leg.
      */
     private $direction;
     
     /**
-     * @var PTStep[] The steps of this section.
-     *
-     * @Groups("pt")
+     * @var PTStep[] The steps of this leg.
      */
     private $ptsteps;
     

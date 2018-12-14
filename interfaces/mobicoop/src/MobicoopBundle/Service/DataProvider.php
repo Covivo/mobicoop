@@ -74,8 +74,8 @@ class DataProvider
     }
 
     /**
-     * @param string $class
-     * @param routename|null $resource
+     * @param string        $class      The name of the class
+     * @param string|null   $resource   The resource name if different than the pluralized class name
      * @throws \ReflectionException
      */
     public function setClass(string $class, $resource=null)

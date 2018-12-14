@@ -165,16 +165,16 @@ class PTJourney
     private $ptarrival;
     
     /**
-     * @var PTSection[] The sections of this journey.
+     * @var PTLeg[] The legs of this journey.
      *
      * @Groups("pt")
      */
-    private $ptsections;
+    private $ptlegs;
     
     public function __construct($id)
     {
         $this->id = $id;
-        $this->ptsections = new ArrayCollection();
+        $this->ptlegs = new ArrayCollection();
     }
     
     public function getDistance()
@@ -237,14 +237,14 @@ class PTJourney
         $this->ptarrival = $ptarrival;
     }
     
-    public function getPTSections()
+    public function getPTLegs()
     {
-        return $this->ptsections;
+        return $this->ptlegs;
     }
 
-    public function setPTSections($ptsections)
+    public function setPTLegs($ptlegs)
     {
-        $this->ptsections = $ptsections;
+        $this->ptlegs = $ptlegs;
     }
     
     public function getId()

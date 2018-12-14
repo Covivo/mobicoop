@@ -26,11 +26,11 @@ namespace Mobicoop\Bundle\MobicoopBundle\Service;
 use Mobicoop\Bundle\MobicoopBundle\Entity\GeoSearch;
 use Mobicoop\Bundle\MobicoopBundle\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Entity\ExternalJourney;
+use Mobicoop\Bundle\MobicoopBundle\Entity\PTJourney;
 use Mobicoop\Bundle\MobicoopBundle\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Entity\UserAddress;
 
-use phpDocumentor\Reflection\Types\Self_;
 use TypeError;
 
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
@@ -40,6 +40,13 @@ use Mobicoop\Bundle\MobicoopBundle\Entity\Criteria;
 use Mobicoop\Bundle\MobicoopBundle\Entity\Point;
 use Mobicoop\Bundle\MobicoopBundle\Entity\TravelMode;
 use Mobicoop\Bundle\MobicoopBundle\Entity\Matching;
+use Mobicoop\Bundle\MobicoopBundle\Entity\PTDeparture;
+use Mobicoop\Bundle\MobicoopBundle\Entity\PTArrival;
+use Mobicoop\Bundle\MobicoopBundle\Entity\PTMode;
+use Mobicoop\Bundle\MobicoopBundle\Entity\PTCompany;
+use Mobicoop\Bundle\MobicoopBundle\Entity\PTLine;
+use Mobicoop\Bundle\MobicoopBundle\Entity\PTStep;
+use Mobicoop\Bundle\MobicoopBundle\Entity\PTLeg;
 
 /**
  * Custom deserializer service.
@@ -81,6 +88,9 @@ class Deserializer
                 break;
             case GeoSearch::class:
                 return self::deserializeGeoSearch($data);
+                break;
+            case PTJourney::class:
+                return self::deserializePTJourney($data);
                 break;
             default:
                 break;
@@ -124,16 +134,6 @@ class Deserializer
     }
     
     private function deserializeAddress(array $data): ?Address
-    {
-        $address = new Address();
-        $address = self::autoSet($address, $data);
-        if (isset($data["@id"])) {
-            $address->setIri($data["@id"]);
-        }
-        return $address;
-    }
-
-    private function deserializeGeoSearch(array $data): ?Address
     {
         $address = new Address();
         $address = self::autoSet($address, $data);
@@ -231,6 +231,119 @@ class Deserializer
             $matching->setCriteria(self::deserializeCriteria($data['criteria']));
         }
         return $matching;
+    }
+    
+    private function deserializeGeoSearch(array $data): ?Address
+    {
+        $address = new Address();
+        $address = self::autoSet($address, $data);
+        if (isset($data["@id"])) {
+            $address->setIri($data["@id"]);
+        }
+        return $address;
+    }
+    
+    private function deserializePTJourney(array $data): ?PTJourney
+    {
+        $PTJourney = new PTJourney();
+        $PTJourney = self::autoSet($PTJourney, $data);
+        if (isset($data["ptdeparture"])) {
+            $PTJourney->setPTDeparture(self::deserializePTDeparture($data["ptdeparture"]));
+        }
+        if (isset($data["ptarrival"])) {
+            $PTJourney->setPTArrival(self::deserializePTArrival($data["ptarrival"]));
+        }
+        if (isset($data["ptlegs"])) {
+            $ptlegs = [];
+            foreach ($data["ptlegs"] as $ptleg) {
+                $ptlegs[] = self::deserializePTLeg($ptleg, count($ptlegs));
+            }
+            $PTJourney->setPTLegs($ptlegs);
+        }
+        return $PTJourney;
+    }
+    
+    private function deserializePTDeparture(array $data): ?PTDeparture
+    {
+        $PTDeparture = new PTDeparture();
+        $PTDeparture = self::autoSet($PTDeparture, $data);
+        if (isset($data["address"])) {
+            $PTDeparture->setAddress(self::deserializeAddress($data["address"]));
+        }
+        return $PTDeparture;
+    }
+    
+    private function deserializePTArrival(array $data): ?PTArrival
+    {
+        $PTArrival = new PTArrival();
+        $PTArrival = self::autoSet($PTArrival, $data);
+        if (isset($data["address"])) {
+            $PTArrival->setAddress(self::deserializeAddress($data["address"]));
+        }
+        return $PTArrival;
+    }
+    
+    private function deserializePTLeg(array $data, int $id): ?PTLeg
+    {
+        $PTLeg = new PTLeg($id);
+        $PTLeg = self::autoSet($PTLeg, $data);
+        if (isset($data["ptdeparture"])) {
+            $PTLeg->setPTDeparture(self::deserializePTDeparture($data["ptdeparture"]));
+        }
+        if (isset($data["ptarrival"])) {
+            $PTLeg->setPTArrival(self::deserializePTArrival($data["ptarrival"]));
+        }
+        if (isset($data["ptmode"])) {
+            $PTLeg->setPTMode(self::deserializePTMode($data["ptmode"]));
+        }
+        if (isset($data["ptline"])) {
+            $PTLeg->setPTLine(self::deserializePTLine($data["ptline"]));
+        }
+        if (isset($data["ptsteps"])) {
+            $ptsteps = [];
+            foreach ($data["ptsteps"] as $ptstep) {
+                $ptsteps[] = self::deserializePTStep($ptstep, count($ptstep));
+            }
+            $PTLeg->setPTSteps($ptsteps);
+        }
+        return $PTLeg;
+    }
+    
+    private function deserializePTMode(array $data): ?PTMode
+    {
+        $PTMode = new PTMode();
+        $PTMode = self::autoSet($PTMode, $data);
+        return $PTMode;
+    }
+    
+    private function deserializePTLine(array $data): ?PTLine
+    {
+        $PTLine = new PTLine();
+        $PTLine = self::autoSet($PTLine, $data);
+        if (isset($data["ptcompany"])) {
+            $PTLine->setPTCompany(self::deserializePTCompany($data["ptcompany"]));
+        }
+        return $PTLine;
+    }
+    
+    private function deserializePTCompany(array $data): ?PTCompany
+    {
+        $PTCompany = new PTCompany();
+        $PTCompany = self::autoSet($PTCompany, $data);
+        return $PTCompany;
+    }
+    
+    private function deserializePTStep(array $data, int $id): ?PTStep
+    {
+        $PTStep = new PTStep($id);
+        $PTStep = self::autoSet($PTStep, $data);
+        if (isset($data["ptdeparture"])) {
+            $PTStep->setPTDeparture(self::deserializePTDeparture($data["ptdeparture"]));
+        }
+        if (isset($data["ptarrival"])) {
+            $PTStep->setPTArrival(self::deserializePTArrival($data["ptarrival"]));
+        }
+        return $PTStep;
     }
     
     private function autoSet($object, $data)

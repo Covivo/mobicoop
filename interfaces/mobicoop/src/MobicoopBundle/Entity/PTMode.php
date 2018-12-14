@@ -21,29 +21,43 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\Entity;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\Routing\Annotation\Route;
-use Mobicoop\Bundle\MobicoopBundle\Service\PublicTransportManager;
-
-class DefaultController extends AbstractController
+/**
+ * A public transport mode.
+ *
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ */
+class PTMode
 {
+
     /**
-     * HomePage
-     * @Route("/")
-     *
+     * @var int The id of this mode.
      */
-    public function index()
+    private $id;
+    
+    /**
+     * @var string The name of this mode.
+     */
+    private $name;
+    
+    public function getId()
     {
-        $baseUri = $_ENV['API_URI'];
-        return $this->render(
-            '@Mobicoop/default/index.html.twig',
-            [
-                'baseUri' => $baseUri,
-                'metaDescription' => 'Homepage of Mobicoop'
-            ]
-        );
+        return $this->id;
+    }
+    
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+    
+    public function getName()
+    {
+        return $this->name;
+    }
+    
+    public function setName($name)
+    {
+        $this->name = $name;
     }
 }
