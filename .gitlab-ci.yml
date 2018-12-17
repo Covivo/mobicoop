@@ -42,26 +42,27 @@ branch_tests:
 ########## Everything under this is execute only for Reports (dev & master) ###################
 ###############################################################################################
 
-code_quality:
-  stage: reports
-  image: docker:stable
-  variables:
-    DOCKER_DRIVER: overlay2
-  allow_failure: true
-  services:
-    - docker:stable-dind
-  script:
-    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
-    - docker run
-      --env SOURCE_CODE="$PWD"
-      --volume "$PWD":/code
-      --volume /var/run/docker.sock:/var/run/docker.sock
-      "registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION" /code
-  artifacts:
-    paths: [gl-code-quality-report.json]
-  #only:
-  #  - master
-  #  - dev
+#this job is taking too much time (>15min)
+#code_quality:
+#  stage: reports
+#  image: docker:stable
+#  variables:
+#    DOCKER_DRIVER: overlay2
+#  allow_failure: true
+#  services:
+#    - docker:stable-dind
+#  script:
+#    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+#    - docker run
+#      --env SOURCE_CODE="$PWD"
+#      --volume "$PWD":/code
+#      --volume /var/run/docker.sock:/var/run/docker.sock
+#      "registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION" /code
+#  artifacts:
+#    paths: [gl-code-quality-report.json]
+#  only:
+#    - master
+#    - dev
 
 dependency_scanning:
   stage: reports
@@ -80,9 +81,9 @@ dependency_scanning:
       "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:$SP_VERSION" /code
   artifacts:
     paths: [gl-dependency-scanning-report.json]
-  #only:
-  #  - master
-  #  - dev
+  only:
+    - master
+    - dev
 
 sast:
   stage : reports
@@ -102,9 +103,9 @@ sast:
   artifacts:
     reports:
       sast: gl-sast-report.json
- # only:
- #   - master
- #   - dev
+  only:
+    - master
+    - dev
 
 license_management:
   image:
@@ -117,9 +118,9 @@ license_management:
   artifacts:
     reports:
       license_management: gl-license-management-report.json
-#  only:
-#    - master
-#    - dev
+  only:
+    - master
+    - dev
 
 ###############################################################################################
 ############# Everything under this is execute only for Tests (dev) ############################
