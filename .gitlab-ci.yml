@@ -88,6 +88,7 @@ dependency_scanning:
 sast:
   stage : reports
   image: docker:stable
+  cache: {}
   variables:
     DOCKER_DRIVER: overlay2
   allow_failure: true
