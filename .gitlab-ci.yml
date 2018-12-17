@@ -113,16 +113,7 @@ license_management:
   stage: reports
   allow_failure: true
   script:
-    - ls
     - sudo /run.sh analyze .
-    - ls -al *
-    - cd interfaces/mobicoop
-    - sudo /run.sh analyze .
-    - cd ../..
-    - cd api
-    - sudo /run.sh analyze .
-    - cd ..
-    - ls -al *
   artifacts:
     reports:
       license_management: gl-license-management-report.json
