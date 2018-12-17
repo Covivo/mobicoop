@@ -104,9 +104,9 @@ sast:
   artifacts:
     reports:
       sast: gl-sast-report.json
-  only:
-    - master
-    - dev
+  #only:
+  #  - master
+  #  - dev
 
 license_management:
   image:
