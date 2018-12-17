@@ -81,9 +81,9 @@ dependency_scanning:
       "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:$SP_VERSION" /code
   artifacts:
     paths: [gl-dependency-scanning-report.json]
-  #only:
-  #  - master
-  #  - dev
+  only:
+    - master
+    - dev
 
 sast:
   stage : reports
@@ -103,9 +103,9 @@ sast:
   artifacts:
     reports:
       sast: gl-sast-report.json
-  #only:
-  #  - master
-  #  - dev
+  only:
+    - master
+    - dev
 
 license_management:
   image:
@@ -118,9 +118,9 @@ license_management:
   artifacts:
     reports:
       license_management: gl-license-management-report.json
-  #only:
-  #  - master
-  #  - dev
+  only:
+    - master
+    - dev
 
 ###############################################################################################
 ############# Everything under this is execute only for Tests (dev) ############################
