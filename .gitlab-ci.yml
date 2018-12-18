@@ -127,6 +127,17 @@ license_management:
 ############# Everything under this is execute only for Tests (dev) ############################
 ###############################################################################################
 
+dev_tests:
+  stage: test
+  variables:
+    APP_ENV: dev # important because symfony use it
+  before_script:
+    - npm install --unsafe-perm
+  script:
+    - npm run testAndCoverage
+  only:
+    - master
+
 dev_deploy:
   stage: deploy
   environment:
