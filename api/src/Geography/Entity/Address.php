@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Address\Entity;
+namespace App\Geography\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -33,8 +33,8 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use App\Carpool\Entity\Point;
-use App\User\Entity\UserAddress;
+use App\Carpool\Entity\WayPoint;
+use App\User\Entity\User;
 
 /**
  * A postal address.
@@ -67,7 +67,7 @@ class Address
     /**
      * @var string The street address.
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"read","write","pt"})
      */
     private $streetAddress;
@@ -81,23 +81,23 @@ class Address
     private $postalCode;
     
     /**
-     * @var string The locality of the address.
+     * @var string|null The locality of the address.
      *
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups({"read","write","pt"})
      */
     private $addressLocality;
     
     /**
-     * @var string The country of the address.
+     * @var string|null The country of the address.
      *
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups({"read","write","pt"})
      */
     private $addressCountry;
     
     /**
-     * @var string The latitude of the address.
+     * @var float|null The latitude of the address.
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      * @Groups({"read","write","pt"})
@@ -105,7 +105,7 @@ class Address
     private $latitude;
     
     /**
-     * @var string The longitude of the address.
+     * @var float|null The longitude of the address.
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      * @Groups({"read","write","pt"})
@@ -119,6 +119,14 @@ class Address
      * @Groups({"read","write","pt"})
      */
     private $elevation;
+    
+    /**
+     * @var string|null The name of this address.
+     *
+     * @ORM\Column(type="string", length=45, nullable=true)
+     * @Groups({"read","write","pt"})
+     */
+    private $name;
 
     public function __construct($id=null)
     {
@@ -164,10 +172,15 @@ class Address
     {
         return $this->elevation;
     }
-
-    public function getUserAddress()
+    
+    public function getName(): ?string
     {
-        return $this->userAddress;
+        return $this->name;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
     }
 
     public function setId($id)
@@ -175,7 +188,7 @@ class Address
         $this->id = $id;
     }
     
-    public function setStreetAddress(string $streetAddress)
+    public function setStreetAddress(?string $streetAddress)
     {
         $this->streetAddress = $streetAddress;
     }
@@ -190,7 +203,7 @@ class Address
         $this->addressLocality = $addressLocality;
     }
 
-    public function setAddressCountry(string $addressCountry)
+    public function setAddressCountry(?string $addressCountry)
     {
         $this->addressCountry = $addressCountry;
     }
@@ -210,9 +223,14 @@ class Address
         $this->elevation = $elevation;
     }
     
-    public function setUserAddress(?UserAddress $userAddress)
+    public function setName(?string $name)
     {
-        $userAddress->setAddress($this);
-        $this->userAddress = $userAddress;
+        $this->name = $name;
+    }
+    
+    public function setUser(?User $user)
+    {
+        $user->setAddress($this);
+        $this->user = $user;
     }
 }

@@ -21,40 +21,37 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Entity;
+namespace App\Carpool\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Address\Entity\Address;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use App\Address\Entity\Address;
+use App\Geography\Entity\Direction;
 
 /**
- * A user address.
+ * Carpooling : an individual stop.
+ * Individual stop is a virtual public transport stop made from an offer proposal. 
+ * It is used for multimodal calculation. It is calculated only for offer proposal, in regions that are covered by public transportation.
  *
  * @ORM\Entity
- * @ORM\Table(
- *      uniqueConstraints={@ORM\UniqueConstraint(columns={"name", "user_id"})}
- * )
- * @UniqueEntity({"name","user"})
  * @ApiResource(
  *      attributes={
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={},
+ *      itemOperations={"get"}
  * )
- * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
  */
-class UserAddress
+class IndividualStop
 {
     /**
-     * @var int The id of this user address.
+     * @var int The id of this stop.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -62,33 +59,40 @@ class UserAddress
      * @Groups("read")
      */
     private $id;
-    
-    /**
-     * @var string The name of the address for the user.
-     *
-     * @Assert\NotBlank
-     * @ORM\Column(type="string", length=45)
-     * @Groups({"read","write"})
-     */
-    private $name;
 
     /**
-     * @var User The user that uses the address.
+     * @var int Position number of the stop in the whole route (all the individual stops of the route).
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="userAddresses")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\Column(type="smallint")
      * @Groups({"read","write"})
-     * @MaxDepth(1)
      */
-    private $user;
+    private $position;
     
     /**
-     * @var Address The address used.
+     * @var \DateTimeInterface|null The stop time.
+     *
+     * @Assert\Time()
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $time;
+
+    /**
+     * @var Proposal The proposal that owns the stop.
+     *
+     * @Assert\NotBlank
+     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Proposal", inversedBy="individualPoints")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $proposal;
+    
+        /**
+     * @var Address The address of the stop.
      *
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="App\Address\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(name="address_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -98,34 +102,53 @@ class UserAddress
     {
         return $this->id;
     }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(int $position): self
+    {
+        $this->position = $position;
+
+        return $this;
+    }
     
-    public function getName(): string
+    public function getTime(): ?\DateTimeInterface
     {
-        return $this->name;
+        return $this->time;
+    }
+    
+    public function setTime(?\DateTimeInterface $time): self
+    {
+        $this->time = $time;
+        
+        return $this;
     }
 
-    public function getUser(): User
+    public function getProposal(): ?Proposal
     {
-        return $this->user;
+        return $this->proposal;
     }
 
-    public function getAddress(): Address
+    public function setProposal(?Proposal $proposal): self
+    {
+        $this->proposal = $proposal;
+
+        return $this;
+    }
+
+    public function getAddress(): ?Address
     {
         return $this->address;
     }
 
-    public function setName(string $name)
-    {
-        $this->name = $name;
-    }
-
-    public function setUser(User $user)
-    {
-        $this->user = $user;
-    }
-
-    public function setAddress(Address $address)
+    public function setAddress(?Address $address): self
     {
         $this->address = $address;
+
+        return $this;
     }
+
 }

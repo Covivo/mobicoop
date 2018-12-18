@@ -27,10 +27,13 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Address\Entity\Address;
+use Doctrine\ORM\Mapping as ORM;
+use App\Carpool\Entity\IndividualStop;
 
 /**
  * An arrival.
  *
+ * @ORM\Entity
  * @ApiResource(
  *      routePrefix="/public_transport",
  *      attributes={
@@ -45,6 +48,11 @@ use App\Address\Entity\Address;
 class PTArrival
 {
     /**
+     * @var int The id of this arrival.
+     * 
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -69,6 +77,15 @@ class PTArrival
      * @Groups("pt")
      */
     private $address;
+    
+    /**
+     * @var IndividualStop|null Individual stop if multimodal using carpool.
+     *
+     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\IndividualStop")
+     * @Groups({"pt"})
+     * @MaxDepth(1)
+     */
+    private $individualStop;
     
     public function __construct($id)
     {
@@ -113,5 +130,17 @@ class PTArrival
     public function setAddress($address)
     {
         $this->address = $address;
+    }
+    
+    public function getIndividualStop(): ?IndividualStop
+    {
+        return $this->individualStop;
+    }
+    
+    public function setIndividualStop(?IndividualStop $individualStop): self
+    {
+        $this->individualStop = $individualStop;
+        
+        return $this;
     }
 }

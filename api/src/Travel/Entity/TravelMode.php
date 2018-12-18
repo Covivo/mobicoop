@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Entity;
+namespace App\Travel\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

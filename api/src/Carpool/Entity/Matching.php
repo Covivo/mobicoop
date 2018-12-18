@@ -28,6 +28,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Events;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Geography\Entity\Direction;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -149,6 +150,17 @@ class Matching
      * @MaxDepth(1)
      */
     private $criteria;
+    
+    /**
+     * @var Direction The calculated direction of the matching.
+     *
+     * @Assert\NotBlank
+     * @ORM\OneToOne(targetEntity="App\Geography\Entity\Direction", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $direction;
 
     public function __construct()
     {
@@ -296,6 +308,18 @@ class Matching
     {
         $this->criteria = $criteria;
 
+        return $this;
+    }
+    
+    public function getDirection(): ?Direction
+    {
+        return $this->direction;
+    }
+    
+    public function setDirection(Direction $direction): self
+    {
+        $this->direction = $direction;
+        
         return $this;
     }
     

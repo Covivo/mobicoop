@@ -31,6 +31,7 @@ use App\Address\Entity\Address;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Geography\Entity\Direction;
 
 /**
  * Carpooling : travel point for a journey.
@@ -79,32 +80,12 @@ class Waypoint
      * @var Proposal The proposal that created the point.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Proposal", inversedBy="points")
+     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Proposal", inversedBy="waypoints")
      * @ORM\JoinColumn(nullable=false)
      */
     private $proposal;
     
-    /**
-     * @var Route The route associated with the point as an origin.
-     *
-     * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Route", mappedBy="waypointOrigin", orphanRemoval=true)
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $routeOrigin;
-    
-    /**
-     * @var Route The route associated with the point as a destination.
-     *
-     * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Route", mappedBy="waypointDestination", orphanRemoval=true)
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $routeDestination;
-
-    /**
+        /**
      * @var Address The address of the point.
      *
      * @Assert\NotBlank
@@ -114,15 +95,6 @@ class Waypoint
      * @MaxDepth(1)
      */
     private $address;
-
-    /**
-     * @var TravelMode|null The travel mode used from the point to the next point.
-     *
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\TravelMode")
-     * @Groups({"read","write"})
-     * @MaxDepth(1)
-     */
-    private $travelMode;
     
     public function getId(): ?int
     {
@@ -177,15 +149,4 @@ class Waypoint
         return $this;
     }
 
-    public function getTravelMode(): ?TravelMode
-    {
-        return $this->travelMode;
-    }
-
-    public function setTravelMode(?TravelMode $travelMode): self
-    {
-        $this->travelMode = $travelMode;
-
-        return $this;
-    }
 }

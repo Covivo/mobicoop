@@ -245,6 +245,30 @@ class Criteria
      */
     private $marginTime;
     
+    /**
+     * @var int|null The maximum deviation time (in seconds) as a driver to accept a request proposal.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $maxDeviationTime;
+    
+    /**
+     * @var int|null The maximum deviation distance (in metres) as a driver to accept a request proposal.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $maxDeviationDistance;
+    
+    /**
+     * @var boolean The user accepts any route as a passenger from its origin to the destination.
+     *
+     * @ORM\Column(type="boolean")
+     * @Groups({"read","write"})
+     */
+    private $anyRouteAsPassenger;
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -511,6 +535,42 @@ class Criteria
     {
         $this->marginTime = $marginTime;
 
+        return $this;
+    }
+    
+    public function getMaxDeviationTime(): ?int
+    {
+        return $this->maxDeviationTime;
+    }
+    
+    public function getMaxDeviationDistance(): ?int
+    {
+        return $this->maxDeviationDistance;
+    }
+    
+    public function getAnyRouteAsPassenger(): bool
+    {
+        return $this->anyRouteAsPassenger;
+    }
+    
+    public function setMaxDeviationTime(?int $maxDeviationTime): self
+    {
+        $this->maxDeviationTime = $maxDeviationTime;
+        
+        return $this;
+    }
+    
+    public function setMaxDeviationDistance(?int $maxDeviationDistance): self
+    {
+        $this->maxDeviationDistance = $maxDeviationDistance;
+        
+        return $this;
+    }
+    
+    public function setAnyRouteAsPassenger(bool $anyRouteAsPassenger): self
+    {
+        $this->anyRouteAsPassenger = $anyRouteAsPassenger;
+        
         return $this;
     }
     

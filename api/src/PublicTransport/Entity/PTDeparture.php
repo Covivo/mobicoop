@@ -27,10 +27,13 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Address\Entity\Address;
+use App\Carpool\Entity\IndividualStop;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * A departure.
  *
+ * @ORM\Entity
  * @ApiResource(
  *      routePrefix="/public_transport",
  *      attributes={
@@ -46,19 +49,28 @@ class PTDeparture
 {
     
     /**
-     * @ApiProperty(identifier=true)
+     * @var int $id The id of this departure.
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     * @Groups("pt")
      */
     private $id;
     
     /**
-     * @var string The name of this departure.
+     * @var string|null The name of this departure.
      *
+     * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups("pt")
      */
     private $name;
     
     /**
-     * @var \DateTime The date and time of this departure.
+     * @var \DateTimeInterface|null The date and time of this departure.
+     *
+     * @Assert\Date()
+     * @ORM\Column(type="date", nullable=true)
      *
      * @Groups("pt")
      */
@@ -70,6 +82,15 @@ class PTDeparture
      * @Groups("pt")
      */
     private $address;
+    
+    /**
+     * @var IndividualStop|null Individual stop if multimodal using carpool.
+     *
+     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\IndividualStop")
+     * @Groups({"pt"})
+     * @MaxDepth(1)
+     */
+    private $individualStop;
     
     public function __construct($id)
     {
@@ -114,5 +135,17 @@ class PTDeparture
     public function setAddress($address)
     {
         $this->address = $address;
+    }
+    
+    public function getIndividualStop(): ?IndividualStop
+    {
+        return $this->individualStop;
+    }
+    
+    public function setIndividualStop(?IndividualStop $individualStop): self
+    {
+        $this->individualStop = $individualStop;
+        
+        return $this;
     }
 }

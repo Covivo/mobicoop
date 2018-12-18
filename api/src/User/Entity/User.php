@@ -23,9 +23,9 @@
 
 namespace App\User\Entity;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\PersistentCollection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Annotation\ApiProperty;
@@ -33,13 +33,13 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use App\Carpool\Entity\Proposal;
-use App\Carpool\Entity\Ask;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Doctrine\ORM\PersistentCollection;
+use App\Geography\Entity\Address;
+use App\Carpool\Entity\Proposal;
+use App\Carpool\Entity\Ask;
 
 /**
  * A user.
@@ -61,8 +61,11 @@ use Doctrine\ORM\PersistentCollection;
  */
 class User
 {
+    CONST MAX_DEVIATION_TIME = 600;
+    CONST MAX_DEVIATION_DISTANCE = 10000;
+    
     /**
-     * @var int $id The id of this user.
+     * @var int The id of this user.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -131,7 +134,7 @@ class User
     private $nationality;
     
     /**
-     * @var \DateTimeInterface|null $birthDate The birth date of the user.
+     * @var \DateTimeInterface|null The birth date of the user.
      *
      * @Assert\Date()
      * @ORM\Column(type="date", nullable=true)
@@ -170,20 +173,37 @@ class User
     private $maxDeviationDistance;
     
     /**
-     * @var UserAddress[]|null A user may have many names addresses.
+     * @var boolean|null The user accepts any route as a passenger from its origin to the destination.
      *
-     * @ORM\OneToMany(targetEntity="UserAddress", mappedBy="user", cascade={"persist","remove"})
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $anyRouteAsPassenger;
+    
+    /**
+     * @var Address[]|null A user may have many addresses.
+     *
+     * @ORM\OneToMany(targetEntity="Address::class", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
-     *
      */
-    private $userAddresses;
+    private $addresses;
+    
+    /**
+     * @var Car[]|null A user may have many cars.
+     *
+     * @ORM\OneToMany(targetEntity="Car::class", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
+     */
+    private $cars;
 
     /**
      * @var Proposal[]|null The proposals made by this user.
      *
-     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Proposal", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Proposal::class", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      * @ApiSubresource(maxDepth=1)
      */
     private $proposals;
@@ -191,7 +211,7 @@ class User
     /**
      * @var Ask[]|null The asks made by this user.
      *
-     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Ask", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Ask::class", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      * @ApiSubresource(maxDepth=1)
      */
     private $asks;
@@ -199,26 +219,27 @@ class User
     /**
      * @var Ask[]|null The asks where the user is involved as a driver.
      *
-     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Ask", mappedBy="userOffer")
+     * @ORM\OneToMany(targetEntity="Ask::class", mappedBy="userOffer", cascade={"remove"}, orphanRemoval=true)
      * @ApiSubresource(maxDepth=1)
      */
-    private $asksOffer;
+    private $askOffers;
 
     /**
      * @var Ask[]|null The asks where the user is involved as a passenger.
      *
-     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Ask", mappedBy="userRequest")
+     * @ORM\OneToMany(targetEntity="Ask::class", mappedBy="userRequest", cascade={"remove"}, orphanRemoval=true)
      * @ApiSubresource(maxDepth=1)
      */
-    private $asksRequest;
+    private $askRequests;
     
     public function __construct()
     {
-        $this->userAddresses = new ArrayCollection();
+        $this->addresses = new ArrayCollection();
+        $this->cars = new ArrayCollection();
         $this->proposals = new ArrayCollection();
         $this->asks = new ArrayCollection();
-        $this->asksOffer = new ArrayCollection();
-        $this->asksRequest = new ArrayCollection();
+        $this->askOffers = new ArrayCollection();
+        $this->askRequests = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -231,14 +252,35 @@ class User
         return $this->givenName;
     }
 
+    public function setGivenName(?string $givenName): self
+    {
+        $this->givenName = $givenName;
+        
+        return $this;
+    }
+    
     public function getFamilyName(): ?string
     {
         return $this->familyName;
     }
     
+    public function setFamilyName(?string $familyName): self
+    {
+        $this->familyName = $familyName;
+        
+        return $this;
+    }
+    
     public function getEmail(): string
     {
         return $this->email;
+    }
+    
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+        
+        return $this;
     }
 
     public function getPassword(): ?string
@@ -246,112 +288,154 @@ class User
         return $this->password;
     }
 
+    public function setPassword(?string $password): self
+    {
+        $this->password = $password;
+        
+        return $this;
+    }
+    
     public function getGender(): ?string
     {
         return $this->gender;
+    }
+    
+    public function setGender(?string $gender): self
+    {
+        $this->gender = $gender;
+        
+        return $this;
     }
 
     public function getNationality(): ?string
     {
         return $this->nationality;
     }
+    
+    public function setNationality(?string $nationality): self
+    {
+        $this->nationality = $nationality;
+        
+        return $this;
+    }
 
     public function getBirthDate(): ?\DateTimeInterface
     {
         return $this->birthDate;
+    }
+    
+    public function setBirthDate(?\DateTimeInterface $birthDate): self
+    {
+        $this->birthDate = $birthDate;
+        
+        return $this;
     }
 
     public function getTelephone(): ?string
     {
         return $this->telephone;
     }
-
-    public function getMaxDeviationTime(): ?int
-    {
-        return $this->maxDeviationTime;
-    }
-
-    public function getMaxDeviationDistance(): ?int
-    {
-        return $this->maxDeviationDistance;
-    }
-
-    public function getUserAddresses()
-    {
-        return $this->userAddresses;
-    }
-
-    public function setGivenName(?string $givenName)
-    {
-        $this->givenName = $givenName;
-    }
-
-    public function setFamilyName(?string $familyName)
-    {
-        $this->familyName = $familyName;
-    }
     
-    public function setEmail(string $email)
-    {
-        $this->email = $email;
-    }
-
-    public function setPassword(?string $password)
-    {
-        $this->password = $password;
-    }
-
-    public function setGender(?string $gender)
-    {
-        $this->gender = $gender;
-    }
-
-    public function setNationality(?string $nationality)
-    {
-        $this->nationality = $nationality;
-    }
-
-    public function setBirthDate(?\DateTimeInterface $birthDate)
-    {
-        $this->birthDate = $birthDate;
-    }
-
-    public function setTelephone(?string $telephone)
+    public function setTelephone(?string $telephone): self
     {
         $this->telephone = $telephone;
+        
+        return $this;
     }
 
-    public function setMaxDeviationTime(?int $maxDeviationTime)
+    public function getMaxDeviationTime(): int
+    {
+        return (!is_null($this->maxDeviationTime) ? $this->maxDeviationTime : self::MAX_DEVIATION_TIME);
+    }
+    
+    public function setMaxDeviationTime(?int $maxDeviationTime): self
     {
         $this->maxDeviationTime = $maxDeviationTime;
+        
+        return $this;
     }
 
-    public function setMaxDeviationDistance(?int $maxDeviationDistance)
+    public function getMaxDeviationDistance(): int
+    {
+        return (!is_null($this->maxDeviationDistance) ? $this->maxDeviationDistance : self::MAX_DEVIATION_DISTANCE);
+    }
+    
+    public function setMaxDeviationDistance(?int $maxDeviationDistance): self
     {
         $this->maxDeviationDistance = $maxDeviationDistance;
-    }
-
-    public function setUserAddresses(?array $userAddresses)
-    {
-        $this->userAddresses = $userAddresses;
+        
+        return $this;
     }
     
-    public function addUserAddress(UserAddress $userAddress)
+    public function getAnyRouteAsPassenger(): bool
     {
-        $userAddress->setUser($this);
-        $this->userAddresses->add($userAddress);
+        return (!is_null($this->anyRouteAsPassenger) ? $this->anyRouteAsPassenger : true);
     }
     
-    public function removeUserAddress(UserAddress $userAddress)
+    public function setAnyRouteAsPassenger(?bool $anyRouteAsPassenger): self
     {
-        $this->userAddresses->removeElement($userAddress);
-        $userAddress->setUser(null);
+        $this->anyRouteAsPassenger = $anyRouteAsPassenger;
+        
+        return $this;
+    }
+    
+    public function getAddresses(): ArrayCollection
+    {
+        return $this->addresses;
+    }
+    
+    public function addAddress(Address $address): self
+    {
+        if (!$this->addresses->contains($address)) {
+            $this->addresses->add($address);
+            $address->setUser($this);
+        }
+        
+        return $this;
     }
 
-    /**
-     * @return Collection|Proposal[]
-     */
-    public function getProposals(): Collection
+    public function removeAddress(Address $address): self
+    {
+        if ($this->addresses->contains($address)) {
+            $this->addresses->removeElement($address);
+            // set the owning side to null (unless already changed)
+            if ($address->getUser() === $this) {
+                $address->setUser(null);
+            }
+        }
+        
+        return $this;
+    }
+    
+    public function getCars(): ArrayCollection
+    {
+        return $this->cars;
+    }
+    
+    public function addCar(Car $car): self
+    {
+        if (!$this->cars->contains($car)) {
+            $this->cars->add($car);
+            $car->setUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeCar(Car $car): self
+    {
+        if ($this->cars->contains($car)) {
+            $this->cars->removeElement($car);
+            // set the owning side to null (unless already changed)
+            if ($car->getUser() === $this) {
+                $car->setUser(null);
+            }
+        }
+        
+        return $this;
+    }
+    
+    public function getProposals(): ArrayCollection
     {
         return $this->proposals;
     }
@@ -359,7 +443,7 @@ class User
     public function addProposal(Proposal $proposal): self
     {
         if (!$this->proposals->contains($proposal)) {
-            $this->proposals[] = $proposal;
+            $this->proposals->add($proposal);
             $proposal->setUser($this);
         }
 
@@ -379,10 +463,7 @@ class User
         return $this;
     }
 
-    /**
-     * @return Collection|Ask[]
-     */
-    public function getAsks(): Collection
+    public function getAsks(): ArrayCollection
     {
         return $this->asks;
     }
@@ -390,7 +471,7 @@ class User
     public function addAsk(Ask $ask): self
     {
         if (!$this->asks->contains($ask)) {
-            $this->asks[] = $ask;
+            $this->asks->add($ask);
             $ask->setUser($this);
         }
 
@@ -410,62 +491,56 @@ class User
         return $this;
     }
 
-    /**
-     * @return Collection|Ask[]
-     */
-    public function getAsksOffer(): Collection
+    public function getAskOffers(): ArrayCollection
     {
-        return $this->asksOffer;
+        return $this->askOffers;
     }
 
-    public function addAsksOffer(Ask $asksOffer): self
+    public function addAskOffer(Ask $askOffer): self
     {
-        if (!$this->asksOffer->contains($asksOffer)) {
-            $this->asksOffer[] = $asksOffer;
-            $asksOffer->setUserOffer($this);
+        if (!$this->askOffers->contains($askOffer)) {
+            $this->askOffers->add($askOffer);
+            $askOffer->setUserOffer($this);
         }
 
         return $this;
     }
 
-    public function removeAsksOffer(Ask $asksOffer): self
+    public function removeAskOffer(Ask $askOffer): self
     {
-        if ($this->asksOffer->contains($asksOffer)) {
-            $this->asksOffer->removeElement($asksOffer);
+        if ($this->askOffers->contains($askOffer)) {
+            $this->askOffers->removeElement($askOffer);
             // set the owning side to null (unless already changed)
-            if ($asksOffer->getUserOffer() === $this) {
-                $asksOffer->setUserOffer(null);
+            if ($askOffer->getUserOffer() === $this) {
+                $askOffer->setUserOffer(null);
             }
         }
 
         return $this;
     }
 
-    /**
-     * @return Collection|Ask[]
-     */
-    public function getAsksRequest(): Collection
+    public function getAskRequests(): ArrayCollection
     {
-        return $this->asksRequest;
+        return $this->askRequests;
     }
 
-    public function addAsksRequest(Ask $asksRequest): self
+    public function addAskRequest(Ask $askRequest): self
     {
-        if (!$this->asksRequest->contains($asksRequest)) {
-            $this->asksRequest[] = $asksRequest;
-            $asksRequest->setUserRequest($this);
+        if (!$this->askRequests->contains($askRequest)) {
+            $this->askRequests->add($askRequest);
+            $askRequest->setUserRequest($this);
         }
 
         return $this;
     }
 
-    public function removeAsksRequest(Ask $asksRequest): self
+    public function removeAskRequest(Ask $askRequest): self
     {
-        if ($this->asksRequest->contains($asksRequest)) {
-            $this->asksRequest->removeElement($asksRequest);
+        if ($this->askRequests->contains($askRequest)) {
+            $this->askRequests->removeElement($askRequest);
             // set the owning side to null (unless already changed)
-            if ($asksRequest->getUserRequest() === $this) {
-                $asksRequest->setUserRequest(null);
+            if ($askRequest->getUserRequest() === $this) {
+                $askRequest->setUserRequest(null);
             }
         }
 

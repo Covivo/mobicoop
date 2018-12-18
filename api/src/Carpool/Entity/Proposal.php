@@ -37,8 +37,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Controller\ProposalPost;
+use App\Travel\Entity\TravelMode;
 use App\User\Entity\User;
 use App\Carpool\Filter\LocalityFilter;
+use App\Geography\Entity\Direction;
+use App\User\Entity\Car;
 
 /**
  * Carpooling : proposal (offer from a driver / request from a passenger).
@@ -155,7 +158,7 @@ class Proposal
     /**
      * @var TravelMode[]|null The travel modes accepted if the proposal is a request.
      *
-     * @ORM\ManyToMany(targetEntity="App\Carpool\Entity\TravelMode")
+     * @ORM\ManyToMany(targetEntity="App\Travel\Entity\TravelMode")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -188,12 +191,46 @@ class Proposal
      */
     private $criteria;
     
+    /**
+     * @var Direction The calculated direction of the proposal.
+     *
+     * @Assert\NotBlank
+     * @ORM\OneToOne(targetEntity="App\Geography\Entity\Direction", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $direction;
+    
+    /**
+     * @var Car The car used for the proposal.
+     *
+     * @Assert\NotBlank
+     * @ORM\OneToOne(targetEntity="App\User\Entity\Car", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $car;
+    
+    /**
+     * @var IndividualStop[] The individual stops of the proposal.
+     *
+     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\IndividualStop", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OrderBy({"position" = "ASC"})
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
+     */
+    private $individualStops;
+    
     private $originLocality;
     private $destinationLocality;
     
     public function __construct()
     {
         $this->waypoints = new ArrayCollection();
+        $this->individualStops = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
         $this->matchingOffers = new ArrayCollection();
         $this->matchingRequests = new ArrayCollection();
@@ -203,6 +240,7 @@ class Proposal
     {
         // when we clone a Proposal we keep only the basic properties, we re-initialize all the collections
         $this->waypoints = new ArrayCollection();
+        $this->individualStops = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
         $this->matchingOffers = new ArrayCollection();
         $this->matchingRequests = new ArrayCollection();
@@ -329,14 +367,45 @@ class Proposal
 
     public function removeWaypoint(Waypoint $waypoint): self
     {
-        if ($this->points->contains($waypoint)) {
-            $this->points->removeElement($waypoint);
+        if ($this->waypoints->contains($waypoint)) {
+            $this->waypoints->removeElement($waypoint);
             // set the owning side to null (unless already changed)
             if ($waypoint->getProposal() === $this) {
                 $waypoint->setProposal(null);
             }
         }
 
+        return $this;
+    }
+    
+    /**
+     * @return Collection|IndividualStop[]
+     */
+    public function getIndividualStops(): Collection
+    {
+        return $this->individualStops;
+    }
+    
+    public function addIndividualStop(IndividualStop $individualStop): self
+    {
+        if (!$this->individualStops->contains($individualStop)) {
+            $this->individualStops[] = $individualStop;
+            $individualStop->setProposal($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeIndividualStop(IndividualStop $individualStop): self
+    {
+        if ($this->individualStops->contains($individualStop)) {
+            $this->individualStops->removeElement($individualStop);
+            // set the owning side to null (unless already changed)
+            if ($individualStop->getProposal() === $this) {
+                $individualStop->setProposal(null);
+            }
+        }
+        
         return $this;
     }
     
@@ -437,6 +506,30 @@ class Proposal
     {
         $this->criteria = $criteria;
 
+        return $this;
+    }
+    
+    public function getDirection(): ?Direction
+    {
+        return $this->direction;
+    }
+    
+    public function setDirection(Direction $direction): self
+    {
+        $this->direction = $direction;
+        
+        return $this;
+    }
+    
+    public function getCar(): ?Car
+    {
+        return $this->car;
+    }
+    
+    public function setCar(Car $car): self
+    {
+        $this->car = $car;
+        
         return $this;
     }
     
