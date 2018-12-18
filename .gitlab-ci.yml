@@ -136,7 +136,7 @@ dev_tests:
   script:
     - npm run testAndCoverage
   only:
-    - master
+    - dev
 
 dev_deploy:
   stage: deploy
