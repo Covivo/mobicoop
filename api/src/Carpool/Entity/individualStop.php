@@ -35,7 +35,7 @@ use App\Geography\Entity\Direction;
 
 /**
  * Carpooling : an individual stop.
- * Individual stop is a virtual public transport stop made from an offer proposal. 
+ * Individual stop is a virtual public transport stop made from an offer proposal.
  * It is used for multimodal calculation. It is calculated only for offer proposal, in regions that are covered by public transportation.
  *
  * @ORM\Entity
@@ -87,7 +87,7 @@ class IndividualStop
      */
     private $proposal;
     
-        /**
+    /**
      * @var Address The address of the stop.
      *
      * @Assert\NotBlank
@@ -150,5 +150,4 @@ class IndividualStop
 
         return $this;
     }
-
 }

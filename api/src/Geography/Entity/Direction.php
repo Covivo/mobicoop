@@ -33,7 +33,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
  * This entity describes the route to follow between 2 or more addresses using an individual transport mode.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- * 
+ *
  * @ORM\Entity
  * @ApiResource(
  *      attributes={
@@ -319,5 +319,4 @@ class Direction
         
         return $this;
     }
-    
 }

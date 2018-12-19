@@ -61,8 +61,8 @@ use App\Carpool\Entity\Ask;
  */
 class User
 {
-    CONST MAX_DEVIATION_TIME = 600;
-    CONST MAX_DEVIATION_DISTANCE = 10000;
+    const MAX_DEVIATION_TIME = 600;
+    const MAX_DEVIATION_DISTANCE = 10000;
     
     /**
      * @var int The id of this user.

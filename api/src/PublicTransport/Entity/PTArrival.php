@@ -49,7 +49,7 @@ class PTArrival
 {
     /**
      * @var int The id of this arrival.
-     * 
+     *
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")

@@ -85,7 +85,7 @@ class Waypoint
      */
     private $proposal;
     
-        /**
+    /**
      * @var Address The address of the point.
      *
      * @Assert\NotBlank
@@ -148,5 +148,4 @@ class Waypoint
 
         return $this;
     }
-
 }
