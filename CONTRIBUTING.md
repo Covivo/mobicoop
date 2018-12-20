@@ -3,7 +3,7 @@ Contributing to Mobicoop !
 
 ![Logo mobicoop](logo.jpg)
 
-##How to contribute to Mobicoop 
+## How to contribute to Mobicoop 
 
 *Don't forget to install all dependencies before (check README.md)*
 
@@ -12,4 +12,4 @@ Contributing to Mobicoop !
 - execute `npm run contribute`
 - Follow all steps and fill in asked information.
 
-###🎉Welcome to Mobicoop's contributing program !🎉
+### 🎉Welcome to Mobicoop's contributing program !🎉
