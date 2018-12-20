@@ -31,7 +31,7 @@ const LOCAL_IP = '127.0.0.1';
 const LOCAL_URL = 'http://'.LOCAL_IP.':'.LOCAL_PORT;
 
 /* Functional tests */
-describe('UserController', function () {
+/*describe('UserController', function () {
     // Given is used to save variables in context👌
     // given('client',function(){
     //     return new Client();
@@ -98,4 +98,4 @@ describe('UserController', function () {
             expect($form->has('user_form[givenName]'))->toBe(true);
         });
     });
-});
+});*/

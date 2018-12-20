@@ -27,7 +27,7 @@ use Mobicoop\Bundle\MobicoopBundle\Service\Deserializer;
 use Mobicoop\Bundle\MobicoopBundle\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Entity\Address;
 
-describe('DeserializerService', function () {
+/*describe('DeserializerService', function () {
     describe('deserializeSimpleUser', function () {
         it('deserializeSimpleUser should return a simple user object', function () {
             $jsonUser = <<<JSON
@@ -108,4 +108,4 @@ JSON;
             expect($user->getUserAddresses()[0]->getAddress()->getLatitude())->toBeNull();
         });
     });
-});
+});*/
