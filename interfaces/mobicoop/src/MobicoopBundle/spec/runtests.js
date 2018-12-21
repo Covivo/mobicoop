@@ -16,7 +16,7 @@ let command= os.platform() === 'win32' ? 'cmd.exe' : 'vendor/bin/kahlan';
 // Start test only, or with coverage if asked
 let options = ['--spec=src/MobicoopBundle/spec', 'src=src/MobicoopBundle', '--reporter=verbose'];
 if(program.coverage){
-  options = [...options, '--cc=true','--coverage=4'];
+  options = [...options, '--cc=true'];
 }
 if (os.platform() === 'win32'){
   options = ['/c','vendor\\bin\\kahlan.bat' ,...options]

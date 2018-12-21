@@ -21,13 +21,29 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Util;
+namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 
-class Calculator
-{
-    public function randAndSquare($a=0, $b=100)
-    {
-        $rdmNb = random_int($a, $b);
-        return $rdmNb * $rdmNb;
-    }
-}
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
+
+/**
+ * IndexControllerSpec.php
+ * Test Class for IndexControllerSpec
+ * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
+ * Date: 19/12/2018
+ * Time: 11:36
+ *
+ */
+
+/* Functional tests */
+describe('Index', function () {
+    describe('/index', function () {
+        it('Index page should return status code 200', function () {
+            $request = $this->request->create('/aut', 'GET');
+            $response = $this->kernel->handle($request);
+            $status = $response->getStatusCode();
+
+            expect($status)->toEqual(200);
+        });
+    });
+});
