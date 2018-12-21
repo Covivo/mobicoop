@@ -21,7 +21,6 @@ Filters::apply($this, 'coverage', function($next) {
         'path'      => $this->commandLine()->get('src'),
         'exclude'   => [
             'src/MobicoopBundle/Entity/*',
-            'Mobicoop/Bundle/MobicoopBundle/*',
         ],
         'colors'    => !$this->commandLine()->get('no-colors')
     ]);
