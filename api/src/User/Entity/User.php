@@ -181,6 +181,14 @@ class User
     private $anyRouteAsPassenger;
     
     /**
+     * @var boolean|null The user accepts any transportation mode.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $multiTransportMode;
+    
+    /**
      * @var Address[]|null A user may have many addresses.
      *
      * @ORM\OneToMany(targetEntity="Address::class", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
@@ -215,22 +223,6 @@ class User
      * @ApiSubresource(maxDepth=1)
      */
     private $asks;
-
-    /**
-     * @var Ask[]|null The asks where the user is involved as a driver.
-     *
-     * @ORM\OneToMany(targetEntity="Ask::class", mappedBy="userOffer", cascade={"remove"}, orphanRemoval=true)
-     * @ApiSubresource(maxDepth=1)
-     */
-    private $askOffers;
-
-    /**
-     * @var Ask[]|null The asks where the user is involved as a passenger.
-     *
-     * @ORM\OneToMany(targetEntity="Ask::class", mappedBy="userRequest", cascade={"remove"}, orphanRemoval=true)
-     * @ApiSubresource(maxDepth=1)
-     */
-    private $askRequests;
     
     public function __construct()
     {
@@ -238,8 +230,6 @@ class User
         $this->cars = new ArrayCollection();
         $this->proposals = new ArrayCollection();
         $this->asks = new ArrayCollection();
-        $this->askOffers = new ArrayCollection();
-        $this->askRequests = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -379,6 +369,18 @@ class User
         return $this;
     }
     
+    public function getMultiTransportMode(): bool
+    {
+        return (!is_null($this->multiTransportMode) ? $this->multiTransportMode : true);
+    }
+    
+    public function setMultiTransportMode(?bool $multiTransportMode): self
+    {
+        $this->multiTransportMode = $multiTransportMode;
+        
+        return $this;
+    }
+    
     public function getAddresses(): ArrayCollection
     {
         return $this->addresses;
@@ -491,59 +493,4 @@ class User
         return $this;
     }
 
-    public function getAskOffers(): ArrayCollection
-    {
-        return $this->askOffers;
-    }
-
-    public function addAskOffer(Ask $askOffer): self
-    {
-        if (!$this->askOffers->contains($askOffer)) {
-            $this->askOffers->add($askOffer);
-            $askOffer->setUserOffer($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAskOffer(Ask $askOffer): self
-    {
-        if ($this->askOffers->contains($askOffer)) {
-            $this->askOffers->removeElement($askOffer);
-            // set the owning side to null (unless already changed)
-            if ($askOffer->getUserOffer() === $this) {
-                $askOffer->setUserOffer(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getAskRequests(): ArrayCollection
-    {
-        return $this->askRequests;
-    }
-
-    public function addAskRequest(Ask $askRequest): self
-    {
-        if (!$this->askRequests->contains($askRequest)) {
-            $this->askRequests->add($askRequest);
-            $askRequest->setUserRequest($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAskRequest(Ask $askRequest): self
-    {
-        if ($this->askRequests->contains($askRequest)) {
-            $this->askRequests->removeElement($askRequest);
-            // set the owning side to null (unless already changed)
-            if ($askRequest->getUserRequest() === $this) {
-                $askRequest->setUserRequest(null);
-            }
-        }
-
-        return $this;
-    }
 }

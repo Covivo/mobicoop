@@ -67,26 +67,10 @@ class Matching
     private $createdDate;
 
     /**
-     * @var int|null Distance in metres of the matching route.
-     *
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read"})
-     */
-    private $distance;
-
-    /**
-     * @var int|null Duration in seconds of the matching route (based on real distance).
-     *
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read"})
-     */
-    private $duration;
-
-    /**
      * @var Proposal The offer proposal.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Proposal", inversedBy="matchingRequests")
+     * @ORM\ManyToOne(targetEntity="Proposal::class", inversedBy="matchingRequests")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
      * @MaxDepth(1)
@@ -97,7 +81,7 @@ class Matching
      * @var Proposal The request proposal.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Proposal", inversedBy="matchingOffers")
+     * @ORM\ManyToOne(targetEntity="Proposal::class", inversedBy="matchingOffers")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
      * @MaxDepth(1)
@@ -105,62 +89,16 @@ class Matching
     private $proposalRequest;
 
     /**
-     * @var Waypoint|null Starting point of the offer proposal used for the matching.
-     *
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Waypoint")
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $waypointOfferOrigin;
-
-    /**
-     * @var Waypoint|null Ending point of the offer proposal used for the matching.
-     *
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Waypoint")
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $waypointOfferDestination;
-
-    /**
-     * @var Waypoint Starting point of the request used for the matching (if multimodal travel, otherwise it's always the starting point).
-     *
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Waypoint")
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $waypointRequestOrigin;
-
-    /**
-     * @var Ask[]|null The asks created with this matching as a source.
-     *
-     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Ask", mappedBy="matching")
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $asks;
-
-    /**
      * @var Criteria The criteria applied to this matching.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="Criteria::class", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read"})
      * @MaxDepth(1)
      */
     private $criteria;
     
-    /**
-     * @var Direction The calculated direction of the matching.
-     *
-     * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="App\Geography\Entity\Direction", cascade={"persist", "remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     * @Groups({"read","write"})
-     * @MaxDepth(1)
-     */
-    private $direction;
 
     public function __construct()
     {
@@ -180,30 +118,6 @@ class Matching
     public function setCreatedDate(\DateTimeInterface $createdDate): self
     {
         $this->createdDate = $createdDate;
-
-        return $this;
-    }
-
-    public function getDistance(): ?int
-    {
-        return $this->distance;
-    }
-
-    public function setDistance(?int $distance): self
-    {
-        $this->distance = $distance;
-
-        return $this;
-    }
-
-    public function getDuration(): ?int
-    {
-        return $this->duration;
-    }
-
-    public function setDuration(?int $duration): self
-    {
-        $this->duration = $duration;
 
         return $this;
     }
@@ -232,45 +146,6 @@ class Matching
         return $this;
     }
 
-    public function getWaypointOfferOrigin(): ?Waypoint
-    {
-        return $this->waypointOfferOrigin;
-    }
-
-    public function setWaypointOfferOrigin(?Waypoint $waypointOfferOrigin): self
-    {
-        $this->waypointOfferOrigin = $waypointOfferOrigin;
-
-        return $this;
-    }
-
-    public function getWaypointOfferDestination(): ?Waypoint
-    {
-        return $this->waypointOfferDestination;
-    }
-
-    public function setWaypointOfferDestination(?Waypoint $waypointOfferDestination): self
-    {
-        $this->waypointOfferDestination = $waypointOfferDestination;
-
-        return $this;
-    }
-
-    public function getWaypointRequestOrigin(): ?Waypoint
-    {
-        return $this->waypointRequestOrigin;
-    }
-
-    public function setWaypointRequestOrigin(?Waypoint $waypointRequestOrigin): self
-    {
-        $this->waypointRequestOrigin = $waypointRequestOrigin;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Ask[]
-     */
     public function getAsks(): Collection
     {
         return $this->asks;
@@ -308,18 +183,6 @@ class Matching
     {
         $this->criteria = $criteria;
 
-        return $this;
-    }
-    
-    public function getDirection(): ?Direction
-    {
-        return $this->direction;
-    }
-    
-    public function setDirection(Direction $direction): self
-    {
-        $this->direction = $direction;
-        
         return $this;
     }
     

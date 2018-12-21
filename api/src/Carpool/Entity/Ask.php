@@ -28,7 +28,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Events;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Address\Entity\Address;
 use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
@@ -86,48 +85,10 @@ class Ask
     private $createdDate;
 
     /**
-     * @var int|null Distance of the matching journey in metres.
-     *
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read"})
-     */
-    private $distance;
-
-    /**
-     * @var int|null Estimated duration of the matching journey in seconds (based on real distance).
-     *
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read"})
-     */
-    private $duration;
-
-    /**
-     * @var Address The starting point address.
-     *
-     * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="App\Address\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
-     * @MaxDepth(1)
-     */
-    private $origin;
-
-    /**
-     * @var Address The destination address.
-     *
-     * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="App\Address\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
-     * @MaxDepth(1)
-     */
-    private $destination;
-
-    /**
      * @var User The user that creates the ask.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="asks")
+     * @ORM\ManyToOne(targetEntity="User::class", inversedBy="asks")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -135,32 +96,10 @@ class Ask
     private $user;
 
     /**
-     * @var User The user that created the offer (= shortcut to the driver)
-     *
-     * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="asksOffer")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
-     * @MaxDepth(1)
-     */
-    private $userOffer;
-
-    /**
-     * @var User The user that created the request (= shortcut to the passenger)
-     *
-     * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="asksRequest")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
-     * @MaxDepth(1)
-     */
-    private $userRequest;
-
-    /**
      * @var Matching The matching at the origin of the ask.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Matching", inversedBy="asks")
+     * @ORM\ManyToOne(targetEntity="Matching::class", inversedBy="asks")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -170,7 +109,7 @@ class Ask
     /**
      * @var Ask|null The linked ask.
      *
-     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Ask")
+     * @ORM\OneToOne(targetEntity="Ask::class")
      * @Groups({"read"})
      * @MaxDepth(1)
      */
@@ -180,12 +119,29 @@ class Ask
      * @var Criteria The criteria applied to the ask.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="Criteria::class", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
     private $criteria;
+    
+    /**
+     * @var Waypoint[] The waypoints of the ask.
+     *
+     * @Assert\NotBlank
+     * @ORM\OneToMany(targetEntity="Waypoint::class", mappedBy="ask", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OrderBy({"position" = "ASC"})
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
+     */
+    private $waypoints;
+    
+    public function __construct()
+    {
+        $this->waypoints = new ArrayCollection();
+    }
     
     public function getId(): ?int
     {
@@ -228,96 +184,24 @@ class Ask
         return $this;
     }
 
-    public function getDistance(): ?int
-    {
-        return $this->distance;
-    }
-
-    public function setDistance(?int $distance): self
-    {
-        $this->distance = $distance;
-
-        return $this;
-    }
-
-    public function getDuration(): ?int
-    {
-        return $this->duration;
-    }
-
-    public function setDuration(?int $duration): self
-    {
-        $this->duration = $duration;
-
-        return $this;
-    }
-
-    public function getOrigin(): ?Address
-    {
-        return $this->origin;
-    }
-
-    public function setOrigin(?Address $origin): self
-    {
-        $this->origin = $origin;
-
-        return $this;
-    }
-
-    public function getDestination(): ?Address
-    {
-        return $this->destination;
-    }
-
-    public function setDestination(?Address $destination): self
-    {
-        $this->destination = $destination;
-
-        return $this;
-    }
-
-    public function getUser(): ?User
+    public function getUser(): User
     {
         return $this->user;
     }
 
-    public function setUser(?User $user): self
+    public function setUser(User $user): self
     {
         $this->user = $user;
 
         return $this;
     }
 
-    public function getUserOffer(): ?User
-    {
-        return $this->userOffer;
-    }
-
-    public function setUserOffer(?User $userOffer): self
-    {
-        $this->userOffer = $userOffer;
-
-        return $this;
-    }
-
-    public function getUserRequest(): ?User
-    {
-        return $this->userRequest;
-    }
-
-    public function setUserRequest(?User $userRequest): self
-    {
-        $this->userRequest = $userRequest;
-
-        return $this;
-    }
-
-    public function getMatching(): ?Matching
+    public function getMatching(): Matching
     {
         return $this->matching;
     }
 
-    public function setMatching(?Matching $matching): self
+    public function setMatching(Matching $matching): self
     {
         $this->matching = $matching;
 
@@ -342,7 +226,7 @@ class Ask
         return $this;
     }
 
-    public function getCriteria(): ?Criteria
+    public function getCriteria(): Criteria
     {
         return $this->criteria;
     }
@@ -351,6 +235,37 @@ class Ask
     {
         $this->criteria = $criteria;
 
+        return $this;
+    }
+    
+    /**
+     * @return Collection|Waypoint[]
+     */
+    public function getWaypoints(): Collection
+    {
+        return $this->waypoints;
+    }
+    
+    public function addWaypoint(Waypoint $waypoint): self
+    {
+        if (!$this->waypoints->contains($waypoint)) {
+            $this->waypoints[] = $waypoint;
+            $waypoint->setAsk($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeWaypoint(Waypoint $waypoint): self
+    {
+        if ($this->waypoints->contains($waypoint)) {
+            $this->waypoints->removeElement($waypoint);
+            // set the owning side to null (unless already changed)
+            if ($waypoint->getAsk() === $this) {
+                $waypoint->setAsk(null);
+            }
+        }
+        
         return $this;
     }
     
