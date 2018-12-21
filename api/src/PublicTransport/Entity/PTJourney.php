@@ -135,6 +135,13 @@ class PTJourney
      * @Groups("pt")
      */
     private $duration;
+
+    /**
+     * @var int The number of changes of this journey.
+     *
+     * @Groups("pt")
+     */
+    private $changeNumber;
     
     /**
      * @var float The estimated price of this journey.
@@ -187,6 +194,11 @@ class PTJourney
         return $this->duration;
     }
 
+    public function getChangeNumber()
+    {
+        return $this->changeNumber;
+    }
+
     public function getPrice()
     {
         return $this->price;
@@ -215,6 +227,11 @@ class PTJourney
     public function setDuration($duration)
     {
         $this->duration = $duration;
+    }
+    
+    public function setChangeNumber($changeNumber)
+    {
+        $this->changeNumber = $changeNumber;
     }
     
     public function setPrice($price)

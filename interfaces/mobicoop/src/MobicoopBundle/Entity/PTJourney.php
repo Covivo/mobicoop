@@ -46,6 +46,11 @@ class PTJourney
      * @var int The total duration of this journey.
      */
     private $duration;
+
+    /**
+     * @var int The number of changes of this journey.
+     */
+    private $changeNumber;
     
     /**
      * @var float The estimated price of this journey.
@@ -86,6 +91,11 @@ class PTJourney
     {
         return $this->duration;
     }
+    
+    public function getChangeNumber()
+    {
+        return $this->changeNumber;
+    }
 
     public function getPrice()
     {
@@ -115,6 +125,11 @@ class PTJourney
     public function setDuration($duration)
     {
         $this->duration = $duration;
+    }
+    
+    public function setChangeNumber($changeNumber)
+    {
+        $this->changeNumber = $changeNumber;
     }
     
     public function setPrice($price)
