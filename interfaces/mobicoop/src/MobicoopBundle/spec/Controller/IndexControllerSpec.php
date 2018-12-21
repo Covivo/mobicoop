@@ -36,7 +36,7 @@ use Symfony\Component\DomCrawler\Form;
  */
 
 /* Functional tests */
-/*describe('Index', function () {
+describe('Index', function () {
     describe('/index', function () {
         it('Index page should return status code 200', function () {
             $request = $this->request->create('/aut', 'GET');
@@ -46,4 +46,4 @@ use Symfony\Component\DomCrawler\Form;
             expect($status)->toEqual(200);
         });
     });
-});*/
+});
