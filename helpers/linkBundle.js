@@ -21,14 +21,14 @@ const bundle = path.resolve(__dirname, '../interfaces/mobicoop/src/MobicoopBundl
   }*/
 
 program
-  .version('0.1.0')
-  .option('-d, --destination  <dir>', 'Path to copy Bundle to')
-  .parse(process.argv);
+    .version('0.1.0')
+    .option('-d, --destination  <dir>', 'Path to copy Bundle to')
+    .parse(process.argv);
 
 
 if (!program.destination)  {
   process.stderr.write(kuler('You did not specify a path to copy canvas to .. ','orange'));
-  return;
+  process.exit(0);
 }
 
 
@@ -41,20 +41,20 @@ async function linkBundle () {
   if(err){
     process.stderr.write(kuler('Path specified does not exists or is not a directory! \n','red'))
     console.error(err);
-    return;
+    process.exit(0);
   }
   // Copy mobicoop files to sent path
 
   let pathToMobicoop = path.resolve(__dirname, '../interfaces/mobicoop');
   let pathToMobicoopBundle = path.resolve(pathToMobicoop, 'src/MobicoopBundle');
   let pathToCopiedBundle = path.resolve(destination, 'src/MobicoopBundle');
-  
+
   // We link bundle to new created folder
   [err,success] = await to(fs.symlink(pathToMobicoopBundle,pathToCopiedBundle,'dir'))
-   if(err){
+  if(err){
     process.stderr.write(kuler('Cannot create symlink bundle\n','red'))
     console.error(err);
-    return;
+    process.exit(0);
   }
   process.stdout.write(kuler('Bundle are now symlinked 💪 ...\n','green'));
 

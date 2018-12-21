@@ -1,4 +1,4 @@
-Mobicoop
+﻿Mobicoop
 =======
 
 ![Logo mobicoop](logo.jpg)
@@ -143,7 +143,7 @@ In order to increase the impact of our platform to any sort of clients whatever 
 
 Please use powershell with our project, in requirement you will need:
 
-*BE SURE TO BE IN AN ADMIN CONSOLE MOD !*
+*BE SURE TO BE IN AN ADMIN CONSOLE MOD !!!*
 
 - Install windows package manager[chocolatey](https://chocolatey.org/install)
 - Restart powershell

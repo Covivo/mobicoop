@@ -8,18 +8,18 @@ const reader = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
-const claWriter = require('./contributor-license-agreement-writer.js')
+const claWriter = require('./contributor-license-agreement-writer.js');
 const claFolderPath = path.resolve(__dirname, '../../ContributorLicenseAgreement');
 const claPath = path.resolve(__dirname, '../../ContributorLicenseAgreement/ContributorLicenseAgreement.txt');
-const copyright = fs.readFileSync(path.resolve(__dirname, '../copyright.txt'))
+const copyright = fs.readFileSync(path.resolve(__dirname, '../copyright.txt'));
 
 //CHECK IF AM ON MOBICOOP's REPO
 if(repoName.sync() == "mobicoop"){
     if(fs.existsSync(claFolderPath + "/" + gitUserName() + "_Agreement.txt")){
-        console.log(kuler(`Contributor License Agreement already accepted 😊 `,'green'))
+        console.log(kuler(`Contributor License Agreement already accepted 😊 `,'green'));
         process.exit(0)
     }
-    console.log(kuler(` It seems that you have not accepted our Contributor License Agreement yet.\r \n If you want to contribute to Mobicoop, you first need to accept this statement :\n`,"red"))
+    console.log(kuler(` It seems that you have not accepted our Contributor License Agreement yet.\r \n If you want to contribute to Mobicoop, you first need to accept this statement :\n`,"red"));
     console.log(kuler(copyright, 'fdd000'));
     console.log("\nPlease fill the following informations : ");
     reader.question('<Your Country> : ', (country) => {
@@ -32,16 +32,16 @@ if(repoName.sync() == "mobicoop"){
                     reader.question('Would you like to sign this agreement ? (Y/n)', (answer) => {
                         let validAnswer = ['yes','Y','y',''];
                         if (answer.includes(answer)){
-                            let hasBeenWritten = claWriter.addContributor(gitUserName() + '_Agreement.txt', country, date, name, surname, gitEmail, gitUserName())
+                            let hasBeenWritten = claWriter.addContributor(gitUserName() + '_Agreement.txt', country, date, name, surname, gitEmail, gitUserName());
                             reader.close();
                             if(hasBeenWritten){
-                                console.log(kuler(`The file has been saved! Don't forget to git add your Contribution Agreement file`,'green'))
+                                console.log(kuler(`The file has been saved! Don't forget to git add your Contribution Agreement file`,'green'));
                                 process.exit(0)
                             }
-                            console.log(kuler(`The file has not been saved!`,'red'))
+                            console.log(kuler(`The file has not been saved!`,'red'));
                             process.exit(1)
                         }
-                        console.log(kuler(`\nCancelling...`,'red'))
+                        console.log(kuler(`\nCancelling...`,'red'));
                         reader.close();
                         process.exit(0);
                     });

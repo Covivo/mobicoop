@@ -21,30 +21,27 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Controller;
-
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Request;
-use Mobicoop\Bundle\MobicoopBundle\Service\ExternalJourneyManager;
-
-use GuzzleHttp\Client;
+namespace Mobicoop\Bundle\MobicoopBundle\Entity;
 
 /**
- * Class ExternalJourneyController
- * Controller class to display external Journey (rdexAPI)
- * @package Mobicoop\Bundle\MobicoopBundle\Controller
+ * A public transport company.
+ *
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class ExternalJourneyController extends AbstractController
+class PTCompany
 {
-
     /**
-     * @Route("/externaljourney")
+     * @var string The name of this company.
      */
-    public function ExternalJourneyIndex()
+    private $name;
+    
+    public function getName()
     {
-        $baseUri = $_ENV['API_URI'];
-        return $this->render('@Mobicoop/proposal/externalAsync.html.twig', ['baseUri' => $baseUri]);
+        return $this->name;
+    }
+    
+    public function setName($name)
+    {
+        $this->name = $name;
     }
 }

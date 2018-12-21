@@ -13,13 +13,14 @@ cache:
 
 stages:
   - test
+  - reports
   - deploy
 
 ###############################################################################################
 ############# Everything under this is execute for all push (branch) ##########################
 ###############################################################################################
 
-test:dev:
+branch_tests:
   stage: test
   variables:
     APP_ENV: dev # important because symfony use it
@@ -38,10 +39,106 @@ test:dev:
       - $CI_COMMIT_MESSAGE =~ /skip/
 
 ###############################################################################################
-############# Everything under this is execute only for Test (dev) ############################
+########## Everything under this is execute only for Reports (dev & master) ###################
 ###############################################################################################
 
-test:test:
+#this job is taking too much time (>15min)
+#code_quality:
+#  stage: reports
+#  image: docker:stable
+#  variables:
+#    DOCKER_DRIVER: overlay2
+#  allow_failure: true
+#  services:
+#    - docker:stable-dind
+#  script:
+#    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+#    - docker run
+#      --env SOURCE_CODE="$PWD"
+#      --volume "$PWD":/code
+#      --volume /var/run/docker.sock:/var/run/docker.sock
+#      "registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION" /code
+#  artifacts:
+#    paths: [gl-code-quality-report.json]
+#  only:
+#    - master
+#    - dev
+
+dependency_scanning:
+  stage: reports
+  image: docker:stable
+  variables:
+    DOCKER_DRIVER: overlay2
+  allow_failure: true
+  services:
+    - docker:stable-dind
+  script:
+    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+    - docker run
+      --env DEP_SCAN_DISABLE_REMOTE_CHECKS="${DEP_SCAN_DISABLE_REMOTE_CHECKS:-false}"
+      --volume "$PWD:/code"
+      --volume /var/run/docker.sock:/var/run/docker.sock
+      "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:$SP_VERSION" /code
+  artifacts:
+    paths: [gl-dependency-scanning-report.json]
+  only:
+    - master
+    - dev
+
+sast:
+  stage : reports
+  image: docker:stable
+  cache: {}
+  variables:
+    DOCKER_DRIVER: overlay2
+  allow_failure: true
+  services:
+    - docker:stable-dind
+  script:
+    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+    - docker run
+      --env SAST_CONFIDENCE_LEVEL="${SAST_CONFIDENCE_LEVEL:-3}"
+      --volume "$PWD:/code"
+      --volume /var/run/docker.sock:/var/run/docker.sock
+      "registry.gitlab.com/gitlab-org/security-products/sast:$SP_VERSION" /app/bin/run /code
+  artifacts:
+    reports:
+      sast: gl-sast-report.json
+  only:
+    - master
+    - dev
+
+license_management:
+  image:
+    name: "registry.gitlab.com/gitlab-org/security-products/license-management:$CI_SERVER_VERSION_MAJOR-$CI_SERVER_VERSION_MINOR-stable"
+    entrypoint: [""]
+  stage: reports
+  allow_failure: true
+  script:
+    - sudo /run.sh analyze .
+  artifacts:
+    reports:
+      license_management: gl-license-management-report.json
+  only:
+    - master
+    - dev
+
+###############################################################################################
+############# Everything under this is execute only for Tests (dev) ############################
+###############################################################################################
+
+dev_tests:
+  stage: test
+  variables:
+    APP_ENV: dev # important because symfony use it
+  before_script:
+    - npm install --unsafe-perm
+  script:
+    - npm run testAndCoverage
+  only:
+    - dev
+
+dev_deploy:
   stage: deploy
   environment:
     name: test
@@ -67,50 +164,10 @@ test:test:
       - tags
 
 ###############################################################################################
-############# Everything under this is execute only for production (MASTER) ###################
+############# Everything under this is execute only for Production (MASTER) ###################
 ###############################################################################################
 
-code_quality:
-  stage: test
-  image: docker:stable
-  variables:
-    DOCKER_DRIVER: overlay2
-  allow_failure: true
-  services:
-    - docker:stable-dind
-  script:
-    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
-    - docker run
-      --env SOURCE_CODE="$PWD"
-      --volume "$PWD":/code
-      --volume /var/run/docker.sock:/var/run/docker.sock
-      "registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION" /code
-  artifacts:
-    paths: [gl-code-quality-report.json]
-  only:
-    - master
-
-dependency_scanning:
-  stage: test
-  image: docker:stable
-  variables:
-    DOCKER_DRIVER: overlay2
-  allow_failure: true
-  services:
-    - docker:stable-dind
-  script:
-    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
-    - docker run
-      --env DEP_SCAN_DISABLE_REMOTE_CHECKS="${DEP_SCAN_DISABLE_REMOTE_CHECKS:-false}"
-      --volume "$PWD:/code"
-      --volume /var/run/docker.sock:/var/run/docker.sock
-      "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:$SP_VERSION" /code
-  artifacts:
-    paths: [gl-dependency-scanning-report.json]
-  only:
-    - master
-
-test:prod:
+master_tests:
   stage: test
   variables:
     APP_ENV: prod # important because symfony use it
@@ -134,7 +191,7 @@ test:prod:
 #  only:
 #    - master
 
-deploy_prod:
+master_deploy:
   stage: deploy
   before_script: # This if require to send the prod type no dev, since it creates errors
     - npm install --unsafe-perm

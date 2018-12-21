@@ -2,13 +2,31 @@
 
 use App\Kernel;
 use Kahlan\Filter\Filters;
-use Symfony\Component\Debug\Debug;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Client;
-//use Symfony\Component\
 use Symfony\Component\Panther\PantherTestCaseTrait;
+use Kahlan\Reporter\Coverage;
+use Kahlan\Reporter\Coverage\Driver\Xdebug;
+
+//Filter folders in code coverage report
+Filters::apply($this, 'coverage', function($next) {
+    if (!extension_loaded('xdebug')) {
+        return;
+    }
+    $reporters = $this->reporters();
+    $coverage = new Coverage([
+        'verbosity' => 4,
+        'driver'    => new Xdebug(),
+        'path'      => $this->commandLine()->get('src'),
+        'exclude'   => [
+            'src/MobicoopBundle/Entity/*',
+        ],
+        'colors'    => !$this->commandLine()->get('no-colors')
+    ]);
+    $reporters->add('coverage', $coverage);
+});
+
 
 // Use a panther trait  & add a public class to access protected method outside
 class ExtendedPanther {

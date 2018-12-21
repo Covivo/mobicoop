@@ -57,7 +57,7 @@ class PTDataProvider
      * @param string $destination_longitude     The longitude of the destination point
      * @param \Datetime $date                   The datetime of the trip
      * @param string $dateType                  The date type of the trip (departure or arrival)
-     * @return NULL|array                       The journeys found or null if
+     * @return NULL|array                       The journeys found or null if no journey is found
      */
     public function getJourneys(
             string $provider,

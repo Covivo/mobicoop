@@ -28,12 +28,12 @@ use App\DataProvider\Service\DataProvider;
 use App\PublicTransport\Entity\PTJourney;
 use App\PublicTransport\Entity\PTArrival;
 use App\PublicTransport\Entity\PTDeparture;
-use App\PublicTransport\Entity\PTSection;
 use App\PublicTransport\Entity\PTMode;
-use App\Address\Entity\Address;
 use App\PublicTransport\Entity\PTStep;
 use App\PublicTransport\Entity\PTLine;
+use App\PublicTransport\Entity\PTLeg;
 use App\PublicTransport\Service\PTDataProvider;
+use App\Address\Entity\Address;
 
 /**
  * Cityway data provider.
@@ -79,23 +79,23 @@ class CitywayProvider implements ProviderInterface
     private const CW_PT_MODE_TRAIN = "TRAIN";
     private const CW_PT_MODE_BIKE = "BIKE";
     private const CW_PT_MODE_WALK = "WALK";
-    
+
     private const CW_COUNTRY = "France";
     private const CW_NC = "NC";
-    
+
     private const URI = "http://preprod.tsvc.grandest.cityway.fr/api/";
     private const COLLECTION_RESOURCE = "journeyplanner/opt/PlanTrips/json";
-    
+
     private const DATETIME_OUTPUT_FORMAT = "d/m/Y H:i:s";
     private const DATETIME_INPUT_FORMAT = "Y-m-d_H-i";
-    
+
     private const DATETYPES = [
-            PTDataProvider::DATETYPE_DEPARTURE => "DEPARTURE",
-            PTDataProvider::DATETYPE_ARRIVAL => "ARRIVAL"
+        PTDataProvider::DATETYPE_DEPARTURE => "DEPARTURE",
+        PTDataProvider::DATETYPE_ARRIVAL => "ARRIVAL"
     ];
-    
+
     private $collection;
-    
+
     public function __construct()
     {
         $this->collection = [];
@@ -110,17 +110,17 @@ class CitywayProvider implements ProviderInterface
             case PTJourney::class:
                 $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESOURCE);
                 $getParams = [
-                        "DepartureType" => "COORDINATES",
-                        "ArrivalType" => "COORDINATES",
-                        "DateType" => "DEPARTURE",
-                        "TripModes" => "PT",
-                        "Algorithm" => "FASTEST",
-                        "Date" => $params["date"]->format(self::DATETIME_INPUT_FORMAT),
-                        "DateType" => self::DATETYPES[$params["dateType"]],
-                        "DepartureLatitude" => $params["origin_latitude"],
-                        "DepartureLongitude" => $params["origin_longitude"],
-                        "ArrivalLatitude" => $params["destination_latitude"],
-                        "ArrivalLongitude" => $params["destination_longitude"]
+                    "DepartureType" => "COORDINATES",
+                    "ArrivalType" => "COORDINATES",
+                    "DateType" => "DEPARTURE",
+                    "TripModes" => "PT",
+                    "Algorithm" => "FASTEST",
+                    "Date" => $params["date"]->format(self::DATETIME_INPUT_FORMAT),
+                    "DateType" => self::DATETYPES[$params["dateType"]],
+                    "DepartureLatitude" => $params["origin_latitude"],
+                    "DepartureLongitude" => $params["origin_longitude"],
+                    "ArrivalLatitude" => $params["destination_latitude"],
+                    "ArrivalLongitude" => $params["destination_longitude"]
                 ];
                 $response = $dataProvider->getCollection($getParams);
                 if ($response->getCode() == 200) {
@@ -157,7 +157,7 @@ class CitywayProvider implements ProviderInterface
     public function getItem(string $class, string $apikey, array $params)
     {
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -171,7 +171,7 @@ class CitywayProvider implements ProviderInterface
                 break;
         }
     }
-    
+
     private function deserializeJourney($data)
     {
         $journey = new PTJourney(count($this->collection)+1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
@@ -180,6 +180,9 @@ class CitywayProvider implements ProviderInterface
         }
         if (isset($data["Duration"])) {
             $journey->setDuration($data["Duration"]);
+        }
+        if (isset($data["InterchangeNumber"])) {
+            $journey->setChangeNumber($data["InterchangeNumber"]);
         }
         if (isset($data["DepartureTime"])) {
             $departure = new PTDeparture(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
@@ -232,46 +235,100 @@ class CitywayProvider implements ProviderInterface
             $journey->setPTArrival($arrival);
         }
         if (isset($data["sections"]["Section"])) {
-            $sections = [];
+            $legs = [];
             foreach ($data["sections"]["Section"] as $section) {
-                $sections[] = self::deserializeSection($section, count($sections)+1);
+                $legs[] = self::deserializeSection($section, count($legs)+1);
             }
-            $journey->setPTSections($sections);
+            $journey->setPTLegs($legs);
         }
         if (isset($data["CarbonFootprint"]["TripCO2"])) {
             $journey->setCo2($data["CarbonFootprint"]["TripCO2"]);
         }
         return $journey;
     }
-        
+
     private function deserializeSection($data, $num)
     {
-        $section = new PTSection($num);
+        $leg = new PTLeg($num);
         if (isset($data["Leg"]) && !is_null($data["Leg"])) {
             // walk mode
             $ptmode = new PTMode(PTMode::PT_MODE_WALK);
-            $section->setPTmode($ptmode);
+            $leg->setPTmode($ptmode);
             if (isset($data["Leg"]["Duration"]) && !is_null($data["Leg"]["Duration"])) {
-                $section->setDuration($data["Leg"]["Duration"]);
+                $leg->setDuration($data["Leg"]["Duration"]);
+            }
+            if (isset($data["Leg"]["Departure"])) {
+                $departure = new PTDeparture(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
+                if (isset($data["Leg"]["Departure"]["Time"])) {
+                    $departure->setDate(\DateTime::createFromFormat(self::DATETIME_OUTPUT_FORMAT, $data["Leg"]["Departure"]["Time"]));
+                }
+                if (isset($data["Leg"]["Departure"]["Site"])) {
+                    $departureAddress = new Address();
+                    $departureAddress->setId(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
+                    $departureAddress->setAddressCountry(self::CW_COUNTRY);
+                    $departureAddress->setAddressLocality(self::CW_NC);
+                    $departureAddress->setStreetAddress(self::CW_NC);
+                    if (isset($data["Leg"]["Departure"]["Site"]["CityName"]) && !is_null($data["Leg"]["Departure"]["Site"]["CityName"])) {
+                        $departureAddress->setAddressLocality($data["Leg"]["Departure"]["Site"]["CityName"]);
+                    }
+                    if (isset($data["Leg"]["Departure"]["Site"]["Name"]) && !is_null($data["Leg"]["Departure"]["Site"]["Name"])) {
+                        $departure->setName($data["Leg"]["Departure"]["Site"]["Name"]);
+                    }
+                    if (isset($data["Leg"]["Departure"]["Site"]["Position"]["Lat"]) && !is_null($data["Leg"]["Departure"]["Site"]["Position"]["Lat"])) {
+                        $departureAddress->setLatitude($data["Leg"]["Departure"]["Site"]["Position"]["Lat"]);
+                    }
+                    if (isset($data["Leg"]["Departure"]["Site"]["Position"]["Long"]) && !is_null($data["Leg"]["Departure"]["Site"]["Position"]["Long"])) {
+                        $departureAddress->setLongitude($data["Leg"]["Departure"]["Site"]["Position"]["Long"]);
+                    }
+                    $departure->setAddress($departureAddress);
+                }
+                $leg->setPTDeparture($departure);
+            }
+            if (isset($data["Leg"]["Arrival"])) {
+                $arrival = new PTArrival(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
+                if (isset($data["Leg"]["Arrival"]["Time"])) {
+                    $arrival->setDate(\DateTime::createFromFormat(self::DATETIME_OUTPUT_FORMAT, $data["Leg"]["Arrival"]["Time"]));
+                }
+                if (isset($data["Leg"]["Arrival"]["Site"])) {
+                    $arrivalAddress = new Address();
+                    $arrivalAddress->setId(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
+                    $arrivalAddress->setAddressCountry(self::CW_COUNTRY);
+                    $arrivalAddress->setAddressLocality(self::CW_NC);
+                    $arrivalAddress->setStreetAddress(self::CW_NC);
+                    if (isset($data["Leg"]["Arrival"]["Site"]["CityName"]) && !is_null($data["Leg"]["Arrival"]["Site"]["CityName"])) {
+                        $arrivalAddress->setAddressLocality($data["Leg"]["Arrival"]["Site"]["CityName"]);
+                    }
+                    if (isset($data["Leg"]["Arrival"]["Site"]["Name"]) && !is_null($data["Leg"]["Arrival"]["Site"]["Name"])) {
+                        $arrival->setName($data["Leg"]["Arrival"]["Site"]["Name"]);
+                    }
+                    if (isset($data["Leg"]["Arrival"]["Site"]["Position"]["Lat"]) && !is_null($data["Leg"]["Arrival"]["Site"]["Position"]["Lat"])) {
+                        $arrivalAddress->setLatitude($data["Leg"]["Arrival"]["Site"]["Position"]["Lat"]);
+                    }
+                    if (isset($data["Leg"]["Arrival"]["Site"]["Position"]["Long"]) && !is_null($data["Leg"]["Arrival"]["Site"]["Position"]["Long"])) {
+                        $arrivalAddress->setLongitude($data["Leg"]["Arrival"]["Site"]["Position"]["Long"]);
+                    }
+                    $arrival->setAddress($arrivalAddress);
+                }
+                $leg->setPTArrival($arrival);
             }
             if (isset($data["Leg"]["pathLinks"]["PathLink"])) {
                 $ptsteps = [];
                 foreach ($data["Leg"]["pathLinks"]["PathLink"] as $pathLink) {
                     $ptsteps[] = self::deserializePTStep($pathLink, count($ptsteps)+1);
                 }
-                $section->setPTSteps($ptsteps);
+                $leg->setPTSteps($ptsteps);
             }
         }
         if (isset($data["PTRide"]) && !is_null($data["PTRide"])) {
             if ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_BUS) {
                 // bus mode
                 $ptmode = new PTMode(PTMode::PT_MODE_BUS);
-                $section->setPTMode($ptmode);
+                $leg->setPTMode($ptmode);
             }
             if ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TRAIN) {
                 // train mode
                 $ptmode = new PTMode(PTMode::PT_MODE_TRAIN);
-                $section->setPTMode($ptmode);
+                $leg->setPTMode($ptmode);
             }
             if (isset($data["PTRide"]["Departure"])) {
                 $departure = new PTDeparture(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
@@ -298,7 +355,7 @@ class CitywayProvider implements ProviderInterface
                     }
                     $departure->setAddress($departureAddress);
                 }
-                $section->setPTDeparture($departure);
+                $leg->setPTDeparture($departure);
             }
             if (isset($data["PTRide"]["Arrival"])) {
                 $arrival = new PTArrival(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
@@ -325,13 +382,13 @@ class CitywayProvider implements ProviderInterface
                     }
                     $arrival->setAddress($arrivalAddress);
                 }
-                $section->setPTArrival($arrival);
+                $leg->setPTArrival($arrival);
             }
             if (isset($data["PTRide"]["Distance"]) && !is_null($data["PTRide"]["Distance"])) {
-                $section->setDistance($data["PTRide"]["Distance"]);
+                $leg->setDistance($data["PTRide"]["Distance"]);
             }
             if (isset($data["PTRide"]["Duration"]) && !is_null($data["PTRide"]["Duration"])) {
-                $section->setDuration($data["PTRide"]["Duration"]);
+                $leg->setDuration($data["PTRide"]["Duration"]);
             }
             if (isset($data["PTRide"]["Line"])) {
                 $ptline = new PTLine(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
@@ -342,24 +399,24 @@ class CitywayProvider implements ProviderInterface
                     $ptline->setNumber($data["PTRide"]["Line"]["Number"]);
                 }
                 if (isset($data["PTRide"]["Line"]["Direction"]["Name"])) {
-                    $section->setDirection($data["PTRide"]["Line"]["Direction"]["Name"]);
+                    $leg->setDirection($data["PTRide"]["Line"]["Direction"]["Name"]);
                 }
-                $section->setPTLine($ptline);
+                $leg->setPTLine($ptline);
             }
             if (isset($data["PTRide"]["Direction"]["Name"])) {
-                $section->setDirection($data["PTRide"]["Direction"]["Name"]);
+                $leg->setDirection($data["PTRide"]["Direction"]["Name"]);
             }
             if (isset($data["PTRide"]["steps"]["Step"])) {
                 $ptsteps = [];
                 foreach ($data["PTRide"]["steps"]["Step"] as $step) {
                     $ptsteps[] = self::deserializePTStep($step, count($ptsteps)+1);
                 }
-                $section->setPTSteps($ptsteps);
+                $leg->setPTSteps($ptsteps);
             }
         }
-        return $section;
+        return $leg;
     }
-    
+
     private function deserializePTStep($data, $num)
     {
         $ptstep = new PTStep($num);

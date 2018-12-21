@@ -174,13 +174,34 @@ class GeoRouterController extends AbstractController
         
         
         echo "Route 1 // duration = $duration1 minutes, distance = $distance1 kms<br />";
+        foreach ($route1->getWaypoints() as $waypoint) {
+            echo $waypoint ->getLatitude() . ", " . $waypoint->getLongitude() . "<br />";
+        }
         //echo "<pre>" . print_r($route1->getPoints(),true) . "</pre>";
         echo "Route 2 // duration = $duration2 minutes, distance = $distance2 kms<br />";
+        foreach ($route2->getWaypoints() as $waypoint) {
+            echo $waypoint ->getLatitude() . ", " . $waypoint->getLongitude() . "<br />";
+        }
         echo "Route 3 // duration = $duration3 minutes, distance = $distance3 kms<br />";
+        foreach ($route3->getWaypoints() as $waypoint) {
+            echo $waypoint ->getLatitude() . ", " . $waypoint->getLongitude() . "<br />";
+        }
         echo "Route 4 // duration = $duration4 minutes, distance = $distance4 kms<br />";
+        foreach ($route4->getWaypoints() as $waypoint) {
+            echo $waypoint ->getLatitude() . ", " . $waypoint->getLongitude() . "<br />";
+        }
         echo "Route 5 // duration = $duration5 minutes, distance = $distance5 kms<br />";
+        foreach ($route5->getWaypoints() as $waypoint) {
+            echo $waypoint ->getLatitude() . ", " . $waypoint->getLongitude() . "<br />";
+        }
         echo "Route 6 // duration = $duration6 minutes, distance = $distance6 kms<br />";
+        foreach ($route6->getWaypoints() as $waypoint) {
+            echo $waypoint ->getLatitude() . ", " . $waypoint->getLongitude() . "<br />";
+        }
         echo "Route 7 // duration = $duration7 minutes, distance = $distance7 kms<br />";
+        foreach ($route7->getWaypoints() as $waypoint) {
+            echo $waypoint ->getLatitude() . ", " . $waypoint->getLongitude() . "<br />";
+        }
         echo "Calculation duration = $time_elapsed_secs s";
         exit;
     }
@@ -219,7 +240,7 @@ class GeoRouterController extends AbstractController
         $start = microtime(true);
         $routes1 = $geoRouter->getRoutes($addresses1);
         $routes2 = $geoRouter->getRoutes($addresses2);
-        $time_elapsed_secs = microtime(true) - $start;
+        
         
         $route1 = $routes1[0];
         $route2 = $routes2[0];
@@ -231,14 +252,22 @@ class GeoRouterController extends AbstractController
         $distance2 = $route2->getDistance()/1000;
         
         $zones1 = $zoneManager->getZonesForAddresses($route1->getPoints());
+        $zones2 = $zoneManager->getZonesForAddresses($route1->getPoints(), 1);
+        
+        $time_elapsed_secs = microtime(true) - $start;
         
         echo "Route 1 // duration = $duration1 minutes, distance = $distance1 kms<br />";
-        echo "Zones 1 // ";
+        echo "Zones 1 // <br />";
         foreach ($zones1 as $zone) {
             echo $zone . " - ";
         }
         echo "<br />";
         echo "Route 2 // duration = $duration2 minutes, distance = $distance2 kms<br />";
+        echo "Zones 2 and near zones // <br />";
+        foreach ($zones2 as $zone) {
+            echo $zone . " - ";
+        }
+        echo "<br />";
         echo "Calculation duration = $time_elapsed_secs s";
         exit;
     }

@@ -21,32 +21,29 @@
  *    LICENSE
  **************************/
 
-namespace App\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use App\Geography\Service\GeoRouter;
-use App\Address\Entity\Address;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Geography\Service\ZoneManager;
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
 
 /**
- * FOR R&D PURPOSE ONLY
- *
- * Creation of geographic zones.
- *
- * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * IndexControllerSpec.php
+ * Test Class for IndexControllerSpec
+ * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
+ * Date: 19/12/2018
+ * Time: 11:36
  *
  */
-class ZoneController extends AbstractController
-{
-    /**
-     * @Route("/create_zones")
-     */
-    public function createZones(ZoneManager $zoneManager)
-    {
-        $zoneManager->createZones();
-        exit;
-    }
-}
+
+/* Functional tests */
+describe('Index', function () {
+    describe('/index', function () {
+        it('Index page should return status code 200', function () {
+            $request = $this->request->create('/aut', 'GET');
+            $response = $this->kernel->handle($request);
+            $status = $response->getStatusCode();
+
+            expect($status)->toEqual(200);
+        });
+    });
+});

@@ -135,6 +135,13 @@ class PTJourney
      * @Groups("pt")
      */
     private $duration;
+
+    /**
+     * @var int The number of changes of this journey.
+     *
+     * @Groups("pt")
+     */
+    private $changeNumber;
     
     /**
      * @var float The estimated price of this journey.
@@ -165,16 +172,16 @@ class PTJourney
     private $ptarrival;
     
     /**
-     * @var PTSection[] The sections of this journey.
+     * @var PTLeg[] The legs of this journey.
      *
      * @Groups("pt")
      */
-    private $ptsections;
+    private $ptlegs;
     
     public function __construct($id)
     {
         $this->id = $id;
-        $this->ptsections = new ArrayCollection();
+        $this->ptlegs = new ArrayCollection();
     }
     
     public function getDistance()
@@ -185,6 +192,11 @@ class PTJourney
     public function getDuration()
     {
         return $this->duration;
+    }
+
+    public function getChangeNumber()
+    {
+        return $this->changeNumber;
     }
 
     public function getPrice()
@@ -217,6 +229,11 @@ class PTJourney
         $this->duration = $duration;
     }
     
+    public function setChangeNumber($changeNumber)
+    {
+        $this->changeNumber = $changeNumber;
+    }
+    
     public function setPrice($price)
     {
         $this->price = $price;
@@ -237,14 +254,14 @@ class PTJourney
         $this->ptarrival = $ptarrival;
     }
     
-    public function getPTSections()
+    public function getPTLegs()
     {
-        return $this->ptsections;
+        return $this->ptlegs;
     }
 
-    public function setPTSections($ptsections)
+    public function setPTLegs($ptlegs)
     {
-        $this->ptsections = $ptsections;
+        $this->ptlegs = $ptlegs;
     }
     
     public function getId()

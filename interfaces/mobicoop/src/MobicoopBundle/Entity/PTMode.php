@@ -21,19 +21,43 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Spec\Util;
+namespace Mobicoop\Bundle\MobicoopBundle\Entity;
 
-use Mobicoop\Bundle\MobicoopBundle\Util\Calculator;
+/**
+ * A public transport mode.
+ *
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ */
+class PTMode
+{
 
-/* This is a sample Unit Test  */
-describe('CalculatorUtil', function () {
-    describe('randAndSquare', function () {
-        it('randAndSquare should return a squared between two number', function () {
-            $calcul = new Calculator();
-            $nb = $calcul->randAndSquare(4, 8);
-
-            expect($nb)->toBeGreaterThan(15);
-            expect($nb)->toBeLessThan(65);
-        });
-    });
-});
+    /**
+     * @var int The id of this mode.
+     */
+    private $id;
+    
+    /**
+     * @var string The name of this mode.
+     */
+    private $name;
+    
+    public function getId()
+    {
+        return $this->id;
+    }
+    
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+    
+    public function getName()
+    {
+        return $this->name;
+    }
+    
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+}
