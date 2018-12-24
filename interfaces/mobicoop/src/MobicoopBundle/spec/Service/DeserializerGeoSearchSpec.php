@@ -23,5 +23,32 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
 
-describe('UserManagerService', function () {
+use Mobicoop\Bundle\MobicoopBundle\Service\Deserializer;
+use Mobicoop\Bundle\MobicoopBundle\Entity\GeoSearch;
+use Mobicoop\Bundle\MobicoopBundle\Entity\Address;
+
+/**
+ * DeserializerGeoSearchSpec.php
+ * Tests for Deserializer - GeoSearch
+ * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
+ * Date: 24/12/2018
+ * Time: 13:46
+ *
+ */
+
+describe('deserializeGeoSearch', function () {
+    describe('deserialize GeoSearch', function () {
+        it('deserialize GeoSearch should return an Address object', function () {
+            $jsonGeoSearch = <<<JSON
+  {
+    "@id": "\/addresses\/1",
+    "id": 0
+  }
+JSON;
+
+            $deserializer = new Deserializer();
+            $GeoSearch = $deserializer->deserialize(GeoSearch::class, json_decode($jsonGeoSearch, true));
+            expect($GeoSearch)->toBeAnInstanceOf(Address::class);
+        });
+    });
 });

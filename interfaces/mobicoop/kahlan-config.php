@@ -17,11 +17,22 @@ Filters::apply($this, 'coverage', function($next) {
     $reporters = $this->reporters();
     $coverage = new Coverage([
         'verbosity' => 4,
+        //'verbosity' => $this->commandLine()->get('coverage'),
         'driver'    => new Xdebug(),
         'path'      => $this->commandLine()->get('src'),
         'exclude'   => [
             'src/MobicoopBundle/Entity/*',
-        ],
+            /* Provider (disabled until we are able to launch api in gitlab-ci) */
+            'src/MobicoopBundle/Service/DataProvider.php',
+            /* Manager (disabled until we are able to launch api in gitlab-ci) */
+            'src/MobicoopBundle/Service/ExternalJourneyManager.php',
+            'src/MobicoopBundle/Service/GeoSearchManager.php',
+            'src/MobicoopBundle/Service/ProposalManager.php',
+            'src/MobicoopBundle/Service/PublicTransportManager.php',
+            'src/MobicoopBundle/Service/UserManager.php',
+        ],/*'include'   => [
+            'src/MobicoopBundle/Service/*',
+        ],*/
         'colors'    => !$this->commandLine()->get('no-colors')
     ]);
     $reporters->add('coverage', $coverage);
