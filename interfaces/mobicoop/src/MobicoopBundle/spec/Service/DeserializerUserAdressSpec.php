@@ -167,7 +167,7 @@ JSON;
 });
 
 describe('deserializeAddress', function () {
-    describe('deserialize Address', function() {
+    describe('deserialize Address', function () {
         it('deserializeAddress should return an Address object', function () {
             $jsonAddress = <<<JSON
 {
@@ -183,7 +183,7 @@ describe('deserializeAddress', function () {
 JSON;
 
             $deserializer = new Deserializer();
-            $Address = $deserializer->deserialize(Address::class,json_decode($jsonAddress, true));
+            $Address = $deserializer->deserialize(Address::class, json_decode($jsonAddress, true));
             expect($Address)->toBeAnInstanceOf(Address::class);
         });
     });

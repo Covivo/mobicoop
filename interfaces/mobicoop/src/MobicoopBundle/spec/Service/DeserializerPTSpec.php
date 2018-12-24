@@ -36,7 +36,7 @@ use Mobicoop\Bundle\MobicoopBundle\Entity\PTJourney;
  */
 
 describe('deserializePT', function () {
-    describe('deserialize PTJourney', function() {
+    describe('deserialize PTJourney', function () {
         it('deserializePTJourney should return a PTJourney object', function () {
             $jsonPTJourney = <<<JSON
 {
@@ -162,7 +162,7 @@ describe('deserializePT', function () {
 JSON;
 
             $deserializer = new Deserializer();
-            $PTJourney = $deserializer->deserialize(PTJourney::class,json_decode($jsonPTJourney, true));
+            $PTJourney = $deserializer->deserialize(PTJourney::class, json_decode($jsonPTJourney, true));
             expect($PTJourney)->toBeAnInstanceOf(PTJourney::class);
         });
     });
