@@ -23,8 +23,6 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 
-use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\DomCrawler\Form;
 
 /**
  * IndexControllerSpec.php
@@ -39,7 +37,7 @@ use Symfony\Component\DomCrawler\Form;
 describe('Index', function () {
     describe('/index', function () {
         it('Index page should return status code 200', function () {
-            $request = $this->request->create('/aut', 'GET');
+            $request = $this->request->create('/index', 'GET');
             $response = $this->kernel->handle($request);
             $status = $response->getStatusCode();
 
@@ -47,3 +45,4 @@ describe('Index', function () {
         });
     });
 });
+;
