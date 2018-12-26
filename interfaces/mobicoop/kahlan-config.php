@@ -21,7 +21,12 @@ Filters::apply($this, 'coverage', function($next) {
         'driver'    => new Xdebug(),
         'path'      => $this->commandLine()->get('src'),
         'exclude'   => [
+            /* Kernel Symfony */
+            'src/App/Kernel/*',
+            /* Entities */
             'src/MobicoopBundle/Entity/*',
+            /* Form (disabled until we are able to launch api in gitlab-ci) */
+            'src/MobicoopBundle/Form/*',
             /* Provider (disabled until we are able to launch api in gitlab-ci) */
             'src/MobicoopBundle/Service/DataProvider.php',
             /* Manager (disabled until we are able to launch api in gitlab-ci) */
@@ -30,9 +35,12 @@ Filters::apply($this, 'coverage', function($next) {
             'src/MobicoopBundle/Service/ProposalManager.php',
             'src/MobicoopBundle/Service/PublicTransportManager.php',
             'src/MobicoopBundle/Service/UserManager.php',
-        ],/*'include'   => [
+        ],'include'   => [
+            'src/Controller/*',
             'src/MobicoopBundle/Service/*',
-        ],*/
+            'src/MobicoopBundle/Form/*',
+            'src/MobicoopBundle/Controller/*',
+        ],
         'colors'    => !$this->commandLine()->get('no-colors')
     ]);
     $reporters->add('coverage', $coverage);
