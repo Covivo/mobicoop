@@ -256,6 +256,4 @@ class PTJourney
     {
         $this->ptlegs = $ptlegs;
     }
-    
-    
 }

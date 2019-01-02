@@ -217,5 +217,4 @@ class PTStep
     {
         $this->ptarrival = $ptarrival;
     }
-    
 }

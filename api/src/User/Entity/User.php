@@ -43,7 +43,7 @@ use App\Carpool\Entity\Ask;
 
 /**
  * A user.
- * 
+ *
  * Users should not be fully removed, if a user wants to remove its account it should be anonymized, unless he has no interactions with other users.
  *
  * @ORM\Entity

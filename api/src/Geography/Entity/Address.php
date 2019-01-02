@@ -233,5 +233,4 @@ class Address
         $user->setAddress($this);
         $this->user = $user;
     }
-    
 }
