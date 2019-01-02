@@ -61,20 +61,20 @@ class Direction
     private $distance;
     
     /**
-     * @var int The total time of the direction in seconds.
+     * @var int The total duration of the direction in seconds.
      * @ORM\Column(type="integer")
      */
     private $duration;
     
     /**
      * @var int The total ascend of the direction in meter.
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $ascend;
     
     /**
      * @var int The total descend of the direction in meter.
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $descend;
 
@@ -82,25 +82,25 @@ class Direction
      * @var float The minimum longitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      */
-    private $bbox_minLon;
+    private $bboxMinLon;
 
     /**
      * @var float The minimum latitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      */
-    private $bbox_minLat;
+    private $bboxMinLat;
     
     /**
      * @var float The maximum longitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      */
-    private $bbox_maxLon;
+    private $bboxMaxLon;
     
     /**
      * @var float The maximum latitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      */
-    private $bbox_maxLat;
+    private $bboxMaxLat;
     
     /**
      * @var string The textual encoded detail of the direction.
@@ -117,160 +117,112 @@ class Direction
     /**
      * @var Zone[]|null The geographical zones covered by the direction.
      *
-     * @ORM\ManyToMany(targetEntity="App\Geography\Entity\Zone")
+     * @ORM\ManyToMany(targetEntity="Zone::class")
      */
     private $zones;
     
     public function __construct()
     {
-        $this->travelModes = new ArrayCollection();
+        $this->zones = new ArrayCollection();
     }
     
-    /**
-     * @return number
-     */
-    public function getDistance()
+    public function getDistance(): int
     {
         return $this->distance;
     }
-
-    /**
-     * @return number
-     */
-    public function getTime()
+    
+    public function setDistance(int $distance): self
     {
-        return $this->time;
+        $this->distance = $distance;
+        
+        return $this;
+    }
+
+    public function getDuration(): int
+    {
+        return $this->duration;
     }
     
-    /**
-     * @return number
-     */
-    public function getAscend()
+    public function setDuration(int $duration): self
+    {
+        $this->duration = $duration;
+        
+        return $this;
+    }
+    
+    public function getAscend(): ?int
     {
         return $this->ascend;
     }
     
-    /**
-     * @return number
-     */
-    public function getDescend()
+    public function setAscend(?int $ascend): self
+    {
+        $this->ascend = $ascend;
+        
+        return $this;
+    }
+    
+    public function getDescend(): ?int
     {
         return $this->descend;
     }
     
-    /**
-     * @return number
-     */
-    public function getBbox_minLon()
-    {
-        return $this->bbox_minLon;
-    }
-    
-    /**
-     * @return number
-     */
-    public function getBbox_minLat()
-    {
-        return $this->bbox_minLat;
-    }
-    
-    /**
-     * @return number
-     */
-    public function getBbox_maxLon()
-    {
-        return $this->bbox_maxLon;
-    }
-    
-    /**
-     * @return number
-     */
-    public function getBbox_maxLat()
-    {
-        return $this->bbox_maxLat;
-    }
-
-    /**
-     * @return multitype:\App\Address\Entity\Address
-     */
-    public function getPoints()
-    {
-        return $this->points;
-    }
-
-    /**
-     * @return multitype:\App\Address\Entity\Address
-     */
-    public function getWaypoints()
-    {
-        return $this->waypoints;
-    }
-    
-    /**
-     * @param number $distance
-     */
-    public function setDistance($distance)
-    {
-        $this->distance = $distance;
-    }
-
-    /**
-     * @param number $time
-     */
-    public function setTime($time)
-    {
-        $this->time = $time;
-    }
-    
-    /**
-     * @param number $ascend
-     */
-    public function setAscend($ascend)
-    {
-        $this->ascend = $ascend;
-    }
-    
-    /**
-     * @param number $descend
-     */
-    public function setDescend($descend)
+    public function setDescend(?int $descend): self
     {
         $this->descend = $descend;
+        
+        return $this;
     }
     
-    /**
-     * @param number $bbox_minLon
-     */
-    public function setBbox_minLon($bbox_minLon)
+    public function getBboxMinLon(): ?float
     {
-        $this->bbox_minLon = $bbox_minLon;
+        return $this->bboxMinLon;
     }
     
-    /**
-     * @param number $bbox_minLat
-     */
-    public function setBbox_minLat($bbox_minLat)
+    public function setBboxMinLon(?float $bboxMinLon): self
     {
-        $this->bbox_minLat = $bbox_minLat;
+        $this->bboxMinLon = $bboxMinLon;
+        
+        return $this;
     }
     
-    /**
-     * @param number $bbox_maxLon
-     */
-    public function setBbox_maxLon($bbox_maxLon)
+    public function getBboxMinLat(): ?float
     {
-        $this->bbox_maxLon = $bbox_maxLon;
+        return $this->bboxMinLat;
     }
     
-    /**
-     * @param number $bbox_maxLat
-     */
-    public function setBbox_maxLat($bbox_maxLat)
+    public function setBboxMinLat(?float $bboxMinLat)
     {
-        $this->bbox_maxLat = $bbox_maxLat;
+        $this->bboxMinLat = $bboxMinLat;
+        
+        return $this;
+    }
+    
+    public function getBboxMaxLon(): ?float
+    {
+        return $this->bboxMaxLon;
+    }
+    
+    public function setBboxMaxLon(?float $bboxMaxLon): self
+    {
+        $this->bboxMaxLon = $bboxMaxLon;
+        
+        return $this;
+    }
+    
+    public function getBboxMaxLat(): ?float
+    {
+        return $this->bboxMaxLat;
+    }
+    
+    public function setBboxMaxLat(?float $bboxMaxLat): self
+    {
+        $this->bboxMaxLat = $bboxMaxLat;
+        
+        return $this;
     }
 
-    public function getDetail(): ?string
+    public function getDetail(): string
     {
         return $this->detail;
     }
@@ -282,21 +234,18 @@ class Direction
         return $this;
     }
     
-    public function getFormat(): ?int
+    public function getFormat(): string
     {
         return $this->format;
     }
     
-    public function setFormat(int $format): self
+    public function setFormat(string $format): self
     {
         $this->format = $format;
         
         return $this;
     }
     
-    /**
-     * @return Collection|Zone[]
-     */
     public function getZones(): Collection
     {
         return $this->zones;

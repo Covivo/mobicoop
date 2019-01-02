@@ -177,34 +177,19 @@ class PTJourney
         $this->ptlegs = new ArrayCollection();
     }
     
+    public function getId()
+    {
+        return $this->id;
+    }
+    
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+    
     public function getDistance()
     {
         return $this->distance;
-    }
-
-    public function getDuration()
-    {
-        return $this->duration;
-    }
-
-    public function getPrice()
-    {
-        return $this->price;
-    }
-
-    public function getCo2()
-    {
-        return $this->co2;
-    }
-    
-    public function getPTDeparture()
-    {
-        return $this->ptdeparture;
-    }
-    
-    public function getPTArrival()
-    {
-        return $this->ptarrival;
     }
     
     public function setDistance($distance)
@@ -212,9 +197,19 @@ class PTJourney
         $this->distance = $distance;
     }
 
+    public function getDuration()
+    {
+        return $this->duration;
+    }
+    
     public function setDuration($duration)
     {
         $this->duration = $duration;
+    }
+
+    public function getPrice()
+    {
+        return $this->price;
     }
     
     public function setPrice($price)
@@ -222,14 +217,29 @@ class PTJourney
         $this->price = $price;
     }
 
+    public function getCo2()
+    {
+        return $this->co2;
+    }
+    
     public function setCo2($co2)
     {
         $this->co2 = $co2;
     }
     
+    public function getPTDeparture()
+    {
+        return $this->ptdeparture;
+    }
+    
     public function setPTDeparture($ptdeparture)
     {
         $this->ptdeparture = $ptdeparture;
+    }
+    
+    public function getPTArrival()
+    {
+        return $this->ptarrival;
     }
     
     public function setPTArrival($ptarrival)
@@ -247,13 +257,5 @@ class PTJourney
         $this->ptlegs = $ptlegs;
     }
     
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
+    
 }

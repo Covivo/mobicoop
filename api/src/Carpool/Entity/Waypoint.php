@@ -77,13 +77,25 @@ class Waypoint
     private $isDestination;
 
     /**
-     * @var Proposal The proposal that created the point.
+     * @var Proposal|null The proposal that created the point.
      *
-     * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Proposal", inversedBy="waypoints")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="Proposal::class", inversedBy="waypoints")
      */
     private $proposal;
+    
+    /**
+     * @var Matching The proposal that created the point.
+     *
+     * @ORM\ManyToOne(targetEntity="Matching::class", inversedBy="waypoints")
+     */
+    private $matching;
+    
+    /**
+     * @var Ask The ask that created the point.
+     *
+     * @ORM\ManyToOne(targetEntity="Ask::class", inversedBy="waypoints")
+     */
+    private $ask;
     
     /**
      * @var Address The address of the point.
@@ -134,6 +146,30 @@ class Waypoint
     {
         $this->proposal = $proposal;
 
+        return $this;
+    }
+    
+    public function getMatching(): ?Matching
+    {
+        return $this->matching;
+    }
+    
+    public function setMatching(?Matching $matching): self
+    {
+        $this->matching = $matching;
+        
+        return $this;
+    }
+    
+    public function getAsk(): ?Ask
+    {
+        return $this->ask;
+    }
+    
+    public function setAsk(?Ask $ask): self
+    {
+        $this->ask = $ask;
+        
         return $this;
     }
 

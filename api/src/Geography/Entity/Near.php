@@ -44,13 +44,13 @@ class Near
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Geography\Entity\Zone", inversedBy="nears1")
+     * @ORM\ManyToOne(targetEntity="Zone::class", inversedBy="nears1")
      * @ORM\JoinColumn(nullable=false)
      */
     private $zone1;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Geography\Entity\Zone", inversedBy="nears2")
+     * @ORM\ManyToOne(targetEntity="Zone::class", inversedBy="nears2")
      * @ORM\JoinColumn(nullable=false)
      */
     private $zone2;
@@ -60,24 +60,24 @@ class Near
         return $this->id;
     }
 
-    public function getZone1(): ?Zone
+    public function getZone1(): Zone
     {
         return $this->zone1;
     }
 
-    public function setZone1(?Zone $zone1): self
+    public function setZone1(Zone $zone1): self
     {
         $this->zone1 = $zone1;
 
         return $this;
     }
 
-    public function getZone2(): ?Zone
+    public function getZone2(): Zone
     {
         return $this->zone2;
     }
 
-    public function setZone2(?Zone $zone2): self
+    public function setZone2(Zone $zone2): self
     {
         $this->zone2 = $zone2;
 

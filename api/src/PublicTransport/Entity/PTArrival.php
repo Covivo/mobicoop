@@ -26,7 +26,7 @@ namespace App\PublicTransport\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
-use App\Address\Entity\Address;
+use App\Geography\Entity\Address;
 use Doctrine\ORM\Mapping as ORM;
 use App\Carpool\Entity\IndividualStop;
 
@@ -106,25 +106,25 @@ class PTArrival
     {
         return $this->name;
     }
-
-    public function getDate()
-    {
-        return $this->date;
-    }
-
-    public function getAddress()
-    {
-        return $this->address;
-    }
-
+    
     public function setName($name)
     {
         $this->name = $name;
     }
 
+    public function getDate()
+    {
+        return $this->date;
+    }
+    
     public function setDate($date)
     {
         $this->date = $date;
+    }
+
+    public function getAddress()
+    {
+        return $this->address;
     }
 
     public function setAddress($address)

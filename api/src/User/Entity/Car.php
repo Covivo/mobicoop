@@ -99,6 +99,7 @@ class Car
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="User::class")
+     * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
      * @MaxDepth(1)
      */
@@ -174,7 +175,7 @@ class Car
         return $this->user;
     }
 
-    public function setUser(User $user): self
+    public function setUser(?User $user): self
     {
         $this->user = $user;
         

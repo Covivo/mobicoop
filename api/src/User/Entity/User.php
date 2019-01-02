@@ -43,6 +43,8 @@ use App\Carpool\Entity\Ask;
 
 /**
  * A user.
+ * 
+ * Users should not be fully removed, if a user wants to remove its account it should be anonymized, unless he has no interactions with other users.
  *
  * @ORM\Entity
  * @UniqueEntity("email")
@@ -64,6 +66,10 @@ class User
     const MAX_DEVIATION_TIME = 600;
     const MAX_DEVIATION_DISTANCE = 10000;
     
+    const STATUS_ACTIVE = 1;
+    const STATUS_DISABLED = 2;
+    const STATUS_ANONYMIZED = 3;
+    
     /**
      * @var int The id of this user.
      *
@@ -73,6 +79,15 @@ class User
      * @Groups("read")
      */
     private $id;
+    
+    /**
+     * @var int User status (1 = active; 2 = disabled; 3 = anonymized).
+     *
+     * @Assert\NotBlank
+     * @ORM\Column(type="smallint")
+     * @Groups({"read","write"})
+     */
+    private $status;
     
     /**
      * @var string|null The first name of the user.
@@ -237,6 +252,18 @@ class User
         return $this->id;
     }
     
+    public function getStatus(): ?int
+    {
+        return $this->status;
+    }
+    
+    public function setStatus(int $status): self
+    {
+        $this->status = $status;
+        
+        return $this;
+    }
+    
     public function getGivenName(): ?string
     {
         return $this->givenName;
@@ -365,18 +392,6 @@ class User
     public function setAnyRouteAsPassenger(?bool $anyRouteAsPassenger): self
     {
         $this->anyRouteAsPassenger = $anyRouteAsPassenger;
-        
-        return $this;
-    }
-    
-    public function getMultiTransportMode(): bool
-    {
-        return (!is_null($this->multiTransportMode) ? $this->multiTransportMode : true);
-    }
-    
-    public function setMultiTransportMode(?bool $multiTransportMode): self
-    {
-        $this->multiTransportMode = $multiTransportMode;
         
         return $this;
     }

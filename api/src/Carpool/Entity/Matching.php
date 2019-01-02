@@ -99,12 +99,6 @@ class Matching
      */
     private $criteria;
     
-
-    public function __construct()
-    {
-        $this->asks = new ArrayCollection();
-    }
-    
     public function getId(): ?int
     {
         return $this->id;
@@ -142,34 +136,6 @@ class Matching
     public function setProposalRequest(?Proposal $proposalRequest): self
     {
         $this->proposalRequest = $proposalRequest;
-
-        return $this;
-    }
-
-    public function getAsks(): Collection
-    {
-        return $this->asks;
-    }
-
-    public function addAsk(Ask $ask): self
-    {
-        if (!$this->asks->contains($ask)) {
-            $this->asks[] = $ask;
-            $ask->setMatching($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAsk(Ask $ask): self
-    {
-        if ($this->asks->contains($ask)) {
-            $this->asks->removeElement($ask);
-            // set the owning side to null (unless already changed)
-            if ($ask->getMatching() === $this) {
-                $ask->setMatching(null);
-            }
-        }
 
         return $this;
     }

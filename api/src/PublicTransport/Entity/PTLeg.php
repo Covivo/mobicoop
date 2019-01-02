@@ -75,14 +75,14 @@ class PTLeg
      *
      * @Groups("pt")
      */
-    private $pos;
+    private $position;
     
     /**
      * @var bool The leg is the last leg of the journey.
      *
      * @Groups("pt")
      */
-    private $last;
+    private $isLast;
     
     /**
      * @var string The magnetic direction of this leg.
@@ -150,7 +150,7 @@ class PTLeg
     public function __construct($id)
     {
         $this->id = $id;
-        $this->setPos($id);
+        $this->setPosition($id);
         $this->ptsteps = new ArrayCollection();
     }
     
@@ -168,65 +168,25 @@ class PTLeg
     {
         return $this->indication;
     }
+    
+    public function setIndication($indication)
+    {
+        $this->indication = $indication;
+    }
 
     public function getDistance()
     {
         return $this->distance;
     }
     
-    public function getDuration()
-    {
-        return $this->duration;
-    }
-
-    public function getPos()
-    {
-        return $this->pos;
-    }
-
-    public function isLast()
-    {
-        return $this->last;
-    }
-
-    public function getPTJourney()
-    {
-        return $this->ptjourney;
-    }
-
-    public function getPTDeparture()
-    {
-        return $this->ptdeparture;
-    }
-
-    public function getPTArrival()
-    {
-        return $this->ptarrival;
-    }
-
-    public function getPTMode()
-    {
-        return $this->ptmode;
-    }
-
-    public function getPTLine()
-    {
-        return $this->ptline;
-    }
-
-    public function getDirection()
-    {
-        return $this->direction;
-    }
-
-    public function setIndication($indication)
-    {
-        $this->indication = $indication;
-    }
-
     public function setDistance($distance)
     {
         $this->distance = $distance;
+    }
+    
+    public function getDuration()
+    {
+        return $this->duration;
     }
     
     public function setDuration($duration)
@@ -234,64 +194,104 @@ class PTLeg
         $this->duration = $duration;
     }
 
-    public function setPos($pos)
+    public function getPosition()
     {
-        $this->pos = $pos;
+        return $this->position;
+    }
+    
+    public function setPosition($position)
+    {
+        $this->position = $position;
     }
 
-    public function setLast($last)
+    public function isLast()
     {
-        $this->last = $last;
+        return $this->isLast;
     }
-
-    public function setPTJourney($ptjourney)
+    
+    public function setIsLast($isLast)
     {
-        $this->ptjourney = $ptjourney;
-    }
-
-    public function setPTDeparture($ptdeparture)
-    {
-        $this->ptdeparture = $ptdeparture;
-    }
-
-    public function setPTArrival($ptarrival)
-    {
-        $this->ptarrival = $ptarrival;
-    }
-
-    public function setPTMode($ptmode)
-    {
-        $this->ptmode = $ptmode;
-    }
-
-    public function setPTLine($ptline)
-    {
-        $this->ptline = $ptline;
-    }
-
-    public function setDirection($direction)
-    {
-        $this->direction = $direction;
+        $this->isLast = $isLast;
     }
     
     public function getMagneticDirection()
     {
         return $this->magneticDirection;
     }
-
-    public function getRelativeDirection()
-    {
-        return $this->relativeDirection;
-    }
-
+    
     public function setMagneticDirection($magneticDirection)
     {
         $this->magneticDirection = $magneticDirection;
     }
-
+    
+    public function getRelativeDirection()
+    {
+        return $this->relativeDirection;
+    }
+    
     public function setRelativeDirection($relativeDirection)
     {
         $this->relativeDirection = $relativeDirection;
+    }
+
+    public function getPTJourney()
+    {
+        return $this->ptjourney;
+    }
+    
+    public function setPTJourney($ptjourney)
+    {
+        $this->ptjourney = $ptjourney;
+    }
+
+    public function getPTDeparture()
+    {
+        return $this->ptdeparture;
+    }
+    
+    public function setPTDeparture($ptdeparture)
+    {
+        $this->ptdeparture = $ptdeparture;
+    }
+
+    public function getPTArrival()
+    {
+        return $this->ptarrival;
+    }
+    
+    public function setPTArrival($ptarrival)
+    {
+        $this->ptarrival = $ptarrival;
+    }
+
+    public function getPTMode()
+    {
+        return $this->ptmode;
+    }
+    
+    public function setPTMode($ptmode)
+    {
+        $this->ptmode = $ptmode;
+    }
+
+    public function getPTLine()
+    {
+        return $this->ptline;
+    }
+    
+    public function setPTLine($ptline)
+    {
+        $this->ptline = $ptline;
+    }
+
+    public function getDirection()
+    {
+        return $this->direction;
+    }
+    
+    public function setDirection($direction)
+    {
+        $this->direction = $direction;
     }
     
     public function getPTSteps()

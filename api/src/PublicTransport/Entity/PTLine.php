@@ -103,29 +103,14 @@ class PTLine
         return $this->name;
     }
     
-    public function getNumber()
-    {
-        return $this->number;
-    }
-
-    public function getOrigin()
-    {
-        return $this->origin;
-    }
-
-    public function getDestination()
-    {
-        return $this->destination;
-    }
-
-    public function getPTCompany()
-    {
-        return $this->ptcompany;
-    }
-
     public function setName($name)
     {
         $this->name = $name;
+    }
+    
+    public function getNumber()
+    {
+        return $this->number;
     }
     
     public function setNumber($number)
@@ -133,14 +118,29 @@ class PTLine
         $this->number = $number;
     }
 
+    public function getOrigin()
+    {
+        return $this->origin;
+    }
+    
     public function setOrigin($origin)
     {
         $this->origin = $origin;
     }
-
+    
+    public function getDestination()
+    {
+        return $this->destination;
+    }
+    
     public function setDestination($destination)
     {
         $this->destination = $destination;
+    }
+
+    public function getPTCompany()
+    {
+        return $this->ptcompany;
     }
 
     public function setPTCompany($ptcompany)

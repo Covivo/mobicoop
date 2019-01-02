@@ -138,54 +138,14 @@ class Address
         return $this->id;
     }
     
-    public function getStreetAddress(): ?string
-    {
-        return $this->streetAddress;
-    }
-
-    public function getPostalCode(): ?string
-    {
-        return $this->postalCode;
-    }
-
-    public function getAddressLocality(): ?string
-    {
-        return $this->addressLocality;
-    }
-
-    public function getAddressCountry(): ?string
-    {
-        return $this->addressCountry;
-    }
-
-    public function getLatitude(): ?float
-    {
-        return $this->latitude;
-    }
-
-    public function getLongitude(): ?float
-    {
-        return $this->longitude;
-    }
-
-    public function getElevation(): ?int
-    {
-        return $this->elevation;
-    }
-    
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
     public function setId($id)
     {
         $this->id = $id;
+    }
+    
+    public function getStreetAddress(): ?string
+    {
+        return $this->streetAddress;
     }
     
     public function setStreetAddress(?string $streetAddress)
@@ -193,39 +153,79 @@ class Address
         $this->streetAddress = $streetAddress;
     }
 
+    public function getPostalCode(): ?string
+    {
+        return $this->postalCode;
+    }
+    
     public function setPostalCode(?string $postalCode)
     {
         $this->postalCode = $postalCode;
     }
 
+    public function getAddressLocality(): ?string
+    {
+        return $this->addressLocality;
+    }
+    
     public function setAddressLocality(?string $addressLocality)
     {
         $this->addressLocality = $addressLocality;
     }
 
+    public function getAddressCountry(): ?string
+    {
+        return $this->addressCountry;
+    }
+    
     public function setAddressCountry(?string $addressCountry)
     {
         $this->addressCountry = $addressCountry;
+    }
+
+    public function getLatitude(): ?float
+    {
+        return $this->latitude;
     }
 
     public function setLatitude(?float $latitude)
     {
         $this->latitude = $latitude;
     }
-
+    
+    public function getLongitude(): ?float
+    {
+        return $this->longitude;
+    }
+    
     public function setLongitude(?float $longitude)
     {
         $this->longitude = $longitude;
     }
 
+    public function getElevation(): ?int
+    {
+        return $this->elevation;
+    }
+    
     public function setElevation(?int $elevation)
     {
         $this->elevation = $elevation;
     }
     
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+    
     public function setName(?string $name)
     {
         $this->name = $name;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
     }
     
     public function setUser(?User $user)
@@ -233,4 +233,5 @@ class Address
         $user->setAddress($this);
         $this->user = $user;
     }
+    
 }

@@ -26,7 +26,7 @@ namespace App\PublicTransport\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
-use App\Address\Entity\Address;
+use App\Geography\Entity\Address;
 
 /**
  * A public transport step (by walk or public transport).
@@ -68,35 +68,35 @@ class PTStep
      *
      * @Groups("pt")
      */
-    private $pos;
+    private $position;
     
     /**
-     * @var bool The step is the last step of the section.
+     * @var bool The step is the last step of the leg.
      *
      * @Groups("pt")
      */
-    private $last;
+    private $isLast;
     
     /**
-     * @var string The magnetic direction of this section.
+     * @var string The magnetic direction of this step.
      *
      * @Groups("pt")
      */
     private $magneticDirection;
     
     /**
-     * @var string The relative direction of this section.
+     * @var string The relative direction of this step.
      *
      * @Groups("pt")
      */
     private $relativeDirection;
    
     /**
-     * @var PTSection The parent section of this step.
+     * @var PTLeg The parent leg of this step.
      *
      * @Groups("pt")
      */
-    private $ptsection;
+    private $ptleg;
     
     /**
      * @var PTDeparture The departure of this step.
@@ -115,7 +115,7 @@ class PTStep
     public function __construct($id)
     {
         $this->id = $id;
-        $this->setPos($id);
+        $this->setPosition($id);
     }
     
     public function getId()
@@ -132,80 +132,45 @@ class PTStep
     {
         return $this->distance;
     }
-
-    public function getDuration()
-    {
-        return $this->duration;
-    }
-
-    public function getPos()
-    {
-        return $this->pos;
-    }
-
-    public function isLast()
-    {
-        return $this->last;
-    }
-
-    public function getPTSection()
-    {
-        return $this->ptsection;
-    }
-
-    public function getPTDeparture()
-    {
-        return $this->ptdeparture;
-    }
-
-    public function getPTArrival()
-    {
-        return $this->ptarrival;
-    }
-
+    
     public function setDistance($distance)
     {
         $this->distance = $distance;
     }
 
+    public function getDuration()
+    {
+        return $this->duration;
+    }
+    
     public function setDuration($duration)
     {
         $this->duration = $duration;
     }
 
-    public function setPos($pos)
+    public function getPosition()
     {
-        $this->pos = $pos;
+        return $this->position;
+    }
+    
+    public function setPosition($position)
+    {
+        $this->position = $position;
     }
 
-    public function setLast($last)
+    public function isLast()
     {
-        $this->last = $last;
+        return $this->isLast;
     }
-
-    public function setPTSection($ptsection)
+    
+    public function setIsLast($isLast)
     {
-        $this->ptsection = $ptsection;
+        $this->isLast = $isLast;
     }
-
-    public function setPTDeparture($ptdeparture)
-    {
-        $this->ptdeparture = $ptdeparture;
-    }
-
-    public function setPTArrival($ptarrival)
-    {
-        $this->ptarrival = $ptarrival;
-    }
-
+    
     public function getMagneticDirection()
     {
         return $this->magneticDirection;
-    }
-    
-    public function getRelativeDirection()
-    {
-        return $this->relativeDirection;
     }
     
     public function setMagneticDirection($magneticDirection)
@@ -213,8 +178,44 @@ class PTStep
         $this->magneticDirection = $magneticDirection;
     }
     
+    public function getRelativeDirection()
+    {
+        return $this->relativeDirection;
+    }
+    
     public function setRelativeDirection($relativeDirection)
     {
         $this->relativeDirection = $relativeDirection;
     }
+
+    public function getPTLeg()
+    {
+        return $this->ptleg;
+    }
+    
+    public function setPTLeg($ptleg)
+    {
+        $this->ptleg = $ptleg;
+    }
+
+    public function getPTDeparture()
+    {
+        return $this->ptdeparture;
+    }
+    
+    public function setPTDeparture($ptdeparture)
+    {
+        $this->ptdeparture = $ptdeparture;
+    }
+
+    public function getPTArrival()
+    {
+        return $this->ptarrival;
+    }
+
+    public function setPTArrival($ptarrival)
+    {
+        $this->ptarrival = $ptarrival;
+    }
+    
 }

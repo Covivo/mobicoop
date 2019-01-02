@@ -70,19 +70,18 @@ class IndividualStop
     private $position;
     
     /**
-     * @var \DateTimeInterface|null The stop time.
+     * @var int Estimated stop delay in seconds (calculated with 0 as origin).
      *
-     * @Assert\Time()
-     * @ORM\Column(type="time", nullable=true)
+     * @ORM\Column(type="int")
      * @Groups({"read","write"})
      */
-    private $time;
+    private $delay;
 
     /**
      * @var Proposal The proposal that owns the stop.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Proposal", inversedBy="individualPoints")
+     * @ORM\ManyToOne(targetEntity="Proposal::class", inversedBy="individualStops")
      * @ORM\JoinColumn(nullable=false)
      */
     private $proposal;
@@ -91,7 +90,7 @@ class IndividualStop
      * @var Address The address of the stop.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="App\Address\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="Address::class", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -115,14 +114,14 @@ class IndividualStop
         return $this;
     }
     
-    public function getTime(): ?\DateTimeInterface
+    public function getDelay(): ?int
     {
-        return $this->time;
+        return $this->delay;
     }
     
-    public function setTime(?\DateTimeInterface $time): self
+    public function setDelay(int $delay): self
     {
-        $this->time = $time;
+        $this->delay = $delay;
         
         return $this;
     }
