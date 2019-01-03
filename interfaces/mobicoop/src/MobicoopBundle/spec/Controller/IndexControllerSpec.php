@@ -23,7 +23,6 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 
-
 /**
  * IndexControllerSpec.php
  * Test Class for IndexControllerSpec
