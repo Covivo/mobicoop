@@ -76,7 +76,7 @@ class PTJourney
      * @var PTLeg[] The legs of this journey.
      */
     private $ptlegs;
-    
+
     public function __construct()
     {
         $this->ptlegs = new ArrayCollection();
