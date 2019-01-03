@@ -132,14 +132,25 @@ Monicoop comes with a simple script to run, it will create a canvas skeletton ba
 ☢️ *Do not forget to commit into monorepo  ( & create branch if needed) when you edit bundle files* ☣️ 
 
 
-### Licence
+### License
+
+
+#### Mobicoop License
 Mobicoop software is owned by Mobicoop cooperative. Mobicoop cooperative is opened to any individual, company or public authority who wish to become a shareholder.
-In order to increase the impact of our platform to any sort of clients whatever type of contractual relationship theyu require, Mobicoop software is dual-licensed:
+In order to increase the impact of our platform to any sort of clients whatever type of contractual relationship they require, Mobicoop software is dual-licensed:
  - [AGPL-3](https://www.gnu.org/licenses/agpl-3.0)
  - proprietary software
 
+#### Components license compatibility
+Since Mobicoop is dual licensed AGPLv3/proprietary, all components used for Mobicoop must be compatible with both licenses. As consequence, all components integrated into Mobicoop source code **must be released with a _permissive_ open source license**.
 
-##### Windows Requirements
+Mobicoop CI process includes a License Management which checks the license of all components part of a merge request. The most common _permissive_ licenses have already been added to the approved licenses list of this License Management process.
+In case you have one of the following situation while merging, please get in touch with Mobicoop project licensing issues expert before merging:
+ - one of the license pops up as non part of the approved license for the project
+ - a component is license under AGPLv3 and is not Mobicoop itself
+
+
+### Windows Requirements
 
 Please use powershell with our project, in requirement you will need:
 
