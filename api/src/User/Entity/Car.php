@@ -27,6 +27,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A car.
@@ -98,7 +99,7 @@ class Car
      * @var User The owner of the car.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="User::class")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
      * @MaxDepth(1)

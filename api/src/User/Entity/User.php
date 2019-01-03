@@ -206,7 +206,7 @@ class User
     /**
      * @var Address[]|null A user may have many addresses.
      *
-     * @ORM\OneToMany(targetEntity="Address::class", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Address", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
@@ -216,7 +216,7 @@ class User
     /**
      * @var Car[]|null A user may have many cars.
      *
-     * @ORM\OneToMany(targetEntity="Car::class", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\User\Entity\Car", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
@@ -226,7 +226,7 @@ class User
     /**
      * @var Proposal[]|null The proposals made by this user.
      *
-     * @ORM\OneToMany(targetEntity="Proposal::class", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      * @ApiSubresource(maxDepth=1)
      */
     private $proposals;
@@ -234,7 +234,7 @@ class User
     /**
      * @var Ask[]|null The asks made by this user.
      *
-     * @ORM\OneToMany(targetEntity="Ask::class", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      * @ApiSubresource(maxDepth=1)
      */
     private $asks;

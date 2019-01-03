@@ -24,7 +24,7 @@
 namespace App\PublicTransport\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Geography\Entity\Address;
 use Doctrine\ORM\Mapping as ORM;
@@ -53,20 +53,22 @@ class PTArrival
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @ApiProperty(identifier=true)
+     * @Groups("pt")
      */
     private $id;
     
     /**
      * @var string The name of this arrival.
      *
+     * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups("pt")
      */
     private $name;
     
     /**
-     * @var \DateTime The date and time of this arrival.
+     * @var \DateTimeInterface The date and time of this arrival.
      *
+     * @ORM\Column(type="datetime")
      * @Groups("pt")
      */
     private $date;
@@ -74,6 +76,8 @@ class PTArrival
     /**
      * @var Address The address of this arrival.
      *
+     * @ORM\ManyToOne(targetEntity="App\Geography\Entity\Address")
+     * @ORM\JoinColumn(nullable=false)
      * @Groups("pt")
      */
     private $address;
@@ -92,44 +96,52 @@ class PTArrival
         $this->id = $id;
     }
     
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
     
-    public function setId($id)
+    public function setId(int $id): self
     {
         $this->id = $id;
+        
+        return $this;
     }
     
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
     
-    public function setName($name)
+    public function setName(?string $name): self
     {
         $this->name = $name;
+        
+        return $this;
     }
-
-    public function getDate()
+    
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }
     
-    public function setDate($date)
+    public function setDate(\DateTimeInterface $date): self
     {
         $this->date = $date;
+        
+        return $this;
     }
-
-    public function getAddress()
+    
+    public function getAddress(): Address
     {
         return $this->address;
     }
-
-    public function setAddress($address)
+    
+    public function setAddress(Address $address): self
     {
         $this->address = $address;
+        
+        return $this;
     }
     
     public function getIndividualStop(): ?IndividualStop

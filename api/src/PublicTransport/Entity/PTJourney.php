@@ -23,14 +23,15 @@
 
 namespace App\PublicTransport\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * A public transport journey.
  *
+ * @ORM\Entity
  * @ApiResource(
  *      routePrefix="/public_transport",
  *      attributes={
@@ -118,13 +119,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class PTJourney
 {
     /**
-     * @ApiProperty(identifier=true)
+     * @var int The id of this journey.
+     * 
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
      */
     private $id;
     
     /**
      * @var int The total distance of this journey.
-     *
+     * 
+     * @ORM\Column(type="integer")
      * @Groups("pt")
      */
     private $distance;
@@ -132,13 +138,15 @@ class PTJourney
     /**
      * @var int The total duration of this journey.
      *
+     * @ORM\Column(type="integer")
      * @Groups("pt")
      */
     private $duration;
     
     /**
      * @var float The estimated price of this journey.
-     *
+     * 
+     * @ORM\Column(type="decimal", precision=4, scale=2, nullable=true)
      * @Groups("pt")
      */
     private $price;
@@ -146,13 +154,24 @@ class PTJourney
     /**
      * @var int The estimated CO2 emission of this journey.
      *
+     * @ORM\Column(type="integer")
      * @Groups("pt")
      */
     private $co2;
     
     /**
+     * @var int The number of changes.
+     *
+     * @ORM\Column(type="integer")
+     * @Groups("pt")
+     */
+    private $changeNumber;
+    
+    /**
      * @var PTDeparture The departure of this journey.
      *
+     * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTDeparture")
+     * @ORM\JoinColumn(nullable=false)
      * @Groups("pt")
      */
     private $ptdeparture;
@@ -160,6 +179,8 @@ class PTJourney
     /**
      * @var PTArrival The arrival of this journey.
      *
+     * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTArrival")
+     * @ORM\JoinColumn(nullable=false)
      * @Groups("pt")
      */
     private $ptarrival;
@@ -167,6 +188,7 @@ class PTJourney
     /**
      * @var PTLeg[] The legs of this journey.
      *
+     * @ORM\OneToMany(targetEntity="\App\PublicTransport\Entity\PTLeg", mappedBy="ptjourney", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups("pt")
      */
     private $ptlegs;
@@ -177,83 +199,134 @@ class PTJourney
         $this->ptlegs = new ArrayCollection();
     }
     
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
     
-    public function setId($id)
+    public function setId(int $id): self
     {
         $this->id = $id;
+        
+        return $this;
     }
     
-    public function getDistance()
+    public function getDistance(): int
     {
         return $this->distance;
     }
     
-    public function setDistance($distance)
+    public function setDistance(int $distance): self
     {
         $this->distance = $distance;
+        
+        return $this;
     }
 
-    public function getDuration()
+    public function getDuration(): ?int
     {
         return $this->duration;
     }
     
-    public function setDuration($duration)
+    public function setDuration(?int $duration): self
     {
         $this->duration = $duration;
+        
+        return $this;
     }
 
-    public function getPrice()
+    public function getPrice(): ?float
     {
         return $this->price;
     }
     
-    public function setPrice($price)
+    public function setPrice(?float $price): self
     {
         $this->price = $price;
+        
+        return $this;
     }
 
-    public function getCo2()
+    public function getCo2(): ?int
     {
         return $this->co2;
     }
     
-    public function setCo2($co2)
+    public function setCo2(?int $co2): self
     {
         $this->co2 = $co2;
+        
+        return $this;
     }
     
-    public function getPTDeparture()
+    public function getChangeNumber(): ?int
+    {
+        return $this->changeNumber;
+    }
+    
+    public function setChangeNumber(?int $changeNumber): self
+    {
+        $this->changeNumber = $changeNumber;
+        
+        return $this;
+    }
+    
+    public function getPTDeparture(): PTDeparture
     {
         return $this->ptdeparture;
     }
     
-    public function setPTDeparture($ptdeparture)
+    public function setPTDeparture(PTDeparture $ptdeparture): self
     {
         $this->ptdeparture = $ptdeparture;
+        
+        return $this;
     }
     
-    public function getPTArrival()
+    public function getPTArrival(): PTArrival
     {
         return $this->ptarrival;
     }
     
-    public function setPTArrival($ptarrival)
+    public function setPTArrival(PTArrival $ptarrival): self
     {
         $this->ptarrival = $ptarrival;
+        
+        return $this;
     }
     
-    public function getPTLegs()
+    public function getPTLegs(): ArrayCollection
     {
         return $this->ptlegs;
     }
 
-    public function setPTLegs($ptlegs)
+    public function setPTLegs(ArrayCollection $ptlegs): self
     {
         $this->ptlegs = $ptlegs;
+        
+        return $this;
+    }
+    
+    public function addPTLeg(PTLeg $ptleg): self
+    {
+        if (!$this->ptlegs->contains($ptleg)) {
+            $this->ptlegs->add($ptleg);
+            $ptleg->setPTJourney($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removePTLeg(PTLeg $ptleg): self
+    {
+        if ($this->ptlegs->contains($ptleg)) {
+            $this->ptlegs->removeElement($ptleg);
+            // set the owning side to null (unless already changed)
+            if ($ptleg->getPTJourney() === $this) {
+                $ptleg->setPTJourney(null);
+            }
+        }
+        
+        return $this;
     }
 }

@@ -100,7 +100,7 @@ class Proposal
     /**
      * @var Proposal|null Linked proposal for a round trip (return or outward journey).
      *
-     * @ORM\OneToOne(targetEntity="Proposal::class", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false,onDelete="CASCADE")
      * @Groups({"read"})
      * @MaxDepth(1)
@@ -110,7 +110,7 @@ class Proposal
     /**
      * @var User|null User who submits the proposal.
      *
-     * @ORM\ManyToOne(targetEntity="User::class", inversedBy="proposals")
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposals")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -120,7 +120,7 @@ class Proposal
      * @var Waypoint[] The waypoints of the proposal.
      *
      * @Assert\NotBlank
-     * @ORM\OneToMany(targetEntity="Waypoint::class", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -131,7 +131,7 @@ class Proposal
     /**
      * @var TravelMode[]|null The travel modes accepted if the proposal is a request.
      *
-     * @ORM\ManyToMany(targetEntity="TravelMode::class")
+     * @ORM\ManyToMany(targetEntity="\App\Travel\Entity\TravelMode")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -140,7 +140,7 @@ class Proposal
     /**
      * @var Matching[]|null The matching of the proposal (if proposal is an offer).
      *
-     * @ORM\OneToMany(targetEntity="Matching::class", mappedBy="proposalOffer")
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer")
      * @ApiSubresource(maxDepth=1)
      */
     private $matchingRequests;
@@ -148,7 +148,7 @@ class Proposal
     /**
      * @var Matching[]|null The matching of the proposal (if proposal is a request).
      *
-     * @ORM\OneToMany(targetEntity="Matching::class", mappedBy="proposalRequest")
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest")
      * @ApiSubresource(maxDepth=1)
      */
     private $matchingOffers;
@@ -157,7 +157,7 @@ class Proposal
      * @var Criteria The criteria applied to the proposal.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="Criteria::class", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -167,7 +167,7 @@ class Proposal
     /**
      * @var IndividualStop[] The individual stops of the proposal.
      *
-     * @ORM\OneToMany(targetEntity="IndividualStop::class", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\IndividualStop", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"read","write"})
      * @MaxDepth(1)

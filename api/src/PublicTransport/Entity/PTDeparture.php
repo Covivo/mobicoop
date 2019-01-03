@@ -23,9 +23,10 @@
 
 namespace App\PublicTransport\Entity;
 
+
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use App\Geography\Entity\Address;
 use App\Carpool\Entity\IndividualStop;
 use Doctrine\ORM\Mapping as ORM;
@@ -67,11 +68,9 @@ class PTDeparture
     private $name;
     
     /**
-     * @var \DateTimeInterface|null The date and time of this departure.
+     * @var \DateTimeInterface The date and time of this departure.
      *
-     * @Assert\Date()
-     * @ORM\Column(type="date", nullable=true)
-     *
+     * @ORM\Column(type="datetime")
      * @Groups("pt")
      */
     private $date;
@@ -79,6 +78,8 @@ class PTDeparture
     /**
      * @var Address The address of this departure.
      *
+     * @ORM\ManyToOne(targetEntity="App\Geography\Entity\Address")
+     * @ORM\JoinColumn(nullable=false)
      * @Groups("pt")
      */
     private $address;
@@ -97,44 +98,52 @@ class PTDeparture
         $this->id = $id;
     }
     
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
     
-    public function setId($id)
+    public function setId(int $id): self
     {
         $this->id = $id;
+        
+        return $this;
     }
     
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
     
-    public function setName($name)
+    public function setName(?string $name): self
     {
         $this->name = $name;
+        
+        return $this;
     }
 
-    public function getDate()
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }
     
-    public function setDate($date)
+    public function setDate(\DateTimeInterface $date): self
     {
         $this->date = $date;
+        
+        return $this;
     }
 
-    public function getAddress()
+    public function getAddress(): Address
     {
         return $this->address;
     }
 
-    public function setAddress($address)
+    public function setAddress(Address $address): self
     {
         $this->address = $address;
+        
+        return $this;
     }
     
     public function getIndividualStop(): ?IndividualStop

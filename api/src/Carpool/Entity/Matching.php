@@ -70,7 +70,7 @@ class Matching
      * @var Proposal The offer proposal.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="Proposal::class", inversedBy="matchingRequests")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingRequests")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
      * @MaxDepth(1)
@@ -81,7 +81,7 @@ class Matching
      * @var Proposal The request proposal.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="Proposal::class", inversedBy="matchingOffers")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingOffers")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
      * @MaxDepth(1)
@@ -92,7 +92,7 @@ class Matching
      * @var Criteria The criteria applied to this matching.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="Criteria::class", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read"})
      * @MaxDepth(1)

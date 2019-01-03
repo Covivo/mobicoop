@@ -72,7 +72,7 @@ class IndividualStop
     /**
      * @var int Estimated stop delay in seconds (calculated with 0 as origin).
      *
-     * @ORM\Column(type="int")
+     * @ORM\Column(type="integer")
      * @Groups({"read","write"})
      */
     private $delay;
@@ -81,7 +81,7 @@ class IndividualStop
      * @var Proposal The proposal that owns the stop.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="Proposal::class", inversedBy="individualStops")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="individualStops")
      * @ORM\JoinColumn(nullable=false)
      */
     private $proposal;
@@ -90,7 +90,7 @@ class IndividualStop
      * @var Address The address of the stop.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="Address::class", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)

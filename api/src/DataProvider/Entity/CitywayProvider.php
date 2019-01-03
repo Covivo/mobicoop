@@ -28,12 +28,12 @@ use App\DataProvider\Service\DataProvider;
 use App\PublicTransport\Entity\PTJourney;
 use App\PublicTransport\Entity\PTArrival;
 use App\PublicTransport\Entity\PTDeparture;
-use App\PublicTransport\Entity\PTMode;
+use App\Travel\Entity\TravelMode;
 use App\PublicTransport\Entity\PTStep;
 use App\PublicTransport\Entity\PTLine;
 use App\PublicTransport\Entity\PTLeg;
 use App\PublicTransport\Service\PTDataProvider;
-use App\Address\Entity\Address;
+use App\Geography\Entity\Address;
 
 /**
  * Cityway data provider.
@@ -76,7 +76,8 @@ use App\Address\Entity\Address;
 class CitywayProvider implements ProviderInterface
 {
     private const CW_PT_MODE_BUS = "BUS";
-    private const CW_PT_MODE_TRAIN = "TRAIN";
+    private const CW_PT_MODE_TRAIN_LOCAL = "TRAIN_LOCAL";
+    private const CW_PT_MODE_TRAIN_HIGH_SPEED = "HST";
     private const CW_PT_MODE_BIKE = "BIKE";
     private const CW_PT_MODE_WALK = "WALK";
     
@@ -249,8 +250,8 @@ class CitywayProvider implements ProviderInterface
         $leg = new PTLeg($num);
         if (isset($data["Leg"]) && !is_null($data["Leg"])) {
             // walk mode
-            $ptmode = new PTMode(PTMode::PT_MODE_WALK);
-            $leg->setPTmode($ptmode);
+            $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_WALK);
+            $leg->setTravelMode($travelMode);
             if (isset($data["Leg"]["Duration"]) && !is_null($data["Leg"]["Duration"])) {
                 $leg->setDuration($data["Leg"]["Duration"]);
             }
@@ -265,13 +266,13 @@ class CitywayProvider implements ProviderInterface
         if (isset($data["PTRide"]) && !is_null($data["PTRide"])) {
             if ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_BUS) {
                 // bus mode
-                $ptmode = new PTMode(PTMode::PT_MODE_BUS);
-                $leg->setPTMode($ptmode);
+                $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_BUS);
+                $leg->setPTMode($travelMode);
             }
-            if ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TRAIN) {
+            if (($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TRAIN_LOCAL) || ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TRAIN_HIGH_SPEED)) {
                 // train mode
-                $ptmode = new PTMode(PTMode::PT_MODE_TRAIN);
-                $leg->setPTMode($ptmode);
+                $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_TRAIN);
+                $leg->setPTMode($travelMode);
             }
             if (isset($data["PTRide"]["Departure"])) {
                 $departure = new PTDeparture(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)

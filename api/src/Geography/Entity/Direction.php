@@ -117,7 +117,7 @@ class Direction
     /**
      * @var Zone[]|null The geographical zones covered by the direction.
      *
-     * @ORM\ManyToMany(targetEntity="Zone::class")
+     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Zone")
      */
     private $zones;
     

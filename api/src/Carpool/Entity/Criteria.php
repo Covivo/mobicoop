@@ -25,6 +25,7 @@ namespace App\Carpool\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\User\Entity\Car;
@@ -283,7 +284,7 @@ class Criteria
     /**
      * @var Car|null The car used in the journey.
      *
-     * @ORM\ManyToOne(targetEntity="Car::class")
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\Car")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -292,7 +293,7 @@ class Criteria
     /**
      * @var Direction|null The direction used in the journey as a driver.
      *
-     * @ORM\ManyToOne(targetEntity="Direction::class")
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -301,7 +302,7 @@ class Criteria
     /**
      * @var Direction|null The direction used in the journey as a passenger.
      *
-     * @ORM\ManyToOne(targetEntity="Direction::class")
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -310,7 +311,7 @@ class Criteria
     /**
      * @var PTJourney|null The public transport journey used.
      *
-     * @ORM\ManyToOne(targetEntity="PTJourney::class")
+     * @ORM\ManyToOne(targetEntity="\App\PublicTransport\Entity\PTJourney")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */

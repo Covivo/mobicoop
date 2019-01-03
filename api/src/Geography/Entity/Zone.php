@@ -65,12 +65,12 @@ class Zone
     private $toLon;
 
     /**
-     * @ORM\OneToMany(targetEntity="Near::class", mappedBy="zone1")
+     * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Near", mappedBy="zone1")
      */
     private $nears1;
 
     /**
-     * @ORM\OneToMany(targetEntity="Near::class", mappedBy="zone2")
+     * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Near", mappedBy="zone2")
      */
     private $nears2;
 

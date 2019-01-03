@@ -24,13 +24,15 @@
 namespace App\PublicTransport\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\Common\Collections\ArrayCollection;
 use App\Geography\Entity\Address;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * A public transport step (by walk or public transport).
  *
+ * @ORM\Entity
  * @ApiResource(
  *      routePrefix="/public_transport",
  *      attributes={
@@ -45,13 +47,18 @@ use App\Geography\Entity\Address;
 class PTStep
 {
     /**
-     * @ApiProperty(identifier=true)
+     * @var int The id of this step.
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
      */
     private $id;
     
     /**
      * @var int The distance of this step.
      *
+     * @ORM\Column(type="integer")
      * @Groups("pt")
      */
     private $distance;
@@ -59,6 +66,7 @@ class PTStep
     /**
      * @var int The duration of this step.
      *
+     * @ORM\Column(type="integer")
      * @Groups("pt")
      */
     private $duration;
@@ -66,6 +74,7 @@ class PTStep
     /**
      * @var int The position of this step.
      *
+     * @ORM\Column(type="integer")
      * @Groups("pt")
      */
     private $position;
@@ -73,6 +82,7 @@ class PTStep
     /**
      * @var bool The step is the last step of the leg.
      *
+     * @ORM\Column(type="boolean")
      * @Groups("pt")
      */
     private $isLast;
@@ -80,6 +90,7 @@ class PTStep
     /**
      * @var string The magnetic direction of this step.
      *
+     * @ORM\Column(type="string", length=10, nullable=true)
      * @Groups("pt")
      */
     private $magneticDirection;
@@ -87,13 +98,15 @@ class PTStep
     /**
      * @var string The relative direction of this step.
      *
+     * @ORM\Column(type="string", length=10, nullable=true)
      * @Groups("pt")
      */
     private $relativeDirection;
-   
+    
     /**
-     * @var PTLeg The parent leg of this step.
+     * @var PTJourney The parent leg of this step.
      *
+     * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTLeg")
      * @Groups("pt")
      */
     private $ptleg;
@@ -101,6 +114,7 @@ class PTStep
     /**
      * @var PTDeparture The departure of this step.
      *
+     * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTDeparture")
      * @Groups("pt")
      */
     private $ptdeparture;
@@ -108,6 +122,7 @@ class PTStep
     /**
      * @var PTArrival The arrival of this step.
      *
+     * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTArrival")
      * @Groups("pt")
      */
     private $ptarrival;
@@ -118,103 +133,123 @@ class PTStep
         $this->setPosition($id);
     }
     
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
     
-    public function setId($id)
+    public function setId(int $id): self
     {
         $this->id = $id;
+        
+        return $this;
     }
     
-    public function getDistance()
+    public function getDistance(): int
     {
         return $this->distance;
     }
     
-    public function setDistance($distance)
+    public function setDistance(int $distance): self
     {
         $this->distance = $distance;
+        
+        return $this;
     }
-
-    public function getDuration()
+    
+    public function getDuration(): int
     {
         return $this->duration;
     }
     
-    public function setDuration($duration)
+    public function setDuration(int $duration): self
     {
         $this->duration = $duration;
+        
+        return $this;
     }
-
-    public function getPosition()
+    
+    public function getPosition(): int
     {
         return $this->position;
     }
     
-    public function setPosition($position)
+    public function setPosition(int $position): self
     {
         $this->position = $position;
+        
+        return $this;
     }
-
-    public function isLast()
+    
+    public function isLast(): bool
     {
         return $this->isLast;
     }
     
-    public function setIsLast($isLast)
+    public function setIsLast(bool $isLast): self
     {
         $this->isLast = $isLast;
+        
+        return $this;
     }
     
-    public function getMagneticDirection()
+    public function getMagneticDirection(): ?string
     {
         return $this->magneticDirection;
     }
     
-    public function setMagneticDirection($magneticDirection)
+    public function setMagneticDirection(?string $magneticDirection): self
     {
         $this->magneticDirection = $magneticDirection;
+        
+        return $this;
     }
     
-    public function getRelativeDirection()
+    public function getRelativeDirection(): ?string
     {
         return $this->relativeDirection;
     }
     
-    public function setRelativeDirection($relativeDirection)
+    public function setRelativeDirection(?string $relativeDirection): self
     {
         $this->relativeDirection = $relativeDirection;
+        
+        return $this;
     }
-
-    public function getPTLeg()
+    
+    public function getPTLeg(): PTLeg
     {
         return $this->ptleg;
     }
     
-    public function setPTLeg($ptleg)
+    public function setPTLeg(PTLeg $ptleg): self
     {
         $this->ptleg = $ptleg;
+        
+        return $this;
     }
-
-    public function getPTDeparture()
+    
+    public function getPTDeparture(): PTDeparture
     {
         return $this->ptdeparture;
     }
     
-    public function setPTDeparture($ptdeparture)
+    public function setPTDeparture(PTDeparture $ptdeparture): self
     {
         $this->ptdeparture = $ptdeparture;
+        
+        return $this;
     }
-
-    public function getPTArrival()
+    
+    public function getPTArrival(): PTArrival
     {
         return $this->ptarrival;
     }
-
-    public function setPTArrival($ptarrival)
+    
+    public function setPTArrival(PTArrival $ptarrival): self
     {
         $this->ptarrival = $ptarrival;
+        
+        return $this;
     }
 }

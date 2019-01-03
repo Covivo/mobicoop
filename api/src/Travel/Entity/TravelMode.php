@@ -46,6 +46,20 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class TravelMode
 {
+    const TRAVEL_MODE_BUS = "BUS";
+    const TRAVEL_MODE_TRAIN = "TRAIN";
+    const TRAVEL_MODE_BIKE = "BIKE";
+    const TRAVEL_MODE_WALK = "WALK";
+    const TRAVEL_MODE_CAR = "CAR";
+    
+    private const TRAVEL_MODES = [
+        self::TRAVEL_MODE_CAR => 1,
+        self::TRAVEL_MODE_BUS => 2,
+        self::TRAVEL_MODE_TRAIN => 3,
+        self::TRAVEL_MODE_BIKE => 4,
+        self::TRAVEL_MODE_WALK => 5
+    ];
+    
     /**
      * @var int The id of this travel mode.
      *
@@ -65,6 +79,12 @@ class TravelMode
      */
     private $name;
 
+    public function __construct($mode)
+    {
+        $this->setId(self::TRAVEL_MODES[$mode]);
+        $this->setName($mode);
+    }
+    
     public function getId(): ?int
     {
         return $this->id;

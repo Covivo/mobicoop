@@ -28,9 +28,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Events;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -88,7 +89,7 @@ class Ask
      * @var User The user that creates the ask.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="User::class", inversedBy="asks")
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="asks")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -99,7 +100,7 @@ class Ask
      * @var Matching The matching at the origin of the ask.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="Matching::class", inversedBy="asks")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="asks")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -109,7 +110,7 @@ class Ask
     /**
      * @var Ask|null The linked ask.
      *
-     * @ORM\OneToOne(targetEntity="Ask::class")
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask")
      * @Groups({"read"})
      * @MaxDepth(1)
      */
@@ -119,7 +120,7 @@ class Ask
      * @var Criteria The criteria applied to the ask.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="Criteria::class", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -130,7 +131,7 @@ class Ask
      * @var Waypoint[] The waypoints of the ask.
      *
      * @Assert\NotBlank
-     * @ORM\OneToMany(targetEntity="Waypoint::class", mappedBy="ask", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="ask", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"read","write"})
      * @MaxDepth(1)

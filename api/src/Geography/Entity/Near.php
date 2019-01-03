@@ -44,13 +44,13 @@ class Near
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Zone::class", inversedBy="nears1")
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Zone", inversedBy="nears1")
      * @ORM\JoinColumn(nullable=false)
      */
     private $zone1;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Zone::class", inversedBy="nears2")
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Zone", inversedBy="nears2")
      * @ORM\JoinColumn(nullable=false)
      */
     private $zone2;

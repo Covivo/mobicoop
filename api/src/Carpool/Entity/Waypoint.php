@@ -79,21 +79,21 @@ class Waypoint
     /**
      * @var Proposal|null The proposal that created the point.
      *
-     * @ORM\ManyToOne(targetEntity="Proposal::class", inversedBy="waypoints")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="waypoints")
      */
     private $proposal;
     
     /**
      * @var Matching The proposal that created the point.
      *
-     * @ORM\ManyToOne(targetEntity="Matching::class", inversedBy="waypoints")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="waypoints")
      */
     private $matching;
     
     /**
      * @var Ask The ask that created the point.
      *
-     * @ORM\ManyToOne(targetEntity="Ask::class", inversedBy="waypoints")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="waypoints")
      */
     private $ask;
     
@@ -101,7 +101,7 @@ class Waypoint
      * @var Address The address of the point.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="App\Address\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)

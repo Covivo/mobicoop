@@ -24,7 +24,7 @@ namespace App\Geography\Controller;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use App\Address\Entity\Address;
+use App\Geography\Entity\Address;
 use Geocoder\Plugin\PluginProvider;
 use Geocoder\Query\GeocodeQuery;
 
