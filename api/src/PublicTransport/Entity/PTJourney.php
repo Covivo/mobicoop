@@ -120,7 +120,7 @@ class PTJourney
 {
     /**
      * @var int The id of this journey.
-     * 
+     *
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -129,7 +129,7 @@ class PTJourney
     
     /**
      * @var int The total distance of this journey.
-     * 
+     *
      * @ORM\Column(type="integer")
      * @Groups("pt")
      */
@@ -145,7 +145,7 @@ class PTJourney
     
     /**
      * @var float The estimated price of this journey.
-     * 
+     *
      * @ORM\Column(type="decimal", precision=4, scale=2, nullable=true)
      * @Groups("pt")
      */

@@ -23,7 +23,6 @@
 
 namespace App\PublicTransport\Entity;
 
-
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
