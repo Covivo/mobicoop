@@ -27,7 +27,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Geography\Service\GeoRouter;
-use App\Address\Entity\Address;
+use App\Geography\Entity\Address;
 use App\Geography\Service\ZoneManager;
 
 /**

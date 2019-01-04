@@ -24,6 +24,7 @@
 namespace App\PublicTransport\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Geography\Entity\Address;
@@ -52,13 +53,14 @@ class PTStep
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @ApiProperty(identifier=true)
      */
     private $id;
     
     /**
      * @var int The distance of this step.
      *
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
      */
     private $distance;
@@ -66,7 +68,7 @@ class PTStep
     /**
      * @var int The duration of this step.
      *
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
      */
     private $duration;
@@ -145,24 +147,24 @@ class PTStep
         return $this;
     }
     
-    public function getDistance(): int
+    public function getDistance(): ?int
     {
         return $this->distance;
     }
     
-    public function setDistance(int $distance): self
+    public function setDistance(?int $distance): self
     {
         $this->distance = $distance;
         
         return $this;
     }
     
-    public function getDuration(): int
+    public function getDuration(): ?int
     {
         return $this->duration;
     }
     
-    public function setDuration(int $duration): self
+    public function setDuration(?int $duration): self
     {
         $this->duration = $duration;
         

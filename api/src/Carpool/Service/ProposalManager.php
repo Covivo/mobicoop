@@ -26,7 +26,7 @@ namespace App\Carpool\Service;
 use App\Carpool\Entity\Proposal;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Criteria;
-use App\Address\Entity\Address;
+use App\Geography\Entity\Address;
 use App\Carpool\Entity\WayPoint;
 use App\Rdex\Entity\RdexJourney;
 use App\User\Entity\User;

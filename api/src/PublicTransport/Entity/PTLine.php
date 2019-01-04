@@ -24,6 +24,7 @@
 namespace App\PublicTransport\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use App\Travel\Entity\TravelMode;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
@@ -51,6 +52,7 @@ class PTLine
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @ApiProperty(identifier=true)
      */
     private $id;
     

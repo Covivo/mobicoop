@@ -24,6 +24,7 @@
 namespace App\PublicTransport\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -50,7 +51,7 @@ class PTCompany
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("pt")
+     * @ApiProperty(identifier=true)
      */
     private $id;
     

@@ -24,6 +24,7 @@
 namespace App\PublicTransport\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -52,6 +53,7 @@ class PTLeg
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @ApiProperty(identifier=true)
      */
     private $id;
     
@@ -66,7 +68,7 @@ class PTLeg
     /**
      * @var int The distance of this leg.
      *
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
      */
     private $distance;
@@ -74,7 +76,7 @@ class PTLeg
     /**
      * @var int The duration of this leg.
      *
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
      */
     private $duration;
@@ -147,7 +149,6 @@ class PTLeg
      * @var PTLine The public transport line of this leg.
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTLine")
-     * @ORM\JoinColumn(nullable=false)
      * @Groups("pt")
      */
     private $ptline;
@@ -199,24 +200,24 @@ class PTLeg
         return $this;
     }
 
-    public function getDistance(): int
+    public function getDistance(): ?int
     {
         return $this->distance;
     }
     
-    public function setDistance(int $distance): self
+    public function setDistance(?int $distance): self
     {
         $this->distance = $distance;
         
         return $this;
     }
     
-    public function getDuration(): int
+    public function getDuration(): ?int
     {
         return $this->duration;
     }
     
-    public function setDuration(int $duration): self
+    public function setDuration(?int $duration): self
     {
         $this->duration = $duration;
         
@@ -283,24 +284,24 @@ class PTLeg
         return $this;
     }
 
-    public function getPTDeparture(): PTDeparture
+    public function getPTDeparture(): ?PTDeparture
     {
         return $this->ptdeparture;
     }
     
-    public function setPTDeparture(PTDeparture $ptdeparture): self
+    public function setPTDeparture(?PTDeparture $ptdeparture): self
     {
         $this->ptdeparture = $ptdeparture;
         
         return $this;
     }
 
-    public function getPTArrival(): PTArrival
+    public function getPTArrival(): ?PTArrival
     {
         return $this->ptarrival;
     }
     
-    public function setPTArrival(PTArrival $ptarrival): self
+    public function setPTArrival(?PTArrival $ptarrival): self
     {
         $this->ptarrival = $ptarrival;
         
@@ -319,12 +320,12 @@ class PTLeg
         return $this;
     }
 
-    public function getPTLine(): PTLine
+    public function getPTLine(): ?PTLine
     {
         return $this->ptline;
     }
     
-    public function setPTLine(PTLine $ptline): self
+    public function setPTLine(?PTLine $ptline): self
     {
         $this->ptline = $ptline;
         

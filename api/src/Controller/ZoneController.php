@@ -26,9 +26,6 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Geography\Service\GeoRouter;
-use App\Address\Entity\Address;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Geography\Service\ZoneManager;
 
 /**

@@ -25,6 +25,7 @@ namespace App\PublicTransport\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -124,13 +125,14 @@ class PTJourney
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @ApiProperty(identifier=true)
      */
     private $id;
     
     /**
      * @var int The total distance of this journey.
      *
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
      */
     private $distance;
@@ -138,7 +140,7 @@ class PTJourney
     /**
      * @var int The total duration of this journey.
      *
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
      */
     private $duration;
@@ -211,12 +213,12 @@ class PTJourney
         return $this;
     }
     
-    public function getDistance(): int
+    public function getDistance(): ?int
     {
         return $this->distance;
     }
     
-    public function setDistance(int $distance): self
+    public function setDistance(?int $distance): self
     {
         $this->distance = $distance;
         

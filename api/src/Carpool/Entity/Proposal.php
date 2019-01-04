@@ -101,7 +101,7 @@ class Proposal
      * @var Proposal|null Linked proposal for a round trip (return or outward journey).
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", cascade={"persist", "remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(nullable=false,onDelete="CASCADE")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read"})
      * @MaxDepth(1)
      */
