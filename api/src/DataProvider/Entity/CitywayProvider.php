@@ -332,12 +332,12 @@ class CitywayProvider implements ProviderInterface
                 $ptmode = new PTMode(PTMode::PT_MODE_CAR);
                 $leg->setPTMode($ptmode);
             }
-            if ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TRAIN ) {
+            if ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TRAIN) {
                 // train mode
                 $ptmode = new PTMode(PTMode::PT_MODE_TRAIN);
                 $leg->setPTMode($ptmode);
             }
-            if ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TGV ) {
+            if ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TGV) {
                 // TGV mode
                 $ptmode = new PTMode(PTMode::PT_MODE_TGV);
                 $leg->setPTMode($ptmode);

@@ -55,8 +55,8 @@ class PTMode
             self::PT_MODE_TRAIN => 2,
             self::PT_MODE_BIKE => 3,
             self::PT_MODE_WALK => 4,
-            self::PT_MODE_CAR => 3,
-            self::PT_MODE_TGV => 4
+            self::PT_MODE_CAR => 5,
+            self::PT_MODE_TGV => 6
     ];
         
     /**
