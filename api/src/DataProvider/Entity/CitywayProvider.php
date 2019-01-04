@@ -126,7 +126,9 @@ class CitywayProvider implements ProviderInterface
                 ];
                 $response = $dataProvider->getCollection($getParams);
                 if ($response->getCode() == 200) {
-                    $data = json_decode($response->getValue(), true);var_dump($data);exit;
+                    $data = json_decode($response->getValue(), true);
+                    var_dump($data);
+                    exit;
                     if (!isset($data["StatusCode"])) {
                         return $this->collection;
                     }
