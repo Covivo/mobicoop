@@ -76,7 +76,9 @@ use App\Address\Entity\Address;
 class CitywayProvider implements ProviderInterface
 {
     private const CW_PT_MODE_BUS = "BUS";
-    private const CW_PT_MODE_TRAIN = "TRAIN";
+    private const CW_PT_MODE_CAR = "COACH";
+    private const CW_PT_MODE_TRAIN = "LOCAL_TRAIN";
+    private const CW_PT_MODE_TGV = "HST";
     private const CW_PT_MODE_BIKE = "BIKE";
     private const CW_PT_MODE_WALK = "WALK";
 
@@ -325,9 +327,19 @@ class CitywayProvider implements ProviderInterface
                 $ptmode = new PTMode(PTMode::PT_MODE_BUS);
                 $leg->setPTMode($ptmode);
             }
-            if ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TRAIN) {
+            if ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_CAR) {
+                // bus mode
+                $ptmode = new PTMode(PTMode::PT_MODE_CAR);
+                $leg->setPTMode($ptmode);
+            }
+            if ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TRAIN ) {
                 // train mode
                 $ptmode = new PTMode(PTMode::PT_MODE_TRAIN);
+                $leg->setPTMode($ptmode);
+            }
+            if ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TGV ) {
+                // TGV mode
+                $ptmode = new PTMode(PTMode::PT_MODE_TGV);
                 $leg->setPTMode($ptmode);
             }
             if (isset($data["PTRide"]["Departure"])) {
