@@ -182,7 +182,7 @@ class CitywayProvider implements ProviderInterface
             $journey->setDistance($data["Distance"]);
         }
         if (isset($data["Duration"])) {
-            $journey->setDuration(intval($data["Duration"]));
+            $journey->setDuration($data["Duration"]);
         }
         if (isset($data["DepartureTime"])) {
             $departure = new PTDeparture(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
@@ -258,7 +258,7 @@ class CitywayProvider implements ProviderInterface
             $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_WALK);
             $leg->setTravelMode($travelMode);
             if (isset($data["Leg"]["Duration"]) && !is_null($data["Leg"]["Duration"])) {
-                $leg->setDuration(intval($data["Leg"]["Duration"]));
+                $leg->setDuration($data["Leg"]["Duration"]);
             }
             if (isset($data["Leg"]["pathLinks"]["PathLink"])) {
                 //$ptsteps = [];
@@ -340,7 +340,7 @@ class CitywayProvider implements ProviderInterface
                 $leg->setDistance($data["PTRide"]["Distance"]);
             }
             if (isset($data["PTRide"]["Duration"]) && !is_null($data["PTRide"]["Duration"])) {
-                $leg->setDuration(intval($data["PTRide"]["Duration"]));
+                $leg->setDuration($data["PTRide"]["Duration"]);
             }
             if (isset($data["PTRide"]["Line"])) {
                 $ptline = new PTLine(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
@@ -479,7 +479,7 @@ class CitywayProvider implements ProviderInterface
             $ptstep->setDistance($data["Distance"]);
         }
         if (isset($data["Duration"]) && !is_null($data["Duration"])) {
-            $ptstep->setDuration(intval($data["Duration"]));
+            $ptstep->setDuration($data["Duration"]);
         }
         if (isset($data["MagneticDirection"]) && !is_null($data["MagneticDirection"])) {
             $ptstep->setMagneticDirection($data["MagneticDirection"]);
