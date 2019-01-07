@@ -246,7 +246,9 @@ class User
         $this->cars = new ArrayCollection();
         $this->proposals = new ArrayCollection();
         $this->asks = new ArrayCollection();
-        if (is_null($status)) $status = self::STATUS_ACTIVE;
+        if (is_null($status)) {
+            $status = self::STATUS_ACTIVE;
+        }
         $this->setStatus($status);
     }
     
