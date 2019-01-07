@@ -34,3 +34,28 @@ services:
     Mobicoop\Bundle\MobicoopBundle\Service\DataProvider :
         arguments:
             $uri: '%env(resolve:API_URI)%'
+            
+    # other services and controllers
+    
+    # User
+    Mobicoop\Bundle\MobicoopBundle\User\Controller\:
+        resource: '@MobicoopBundle/User/Controller/*'
+        tags: ['controller.service_arguments']
+    Mobicoop\Bundle\MobicoopBundle\User\Service\:
+        resource: '@MobicoopBundle/User/Service/*'
+        
+    # Carpool
+    Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
+        resource: '@MobicoopBundle/Carpool/Service/*'
+        
+    # Public transport
+    Mobicoop\Bundle\MobicoopBundle\PublicTransport\Service\:
+        resource: '@MobicoopBundle/PublicTransport/Service/*'
+        
+    # Geography
+    Mobicoop\Bundle\MobicoopBundle\Geography\Service\:
+        resource: '@MobicoopBundle/Geography/Service/*'
+        
+    # External journey
+    Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\:
+        resource: '@MobicoopBundle/ExternalJourney/Service/*'

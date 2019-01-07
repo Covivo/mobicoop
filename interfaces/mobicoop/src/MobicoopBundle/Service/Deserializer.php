@@ -23,30 +23,30 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Entity\GeoSearch;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Address;
-use Mobicoop\Bundle\MobicoopBundle\Entity\ExternalJourney;
-use Mobicoop\Bundle\MobicoopBundle\Entity\PTJourney;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Proposal;
-use Mobicoop\Bundle\MobicoopBundle\Entity\User;
-use Mobicoop\Bundle\MobicoopBundle\Entity\UserAddress;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourney;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\UserAddress;
 
 use TypeError;
 
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Criteria;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Point;
-use Mobicoop\Bundle\MobicoopBundle\Entity\TravelMode;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Matching;
-use Mobicoop\Bundle\MobicoopBundle\Entity\PTDeparture;
-use Mobicoop\Bundle\MobicoopBundle\Entity\PTArrival;
-use Mobicoop\Bundle\MobicoopBundle\Entity\PTMode;
-use Mobicoop\Bundle\MobicoopBundle\Entity\PTCompany;
-use Mobicoop\Bundle\MobicoopBundle\Entity\PTLine;
-use Mobicoop\Bundle\MobicoopBundle\Entity\PTStep;
-use Mobicoop\Bundle\MobicoopBundle\Entity\PTLeg;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Point;
+use Mobicoop\Bundle\MobicoopBundle\Travel\Entity\TravelMode;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Matching;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTDeparture;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTArrival;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTMode;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTCompany;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLine;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTStep;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLeg;
 
 /**
  * Custom deserializer service.

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -21,37 +20,41 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\Geography\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Geography\Service\GeoSearchManager;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\Routing\Annotation\Route;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
+use Mobicoop\Bundle\MobicoopBundle\Service\DataProvider;
 
 /**
- * TestAutoCompleteController.php
- * Class
+ * GeoSearchManager.php
+ * Geopoint search management service.
  * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 27/11/2018
- * Time: 13:23
+ * Date: 29/11/2018
+ * Time: 16:38
  *
  */
 
-class AutoCompleteController extends AbstractController
+class GeoSearchManager
 {
+    private $dataProvider;
+
+    public function __construct(DataProvider $dataProvider)
+    {
+        $this->dataProvider = $dataProvider;
+        $this->dataProvider->setClass(GeoSearch::class, 'geo_search');
+    }
 
     /**
-     * Retrieve all geosearch results of an input
+     * Get all Geosearch results
      *
-     * @Route("/aut")
+     * @return array|GeoSearch|null
      */
-    public function AutoCompleteIndex(GeoSearchManager $geoSearchManager)
+    public function getGeoSearch(array $params)
     {
-        return $this->render(
-            '@Mobicoop/autocomplete/index.html.twig',
-            [
-                'GeoSearch' => $geoSearchManager->getGeoSearch(['input'=>'Nancy'])
-            ]
-        );
+        $response = $this->dataProvider->getCollection($params);
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
     }
 }

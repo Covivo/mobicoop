@@ -21,37 +21,37 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\Geography\Form;
 
-use Mobicoop\Bundle\MobicoopBundle\Geography\Service\GeoSearchManager;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
- * TestAutoCompleteController.php
- * Class
- * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 27/11/2018
- * Time: 13:23
+ * Address form.
  *
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-
-class AutoCompleteController extends AbstractController
+class AddressForm extends AbstractType
 {
-
-    /**
-     * Retrieve all geosearch results of an input
-     *
-     * @Route("/aut")
-     */
-    public function AutoCompleteIndex(GeoSearchManager $geoSearchManager)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        return $this->render(
-            '@Mobicoop/autocomplete/index.html.twig',
-            [
-                'GeoSearch' => $geoSearchManager->getGeoSearch(['input'=>'Nancy'])
-            ]
-        );
+        $builder
+        ->add('streetAddress')
+        ->add('postalCode')
+        ->add('addressLocality')
+        ->add('addressCountry')
+        ->add('latitude')
+        ->add('longitude')
+        ->add('elevation')
+        ;
+    }
+    
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+                'data_class' => Address::class,
+        ));
     }
 }

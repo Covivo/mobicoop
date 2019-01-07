@@ -21,37 +21,36 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity;
 
-use Mobicoop\Bundle\MobicoopBundle\Geography\Service\GeoSearchManager;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\Routing\Annotation\Route;
+use Mobicoop\Bundle\MobicoopBundle\Entity\Resource;
 
 /**
- * TestAutoCompleteController.php
- * Class
- * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 27/11/2018
- * Time: 13:23
- *
+ * An external journey
  */
-
-class AutoCompleteController extends AbstractController
+class ExternalJourney implements Resource
 {
 
     /**
-     * Retrieve all geosearch results of an input
-     *
-     * @Route("/aut")
+     * @var int The id of this user.
      */
-    public function AutoCompleteIndex(GeoSearchManager $geoSearchManager)
+    private $id;
+
+
+    public function __construct($id=null)
     {
-        return $this->render(
-            '@Mobicoop/autocomplete/index.html.twig',
-            [
-                'GeoSearch' => $geoSearchManager->getGeoSearch(['input'=>'Nancy'])
-            ]
-        );
+        if ($id) {
+            $this->setId($id);
+        }
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function setId(int $id)
+    {
+        $this->id = $id;
     }
 }

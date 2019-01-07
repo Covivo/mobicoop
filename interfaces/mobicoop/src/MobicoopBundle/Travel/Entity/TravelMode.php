@@ -21,37 +21,61 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\Travel\Entity;
 
-use Mobicoop\Bundle\MobicoopBundle\Geography\Service\GeoSearchManager;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * TestAutoCompleteController.php
- * Class
- * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 27/11/2018
- * Time: 13:23
- *
+ * Carpooling : travel mode.
  */
-
-class AutoCompleteController extends AbstractController
+class TravelMode
 {
+    /**
+     * @var int The id of this travel mode.
+     */
+    private $id;
+    
+    /**
+     * @var string|null The iri of this proposal.
+     */
+    private $iri;
 
     /**
-     * Retrieve all geosearch results of an input
-     *
-     * @Route("/aut")
+     * @var string Name of the travel mode.
+     * @Assert\NotBlank
      */
-    public function AutoCompleteIndex(GeoSearchManager $geoSearchManager)
+    private $name;
+
+    public function getId(): ?int
     {
-        return $this->render(
-            '@Mobicoop/autocomplete/index.html.twig',
-            [
-                'GeoSearch' => $geoSearchManager->getGeoSearch(['input'=>'Nancy'])
-            ]
-        );
+        return $this->id;
+    }
+    
+    public function getIri()
+    {
+        return $this->iri;
+    }
+    
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+    
+    public function setId(int $id)
+    {
+        $this->id = $id;
+    }
+    
+    public function setIri($iri)
+    {
+        $this->iri = $iri;
     }
 }

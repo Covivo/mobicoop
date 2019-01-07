@@ -21,37 +21,43 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Controller;
-
-use Mobicoop\Bundle\MobicoopBundle\Geography\Service\GeoSearchManager;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\Routing\Annotation\Route;
+namespace Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity;
 
 /**
- * TestAutoCompleteController.php
- * Class
- * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 27/11/2018
- * Time: 13:23
+ * A public transport mode.
  *
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-
-class AutoCompleteController extends AbstractController
+class PTMode
 {
 
     /**
-     * Retrieve all geosearch results of an input
-     *
-     * @Route("/aut")
+     * @var int The id of this mode.
      */
-    public function AutoCompleteIndex(GeoSearchManager $geoSearchManager)
+    private $id;
+    
+    /**
+     * @var string The name of this mode.
+     */
+    private $name;
+    
+    public function getId()
     {
-        return $this->render(
-            '@Mobicoop/autocomplete/index.html.twig',
-            [
-                'GeoSearch' => $geoSearchManager->getGeoSearch(['input'=>'Nancy'])
-            ]
-        );
+        return $this->id;
+    }
+    
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+    
+    public function getName()
+    {
+        return $this->name;
+    }
+    
+    public function setName($name)
+    {
+        $this->name = $name;
     }
 }
