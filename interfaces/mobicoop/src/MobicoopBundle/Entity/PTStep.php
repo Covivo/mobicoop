@@ -66,9 +66,9 @@ class PTStep
     private $relativeDirection;
    
     /**
-     * @var PTSection The parent section of this step.
+     * @var PTLeg The parent section of this step.
      */
-    private $ptsection;
+    private $ptleg;
     
     /**
      * @var PTDeparture The departure of this step.
@@ -116,9 +116,9 @@ class PTStep
         return $this->last;
     }
 
-    public function getPTSection()
+    public function getPTLeg()
     {
-        return $this->ptsection;
+        return $this->ptleg;
     }
 
     public function getPTDeparture()
@@ -151,9 +151,9 @@ class PTStep
         $this->last = $last;
     }
 
-    public function setPTSection($ptsection)
+    public function setPTLeg($ptleg)
     {
-        $this->ptsection = $ptsection;
+        $this->ptleg = $ptleg;
     }
 
     public function setPTDeparture($ptdeparture)
