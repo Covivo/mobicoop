@@ -39,16 +39,22 @@ doctrine:
                 dir: '%kernel.project_dir%/src/User/Entity'
                 prefix: 'App\User\Entity'
                 alias: User
-            Address:
+            Travel:
                 is_bundle: false
                 type: annotation
-                dir: '%kernel.project_dir%/src/Address/Entity'
-                prefix: 'App\Address\Entity'
-                alias: Address
+                dir: '%kernel.project_dir%/src/Travel/Entity'
+                prefix: 'App\Travel\Entity'
+                alias: Travel
             Geography:
                 is_bundle: false
                 type: annotation
                 dir: '%kernel.project_dir%/src/Geography/Entity'
                 prefix: 'App\Geography\Entity'
                 alias: Geography
+            PublicTransport:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/PublicTransport/Entity'
+                prefix: 'App\PublicTransport\Entity'
+                alias: PublicTransport
                 

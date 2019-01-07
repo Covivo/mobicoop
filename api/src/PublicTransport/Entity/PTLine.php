@@ -25,11 +25,14 @@ namespace App\PublicTransport\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use App\Travel\Entity\TravelMode;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * A public transport line.
  *
+ * @ORM\Entity
  * @ApiResource(
  *      routePrefix="/public_transport",
  *      attributes={
@@ -44,6 +47,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class PTLine
 {
     /**
+     * @var int The id of this line.
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -51,6 +59,7 @@ class PTLine
     /**
      * @var string The name of this line.
      *
+     * @ORM\Column(type="string", length=45)
      * @Groups("pt")
      */
     private $name;
@@ -58,6 +67,7 @@ class PTLine
     /**
      * @var string The number of this line.
      *
+     * @ORM\Column(type="string", length=10, nullable=true)
      * @Groups("pt")
      */
     private $number;
@@ -65,6 +75,7 @@ class PTLine
     /**
      * @var string The origin of this line.
      *
+     * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups("pt")
      */
     private $origin;
@@ -72,79 +83,133 @@ class PTLine
     /**
      * @var string The destination of this line.
      *
+     * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups("pt")
      */
     private $destination;
     
     /**
+     * @var string The direction of this line if no origin / destination specified.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("pt")
+     */
+    private $direction;
+    
+    /**
      * @var PTCompany The company that manage this line.
      *
+     * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTCompany")
      * @Groups("pt")
      */
     private $ptcompany;
+    
+    /**
+     * @var TravelMode The transport mode of this leg.
+     *
+     * @ORM\ManyToOne(targetEntity="App\Travel\Entity\TravelMode")
+     * @Groups("pt")
+     */
+    private $travelMode;
     
     public function __construct($id)
     {
         $this->id = $id;
     }
     
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
     
-    public function setId($id)
+    public function setId(int $id): self
     {
         $this->id = $id;
+        
+        return $this;
     }
     
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
     
-    public function getNumber()
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+        
+        return $this;
+    }
+    
+    public function getNumber(): ?string
     {
         return $this->number;
     }
+    
+    public function setNumber(?string $number): self
+    {
+        $this->number = $number;
+        
+        return $this;
+    }
 
-    public function getOrigin()
+    public function getOrigin(): ?string
     {
         return $this->origin;
     }
-
-    public function getDestination()
+    
+    public function setOrigin(?string $origin): self
+    {
+        $this->origin = $origin;
+        
+        return $this;
+    }
+    
+    public function getDestination(): ?string
     {
         return $this->destination;
     }
+    
+    public function setDestination(?string $destination): self
+    {
+        $this->destination = $destination;
+        
+        return $this;
+    }
+    
+    public function getDirection(): ?string
+    {
+        return $this->direction;
+    }
+    
+    public function setDirection(?string $direction): self
+    {
+        $this->direction = $direction;
+        
+        return $this;
+    }
 
-    public function getPTCompany()
+    public function getPTCompany(): PTCompany
     {
         return $this->ptcompany;
     }
 
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-    
-    public function setNumber($number)
-    {
-        $this->number = $number;
-    }
-
-    public function setOrigin($origin)
-    {
-        $this->origin = $origin;
-    }
-
-    public function setDestination($destination)
-    {
-        $this->destination = $destination;
-    }
-
-    public function setPTCompany($ptcompany)
+    public function setPTCompany(PTCompany $ptcompany): self
     {
         $this->ptcompany = $ptcompany;
+        
+        return $this;
+    }
+    
+    public function getTravelMode(): TravelMode
+    {
+        return $this->travelMode;
+    }
+    
+    public function setTravelMode(TravelMode $travelMode): self
+    {
+        $this->travelMode = $travelMode;
+        
+        return $this;
     }
 }

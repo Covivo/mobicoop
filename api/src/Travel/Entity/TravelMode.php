@@ -21,79 +21,93 @@
  *    LICENSE
  **************************/
 
-namespace App\PublicTransport\Entity;
+namespace App\Travel\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A public transport mode.
+ * Carpooling : travel mode.
  *
+ * @ORM\Entity
  * @ApiResource(
- *      routePrefix="/public_transport",
  *      attributes={
- *          "normalization_context"={"groups"={"pt"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={},
- *      itemOperations={"get"={"path"="/modes/{id}"}}
+ *      collectionOperations={"get"},
+ *      itemOperations={"get"}
  * )
- *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class PTMode
+class TravelMode
 {
-    const PT_MODE_BUS = "BUS";
-    const PT_MODE_TRAIN = "LOCAL_TRAIN";
-    const PT_MODE_BIKE = "BIKE";
-    const PT_MODE_WALK = "WALK";
-    const PT_MODE_CAR = "COACH";
-    const PT_MODE_TGV = "HST";
-
-    private const PT_MODES = [
-            self::PT_MODE_BUS => 1,
-            self::PT_MODE_TRAIN => 2,
-            self::PT_MODE_BIKE => 3,
-            self::PT_MODE_WALK => 4,
-            self::PT_MODE_CAR => 5,
-            self::PT_MODE_TGV => 6
+    const TRAVEL_MODE_CAR = "CAR";
+    const TRAVEL_MODE_BUS = "BUS";
+    const TRAVEL_MODE_TRAIN = "TRAIN";
+    const TRAVEL_MODE_BIKE = "BIKE";
+    const TRAVEL_MODE_WALK = "WALK";
+    
+    private const TRAVEL_MODES = [
+        self::TRAVEL_MODE_CAR => 1,
+        self::TRAVEL_MODE_BUS => 2,
+        self::TRAVEL_MODE_TRAIN => 3,
+        self::TRAVEL_MODE_BIKE => 4,
+        self::TRAVEL_MODE_WALK => 5
     ];
-        
+    
     /**
+     * @var int The id of this travel mode.
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
+     * @Groups("read")
      */
     private $id;
-    
+
     /**
-     * @var string The name of this mode.
+     * @var string Name of the travel mode.
      *
-     * @Groups("pt")
+     * @Assert\NotBlank
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"read","write"})
      */
     private $name;
-    
+
     public function __construct($mode)
     {
-        $this->setId(self::PT_MODES[$mode]);
+        $this->setId(self::TRAVEL_MODES[$mode]);
         $this->setName($mode);
     }
     
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
     
-    public function setId($id)
+    public function setId(int $id): self
     {
         $this->id = $id;
+        
+        return $this;
     }
     
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
-    
-    public function setName($name)
+
+    public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
     }
 }

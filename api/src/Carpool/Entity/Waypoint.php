@@ -23,28 +23,33 @@
 
 namespace App\Carpool\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Geography\Entity\Address;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Geography\Entity\Direction;
 
 /**
- * Carpooling : travel path between 2 points.
+ * Carpooling : travel point for a journey.
  *
  * @ORM\Entity
  * @ApiResource(
  *      attributes={
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={},
  *      itemOperations={"get"}
  * )
  */
-class Path
+class Waypoint
 {
     /**
-     * @var int The id of this path.
+     * @var int The id of this point.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -54,62 +59,54 @@ class Path
     private $id;
 
     /**
-     * @var int Position number of the current part in the whole path.
+     * @var int Position number of the point in the whole route.
      *
      * @Assert\NotBlank
-     * @ORM\Column(type="integer")
-     * @Groups({"read"})
+     * @ORM\Column(type="smallint")
+     * @Groups({"read","write"})
      */
     private $position;
 
     /**
-     * @var string Path detail.
+     * @var boolean The point is the last point of the whole route.
      *
      * @Assert\NotBlank
-     * @ORM\Column(type="text")
-     * @Groups({"read"})
+     * @ORM\Column(type="boolean")
+     * @Groups({"read","write"})
      */
-    private $detail;
+    private $isDestination;
 
     /**
-     * @var int Encoding format (1 = json; 2 = xml)
+     * @var Proposal|null The proposal that created the point.
      *
-     * @Assert\NotBlank
-     * @ORM\Column(type="smallint")
-     * @Groups({"read"})
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="waypoints")
      */
-    private $encodeFormat;
-
+    private $proposal;
+    
     /**
-     * @var Point The starting point of the path.
+     * @var Matching The proposal that created the point.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="waypoints")
+     */
+    private $matching;
+    
+    /**
+     * @var Ask The ask that created the point.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="waypoints")
+     */
+    private $ask;
+    
+    /**
+     * @var Address The address of the point.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Point", inversedBy="pathStart")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read"})
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     * @Groups({"read","write"})
      * @MaxDepth(1)
      */
-    private $point1;
-
-    /**
-     * @var Point The destination point of the path.
-     *
-     * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Point", inversedBy="pathDestination")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $point2;
-
-    /**
-     * @var TravelMode The travel mode of the path.
-     *
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\TravelMode")
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $travelMode;
+    private $address;
     
     public function getId(): ?int
     {
@@ -128,62 +125,62 @@ class Path
         return $this;
     }
 
-    public function getDetail(): ?string
+    public function isDestination(): ?bool
     {
-        return $this->detail;
+        return $this->isDestination;
     }
 
-    public function setDetail(string $detail): self
+    public function setIsDestination(bool $isDestination): self
     {
-        $this->detail = $detail;
+        $this->isDestination = $isDestination;
 
         return $this;
     }
 
-    public function getEncodeFormat(): ?int
+    public function getProposal(): ?Proposal
     {
-        return $this->encodeFormat;
+        return $this->proposal;
     }
 
-    public function setEncodeFormat(int $encodeFormat): self
+    public function setProposal(?Proposal $proposal): self
     {
-        $this->encodeFormat = $encodeFormat;
+        $this->proposal = $proposal;
 
         return $this;
     }
-
-    public function getPoint1(): ?Point
+    
+    public function getMatching(): ?Matching
     {
-        return $this->point1;
+        return $this->matching;
     }
-
-    public function setPoint1(?Point $point1): self
+    
+    public function setMatching(?Matching $matching): self
     {
-        $this->point1 = $point1;
-
+        $this->matching = $matching;
+        
+        return $this;
+    }
+    
+    public function getAsk(): ?Ask
+    {
+        return $this->ask;
+    }
+    
+    public function setAsk(?Ask $ask): self
+    {
+        $this->ask = $ask;
+        
         return $this;
     }
 
-    public function getPoint2(): ?Point
+    public function getAddress(): ?Address
     {
-        return $this->point2;
+        return $this->address;
     }
 
-    public function setPoint2(?Point $point2): self
+    public function setAddress(?Address $address): self
     {
-        $this->point2 = $point2;
-
-        return $this;
-    }
-
-    public function getTravelMode(): ?TravelMode
-    {
-        return $this->travelMode;
-    }
-
-    public function setTravelMode(?TravelMode $travelMode): self
-    {
-        $this->travelMode = $travelMode;
+        $this->address = $address;
 
         return $this;
     }

@@ -25,8 +25,12 @@ namespace App\Carpool\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\User\Entity\Car;
+use App\Geography\Entity\Direction;
+use App\PublicTransport\Entity\PTJourney;
 
 /**
  * Carpooling : criteria (restriction for an offer / selection for a request).
@@ -56,6 +60,22 @@ class Criteria
      */
     private $id;
 
+    /**
+     * @var boolean The user can be a driver.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $isDriver;
+
+    /**
+     * @var boolean The user can be a passenger.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $isPassenger;
+    
     /**
      * @var int The proposal frequency (1 = punctual; 2 = regular).
      *
@@ -229,9 +249,102 @@ class Criteria
      */
     private $marginTime;
     
+    /**
+     * @var int|null The maximum deviation time (in seconds) as a driver to accept a request proposal.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $maxDeviationTime;
+    
+    /**
+     * @var int|null The maximum deviation distance (in metres) as a driver to accept a request proposal.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $maxDeviationDistance;
+    
+    /**
+     * @var boolean The user accepts any route as a passenger from its origin to the destination.
+     *
+     * @ORM\Column(type="boolean")
+     * @Groups({"read","write"})
+     */
+    private $anyRouteAsPassenger;
+    
+    /**
+     * @var boolean|null The user accepts any transportation mode.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $multiTransportMode;
+    
+    /**
+     * @var Car|null The car used in the journey.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\Car")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $car;
+    
+    /**
+     * @var Direction|null The direction used in the journey as a driver.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $directionDriver;
+    
+    /**
+     * @var Direction|null The direction used in the journey as a passenger.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $directionPassenger;
+    
+    /**
+     * @var PTJourney|null The public transport journey used.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\PublicTransport\Entity\PTJourney")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $ptjourney;
+    
+    
     public function getId(): ?int
     {
         return $this->id;
+    }
+    
+    public function isDriver(): bool
+    {
+        return $this->isDriver;
+    }
+    
+    public function setIsDriver(bool $isDriver): self
+    {
+        $this->isDriver = $isDriver;
+        
+        return $this;
+    }
+    
+    public function isPassenger(): bool
+    {
+        return $this->isPassenger;
+    }
+    
+    public function setIsPassenger(bool $isPassenger): self
+    {
+        $this->isPassenger = $isPassenger;
+        
+        return $this;
     }
 
     public function getFrequency(): ?int
@@ -471,6 +584,102 @@ class Criteria
     {
         $this->marginTime = $marginTime;
 
+        return $this;
+    }
+    
+    public function getMaxDeviationTime(): ?int
+    {
+        return $this->maxDeviationTime;
+    }
+    
+    public function getMaxDeviationDistance(): ?int
+    {
+        return $this->maxDeviationDistance;
+    }
+    
+    public function getAnyRouteAsPassenger(): bool
+    {
+        return $this->anyRouteAsPassenger;
+    }
+    
+    public function setMaxDeviationTime(?int $maxDeviationTime): self
+    {
+        $this->maxDeviationTime = $maxDeviationTime;
+        
+        return $this;
+    }
+    
+    public function setMaxDeviationDistance(?int $maxDeviationDistance): self
+    {
+        $this->maxDeviationDistance = $maxDeviationDistance;
+        
+        return $this;
+    }
+    
+    public function setAnyRouteAsPassenger(bool $anyRouteAsPassenger): self
+    {
+        $this->anyRouteAsPassenger = $anyRouteAsPassenger;
+        
+        return $this;
+    }
+    
+    public function getMultiTransportMode(): bool
+    {
+        return (!is_null($this->multiTransportMode) ? $this->multiTransportMode : true);
+    }
+    
+    public function setMultiTransportMode(?bool $multiTransportMode): self
+    {
+        $this->multiTransportMode = $multiTransportMode;
+        
+        return $this;
+    }
+    
+    public function getCar(): ?Car
+    {
+        return $this->car;
+    }
+    
+    public function setCar(?Car $car): self
+    {
+        $this->car = $car;
+        
+        return $this;
+    }
+    
+    public function getDirectionDriver(): ?Direction
+    {
+        return $this->directionDriver;
+    }
+    
+    public function setDirectionDriver(?Direction $directionDriver): self
+    {
+        $this->directionDriver = $directionDriver;
+        
+        return $this;
+    }
+    
+    public function getDirectionPassenger(): ?Direction
+    {
+        return $this->directionPassenger;
+    }
+    
+    public function setDirectionPassenger(?Direction $directionPassenger): self
+    {
+        $this->directionPassenger = $directionPassenger;
+        
+        return $this;
+    }
+    
+    public function getPTJourney(): ?PTJourney
+    {
+        return $this->ptjourney;
+    }
+    
+    public function setPTJourney(?PTJourney $ptjourney): self
+    {
+        $this->ptjourney = $ptjourney;
+        
         return $this;
     }
     

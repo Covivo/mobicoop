@@ -26,11 +26,15 @@ namespace App\PublicTransport\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
-use App\Address\Entity\Address;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use App\Geography\Entity\Address;
+use App\Carpool\Entity\IndividualStop;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * A departure.
  *
+ * @ORM\Entity
  * @ApiResource(
  *      routePrefix="/public_transport",
  *      attributes={
@@ -46,20 +50,27 @@ class PTDeparture
 {
     
     /**
+     * @var int $id The id of this departure.
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
      */
     private $id;
     
     /**
-     * @var string The name of this departure.
+     * @var string|null The name of this departure.
      *
+     * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups("pt")
      */
     private $name;
     
     /**
-     * @var \DateTime The date and time of this departure.
+     * @var \DateTimeInterface The date and time of this departure.
      *
+     * @ORM\Column(type="datetime")
      * @Groups("pt")
      */
     private $date;
@@ -67,52 +78,83 @@ class PTDeparture
     /**
      * @var Address The address of this departure.
      *
+     * @ORM\ManyToOne(targetEntity="App\Geography\Entity\Address")
+     * @ORM\JoinColumn(nullable=false)
      * @Groups("pt")
      */
     private $address;
+    
+    /**
+     * @var IndividualStop|null Individual stop if multimodal using carpool.
+     *
+     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\IndividualStop")
+     * @Groups({"pt"})
+     * @MaxDepth(1)
+     */
+    private $individualStop;
     
     public function __construct($id)
     {
         $this->id = $id;
     }
     
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
     
-    public function setId($id)
+    public function setId(int $id): self
     {
         $this->id = $id;
+        
+        return $this;
     }
     
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
+    
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
+        
+        return $this;
+    }
 
-    public function getDate()
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }
+    
+    public function setDate(\DateTimeInterface $date): self
+    {
+        $this->date = $date;
+        
+        return $this;
+    }
 
-    public function getAddress()
+    public function getAddress(): Address
     {
         return $this->address;
     }
 
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    public function setDate($date)
-    {
-        $this->date = $date;
-    }
-
-    public function setAddress($address)
+    public function setAddress(Address $address): self
     {
         $this->address = $address;
+        
+        return $this;
+    }
+    
+    public function getIndividualStop(): ?IndividualStop
+    {
+        return $this->individualStop;
+    }
+    
+    public function setIndividualStop(?IndividualStop $individualStop): self
+    {
+        $this->individualStop = $individualStop;
+        
+        return $this;
     }
 }

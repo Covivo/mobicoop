@@ -26,18 +26,19 @@ namespace App\Carpool\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Events;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Geography\Entity\Direction;
+use App\Geography\Entity\Address;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Geography\Entity\Direction;
 
 /**
- * Carpooling : matching between an offer and a request.
+ * Carpooling : an individual stop.
+ * Individual stop is a virtual public transport stop made from an offer proposal.
+ * It is used for multimodal calculation. It is calculated only for offer proposal, in regions that are covered by public transportation.
  *
  * @ORM\Entity
- * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
@@ -47,10 +48,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      itemOperations={"get"}
  * )
  */
-class Matching
+class IndividualStop
 {
     /**
-     * @var int The id of this matching.
+     * @var int The id of this stop.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -60,107 +61,92 @@ class Matching
     private $id;
 
     /**
-     * @var \DateTimeInterface Creation date of the matching.
-     *
-     * @ORM\Column(type="datetime")
-     */
-    private $createdDate;
-
-    /**
-     * @var Proposal The offer proposal.
+     * @var int Position number of the stop in the whole route (all the individual stops of the route).
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingRequests")
+     * @ORM\Column(type="smallint")
+     * @Groups({"read","write"})
+     */
+    private $position;
+    
+    /**
+     * @var int Estimated stop delay in seconds (calculated with 0 as origin).
+     *
+     * @ORM\Column(type="integer")
+     * @Groups({"read","write"})
+     */
+    private $delay;
+
+    /**
+     * @var Proposal The proposal that owns the stop.
+     *
+     * @Assert\NotBlank
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="individualStops")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read"})
-     * @MaxDepth(1)
      */
-    private $proposalOffer;
-
+    private $proposal;
+    
     /**
-     * @var Proposal The request proposal.
+     * @var Address The address of the stop.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingOffers")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $proposalRequest;
-
-    /**
-     * @var Criteria The criteria applied to this matching.
-     *
-     * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     * @Groups({"read"})
+     * @Groups({"read","write"})
      * @MaxDepth(1)
      */
-    private $criteria;
+    private $address;
     
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getCreatedDate(): ?\DateTimeInterface
+    public function getPosition(): ?int
     {
-        return $this->createdDate;
+        return $this->position;
     }
 
-    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    public function setPosition(int $position): self
     {
-        $this->createdDate = $createdDate;
-
-        return $this;
-    }
-
-    public function getProposalOffer(): ?Proposal
-    {
-        return $this->proposalOffer;
-    }
-
-    public function setProposalOffer(?Proposal $proposalOffer): self
-    {
-        $this->proposalOffer = $proposalOffer;
-
-        return $this;
-    }
-
-    public function getProposalRequest(): ?Proposal
-    {
-        return $this->proposalRequest;
-    }
-
-    public function setProposalRequest(?Proposal $proposalRequest): self
-    {
-        $this->proposalRequest = $proposalRequest;
-
-        return $this;
-    }
-
-    public function getCriteria(): ?Criteria
-    {
-        return $this->criteria;
-    }
-
-    public function setCriteria(Criteria $criteria): self
-    {
-        $this->criteria = $criteria;
+        $this->position = $position;
 
         return $this;
     }
     
-    // DOCTRINE EVENTS
-    
-    /**
-     * Creation date.
-     *
-     * @ORM\PrePersist
-     */
-    public function setAutoCreatedDate()
+    public function getDelay(): ?int
     {
-        $this->setCreatedDate(new \Datetime());
+        return $this->delay;
+    }
+    
+    public function setDelay(int $delay): self
+    {
+        $this->delay = $delay;
+        
+        return $this;
+    }
+
+    public function getProposal(): ?Proposal
+    {
+        return $this->proposal;
+    }
+
+    public function setProposal(?Proposal $proposal): self
+    {
+        $this->proposal = $proposal;
+
+        return $this;
+    }
+
+    public function getAddress(): ?Address
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?Address $address): self
+    {
+        $this->address = $address;
+
+        return $this;
     }
 }

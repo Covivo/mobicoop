@@ -23,7 +23,7 @@
 
 namespace App\Geography\Service;
 
-use App\Address\Entity\Address;
+use App\Geography\Entity\Address;
 use App\Geography\Entity\Zone;
 use App\Geography\Entity\Near;
 use Doctrine\ORM\EntityManagerInterface;
@@ -237,7 +237,8 @@ class ZoneManager
     /**
      * FOR R&D PURPOSE ONLY
      *
-     * Creation of geographic zones in th database.
+     * Creation of geographic zones in the database.
+     * Made in raw sql for performance optimization.
      */
     public function createZones()
     {

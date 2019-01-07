@@ -65,12 +65,12 @@ class Zone
     private $toLon;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Geography\Entity\Near", mappedBy="zone1")
+     * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Near", mappedBy="zone1")
      */
     private $nears1;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Geography\Entity\Near", mappedBy="zone2")
+     * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Near", mappedBy="zone2")
      */
     private $nears2;
 
@@ -88,48 +88,48 @@ class Zone
         return $this->id;
     }
 
-    public function getFromLat()
+    public function getFromLat(): float
     {
         return $this->fromLat;
     }
 
-    public function setFromLat($fromLat): self
+    public function setFromLat(float $fromLat): self
     {
         $this->fromLat = $fromLat;
 
         return $this;
     }
 
-    public function getToLat()
+    public function getToLat(): float
     {
         return $this->toLat;
     }
 
-    public function setToLat($toLat): self
+    public function setToLat(float $toLat): self
     {
         $this->toLat = $toLat;
 
         return $this;
     }
 
-    public function getFromLon()
+    public function getFromLon(): float
     {
         return $this->fromLon;
     }
 
-    public function setFromLon($fromLon): self
+    public function setFromLon(float $fromLon): self
     {
         $this->fromLon = $fromLon;
 
         return $this;
     }
 
-    public function getToLon()
+    public function getToLon(): float
     {
         return $this->toLon;
     }
 
-    public function setToLon($toLon): self
+    public function setToLon(float $toLon): self
     {
         $this->toLon = $toLon;
 
