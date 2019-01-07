@@ -44,15 +44,19 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class PTMode
 {
     const PT_MODE_BUS = "BUS";
-    const PT_MODE_TRAIN = "TRAIN";
+    const PT_MODE_TRAIN = "LOCAL_TRAIN";
     const PT_MODE_BIKE = "BIKE";
     const PT_MODE_WALK = "WALK";
+    const PT_MODE_CAR = "COACH";
+    const PT_MODE_TGV = "HST";
 
     private const PT_MODES = [
             self::PT_MODE_BUS => 1,
             self::PT_MODE_TRAIN => 2,
             self::PT_MODE_BIKE => 3,
-            self::PT_MODE_WALK => 4
+            self::PT_MODE_WALK => 4,
+            self::PT_MODE_CAR => 5,
+            self::PT_MODE_TGV => 6
     ];
         
     /**
