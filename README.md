@@ -142,7 +142,7 @@ In order to increase the impact of our platform to any sort of clients whatever 
  - proprietary software
 
 #### Components license compatibility
-Since Mobicoop is dual licensed AGPLv3/proprietary, all components used for Mobicoop must be compatible with both licenses. As consequence, all components integrated into Mobicoop source code **must be released with a _permissive_ open source license**.
+Since Mobicoop is dual licensed AGPLv3/proprietary, all components used for Mobicoop must be compatible with both licenses. As consequence, all components integrated into Mobicoop source code **must be released with a _permissive_ open source license**. More information on license compatibility for [software components](https://dwheeler.com/essays/floss-license-slide.html) and [content components (Creative Commons issues)](https://opensource.stackexchange.com/questions/7750/which-creative-commons-licenses-are-permissive-enough-for-proprietary-software/7751).
 
 Mobicoop CI process includes a License Management which checks the license of all components part of a merge request. The most common _permissive_ licenses have already been added to the approved licenses list of this License Management process.
 In case you have one of the following situation while merging, please get in touch with Mobicoop project licensing issues expert before merging:
