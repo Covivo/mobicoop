@@ -127,6 +127,14 @@ class Address
      * @Groups({"read","write","pt"})
      */
     private $name;
+    
+    /**
+     * @var User|null The owner of the address.
+     *
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
+     * @Groups({"pt"})
+     */
+    private $user;
 
     public function __construct($id=null)
     {

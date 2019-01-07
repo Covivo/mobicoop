@@ -40,6 +40,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use App\Geography\Entity\Address;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Ask;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * A user.
@@ -239,12 +240,14 @@ class User
      */
     private $asks;
     
-    public function __construct()
+    public function __construct($status=null)
     {
         $this->addresses = new ArrayCollection();
         $this->cars = new ArrayCollection();
         $this->proposals = new ArrayCollection();
         $this->asks = new ArrayCollection();
+        if (is_null($status)) $status = self::STATUS_ACTIVE;
+        $this->setStatus($status);
     }
     
     public function getId(): ?int
@@ -252,7 +255,7 @@ class User
         return $this->id;
     }
     
-    public function getStatus(): ?int
+    public function getStatus(): int
     {
         return $this->status;
     }
@@ -396,7 +399,7 @@ class User
         return $this;
     }
     
-    public function getAddresses(): ArrayCollection
+    public function getAddresses(): Collection
     {
         return $this->addresses;
     }
@@ -424,7 +427,7 @@ class User
         return $this;
     }
     
-    public function getCars(): ArrayCollection
+    public function getCars(): Collection
     {
         return $this->cars;
     }
@@ -452,7 +455,7 @@ class User
         return $this;
     }
     
-    public function getProposals(): ArrayCollection
+    public function getProposals(): Collection
     {
         return $this->proposals;
     }
@@ -480,7 +483,7 @@ class User
         return $this;
     }
 
-    public function getAsks(): ArrayCollection
+    public function getAsks(): Collection
     {
         return $this->asks;
     }

@@ -75,7 +75,7 @@ class PTLine
     /**
      * @var string The origin of this line.
      *
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups("pt")
      */
     private $origin;
@@ -83,10 +83,18 @@ class PTLine
     /**
      * @var string The destination of this line.
      *
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups("pt")
      */
     private $destination;
+    
+    /**
+     * @var string The direction of this line if no origin / destination specified.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("pt")
+     */
+    private $direction;
     
     /**
      * @var PTCompany The company that manage this line.
@@ -145,26 +153,38 @@ class PTLine
         return $this;
     }
 
-    public function getOrigin(): string
+    public function getOrigin(): ?string
     {
         return $this->origin;
     }
     
-    public function setOrigin(string $origin): self
+    public function setOrigin(?string $origin): self
     {
         $this->origin = $origin;
         
         return $this;
     }
     
-    public function getDestination(): string
+    public function getDestination(): ?string
     {
         return $this->destination;
     }
     
-    public function setDestination(string $destination): self
+    public function setDestination(?string $destination): self
     {
         $this->destination = $destination;
+        
+        return $this;
+    }
+    
+    public function getDirection(): ?string
+    {
+        return $this->direction;
+    }
+    
+    public function setDirection(?string $direction): self
+    {
+        $this->direction = $direction;
         
         return $this;
     }
