@@ -27,6 +27,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Travel\Entity\TravelMode;
 
@@ -344,7 +345,7 @@ class PTLeg
         return $this;
     }
     
-    public function getPTSteps(): ArrayCollection
+    public function getPTSteps(): Collection
     {
         return $this->ptsteps;
     }
