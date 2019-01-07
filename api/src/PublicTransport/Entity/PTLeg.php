@@ -75,9 +75,9 @@ class PTLeg
     private $distance;
     
     /**
-     * @var int The duration of this leg.
+     * @var string The duration of this leg (in iso8601 format).
      *
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer", length=100, nullable=true)
      * @Groups("pt")
      */
     private $duration;
@@ -213,12 +213,12 @@ class PTLeg
         return $this;
     }
     
-    public function getDuration(): ?int
+    public function getDuration(): ?string
     {
         return $this->duration;
     }
     
-    public function setDuration(?int $duration): self
+    public function setDuration(?string $duration): self
     {
         $this->duration = $duration;
         
