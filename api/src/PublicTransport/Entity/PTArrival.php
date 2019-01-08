@@ -87,8 +87,6 @@ class PTArrival
      * @var IndividualStop|null Individual stop if multimodal using carpool.
      *
      * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\IndividualStop")
-     * @Groups({"pt"})
-     * @MaxDepth(1)
      */
     private $individualStop;
     

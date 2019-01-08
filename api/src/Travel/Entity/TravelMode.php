@@ -77,7 +77,7 @@ class TravelMode
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","pt"})
      */
     private $name;
 

@@ -105,7 +105,7 @@ class PTLine
     private $ptcompany;
     
     /**
-     * @var TravelMode The transport mode of this leg.
+     * @var TravelMode The transport mode of this line.
      *
      * @ORM\ManyToOne(targetEntity="App\Travel\Entity\TravelMode")
      * @Groups("pt")
