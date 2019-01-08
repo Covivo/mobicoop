@@ -25,9 +25,8 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Travel\Entity\TravelMode;
 
@@ -36,22 +35,13 @@ use Mobicoop\Bundle\MobicoopBundle\Travel\Entity\TravelMode;
  */
 class Proposal implements Resource
 {
-    const PROPOSAL_TYPE_OFFER = 1;
-    const PROPOSAL_TYPE_REQUEST = 2;
-    const PROPOSAL_TYPE_BOTH = 3;
-    const JOURNEY_TYPE_ONE_WAY = 1;
-    const JOURNEY_TYPE_OUTWARD = 2;
-    const JOURNEY_TYPE_RETURN = 3;
+    const TYPE_ONE_WAY = 1;
+    const TYPE_OUTWARD = 2;
+    const TYPE_RETURN = 3;
     
-    const PROPOSAL_TYPE = [
-            "offer"=>self::PROPOSAL_TYPE_OFFER,
-            "request"=>self::PROPOSAL_TYPE_REQUEST,
-            "both"=>self::PROPOSAL_TYPE_BOTH
-    ];
-    
-    const JOURNEY_TYPE = [
-            "one_way"=>self::PROPOSAL_TYPE_OFFER,
-            "return"=>self::JOURNEY_TYPE_OUTWARD
+    const TYPE = [
+            "one_way"=>self::TYPE_ONE_WAY,
+            "return"=>self::TYPE_OUTWARD
     ];
     
     /**
@@ -65,95 +55,48 @@ class Proposal implements Resource
     private $iri;
 
     /**
-     * @var int The proposal type (1 = offer (as a driver); 2 = request (as a passenger)).
-     * @Assert\NotBlank
-     *
-     * @Groups({"post","put"})
-     */
-    private $proposalType;
-
-    /**
-     * @var int The journey type (1 = one way trip; 2 = outward of a round trip; 3 = return of a round trip)).
-     * @Assert\NotBlank
-     *
-     * @Groups({"post","put"})
-     */
-    private $journeyType;
-
-    /**
-     * @var int|null Real distance of the full journey in metres.
-     */
-    private $distanceReal;
-
-    /**
-     * @var int|null Flying distance of the full journey in metres.
-     */
-    private $distanceFly;
-
-    /**
-     * @var int|null Estimated duration of the full journey in seconds (based on real distance).
-     */
-    private $duration;
-
-    /**
-     * @var string|null Main cape of the journey (N/S/E/W)
-     */
-    private $cape;
-
-    /**
-     * @var Proposal|null Linked proposal for an offer AND request proposal (= request linked for an offer proposal, offer linked for a request proposal).
+     * @var Proposal|null Linked proposal for a round trip (return or outward journey).
      */
     private $proposalLinked;
     
     /**
-     * @var Proposal|null Linked proposal for a round trip (return or outward journey).
-     */
-    private $proposalLinkedJourney;
-    
-    /**
-     * @var Proposal|null Original proposal if calculated proposal.
-     */
-    private $proposalOrigin;
-    
-    /**
      * @var User|null User who submits the proposal.
-     *
-     * @Groups({"post"})
      */
     private $user;
 
     /**
-     * @var Point[] The points of the proposal.
-     * @Assert\NotBlank
+     * @var Waypoint[] The waypoints of the proposal.
      *
-     * @Groups({"post","put"})
+     * @Assert\NotBlank
      */
-    private $points;
-
+    private $waypoints;
+    
     /**
      * @var TravelMode[]|null The travel modes accepted if the proposal is a request.
-     *
-     * @Groups({"post","put"})
      */
     private $travelModes;
 
     /**
      * @var Matching[]|null The matching of the proposal (if proposal is an offer).
      */
-    private $matchingOffers;
+    private $matchingRequests;
 
     /**
      * @var Matching[]|null The matching of the proposal (if proposal is a request).
      */
-    private $matchingRequests;
+    private $matchingOffers;
 
     /**
      * @var Criteria The criteria applied to the proposal.
-     * @Assert\NotBlank
      *
-     * @Groups({"post","put"})
+     * @Assert\NotBlank
      */
     private $criteria;
+    
+    /**
+     * @var IndividualStop[] The individual stops of the proposal.
+     */
+    private $individualStops;
     
     // these fields are only for testing purpose,
     // in the future we will need dynamic fields that will populate the points.
@@ -166,10 +109,11 @@ class Proposal implements Resource
             $this->setId($id);
             $this->setIri("/proposals/".$id);
         }
-        $this->points = new ArrayCollection();
+        $this->waypoints = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
-        $this->matchingOffers = new ArrayCollection();
         $this->matchingRequests = new ArrayCollection();
+        $this->matchingOffers = new ArrayCollection();
+        $this->individualStops = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -177,79 +121,41 @@ class Proposal implements Resource
         return $this->id;
     }
     
+    public function setId(int $id)
+    {
+        $this->id = $id;
+    }
+    
     public function getIri()
     {
         return $this->iri;
     }
     
-    public function getProposalType(): ?int
+    public function setIri($iri)
     {
-        return $this->proposalType;
-    }
-
-    public function setProposalType(int $proposalType): self
-    {
-        $this->proposalType = $proposalType;
-
-        return $this;
-    }
-
-    public function getJourneyType(): ?int
-    {
-        return $this->journeyType;
-    }
-
-    public function setJourneyType(int $journeyType): self
-    {
-        $this->journeyType = $journeyType;
-
-        return $this;
-    }
-
-    public function getDistanceReal(): ?int
-    {
-        return $this->distanceReal;
-    }
-
-    public function setDistanceReal(?int $distanceReal): self
-    {
-        $this->distanceReal = $distanceReal;
-
-        return $this;
-    }
-
-    public function getDistanceFly(): ?int
-    {
-        return $this->distanceFly;
-    }
-
-    public function setDistanceFly(?int $distanceFly): self
-    {
-        $this->distanceFly = $distanceFly;
-
-        return $this;
-    }
-
-    public function getDuration(): ?int
-    {
-        return $this->duration;
-    }
-
-    public function setDuration(?int $duration): self
-    {
-        $this->duration = $duration;
-
-        return $this;
-    }
-
-    public function getCape(): ?string
-    {
-        return $this->cape;
+        $this->iri = $iri;
     }
     
-    public function setCape(string $cape): self
+    public function getType(): ?int
     {
-        $this->cape = $cape;
+        return $this->type;
+    }
+    
+    public function setType(int $type): self
+    {
+        $this->type = $type;
+        
+        return $this;
+    }
+    
+    public function getCreatedDate(): ?\DateTimeInterface
+    {
+        return $this->createdDate;
+    }
+    
+    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    {
+        $this->createdDate = $createdDate;
         
         return $this;
     }
@@ -272,85 +178,49 @@ class Proposal implements Resource
         return $this;
     }
     
-    public function getProposalLinkedJourney(): ?self
-    {
-        return $this->proposalLinkedJourney;
-    }
-    
-    public function setProposalLinkedJourney(?self $proposalLinkedJourney): self
-    {
-        $this->proposalLinkedJourney = $proposalLinkedJourney;
-        
-        // set (or unset) the owning side of the relation if necessary
-        $newProposalLinkedJourney = $proposalLinkedJourney === null ? null : $this;
-        if ($newProposalLinkedJourney !== $proposalLinkedJourney->getProposalLinkedJourney()) {
-            $proposalLinkedJourney->setProposalLinkedJourney($newProposalLinkedJourney);
-        }
-        
-        return $this;
-    }
-    
-    public function getProposalOrigin(): ?self
-    {
-        return $this->proposalOrigin;
-    }
-    
-    public function setProposalOrigin(?self $proposalOrigin): self
-    {
-        $this->proposalOrigin = $proposalOrigin;
-        
-        // set (or unset) the owning side of the relation if necessary
-        $newProposalOrigin = $proposalOrigind === null ? null : $this;
-        if ($newProposalOrigin !== $proposalOrigin->getProposalOrigin()) {
-            $proposalOrigin->setProposalOrigin($newProposalOrigin);
-        }
-        
-        return $this;
-    }
-    
     public function getUser(): ?User
     {
         return $this->user;
     }
-
+    
     public function setUser(?User $user): self
     {
         $this->user = $user;
-
+        
         return $this;
     }
-
+    
     /**
-     * @return Collection|Point[]
+     * @return Collection|Waypoint[]
      */
-    public function getPoints(): Collection
+    public function getWaypoints(): Collection
     {
-        return $this->points;
+        return $this->waypoints;
     }
-
-    public function addPoint(Point $point): self
+    
+    public function addWaypoint(Waypoint $waypoint): self
     {
-        if (!$this->points->contains($point)) {
-            $this->points[] = $point;
-            $point->setProposal($this);
+        if (!$this->waypoints->contains($waypoint)) {
+            $this->waypoints[] = $waypoint;
+            $waypoint->setProposal($this);
         }
-
+        
         return $this;
     }
-
-    public function removePoint(Point $point): self
+    
+    public function removeWaypoint(Waypoint $waypoint): self
     {
-        if ($this->points->contains($point)) {
-            $this->points->removeElement($point);
+        if ($this->waypoints->contains($waypoint)) {
+            $this->waypoints->removeElement($waypoint);
             // set the owning side to null (unless already changed)
-            if ($point->getProposal() === $this) {
-                $point->setProposal(null);
+            if ($waypoint->getProposal() === $this) {
+                $waypoint->setProposal(null);
             }
         }
-
+        
         return $this;
     }
-
+    
     /**
      * @return Collection|TravelMode[]
      */
@@ -358,56 +228,25 @@ class Proposal implements Resource
     {
         return $this->travelModes;
     }
-
+    
     public function addTravelMode(TravelMode $travelMode): self
     {
         if (!$this->travelModes->contains($travelMode)) {
             $this->travelModes[] = $travelMode;
         }
-
+        
         return $this;
     }
-
+    
     public function removeTravelMode(TravelMode $travelMode): self
     {
         if ($this->travelModes->contains($travelMode)) {
             $this->travelModes->removeElement($travelMode);
         }
-
+        
         return $this;
     }
-
-    /**
-     * @return Collection|Matching[]
-     */
-    public function getMatchingOffers(): Collection
-    {
-        return $this->matchingOffers;
-    }
-
-    public function addMatchingOffer(Matching $matchingOffer): self
-    {
-        if (!$this->matchingOffers->contains($matchingOffer)) {
-            $this->matchingOffers[] = $matchingOffer;
-            $matchingOffer->setProposalOffer($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMatchingOffer(Matching $matchingOffer): self
-    {
-        if ($this->matchingOffers->contains($matchingOffer)) {
-            $this->matchingOffers->removeElement($matchingOffer);
-            // set the owning side to null (unless already changed)
-            if ($matchingOffer->getProposalOffer() === $this) {
-                $matchingOffer->setProposalOffer(null);
-            }
-        }
-
-        return $this;
-    }
-
+    
     /**
      * @return Collection|Matching[]
      */
@@ -415,50 +254,102 @@ class Proposal implements Resource
     {
         return $this->matchingRequests;
     }
-
+    
     public function addMatchingRequest(Matching $matchingRequest): self
     {
         if (!$this->matchingRequests->contains($matchingRequest)) {
             $this->matchingRequests[] = $matchingRequest;
-            $matchingRequest->setProposalRequest($this);
+            $matchingRequest->setProposalOffer($this);
         }
-
+        
         return $this;
     }
-
+    
     public function removeMatchingRequest(Matching $matchingRequest): self
     {
         if ($this->matchingRequests->contains($matchingRequest)) {
             $this->matchingRequests->removeElement($matchingRequest);
             // set the owning side to null (unless already changed)
-            if ($matchingRequest->getProposalRequest() === $this) {
-                $matchingRequest->setProposalRequest(null);
+            if ($matchingRequest->getProposalOffer() === $this) {
+                $matchingRequest->setProposalOffer(null);
             }
         }
-
+        
         return $this;
     }
-
+    
+    /**
+     * @return Collection|Matching[]
+     */
+    public function getMatchingOffers(): Collection
+    {
+        return $this->matchingOffers;
+    }
+    
+    public function addMatchingOffer(Matching $matchingOffer): self
+    {
+        if (!$this->matchingOffers->contains($matchingOffer)) {
+            $this->matchingOffers[] = $matchingOffer;
+            $matchingOffer->setProposalRequest($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeMatchingOffer(Matching $matchingOffer): self
+    {
+        if ($this->matchingOffers->contains($matchingOffer)) {
+            $this->matchingOffers->removeElement($matchingOffer);
+            // set the owning side to null (unless already changed)
+            if ($matchingOffer->getProposalRequest() === $this) {
+                $matchingOffer->setProposalRequest(null);
+            }
+        }
+        
+        return $this;
+    }
+    
     public function getCriteria(): ?Criteria
     {
         return $this->criteria;
     }
-
+    
     public function setCriteria(Criteria $criteria): self
     {
         $this->criteria = $criteria;
-
+        
         return $this;
     }
     
-    public function setId(int $id)
+    /**
+     * @return Collection|IndividualStop[]
+     */
+    public function getIndividualStops(): Collection
     {
-        $this->id = $id;
+        return $this->individualStops;
     }
     
-    public function setIri($iri)
+    public function addIndividualStop(IndividualStop $individualStop): self
     {
-        $this->iri = $iri;
+        if (!$this->individualStops->contains($individualStop)) {
+            $this->individualStops[] = $individualStop;
+            $individualStop->setProposal($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeIndividualStop(IndividualStop $individualStop): self
+    {
+        if ($this->individualStops->contains($individualStop)) {
+            $this->individualStops->removeElement($individualStop);
+            // set the owning side to null (unless already changed)
+            if ($individualStop->getProposal() === $this) {
+                $individualStop->setProposal(null);
+            }
+        }
+        
+        return $this;
     }
     
     public function getStart()

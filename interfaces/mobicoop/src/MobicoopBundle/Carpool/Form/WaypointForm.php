@@ -21,37 +21,37 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Form;
 
-use Mobicoop\Bundle\MobicoopBundle\Geography\Service\GeoSearchManager;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Waypoint;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Form\AddressForm;
 
 /**
- * TestAutoCompleteController.php
- * Class
- * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 27/11/2018
- * Time: 13:23
+ * Point form.
  *
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-
-class AutoCompleteController extends AbstractController
+class WaypointForm extends AbstractType
 {
-
-    /**
-     * Retrieve all geosearch results of an input
-     *
-     * @Route("/aut")
-     */
-    public function AutoCompleteIndex(GeoSearchManager $geoSearchManager)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        return $this->render(
-            '@Mobicoop/autocomplete/index.html.twig',
-            [
-                'GeoSearch' => $geoSearchManager->getGeoSearch(['input'=>'Nancy'])
-            ]
-        );
+        $builder
+        ->add('position')
+        ->add('isDestination', CheckboxType::class, [
+                'required' => false
+        ])
+        ->add('address', AddressForm::class)
+        ;
+    }
+    
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+                'data_class' => Waypoint::class,
+        ));
     }
 }

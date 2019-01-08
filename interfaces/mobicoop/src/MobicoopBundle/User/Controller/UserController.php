@@ -32,13 +32,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\UserAddress;
 use Mobicoop\Bundle\MobicoopBundle\User\Form\UserForm;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Point;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Form\ProposalForm;
 
 /**
@@ -86,6 +82,7 @@ class UserController extends AbstractController
         $user = new User();
         
         $form = $this->createForm(UserForm::class, $user);
+        
         $form->handleRequest($request);
         $error = false;
         

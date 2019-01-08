@@ -24,10 +24,10 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Geography\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use Mobicoop\Bundle\MobicoopBundle\Entity\UserAddress;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 
 /**
  * A postal address.
@@ -95,9 +95,14 @@ class Address implements Resource
     private $elevation;
     
     /**
-     * @var UserAddress[] | ArrayCollection An address may have many users.
+     * @var string|null The name of this address.
      */
-    private $userAddresses;
+    private $name;
+    
+    /**
+     * @var User|null The owner of the address.
+     */
+    private $user;
     
     public function __construct()
     {
@@ -109,110 +114,108 @@ class Address implements Resource
         return $this->id;
     }
     
-    public function getIri()
-    {
-        return $this->iri;
-    }
-    
-    public function getStreetAddress(): ?string
-    {
-        return $this->streetAddress;
-    }
-
-    public function getPostalCode(): ?string
-    {
-        return $this->postalCode;
-    }
-
-    public function getAddressLocality(): ?string
-    {
-        return $this->addressLocality;
-    }
-
-    public function getAddressCountry(): ?string
-    {
-        return $this->addressCountry;
-    }
-
-    public function getLatitude(): ?float
-    {
-        return $this->latitude;
-    }
-
-    public function getLongitude(): ?float
-    {
-        return $this->longitude;
-    }
-
-    public function getElevation(): ?int
-    {
-        return $this->elevation;
-    }
-
-    public function getUserAddresses()
-    {
-        return $this->userAddresses;
-    }
-    
     public function setId(int $id)
     {
         $this->id = $id;
+    }
+    
+    public function getIri()
+    {
+        return $this->iri;
     }
     
     public function setIri($iri)
     {
         $this->iri = $iri;
     }
-
-    public function setStreetAddress(string $streetAddress)
+    
+    public function getStreetAddress(): ?string
+    {
+        return $this->streetAddress;
+    }
+    
+    public function setStreetAddress(?string $streetAddress)
     {
         $this->streetAddress = $streetAddress;
     }
-
-    public function setPostalCode(string $postalCode)
+    
+    public function getPostalCode(): ?string
+    {
+        return $this->postalCode;
+    }
+    
+    public function setPostalCode(?string $postalCode)
     {
         $this->postalCode = $postalCode;
     }
-
-    public function setAddressLocality(string $addressLocality)
+    
+    public function getAddressLocality(): ?string
+    {
+        return $this->addressLocality;
+    }
+    
+    public function setAddressLocality(?string $addressLocality)
     {
         $this->addressLocality = $addressLocality;
     }
-
-    public function setAddressCountry(string $addressCountry)
+    
+    public function getAddressCountry(): ?string
+    {
+        return $this->addressCountry;
+    }
+    
+    public function setAddressCountry(?string $addressCountry)
     {
         $this->addressCountry = $addressCountry;
     }
-
+    
+    public function getLatitude(): ?float
+    {
+        return $this->latitude;
+    }
+    
     public function setLatitude(?float $latitude)
     {
         $this->latitude = $latitude;
     }
-
+    
+    public function getLongitude(): ?float
+    {
+        return $this->longitude;
+    }
+    
     public function setLongitude(?float $longitude)
     {
         $this->longitude = $longitude;
     }
-
+    
+    public function getElevation(): ?int
+    {
+        return $this->elevation;
+    }
+    
     public function setElevation(?int $elevation)
     {
         $this->elevation = $elevation;
     }
-
-    public function setUserAddresses(array $userAddresses)
+    
+    public function getName(): ?string
     {
-        $this->userAddresses = $userAddresses;
+        return $this->name;
     }
     
-    public function addUserAddress(UserAddress $userAddress)
+    public function setName(?string $name)
     {
-        $userAddress->setAddress($this);
-        $this->userAddresses->add($userAddress);
+        $this->name = $name;
     }
     
-    public function removeUserAddress(UserAddress $userAddress)
+    public function getUser(): ?User
     {
-        $this->userAddresses->removeElement($userAddress);
-        $userAddress->setAddress(null);
+        return $this->user;
+    }
+    
+    public function setUser(?User $user)
+    {
+        $this->user = $user;
     }
 }

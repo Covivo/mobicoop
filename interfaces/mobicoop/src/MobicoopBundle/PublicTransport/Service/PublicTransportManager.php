@@ -24,8 +24,8 @@
 namespace Mobicoop\Bundle\MobicoopBundle\PublicTransport\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Hydra;
-use Mobicoop\Bundle\MobicoopBundle\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 
 /**
  * Public transport management service.

@@ -27,16 +27,22 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Resource;
-use Mobicoop\Bundle\MobicoopBundle\Entity\UserAddress;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Proposal;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Solicitation;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
  * A user.
  */
 class User implements Resource
 {
+    const MAX_DEVIATION_TIME = 600;
+    const MAX_DEVIATION_DISTANCE = 10000;
+    
+    const STATUS_ACTIVE = 1;
+    const STATUS_DISABLED = 2;
+    const STATUS_ANONYMIZED = 3;
     
     /**
      * @var int The id of this user.
@@ -49,6 +55,11 @@ class User implements Resource
      * @Groups({"post","put"})
      */
     private $iri;
+    
+    /**
+     * @var int User status (1 = active; 2 = disabled; 3 = anonymized).
+     */
+    private $status;
     
     /**
      * @var string|null The first name of the user.
@@ -126,41 +137,49 @@ class User implements Resource
     private $maxDeviationDistance;
     
     /**
-     * @var UserAddress[]|null A user may have many names addresses.
+     * @var boolean|null The user accepts any route as a passenger from its origin to the destination.
      */
-    private $userAddresses;
+    private $anyRouteAsPassenger;
     
+    /**
+     * @var boolean|null The user accepts any transportation mode.
+     */
+    private $multiTransportMode;
+    
+    /**
+     * @var Address[]|null A user may have many addresses.
+     */
+    private $addresses;
+    
+    /**
+     * @var Car[]|null A user may have many cars.
+     */
+    private $cars;
+
     /**
      * @var Proposal[]|null The proposals made by this user.
      */
     private $proposals;
-    
+
     /**
-     * @var Solicitation[]|null The solicitations made by this user.
+     * @var Ask[]|null The asks made by this user.
      */
-    private $solicitations;
-    
-    /**
-     * @var Solicitation[]|null The solicitations where the user is involved as a driver.
-     */
-    private $solicitationsOffer;
-    
-    /**
-     * @var Solicitation[]|null The solicitations where the user is involved as a passenger.
-     */
-    private $solicitationsRequest;
+    private $asks;
         
-    public function __construct($id=null)
+    public function __construct($id=null,$status=null)
     {
         if ($id) {
             $this->setId($id);
             $this->setIri("/users/".$id);
         }
-        $this->userAddresses = new ArrayCollection();
+        $this->addresses = new ArrayCollection();
+        $this->cars = new ArrayCollection();
         $this->proposals = new ArrayCollection();
-        $this->solicitations = new ArrayCollection();
-        $this->solicitationsOffer = new ArrayCollection();
-        $this->solicitationsRequest = new ArrayCollection();
+        $this->asks = new ArrayCollection();
+        if (is_null($status)) {
+            $status = self::STATUS_ACTIVE;
+        }
+        $this->setStatus($status);
     }
         
     public function getId(): ?int
@@ -168,146 +187,221 @@ class User implements Resource
         return $this->id;
     }
     
+    public function setId(int $id)
+    {
+        $this->id = $id;
+    }
+    
     public function getIri()
     {
         return $this->iri;
     }
 
+    public function setIri($iri)
+    {
+        $this->iri = $iri;
+    }
+    
+    public function getStatus(): int
+    {
+        return $this->status;
+    }
+    
+    public function setStatus(int $status): self
+    {
+        $this->status = $status;
+        
+        return $this;
+    }
+    
     public function getGivenName(): ?string
     {
         return $this->givenName;
     }
-
+    
+    public function setGivenName(?string $givenName): self
+    {
+        $this->givenName = $givenName;
+        
+        return $this;
+    }
+    
     public function getFamilyName(): ?string
     {
         return $this->familyName;
+    }
+    
+    public function setFamilyName(?string $familyName): self
+    {
+        $this->familyName = $familyName;
+        
+        return $this;
     }
     
     public function getEmail(): ?string
     {
         return $this->email;
     }
-
+    
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+        
+        return $this;
+    }
+    
     public function getPassword(): ?string
     {
         return $this->password;
     }
-
+    
+    public function setPassword(?string $password): self
+    {
+        $this->password = $password;
+        
+        return $this;
+    }
+    
     public function getGender(): ?string
     {
         return $this->gender;
     }
-
+    
+    public function setGender(?string $gender): self
+    {
+        $this->gender = $gender;
+        
+        return $this;
+    }
+    
     public function getNationality(): ?string
     {
         return $this->nationality;
     }
-
+    
+    public function setNationality(?string $nationality): self
+    {
+        $this->nationality = $nationality;
+        
+        return $this;
+    }
+    
     public function getBirthDate(): ?\DateTimeInterface
     {
         return $this->birthDate;
     }
-
+    
+    public function setBirthDate(?\DateTimeInterface $birthDate): self
+    {
+        $this->birthDate = $birthDate;
+        
+        return $this;
+    }
+    
     public function getTelephone(): ?string
     {
         return $this->telephone;
     }
-
-    public function getMaxDeviationTime(): ?int
-    {
-        return $this->maxDeviationTime;
-    }
-
-    public function getMaxDeviationDistance(): ?int
-    {
-        return $this->maxDeviationDistance;
-    }
-
-    public function getUserAddresses()
-    {
-        return $this->userAddresses;
-    }
     
-    public function setId(int $id)
-    {
-        $this->id = $id;
-    }
-    
-    public function setIri($iri)
-    {
-        $this->iri = $iri;
-    }
-    
-    public function setGivenName(?string $givenName)
-    {
-        $this->givenName = $givenName;
-    }
-
-    public function setFamilyName(?string $familyName)
-    {
-        $this->familyName = $familyName;
-    }
-    
-    public function setEmail(?string $email)
-    {
-        $this->email = $email;
-    }
-
-    public function setPassword(?string $password)
-    {
-        $this->password = $password;
-    }
-
-    public function setGender(?string $gender)
-    {
-        $this->gender = $gender;
-    }
-
-    public function setNationality(?string $nationality)
-    {
-        $this->nationality = $nationality;
-    }
-
-    public function setBirthDate(?\DateTimeInterface $birthDate)
-    {
-        $this->birthDate = $birthDate;
-    }
-
-    public function setTelephone(?string $telephone)
+    public function setTelephone(?string $telephone): self
     {
         $this->telephone = $telephone;
+        
+        return $this;
     }
-
-    public function setMaxDeviationTime(?int $maxDeviationTime)
+    
+    public function getMaxDeviationTime(): int
+    {
+        return (!is_null($this->maxDeviationTime) ? $this->maxDeviationTime : self::MAX_DEVIATION_TIME);
+    }
+    
+    public function setMaxDeviationTime(?int $maxDeviationTime): self
     {
         $this->maxDeviationTime = $maxDeviationTime;
+        
+        return $this;
     }
-
-    public function setMaxDeviationDistance(?int $maxDeviationDistance)
+    
+    public function getMaxDeviationDistance(): int
+    {
+        return (!is_null($this->maxDeviationDistance) ? $this->maxDeviationDistance : self::MAX_DEVIATION_DISTANCE);
+    }
+    
+    public function setMaxDeviationDistance(?int $maxDeviationDistance): self
     {
         $this->maxDeviationDistance = $maxDeviationDistance;
-    }
-
-    public function setUserAddresses(?array $userAddresses)
-    {
-        $this->userAddresses = $userAddresses;
+        
+        return $this;
     }
     
-    public function addUserAddress(UserAddress $userAddress)
+    public function getAnyRouteAsPassenger(): bool
     {
-        $userAddress->setUser($this);
-        $this->userAddresses->add($userAddress);
+        return (!is_null($this->anyRouteAsPassenger) ? $this->anyRouteAsPassenger : true);
     }
     
-    public function removeUserAddress(UserAddress $userAddress)
+    public function setAnyRouteAsPassenger(?bool $anyRouteAsPassenger): self
     {
-        $this->userAddresses->removeElement($userAddress);
-        $userAddress->setUser(null);
+        $this->anyRouteAsPassenger = $anyRouteAsPassenger;
+        
+        return $this;
     }
     
-    /**
-     * @return Collection|Proposal[]
-     */
+    public function getAddresses(): Collection
+    {
+        return $this->addresses;
+    }
+    
+    public function addAddress(Address $address): self
+    {
+        if (!$this->addresses->contains($address)) {
+            $this->addresses->add($address);
+            $address->setUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeAddress(Address $address): self
+    {
+        if ($this->addresses->contains($address)) {
+            $this->addresses->removeElement($address);
+            // set the owning side to null (unless already changed)
+            if ($address->getUser() === $this) {
+                $address->setUser(null);
+            }
+        }
+        
+        return $this;
+    }
+    
+    public function getCars(): Collection
+    {
+        return $this->cars;
+    }
+    
+    public function addCar(Car $car): self
+    {
+        if (!$this->cars->contains($car)) {
+            $this->cars->add($car);
+            $car->setUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeCar(Car $car): self
+    {
+        if ($this->cars->contains($car)) {
+            $this->cars->removeElement($car);
+            // set the owning side to null (unless already changed)
+            if ($car->getUser() === $this) {
+                $car->setUser(null);
+            }
+        }
+        
+        return $this;
+    }
+    
     public function getProposals(): Collection
     {
         return $this->proposals;
@@ -316,7 +410,7 @@ class User implements Resource
     public function addProposal(Proposal $proposal): self
     {
         if (!$this->proposals->contains($proposal)) {
-            $this->proposals[] = $proposal;
+            $this->proposals->add($proposal);
             $proposal->setUser($this);
         }
         
@@ -336,93 +430,28 @@ class User implements Resource
         return $this;
     }
     
-    /**
-     * @return Collection|Solicitation[]
-     */
-    public function getSolicitations(): Collection
+    public function getAsks(): Collection
     {
-        return $this->solicitations;
+        return $this->asks;
     }
     
-    public function addSolicitation(Solicitation $solicitation): self
+    public function addAsk(Ask $ask): self
     {
-        if (!$this->solicitations->contains($solicitation)) {
-            $this->solicitations[] = $solicitation;
-            $solicitation->setUser($this);
+        if (!$this->asks->contains($ask)) {
+            $this->asks->add($ask);
+            $ask->setUser($this);
         }
         
         return $this;
     }
     
-    public function removeSolicitation(Solicitation $solicitation): self
+    public function removeAsk(Ask $ask): self
     {
-        if ($this->solicitations->contains($solicitation)) {
-            $this->solicitations->removeElement($solicitation);
+        if ($this->asks->contains($ask)) {
+            $this->asks->removeElement($ask);
             // set the owning side to null (unless already changed)
-            if ($solicitation->getUser() === $this) {
-                $solicitation->setUser(null);
-            }
-        }
-        
-        return $this;
-    }
-    
-    /**
-     * @return Collection|Solicitation[]
-     */
-    public function getSolicitationsOffer(): Collection
-    {
-        return $this->solicitationsOffer;
-    }
-    
-    public function addSolicitationsOffer(Solicitation $solicitationsOffer): self
-    {
-        if (!$this->solicitationsOffer->contains($solicitationsOffer)) {
-            $this->solicitationsOffer[] = $solicitationsOffer;
-            $solicitationsOffer->setUserOffer($this);
-        }
-        
-        return $this;
-    }
-    
-    public function removeSolicitationsOffer(Solicitation $solicitationsOffer): self
-    {
-        if ($this->solicitationsOffer->contains($solicitationsOffer)) {
-            $this->solicitationsOffer->removeElement($solicitationsOffer);
-            // set the owning side to null (unless already changed)
-            if ($solicitationsOffer->getUserOffer() === $this) {
-                $solicitationsOffer->setUserOffer(null);
-            }
-        }
-        
-        return $this;
-    }
-    
-    /**
-     * @return Collection|Solicitation[]
-     */
-    public function getSolicitationsRequest(): Collection
-    {
-        return $this->solicitationsRequest;
-    }
-    
-    public function addSolicitationsRequest(Solicitation $solicitationsRequest): self
-    {
-        if (!$this->solicitationsRequest->contains($solicitationsRequest)) {
-            $this->solicitationsRequest[] = $solicitationsRequest;
-            $solicitationsRequest->setUserRequest($this);
-        }
-        
-        return $this;
-    }
-    
-    public function removeSolicitationsRequest(Solicitation $solicitationsRequest): self
-    {
-        if ($this->solicitationsRequest->contains($solicitationsRequest)) {
-            $this->solicitationsRequest->removeElement($solicitationsRequest);
-            // set the owning side to null (unless already changed)
-            if ($solicitationsRequest->getUserRequest() === $this) {
-                $solicitationsRequest->setUserRequest(null);
+            if ($ask->getUser() === $this) {
+                $ask->setUser(null);
             }
         }
         

@@ -23,7 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity;
 
-use Mobicoop\Bundle\MobicoopBundle\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
 
 /**
  * An external journey
@@ -32,7 +32,7 @@ class ExternalJourney implements Resource
 {
 
     /**
-     * @var int The id of this user.
+     * @var int The id of this external journey.
      */
     private $id;
 

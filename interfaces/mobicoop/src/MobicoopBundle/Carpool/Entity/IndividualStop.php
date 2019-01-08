@@ -24,52 +24,45 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
 use Symfony\Component\Validator\Constraints as Assert;
-use Mobicoop\Bundle\MobicoopBundle\Travel\Entity\TravelMode;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
- * Carpooling : travel path between 2 points.
+ * Carpooling : an individual stop.
+ * Individual stop is a virtual public transport stop made from an offer proposal.
+ * It is used for multimodal calculation. It is calculated only for offer proposal, in regions that are covered by public transportation.
  */
-class Path
+class IndividualStop
 {
     /**
-     * @var int The id of this path.
+     * @var int The id of this stop.
      */
     private $id;
 
     /**
-     * @var int Position number of the current part in the whole path.
+     * @var int Position number of the stop in the whole route (all the individual stops of the route).
+     *
      * @Assert\NotBlank
      */
     private $position;
+    
+    /**
+     * @var int Estimated stop delay in seconds (calculated with 0 as origin).
+     */
+    private $delay;
 
     /**
-     * @var string Path detail.
+     * @var Proposal The proposal that owns the stop.
+     *
      * @Assert\NotBlank
      */
-    private $detail;
-
+    private $proposal;
+    
     /**
-     * @var int Encoding format (1 = json; 2 = xml)
+     * @var Address The address of the stop.
+     *
      * @Assert\NotBlank
      */
-    private $encodeFormat;
-
-    /**
-     * @var Point The starting point of the path.
-     * @Assert\NotBlank
-     */
-    private $point1;
-
-    /**
-     * @var Point The destination point of the path.
-     * @Assert\NotBlank
-     */
-    private $point2;
-
-    /**
-     * @var TravelMode The travel mode of the path.
-     */
-    private $travelMode;
+    private $address;
     
     public function getId(): ?int
     {
@@ -87,63 +80,39 @@ class Path
 
         return $this;
     }
-
-    public function getDetail(): ?string
+    
+    public function getDelay(): ?int
     {
-        return $this->detail;
+        return $this->delay;
+    }
+    
+    public function setDelay(int $delay): self
+    {
+        $this->delay = $delay;
+        
+        return $this;
     }
 
-    public function setDetail(string $detail): self
+    public function getProposal(): ?Proposal
     {
-        $this->detail = $detail;
+        return $this->proposal;
+    }
+
+    public function setProposal(?Proposal $proposal): self
+    {
+        $this->proposal = $proposal;
 
         return $this;
     }
 
-    public function getEncodeFormat(): ?int
+    public function getAddress(): ?Address
     {
-        return $this->encodeFormat;
+        return $this->address;
     }
 
-    public function setEncodeFormat(int $encodeFormat): self
+    public function setAddress(?Address $address): self
     {
-        $this->encodeFormat = $encodeFormat;
-
-        return $this;
-    }
-
-    public function getPoint1(): ?Point
-    {
-        return $this->point1;
-    }
-
-    public function setPoint1(?Point $point1): self
-    {
-        $this->point1 = $point1;
-
-        return $this;
-    }
-
-    public function getPoint2(): ?Point
-    {
-        return $this->point2;
-    }
-
-    public function setPoint2(?Point $point2): self
-    {
-        $this->point2 = $point2;
-
-        return $this;
-    }
-
-    public function getTravelMode(): ?TravelMode
-    {
-        return $this->travelMode;
-    }
-
-    public function setTravelMode(?TravelMode $travelMode): self
-    {
-        $this->travelMode = $travelMode;
+        $this->address = $address;
 
         return $this;
     }

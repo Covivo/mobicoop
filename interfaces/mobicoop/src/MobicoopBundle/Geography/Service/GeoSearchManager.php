@@ -23,7 +23,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Geography\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
-use Mobicoop\Bundle\MobicoopBundle\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 
 /**
  * GeoSearchManager.php

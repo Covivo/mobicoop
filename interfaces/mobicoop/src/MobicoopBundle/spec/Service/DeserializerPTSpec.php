@@ -23,12 +23,14 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Service\Deserializer;
-use Mobicoop\Bundle\MobicoopBundle\Entity\PTJourney;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLeg;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTStep;
 
 /**
  * DeserializerPTSpec.php
- * Tests for Deserializer - PTArrival | PTCompany | PTDeparture | PTJourney | PTLeg | PTLeg | PTLine | PTLine | PTMode | PTStep
+ * Tests for Deserializer - PTArrival | PTCompany | PTDeparture | PTJourney | PTLeg | PTStep | PTLine | TravelMode
  * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
  * Date: 24/12/2018
  * Time: 12:36
@@ -37,17 +39,17 @@ use Mobicoop\Bundle\MobicoopBundle\Entity\PTJourney;
 
 describe('deserializePT', function () {
     describe('deserialize PTJourney', function () {
-        it('deserializePTJourney should return a PTJourney object', function () {
+        it('deserialize PTJourney should return a PTJourney object', function () {
             $jsonPTJourney = <<<JSON
 {
     "distance": 0,
-    "duration": 0,
+    "duration": "string",
     "changeNumber": 0,
-    "price": 0,
+    "price": "string",
     "co2": 0,
     "ptdeparture": {
       "name": "string",
-      "date": "2018-12-24T12:40:59.973Z",
+      "date": "2019-01-08T15:06:18.329Z",
       "address": {
         "streetAddress": "string",
         "postalCode": "string",
@@ -55,12 +57,14 @@ describe('deserializePT', function () {
         "addressCountry": "string",
         "latitude": "string",
         "longitude": "string",
-        "elevation": 0
+        "elevation": 0,
+        "name": "string",
+        "user": {}
       }
     },
     "ptarrival": {
       "name": "string",
-      "date": "2018-12-24T12:40:59.973Z",
+      "date": "2019-01-08T15:06:18.329Z",
       "address": {
         "streetAddress": "string",
         "postalCode": "string",
@@ -68,7 +72,9 @@ describe('deserializePT', function () {
         "addressCountry": "string",
         "latitude": "string",
         "longitude": "string",
-        "elevation": 0
+        "elevation": 0,
+        "name": "string",
+        "user": {}
       }
     },
     "ptlegs": [
@@ -76,13 +82,13 @@ describe('deserializePT', function () {
         "indication": "string",
         "distance": 0,
         "duration": 0,
-        "pos": 0,
-        "last": true,
+        "position": 0,
+        "isLast": true,
         "magneticDirection": "string",
         "relativeDirection": "string",
         "ptdeparture": {
           "name": "string",
-          "date": "2018-12-24T12:40:59.973Z",
+          "date": "2019-01-08T15:06:18.329Z",
           "address": {
             "streetAddress": "string",
             "postalCode": "string",
@@ -90,12 +96,14 @@ describe('deserializePT', function () {
             "addressCountry": "string",
             "latitude": "string",
             "longitude": "string",
-            "elevation": 0
+            "elevation": 0,
+            "name": "string",
+            "user": {}
           }
         },
         "ptarrival": {
           "name": "string",
-          "date": "2018-12-24T12:40:59.973Z",
+          "date": "2019-01-08T15:06:18.329Z",
           "address": {
             "streetAddress": "string",
             "postalCode": "string",
@@ -103,10 +111,12 @@ describe('deserializePT', function () {
             "addressCountry": "string",
             "latitude": "string",
             "longitude": "string",
-            "elevation": 0
+            "elevation": 0,
+            "name": "string",
+            "user": {}
           }
         },
-        "ptmode": {
+        "travelMode": {
           "name": "string"
         },
         "ptline": {
@@ -114,7 +124,11 @@ describe('deserializePT', function () {
           "number": "string",
           "origin": "string",
           "destination": "string",
+          "direction": "string",
           "ptcompany": {
+            "name": "string"
+          },
+          "travelMode": {
             "name": "string"
           }
         },
@@ -123,14 +137,13 @@ describe('deserializePT', function () {
           {
             "distance": 0,
             "duration": 0,
-            "pos": 0,
-            "last": true,
+            "position": 0,
+            "isLast": true,
             "magneticDirection": "string",
             "relativeDirection": "string",
-            "ptsection": "string",
             "ptdeparture": {
               "name": "string",
-              "date": "2018-12-24T12:40:59.973Z",
+              "date": "2019-01-08T15:06:18.329Z",
               "address": {
                 "streetAddress": "string",
                 "postalCode": "string",
@@ -138,12 +151,14 @@ describe('deserializePT', function () {
                 "addressCountry": "string",
                 "latitude": "string",
                 "longitude": "string",
-                "elevation": 0
+                "elevation": 0,
+                "name": "string",
+                "user": {}
               }
             },
             "ptarrival": {
               "name": "string",
-              "date": "2018-12-24T12:40:59.973Z",
+              "date": "2019-01-08T15:06:18.329Z",
               "address": {
                 "streetAddress": "string",
                 "postalCode": "string",
@@ -151,7 +166,9 @@ describe('deserializePT', function () {
                 "addressCountry": "string",
                 "latitude": "string",
                 "longitude": "string",
-                "elevation": 0
+                "elevation": 0,
+                "name": "string",
+                "user": {}
               }
             }
           }
@@ -164,6 +181,8 @@ JSON;
             $deserializer = new Deserializer();
             $PTJourney = $deserializer->deserialize(PTJourney::class, json_decode($jsonPTJourney, true));
             expect($PTJourney)->toBeAnInstanceOf(PTJourney::class);
+            expect($PTJourney->getPTLegs()[0])->toBeAnInstanceOf(PTLeg::class);
+            expect($PTJourney->getPTLegs()[0]->getPTSteps()[0])->toBeAnInstanceOf(PTStep::class);
         });
     });
 });

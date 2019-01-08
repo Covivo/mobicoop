@@ -23,7 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 
 /**

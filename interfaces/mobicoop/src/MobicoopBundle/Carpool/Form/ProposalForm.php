@@ -40,15 +40,12 @@ class ProposalForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        ->add('proposalType', ChoiceType::class, [
-                'choices'  => Proposal::PROPOSAL_TYPE
-        ])
-        ->add('journeyType', ChoiceType::class, [
-                'choices'  => Proposal::JOURNEY_TYPE
+        ->add('type', ChoiceType::class, [
+                'choices'  => Proposal::TYPE
         ])
         ->add('criteria', CriteriaForm::class)
-        ->add('start', PointForm::class)
-        ->add('destination', PointForm::class)
+        ->add('start', WaypointForm::class)
+        ->add('destination', WaypointForm::class)
         ->add('submit', SubmitType::class)
         ;
     }

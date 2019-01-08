@@ -21,38 +21,48 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\User\Form;
-
-use Mobicoop\Bundle\MobicoopBundle\Form\AddressForm;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+namespace Mobicoop\Bundle\MobicoopBundle\Api\Entity;
 
 /**
- * User address form.
- *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * A DataProvider response.
  */
-class UserAddressForm extends AbstractType
+class Response
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    const DEFAULT_CODE = 404;
+    
+    /**
+     * @var int $code The response code.
+     */
+    private $code;
+    
+    /**
+     * @var object|array $value The value of the response.
+     */
+    private $value;
+    
+    public function __construct(int $code=self::DEFAULT_CODE, $value=null)
     {
-        $builder
-        ->add('name')
-        ->add('address', CollectionType::class, [
-                'entry_type' => AddressForm::class,
-                'allow_add' => true,
-                'by_reference' => false,
-                'error_bubbling' => false,
-        ])
-        ;
+        $this->setCode($code);
+        $this->setValue($value);
     }
     
-    public function configureOptions(OptionsResolver $resolver)
+    public function getCode(): int
     {
-        $resolver->setDefaults(array(
-                'data_class' => 'Mobicoop\Bundle\MobicoopBundle\User\Entity\UserAddress',
-        ));
+        return $this->code;
+    }
+
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    public function setCode(int $code)
+    {
+        $this->code = $code;
+    }
+
+    public function setValue($value)
+    {
+        $this->value = $value;
     }
 }

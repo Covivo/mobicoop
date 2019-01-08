@@ -23,6 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -43,7 +44,7 @@ class PTJourney
     private $distance;
     
     /**
-     * @var int The total duration of this journey.
+     * @var string The total duration of this journey.
      */
     private $duration;
 
@@ -82,93 +83,134 @@ class PTJourney
         $this->ptlegs = new ArrayCollection();
     }
     
-    public function getDistance()
+    public function getId(): int
+    {
+        return $this->id;
+    }
+    
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+        
+        return $this;
+    }
+    
+    public function getDistance(): ?int
     {
         return $this->distance;
     }
-
-    public function getDuration()
+    
+    public function setDistance(?int $distance): self
+    {
+        $this->distance = $distance;
+        
+        return $this;
+    }
+    
+    public function getDuration(): ?string
     {
         return $this->duration;
     }
     
-    public function getChangeNumber()
+    public function setDuration(?string $duration): self
+    {
+        $this->duration = $duration;
+        
+        return $this;
+    }
+    
+    public function getChangeNumber(): ?int
     {
         return $this->changeNumber;
     }
-
-    public function getPrice()
+    
+    public function setChangeNumber(?int $changeNumber): self
+    {
+        $this->changeNumber = $changeNumber;
+        
+        return $this;
+    }
+    
+    public function getPrice(): ?float
     {
         return $this->price;
     }
-
-    public function getCo2()
+    
+    public function setPrice(?float $price): self
+    {
+        $this->price = $price;
+        
+        return $this;
+    }
+    
+    public function getCo2(): ?int
     {
         return $this->co2;
     }
     
-    public function getPTDeparture()
+    public function setCo2(?int $co2): self
+    {
+        $this->co2 = $co2;
+        
+        return $this;
+    }
+    
+    public function getPTDeparture(): PTDeparture
     {
         return $this->ptdeparture;
     }
     
-    public function getPTArrival()
+    public function setPTDeparture(PTDeparture $ptdeparture): self
+    {
+        $this->ptdeparture = $ptdeparture;
+        
+        return $this;
+    }
+    
+    public function getPTArrival(): PTArrival
     {
         return $this->ptarrival;
     }
     
-    public function setDistance($distance)
-    {
-        $this->distance = $distance;
-    }
-
-    public function setDuration($duration)
-    {
-        $this->duration = $duration;
-    }
-    
-    public function setChangeNumber($changeNumber)
-    {
-        $this->changeNumber = $changeNumber;
-    }
-    
-    public function setPrice($price)
-    {
-        $this->price = $price;
-    }
-
-    public function setCo2($co2)
-    {
-        $this->co2 = $co2;
-    }
-    
-    public function setPTDeparture($ptdeparture)
-    {
-        $this->ptdeparture = $ptdeparture;
-    }
-    
-    public function setPTArrival($ptarrival)
+    public function setPTArrival(PTArrival $ptarrival): self
     {
         $this->ptarrival = $ptarrival;
+        
+        return $this;
     }
     
-    public function getPTLegs()
+    public function getPTLegs(): Collection
     {
         return $this->ptlegs;
     }
-
-    public function setPTLegs($ptlegs)
+    
+    public function setPTLegs(ArrayCollection $ptlegs): self
     {
         $this->ptlegs = $ptlegs;
+        
+        return $this;
     }
     
-    public function getId()
+    public function addPTLeg(PTLeg $ptleg): self
     {
-        return $this->id;
+        if (!$this->ptlegs->contains($ptleg)) {
+            $this->ptlegs->add($ptleg);
+            $ptleg->setPTJourney($this);
+        }
+        
+        return $this;
     }
-
-    public function setId($id)
+    
+    public function removePTLeg(PTLeg $ptleg): self
     {
-        $this->id = $id;
+        if ($this->ptlegs->contains($ptleg)) {
+            $this->ptlegs->removeElement($ptleg);
+            // set the owning side to null (unless already changed)
+            if ($ptleg->getPTJourney() === $this) {
+                $ptleg->setPTJourney(null);
+            }
+        }
+        
+        return $this;
     }
 }

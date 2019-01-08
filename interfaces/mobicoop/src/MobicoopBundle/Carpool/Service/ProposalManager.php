@@ -26,7 +26,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Service;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Matching;
-use Mobicoop\Bundle\MobicoopBundle\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 
 /**
  * Proposal management service.

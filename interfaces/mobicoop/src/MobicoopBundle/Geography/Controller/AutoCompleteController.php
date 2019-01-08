@@ -21,48 +21,37 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\Geography\Controller;
+
+use Mobicoop\Bundle\MobicoopBundle\Geography\Service\GeoSearchManager;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * A DataProvider response.
+ * TestAutoCompleteController.php
+ * Class
+ * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
+ * Date: 27/11/2018
+ * Time: 13:23
+ *
  */
-class Response
+
+class AutoCompleteController extends AbstractController
 {
-    const DEFAULT_CODE = 404;
-    
+
     /**
-     * @var int $code The response code.
+     * Retrieve all geosearch results of an input
+     *
+     * @Route("/aut")
      */
-    private $code;
-    
-    /**
-     * @var object|array $value The value of the response.
-     */
-    private $value;
-    
-    public function __construct(int $code=self::DEFAULT_CODE, $value=null)
+    public function AutoCompleteIndex(GeoSearchManager $geoSearchManager)
     {
-        $this->setCode($code);
-        $this->setValue($value);
-    }
-    
-    public function getCode(): int
-    {
-        return $this->code;
-    }
-
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-    public function setCode(int $code)
-    {
-        $this->code = $code;
-    }
-
-    public function setValue($value)
-    {
-        $this->value = $value;
+        return $this->render(
+            '@Mobicoop/autocomplete/index.html.twig',
+            [
+                'GeoSearch' => $geoSearchManager->getGeoSearch(['input'=>'Nancy'])
+            ]
+        );
     }
 }

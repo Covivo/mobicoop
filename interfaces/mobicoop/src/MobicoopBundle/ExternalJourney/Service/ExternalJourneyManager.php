@@ -9,7 +9,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourney;
-use Mobicoop\Bundle\MobicoopBundle\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 
 class ExternalJourneyManager
 {

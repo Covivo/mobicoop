@@ -23,9 +23,9 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Service\Deserializer;
-use Mobicoop\Bundle\MobicoopBundle\Entity\GeoSearch;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
  * DeserializerGeoSearchSpec.php

@@ -3,6 +3,11 @@ app_annotations:
     resource: '../src/MobicoopBundle/Controller/'
     type:     annotation
     
+geography_annotations:
+    # loads routes from the PHP annotations of the controllers found in that directory
+    resource: '../src/MobicoopBundle/Geography/Controller/'
+    type:     annotation
+    
 user_annotations:
     # loads routes from the PHP annotations of the controllers found in that directory
     resource: '../src/MobicoopBundle/User/Controller/'

@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity;
 
 /**
  * A hydra collection object (returned by a JSON-LD Rest API).

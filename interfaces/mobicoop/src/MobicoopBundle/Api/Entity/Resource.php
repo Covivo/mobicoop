@@ -21,37 +21,16 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Form;
-
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Point;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Form\AddressForm;
+namespace Mobicoop\Bundle\MobicoopBundle\Api\Entity;
 
 /**
- * Point form.
+ * Resource interface.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ *
  */
-class PointForm extends AbstractType
+interface Resource
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        $builder
-        ->add('position')
-        ->add('lastPoint', CheckboxType::class, [
-                'required' => false
-        ])
-        ->add('address', AddressForm::class)
-        ;
-    }
-    
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(array(
-                'data_class' => Point::class,
-        ));
-    }
+    public function getId(): ?int;
+    public function setId(int $id);
 }

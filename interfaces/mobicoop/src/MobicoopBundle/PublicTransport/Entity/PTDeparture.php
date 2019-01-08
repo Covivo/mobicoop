@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity;
 
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\IndividualStop;
 
 /**
  * A departure.
@@ -53,43 +54,68 @@ class PTDeparture
      */
     private $address;
         
-    public function getId()
+    /**
+     * @var IndividualStop|null Individual stop if multimodal using carpool.
+     */
+    private $individualStop;
+    
+    public function getId(): int
     {
         return $this->id;
     }
     
-    public function setId($id)
+    public function setId(int $id): self
     {
         $this->id = $id;
+        
+        return $this;
     }
     
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
-
-    public function getDate()
+    
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
+        
+        return $this;
+    }
+    
+    public function getDate(): \DateTimeInterface
     {
         return $this->date;
     }
-
-    public function getAddress()
+    
+    public function setDate(\DateTimeInterface $date): self
+    {
+        $this->date = $date;
+        
+        return $this;
+    }
+    
+    public function getAddress(): Address
     {
         return $this->address;
     }
-
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    public function setDate($date)
-    {
-        $this->date = $date;
-    }
-
-    public function setAddress($address)
+    
+    public function setAddress(Address $address): self
     {
         $this->address = $address;
+        
+        return $this;
+    }
+    
+    public function getIndividualStop(): ?IndividualStop
+    {
+        return $this->individualStop;
+    }
+    
+    public function setIndividualStop(?IndividualStop $individualStop): self
+    {
+        $this->individualStop = $individualStop;
+        
+        return $this;
     }
 }

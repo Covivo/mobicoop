@@ -23,14 +23,13 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Entity\UserAddress;
-use Mobicoop\Bundle\MobicoopBundle\Service\Deserializer;
-use Mobicoop\Bundle\MobicoopBundle\Entity\User;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
- * DeserializerAddressSpec.php
- * Tests for Deserializer - User | Address | UserAddress
+ * DeserializerUserSpec.php
+ * Tests for Deserializer - User | Address
  * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
  * Date: 24/12/2018
  * Time: 10:34
@@ -61,7 +60,7 @@ JSON;
 });
 
 describe('deserializeComplexUser', function () {
-    it('deserializeComplexUser should return a complex user object with nested UserAddress', function () {
+    it('deserializeComplexUser should return a complex user object with nested address', function () {
         $jsonUser = <<<JSON
 {
   "@context": "/api/contexts/User",
@@ -77,28 +76,20 @@ describe('deserializeComplexUser', function () {
   "telephone": null,
   "maxDeviationTime": 300,
   "maxDeviationDistance": 5000,
-  "userAddresses": [
+  "addresses": [
     {
-      "@id": "/api/user_addresses/1",
-      "@type": "UserAddress",
+      "@id": "/api/addresses/1",
+      "@type": "Address",
       "id": 1,
+      "streetAddress": "5 rue de la monnaie",
+      "postalCode": "54000",
+      "addressLocality": "Nancy",
+      "addressCountry": "France",
+      "latitude": null,
+      "longitude": null,
+      "elevation": null,
       "name": "domicile",
-      "user": "/api/users/1",
-      "address": {
-        "@id": "/api/addresses/1",
-        "@type": "Address",
-        "id": 1,
-        "streetAddress": "5 rue de la monnaie",
-        "postalCode": "54000",
-        "addressLocality": "Nancy",
-        "addressCountry": "France",
-        "latitude": null,
-        "longitude": null,
-        "elevation": null,
-        "userAddresses": [
-          "/api/user_addresses/1"
-        ]
-      }
+      "user": "/api/users/1"
     }
   ]
 }
@@ -111,58 +102,10 @@ JSON;
         expect($user->getGivenName())->toBe('Jean');
         expect($user->getFamilyName())->toBe('Dupont');
         expect($user->getFamilyName())->not->toBe('jean.dupont@covivo.eu');
-        expect($user->getUserAddresses())->toBeA('array');
-        expect($user->getUserAddresses()[0]->getAddress())->toBeAnInstanceOf(Address::class);
-        expect($user->getUserAddresses()[0]->getAddress()->getPostalCode())->toBe('54000');
-        expect($user->getUserAddresses()[0]->getAddress()->getLatitude())->toBeNull();
-    });
-    it('deserializeComplexUser should return an UserAddress object', function () {
-        $jsonUser = <<<JSON
-{
-  "@context": "/api/contexts/User",
-  "@id": "/api/users/1",
-  "@type": "User",
-  "id": 1,
-  "givenName": "Jean",
-  "familyName": "Dupont",
-  "email": "Jean.Dupont@covivo.eu",
-  "gender": "male",
-  "nationality": "Française",
-  "birthDate": "1976-11-26T00:00:00+01:00",
-  "telephone": null,
-  "maxDeviationTime": 300,
-  "maxDeviationDistance": 5000,
-  "userAddresses": [
-    {
-      "@id": "/api/user_addresses/1",
-      "@type": "UserAddress",
-      "id": 1,
-      "name": "domicile",
-      "user": "/api/users/1",
-      "address": {
-        "@id": "/api/addresses/1",
-        "@type": "Address",
-        "id": 1,
-        "streetAddress": "5 rue de la monnaie",
-        "postalCode": "54000",
-        "addressLocality": "Nancy",
-        "addressCountry": "France",
-        "latitude": null,
-        "longitude": null,
-        "elevation": null,
-        "userAddresses": [
-          "/api/user_addresses/1"
-        ]
-      }
-    }
-  ]
-}
-JSON;
-
-        $deserializer = new Deserializer();
-        $user = $deserializer->deserialize(UserAddress::class, json_decode($jsonUser, true));
-
-        expect($user)->toBeAnInstanceOf(UserAddress::class);
+        expect($user->getAddresses())->toBeA('object');
+        expect($user->getAddresses()[0])->toBeAnInstanceOf(Address::class);
+        expect($user->getAddresses()[0]->getPostalCode())->toBe('54000');
+        expect($user->getAddresses()[0]->getLatitude())->toBeNull();
     });
 });
 

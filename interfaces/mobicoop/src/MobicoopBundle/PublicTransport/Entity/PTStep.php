@@ -41,19 +41,19 @@ class PTStep
     private $distance;
     
     /**
-     * @var int The duration of this step.
+     * @var string The duration of this step.
      */
     private $duration;
     
     /**
      * @var int The position of this step.
      */
-    private $pos;
+    private $position;
     
     /**
      * @var bool The step is the last step of the section.
      */
-    private $last;
+    private $isLast;
     
     /**
      * @var string The magnetic direction of this section.
@@ -83,106 +83,126 @@ class PTStep
     public function __construct($id)
     {
         $this->id = $id;
-        $this->setPos($id);
+        $this->setPosition($id);
     }
     
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
     
-    public function setId($id)
+    public function setId(int $id): self
     {
         $this->id = $id;
+        
+        return $this;
     }
     
-    public function getDistance()
+    public function getDistance(): ?int
     {
         return $this->distance;
     }
-
-    public function getDuration()
+    
+    public function setDistance(?int $distance): self
+    {
+        $this->distance = $distance;
+        
+        return $this;
+    }
+    
+    public function getDuration(): ?string
     {
         return $this->duration;
     }
-
-    public function getPos()
-    {
-        return $this->pos;
-    }
-
-    public function isLast()
-    {
-        return $this->last;
-    }
-
-    public function getPTLeg()
-    {
-        return $this->ptleg;
-    }
-
-    public function getPTDeparture()
-    {
-        return $this->ptdeparture;
-    }
-
-    public function getPTArrival()
-    {
-        return $this->ptarrival;
-    }
-
-    public function setDistance($distance)
-    {
-        $this->distance = $distance;
-    }
-
-    public function setDuration($duration)
+    
+    public function setDuration(?string $duration): self
     {
         $this->duration = $duration;
+        
+        return $this;
     }
-
-    public function setPos($pos)
+    
+    public function getPosition(): int
     {
-        $this->pos = $pos;
+        return $this->position;
     }
-
-    public function setLast($last)
+    
+    public function setPosition(int $position): self
     {
-        $this->last = $last;
+        $this->position = $position;
+        
+        return $this;
     }
-
-    public function setPTLeg($ptleg)
+    
+    public function isLast(): bool
     {
-        $this->ptleg = $ptleg;
+        return $this->isLast;
     }
-
-    public function setPTDeparture($ptdeparture)
+    
+    public function setIsLast(bool $isLast): self
     {
-        $this->ptdeparture = $ptdeparture;
+        $this->isLast = $isLast;
+        
+        return $this;
     }
-
-    public function setPTArrival($ptarrival)
-    {
-        $this->ptarrival = $ptarrival;
-    }
-
-    public function getMagneticDirection()
+    
+    public function getMagneticDirection(): ?string
     {
         return $this->magneticDirection;
     }
     
-    public function getRelativeDirection()
+    public function setMagneticDirection(?string $magneticDirection): self
+    {
+        $this->magneticDirection = $magneticDirection;
+        
+        return $this;
+    }
+    
+    public function getRelativeDirection(): ?string
     {
         return $this->relativeDirection;
     }
     
-    public function setMagneticDirection($magneticDirection)
-    {
-        $this->magneticDirection = $magneticDirection;
-    }
-    
-    public function setRelativeDirection($relativeDirection)
+    public function setRelativeDirection(?string $relativeDirection): self
     {
         $this->relativeDirection = $relativeDirection;
+        
+        return $this;
+    }
+    
+    public function getPTLeg(): PTLeg
+    {
+        return $this->ptleg;
+    }
+    
+    public function setPTLeg(PTLeg $ptleg): self
+    {
+        $this->ptleg = $ptleg;
+        
+        return $this;
+    }
+    
+    public function getPTDeparture(): PTDeparture
+    {
+        return $this->ptdeparture;
+    }
+    
+    public function setPTDeparture(PTDeparture $ptdeparture): self
+    {
+        $this->ptdeparture = $ptdeparture;
+        
+        return $this;
+    }
+    
+    public function getPTArrival(): PTArrival
+    {
+        return $this->ptarrival;
+    }
+    
+    public function setPTArrival(PTArrival $ptarrival): self
+    {
+        $this->ptarrival = $ptarrival;
+        
+        return $this;
     }
 }

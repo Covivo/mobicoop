@@ -23,11 +23,8 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Travel\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Validator\Constraints as Assert;
-
 /**
- * Carpooling : travel mode.
+ * Travel : travel mode.
  */
 class TravelMode
 {
@@ -37,13 +34,12 @@ class TravelMode
     private $id;
     
     /**
-     * @var string|null The iri of this proposal.
+     * @var string|null The iri of this travel mode.
      */
     private $iri;
 
     /**
      * @var string Name of the travel mode.
-     * @Assert\NotBlank
      */
     private $name;
 
@@ -52,9 +48,19 @@ class TravelMode
         return $this->id;
     }
     
+    public function setId(int $id)
+    {
+        $this->id = $id;
+    }
+    
     public function getIri()
     {
         return $this->iri;
+    }
+    
+    public function setIri($iri)
+    {
+        $this->iri = $iri;
     }
     
     public function getName(): ?string
@@ -69,13 +75,4 @@ class TravelMode
         return $this;
     }
     
-    public function setId(int $id)
-    {
-        $this->id = $id;
-    }
-    
-    public function setIri($iri)
-    {
-        $this->iri = $iri;
-    }
 }

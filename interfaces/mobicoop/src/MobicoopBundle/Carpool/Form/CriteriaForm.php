@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -40,6 +41,12 @@ class CriteriaForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+        ->add('isDriver', CheckboxType::class, [
+            'required' => false
+        ])
+        ->add('isPassenger', CheckboxType::class, [
+            'required' => false
+        ])
         ->add('frequency', ChoiceType::class, [
                 'choices'  => Criteria::FREQUENCY
         ])

@@ -21,12 +21,12 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Service;
+namespace Mobicoop\Bundle\MobicoopBundle\Api\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Entity\Resource;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Response;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Hydra;
-use Mobicoop\Bundle\MobicoopBundle\Entity\HydraView;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Response;
+use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
+use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\HydraView;
 
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;

@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Service;
+namespace Mobicoop\Bundle\MobicoopBundle\Api\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
@@ -29,7 +29,6 @@ use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourney;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\UserAddress;
 
 use TypeError;
 
@@ -37,16 +36,16 @@ use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Point;
 use Mobicoop\Bundle\MobicoopBundle\Travel\Entity\TravelMode;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Matching;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTDeparture;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTArrival;
-use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTMode;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTCompany;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLine;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTStep;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLeg;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Waypoint;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\IndividualStop;
 
 /**
  * Custom deserializer service.
@@ -66,16 +65,13 @@ class Deserializer
      *
      * @param string $class The expected class of the object
      * @param array $data   The array to deserialize
-     * @return User|UserAddress|Address|null
+     * @return User|Address|Proposal|Matching|GeoSearch|PTJourney|ExternalJourney|null
      */
     public function deserialize(string $class, array $data)
     {
         switch ($class) {
             case User::class:
                 return self::deserializeUser($data);
-                break;
-            case UserAddress::class:
-                return self::deserializeUserAddress($data);
                 break;
             case Address::class:
                 return self::deserializeAddress($data);
@@ -92,10 +88,10 @@ class Deserializer
             case PTJourney::class:
                 return self::deserializePTJourney($data);
                 break;
-            default:
-                break;
             case ExternalJourney::class:
                 return $data;
+                break;
+            default:
                 break;
 
 
@@ -110,27 +106,12 @@ class Deserializer
         if (isset($data["@id"])) {
             $user->setIri($data["@id"]);
         }
-        if (isset($data["userAddresses"])) {
-            $userAddresses = [];
-            foreach ($data["userAddresses"] as $userAddress) {
-                $userAddresses[] = self::deserializeUserAddress($userAddress);
+        if (isset($data["addresses"])) {
+            foreach ($data["addresses"] as $address) {
+                $user->addAddress(self::deserializeAddress($address));
             }
-            $user->setUserAddresses($userAddresses);
         }
         return $user;
-    }
-    
-    private function deserializeUserAddress(array $data): ?UserAddress
-    {
-        $userAddress = new UserAddress();
-        $userAddress = self::autoSet($userAddress, $data);
-        if (isset($data["@id"])) {
-            $userAddress->setIri($data["@id"]);
-        }
-        if (isset($data["address"])) {
-            $userAddress->setAddress(self::deserializeAddress($data["address"]));
-        }
-        return $userAddress;
     }
     
     private function deserializeAddress(array $data): ?Address
@@ -153,9 +134,9 @@ class Deserializer
         if (isset($data["user"])) {
             $proposal->setUser(self::deserializeUser($data['user']));
         }
-        if (isset($data["points"])) {
-            foreach ($data["points"] as $point) {
-                $proposal->addPoint(self::deserializePoint($point));
+        if (isset($data["waypoints"])) {
+            foreach ($data["waypoints"] as $waypoint) {
+                $proposal->addWaypoint(self::deserializeWaypoint($waypoint));
             }
         }
         if (isset($data["travelModes"])) {
@@ -166,23 +147,28 @@ class Deserializer
         if (isset($data["criteria"])) {
             $proposal->setCriteria(self::deserializeCriteria($data['criteria']));
         }
+        if (isset($data["individualStops"])) {
+            foreach ($data["individualStops"] as $individualStop) {
+                $proposal->addIndividualStop(self::deserializeIndividualStop($individualStop));
+            }
+        }
         return $proposal;
     }
     
-    private function deserializePoint(array $data): ?Point
+    private function deserializeWaypoint(array $data): ?Waypoint
     {
-        $point = new Point();
-        $point = self::autoSet($point, $data);
+        $waypoint = new Waypoint();
+        $waypoint = self::autoSet($waypoint, $data);
         if (isset($data["@id"])) {
-            $point->setIri($data["@id"]);
+            $waypoint->setIri($data["@id"]);
         }
         if (isset($data["address"])) {
-            $point->setAddress(self::deserializeAddress($data['address']));
+            $waypoint->setAddress(self::deserializeAddress($data['address']));
         }
         if (isset($data["travelMode"])) {
-            $point->setTravelMode(self::deserializeTravelMode($data['travelMode']));
+            $waypoint->setTravelMode(self::deserializeTravelMode($data['travelMode']));
         }
-        return $point;
+        return $waypoint;
     }
     
     private function deserializeTravelMode(array $data): ?TravelMode
@@ -205,6 +191,22 @@ class Deserializer
         return $criteria;
     }
     
+    private function deserializeIndividualStop(array $data): ?IndividualStop
+    {
+        $individualStop = new IndividualStop();
+        $individualStop = self::autoSet($individualStop, $data);
+        if (isset($data["@id"])) {
+            $individualStop->setIri($data["@id"]);
+        }
+        if (isset($data["proposal"])) {
+            $individualStop->setProposal(self::deserializeProposal($data['proposal']));
+        }
+        if (isset($data["address"])) {
+            $individualStop->setAddress(self::deserializeAddress($data['address']));
+        }
+        return $individualStop;
+    }
+    
     private function deserializeMatching(array $data): ?Matching
     {
         $matching = new Matching();
@@ -217,15 +219,6 @@ class Deserializer
         }
         if (isset($data["proposalRequest"])) {
             $matching->setProposalRequest(self::deserializeProposal($data['proposalRequest']));
-        }
-        if (isset($data["pointOfferFrom"])) {
-            $matching->setPointOfferFrom(self::deserializePoint($data['pointOfferFrom']));
-        }
-        if (isset($data["pointOfferTo"])) {
-            $matching->setPointOfferTo(self::deserializePoint($data['pointOfferTo']));
-        }
-        if (isset($data["pointRequestFrom"])) {
-            $matching->setPointRequestFrom(self::deserializePoint($data['pointRequestFrom']));
         }
         if (isset($data["criteria"])) {
             $matching->setCriteria(self::deserializeCriteria($data['criteria']));
@@ -254,11 +247,11 @@ class Deserializer
             $PTJourney->setPTArrival(self::deserializePTArrival($data["ptarrival"]));
         }
         if (isset($data["ptlegs"])) {
-            $ptlegs = [];
+            $nblegs = 0;
             foreach ($data["ptlegs"] as $ptleg) {
-                $ptlegs[] = self::deserializePTLeg($ptleg, count($ptlegs));
+                $nblegs++;
+                $PTJourney->addPTLeg(self::deserializePTLeg($ptleg, $nblegs));
             }
-            $PTJourney->setPTLegs($ptlegs);
         }
         return $PTJourney;
     }
@@ -293,29 +286,22 @@ class Deserializer
         if (isset($data["ptarrival"])) {
             $PTLeg->setPTArrival(self::deserializePTArrival($data["ptarrival"]));
         }
-        if (isset($data["ptmode"])) {
-            $PTLeg->setPTMode(self::deserializePTMode($data["ptmode"]));
+        if (isset($data["travelMode"])) {
+            $PTLeg->setTravelMode(self::deserializeTravelMode($data["travelMode"]));
         }
         if (isset($data["ptline"])) {
             $PTLeg->setPTLine(self::deserializePTLine($data["ptline"]));
         }
         if (isset($data["ptsteps"])) {
-            $ptsteps = [];
+            $nbsteps = 0;
             foreach ($data["ptsteps"] as $ptstep) {
-                $ptsteps[] = self::deserializePTStep($ptstep, count($ptstep));
+                $nbsteps++;
+                $PTLeg->addPTStep(self::deserializePTStep($ptstep, $nbsteps));
             }
-            $PTLeg->setPTSteps($ptsteps);
         }
         return $PTLeg;
     }
-    
-    private function deserializePTMode(array $data): ?PTMode
-    {
-        $PTMode = new PTMode();
-        $PTMode = self::autoSet($PTMode, $data);
-        return $PTMode;
-    }
-    
+        
     private function deserializePTLine(array $data): ?PTLine
     {
         $PTLine = new PTLine();

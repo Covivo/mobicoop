@@ -23,6 +23,8 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity;
 
+use Mobicoop\Bundle\MobicoopBundle\Travel\Entity\TravelMode;
+
 /**
  * A public transport line.
  *
@@ -56,67 +58,113 @@ class PTLine
     private $destination;
     
     /**
+     * @var string The direction of this line if no origin / destination specified.
+     */
+    private $direction;
+    
+    /**
      * @var PTCompany The company that manage this line.
      */
     private $ptcompany;
+    
+    /**
+     * @var TravelMode The transport mode of this leg.
+     */
+    private $travelMode;
         
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
     
-    public function setId($id)
+    public function setId(int $id): self
     {
         $this->id = $id;
+        
+        return $this;
     }
     
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
     
-    public function getNumber()
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+        
+        return $this;
+    }
+    
+    public function getNumber(): ?string
     {
         return $this->number;
     }
-
-    public function getOrigin()
+    
+    public function setNumber(?string $number): self
+    {
+        $this->number = $number;
+        
+        return $this;
+    }
+    
+    public function getOrigin(): ?string
     {
         return $this->origin;
     }
-
-    public function getDestination()
+    
+    public function setOrigin(?string $origin): self
+    {
+        $this->origin = $origin;
+        
+        return $this;
+    }
+    
+    public function getDestination(): ?string
     {
         return $this->destination;
     }
-
-    public function getPTCompany()
+    
+    public function setDestination(?string $destination): self
+    {
+        $this->destination = $destination;
+        
+        return $this;
+    }
+    
+    public function getDirection(): ?string
+    {
+        return $this->direction;
+    }
+    
+    public function setDirection(?string $direction): self
+    {
+        $this->direction = $direction;
+        
+        return $this;
+    }
+    
+    public function getPTCompany(): PTCompany
     {
         return $this->ptcompany;
     }
-
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
     
-    public function setNumber($number)
-    {
-        $this->number = $number;
-    }
-
-    public function setOrigin($origin)
-    {
-        $this->origin = $origin;
-    }
-
-    public function setDestination($destination)
-    {
-        $this->destination = $destination;
-    }
-
-    public function setPTCompany($ptcompany)
+    public function setPTCompany(PTCompany $ptcompany): self
     {
         $this->ptcompany = $ptcompany;
+        
+        return $this;
+    }
+    
+    public function getTravelMode(): TravelMode
+    {
+        return $this->travelMode;
+    }
+    
+    public function setTravelMode(TravelMode $travelMode): self
+    {
+        $this->travelMode = $travelMode;
+        
+        return $this;
     }
 }
