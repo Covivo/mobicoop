@@ -54,14 +54,14 @@ class Criteria
     
     /**
      * @var boolean The user can be a driver.
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $isDriver;
     
     /**
      * @var boolean The user can be a passenger.
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $isPassenger;
@@ -606,5 +606,4 @@ class Criteria
         
         return $this;
     }
-    
 }

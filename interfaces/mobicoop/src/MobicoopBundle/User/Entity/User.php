@@ -166,7 +166,7 @@ class User implements Resource
      */
     private $asks;
         
-    public function __construct($id=null,$status=null)
+    public function __construct($id=null, $status=null)
     {
         if ($id) {
             $this->setId($id);

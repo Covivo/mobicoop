@@ -74,5 +74,4 @@ class TravelMode
 
         return $this;
     }
-    
 }
