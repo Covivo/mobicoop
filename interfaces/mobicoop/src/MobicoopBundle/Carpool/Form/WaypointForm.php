@@ -21,34 +21,37 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
+namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Form;
 
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Waypoint;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Form\AddressForm;
 
 /**
- * DeserializerGeoSearchSpec.php
- * Tests for Deserializer - GeoSearch
- * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 24/12/2018
- * Time: 13:46
+ * Point form.
  *
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-
-describe('deserializeGeoSearch', function () {
-    describe('deserialize GeoSearch', function () {
-        it('deserialize GeoSearch should return an Address object', function () {
-            $jsonGeoSearch = <<<JSON
-  {
-    "@id": "\/addresses\/1",
-    "id": 0
-  }
-JSON;
-
-            $deserializer = new Deserializer();
-            $GeoSearch = $deserializer->deserialize(GeoSearch::class, json_decode($jsonGeoSearch, true));
-            expect($GeoSearch)->toBeAnInstanceOf(Address::class);
-        });
-    });
-});
+class WaypointForm extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+        ->add('position')
+        ->add('isDestination', CheckboxType::class, [
+                'required' => false
+        ])
+        ->add('address', AddressForm::class)
+        ;
+    }
+    
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+                'data_class' => Waypoint::class,
+        ));
+    }
+}

@@ -21,34 +21,48 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
-
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+namespace Mobicoop\Bundle\MobicoopBundle\Api\Entity;
 
 /**
- * DeserializerGeoSearchSpec.php
- * Tests for Deserializer - GeoSearch
- * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 24/12/2018
- * Time: 13:46
- *
+ * A DataProvider response.
  */
+class Response
+{
+    const DEFAULT_CODE = 404;
+    
+    /**
+     * @var int $code The response code.
+     */
+    private $code;
+    
+    /**
+     * @var object|array $value The value of the response.
+     */
+    private $value;
+    
+    public function __construct(int $code=self::DEFAULT_CODE, $value=null)
+    {
+        $this->setCode($code);
+        $this->setValue($value);
+    }
+    
+    public function getCode(): int
+    {
+        return $this->code;
+    }
 
-describe('deserializeGeoSearch', function () {
-    describe('deserialize GeoSearch', function () {
-        it('deserialize GeoSearch should return an Address object', function () {
-            $jsonGeoSearch = <<<JSON
-  {
-    "@id": "\/addresses\/1",
-    "id": 0
-  }
-JSON;
+    public function getValue()
+    {
+        return $this->value;
+    }
 
-            $deserializer = new Deserializer();
-            $GeoSearch = $deserializer->deserialize(GeoSearch::class, json_decode($jsonGeoSearch, true));
-            expect($GeoSearch)->toBeAnInstanceOf(Address::class);
-        });
-    });
-});
+    public function setCode(int $code)
+    {
+        $this->code = $code;
+    }
+
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
+}

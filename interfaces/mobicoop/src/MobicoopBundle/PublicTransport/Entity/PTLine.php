@@ -21,26 +21,12 @@
  *    LICENSE
  **************************/
 
-namespace App\PublicTransport\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use App\Travel\Entity\TravelMode;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\ORM\Mapping as ORM;
+use Mobicoop\Bundle\MobicoopBundle\Travel\Entity\TravelMode;
 
 /**
  * A public transport line.
- *
- * @ORM\Entity
- * @ApiResource(
- *      routePrefix="/public_transport",
- *      attributes={
- *          "normalization_context"={"groups"={"pt"}, "enable_max_depth"="true"},
- *      },
- *      collectionOperations={},
- *      itemOperations={"get"={"path"="/lines/{id}"}}
- * )
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
@@ -48,75 +34,44 @@ class PTLine
 {
     /**
      * @var int The id of this line.
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @ApiProperty(identifier=true)
      */
     private $id;
     
     /**
      * @var string The name of this line.
-     *
-     * @ORM\Column(type="string", length=45)
-     * @Groups("pt")
      */
     private $name;
     
     /**
      * @var string The number of this line.
-     *
-     * @ORM\Column(type="string", length=10, nullable=true)
-     * @Groups("pt")
      */
     private $number;
     
     /**
      * @var string The origin of this line.
-     *
-     * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups("pt")
      */
     private $origin;
     
     /**
      * @var string The destination of this line.
-     *
-     * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups("pt")
      */
     private $destination;
     
     /**
      * @var string The direction of this line if no origin / destination specified.
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups("pt")
      */
     private $direction;
     
     /**
      * @var PTCompany The company that manage this line.
-     *
-     * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTCompany")
-     * @Groups("pt")
      */
     private $ptcompany;
     
     /**
-     * @var TravelMode The transport mode of this line.
-     *
-     * @ORM\ManyToOne(targetEntity="App\Travel\Entity\TravelMode")
-     * @Groups("pt")
+     * @var TravelMode The transport mode of this leg.
      */
     private $travelMode;
-    
-    public function __construct($id)
-    {
-        $this->id = $id;
-    }
-    
+        
     public function getId(): int
     {
         return $this->id;
@@ -152,7 +107,7 @@ class PTLine
         
         return $this;
     }
-
+    
     public function getOrigin(): ?string
     {
         return $this->origin;
@@ -188,12 +143,12 @@ class PTLine
         
         return $this;
     }
-
+    
     public function getPTCompany(): PTCompany
     {
         return $this->ptcompany;
     }
-
+    
     public function setPTCompany(PTCompany $ptcompany): self
     {
         $this->ptcompany = $ptcompany;

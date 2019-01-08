@@ -23,8 +23,8 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Service\Deserializer;
-use Mobicoop\Bundle\MobicoopBundle\Entity\ExternalJourney;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
+use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourney;
 
 /**
  * DeserializerAdressSpec.php

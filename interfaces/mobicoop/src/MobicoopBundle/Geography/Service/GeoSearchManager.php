@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -21,34 +20,41 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
+namespace Mobicoop\Bundle\MobicoopBundle\Geography\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 
 /**
- * DeserializerGeoSearchSpec.php
- * Tests for Deserializer - GeoSearch
+ * GeoSearchManager.php
+ * Geopoint search management service.
  * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 24/12/2018
- * Time: 13:46
+ * Date: 29/11/2018
+ * Time: 16:38
  *
  */
 
-describe('deserializeGeoSearch', function () {
-    describe('deserialize GeoSearch', function () {
-        it('deserialize GeoSearch should return an Address object', function () {
-            $jsonGeoSearch = <<<JSON
-  {
-    "@id": "\/addresses\/1",
-    "id": 0
-  }
-JSON;
+class GeoSearchManager
+{
+    private $dataProvider;
 
-            $deserializer = new Deserializer();
-            $GeoSearch = $deserializer->deserialize(GeoSearch::class, json_decode($jsonGeoSearch, true));
-            expect($GeoSearch)->toBeAnInstanceOf(Address::class);
-        });
-    });
-});
+    public function __construct(DataProvider $dataProvider)
+    {
+        $this->dataProvider = $dataProvider;
+        $this->dataProvider->setClass(GeoSearch::class, 'geo_search');
+    }
+
+    /**
+     * Get all Geosearch results
+     *
+     * @return array|GeoSearch|null
+     */
+    public function getGeoSearch(array $params)
+    {
+        $response = $this->dataProvider->getCollection($params);
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
+}

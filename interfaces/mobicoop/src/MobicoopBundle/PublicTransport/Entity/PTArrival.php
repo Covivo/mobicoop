@@ -21,28 +21,13 @@
  *    LICENSE
  **************************/
 
-namespace App\PublicTransport\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Serializer\Annotation\Groups;
-use App\Geography\Entity\Address;
-use Doctrine\ORM\Mapping as ORM;
-use App\Carpool\Entity\IndividualStop;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\IndividualStop;
 
 /**
  * An arrival.
- *
- * @ORM\Entity
- * @ApiResource(
- *      routePrefix="/public_transport",
- *      attributes={
- *          "normalization_context"={"groups"={"pt"}, "enable_max_depth"="true"},
- *      },
- *      collectionOperations={},
- *      itemOperations={"get"={"path"="/arrivals/{id}"}}
- * )
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
@@ -50,51 +35,29 @@ class PTArrival
 {
     /**
      * @var int The id of this arrival.
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @ApiProperty(identifier=true)
      */
     private $id;
     
     /**
      * @var string The name of this arrival.
-     *
-     * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups("pt")
      */
     private $name;
     
     /**
-     * @var \DateTimeInterface The date and time of this arrival.
-     *
-     * @ORM\Column(type="datetime")
-     * @Groups("pt")
+     * @var \DateTime The date and time of this arrival.
      */
     private $date;
    
     /**
      * @var Address The address of this arrival.
-     *
-     * @ORM\ManyToOne(targetEntity="App\Geography\Entity\Address")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups("pt")
      */
     private $address;
     
     /**
      * @var IndividualStop|null Individual stop if multimodal using carpool.
-     *
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\IndividualStop")
      */
     private $individualStop;
-    
-    public function __construct($id)
-    {
-        $this->id = $id;
-    }
-    
+        
     public function getId(): int
     {
         return $this->id;

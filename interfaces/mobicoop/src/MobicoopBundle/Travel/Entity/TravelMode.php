@@ -21,34 +21,57 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
-
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+namespace Mobicoop\Bundle\MobicoopBundle\Travel\Entity;
 
 /**
- * DeserializerGeoSearchSpec.php
- * Tests for Deserializer - GeoSearch
- * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 24/12/2018
- * Time: 13:46
- *
+ * Travel : travel mode.
  */
+class TravelMode
+{
+    /**
+     * @var int The id of this travel mode.
+     */
+    private $id;
+    
+    /**
+     * @var string|null The iri of this travel mode.
+     */
+    private $iri;
 
-describe('deserializeGeoSearch', function () {
-    describe('deserialize GeoSearch', function () {
-        it('deserialize GeoSearch should return an Address object', function () {
-            $jsonGeoSearch = <<<JSON
-  {
-    "@id": "\/addresses\/1",
-    "id": 0
-  }
-JSON;
+    /**
+     * @var string Name of the travel mode.
+     */
+    private $name;
 
-            $deserializer = new Deserializer();
-            $GeoSearch = $deserializer->deserialize(GeoSearch::class, json_decode($jsonGeoSearch, true));
-            expect($GeoSearch)->toBeAnInstanceOf(Address::class);
-        });
-    });
-});
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+    
+    public function setId(int $id)
+    {
+        $this->id = $id;
+    }
+    
+    public function getIri()
+    {
+        return $this->iri;
+    }
+    
+    public function setIri($iri)
+    {
+        $this->iri = $iri;
+    }
+    
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+}

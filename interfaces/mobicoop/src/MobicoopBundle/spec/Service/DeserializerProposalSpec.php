@@ -23,8 +23,8 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Service\Deserializer;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 
 /**
  * DeserializerProposalSpec.php
@@ -37,18 +37,14 @@ use Mobicoop\Bundle\MobicoopBundle\Entity\Proposal;
 
 describe('deserializeProposal', function () {
     describe('deserialize Proposal', function () {
-        it('deserialize Proposal should return an Address object', function () {
+        it('deserialize Proposal should return a Proposal object', function () {
             $jsonProposal = <<<JSON
 {
     "id": 0,
-    "proposalType": 0,
-    "journeyType": 0,
-    "distanceReal": 0,
-    "distanceFly": 0,
-    "duration": 0,
-    "cape": "string",
+    "type": 0,
     "user": {
       "id": 0,
+      "status": 0,
       "givenName": "string",
       "familyName": "string",
       "email": "string",
@@ -58,51 +54,37 @@ describe('deserializeProposal', function () {
       "telephone": "string",
       "maxDeviationTime": 0,
       "maxDeviationDistance": 0,
-      "userAddresses": [
+      "anyRouteAsPassenger": true,
+      "multiTransportMode": true,
+      "addresses": [
         {
           "id": 0,
-          "name": "string",
-          "address": {
-            "id": 0,
-            "streetAddress": "string",
-            "postalCode": "string",
-            "addressLocality": "string",
-            "addressCountry": "string",
-            "latitude": "string",
-            "longitude": "string",
-            "elevation": 0
-          }
+          "streetAddress": "string",
+          "postalCode": "string",
+          "addressLocality": "string",
+          "addressCountry": "string",
+          "latitude": "string",
+          "longitude": "string",
+          "elevation": 0,
+          "name": "string"
+        }
+      ],
+      "cars": [
+        {
+          "id": 0,
+          "brand": "string",
+          "model": "string",
+          "color": "string",
+          "siv": "string",
+          "seats": 0
         }
       ]
     },
-    "points": [
+    "waypoints": [
       {
         "id": 0,
         "position": 0,
-        "lastPoint": true,
-        "distanceNextReal": 0,
-        "distanceNextFly": 0,
-        "durationNext": 0,
-        "pathStart": {
-          "id": 0,
-          "position": 0,
-          "detail": "string",
-          "encodeFormat": 0,
-          "travelMode": {
-            "id": 0,
-            "name": "string"
-          }
-        },
-        "pathDestination": {
-          "id": 0,
-          "position": 0,
-          "detail": "string",
-          "encodeFormat": 0,
-          "travelMode": {
-            "id": 0,
-            "name": "string"
-          }
-        },
+        "isDestination": true,
         "address": {
           "id": 0,
           "streetAddress": "string",
@@ -111,10 +93,7 @@ describe('deserializeProposal', function () {
           "addressCountry": "string",
           "latitude": "string",
           "longitude": "string",
-          "elevation": 0
-        },
-        "travelMode": {
-          "id": 0,
+          "elevation": 0,
           "name": "string"
         }
       }
@@ -127,11 +106,13 @@ describe('deserializeProposal', function () {
     ],
     "criteria": {
       "id": 0,
+      "isDriver": true,
+      "isPassenger": true,
       "frequency": 0,
       "seats": 0,
-      "fromDate": "2018-12-24T13:20:42.562Z",
-      "fromTime": "2018-12-24T13:20:42.562Z",
-      "toDate": "2018-12-24T13:20:42.562Z",
+      "fromDate": "2019-01-08T14:41:59.572Z",
+      "fromTime": "2019-01-08T14:41:59.572Z",
+      "toDate": "2019-01-08T14:41:59.572Z",
       "monCheck": true,
       "tueCheck": true,
       "wedCheck": true,
@@ -139,15 +120,48 @@ describe('deserializeProposal', function () {
       "friCheck": true,
       "satCheck": true,
       "sunCheck": true,
-      "monTime": "2018-12-24T13:20:42.562Z",
-      "tueTime": "2018-12-24T13:20:42.562Z",
-      "wedTime": "2018-12-24T13:20:42.562Z",
-      "thuTime": "2018-12-24T13:20:42.562Z",
-      "friTime": "2018-12-24T13:20:42.562Z",
-      "satTime": "2018-12-24T13:20:42.562Z",
-      "sunTime": "2018-12-24T13:20:42.562Z",
-      "marginTime": 0
-    }
+      "monTime": "2019-01-08T14:41:59.572Z",
+      "tueTime": "2019-01-08T14:41:59.572Z",
+      "wedTime": "2019-01-08T14:41:59.572Z",
+      "thuTime": "2019-01-08T14:41:59.572Z",
+      "friTime": "2019-01-08T14:41:59.572Z",
+      "satTime": "2019-01-08T14:41:59.572Z",
+      "sunTime": "2019-01-08T14:41:59.572Z",
+      "marginTime": 0,
+      "maxDeviationTime": 0,
+      "maxDeviationDistance": 0,
+      "anyRouteAsPassenger": true,
+      "multiTransportMode": true,
+      "car": {
+        "id": 0,
+        "brand": "string",
+        "model": "string",
+        "color": "string",
+        "siv": "string",
+        "seats": 0
+      },
+      "directionDriver": "string",
+      "directionPassenger": "string",
+      "ptjourney": "string"
+    },
+    "individualStops": [
+      {
+        "id": 0,
+        "position": 0,
+        "delay": 0,
+        "address": {
+          "id": 0,
+          "streetAddress": "string",
+          "postalCode": "string",
+          "addressLocality": "string",
+          "addressCountry": "string",
+          "latitude": "string",
+          "longitude": "string",
+          "elevation": 0,
+          "name": "string"
+        }
+      }
+    ]
   }
 JSON;
 

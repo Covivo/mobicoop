@@ -21,34 +21,46 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
-
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+namespace Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity;
 
 /**
- * DeserializerGeoSearchSpec.php
- * Tests for Deserializer - GeoSearch
- * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 24/12/2018
- * Time: 13:46
+ * A public transport company.
  *
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-
-describe('deserializeGeoSearch', function () {
-    describe('deserialize GeoSearch', function () {
-        it('deserialize GeoSearch should return an Address object', function () {
-            $jsonGeoSearch = <<<JSON
-  {
-    "@id": "\/addresses\/1",
-    "id": 0
-  }
-JSON;
-
-            $deserializer = new Deserializer();
-            $GeoSearch = $deserializer->deserialize(GeoSearch::class, json_decode($jsonGeoSearch, true));
-            expect($GeoSearch)->toBeAnInstanceOf(Address::class);
-        });
-    });
-});
+class PTCompany
+{
+    /**
+     * @var int The id of this company.
+     */
+    private $id;
+    
+    /**
+     * @var string The name of this company.
+     */
+    private $name;
+    
+    public function getId(): int
+    {
+        return $this->id;
+    }
+    
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+        
+        return $this;
+    }
+    
+    public function getName(): string
+    {
+        return $this->name;
+    }
+    
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+        
+        return $this;
+    }
+}

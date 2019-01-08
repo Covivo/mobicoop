@@ -21,34 +21,37 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
+namespace Mobicoop\Bundle\MobicoopBundle\Geography\Controller;
 
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Service\GeoSearchManager;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * DeserializerGeoSearchSpec.php
- * Tests for Deserializer - GeoSearch
+ * TestAutoCompleteController.php
+ * Class
  * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 24/12/2018
- * Time: 13:46
+ * Date: 27/11/2018
+ * Time: 13:23
  *
  */
 
-describe('deserializeGeoSearch', function () {
-    describe('deserialize GeoSearch', function () {
-        it('deserialize GeoSearch should return an Address object', function () {
-            $jsonGeoSearch = <<<JSON
-  {
-    "@id": "\/addresses\/1",
-    "id": 0
-  }
-JSON;
+class AutoCompleteController extends AbstractController
+{
 
-            $deserializer = new Deserializer();
-            $GeoSearch = $deserializer->deserialize(GeoSearch::class, json_decode($jsonGeoSearch, true));
-            expect($GeoSearch)->toBeAnInstanceOf(Address::class);
-        });
-    });
-});
+    /**
+     * Retrieve all geosearch results of an input
+     *
+     * @Route("/aut")
+     */
+    public function AutoCompleteIndex(GeoSearchManager $geoSearchManager)
+    {
+        return $this->render(
+            '@Mobicoop/autocomplete/index.html.twig',
+            [
+                'GeoSearch' => $geoSearchManager->getGeoSearch(['input'=>'Nancy'])
+            ]
+        );
+    }
+}
