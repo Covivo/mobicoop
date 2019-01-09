@@ -31,7 +31,6 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 
 class UserProvider implements UserProviderInterface
 {
-
     private $dataProvider;
 
     public function __construct(DataProvider $dataProvider)
@@ -65,7 +64,6 @@ class UserProvider implements UserProviderInterface
 
     private function fetchUser($username)
     {
-
         $response = $this->dataProvider->getCollection(array("email"=>$username));
         if ($response->getCode() == 200) {
             $userData = $response->getValue();
@@ -73,11 +71,9 @@ class UserProvider implements UserProviderInterface
             if (is_array($userData->getMember()) && count($userData->getMember())==1) {
                 return $userData->getMember()[0];
             }
-
         }
         throw new UsernameNotFoundException(
             sprintf('Username "%s" does not exist.', $username)
         );
     }
-
 }

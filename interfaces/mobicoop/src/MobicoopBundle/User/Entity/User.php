@@ -497,5 +497,4 @@ class User implements Resource, UserInterface, EquatableInterface
 
         return true;
     }
-
 }

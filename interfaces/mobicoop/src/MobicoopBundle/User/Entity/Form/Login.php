@@ -39,7 +39,7 @@ class Login
      * @Assert\NotBlank()
      * @return mixed
      */
-    public function getUsername ()
+    public function getUsername()
     {
         return $this->username;
     }
@@ -48,7 +48,7 @@ class Login
      * @Assert\NotBlank()
      * @return mixed
      */
-    public function getPassword ()
+    public function getPassword()
     {
         return $this->password;
     }
@@ -56,7 +56,7 @@ class Login
     /**
      * @param mixed $username
      */
-    public function setUsername ($username)
+    public function setUsername($username)
     {
         $this->username = $username;
     }
@@ -64,9 +64,8 @@ class Login
     /**
      * @param mixed $password
      */
-    public function setPassword ($password)
+    public function setPassword($password)
     {
         $this->password = $password;
     }
-
 }

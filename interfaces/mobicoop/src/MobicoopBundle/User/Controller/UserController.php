@@ -22,6 +22,7 @@
  **************************/
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Controller;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
@@ -242,6 +243,4 @@ class UserController extends AbstractController
 
         return $this->render('@Mobicoop/user/login.html.twig', ["form"=>$form->createView()]);
     }
-
-
 }
