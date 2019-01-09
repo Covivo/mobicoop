@@ -22,20 +22,19 @@
  **************************/
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Controller;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-
-
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\User\Form\UserForm;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Form\ProposalForm;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\Form\Login;
+use Mobicoop\Bundle\MobicoopBundle\User\Form\UserLoginForm;
 
 /**
  * Controller class for user related actions.
@@ -228,4 +227,21 @@ class UserController extends AbstractController
             ]);
         }
     }
+
+    /**
+     * User login.
+     *
+     * @Route("/user/login", name="login")
+     *
+     */
+    public function login()
+    {
+        $login = new Login();
+
+        $form = $this->createForm(UserLoginForm::class, $login);
+
+        return $this->render('@Mobicoop/user/login.html.twig', ["form"=>$form->createView()]);
+    }
+
+
 }

@@ -16,5 +16,13 @@ body {
     .logo {
       max-height: 4rem;
     }
+    .buttons {
+      .button {
+        &.is-primary {
+          background-color: $mobiPink;
+          color: $mobiGreen;
+        }
+      }
+    }
   }
 }
