@@ -361,6 +361,7 @@ class Deserializer
                         // fail... it must be an object or array property, we will treat it manually
                         $type = $propertyInfo->getTypes(get_class($object), $property)[0]->getClassName();
                         switch ($type) {
+                            case "DateTime":
                             case "DateTimeInterface":
                                 try {
                                     $catchedValue = \DateTime::createFromFormat(self::DATETIME_FORMAT, $data[$property]);
