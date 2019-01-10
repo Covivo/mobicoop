@@ -31,11 +31,13 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\EquatableInterface;
 
 /**
  * A user.
  */
-class User implements Resource
+class User implements Resource, UserInterface, EquatableInterface
 {
     const MAX_DEVIATION_TIME = 600;
     const MAX_DEVIATION_DISTANCE = 10000;
@@ -456,5 +458,43 @@ class User implements Resource
         }
         
         return $this;
+    }
+
+
+    public function getRoles()
+    {
+        return array('ROLE_USER');
+    }
+
+
+    public function getSalt()
+    {
+        return  null;
+    }
+
+    public function getUsername()
+    {
+        return $this->email;
+    }
+
+    public function eraseCredentials()
+    {
+    }
+
+    public function isEqualTo(UserInterface $user)
+    {
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        if ($this->password !== $user->getPassword()) {
+            return false;
+        }
+
+        if ($this->email !== $user->getUsername()) {
+            return false;
+        }
+
+        return true;
     }
 }

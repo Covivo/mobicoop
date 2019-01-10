@@ -15,20 +15,41 @@
         <a class="navbar-item" href="../">
           <img class="logo" src="{{asset('images/logo.jpg')}}" alt="Bulma: a modern CSS framework based on Flexbox"/>
         </a>
-        <div class="navbar-burger burger" data-target="navMenu">
-          <span></span><span></span><span></span>
-        </div>
+
+          <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+
       </div>
       <div class="navbar-menu" id="navMenu">
         <div class="navbar-end">
-          <div class="navbar-item has-dropdown is-hoverable" id="accountMenu"><a class="navbar-link">Account</a>
-            <div class="navbar-dropdown">
-              <a class="navbar-item">Dashboard</a>
-              <a href="{{path('users')}}" class="navbar-item">Profile</a>
-              <a class="navbar-item">Settings</a>
-              <hr class="navbar-divider" />
-              <div class="navbar-item">Logout</div>
+          {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+          <div class="buttons">
+            <a href="#" class="button is-primary">
+              <strong>Sign up</strong>
+            </a>
+            <a href="/user/login" class="button is-light">
+              Log in
+            </a>
+          </div>
+          {% else %}
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link">
+                    My account
+                </a>
+                <div class="navbar-dropdown">
+                  <a href="/user/{{ app.user.id }}" class="navbar-item">
+                      My Profile
+                  </a>
+                  <hr class="navbar-divider">
+                  <a href="/user/logout" class="navbar-item">
+                      Logout
+                  </a>
+              </div>
             </div>
+          {% endif %}
           </div>
         </div>
       </div>
@@ -43,7 +64,7 @@
 <footer class="footer">
   <div class="content has-text-centered">
     <p>
-      <strong>Covivo</strong> by <a href="https://roulezmalin.fr">Covivo team</a>. The source code is licensed
+      <strong>Covivo</strong> by <a href="https://www.roulezmalin.fr">Covivo team</a>. The source code is licensed
       <a href="#">AGPL3</a>. The website content
       is licensed <a href="#">AGPL3 too</a>.
     </p>

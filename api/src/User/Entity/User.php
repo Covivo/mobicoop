@@ -120,7 +120,7 @@ class User
      * @var string The encoded password of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups("write")
+     * @Groups({"read","write"})
      */
     private $password;
     

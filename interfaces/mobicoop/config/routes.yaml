@@ -12,3 +12,5 @@ user_annotations:
     # loads routes from the PHP annotations of the controllers found in that directory
     resource: '../src/MobicoopBundle/User/Controller/'
     type:     annotation
+logout:
+    path: /user/logout

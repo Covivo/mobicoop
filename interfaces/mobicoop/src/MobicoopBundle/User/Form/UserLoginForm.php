@@ -21,23 +21,34 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Spec\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\User\Form;
 
-use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\Form\Login;
 
-/* This is a sample functionnal Test */
-describe('DefaultController', function () {
-    describe('/', function () {
-        it('Index page should return status code 200 & contains an image with rsc = /images/logo.jpg', function () {
-            $request = $this->request->create('/', 'GET');
-            $response = $this->kernel->handle($request);
+/**
+ * User Login form.
+ *
+ * @author Maxime Bardot <maxime.bardot@covivo.eu>
+ */
+class UserLoginForm extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+        ->add('username')
+        ->add('password', PasswordType::class)
+        ->add('login', SubmitType::class);
+    }
 
-            $status = $response->getStatusCode();
-            $crawler = new Crawler($response->getContent());
-            $logo = trim($crawler->filter('body .navbar img')->attr('src'));
-
-            expect($status)->toEqual(200);
-            expect($logo)->toContain('/images/logo.jpg');
-        });
-    });
-});
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+            'data_class' => Login::class,
+        ));
+    }
+}

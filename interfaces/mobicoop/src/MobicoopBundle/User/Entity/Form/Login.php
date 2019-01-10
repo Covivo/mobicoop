@@ -21,23 +21,51 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Spec\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\User\Entity\Form;
 
-use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\Validator\Constraints as Assert;
 
-/* This is a sample functionnal Test */
-describe('DefaultController', function () {
-    describe('/', function () {
-        it('Index page should return status code 200 & contains an image with rsc = /images/logo.jpg', function () {
-            $request = $this->request->create('/', 'GET');
-            $response = $this->kernel->handle($request);
+/**
+ * Login Entity
+ *
+ * @author Sylvain Briat <Sylvain.Briat@covivo.eu>
+ */
+class Login
+{
+    private $username;
+    private $password;
 
-            $status = $response->getStatusCode();
-            $crawler = new Crawler($response->getContent());
-            $logo = trim($crawler->filter('body .navbar img')->attr('src'));
+    /**
+     * @Assert\NotBlank()
+     * @return mixed
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
 
-            expect($status)->toEqual(200);
-            expect($logo)->toContain('/images/logo.jpg');
-        });
-    });
-});
+    /**
+     * @Assert\NotBlank()
+     * @return mixed
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * @param mixed $username
+     */
+    public function setUsername($username)
+    {
+        $this->username = $username;
+    }
+
+    /**
+     * @param mixed $password
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+    }
+}
