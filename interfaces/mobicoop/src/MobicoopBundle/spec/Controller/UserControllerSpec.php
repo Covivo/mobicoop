@@ -54,12 +54,12 @@ describe('UserController', function () {
             expect($status)->toEqual(404);
         });
     });
-    describe('/user/create', function () {
-        it('User create page should return status code 200 and contains a givenName form input', function () {
-            $request = $this->request->create('/user/create', 'GET');
+    describe('/user/signup', function () {
+        it('User sign up page should return status code 200 and contains a givenName form input', function () {
+            $request = $this->request->create('/user/signup', 'GET');
             $response = $this->kernel->handle($request);
             $status = $response->getStatusCode();
-            $crawler = new Crawler($response->getContent(), LOCAL_URL.'/user/create');
+            $crawler = new Crawler($response->getContent(), LOCAL_URL.'/user/signup');
             $form = $crawler->filter('form')->form();
 
             expect($form->has('user_form[givenName]'))->toBe(true);
