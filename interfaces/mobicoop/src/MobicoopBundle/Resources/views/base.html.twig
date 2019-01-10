@@ -27,10 +27,10 @@
         <div class="navbar-end">
           {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
           <div class="buttons">
-            <a href="#" class="button is-primary">
+            <a href="{{ path('user_sign_up') }}" class="button is-primary">
               <strong>Sign up</strong>
             </a>
-            <a href="/user/login" class="button is-light">
+            <a href="{{ path('user_login') }}" class="button is-light">
               Log in
             </a>
           </div>
@@ -40,11 +40,11 @@
                     My account
                 </a>
                 <div class="navbar-dropdown">
-                  <a href="/user/{{ app.user.id }}" class="navbar-item">
+                  <a href="{{ path('user', {'id': app.user.id}) }}" class="navbar-item">
                       My Profile
                   </a>
                   <hr class="navbar-divider">
-                  <a href="/user/logout" class="navbar-item">
+                  <a href="{{ path('logout') }}" class="navbar-item">
                       Logout
                   </a>
               </div>

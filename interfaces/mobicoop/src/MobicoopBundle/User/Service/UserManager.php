@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * User management service.
@@ -32,11 +33,13 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 class UserManager
 {
     private $dataProvider;
+    private $encoder;
     
-    public function __construct(DataProvider $dataProvider)
+    public function __construct(DataProvider $dataProvider, UserPasswordEncoderInterface $encoder)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(User::class);
+        $this->encoder = $encoder;
     }
     
     /**
@@ -78,6 +81,8 @@ class UserManager
      */
     public function createUser(User $user)
     {
+        // encoding of the password
+        $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
         $response = $this->dataProvider->post($user);
         if ($response->getCode() == 201) {
             return $response->getValue();

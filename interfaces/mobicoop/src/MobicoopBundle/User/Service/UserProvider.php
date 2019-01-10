@@ -72,6 +72,7 @@ class UserProvider implements UserProviderInterface
                 return $userData->getMember()[0];
             }
         }
+        
         throw new UsernameNotFoundException(
             sprintf('Username "%s" does not exist.', $username)
         );

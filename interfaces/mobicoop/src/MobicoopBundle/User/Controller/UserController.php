@@ -74,15 +74,17 @@ class UserController extends AbstractController
     /**
      * Create a user.
      *
-     * @Route("/user/create", name="user_create")
+     * @Route("/user/signup", name="user_sign_up")
      *
      */
-    public function userCreate(UserManager $userManager, Request $request)
+    public function userSignUp(UserManager $userManager, Request $request)
     {
         $user = new User();
         
-        $form = $this->createForm(UserForm::class, $user);
-        
+        $form = $this->createForm(UserForm::class, $user,
+            ['validation_groups'=>['signUp']]
+        );
+        //var_dump($request);die;
         $form->handleRequest($request);
         $error = false;
         
@@ -93,7 +95,7 @@ class UserController extends AbstractController
             $error = true;
         }
         
-        return $this->render('@Mobicoop/user/create.html.twig', [
+        return $this->render('@Mobicoop/user/signup.html.twig', [
                 'form' => $form->createView(),
                 'error' => $error
         ]);
@@ -232,7 +234,7 @@ class UserController extends AbstractController
     /**
      * User login.
      *
-     * @Route("/user/login", name="login")
+     * @Route("/user/login", name="user_login")
      *
      */
     public function login()

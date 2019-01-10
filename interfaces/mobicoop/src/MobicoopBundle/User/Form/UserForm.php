@@ -27,6 +27,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 //use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -44,21 +45,16 @@ class UserForm extends AbstractType
         $builder
         ->add('givenName')
         ->add('familyName')
-        ->add('givenName')
         ->add('email')
-        ->add('password', PasswordType::class)
+        ->add('password', RepeatedType::class,[
+            'type' => PasswordType::class
+        ])
         ->add('gender')
         ->add('nationality')
         ->add('birthDate', BirthdayType::class)
         ->add('telephone')
         ->add('maxDeviationTime')
         ->add('maxDeviationDistance')
-        /*->add('userAddresses', CollectionType::class, [
-                'entry_type' => UserAddressCreateForm::class,
-                'allow_add' => true,
-                'by_reference' => false,
-                'error_bubbling' => false,
-        ])*/
         ->add('submit', SubmitType::class)
         ;
     }
@@ -67,6 +63,7 @@ class UserForm extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => User::class,
+            'validation_groups' => array('signUp','update'),
         ));
     }
 }

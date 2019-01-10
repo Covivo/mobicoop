@@ -89,8 +89,10 @@ class User implements Resource, UserInterface, EquatableInterface
     
     /**
      * @var string|null The encoded password of the user.
-     *
+     * 
      * @Groups({"post","put"})
+     * 
+     * @Assert\NotBlank(groups={"signUp","updatePassword"})
      */
     private $password;
     
