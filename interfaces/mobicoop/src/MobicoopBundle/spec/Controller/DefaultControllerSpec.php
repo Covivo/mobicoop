@@ -28,7 +28,7 @@ use Symfony\Component\DomCrawler\Crawler;
 /* This is a sample functionnal Test */
 describe('DefaultController', function () {
     describe('/', function () {
-        it('Index page should return status code 200 & contains "hello" in a h1', function () {
+        it('Index page should return status code 200 & contains an image with rsc = /images/logo.jpg', function () {
             $request = $this->request->create('/', 'GET');
             $response = $this->kernel->handle($request);
 
