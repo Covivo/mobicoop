@@ -46,7 +46,7 @@ class UserForm extends AbstractType
         ->add('givenName')
         ->add('familyName')
         ->add('email')
-        ->add('password', RepeatedType::class,[
+        ->add('password', RepeatedType::class, [
             'type' => PasswordType::class
         ])
         ->add('gender')

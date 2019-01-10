@@ -81,7 +81,9 @@ class UserController extends AbstractController
     {
         $user = new User();
         
-        $form = $this->createForm(UserForm::class, $user,
+        $form = $this->createForm(
+            UserForm::class,
+            $user,
             ['validation_groups'=>['signUp']]
         );
         //var_dump($request);die;
