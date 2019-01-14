@@ -68,7 +68,7 @@ final class LocationIQ extends AbstractHttpProvider implements Provider
      * results than requested.
      * @var int
      */
-    private $dedup = 1;
+    private $dedupe = 1;
 
 
 
