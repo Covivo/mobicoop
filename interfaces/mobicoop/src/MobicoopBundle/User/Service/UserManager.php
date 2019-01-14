@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
@@ -34,12 +35,14 @@ class UserManager
 {
     private $dataProvider;
     private $encoder;
+    private $tokenStorage;
     
-    public function __construct(DataProvider $dataProvider, UserPasswordEncoderInterface $encoder)
+    public function __construct(DataProvider $dataProvider, UserPasswordEncoderInterface $encoder, TokenStorageInterface $tokenStorage)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(User::class);
         $this->encoder = $encoder;
+        $this->tokenStorage = $tokenStorage;
     }
     
     /**
@@ -56,6 +59,20 @@ class UserManager
             return $response->getValue();
         }
         return null;
+    }
+    
+    /**
+     * Get the logged user.
+     *
+     * @return User|null The logged user found or null if not found.
+     */
+    public function getLoggedUser()
+    {
+        if ($this->tokenStorage->getToken() === null) {
+            return null;
+        }
+        $user = $this->tokenStorage->getToken()->getUser();
+        return $user instanceof User ? $user : null;
     }
     
     /**

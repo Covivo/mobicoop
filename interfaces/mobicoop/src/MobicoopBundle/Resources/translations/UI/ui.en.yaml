@@ -6,9 +6,23 @@ button:
 menu:
     signup: 'Sign up'
     login: 'Log in'
+    account: 'My account'
+    profile: 'My profile'
+    logout: 'Logout'
 
 # pages
 user:
     signup:
         title: 'Sign up'
         h1: 'Sign up'
+    login:
+        title: 'Login'
+        h1: 'Login'
+    profile:
+        title: 'My profile'
+        h1: 'My profile'
+        buttons:
+            update: 'Update'
+    profile_update:
+        title: 'Update my profile'
+        h1: 'Update my profile'

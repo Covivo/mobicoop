@@ -1,6 +1,6 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}Hello{% endblock %}
+{% block title %}{% trans from 'ui' %}user.profile.title{% endtrans %}{% endblock %}
 
 {% block body %}
 
@@ -8,7 +8,7 @@
 	<div class="hero-body">
     	<div class="container">
       		<h1 class="title">
-				Mobicoop - User detail
+				Mobicoop - {% trans from 'ui' %}user.profile.h1{% endtrans %}
       		</h1>
     	</div>
   	</div>
@@ -16,6 +16,7 @@
 
 <section class="section">
 	<div class="container">
+		<a class="button is-primary" href="{{ path('user_profile_update') }}">{% trans from 'ui' %}user.profile.buttons.update{% endtrans %}</a>
 		{% if user %}
     	<table class="table">
           	<tr><th>#</th><td>{{ user.id }}</td></tr>

@@ -141,12 +141,16 @@ class User implements Resource, UserInterface, EquatableInterface
     private $maxDeviationDistance;
     
     /**
-     * @var boolean|null The user accepts any route as a passenger from its origin to the destination.
+     * @var boolean The user accepts any route as a passenger from its origin to the destination.
+     *
+     * @Groups({"post","put"})
      */
     private $anyRouteAsPassenger;
     
     /**
-     * @var boolean|null The user accepts any transportation mode.
+     * @var boolean The user accepts any transportation mode.
+     *
+     * @Groups({"post","put"})
      */
     private $multiTransportMode;
     
@@ -340,10 +344,10 @@ class User implements Resource, UserInterface, EquatableInterface
     
     public function getAnyRouteAsPassenger(): bool
     {
-        return (!is_null($this->anyRouteAsPassenger) ? $this->anyRouteAsPassenger : true);
+        return !is_null($this->anyRouteAsPassenger) ? $this->anyRouteAsPassenger : false;
     }
     
-    public function setAnyRouteAsPassenger(?bool $anyRouteAsPassenger): self
+    public function setAnyRouteAsPassenger(bool $anyRouteAsPassenger): self
     {
         $this->anyRouteAsPassenger = $anyRouteAsPassenger;
         
@@ -352,10 +356,10 @@ class User implements Resource, UserInterface, EquatableInterface
     
     public function getMultiTransportMode(): bool
     {
-        return (!is_null($this->multiTransportMode) ? $this->multiTransportMode : true);
+        return !is_null($this->multiTransportMode) ? $this->multiTransportMode : false;
     }
     
-    public function setMultiTransportMode(?bool $multiTransportMode): self
+    public function setMultiTransportMode(bool $multiTransportMode): self
     {
         $this->multiTransportMode = $multiTransportMode;
         

@@ -6,9 +6,23 @@ button:
 menu:
     signup: 'Inscription'
     login: 'Connexion' 
+    account: 'Mon compte'
+    profile: 'Mon profil'
+    logout: 'Déconnexion'
     
 # pages
 user:
     signup:
         title: 'Inscription'
         h1: 'Inscription'
+    login:
+        title: 'Connexion'
+        h1: 'Connexion'
+    profile:
+        title: 'Mon profil'
+        h1: 'Mon profil'
+        buttons:
+            update: 'Mettre à jour'
+    profile_update:
+        title: 'Mettre à jour mon profil'
+        h1: 'Mettre à jour mon profil'

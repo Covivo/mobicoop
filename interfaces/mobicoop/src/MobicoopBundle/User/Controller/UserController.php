@@ -15,7 +15,7 @@
  *    GNU Affero General Public License for more details.
  *
  *    You should have received a copy of the GNU Affero General Public License
- *    along with this program.  If not, see <gnu.org/licenses>.
+ *    along with this program.  If not, see <gnu.oruse Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;g/licenses>.
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
@@ -36,6 +36,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Form\ProposalForm;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Form\Login;
 use Mobicoop\Bundle\MobicoopBundle\User\Form\UserLoginForm;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
  * Controller class for user related actions.
@@ -59,6 +60,19 @@ class UserController extends AbstractController
     }
     
     /**
+     * Retrieve the logged user.
+     *
+     * @Route("/user/profile", name="user_profile")
+     *
+     */
+    public function userProfile(UserManager $userManager)
+    {
+        return $this->render('@Mobicoop/user/detail.html.twig', [
+            'user' => $userManager->getLoggedUser()
+        ]);
+    }
+    
+    /**
      * Retrieve all users.
      *
      * @Route("/users", name="users")
@@ -72,7 +86,7 @@ class UserController extends AbstractController
     }
     
     /**
-     * Create a user.
+     * Register a user.
      *
      * @Route("/user/signup", name="user_sign_up")
      *
@@ -91,8 +105,13 @@ class UserController extends AbstractController
         $error = false;
         
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($userManager->createUser($user)) {
-                return $this->redirectToRoute('users');
+            if ($user = $userManager->createUser($user)) {
+                // after successful registering, we log the user
+                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                $this->get('security.token_storage')->setToken($token);
+                $this->get('session')->set('_security_main', serialize($token));
+                // redirection to the user profile page
+                return $this->redirectToRoute('user_profile');
             }
             $error = true;
         }
@@ -113,7 +132,12 @@ class UserController extends AbstractController
     {
         $user = $userManager->getUser($id);
         
-        $form = $this->createForm(UserForm::class, $user);
+        $form = $this->createForm(
+            UserForm::class,
+            $user,
+            ['validation_groups'=>['update']]
+        );
+        
         $form->handleRequest($request);
         $error = false;
         
@@ -128,6 +152,43 @@ class UserController extends AbstractController
                 'form' => $form->createView(),
                 'user' => $user,
                 'error' => $error
+        ]);
+    }
+    
+    /**
+     * Update the logged user.
+     *
+     * @Route("/user/update", name="user_profile_update")
+     *
+     */
+    public function userProfileUpdate(UserManager $userManager, Request $request)
+    {
+        $user = $userManager->getLoggedUser();
+        
+        $form = $this->createForm(
+            UserForm::class,
+            $user,
+            ['validation_groups'=>['update']]
+        );
+        
+        $form->handleRequest($request);
+        $error = false;
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($user = $userManager->updateUser($user)) {
+                // after successful update, we re-log the user
+                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                $this->get('security.token_storage')->setToken($token);
+                $this->get('session')->set('_security_main', serialize($token));
+                return $this->redirectToRoute('user_profile');
+            }
+            $error = true;
+        }
+        
+        return $this->render('@Mobicoop/user/update.html.twig', [
+            'form' => $form->createView(),
+            'user' => $user,
+            'error' => $error
         ]);
     }
     

@@ -26,7 +26,6 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
-//use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -97,7 +96,10 @@ class UserForm extends AbstractType
                 'placeholder' => 'nationality.placeholder'
             ]
         ])
-        ->add('birthDate', BirthdayType::class)
+        ->add('birthDate', BirthdayType::class, [
+            'translation_domain' => 'user',
+            'label' => 'birthDate.label'
+        ])
         ->add('telephone', TextType::class, [
             'translation_domain' => 'user',
             'label' => 'telephone.label',
@@ -120,10 +122,12 @@ class UserForm extends AbstractType
             ]
         ])
         ->add('anyRouteAsPassenger', CheckboxType::class, [
+            'required' => false,
             'translation_domain' => 'user',
             'label' => 'anyRouteAsPassenger.label'
         ])
         ->add('multiTransportMode', CheckboxType::class, [
+            'required' => false,
             'translation_domain' => 'user',
             'label' => 'multiTransportMode.label'
         ])

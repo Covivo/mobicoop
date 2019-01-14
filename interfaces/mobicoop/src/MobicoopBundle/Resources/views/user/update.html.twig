@@ -1,6 +1,6 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}Update a user{% endblock %}
+{% block title %}{% trans from 'ui' %}user.profile_update.title{% endtrans %}{% endblock %}
 
 {% block body %}
 
@@ -8,7 +8,7 @@
 	<div class="hero-body">
     	<div class="container">
       		<h1 class="title">
-				Mobicoop - User #{{ user.id }} update
+				Mobicoop - {% trans from 'ui' %}user.profile_update.h1{% endtrans %}
       		</h1>
     	</div>
   	</div>
@@ -21,8 +21,20 @@
     		<span class="tag is-danger">An error occured.</span>
     		{% endif %}
             {{ form_start(form) }}
-            {{ form_errors(form) }}
-            {{ form_end(form) }}
+            {{ form_row(form.givenName) }}
+            {{ form_row(form.familyName) }}
+            {{ form_row(form.email) }}
+            {{ form_row(form.gender) }}
+            {{ form_row(form.nationality) }}
+            {{ form_row(form.birthDate) }}
+            {{ form_row(form.telephone) }}
+            {{ form_row(form.maxDeviationTime) }}
+            {{ form_row(form.maxDeviationDistance) }}
+            {{ form_row(form.anyRouteAsPassenger) }}
+            {{ form_row(form.multiTransportMode) }}
+            {{ form_row(form._token) }}
+            {{ form_row(form.submit) }}
+            {{ form_end(form, {'render_rest': false}) }}
     	{% else %}
       		<span class="tag is-danger">User not found.</span>
       	{% endif %}

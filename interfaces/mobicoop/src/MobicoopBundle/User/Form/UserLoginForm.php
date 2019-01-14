@@ -29,6 +29,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Form\Login;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 /**
  * User Login form.
@@ -40,9 +41,24 @@ class UserLoginForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        ->add('username')
-        ->add('password', PasswordType::class)
-        ->add('login', SubmitType::class);
+        ->add('username', TextType::class, [
+            'translation_domain' => 'login',
+            'label' => 'username.label',
+            'attr' => [
+                'placeholder' => 'username.placeholder'
+            ]
+        ])
+        ->add('password', PasswordType::class, [
+            'translation_domain' => 'login',
+            'label' => 'password.label',
+            'attr' => [
+                'placeholder' => 'password.placeholder'
+            ]
+        ])
+        ->add('login', SubmitType::class, [
+            'translation_domain' => 'ui',
+            'label' => 'button.submit'
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

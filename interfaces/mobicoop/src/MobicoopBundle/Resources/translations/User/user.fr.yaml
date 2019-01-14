@@ -13,21 +13,23 @@ password:
     placeholder: 'Saisissez votre mot de passe'
     placeholder_repeat: 'Confirmez votre mot de passe'
 gender:
-    label: 'Gender'
-    placeholder: 'Set your gender'
+    label: 'Genre'
+    placeholder: 'Saisissez votre genre'
 nationality:
-    label: 'Nationality'
-    placeholder: 'Set your nationality'
+    label: 'Nationalité'
+    placeholder: 'Saisissez votre nationalité'
+birthDate:
+    label: 'Date de naissance'
 telephone:
     label: 'Telephone'
-    placeholder: 'Set your phone number'
+    placeholder: 'Saisissez votre numéro de téléphone'
 maxDeviationTime:
-    label: 'Maximum deviation time'
-    placeholder: 'Set the maximum deviation time in minutes that you can accept'
+    label: 'Temps de détour maximum'
+    placeholder: 'Saisissez le temps de détour maximum accepté en minutes'
 maxDeviationDistance:
-    label: 'Maximum deviation distance'
-    placeholder: 'Set the maximum deviation distance in km that you can accept'
+    label: 'Distance de détour maximum'
+    placeholder: 'Saisissez la distance de détour maximum accepté en km'
 anyRouteAsPassenger:
-    label: 'As a passenger, I accept any route proposed by a driver'
+    label: 'En tant que passager, j''accepte tout itinéraire proposé par le conducteur'
 multiTransportMode:
-    label: 'As a passenger, I accept any transportation mode'
+    label: 'En tant que passager, j''accepte tous les moyens de transport'

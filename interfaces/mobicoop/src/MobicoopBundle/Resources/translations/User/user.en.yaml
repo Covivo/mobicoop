@@ -18,6 +18,8 @@ gender:
 nationality:
     label: 'Nationality'
     placeholder: 'Set your nationality'
+birthDate:
+    label: 'Birth date'
 telephone:
     label: 'Telephone'
     placeholder: 'Set your phone number'

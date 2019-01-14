@@ -37,15 +37,15 @@
           {% else %}
             <div class="navbar-item has-dropdown is-hoverable">
                 <a class="navbar-link">
-                    My account
+                    {% trans from 'ui' %}menu.account{% endtrans %}
                 </a>
                 <div class="navbar-dropdown">
-                  <a href="{{ path('user', {'id': app.user.id}) }}" class="navbar-item">
-                      My Profile
+                  <a href="{{ path('user_profile') }}" class="navbar-item">
+                      {% trans from 'ui' %}menu.profile{% endtrans %}
                   </a>
                   <hr class="navbar-divider">
                   <a href="{{ path('logout') }}" class="navbar-item">
-                      Logout
+                      {% trans from 'ui' %}menu.logout{% endtrans %}
                   </a>
               </div>
             </div>
