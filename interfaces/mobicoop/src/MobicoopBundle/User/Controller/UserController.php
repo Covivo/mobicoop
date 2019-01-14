@@ -272,7 +272,7 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             if ($userManager->deleteUser($user->getId())) {
                 return $this->redirectToRoute('home');
-            } 
+            }
             $error = true;
         }
         
