@@ -40,6 +40,40 @@ final class LocationIQ extends AbstractHttpProvider implements Provider
     private $apiKey;
 
     /**
+     * Limit search to a list of countries.
+     * @var string
+     */
+    private $countrycodes = "fr";
+
+    /**
+     * For responses with no city value in the address section,
+     * the next available element in this order - city_district,
+     * locality, town, borough, municipality, village, hamlet,
+     * quarter, neighbourhood - from the address section will be
+     * normalized to city. Defaults to 0.
+     * @var int
+     */
+    private $normalizecity = 1;
+
+    /**
+     * Sometimes you have several objects in OSM identifying the
+     * same place or object in reality. The simplest case is a
+     * street being split in many different OSM ways due to
+     * different characteristics. Nominatim will attempt to
+     * detect such duplicates and only return one match; this
+     * is controlled by the dedupe parameter which defaults to 1.
+     * Since the limit is, for reasons of efficiency,
+     * enforced before and not after de-duplicating, it is
+     * possible that de-duplicating leaves you with less
+     * results than requested.
+     * @var int
+     */
+    private $dedup = 1;
+
+
+
+
+    /**
      * @param HttpClient $client an HTTP adapter
      * @param string     $apiKey an API key
      */
@@ -64,7 +98,7 @@ final class LocationIQ extends AbstractHttpProvider implements Provider
         $url = sprintf($this->getGeocodeEndpointUrl(), urlencode($address), $query->getLimit());
 
         $content = $this->executeQuery($url, $query->getLocale());
-        echo($content);
+
         $doc = new \DOMDocument();
         if (!@$doc->loadXML($content) || null === $doc->getElementsByTagName('searchresults')->item(0)) {
             throw InvalidServerResponse::create($url);
@@ -134,6 +168,7 @@ final class LocationIQ extends AbstractHttpProvider implements Provider
         $builder->setStreetNumber($this->getNodeValue($addressNode->getElementsByTagName('house_number')));
         //Locality if city not set ->county & if county not set ->village
         $builder->setLocality($this->getNodeValue($addressNode->getElementsByTagName('city')) ?: $this->getNodeValue($addressNode->getElementsByTagName('county')) ?: $this->getNodeValue($addressNode->getElementsByTagName('village')));
+        $builder->setLocality($this->getNodeValue($addressNode->getElementsByTagName('city')));
         //SubLocality if suburb(not useful for the moment) not set ->village & if village not set ->county
         $builder->setSubLocality(/*$this->getNodeValue($addressNode->getElementsByTagName('suburb')) ?:*/ $this->getNodeValue($addressNode->getElementsByTagName('village')) ?: $this->getNodeValue($addressNode->getElementsByTagName('county')));
         $builder->setCountry($this->getNodeValue($addressNode->getElementsByTagName('country')));
@@ -175,7 +210,7 @@ final class LocationIQ extends AbstractHttpProvider implements Provider
 
     private function getGeocodeEndpointUrl(): string
     {
-        return self::BASE_API_URL.'/search.php?q=%s&format=xml&addressdetails=1&limit=%d&key='.$this->apiKey;
+        return self::BASE_API_URL.'/search.php?q=%s&format=xml&addressdetails=1&limit=%d&normalizecity=1&key='.$this->apiKey."&countrycodes=".$this->countrycodes;
     }
 
     private function getReverseEndpointUrl(): string
