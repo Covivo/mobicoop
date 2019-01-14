@@ -61,8 +61,8 @@ class PTDataProvider
      * @param string $destination_longitude     The longitude of the destination point
      * @param \Datetime $date                   The datetime of the trip
      * @param string $dateType                  The date type of the trip (departure or arrival)
-     * @param string $algorithm                 The algorithm used for the trip calculation
-     * @param string $modes                     The trip modes accepted (PT, BIKE, PT+BIKE)
+     * @param string $algorithm                 The algorithm used for the trip calculation (fastest, shortest or minchanges)
+     * @param string $modes                     The trip modes accepted (PT, BIKE, CAR, PT+BIKE, PT+CAR)
      * @return NULL|array                       The journeys found or null if no journey is found
      */
     public function getJourneys(

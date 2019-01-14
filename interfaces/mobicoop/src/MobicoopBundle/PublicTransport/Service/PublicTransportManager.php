@@ -56,6 +56,8 @@ class PublicTransportManager
      * @param float     $destination_longitude      The longitude of the destination point
      * @param string    $date                       The date of the journey
      * @param string    $dateType                   The date type (departure or arrival)
+     * @param string    $algorithm                  The algorithm used for the trip calculation (fastest, shortest or minchanges)
+     * @param string    $modes                      The trip modes accepted (PT, BIKE, CAR, PT+BIKE, PT+CAR)
      * @return Hydra|null The journeys found (as an Hydra object) or null if not found.
      */
     public function getJourneys(
@@ -66,7 +68,9 @@ class PublicTransportManager
         float $destination_latitude,
         float $destination_longitude,
         string $date,
-        string $dateType
+        string $dateType,
+        string $algorithm,
+        string $modes
         ) {
         $response = $this->dataProvider->getCollection([
             'provider'              => $provider,
@@ -76,7 +80,9 @@ class PublicTransportManager
             'destination_latitude'  => $destination_latitude,
             'destination_longitude' => $destination_longitude,
             'date'                  => $date,
-            'dateType'              => $dateType
+            'dateType'              => $dateType,
+            'algorithm'             => $algorithm,
+            'modes'                 => $modes
         ]);
         if ($response->getCode() == 200) {
             return $response->getValue();
