@@ -49,16 +49,24 @@ class TravelMode
 {
     const TRAVEL_MODE_CAR = "CAR";
     const TRAVEL_MODE_BUS = "BUS";
+    const TRAVEL_MODE_TRAMWAY = "TRAMWAY";
+    const TRAVEL_MODE_COACH = "COACH";
     const TRAVEL_MODE_TRAIN = "TRAIN";
+    const TRAVEL_MODE_TRAIN_LOCAL = "TRAIN_LOCAL";
+    const TRAVEL_MODE_TRAIN_HIGH_SPEED = "TRAIN_HIGH_SPEED";
     const TRAVEL_MODE_BIKE = "BIKE";
     const TRAVEL_MODE_WALK = "WALK";
     
     private const TRAVEL_MODES = [
         self::TRAVEL_MODE_CAR => 1,
         self::TRAVEL_MODE_BUS => 2,
-        self::TRAVEL_MODE_TRAIN => 3,
-        self::TRAVEL_MODE_BIKE => 4,
-        self::TRAVEL_MODE_WALK => 5
+        self::TRAVEL_MODE_TRAMWAY => 3,
+        self::TRAVEL_MODE_COACH => 4,
+        self::TRAVEL_MODE_TRAIN => 5,
+        self::TRAVEL_MODE_TRAIN_LOCAL => 6,
+        self::TRAVEL_MODE_TRAIN_HIGH_SPEED => 7,
+        self::TRAVEL_MODE_BIKE => 8,
+        self::TRAVEL_MODE_WALK => 9
     ];
     
     /**

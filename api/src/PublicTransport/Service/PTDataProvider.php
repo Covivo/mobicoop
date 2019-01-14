@@ -45,7 +45,11 @@ class PTDataProvider
     
     const DATETYPE_DEPARTURE = "departure";
     const DATETYPE_ARRIVAL = "arrival";
-      
+    
+    const ALGORITHM_FASTEST = "fastest";
+    const ALGORITHM_SHORTEST = "shortest";
+    const ALGORITHM_MINCHANGES = "minchanges";
+    
     /**
      * Get journeys from an external Public Transport data provider.
      *
@@ -57,6 +61,8 @@ class PTDataProvider
      * @param string $destination_longitude     The longitude of the destination point
      * @param \Datetime $date                   The datetime of the trip
      * @param string $dateType                  The date type of the trip (departure or arrival)
+     * @param string $algorithm                 The algorithm used for the trip calculation
+     * @param string $modes                     The trip modes accepted (PT, BIKE, PT+BIKE)
      * @return NULL|array                       The journeys found or null if no journey is found
      */
     public function getJourneys(
@@ -67,7 +73,9 @@ class PTDataProvider
             string $destination_latitude,
             string $destination_longitude,
             \Datetime $date,
-            string $dateType
+            string $dateType,
+            string $algorithm,
+            string $modes
             ): ?array {
         if (!array_key_exists($provider, self::PROVIDERS)) {
             return null;
@@ -80,7 +88,9 @@ class PTDataProvider
                 "destination_latitude" => $destination_latitude,
                 "destination_longitude" => $destination_longitude,
                 "date" => $date,
-                "dateType" => $dateType
+                "dateType" => $dateType,
+                "algorithm" => $algorithm,
+                "modes" => $modes
         ]]);
     }
 }

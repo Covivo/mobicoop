@@ -124,7 +124,7 @@ class Address
      * @var string|null The name of this address.
      *
      * @ORM\Column(type="string", length=45, nullable=true)
-     * @Groups({"read","write","pt"})
+     * @Groups({"read","write"})
      */
     private $name;
     
@@ -132,7 +132,6 @@ class Address
      * @var User|null The owner of the address.
      *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
-     * @Groups({"pt"})
      */
     private $user;
 

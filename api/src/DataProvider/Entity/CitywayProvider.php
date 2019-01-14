@@ -49,11 +49,11 @@ use App\PublicTransport\Entity\PTCompany;
  * - a Trip has a departure and arrival time, a duration, a distance...
  * - a Trip consists in one or more Sections
  * - a Section consists in a Leg or a PTRide
- * - a Leg is the name for a walk
+ * - a Leg is the name for an indivual transport mode section (walk, bike, car...)
  * - a Leg consists in one or more PathLinks
  * - a PathLink consists in a departure and arrival point (and distance, duration, direction, eventually a site like a bus stop etc...)
  * - typically, a PathLink is a path between two points on the same road; when one needs to turn or change direction it is another PathLink
- * - a PTRide is the name for a public transport ride, it can be by bus, train, bike...
+ * - a PTRide is the name for a public transport ride, it can be by bus, train, coach...
  * - a PTRide consists in one or more Steps
  * - typically, a step is a path between two consecutive stops, for example two consecutive stops of the same bus line
  *
@@ -76,11 +76,13 @@ use App\PublicTransport\Entity\PTCompany;
  */
 class CitywayProvider implements ProviderInterface
 {
+    private const CW_PT_MODE_CAR = "PRIVATE_VEHICLE";
     private const CW_PT_MODE_BUS = "BUS";
+    private const CW_PT_MODE_TRAMWAY = "TRAMWAY";
     private const CW_PT_MODE_COACH = "COACH";
     private const CW_PT_MODE_TRAIN_LOCAL = "LOCAL_TRAIN";
     private const CW_PT_MODE_TRAIN_HIGH_SPEED = "HST";
-    private const CW_PT_MODE_BIKE = "BIKE";
+    private const CW_PT_MODE_BIKE = "BICYCLE";
     private const CW_PT_MODE_WALK = "WALK";
 
     private const CW_COUNTRY = "France";
@@ -95,6 +97,12 @@ class CitywayProvider implements ProviderInterface
     private const DATETYPES = [
         PTDataProvider::DATETYPE_DEPARTURE => "DEPARTURE",
         PTDataProvider::DATETYPE_ARRIVAL => "ARRIVAL"
+    ];
+    
+    private const ALGORITHMS = [
+        PTDataProvider::ALGORITHM_FASTEST => "FASTEST",
+        PTDataProvider::ALGORITHM_SHORTEST => "SHORTEST",
+        PTDataProvider::ALGORITHM_MINCHANGES => "MINCHANGES"
     ];
 
     private $collection;
@@ -115,9 +123,8 @@ class CitywayProvider implements ProviderInterface
                 $getParams = [
                     "DepartureType" => "COORDINATES",
                     "ArrivalType" => "COORDINATES",
-                    "DateType" => "DEPARTURE",
-                    "TripModes" => "PT",
-                    "Algorithm" => "FASTEST",
+                    "TripModes" => $this->getTripModes($params["modes"]),
+                    "Algorithm" => self::ALGORITHMS[$params["algorithm"]],
                     "Date" => $params["date"]->format(self::DATETIME_INPUT_FORMAT),
                     "DateType" => self::DATETYPES[$params["dateType"]],
                     "DepartureLatitude" => $params["origin_latitude"],
@@ -150,6 +157,30 @@ class CitywayProvider implements ProviderInterface
                 }
                 break;
             default:
+                break;
+        }
+    }
+    
+    private function getTripModes($modes)
+    {
+        switch ($modes) {
+            case "PT":
+                return "PT";
+                break;
+            case "BIKE":
+                return "BIKE";
+                break;
+            case "CAR":
+                return "CAR";
+                break;
+            case "PT+BIKE":
+                return "PT,BIKE";
+                break;
+            case "PT+CAR":
+                return "PT,CAR";
+                break;
+            default:
+                return "PT";
                 break;
         }
     }
@@ -257,9 +288,19 @@ class CitywayProvider implements ProviderInterface
     {
         $leg = new PTLeg($num);
         if (isset($data["Leg"]) && !is_null($data["Leg"])) {
-            // walk mode
-            $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_WALK);
-            $leg->setTravelMode($travelMode);
+            if ($data["Leg"]["TransportMode"] == self::CW_PT_MODE_WALK) {
+                // walk mode
+                $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_WALK);
+                $leg->setTravelMode($travelMode);
+            } elseif ($data["Leg"]["TransportMode"] == self::CW_PT_MODE_BIKE) {
+                // bike mode
+                $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_BIKE);
+                $leg->setTravelMode($travelMode);
+            } elseif ($data["Leg"]["TransportMode"] == self::CW_PT_MODE_CAR) {
+                // car mode
+                $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_CAR);
+                $leg->setTravelMode($travelMode);
+            }
             if (isset($data["Leg"]["Duration"]) && !is_null($data["Leg"]["Duration"])) {
                 $leg->setDuration($data["Leg"]["Duration"]);
             }
@@ -329,14 +370,25 @@ class CitywayProvider implements ProviderInterface
             }
         }
         if (isset($data["PTRide"]) && !is_null($data["PTRide"])) {
-            if (($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_BUS) || ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_COACH)) {
+            if ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_BUS) {
                 // bus mode
                 $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_BUS);
                 $leg->setTravelMode($travelMode);
-            }
-            if (($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TRAIN_LOCAL) || ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TRAIN_HIGH_SPEED)) {
-                // train mode
-                $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_TRAIN);
+            } elseif ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TRAMWAY) {
+                // tramway mode
+                $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_TRAMWAY);
+                $leg->setTravelMode($travelMode);
+            } elseif ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_COACH) {
+                // coach mode
+                $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_COACH);
+                $leg->setTravelMode($travelMode);
+            } elseif ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TRAIN_LOCAL) {
+                // train local mode
+                $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_TRAIN_LOCAL);
+                $leg->setTravelMode($travelMode);
+            } elseif ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TRAIN_HIGH_SPEED) {
+                // train high speed mode
+                $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_TRAIN_HIGH_SPEED);
                 $leg->setTravelMode($travelMode);
             }
             if (isset($data["PTRide"]["Departure"])) {

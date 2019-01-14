@@ -64,7 +64,9 @@ final class JourneyCollectionDataProvider implements CollectionDataProviderInter
                 $this->request->get("destination_latitude"),
                 $this->request->get("destination_longitude"),
                 \DateTime::createFromFormat(PTDataProvider::DATETIME_FORMAT, $this->request->get("date")),
-                $this->request->get("dateType")
+                $this->request->get("dateType"),
+                $this->request->get('algorithm'),
+                $this->request->get('modes')
                 );
     }
 }
