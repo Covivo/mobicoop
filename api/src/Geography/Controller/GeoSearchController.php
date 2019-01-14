@@ -73,13 +73,14 @@ class GeoSearchController
             $streetNumber = $value->getStreetNumber();
             $streetName = $value->getStreetName();
             $address->setStreetAddress($streetNumber.' '.$streetName);
-            $address->setAddressLocality($value->getLocality());
+            //addressLocality combined with SubLocality and Locality of Geocoder-php
+            $addressLocality = $value->getSubLocality().' '.$value->getLocality();
+            $address->setAddressLocality($addressLocality);
             $address->setPostalCode($value->getPostalCode());
             $address->setAddressCountry($value->getCountry()->getName());
 
             $resultArray[] = $address;
         }
-
         return $resultArray;
     }
 }
