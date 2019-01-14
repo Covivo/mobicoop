@@ -161,21 +161,22 @@ class CitywayProvider implements ProviderInterface
         }
     }
     
-    private function getTripModes($modes) {
+    private function getTripModes($modes)
+    {
         switch ($modes) {
-            case "PT" : 
+            case "PT":
                 return "PT";
                 break;
-            case "BIKE" : 
+            case "BIKE":
                 return "BIKE";
                 break;
-            case "CAR" :
+            case "CAR":
                 return "CAR";
                 break;
-            case "PT+BIKE" :
+            case "PT+BIKE":
                 return "PT,BIKE";
                 break;
-            case "PT+CAR" :
+            case "PT+CAR":
                 return "PT,CAR";
                 break;
             default:
@@ -295,7 +296,7 @@ class CitywayProvider implements ProviderInterface
                 // bike mode
                 $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_BIKE);
                 $leg->setTravelMode($travelMode);
-            }  elseif ($data["Leg"]["TransportMode"] == self::CW_PT_MODE_CAR) {
+            } elseif ($data["Leg"]["TransportMode"] == self::CW_PT_MODE_CAR) {
                 // car mode
                 $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_CAR);
                 $leg->setTravelMode($travelMode);
