@@ -109,6 +109,32 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                              "arrival"
  *                          }
  *                      },
+ *                      {
+ *                          "name" = "algorithm",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "string",
+ *                          "description" = "The type of calculation algorithm for the trip",
+ *                          "enum" = {
+ *                              "fastest",
+ *                              "shortest",
+ *                              "minchanges"
+ *                          }
+ *                      },
+ *                      {
+ *                          "name" = "modes",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "string",
+ *                          "description" = "The transport modes accepted for the trip",
+ *                          "enum" = {
+ *                              "PT",
+ *                              "BIKE",
+ *                              "CAR",
+ *                              "PT+BIKE",
+ *                              "PT+CAR"
+ *                          }
+ *                      },
  *                  },
  *              }
  *          }
