@@ -64,22 +64,24 @@ class GeoSearchController
         $result= $this->container
             ->geocodeQuery(GeocodeQuery::create($input))->all();
 
-        $resultArray = [];
-        foreach ($result as $value) {
-            $address = new Address(1);
-            $address->setLatitude($value->getCoordinates()->getLatitude());
-            $address->setLongitude($value->getCoordinates()->getLongitude()) ;
+        /*        $resultArray = [];
+                foreach ($result as $value) {
+                    $address = new Address(1);
+                    $address->setLatitude($value->getCoordinates()->getLatitude());
+                    $address->setLongitude($value->getCoordinates()->getLongitude()) ;
 
-            $streetNumber = $value->getStreetNumber();
-            $streetName = $value->getStreetName();
-            $address->setStreetAddress($streetNumber.' '.$streetName);
-            $address->setAddressLocality($value->getLocality());
-            $address->setPostalCode($value->getPostalCode());
-            $address->setAddressCountry($value->getCountry()->getName());
+                    $streetNumber = $value->getStreetNumber();
+                    $streetName = $value->getStreetName();
+                    $address->setStreetAddress($streetNumber.' '.$streetName);
+                    $address->setAddressLocality($value->getLocality());
+                    $address->setPostalCode($value->getPostalCode());
+                    $address->setAddressCountry($value->getCountry()->getName());
 
-            $resultArray[] = $address;
-        }
+                    $resultArray[] = $address;
+                }
 
-        return $resultArray;
+                return $resultArray;*/
+
+        return $result;
     }
 }
