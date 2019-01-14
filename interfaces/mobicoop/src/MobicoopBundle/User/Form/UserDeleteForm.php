@@ -21,29 +21,29 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\User\Form;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\Routing\Annotation\Route;
-use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Service\PublicTransportManager;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\Form\Login;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
-class DefaultController extends AbstractController
+/**
+ * User Login form.
+ *
+ * @author Maxime Bardot <maxime.bardot@covivo.eu>
+ */
+class UserDeleteForm extends AbstractType
 {
-    /**
-     * HomePage
-     * @Route("/", name="home")
-     *
-     */
-    public function index()
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $baseUri = $_ENV['API_URI'];
-        return $this->render(
-            '@Mobicoop/default/index.html.twig',
-            [
-                'baseUri' => $baseUri,
-                'metaDescription' => 'Homepage of Mobicoop'
-            ]
-        );
+        $builder
+        ->add('submit', SubmitType::class, [
+            'translation_domain' => 'ui',
+            'label' => 'button.delete'
+        ]);
     }
 }

@@ -124,6 +124,24 @@ class UserManager
     }
     
     /**
+     * Update a user password
+     *
+     * @param User $user The user to update the password
+     *
+     * @return User|null The user updated or null if error.
+     */
+    public function updateUserPassword(User $user)
+    {
+        // encoding of the password
+        $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
+        $response = $this->dataProvider->put($user);
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
+    
+    /**
      * Delete a user
      *
      * @param int $id The id of the user to delete

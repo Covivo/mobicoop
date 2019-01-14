@@ -82,7 +82,7 @@ class User implements Resource, UserInterface, EquatableInterface
      *
      * @Groups({"post","put"})
      *
-     * @Assert\NotBlank
+     * @Assert\NotBlank(groups={"signUp","update"})
      * @Assert\Email()
      */
     private $email;
@@ -92,7 +92,7 @@ class User implements Resource, UserInterface, EquatableInterface
      *
      * @Groups({"post","put"})
      *
-     * @Assert\NotBlank(groups={"signUp","updatePassword"})
+     * @Assert\NotBlank(groups={"signUp","password"})
      */
     private $password;
     
@@ -251,7 +251,7 @@ class User implements Resource, UserInterface, EquatableInterface
         return $this->email;
     }
     
-    public function setEmail(string $email): self
+    public function setEmail(?string $email): self
     {
         $this->email = $email;
         
