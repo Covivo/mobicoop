@@ -1,0 +1,33 @@
+givenName:
+    label: 'Prénom'
+    placeholder: 'Saisissez votre prénom'
+familyName:
+    label: 'Nom'
+    placeholder: 'Saisissez votre nom'
+email:
+    label: 'Email'
+    placeholder: 'Saisissez votre adresse email'
+password:
+    label: 'Mot de passe'
+    label_repeat: 'Mot de passe (confirmation)'
+    placeholder: 'Saisissez votre mot de passe'
+    placeholder_repeat: 'Confirmez votre mot de passe'
+gender:
+    label: 'Gender'
+    placeholder: 'Set your gender'
+nationality:
+    label: 'Nationality'
+    placeholder: 'Set your nationality'
+telephone:
+    label: 'Telephone'
+    placeholder: 'Set your phone number'
+maxDeviationTime:
+    label: 'Maximum deviation time'
+    placeholder: 'Set the maximum deviation time in minutes that you can accept'
+maxDeviationDistance:
+    label: 'Maximum deviation distance'
+    placeholder: 'Set the maximum deviation distance in km that you can accept'
+anyRouteAsPassenger:
+    label: 'As a passenger, I accept any route proposed by a driver'
+multiTransportMode:
+    label: 'As a passenger, I accept any transportation mode'

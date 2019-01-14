@@ -30,8 +30,10 @@ use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 /**
  * User form.
@@ -43,19 +45,92 @@ class UserForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        ->add('givenName')
-        ->add('familyName')
-        ->add('email')
-        ->add('password', RepeatedType::class, [
-            'type' => PasswordType::class
+        ->add('givenName', TextType::class, [
+            'translation_domain' => 'user',
+            'label' => 'givenName.label',
+            'attr' => [
+                'placeholder' => 'givenName.placeholder'
+            ]
         ])
-        ->add('gender')
-        ->add('nationality')
+        ->add('familyName', TextType::class, [
+            'translation_domain' => 'user',
+            'label' => 'familyName.label',
+            'attr' => [
+                'placeholder' => 'familyName.placeholder'
+            ]
+        ])
+        ->add('email', TextType::class, [
+            'translation_domain' => 'user',
+            'label' => 'email.label',
+            'attr' => [
+                'placeholder' => 'email.placeholder'
+            ]
+        ])
+        ->add('password', RepeatedType::class, [
+            'type' => PasswordType::class,
+            'translation_domain' => 'user',
+            'invalid_message' => 'password.password_match',
+            'first_options'  => [
+                'label' => 'password.label',
+                'attr' => [
+                    'placeholder' => 'password.placeholder'
+                ],
+            ],
+            'second_options' => [
+                'label' => 'password.label_repeat',
+                'attr' => [
+                    'placeholder' => 'password.placeholder_repeat'
+                ],
+            ]
+        ])
+        ->add('gender', TextType::class, [
+            'translation_domain' => 'user',
+            'label' => 'gender.label',
+            'attr' => [
+                'placeholder' => 'gender.placeholder'
+            ]
+        ])
+        ->add('nationality', TextType::class, [
+            'translation_domain' => 'user',
+            'label' => 'nationality.label',
+            'attr' => [
+                'placeholder' => 'nationality.placeholder'
+            ]
+        ])
         ->add('birthDate', BirthdayType::class)
-        ->add('telephone')
-        ->add('maxDeviationTime')
-        ->add('maxDeviationDistance')
-        ->add('submit', SubmitType::class)
+        ->add('telephone', TextType::class, [
+            'translation_domain' => 'user',
+            'label' => 'telephone.label',
+            'attr' => [
+                'placeholder' => 'telephone.placeholder'
+            ]
+        ])
+        ->add('maxDeviationTime', TextType::class, [
+            'translation_domain' => 'user',
+            'label' => 'maxDeviationTime.label',
+            'attr' => [
+                'placeholder' => 'maxDeviationTime.placeholder'
+            ]
+        ])
+        ->add('maxDeviationDistance', TextType::class, [
+            'translation_domain' => 'user',
+            'label' => 'maxDeviationDistance.label',
+            'attr' => [
+                'placeholder' => 'maxDeviationDistance.placeholder'
+            ]
+        ])
+        ->add('anyRouteAsPassenger', CheckboxType::class, [
+            'translation_domain' => 'user',
+            'label' => 'anyRouteAsPassenger.label'
+        ])
+        ->add('multiTransportMode', CheckboxType::class, [
+            'translation_domain' => 'user',
+            'label' => 'multiTransportMode.label'
+        ])
+        ->add('submit', SubmitType::class, [
+            'translation_domain' => 'ui',
+            'label' => 'button.submit'
+        ])
         ;
     }
 

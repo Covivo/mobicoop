@@ -350,6 +350,18 @@ class User implements Resource, UserInterface, EquatableInterface
         return $this;
     }
     
+    public function getMultiTransportMode(): bool
+    {
+        return (!is_null($this->multiTransportMode) ? $this->multiTransportMode : true);
+    }
+    
+    public function setMultiTransportMode(?bool $multiTransportMode): self
+    {
+        $this->multiTransportMode = $multiTransportMode;
+        
+        return $this;
+    }
+    
     public function getAddresses(): Collection
     {
         return $this->addresses;

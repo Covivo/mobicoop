@@ -28,10 +28,10 @@
           {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
           <div class="buttons">
             <a href="{{ path('user_sign_up') }}" class="button is-primary">
-              <strong>Sign up</strong>
+              <strong>{% trans from 'ui' %}menu.signup{% endtrans %}</strong>
             </a>
             <a href="{{ path('user_login') }}" class="button is-light">
-              Log in
+              {% trans from 'ui' %}menu.login{% endtrans %}
             </a>
           </div>
           {% else %}

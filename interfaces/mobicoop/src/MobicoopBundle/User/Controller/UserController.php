@@ -86,7 +86,7 @@ class UserController extends AbstractController
             $user,
             ['validation_groups'=>['signUp']]
         );
-        //var_dump($request);die;
+
         $form->handleRequest($request);
         $error = false;
         

@@ -1,0 +1,14 @@
+# buttons
+button:
+    submit: 'Envoyer'
+    
+# menus
+menu:
+    signup: 'Inscription'
+    login: 'Connexion' 
+    
+# pages
+user:
+    signup:
+        title: 'Inscription'
+        h1: 'Inscription'

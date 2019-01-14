@@ -1,0 +1,14 @@
+# buttons
+button:
+    submit: 'Submit'
+    
+# menus
+menu:
+    signup: 'Sign up'
+    login: 'Log in'
+
+# pages
+user:
+    signup:
+        title: 'Sign up'
+        h1: 'Sign up'
