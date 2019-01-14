@@ -64,7 +64,7 @@ final class LocationIQ extends AbstractHttpProvider implements Provider
         $url = sprintf($this->getGeocodeEndpointUrl(), urlencode($address), $query->getLimit());
 
         $content = $this->executeQuery($url, $query->getLocale());
-
+        echo($content);
         $doc = new \DOMDocument();
         if (!@$doc->loadXML($content) || null === $doc->getElementsByTagName('searchresults')->item(0)) {
             throw InvalidServerResponse::create($url);

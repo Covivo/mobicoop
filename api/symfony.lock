@@ -95,9 +95,6 @@
     "geocoder-php/here-provider": {
         "version": "0.1.0"
     },
-    "geocoder-php/locationiq-provider": {
-        "version": "1.0.0"
-    },
     "geocoder-php/open-cage-provider": {
         "version": "4.0.0"
     },
@@ -178,6 +175,9 @@
     },
     "psr/simple-cache": {
         "version": "1.0.1"
+    },
+    "ralouphie/getallheaders": {
+        "version": "2.0.5"
     },
     "symfony/asset": {
         "version": "v4.1.4"
