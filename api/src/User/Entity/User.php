@@ -191,7 +191,7 @@ class User
     /**
      * @var boolean|null The user accepts any route as a passenger from its origin to the destination.
      *
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="boolean")
      * @Groups({"read","write"})
      */
     private $anyRouteAsPassenger;
@@ -199,7 +199,7 @@ class User
     /**
      * @var boolean|null The user accepts any transportation mode.
      *
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="boolean")
      * @Groups({"read","write"})
      */
     private $multiTransportMode;
@@ -391,12 +391,24 @@ class User
     
     public function getAnyRouteAsPassenger(): bool
     {
-        return (!is_null($this->anyRouteAsPassenger) ? $this->anyRouteAsPassenger : true);
+        return $this->anyRouteAsPassenger;
     }
     
-    public function setAnyRouteAsPassenger(?bool $anyRouteAsPassenger): self
+    public function setAnyRouteAsPassenger(bool $anyRouteAsPassenger): self
     {
         $this->anyRouteAsPassenger = $anyRouteAsPassenger;
+        
+        return $this;
+    }
+    
+    public function getMultiTransportMode(): bool
+    {
+        return $this->multiTransportMode;
+    }
+    
+    public function setMultiTransportMode(bool $multiTransportMode): self
+    {
+        $this->multiTransportMode = $multiTransportMode;
         
         return $this;
     }

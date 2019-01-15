@@ -27,25 +27,25 @@
         <div class="navbar-end">
           {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
           <div class="buttons">
-            <a href="#" class="button is-primary">
-              <strong>Sign up</strong>
+            <a href="{{ path('user_sign_up') }}" class="button is-primary">
+              <strong>{% trans from 'ui' %}menu.signup{% endtrans %}</strong>
             </a>
-            <a href="/user/login" class="button is-light">
-              Log in
+            <a href="{{ path('user_login') }}" class="button is-light">
+              {% trans from 'ui' %}menu.login{% endtrans %}
             </a>
           </div>
           {% else %}
             <div class="navbar-item has-dropdown is-hoverable">
                 <a class="navbar-link">
-                    My account
+                    {% trans from 'ui' %}menu.account{% endtrans %}
                 </a>
                 <div class="navbar-dropdown">
-                  <a href="/user/{{ app.user.id }}" class="navbar-item">
-                      My Profile
+                  <a href="{{ path('user_profile') }}" class="navbar-item">
+                      {% trans from 'ui' %}menu.profile{% endtrans %}
                   </a>
                   <hr class="navbar-divider">
-                  <a href="/user/logout" class="navbar-item">
-                      Logout
+                  <a href="{{ path('logout') }}" class="navbar-item">
+                      {% trans from 'ui' %}menu.logout{% endtrans %}
                   </a>
               </div>
             </div>

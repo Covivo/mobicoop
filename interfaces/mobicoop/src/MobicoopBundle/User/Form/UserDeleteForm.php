@@ -36,35 +36,14 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
  *
  * @author Maxime Bardot <maxime.bardot@covivo.eu>
  */
-class UserLoginForm extends AbstractType
+class UserDeleteForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        ->add('username', TextType::class, [
-            'translation_domain' => 'login',
-            'label' => 'username.label',
-            'attr' => [
-                'placeholder' => 'username.placeholder'
-            ]
-        ])
-        ->add('password', PasswordType::class, [
-            'translation_domain' => 'login',
-            'label' => 'password.label',
-            'attr' => [
-                'placeholder' => 'password.placeholder'
-            ]
-        ])
-        ->add('login', SubmitType::class, [
+        ->add('submit', SubmitType::class, [
             'translation_domain' => 'ui',
-            'label' => 'button.submit'
+            'label' => 'button.delete'
         ]);
-    }
-
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(array(
-            'data_class' => Login::class,
-        ));
     }
 }

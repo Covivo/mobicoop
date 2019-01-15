@@ -32,7 +32,7 @@ class DefaultController extends AbstractController
 {
     /**
      * HomePage
-     * @Route("/")
+     * @Route("/", name="home")
      *
      */
     public function index()

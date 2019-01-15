@@ -16,8 +16,8 @@ security:
             # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
 
             form_login:
-                login_path: login
-                check_path: login
+                login_path: user_login
+                check_path: user_login
                 username_parameter: user_login_form[username]
                 password_parameter: user_login_form[password]
             # https://symfony.com/doc/current/security/form_login_setup.html
@@ -33,5 +33,5 @@ security:
         # - { path: ^/profile, roles: ROLE_USER }
     encoders:
         Mobicoop\Bundle\MobicoopBundle\User\Entity\User:
-            algorithm: plaintext
-            #cost: 12
+            algorithm: bcrypt
+            cost: 12

@@ -25,6 +25,8 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * User management service.
@@ -32,11 +34,15 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 class UserManager
 {
     private $dataProvider;
+    private $encoder;
+    private $tokenStorage;
     
-    public function __construct(DataProvider $dataProvider)
+    public function __construct(DataProvider $dataProvider, UserPasswordEncoderInterface $encoder, TokenStorageInterface $tokenStorage)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(User::class);
+        $this->encoder = $encoder;
+        $this->tokenStorage = $tokenStorage;
     }
     
     /**
@@ -53,6 +59,20 @@ class UserManager
             return $response->getValue();
         }
         return null;
+    }
+    
+    /**
+     * Get the logged user.
+     *
+     * @return User|null The logged user found or null if not found.
+     */
+    public function getLoggedUser()
+    {
+        if ($this->tokenStorage->getToken() === null) {
+            return null;
+        }
+        $user = $this->tokenStorage->getToken()->getUser();
+        return $user instanceof User ? $user : null;
     }
     
     /**
@@ -78,6 +98,8 @@ class UserManager
      */
     public function createUser(User $user)
     {
+        // encoding of the password
+        $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
         $response = $this->dataProvider->post($user);
         if ($response->getCode() == 201) {
             return $response->getValue();
@@ -94,6 +116,24 @@ class UserManager
      */
     public function updateUser(User $user)
     {
+        $response = $this->dataProvider->put($user);
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
+    
+    /**
+     * Update a user password
+     *
+     * @param User $user The user to update the password
+     *
+     * @return User|null The user updated or null if error.
+     */
+    public function updateUserPassword(User $user)
+    {
+        // encoding of the password
+        $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
         $response = $this->dataProvider->put($user);
         if ($response->getCode() == 200) {
             return $response->getValue();

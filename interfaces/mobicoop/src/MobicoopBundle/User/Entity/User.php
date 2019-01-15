@@ -82,7 +82,7 @@ class User implements Resource, UserInterface, EquatableInterface
      *
      * @Groups({"post","put"})
      *
-     * @Assert\NotBlank
+     * @Assert\NotBlank(groups={"signUp","update"})
      * @Assert\Email()
      */
     private $email;
@@ -91,6 +91,8 @@ class User implements Resource, UserInterface, EquatableInterface
      * @var string|null The encoded password of the user.
      *
      * @Groups({"post","put"})
+     *
+     * @Assert\NotBlank(groups={"signUp","password"})
      */
     private $password;
     
@@ -139,12 +141,16 @@ class User implements Resource, UserInterface, EquatableInterface
     private $maxDeviationDistance;
     
     /**
-     * @var boolean|null The user accepts any route as a passenger from its origin to the destination.
+     * @var boolean The user accepts any route as a passenger from its origin to the destination.
+     *
+     * @Groups({"post","put"})
      */
     private $anyRouteAsPassenger;
     
     /**
-     * @var boolean|null The user accepts any transportation mode.
+     * @var boolean The user accepts any transportation mode.
+     *
+     * @Groups({"post","put"})
      */
     private $multiTransportMode;
     
@@ -245,7 +251,7 @@ class User implements Resource, UserInterface, EquatableInterface
         return $this->email;
     }
     
-    public function setEmail(string $email): self
+    public function setEmail(?string $email): self
     {
         $this->email = $email;
         
@@ -338,12 +344,24 @@ class User implements Resource, UserInterface, EquatableInterface
     
     public function getAnyRouteAsPassenger(): bool
     {
-        return (!is_null($this->anyRouteAsPassenger) ? $this->anyRouteAsPassenger : true);
+        return !is_null($this->anyRouteAsPassenger) ? $this->anyRouteAsPassenger : false;
     }
     
-    public function setAnyRouteAsPassenger(?bool $anyRouteAsPassenger): self
+    public function setAnyRouteAsPassenger(bool $anyRouteAsPassenger): self
     {
         $this->anyRouteAsPassenger = $anyRouteAsPassenger;
+        
+        return $this;
+    }
+    
+    public function getMultiTransportMode(): bool
+    {
+        return !is_null($this->multiTransportMode) ? $this->multiTransportMode : false;
+    }
+    
+    public function setMultiTransportMode(bool $multiTransportMode): self
+    {
+        $this->multiTransportMode = $multiTransportMode;
         
         return $this;
     }
