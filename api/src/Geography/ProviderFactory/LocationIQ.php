@@ -168,9 +168,8 @@ final class LocationIQ extends AbstractHttpProvider implements Provider
         $builder->setStreetNumber($this->getNodeValue($addressNode->getElementsByTagName('house_number')));
         //Locality if city not set ->county & if county not set ->village
         $builder->setLocality($this->getNodeValue($addressNode->getElementsByTagName('city')) ?: $this->getNodeValue($addressNode->getElementsByTagName('county')) ?: $this->getNodeValue($addressNode->getElementsByTagName('village')));
-        $builder->setLocality($this->getNodeValue($addressNode->getElementsByTagName('city')));
         //SubLocality if suburb(not useful for the moment) not set ->village & if village not set ->county
-        $builder->setSubLocality(/*$this->getNodeValue($addressNode->getElementsByTagName('suburb')) ?:*/ $this->getNodeValue($addressNode->getElementsByTagName('village')) ?: $this->getNodeValue($addressNode->getElementsByTagName('county')));
+        $builder->setSubLocality(/*$this->getNodeValue($addressNode->getElementsByTagName('suburb')) ?:*/ $this->getNodeValue($addressNode->getElementsByTagName('village')) /*?: $this->getNodeValue($addressNode->getElementsByTagName('county'))*/);
         $builder->setCountry($this->getNodeValue($addressNode->getElementsByTagName('country')));
         $builder->setCountryCode(strtoupper($this->getNodeValue($addressNode->getElementsByTagName('country_code'))));
         $builder->setCoordinates($resultNode->getAttribute('lat'), $resultNode->getAttribute('lon'));
