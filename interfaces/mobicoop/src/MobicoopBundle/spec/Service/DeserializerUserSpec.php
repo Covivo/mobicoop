@@ -24,8 +24,8 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 
 /**
  * DeserializerUserSpec.php
