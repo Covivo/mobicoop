@@ -29,7 +29,9 @@ Filters::apply($this, 'coverage', function($next) {
             'src/MobicoopBundle/Carpool/Entity/*',
             'src/MobicoopBundle/ExternalJourney/Entity/*',
             'src/MobicoopBundle/Geography/Entity/*',
+            'src/MobicoopBundle/JsonLD/Entity/*',
             'src/MobicoopBundle/PublicTransport/Entity/*',
+            'src/MobicoopBundle/Travel/Entity/*',
             'src/MobicoopBundle/User/Entity/*',
             /* Form (disabled until we are able to launch api in gitlab-ci) */
             'src/MobicoopBundle/Form/*',
