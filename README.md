@@ -12,7 +12,7 @@
 
 ### About mobicoop
 
-Carpools apps available on a territory and allows connection between carpoolers making the same trip daily or punctually.
+Carpool apps available on a territory, allows connection between carpoolers making the same trip daily or punctually.
 
 For more informations, check their readme:
 
@@ -28,7 +28,7 @@ For more informations, check their readme:
 - xdebug (needed for code-coverage)
 - Google Chrome (for functionnals tests)
 - If you have missing modules during installation check this docker file
-install & enable in you .ini all its php extensions : [Docker file](https://github.com/vyuldashev/docker-ci-php-node/blob/master/Dockerfile)
+install & enable in your .ini all its php extensions : [Docker file](https://github.com/vyuldashev/docker-ci-php-node/blob/master/Dockerfile)
 
 - for Windows check the [windows requirement](#windows-requirements) part
 
@@ -50,7 +50,7 @@ install & enable in you .ini all its php extensions : [Docker file](https://gith
  - Admin node_modules 
  - Download tools binaries (php-cs-fixer & phpdocumentor)
 
-- Sometimes if tools do not work you will ne on unix systems: `chmod 775 bin/*`
+- Sometimes if tools do not work you will need on unix systems: `chmod 775 bin/*`
 
 - Duplicate, rename without .dist & edit some env & config files:
     - [.env api](api/.env.dist)  
@@ -71,8 +71,8 @@ There are some needs for api database , check them [/api](/api)
 
 `npm test` will test the three apps
 
--We use [Kahlan](https://kahlan.github.io/docs/) to create units/functionnals tests, you can launch them easily with:
--For functionnals tests you can do it via 3 ways, with [kernels](https://api.symfony.com/4.1/Symfony/Component/HttpKernel/Kernel.html) (limited--), with [client](https://api.symfony.com/4.1/Symfony/Component/HttpKernel/Client.html) (limited), with [panther](https://github.com/symfony/panther) for a real browser testing (click,form ..)
+- We use [Kahlan](https://kahlan.github.io/docs/) to create unit/functional tests, you can launch them easily with:
+- For functional tests you can do it 3 ways, with [kernels](https://api.symfony.com/4.1/Symfony/Component/HttpKernel/Kernel.html) (limited--), with [client](https://api.symfony.com/4.1/Symfony/Component/HttpKernel/Client.html) (limited), with [panther](https://github.com/symfony/panther) for a real browser testing (click,form ..)
 
 
 ### Start 🚀
@@ -91,9 +91,9 @@ To start the application simply run :
 To contribute to the mobicoop application, please do the following:
 
 1. Create a branch by feature or fork the repo if you are not in dev team
-2. [Start](#start) the 3 apps  (necesary to watch js/css/sass):
-3. Add some Unit Tests and/or functionnals test and check if build passed
-4. Create a pull request & set reviewver before merge
+2. [Start](#start) the 3 apps  (mandatory to watch js/css/sass):
+3. Add some Unit Tests and/or functional tests and check if build passes
+4. Create a pull request & set reviewer before merge
 
 ### Documentation
 
@@ -113,17 +113,18 @@ and [contributor covenant](https://www.contributor-covenant.org)
 
 ### Hooks
 
-There is some git hooks implemented in this app:
+There are some git hooks implemented in this app:
 
-- Run test before any push
+- Run tests before any push
 - Run php-cs-fixer before any commit
 - Run npm install after each pull
 
 
 ### How to create my own front application
 
-Because Mobicoop is a monorepo, you can ask yourself you to create & dev on you own front-end application.
-Monicoop comes with a simple script to run, it will create a canvas skeletton based on mobicoop front-end & link the main bundle to it.
+Because Mobicoop is a monorepo, you can ask yourself how to create & dev on your own front-end application.
+Mobicoop comes with a simple script to run, it will create a canvas skeleton based on mobicoop front-end & link the main bundle to it.
+Just go to the root of Mobicoop repo and do the flollowing:
 
 `mkdir -p ../path/to/newFront`
 
@@ -142,7 +143,7 @@ In order to increase the impact of our platform to any sort of clients whatever 
  - proprietary software
 
 #### Components license compatibility
-Since Mobicoop is dual licensed AGPLv3/proprietary, all components used for Mobicoop must be compatible with both licenses. As consequence, all components integrated into Mobicoop source code **must be released with a _permissive_ open source license**. More information on license compatibility for [software components](https://dwheeler.com/essays/floss-license-slide.html) and [content components (Creative Commons issues)](https://opensource.stackexchange.com/questions/7750/which-creative-commons-licenses-are-permissive-enough-for-proprietary-software/7751).
+Since Mobicoop is dual licensed AGPLv3/proprietary, all components used for Mobicoop must be compatible with both licenses. As a consequence, all components integrated into Mobicoop source code **must be released with a _permissive_ open source license**. More information on license compatibility for [software components](https://dwheeler.com/essays/floss-license-slide.html) and [content components (Creative Commons issues)](https://opensource.stackexchange.com/questions/7750/which-creative-commons-licenses-are-permissive-enough-for-proprietary-software/7751).
 
 Mobicoop CI process includes a License Management which checks the license of all components part of a merge request. The most common _permissive_ licenses have already been added to the approved licenses list of this License Management process.
 In case you have one of the following situation while merging, please get in touch with Mobicoop project licensing issues expert before merging:
@@ -152,7 +153,7 @@ In case you have one of the following situation while merging, please get in tou
 
 ### Windows Requirements
 
-Please use powershell with our project, in requirement you will need:
+Please use powershell with our project, in requirements you will need:
 
 *BE SURE TO BE IN AN ADMIN CONSOLE MOD !!!*
 

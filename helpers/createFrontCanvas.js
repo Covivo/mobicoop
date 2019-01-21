@@ -19,16 +19,16 @@ const bundle = path.resolve(__dirname, '../interfaces/mobicoop/src/MobicoopBundl
       else{return true;}
     }
   }*/
+
+program
+.version('0.1.0')
+.option('-d, --destination  <dir>', 'Path to copy canvas to')
+.parse(process.argv);
+
 if (!program.destination)  {
   process.stderr.write(kuler('You did not specify a path to copy canvas to .. ','orange'));
   process.exit(0);
 }
-
-program
-    .version('0.1.0')
-    .option('-d, --destination  <dir>', 'Path to copy canvas to')
-    .parse(process.argv);
-
 
 // This function check copy to path sent & link to bundle
 async function createCanvas () {
