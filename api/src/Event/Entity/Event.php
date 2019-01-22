@@ -27,6 +27,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use App\Geography\Entity\Address;
 use App\Image\Entity\Image;
@@ -125,7 +126,7 @@ class Event
     /**
      * @var string The information url for the event.
      *
-     * @ORM\Column(type="string", length=255, nullable="true")
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"read","write"})
      */
     private $url;
@@ -319,6 +320,4 @@ class Event
         
         return $this;
     }
-    
-    
 }

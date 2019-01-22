@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Event\Entity;
+namespace App\Image\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -61,7 +61,7 @@ class ThumbnailType
     /**
      * @var string The name of the image.
      *
-     * @ORM\Column(type="string", length=45, nullable="true")
+     * @ORM\Column(type="string", length=45, nullable=true)
      * @Groups("read")
      */
     private $name;
@@ -77,7 +77,7 @@ class ThumbnailType
     /**
      * @var string Force to the encoding format of the generated thumbnail image.
      *
-     * @ORM\Column(type="string", length=255, nullable="true")
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups("read")
      */
     private $encodingFormat;
@@ -128,5 +128,4 @@ class ThumbnailType
     {
         $this->encodingFormat = $encodingFormat;
     }
-    
 }

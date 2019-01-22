@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Event\Entity;
+namespace App\Image\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -143,5 +143,4 @@ class ImageType
         
         return $this;
     }
-    
 }
