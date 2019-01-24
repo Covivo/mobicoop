@@ -35,7 +35,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * An image type (image for a user, an event...).
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\Image\Repository\ImageTypeRepository")
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -47,6 +47,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class ImageType
 {
+    const TYPE_USER = 1;
+    const TYPE_EVENT = 2;
+    
     /**
      * @var int The id of this image type.
      *

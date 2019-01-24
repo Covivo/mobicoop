@@ -39,7 +39,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * An event.
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\Event\Repository\EventRepository")
+ * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -132,12 +133,19 @@ class Event
     private $url;
     
     /**
+    * @var \DateTimeInterface Creation date of the event.
+    *
+    * @ORM\Column(type="datetime")
+    */
+    private $createdDate;
+    
+    /**
      * @var User The creator of the event.
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read"})
+     * @Groups({"read","write"})
      * @MaxDepth(1)
      */
     private $user;
@@ -154,9 +162,8 @@ class Event
     private $address;
     
     /**
-     * @var Image[] The images of the event.
+     * @var Image[]|null The images of the event.
      *
-     * @Assert\NotBlank
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="event", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"read","write"})
@@ -266,6 +273,18 @@ class Event
         $this->url = $url;
     }
     
+    public function getCreatedDate(): ?\DateTimeInterface
+    {
+        return $this->createdDate;
+    }
+    
+    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    {
+        $this->createdDate = $createdDate;
+        
+        return $this;
+    }
+    
     public function getUser(): User
     {
         return $this->user;
@@ -319,5 +338,17 @@ class Event
         }
         
         return $this;
+    }
+    
+    // DOCTRINE EVENTS
+    
+    /**
+     * Creation date.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoCreatedDate()
+    {
+        $this->setCreatedDate(new \Datetime());
     }
 }

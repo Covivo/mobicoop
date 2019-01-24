@@ -1,0 +1,64 @@
+<?php
+
+/**
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * This project is dual licensed under AGPL and proprietary licence.
+ ***************************
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Affero General Public License as
+ *    published by the Free Software Foundation, either version 3 of the
+ *    License, or (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Affero General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Affero General Public License
+ *    along with this program.  If not, see <gnu.org/licenses>.
+ ***************************
+ *    Licence MOBICOOP described in the file
+ *    LICENSE
+ **************************/
+
+namespace App\Image\Repository;
+
+use App\Event\Entity\Event;
+use App\Image\Entity\Image;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+
+/**
+ * @method Image|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Image|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Image[]    findAll()
+ * @method Image[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
+class ImageRepository extends ServiceEntityRepository
+{
+    public function __construct(RegistryInterface $registry)
+    {
+        parent::__construct($registry, Image::class);
+    }
+    
+    /**
+     * Find the next image position for a given related entity (owner)
+     * @param object $owner
+     */
+    public function findNextPosition(object $owner)
+    {
+        $query = $this->createQueryBuilder('i');
+        $query->select('MAX(i.position) AS maxPos');
+        switch (get_class($owner)) {
+            case Event::class : 
+                $query->andWhere('i.event = :event')
+                ->setParameter('event', $owner);
+                break;
+            default:
+                break;
+        }
+        if ($result = $query->getQuery()->getOneOrNullResult()) return 1+$result['maxPos'];
+        return 1;
+        
+    }
+}

@@ -25,6 +25,7 @@ namespace App\Image\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Events;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
@@ -33,19 +34,32 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Event\Entity\Event;
+use App\Image\Controller\CreateImageAction;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * An image.
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\Image\Repository\ImageRepository")
+ * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *      },
- *      collectionOperations={"get"},
+ *      collectionOperations={
+ *          "get",
+ *          "post"={
+ *              "method"="POST",
+ *              "path"="/images",
+ *              "controller"=CreateImageAction::class,
+ *              "defaults"={"_api_receive"=false},
+ *          }
+ *      },
  *      itemOperations={"get"}
  * )
+ * @Vich\Uploadable
  */
 class Image
 {
@@ -85,28 +99,72 @@ class Image
     private $alt;
     
     /**
-     * @var string The file name of the image.
+     * @var string The final file name of the image.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups("read")
+     * @Groups({"read","write"})
      */
     private $fileName;
     
     /**
-     * @var string The encoding format of the image.
+     * @var string The original file name of the image.
+     *
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"read","write"})
+     */
+    private $originalName;
+    
+    /**
+     * @var array The dimensions of the image.
+     */
+    private $dimensions;
+    
+    /**
+    * @var int The width of the image in pixels.
+    *
+    * @ORM\Column(type="integer")
+    * @Groups({"read","write"})
+    */
+    private $width;
+    
+    /**
+     * @var int The height of the image in pixels.
+     *
+     * @ORM\Column(type="integer")
+     * @Groups({"read","write"})
+     */
+    private $height;
+    
+    /**
+     * @var int The size in bytes of the image.
+     *
+     * @ORM\Column(type="integer")
+     * @Groups({"read","write"})
+     */
+    private $size;
+    
+    /**
+     * @var string The mime type of the image.
      *
      * @ORM\Column(type="string", length=255)
      * @Groups("read")
      */
-    private $encodingFormat;
+    private $mimeType;
     
     /**
-     * @var string The position of the image if mulitple images are related to the same entity.
+     * @var int The position of the image if mulitple images are related to the same entity.
      *
      * @ORM\Column(type="smallint")
      * @Groups({"read","write"})
      */
     private $position;
+    
+    /**
+     * @var \DateTimeInterface Creation date of the image.
+     *
+     * @ORM\Column(type="datetime")
+     */
+    private $createdDate;
     
     /**
      * @var Event|null The event associated with the image.
@@ -118,13 +176,35 @@ class Image
     /**
      * @var ImageType The image type of the image.
      *
-     * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Image\Entity\ImageType")
-     * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
      * @MaxDepth(1)
      */
     private $imageType;
+    
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="event", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     */
+    private $eventFile;
+    
+    /**
+     * @var int|null The event id associated with the image.
+     * @Groups({"write"})
+     */
+    private $eventId;
+    
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="user", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     */
+    private $userFile;
+    
+    /**
+     * @var int|null The user id associated with the image.
+     * @Groups({"write"})
+     */
+    private $userId;
         
     public function __construct($id=null)
     {
@@ -141,7 +221,7 @@ class Image
         $this->id = $id;
     }
     
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -171,34 +251,104 @@ class Image
         $this->alt = $alt;
     }
     
-    public function getFileName(): string
+    public function getFileName(): ?string
     {
         return $this->fileName;
     }
     
-    public function setFileName(string $fileName)
+    public function setFileName(?string $fileName)
     {
         $this->fileName = $fileName;
     }
     
-    public function getEncodingFormat(): string
+    public function getOriginalName(): ?string
     {
-        return $this->encodingFormat;
+        return $this->originalName;
     }
     
-    public function setEncodingFormat(string $encodingFormat)
+    public function setOriginalName(?string $originalName)
     {
-        $this->encodingFormat = $encodingFormat;
+        $this->originalName = $originalName;
     }
     
-    public function getPosition(): int
+    public function getDimensions(): ?array
+    {
+        return $this->dimensions;
+    }
+    
+    public function setDimensions(?array $dimensions)
+    {
+        $this->dimensions = $dimensions;
+        $this->setWidth($this->getDimensions()[0]);
+        $this->setHeight($this->getDimensions()[1]);
+    }
+    
+    public function getWidth(): ?int
+    {
+        return $this->width;
+    }
+    
+    public function setWidth(?int $width): self
+    {
+        $this->width = $width;
+        
+        return $this;
+    }
+    
+    public function getHeight(): ?int
+    {
+        return $this->height;
+    }
+    
+    public function setHeight(?int $height): self
+    {
+        $this->height = $height;
+        
+        return $this;
+    }
+    
+    public function getSize(): ?int
+    {
+        return $this->size;
+    }
+    
+    public function setSize(?int $size): self
+    {
+        $this->size = $size;
+        
+        return $this;
+    }
+    
+    public function getMimeType(): ?string
+    {
+        return $this->mimeType;
+    }
+    
+    public function setMimeType(?string $mimeType)
+    {
+        $this->mimeType = $mimeType;
+    }
+    
+    public function getPosition(): ?int
     {
         return $this->position;
     }
     
-    public function setPosition(int $position): self
+    public function setPosition(?int $position): self
     {
         $this->position = $position;
+        
+        return $this;
+    }
+    
+    public function getCreatedDate(): ?\DateTimeInterface
+    {
+        return $this->createdDate;
+    }
+    
+    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    {
+        $this->createdDate = $createdDate;
         
         return $this;
     }
@@ -215,15 +365,68 @@ class Image
         return $this;
     }
     
-    public function getImageType(): ImageType
+    public function getImageType(): ?ImageType
     {
         return $this->imageType;
     }
     
-    public function setImageType(ImageType $imageType): self
+    public function setImageType(?ImageType $imageType): self
     {
         $this->imageType = $imageType;
         
         return $this;
     }
+    
+    public function getEventFile(): ?File
+    {
+        return $this->eventFile;
+    }
+    
+    public function setEventFile(?File $eventFile)
+    {
+        $this->eventFile = $eventFile;
+    }
+    
+    public function getEventId(): ?int
+    {
+        return $this->eventId;
+    }
+    
+    public function setEventId($eventId)
+    {
+        $this->eventId = $eventId;
+    }
+    
+    public function getUserFile(): ?File
+    {
+        return $this->userFile;
+    }
+    
+    public function setUserFile(?File $userFile)
+    {
+        $this->userFile = $userFile;
+    }
+    
+    public function getUserId(): ?int
+    {
+        return $this->userId;
+    }
+    
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
+    }
+    
+    // DOCTRINE EVENTS
+    
+    /**
+     * Creation date.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoCreatedDate()
+    {
+        $this->setCreatedDate(new \Datetime());
+    }
+        
 }
