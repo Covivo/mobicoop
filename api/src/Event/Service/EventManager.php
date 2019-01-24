@@ -41,5 +41,4 @@ class EventManager
     {
         $this->entityManager = $entityManager;
     }
-    
 }

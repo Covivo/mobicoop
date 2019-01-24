@@ -40,7 +40,8 @@ class FileManager
      * @param boolean $anal
      * @return string
      */
-    public function sanitize(string $string, bool $force_lowercase = true, bool $anal = false) {
+    public function sanitize(string $string, bool $force_lowercase = true, bool $anal = false)
+    {
         $strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "=", "+", "[", "{", "]",
             "}", "\\", "|", ";", ":", "\"", "'", "&#8216;", "&#8217;", "&#8220;", "&#8221;", "&#8211;", "&#8212;",
             "â€”", "â€“", ",", "<", ".", ">", "/", "?");
@@ -53,5 +54,4 @@ class FileManager
         strtolower($clean) :
         $clean;
     }
-    
 }

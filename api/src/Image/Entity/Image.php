@@ -428,5 +428,4 @@ class Image
     {
         $this->setCreatedDate(new \Datetime());
     }
-        
 }

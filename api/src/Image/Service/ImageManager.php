@@ -53,7 +53,7 @@ class ImageManager
      * @param Image $image
      * @return object|false
      */
-    public function getOwner(Image $image) 
+    public function getOwner(Image $image)
     {
         if (!is_null($image->getEventId())) {
             // the image is an image for an event
@@ -68,7 +68,7 @@ class ImageManager
      * @param object $owner
      * @return int
      */
-    public function getNextPosition(Image $image, object $owner) 
+    public function getNextPosition(Image $image, object $owner)
     {
         return $this->entityManager->getRepository(Image::class)->findNextPosition($owner);
     }
@@ -79,16 +79,16 @@ class ImageManager
      * @param object $owner
      * @return string|boolean
      */
-    public function generateFilename(Image $image, object $owner) 
+    public function generateFilename(Image $image, object $owner)
     {
         // note : the file extension will be automatically added
         switch (get_class($owner)) {
-            case Event::class :
+            case Event::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for an event, the filename will be the sanitized name of the event and the position of the image in the set
                 return $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition());
                 break;
-            default: 
+            default:
                 break;
         }
         return false;
@@ -103,7 +103,7 @@ class ImageManager
     public function getImageType(Image $image, object $owner)
     {
         switch (get_class($owner)) {
-            case Event::class :
+            case Event::class:
                 return $this->entityManager->getRepository(ImageType::class)->find(ImageType::TYPE_EVENT);
                 break;
             default:
@@ -121,7 +121,7 @@ class ImageManager
     public function treat(Image $image)
     {
         switch ($image->getImageType()->getId()) {
-            case ImageType::TYPE_EVENT : 
+            case ImageType::TYPE_EVENT:
                 // Prevent the serialization of the file property
                 $image->setEventFile(null);
                 // TODO : resize, thumbnails...
@@ -131,5 +131,4 @@ class ImageManager
     }
     
     // TODO : create methods to modify the position and filename of an image set if an image of the set is deleted, or if the position changes (swicth between images) etc...
-    
 }

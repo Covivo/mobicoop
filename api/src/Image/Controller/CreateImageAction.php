@@ -66,9 +66,9 @@ final class CreateImageAction
             // we associate the event and the image
             $owner->addImage($image);
             // we get the image type
-            $image->setImageType($this->imageManager->getImageType($image,$owner));
+            $image->setImageType($this->imageManager->getImageType($image, $owner));
             // we search the position of the image
-            $image->setPosition($this->imageManager->getNextPosition($image,$owner));
+            $image->setPosition($this->imageManager->getNextPosition($image, $owner));
             // we rename the image depending on the owner
             $image->setFileName($this->imageManager->generateFilename($image, $owner));
         }
@@ -79,7 +79,7 @@ final class CreateImageAction
             $em->persist($image);
             
             // we apply treatments to the image
-            $image = $this->imageManager->treat($image,$owner);
+            $image = $this->imageManager->treat($image, $owner);
             $em->persist($image);
             $em->flush();
             

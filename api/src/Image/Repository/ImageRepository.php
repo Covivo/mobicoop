@@ -50,15 +50,16 @@ class ImageRepository extends ServiceEntityRepository
         $query = $this->createQueryBuilder('i');
         $query->select('MAX(i.position) AS maxPos');
         switch (get_class($owner)) {
-            case Event::class : 
+            case Event::class:
                 $query->andWhere('i.event = :event')
                 ->setParameter('event', $owner);
                 break;
             default:
                 break;
         }
-        if ($result = $query->getQuery()->getOneOrNullResult()) return 1+$result['maxPos'];
+        if ($result = $query->getQuery()->getOneOrNullResult()) {
+            return 1+$result['maxPos'];
+        }
         return 1;
-        
     }
 }
