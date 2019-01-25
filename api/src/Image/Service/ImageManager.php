@@ -110,18 +110,18 @@ class ImageManager
             foreach ($types['thumbnail']['sizes'] as $thumbnail) {
                 $fileName = $image->getFileName();
                 if ($extension = $this->fileManager->getExtension($fileName)) {
-                    $fileName = substr($fileName,0,-(strlen($extension)+1));
+                    $fileName = substr($fileName, 0, -(strlen($extension)+1));
                 }
                 $version = $this->generateVersion(
-                    $image, 
-                    $types['folder']['thumbnail'], 
-                    $fileName, 
-                    $types['thumbnail']['extension'], 
-                    $thumbnail['ratio'] == '1' ? $ratio['ratio'] : $thumbnail['ratio'], 
-                    $ratio['prefix'], 
-                    $thumbnail['prefix'], 
+                    $image,
+                    $types['folder']['thumbnail'],
+                    $fileName,
+                    $types['thumbnail']['extension'],
+                    $thumbnail['ratio'] == '1' ? $ratio['ratio'] : $thumbnail['ratio'],
+                    $ratio['prefix'],
+                    $thumbnail['prefix'],
                     $thumbnail['width']
-                ); 
+                );
                 $versions[] = $version;
             }
         }
@@ -140,16 +140,15 @@ class ImageManager
      * @return string
      */
     private function generateVersion(
-        Image $image, 
+        Image $image,
         string $folder,
         string $fileName,
         string $extension,
         string $ratio,
-        string $ratioPrefix, 
-        string $thumbnailPrefix, 
+        string $ratioPrefix,
+        string $thumbnailPrefix,
         int $thumbnailWidth
-        )
-    {
+        ) {
         $versionName = $ratioPrefix . $thumbnailPrefix . $fileName . "." . $extension;
         return $versionName;
     }

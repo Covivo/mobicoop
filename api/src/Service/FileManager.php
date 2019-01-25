@@ -60,9 +60,10 @@ class FileManager
      * @param mixed $file
      * @return string
      */
-    public function getExtension($file) {
+    public function getExtension($file)
+    {
         if (is_string($file)) {
-            return substr(strrchr($file,'.'),1);
+            return substr(strrchr($file, '.'), 1);
         } elseif (is_object($file)) {
             $fileParts = pathinfo($file);
             return $fileParts['extension'];

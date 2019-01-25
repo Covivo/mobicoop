@@ -492,7 +492,7 @@ class Image
         $this->versions = $versions;
     }
     
-    public function preventSerialization() 
+    public function preventSerialization()
     {
         $this->setEventFile(null);
         $this->setUserFile(null);
