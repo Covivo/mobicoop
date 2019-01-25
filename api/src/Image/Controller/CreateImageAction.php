@@ -65,8 +65,6 @@ final class CreateImageAction
         if ($owner = $this->imageManager->getOwner($image)) {
             // we associate the event and the image
             $owner->addImage($image);
-            // we get the image type
-            $image->setImageType($this->imageManager->getImageType($image, $owner));
             // we search the position of the image
             $image->setPosition($this->imageManager->getNextPosition($image, $owner));
             // we rename the image depending on the owner
@@ -78,8 +76,12 @@ final class CreateImageAction
             $em = $this->doctrine->getManager();
             $em->persist($image);
             
-            // we apply treatments to the image
-            $image = $this->imageManager->treat($image, $owner);
+            // we generate the versions available for the image
+            $image->setVersions($this->imageManager->generateVersions($image, $owner));
+
+            // Prevent the serialization of the file property
+            $image->preventSerialization();
+            
             $em->persist($image);
             $em->flush();
             

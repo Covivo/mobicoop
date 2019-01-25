@@ -46,6 +46,10 @@ final class ImageForm extends AbstractType
         ->add('name')
         ->add('title')
         ->add('alt')
+        ->add('cropX1')
+        ->add('cropY1')
+        ->add('cropX2')
+        ->add('cropY2')
         ->add('eventId')
         ;
     }

@@ -6,6 +6,9 @@
 parameters:
     locale: 'en'
 
+imports:
+    resource: 'images.yaml'
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -51,3 +54,8 @@ services:
 
     # alias to allow this type to be autowired
     Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'
+    
+    # inject image parameters to ImageManager 
+    App\Image\Service\ImageManager:
+        arguments:
+            $types: '%images%'

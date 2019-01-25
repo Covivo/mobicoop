@@ -99,6 +99,38 @@ class Image
     private $alt;
     
     /**
+     * @var int The left coordinate of the crop, in percentage of the full width.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $cropX1;
+
+    /**
+     * @var int The top coordinate of the crop, in percent of the full height.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $cropY1;
+    
+    /**
+     * @var int The right coordinate of the crop, in percentage of the full width.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $cropX2;
+    
+    /**
+     * @var int The bottom coordinate of the crop, in percent of the full height.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $cropY2;
+    
+    /**
      * @var string The final file name of the image.
      *
      * @ORM\Column(type="string", length=255)
@@ -115,7 +147,7 @@ class Image
     private $originalName;
     
     /**
-     * @var array The dimensions of the image.
+     * @var array The original dimensions of the image.
      */
     private $dimensions;
     
@@ -174,15 +206,6 @@ class Image
     private $event;
     
     /**
-     * @var ImageType The image type of the image.
-     *
-     * @ORM\ManyToOne(targetEntity="App\Image\Entity\ImageType")
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $imageType;
-    
-    /**
      * @var File|null
      * @Vich\UploadableField(mapping="event", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
      */
@@ -205,6 +228,12 @@ class Image
      * @Groups({"write"})
      */
     private $userId;
+    
+    /**
+     * @var array|null The versions of with the image.
+     * @Groups({"read"})
+     */
+    private $versions;
         
     public function __construct($id=null)
     {
@@ -249,6 +278,54 @@ class Image
     public function setAlt(?string $alt)
     {
         $this->alt = $alt;
+    }
+    
+    public function getCropX1(): ?int
+    {
+        return $this->cropX1;
+    }
+    
+    public function setCropX1(?int $cropX1): self
+    {
+        $this->cropX1 = $cropX1;
+        
+        return $this;
+    }
+    
+    public function getCropY1(): ?int
+    {
+        return $this->cropY1;
+    }
+    
+    public function setCropY1(?int $cropY1): self
+    {
+        $this->cropY1 = $cropY1;
+        
+        return $this;
+    }
+    
+    public function getCropX2(): ?int
+    {
+        return $this->cropX2;
+    }
+    
+    public function setCropX2(?int $cropX2): self
+    {
+        $this->cropX2 = $cropX2;
+        
+        return $this;
+    }
+    
+    public function getCropY2(): ?int
+    {
+        return $this->cropX1;
+    }
+    
+    public function setCropY2(?int $cropY2): self
+    {
+        $this->cropY2 = $cropY2;
+        
+        return $this;
     }
     
     public function getFileName(): ?string
@@ -365,18 +442,6 @@ class Image
         return $this;
     }
     
-    public function getImageType(): ?ImageType
-    {
-        return $this->imageType;
-    }
-    
-    public function setImageType(?ImageType $imageType): self
-    {
-        $this->imageType = $imageType;
-        
-        return $this;
-    }
-    
     public function getEventFile(): ?File
     {
         return $this->eventFile;
@@ -415,6 +480,22 @@ class Image
     public function setUserId($userId)
     {
         $this->userId = $userId;
+    }
+    
+    public function getVersions(): ?array
+    {
+        return $this->versions;
+    }
+    
+    public function setVersions(?array $versions)
+    {
+        $this->versions = $versions;
+    }
+    
+    public function preventSerialization() 
+    {
+        $this->setEventFile(null);
+        $this->setUserFile(null);
     }
     
     // DOCTRINE EVENTS

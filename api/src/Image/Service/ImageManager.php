@@ -26,7 +26,6 @@ namespace App\Image\Service;
 use App\Image\Entity\Image;
 use App\Event\Entity\Event;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Image\Entity\ImageType;
 use App\Service\FileManager;
 
 /**
@@ -40,11 +39,13 @@ class ImageManager
 {
     private $entityManager;
     private $fileManager;
+    private $types;
     
-    public function __construct(EntityManagerInterface $entityManager, FileManager $fileManager)
+    public function __construct(EntityManagerInterface $entityManager, FileManager $fileManager, array $types)
     {
         $this->entityManager = $entityManager;
         $this->fileManager = $fileManager;
+        $this->types = $types;
     }
     
     /**
@@ -95,40 +96,63 @@ class ImageManager
     }
     
     /**
-     * Get the image type depending on the class of the image owner.
+     * Generates the different versions of the image (thumbnails).
+     * Returns the names of the generated versions
      * @param Image $image
      * @param object $owner
-     * @return object|NULL|boolean
+     * @return array
      */
-    public function getImageType(Image $image, object $owner)
+    public function generateVersions(Image $image, object $owner)
     {
-        switch (get_class($owner)) {
-            case Event::class:
-                return $this->entityManager->getRepository(ImageType::class)->find(ImageType::TYPE_EVENT);
-                break;
-            default:
-                break;
+        $versions = [];
+        $types = $this->types[strtolower((new \ReflectionClass($owner))->getShortName())];
+        foreach ($types['ratios'] as $ratio) {
+            foreach ($types['thumbnail']['sizes'] as $thumbnail) {
+                $fileName = $image->getFileName();
+                if ($extension = $this->fileManager->getExtension($fileName)) {
+                    $fileName = substr($fileName,0,-(strlen($extension)+1));
+                }
+                $version = $this->generateVersion(
+                    $image, 
+                    $types['folder']['thumbnail'], 
+                    $fileName, 
+                    $types['thumbnail']['extension'], 
+                    $thumbnail['ratio'] == '1' ? $ratio['ratio'] : $thumbnail['ratio'], 
+                    $ratio['prefix'], 
+                    $thumbnail['prefix'], 
+                    $thumbnail['width']
+                ); 
+                $versions[] = $version;
+            }
         }
-        return false;
+        // TODO : verify each version
+        return $versions;
     }
     
     /**
-     * Apply treatments to the provided image (it should already be saved).
-     * Depending of image type (= the entity associated with the image : User, Event...), different treatments can be applied.
+     * Generates a version of an image.
      * @param Image $image
-     * @return \App\Image\Entity\Image
+     * @param string $folder
+     * @param string $fileName
+     * @param string $ratio
+     * @param string $mimeType
+     * @param string $extension
+     * @return string
      */
-    public function treat(Image $image)
+    private function generateVersion(
+        Image $image, 
+        string $folder,
+        string $fileName,
+        string $extension,
+        string $ratio,
+        string $ratioPrefix, 
+        string $thumbnailPrefix, 
+        int $thumbnailWidth
+        )
     {
-        switch ($image->getImageType()->getId()) {
-            case ImageType::TYPE_EVENT:
-                // Prevent the serialization of the file property
-                $image->setEventFile(null);
-                // TODO : resize, thumbnails...
-                break;
-        }
-        return $image;
+        $versionName = $ratioPrefix . $thumbnailPrefix . $fileName . "." . $extension;
+        return $versionName;
     }
     
-    // TODO : create methods to modify the position and filename of an image set if an image of the set is deleted, or if the position changes (swicth between images) etc...
+    // TODO : create methods to modify the position and filename of an image set if an image of the set is deleted, or if the position changes (switch between images) etc...
 }

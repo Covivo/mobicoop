@@ -13,6 +13,7 @@
         "geocoder-php/google-maps-provider": "^4.2",
         "geocoder-php/here-provider": "^0.1.0",
         "geocoder-php/open-cage-provider": "^4.0",
+        "liip/imagine-bundle": "^2.1",
         "php-http/guzzle6-adapter": "1.1.1",
         "php-http/message": "^1.7",
         "symfony/console": "*",
