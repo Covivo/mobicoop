@@ -128,7 +128,14 @@ class PTStep
      * @Groups("pt")
      */
     private $ptarrival;
-    
+
+    /**
+     * @var String Geometric path of this step
+     * @Groups("pt")
+     */
+    private $geometry;
+
+
     public function __construct($id)
     {
         $this->id = $id;
@@ -252,6 +259,18 @@ class PTStep
     {
         $this->ptarrival = $ptarrival;
         
+        return $this;
+    }
+
+    public function getGeometry(): ?String
+    {
+        return $this->geometry;
+    }
+
+    public function setGeometry(String $geometry): self
+    {
+        $this->geometry = $geometry;
+
         return $this;
     }
 }

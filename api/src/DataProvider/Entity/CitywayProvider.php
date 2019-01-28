@@ -596,6 +596,9 @@ class CitywayProvider implements ProviderInterface
         if (isset($data["RelativeDirection"]) && !is_null($data["RelativeDirection"])) {
             $ptstep->setRelativeDirection($data["RelativeDirection"]);
         }
+        if (isset($data["Geometry"])) {
+            $ptstep->setGeometry($data["Geometry"]);
+        }
         return $ptstep;
     }
 }
