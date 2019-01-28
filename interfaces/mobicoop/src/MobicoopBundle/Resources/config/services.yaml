@@ -67,5 +67,8 @@ services:
     Mobicoop\Bundle\MobicoopBundle\User\Service\:
         resource: '@MobicoopBundle/User/Service/*'
     
+    # Event
+    Mobicoop\Bundle\MobicoopBundle\Event\Service\:
+        resource: '@MobicoopBundle/Event/Service/*'
         
     

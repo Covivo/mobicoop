@@ -29,6 +29,7 @@ use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourney;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 
 use TypeError;
 
@@ -76,6 +77,9 @@ class Deserializer
             case Address::class:
                 return self::deserializeAddress($data);
                 break;
+            case Event::class:
+                return self::deserializeEvent($data);
+                break;
             case Proposal::class:
                 return self::deserializeProposal($data);
                 break;
@@ -122,6 +126,24 @@ class Deserializer
             $address->setIri($data["@id"]);
         }
         return $address;
+    }
+    
+    private function deserializeEvent(array $data): ?Event
+    {
+        $event = new Event();
+        $event = self::autoSet($event, $data);
+        if (isset($data["@id"])) {
+            $event->setIri($data["@id"]);
+        }
+        if (isset($data["address"])) {
+            $event->setAddress(self::deserializeAddress($data['address']));
+        }
+        /*if (isset($data["images"])) {
+            foreach ($data["images"] as $image) {
+                $event->addImage(self::deserializeImage($image));
+            }
+        }*/
+        return $event;
     }
     
     private function deserializeProposal(array $data): ?Proposal
@@ -359,7 +381,10 @@ class Deserializer
                         $object->$setter($data[$property]);
                     } catch (TypeError $error) {
                         // fail... it must be an object or array property, we will treat it manually
-                        $type = $propertyInfo->getTypes(get_class($object), $property)[0]->getClassName();
+                        $type = null;
+                        if (!is_null($propertyInfo->getTypes(get_class($object), $property)[0])) {
+                            $type = $propertyInfo->getTypes(get_class($object), $property)[0]->getClassName();
+                        }
                         switch ($type) {
                             case "DateTime":
                             case "DateTimeInterface":
