@@ -79,7 +79,12 @@ class PTStep
      * @var PTArrival The arrival of this step.
      */
     private $ptarrival;
-    
+
+    /**
+     * @var String Geometric path of this step
+     */
+    private $geometry;
+
     public function __construct($id)
     {
         $this->id = $id;
@@ -205,4 +210,18 @@ class PTStep
         
         return $this;
     }
+
+    public function getGeometry(): ?String
+    {
+        return $this->geometry;
+    }
+
+    public function setGeometry(String $geometry): self
+    {
+        $this->geometry = $geometry;
+
+        return $this;
+    }
+
+
 }

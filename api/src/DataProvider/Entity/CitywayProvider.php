@@ -368,6 +368,7 @@ class CitywayProvider implements ProviderInterface
                 }
                 //$leg->setPTSteps($ptsteps);
             }
+
         }
         if (isset($data["PTRide"]) && !is_null($data["PTRide"])) {
             if ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_BUS) {
@@ -595,6 +596,9 @@ class CitywayProvider implements ProviderInterface
         }
         if (isset($data["RelativeDirection"]) && !is_null($data["RelativeDirection"])) {
             $ptstep->setRelativeDirection($data["RelativeDirection"]);
+        }
+        if (isset($data["Geometry"])) {
+            $ptstep->setGeometry($data["Geometry"]);
         }
         return $ptstep;
     }
