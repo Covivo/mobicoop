@@ -272,17 +272,17 @@ class Event implements Resource
     {
         return $this->images;
     }
-    
+
     public function addImage(Image $image): self
     {
         if (!$this->images->contains($image)) {
             $this->images[] = $image;
             $image->setEvent($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeImage(Image $image): self
     {
         if ($this->images->contains($image)) {
@@ -292,8 +292,7 @@ class Event implements Resource
                 $image->setEvent(null);
             }
         }
-        
+
         return $this;
     }*/
-    
 }
