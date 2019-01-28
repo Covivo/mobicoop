@@ -31,6 +31,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
  */
 class EventManager
 {
+    
     private $dataProvider;
     
     public function __construct(DataProvider $dataProvider)
@@ -57,12 +58,20 @@ class EventManager
     
     /**
      * Get all events
-     *
+     * @param \DateTimeInterface    $toDate     End date of events
+     * @param string                $orderBy    Property on which order the results (id or fromDate)
+     * @param string                $order      Order type (asc or desc)
+     * @param int                   $limit      The max number of results
      * @return array|null The events found or null if not found.
      */
-    public function getEvents()
+    public function getEvents(?\DateTimeInterface $toDate, string $orderBy="fromDate", string $order="asc", int $limit=null)
     {
-        $response = $this->dataProvider->getCollection();
+        $params=[];
+        if ($toDate) $params['toDate[after]'] = $toDate->format('Y-m-d');
+        if ($orderBy == "fromDate") $params['order[fromDate]'] = $order;
+        if ($orderBy == "id") $params['order[id]'] = $order;
+        if ($limit) $params['itemsPerPage'] = $limit;
+        $response = $this->dataProvider->getCollection($params);
         if ($response->getCode() == 200) {
             return $response->getValue();
         }

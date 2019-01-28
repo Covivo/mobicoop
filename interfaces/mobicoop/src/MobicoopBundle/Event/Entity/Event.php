@@ -120,6 +120,14 @@ class Event implements Resource
     private $address;
     
     /**
+     * @var User The creator of the event.
+     *
+     * @Groups({"post","put"})
+     * @Assert\NotBlank(groups={"create","update"})
+     */
+    private $user;
+    
+    /**
      * var Image[]|null The images of the event.
      *
      * Groups({"post","put"})
@@ -155,7 +163,7 @@ class Event implements Resource
         $this->iri = $iri;
     }
     
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -165,7 +173,7 @@ class Event implements Resource
         $this->name = $name;
     }
     
-    public function getStatus(): int
+    public function getStatus(): ?int
     {
         return $this->status;
     }
@@ -175,7 +183,7 @@ class Event implements Resource
         $this->status = $status;
     }
     
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -185,7 +193,7 @@ class Event implements Resource
         $this->description = $description;
     }
     
-    public function getFullDescription(): string
+    public function getFullDescription(): ?string
     {
         return $this->fullDescription;
     }
@@ -195,7 +203,7 @@ class Event implements Resource
         $this->fullDescription = $fullDescription;
     }
     
-    public function getFromDate(): \DateTimeInterface
+    public function getFromDate(): ?\DateTimeInterface
     {
         return $this->fromDate;
     }
@@ -207,7 +215,7 @@ class Event implements Resource
         return $this;
     }
     
-    public function getToDate(): \DateTimeInterface
+    public function getToDate(): ?\DateTimeInterface
     {
         return $this->toDate;
     }
@@ -219,7 +227,7 @@ class Event implements Resource
         return $this;
     }
     
-    public function getUseTime(): bool
+    public function getUseTime(): ?bool
     {
         return $this->useTime;
     }
@@ -241,7 +249,7 @@ class Event implements Resource
         $this->url = $url;
     }
     
-    public function getUser(): User
+    public function getUser(): ?User
     {
         return $this->user;
     }
@@ -253,7 +261,7 @@ class Event implements Resource
         return $this;
     }
     
-    public function getAddress(): Address
+    public function getAddress(): ?Address
     {
         return $this->address;
     }
@@ -268,7 +276,8 @@ class Event implements Resource
     /**
      * @return Collection|Image[]
      */
-    /*public function getImages(): Collection
+    /*
+    public function getImages(): Collection
     {
         return $this->images;
     }

@@ -29,6 +29,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use App\Geography\Entity\Address;
 use App\Image\Entity\Image;
 use App\User\Entity\User;
@@ -45,11 +48,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
+ *          "denormalization_context"={"groups"={"write"}},
+ *          "pagination_client_items_per_page"=true
  *      },
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
  * )
+ * @ApiFilter(OrderFilter::class, properties={"id", "fromDate"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(DateFilter::class, properties={"toDate"})
  */
 class Event
 {

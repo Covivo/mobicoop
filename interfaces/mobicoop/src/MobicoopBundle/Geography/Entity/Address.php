@@ -80,12 +80,16 @@ class Address implements Resource
     private $addressCountry;
     
     /**
-     * @var string|null The latitude of the address.
+     * @var float|null The latitude of the address.
+     * 
+     * @Groups({"post","put"})
      */
     private $latitude;
     
     /**
-     * @var string|null The longitude of the address.
+     * @var float|null The longitude of the address.
+     * 
+     * @Groups({"post","put"})
      */
     private $longitude;
     
@@ -169,22 +173,22 @@ class Address implements Resource
         $this->addressCountry = $addressCountry;
     }
     
-    public function getLatitude(): ?float
+    public function getLatitude(): ?string
     {
         return $this->latitude;
     }
     
-    public function setLatitude(?float $latitude)
+    public function setLatitude(?string $latitude)
     {
         $this->latitude = $latitude;
     }
     
-    public function getLongitude(): ?float
+    public function getLongitude(): ?string
     {
         return $this->longitude;
     }
     
-    public function setLongitude(?float $longitude)
+    public function setLongitude(?string $longitude)
     {
         $this->longitude = $longitude;
     }

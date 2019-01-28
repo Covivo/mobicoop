@@ -190,22 +190,22 @@ class Address
         $this->addressCountry = $addressCountry;
     }
 
-    public function getLatitude(): ?float
+    public function getLatitude(): ?string
     {
         return $this->latitude;
     }
 
-    public function setLatitude(?float $latitude)
+    public function setLatitude(?string $latitude)
     {
         $this->latitude = $latitude;
     }
     
-    public function getLongitude(): ?float
+    public function getLongitude(): ?string
     {
         return $this->longitude;
     }
     
-    public function setLongitude(?float $longitude)
+    public function setLongitude(?string $longitude)
     {
         $this->longitude = $longitude;
     }
