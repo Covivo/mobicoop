@@ -368,7 +368,6 @@ class CitywayProvider implements ProviderInterface
                 }
                 //$leg->setPTSteps($ptsteps);
             }
-
         }
         if (isset($data["PTRide"]) && !is_null($data["PTRide"])) {
             if ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_BUS) {
