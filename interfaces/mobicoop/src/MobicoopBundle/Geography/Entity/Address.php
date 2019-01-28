@@ -81,14 +81,14 @@ class Address implements Resource
     
     /**
      * @var float|null The latitude of the address.
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $latitude;
     
     /**
      * @var float|null The longitude of the address.
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $longitude;
