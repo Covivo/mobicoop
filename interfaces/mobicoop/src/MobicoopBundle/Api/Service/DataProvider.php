@@ -132,8 +132,6 @@ class DataProvider
      */
     public function getCollection(array $params=null): Response
     {
-        // @todo : send the params to the request in the json body of the request
-        
         try {
             $clientResponse = $this->client->get($this->resource, ['query'=>$params]);
             if ($clientResponse->getStatusCode() == 200) {

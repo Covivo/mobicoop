@@ -57,4 +57,16 @@ doctrine:
                 dir: '%kernel.project_dir%/src/PublicTransport/Entity'
                 prefix: 'App\PublicTransport\Entity'
                 alias: PublicTransport
+            Event:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Event/Entity'
+                prefix: 'App\Event\Entity'
+                alias: Event
+            Image:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Image/Entity'
+                prefix: 'App\Image\Entity'
+                alias: Image
                 
