@@ -54,5 +54,4 @@ class ImageManager
         }
         return null;
     }
-    
 }

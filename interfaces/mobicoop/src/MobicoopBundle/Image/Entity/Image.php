@@ -58,56 +58,56 @@ class Image implements Resource
     
     /**
      * @var string The name of the image.
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $name;
 
     /**
      * @var string The html title of the image.
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $title;
     
     /**
      * @var string The html alt of the image.
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $alt;
     
     /**
      * @var int The left coordinate of the crop, in percentage of the full width.
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $cropX1;
 
     /**
      * @var int The top coordinate of the crop, in percent of the full height.
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $cropY1;
     
     /**
      * @var int The right coordinate of the crop, in percentage of the full width.
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $cropX2;
     
     /**
      * @var int The bottom coordinate of the crop, in percent of the full height.
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $cropY2;
     
     /**
      * @var string The final file name of the image.
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $fileName;
@@ -139,7 +139,7 @@ class Image implements Resource
     
     /**
      * @var int The position of the image if mulitple images are related to the same entity.
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $position;

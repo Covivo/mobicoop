@@ -72,7 +72,9 @@ final class CreateImageAction
             // we rename the image depending on the owner
             $image->setFileName($this->imageManager->generateFilename($image, $owner));
             // we check if an originalName has been sent
-            if ($image->getOriginalName()) $originalName = $image->getOriginalName();
+            if ($image->getOriginalName()) {
+                $originalName = $image->getOriginalName();
+            }
         }
         if ($form->isSubmitted() && $form->isValid()) {
             // the form is valid and the image has a valid owner
@@ -81,7 +83,9 @@ final class CreateImageAction
             $em->persist($image);
             
             // we eventually write the originalName
-            if ($originalName) $image->setOriginalName($originalName);
+            if ($originalName) {
+                $image->setOriginalName($originalName);
+            }
             
             // we generate the versions available for the image
             //$image->setVersions($this->imageManager->generateVersions($image, $owner));

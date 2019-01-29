@@ -54,7 +54,7 @@ class DataProvider
     
     // possible file properties and associated getter, used for multipart/form-data
     const FILE_PROPERTIES = [
-        'eventFile' => 'getEventFile', 
+        'eventFile' => 'getEventFile',
         'userFile'  => 'getUserFile'
     ];
     
@@ -198,7 +198,6 @@ class DataProvider
             if ($clientResponse->getStatusCode() == 201) {
                 return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
             }
-            
         } catch (TransferException $e) {
             return new Response($e->getCode());
         }
@@ -215,13 +214,13 @@ class DataProvider
     public function postMultiPart(Resource $object): Response
     {
         $multipart = [];
-        // we serialize the serializable properties 
+        // we serialize the serializable properties
         $data = json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]), true);
         foreach ($data as $key=>$value) {
             $multipart[] = [
                 'name'      => $key,
                 'contents'  => $value
-            ];   
+            ];
         }
         // we check for other possible file properties
         foreach (self::FILE_PROPERTIES as $property=>$getter) {
@@ -229,7 +228,7 @@ class DataProvider
                 $file = $object->$getter();
                 $multipart[] = [
                     'name'      => $property,
-                    'contents'  => fopen($file->getPathname(),'rb')
+                    'contents'  => fopen($file->getPathname(), 'rb')
                 ];
                 $multipart[] = [
                     'name'      => self::FILE_ORIGINAL_NAME_PROPERTY,
@@ -300,7 +299,7 @@ class DataProvider
         }
         
         // $data comes from a GuzzleHttp request; it's a json hydra collection so when need to parse the json to an array
-        $data = json_decode($data,true);
+        $data = json_decode($data, true);
         
         $hydra = new Hydra();
         if (isset($data['@context'])) {
