@@ -28,8 +28,8 @@ stages:
 #
 branch_tests:   # name of the job
   stage: test   
-  variables:
-    APP_ENV: dev    # /!\ important : symfony env variable /!\
+#  variables:
+#    APP_ENV: dev    # /!\ important : symfony env variable /!\
   before_script:
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
   script:
@@ -151,8 +151,8 @@ license_management:
 #
 dev_tests:
   stage: test
-  variables:
-    APP_ENV: dev    # /!\ important : symfony env variable /!\
+#  variables:
+#    APP_ENV: dev    # /!\ important : symfony env variable /!\
   before_script:
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
   script:
@@ -170,8 +170,8 @@ dev_deploy:
     url: http://test.mobicoop.io
   only:
     - dev
-  variables:
-    APP_ENV: test   # /!\ important : symfony env variable /!\
+#  variables:
+#    APP_ENV: test   # /!\ important : symfony env variable /!\
   before_script:
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
   script:
@@ -197,8 +197,8 @@ dev_deploy:
 #
 master_tests:
   stage: test
-  variables:
-    APP_ENV: prod   # /!\ important : symfony env variable /!\
+#  variables:
+#    APP_ENV: prod   # /!\ important : symfony env variable /!\
   before_script:
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
   script:
@@ -226,8 +226,8 @@ master_deploy:
   stage: deploy
   before_script: # This is required to send the prod type no dev, since it creates errors
     - npm install --unsafe-perm
-  variables:
-    APP_ENV: prod   # /!\ important : symfony env variable /!\
+ # variables:
+ #   APP_ENV: prod   # /!\ important : symfony env variable /!\
   script:
     - npm run testAndCoverage                                                   # run the tests and code coverage
     - php interfaces/mobicoop/bin/console cache:clear --env=prod --no-debug     # clear the cache for the interfaces
