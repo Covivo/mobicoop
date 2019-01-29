@@ -61,6 +61,8 @@ final class CreateImageAction
         // TODO : check if the following code (before submit) could be managed by VichUploaderBundle events
         // see https://github.com/dustin10/VichUploaderBundle/blob/master/Resources/doc/events.md
         
+        $originalName = null;
+        
         // we search the future owner of the image (user ? event ?...)
         if ($owner = $this->imageManager->getOwner($image)) {
             // we associate the event and the image
@@ -69,6 +71,8 @@ final class CreateImageAction
             $image->setPosition($this->imageManager->getNextPosition($image, $owner));
             // we rename the image depending on the owner
             $image->setFileName($this->imageManager->generateFilename($image, $owner));
+            // we check if an originalName has been sent
+            if ($image->getOriginalName()) $originalName = $image->getOriginalName();
         }
         if ($form->isSubmitted() && $form->isValid()) {
             // the form is valid and the image has a valid owner
@@ -76,8 +80,11 @@ final class CreateImageAction
             $em = $this->doctrine->getManager();
             $em->persist($image);
             
+            // we eventually write the originalName
+            if ($originalName) $image->setOriginalName($originalName);
+            
             // we generate the versions available for the image
-            $image->setVersions($this->imageManager->generateVersions($image, $owner));
+            //$image->setVersions($this->imageManager->generateVersions($image, $owner));
 
             // Prevent the serialization of the file property
             $image->preventSerialization();

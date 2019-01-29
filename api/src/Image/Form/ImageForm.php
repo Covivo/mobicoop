@@ -44,6 +44,7 @@ final class ImageForm extends AbstractType
             'required' => false,
         ])
         ->add('name')
+        ->add('originalName')
         ->add('title')
         ->add('alt')
         ->add('cropX1')
