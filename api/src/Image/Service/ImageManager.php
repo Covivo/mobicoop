@@ -129,7 +129,7 @@ class ImageManager
                 $extension ? $extension : 'nc',
                 $thumbnail['prefix']
             );
-                $versions[] = $version;
+            $versions[] = $version;
         }
         // TODO : verify each version
         return $versions;
@@ -152,7 +152,9 @@ class ImageManager
                 $fileName = substr($fileName, 0, -(strlen($extension)+1));
             }
             $versionName = $thumbnail['prefix'] . $fileName . "." . $extension;
-            if (file_exists($types['folder']['thumbnail'] . "/" . $versionName)) $versions[] = $versionName;
+            if (file_exists($types['folder']['thumbnail'] . "/" . $versionName)) {
+                $versions[] = $versionName;
+            }
         }
         // TODO : verify each version
         return $versions;
@@ -195,13 +197,12 @@ class ImageManager
      * @param String $fileName  The file
      * @param String $directory The folder
      */
-    private function saveImage($blob,$fileName,$directory) {
+    private function saveImage($blob, $fileName, $directory)
+    {
         $file = fopen($directory."/".$fileName, 'w');
         fwrite($file, $blob);
         fclose($file);
     }
     
     // TODO : create methods to modify the position and filename of an image set if an image of the set is deleted, or if the position changes (switch between images) etc...
-    
-    
 }
