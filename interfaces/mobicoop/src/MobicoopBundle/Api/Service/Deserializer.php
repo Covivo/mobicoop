@@ -81,6 +81,9 @@ class Deserializer
             case Event::class:
                 return self::deserializeEvent($data);
                 break;
+            case Image::class:
+                return self::deserializeImage($data);
+                break;
             case Proposal::class:
                 return self::deserializeProposal($data);
                 break;

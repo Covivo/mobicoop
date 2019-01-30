@@ -27,6 +27,8 @@ use App\Image\Entity\Image;
 use App\Event\Entity\Event;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\FileManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Image manager.
@@ -41,11 +43,17 @@ class ImageManager
     private $fileManager;
     private $types;
     
-    public function __construct(EntityManagerInterface $entityManager, FileManager $fileManager, array $types)
+    private $filterManager;
+    private $dataManager;
+    private $container;
+    
+    public function __construct(EntityManagerInterface $entityManager, FileManager $fileManager, ContainerInterface $container, array $types)
     {
         $this->entityManager = $entityManager;
         $this->fileManager = $fileManager;
         $this->types = $types;
+        $this->filterManager = $container->get('liip_imagine.filter.manager');
+        $this->dataManager = $container->get('liip_imagine.data.manager');
     }
     
     /**
@@ -106,24 +114,45 @@ class ImageManager
     {
         $versions = [];
         $types = $this->types[strtolower((new \ReflectionClass($owner))->getShortName())];
-        foreach ($types['ratios'] as $ratio) {
-            foreach ($types['thumbnail']['sizes'] as $thumbnail) {
-                $fileName = $image->getFileName();
-                if ($extension = $this->fileManager->getExtension($fileName)) {
-                    $fileName = substr($fileName, 0, -(strlen($extension)+1));
-                }
-                $version = $this->generateVersion(
-                    $image,
-                    $types['folder']['thumbnail'],
-                    $fileName,
-                    $types['thumbnail']['extension'],
-                    $thumbnail['ratio'] == '1' ? $ratio['ratio'] : $thumbnail['ratio'],
-                    $ratio['prefix'],
-                    $thumbnail['prefix'],
-                    $thumbnail['width']
-                );
-                $versions[] = $version;
+        foreach ($types['thumbnail']['sizes'] as $thumbnail) {
+            $fileName = $image->getFileName();
+            $extension = null;
+            if ($extension = $this->fileManager->getExtension($fileName)) {
+                $fileName = substr($fileName, 0, -(strlen($extension)+1));
             }
+            $version = $this->generateVersion(
+                $image,
+                $types['folder']['plain'],
+                $types['folder']['thumbnail'],
+                $fileName,
+                $thumbnail['filterSet'],
+                $extension ? $extension : 'nc',
+                $thumbnail['prefix']
+            );
+                $versions[] = $version;
+        }
+        // TODO : verify each version
+        return $versions;
+    }
+    
+    /**
+     * Get the different versions of the image (thumbnails).
+     * Returns the names of the generated versions
+     * @param Image $image
+     * @return array
+     */
+    public function getVersions(Image $image)
+    {
+        $versions = [];
+        $types = $this->types[strtolower((new \ReflectionClass($owner))->getShortName())];
+        foreach ($types['thumbnail']['sizes'] as $thumbnail) {
+            $fileName = $image->getFileName();
+            $extension = null;
+            if ($extension = $this->fileManager->getExtension($fileName)) {
+                $fileName = substr($fileName, 0, -(strlen($extension)+1));
+            }
+            $versionName = $thumbnail['prefix'] . $fileName . "." . $extension;
+            if (file_exists($types['folder']['thumbnail'] . "/" . $versionName)) $versions[] = $versionName;
         }
         // TODO : verify each version
         return $versions;
@@ -132,26 +161,47 @@ class ImageManager
     /**
      * Generates a version of an image.
      * @param Image $image
-     * @param string $folder
+     * @param string $folderOrigin
+     * @param string $folderDestination
      * @param string $fileName
-     * @param string $ratio
-     * @param string $mimeType
+     * @param string $filter
      * @param string $extension
+     * @param string $prefix
      * @return string
      */
     private function generateVersion(
         Image $image,
-        string $folder,
+        string $folderOrigin,
+        string $folderDestination,
         string $fileName,
+        string $filter,
         string $extension,
-        string $ratio,
-        string $ratioPrefix,
-        string $thumbnailPrefix,
-        int $thumbnailWidth
+        string $prefix
         ) {
-        $versionName = $ratioPrefix . $thumbnailPrefix . $fileName . "." . $extension;
+        $versionName = $prefix . $fileName . "." . $extension;
+        
+        $liipImage = $this->dataManager->find($filter, $folderOrigin.'/'.$image->getFileName());
+
+        $resized = $this->filterManager->applyFilter($liipImage, $filter)->getContent();
+        self::saveImage($resized, $versionName, $folderDestination);
+        
         return $versionName;
     }
     
+    /**
+     * Save a binay to a file.
+     *
+     * @param String $blob      The binary string
+     * @param String $fileName  The file
+     * @param String $directory The folder
+     */
+    private function saveImage($blob,$fileName,$directory) {
+        $file = fopen($directory."/".$fileName, 'w');
+        fwrite($file, $blob);
+        fclose($file);
+    }
+    
     // TODO : create methods to modify the position and filename of an image set if an image of the set is deleted, or if the position changes (switch between images) etc...
+    
+    
 }

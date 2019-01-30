@@ -40,7 +40,23 @@ class ImageManager
     }
     
     /**
-     * Create an event
+     * Get an image
+     *
+     * @param int $id The image id
+     *
+     * @return Image|null The image read or null if error.
+     */
+    public function getImage(int $id)
+    {
+        $response = $this->dataProvider->getItem($id);
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
+    
+    /**
+     * Create an image
      *
      * @param Image $image The image to create
      *
@@ -53,5 +69,21 @@ class ImageManager
             return $response->getValue();
         }
         return null;
+    }
+    
+    /**
+     * Delete an image
+     *
+     * @param int $id The id of the image to delete
+     *
+     * @return boolean The result of the deletion.
+     */
+    public function deleteImage(int $id)
+    {
+        $response = $this->dataProvider->delete($id);
+        if ($response->getCode() == 204) {
+            return true;
+        }
+        return false;
     }
 }

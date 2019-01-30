@@ -88,7 +88,7 @@ final class CreateImageAction
             }
             
             // we generate the versions available for the image
-            //$image->setVersions($this->imageManager->generateVersions($image, $owner));
+            $image->setVersions($this->imageManager->generateVersions($image, $owner));
 
             // Prevent the serialization of the file property
             $image->preventSerialization();

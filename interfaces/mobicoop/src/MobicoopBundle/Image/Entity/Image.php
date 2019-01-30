@@ -156,6 +156,12 @@ class Image implements Resource
     
     /**
      * @var File|null
+     * @Assert\Image(
+     *     minWidth = 200,
+     *     maxWidth = 4000,
+     *     minHeight = 200,
+     *     maxHeight = 4000
+     * )
      * @Groups({"post","put"})
      */
     private $eventFile;
@@ -172,7 +178,6 @@ class Image implements Resource
             $this->setId($id);
             $this->setIri("/images/".$id);
         }
-        $this->images = new ArrayCollection();
     }
     
     public function getId(): ?int

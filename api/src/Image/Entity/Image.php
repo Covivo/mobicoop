@@ -57,7 +57,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *              "defaults"={"_api_receive"=false},
  *          }
  *      },
- *      itemOperations={"get"}
+ *      itemOperations={"get","put","delete"}
  * )
  * @Vich\Uploadable
  */
