@@ -51,6 +51,15 @@ use GuzzleHttp\Exception\TransferException;
 class DataProvider
 {
     const SERIALIZER_ENCODER = 'json';
+    
+    // possible file properties and associated getter, used for multipart/form-data
+    const FILE_PROPERTIES = [
+        'eventFile' => 'getEventFile',
+        'userFile'  => 'getUserFile'
+    ];
+    
+    // original name property for file-based entities
+    const FILE_ORIGINAL_NAME_PROPERTY = 'originalName';
         
     private $client;
     private $resource;
@@ -196,6 +205,51 @@ class DataProvider
     }
     
     /**
+     * Post collection operation with multipart/form-data
+     *
+     * @param Resource $object An object representing the resource to post
+     *
+     * @return Response The response of the operation.
+     */
+    public function postMultiPart(Resource $object): Response
+    {
+        $multipart = [];
+        // we serialize the serializable properties
+        $data = json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]), true);
+        foreach ($data as $key=>$value) {
+            $multipart[] = [
+                'name'      => $key,
+                'contents'  => $value
+            ];
+        }
+        // we check for other possible file properties
+        foreach (self::FILE_PROPERTIES as $property=>$getter) {
+            if (method_exists($object, $getter)) {
+                $file = $object->$getter();
+                $multipart[] = [
+                    'name'      => $property,
+                    'contents'  => fopen($file->getPathname(), 'rb')
+                ];
+                $multipart[] = [
+                    'name'      => self::FILE_ORIGINAL_NAME_PROPERTY,
+                    'contents'  => $file->getClientOriginalName()
+                ];
+            }
+        }
+        try {
+            $clientResponse = $this->client->post($this->resource, [
+                'multipart' => $multipart
+            ]);
+            if ($clientResponse->getStatusCode() == 201) {
+                return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
+            }
+        } catch (TransferException $e) {
+            return new Response($e->getCode());
+        }
+        return new Response();
+    }
+    
+    /**
      * Put item operation
      *
      * @param object $object An object representing the resource to put
@@ -246,6 +300,7 @@ class DataProvider
         
         // $data comes from a GuzzleHttp request; it's a json hydra collection so when need to parse the json to an array
         $data = json_decode($data, true);
+        
         $hydra = new Hydra();
         if (isset($data['@context'])) {
             $hydra->setContext($data['@context']);

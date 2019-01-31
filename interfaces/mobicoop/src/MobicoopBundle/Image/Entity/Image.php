@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Image\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\Image\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -33,211 +33,151 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Event\Entity\Event;
 use App\Image\Controller\CreateImageAction;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 
 /**
  * An image.
- *
- * @ORM\Entity(repositoryClass="App\Image\Repository\ImageRepository")
- * @ORM\HasLifecycleCallbacks
- * @ApiResource(
- *      attributes={
- *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *      },
- *      collectionOperations={
- *          "get",
- *          "post"={
- *              "method"="POST",
- *              "path"="/images",
- *              "controller"=CreateImageAction::class,
- *              "defaults"={"_api_receive"=false},
- *          }
- *      },
- *      itemOperations={"get","put","delete"}
- * )
- * @Vich\Uploadable
  */
-class Image
+class Image implements Resource
 {
     /**
      * @var int The id of this image.
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @Groups("read")
-     * @ApiProperty(identifier=true)
      */
     private $id;
     
     /**
+     * @var string|null The iri of this event.
+     *
+     * @Groups({"post","put"})
+     */
+    private $iri;
+    
+    /**
      * @var string The name of the image.
      *
-     * @ORM\Column(type="string", length=255)
-     * @Groups("read")
+     * @Groups({"post","put"})
      */
     private $name;
 
     /**
      * @var string The html title of the image.
      *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups("read")
+     * @Groups({"post","put"})
      */
     private $title;
     
     /**
      * @var string The html alt of the image.
      *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups("read")
+     * @Groups({"post","put"})
      */
     private $alt;
     
     /**
      * @var int The left coordinate of the crop, in percentage of the full width.
      *
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $cropX1;
 
     /**
      * @var int The top coordinate of the crop, in percent of the full height.
      *
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $cropY1;
     
     /**
      * @var int The right coordinate of the crop, in percentage of the full width.
      *
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $cropX2;
     
     /**
      * @var int The bottom coordinate of the crop, in percent of the full height.
      *
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $cropY2;
     
     /**
      * @var string The final file name of the image.
      *
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $fileName;
     
     /**
      * @var string The original file name of the image.
-     *
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
      */
     private $originalName;
     
     /**
-     * @var array The original dimensions of the image.
-     */
-    private $dimensions;
-    
-    /**
     * @var int The width of the image in pixels.
-    *
-    * @ORM\Column(type="integer")
-    * @Groups({"read","write"})
     */
     private $width;
     
     /**
      * @var int The height of the image in pixels.
-     *
-     * @ORM\Column(type="integer")
-     * @Groups({"read","write"})
      */
     private $height;
     
     /**
      * @var int The size in bytes of the image.
-     *
-     * @ORM\Column(type="integer")
-     * @Groups({"read","write"})
      */
     private $size;
     
     /**
      * @var string The mime type of the image.
-     *
-     * @ORM\Column(type="string", length=255)
-     * @Groups("read")
      */
     private $mimeType;
     
     /**
      * @var int The position of the image if mulitple images are related to the same entity.
      *
-     * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $position;
     
     /**
-     * @var \DateTimeInterface Creation date of the image.
-     *
-     * @ORM\Column(type="datetime")
-     */
-    private $createdDate;
-    
-    /**
      * @var Event|null The event associated with the image.
-     *
-     * @ORM\ManyToOne(targetEntity="\App\Event\Entity\Event", inversedBy="images")
      */
     private $event;
     
     /**
+     * @var array|null The versions of with the image.
+     */
+    private $versions;
+    
+    /**
      * @var File|null
-     * @Vich\UploadableField(mapping="event", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     * @Assert\Image(
+     *     minWidth = 200,
+     *     maxWidth = 4000,
+     *     minHeight = 200,
+     *     maxHeight = 4000
+     * )
+     * @Groups({"post","put"})
      */
     private $eventFile;
     
     /**
      * @var int|null The event id associated with the image.
-     * @Groups({"write"})
+     * @Groups({"post","put"})
      */
     private $eventId;
-    
-    /**
-     * @var File|null
-     * @Vich\UploadableField(mapping="user", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
-     */
-    private $userFile;
-    
-    /**
-     * @var int|null The user id associated with the image.
-     * @Groups({"write"})
-     */
-    private $userId;
-    
-    /**
-     * @var array|null The versions of with the image.
-     * @Groups({"read"})
-     */
-    private $versions;
         
     public function __construct($id=null)
     {
-        $this->id = $id;
+        if ($id) {
+            $this->setId($id);
+            $this->setIri("/images/".$id);
+        }
     }
     
     public function getId(): ?int
@@ -245,9 +185,19 @@ class Image
         return $this->id;
     }
     
-    public function setId($id)
+    public function setId(int $id)
     {
         $this->id = $id;
+    }
+    
+    public function getIri()
+    {
+        return $this->iri;
+    }
+    
+    public function setIri($iri)
+    {
+        $this->iri = $iri;
     }
     
     public function getName(): ?string
@@ -348,18 +298,6 @@ class Image
         $this->originalName = $originalName;
     }
     
-    public function getDimensions(): ?array
-    {
-        return $this->dimensions;
-    }
-    
-    public function setDimensions(?array $dimensions)
-    {
-        $this->dimensions = $dimensions;
-        $this->setWidth($this->getDimensions()[0]);
-        $this->setHeight($this->getDimensions()[1]);
-    }
-    
     public function getWidth(): ?int
     {
         return $this->width;
@@ -418,18 +356,6 @@ class Image
         return $this;
     }
     
-    public function getCreatedDate(): ?\DateTimeInterface
-    {
-        return $this->createdDate;
-    }
-    
-    public function setCreatedDate(\DateTimeInterface $createdDate): self
-    {
-        $this->createdDate = $createdDate;
-        
-        return $this;
-    }
-    
     public function getEvent(): ?Event
     {
         return $this->event;
@@ -440,6 +366,16 @@ class Image
         $this->event = $event;
         
         return $this;
+    }
+    
+    public function getVersions(): ?array
+    {
+        return $this->versions;
+    }
+    
+    public function setVersions(?array $versions)
+    {
+        $this->versions = $versions;
     }
     
     public function getEventFile(): ?File
@@ -460,53 +396,5 @@ class Image
     public function setEventId($eventId)
     {
         $this->eventId = $eventId;
-    }
-    
-    public function getUserFile(): ?File
-    {
-        return $this->userFile;
-    }
-    
-    public function setUserFile(?File $userFile)
-    {
-        $this->userFile = $userFile;
-    }
-    
-    public function getUserId(): ?int
-    {
-        return $this->userId;
-    }
-    
-    public function setUserId($userId)
-    {
-        $this->userId = $userId;
-    }
-    
-    public function getVersions(): ?array
-    {
-        return $this->versions;
-    }
-    
-    public function setVersions(?array $versions)
-    {
-        $this->versions = $versions;
-    }
-    
-    public function preventSerialization()
-    {
-        $this->setEventFile(null);
-        $this->setUserFile(null);
-    }
-    
-    // DOCTRINE EVENTS
-    
-    /**
-     * Creation date.
-     *
-     * @ORM\PrePersist
-     */
-    public function setAutoCreatedDate()
-    {
-        $this->setCreatedDate(new \Datetime());
     }
 }

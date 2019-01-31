@@ -47,6 +47,7 @@ use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTStep;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLeg;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Waypoint;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\IndividualStop;
+use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 
 /**
  * Custom deserializer service.
@@ -79,6 +80,9 @@ class Deserializer
                 break;
             case Event::class:
                 return self::deserializeEvent($data);
+                break;
+            case Image::class:
+                return self::deserializeImage($data);
                 break;
             case Proposal::class:
                 return self::deserializeProposal($data);
@@ -138,12 +142,22 @@ class Deserializer
         if (isset($data["address"])) {
             $event->setAddress(self::deserializeAddress($data['address']));
         }
-        /*if (isset($data["images"])) {
+        if (isset($data["images"])) {
             foreach ($data["images"] as $image) {
                 $event->addImage(self::deserializeImage($image));
             }
-        }*/
+        }
         return $event;
+    }
+    
+    private function deserializeImage(array $data): ?Image
+    {
+        $image = new Image();
+        $image = self::autoSet($image, $data);
+        if (isset($data["@id"])) {
+            $image->setIri($data["@id"]);
+        }
+        return $image;
     }
     
     private function deserializeProposal(array $data): ?Proposal

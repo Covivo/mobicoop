@@ -40,6 +40,7 @@ services:
     Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider :
         arguments:
             $uri: '%env(resolve:API_URI)%'
+        shared: false
     
     # Carpool
     Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
@@ -71,4 +72,7 @@ services:
     Mobicoop\Bundle\MobicoopBundle\Event\Service\:
         resource: '@MobicoopBundle/Event/Service/*'
         
+    # Image
+    Mobicoop\Bundle\MobicoopBundle\Image\Service\:
+        resource: '@MobicoopBundle/Image/Service/*'
     

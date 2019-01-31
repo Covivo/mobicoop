@@ -23,12 +23,14 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Event\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 
 /**
  * An event.
@@ -131,8 +133,9 @@ class Event implements Resource
      * var Image[]|null The images of the event.
      *
      * Groups({"post","put"})
+     * @Assert\Valid
      */
-    //private $images;
+    private $images;
     
     public function __construct($id=null)
     {
@@ -276,7 +279,6 @@ class Event implements Resource
     /**
      * @return Collection|Image[]
      */
-    /*
     public function getImages(): Collection
     {
         return $this->images;
@@ -303,5 +305,13 @@ class Event implements Resource
         }
 
         return $this;
-    }*/
+    }
+    
+    public function removeImages(): self
+    {
+        foreach ($this->images as $image) {
+            $this->removeImage($image);
+        }
+        return $this;
+    }
 }

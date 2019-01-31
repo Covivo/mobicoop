@@ -48,11 +48,32 @@ class FileManager
         $clean = trim(str_replace($strip, "", strip_tags($string)));
         $clean = preg_replace('/\s+/', "-", $clean);
         $clean = ($anal) ? preg_replace("/[^a-zA-Z0-9]/", "", $clean) : $clean ;
-        return ($force_lowercase) ?
-        (function_exists('mb_strtolower')) ?
-        mb_strtolower($clean, 'UTF-8') :
-        strtolower($clean) :
-        $clean;
+        if ($force_lowercase) {
+            if (function_exists('mb_strtolower')) {
+                $clean = mb_strtolower($clean, 'UTF-8');
+            } else {
+                $clean = strtolower($clean);
+            }
+        }
+        
+        $clean = strtr($clean, [
+            "à" => "a",
+            "â" => "a",
+            "ä" => "a",
+            "é" => "e",
+            "è" => "e",
+            "ê" => "e",
+            "ë" => "e",
+            "ï" => "i",
+            "î" => "i",
+            "ô" => "o",
+            "ö" => "o",
+            "ù" => "u",
+            "û" => "u",
+            "ü" => "u",
+            "ç" => "c"
+        ]);
+        return $clean;
     }
     
     /**
