@@ -163,12 +163,14 @@ class ImageManager
     }
     
     /**
-     * Delete the different versions 
+     * Delete the different versions
      * @param Image $image
      */
     public function deleteVersions(Image $image)
     {
-        if (!$owner = $this->getOwner($image)) return false;
+        if (!$owner = $this->getOwner($image)) {
+            return false;
+        }
         $types = $this->types[strtolower((new \ReflectionClass($owner))->getShortName())];
         foreach ($types['thumbnail']['sizes'] as $thumbnail) {
             $fileName = $image->getFileName();

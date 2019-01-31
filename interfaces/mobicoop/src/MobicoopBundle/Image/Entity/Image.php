@@ -114,7 +114,7 @@ class Image implements Resource
     
     /**
      * @var string The original file name of the image.
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $originalName;
