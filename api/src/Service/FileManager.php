@@ -56,7 +56,7 @@ class FileManager
             }
         }
         
-        $clean = strtr($clean,[
+        $clean = strtr($clean, [
             "à" => "a",
             "â" => "a",
             "ä" => "a",
