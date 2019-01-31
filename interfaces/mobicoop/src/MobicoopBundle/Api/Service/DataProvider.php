@@ -199,7 +199,7 @@ class DataProvider
                 return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
             }
         } catch (TransferException $e) {
-            return new Response($e->getCode());
+            return new Response($e->getCode(),$e->getMessage());
         }
         return new Response();
     }

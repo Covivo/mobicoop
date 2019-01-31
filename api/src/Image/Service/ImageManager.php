@@ -139,10 +139,12 @@ class ImageManager
      * Get the different versions of the image (thumbnails).
      * Returns the names of the generated versions
      * @param Image $image
+     * @param object $owner
      * @return array
      */
-    public function getVersions(Image $image)
+    public function getVersions(Image $image, object $owner)
     {
+        // TODO :verify
         $versions = [];
         $types = $this->types[strtolower((new \ReflectionClass($owner))->getShortName())];
         foreach ($types['thumbnail']['sizes'] as $thumbnail) {
@@ -158,6 +160,27 @@ class ImageManager
         }
         // TODO : verify each version
         return $versions;
+    }
+    
+    /**
+     * Delete the different versions 
+     * @param Image $image
+     */
+    public function deleteVersions(Image $image)
+    {
+        if (!$owner = $this->getOwner($image)) return false;
+        $types = $this->types[strtolower((new \ReflectionClass($owner))->getShortName())];
+        foreach ($types['thumbnail']['sizes'] as $thumbnail) {
+            $fileName = $image->getFileName();
+            $extension = null;
+            if ($extension = $this->fileManager->getExtension($fileName)) {
+                $fileName = substr($fileName, 0, -(strlen($extension)+1));
+            }
+            $versionName = $thumbnail['prefix'] . $fileName . "." . $extension;
+            if (file_exists($types['folder']['thumbnail'] . "/" . $versionName)) {
+                unlink($types['folder']['thumbnail'] . "/" . $versionName);
+            }
+        }
     }
     
     /**
