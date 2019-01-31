@@ -59,3 +59,7 @@ services:
     App\Image\Service\ImageManager:
         arguments:
             $types: '%images%'
+   
+    #App\Image\EventSubscriber\DeleteSubscriber:
+    #    class: App\Image\EventSubscriber\DeleteSubscriber
+    #    tags: [ { name: 'kernel.event_subscriber'} ]
