@@ -43,6 +43,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *
  * @ORM\Entity(repositoryClass="App\Image\Repository\ImageRepository")
  * @ORM\HasLifecycleCallbacks
+ * @ORM\EntityListeners({"App\Image\EntityListener\ImageListener"})
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -213,7 +214,7 @@ class Image
     
     /**
      * @var int|null The event id associated with the image.
-     * @Groups({"write"})
+     * @Groups({"read","write"})
      */
     private $eventId;
     
