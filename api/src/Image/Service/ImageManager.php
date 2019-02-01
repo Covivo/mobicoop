@@ -27,6 +27,7 @@ use App\Image\Entity\Image;
 use App\Event\Entity\Event;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\FileManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -46,14 +47,16 @@ class ImageManager
     private $filterManager;
     private $dataManager;
     private $container;
+    private $logger;
     
-    public function __construct(EntityManagerInterface $entityManager, FileManager $fileManager, ContainerInterface $container, array $types)
+    public function __construct(EntityManagerInterface $entityManager, FileManager $fileManager, ContainerInterface $container, LoggerInterface $logger, array $types)
     {
         $this->entityManager = $entityManager;
         $this->fileManager = $fileManager;
         $this->types = $types;
         $this->filterManager = $container->get('liip_imagine.filter.manager');
         $this->dataManager = $container->get('liip_imagine.data.manager');
+        $this->logger = $logger;
     }
     
     /**
@@ -67,6 +70,9 @@ class ImageManager
         if (!is_null($image->getEventId())) {
             // the image is an image for an event
             return $this->entityManager->getRepository(Event::class)->find($image->getEventId());
+        } elseif (!is_null($image->getEvent())) {
+            // the image is an image for an event
+            return $this->entityManager->getRepository(Event::class)->find($image->getEvent()->getId());
         }
         return false;
     }
@@ -139,13 +145,14 @@ class ImageManager
      * Get the different versions of the image (thumbnails).
      * Returns the names of the generated versions
      * @param Image $image
-     * @param object $owner
      * @return array
      */
-    public function getVersions(Image $image, object $owner)
+    public function getVersions(Image $image)
     {
-        // TODO :verify
         $versions = [];
+        if (!$owner = $this->getOwner($image)) {
+            return $versions;
+        }
         $types = $this->types[strtolower((new \ReflectionClass($owner))->getShortName())];
         foreach ($types['thumbnail']['sizes'] as $thumbnail) {
             $fileName = $image->getFileName();
@@ -158,7 +165,6 @@ class ImageManager
                 $versions[] = $versionName;
             }
         }
-        // TODO : verify each version
         return $versions;
     }
     
@@ -183,6 +189,7 @@ class ImageManager
                 unlink($types['folder']['thumbnail'] . "/" . $versionName);
             }
         }
+        return true;
     }
     
     /**

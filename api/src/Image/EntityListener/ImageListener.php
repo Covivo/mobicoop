@@ -21,41 +21,27 @@
  *    LICENSE
  **************************/
 
-namespace App\Image\EventSubscriber;
+namespace App\Image\EntityListener;
 
-use ApiPlatform\Core\EventListener\EventPriorities;
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 use App\Image\Entity\Image;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
 use App\Image\Service\ImageManager;
 
-final class DeleteSubscriber implements EventSubscriberInterface
+class ImageListener
 {
     private $imageManager;
+    private $logger;
     
     public function __construct(ImageManager $imageManager)
     {
         $this->imageManager = $imageManager;
     }
     
-    public static function getSubscribedEvents()
+    /** @ORM\PostLoad */
+    public function postLoadHandler(Image $image, LifecycleEventArgs $args)
     {
-        return [
-            KernelEvents::VIEW => ['deleteThumbnails', EventPriorities::PRE_WRITE],
-        ];
+        $image->setVersions($this->imageManager->getVersions($image));
     }
-    
-    public function deleteThumbnails(GetResponseForControllerResultEvent $event)
-    {
-        $image = $event->getControllerResult();
-        $method = $event->getRequest()->getMethod();
-        
-        if (!$image instanceof Image || Request::METHOD_DELETE !== $method) {
-            return;
-        }
-        $this->imageManager->deleteVersions($image);
-        return;
-    }
+       
 }
