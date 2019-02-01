@@ -43,5 +43,4 @@ class ImageListener
     {
         $image->setVersions($this->imageManager->getVersions($image));
     }
-       
 }
