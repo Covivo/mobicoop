@@ -24,8 +24,8 @@
 namespace App\Event\Repository;
 
 use App\Event\Entity\Event;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * @method Event|null find($id, $lockMode = null, $lockVersion = null)
@@ -33,10 +33,20 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  * @method Event[]    findAll()
  * @method Event[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class EventRepository extends ServiceEntityRepository
+class EventRepository
 {
-    public function __construct(RegistryInterface $registry)
+    /**
+     * @var EntityRepository
+     */
+    private $repository;
+    
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        parent::__construct($registry, Event::class);
+        $this->repository = $entityManager->getRepository(Event::class);
+    }
+    
+    public function find(int $id): ?Event
+    {
+        return $this->repository->find($id);
     }
 }

@@ -42,7 +42,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * An event.
  *
- * @ORM\Entity(repositoryClass="App\Event\Repository\EventRepository")
+ * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={

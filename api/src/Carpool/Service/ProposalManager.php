@@ -28,8 +28,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Criteria;
 use App\Geography\Entity\Address;
 use App\Carpool\Entity\WayPoint;
-use App\Rdex\Entity\RdexJourney;
-use App\User\Entity\User;
+use App\Carpool\Repository\ProposalRepository;
 
 /**
  * Proposal manager service.
@@ -40,11 +39,13 @@ class ProposalManager
 {
     private $entityManager;
     private $matchingAnalyzer;
+    private $proposalRepository;
     
-    public function __construct(EntityManagerInterface $entityManager, MatchingAnalyzer $matchingAnalyzer)
+    public function __construct(EntityManagerInterface $entityManager, MatchingAnalyzer $matchingAnalyzer, ProposalRepository $proposalRepository)
     {
         $this->entityManager = $entityManager;
         $this->matchingAnalyzer = $matchingAnalyzer;
+        $this->proposalRepository = $proposalRepository;
     }
     
     /**
@@ -200,6 +201,6 @@ class ProposalManager
         $proposal->addWaypoint($waypointTo);
         // for now we don't use the time parameters
         // @todo add the time parameters
-        return $this->entityManager->getRepository(Proposal::class)->findMatchingProposals($proposal, false);
+        return $this->proposalRepository->findMatchingProposals($proposal, false);
     }
 }

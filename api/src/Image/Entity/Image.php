@@ -41,7 +41,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 /**
  * An image.
  *
- * @ORM\Entity(repositoryClass="App\Image\Repository\ImageRepository")
+ * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
  * @ORM\EntityListeners({"App\Image\EntityListener\ImageListener"})
  * @ApiResource(

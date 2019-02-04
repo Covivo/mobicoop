@@ -27,6 +27,8 @@ use App\Geography\Entity\Address;
 use App\Geography\Entity\Zone;
 use App\Geography\Entity\Near;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Geography\Repository\ZoneRepository;
+use App\Geography\Repository\NearRepository;
 
 /**
  * Zone management service.
@@ -117,11 +119,15 @@ class ZoneManager
     ];
     const EXCLUDE_ZONES = true;         // exclude zones when creating
     
+    private $zoneRepository;
+    private $nearRepository;
     private $entityManager;
     
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, ZoneRepository $zoneRepository, NearRepository $nearRepository)
     {
         $this->entityManager = $entityManager;
+        $this->zoneRepository = $zoneRepository;
+        $this->nearRepository = $nearRepository;
     }
     
     /**
@@ -165,7 +171,7 @@ class ZoneManager
     public function getZonesForAddress(Address $address, int $deep = 0): ?array
     {
         $zones = [];
-        $zone = $this->entityManager->getRepository(Zone::class)->findOneByLatitudeLongitude($address->getLatitude(), $address->getLongitude());
+        $zone = $this->zoneRepository->findOneByLatitudeLongitude($address->getLatitude(), $address->getLongitude());
         $zones[] = $zone;
         if ($deep == 0) {
             return $zones;
@@ -184,7 +190,7 @@ class ZoneManager
      */
     public function getNear(int $id, int $deep): ?array
     {
-        if ($zone = $this->entityManager->getRepository(Zone::class)->find($id)) {
+        if ($zone = $this->zoneRepository->find($id)) {
             $azones = [];
             $near = self::near($zone, $azones, $deep);
             ksort($near);
@@ -197,7 +203,7 @@ class ZoneManager
     {
         $azones[$zone->getId()] = $zone;
         if ($deep>0) {
-            $nearZones = $this->entityManager->getRepository(Near::class)->findBy([
+            $nearZones = $this->nearRepository->findBy([
                 'zone1' => $zone
             ]);
             foreach ($nearZones as $near) {

@@ -56,18 +56,20 @@ class EventManager
     }
     
     /**
-     * Get all events
-     * @param \DateTimeInterface    $toDate     End date of events
-     * @param string                $orderBy    Property on which order the results (id or fromDate)
-     * @param string                $order      Order type (asc or desc)
-     * @param int                   $limit      The max number of results
+     * Get all events which end date happens after a certain date.
+     * @param \DateTimeInterface    $endDateIsAfter     The date after which the end date of events are taken account (usually the current date)
+     * @param string                $orderBy            Property on which order the results (id or fromDate)
+     * @param string                $order              Order type (asc or desc)
+     * @param int                   $limit              The max number of results
      * @return array|null The events found or null if not found.
      */
-    public function getEvents(?\DateTimeInterface $toDate, string $orderBy="fromDate", string $order="asc", int $limit=null)
+    public function getEvents(?\DateTimeInterface $endDateIsAfter, string $orderBy="fromDate", string $order="asc", int $limit=null)
     {
         $params=[];
-        if ($toDate) {
-            $params['toDate[after]'] = $toDate->format('Y-m-d');
+        if ($endDateIsAfter) {
+            $params['toDate[after]'] = $endDateIsAfter->format('Y-m-d');
+        } else {
+            $params['toDate[after]'] = new \DateTime();
         }
         if ($orderBy == "fromDate") {
             $params['order[fromDate]'] = $order;

@@ -24,8 +24,8 @@
 namespace App\Carpool\Repository;
 
 use App\Carpool\Entity\Proposal;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use App\Carpool\Entity\Criteria;
 
 /**
@@ -34,11 +34,16 @@ use App\Carpool\Entity\Criteria;
  * @method Proposal[]    findAll()
  * @method Proposal[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ProposalRepository extends ServiceEntityRepository
+class ProposalRepository
 {
-    public function __construct(RegistryInterface $registry)
+    /**
+     * @var EntityRepository
+     */
+    private $repository;
+    
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        parent::__construct($registry, Proposal::class);
+        $this->repository = $entityManager->getRepository(Proposal::class);
     }
     
     /**
@@ -97,7 +102,7 @@ class ProposalRepository extends ServiceEntityRepository
         }
         
         // we search the matchings in the proposal entity
-        $query = $this->createQueryBuilder('p')
+        $query = $this->repository->createQueryBuilder('p')
         // we also need the criteria (for the dates, number of seats...) and the starting/ending points/addresses for the location
         ->join('p.criteria', 'c')
         ->join('p.points', 'startPoint')

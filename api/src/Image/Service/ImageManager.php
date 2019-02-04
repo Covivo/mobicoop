@@ -30,6 +30,8 @@ use App\Service\FileManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use App\Event\Repository\EventRepository;
+use App\Image\Repository\ImageRepository;
 
 /**
  * Image manager.
@@ -41,6 +43,8 @@ use Symfony\Component\Filesystem\Filesystem;
 class ImageManager
 {
     private $entityManager;
+    private $eventRepository;
+    private $imageRepository;
     private $fileManager;
     private $types;
     
@@ -49,9 +53,10 @@ class ImageManager
     private $container;
     private $logger;
     
-    public function __construct(EntityManagerInterface $entityManager, FileManager $fileManager, ContainerInterface $container, LoggerInterface $logger, array $types)
+    public function __construct(EventRepository $eventRepository, ImageRepository $imageRepository, FileManager $fileManager, ContainerInterface $container, LoggerInterface $logger, array $types)
     {
-        $this->entityManager = $entityManager;
+        $this->eventRepository = $eventRepository;
+        $this->imageRepository = $imageRepository;
         $this->fileManager = $fileManager;
         $this->types = $types;
         $this->filterManager = $container->get('liip_imagine.filter.manager');
@@ -69,10 +74,10 @@ class ImageManager
     {
         if (!is_null($image->getEventId())) {
             // the image is an image for an event
-            return $this->entityManager->getRepository(Event::class)->find($image->getEventId());
+            return $this->eventRepository->find($image->getEventId());
         } elseif (!is_null($image->getEvent())) {
             // the image is an image for an event
-            return $this->entityManager->getRepository(Event::class)->find($image->getEvent()->getId());
+            return $this->eventRepository->find($image->getEvent()->getId());
         }
         return false;
     }
@@ -85,7 +90,7 @@ class ImageManager
      */
     public function getNextPosition(Image $image, object $owner)
     {
-        return $this->entityManager->getRepository(Image::class)->findNextPosition($owner);
+        return $this->imageRepository->findNextPosition($owner);
     }
     
     /**
