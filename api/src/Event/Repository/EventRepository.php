@@ -49,5 +49,4 @@ class EventRepository
     {
         return $this->repository->find($id);
     }
-    
 }
