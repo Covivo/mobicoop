@@ -44,5 +44,4 @@ class ZoneRepository
         return $query->getOneOrNullResult()
         ;
     }
-
 }
