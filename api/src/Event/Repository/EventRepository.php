@@ -44,4 +44,10 @@ class EventRepository
     {
         $this->repository = $entityManager->getRepository(Event::class);
     }
+    
+    public function find(int $id): ?Event
+    {
+        return $this->repository->find($id);
+    }
+    
 }
