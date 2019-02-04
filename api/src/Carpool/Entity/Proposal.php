@@ -44,7 +44,7 @@ use App\Carpool\Filter\LocalityFilter;
 /**
  * Carpooling : proposal (offer from a driver / request from a passenger).
  *
- * @ORM\Entity(repositoryClass="App\Carpool\Repository\ProposalRepository")
+ * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
