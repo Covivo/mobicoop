@@ -25,8 +25,8 @@ namespace App\Image\Repository;
 
 use App\Event\Entity\Event;
 use App\Image\Entity\Image;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * @method Image|null find($id, $lockMode = null, $lockVersion = null)
@@ -34,11 +34,16 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  * @method Image[]    findAll()
  * @method Image[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ImageRepository extends ServiceEntityRepository
+class ImageRepository
 {
-    public function __construct(RegistryInterface $registry)
+    /**
+     * @var EntityRepository
+     */
+    private $repository;
+    
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        parent::__construct($registry, Image::class);
+        $this->repository = $entityManager->getRepository(Image::class);
     }
     
     /**
@@ -47,7 +52,7 @@ class ImageRepository extends ServiceEntityRepository
      */
     public function findNextPosition(object $owner)
     {
-        $query = $this->createQueryBuilder('i');
+        $query = $this->repository->createQueryBuilder('i');
         $query->select('MAX(i.position) AS maxPos');
         switch (get_class($owner)) {
             case Event::class:

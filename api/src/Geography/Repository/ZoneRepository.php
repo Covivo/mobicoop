@@ -3,8 +3,8 @@
 namespace App\Geography\Repository;
 
 use App\Geography\Entity\Zone;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * @method Zone|null find($id, $lockMode = null, $lockVersion = null)
@@ -12,11 +12,16 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  * @method Zone[]    findAll()
  * @method Zone[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ZoneRepository extends ServiceEntityRepository
+class ZoneRepository
 {
-    public function __construct(RegistryInterface $registry)
+    /**
+     * @var EntityRepository
+     */
+    private $repository;
+    
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        parent::__construct($registry, Zone::class);
+        $this->repository = $entityManager->getRepository(Zone::class);
     }
     
     /**
@@ -27,7 +32,7 @@ class ZoneRepository extends ServiceEntityRepository
      */
     public function findOneByLatitudeLongitude($latitude, $longitude)
     {
-        $query = $this->createQueryBuilder('z')
+        $query = $this->repository->createQueryBuilder('z')
         ->andWhere('z.fromLat <= :lat')
         ->andWhere('z.toLat >= :lat')
         ->andWhere('z.fromLon <= :lon')
@@ -40,32 +45,4 @@ class ZoneRepository extends ServiceEntityRepository
         ;
     }
 
-//    /**
-//     * @return Zone[] Returns an array of Zone objects
-//     */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('z')
-            ->andWhere('z.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('z.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Zone
-    {
-        return $this->createQueryBuilder('z')
-            ->andWhere('z.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
