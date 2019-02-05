@@ -5,33 +5,14 @@ parameters:
         event:
             # upload folders
             folder:
-                plain: 'upload/event/images'
-                thumbnail: 'upload/event/images/thumbnail'
-            # aspect ratios authorized
-            # - ratio : the aspect ratio as width:height
-            #ratios: 
-                #- {ratio: '1:1', prefix: '1-'}
-                #- {ratio: '4:3', prefix: '2-'}
-                #- {ratio: '16:9', prefix: '3-'}
-                #- {ratio: 'circle', prefix: '4-'}
-            # authorized mimeTypes and associated extension
-            mimeTypes:
-                - {type: 'image/jpeg', extension: 'jpg'} 
-                - {type: 'image/png', extension: 'png'}
-            # min size authorized
-            minsize: 600
-            # max size autorized (if the size is exceeded the original image will be downsized to this maximum size)
-            maxsize: 3000
-            # max weight autorized (in MB)
-            maxweight: 5
-            # thumbnail parameters
-            thumbnail:
-                #mimeType: 'image/png'
-                #extension: 'png'
-                # thumbnail sizes to be generated
+                plain: 'upload/events/images'
+                versions: 'upload/events/images/versions'
+            # versions to generate
+            versions:
+                # versions sizes to be generated
                 # - filterSet : the LiipImagine filter set to apply
-                sizes:
-                    - {filterSet: 'maxSize', prefix: 'o-'}
-                    - {filterSet: 'square_800', prefix: '800-'}
-                    - {filterSet: 'square_250', prefix: '250-'}
-                    #- {filterSet: 'square_100', prefix: '100-'}
+                # - prefix : the prefix of the version
+                - {filterSet: 'max', prefix: ''}
+                - {filterSet: 'square_800', prefix: '800-'}
+                - {filterSet: 'square_250', prefix: '250-'}
+                - {filterSet: 'square_100', prefix: '100-'}

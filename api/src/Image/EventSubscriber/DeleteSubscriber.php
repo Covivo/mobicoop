@@ -43,11 +43,11 @@ final class DeleteSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::VIEW => ['deleteThumbnails', EventPriorities::PRE_WRITE],
+            KernelEvents::VIEW => ['deleteVersions', EventPriorities::PRE_WRITE],
         ];
     }
     
-    public function deleteThumbnails(GetResponseForControllerResultEvent $event)
+    public function deleteVersions(GetResponseForControllerResultEvent $event)
     {
         $image = $event->getControllerResult();
         $method = $event->getRequest()->getMethod();

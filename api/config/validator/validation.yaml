@@ -1,0 +1,21 @@
+# images
+App\Image\Entity\Image:
+    properties:
+        eventFile:
+            - File:
+                maxSize: 4M
+                mimeTypes: [image/png, image/jpeg]
+            - Image:
+                minWidth: 200
+                maxWidth: 4000
+                minHeight: 200
+                maxHeight: 4000
+        userFile:
+            - File:
+                maxSize: 4M
+                mimeTypes: [image/png, image/jpeg]
+            - Image:
+                minWidth: 200
+                maxWidth: 4000
+                minHeight: 200
+                maxHeight: 4000

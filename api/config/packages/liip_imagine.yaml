@@ -5,7 +5,7 @@ liip_imagine:
     # define your filter sets under this option
     filter_sets:
 
-        maxSize:
+        max:
             jpeg_quality: 70
             png_compression_level: 8
             filters:

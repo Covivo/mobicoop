@@ -21,23 +21,8 @@
  *    LICENSE
  **************************/
 
-namespace App\Event\Service;
+namespace App\Image\Exception;
 
-use Doctrine\ORM\EntityManagerInterface;
+class ImageException extends \LogicException {
 
-/**
- * Event manager.
- *
- * This service contains methods related to event manipulations.
- *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
- */
-class EventManager
-{
-    private $entityManager;
-    
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
 }

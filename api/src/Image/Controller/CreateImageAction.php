@@ -65,12 +65,12 @@ final class CreateImageAction
         
         // we search the future owner of the image (user ? event ?...)
         if ($owner = $this->imageManager->getOwner($image)) {
-            // we associate the event and the image
+            // we associate the owner and the image
             $owner->addImage($image);
             // we search the position of the image
-            $image->setPosition($this->imageManager->getNextPosition($image, $owner));
+            $image->setPosition($this->imageManager->getNextPosition($image));
             // we rename the image depending on the owner
-            $image->setFileName($this->imageManager->generateFilename($image, $owner));
+            $image->setFileName($this->imageManager->generateFilename($image));
             // we check if an originalName has been sent
             if ($image->getOriginalName()) {
                 $originalName = $image->getOriginalName();
@@ -88,7 +88,7 @@ final class CreateImageAction
             }
             
             // we generate the versions available for the image
-            $image->setVersions($this->imageManager->generateVersions($image, $owner));
+            $image->setVersions($this->imageManager->generateVersions($image));
 
             // Prevent the serialization of the file property
             $image->preventSerialization();

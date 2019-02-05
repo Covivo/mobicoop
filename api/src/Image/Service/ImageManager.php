@@ -32,6 +32,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use App\Event\Repository\EventRepository;
 use App\Image\Repository\ImageRepository;
+use App\Image\Exception\OwnerNotFoundException;
+use App\Image\Exception\ImageException;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
+use ProxyManager\Exception\FileNotWritableException;
 
 /**
  * Image manager.
@@ -66,11 +70,11 @@ class ImageManager
     
     /**
      * Get the owner of the image.
-     * Returns the owner or false if no valid owner is found.
      * @param Image $image
-     * @return object|false
+     * @throws OwnerNotFoundException
+     * @return object
      */
-    public function getOwner(Image $image)
+    public function getOwner(Image $image): object
     {
         if (!is_null($image->getEventId())) {
             // the image is an image for an event
@@ -79,39 +83,40 @@ class ImageManager
             // the image is an image for an event
             return $this->eventRepository->find($image->getEvent()->getId());
         }
-        return false;
+        throw new OwnerNotFoundException('The owner of this image cannot be found');
     }
     
     /**
-     * Returns the position of an image for an object.
+     * Returns the future position of a new image for an object.
      * @param Image $image
      * @param object $owner
      * @return int
      */
-    public function getNextPosition(Image $image, object $owner)
+    public function getNextPosition(Image $image)
     {
-        return $this->imageRepository->findNextPosition($owner);
+        return $this->imageRepository->findNextPosition($this->getOwner($image));
     }
     
     /**
      * Generates a filename depending on the class of the image owner.
      * @param Image $image
-     * @param object $owner
-     * @return string|boolean
+     * @throws ImageException
+     * @return string
      */
-    public function generateFilename(Image $image, object $owner)
+    public function generateFilename(Image $image)
     {
-        // note : the file extension will be automatically added
+        // note : the file extension will be added later (usually automatically) so we don't need to treat it now
+        $owner = $this->getOwner($image);
         switch (get_class($owner)) {
             case Event::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for an event, the filename will be the sanitized name of the event and the position of the image in the set
-                return $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition());
+                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition())) return $fileName;
                 break;
             default:
                 break;
         }
-        return false;
+        throw new ImageException('Cannot generate image filename for the owner of class ' . get_class($owner));
     }
     
     /**
@@ -121,28 +126,28 @@ class ImageManager
      * @param object $owner
      * @return array
      */
-    public function generateVersions(Image $image, object $owner)
+    public function generateVersions(Image $image)
     {
+        $owner = $this->getOwner($image);
         $versions = [];
         $types = $this->types[strtolower((new \ReflectionClass($owner))->getShortName())];
-        foreach ($types['thumbnail']['sizes'] as $thumbnail) {
+        foreach ($types['versions'] as $version) {
             $fileName = $image->getFileName();
             $extension = null;
             if ($extension = $this->fileManager->getExtension($fileName)) {
                 $fileName = substr($fileName, 0, -(strlen($extension)+1));
             }
-            $version = $this->generateVersion(
+            $generatedVersion = $this->generateVersion(
                 $image,
                 $types['folder']['plain'],
-                $types['folder']['thumbnail'],
+                $types['folder']['versions'],
                 $fileName,
-                $thumbnail['filterSet'],
+                $version['filterSet'],
                 $extension ? $extension : 'nc',
-                $thumbnail['prefix']
+                $version['prefix']
             );
-            $versions[] = $version;
+            $versions[$version['filterSet']] = $generatedVersion;
         }
-        // TODO : verify each version
         return $versions;
     }
     
@@ -155,20 +160,16 @@ class ImageManager
     public function getVersions(Image $image)
     {
         $versions = [];
-        if (!$owner = $this->getOwner($image)) {
-            return $versions;
-        }
+        $owner = $this->getOwner($image);
         $types = $this->types[strtolower((new \ReflectionClass($owner))->getShortName())];
-        foreach ($types['thumbnail']['sizes'] as $thumbnail) {
+        foreach ($types['versions'] as $version) {
             $fileName = $image->getFileName();
             $extension = null;
             if ($extension = $this->fileManager->getExtension($fileName)) {
                 $fileName = substr($fileName, 0, -(strlen($extension)+1));
             }
-            $versionName = $thumbnail['prefix'] . $fileName . "." . $extension;
-            if (file_exists($types['folder']['thumbnail'] . "/" . $versionName)) {
-                $versions[] = $versionName;
-            }
+            $versionName = $types['folder']['versions'] . "/" . $version['prefix'] . $fileName . "." . $extension;
+            if (file_exists($versionName)) $versions[$version['filterSet']] = $versionName;
         }
         return $versions;
     }
@@ -177,24 +178,19 @@ class ImageManager
      * Delete the different versions
      * @param Image $image
      */
-    public function deleteVersions(Image $image)
+    public function deleteVersions(Image $image): void
     {
-        if (!$owner = $this->getOwner($image)) {
-            return false;
-        }
+        $owner = $this->getOwner($image);
         $types = $this->types[strtolower((new \ReflectionClass($owner))->getShortName())];
-        foreach ($types['thumbnail']['sizes'] as $thumbnail) {
+        foreach ($types['versions'] as $version) {
             $fileName = $image->getFileName();
             $extension = null;
             if ($extension = $this->fileManager->getExtension($fileName)) {
                 $fileName = substr($fileName, 0, -(strlen($extension)+1));
             }
-            $versionName = $thumbnail['prefix'] . $fileName . "." . $extension;
-            if (file_exists($types['folder']['thumbnail'] . "/" . $versionName)) {
-                unlink($types['folder']['thumbnail'] . "/" . $versionName);
-            }
+            $versionName = $types['folder']['versions'] . "/" . $version['prefix'] . $fileName . "." . $extension;
+            if (file_exists($versionName)) unlink($versionName);
         }
-        return true;
     }
     
     /**
@@ -218,12 +214,9 @@ class ImageManager
         string $prefix
         ) {
         $versionName = $prefix . $fileName . "." . $extension;
-        
         $liipImage = $this->dataManager->find($filter, $folderOrigin.'/'.$image->getFileName());
-
         $resized = $this->filterManager->applyFilter($liipImage, $filter)->getContent();
-        self::saveImage($resized, $versionName, $folderDestination);
-        
+        $this->saveImage($resized, $versionName, $folderDestination);
         return $versionName;
     }
     
@@ -233,13 +226,24 @@ class ImageManager
      * @param String $blob      The binary string
      * @param String $fileName  The file
      * @param String $directory The folder
+     * @throws \DomainException
+     * @throws FileNotWritableException
      */
     private function saveImage($blob, $fileName, $directory)
     {
-        $file = fopen($directory."/".$fileName, 'w');
-        fwrite($file, $blob);
+        if ($blob == '') throw new \DomainException('Empty blob string');
+        if (!$file = fopen($directory."/".$fileName, 'w')) {
+            throw new FileNotWritableException('File ' . $directory . '/' . $fileName . ' is not writable');
+        }
+        if (!fwrite($file, $blob)) {
+            throw new FileNotWritableException('Cannot write to ' . $directory . '/' . $fileName);
+        }
         fclose($file);
     }
     
-    // TODO : create methods to modify the position and filename of an image set if an image of the set is deleted, or if the position changes (switch between images) etc...
+    /** TODO : create methods to : 
+     * - modify the position and filename of images of a set if positions change (switch between images) 
+     * - modify the position and filename of images of a set if an image of the set is deleted
+     * - recreate all images of a set (if an error occurs, or if an image is accidentally deleted, or if the name of the owner changes)
+     */
 }
