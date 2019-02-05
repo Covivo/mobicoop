@@ -141,6 +141,7 @@ class ImageManager
             }
             $generatedVersion = $this->generateVersion(
                 $image,
+                $types['folder']['base'],
                 $types['folder']['plain'],
                 $types['folder']['versions'],
                 $fileName,
@@ -170,8 +171,8 @@ class ImageManager
             if ($extension = $this->fileManager->getExtension($fileName)) {
                 $fileName = substr($fileName, 0, -(strlen($extension)+1));
             }
-            $versionName = $types['folder']['versions'] . "/" . $version['prefix'] . $fileName . "." . $extension;
-            if (file_exists($versionName)) {
+            $versionName = $types['folder']['versions'] . $version['prefix'] . $fileName . "." . $extension;
+            if (file_exists($types['folder']['base'].$versionName)) {
                 $versions[$version['filterSet']] = $versionName;
             }
         }
@@ -192,7 +193,7 @@ class ImageManager
             if ($extension = $this->fileManager->getExtension($fileName)) {
                 $fileName = substr($fileName, 0, -(strlen($extension)+1));
             }
-            $versionName = $types['folder']['versions'] . "/" . $version['prefix'] . $fileName . "." . $extension;
+            $versionName = $types['folder']['base'].$types['folder']['versions'] . $version['prefix'] . $fileName . "." . $extension;
             if (file_exists($versionName)) {
                 unlink($versionName);
             }
@@ -202,6 +203,7 @@ class ImageManager
     /**
      * Generates a version of an image.
      * @param Image $image
+     * @param string $baseFolder
      * @param string $folderOrigin
      * @param string $folderDestination
      * @param string $fileName
@@ -212,6 +214,7 @@ class ImageManager
      */
     private function generateVersion(
         Image $image,
+        string $baseFolder,
         string $folderOrigin,
         string $folderDestination,
         string $fileName,
@@ -220,9 +223,9 @@ class ImageManager
         string $prefix
         ) {
         $versionName = $prefix . $fileName . "." . $extension;
-        $liipImage = $this->dataManager->find($filter, $folderOrigin.'/'.$image->getFileName());
+        $liipImage = $this->dataManager->find($filter, $baseFolder.$folderOrigin.$image->getFileName());
         $resized = $this->filterManager->applyFilter($liipImage, $filter)->getContent();
-        $this->saveImage($resized, $versionName, $folderDestination);
+        $this->saveImage($resized, $versionName, $baseFolder.$folderDestination);
         return $versionName;
     }
     
@@ -240,11 +243,11 @@ class ImageManager
         if ($blob == '') {
             throw new \DomainException('Empty blob string');
         }
-        if (!$file = fopen($directory."/".$fileName, 'w')) {
-            throw new FileNotWritableException('File ' . $directory . '/' . $fileName . ' is not writable');
+        if (!$file = fopen($directory.$fileName, 'w')) {
+            throw new FileNotWritableException('File ' . $directory . $fileName . ' is not writable');
         }
         if (!fwrite($file, $blob)) {
-            throw new FileNotWritableException('Cannot write to ' . $directory . '/' . $fileName);
+            throw new FileNotWritableException('Cannot write to ' . $directory . $fileName);
         }
         fclose($file);
     }
