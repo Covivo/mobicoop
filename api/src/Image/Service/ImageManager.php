@@ -111,7 +111,9 @@ class ImageManager
             case Event::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for an event, the filename will be the sanitized name of the event and the position of the image in the set
-                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition())) return $fileName;
+                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition())) {
+                    return $fileName;
+                }
                 break;
             default:
                 break;
@@ -169,7 +171,9 @@ class ImageManager
                 $fileName = substr($fileName, 0, -(strlen($extension)+1));
             }
             $versionName = $types['folder']['versions'] . "/" . $version['prefix'] . $fileName . "." . $extension;
-            if (file_exists($versionName)) $versions[$version['filterSet']] = $versionName;
+            if (file_exists($versionName)) {
+                $versions[$version['filterSet']] = $versionName;
+            }
         }
         return $versions;
     }
@@ -189,7 +193,9 @@ class ImageManager
                 $fileName = substr($fileName, 0, -(strlen($extension)+1));
             }
             $versionName = $types['folder']['versions'] . "/" . $version['prefix'] . $fileName . "." . $extension;
-            if (file_exists($versionName)) unlink($versionName);
+            if (file_exists($versionName)) {
+                unlink($versionName);
+            }
         }
     }
     
@@ -231,7 +237,9 @@ class ImageManager
      */
     private function saveImage($blob, $fileName, $directory)
     {
-        if ($blob == '') throw new \DomainException('Empty blob string');
+        if ($blob == '') {
+            throw new \DomainException('Empty blob string');
+        }
         if (!$file = fopen($directory."/".$fileName, 'w')) {
             throw new FileNotWritableException('File ' . $directory . '/' . $fileName . ' is not writable');
         }
@@ -241,8 +249,8 @@ class ImageManager
         fclose($file);
     }
     
-    /** TODO : create methods to : 
-     * - modify the position and filename of images of a set if positions change (switch between images) 
+    /** TODO : create methods to :
+     * - modify the position and filename of images of a set if positions change (switch between images)
      * - modify the position and filename of images of a set if an image of the set is deleted
      * - recreate all images of a set (if an error occurs, or if an image is accidentally deleted, or if the name of the owner changes)
      */

@@ -23,6 +23,6 @@
 
 namespace App\Image\Exception;
 
-class OwnerNotFoundException extends \LogicException {
-        
+class OwnerNotFoundException extends \LogicException
+{
 }

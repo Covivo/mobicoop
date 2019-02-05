@@ -23,6 +23,6 @@
 
 namespace App\Image\Exception;
 
-class ImageException extends \LogicException {
-
+class ImageException extends \LogicException
+{
 }
