@@ -5,8 +5,9 @@ parameters:
         event:
             # upload folders
             folder:
-                plain: 'upload/events/images'
-                versions: 'upload/events/images/versions'
+                base: 'upload/'
+                plain: 'events/images/'
+                versions: 'events/images/versions/'
             # versions to generate
             versions:
                 # versions sizes to be generated
