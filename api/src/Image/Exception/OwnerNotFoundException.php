@@ -21,23 +21,8 @@
  *    LICENSE
  **************************/
 
-namespace App\Event\Service;
+namespace App\Image\Exception;
 
-use Doctrine\ORM\EntityManagerInterface;
-
-/**
- * Event manager.
- *
- * This service contains methods related to event manipulations.
- *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
- */
-class EventManager
+class OwnerNotFoundException extends \LogicException
 {
-    private $entityManager;
-    
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
 }

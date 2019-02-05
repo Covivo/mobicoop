@@ -3,11 +3,11 @@ vich_uploader:
 
     mappings:
         event:
-            uri_prefix: /upload/event/images/
-            upload_destination: '%kernel.project_dir%/public/upload/event/images/'
+            uri_prefix: /upload/events/images/
+            upload_destination: '%kernel.project_dir%/public/upload/events/images/'
             namer:
                 service: Vich\UploaderBundle\Naming\PropertyNamer
                 options: { property: 'fileName'}
         user:
-            uri_prefix: /upload/user/images/
-            upload_destination: '%kernel.project_dir%/public/upload/user/images/'    
+            uri_prefix: /upload/users/images/
+            upload_destination: '%kernel.project_dir%/public/upload/users/images/'    

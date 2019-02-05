@@ -31,7 +31,6 @@ use App\Image\Service\ImageManager;
 class ImageListener
 {
     private $imageManager;
-    private $logger;
     
     public function __construct(ImageManager $imageManager)
     {
