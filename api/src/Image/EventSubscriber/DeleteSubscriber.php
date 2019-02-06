@@ -46,16 +46,25 @@ final class DeleteSubscriber implements EventSubscriberInterface
             KernelEvents::VIEW => ['deleteVersions', EventPriorities::PRE_WRITE],
         ];
     }
-    
+
     public function deleteVersions(GetResponseForControllerResultEvent $event)
     {
-        $image = $event->getControllerResult();
+        $object = $event->getControllerResult();
         $method = $event->getRequest()->getMethod();
-        
-        if (!$image instanceof Image || Request::METHOD_DELETE !== $method) {
+
+        // needs to be modified for each new related entity (event, user etc...)
+        if ((!($object instanceof Image) && !($object instanceof Event)) || Request::METHOD_DELETE !== $method) {
             return;
         }
-        $this->imageManager->deleteVersions($image);
+        if ($object instanceof Image) {
+            // deletion of Image => we delete the versions
+            $this->imageManager->deleteVersions($object);
+        } elseif ($object instanceof Event) {
+            // deletion of Event => we delete the versions of all related images
+            foreach ($object->getImages() as $image) {
+                $this->imageManager->deleteVersions($image);
+            }
+        }
         return;
     }
 }

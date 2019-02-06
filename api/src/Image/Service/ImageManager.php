@@ -46,7 +46,6 @@ use ProxyManager\Exception\FileNotWritableException;
  */
 class ImageManager
 {
-    private $entityManager;
     private $eventRepository;
     private $imageRepository;
     private $fileManager;
@@ -54,7 +53,6 @@ class ImageManager
     
     private $filterManager;
     private $dataManager;
-    private $container;
     private $logger;
     
     public function __construct(EventRepository $eventRepository, ImageRepository $imageRepository, FileManager $fileManager, ContainerInterface $container, LoggerInterface $logger, array $types)
@@ -89,7 +87,6 @@ class ImageManager
     /**
      * Returns the future position of a new image for an object.
      * @param Image $image
-     * @param object $owner
      * @return int
      */
     public function getNextPosition(Image $image)
@@ -125,8 +122,8 @@ class ImageManager
      * Generates the different versions of the image (thumbnails).
      * Returns the names of the generated versions
      * @param Image $image
-     * @param object $owner
      * @return array
+     * @throws \ReflectionException
      */
     public function generateVersions(Image $image)
     {
@@ -159,6 +156,7 @@ class ImageManager
      * Returns the names of the generated versions
      * @param Image $image
      * @return array
+     * @throws \ReflectionException
      */
     public function getVersions(Image $image)
     {
@@ -182,6 +180,7 @@ class ImageManager
     /**
      * Delete the different versions
      * @param Image $image
+     * @throws \ReflectionException
      */
     public function deleteVersions(Image $image): void
     {

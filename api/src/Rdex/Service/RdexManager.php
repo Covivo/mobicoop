@@ -61,7 +61,8 @@ class RdexManager
      * Validates the parameters of a request.
      *
      * @param object $request
-     * @return mixed True if validation is ok, error if not
+     * @return RdexError|bool True if validation is ok, error if not
+     * @throws \Exception
      */
     public function validate(object $request)
     {
@@ -203,6 +204,7 @@ class RdexManager
      *
      * @param array $parameters
      * @return array
+     * @throws \Exception
      */
     public function getJourneys(array $parameters): array
     {

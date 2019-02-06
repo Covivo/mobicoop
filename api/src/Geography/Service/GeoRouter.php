@@ -44,7 +44,6 @@ class GeoRouter
      */
     public function getRoutes(array $addresses): ?array
     {
-        $routes = [];
         $georouter = new GeoRouterProvider();
         $params = [];
         $params['points'] = $addresses;
