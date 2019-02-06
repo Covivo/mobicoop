@@ -159,8 +159,8 @@ class DataProvider
      * @param string        $subClassName   The classname of the subresource
      * @param string        $subClassRoute  The class route of the subresource (used for custom routes, if not provided the route will be the subClassName pluralized)
      * @param array|null    $params         An array of parameters
-     *
      * @return Response The response of the operation.
+     * @throws \ReflectionException
      */
     public function getSubCollection(int $id, string $subClassName, string $subClassRoute=null, array $params=null): Response
     {
@@ -252,7 +252,7 @@ class DataProvider
     /**
      * Put item operation
      *
-     * @param object $object An object representing the resource to put
+     * @param Resource $object An object representing the resource to put
      *
      * @return Response The response of the operation.
      */
