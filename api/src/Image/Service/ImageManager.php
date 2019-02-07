@@ -146,7 +146,7 @@ class ImageManager
                 $extension ? $extension : 'nc',
                 $version['prefix']
             );
-            $versions[$version['filterSet']] = $generatedVersion;
+            $versions[$version['filterSet']] = getenv('DATA_URI') . $generatedVersion;
         }
         return $versions;
     }
@@ -171,7 +171,7 @@ class ImageManager
             }
             $versionName = $types['folder']['versions'] . $version['prefix'] . $fileName . "." . $extension;
             if (file_exists($types['folder']['base'].$versionName)) {
-                $versions[$version['filterSet']] = $versionName;
+                $versions[$version['filterSet']] = getenv('DATA_URI') . $versionName;
             }
         }
         return $versions;
