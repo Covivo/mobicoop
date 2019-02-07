@@ -1,5 +1,0 @@
-{
-    "require": {
-        "symfony/security-bundle": "^4.2"
-    }
-}
