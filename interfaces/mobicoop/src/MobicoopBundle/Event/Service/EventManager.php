@@ -96,8 +96,14 @@ class EventManager
     public function getEvent(int $id)
     {
         $response = $this->dataProvider->getItem($id);
+
         if ($response->getCode() == 200) {
-            return $response->getValue();
+            $event = $response->getValue();
+            $eventFullDescription = $event->getFullDescription();
+
+            $event->setFullDescription(str_replace(array("\r\n", "\r", "\n"), "<br />", $eventFullDescription));
+
+            return $event;
         }
         return null;
     }
