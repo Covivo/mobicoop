@@ -39,9 +39,6 @@ install & enable in your .ini all its php extensions : [Docker file](https://git
 
 `git clone https://gitlab.com/mobicoop/mobicoop`
 
-*DUPLICATE THE [config.json.dist](config.json.dist) INTO A `config.json` FILE*
-
-
 #### For all apps
 
 `npm install --no-save` will perfom:
@@ -52,15 +49,18 @@ install & enable in your .ini all its php extensions : [Docker file](https://git
 
 - Sometimes if tools do not work you will need on unix systems: `chmod 775 bin/*`
 
-- Duplicate, rename without .dist & edit some env & config files:
-    - [.env api](api/.env.dist)  
+- Duplicate, rename without .dist & config files:
     - [config.json api](api/config.json.dist)
-    - [.env mobicoop](interfaces/mobicoop/.env.dist) 
+
+- Duplicate, rename with .env.local & edit some env.local:  
+    - [.env api](api/.env)   
+    - [.env mobicoop](interfaces/mobicoop/.env) 
 
 *Do not edit the dist file with your config info*
 
 - If you have missing modules during installation check this docker file
 and install all its php extensions : [Docker file](https://github.com/vyuldashev/docker-ci-php-node/blob/master/Dockerfile)
+
 
 #### API
 

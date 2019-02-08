@@ -1,7 +1,0 @@
-framework:
-    default_locale: '%locale%'
-    translator:
-        paths:
-            - '%kernel.project_dir%/src/MobicoopBundle/Resources/translations'
-        fallbacks:
-            - '%locale%'

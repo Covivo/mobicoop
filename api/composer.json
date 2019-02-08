@@ -21,6 +21,7 @@
         "symfony/flex": "^1.1",
         "symfony/framework-bundle": "*",
         "symfony/monolog-bundle": "^3.3",
+        "symfony/security-bundle": "4.2.*",
         "symfony/yaml": "*",
         "vich/uploader-bundle": "^1.8",
         "willdurand/geocoder-bundle": "^5.3"
@@ -71,7 +72,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "4.1.*"
+            "require": "4.2.*"
         }
     }
 }
