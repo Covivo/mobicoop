@@ -1,26 +1,39 @@
-/* Welcome to Coviride main SASS file, this file require all the sub-elements */
+/* Welcome to Mobicoop main SASS file, this file require all the sub-elements */
 // Import Bulma and Buefy styles
-// @import '~bulma/sass/utilities/_all'; // not sure if this is usefull
+// @import '~bulma/sass/utilities/_all'; // not sure if this is useful
 @import '~bulma';
 @import '~buefy/src/scss/buefy';
 @import '_variables';
 @import '_header';
 body {
-  background-color: $mainBackgroundColor;
-  color: $mainFontColor;
-  //font-size: 45px;
+  background-color: $main-background-color;
+  color: $main-font-color;
   h1 {
     // font-size: 75px;
   }
   .commonNav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 80px;
+    background-color: $nav-background-color;
     .logo {
       max-height: 4rem;
     }
     .buttons {
       .button {
+        font-weight: bold;
         &.is-primary {
-          background-color: $mobiPink;
-          color: $mobiGreen;
+          background-color: $mb-dark-green;
+          color: $mb-green;
+        }
+        &.is-light {
+          background-color: $mb-green;
+          color: $mb-dark-green;
+        }
+        &:hover {
+          color: $mb-white;
         }
       }
     }

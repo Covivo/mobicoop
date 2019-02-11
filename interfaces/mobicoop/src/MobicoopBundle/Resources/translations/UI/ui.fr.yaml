@@ -9,6 +9,8 @@ menu:
     login: 'Connexion' 
     account: 'Mon compte'
     profile: 'Mon profil'
+    messages: 'Messages'
+    proposal_create: 'Partager une annonce'
     logout: 'Déconnexion'
     
 # pages

@@ -59,20 +59,7 @@ class UserController extends AbstractController
             'user' => $userManager->getUser($id)
         ]);
     }
-    
-    /**
-     * Retrieve the logged user.
-     *
-     * @Route("/user/profile", name="user_profile")
-     *
-     */
-    public function userProfile(UserManager $userManager)
-    {
-        return $this->render('@Mobicoop/user/detail.html.twig', [
-            'user' => $userManager->getLoggedUser()
-        ]);
-    }
-    
+
     /**
      * Retrieve all users.
      *
@@ -85,44 +72,7 @@ class UserController extends AbstractController
             'hydra' => $userManager->getUsers()
         ]);
     }
-    
-    /**
-     * Register a user.
-     *
-     * @Route("/user/signup", name="user_sign_up")
-     *
-     */
-    public function userSignUp(UserManager $userManager, Request $request)
-    {
-        $user = new User();
-        
-        $form = $this->createForm(
-            UserForm::class,
-            $user,
-            ['validation_groups'=>['signUp']]
-        );
 
-        $form->handleRequest($request);
-        $error = false;
-        
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($user = $userManager->createUser($user)) {
-                // after successful registering, we log the user
-                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-                $this->get('security.token_storage')->setToken($token);
-                $this->get('session')->set('_security_main', serialize($token));
-                // redirection to the user profile page
-                return $this->redirectToRoute('user_profile');
-            }
-            $error = true;
-        }
-        
-        return $this->render('@Mobicoop/user/signup.html.twig', [
-                'form' => $form->createView(),
-                'error' => $error
-        ]);
-    }
-    
     /**
      * Update a user.
      *
@@ -284,38 +234,6 @@ class UserController extends AbstractController
     }
 
     /**
-     * Create a proposal for a user.
-     *
-     * @Route("/user/{id}/proposal/create", name="user_proposal_create", requirements={"id"="\d+"})
-     *
-     */
-    public function userProposalCreate($id, ProposalManager $proposalManager, Request $request)
-    {
-        $proposal = new Proposal();
-        $proposal->setUser(new User($id));
-
-        $form = $this->createForm(ProposalForm::class, $proposal);
-        $form->handleRequest($request);
-        $error = false;
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            // for now we add the starting end ending points,
-            // in the future we will need to have dynamic fields
-            $proposal->addPoint($proposal->getStart());
-            $proposal->addPoint($proposal->getDestination());
-            if ($proposal = $proposalManager->createProposal($proposal)) {
-                return $this->redirectToRoute('user_proposal_matchings', ['id'=>$id,'idProposal'=>$proposal->getId()]);
-            }
-            $error = true;
-        }
-
-        return $this->render('@Mobicoop/proposal/create.html.twig', [
-            'form' => $form->createView(),
-            'error' => $error
-        ]);
-    }
-
-    /**
      * Retrieve all proposals for a user.
      *
      * @Route("/user/{id}/proposals", name="user_proposals", requirements={"id"="\d+"})
@@ -367,11 +285,10 @@ class UserController extends AbstractController
         }
     }
 
+
+
     /**
      * User login.
-     *
-     * @Route("/user/login", name="user_login")
-     *
      */
     public function login()
     {
@@ -380,5 +297,82 @@ class UserController extends AbstractController
         $form = $this->createForm(UserLoginForm::class, $login);
 
         return $this->render('@Mobicoop/user/login.html.twig', ["form"=>$form->createView()]);
+    }
+
+    /**
+     * Register a user.
+     */
+    public function userSignUp(UserManager $userManager, Request $request)
+    {
+        $user = new User();
+
+        $form = $this->createForm(
+            UserForm::class,
+            $user,
+            ['validation_groups'=>['signUp']]
+        );
+
+        $form->handleRequest($request);
+        $error = false;
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($user = $userManager->createUser($user)) {
+                // after successful registering, we log the user
+                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                $this->get('security.token_storage')->setToken($token);
+                $this->get('session')->set('_security_main', serialize($token));
+                // redirection to the user profile page
+                return $this->redirectToRoute('user_profile');
+            }
+            $error = true;
+        }
+
+        return $this->render('@Mobicoop/user/signup.html.twig', [
+            'form' => $form->createView(),
+            'error' => $error
+        ]);
+    }
+
+    /**
+     * User profile (get the current user).
+     */
+    public function userProfile(UserManager $userManager)
+    {
+        return $this->render('@Mobicoop/user/detail.html.twig', [
+            'user' => $userManager->getLoggedUser()
+        ]);
+    }
+
+    /**
+     * Create a proposal for a user.
+     */
+    public function userProposalCreate($id=null, ProposalManager $proposalManager, Request $request)
+    {
+        $proposal = new Proposal();
+        if ($id) {
+            $proposal->setUser(new User($id));
+        } else {
+            $proposal->setUser(new User());
+        }
+
+        $form = $this->createForm(ProposalForm::class, $proposal);
+        $form->handleRequest($request);
+        $error = false;
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // for now we add the starting end ending points,
+            // in the future we will need to have dynamic fields
+            $proposal->addPoint($proposal->getStart());
+            $proposal->addPoint($proposal->getDestination());
+            if ($proposal = $proposalManager->createProposal($proposal)) {
+                return $this->redirectToRoute('user_proposal_matchings', ['id'=>$id,'idProposal'=>$proposal->getId()]);
+            }
+            $error = true;
+        }
+
+        return $this->render('@Mobicoop/proposal/create.html.twig', [
+            'form' => $form->createView(),
+            'error' => $error
+        ]);
     }
 }

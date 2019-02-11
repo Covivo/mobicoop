@@ -65,6 +65,11 @@ class Proposal implements Resource
     private $user;
 
     /**
+    * @var int Proposal type (one way / outward / return).
+    */
+    private $type;
+
+    /**
      * @var Waypoint[] The waypoints of the proposal.
      *
      * @Assert\NotBlank
