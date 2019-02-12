@@ -176,7 +176,7 @@ class GeoRouterController extends AbstractController
 
 
         for ($i=1;$i<=50;$i++) {
-            $addresses100[] = $addressespool[rand(0,count($addressespool)-1)];
+            $addresses100[] = $addressespool[rand(0, count($addressespool)-1)];
         }
 
         $start = microtime(true);
