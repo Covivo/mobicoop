@@ -91,6 +91,7 @@ class GeoRouterController extends AbstractController
         $address14->setLatitude(49.181491);
         $address14->setLongitude(5.695852);
 
+        // nancy metz
         $address15 = new Address(15);
         $address15->setLatitude(48.693900);
         $address15->setLongitude(6.178986);
@@ -98,6 +99,15 @@ class GeoRouterController extends AbstractController
         $address16 = new Address(16);
         $address16->setLatitude(49.120602);
         $address16->setLongitude(6.174711);
+
+        // hambourg séville
+        $address17 = new Address(17);
+        $address17->setLatitude(53.50900);
+        $address17->setLongitude(9.999634);
+
+        $address18 = new Address(18);
+        $address18->setLatitude(37.268897);
+        $address18->setLongitude(-5.682345);
 
         $addresses1 = [
             $address1,
@@ -151,12 +161,22 @@ class GeoRouterController extends AbstractController
             $address16
         ];
 
+        $addresses9 = [
+            $address17,
+            $address18
+        ];
+
+        $addressespool = [
+            $address15,
+            $address16,
+            $address17,
+            $address18
+        ];
         $addresses100 = [];
 
 
-        for ($i=1;$i<=100;$i++) {
-            $addresses100[] = $address15;
-            $addresses100[] = $address16;
+        for ($i=1;$i<=50;$i++) {
+            $addresses100[] = $addressespool[rand(0,count($addressespool)-1)];
         }
 
         $start = microtime(true);

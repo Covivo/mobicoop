@@ -1,68 +1,68 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>{% block title %}Welcome!{% endblock %}</title>
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-   {{encore_entry_link_tags('app') }}
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  {% block stylesheets %}{% endblock %}
+    <meta charset="UTF-8">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    {{encore_entry_link_tags('app') }}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% block stylesheets %}{% endblock %}
 </head>
 <body>
-  <nav class="navbar has-shadow commonNav">
+<nav class="navbar has-shadow commonNav">
     <div class="container">
-      <div class="navbar-brand">
-        <a class="navbar-item" href="/">
-          <img class="logo" src="{{asset('images/logo.png')}}" alt="Mobicoop"/>
-        </a>
-        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </a>
-      </div>
-      <div class="navbar-menu" id="navMenu">
-        <div class="navbar-end">
-          <div class="buttons">
-            {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-            <a href="{{ path('user_sign_up') }}" class="button is-light">
-              {% trans from 'ui' %}menu.signup{% endtrans %}
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+                <img class="logo" src="{{asset('images/logo.png')}}" alt="Mobicoop"/>
             </a>
-            <a href="{{ path('user_login') }}" class="button is-light">
-              {% trans from 'ui' %}menu.login{% endtrans %}
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
             </a>
-            {% else %}
-            <a href="{{ path('user_messages') }}" class="button is-light">
-              {% trans from 'ui' %}menu.messages{% endtrans %}
-            </a>
-            <a href="{{ path('user_profile') }}" class="button is-light">
-              {% trans from 'ui' %}menu.profile{% endtrans %}
-            </a>
-            <a href="{{ path('logout') }}" class="button is-light">
-              {% trans from 'ui' %}menu.logout{% endtrans %}
-            </a>
-            {% endif %}
-            <a href="{{ path('user_proposal_create') }}" class="button is-primary">
-              {% trans from 'ui' %}menu.proposal_create{% endtrans %}
-            </a>
-          </div>
         </div>
-      </div>
+        <div class="navbar-menu" id="navMenu">
+            <div class="navbar-end">
+                <div class="buttons">
+                    {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                        <a href="{{ path('user_sign_up') }}" class="button is-light">
+                            {% trans from 'ui' %}menu.signup{% endtrans %}
+                        </a>
+                        <a href="{{ path('user_login') }}" class="button is-light">
+                            {% trans from 'ui' %}menu.login{% endtrans %}
+                        </a>
+                    {% else %}
+                        <a href="{{ path('user_messages') }}" class="button is-light">
+                            {% trans from 'ui' %}menu.messages{% endtrans %}
+                        </a>
+                        <a href="{{ path('user_profile') }}" class="button is-light">
+                            {% trans from 'ui' %}menu.profile{% endtrans %}
+                        </a>
+                        <a href="{{ path('logout') }}" class="button is-light">
+                            {% trans from 'ui' %}menu.logout{% endtrans %}
+                        </a>
+                    {% endif %}
+                    <a href="{{ path('user_proposal_create') }}" class="button is-primary">
+                        {% trans from 'ui' %}menu.proposal_create{% endtrans %}
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
-  </nav>
-  <div id="app">
+</nav>
+<div id="app">
     {% block body %}{% endblock %}
-  </div>
+</div>
 
 </body>
 <footer class="footer">
-  <div class="content has-text-centered">
-    <p>
-      <strong>Mobicoop</strong> by <a href="https://mobicoop.io">Mobicoop team</a>. The source code is licensed
-      <a href="#">AGPL3</a>. The website content
-      is licensed <a href="#">AGPL3 too</a>.
-    </p>
-  </div>
+    <div class="content has-text-centered">
+        <p>
+            <strong>Mobicoop</strong> by <a href="https://mobicoop.io">Mobicoop team</a>. The source code is licensed
+            <a href="#">AGPL3</a>. The website content
+            is licensed <a href="#">AGPL3 too</a>.
+        </p>
+    </div>
 </footer>
 {{ encore_entry_script_tags('app') }}
 {% block javascripts %}{% endblock %}
