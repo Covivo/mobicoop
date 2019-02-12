@@ -521,7 +521,7 @@ class User implements Resource, UserInterface, EquatableInterface
 
     public function getGenderString(): ?string
     {
-        return ($this->getGender() ? array_search ($this->getGender(), self::GENDERS) : null);
+        return ($this->getGender() ? array_search($this->getGender(), self::GENDERS) : null);
     }
 
 

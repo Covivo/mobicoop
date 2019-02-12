@@ -58,7 +58,9 @@ class UserManager
         $response = $this->dataProvider->getItem($id);
         if ($response->getCode() == 200) {
             $user = $response->getValue();
-            if ($user->getBirthDate()) $user->setBirthYear($user->getBirthDate()->format('Y'));
+            if ($user->getBirthDate()) {
+                $user->setBirthYear($user->getBirthDate()->format('Y'));
+            }
             return $user;
         }
         return null;
@@ -75,7 +77,9 @@ class UserManager
             return null;
         }
         $user = $this->tokenStorage->getToken()->getUser();
-        if ($user->getBirthDate()) $user->setBirthYear($user->getBirthDate()->format('Y'));
+        if ($user->getBirthDate()) {
+            $user->setBirthYear($user->getBirthDate()->format('Y'));
+        }
         return $user instanceof User ? $user : null;
     }
     
