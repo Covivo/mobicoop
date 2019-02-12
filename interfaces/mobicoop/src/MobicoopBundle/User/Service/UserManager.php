@@ -27,6 +27,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use DateTime;
 
 /**
  * User management service.
@@ -56,7 +57,11 @@ class UserManager
     {
         $response = $this->dataProvider->getItem($id);
         if ($response->getCode() == 200) {
-            return $response->getValue();
+            $user = $response->getValue();
+            if ($user->getBirthDate()) {
+                $user->setBirthYear($user->getBirthDate()->format('Y'));
+            }
+            return $user;
         }
         return null;
     }
@@ -72,6 +77,9 @@ class UserManager
             return null;
         }
         $user = $this->tokenStorage->getToken()->getUser();
+        if ($user->getBirthDate()) {
+            $user->setBirthYear($user->getBirthDate()->format('Y'));
+        }
         return $user instanceof User ? $user : null;
     }
     
@@ -100,6 +108,9 @@ class UserManager
     {
         // encoding of the password
         $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
+        // set the birthdate
+        $birthdate = DateTime::createFromFormat('Y-m-d', $user->getBirthYear() . '-1-1');
+        $user->setBirthDate($birthdate);
         $response = $this->dataProvider->post($user);
         if ($response->getCode() == 201) {
             return $response->getValue();

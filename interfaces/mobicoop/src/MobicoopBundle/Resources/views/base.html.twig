@@ -1,75 +1,89 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>{% block title %}Welcome!{% endblock %}</title>
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-   {{encore_entry_link_tags('app') }}
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  {% block stylesheets %}{% endblock %}
+    <meta charset="UTF-8">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+          integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    {{ encore_entry_link_tags('app') }}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% block stylesheets %}{% endblock %}
 </head>
 <body>
-  <nav class="navbar has-shadow commonNav">
-    <div class="container">
-      <div class="navbar-brand">
-        <a class="navbar-item" href="../">
-          <img class="logo" src="{{asset('images/logo.jpg')}}" alt="Bulma: a modern CSS framework based on Flexbox"/>
+<nav class="navbar has-shadow common-nav">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+            <img class="logo " src="{{ asset('images/logo.png') }}" alt="Mobicoop"/>
         </a>
-
-          <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
-          </a>
-
-      </div>
-      <div class="navbar-menu" id="navMenu">
-        <div class="navbar-end">
-          {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-          <div class="buttons">
-            <a href="{{ path('user_sign_up') }}" class="button is-primary">
-              <strong>{% trans from 'ui' %}menu.signup{% endtrans %}</strong>
-            </a>
-            <a href="{{ path('user_login') }}" class="button is-light">
-              {% trans from 'ui' %}menu.login{% endtrans %}
-            </a>
-          </div>
-          {% else %}
-            <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link">
-                    {% trans from 'ui' %}menu.account{% endtrans %}
-                </a>
-                <div class="navbar-dropdown">
-                  <a href="{{ path('user_profile') }}" class="navbar-item">
-                      {% trans from 'ui' %}menu.profile{% endtrans %}
-                  </a>
-                  <hr class="navbar-divider">
-                  <a href="{{ path('logout') }}" class="navbar-item">
-                      {% trans from 'ui' %}menu.logout{% endtrans %}
-                  </a>
-              </div>
-            </div>
-          {% endif %}
-          </div>
-        </div>
-      </div>
+        </a>
     </div>
-  </nav>
-  <div id="app">
-    {% block body %}{% endblock %}
-  </div>
+    <div class="navbar-menu" id="navMenu">
+        <div class="navbar-end">
+            <div class="buttons">
+                {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                    <a href="{{ path('user_sign_up') }}" class="button is-light">
+                        {% trans from 'ui' %}menu.signup{% endtrans %}
+                    </a>
+                    <a href="{{ path('user_login') }}" class="button is-light">
+                        {% trans from 'ui' %}menu.login{% endtrans %}
+                    </a>
+                {% else %}
+                    <a href="{{ path('user_messages') }}" class="button is-light">
+                        {% trans from 'ui' %}menu.messages{% endtrans %}
+                    </a>
+                    <a href="{{ path('user_profile') }}" class="button is-light">
+                        {% trans from 'ui' %}menu.profile{% endtrans %}
+                    </a>
+                    <a href="{{ path('logout') }}" class="button is-light">
+                        {% trans from 'ui' %}menu.logout{% endtrans %}
+                    </a>
+                {% endif %}
+                <a href="{{ path('user_proposal_create') }}" class="button is-primary">
+                    {% trans from 'ui' %}menu.proposal_create{% endtrans %}
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
 
- 
-</body>
-<footer class="footer">
-  <div class="content has-text-centered">
-    <p>
-      <strong>Covivo</strong> by <a href="https://www.roulezmalin.fr">Covivo team</a>. The source code is licensed
-      <a href="#">AGPL3</a>. The website content
-      is licensed <a href="#">AGPL3 too</a>.
-    </p>
-  </div>
+<div id="app">
+    {% block body %}{% endblock %}
+</div>
+<footer class="common-footer">
+    <div class="container content has-text-centered">
+        <div>
+            <p class="footer-font">Réseaux sociaux</p>
+            <div class="columns is-centered">
+                <p><a href='https://www.facebook.com/Mobicoop/' target="blank"><img
+                                src='/images/Mobicoop/footer/facebook.svg' alt="logo-facebook"/></a></p>
+                <p><a href='https://twitter.com/MobicoopCovoit?lang=fr' target="blank"><img
+                                src='/images/Mobicoop/footer/twitter.svg' alt="logo-twitter"/></a></p>
+                <p><a href='https://www.instagram.com/mobicoopcovoiturage/' target="blank"><img
+                                src='/images/Mobicoop/footer/instagram.svg' alt="logo-instagram"/></a></p>
+                <p><a href='https://framasphere.org/people/9bfd3a40f8fb0134e71f2a0000053625' target="blank"><img
+                                src='/images/Mobicoop/footer/framasphere.svg' alt="logo-framasphere"/></a></p>
+            </div>
+        </div>
+        <div>
+            <p class="footer-font">Mobicoop</p>
+
+            <div>
+                <p>
+                    <strong>Mobicoop</strong> by <a href="https://mobicoop.io">Mobicoop team</a>. The source code is
+                    licensed
+                    <a href="#">AGPL3</a>. The website content
+                    is licensed <a href="#">AGPL3 too</a>.
+                </p>
+            </div>
+        </div>
+    </div>
 </footer>
-  {{ encore_entry_script_tags('app') }}
+</body>
+
+{{ encore_entry_script_tags('app') }}
 {% block javascripts %}{% endblock %}
 </html>

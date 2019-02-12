@@ -1,28 +1,69 @@
-/* Welcome to Coviride main SASS file, this file require all the sub-elements */
+/* Welcome to Mobicoop main SASS file, this file require all the sub-elements */
 // Import Bulma and Buefy styles
-// @import '~bulma/sass/utilities/_all'; // not sure if this is usefull
+// @import '~bulma/sass/utilities/_all'; // not sure if this is useful
 @import '~bulma';
 @import '~buefy/src/scss/buefy';
 @import '_variables';
 @import '_header';
 body {
-  background-color: $mainBackgroundColor;
-  color: $mainFontColor;
-  //font-size: 45px;
+  background-color: $main-background-color;
+  color: $main-font-color;
   h1 {
     // font-size: 75px;
   }
-  .commonNav {
+  .header {
+    background: url('images/header.png');
+    width: 100vw;
+    height: 30vh;
+  }
+  .common-nav {
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 80px;
+    background-color: $nav-background-color;
     .logo {
       max-height: 4rem;
     }
-    .buttons {
-      .button {
-        &.is-primary {
-          background-color: $mobiPink;
-          color: $mobiGreen;
-        }
+    .navbar-brand {
+      margin-left: 2vw;
+    }
+    .navbar-end {
+      margin-right: 1vw;
+    }
+  }
+  .common-footer {
+    background-color: $footer-background-color;
+    color: $mb-dark-green;
+    a {
+      color: $mb-dark-green;
+    }
+    ul {
+      color: #008282;
+    }
+    .footer-font {
+      font-size: 21px;
+      text-transform: uppercase;
+      margin-bottom: 15px;
+      font-weight: bold;
+      color: $mb-dark-green;
+    }
+  }
+  .buttons {
+    .button {
+      font-weight: bold;
+      &.is-primary {
+        background-color: $mb-dark-green;
+        color: $mb-green;
+      }
+      &.is-light {
+        background-color: $mb-green;
+        color: $mb-dark-green;
+      }
+      &:hover {
+        color: $mb-white;
       }
     }
   }
 }
+

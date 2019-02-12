@@ -40,7 +40,7 @@ use App\Geography\Entity\Direction;
  */
 class GeoRouterProvider implements ProviderInterface
 {
-    private const URI = "http://89.158.96.31:8989/";
+    private const URI = "http://149.202.205.240:8989/";
     private const COLLECTION_RESOURCE = "route";
     private const GR_MODE_CAR = "CAR";
     private const GR_LOCALE = "fr-FR";
@@ -138,7 +138,7 @@ class GeoRouterProvider implements ProviderInterface
                 $direction->setBboxMaxLat($data["bbox"][3]);
             }
         }
-        if (isset($data['points'])) {
+        /*if (isset($data['points'])) {
             if (isset($data['points_encoded']) && $data['points_encoded'] === false) {
                 $direction->setPoints($this->deserializePoints($data['points'], false, filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
             } else {
@@ -151,7 +151,7 @@ class GeoRouterProvider implements ProviderInterface
             } else {
                 $direction->setWaypoints($this->deserializePoints($data['snapped_waypoints'], true, false));
             }
-        }
+        }*/
         return $direction;
     }
     

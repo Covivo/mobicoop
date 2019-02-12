@@ -66,16 +66,16 @@ class PTDataProvider
      * @return NULL|array                       The journeys found or null if no journey is found
      */
     public function getJourneys(
-            string $provider,
-            string $apikey,
-            string $origin_latitude,
-            string $origin_longitude,
-            string $destination_latitude,
-            string $destination_longitude,
-            \Datetime $date,
-            string $dateType,
-            string $algorithm,
-            string $modes
+        string $provider,
+        string $apikey,
+        string $origin_latitude,
+        string $origin_longitude,
+        string $destination_latitude,
+        string $destination_longitude,
+        \Datetime $date,
+        string $dateType,
+        string $algorithm,
+        string $modes
             ): ?array {
         if (!array_key_exists($provider, self::PROVIDERS)) {
             return null;

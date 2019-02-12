@@ -14,12 +14,19 @@ password:
     placeholder_repeat: 'Confirm your password'
 gender:
     label: 'Gender'
-    placeholder: 'Set your gender'
+    placeholder: 'Choose your gender'
+    choice:
+        female: 'Female'
+        male: 'Male'
+        nc: 'Other'
 nationality:
     label: 'Nationality'
     placeholder: 'Set your nationality'
 birthDate:
     label: 'Birth date'
+birthYear:
+    label: 'Birth year'
+    placeholder: 'Choose your birth year'
 telephone:
     label: 'Telephone'
     placeholder: 'Set your phone number'
@@ -33,3 +40,7 @@ anyRouteAsPassenger:
     label: 'As a passenger, I accept any route proposed by a driver'
 multiTransportMode:
     label: 'As a passenger, I accept any transportation mode'
+conditions:
+    label: 'I approve the general conditions'
+signup:
+    label: 'I register'

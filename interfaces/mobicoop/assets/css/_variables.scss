@@ -1,15 +1,21 @@
 /*
-* This files should contians all common variables to be used between *.scss files
+* This files should contains all common variables to be used between *.scss files
 * the _ in the name means it's a partial file dude! So it will not be generated as a _variable.css 👌
 */
 
-$mainFontColor: #000;
-$mainBackgroundColor: #FFF;
-$secondBackgroundColor: #0FF;
-$footer-background-color: #FFF;
-$mobiPink : #FE3EA6;
-$mobiGreen : #66EE95;
+/* mobicoop palette */
+$mb-white: #FFF;
+$mb-pink: #F13FA8;
+$mb-green: #81F19A;
+$mb-dark-green: #005933;
 
+$main-font-color: #000;
+$main-background-color: #FFF;
+$second-background-color: #0FF;
+$nav-background-color: $mb-green;
+$footer-background-color: $mb-green;
+
+/*
 $partners: (
   mobicoop: (
     base: rgba(217, 0, 0, 0.5),
@@ -28,3 +34,4 @@ $partners: (
     url: 'covoiturage-libre.fr'
   )
 );
+*/
