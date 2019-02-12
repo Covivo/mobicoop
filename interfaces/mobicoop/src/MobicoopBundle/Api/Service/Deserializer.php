@@ -378,10 +378,10 @@ class Deserializer
         $accessExtractors = array($reflectionExtractor);
         
         $propertyInfo = new PropertyInfoExtractor(
-                $listExtractors,
-                $typeExtractors,
-                $descriptionExtractors,
-                $accessExtractors
+            $listExtractors,
+            $typeExtractors,
+            $descriptionExtractors,
+            $accessExtractors
                 );
         
         $properties = $propertyInfo->getProperties(get_class($object));
