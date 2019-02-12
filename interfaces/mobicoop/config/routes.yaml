@@ -47,13 +47,33 @@ user_profile:
         en: /user/profile
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfile
 
-# profile
+# messages
 user_messages:
     path:
         fr: /utilisateur/messages
         en: /user/messages
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfile
 
+# profile update
+user_profile_update:
+    path:
+        fr: /utilisateur/profil/modifier
+        en: /user/profile/update
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileUpdate
+
+# password update
+user_password_update:
+    path:
+        fr: /utilisateur/mot-de-passe/modifier
+        en: /user/password/update
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordUpdate
+
+# profile delete
+user_profile_delete:
+    path:
+        fr: /utilisateur/profil/supprimer
+        en: /user/profile/delete
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileDelete
 
 # logout
 logout:

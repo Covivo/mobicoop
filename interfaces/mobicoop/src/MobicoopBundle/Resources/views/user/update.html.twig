@@ -21,17 +21,12 @@
     		<span class="tag is-danger">An error occured.</span>
     		{% endif %}
             {{ form_start(form) }}
+			{{ form_row(form.email) }}
             {{ form_row(form.givenName) }}
             {{ form_row(form.familyName) }}
-            {{ form_row(form.email) }}
             {{ form_row(form.gender) }}
-            {{ form_row(form.nationality) }}
-            {{ form_row(form.birthDate) }}
+            {{ form_row(form.birthYear) }}
             {{ form_row(form.telephone) }}
-            {{ form_row(form.maxDeviationTime) }}
-            {{ form_row(form.maxDeviationDistance) }}
-            {{ form_row(form.anyRouteAsPassenger) }}
-            {{ form_row(form.multiTransportMode) }}
             {{ form_row(form._token) }}
             {{ form_row(form.submit) }}
             {{ form_end(form, {'render_rest': false}) }}

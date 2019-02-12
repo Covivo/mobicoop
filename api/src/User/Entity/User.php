@@ -70,6 +70,16 @@ class User
     const STATUS_ACTIVE = 1;
     const STATUS_DISABLED = 2;
     const STATUS_ANONYMIZED = 3;
+
+    const GENDER_FEMALE = 1;
+    const GENDER_MALE = 2;
+    const GENDER_OTHER = 3;
+
+    const GENDERS = [
+        self::GENDER_FEMALE,
+        self::GENDER_MALE,
+        self::GENDER_OTHER
+    ];
     
     /**
      * @var int The id of this user.
@@ -125,19 +135,10 @@ class User
     private $password;
     
     /**
-     * @var string|null The gender of the user.
+     * @var int|null The gender of the user (1=female, 2=male, 3=nc)
      *
-     * @ORM\Column(type="string", length=30, nullable=true)
+     * @ORM\Column(type="smallint")
      * @Groups({"read","write"})
-     *
-     * @ApiProperty(
-     *     attributes={
-     *         "swagger_context"={
-     *             "type"="string",
-     *             "enum"={"female", "male"}
-     *         }
-     *     }
-     * )
      */
     private $gender;
     
@@ -191,7 +192,7 @@ class User
     /**
      * @var boolean|null The user accepts any route as a passenger from its origin to the destination.
      *
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
     private $anyRouteAsPassenger;

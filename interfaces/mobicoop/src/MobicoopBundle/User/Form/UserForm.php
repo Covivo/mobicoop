@@ -25,7 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\BirthdayType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -43,6 +43,12 @@ class UserForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $birthYears = [];
+        $curYear = date('Y');
+        for ($i=($curYear-getenv('USER_MIN_AGE'));$i>=($curYear-getenv('USER_MAX_AGE'));$i--) {
+            $birthYears[$i] = $i;
+        }
+
         $builder
         ->add('givenName', TextType::class, [
             'translation_domain' => 'user',
@@ -82,12 +88,12 @@ class UserForm extends AbstractType
                 ],
             ]
         ])
-        ->add('gender', TextType::class, [
+        ->add('gender', ChoiceType::class, [
+            'placeholder' => 'gender.placeholder',
+            'choices'  => User::GENDERS,
             'translation_domain' => 'user',
-            'label' => 'gender.label',
-            'attr' => [
-                'placeholder' => 'gender.placeholder'
-            ]
+            'choice_translation_domain' => true,
+            'label' => 'gender.label'
         ])
         ->add('nationality', TextType::class, [
             'translation_domain' => 'user',
@@ -96,9 +102,12 @@ class UserForm extends AbstractType
                 'placeholder' => 'nationality.placeholder'
             ]
         ])
-        ->add('birthDate', BirthdayType::class, [
+        ->add('birthYear', ChoiceType::class, [
+            'placeholder' => 'birthYear.placeholder',
+            'choices'  => $birthYears,
             'translation_domain' => 'user',
-            'label' => 'birthDate.label'
+            'choice_translation_domain' => false,
+            'label' => 'birthYear.label'
         ])
         ->add('telephone', TextType::class, [
             'translation_domain' => 'user',
@@ -131,9 +140,13 @@ class UserForm extends AbstractType
             'translation_domain' => 'user',
             'label' => 'multiTransportMode.label'
         ])
+        ->add('conditions', CheckboxType::class, [
+            'translation_domain' => 'user',
+            'label' => 'conditions.label'
+        ])
         ->add('submit', SubmitType::class, [
-            'translation_domain' => 'ui',
-            'label' => 'button.submit'
+            'translation_domain' => 'user',
+            'label' => 'signup.label'
         ])
         ;
     }

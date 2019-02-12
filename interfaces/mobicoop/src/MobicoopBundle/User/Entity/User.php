@@ -45,6 +45,16 @@ class User implements Resource, UserInterface, EquatableInterface
     const STATUS_ACTIVE = 1;
     const STATUS_DISABLED = 2;
     const STATUS_ANONYMIZED = 3;
+
+    const GENDER_FEMALE = 1;
+    const GENDER_MALE = 2;
+    const GENDER_OTHER = 3;
+
+    const GENDERS = [
+        'gender.choice.female'  => self::GENDER_FEMALE,
+        'gender.choice.male'    => self::GENDER_MALE,
+        'gender.choice.nc'      => self::GENDER_OTHER
+    ];
     
     /**
      * @var int The id of this user.
@@ -97,7 +107,7 @@ class User implements Resource, UserInterface, EquatableInterface
     private $password;
     
     /**
-     * @var string|null The gender of the user.
+     * @var int|null The gender of the user.
      *
      * @Groups({"post","put"})
      */
@@ -173,6 +183,17 @@ class User implements Resource, UserInterface, EquatableInterface
      * @var Ask[]|null The asks made by this user.
      */
     private $asks;
+
+    /**
+     * @var int|null The birth year of the user.
+     */
+    private $birthYear;
+
+    /**
+     * @var int Validation of conditions
+     * @Assert\NotBlank(groups={"signUp"})
+     */
+    private $conditions;
         
     public function __construct($id=null, $status=null)
     {
@@ -270,12 +291,12 @@ class User implements Resource, UserInterface, EquatableInterface
         return $this;
     }
     
-    public function getGender(): ?string
+    public function getGender(): ?int
     {
         return $this->gender;
     }
     
-    public function setGender(?string $gender): self
+    public function setGender(?int $gender): self
     {
         $this->gender = $gender;
         
@@ -477,6 +498,32 @@ class User implements Resource, UserInterface, EquatableInterface
         
         return $this;
     }
+
+    public function getBirthYear(): ?int
+    {
+        return $this->birthYear;
+    }
+
+    public function setBirthYear(?int $birthYear)
+    {
+        $this->birthYear = $birthYear;
+    }
+
+    public function getConditions(): ?int
+    {
+        return $this->conditions;
+    }
+
+    public function setConditions(?int $conditions)
+    {
+        $this->conditions = $conditions;
+    }
+
+    public function getGenderString(): ?string
+    {
+        return ($this->getGender() ? array_search ($this->getGender(), self::GENDERS) : null);
+    }
+
 
 
     public function getRoles()
