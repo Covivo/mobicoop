@@ -29,7 +29,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 /**
  * Ad form.
@@ -41,20 +42,69 @@ class AdForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('origin', TextType::class)
-            ->add('destination', WaypointForm::class)
-            ->add('type', ChoiceType::class, [
-                'choices'  => Proposal::TYPE
+        ->add('origin', TextType::class, [
+            'translation_domain' => 'carpool',
+            'label' => 'ad.origin.label',
+            'attr' => [
+                'placeholder' => 'ad.origin.placeholder'
+            ]
         ])
-        ->add('criteria', CriteriaForm::class)
-        ->add('submit', SubmitType::class)
+        ->add('destination', TextType::class, [
+            'translation_domain' => 'carpool',
+            'label' => 'ad.destination.label',
+            'attr' => [
+                'placeholder' => 'ad.destination.placeholder'
+            ]
+        ])
+        ->add('role', ChoiceType::class, [
+            'choices'  => Ad::ROLES,
+            'placeholder' => 'ad.role.placeholder',
+            'translation_domain' => 'carpool',
+            'choice_translation_domain' => true,
+            'label' => 'ad.role.label'
+        ])
+        ->add('type', ChoiceType::class, [
+            'choices'  => Ad::TYPES,
+            'placeholder' => 'ad.type.placeholder',
+            'translation_domain' => 'carpool',
+            'choice_translation_domain' => true,
+            'label' => 'ad.type.label'
+        ])
+        ->add('frequency', ChoiceType::class, [
+            'choices'  => Ad::FREQUENCIES,
+            'placeholder' => 'ad.frequency.placeholder',
+            'translation_domain' => 'carpool',
+            'choice_translation_domain' => true,
+            'label' => 'ad.frequency.label',
+            'attr' => [
+                'disabled' => true
+            ],
+        ])
+        ->add('comment', TextareaType::class, [
+            'translation_domain' => 'carpool',
+            'label' => 'ad.comment.label',
+            'attr' => [
+                'placeholder' => 'ad.comment.placeholder'
+            ]
+        ])
+        ->add('price', TextType::class, [
+            'translation_domain' => 'carpool',
+            'label' => 'ad.price.label',
+            'attr' => [
+                'placeholder' => 'ad.price.placeholder'
+            ]
+        ])
+        ->add('submit', SubmitType::class, [
+            'translation_domain' => 'carpool',
+            'label' => 'ad.submit.label'
+        ])
         ;
     }
     
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-                'data_class' => Proposal::class,
+                'data_class' => Ad::class,
         ));
     }
 }

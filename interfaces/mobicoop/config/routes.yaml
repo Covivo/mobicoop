@@ -78,3 +78,13 @@ user_profile_delete:
 # logout
 logout:
     path: /user/logout
+    
+##################
+# carpool routes #
+##################
+# messages
+ad:
+    path:
+        fr: /covoiturage/annonce/poster
+        en: /carpool/ad/share
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::ad

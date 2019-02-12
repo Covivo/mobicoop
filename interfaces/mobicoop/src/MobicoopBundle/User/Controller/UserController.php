@@ -28,6 +28,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\User\Form\UserForm;
@@ -36,7 +37,6 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Form\ProposalForm;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Form\Login;
 use Mobicoop\Bundle\MobicoopBundle\User\Form\UserLoginForm;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Mobicoop\Bundle\MobicoopBundle\User\Form\UserDeleteForm;
 
 /**

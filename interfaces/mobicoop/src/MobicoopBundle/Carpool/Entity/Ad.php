@@ -40,26 +40,28 @@ class Ad
     const ROLE_BOTH = 3;
 
     const ROLES = [
-        "driver"=>self::ROLE_DRIVER,
-        "passenger"=>self::ROLE_PASSENGER,
-        "both"=>self::ROLE_BOTH
+        "ad.role.choice.driver"=>self::ROLE_DRIVER,
+        "ad.role.choice.passenger"=>self::ROLE_PASSENGER,
+        "ad.role.choice.both"=>self::ROLE_BOTH
     ];
 
     const TYPE_ONE_WAY = 1;
     const TYPE_RETURN_TRIP = 2;
 
     const TYPES = [
-            "one_way"=>self::TYPE_ONE_WAY,
-            "return_trip"=>self::TYPE_RETURN_TRIP
+            "ad.type.choice.one_way"=>self::TYPE_ONE_WAY,
+            "ad.type.choice.return_trip"=>self::TYPE_RETURN_TRIP
     ];
 
     const FREQUENCY_PUNCTUAL = 1;
     const FREQUENCY_REGULAR = 2;
 
     const FREQUENCIES = [
-        "punctual"=>self::FREQUENCY_PUNCTUAL,
-        "regular"=>self::FREQUENCY_REGULAR
+        "ad.frequency.choice.punctual"=>self::FREQUENCY_PUNCTUAL,
+        "ad.frequency.choice.regular"=>self::FREQUENCY_REGULAR
     ];
+    
+    const PRICE = 1.10;
 
     /**
      * @var string The origin of the travel.
@@ -96,6 +98,16 @@ class Ad
      */
     private $frequency;
 
+    /**
+     * @var string The comment of the ad.
+     */
+    private $comment;
+    
+    /**
+     * @var float The km price of the ad.
+     */
+    private $price;
+    
     /**
      * @var User The user who submits the ad.
      */
@@ -178,6 +190,30 @@ class Ad
     {
         $this->frequency = $frequency;
 
+        return $this;
+    }
+    
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+    
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
+        
+        return $this;
+    }
+    
+    public function getPrice(): ?float
+    {
+        return $this->price;
+    }
+    
+    public function setPrice(?float $price): self
+    {
+        $this->price = $price;
+        
         return $this;
     }
 
