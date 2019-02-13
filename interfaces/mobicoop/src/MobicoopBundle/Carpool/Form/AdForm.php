@@ -43,10 +43,9 @@ class AdForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        
         $builder
         ->add('origin', AutocompleteType::class, [
-            'url' => '/geosearch?search=', 
+            'url' => '/geosearch?search=',
             'translation_domain' => 'carpool',
             'label' => 'ad.origin.label',
             'attr' => [
@@ -54,7 +53,7 @@ class AdForm extends AbstractType
             ]
         ])
         ->add('destination', AutocompleteType::class, [
-            'url' => '/geosearch?search=', 
+            'url' => '/geosearch?search=',
             'translation_domain' => 'carpool',
             'label' => 'ad.destination.label',
             'attr' => [

@@ -104,7 +104,7 @@ class Ad
     
     /**
      * @var array Dates of the travels if regular.
-     * format : 
+     * format :
      * [
      *      'monday' => [
      *          'O' => [

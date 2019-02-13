@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
  * Copyright (c) 2018, MOBICOOP. All rights reserved.
@@ -56,4 +56,3 @@ class AutocompleteType extends AbstractType
         return 'autocomplete';
     }
 }
-?>

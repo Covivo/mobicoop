@@ -61,7 +61,7 @@ class AutoCompleteController extends AbstractController
      *
      * @Route("/geosearch")
      */
-    public function GeoSearch(GeoSearchManager $geoSearchManager, Request $request) 
+    public function GeoSearch(GeoSearchManager $geoSearchManager, Request $request)
     {
         $results = $geoSearchManager->getGeoSearch(['input'=>$request->query->get('search')]);
         

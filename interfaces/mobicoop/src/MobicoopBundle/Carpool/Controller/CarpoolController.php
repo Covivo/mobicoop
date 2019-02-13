@@ -68,7 +68,8 @@ class CarpoolController extends AbstractController
         $error = false;
 
         if ($form->isSubmitted() && $form->isValid()) {
-            var_dump($ad);exit;
+            var_dump($ad);
+            exit;
             if ($ad = $adManager->createAd($ad)) {
                 return $this->redirectToRoute('home');
             }
