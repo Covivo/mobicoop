@@ -58,14 +58,17 @@ class CarpoolController extends AbstractController
     {
         $ad = new Ad();
         $ad->setRole(Ad::ROLE_BOTH);
+        $ad->setType(Ad::TYPE_ONE_WAY);
         $ad->setFrequency(Ad::FREQUENCY_PUNCTUAL);
         $ad->setPrice(Ad::PRICE);
+        $ad->setOutwardDate(new \DateTime());
         
         $form = $this->createForm(AdForm::class, $ad);
         $form->handleRequest($request);
         $error = false;
 
         if ($form->isSubmitted() && $form->isValid()) {
+            var_dump($ad);exit;
             if ($ad = $adManager->createAd($ad)) {
                 return $this->redirectToRoute('home');
             }

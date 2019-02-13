@@ -183,9 +183,39 @@ class Criteria
     private $sunTime;
 
     /**
-     * @var int Accepted margin for starting time in seconds.
+     * @var int Accepted margin for monday starting time in seconds.
      */
-    private $marginTime;
+    private $monMarginTime;
+
+    /**
+     * @var int Accepted margin for tuesday starting time in seconds.
+     */
+    private $tueMarginTime;
+    
+    /**
+     * @var int Accepted margin for wednesday starting time in seconds.
+     */
+    private $wedMarginTime;
+    
+    /**
+     * @var int Accepted margin for thursday starting time in seconds.
+     */
+    private $thuMarginTime;
+    
+    /**
+     * @var int Accepted margin for friday starting time in seconds.
+     */
+    private $friMarginTime;
+    
+    /**
+     * @var int Accepted margin for saturday starting time in seconds.
+     */
+    private $satMarginTime;
+    
+    /**
+     * @var int Accepted margin for sunday starting time in seconds.
+     */
+    private $sunMarginTime;
     
     /**
      * @var int|null The maximum deviation time (in seconds) as a driver to accept a request proposal.
@@ -206,6 +236,11 @@ class Criteria
      * @var boolean|null The user accepts any transportation mode.
      */
     private $multiTransportMode;
+    
+    /**
+     * @var float|null The price per km.
+     */
+    private $priceKm;
     
     /**
      * @var Car|null The car used in the journey.
@@ -499,14 +534,86 @@ class Criteria
         return $this;
     }
     
-    public function getMarginTime(): ?int
+    public function getMonMarginTime(): ?int
     {
-        return $this->marginTime;
+        return $this->monMarginTime;
     }
     
-    public function setMarginTime(?int $marginTime): self
+    public function setMonMarginTime(?int $monMarginTime): self
     {
-        $this->marginTime = $marginTime;
+        $this->monMarginTime = $monMarginTime;
+        
+        return $this;
+    }
+    
+    public function getTueMarginTime(): ?int
+    {
+        return $this->tueMarginTime;
+    }
+    
+    public function setTueMarginTime(?int $tueMarginTime): self
+    {
+        $this->tueMarginTime = $tueMarginTime;
+        
+        return $this;
+    }
+    
+    public function getWedMarginTime(): ?int
+    {
+        return $this->wedMarginTime;
+    }
+    
+    public function setWedMarginTime(?int $wedMarginTime): self
+    {
+        $this->wedMarginTime = $wedMarginTime;
+        
+        return $this;
+    }
+    
+    public function getThuMarginTime(): ?int
+    {
+        return $this->thuMarginTime;
+    }
+    
+    public function setThuMarginTime(?int $thuMarginTime): self
+    {
+        $this->thuMarginTime = $thuMarginTime;
+        
+        return $this;
+    }
+    
+    public function getFriMarginTime(): ?int
+    {
+        return $this->friMarginTime;
+    }
+    
+    public function setFriMarginTime(?int $friMarginTime): self
+    {
+        $this->friMarginTime = $friMarginTime;
+        
+        return $this;
+    }
+    
+    public function getSatMarginTime(): ?int
+    {
+        return $this->satMarginTime;
+    }
+    
+    public function setSatMarginTime(?int $satMarginTime): self
+    {
+        $this->satMarginTime = $satMarginTime;
+        
+        return $this;
+    }
+    
+    public function getSunMarginTime(): ?int
+    {
+        return $this->sunMarginTime;
+    }
+    
+    public function setSunMarginTime(?int $sunMarginTime): self
+    {
+        $this->sunMarginTime = $sunMarginTime;
         
         return $this;
     }
@@ -557,6 +664,16 @@ class Criteria
         $this->multiTransportMode = $multiTransportMode;
         
         return $this;
+    }
+    
+    public function getPriceKm(): ?string
+    {
+        return $this->priceKm;
+    }
+    
+    public function setPriceKm(?string $priceKm)
+    {
+        $this->priceKm = $priceKm;
     }
     
     public function getCar(): ?Car

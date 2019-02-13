@@ -12,12 +12,11 @@ ad:
             driver: 'Conducteur'
             passenger: 'Passager'
             both: 'Conducteur ou passager'
-    type:
-        label: 'Type de trajet'
-        placeholder: 'Choisissez le type de trajet'
-        choice:
-            one_way: 'Aller simple'
-            return_trip: 'Aller-retour'
+    outward_date:
+        label: 'Date aller'
+    outward_margin:
+        label: 'Flexibilité horaire'
+        placeholder: 'Choisissez la flexibilité horaire en minutes'
     frequency:
         label: 'Fréquence'
         placeholder: 'Choisissez la fréquence du trajet'

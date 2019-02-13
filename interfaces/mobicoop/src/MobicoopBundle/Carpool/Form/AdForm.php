@@ -25,12 +25,14 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Mobicoop\Bundle\MobicoopBundle\Form\Type\AutocompleteType;
 
 /**
  * Ad form.
@@ -41,15 +43,18 @@ class AdForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        
         $builder
-        ->add('origin', TextType::class, [
+        ->add('origin', AutocompleteType::class, [
+            'url' => '/geosearch?search=', 
             'translation_domain' => 'carpool',
             'label' => 'ad.origin.label',
             'attr' => [
                 'placeholder' => 'ad.origin.placeholder'
             ]
         ])
-        ->add('destination', TextType::class, [
+        ->add('destination', AutocompleteType::class, [
+            'url' => '/geosearch?search=', 
             'translation_domain' => 'carpool',
             'label' => 'ad.destination.label',
             'attr' => [
@@ -63,12 +68,19 @@ class AdForm extends AbstractType
             'choice_translation_domain' => true,
             'label' => 'ad.role.label'
         ])
-        ->add('type', ChoiceType::class, [
-            'choices'  => Ad::TYPES,
-            'placeholder' => 'ad.type.placeholder',
+        ->add('outwardDate', DateTimeType::class, [
             'translation_domain' => 'carpool',
-            'choice_translation_domain' => true,
-            'label' => 'ad.type.label'
+            'years' => range(date('Y'), date('Y')+3),
+            'months' => range(1, 12),
+            'days' => range(1, 31),
+            'label' => 'ad.outward_date.label'
+        ])
+        ->add('outwardMargin', ChoiceType::class, [
+            'choices'  => Ad::MARGIN_TIME,
+            'placeholder' => 'ad.outward_margin.placeholder',
+            'translation_domain' => 'carpool',
+            'choice_translation_domain' => false,
+            'label' => 'ad.outward_margin.label'
         ])
         ->add('frequency', ChoiceType::class, [
             'choices'  => Ad::FREQUENCIES,
@@ -76,11 +88,9 @@ class AdForm extends AbstractType
             'translation_domain' => 'carpool',
             'choice_translation_domain' => true,
             'label' => 'ad.frequency.label',
-            'attr' => [
-                'disabled' => true
-            ],
         ])
         ->add('comment', TextareaType::class, [
+            'required' => false,
             'translation_domain' => 'carpool',
             'label' => 'ad.comment.label',
             'attr' => [

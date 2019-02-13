@@ -68,6 +68,11 @@ class Proposal implements Resource
     * @var int Proposal type (one way / outward / return).
     */
     private $type;
+    
+    /**
+     * @var string A comment about the proposal.
+     */
+    private $comment;
 
     /**
      * @var Waypoint[] The waypoints of the proposal.
@@ -149,6 +154,18 @@ class Proposal implements Resource
     public function setType(int $type): self
     {
         $this->type = $type;
+        
+        return $this;
+    }
+    
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+    
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
         
         return $this;
     }

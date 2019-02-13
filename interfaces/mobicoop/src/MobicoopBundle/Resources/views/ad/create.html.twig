@@ -2,6 +2,11 @@
 
 {% block title %}{% trans from 'ui' %}carpool.ad_create.title{% endtrans %}{% endblock %}
 
+{% block stylesheets %}
+    {{ encore_entry_link_tags('ad_create') }}
+    <link rel="stylesheet" href="/vue2-autocomplete.css">
+{% endblock %}
+
 {% block body %}
 
 <section class="hero is-primary">
@@ -25,4 +30,8 @@
     </div>
 </section>
 
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('ad_create') }}
 {% endblock %}

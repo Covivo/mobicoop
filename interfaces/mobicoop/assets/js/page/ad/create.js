@@ -6,16 +6,14 @@ import 'babel-polyfill';
 import Vue from 'vue';
 import Buefy from 'buefy';
 import Affix from 'vue-affix';
-import '../../css/page/home.scss';
+import '../../../css/page/home.scss';
 
 // Vue components
-import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
-import Autocomplete_sofiane from '../components/Autocomplete_sofiane';
-
+import Mautocomplete from '../../components/Autocomplete';
 
 Vue.use(Affix);
 Vue.use(Buefy);
 new Vue({
     el: '#app',
-    components: { Autocomplete_sofiane, VueBootstrapTypeahead},
+    components: { Mautocomplete},
 });

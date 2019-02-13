@@ -12,12 +12,11 @@ ad:
             driver: 'Driver'
             passenger: 'Passenger'
             both: 'Driver or passenger'
-    type:
-        label: 'Trip type'
-        placeholder: 'Choose the trip type'
-        choice:
-            one_way: 'One way'
-            return_trip: 'Return trip'
+    outward_date:
+        label: 'Outward date'
+    outward_margin:
+        label: 'Margin time'
+        placeholder: 'Choose the margin time in minutes'
     frequency:
         label: 'Frequency'
         placeholder: 'Choose the trip frequncy'

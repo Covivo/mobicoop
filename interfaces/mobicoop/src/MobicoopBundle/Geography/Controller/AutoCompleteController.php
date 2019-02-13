@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Geography\Controller;
 
 use Mobicoop\Bundle\MobicoopBundle\Geography\Service\GeoSearchManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -53,5 +54,17 @@ class AutoCompleteController extends AbstractController
                 'GeoSearch' => $geoSearchManager->getGeoSearch(['input'=>'Nancy'])
             ]
         );
+    }
+    
+    /**
+     * Retrieve all geosearch results of an input
+     *
+     * @Route("/geosearch")
+     */
+    public function GeoSearch(GeoSearchManager $geoSearchManager, Request $request) 
+    {
+        $results = $geoSearchManager->getGeoSearch(['input'=>$request->query->get('search')]);
+        
+        return $this->json($results->getMember());
     }
 }

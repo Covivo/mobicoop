@@ -61,6 +61,11 @@ class Car
     private $seats;
     
     /**
+     * @var float|null The price per km.
+     */
+    private $priceKm;
+    
+    /**
      * @var User The owner of the car.
      *
      * @Assert\NotBlank
@@ -130,6 +135,16 @@ class Car
         $this->seats = $seats;
         
         return $this;
+    }
+    
+    public function getPriceKm(): ?string
+    {
+        return $this->priceKm;
+    }
+    
+    public function setPriceKm(?string $priceKm)
+    {
+        $this->priceKm = $priceKm;
     }
     
     public function getUser(): ?User
