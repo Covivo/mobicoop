@@ -9,6 +9,8 @@ menu:
     login: 'Log in'
     account: 'My account'
     profile: 'My profile'
+    messages: 'Messages'
+    ad_create: 'Share an ad'
     logout: 'Logout'
 
 # pages
@@ -36,3 +38,7 @@ user:
         title: 'Delete my account'
         h1: 'Delete my account'
         text: 'Are you sure you want to delete your account ?'
+carpool:
+    ad_create:
+        title: 'Share an ad'
+        h1: 'Share an ad'

@@ -1,0 +1,34 @@
+ad:
+    origin:
+        label: 'Origine'
+        placeholder: 'Saisissez l''adresse d''origine'
+    destination:
+        label: 'Destination'
+        placeholder: 'Saisissez l''adresse de destination'
+    role:
+        label: 'Vous souhaitez être'
+        placeholder: 'Choisissez votre rôle'
+        choice:
+            driver: 'Conducteur'
+            passenger: 'Passager'
+            both: 'Conducteur ou passager'
+    outward_date:
+        label: 'Date aller'
+    outward_margin:
+        label: 'Flexibilité horaire'
+        placeholder: 'Choisissez la flexibilité horaire en minutes'
+    frequency:
+        label: 'Fréquence'
+        placeholder: 'Choisissez la fréquence du trajet'
+        choice:
+            punctual: 'Ponctuel'
+            regular: 'Régulier'
+    comment:
+        label: 'Commentaire'
+        placeholder: 'Saisissez un éventuel commentaire à propos de votre annonce'
+    price:
+        label: 'Coût au km'
+        placeholder: 'Saisissez le coût au kilomètre'
+    submit:
+        label: 'Je partage mon annonce' 
+        

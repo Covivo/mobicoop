@@ -32,6 +32,7 @@ use Mobicoop\Bundle\MobicoopBundle\Travel\Entity\TravelMode;
 /**
  * Carpooling : an ad on the platform (offer from a driver / request from a passenger).
  * This entity is used to simplify the process and give all the requested fields on one entity, instead of creating nested forms.
+ * Therefor it's NOT a table in the database.
  */
 class Ad
 {
@@ -40,48 +41,86 @@ class Ad
     const ROLE_BOTH = 3;
 
     const ROLES = [
-        "driver"=>self::ROLE_DRIVER,
-        "passenger"=>self::ROLE_PASSENGER,
-        "both"=>self::ROLE_BOTH
+        "ad.role.choice.driver"=>self::ROLE_DRIVER,
+        "ad.role.choice.passenger"=>self::ROLE_PASSENGER,
+        "ad.role.choice.both"=>self::ROLE_BOTH
     ];
 
     const TYPE_ONE_WAY = 1;
     const TYPE_RETURN_TRIP = 2;
 
-    const TYPES = [
-            "one_way"=>self::TYPE_ONE_WAY,
-            "return_trip"=>self::TYPE_RETURN_TRIP
-    ];
-
     const FREQUENCY_PUNCTUAL = 1;
     const FREQUENCY_REGULAR = 2;
 
     const FREQUENCIES = [
-        "punctual"=>self::FREQUENCY_PUNCTUAL,
-        "regular"=>self::FREQUENCY_REGULAR
+        "ad.frequency.choice.punctual"=>self::FREQUENCY_PUNCTUAL,
+        "ad.frequency.choice.regular"=>self::FREQUENCY_REGULAR
     ];
+    
+    const PRICE = 1.10;
+    
+    const MARGIN_TIME = [0=>0,5=>5,10=>10,15=>15,30=>30,45=>45,60=>60];
 
     /**
-     * @var string The origin of the travel.
+     * @var array The origin of the travel.
      *
      * @Assert\NotBlank
      */
     private $origin;
 
     /**
-     * @var string The destination of the travel.
+     * @var array The destination of the travel.
      *
      * @Assert\NotBlank
      */
     private $destination;
-
+    
     /**
      * @var int The ad role (driver / passenger / both).
      *
      * @Assert\NotBlank
      */
     private $role;
+    
+    /**
+     * @var \DateTimeInterface Date of the outward travel if punctual.
+     */
+    private $outwardDate;
+    
+    /**
+     * @var int Margin time of the outward travel if punctual.
+     */
+    private $outwardMargin;
 
+    /**
+     * @var \DateTimeInterface Date of the return travel if punctual.
+     */
+    private $returnDate;
+    
+    /**
+     * @var int Margin time of the return travel if punctual.
+     */
+    private $returnMargin;
+    
+    /**
+     * @var array Dates of the travels if regular.
+     * format :
+     * [
+     *      'monday' => [
+     *          'O' => [
+     *              'date'      => outward_date,
+     *              'margin'    => margin_time
+     *          ],
+     *          'R' => [
+     *              'date'      => return_date,
+     *              'margin'    => margin_time
+     *          ],
+     *      ],
+     *      ...
+     * ]
+     */
+    private $regularDates;
+    
     /**
     * @var int The ad type (one way / return trip).
      *
@@ -96,6 +135,16 @@ class Ad
      */
     private $frequency;
 
+    /**
+     * @var string The comment of the ad.
+     */
+    private $comment;
+    
+    /**
+     * @var float The km price of the ad.
+     */
+    private $price;
+    
     /**
      * @var User The user who submits the ad.
      */
@@ -156,6 +205,66 @@ class Ad
 
         return $this;
     }
+    
+    public function getOutwardDate(): ?\DateTimeInterface
+    {
+        return $this->outwardDate;
+    }
+    
+    public function setOutwardDate(?\DateTimeInterface $outwardDate): self
+    {
+        $this->outwardDate = $outwardDate;
+        
+        return $this;
+    }
+    
+    public function getOutwardMargin(): ?int
+    {
+        return $this->outwardMargin;
+    }
+    
+    public function setOutwardMargin(int $outwardMargin): self
+    {
+        $this->outwardMargin = $outwardMargin;
+        
+        return $this;
+    }
+    
+    public function getReturnDate(): ?\DateTimeInterface
+    {
+        return $this->returnDate;
+    }
+    
+    public function setReturnDate(?\DateTimeInterface $returnDate): self
+    {
+        $this->returnDate = $returnDate;
+        
+        return $this;
+    }
+    
+    public function getReturnMargin(): ?int
+    {
+        return $this->returnMargin;
+    }
+    
+    public function setReturnMargin(int $returnMargin): self
+    {
+        $this->returnMargin = $returnMargin;
+        
+        return $this;
+    }
+    
+    public function getRegularDates(): ?array
+    {
+        return $this->regularDates;
+    }
+    
+    public function setRegularDates(?array $regularDates): self
+    {
+        $this->regularDates = $regularDates;
+        
+        return $this;
+    }
 
     public function getType(): ?int
     {
@@ -178,6 +287,30 @@ class Ad
     {
         $this->frequency = $frequency;
 
+        return $this;
+    }
+    
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+    
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
+        
+        return $this;
+    }
+    
+    public function getPrice(): ?float
+    {
+        return $this->price;
+    }
+    
+    public function setPrice(?float $price): self
+    {
+        $this->price = $price;
+        
         return $this;
     }
 

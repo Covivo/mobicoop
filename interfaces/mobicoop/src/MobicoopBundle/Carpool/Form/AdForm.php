@@ -25,11 +25,14 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Mobicoop\Bundle\MobicoopBundle\Form\Type\GeocompleteType;
 
 /**
  * Ad form.
@@ -41,20 +44,76 @@ class AdForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('origin', TextType::class)
-            ->add('destination', WaypointForm::class)
-            ->add('type', ChoiceType::class, [
-                'choices'  => Proposal::TYPE
+        ->add('origin', GeocompleteType::class, [
+            'url' => '/geosearch?search=',
+            'translation_domain' => 'carpool',
+            'label' => 'ad.origin.label',
+            'attr' => [
+                'placeholder' => 'ad.origin.placeholder'
+            ]
         ])
-        ->add('criteria', CriteriaForm::class)
-        ->add('submit', SubmitType::class)
+        ->add('destination', GeocompleteType::class, [
+            'url' => '/geosearch?search=',
+            'translation_domain' => 'carpool',
+            'label' => 'ad.destination.label',
+            'attr' => [
+                'placeholder' => 'ad.destination.placeholder'
+            ]
+        ])
+        ->add('role', ChoiceType::class, [
+            'choices'  => Ad::ROLES,
+            'placeholder' => 'ad.role.placeholder',
+            'translation_domain' => 'carpool',
+            'choice_translation_domain' => true,
+            'label' => 'ad.role.label'
+        ])
+        ->add('outwardDate', DateTimeType::class, [
+            'translation_domain' => 'carpool',
+            'years' => range(date('Y'), date('Y')+3),
+            'months' => range(1, 12),
+            'days' => range(1, 31),
+            'label' => 'ad.outward_date.label'
+        ])
+        ->add('outwardMargin', ChoiceType::class, [
+            'choices'  => Ad::MARGIN_TIME,
+            'placeholder' => 'ad.outward_margin.placeholder',
+            'translation_domain' => 'carpool',
+            'choice_translation_domain' => false,
+            'label' => 'ad.outward_margin.label'
+        ])
+        ->add('frequency', ChoiceType::class, [
+            'choices'  => Ad::FREQUENCIES,
+            'placeholder' => 'ad.frequency.placeholder',
+            'translation_domain' => 'carpool',
+            'choice_translation_domain' => true,
+            'label' => 'ad.frequency.label',
+        ])
+        ->add('comment', TextareaType::class, [
+            'required' => false,
+            'translation_domain' => 'carpool',
+            'label' => 'ad.comment.label',
+            'attr' => [
+                'placeholder' => 'ad.comment.placeholder'
+            ]
+        ])
+        ->add('price', TextType::class, [
+            'translation_domain' => 'carpool',
+            'label' => 'ad.price.label',
+            'attr' => [
+                'placeholder' => 'ad.price.placeholder'
+            ]
+        ])
+        ->add('submit', SubmitType::class, [
+            'translation_domain' => 'carpool',
+            'label' => 'ad.submit.label'
+        ])
         ;
     }
     
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-                'data_class' => Proposal::class,
+                'data_class' => Ad::class,
         ));
     }
 }

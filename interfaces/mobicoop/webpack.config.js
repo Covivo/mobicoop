@@ -21,6 +21,7 @@ Encore
 
     .addEntry('app', './assets/js/app.js')
     .addEntry('autocomplete', './assets/js/page/autocomplete.js')
+    .addEntry('ad_create', './assets/js/page/ad/create.js')
     .addEntry('home', './assets/js/page/home.js')
     .addEntry('users', './assets/js/page/users.js')
     .splitEntryChunks()

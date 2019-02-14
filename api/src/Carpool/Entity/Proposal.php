@@ -89,6 +89,12 @@ class Proposal
      * @Groups({"read","write"})
      */
     private $type;
+    
+    /**
+     * @var string A comment about the proposal.
+     * @ORM\Column(type="text")
+     */
+    private $comment;
 
     /**
      * @var \DateTimeInterface Creation date of the proposal.
@@ -211,6 +217,18 @@ class Proposal
     {
         $this->type = $type;
 
+        return $this;
+    }
+    
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+    
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
+        
         return $this;
     }
 
