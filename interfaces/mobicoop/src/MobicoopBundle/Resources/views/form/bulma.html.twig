@@ -218,14 +218,14 @@
     {{- block('form_widget_simple') -}}
 {%- endblock percent_row -%}
 
-{%- block autocomplete_row -%}
+{%- block geocomplete_row -%}
     <div class="field is-horizontal">
     	<div class="field-label">
 	        {{- form_label(form) -}}
 	    </div>
 	    <div class="field-body">
     		<div class="field">
-                <mautocomplete 
+                <geocomplete 
                 	:url="'{{ form.vars.url }}'"
                 	:required="'{{ form.vars.required }}'"
                 	:placeholder="`{{ translation_domain is same as(false) ? form.vars.attr.placeholder : form.vars.attr.placeholder|trans({}, translation_domain) }}`"
@@ -236,14 +236,14 @@
                 	:addresscountry="'{{ full_name }}[addressCountry]'"
                 	:longitude="'{{ full_name }}[longitude]'"
                 	:latitude="'{{ full_name }}[latitude]'"
-                	></mautocomplete>
+                	></geocomplete>
                 {%- if form.vars.attr.help_text is defined -%}
                     <p class="help">{{ form.vars.attr.help_text }}</p>
                 {%- endif -%}
             </div>
         </div>
     </div>
-{%- endblock autocomplete_row -%}
+{%- endblock geocomplete_row -%}
 
 {# Errors #}
 

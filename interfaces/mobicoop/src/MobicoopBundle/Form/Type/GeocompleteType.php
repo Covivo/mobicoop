@@ -29,7 +29,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
-class AutocompleteType extends AbstractType
+class GeocompleteType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -53,6 +53,6 @@ class AutocompleteType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'autocomplete';
+        return 'geocomplete';
     }
 }

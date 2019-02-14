@@ -22,7 +22,7 @@
   import Autocomplete from 'vuejs-auto-complete';
   export default {
     components: { Autocomplete },
-    name: "mautocomplete",
+    name: "geocomplete",
     props: {
       url: {
         type: String,
@@ -77,15 +77,20 @@
     },
     methods: {
       formattedDisplay (result) {
-        return (result.streetAddress + ' ' + result.postalCode + ' ' + result.addressLocality + ' ' + result.addressCountry).trim();  
+        return (
+            (result.streetAddress ? result.streetAddress + ' '  : '') + 
+            (result.postalCode ? result.postalCode + ' ' : '') +
+            (result.addressLocality ? result.addressLocality + ' ' : '') + 
+            (result.addressCountry ? result.addressCountry : '')
+        ).trim();  
       },
       onSelected (value) {
-        this.valStreetAddress = value.selectedObject.streetAddress.trim();
-        this.valPostalCode = value.selectedObject.postalCode.trim();
-        this.valAddressLocality = value.selectedObject.addressLocality.trim();
-        this.valAddressCountry = value.selectedObject.addressCountry.trim();
-        this.valLongitude = value.selectedObject.longitude;
-        this.valLatitude = value.selectedObject.latitude;
+        if (value.selectedObject.streetAddress) this.valStreetAddress = value.selectedObject.streetAddress.trim();
+        if (value.selectedObject.postalCode) this.valPostalCode = value.selectedObject.postalCode.trim();
+        if (value.selectedObject.addressLocality) this.valAddressLocality = value.selectedObject.addressLocality.trim();
+        if (value.selectedObject.addressCountry) this.valAddressCountry = value.selectedObject.addressCountry.trim();
+        if (value.selectedObject.longitude) this.valLongitude = value.selectedObject.longitude;
+        if (value.selectedObject.latitude) this.valLatitude = value.selectedObject.latitude;
       }
     }
   }

@@ -9,11 +9,11 @@ import Affix from 'vue-affix';
 import '../../../css/page/home.scss';
 
 // Vue components
-import Mautocomplete from '../../components/Autocomplete';
+import Geocomplete from '../../components/Geocomplete';
 
 Vue.use(Affix);
 Vue.use(Buefy);
 new Vue({
     el: '#app',
-    components: { Mautocomplete},
+    components: { Geocomplete},
 });

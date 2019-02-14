@@ -66,10 +66,9 @@ class CarpoolController extends AbstractController
         $form = $this->createForm(AdForm::class, $ad);
         $form->handleRequest($request);
         $error = false;
-
+        
         if ($form->isSubmitted() && $form->isValid()) {
-            var_dump($ad);
-            exit;
+            
             if ($ad = $adManager->createAd($ad)) {
                 return $this->redirectToRoute('home');
             }

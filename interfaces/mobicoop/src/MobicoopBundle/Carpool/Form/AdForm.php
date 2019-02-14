@@ -32,7 +32,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Mobicoop\Bundle\MobicoopBundle\Form\Type\AutocompleteType;
+use Mobicoop\Bundle\MobicoopBundle\Form\Type\GeocompleteType;
 
 /**
  * Ad form.
@@ -44,7 +44,7 @@ class AdForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        ->add('origin', AutocompleteType::class, [
+        ->add('origin', GeocompleteType::class, [
             'url' => '/geosearch?search=',
             'translation_domain' => 'carpool',
             'label' => 'ad.origin.label',
@@ -52,7 +52,7 @@ class AdForm extends AbstractType
                 'placeholder' => 'ad.origin.placeholder'
             ]
         ])
-        ->add('destination', AutocompleteType::class, [
+        ->add('destination', GeocompleteType::class, [
             'url' => '/geosearch?search=',
             'translation_domain' => 'carpool',
             'label' => 'ad.destination.label',

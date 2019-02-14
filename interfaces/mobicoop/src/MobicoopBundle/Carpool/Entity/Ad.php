@@ -62,14 +62,14 @@ class Ad
     const MARGIN_TIME = [0=>0,5=>5,10=>10,15=>15,30=>30,45=>45,60=>60];
 
     /**
-     * @var string The origin of the travel.
+     * @var array The origin of the travel.
      *
      * @Assert\NotBlank
      */
     private $origin;
 
     /**
-     * @var string The destination of the travel.
+     * @var array The destination of the travel.
      *
      * @Assert\NotBlank
      */

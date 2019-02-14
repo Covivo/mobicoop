@@ -63,8 +63,9 @@ class AutoCompleteController extends AbstractController
      */
     public function GeoSearch(GeoSearchManager $geoSearchManager, Request $request)
     {
-        $results = $geoSearchManager->getGeoSearch(['input'=>$request->query->get('search')]);
-        
-        return $this->json($results->getMember());
+        if ($results = $geoSearchManager->getGeoSearch(['input'=>$request->query->get('search')])) {
+          return $this->json($results->getMember());
+        }
+        return $this->json("error");
     }
 }
