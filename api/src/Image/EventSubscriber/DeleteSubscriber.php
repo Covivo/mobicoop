@@ -24,6 +24,7 @@
 namespace App\Image\EventSubscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
+use App\Event\Entity\Event;
 use App\Image\Entity\Image;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
