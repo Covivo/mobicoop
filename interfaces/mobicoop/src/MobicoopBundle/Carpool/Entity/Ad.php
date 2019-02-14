@@ -65,7 +65,7 @@ class Ad
     
     /*
      * Properties for fields that will be used in the form
-     */ 
+     */
     
     /**
      * @var string The origin of the travel.

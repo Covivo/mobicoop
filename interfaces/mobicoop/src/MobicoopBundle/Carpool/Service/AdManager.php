@@ -48,11 +48,15 @@ class AdManager
      * @param Request $request
      * @return \Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad
      */
-    public function prepareAd(Ad $ad, Request $request) 
+    public function prepareAd(Ad $ad, Request $request)
     {
         if ($origin = $request->get('ad_form')['originAddress']) {
-            if (isset($origin['longitude'])) $ad->setOriginLongitude($origin['longitude']);
-            if (isset($origin['latitude'])) $ad->setOriginLatitude($origin['latitude']);
+            if (isset($origin['longitude'])) {
+                $ad->setOriginLongitude($origin['longitude']);
+            }
+            if (isset($origin['latitude'])) {
+                $ad->setOriginLatitude($origin['latitude']);
+            }
             $ad->setOrigin(
                 ($origin['streetAddress'] ? $origin['streetAddress'] . ' ' : '') .
                 ($origin['postalCode'] ? $origin['postalCode'] . ' '  : '') .
@@ -61,8 +65,12 @@ class AdManager
                 );
         }
         if ($destination = $request->get('ad_form')['destinationAddress']) {
-            if (isset($destination['longitude'])) $ad->setDestinationLongitude($destination['longitude']);
-            if (isset($destination['latitude'])) $ad->setDestinationLatitude($destination['latitude']);
+            if (isset($destination['longitude'])) {
+                $ad->setDestinationLongitude($destination['longitude']);
+            }
+            if (isset($destination['latitude'])) {
+                $ad->setDestinationLatitude($destination['latitude']);
+            }
             $ad->setDestination(
                 ($destination['streetAddress'] ? $destination['streetAddress'] . ' '  : '') .
                 ($destination['postalCode'] ? $destination['postalCode'] . ' '  : '') .
