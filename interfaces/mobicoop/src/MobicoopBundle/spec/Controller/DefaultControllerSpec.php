@@ -37,7 +37,7 @@ describe('DefaultController', function () {
             $logo = trim($crawler->filter('body .navbar img')->attr('src'));
 
             expect($status)->toEqual(200);
-            expect($logo)->toContain('/images/logo.jpg');
+            expect($logo)->toContain('/images/logo.png');
         });
     });
 });
