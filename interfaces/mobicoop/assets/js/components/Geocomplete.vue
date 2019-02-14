@@ -3,6 +3,7 @@
     <autocomplete
       :source="url"
       :results-display="formattedDisplay"
+      :name="name"
       :placeholder="placeholder"
       :input-class="iclass"
       :required="required"
@@ -25,6 +26,10 @@
     name: "geocomplete",
     props: {
       url: {
+        type: String,
+        default: ''
+      },
+      name: {
         type: String,
         default: ''
       },
@@ -63,7 +68,7 @@
       latitude: {
         type: String,
         default: ''
-      },
+      }
     },
     data () {
       return {
@@ -71,8 +76,8 @@
         valPostalCode: '',
         valAddressLocality: '',
         valAddressCountry: '',
-        valLongitude: 0,
-        valLatitude: 0
+        valLongitude: '0',
+        valLatitude: '0'
       }
     },
     methods: {
@@ -82,15 +87,39 @@
             (result.postalCode ? result.postalCode + ' ' : '') +
             (result.addressLocality ? result.addressLocality + ' ' : '') + 
             (result.addressCountry ? result.addressCountry : '')
-        ).trim();  
+        ).trim();
       },
       onSelected (value) {
-        if (value.selectedObject.streetAddress) this.valStreetAddress = value.selectedObject.streetAddress.trim();
-        if (value.selectedObject.postalCode) this.valPostalCode = value.selectedObject.postalCode.trim();
-        if (value.selectedObject.addressLocality) this.valAddressLocality = value.selectedObject.addressLocality.trim();
-        if (value.selectedObject.addressCountry) this.valAddressCountry = value.selectedObject.addressCountry.trim();
-        if (value.selectedObject.longitude) this.valLongitude = value.selectedObject.longitude;
-        if (value.selectedObject.latitude) this.valLatitude = value.selectedObject.latitude;
+        if (value.selectedObject.streetAddress) {
+          this.valStreetAddress = value.selectedObject.streetAddress.trim();
+        } else {
+          this.valStreetAddress = '';
+        }
+        if (value.selectedObject.postalCode) {
+          this.valPostalCode = value.selectedObject.postalCode.trim();
+        } else {
+          this.valPostalCode = '';
+        }
+        if (value.selectedObject.addressLocality) {
+          this.valAddressLocality = value.selectedObject.addressLocality.trim();
+        } else {
+          this.valAddressLocality = '';
+        }
+        if (value.selectedObject.addressCountry) {
+          this.valAddressCountry = value.selectedObject.addressCountry.trim();
+        } else {
+          this.valAddressCountry = '';
+        }
+        if (value.selectedObject.longitude) {
+          this.valLongitude = value.selectedObject.longitude;
+        } else {
+          this.valLongitude = '';
+        }
+        if (value.selectedObject.latitude) {
+          this.valLatitude = value.selectedObject.latitude;
+        } else {
+          this.valLatitude = '';
+        }
       }
     }
   }

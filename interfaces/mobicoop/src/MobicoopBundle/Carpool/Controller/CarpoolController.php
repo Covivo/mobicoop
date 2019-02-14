@@ -67,11 +67,15 @@ class CarpoolController extends AbstractController
         $form->handleRequest($request);
         $error = false;
         
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($ad = $adManager->createAd($ad)) {
-                return $this->redirectToRoute('home');
+        if ($form->isSubmitted()) {
+            $ad = $adManager->prepareAd($ad, $request);
+            //echo "<pre>" . print_r($ad,true) . "</pre>";exit;
+            if ($form->isValid()) {
+                if ($ad = $adManager->createAd($ad)) {
+                    return $this->redirectToRoute('home');
+                }
+                $error = true;
             }
-            $error = true;
         }
 
         return $this->render('@Mobicoop/ad/create.html.twig', [

@@ -33,6 +33,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Mobicoop\Bundle\MobicoopBundle\Form\Type\GeocompleteType;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Form\AddressForm;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 /**
  * Ad form.
@@ -46,6 +48,7 @@ class AdForm extends AbstractType
         $builder
         ->add('origin', GeocompleteType::class, [
             'url' => '/geosearch?search=',
+            'address' => 'originAddress',
             'translation_domain' => 'carpool',
             'label' => 'ad.origin.label',
             'attr' => [
@@ -54,12 +57,15 @@ class AdForm extends AbstractType
         ])
         ->add('destination', GeocompleteType::class, [
             'url' => '/geosearch?search=',
+            'address' => 'destinationAddress',
             'translation_domain' => 'carpool',
             'label' => 'ad.destination.label',
             'attr' => [
                 'placeholder' => 'ad.destination.placeholder'
             ]
         ])
+        ->add('originAddress', AddressForm::class)
+        ->add('destinationAddress', AddressForm::class)
         ->add('role', ChoiceType::class, [
             'choices'  => Ad::ROLES,
             'placeholder' => 'ad.role.placeholder',
