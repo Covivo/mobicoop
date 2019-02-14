@@ -225,17 +225,18 @@
 	    </div>
 	    <div class="field-body">
     		<div class="field">
-                <geocomplete 
+    		    <geocomplete 
                 	:url="'{{ form.vars.url }}'"
                 	:required="'{{ form.vars.required }}'"
                 	:placeholder="`{{ translation_domain is same as(false) ? form.vars.attr.placeholder : form.vars.attr.placeholder|trans({}, translation_domain) }}`"
                 	:iclass="'input'"
-                	:streetaddress="'{{ full_name }}[streetAddress]'"
-                	:postalcode="'{{ full_name }}[postalCode]'"
-                	:addresslocality="'{{ full_name }}[addressLocality]'"
-                	:addresscountry="'{{ full_name }}[addressCountry]'"
-                	:longitude="'{{ full_name }}[longitude]'"
-                	:latitude="'{{ full_name }}[latitude]'"
+                	:name="'{{ full_name }}'"
+                	:streetaddress="'{{ form.parent.vars.name }}[{{ form.vars.address }}][streetAddress]'"
+                	:postalcode="'{{ form.parent.vars.name }}[{{ form.vars.address }}][postalCode]'"
+                	:addresslocality="'{{ form.parent.vars.name }}[{{ form.vars.address }}][addressLocality]'"
+                	:addresscountry="'{{ form.parent.vars.name }}[{{ form.vars.address }}][addressCountry]'"
+                	:longitude="'{{ form.parent.vars.name }}[{{ form.vars.address }}][longitude]'"
+                	:latitude="'{{ form.parent.vars.name }}[{{ form.vars.address }}][latitude]'"
                 	></geocomplete>
                 {%- if form.vars.attr.help_text is defined -%}
                     <p class="help">{{ form.vars.attr.help_text }}</p>

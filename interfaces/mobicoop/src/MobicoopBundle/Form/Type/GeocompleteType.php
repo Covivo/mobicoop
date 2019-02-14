@@ -34,13 +34,15 @@ class GeocompleteType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'url' => ""
+            'url' => '',
+            'address' => ''
         ]);
     }
     
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['url'] = $options['url'];
+        $view->vars['address'] = $options['address'];
     }
     
     public function getParent()

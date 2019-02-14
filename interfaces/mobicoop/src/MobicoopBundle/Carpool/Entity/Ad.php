@@ -27,6 +27,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Travel\Entity\TravelMode;
 
 /**
@@ -61,15 +62,20 @@ class Ad
     
     const MARGIN_TIME = [0=>0,5=>5,10=>10,15=>15,30=>30,45=>45,60=>60];
 
+    
+    /*
+     * Properties for fields that will be used in the form
+     */ 
+    
     /**
-     * @var array The origin of the travel.
+     * @var string The origin of the travel.
      *
      * @Assert\NotBlank
      */
     private $origin;
 
     /**
-     * @var array The destination of the travel.
+     * @var string The destination of the travel.
      *
      * @Assert\NotBlank
      */
@@ -145,6 +151,11 @@ class Ad
      */
     private $price;
     
+    
+    /*
+     * Properties that will be needed to create the proposal from the ad
+     */
+    
     /**
      * @var User The user who submits the ad.
      */
@@ -169,6 +180,9 @@ class Ad
      * @var string The longitude of the destination of the travel.
      */
     private $destinationLongitude;
+    
+    private $originAddress;
+    private $destinationAddress;
 
     public function getOrigin(): ?string
     {
@@ -371,6 +385,30 @@ class Ad
     {
         $this->destinationLongitude = $destinationLongitude;
 
+        return $this;
+    }
+    
+    public function getOriginAddress(): ?Address
+    {
+        return $this->originAddress;
+    }
+    
+    public function setOriginAddress(?Address $originAddress): self
+    {
+        $this->originAddress = $originAddress;
+        
+        return $this;
+    }
+    
+    public function getDestinationAddress(): ?Address
+    {
+        return $this->destinationAddress;
+    }
+    
+    public function setDestinationAddress(?Address $destinationAddress): self
+    {
+        $this->destinationAddress = $destinationAddress;
+        
         return $this;
     }
 }
