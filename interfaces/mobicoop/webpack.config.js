@@ -1,5 +1,12 @@
 const Encore = require('@symfony/webpack-encore');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
+const fs = require('fs');
+
+let files = fs.readdirSync('./assets/js/page',{
+  withFileTypes: true
+});
+
+console.log('files', files)
 
 Encore
   // directory where compiled assets will be stored
@@ -19,11 +26,14 @@ Encore
    * and one CSS file (e.g. app.css) if you JavaScript imports CSS.
   */
 
-    .addEntry('app', './assets/js/app.js')
-    .addEntry('autocomplete', './assets/js/page/autocomplete.js')
-    .addEntry('ad_create', './assets/js/page/ad/create.js')
-    .addEntry('home', './assets/js/page/home.js')
-    .addEntry('users', './assets/js/page/users.js')
+    //.addEntry('app', './src/MobicoopBundle/Resources/assets/js/app.js')
+    
+    .addEntry('app', './src/MobicoopBundle/Resources/assets/js/app.js')
+//    .addEntry('autocomplete', './src/MobicoopBundle/Resources/assets/js/page/autocomplete.js')
+//    .addEntry('ad_create', './src/MobicoopBundle/Resources/assets/js/page/ad/create.js')
+//    .addEntry('home', './src/MobicoopBundle/Resources/assets/js/page/home.js')
+//    .addEntry('users', './src/MobicoopBundle/Resources/assets/js/page/users.js')
+    
     .splitEntryChunks()
 
     /*
@@ -73,5 +83,11 @@ Encore
     // uncomment if you're having problems with a jQuery plugin
     //.autoProvidejQuery()
 ;
+
+for (let file of files){
+  if(file.isFile()){
+    Encore.addEntry(file.name, `./assets/js/page/${file.name}`)
+  }
+}
 
 module.exports = Encore.getWebpackConfig();
