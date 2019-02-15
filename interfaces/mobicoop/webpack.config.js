@@ -1,12 +1,10 @@
 const Encore = require('@symfony/webpack-encore');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const fs = require('fs');
+const read = require('fs-readdir-recursive');
 
-let files = fs.readdirSync('./assets/js/page',{
-  withFileTypes: true
-});
-
-console.log('files', files)
+let files = read('./assets/js/page');
+let filesBundle = read('./src/MobicoopBundle/Resources/assets/js/page');
 
 Encore
   // directory where compiled assets will be stored
@@ -84,10 +82,14 @@ Encore
     //.autoProvidejQuery()
 ;
 
+// Add base assets
 for (let file of files){
-  if(file.isFile()){
-    Encore.addEntry(file.name, `./assets/js/page/${file.name}`)
-  }
+  Encore.addEntry(file.split('.js')[0], `./assets/js/page/${file}`)
+}
+
+// Add bundle assets
+for (let file of filesBundle){
+  Encore.addEntry(`bundle_${file.split('.js')[0]}`, `./src/MobicoopBundle/Resources/assets/js/page/${file}`)
 }
 
 module.exports = Encore.getWebpackConfig();

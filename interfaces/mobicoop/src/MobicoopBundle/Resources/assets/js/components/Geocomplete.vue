@@ -71,16 +71,19 @@
       }
     },
     data () {
-      return {
-        valStreetAddress: '',
-        valPostalCode: '',
-        valAddressLocality: '',
-        valAddressCountry: '',
-        valLongitude: '0',
-        valLatitude: '0'
-      }
+      return initialData();
     },
     methods: {
+      initialData(){
+        return {
+          valStreetAddress: '',
+          valPostalCode: '',
+          valAddressLocality: '',
+          valAddressCountry: '',
+          valLongitude: '0',
+          valLatitude: '0'
+        }
+      },
       formattedDisplay (result) {
         return (
             (result.streetAddress ? result.streetAddress + ' '  : '') + 
@@ -90,35 +93,8 @@
         ).trim();
       },
       onSelected (value) {
-        if (value.selectedObject.streetAddress) {
-          this.valStreetAddress = value.selectedObject.streetAddress.trim();
-        } else {
-          this.valStreetAddress = '';
-        }
-        if (value.selectedObject.postalCode) {
-          this.valPostalCode = value.selectedObject.postalCode.trim();
-        } else {
-          this.valPostalCode = '';
-        }
-        if (value.selectedObject.addressLocality) {
-          this.valAddressLocality = value.selectedObject.addressLocality.trim();
-        } else {
-          this.valAddressLocality = '';
-        }
-        if (value.selectedObject.addressCountry) {
-          this.valAddressCountry = value.selectedObject.addressCountry.trim();
-        } else {
-          this.valAddressCountry = '';
-        }
-        if (value.selectedObject.longitude) {
-          this.valLongitude = value.selectedObject.longitude;
-        } else {
-          this.valLongitude = '';
-        }
-        if (value.selectedObject.latitude) {
-          this.valLatitude = value.selectedObject.latitude;
-        } else {
-          this.valLatitude = '';
+        for(let property in value.selectedObject){
+          this[property] = value.selectedObject[property].trim(); 
         }
       }
     }
