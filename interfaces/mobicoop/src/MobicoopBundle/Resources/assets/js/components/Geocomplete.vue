@@ -71,7 +71,7 @@
       }
     },
     data () {
-      return initialData();
+      return this.initialData();
     },
     methods: {
       initialData(){
