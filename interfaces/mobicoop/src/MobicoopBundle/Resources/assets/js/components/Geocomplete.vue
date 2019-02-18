@@ -21,54 +21,25 @@
 
 <script>
   import Autocomplete from 'vuejs-auto-complete';
+  const defaultString = {
+    type: String,
+    default: ''
+  }
   export default {
     components: { Autocomplete },
     name: "geocomplete",
     props: {
-      url: {
-        type: String,
-        default: ''
-      },
-      name: {
-        type: String,
-        default: ''
-      },
-      required: {
-        type: String,
-        default: ''
-      },
-      placeholder: {
-        type: String,
-        default: ''
-      },
-      iclass: {
-        type: String,
-        default: ''
-      },
-      streetaddress: {
-        type: String,
-        default: ''
-      },
-      postalcode: {
-        type: String,
-        default: ''
-      },
-      addresslocality: {
-        type: String,
-        default: ''
-      },
-      addresscountry: {
-        type: String,
-        default: ''
-      },
-      longitude: {
-        type: String,
-        default: ''
-      },
-      latitude: {
-        type: String,
-        default: ''
-      }
+      url: defaultString,
+      name: defaultString,
+      required: defaultString,
+      placeholder: defaultString,
+      iclass: defaultString,
+      streetaddress: defaultString,
+      postalcode: defaultString,
+      addresslocality: defaultString,
+      addresscountry: defaultString,
+      longitude: defaultString,
+      latitude: defaultString
     },
     data () {
       return this.initialData();
@@ -80,17 +51,13 @@
           valPostalCode: '',
           valAddressLocality: '',
           valAddressCountry: '',
-          valLongitude: '0',
-          valLatitude: '0'
+          valLongitude: 0,
+          valLatitude: 0
         }
       },
       formattedDisplay (result) {
-        return (
-            (result.streetAddress ? result.streetAddress + ' '  : '') + 
-            (result.postalCode ? result.postalCode + ' ' : '') +
-            (result.addressLocality ? result.addressLocality + ' ' : '') + 
-            (result.addressCountry ? result.addressCountry : '')
-        ).trim();
+        let resultToShow = `${result.streetAddress} ${result.postalCode} ${result.addressLocality} ${result.addressCountry}`;
+        return resultToShow.trim();
       },
       onSelected (value) {
         for(let property in value.selectedObject){
