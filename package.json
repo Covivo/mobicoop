@@ -48,6 +48,7 @@
     "await-to-js": "^2.0.1",
     "commander": "^2.19.0",
     "fs-extra": "^7.0.0",
+    "fs-readdir-recursive": "^1.1.0",
     "git-command-line": "^0.1.5",
     "git-repo-info": "^2.0.0",
     "git-repo-name": "^0.6.0",
