@@ -16,6 +16,6 @@ import Autocomplete_sofiane from '../components/Autocomplete_sofiane';
 Vue.use(Affix);
 Vue.use(Buefy);
 new Vue({
-    el: '#app',
-    components: { Autocomplete_sofiane, VueBootstrapTypeahead},
+  el: '#app',
+  components: { Autocomplete_sofiane, VueBootstrapTypeahead},
 });

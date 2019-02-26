@@ -14,6 +14,6 @@ import Geocomplete from '../../components/Geocomplete';
 Vue.use(Affix);
 Vue.use(Buefy);
 new Vue({
-    el: '#app',
-    components: { Geocomplete},
+  el: '#app',
+  components: { Geocomplete},
 });
