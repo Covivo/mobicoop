@@ -1,0 +1,33 @@
+ad:
+    origin:
+        label: 'Origin'
+        placeholder: 'Enter the origin address'
+    destination:
+        label: 'Destination'
+        placeholder: 'Enter the destination address'
+    role:
+        label: 'You want to be'
+        placeholder: 'Choose your role'
+        choice:
+            driver: 'Driver'
+            passenger: 'Passenger'
+            both: 'Driver or passenger'
+    outward_date:
+        label: 'Outward date'
+    outward_margin:
+        label: 'Margin time'
+        placeholder: 'Choose the margin time in minutes'
+    frequency:
+        label: 'Frequency'
+        placeholder: 'Choose the trip frequncy'
+        choice:
+            punctual: 'Punctual'
+            regular: 'Regular'
+    comment:
+        label: 'Comment'
+        placeholder: 'You can enter a comment about your ad'
+    price:
+        label: 'Cost by km'
+        placeholder: 'Enter the cost of the travel for one km'
+    submit:
+        label: 'I share my ad'

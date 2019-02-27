@@ -1,6 +1,8 @@
 .idea/
 ###> symfony/framework-bundle ###
-/.env
+/.env.local
+/.env.local.php
+/.env.*.local
 /public/bundles/
 /var/
 /vendor/
@@ -187,7 +189,7 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
-.env
+.env.local
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -342,3 +344,7 @@ $RECYCLE.BIN/
 ###> symfony/web-server-bundle ###
 /.web-server-pid
 ###< symfony/web-server-bundle ###
+
+###> liip/imagine-bundle ###
+/public/media/cache/
+###< liip/imagine-bundle ###

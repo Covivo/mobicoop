@@ -19,7 +19,7 @@ agreementSample = function(country, date, name, surname, gitEmail, gitUserName){
     ${gitEmail} | ${gitUserName}
 
 *************************************************************************************`;
-}
+};
 
 exports.addContributor = function(fileName, country, date, name, surname, gitEmail, gitUserName){
 
@@ -27,9 +27,9 @@ exports.addContributor = function(fileName, country, date, name, surname, gitEma
         fs.writeFileSync('ContributorLicenseAgreement/' + fileName, agreementSample(country,date,name,surname,gitEmail,gitUserName));
         return true;
     }catch(err){
-        console.error(err)
+        console.error(err);
         return false;
     }
-    
-}
+
+};
 

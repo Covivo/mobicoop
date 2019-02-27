@@ -1,0 +1,46 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}{% trans from 'ui' %}carpool.ad_create.title{% endtrans %}{% endblock %}
+
+{% block stylesheets %}
+    {{ encore_entry_link_tags('bundle_ad/create') }}
+{% endblock %}
+
+{% block body %}
+
+<section class="hero is-primary">
+	<div class="hero-body">
+    	<div class="container">
+      		<h1 class="title">
+        		Mobicoop - {% trans from 'ui' %}carpool.ad_create.h1{% endtrans %}
+      		</h1>
+    	</div>
+  	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+		{% if error %}
+		<span class="tag is-danger">An error occured.</span>
+		{% endif %}
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        {{ form_row(form.origin) }}
+        {{ form_row(form.destination) }}
+        {{ form_row(form.role) }}
+        {{ form_row(form.outwardDate) }}
+        {{ form_row(form.outwardMargin) }}
+        {{ form_row(form.frequency) }}
+        {{ form_row(form.comment) }}
+        {{ form_row(form.price) }}
+        {{ form_row(form._token) }}
+        {{ form_row(form.submit) }}
+        {{ form_end(form, {'render_rest': false}) }}
+    </div>
+</section>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('bundle_ad/create') }}
+{% endblock %}

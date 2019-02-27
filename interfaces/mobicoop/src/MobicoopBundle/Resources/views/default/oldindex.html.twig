@@ -1,0 +1,27 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}{{ metaDescription }}{% endblock %}
+{% block stylesheets %}
+    {{ encore_entry_link_tags('bundle_home') }}
+{% endblock %}
+
+{% block body %}
+
+  <main class="homePage">
+    <section class="hero is-info header">
+      <div class="hero-body">
+        <div class="container">
+          <Searchgeocoding :geo-infos="geoInfos" :search-user="searchUser"></Searchgeocoding>
+        </div>
+      </div>
+    </section>
+    <section id="journeyResult" class="journeyResult">
+      <Journey :api-uri="'{{ baseUri }}'" :geo-infos="geoInfos" :search-user="searchUser"></Journey>
+    </section>
+  </main>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('bundle_home') }}
+{% endblock %}

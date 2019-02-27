@@ -27,6 +27,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Criteria;
+use App\Carpool\Repository\ProposalRepository;
 
 /**
  * Matching analyzer service.
@@ -36,10 +37,12 @@ use App\Carpool\Entity\Criteria;
 class MatchingAnalyzer
 {
     private $entityManager;
+    private $proposalRepository;
     
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository)
     {
         $this->entityManager = $entityManager;
+        $this->proposalRepository = $proposalRepository;
     }
     
     /**
@@ -50,7 +53,7 @@ class MatchingAnalyzer
      */
     public function findMatchingProposals(Proposal $proposal)
     {
-        return $this->entityManager->getRepository(Proposal::class)->findMatchingProposals($proposal);
+        return $this->proposalRepository->findMatchingProposals($proposal);
     }
     
     /**

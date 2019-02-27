@@ -1,27 +1,31 @@
 api_platform:
 
     # The title of the API.
-    title: 'Coviride API'
+    title: 'Mobicoop API'
 
     # The description of the API.
-    description: 'The carpooling API.'
+    description: 'The mobility API.'
 
     # The version of the API.
     version: '0.1.0'
 
     mapping:
-        paths: ['%kernel.project_dir%/src/Entity','%kernel.project_dir%/src/Address/Entity','%kernel.project_dir%/src/Carpool/Entity','%kernel.project_dir%/src/User/Entity',
-            '%kernel.project_dir%/src/PublicTransport/Entity',
-            '%kernel.project_dir%/src/ExternalJourney/Entity',
-            '%kernel.project_dir%/src/Rdex/Entity']
+        paths: ['%kernel.project_dir%/src/Entity','%kernel.project_dir%/src/Carpool/Entity','%kernel.project_dir%/src/User/Entity',
+            '%kernel.project_dir%/src/PublicTransport/Entity','%kernel.project_dir%/src/Geography/Entity','%kernel.project_dir%/src/Travel/Entity',
+            '%kernel.project_dir%/src/ExternalJourney/Entity','%kernel.project_dir%/src/Rdex/Entity','%kernel.project_dir%/src/Event/Entity',
+            '%kernel.project_dir%/src/Image/Entity']
+            
     resource_class_directories:
         - '%kernel.project_dir%/src/Entity'
-        - '%kernel.project_dir%/src/Address/Entity'
         - '%kernel.project_dir%/src/Carpool/Entity'
         - '%kernel.project_dir%/src/User/Entity'
         - '%kernel.project_dir%/src/PublicTransport/Entity'
         - '%kernel.project_dir%/src/ExternalJourney/Entity'
+        - '%kernel.project_dir%/src/Geography/Entity'
+        - '%kernel.project_dir%/src/Travel/Entity'
         - '%kernel.project_dir%/src/Rdex/Entity'
+        - '%kernel.project_dir%/src/Event/Entity'
+        - '%kernel.project_dir%/src/Image/Entity'
         
     formats:
         jsonld:   ['application/ld+json']

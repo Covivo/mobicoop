@@ -24,8 +24,8 @@
 namespace App\Carpool\Repository;
 
 use App\Carpool\Entity\Proposal;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use App\Carpool\Entity\Criteria;
 
 /**
@@ -34,11 +34,16 @@ use App\Carpool\Entity\Criteria;
  * @method Proposal[]    findAll()
  * @method Proposal[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ProposalRepository extends ServiceEntityRepository
+class ProposalRepository
 {
-    public function __construct(RegistryInterface $registry)
+    /**
+     * @var EntityRepository
+     */
+    private $repository;
+    
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        parent::__construct($registry, Proposal::class);
+        $this->repository = $entityManager->getRepository(Proposal::class);
     }
     
     /**
@@ -53,7 +58,7 @@ class ProposalRepository extends ServiceEntityRepository
         
         // LIMITATIONS :
         // - only punctual journeys
-        // - only 2 points : starting point and destination
+        // - only 2 points : origin and destination
         // - only for the same day
         
         switch ($proposal->getCriteria()->getFrequency()) {
@@ -78,26 +83,26 @@ class ProposalRepository extends ServiceEntityRepository
     private function findMatchingForPunctualProposal(Proposal $proposal, bool $excludeProposalUser=true)
     {
         // LIMITATIONS :
-        // - only 2 points : starting point and destination
+        // - only 2 points : origin and destination
         // - the matching is made only on the locality, for the same day
         
-        // we search for the starting and ending point of the proposal
-        $startLocality = null;
-        $endLocality = null;
-        foreach ($proposal->getPoints() as $point) {
-            if ($point->getPosition() == 0) {
-                $startLocality = $point->getAddress()->getAddressLocality();
+        // we search for the origin and destination of the proposal
+        $originLocality = null;
+        $destinationLocality = null;
+        foreach ($proposal->getWaypoints() as $waypoint) {
+            if ($waypoint->getPosition() == 0) {
+                $originLocality = $waypoint->getAddress()->getAddressLocality();
             }
-            if ($point->getLastPoint()) {
-                $endLocality = $point->getAddress()->getAddressLocality();
+            if ($waypoint->isDestination()) {
+                $destinationLocality = $waypoint->getAddress()->getAddressLocality();
             }
-            if (!is_null($startLocality) && !is_null($endLocality)) {
+            if (!is_null($originLocality) && !is_null($destinationLocality)) {
                 break;
             }
         }
         
         // we search the matchings in the proposal entity
-        $query = $this->createQueryBuilder('p')
+        $query = $this->repository->createQueryBuilder('p')
         // we also need the criteria (for the dates, number of seats...) and the starting/ending points/addresses for the location
         ->join('p.criteria', 'c')
         ->join('p.points', 'startPoint')
@@ -111,9 +116,14 @@ class ProposalRepository extends ServiceEntityRepository
             ->setParameter('user', $proposal->getUser());
         }
         
-        // we search for the opposite proposal type (offer => requests // request => offers)
-        $query->andWhere('p.proposalType = :proposalType')
-        ->setParameter('proposalType', ($proposal->getProposalType() == Proposal::PROPOSAL_TYPE_OFFER ? Proposal::PROPOSAL_TYPE_REQUEST : Proposal::PROPOSAL_TYPE_OFFER));
+        // we search if the user can be passenger and/or driver
+        if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+            $query->andWhere('c.isDriver = 1 OR c.isPassenger = 1');
+        } elseif ($proposal->getCriteria()->isDriver()) {
+            $query->andWhere('c.isPassenger = 1');
+        } elseif ($proposal->getCriteria()->isPassenger()) {
+            $query->andWhere('c.isDriver = 1');
+        }
         
         // dates
         // we limit the search to the days after the fromDate and before toDate if it's defined
@@ -131,8 +141,8 @@ class ProposalRepository extends ServiceEntityRepository
         ->andWhere('endPoint.lastPoint = 1');
         $query->andWhere('startAddress.addressLocality = :startLocality')
         ->andWhere('endAddress.addressLocality = :endLocality')
-        ->setParameter('startLocality', $startLocality)
-        ->setParameter('endLocality', $endLocality);
+        ->setParameter('startLocality', $originLocality)
+        ->setParameter('endLocality', $destinationLocality);
         
         // we launch the request and return the result
         return $query->getQuery()->getResult();

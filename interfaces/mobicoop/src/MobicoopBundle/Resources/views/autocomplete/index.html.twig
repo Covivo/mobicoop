@@ -1,0 +1,29 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}{% endblock %}
+{% block stylesheets %}
+    {{ encore_entry_link_tags('bundle_autocomplete') }}
+{% endblock %}
+
+{% block body %}
+    <span>nancy</span>
+    <autocomplete></autocomplete>
+
+    Resultats pour Nancy :
+
+    {% for GeoSearch in GeoSearch.member %}
+        <br>
+        {{ GeoSearch.AddressLocality }}
+        {{ GeoSearch.streetAddress }}
+        {{ GeoSearch.postalCode }}
+        {{ GeoSearch.AddressCountry }}
+        {{ GeoSearch.latitude }}
+        {{ GeoSearch.longitude }}
+    {% endfor %}
+
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('bundle_autocomplete') }}
+{% endblock %}

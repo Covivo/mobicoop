@@ -4,7 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    locale: 'en'
+    locale: 'fr'
 
 services:
     # default configuration for services in *this* file
@@ -29,8 +29,53 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-
+            
+    # other services and controllers
+    
+    # Api
+    Mobicoop\Bundle\MobicoopBundle\Api\Service\:
+        resource: '@MobicoopBundle/Api/Service/*' 
+    
     # Envoi de l'uri par défaut de l'api au service DataProvider
-    Mobicoop\Bundle\MobicoopBundle\Service\DataProvider :
+    Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider :
         arguments:
             $uri: '%env(resolve:API_URI)%'
+        shared: false
+    
+    # Carpool
+    Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\:
+        resource: '@MobicoopBundle/Carpool/Controller/*'
+        tags: ['controller.service_arguments']
+    Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
+        resource: '@MobicoopBundle/Carpool/Service/*'    
+        
+    # External journey
+    Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\:
+        resource: '@MobicoopBundle/ExternalJourney/Service/*'
+        
+    # Geography
+    Mobicoop\Bundle\MobicoopBundle\Geography\Controller\:
+        resource: '@MobicoopBundle/Geography/Controller/*'
+        tags: ['controller.service_arguments']
+    Mobicoop\Bundle\MobicoopBundle\Geography\Service\:
+        resource: '@MobicoopBundle/Geography/Service/*'
+        
+    # Public transport
+    Mobicoop\Bundle\MobicoopBundle\PublicTransport\Service\:
+        resource: '@MobicoopBundle/PublicTransport/Service/*'
+        
+    # User
+    Mobicoop\Bundle\MobicoopBundle\User\Controller\:
+        resource: '@MobicoopBundle/User/Controller/*'
+        tags: ['controller.service_arguments']
+    Mobicoop\Bundle\MobicoopBundle\User\Service\:
+        resource: '@MobicoopBundle/User/Service/*'
+    
+    # Event
+    Mobicoop\Bundle\MobicoopBundle\Event\Service\:
+        resource: '@MobicoopBundle/Event/Service/*'
+        
+    # Image
+    Mobicoop\Bundle\MobicoopBundle\Image\Service\:
+        resource: '@MobicoopBundle/Image/Service/*'
+    

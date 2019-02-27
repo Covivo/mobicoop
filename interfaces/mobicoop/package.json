@@ -59,6 +59,7 @@
     "eslint-config-prettier": "^3.0.1",
     "gsap": "^2.0.2",
     "kuler": "^1.0.0",
+    "lodash": "^4.17.11",
     "mapbox-gl": "^0.49.0-beta.1",
     "mapbox-gl-vue": "^1.9.0",
     "moment": "^2.22.2",
@@ -66,15 +67,19 @@
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
     "request-promise-native": "^1.0.5",
+    "resize-observer-polyfill": "^1.5.0",
     "stylelint": "^9.5.0",
     "stylelint-config-standard": "^18.2.0",
     "transform-runtime": "0.0.0",
+    "underscore": "^1.9.1",
     "vue": "^2.5.17",
     "vue-affix": "^0.4.0",
+    "vue-bootstrap-typeahead": "^0.2.6",
     "vue-loader": "^15.4.2",
     "vue-loading-spinner": "^1.0.11",
     "vue-mapbox": "0.0.34",
     "vue-resource": "^1.5.1",
-    "vue-template-compiler": "^2.5.17"
+    "vue-template-compiler": "^2.5.17",
+    "vuejs-auto-complete": "^0.9.0"
   }
 }

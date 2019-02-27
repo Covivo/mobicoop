@@ -1,6 +1,6 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}Hello{% endblock %}
+{% block title %}{% trans from 'ui' %}user.profile.title{% endtrans %}{% endblock %}
 
 {% block body %}
 
@@ -8,7 +8,7 @@
 	<div class="hero-body">
     	<div class="container">
       		<h1 class="title">
-				Mobicoop - User detail
+				Mobicoop - {% trans from 'ui' %}user.profile.h1{% endtrans %}
       		</h1>
     	</div>
   	</div>
@@ -17,30 +17,16 @@
 <section class="section">
 	<div class="container">
 		{% if user %}
+    	<a class="button is-primary" href="{{ path('user_profile_update') }}">{% trans from 'ui' %}user.profile.buttons.update{% endtrans %}</a>
+    	<a class="button is-warning" href="{{ path('user_password_update') }}">{% trans from 'ui' %}user.profile.buttons.password{% endtrans %}</a>
+    	<a class="button is-danger" href="{{ path('user_profile_delete') }}">{% trans from 'ui' %}user.profile.buttons.delete{% endtrans %}</a>
     	<table class="table">
-          	<tr><th>#</th><td>{{ user.id }}</td></tr>
-          	<tr><th>givenName</th><td>{{ user.givenName }}</td></tr>
-          	<tr><th>familyName</th><td>{{ user.familyName }}</td></tr>
-          	<tr><th>email</th><td>{{ user.email }}</td></tr>
-          	<tr><th>birthDate</th><td>{{ user.birthDate ? user.birthDate|date('Y-m-d') }}</td></tr>
-          	<tr><th>gender</th><td>{{ user.gender }}</td></tr>
-          	<tr><th>nationality</th><td>{{ user.nationality }}</td></tr>
-          	<tr><th>telephone</th><td>{{ user.telephone }}</td></tr>
-          	<tr><th>addresses</th>
-          	<td>
-          		{% for userAddress in user.userAddresses %}
-          		<ul>
-          			<li>{{ userAddress.name }}
-          				<ul>
-          					<li>{{ userAddress.address.streetAddress }}</li>
-          					<li>{{ userAddress.address.postalCode }}</li>
-          					<li>{{ userAddress.address.addressLocality }}</li>
-          					<li>{{ userAddress.address.addressCountry }}</li>
-          				</ul>
-          			</li>
-          		</ul>
-          		{% endfor %}
-          	</td>
+			<tr><th>{% trans from 'user' %}email.label{% endtrans %}</th><td>{{ user.email }}</td></tr>
+			<tr><th>{% trans from 'user' %}givenName.label{% endtrans %}</th><td>{{ user.givenName }}</td></tr>
+          	<tr><th>{% trans from 'user' %}familyName.label{% endtrans %}</th><td>{{ user.familyName }}</td></tr>
+			<tr><th>{% trans from 'user' %}gender.label{% endtrans %}</th><td>{{ user.genderString | trans({}, 'user') }}</td></tr>
+			<tr><th>{% trans from 'user' %}birthYear.label{% endtrans %}</th><td>{{ user.birthYear ? user.birthYear }}</td></tr>
+          	<tr><th>{% trans from 'user' %}telephone.label{% endtrans %}</th><td>{{ user.telephone }}</td></tr>
       	</table>
       	{% else %}
       	<span class="tag is-danger">User not found.</span>

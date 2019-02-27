@@ -1,0 +1,44 @@
+# buttons
+button:
+    submit: 'Submit'
+    delete: 'Delete'
+    
+# menus
+menu:
+    signup: 'Sign up'
+    login: 'Log in'
+    account: 'My account'
+    profile: 'My profile'
+    messages: 'Messages'
+    ad_create: 'Share an ad'
+    logout: 'Logout'
+
+# pages
+user:
+    signup:
+        title: 'Sign up'
+        h1: 'Sign up'
+    login:
+        title: 'Login'
+        h1: 'Login'
+    profile:
+        title: 'My profile'
+        h1: 'My profile'
+        buttons:
+            update: 'Update'
+            password: 'Password'
+            delete: 'Delete my account'
+    profile_update:
+        title: 'Update my profile'
+        h1: 'Update my profile'
+    profile_password_update:
+        title: 'Update my password'
+        h1: 'Update my password'
+    profile_delete:
+        title: 'Delete my account'
+        h1: 'Delete my account'
+        text: 'Are you sure you want to delete your account ?'
+carpool:
+    ad_create:
+        title: 'Share an ad'
+        h1: 'Share an ad'

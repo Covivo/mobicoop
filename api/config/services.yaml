@@ -4,7 +4,10 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    locale: 'en'
+    locale: 'fr'
+
+imports:
+    resource: 'images.yaml'
 
 services:
     # default configuration for services in *this* file
@@ -40,3 +43,24 @@ services:
     'App\Carpool\Filter\LocalityFilter':
         # Uncomment only if autoconfiguration isn't enabled
         #tags: [ 'api_platform.filter' ]
+
+    App\Geography\Controller\:
+        resource: '../src/Geography/Controller'
+        tags: ['controller.service_arguments']
+        
+    App\Image\Controller\:
+        resource: '../src/Image/Controller'
+        tags: ['controller.service_arguments']
+
+    # alias to allow this type to be autowired
+    Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'
+    
+    # inject image parameters to ImageManager 
+    App\Image\Service\ImageManager:
+        arguments:
+            $types: '%images%'
+            
+    App\Image\EntityListener\ImageListener:
+        arguments: ['@App\Image\Service\ImageManager']
+        tags:
+            - { name: doctrine.orm.entity_listener }

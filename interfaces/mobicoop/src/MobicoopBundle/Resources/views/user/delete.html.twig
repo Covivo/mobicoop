@@ -1,0 +1,34 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}{% trans from 'ui' %}user.profile_delete.title{% endtrans %}{% endblock %}
+
+{% block body %}
+
+<section class="hero is-primary">
+	<div class="hero-body">
+    	<div class="container">
+      		<h1 class="title">
+				Mobicoop - {% trans from 'ui' %}user.profile_delete.h1{% endtrans %}
+      		</h1>
+    	</div>
+  	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+	    {% if user %}
+    		{% if error %}
+    		<span class="tag is-danger">An error occured.</span>
+    		{% endif %}
+            <p>{% trans from 'ui' %}user.profile_delete.text{% endtrans %}</p>
+    		{{ form_start(form) }}
+            {{ form_row(form._token) }}
+            {{ form_row(form.submit) }}
+            {{ form_end(form, {'render_rest': false}) }}
+    	{% else %}
+      		<span class="tag is-danger">User not found.</span>
+      	{% endif %}
+    </div>
+</section>
+
+{% endblock %}

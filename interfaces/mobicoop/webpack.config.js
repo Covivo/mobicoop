@@ -1,27 +1,38 @@
 const Encore = require('@symfony/webpack-encore');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
+const fs = require('fs');
+const read = require('fs-readdir-recursive');
+
+let files = read('./assets/js/page');
+let filesBundle = read('./src/MobicoopBundle/Resources/assets/js/page');
 
 Encore
-    // directory where compiled assets will be stored
-    .setOutputPath('public/build/')
-    // public path used by the web server to access the output path
-    .setPublicPath('/build')
-    // only needed for CDN's or sub-directory deploy
-    // .setManifestKeyPrefix('build/')
+  // directory where compiled assets will be stored
+  .setOutputPath('public/build/')
+  // public path used by the web server to access the output path
+  .setPublicPath('/build')
+  // only needed for CDN's or sub-directory deploy
+  // .setManifestKeyPrefix('build/')
 
-    /*
-     * ENTRY CONFIG
-     *
-     * Add 1 entry for each "page" of your app
-     * (including one that's included on every page - e.g. "app")
-     *
-     * Each entry will result in one JavaScript file (e.g. app.js)
-     * and one CSS file (e.g. app.css) if you JavaScript imports CSS.
-     */
-     .addEntry('app', './assets/js/app.js')
-     .addEntry('home', './assets/js/page/home.js')
-     .addEntry('users', './assets/js/page/users.js')
-     .splitEntryChunks()
+  /*
+   * ENTRY CONFIG
+   *
+   * Add 1 entry for each "page" of your app
+   * (including one that's included on every page - e.g. "app")
+   *
+   * Each entry will result in one JavaScript file (e.g. app.js)
+   * and one CSS file (e.g. app.css) if you JavaScript imports CSS.
+  */
+
+    //.addEntry('app', './src/MobicoopBundle/Resources/assets/js/app.js')
+    
+    .addEntry('app', './src/MobicoopBundle/Resources/assets/js/app.js')
+//    .addEntry('autocomplete', './src/MobicoopBundle/Resources/assets/js/page/autocomplete.js')
+//    .addEntry('ad_create', './src/MobicoopBundle/Resources/assets/js/page/ad/create.js')
+//    .addEntry('home', './src/MobicoopBundle/Resources/assets/js/page/home.js')
+//    .addEntry('users', './src/MobicoopBundle/Resources/assets/js/page/users.js')
+    
+    .splitEntryChunks()
 
     /*
      * FEATURE CONFIG
@@ -70,5 +81,15 @@ Encore
     // uncomment if you're having problems with a jQuery plugin
     //.autoProvidejQuery()
 ;
+
+// Add base assets
+for (let file of files){
+  Encore.addEntry(file.split('.js')[0], `./assets/js/page/${file}`)
+}
+
+// Add bundle assets
+for (let file of filesBundle){
+  Encore.addEntry(`bundle_${file.split('.js')[0]}`, `./src/MobicoopBundle/Resources/assets/js/page/${file}`)
+}
 
 module.exports = Encore.getWebpackConfig();

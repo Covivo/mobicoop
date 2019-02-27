@@ -1,9 +1,10 @@
+# Docker image needed for CI
 image: mobicoop/php-node-chromium
 
 # Cache modules in between jobs
 cache:
   key: ${CI_COMMIT_REF_SLUG}
-  paths:
+  paths:    # excluded : not cached
   - node_modules/
   - api/node_modules/
   - api/vendor/
@@ -11,109 +12,235 @@ cache:
   - interfaces/mobicoop/vendor/
   - interfaces/admin/node_modules/
 
+# Name of the stages that can be executed on a pipeline by the runner
 stages:
   - test
+  - reports
   - deploy
+
 
 ###############################################################################################
 ############# Everything under this is execute for all push (branch) ##########################
 ###############################################################################################
 
-test:dev:
-  stage: test
-  variables:
-    APP_ENV: dev # important because symfony use it
+#
+# Tests for all branches except dev, master & tagged branches
+#
+branch_tests:   # name of the job
+  stage: test   
+#  variables:
+#    APP_ENV: dev    # /!\ important : symfony env variable /!\
   before_script:
-    - npm install --unsafe-perm
+    - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
   script:
-    - npm test
+    - npm test  # run the tests
   only:
     - pushes
-  except:
-    refs:
-      - tags
+  except:       
+    refs:   # job not executed for these branches & tags
+      - tags    
       - dev
       - master
     variables:
-      - $CI_COMMIT_MESSAGE =~ /skip/
+      - $CI_COMMIT_MESSAGE =~ /skip/    # job not executed when commit message contains this expression
+
 
 ###############################################################################################
-############# Everything under this is execute only for Test (dev) ############################
+########## Everything under this is execute only for Reports (dev & master) ###################
 ###############################################################################################
 
-test:test:
+#this job is taking too much time (>15min)
+#code_quality:
+#  stage: reports
+#  image: docker:stable
+#  variables:
+#    DOCKER_DRIVER: overlay2
+#  allow_failure: true
+#  services:
+#    - docker:stable-dind
+#  script:
+#    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+#    - docker run
+#      --env SOURCE_CODE="$PWD"
+#      --volume "$PWD":/code
+#      --volume /var/run/docker.sock:/var/run/docker.sock
+#      "registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION" /code
+#  artifacts:
+#    paths: [gl-code-quality-report.json]
+#  only:
+#    - master
+#    - dev
+
+#
+# Dependency Scanning
+# (gitlab preconfigured job) 
+#
+dependency_scanning:    
+  stage: reports
+  image: docker:stable
+  variables:
+    DOCKER_DRIVER: overlay2
+  allow_failure: true
+  services:
+    - docker:stable-dind
+  script:
+    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+    - docker run
+      --env DEP_SCAN_DISABLE_REMOTE_CHECKS="${DEP_SCAN_DISABLE_REMOTE_CHECKS:-false}"
+      --volume "$PWD:/code"
+      --volume /var/run/docker.sock:/var/run/docker.sock
+      "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:$SP_VERSION" /code
+  artifacts:
+    paths: [gl-dependency-scanning-report.json]
+  only:     # job executed only on dev & master branches
+    - master
+    - dev
+    
+#
+# Static Application Security Testing (SAST)
+# (gitlab preconfigured job) 
+#
+sast:
+  stage : reports
+  image: docker:stable
+  cache: {}
+  variables:
+    DOCKER_DRIVER: overlay2
+  allow_failure: true
+  services:
+    - docker:stable-dind
+  script:
+    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+    - docker run
+      --env SAST_CONFIDENCE_LEVEL="${SAST_CONFIDENCE_LEVEL:-3}"
+      --volume "$PWD:/code"
+      --volume /var/run/docker.sock:/var/run/docker.sock
+      "registry.gitlab.com/gitlab-org/security-products/sast:$SP_VERSION" /app/bin/run /code
+  artifacts:
+    reports:
+      sast: gl-sast-report.json
+  only:     # job executed only on dev & master branches
+    - master
+    - dev
+
+#
+# License Management
+#
+license_management:
+  image:
+    name: "registry.gitlab.com/gitlab-org/security-products/license-management:$CI_SERVER_VERSION_MAJOR-$CI_SERVER_VERSION_MINOR-stable"
+    entrypoint: [""]
+  stage: reports
+  allow_failure: true
+  script:
+    - sudo /run.sh analyze .
+  artifacts:
+    reports:
+      license_management: gl-license-management-report.json
+  only:     # job executed only on dev & master branches
+    - master
+    - dev
+
+
+###############################################################################################
+############# Everything under this is execute only for Tests (dev) ############################
+###############################################################################################
+
+#
+# Tests for dev branch
+#
+dev_tests:
+  stage: test
+#  variables:
+#    APP_ENV: dev    # /!\ important : symfony env variable /!\
+  before_script:
+    - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
+  script:
+    - npm run testAndCoverage   # run the tests and code coverage
+  only: # job executed only on dev branch
+    - dev
+
+#
+# Deployment for dev branch
+#
+dev_deploy:
   stage: deploy
   environment:
     name: test
     url: http://test.mobicoop.io
   only:
     - dev
-  variables:
-    APP_ENV: test # important because symfony use it
+#  variables:
+#    APP_ENV: test   # /!\ important : symfony env variable /!\
   before_script:
-    - npm install --unsafe-perm
+    - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
   script:
-    - npm test
-    - php interfaces/mobicoop/bin/console cache:clear --env=test --no-debug
-    - php api/bin/console cache:clear --env=test --no-debug
-    - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
-    - chmod 700 id_rsa
-    - mv id_rsa ${HOME}/.ssh
-    - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - rsync --stats --quiet --group=www-data -hrvz --exclude=.env --exclude=/api/config.json --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/test
-    - ssh -o StrictHostKeyChecking=no ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/test/api; php bin/console doctrine:migrations:migrate -n"
+    - npm run testAndCoverage                                                   # run the tests and code coverage
+    - php interfaces/mobicoop/bin/console cache:clear --env=test --no-debug     # clear the cache for the interfaces
+    - php api/bin/console cache:clear --env=test --no-debug                     # clear the cache for the api
+    - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa                   # 
+    - chmod 700 id_rsa                                          # ssh identification on docker side 
+    - mv id_rsa ${HOME}/.ssh                                    #
+    - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"  #
+    - rsync --stats --quiet --group=www-data -hrvz --exclude=.env.local --exclude=/api/config.json --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/test    # rsync the files on the server
+    - ssh -o StrictHostKeyChecking=no ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/test/api; php bin/console doctrine:migrations:migrate -n"    # database migration
   except:
     refs:
-      - tags
+      - tags    # job not executed on tags
 
 ###############################################################################################
-############# Everything under this is execute only for production (MASTER) ###################
+############# Everything under this is execute only for Production (MASTER) ###################
 ###############################################################################################
-test:prod:
+
+#
+# Tests for master branch
+#
+master_tests:
   stage: test
-  variables:
-    APP_ENV: prod # important because symfony use it
+#  variables:
+#    APP_ENV: prod   # /!\ important : symfony env variable /!\
   before_script:
-    - npm install --unsafe-perm
+    - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
   script:
-    - npm test
-  artifacts:
-    paths:
-    - interfaces/mobicoop/public/doc
-  only:
+    - npm run testAndCoverage   # run the tests and code coverage
+  only:     # job executed only on master branch
     - master
 
-pages:
-  stage: deploy
-  script:
-    - echo 'Deploying the doc...'
-    - npm run generateDocs
-  dependencies:
-    - test:prod
-  artifacts:
-    paths:
-    - interfaces/mobicoop/public/doc
-  only:
-    - master
+#pages:
+#  stage: deploy
+#  script:
+#    - echo 'Deploying the doc...'
+#    - npm run generateDocs
+#  dependencies:
+#    - test:prod
+#  artifacts:
+#    paths:
+#    - interfaces/mobicoop/public/doc
+#  only:
+#    - master
 
-deploy_prod:
+#
+# Deployment for master branch
+#
+master_deploy:
   stage: deploy
-  before_script: # This if require to send the prod type no dev, since it creates errors
+  before_script: # This is required to send the prod type no dev, since it creates errors
     - npm install --unsafe-perm
-    - php bin/console cache:clear --env=prod --no-debug
-  variables:
-    APP_ENV: prod # important because symfony use it
+ # variables:
+ #   APP_ENV: prod   # /!\ important : symfony env variable /!\
   script:
-    - npm test
-    - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa
-    - chmod 700 id_rsa
-    - mv id_rsa ${HOME}/.ssh
-    - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - rsync --stats --quiet --exclude=/.env -hrvz --group=www-data --delete -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/prod
-    - ssh -o StrictHostKeyChecking=no ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/test/api; php bin/console doctrine:migrations:migrate -n"
+    - npm run testAndCoverage                                                   # run the tests and code coverage
+    - php interfaces/mobicoop/bin/console cache:clear --env=prod --no-debug     # clear the cache for the interfaces
+    - php api/bin/console cache:clear --env=prod --no-debug                     # clear the cache for the api
+    - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa                       #
+    - chmod 700 id_rsa                                              #
+    - mv id_rsa ${HOME}/.ssh                                        # ssh identification on docker side
+    - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"      #
+    - rsync --stats --quiet --group=www-data -hrvz --exclude=.env.local --exclude=/api/config.json --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/prod    # rsync the files on the server
+    - ssh -o StrictHostKeyChecking=no ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/prod/api; php bin/console doctrine:migrations:migrate -n"    # database migration
   environment:
     name: prod
     url: http://mobicoop.io
-  when: manual
-  only:
+  when: manual      # /!\ important : job executed manually /!\
+  only:     # job executed only on master branch
     - master
