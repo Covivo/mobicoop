@@ -44,6 +44,7 @@ class RdexManager
 {
     private const RDEX_CONFIG_FILE = "../config.json";
     private const RDEX_CLIENT_KEY = "rdexClient";
+    private const RDEX_OPERATOR_KEY = "rdexOperator";
     private const RDEX_HASH = "sha256";         // hash algorithm
     private const MIN_TIMESTAMP_MINUTES = 60;   // accepted minutes for timestamp in the past
     private const MAX_TIMESTAMP_MINUTES = 60;   // accepted minutes for timestamp in the future
@@ -235,13 +236,19 @@ class RdexManager
             isset($parameters["outward"]["sunday"]["mintime"]) ? $parameters["outward"]["sunday"]["mintime"] : null,
             isset($parameters["outward"]["sunday"]["maxtime"]) ? $parameters["outward"]["sunday"]["maxtime"] : null
             );
+        
+        if (!file_exists(self::RDEX_CONFIG_FILE)) {
+            return ['no config.json file.'];
+        }
+        $config = json_decode(file_get_contents(self::RDEX_CONFIG_FILE), true);
+        $operator = $config[self::RDEX_OPERATOR_KEY];
             
         foreach ($proposals as $proposal) {
             // @todo : create a rule for uuid creation
             $journey = new RdexJourney($proposal->getId());
-            $journey->setOperator(RdexJourney::OPERATOR);
-            $journey->setOrigin(RdexJourney::ORIGIN);
-            $journey->setUrl(RdexJourney::URL);
+            $journey->setOperator($operator['name']);
+            $journey->setOrigin($operator['origin']);
+            $journey->setUrl($operator['url']);
             // by default the type is one-way
             // if the proposal is the return of a round trip, it is considered as a one-way
             // the type will be round trip only if the proposal type is outward

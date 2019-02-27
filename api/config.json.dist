@@ -5,11 +5,16 @@
 			"apiKey": "key of the api",
 			"privateKey": "private key of the api"
 		},
-      	"api_name2": {
+		"api_name2": {
 			"apiUrl": "url of the api",
 			"apiKey": "key of the api",
 			"privateKey": "private key of the api"
       	}
+	},
+	"rdexOperator": {
+		"name": "mobicoop",
+		"origin": "mobicoop.io",
+		"url": "https://www.mobicoop.io/" 
 	},
   	"rdexClient": {
 		"client_name": {
