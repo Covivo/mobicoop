@@ -202,7 +202,7 @@ class DataProvider
             }
         } catch (ServerException $e) {
             echo '<pre>'.print_r($e->getResponse()->getBody()->getContents(), true).'</pre>';
-                exit;
+            exit;
                 
             return new Response($e->getCode(), $e->getMessage());
         }

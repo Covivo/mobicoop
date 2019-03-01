@@ -374,5 +374,4 @@ class Proposal implements Resource
         
         return $this;
     }
-    
 }

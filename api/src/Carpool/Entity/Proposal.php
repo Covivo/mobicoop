@@ -161,10 +161,10 @@ class Proposal
 
     /**
      * @var Criteria The criteria applied to the proposal.
-     * Note : 
-     * The criteria is set as a nullable column, BUT it is in fact MANDATORY. 
+     * Note :
+     * The criteria is set as a nullable column, BUT it is in fact MANDATORY.
      * It is set as nullable because the owning side of a one-to-one association is saved first, so the inverse side does not exist yet.
-     * Other solution : make the proposal as the inverse side, and the criteria as the owning side. 
+     * Other solution : make the proposal as the inverse side, and the criteria as the owning side.
      * But it is not acceptable as a criteria can be related with other entities (ask and matching) so we would have multiple nullable foreign keys.
      *
      * @Assert\NotBlank

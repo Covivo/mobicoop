@@ -62,7 +62,7 @@ class ProposalManager
      * @param Proposal $proposal
      */
     public function createProposal(Proposal $proposal)
-    {   
+    {
         // temporary initialisation, will be dumped when implementation of these fields will be done
         $proposal->getCriteria()->setSeats(1);
         $proposal->getCriteria()->setAnyRouteAsPassenger(true);
@@ -135,7 +135,6 @@ class ProposalManager
         // if (!is_null($proposalLinked)) {
         //     $this->matchingAnalyzer->createMatchingsForProposal($proposalLinked);
         // }
-        
     }
     
     /**
