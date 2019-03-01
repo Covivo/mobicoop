@@ -10,12 +10,12 @@
       @selected="onSelected"
         >
     </autocomplete>
-    <input type="hidden" :name="streetaddress" :value="valStreetAddress">
-    <input type="hidden" :name="postalcode" :value="valPostalCode">
-    <input type="hidden" :name="addresslocality" :value="valAddressLocality">
-    <input type="hidden" :name="addresscountry" :value="valAddressCountry">
-    <input type="hidden" :name="longitude" :value="valLongitude">
-    <input type="hidden" :name="latitude" :value="valLatitude">
+    <input type="hidden" :name="streetaddress" :value="valstreetAddress">
+    <input type="hidden" :name="postalcode" :value="valpostalCode">
+    <input type="hidden" :name="addresslocality" :value="valaddressLocality">
+    <input type="hidden" :name="addresscountry" :value="valaddressCountry">
+    <input type="hidden" :name="longitude" :value="vallongitude">
+    <input type="hidden" :name="latitude" :value="vallatitude">
   </div>
 </template>
 
@@ -47,12 +47,12 @@
     methods: {
       initialData(){
         return {
-          valStreetAddress: '',
-          valPostalCode: '',
-          valAddressLocality: '',
-          valAddressCountry: '',
-          valLongitude: 0,
-          valLatitude: 0
+          valstreetAddress: '',
+          valpostalCode: '',
+          valaddressLocality: '',
+          valaddressCountry: '',
+          vallongitude: 0,
+          vallatitude: 0
         }
       },
       formattedDisplay (result) {
@@ -61,7 +61,7 @@
       },
       onSelected (value) {
         for(let property in value.selectedObject){
-          this[property] = value.selectedObject[property].trim(); 
+          this['val'+property] = typeof value.selectedObject[property] === "string" ? value.selectedObject[property].trim() : value.selectedObject[property]; 
         }
       }
     }

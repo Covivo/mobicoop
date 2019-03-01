@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
@@ -61,21 +62,25 @@ class Proposal implements Resource
     
     /**
      * @var User|null User who submits the proposal.
+     * @Groups({"post","put"})
      */
     private $user;
 
     /**
     * @var int Proposal type (one way / outward / return).
+    * @Groups({"post","put"})
     */
     private $type;
     
     /**
-     * @var string A comment about the proposal.
+     * @var string|null A comment about the proposal.
+     * @Groups({"post","put"})
      */
     private $comment;
 
     /**
      * @var Waypoint[] The waypoints of the proposal.
+     * @Groups({"post","put"})
      *
      * @Assert\NotBlank
      */
@@ -98,6 +103,7 @@ class Proposal implements Resource
 
     /**
      * @var Criteria The criteria applied to the proposal.
+     * @Groups({"post","put"})
      *
      * @Assert\NotBlank
      */
@@ -108,11 +114,6 @@ class Proposal implements Resource
      */
     private $individualStops;
     
-    // these fields are only for testing purpose,
-    // in the future we will need dynamic fields that will populate the points.
-    private $start;
-    private $destination;
-
     public function __construct($id=null)
     {
         if ($id) {
@@ -374,23 +375,4 @@ class Proposal implements Resource
         return $this;
     }
     
-    public function getStart()
-    {
-        return $this->start;
-    }
-
-    public function getDestination()
-    {
-        return $this->destination;
-    }
-
-    public function setStart($start)
-    {
-        $this->start = $start;
-    }
-
-    public function setDestination($destination)
-    {
-        $this->destination = $destination;
-    }
 }

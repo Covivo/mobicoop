@@ -108,7 +108,7 @@ class PTStep
     /**
      * @var PTJourney The parent leg of this step.
      *
-     * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTLeg")
+     * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTLeg", inversedBy="ptsteps")
      * @Groups("pt")
      */
     private $ptleg;

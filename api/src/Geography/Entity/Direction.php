@@ -27,6 +27,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Direction entity
@@ -51,66 +52,77 @@ class Direction
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups("read")
      */
     private $id;
     
     /**
      * @var int The total distance of the direction in meter.
      * @ORM\Column(type="integer")
+     * @Groups({"read","write"})
      */
     private $distance;
     
     /**
      * @var int The total duration of the direction in seconds.
      * @ORM\Column(type="integer")
+     * @Groups({"read","write"})
      */
     private $duration;
     
     /**
      * @var int The total ascend of the direction in meter.
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
      */
     private $ascend;
     
     /**
      * @var int The total descend of the direction in meter.
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
      */
     private $descend;
 
     /**
      * @var float The minimum longitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     * @Groups({"read","write"})
      */
     private $bboxMinLon;
 
     /**
      * @var float The minimum latitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     * @Groups({"read","write"})
      */
     private $bboxMinLat;
     
     /**
      * @var float The maximum longitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     * @Groups({"read","write"})
      */
     private $bboxMaxLon;
     
     /**
      * @var float The maximum latitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     * @Groups({"read","write"})
      */
     private $bboxMaxLat;
     
     /**
      * @var string The textual encoded detail of the direction.
      * @ORM\Column(type="text")
+     * @Groups({"read","write"})
      */
     private $detail;
     
     /**
      * @var string The encoding format of the detail.
      * @ORM\Column(type="string", length=45)
+     * @Groups({"read","write"})
      */
     private $format;
     
@@ -124,6 +136,11 @@ class Direction
     public function __construct()
     {
         $this->zones = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
     }
     
     public function getDistance(): int

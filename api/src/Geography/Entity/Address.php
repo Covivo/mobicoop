@@ -131,7 +131,7 @@ class Address
     /**
      * @var User|null The owner of the address.
      *
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="addresses")
      */
     private $user;
 

@@ -40,6 +40,8 @@ use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\Exception\TransferException;
+use GuzzleHttp\Exception\ServerException;
+use Buzz\Exception\ClientException;
 
 /**
  * Data provider service.
@@ -198,7 +200,10 @@ class DataProvider
             if ($clientResponse->getStatusCode() == 201) {
                 return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
             }
-        } catch (TransferException $e) {
+        } catch (ServerException $e) {
+            echo '<pre>'.print_r($e->getResponse()->getBody()->getContents(), true).'</pre>';
+                exit;
+                
             return new Response($e->getCode(), $e->getMessage());
         }
         return new Response();

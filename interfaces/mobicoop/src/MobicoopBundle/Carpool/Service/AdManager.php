@@ -26,9 +26,8 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Service;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Symfony\Component\HttpFoundation\Request;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Matching;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Waypoint;
 
 /**
  * Ad management service.
@@ -36,16 +35,18 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
 class AdManager
 {
     private $proposalManager;
-    
+
     public function __construct(ProposalManager $proposalManager)
     {
         $this->proposalManager = $proposalManager;
     }
-    
+
     /**
-     * Prepare the ad before creating a proposal
-     * @param Ad $ad
+     * Prepare the ad before creating a proposal.
+     *
+     * @param Ad      $ad
      * @param Request $request
+     *
      * @return \Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad
      */
     public function prepareAd(Ad $ad, Request $request)
@@ -58,9 +59,9 @@ class AdManager
                 $ad->setOriginLatitude($origin['latitude']);
             }
             $ad->setOrigin(
-                ($origin['streetAddress'] ? $origin['streetAddress'] . ' ' : '') .
-                ($origin['postalCode'] ? $origin['postalCode'] . ' '  : '') .
-                ($origin['addressLocality'] ? $origin['addressLocality'] . ' '  : '') .
+                ($origin['streetAddress'] ? $origin['streetAddress'].' ' : '').
+                ($origin['postalCode'] ? $origin['postalCode'].' ' : '').
+                ($origin['addressLocality'] ? $origin['addressLocality'].' ' : '').
                 ($origin['addressCountry'] ? $origin['addressCountry'] : '')
                 );
         }
@@ -72,20 +73,52 @@ class AdManager
                 $ad->setDestinationLatitude($destination['latitude']);
             }
             $ad->setDestination(
-                ($destination['streetAddress'] ? $destination['streetAddress'] . ' '  : '') .
-                ($destination['postalCode'] ? $destination['postalCode'] . ' '  : '') .
-                ($destination['addressLocality'] ? $destination['addressLocality'] . ' '  : '') .
+                ($destination['streetAddress'] ? $destination['streetAddress'].' ' : '').
+                ($destination['postalCode'] ? $destination['postalCode'].' ' : '').
+                ($destination['addressLocality'] ? $destination['addressLocality'].' ' : '').
                 ($destination['addressCountry'] ? $destination['addressCountry'] : '')
             );
         }
+
         return $ad;
     }
-    
+
     /**
-     * Create an ad and the resulting proposal
+     * Create an ad and the resulting proposal.
      */
-    public function createAd(Ad $ad)
+    public function createProposalFromAd(Ad $ad)
     {
-        return true;
+        $proposal = new Proposal();
+        $proposal->setType($ad->getType());
+        $proposal->setComment($ad->getComment());
+        $proposal->setUser($ad->getUser());
+
+        $criteria = new Criteria();
+        if ($ad->getRole() == Ad::ROLE_BOTH || $ad->getRole() == Ad::ROLE_DRIVER) {
+            $criteria->setIsDriver(true);
+        }
+        if ($ad->getRole() == Ad::ROLE_BOTH || $ad->getRole() == Ad::ROLE_PASSENGER) {
+            $criteria->setIsPassenger(true);
+        }
+
+        $criteria->setFrequency($ad->getFrequency());
+        $criteria->setFromDate($ad->getOutwardDate());
+        $criteria->setPriceKm($ad->getPrice());
+
+        $waypointOrigin = new Waypoint();
+        $waypointOrigin->setAddress($ad->getOriginAddress());
+        $waypointOrigin->setPosition(0);
+        $waypointOrigin->setIsDestination(false);
+
+        $waypointDestination = new Waypoint();
+        $waypointDestination->setAddress($ad->getDestinationAddress());
+        $waypointDestination->setPosition(1);
+        $waypointDestination->setIsDestination(true);
+
+        $proposal->setCriteria($criteria);
+        $proposal->addWaypoint($waypointOrigin);
+        $proposal->addWaypoint($waypointDestination);
+
+        return $this->proposalManager->createProposal($proposal);
     }
 }

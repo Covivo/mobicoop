@@ -77,10 +77,13 @@ class UserManager
             return null;
         }
         $user = $this->tokenStorage->getToken()->getUser();
-        if ($user->getBirthDate()) {
-            $user->setBirthYear($user->getBirthDate()->format('Y'));
+        if ($user instanceof User) {
+            if ($user->getBirthDate()) {
+                $user->setBirthYear($user->getBirthDate()->format('Y'));
+            }
+            return $user;
         }
-        return $user instanceof User ? $user : null;
+        return null;
     }
     
     /**

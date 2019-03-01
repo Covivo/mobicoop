@@ -63,7 +63,7 @@ class GeoRouterProvider implements ProviderInterface
     {
         switch ($class) {
             case Direction::class:
-                $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESOURCE);
+            $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESOURCE);
                 $getParams = "";
                 foreach ($params['points'] as $address) {
                     $getParams .= "point=" . $address->getLatitude() . "," . $address->getLongitude() . "&";
@@ -138,6 +138,10 @@ class GeoRouterProvider implements ProviderInterface
                 $direction->setBboxMaxLat($data["bbox"][3]);
             }
         }
+        if (isset($data["points"])) {
+            $direction->setDetail($data["points"]);
+        }
+        $direction->setFormat('graphhopper');
         /*if (isset($data['points'])) {
             if (isset($data['points_encoded']) && $data['points_encoded'] === false) {
                 $direction->setPoints($this->deserializePoints($data['points'], false, filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
@@ -155,7 +159,7 @@ class GeoRouterProvider implements ProviderInterface
         return $direction;
     }
     
-    private function deserializePoints($data, $encoded, $is3D)
+    public function deserializePoints($data, $encoded, $is3D)
     {
         $addresses = [];
         if ($encoded) {

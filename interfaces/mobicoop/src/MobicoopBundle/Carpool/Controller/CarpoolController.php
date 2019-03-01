@@ -24,37 +24,23 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Mobicoop\Bundle\MobicoopBundle\User\Form\UserForm;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Form\ProposalForm;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\Form\Login;
-use Mobicoop\Bundle\MobicoopBundle\User\Form\UserLoginForm;
-use Mobicoop\Bundle\MobicoopBundle\User\Form\UserDeleteForm;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Form\AdForm;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
+use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 
 /**
  * Controller class for carpooling related actions.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
- *
  */
 class CarpoolController extends AbstractController
 {
-
     /**
      * Create a carpooling ad.
      */
-    public function ad(AdManager $adManager, Request $request)
+    public function ad(AdManager $adManager, UserManager $userManager, Request $request)
     {
         $ad = new Ad();
         $ad->setRole(Ad::ROLE_BOTH);
@@ -62,16 +48,16 @@ class CarpoolController extends AbstractController
         $ad->setFrequency(Ad::FREQUENCY_PUNCTUAL);
         $ad->setPrice(Ad::PRICE);
         $ad->setOutwardDate(new \DateTime());
-        
+        $ad->setUser($userManager->getLoggedUser());
+
         $form = $this->createForm(AdForm::class, $ad);
         $form->handleRequest($request);
         $error = false;
-        
+
         if ($form->isSubmitted()) {
             $ad = $adManager->prepareAd($ad, $request);
-            //echo "<pre>" . print_r($ad,true) . "</pre>";exit;
             if ($form->isValid()) {
-                if ($ad = $adManager->createAd($ad)) {
+                if ($ad = $adManager->createProposalFromAd($ad)) {
                     return $this->redirectToRoute('home');
                 }
                 $error = true;
@@ -80,7 +66,7 @@ class CarpoolController extends AbstractController
 
         return $this->render('@Mobicoop/ad/create.html.twig', [
             'form' => $form->createView(),
-            'error' => $error
+            'error' => $error,
         ]);
     }
 }

@@ -107,7 +107,7 @@ class Car
      * @var User The owner of the car.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="cars")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
      * @MaxDepth(1)

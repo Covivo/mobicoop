@@ -41,7 +41,7 @@ use App\PublicTransport\Entity\PTJourney;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={},
+ *      collectionOperations={"post"},
  *      itemOperations={"get"}
  * )
  */
@@ -349,7 +349,7 @@ class Criteria
     /**
      * @var Direction|null The direction used in the journey as a driver.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction")
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -358,7 +358,7 @@ class Criteria
     /**
      * @var Direction|null The direction used in the journey as a passenger.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction")
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -372,7 +372,15 @@ class Criteria
      * @MaxDepth(1)
      */
     private $ptjourney;
-    
+
+    /**
+     * @var Proposal The proposal that uses this criteria.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="criteria")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $proposal;
     
     public function getId(): ?int
     {
@@ -818,6 +826,18 @@ class Criteria
     {
         $this->ptjourney = $ptjourney;
         
+        return $this;
+    }
+
+    public function getProposal(): ?Proposal
+    {
+        return $this->proposal;
+    }
+
+    public function setProposal(Proposal $proposal): self
+    {
+        $this->proposal = $proposal;
+
         return $this;
     }
     
