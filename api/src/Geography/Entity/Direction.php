@@ -297,7 +297,7 @@ class Direction
         return $this->points;
     }
     
-    public function setPoints(Array $points): self
+    public function setPoints(array $points): self
     {
         $this->points = $points;
         

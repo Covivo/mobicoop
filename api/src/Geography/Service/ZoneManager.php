@@ -154,7 +154,7 @@ class ZoneManager
                 $zones = array_merge($zones, $this->getZonesForAddress($address, $deep));
             }
         }
-        return array_unique($zones,SORT_REGULAR);
+        return array_unique($zones, SORT_REGULAR);
     }
     
     /**
@@ -500,7 +500,7 @@ class pointLocation
             }
             if ($point['y'] > min($vertex1['y'], $vertex2['y']) and $point['y'] <= max($vertex1['y'], $vertex2['y']) and $point['x'] <= max($vertex1['x'], $vertex2['x']) and $vertex1['y'] != $vertex2['y']) {
                 $xinters = ($point['y'] - $vertex1['y']) * ($vertex2['x'] - $vertex1['x']) / ($vertex2['y'] - $vertex1['y']) + $vertex1['x'];
-                if ($xinters == $point['x']) { 
+                if ($xinters == $point['x']) {
                     return "boundary";
                 }
                 if ($vertex1['x'] == $vertex2['x'] || $point['x'] <= $xinters) {

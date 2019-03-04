@@ -79,7 +79,7 @@ class ProposalManager
             // creation of the zones
             $zones = $this->zoneManager->getZonesForAddresses($routes[0]->getPoints());
             foreach ($zones as $zone) {
-                 $routes[0]->addZone($zone);
+                $routes[0]->addZone($zone);
             }
             if ($proposal->getCriteria()->isDriver()) {
                 $proposal->getCriteria()->setDirectionDriver($routes[0]);
@@ -93,7 +93,7 @@ class ProposalManager
 
         // the linked proposal (return for an outward)
         $proposalLinked = null;
-        // the waypoints in reverse order if return trip 
+        // the waypoints in reverse order if return trip
         // /!\ for now we assume that the return trip uses the same waypoints as the outward) /!\
         $reversedWaypoints = [];
         $nbWaypoints = 0;
