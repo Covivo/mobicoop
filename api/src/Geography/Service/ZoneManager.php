@@ -39,14 +39,14 @@ use App\Geography\Repository\NearRepository;
  */
 class ZoneManager
 {
-    const ZONE_STEP = 0.25;         // la finesse de la grille en degré : 0.5 correspond à 0.5° de latitude et longitude
-    const ZONE_MIN_LAT = -55;       // sud chili
-    const ZONE_MAX_LAT = 71;        // nord norvege
+    const ZONE_STEP = 0.25;         // grid step granularity : 0.5 means 0.5° of latitude and longitude
+    const ZONE_MIN_LAT = -55;       // south of chili
+    const ZONE_MAX_LAT = 71;        // north of norway
     const ZONE_MIN_LON = -180;
     const ZONE_MAX_LON = 180;
-    const ZONE_FINE = 0.000001;     // la précision des valeurs de longitude et latitude stockées en base :
-    // par exemple pour une latitude 48, pour une précision de 0.000001 et un pas de 0.5
-    // => de 48.000000 à 48.499999, de 48.500000 à 48.999999 etc...
+    const ZONE_FINE = 0.000001;     // precision of latitude and longitude in the database :
+    // eg. for latitude 48, for a precision of 0.000001 and a step of 0.5
+    // => from 48.000000 to 48.499999, from 48.500000 to 48.999999 etc...
     
     const ZONE_EXCLUSION = [
         'south_atlantic' => [
@@ -154,11 +154,7 @@ class ZoneManager
                 $zones = array_merge($zones, $this->getZonesForAddress($address, $deep));
             }
         }
-        $return = [];
-        foreach ($zones as $zone) {
-            $return[] = $zone->getId();
-        }
-        return array_unique($return);
+        return array_unique($zones,SORT_REGULAR);
     }
     
     /**
@@ -246,231 +242,231 @@ class ZoneManager
      * Creation of geographic zones in the database.
      * Made in raw sql for performance optimization.
      */
-    public function createZones()
-    {
-        // Create connection
-        $conn = new \mysqli(
-            $this->entityManager->getConnection()->getHost(),
-            $this->entityManager->getConnection()->getUsername(),
-            $this->entityManager->getConnection()->getPassword(),
-            $this->entityManager->getConnection()->getDatabase()
-            );
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
+//     public function createZones()
+//     {
+//         // Create connection
+//         $conn = new \mysqli(
+//             $this->entityManager->getConnection()->getHost(),
+//             $this->entityManager->getConnection()->getUsername(),
+//             $this->entityManager->getConnection()->getPassword(),
+//             $this->entityManager->getConnection()->getDatabase()
+//             );
+//         // Check connection
+//         if ($conn->connect_error) {
+//             die("Connection failed: " . $conn->connect_error);
+//         }
         
-        $MIN_LAT = self::ZONE_MIN_LAT;
-        $MAX_LAT = self::ZONE_MAX_LAT;
-        $MIN_LON = self::ZONE_MIN_LON;
-        $MAX_LON = self::ZONE_MAX_LON;
-        $step = self::ZONE_STEP;
-        $fine = self::ZONE_FINE;
-        $delta = $step - $fine;
-        $zones = [];
+//         $MIN_LAT = self::ZONE_MIN_LAT;
+//         $MAX_LAT = self::ZONE_MAX_LAT;
+//         $MIN_LON = self::ZONE_MIN_LON;
+//         $MAX_LON = self::ZONE_MAX_LON;
+//         $step = self::ZONE_STEP;
+//         $fine = self::ZONE_FINE;
+//         $delta = $step - $fine;
+//         $zones = [];
         
-        $pointLocation = new pointLocation();
+//         $pointLocation = new pointLocation();
         
-        set_time_limit(0);
+//         set_time_limit(0);
         
-        // TRUNCATE TABLES
-        $time_start = microtime(true);
-        $sql = 'SET foreign_key_checks = 0;';
-        if (!$res = $conn->query($sql)) {
-            echo $conn->error;
-        }
-        $sql = 'TRUNCATE near;';
-        if (!$res = $conn->query($sql)) {
-            echo $conn->error;
-        }
-        $sql = 'TRUNCATE zone;';
-        if (!$res = $conn->query($sql)) {
-            echo $conn->error;
-        }
-        $sql = 'SET foreign_key_checks = 1;';
-        if (!$res = $conn->query($sql)) {
-            echo $conn->error;
-        }
-        $time_end = microtime(true);
-        $time = $time_end - $time_start;
-        echo 'Execution time for truncate : '.$time.' seconds<br />';
+//         // TRUNCATE TABLES
+//         $time_start = microtime(true);
+//         $sql = 'SET foreign_key_checks = 0;';
+//         if (!$res = $conn->query($sql)) {
+//             echo $conn->error;
+//         }
+//         $sql = 'TRUNCATE near;';
+//         if (!$res = $conn->query($sql)) {
+//             echo $conn->error;
+//         }
+//         $sql = 'TRUNCATE zone;';
+//         if (!$res = $conn->query($sql)) {
+//             echo $conn->error;
+//         }
+//         $sql = 'SET foreign_key_checks = 1;';
+//         if (!$res = $conn->query($sql)) {
+//             echo $conn->error;
+//         }
+//         $time_end = microtime(true);
+//         $time = $time_end - $time_start;
+//         echo 'Execution time for truncate : '.$time.' seconds<br />';
         
-        // CREATE ZONES
+//         // CREATE ZONES
         
-        $time_start = microtime(true);
-        $i=0;
-        for ($lat=$MIN_LAT;$lat<$MAX_LAT;$lat = $lat + $step) {
-            $sql = "INSERT INTO zone (id, from_lat, to_lat, from_lon, to_lon)
-            VALUES ";
-            for ($lon=$MIN_LON;$lon<$MAX_LON;$lon = $lon + $step) {
-                $i++;
-                $fromLat = $lat;
-                if (($lat + $step) == $MAX_LAT) {
-                    $toLat = $lat + $step;
-                } else {
-                    $toLat = $lat + $delta;
-                }
-                if ($lon == $MIN_LON) {
-                    $fromLon = $MIN_LON + $fine;
-                } else {
-                    $fromLon = $lon;
-                }
-                if (($lon + $step) == $MAX_LON) {
-                    $toLon = $lon + $step;
-                } else {
-                    $toLon = $lon + $delta;
-                }
+//         $time_start = microtime(true);
+//         $i=0;
+//         for ($lat=$MIN_LAT;$lat<$MAX_LAT;$lat = $lat + $step) {
+//             $sql = "INSERT INTO zone (id, from_lat, to_lat, from_lon, to_lon)
+//             VALUES ";
+//             for ($lon=$MIN_LON;$lon<$MAX_LON;$lon = $lon + $step) {
+//                 $i++;
+//                 $fromLat = $lat;
+//                 if (($lat + $step) == $MAX_LAT) {
+//                     $toLat = $lat + $step;
+//                 } else {
+//                     $toLat = $lat + $delta;
+//                 }
+//                 if ($lon == $MIN_LON) {
+//                     $fromLon = $MIN_LON + $fine;
+//                 } else {
+//                     $fromLon = $lon;
+//                 }
+//                 if (($lon + $step) == $MAX_LON) {
+//                     $toLon = $lon + $step;
+//                 } else {
+//                     $toLon = $lon + $delta;
+//                 }
                 
-                $exclude = false;
-                if (self::EXCLUDE_ZONES) {
-                    $point1 = $fromLat . " " . $fromLon;
-                    $point2 = $toLat . " " . $toLon;
-                    foreach (self::ZONE_EXCLUSION as $ocean=>$polygon) {
-                        if ($pointLocation->pointInPolygon($point1, $polygon) == "inside" && $pointLocation->pointInPolygon($point2, $polygon) == "inside") {
-                            $exclude = true;
-                            break(1);
-                        }
-                    }
-                }
-                if (!$exclude) {
-                    $sql .= "($i, $fromLat, $toLat, $fromLon, $toLon),";
-                    $zones[] = $i;  // on ajoute la zone à la liste des zones effectivement créées
-                }
-            }
-            $sql = rtrim($sql, ",");
-            $res = $conn->query($sql);
-        }
-        $time_end = microtime(true);
-        $time = $time_end - $time_start;
-        echo 'Execution time for create zones : '.$time.' seconds<br />';
+//                 $exclude = false;
+//                 if (self::EXCLUDE_ZONES) {
+//                     $point1 = $fromLat . " " . $fromLon;
+//                     $point2 = $toLat . " " . $toLon;
+//                     foreach (self::ZONE_EXCLUSION as $ocean=>$polygon) {
+//                         if ($pointLocation->pointInPolygon($point1, $polygon) == "inside" && $pointLocation->pointInPolygon($point2, $polygon) == "inside") {
+//                             $exclude = true;
+//                             break(1);
+//                         }
+//                     }
+//                 }
+//                 if (!$exclude) {
+//                     $sql .= "($i, $fromLat, $toLat, $fromLon, $toLon),";
+//                     $zones[] = $i;  // on ajoute la zone à la liste des zones effectivement créées
+//                 }
+//             }
+//             $sql = rtrim($sql, ",");
+//             $res = $conn->query($sql);
+//         }
+//         $time_end = microtime(true);
+//         $time = $time_end - $time_start;
+//         echo 'Execution time for create zones : '.$time.' seconds<br />';
         
-        // CREATE NEAR
+//         // CREATE NEAR
         
-        // les zones voisines de ZZ :
+//         // les zones voisines de ZZ :
         
-        // X1 X2 X3
-        // X4 ZZ X5
-        // X6 X7 X8
+//         // X1 X2 X3
+//         // X4 ZZ X5
+//         // X6 X7 X8
         
-        $time_start = microtime(true);
+//         $time_start = microtime(true);
         
-        $sql = "SELECT count(id) as nb FROM zone";
-        $result = $conn->query($sql);
+//         $sql = "SELECT count(id) as nb FROM zone";
+//         $result = $conn->query($sql);
         
-        $nbrows = 0;
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $nbrows = $row["nb"];
-            }
-        }
+//         $nbrows = 0;
+//         if ($result->num_rows > 0) {
+//             while ($row = $result->fetch_assoc()) {
+//                 $nbrows = $row["nb"];
+//             }
+//         }
         
-        $nbLon = ($MAX_LON - $MIN_LON)/$step;
-        $nbLat = (($MAX_LAT - $MIN_LAT)/$step)-1;
+//         $nbLon = ($MAX_LON - $MIN_LON)/$step;
+//         $nbLat = (($MAX_LAT - $MIN_LAT)/$step)-1;
         
-        $batchSize = 100;   // on va insérer les valeurs en base par batch pour optimiser le temps de traitement
-        $sql = "";
-        //for ($i=1;$i<=$nbrows;$i++) {
-        foreach ($zones as $i) {
-            if ($sql == "") {
-                $sql = "INSERT INTO near (zone1_id,zone2_id) VALUES ";
-            }
+//         $batchSize = 100;   // on va insérer les valeurs en base par batch pour optimiser le temps de traitement
+//         $sql = "";
+//         //for ($i=1;$i<=$nbrows;$i++) {
+//         foreach ($zones as $i) {
+//             if ($sql == "") {
+//                 $sql = "INSERT INTO near (zone1_id,zone2_id) VALUES ";
+//             }
             
-            // cas génériques (milieu de grille)
-            $x1 = $i-1-$nbLon;
-            $x2 = $i-$nbLon;
-            $x3 = $i+1-$nbLon;
-            $x4 = $i-1;
-            $x5 = $i+1;
-            $x6 = $i-1+$nbLon;
-            $x7 = $i+$nbLon;
-            $x8 = $i+1+$nbLon;
+//             // cas génériques (milieu de grille)
+//             $x1 = $i-1-$nbLon;
+//             $x2 = $i-$nbLon;
+//             $x3 = $i+1-$nbLon;
+//             $x4 = $i-1;
+//             $x5 = $i+1;
+//             $x6 = $i-1+$nbLon;
+//             $x7 = $i+$nbLon;
+//             $x8 = $i+1+$nbLon;
             
-            // on regarde si on est sur la première ligne ou la dernière ligne
-            if ($i<=$nbLon) {
-                // première ligne : pas de X1, X2, X3
-                $x1 = $x2 = $x3 = 0;
-                if ($i==1) {
-                    // premier de la première ligne
-                    $x4 = $i-1+$nbLon;
-                    $x6 = $x4+$nbLon;
-                } elseif ($i==$nbLon) {
-                    // dernier de la première ligne
-                    $x5 = $i-$nbLon+1;
-                    $x8 = $i+1;
-                }
-            } elseif ($i>($nbLat*$nbLon)) {
-                // dernière ligne : pas de X6, X7, X8
-                $x6 = $x7 = $x8 = 0;
-                if ((($i-1) % $nbLon) === 0) {
-                    // premier de la dernière ligne
-                    $x1 = $i-1;
-                    $x4 = $i-1+$nbLon;
-                } elseif (($i % $nbLon) === 0) {
-                    // dernier de la dernière ligne
-                    $x3 = $i-$nbLon-$nbLon+1;
-                    $x5 = $i-$nbLon+1;
-                }
-            } elseif ((($i-1) % $nbLon) === 0) {
-                // premier de la ligne
-                $x1 = $i-1;
-                $x4 = $i-1+$nbLon;
-                $x6 = $x4+$nbLon;
-            } elseif (($i % $nbLon) === 0) {
-                // dernier de la ligne
-                $x3 = $i-$nbLon-$nbLon+1;
-                $x5 = $i-$nbLon+1;
-                $x8 = $i+1;
-            }
+//             // on regarde si on est sur la première ligne ou la dernière ligne
+//             if ($i<=$nbLon) {
+//                 // première ligne : pas de X1, X2, X3
+//                 $x1 = $x2 = $x3 = 0;
+//                 if ($i==1) {
+//                     // premier de la première ligne
+//                     $x4 = $i-1+$nbLon;
+//                     $x6 = $x4+$nbLon;
+//                 } elseif ($i==$nbLon) {
+//                     // dernier de la première ligne
+//                     $x5 = $i-$nbLon+1;
+//                     $x8 = $i+1;
+//                 }
+//             } elseif ($i>($nbLat*$nbLon)) {
+//                 // dernière ligne : pas de X6, X7, X8
+//                 $x6 = $x7 = $x8 = 0;
+//                 if ((($i-1) % $nbLon) === 0) {
+//                     // premier de la dernière ligne
+//                     $x1 = $i-1;
+//                     $x4 = $i-1+$nbLon;
+//                 } elseif (($i % $nbLon) === 0) {
+//                     // dernier de la dernière ligne
+//                     $x3 = $i-$nbLon-$nbLon+1;
+//                     $x5 = $i-$nbLon+1;
+//                 }
+//             } elseif ((($i-1) % $nbLon) === 0) {
+//                 // premier de la ligne
+//                 $x1 = $i-1;
+//                 $x4 = $i-1+$nbLon;
+//                 $x6 = $x4+$nbLon;
+//             } elseif (($i % $nbLon) === 0) {
+//                 // dernier de la ligne
+//                 $x3 = $i-$nbLon-$nbLon+1;
+//                 $x5 = $i-$nbLon+1;
+//                 $x8 = $i+1;
+//             }
             
-            // pour chaque zone on va aussi vérifier qu'elle a effectivement été créée : il pourrait s'agir d'une zone exclue (océan)
-            if (($x1>0) && ((self::EXCLUDE_ZONES && in_array($x1, $zones)) || (!self::EXCLUDE_ZONES))) {
-                $sql .= "($i,$x1),";
-            }
-            if (($x2>0) && ((self::EXCLUDE_ZONES && in_array($x2, $zones)) || (!self::EXCLUDE_ZONES))) {
-                $sql .= "($i,$x2),";
-            }
-            if (($x3>0) && ((self::EXCLUDE_ZONES && in_array($x3, $zones)) || (!self::EXCLUDE_ZONES))) {
-                $sql .= "($i,$x3),";
-            }
-            if (($x4>0) && ((self::EXCLUDE_ZONES && in_array($x4, $zones)) || (!self::EXCLUDE_ZONES))) {
-                $sql .= "($i,$x4),";
-            }
-            if (($x5>0) && ((self::EXCLUDE_ZONES && in_array($x5, $zones)) || (!self::EXCLUDE_ZONES))) {
-                $sql .= "($i,$x5),";
-            }
-            if (($x6>0) && ((self::EXCLUDE_ZONES && in_array($x6, $zones)) || (!self::EXCLUDE_ZONES))) {
-                $sql .= "($i,$x6),";
-            }
-            if (($x7>0) && ((self::EXCLUDE_ZONES && in_array($x7, $zones)) || (!self::EXCLUDE_ZONES))) {
-                $sql .= "($i,$x7),";
-            }
-            if (($x8>0) && ((self::EXCLUDE_ZONES && in_array($x8, $zones)) || (!self::EXCLUDE_ZONES))) {
-                $sql .= "($i,$x8),";
-            }
+//             // pour chaque zone on va aussi vérifier qu'elle a effectivement été créée : il pourrait s'agir d'une zone exclue (océan)
+//             if (($x1>0) && ((self::EXCLUDE_ZONES && in_array($x1, $zones)) || (!self::EXCLUDE_ZONES))) {
+//                 $sql .= "($i,$x1),";
+//             }
+//             if (($x2>0) && ((self::EXCLUDE_ZONES && in_array($x2, $zones)) || (!self::EXCLUDE_ZONES))) {
+//                 $sql .= "($i,$x2),";
+//             }
+//             if (($x3>0) && ((self::EXCLUDE_ZONES && in_array($x3, $zones)) || (!self::EXCLUDE_ZONES))) {
+//                 $sql .= "($i,$x3),";
+//             }
+//             if (($x4>0) && ((self::EXCLUDE_ZONES && in_array($x4, $zones)) || (!self::EXCLUDE_ZONES))) {
+//                 $sql .= "($i,$x4),";
+//             }
+//             if (($x5>0) && ((self::EXCLUDE_ZONES && in_array($x5, $zones)) || (!self::EXCLUDE_ZONES))) {
+//                 $sql .= "($i,$x5),";
+//             }
+//             if (($x6>0) && ((self::EXCLUDE_ZONES && in_array($x6, $zones)) || (!self::EXCLUDE_ZONES))) {
+//                 $sql .= "($i,$x6),";
+//             }
+//             if (($x7>0) && ((self::EXCLUDE_ZONES && in_array($x7, $zones)) || (!self::EXCLUDE_ZONES))) {
+//                 $sql .= "($i,$x7),";
+//             }
+//             if (($x8>0) && ((self::EXCLUDE_ZONES && in_array($x8, $zones)) || (!self::EXCLUDE_ZONES))) {
+//                 $sql .= "($i,$x8),";
+//             }
             
-            if (($i % $batchSize) === 0) {
-                $sql = rtrim($sql, ",");
-                $conn->query($sql);
-                $sql = "";
-            }
-        }
+//             if (($i % $batchSize) === 0) {
+//                 $sql = rtrim($sql, ",");
+//                 $conn->query($sql);
+//                 $sql = "";
+//             }
+//         }
         
-        if ($sql != "") {
-            $sql = rtrim($sql, ",");
-            $res = $conn->query($sql);
-        }
+//         if ($sql != "") {
+//             $sql = rtrim($sql, ",");
+//             $res = $conn->query($sql);
+//         }
         
-        $time_end = microtime(true);
-        $time = $time_end - $time_start;
-        echo 'Execution time for create near : '.$time.' seconds';
+//         $time_end = microtime(true);
+//         $time = $time_end - $time_start;
+//         echo 'Execution time for create near : '.$time.' seconds';
         
-        $conn->close();
-    }
+//         $conn->close();
+//     }
 }
 
 class pointLocation
 {
-    public $pointOnVertex = true; // Vérifier si le point est exactement sur un sommet ?
+    public $pointOnVertex = true; // verify if a point is on a summit
     
     public function pointLocation()
     {
@@ -480,19 +476,19 @@ class pointLocation
     {
         $this->pointOnVertex = $pointOnVertex;
         
-        // Transformer chaque couple de coordonnées en un tableau de 2 valeurs (x et y)
+        // transform each coordinates tuple in a 2-value array (x and y)
         $point = $this->pointStringToCoordinates($point);
         $vertices = array();
         foreach ($polygon as $vertex) {
             $vertices[] = $this->pointStringToCoordinates($vertex);
         }
         
-        // Vérfier si le point est exactement sur un sommet
+        // verify if the point is exactly on a summit
         if ($this->pointOnVertex == true and $this->pointOnVertex($point, $vertices) == true) {
             return "vertex";
         }
         
-        // Vérifier si le point est dans le polygone ou sur le bord
+        // verify if the point is in the polygon or on a side
         $intersections = 0;
         $vertices_count = count($vertices);
         
@@ -504,7 +500,7 @@ class pointLocation
             }
             if ($point['y'] > min($vertex1['y'], $vertex2['y']) and $point['y'] <= max($vertex1['y'], $vertex2['y']) and $point['x'] <= max($vertex1['x'], $vertex2['x']) and $vertex1['y'] != $vertex2['y']) {
                 $xinters = ($point['y'] - $vertex1['y']) * ($vertex2['x'] - $vertex1['x']) / ($vertex2['y'] - $vertex1['y']) + $vertex1['x'];
-                if ($xinters == $point['x']) { // Vérifier si le point est sur un bord (autre qu'horizontal)
+                if ($xinters == $point['x']) { 
                     return "boundary";
                 }
                 if ($vertex1['x'] == $vertex2['x'] || $point['x'] <= $xinters) {
@@ -512,7 +508,7 @@ class pointLocation
                 }
             }
         }
-        // Si le nombre de bords par lesquels on passe est impair, le point est dans le polygone.
+        // if the number of cross borders is even, the point is in the polygon
         if ($intersections % 2 != 0) {
             return "inside";
         } else {

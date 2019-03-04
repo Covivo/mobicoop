@@ -27,7 +27,7 @@ use App\Carpool\Entity\Proposal;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Criteria;
 use App\Geography\Entity\Address;
-use App\Carpool\Entity\WayPoint;
+use App\Carpool\Entity\Waypoint;
 use App\Carpool\Repository\ProposalRepository;
 use App\Geography\Service\GeoRouter;
 use App\Geography\Entity\Direction;
@@ -45,15 +45,15 @@ class ProposalManager
     private $matchingAnalyzer;
     private $proposalRepository;
     private $geoRouter;
-    // private $zoneManager;
+    private $zoneManager;
 
-    public function __construct(EntityManagerInterface $entityManager, MatchingAnalyzer $matchingAnalyzer, ProposalRepository $proposalRepository, GeoRouter $geoRouter)
+    public function __construct(EntityManagerInterface $entityManager, MatchingAnalyzer $matchingAnalyzer, ProposalRepository $proposalRepository, GeoRouter $geoRouter, ZoneManager $zoneManager)
     {
         $this->entityManager = $entityManager;
         $this->matchingAnalyzer = $matchingAnalyzer;
         $this->proposalRepository = $proposalRepository;
         $this->geoRouter = $geoRouter;
-        // $this->zoneManager = $zoneManager;
+        $this->zoneManager = $zoneManager;
     }
     
     /**
@@ -63,26 +63,93 @@ class ProposalManager
      */
     public function createProposal(Proposal $proposal)
     {
+        //$proposal->setType(Proposal::TYPE_OUTWARD);
+
         // temporary initialisation, will be dumped when implementation of these fields will be done
         $proposal->getCriteria()->setSeats(1);
         $proposal->getCriteria()->setAnyRouteAsPassenger(true);
+        $proposal->getCriteria()->setFromTime($proposal->getCriteria()->getFromDate());
 
-        // creation of the directions
+        // creation of the directions for the outward
         $addresses = [];
         foreach ($proposal->getWaypoints() as $waypoint) {
             $addresses[] = $waypoint->getAddress();
         }
         if ($routes = $this->geoRouter->getRoutes($addresses)) {
             // creation of the zones
-            $points = $routes[0]->deserializePoints($routes[0]->getDetail(), false, filter_var(GeoRouterProvider::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN));
-            // $zones = $this->zoneManager->getZonesForAddresses($points);
-            // foreach ($zones as $zone) {
-            //     $routes[0]->addZone($zone);
-            // }
-            $proposal->getCriteria()->setDirectionDriver($routes[0]);
+            $zones = $this->zoneManager->getZonesForAddresses($routes[0]->getPoints());
+            foreach ($zones as $zone) {
+                 $routes[0]->addZone($zone);
+            }
+            if ($proposal->getCriteria()->isDriver()) {
+                $proposal->getCriteria()->setDirectionDriver($routes[0]);
+            }
+            if ($proposal->getCriteria()->isPassenger()) {
+                $proposal->getCriteria()->setDirectionPassenger($routes[0]);
+            }
         }
 
         $this->entityManager->persist($proposal);
+
+        // the linked proposal (return for an outward)
+        $proposalLinked = null;
+        // the waypoints in reverse order if return trip 
+        // /!\ for now we assume that the return trip uses the same waypoints as the outward) /!\
+        $reversedWaypoints = [];
+        $nbWaypoints = 0;
+        if ($proposal->getType() == Proposal::TYPE_OUTWARD) {
+            // we will need the reverse waypoints
+            $nbWaypoints = count($proposal->getWaypoints());
+            // we need to get the waypoints in reverse order
+            // we will read the wappoints a first time to create an array with the position as index
+            $aWaypoints = [];
+            foreach ($proposal->getWaypoints() as $proposalWaypoint) {
+                $aWaypoints[$proposalWaypoint->getPosition()] = $proposalWaypoint;
+            }
+            // we sort the array by key
+            ksort($aWaypoints);
+            // our array is ordered by position, we read it backwards
+            $reversedWaypoints = array_reverse($aWaypoints);
+            
+            $proposalLinked = clone $proposal;
+            $proposalLinked->setType(Proposal::TYPE_RETURN);
+            // criteria
+            $proposalLinked->setCriteria(clone $proposal->getCriteria());
+            foreach ($reversedWaypoints as $pos=>$proposalWaypoint) {
+                $waypoint = clone $proposalWaypoint;
+                $waypoint->setPosition($pos);
+                $waypoint->setIsDestination(false);
+                // address
+                $waypoint->setAddress(clone $proposalWaypoint->getAddress());
+                if ($pos == ($nbWaypoints-1)) {
+                    $waypoint->setIsDestination(true);
+                }
+                $proposalLinked->addWaypoint($waypoint);
+            }
+            
+            // creation of the directions for the return trip (if relevant)
+            $addresses = [];
+            foreach ($proposalLinked->getWaypoints() as $waypoint) {
+                $addresses[] = $waypoint->getAddress();
+            }
+            if ($routes = $this->geoRouter->getRoutes($addresses)) {
+                // creation of the zones
+                $zones = $this->zoneManager->getZonesForAddresses($routes[0]->getPoints());
+                foreach ($zones as $zone) {
+                    $routes[0]->addZone($zone);
+                }
+                if ($proposalLinked->getCriteria()->isDriver()) {
+                    $proposalLinked->getCriteria()->setDirectionDriver($routes[0]);
+                }
+                if ($proposalLinked->getCriteria()->isPassenger()) {
+                    $proposalLinked->getCriteria()->setDirectionPassenger($routes[0]);
+                }
+            }
+
+            $proposal->setProposalLinked($proposalLinked);
+            $this->entityManager->persist($proposalLinked);
+        }
+
         $this->entityManager->flush();
 
         // return the proposal (not really necessary, but good practice ?)
@@ -195,14 +262,14 @@ class ProposalManager
         $proposal = new Proposal();
         $proposal->setType(Proposal::TYPE_ONE_WAY);
         $addressFrom = new Address();
-        $addressFrom->setLongitude($from_longitude);
-        $addressFrom->setLatitude($from_latitude);
+        $addressFrom->setLongitude((string)$from_longitude);
+        $addressFrom->setLatitude((string)$from_latitude);
         // for now we don't search with coordinates, we force the localities for testing purpose
         // @todo delete the locality search only
         $addressFrom->setAddressLocality("Nancy");
         $addressTo = new Address();
-        $addressTo->setLongitude($to_longitude);
-        $addressTo->setLatitude($to_latitude);
+        $addressTo->setLongitude((string)$to_longitude);
+        $addressTo->setLatitude((string)$to_latitude);
         $addressTo->setAddressLocality("Metz");
         $waypointFrom = new Waypoint();
         $waypointFrom->setAddress($addressFrom);

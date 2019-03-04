@@ -132,6 +132,12 @@ class Direction
      * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Zone")
      */
     private $zones;
+
+    /**
+     * @var Address[]|null The decoded points (from detail) of the direction.
+     * Can be used to draw the path on a map.
+     */
+    private $points;
     
     public function __construct()
     {
@@ -282,6 +288,18 @@ class Direction
         if ($this->zones->contains($zone)) {
             $this->zones->removeElement($zone);
         }
+        
+        return $this;
+    }
+
+    public function getPoints(): array
+    {
+        return $this->points;
+    }
+    
+    public function setPoints(Array $points): self
+    {
+        $this->points = $points;
         
         return $this;
     }

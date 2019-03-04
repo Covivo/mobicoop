@@ -139,7 +139,10 @@ class GeoRouterProvider implements ProviderInterface
             }
         }
         if (isset($data["points"])) {
+            // we keep the encoded AND the decoded points
+            // the decoded points are not stored in the database
             $direction->setDetail($data["points"]);
+            $direction->setPoints($this->deserializePoints($data['points'], true, filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
         }
         $direction->setFormat('graphhopper');
         /*if (isset($data['points'])) {
