@@ -155,46 +155,6 @@ class ProposalManager
         // return the proposal (not really necessary, but good practice ?)
         return $proposal;
         
-        // $proposalLinked = null;
-        // $reversedWaypoints = [];
-        // $nbWaypoints = 0;
-        // if ($proposal->getType() == Proposal::TYPE_OUTWARD) {
-        //     // we will need the reverse waypoints
-        //     $nbWaypoints = count($proposal->getWaypoints());
-        //     // we need to get the waypoints in reverse order
-        //     // we will read the wappoints a first time to create an array with the position as index
-        //     $aWaypoints = [];
-        //     foreach ($proposal->getWaypoints() as $proposalWaypoint) {
-        //         $aWaypoints[$proposalWaypoint->getPosition()] = $proposalWaypoint;
-        //     }
-        //     // we sort the array by key
-        //     ksort($aWaypoints);
-        //     // our array is ordered by position, we read it backwards
-        //     $reversedWaypoints = array_reverse($aWaypoints);
-            
-        //     $proposalLinked = clone $proposal;
-        //     $proposalLinked->setType(Proposal::TYPE_RETURN);
-        //     // criteria
-        //     $proposalLinked->setCriteria(clone $proposal->getCriteria());
-        //     foreach ($reversedWaypoints as $pos=>$proposalWaypoint) {
-        //         $waypoint = clone $proposalWaypoint;
-        //         $waypoint->setPosition($pos);
-        //         $waypoint->setIsDestination(false);
-        //         // address
-        //         $waypoint->setAddress(clone $proposalWaypoint->getAddress());
-        //         if ($pos == ($nbWaypoints-1)) {
-        //             $waypoint->setIsDestination(true);
-        //         }
-        //         $proposalLinked->addWaypoint($waypoint);
-        //     }
-        //     $proposal->setProposalLinked($proposalLinked);
-        // }
-        
-        // persistence
-        // if (!is_null($proposalLinked)) {
-        //     $this->entityManager->persist($proposalLinked);
-        // }
-
         // matching analyze
         // => should be replaced by path analyzer when it's created
         // => the analyze would be asked when all paths are analyzed and returned

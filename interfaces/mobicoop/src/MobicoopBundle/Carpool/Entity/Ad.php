@@ -89,7 +89,7 @@ class Ad
     private $role;
     
     /**
-     * @var \DateTimeInterface Date of the outward travel if punctual.
+     * @var string Date of the outward travel if punctual (in string format as we use a datepicker).
      */
     private $outwardDate;
     
@@ -220,12 +220,12 @@ class Ad
         return $this;
     }
     
-    public function getOutwardDate(): ?\DateTimeInterface
+    public function getOutwardDate(): ?string
     {
         return $this->outwardDate;
     }
     
-    public function setOutwardDate(?\DateTimeInterface $outwardDate): self
+    public function setOutwardDate(?string $outwardDate): self
     {
         $this->outwardDate = $outwardDate;
         

@@ -42,12 +42,13 @@ class CarpoolController extends AbstractController
      */
     public function ad(AdManager $adManager, UserManager $userManager, Request $request)
     {
+        $date = new \DateTime();
         $ad = new Ad();
         $ad->setRole(Ad::ROLE_BOTH);
         $ad->setType(Ad::TYPE_ONE_WAY);
         $ad->setFrequency(Ad::FREQUENCY_PUNCTUAL);
         $ad->setPrice(Ad::PRICE);
-        $ad->setOutwardDate(new \DateTime());
+        $ad->setOutwardDate($date->format('Y-m-d H:i'));
         $ad->setUser($userManager->getLoggedUser());
 
         $form = $this->createForm(AdForm::class, $ad);

@@ -75,6 +75,7 @@
     "vue": "^2.5.17",
     "vue-affix": "^0.4.0",
     "vue-bootstrap-typeahead": "^0.2.6",
+    "vue-flatpickr-component": "^8.1.1",
     "vue-loader": "^15.4.2",
     "vue-loading-spinner": "^1.0.11",
     "vue-mapbox": "0.0.34",

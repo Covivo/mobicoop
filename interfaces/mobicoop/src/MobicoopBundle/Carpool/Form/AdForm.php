@@ -25,7 +25,6 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -34,7 +33,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Mobicoop\Bundle\MobicoopBundle\Form\Type\GeocompleteType;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Form\AddressForm;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Mobicoop\Bundle\MobicoopBundle\Form\Type\DatepickerType;
 
 /**
  * Ad form.
@@ -64,8 +63,8 @@ class AdForm extends AbstractType
                 'placeholder' => 'ad.destination.placeholder'
             ]
         ])
-        ->add('originAddress', AddressForm::class)
-        ->add('destinationAddress', AddressForm::class)
+        ->add('originAddress', AddressForm::class)      // not displayed directly => displayed by geocomplete; must be present here for validation
+        ->add('destinationAddress', AddressForm::class) // not displayed directly => displayed by geocomplete; must be present here for validation
         ->add('role', ChoiceType::class, [
             'choices'  => Ad::ROLES,
             'placeholder' => 'ad.role.placeholder',
@@ -73,11 +72,8 @@ class AdForm extends AbstractType
             'choice_translation_domain' => true,
             'label' => 'ad.role.label'
         ])
-        ->add('outwardDate', DateTimeType::class, [
+        ->add('outwardDate', DatepickerType::class, [
             'translation_domain' => 'carpool',
-            'years' => range(date('Y'), date('Y')+3),
-            'months' => range(1, 12),
-            'days' => range(1, 31),
             'label' => 'ad.outward_date.label'
         ])
         ->add('outwardMargin', ChoiceType::class, [

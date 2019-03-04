@@ -102,7 +102,7 @@ class AdManager
         }
 
         $criteria->setFrequency($ad->getFrequency());
-        $criteria->setFromDate($ad->getOutwardDate());
+        $criteria->setFromDate(\DateTime::createFromFormat('Y-m-d H:i', $ad->getOutwardDate()));
         $criteria->setPriceKm($ad->getPrice());
 
         $waypointOrigin = new Waypoint();

@@ -10,10 +10,11 @@ import '../../../css/page/home.scss';
 
 // Vue components
 import Geocomplete from '../../components/Geocomplete';
+import Datepicker from '../../components/Datepicker'
 
 Vue.use(Affix);
 Vue.use(Buefy);
 new Vue({
   el: '#app',
-  components: { Geocomplete},
+  components: { Geocomplete, Datepicker},
 });

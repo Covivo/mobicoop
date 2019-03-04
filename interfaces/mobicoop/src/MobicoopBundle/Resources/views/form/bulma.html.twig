@@ -246,6 +246,26 @@
     </div>
 {%- endblock geocomplete_row -%}
 
+{%- block datepicker_row -%}
+    <div class="field is-horizontal">
+    	<div class="field-label">
+	        {{- form_label(form) -}}
+	    </div>
+	    <div class="field-body">
+    		<div class="field">
+    		    <datepicker
+                    :pname="'{{ full_name}}'"
+                    :pclass="input"
+                    :pdate="'{{ value }}'"
+                    ></datepicker>
+                {%- if form.vars.attr.help_text is defined -%}
+                    <p class="help">{{ form.vars.attr.help_text }}</p>
+                {%- endif -%}
+            </div>
+        </div>
+    </div>
+{%- endblock datepicker_row -%}
+
 {# Errors #}
 
 {%- block form_errors -%}
