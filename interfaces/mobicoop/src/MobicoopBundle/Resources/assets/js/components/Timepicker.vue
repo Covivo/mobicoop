@@ -1,11 +1,11 @@
 <template>
   <div>
     <flat-pickr 
-      v-model="date"
+      v-model="time"
       :config="config"                                                          
-      :class="dclass" 
+      :class="tclass" 
       :name="name"
-      :value="vdate"
+      :value="vtime"
       >
     </flat-pickr>
   </div>
@@ -23,24 +23,25 @@
   export default {   
     props: {
       name: defaultString,
-      dclass: defaultString,
-      vdate: defaultString,
-      date: defaultString
+      tclass: defaultString,
+      time: defaultString,
+      vtime: defaultString
     }, 
     data () {
       return {
         // Get more form https://chmln.github.io/flatpickr/options/
         config: {
-          minDate: "today",
-          enableTime: false,
-          altFormat: 'd/m/Y',
+          enableTime:true,
+          noCalendar: true,
+          dateFormat: "H:i",
+          time_24hr: true,
+          altFormat: 'H:i',
           altInput: true,
-          dateFormat: 'Y-m-d',
           locale: French
         }       
       }
     },
-    name: "datepicker",
+    name: "timepicker",
     components: {
       flatPickr
     }
