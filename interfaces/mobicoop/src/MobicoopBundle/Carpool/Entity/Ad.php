@@ -137,11 +137,6 @@ class Ad
     private $toDate;
 
     /**
-     * @var bool Outward travel is done on mondays .
-     */
-    private $outwardMon;
-
-    /**
      * @var string Time of the outward travel on mondays .
      */
     private $outwardMonTime;
@@ -150,11 +145,6 @@ class Ad
      * @var int Margin time of the outward travel on mondays.
      */
     private $outwardMonMargin;
-
-    /**
-     * @var bool Return travel is done on mondays .
-     */
-    private $returnMon;
 
     /**
      * @var string Time of the return travel on mondays.
@@ -167,11 +157,6 @@ class Ad
     private $returnMonMargin;
 
     /**
-     * @var bool Outward travel is done on tuesdays .
-     */
-    private $outwardTue;
-
-    /**
      * @var string Time of the outward travel on tuesdays .
      */
     private $outwardTueTime;
@@ -180,11 +165,6 @@ class Ad
      * @var int Margin time of the outward travel on tuesdays.
      */
     private $outwardTueMargin;
-
-    /**
-     * @var bool Return travel is done on tuesdays .
-     */
-    private $returnTue;
 
     /**
      * @var string Time of the return travel on tuesdays.
@@ -197,11 +177,6 @@ class Ad
     private $returnTueMargin;
 
     /**
-     * @var bool Outward travel is done on wednesdays .
-     */
-    private $outwardWed;
-
-    /**
      * @var string Time of the outward travel on wednesdays .
      */
     private $outwardWedTime;
@@ -210,11 +185,6 @@ class Ad
      * @var int Margin time of the outward travel on wednesdays.
      */
     private $outwardWedMargin;
-
-    /**
-     * @var bool Return travel is done on wednesdays .
-     */
-    private $returnWed;
 
     /**
      * @var string Time of the return travel on wednesdays.
@@ -227,11 +197,6 @@ class Ad
     private $returnWedMargin;
 
     /**
-     * @var bool Outward travel is done on thursdays .
-     */
-    private $outwardThu;
-
-    /**
      * @var string Time of the outward travel on thursdays .
      */
     private $outwardThuTime;
@@ -240,11 +205,6 @@ class Ad
      * @var int Margin time of the outward travel on thursdays.
      */
     private $outwardThuMargin;
-
-    /**
-     * @var bool Return travel is done on thursdays .
-     */
-    private $returnThu;
 
     /**
      * @var string Time of the return travel on thursdays.
@@ -257,11 +217,6 @@ class Ad
     private $returnThuMargin;
 
     /**
-     * @var bool Outward travel is done on fridays .
-     */
-    private $outwardFri;
-
-    /**
      * @var string Time of the outward travel on fridays .
      */
     private $outwardFriTime;
@@ -270,11 +225,6 @@ class Ad
      * @var int Margin time of the outward travel on fridays.
      */
     private $outwardFriMargin;
-
-    /**
-     * @var bool Return travel is done on fridays .
-     */
-    private $returnFri;
 
     /**
      * @var string Time of the return travel on fridays.
@@ -287,11 +237,6 @@ class Ad
     private $returnFriMargin;
 
     /**
-     * @var bool Outward travel is done on saturdays .
-     */
-    private $outwardSat;
-
-    /**
      * @var string Time of the outward travel on saturdays .
      */
     private $outwardSatTime;
@@ -300,11 +245,6 @@ class Ad
      * @var int Margin time of the outward travel on saturdays.
      */
     private $outwardSatMargin;
-
-    /**
-     * @var bool Return travel is done on saturdays .
-     */
-    private $returnSat;
 
     /**
      * @var string Time of the return travel on saturdays.
@@ -317,11 +257,6 @@ class Ad
     private $returnSatMargin;
 
     /**
-     * @var bool Outward travel is done on sundays .
-     */
-    private $outwardSun;
-
-    /**
      * @var string Time of the outward travel on sundays .
      */
     private $outwardSunTime;
@@ -330,11 +265,6 @@ class Ad
      * @var int Margin time of the outward travel on sundays.
      */
     private $outwardSunMargin;
-
-    /**
-     * @var bool Return travel is done on sundays .
-     */
-    private $returnSun;
 
     /**
      * @var string Time of the return travel on sundays.
@@ -471,7 +401,7 @@ class Ad
         return $this->outwardMargin;
     }
     
-    public function setOutwardMargin(int $outwardMargin): self
+    public function setOutwardMargin(?int $outwardMargin): self
     {
         $this->outwardMargin = $outwardMargin;
         
@@ -507,7 +437,7 @@ class Ad
         return $this->returnMargin;
     }
     
-    public function setReturnMargin(int $returnMargin): self
+    public function setReturnMargin(?int $returnMargin): self
     {
         $this->returnMargin = $returnMargin;
         
@@ -569,7 +499,7 @@ class Ad
         return $this->outwardMonMargin;
     }
     
-    public function setOutwardMonMargin(?string $outwardMonMargin): self
+    public function setOutwardMonMargin(?int $outwardMonMargin): self
     {
         $this->outwardMonMargin = $outwardMonMargin;
         
@@ -605,7 +535,7 @@ class Ad
         return $this->returnMonMargin;
     }
     
-    public function setReturnMonMargin(?string $returnMonMargin): self
+    public function setReturnMonMargin(?int $returnMonMargin): self
     {
         $this->oreturnMonMargin = $returnMonMargin;
         
@@ -641,7 +571,7 @@ class Ad
         return $this->outwardTueMargin;
     }
     
-    public function setOutwardTueMargin(?string $outwardTueMargin): self
+    public function setOutwardTueMargin(?int $outwardTueMargin): self
     {
         $this->outwardTueMargin = $outwardTueMargin;
         
@@ -677,7 +607,7 @@ class Ad
         return $this->returnTueMargin;
     }
     
-    public function setReturnTueMargin(?string $returnTueMargin): self
+    public function setReturnTueMargin(?int $returnTueMargin): self
     {
         $this->oreturnTueMargin = $returnTueMargin;
         
@@ -713,7 +643,7 @@ class Ad
         return $this->outwardWedMargin;
     }
     
-    public function setOutwardWedMargin(?string $outwardWedMargin): self
+    public function setOutwardWedMargin(?int $outwardWedMargin): self
     {
         $this->outwardWedMargin = $outwardWedMargin;
         
@@ -749,7 +679,7 @@ class Ad
         return $this->returnWedMargin;
     }
     
-    public function setReturnWedMargin(?string $returnWedMargin): self
+    public function setReturnWedMargin(?int $returnWedMargin): self
     {
         $this->oreturnWedMargin = $returnWedMargin;
         
@@ -785,7 +715,7 @@ class Ad
         return $this->outwardThuMargin;
     }
     
-    public function setOutwardThuMargin(?string $outwardThuMargin): self
+    public function setOutwardThuMargin(?int $outwardThuMargin): self
     {
         $this->outwardThuMargin = $outwardThuMargin;
         
@@ -821,7 +751,7 @@ class Ad
         return $this->returnThuMargin;
     }
     
-    public function setReturnThuMargin(?string $returnThuMargin): self
+    public function setReturnThuMargin(?int $returnThuMargin): self
     {
         $this->oreturnThuMargin = $returnThuMargin;
         
@@ -857,7 +787,7 @@ class Ad
         return $this->outwardFriMargin;
     }
     
-    public function setOutwardFriMargin(?string $outwardFriMargin): self
+    public function setOutwardFriMargin(?int $outwardFriMargin): self
     {
         $this->outwardFriMargin = $outwardFriMargin;
         
@@ -893,7 +823,7 @@ class Ad
         return $this->returnFriMargin;
     }
     
-    public function setReturnFriMargin(?string $returnFriMargin): self
+    public function setReturnFriMargin(?int $returnFriMargin): self
     {
         $this->oreturnFriMargin = $returnFriMargin;
         
@@ -929,7 +859,7 @@ class Ad
         return $this->outwardSatMargin;
     }
     
-    public function setOutwardSatMargin(?string $outwardSatMargin): self
+    public function setOutwardSatMargin(?int $outwardSatMargin): self
     {
         $this->outwardSatMargin = $outwardSatMargin;
         
@@ -965,7 +895,7 @@ class Ad
         return $this->returnSatMargin;
     }
     
-    public function setReturnSatMargin(?string $returnSatMargin): self
+    public function setReturnSatMargin(?int $returnSatMargin): self
     {
         $this->oreturnSatMargin = $returnSatMargin;
         
@@ -1001,7 +931,7 @@ class Ad
         return $this->outwardSunMargin;
     }
     
-    public function setOutwardSunMargin(?string $outwardSunMargin): self
+    public function setOutwardSunMargin(?int $outwardSunMargin): self
     {
         $this->outwardSunMargin = $outwardSunMargin;
         
@@ -1037,7 +967,7 @@ class Ad
         return $this->returnSunMargin;
     }
     
-    public function setReturnSunMargin(?string $returnSunMargin): self
+    public function setReturnSunMargin(?int $returnSunMargin): self
     {
         $this->oreturnSunMargin = $returnSunMargin;
         
@@ -1157,7 +1087,7 @@ class Ad
         return $this->originAddress;
     }
     
-    public function setOriginAddress(?Address $originAddress): self
+    public function setOriginAddress(Address $originAddress): self
     {
         $this->originAddress = $originAddress;
         
@@ -1169,7 +1099,7 @@ class Ad
         return $this->destinationAddress;
     }
     
-    public function setDestinationAddress(?Address $destinationAddress): self
+    public function setDestinationAddress(Address $destinationAddress): self
     {
         $this->destinationAddress = $destinationAddress;
         

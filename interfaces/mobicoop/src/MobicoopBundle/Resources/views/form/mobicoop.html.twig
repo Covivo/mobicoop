@@ -1,0 +1,190 @@
+{# mobicoop form theme #}
+
+{# Widgets #}
+
+{%- block choice_widget_expanded -%}
+    {%- if '--inline' in form.vars.attr.class|default('') -%}
+        {%- set inline_choice = true -%}
+    {%- endif -%}
+
+    {%- if inline_choice|default(false) == true -%}
+        <div {{ block('form_widget_container_attributes') }}>
+    {%- endif -%}
+    
+    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' control')|trim}) -%}
+    {# we define a type to avoid extra attributes to be rendered in the container #}
+    {%- set vtype = 'choice_widget_expanded' -%}
+    <template>
+        <section>
+            <div {{ block('widget_container_attributes') }}>
+                {%- for child in form -%}
+                    {{- form_widget(child, {
+                        inline_choice: inline_choice|default(false),
+                        translation_domain: choice_translation_domain,
+                        vtype: vtype,
+                        attr: attr
+                    }) -}}
+                {%- endfor -%}
+                {{- block('form_errors') -}}
+            </div>
+        </section>
+    </template>
+    <script>
+        export default {
+            data() {
+                return {
+                    {%- for attrname, attrvalue in attr -%}
+                        {{- " " -}}
+                        {%- if attrname not in ['placeholder', 'title', 'class'] -%}
+                            {{- attrname }}="{{ attrvalue }}",
+                        {%- endif -%}
+                    {%- endfor -%}
+                }
+            }
+        }
+    </script>
+    {%- if inline_choice|default(false) == true -%}
+        </div>
+    {%- endif -%}
+{%- endblock choice_widget_expanded -%}
+
+{% block radio_widget -%}   
+    {{- block('vradio_widget') -}}
+    {# {{- form_label(form, null, { widget: vwidget }) -}} #}
+{%- endblock radio_widget %}
+
+{# Labels #}
+
+{# Rows #}
+
+{%- block form_row -%}
+    <div class="field is-horizontal">
+    	<div class="field-label">
+	        {{- form_label(form) -}}
+	    </div>
+	    <div class="field-body">
+    		<div class="field">
+                {{- form_widget(form) -}}
+                {%- if form.vars.attr.help_text is defined -%}
+                    <p class="help">{{ form.vars.attr.help_text }}</p>
+                {%- endif -%}
+            </div>
+        </div>
+    </div>
+{%- endblock form_row -%}
+
+{%- block geocomplete_row -%}
+    <div class="field is-horizontal">
+    	<div class="field-label">
+	        {{- form_label(form) -}}
+	    </div>
+	    <div class="field-body">
+    		<div class="field">
+    		    <geocomplete 
+                	:url="'{{ form.vars.url }}'"
+                	:required="'{{ form.vars.required }}'"
+                	:placeholder="`{{ translation_domain is same as(false) ? form.vars.attr.placeholder : form.vars.attr.placeholder|trans({}, translation_domain) }}`"
+                	:iclass="'input'"
+                	:name="'{{ full_name }}'"
+                	:streetaddress="'{{ form.parent.vars.name }}[{{ form.vars.address }}][streetAddress]'"
+                	:postalcode="'{{ form.parent.vars.name }}[{{ form.vars.address }}][postalCode]'"
+                	:addresslocality="'{{ form.parent.vars.name }}[{{ form.vars.address }}][addressLocality]'"
+                	:addresscountry="'{{ form.parent.vars.name }}[{{ form.vars.address }}][addressCountry]'"
+                	:longitude="'{{ form.parent.vars.name }}[{{ form.vars.address }}][longitude]'"
+                	:latitude="'{{ form.parent.vars.name }}[{{ form.vars.address }}][latitude]'"
+                	></geocomplete>
+                {%- if form.vars.attr.help_text is defined -%}
+                    <p class="help">{{ form.vars.attr.help_text }}</p>
+                {%- endif -%}
+            </div>
+            {{- block('form_errors') -}}
+        </div>
+    </div>
+{%- endblock geocomplete_row -%}
+
+{%- block datepicker_row -%}
+    <div class="field is-horizontal">
+    	<div class="field-label">
+	        {{- form_label(form) -}}
+	    </div>
+	    <div class="field-body">
+    		<div class="field">
+    		    <datepicker
+                    :name="'{{ full_name}}'"
+                    dclass='input'
+                    :vdate="'{{ value }}'"
+                    ></datepicker>
+                {%- if form.vars.attr.help_text is defined -%}
+                    <p class="help">{{ form.vars.attr.help_text }}</p>
+                {%- endif -%}
+            </div>
+        </div>
+    </div>
+{%- endblock datepicker_row -%}
+
+{%- block timepicker_row -%}
+    <div class="field is-horizontal">
+    	<div class="field-label">
+	        {{- form_label(form) -}}
+	    </div>
+	    <div class="field-body">
+    		<div class="field">
+    		    <timepicker
+                    :name="'{{ full_name}}'"
+                    tclass='inputt'
+                    :vdate="'{{ value }}'"
+                    ></timepicker>
+                {%- if form.vars.attr.help_text is defined -%}
+                    <p class="help">{{ form.vars.attr.help_text }}</p>
+                {%- endif -%}
+            </div>
+        </div>
+    </div>
+{%- endblock timepicker_row -%}
+
+{# Errors #}
+
+{# Support #}
+
+{% block attributes -%}
+    {%- if vtype is not defined -%}
+        {%- for attrname, attrvalue in attr -%}
+            {{- " " -}}
+            {%- if attrname in ['placeholder', 'title'] -%}
+                {{- attrname }}="{{ translation_domain is same as(false) ? attrvalue : attrvalue|trans({}, translation_domain) }}"
+            {%- elseif attrvalue is same as(true) -%}
+                {{- attrname }}="{{ attrname }}"
+            {%- elseif attrvalue is not same as(false) -%}
+                {{- attrname }}="{{ attrvalue }}"
+            {%- endif -%}
+        {%- endfor -%}
+    {%- endif -%}
+{%- endblock attributes -%}
+
+{%- block vradio_widget -%}
+    {# <input type="radio" {{ block('vwidget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} /> #}
+    <b-radio {{ block('vwidget_attributes') }}
+        native-value="{{ value }}">
+        {%- if translation_domain is same as(false) -%}
+            {{- label -}}
+        {%- else -%}
+            {{- label|trans({}, translation_domain) -}}
+        {%- endif -%}
+    </b-radio>
+{%- endblock vradio_widget -%}
+
+{%- block vwidget_attributes -%}
+    id="{{ id }}" name="{{ full_name }}"
+    {%- if disabled %} disabled="disabled"{% endif -%}
+    {%- if required %} required="required"{% endif -%}
+    {{ block('vattributes') }}
+{%- endblock vwidget_attributes -%}
+
+{% block vattributes -%}
+    {%- for attrname, attrvalue in attr -%}
+        {%- if attrname not in ['class'] -%}
+            {{- " " -}}    
+            {{- attrname }}="{{ attrvalue }}"
+        {%- endif -%}
+    {%- endfor -%}
+{%- endblock vattributes -%}

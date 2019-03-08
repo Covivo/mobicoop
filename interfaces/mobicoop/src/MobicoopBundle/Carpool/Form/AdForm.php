@@ -52,6 +52,7 @@ class AdForm extends AbstractType
             'address' => 'originAddress',
             'translation_domain' => 'carpool',
             'label' => 'ad.origin.label',
+            'required' => true,
             'attr' => [
                 'placeholder' => 'ad.origin.placeholder'
             ]
@@ -61,6 +62,7 @@ class AdForm extends AbstractType
             'address' => 'destinationAddress',
             'translation_domain' => 'carpool',
             'label' => 'ad.destination.label',
+            'required' => true,
             'attr' => [
                 'placeholder' => 'ad.destination.placeholder'
             ]
@@ -73,18 +75,20 @@ class AdForm extends AbstractType
             'placeholder' => 'ad.role.placeholder',
             'translation_domain' => 'carpool',
             'choice_translation_domain' => true,
-            'label' => 'ad.role.label'
+            'label' => 'ad.role.label',
+            'attr' => [
+                'v-model' => 'role'
+            ]
         ])
         ->add('type', ChoiceType::class, [
             'choices'  => Ad::TYPES,
-            'expanded' => false,
+            'expanded' => true,
             'placeholder' => 'ad.type.placeholder',
             'translation_domain' => 'carpool',
             'choice_translation_domain' => true,
             'label' => 'ad.type.label',
             'attr' => [
-                'v-model' => 'type',
-                'erjhoei' => 'nnonon'
+                'v-model' => 'type'
             ]
         ])
         ->add('frequency', ChoiceType::class, [
@@ -102,60 +106,61 @@ class AdForm extends AbstractType
         // PUNCTUAL
         ->add('outwardDate', DatepickerType::class, [
             'translation_domain' => 'carpool',
-            'label' => 'ad.outward_date.label'
+            'label' => 'ad.outward_date.label',
+            'required' => false
         ])
         ->add('outwardTime', TimepickerType::class, [
             'translation_domain' => 'carpool',
-            'label' => 'ad.outward_time.label'
+            'label' => 'ad.outward_time.label',
+            'required' => false
         ])
         ->add('outwardMargin', ChoiceType::class, [
             'choices'  => Ad::MARGIN_TIME,
             'placeholder' => 'ad.margin.placeholder',
             'translation_domain' => 'carpool',
             'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
+            'label' => 'ad.margin.label',
+            'required' => false
         ])
         ->add('returnDate', DatepickerType::class, [
             'translation_domain' => 'carpool',
-            'label' => 'ad.return_date.label'
+            'label' => 'ad.return_date.label',
+            'required' => false
         ])
         ->add('returnTime', TimepickerType::class, [
             'translation_domain' => 'carpool',
-            'label' => 'ad.return_time.label'
+            'label' => 'ad.return_time.label',
+            'required' => false
         ])
         ->add('returnMargin', ChoiceType::class, [
             'choices'  => Ad::MARGIN_TIME,
             'placeholder' => 'ad.margin.placeholder',
             'translation_domain' => 'carpool',
             'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
+            'label' => 'ad.margin.label',
+            'required' => false
         ])
         // REGULAR
         ->add('fromDate', DatepickerType::class, [
             'translation_domain' => 'carpool',
-            'label' => 'ad.from_date.label'
+            'label' => 'ad.from_date.label',
+            'required' => false
         ])
         ->add('toDate', DatepickerType::class, [
             'translation_domain' => 'carpool',
-            'label' => 'ad.to_date.label'
-        ])
-        ->add('outwardMon', CheckboxType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_mon.label'
+            'label' => 'ad.to_date.label',
+            'required' => false
         ])
         ->add('outwardMonTime', TimepickerType::class, [
             'translation_domain' => 'carpool',
-            'label' => 'ad.outward_mon_time.label'
+            'label' => 'ad.outward_mon_time.label',
+            'required' => false
         ])
         ->add('outwardMonMargin', ChoiceType::class, [
             'choices'  => Ad::MARGIN_TIME,
             'translation_domain' => 'carpool',
             'choice_translation_domain' => false,
             'label' => 'ad.margin.label'
-        ])
-        ->add('outwardTue', CheckboxType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_tue.label'
         ])
         ->add('outwardTueTime', TimepickerType::class, [
             'translation_domain' => 'carpool',
@@ -167,10 +172,6 @@ class AdForm extends AbstractType
             'choice_translation_domain' => false,
             'label' => 'ad.margin.label'
         ])
-        ->add('outwardWed', CheckboxType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_wed.label'
-        ])
         ->add('outwardWedTime', TimepickerType::class, [
             'translation_domain' => 'carpool',
             'label' => 'ad.outward_wed_time.label'
@@ -180,10 +181,6 @@ class AdForm extends AbstractType
             'translation_domain' => 'carpool',
             'choice_translation_domain' => false,
             'label' => 'ad.margin.label'
-        ])
-        ->add('outwardThu', CheckboxType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_thu.label'
         ])
         ->add('outwardThuTime', TimepickerType::class, [
             'translation_domain' => 'carpool',
@@ -195,10 +192,6 @@ class AdForm extends AbstractType
             'choice_translation_domain' => false,
             'label' => 'ad.margin.label'
         ])
-        ->add('outwardFri', CheckboxType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_fri.label'
-        ])
         ->add('outwardFriTime', TimepickerType::class, [
             'translation_domain' => 'carpool',
             'label' => 'ad.outward_fri_time.label'
@@ -208,10 +201,6 @@ class AdForm extends AbstractType
             'translation_domain' => 'carpool',
             'choice_translation_domain' => false,
             'label' => 'ad.margin.label'
-        ])
-        ->add('outwardSat', CheckboxType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_sat.label'
         ])
         ->add('outwardSatTime', TimepickerType::class, [
             'translation_domain' => 'carpool',
@@ -223,10 +212,6 @@ class AdForm extends AbstractType
             'choice_translation_domain' => false,
             'label' => 'ad.margin.label'
         ])
-        ->add('outwardSun', CheckboxType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_sun.label'
-        ])
         ->add('outwardSunTime', TimepickerType::class, [
             'translation_domain' => 'carpool',
             'label' => 'ad.outward_sun_time.label'
@@ -236,10 +221,6 @@ class AdForm extends AbstractType
             'translation_domain' => 'carpool',
             'choice_translation_domain' => false,
             'label' => 'ad.margin.label'
-        ])
-        ->add('returnMon', CheckboxType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_mon.label'
         ])
         ->add('returnMonTime', TimepickerType::class, [
             'translation_domain' => 'carpool',
@@ -251,10 +232,6 @@ class AdForm extends AbstractType
             'choice_translation_domain' => false,
             'label' => 'ad.margin.label'
         ])
-        ->add('returnTue', CheckboxType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_tue.label'
-        ])
         ->add('returnTueTime', TimepickerType::class, [
             'translation_domain' => 'carpool',
             'label' => 'ad.return_tue_time.label'
@@ -264,10 +241,6 @@ class AdForm extends AbstractType
             'translation_domain' => 'carpool',
             'choice_translation_domain' => false,
             'label' => 'ad.margin.label'
-        ])
-        ->add('returnWed', CheckboxType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_wed.label'
         ])
         ->add('returnWedTime', TimepickerType::class, [
             'translation_domain' => 'carpool',
@@ -279,10 +252,6 @@ class AdForm extends AbstractType
             'choice_translation_domain' => false,
             'label' => 'ad.margin.label'
         ])
-        ->add('returnThu', CheckboxType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_thu.label'
-        ])
         ->add('returnThuTime', TimepickerType::class, [
             'translation_domain' => 'carpool',
             'label' => 'ad.return_thu_time.label'
@@ -292,10 +261,6 @@ class AdForm extends AbstractType
             'translation_domain' => 'carpool',
             'choice_translation_domain' => false,
             'label' => 'ad.margin.label'
-        ])
-        ->add('returnFri', CheckboxType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_fri.label'
         ])
         ->add('returnFriTime', TimepickerType::class, [
             'translation_domain' => 'carpool',
@@ -307,10 +272,6 @@ class AdForm extends AbstractType
             'choice_translation_domain' => false,
             'label' => 'ad.margin.label'
         ])
-        ->add('returnSat', CheckboxType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_sat.label'
-        ])
         ->add('returnSatTime', TimepickerType::class, [
             'translation_domain' => 'carpool',
             'label' => 'ad.return_sat_time.label'
@@ -320,10 +281,6 @@ class AdForm extends AbstractType
             'translation_domain' => 'carpool',
             'choice_translation_domain' => false,
             'label' => 'ad.margin.label'
-        ])
-        ->add('returnSun', CheckboxType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_sun.label'
         ])
         ->add('returnSunTime', TimepickerType::class, [
             'translation_domain' => 'carpool',

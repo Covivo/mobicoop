@@ -42,34 +42,6 @@ ad:
         label: 'Date de début'
     to_date:
         label: 'Date de fin'
-    outward_mon:
-        label: 'Lundi'    
-    outward_tue:
-        label: 'Mardi'    
-    outward_wed:
-        label: 'Mercredi'    
-    outward_thu:
-        label: 'Jeudi'    
-    outward_fri:
-        label: 'Vendredi'    
-    outward_sat:
-        label: 'Samedi'    
-    outward_sun:
-        label: 'Dimanche'
-    return_mon:
-        label: 'Lundi'    
-    return_tue:
-        label: 'Mardi'    
-    return_wed:
-        label: 'Mercredi'    
-    return_thu:
-        label: 'Jeudi'    
-    return_fri:
-        label: 'Vendredi'    
-    return_sat:
-        label: 'Samedi'    
-    return_sun:
-        label: 'Dimanche'
     outward_mon_time:
         label: 'Heure'    
     outward_tue_time:
