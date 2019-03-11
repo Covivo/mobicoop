@@ -41,7 +41,7 @@
         native-value="{{ value }}">
         {{ vlabel }}
     </b-radio> #}
-    <vradio
+    <vradio {{ block('widget_attributes') }}
         :name="'{{ full_name }}'"
         :id="'{{ id }}'"
         :model="'{{ form.parent.vars.model }}'"
