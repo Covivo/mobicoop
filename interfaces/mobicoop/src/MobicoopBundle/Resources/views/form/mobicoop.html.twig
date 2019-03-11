@@ -36,12 +36,20 @@
     {%- else -%}
         {% set vlabel = label|trans({}, translation_domain) %}
     {%- endif -%}
-    <radio {{ block('widget_attributes') }}
-        :model="{{ form.parent.vars.model }}"
-        :value="{{ value }}" 
-        {# :label="{{ vlabel }}" #}
+    {# <b-radio {{ block('widget_attributes') }}
+        v-model="{{ form.parent.vars.model }}"
+        native-value="{{ value }}">
+        {{ vlabel }}
+    </b-radio> #}
+    <vradio
+        :name="'{{ full_name }}'"
+        :id="'{{ id }}'"
+        :model="'{{ form.parent.vars.model }}'"
+        :value="'{{ value }}'" 
+        :label="'{{ vlabel }}'"
+        :checked="{{ checked ? 'true' : 'false' }}"
         >
-    </radio>
+    </vradio>
 {%- endblock vradio_widget %}
 
 

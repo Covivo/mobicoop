@@ -30,7 +30,7 @@
         {{ form_row(form.role) }}
         {{ form_row(form.type) }}
         {{ form_row(form.frequency) }}
-        <div v-show="frequency==1">
+        <div v-show="sfrequency==1">
             <div class="columns">
                 <div class="column">
                     <h2 class="title">Aller</h2>
@@ -38,7 +38,7 @@
                     {{ form_row(form.outwardTime) }}
                     {{ form_row(form.outwardMargin) }}
                 </div>
-                <div class="column" v-show="type==2">
+                <div class="column" v-show="stype==2">
                     <h2 class="title">Retour</h2>
                     {{ form_row(form.returnDate) }}
                     {{ form_row(form.returnTime) }}
@@ -46,7 +46,7 @@
                 </div>
             </div>
         </div>
-        <div v-show="frequency==2">
+        <div v-show="sfrequency==2">
             {{ form_row(form.fromDate) }}
             {{ form_row(form.toDate) }}
             <div class="columns">
@@ -67,7 +67,7 @@
                     {{ form_row(form.outwardSunTime) }}
                     {{ form_row(form.outwardSunMargin) }}
                 </div>
-                <div class="column" v-show="type==2">
+                <div class="column" v-show="stype==2">
                     <h2 class="title">Retour</h2>
                     {{ form_row(form.returnMonTime) }}
                     {{ form_row(form.returnMonMargin) }}
