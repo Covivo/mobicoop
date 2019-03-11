@@ -1,19 +1,11 @@
+{%- use "@Mobicoop/form/bulma.html.twig" -%}
 {# mobicoop form theme #}
 
 {# Widgets #}
 
-{%- block choice_widget_expanded -%}
-    {%- if '--inline' in form.vars.attr.class|default('') -%}
-        {%- set inline_choice = true -%}
-    {%- endif -%}
-
-    {%- if inline_choice|default(false) == true -%}
-        <div {{ block('form_widget_container_attributes') }}>
-    {%- endif -%}
-    
+{%- block vueradio_widget -%}
     {%- set attr = attr|merge({class: (attr.class|default('') ~ ' control')|trim}) -%}
-    {# we define a type to avoid extra attributes to be rendered in the container #}
-    {%- set vtype = 'choice_widget_expanded' -%}
+    {%- set vtype = 'vueradio' -%}
     <template>
         <section>
             <div {{ block('widget_container_attributes') }}>
@@ -21,37 +13,37 @@
                     {{- form_widget(child, {
                         inline_choice: inline_choice|default(false),
                         translation_domain: choice_translation_domain,
-                        vtype: vtype,
-                        attr: attr
+                        vtype:vtype
                     }) -}}
                 {%- endfor -%}
                 {{- block('form_errors') -}}
             </div>
         </section>
     </template>
-    <script>
-        export default {
-            data() {
-                return {
-                    {%- for attrname, attrvalue in attr -%}
-                        {{- " " -}}
-                        {%- if attrname not in ['placeholder', 'title', 'class'] -%}
-                            {{- attrname }}="{{ attrvalue }}",
-                        {%- endif -%}
-                    {%- endfor -%}
-                }
-            }
-        }
-    </script>
-    {%- if inline_choice|default(false) == true -%}
-        </div>
-    {%- endif -%}
-{%- endblock choice_widget_expanded -%}
+{%- endblock vueradio_widget -%}
 
-{% block radio_widget -%}   
-    {{- block('vradio_widget') -}}
-    {# {{- form_label(form, null, { widget: vwidget }) -}} #}
+{% block radio_widget -%}
+    {% if (vtype is defined) %}
+        {{- block('vradio_widget') -}}
+    {% else %}
+        {{- form_label(form, null, { widget: parent() }) -}}
+    {% endif %}
 {%- endblock radio_widget %}
+
+{% block vradio_widget -%}
+    {%- if translation_domain is same as(false) -%}
+        {% set vlabel = label %}
+    {%- else -%}
+        {% set vlabel = label|trans({}, translation_domain) %}
+    {%- endif -%}
+    <radio {{ block('widget_attributes') }}
+        :model="{{ form.parent.vars.model }}"
+        :value="{{ value }}" 
+        {# :label="{{ vlabel }}" #}
+        >
+    </radio>
+{%- endblock vradio_widget %}
+
 
 {# Labels #}
 
@@ -160,18 +152,6 @@
         {%- endfor -%}
     {%- endif -%}
 {%- endblock attributes -%}
-
-{%- block vradio_widget -%}
-    {# <input type="radio" {{ block('vwidget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} /> #}
-    <b-radio {{ block('vwidget_attributes') }}
-        native-value="{{ value }}">
-        {%- if translation_domain is same as(false) -%}
-            {{- label -}}
-        {%- else -%}
-            {{- label|trans({}, translation_domain) -}}
-        {%- endif -%}
-    </b-radio>
-{%- endblock vradio_widget -%}
 
 {%- block vwidget_attributes -%}
     id="{{ id }}" name="{{ full_name }}"

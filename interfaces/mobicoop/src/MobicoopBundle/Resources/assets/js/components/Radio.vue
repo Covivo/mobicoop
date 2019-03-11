@@ -2,7 +2,7 @@
     <b-radio 
         :v-model="model"
         :native-value="value">
-        :label
+        toto
     </b-radio>
 </template>
 
@@ -12,10 +12,11 @@
         default: ''
     }
     export default {
-        components: { Radio },
         name: "radio",
         props: {
             model: defaultString,
+            value: defaultString,
+            label: defaultString
         },
         data () {
             return this.initialData();
@@ -23,7 +24,9 @@
         methods: {
             initialData(){
                 return {
-                    value: ''
+                    model: '',
+                    value: '',
+                    label: ''
                 }
             }
         }

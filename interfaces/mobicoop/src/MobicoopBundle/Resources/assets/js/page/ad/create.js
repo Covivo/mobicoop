@@ -9,25 +9,12 @@ import '../../../css/page/home.scss';
 import Geocomplete from '../../components/Geocomplete';
 import Datepicker from '../../components/Datepicker';
 import Timepicker from '../../components/Timepicker';
+import Radio from '../../components/Radio';
 
 Vue.use(Buefy);
 
 new Vue({
   el: '#app',
-  components: { Geocomplete, Datepicker, Timepicker},
-  props: {
-    role : {
-      type: Number,
-      default: null
-    }
-    frequency : {
-      type: Number,
-      default: null
-    }
-    type : {
-      type: Number,
-      default: null
-    }
-  }
-
+  components: { Geocomplete, Datepicker, Timepicker, Radio}
+  
 })

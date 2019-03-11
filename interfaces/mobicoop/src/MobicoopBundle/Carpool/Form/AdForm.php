@@ -36,6 +36,7 @@ use Mobicoop\Bundle\MobicoopBundle\Geography\Form\AddressForm;
 use Mobicoop\Bundle\MobicoopBundle\Form\Type\DatepickerType;
 use Mobicoop\Bundle\MobicoopBundle\Form\Type\TimepickerType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Mobicoop\Bundle\MobicoopBundle\Form\Type\VueRadioType;
 
 /**
  * Ad form.
@@ -69,38 +70,31 @@ class AdForm extends AbstractType
         ])
         ->add('originAddress', AddressForm::class)      // not displayed directly => displayed by geocomplete; must be present here for validation
         ->add('destinationAddress', AddressForm::class) // not displayed directly => displayed by geocomplete; must be present here for validation
-        ->add('role', ChoiceType::class, [
-            'choices'  => Ad::ROLES,
+        ->add('role', VueRadioType::class, [
+            'model' => 'role',
             'expanded' => true,
-            'placeholder' => 'ad.role.placeholder',
+            'choices'  => Ad::ROLES,
             'translation_domain' => 'carpool',
             'choice_translation_domain' => true,
             'label' => 'ad.role.label',
-            'attr' => [
-                'v-model' => 'role'
-            ]
         ])
-        ->add('type', ChoiceType::class, [
+        ->add('type', VueRadioType::class, [
+            'model' => 'type',
             'choices'  => Ad::TYPES,
             'expanded' => true,
             'placeholder' => 'ad.type.placeholder',
             'translation_domain' => 'carpool',
             'choice_translation_domain' => true,
             'label' => 'ad.type.label',
-            'attr' => [
-                'v-model' => 'type'
-            ]
         ])
-        ->add('frequency', ChoiceType::class, [
+        ->add('frequency', VueRadioType::class, [
+            'model' => 'frequency',
             'choices'  => Ad::FREQUENCIES,
             'expanded' => true,
             'placeholder' => 'ad.frequency.placeholder',
             'translation_domain' => 'carpool',
             'choice_translation_domain' => true,
-            'label' => 'ad.frequency.label',
-            'attr' => [
-                'v-model' => 'frequency'
-            ]
+            'label' => 'ad.frequency.label'
         ])
 
         // PUNCTUAL
