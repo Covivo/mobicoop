@@ -327,7 +327,7 @@ class AdForm extends AbstractType
                             $groups[] = 'regular';
                         } else {
                             $groups[] = 'regular';
-                        }                        
+                        }
                     }
                     
                     return $groups;

@@ -96,7 +96,7 @@ class Ad
     /**
      * @var string Date of the outward travel if punctual (in string format as we use a datepicker).
      * @Assert\NotBlank(groups={"punctual"})
-     * 
+     *
      */
     private $outwardDate;
 

@@ -113,7 +113,7 @@ class ProposalManager
             ksort($aWaypoints);
             // our array is ordered by position, we read it backwards
             $reversedWaypoints = array_reverse($aWaypoints);
-            
+
             $proposalLinked = clone $proposal;
             $proposalLinked->setType(Proposal::TYPE_RETURN);
             // criteria
@@ -129,7 +129,7 @@ class ProposalManager
                 }
                 $proposalLinked->addWaypoint($waypoint);
             }
-            
+
             // creation of the directions for the return trip (if relevant)
             $addresses = [];
             foreach ($proposalLinked->getWaypoints() as $waypoint) {

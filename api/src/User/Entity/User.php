@@ -47,7 +47,7 @@ use Doctrine\Common\Collections\Collection;
  *
  * Users should not be fully removed, if a user wants to remove its account it should be anonymized, unless he has no interactions with other users.
  * Note : force eager is set to false to avoid max number of nested relations (can occure despite of maxdepth... https://github.com/api-platform/core/issues/1910)
- * 
+ *
  * @ORM\Entity
  * @UniqueEntity("email")
  * @ApiResource(

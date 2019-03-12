@@ -93,7 +93,7 @@ class AdManager
 
         // OUTWARD
         $proposal = new Proposal();
-        $proposal->setType($ad->getType() == Ad::TYPE_ONE_WAY ? Proposal::TYPE_ONE_WAY : Proposal::TYPE_OUTWARD); 
+        $proposal->setType($ad->getType() == Ad::TYPE_ONE_WAY ? Proposal::TYPE_ONE_WAY : Proposal::TYPE_OUTWARD);
         $proposal->setComment($ad->getComment());
         $proposal->setUser($ad->getUser());
 
@@ -169,7 +169,9 @@ class AdManager
         // exit;
 
         // creation of the outward proposal
-        if (!$proposalOutward = $this->proposalManager->createProposal($proposal)) return false;
+        if (!$proposalOutward = $this->proposalManager->createProposal($proposal)) {
+            return false;
+        }
         
         if ($ad->getType() == Ad::TYPE_RETURN_TRIP) {
             
@@ -258,10 +260,7 @@ class AdManager
             $proposalReturn = $this->proposalManager->createProposal($proposalReturn);
 
             exit;
-            
-    
         }
         return $proposalOutward;
-
     }
 }

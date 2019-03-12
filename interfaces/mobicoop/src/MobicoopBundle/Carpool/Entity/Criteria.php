@@ -102,7 +102,7 @@ class Criteria
     /**
      * @var \DateTimeInterface|null The end date if regular proposal.
      * @Assert\Date()
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $toDate;
@@ -152,7 +152,7 @@ class Criteria
     /**
      * @var \DateTimeInterface|null Mondays starting time (if regular).
      * @Assert\Time()
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $monTime;
@@ -160,7 +160,7 @@ class Criteria
     /**
      * @var \DateTimeInterface|null Tuesdays starting time (if regular).
      * @Assert\Time()
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $tueTime;
@@ -168,7 +168,7 @@ class Criteria
     /**
      * @var \DateTimeInterface|null Wednesdays starting time (if regular).
      * @Assert\Time()
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $wedTime;
@@ -176,7 +176,7 @@ class Criteria
     /**
      * @var \DateTimeInterface|null Thursdays starting time (if regular).
      * @Assert\Time()
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $thuTime;
@@ -184,7 +184,7 @@ class Criteria
     /**
      * @var \DateTimeInterface|null Fridays starting time (if regular).
      * @Assert\Time()
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $friTime;
@@ -192,7 +192,7 @@ class Criteria
     /**
      * @var \DateTimeInterface|null Saturdays starting time (if regular).
      * @Assert\Time()
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $satTime;
@@ -200,7 +200,7 @@ class Criteria
     /**
      * @var \DateTimeInterface|null Sunadays starting time (if regular).
      * @Assert\Time()
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $sunTime;

@@ -388,7 +388,7 @@ class RemoveNullObjectNormalizer extends ObjectNormalizer
         });
 
         $data = parent::normalize($object, $format, $context);
-        if (is_array($data)) {       
+        if (is_array($data)) {
             return self::replaceIris(array_filter($data, function ($value) {
                 return (null !== $value) && (!(empty($value) && is_array($value)));
             }));
