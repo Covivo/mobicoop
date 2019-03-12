@@ -102,128 +102,160 @@ class Criteria
     /**
      * @var \DateTimeInterface|null The end date if regular proposal.
      * @Assert\Date()
+     * 
+     * @Groups({"post","put"})
      */
     private $toDate;
 
     /**
      * @var boolean|null The proposal is available on mondays (if regular).
+     * @Groups({"post","put"})
      */
     private $monCheck;
 
     /**
      * @var boolean|null The proposal is available on tuesdays (if regular).
+     * @Groups({"post","put"})
      */
     private $tueCheck;
 
     /**
      * @var boolean|null The proposal is available on wednesdays (if regular).
+     * @Groups({"post","put"})
      */
     private $wedCheck;
 
     /**
      * @var boolean|null The proposal is available on thursdays (if regular).
+     * @Groups({"post","put"})
      */
     private $thuCheck;
 
     /**
      * @var boolean|null The proposal is available on fridays (if regular).
+     * @Groups({"post","put"})
      */
     private $friCheck;
 
     /**
      * @var boolean|null The proposal is available on saturdays (if regular).
+     * @Groups({"post","put"})
      */
     private $satCheck;
 
     /**
      * @var boolean|null The proposal is available on sundays (if regular).
+     * @Groups({"post","put"})
      */
     private $sunCheck;
 
     /**
      * @var \DateTimeInterface|null Mondays starting time (if regular).
      * @Assert\Time()
+     * 
+     * @Groups({"post","put"})
      */
     private $monTime;
 
     /**
      * @var \DateTimeInterface|null Tuesdays starting time (if regular).
      * @Assert\Time()
+     * 
+     * @Groups({"post","put"})
      */
     private $tueTime;
 
     /**
      * @var \DateTimeInterface|null Wednesdays starting time (if regular).
      * @Assert\Time()
+     * 
+     * @Groups({"post","put"})
      */
     private $wedTime;
 
     /**
      * @var \DateTimeInterface|null Thursdays starting time (if regular).
      * @Assert\Time()
+     * 
+     * @Groups({"post","put"})
      */
     private $thuTime;
 
     /**
      * @var \DateTimeInterface|null Fridays starting time (if regular).
      * @Assert\Time()
+     * 
+     * @Groups({"post","put"})
      */
     private $friTime;
 
     /**
      * @var \DateTimeInterface|null Saturdays starting time (if regular).
      * @Assert\Time()
+     * 
+     * @Groups({"post","put"})
      */
     private $satTime;
 
     /**
      * @var \DateTimeInterface|null Sunadays starting time (if regular).
      * @Assert\Time()
+     * 
+     * @Groups({"post","put"})
      */
     private $sunTime;
 
     /**
      * @var int Accepted margin for monday starting time in seconds.
+     * @Groups({"post","put"})
      */
     private $monMarginTime;
 
     /**
      * @var int Accepted margin for tuesday starting time in seconds.
+     * @Groups({"post","put"})
      */
     private $tueMarginTime;
     
     /**
      * @var int Accepted margin for wednesday starting time in seconds.
+     * @Groups({"post","put"})
      */
     private $wedMarginTime;
     
     /**
      * @var int Accepted margin for thursday starting time in seconds.
+     * @Groups({"post","put"})
      */
     private $thuMarginTime;
     
     /**
      * @var int Accepted margin for friday starting time in seconds.
+     * @Groups({"post","put"})
      */
     private $friMarginTime;
     
     /**
      * @var int Accepted margin for saturday starting time in seconds.
+     * @Groups({"post","put"})
      */
     private $satMarginTime;
     
     /**
      * @var int Accepted margin for sunday starting time in seconds.
+     * @Groups({"post","put"})
      */
     private $sunMarginTime;
     
     /**
      * @var int|null The maximum deviation time (in seconds) as a driver to accept a request proposal.
+     * @Groups({"post","put"})
      */
     private $maxDeviationTime;
     
     /**
      * @var int|null The maximum deviation distance (in metres) as a driver to accept a request proposal.
+     * @Groups({"post","put"})
      */
     private $maxDeviationDistance;
     
@@ -239,11 +271,13 @@ class Criteria
     
     /**
      * @var float|null The price per km.
+     * @Groups({"post","put"})
      */
     private $priceKm;
     
     /**
      * @var Car|null The car used in the journey.
+     * @Groups({"post","put"})
      */
     private $car;
     
@@ -282,7 +316,7 @@ class Criteria
         $this->iri = $iri;
     }
     
-    public function isDriver(): bool
+    public function isDriver(): ?bool
     {
         return $this->isDriver;
     }
@@ -294,7 +328,7 @@ class Criteria
         return $this;
     }
     
-    public function isPassenger(): bool
+    public function isPassenger(): ?bool
     {
         return $this->isPassenger;
     }

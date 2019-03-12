@@ -5,5 +5,4 @@ twig:
     cache: false
     # themes used in the project (the order is important : each theme overrides the previous ones) 
     form_themes:
-    - '@Mobicoop/form/bulma.html.twig'
     - '@Mobicoop/form/mobicoop.html.twig'

@@ -11,7 +11,6 @@
 </template>
 
 <script>
-    
     const defaultString = {
         type: String,
         default: ''
@@ -29,17 +28,16 @@
             value: defaultString,
             label: defaultString,
             checked: defaultBoolean
-        },
-        data () {
-            console.log(this.model, this.checked, this.value)
-
-            return {
-                [this.model]: this.checked ? this.value.toString() : null
-            }
-        },
-        mounted() {
-            if (this.checked) this[this.model] = this.value.toString(); 
         }
+        // data () {
+        //     console.log(this.model, this.checked, this.value)
+        //     return {
+        //         [this.model]: this.checked ? this.value.toString() : null
+        //     }
+        // },
+        // mounted() {
+        //     if (this.checked) this[this.model] = this.value.toString(); 
+        // }
         // methods: {
         //     initialData(){
         //         return {

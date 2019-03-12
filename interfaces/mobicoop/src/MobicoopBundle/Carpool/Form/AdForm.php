@@ -29,14 +29,14 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Validator\Constraints\GroupSequence;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Mobicoop\Bundle\MobicoopBundle\Form\Type\GeocompleteType;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Form\AddressForm;
 use Mobicoop\Bundle\MobicoopBundle\Form\Type\DatepickerType;
 use Mobicoop\Bundle\MobicoopBundle\Form\Type\TimepickerType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Mobicoop\Bundle\MobicoopBundle\Form\Type\VueRadioType;
 
 /**
  * Ad form.
@@ -70,16 +70,16 @@ class AdForm extends AbstractType
         ])
         ->add('originAddress', AddressForm::class)      // not displayed directly => displayed by geocomplete; must be present here for validation
         ->add('destinationAddress', AddressForm::class) // not displayed directly => displayed by geocomplete; must be present here for validation
-        ->add('role', VueRadioType::class, [
-            'model' => 'role',
+        ->add('role', ChoiceType::class, [
+            // 'model' => 'role',
             'expanded' => true,
             'choices'  => Ad::ROLES,
             'translation_domain' => 'carpool',
             'choice_translation_domain' => true,
             'label' => 'ad.role.label',
         ])
-        ->add('type', VueRadioType::class, [
-            'model' => 'type',
+        ->add('type', ChoiceType::class, [
+            // 'model' => 'type',
             'choices'  => Ad::TYPES,
             'expanded' => true,
             'placeholder' => 'ad.type.placeholder',
@@ -87,8 +87,8 @@ class AdForm extends AbstractType
             'choice_translation_domain' => true,
             'label' => 'ad.type.label',
         ])
-        ->add('frequency', VueRadioType::class, [
-            'model' => 'frequency',
+        ->add('frequency', ChoiceType::class, [
+            // 'model' => 'frequency',
             'choices'  => Ad::FREQUENCIES,
             'expanded' => true,
             'placeholder' => 'ad.frequency.placeholder',
@@ -313,6 +313,25 @@ class AdForm extends AbstractType
     {
         $resolver->setDefaults(array(
                 'data_class' => Ad::class,
+                'validation_groups' => function (FormInterface $form) {
+                    $data = $form->getData();
+                    $groups[] = 'Default';
+                    if (Ad::FREQUENCY_PUNCTUAL == $data->getFrequency()) {
+                        if (Ad::TYPE_RETURN_TRIP == $data->getType()) {
+                            $groups[] = 'punctualReturnTrip';
+                        } else {
+                            $groups[] = 'punctual';
+                        }
+                    } else {
+                        if (Ad::TYPE_RETURN_TRIP == $data->getType()) {
+                            $groups[] = 'regular';
+                        } else {
+                            $groups[] = 'regular';
+                        }                        
+                    }
+                    
+                    return $groups;
+                },
         ));
     }
 }

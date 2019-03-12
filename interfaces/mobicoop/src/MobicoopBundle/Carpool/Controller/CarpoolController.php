@@ -67,7 +67,7 @@ class CarpoolController extends AbstractController
 
         return $this->render('@Mobicoop/ad/create.html.twig', [
             'form' => $form->createView(),
-            'error' => $error,
+            'error' => $error
         ]);
     }
 }

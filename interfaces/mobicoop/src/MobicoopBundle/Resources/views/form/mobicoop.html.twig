@@ -3,7 +3,7 @@
 
 {# Widgets #}
 
-{%- block vueradio_widget -%}
+{# {%- block vueradio_widget -%}
     {%- set attr = attr|merge({class: (attr.class|default('') ~ ' control')|trim}) -%}
     {%- set vtype = 'vueradio' -%}
     <template>
@@ -36,21 +36,16 @@
     {%- else -%}
         {% set vlabel = label|trans({}, translation_domain) %}
     {%- endif -%}
-    {# <b-radio {{ block('widget_attributes') }}
-        v-model="{{ form.parent.vars.model }}"
-        native-value="{{ value }}">
-        {{ vlabel }}
-    </b-radio> #}
     <vradio {{ block('widget_attributes') }}
-        :name="'{{ full_name }}'"
+        :name="{{ full_name }}"
         :id="'{{ id }}'"
-        :model="'{{ form.parent.vars.model }}'"
+        :model="role"
         :value="'{{ value }}'" 
         :label="'{{ vlabel }}'"
         :checked="{{ checked ? 'true' : 'false' }}"
         >
     </vradio>
-{%- endblock vradio_widget %}
+{%- endblock vradio_widget %} #}
 
 
 {# Labels #}
@@ -68,6 +63,7 @@
                 {%- if form.vars.attr.help_text is defined -%}
                     <p class="help">{{ form.vars.attr.help_text }}</p>
                 {%- endif -%}
+                {{- block('form_errors') -}}
             </div>
         </div>
     </div>
@@ -118,6 +114,7 @@
                     <p class="help">{{ form.vars.attr.help_text }}</p>
                 {%- endif -%}
             </div>
+            {{- block('form_errors') -}}
         </div>
     </div>
 {%- endblock datepicker_row -%}
@@ -138,15 +135,32 @@
                     <p class="help">{{ form.vars.attr.help_text }}</p>
                 {%- endif -%}
             </div>
+            {{- block('form_errors') -}}
         </div>
     </div>
 {%- endblock timepicker_row -%}
+
+{%- block timepicker_widget -%}
+<div class="field-body">
+    <div class="field">
+        <timepicker
+            :name="'{{ full_name}}'"
+            tclass='inputt'
+            :vdate="'{{ value }}'"
+            ></timepicker>
+        {%- if form.vars.attr.help_text is defined -%}
+            <p class="help">{{ form.vars.attr.help_text }}</p>
+        {%- endif -%}
+    </div>
+    {{- block('form_errors') -}}
+</div>
+{%- endblock timepicker_widget -%}
 
 {# Errors #}
 
 {# Support #}
 
-{% block attributes -%}
+{# {% block attributes -%}
     {%- if vtype is not defined -%}
         {%- for attrname, attrvalue in attr -%}
             {{- " " -}}
@@ -175,4 +189,4 @@
             {{- attrname }}="{{ attrvalue }}"
         {%- endif -%}
     {%- endfor -%}
-{%- endblock vattributes -%}
+{%- endblock vattributes -%} #}

@@ -68,9 +68,9 @@ class ProposalManager
         // temporary initialisation, will be dumped when implementation of these fields will be done
         $proposal->getCriteria()->setSeats(1);
         $proposal->getCriteria()->setAnyRouteAsPassenger(true);
-        $proposal->getCriteria()->setFromTime($proposal->getCriteria()->getFromDate());
+        //$proposal->getCriteria()->setFromTime($proposal->getCriteria()->getFromDate());
 
-        // creation of the directions for the outward
+        // creation of the directions
         $addresses = [];
         foreach ($proposal->getWaypoints() as $waypoint) {
             $addresses[] = $waypoint->getAddress();
@@ -91,6 +91,9 @@ class ProposalManager
 
         $this->entityManager->persist($proposal);
 
+        return $proposal;
+        
+        /*
         // the linked proposal (return for an outward)
         $proposalLinked = null;
         // the waypoints in reverse order if return trip
@@ -151,9 +154,7 @@ class ProposalManager
         }
 
         $this->entityManager->flush();
-
-        // return the proposal (not really necessary, but good practice ?)
-        return $proposal;
+        */
         
         // matching analyze
         // => should be replaced by path analyzer when it's created

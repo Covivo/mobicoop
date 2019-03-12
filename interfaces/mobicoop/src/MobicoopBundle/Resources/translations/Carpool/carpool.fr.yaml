@@ -43,33 +43,33 @@ ad:
     to_date:
         label: 'Date de fin'
     outward_mon_time:
-        label: 'Heure'    
+        label: 'Lundi'    
     outward_tue_time:
-        label: 'Heure'    
+        label: 'Mardi'    
     outward_wed_time:
-        label: 'Heure'    
+        label: 'Mercredi'    
     outward_thu_time:
-        label: 'Heure'    
+        label: 'Jeudi'    
     outward_fri_time:
-        label: 'Heure'    
+        label: 'Vendredi'    
     outward_sat_time:
-        label: 'Heure'    
+        label: 'Samedi'    
     outward_sun_time:
-        label: 'Heure'
+        label: 'Dimanche'
     return_mon_time:
-        label: 'Heure'    
+        label: 'Lundi'    
     return_tue_time:
-        label: 'Heure'    
+        label: 'Mardi'    
     return_wed_time:
-        label: 'Heure'    
+        label: 'Mercredi'    
     return_thu_time:
-        label: 'Heure'    
+        label: 'Jeudi'    
     return_fri_time:
-        label: 'Heure'    
+        label: 'Vendredi'    
     return_sat_time:
-        label: 'Heure'    
+        label: 'Samedi'    
     return_sun_time:
-        label: 'Heure'
+        label: 'Dimanche'
     
     comment:
         label: 'Commentaire'
@@ -78,5 +78,4 @@ ad:
         label: 'Coût au km'
         placeholder: 'Saisissez le coût au kilomètre'
     submit:
-        label: 'Je partage mon annonce' 
-        
+        label: 'Je partage mon annonce'

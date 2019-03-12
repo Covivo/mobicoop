@@ -43,11 +43,13 @@ use App\Carpool\Filter\LocalityFilter;
 
 /**
  * Carpooling : proposal (offer from a driver / request from a passenger).
+ * Note : force eager is set to false to avoid max number of nested relations (can occure despite of maxdepth... https://github.com/api-platform/core/issues/1910)
  *
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -108,7 +110,7 @@ class Proposal
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Groups({"read"})
+     * @Groups({"read","write"})
      * @MaxDepth(1)
      */
     private $proposalLinked;

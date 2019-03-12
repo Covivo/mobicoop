@@ -84,15 +84,20 @@ class AdManager
     }
 
     /**
-     * Create an ad and the resulting proposal.
+     * Create a proposal from an ad.
+     * If it's a return trip, 2 proposals will be created.
      */
     public function createProposalFromAd(Ad $ad)
     {
+        //echo "<pre>" . print_r($ad,true) . "</pre>";exit;
+
+        // OUTWARD
         $proposal = new Proposal();
-        $proposal->setType($ad->getType());
+        $proposal->setType($ad->getType() == Ad::TYPE_ONE_WAY ? Proposal::TYPE_ONE_WAY : Proposal::TYPE_OUTWARD); 
         $proposal->setComment($ad->getComment());
         $proposal->setUser($ad->getUser());
 
+        // creation of the criteria
         $criteria = new Criteria();
         if ($ad->getRole() == Ad::ROLE_BOTH || $ad->getRole() == Ad::ROLE_DRIVER) {
             $criteria->setIsDriver(true);
@@ -100,11 +105,52 @@ class AdManager
         if ($ad->getRole() == Ad::ROLE_BOTH || $ad->getRole() == Ad::ROLE_PASSENGER) {
             $criteria->setIsPassenger(true);
         }
-
-        $criteria->setFrequency($ad->getFrequency());
-        $criteria->setFromDate(\DateTime::createFromFormat('Y-m-d H:i', $ad->getOutwardDate()));
         $criteria->setPriceKm($ad->getPrice());
 
+        $criteria->setFrequency($ad->getFrequency());
+        if ($ad->getFrequency() == Ad::FREQUENCY_PUNCTUAL) {
+            $criteria->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad->getOutwardDate()));
+            $criteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
+        } else {
+            $criteria->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad->getFromDate()));
+            $criteria->setToDate(\DateTime::createFromFormat('Y-m-d', $ad->getToDate()));
+            $criteria->setMonCheck($ad->getOutwardMonTime()<>null);
+            if ($ad->getOutwardMonTime()) {
+                $criteria->setMonTime(\DateTime::createFromFormat('H:i', $ad->getOutwardMonTime()));
+                $criteria->setMonMarginTime($ad->getOutwardMonMargin());
+            }
+            $criteria->setTueCheck($ad->getOutwardTueTime()<>null);
+            if ($ad->getOutwardTueTime()) {
+                $criteria->setTueTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTueTime()));
+                $criteria->setTueMarginTime($ad->getOutwardTueMargin());
+            }
+            $criteria->setWedCheck($ad->getOutwardWedTime()<>null);
+            if ($ad->getOutwardWedTime()) {
+                $criteria->setWedTime(\DateTime::createFromFormat('H:i', $ad->getOutwardWedTime()));
+                $criteria->setWedMarginTime($ad->getOutwardWedMargin());
+            }
+            $criteria->setThuCheck($ad->getOutwardThuTime()<>null);
+            if ($ad->getOutwardThuTime()) {
+                $criteria->setThuTime(\DateTime::createFromFormat('H:i', $ad->getOutwardThuTime()));
+                $criteria->setThuMarginTime($ad->getOutwardThuMargin());
+            }
+            $criteria->setFriCheck($ad->getOutwardFriTime()<>null);
+            if ($ad->getOutwardFriTime()) {
+                $criteria->setFriTime(\DateTime::createFromFormat('H:i', $ad->getOutwardFriTime()));
+                $criteria->setFriMarginTime($ad->getOutwardFriMargin());
+            }
+            $criteria->setSatCheck($ad->getOutwardSatTime()<>null);
+            if ($ad->getOutwardSatTime()) {
+                $criteria->setSatTime(\DateTime::createFromFormat('H:i', $ad->getOutwardSatTime()));
+                $criteria->setSatMarginTime($ad->getOutwardSatMargin());
+            }
+            $criteria->setSunCheck($ad->getOutwardSunTime()<>null);
+            if ($ad->getOutwardSunTime()) {
+                $criteria->setSunTime(\DateTime::createFromFormat('H:i', $ad->getOutwardSunTime()));
+                $criteria->setSunMarginTime($ad->getOutwardSunMargin());
+            }
+        }
+        
         $waypointOrigin = new Waypoint();
         $waypointOrigin->setAddress($ad->getOriginAddress());
         $waypointOrigin->setPosition(0);
@@ -119,6 +165,103 @@ class AdManager
         $proposal->addWaypoint($waypointOrigin);
         $proposal->addWaypoint($waypointDestination);
 
-        return $this->proposalManager->createProposal($proposal);
+        // echo "<pre>" . print_r($proposal,true) . "</pre>";
+        // exit;
+
+        // creation of the outward proposal
+        if (!$proposalOutward = $this->proposalManager->createProposal($proposal)) return false;
+        
+        if ($ad->getType() == Ad::TYPE_RETURN_TRIP) {
+            
+            // creation of the return trip
+            $proposalReturn = clone $proposal;
+            $criteriaReturn = clone $criteria;
+            if ($ad->getFrequency() == Ad::FREQUENCY_PUNCTUAL) {
+                $criteriaReturn->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad->getReturnDate()));
+                $criteriaReturn->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
+            } else {
+                $criteriaReturn->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad->getFromDate()));
+                $criteriaReturn->setToDate(\DateTime::createFromFormat('Y-m-d', $ad->getToDate()));
+                $criteria->setMonCheck($ad->getOutwardMonTime()<>null);
+                if ($ad->getReturnMonTime()) {
+                    $criteria->setMonTime(\DateTime::createFromFormat('H:i', $ad->getReturnMonTime()));
+                    $criteria->setMonMarginTime($ad->getReturnMonMargin());
+                }
+                $criteria->setTueCheck($ad->getReturnTueTime()<>null);
+                if ($ad->getReturnTueTime()) {
+                    $criteriaReturn->setTueTime(\DateTime::createFromFormat('H:i', $ad->getReturnTueTime()));
+                    $criteriaReturn->setTueMarginTime($ad->getReturnTueMargin());
+                }
+                $criteriaReturn->setWedCheck($ad->getReturnWedTime()<>null);
+                if ($ad->getReturnWedTime()) {
+                    $criteriaReturn->setWedTime(\DateTime::createFromFormat('H:i', $ad->getReturnWedTime()));
+                    $criteriaReturn->setWedMarginTime($ad->getReturnWedMargin());
+                }
+                $criteriaReturn->setThuCheck($ad->getReturnThuTime()<>null);
+                if ($ad->getReturnThuTime()) {
+                    $criteriaReturn->setThuTime(\DateTime::createFromFormat('H:i', $ad->getReturnThuTime()));
+                    $criteriaReturn->setThuMarginTime($ad->getReturnThuMargin());
+                }
+                $criteriaReturn->setFriCheck($ad->getReturnFriTime()<>null);
+                if ($ad->getReturnFriTime()) {
+                    $criteriaReturn->setFriTime(\DateTime::createFromFormat('H:i', $ad->getReturnFriTime()));
+                    $criteriaReturn->setFriMarginTime($ad->getReturnFriMargin());
+                }
+                $criteriaReturn->setSatCheck($ad->getReturnSatTime()<>null);
+                if ($ad->getReturnSatTime()) {
+                    $criteriaReturn->setSatTime(\DateTime::createFromFormat('H:i', $ad->getReturnSatTime()));
+                    $criteriaReturn->setSatMarginTime($ad->getReturnSatMargin());
+                }
+                $criteriaReturn->setSunCheck($ad->getReturnSunTime()<>null);
+                if ($ad->getReturnSunTime()) {
+                    $criteriaReturn->setSunTime(\DateTime::createFromFormat('H:i', $ad->getReturnSunTime()));
+                    $criteriaReturn->setSunMarginTime($ad->getReturnSunMargin());
+                }
+            }
+
+            $proposalReturn->setCriteria($criteriaReturn);
+
+            // the waypoints in reverse order if return trip
+            // /!\ for now we assume that the return trip uses the same waypoints as the outward) /!\
+            $reversedWaypoints = [];
+            $nbWaypoints = count($proposal->getWaypoints());
+            // we need to get the waypoints in reverse order
+            // we will read the waypoints a first time to create an array with the position as index
+            $aWaypoints = [];
+            foreach ($proposal->getWaypoints() as $proposalWaypoint) {
+                $aWaypoints[$proposalWaypoint->getPosition()] = $proposalWaypoint;
+            }
+            // we sort the array by key
+            ksort($aWaypoints);
+            // our array is ordered by position, we read it backwards
+            $reversedWaypoints = array_reverse($aWaypoints);
+            
+            $proposalReturn->setType(Proposal::TYPE_RETURN);
+            $proposalReturn->setCriteria($criteriaReturn);
+            foreach ($reversedWaypoints as $pos=>$proposalWaypoint) {
+                $waypoint = clone $proposalWaypoint;
+                $waypoint->setPosition($pos);
+                $waypoint->setIsDestination(false);
+                // address
+                $waypoint->setAddress(clone $proposalWaypoint->getAddress());
+                if ($pos == ($nbWaypoints-1)) {
+                    $waypoint->setIsDestination(true);
+                }
+                $proposalReturn->addWaypoint($waypoint);
+            }
+
+            // link
+            $proposalReturn->setProposalLinked($proposalOutward->getIri());
+
+
+            // creation of the return proposal
+            $proposalReturn = $this->proposalManager->createProposal($proposalReturn);
+
+            exit;
+            
+    
+        }
+        return $proposalOutward;
+
     }
 }

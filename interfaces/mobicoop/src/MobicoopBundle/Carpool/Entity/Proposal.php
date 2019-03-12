@@ -56,7 +56,9 @@ class Proposal implements Resource
     private $iri;
 
     /**
-     * @var Proposal|null Linked proposal for a round trip (return or outward journey).
+     * @var string|null Linked proposal for a round trip (return or outward journey).
+     * /!\ for now we must pass the IRI !!!
+     * @Groups({"post","put"})
      */
     private $proposalLinked;
     
@@ -127,6 +129,16 @@ class Proposal implements Resource
         $this->individualStops = new ArrayCollection();
     }
 
+    public function __clone()
+    {
+        // when we clone a Proposal we keep only the basic properties, we re-initialize all the collections
+        $this->waypoints = new ArrayCollection();
+        $this->travelModes = new ArrayCollection();
+        $this->matchingRequests = new ArrayCollection();
+        $this->matchingOffers = new ArrayCollection();
+        $this->individualStops = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -183,20 +195,20 @@ class Proposal implements Resource
         return $this;
     }
     
-    public function getProposalLinked(): ?self
+    public function getProposalLinked(): ?string
     {
         return $this->proposalLinked;
     }
     
-    public function setProposalLinked(?self $proposalLinked): self
+    public function setProposalLinked(?string $proposalLinked): self
     {
         $this->proposalLinked = $proposalLinked;
         
         // set (or unset) the owning side of the relation if necessary
-        $newProposalLinked = $proposalLinked === null ? null : $this;
-        if ($newProposalLinked !== $proposalLinked->getProposalLinked()) {
-            $proposalLinked->setProposalLinked($newProposalLinked);
-        }
+        // $newProposalLinked = $proposalLinked === null ? null : $this;
+        // if ($newProposalLinked !== $proposalLinked->getProposalLinked()) {
+        //     $proposalLinked->setProposalLinked($newProposalLinked);
+        // }
         
         return $this;
     }

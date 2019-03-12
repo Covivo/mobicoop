@@ -95,31 +95,38 @@ class Ad
 
     /**
      * @var string Date of the outward travel if punctual (in string format as we use a datepicker).
+     * @Assert\NotBlank(groups={"punctual"})
+     * 
      */
     private $outwardDate;
 
     /**
      * @var string Time of the outward travel if punctual (in string format as we use a datepicker).
+     * @Assert\NotBlank(groups={"punctual"})
      */
     private $outwardTime;
     
     /**
      * @var int Margin time of the outward travel if punctual.
+     * @Assert\NotBlank(groups={"punctual"})
      */
     private $outwardMargin;
 
     /**
      * @var string Date of the return travel if punctual (in string format as we use a datepicker).
+     * @Assert\NotBlank(groups={"punctualReturnTrip"})
      */
     private $returnDate;
 
     /**
      * @var string Time of the return travel if punctual (in string format as we use a datepicker).
+     * @Assert\NotBlank(groups={"punctualReturnTrip"})
      */
     private $returnTime;
     
     /**
      * @var int Margin time of the return travel if punctual.
+     * @Assert\NotBlank(groups={"punctualReturnTrip"})
      */
     private $returnMargin;
     
@@ -128,11 +135,13 @@ class Ad
 
     /**
      * @var string Date of the first travel if regular.
+     * @Assert\NotBlank(groups={"regular"})
      */
     private $fromDate;
 
     /**
      * @var string Date of the last travel if regular.
+     * @Assert\NotBlank(groups={"regular"})
      */
     private $toDate;
 
@@ -470,18 +479,6 @@ class Ad
         return $this;
     }
 
-    public function getOutwardMon(): ?bool
-    {
-        return $this->outwardMon;
-    }
-    
-    public function setOutwardMon(?bool $outwardMon): self
-    {
-        $this->outwardMon = $outwardMon;
-        
-        return $this;
-    }
-    
     public function getOutwardMonTime(): ?string
     {
         return $this->outwardMonTime;
@@ -502,18 +499,6 @@ class Ad
     public function setOutwardMonMargin(?int $outwardMonMargin): self
     {
         $this->outwardMonMargin = $outwardMonMargin;
-        
-        return $this;
-    }
-
-    public function getReturnMon(): ?bool
-    {
-        return $this->returnMon;
-    }
-    
-    public function setReturnMon(?bool $returnMon): self
-    {
-        $this->returnMon = $returnMon;
         
         return $this;
     }
@@ -542,18 +527,6 @@ class Ad
         return $this;
     }
     
-    public function getOutwardTue(): ?bool
-    {
-        return $this->outwardTue;
-    }
-    
-    public function setOutwardTue(?bool $outwardTue): self
-    {
-        $this->outwardTue = $outwardTue;
-        
-        return $this;
-    }
-    
     public function getOutwardTueTime(): ?string
     {
         return $this->outwardTueTime;
@@ -578,18 +551,6 @@ class Ad
         return $this;
     }
 
-    public function getReturnTue(): ?bool
-    {
-        return $this->returnTue;
-    }
-    
-    public function setReturnTue(?bool $returnTue): self
-    {
-        $this->returnTue = $returnTue;
-        
-        return $this;
-    }
-    
     public function getReturnTueTime(): ?string
     {
         return $this->returnTueTime;
@@ -610,18 +571,6 @@ class Ad
     public function setReturnTueMargin(?int $returnTueMargin): self
     {
         $this->oreturnTueMargin = $returnTueMargin;
-        
-        return $this;
-    }
-
-    public function getOutwardWed(): ?bool
-    {
-        return $this->outwardWed;
-    }
-    
-    public function setOutwardWed(?bool $outwardWed): self
-    {
-        $this->outwardWed = $outwardWed;
         
         return $this;
     }
@@ -649,18 +598,6 @@ class Ad
         
         return $this;
     }
-
-    public function getReturnWed(): ?bool
-    {
-        return $this->returnWed;
-    }
-    
-    public function setReturnWed(?bool $returnWed): self
-    {
-        $this->returnWed = $returnWed;
-        
-        return $this;
-    }
     
     public function getReturnWedTime(): ?string
     {
@@ -682,18 +619,6 @@ class Ad
     public function setReturnWedMargin(?int $returnWedMargin): self
     {
         $this->oreturnWedMargin = $returnWedMargin;
-        
-        return $this;
-    }
-
-    public function getOutwardThu(): ?bool
-    {
-        return $this->outwardThu;
-    }
-    
-    public function setOutwardThu(?bool $outwardThu): self
-    {
-        $this->outwardThu = $outwardThu;
         
         return $this;
     }
@@ -721,18 +646,6 @@ class Ad
         
         return $this;
     }
-
-    public function getReturnThu(): ?bool
-    {
-        return $this->returnThu;
-    }
-    
-    public function setReturnThu(?bool $returnThu): self
-    {
-        $this->returnThu = $returnThu;
-        
-        return $this;
-    }
     
     public function getReturnThuTime(): ?string
     {
@@ -754,18 +667,6 @@ class Ad
     public function setReturnThuMargin(?int $returnThuMargin): self
     {
         $this->oreturnThuMargin = $returnThuMargin;
-        
-        return $this;
-    }
-
-    public function getOutwardFri(): ?bool
-    {
-        return $this->outwardFri;
-    }
-    
-    public function setOutwardFri(?bool $outwardFri): self
-    {
-        $this->outwardFri = $outwardFri;
         
         return $this;
     }
@@ -794,18 +695,6 @@ class Ad
         return $this;
     }
 
-    public function getReturnFri(): ?bool
-    {
-        return $this->returnFri;
-    }
-    
-    public function setReturnFri(?bool $returnFri): self
-    {
-        $this->returnFri = $returnFri;
-        
-        return $this;
-    }
-    
     public function getReturnFriTime(): ?string
     {
         return $this->returnFriTime;
@@ -830,18 +719,6 @@ class Ad
         return $this;
     }
 
-    public function getOutwardSat(): ?bool
-    {
-        return $this->outwardSat;
-    }
-    
-    public function setOutwardSat(?bool $outwardSat): self
-    {
-        $this->outwardSat = $outwardSat;
-        
-        return $this;
-    }
-    
     public function getOutwardSatTime(): ?string
     {
         return $this->outwardSatTime;
@@ -862,18 +739,6 @@ class Ad
     public function setOutwardSatMargin(?int $outwardSatMargin): self
     {
         $this->outwardSatMargin = $outwardSatMargin;
-        
-        return $this;
-    }
-
-    public function getReturnSat(): ?bool
-    {
-        return $this->returnSat;
-    }
-    
-    public function setReturnSat(?bool $returnSat): self
-    {
-        $this->returnSat = $returnSat;
         
         return $this;
     }
@@ -901,18 +766,6 @@ class Ad
         
         return $this;
     }
-
-    public function getOutwardSun(): ?bool
-    {
-        return $this->outwardSun;
-    }
-    
-    public function setOutwardSun(?bool $outwardSun): self
-    {
-        $this->outwardSun = $outwardSun;
-        
-        return $this;
-    }
     
     public function getOutwardSunTime(): ?string
     {
@@ -934,18 +787,6 @@ class Ad
     public function setOutwardSunMargin(?int $outwardSunMargin): self
     {
         $this->outwardSunMargin = $outwardSunMargin;
-        
-        return $this;
-    }
-
-    public function getReturnSun(): ?bool
-    {
-        return $this->returnSun;
-    }
-    
-    public function setReturnSun(?bool $returnSun): self
-    {
-        $this->returnSun = $returnSun;
         
         return $this;
     }
