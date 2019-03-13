@@ -9,6 +9,16 @@ api_platform:
     # The version of the API.
     version: '0.1.0'
 
+    # we disable the original swagger to change the path of the documentation
+    enable_swagger_ui: false
+    
+    # enable token bearer
+    swagger:
+         api_keys:
+             apiKey:
+                name: Authorization
+                type: header
+
     mapping:
         paths: ['%kernel.project_dir%/src/Entity','%kernel.project_dir%/src/Carpool/Entity','%kernel.project_dir%/src/User/Entity',
             '%kernel.project_dir%/src/PublicTransport/Entity','%kernel.project_dir%/src/Geography/Entity','%kernel.project_dir%/src/Travel/Entity',
