@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Form\AdForm;
@@ -39,6 +40,7 @@ class CarpoolController extends AbstractController
 {
     /**
      * Create a carpooling ad.
+     * @IsGranted("ROLE_USER")
      */
     public function ad(AdManager $adManager, UserManager $userManager, Request $request)
     {
