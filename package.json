@@ -54,6 +54,7 @@
     "git-repo-name": "^0.6.0",
     "git-user-name": "^2.0.0",
     "kuler": "^1.0.1",
+    "lodash": "^4.17.11",
     "npm-run-all": "^4.1.5",
     "readline-sync": "^1.4.9",
     "simple-git": "^1.105.0"

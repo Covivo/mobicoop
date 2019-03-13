@@ -43,11 +43,13 @@ use App\Carpool\Filter\LocalityFilter;
 
 /**
  * Carpooling : proposal (offer from a driver / request from a passenger).
+ * Note : force eager is set to false to avoid max number of nested relations (can occure despite of maxdepth... https://github.com/api-platform/core/issues/1910)
  *
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -61,7 +63,6 @@ use App\Carpool\Filter\LocalityFilter;
  *      },
  *      itemOperations={"get","put","delete"}
  * )
- * @ApiFilter(LocalityFilter::class, properties={"startLocality","destinationLocality"})
  * @ApiFilter(NumericFilter::class, properties={"proposalType"})
  * @ApiFilter(DateFilter::class, properties={"criteria.fromDate"})
  */
@@ -92,7 +93,8 @@ class Proposal
     
     /**
      * @var string A comment about the proposal.
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
+     * @Groups({"read","write"})
      */
     private $comment;
 
@@ -108,7 +110,7 @@ class Proposal
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Groups({"read"})
+     * @Groups({"read","write"})
      * @MaxDepth(1)
      */
     private $proposalLinked;
@@ -161,10 +163,15 @@ class Proposal
 
     /**
      * @var Criteria The criteria applied to the proposal.
+     * Note :
+     * The criteria is set as a nullable column, BUT it is in fact MANDATORY.
+     * It is set as nullable because the owning side of a one-to-one association is saved first, so the inverse side does not exist yet.
+     * Other solution : make the proposal as the inverse side, and the criteria as the owning side.
+     * But it is not acceptable as a criteria can be related with other entities (ask and matching) so we would have multiple nullable foreign keys.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="proposal", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -180,10 +187,7 @@ class Proposal
      * @ApiSubresource(maxDepth=1)
      */
     private $individualStops;
-    
-    private $originLocality;
-    private $destinationLocality;
-    
+        
     public function __construct()
     {
         $this->waypoints = new ArrayCollection();
@@ -400,8 +404,11 @@ class Proposal
 
     public function setCriteria(Criteria $criteria): self
     {
+        if ($criteria->getProposal() !== $this) {
+            $criteria->setProposal($this);
+        }
         $this->criteria = $criteria;
-
+        
         return $this;
     }
     
@@ -436,26 +443,6 @@ class Proposal
         return $this;
     }
     
-    public function getOriginLocality()
-    {
-        return $this->originLocality;
-    }
-
-    public function setOriginLocality($originLocality)
-    {
-        $this->originLocality = $originLocality;
-    }
-    
-    public function getDestinationLocality()
-    {
-        return $this->destinationLocality;
-    }
-
-    public function setDestinationLocality($destinationLocality)
-    {
-        $this->destinationLocality = $destinationLocality;
-    }
-
     // DOCTRINE EVENTS
     
     /**

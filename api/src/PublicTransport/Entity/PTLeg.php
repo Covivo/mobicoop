@@ -117,7 +117,7 @@ class PTLeg
     /**
      * @var PTJourney The parent journey of this leg.
      *
-     * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTJourney")
+     * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTJourney", inversedBy="ptlegs")
      * @Groups("pt")
      */
     private $ptjourney;

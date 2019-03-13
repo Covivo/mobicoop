@@ -84,7 +84,7 @@ class Waypoint
     private $proposal;
     
     /**
-     * @var Matching The proposal that created the point.
+     * @var Matching The matching that created the point.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="waypoints")
      */

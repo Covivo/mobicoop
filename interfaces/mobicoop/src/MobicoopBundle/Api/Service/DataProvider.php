@@ -40,6 +40,8 @@ use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\Exception\TransferException;
+use GuzzleHttp\Exception\ServerException;
+use Buzz\Exception\ClientException;
 
 /**
  * Data provider service.
@@ -191,6 +193,7 @@ class DataProvider
      */
     public function post(Resource $object): Response
     {
+        echo 'post <pre>'.print_r($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]), true).'</pre>';
         try {
             $clientResponse = $this->client->post($this->resource, [
                     RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]), true)
@@ -198,7 +201,10 @@ class DataProvider
             if ($clientResponse->getStatusCode() == 201) {
                 return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
             }
-        } catch (TransferException $e) {
+        } catch (ServerException $e) {
+            // echo '<pre>'.print_r($e->getResponse()->getBody()->getContents(), true).'</pre>';
+            // exit;
+                
             return new Response($e->getCode(), $e->getMessage());
         }
         return new Response();
@@ -375,11 +381,19 @@ class RemoveNullObjectNormalizer extends ObjectNormalizer
 {
     public function normalize($object, $format = null, array $context = [])
     {
+        // handling circular references
+        $this->setCircularReferenceHandler(function ($object, string $format = null, array $context = []) {
+            //echo '<pre>'.print_r($object, true).'</pre>';exit;
+            return $object;
+        });
+
         $data = parent::normalize($object, $format, $context);
-        
-        return self::replaceIris(array_filter($data, function ($value) {
-            return (null !== $value) && (!(empty($value) && is_array($value)));
-        }));
+        if (is_array($data)) {
+            return self::replaceIris(array_filter($data, function ($value) {
+                return (null !== $value) && (!(empty($value) && is_array($value)));
+            }));
+        }
+        return $data;
     }
     
     /**

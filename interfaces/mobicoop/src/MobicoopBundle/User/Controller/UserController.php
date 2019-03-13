@@ -25,9 +25,8 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
@@ -95,6 +94,7 @@ class UserController extends AbstractController
 
     /**
      * User profile (get the current user).
+     * @IsGranted("ROLE_USER")
      */
     public function userProfile(UserManager $userManager)
     {
@@ -105,6 +105,7 @@ class UserController extends AbstractController
 
     /**
      * User profile update.
+     * @IsGranted("ROLE_USER")
      */
     public function userProfileUpdate(UserManager $userManager, Request $request)
     {
@@ -140,6 +141,7 @@ class UserController extends AbstractController
 
     /**
      * User password update.
+     * @IsGranted("ROLE_USER")
      */
     public function userPasswordUpdate(UserManager $userManager, Request $request)
     {
@@ -175,6 +177,7 @@ class UserController extends AbstractController
 
     /**
      * Delete the current user.
+     * @IsGranted("ROLE_USER")
      */
     public function userProfileDelete(UserManager $userManager, Request $request)
     {

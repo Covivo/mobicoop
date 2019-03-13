@@ -28,6 +28,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Events;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Geography\Entity\Direction;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
@@ -98,7 +99,35 @@ class Matching
      * @MaxDepth(1)
      */
     private $criteria;
+
+    /**
+     * @var Ask[] The asks made for this matching.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\ask", mappedBy="matching", cascade={"remove"}, orphanRemoval=true)
+     * @Groups({"read"})
+     * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
+     */
+    private $asks;
+
+    /**
+     * @var Waypoint[] The waypoints of the proposal.
+     *
+     * @Assert\NotBlank
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="matching", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OrderBy({"position" = "ASC"})
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
+     */
+    private $waypoints;
     
+    public function __construct()
+    {
+        $this->asks = new ArrayCollection();
+        $this->waypoints = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -148,6 +177,68 @@ class Matching
     public function setCriteria(Criteria $criteria): self
     {
         $this->criteria = $criteria;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Ask[]
+     */
+    public function getAsks(): Collection
+    {
+        return $this->asks;
+    }
+
+    public function addAsk(Ask $ask): self
+    {
+        if (!$this->asks->contains($ask)) {
+            $this->asks[] = $ask;
+            $ask->setMatching($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAsk(Ask $ask): self
+    {
+        if ($this->asks->contains($ask)) {
+            $this->asks->removeElement($ask);
+            // set the owning side to null (unless already changed)
+            if ($ask->getMatching() === $this) {
+                $ask->setMatching(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Waypoint[]
+     */
+    public function getWaypoints(): Collection
+    {
+        return $this->waypoints;
+    }
+
+    public function addWaypoint(Waypoint $waypoint): self
+    {
+        if (!$this->waypoints->contains($waypoint)) {
+            $this->waypoints[] = $waypoint;
+            $waypoint->setMatching($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWaypoint(Waypoint $waypoint): self
+    {
+        if ($this->waypoints->contains($waypoint)) {
+            $this->waypoints->removeElement($waypoint);
+            // set the owning side to null (unless already changed)
+            if ($waypoint->getMatching() === $this) {
+                $waypoint->setMatching(null);
+            }
+        }
 
         return $this;
     }

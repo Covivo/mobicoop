@@ -33,7 +33,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  *
- * @ORM\Entity(repositoryClass="App\Geography\Repository\ZoneRepository")
+ * @ORM\Entity()
  */
 class Zone
 {
