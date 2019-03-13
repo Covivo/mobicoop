@@ -259,7 +259,6 @@ class AdManager
             // creation of the return proposal
             $proposalReturn = $this->proposalManager->createProposal($proposalReturn);
 
-            exit;
         }
         return $proposalOutward;
     }

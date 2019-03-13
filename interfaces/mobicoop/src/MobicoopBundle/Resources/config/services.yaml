@@ -36,10 +36,13 @@ services:
     Mobicoop\Bundle\MobicoopBundle\Api\Service\:
         resource: '@MobicoopBundle/Api/Service/*' 
     
-    # Envoi de l'uri par défaut de l'api au service DataProvider
+    # Send API uri and identifiers to DataProvider service
     Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider :
         arguments:
             $uri: '%env(resolve:API_URI)%'
+            $username: '%env(resolve:API_USERNAME)%'
+            $password: '%env(resolve:API_PASSWORD)%'
+            $authPath: '%env(resolve:API_AUTH_PATH)%'
         shared: false
     
     # Carpool
