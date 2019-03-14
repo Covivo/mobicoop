@@ -39,6 +39,18 @@ Simple API based on [api-plateform](https://api-platform.com), which is a symfon
 
 If you want to check that you are up-to-date in your SQL schema : `npm run updateDb`
 
+#### Security
+
+The api is secured using JWT (Json Web Token), so you need to generate ssl keys in config/jwt : 
+- private.pem
+- public.pem
+
+To generate ssl keys, use these commands in a terminal, at the root of the api : 
+```
+$ openssl genrsa -out config/jwt/private.pem -aes256 4096
+$ openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem
+```
+You will be asked for a passphrase, you can use the one in the [.env](.env) file or change this passphrase to use your own (see *stuff for devs* below for your local .env).
 
 ### Test
  for the moment there is no any tests yet..
@@ -49,17 +61,38 @@ To start the application simply enter :
 
 `npm start`
 
-& just go [http://localhost:8080](http://localhost:8080) 
+& just go to [http://localhost:8080/doc](http://localhost:8080/doc) to see the swagger documentation
 
+The api itself stands at [http://localhost:8080](http://localhost:8080)
+The api is secured using JWT (Json Web Token), so you need to get a token before you can send queries to the api.
+To do so you have to send your credentials to [http://localhost:8080/auth](http://localhost:8080/auth)
+You can do it using an app like Postman with the following settings : 
+- method : POST
+- Headers : Content-Type: application/json
+- Body: 
+  ```
+  {
+    "username":"your username",
+	  "password":"your password"
+  }
+  ```
 
-##### Stuff for devs
+### Documentation
+The swagger documentation can be found at [http://localhost:8080/doc](http://localhost:8080/doc)
+To send queries using a token you first need to get a token (see above), and copy it.
+Then use this token to authorize queries :
+- click on Authorize button
+- on 'Value' write : bearer \<your token\>
+- click on Authorize
 
-If you are in developpement mod, after `composer install` you could see a new `.env` file which is an instance of [.env.dist](.env.dist), *this file is not versionned*, be sure to update this file to indicate the *right ENV variables*
+#### Stuff for devs
+
+If you are in developpement mod, after `composer install` you could see a new `.env`. This file is the default configuration file and *is versioned* (this is a new behavior in Symfony 4.2). *DO NOT* modify this file for your own needs, create instead a [.env.local](.env.file), which *won't be versioned*.
 
 - APP_ENV=dev *used to indicate you are in developpement mod*
 - DATABASE_URL=mysql://db_user:db_password@127.0.0.1:3306/db_name *used to connect to mysql DB*
 
-*IF YOU NEED TO ADD OTHER ENV VARIABLES ADD IT TO [.env.dist](.env.dist), not just .env*
+*IF YOU NEED TO ADD OTHER ENV VARIABLES ADD IT TO [.env.local](.env.local), not just .env*
 
 When you push on this repo, pipeline are automatically trigerred, if you do not want that, please add the message `skip` into your commit; for eg: `git commit -m"update readme, skip"`
 

@@ -1,3 +1,7 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
+# api authentication
+api_login_check:
+    path: /auth
+# api documentation
+swagger_ui:
+    path: /doc
+    controller: api_platform.swagger.action.ui
