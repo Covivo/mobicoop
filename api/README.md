@@ -39,6 +39,19 @@ Simple API based on [api-plateform](https://api-platform.com), which is a symfon
 
 If you want to check that you are up-to-date in your SQL schema : `npm run updateDb`
 
+#### Security
+
+The api is secured using JWT (Json Web Token), so you need to generate ssl keys in config/jwt : 
+- private.pem
+- public.pem
+
+To generate ssl keys, use these commands in a terminal, at the root of the api : 
+```
+$ openssl genrsa -out config/jwt/private.pem -aes256 4096
+$ openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem
+```
+You will be asked for a passphrase, you can use the one in the [.env](.env) file or change this passphrase to use your own (see *stuff for devs* below for your local .env).
+
 ### Test
  for the moment there is no any tests yet..
 
@@ -62,6 +75,7 @@ You can do it using an app like Postman with the following settings :
     "username":"your username",
 	  "password":"your password"
   }
+  ```
 
 ### Documentation
 The swagger documentation can be found at [http://localhost:8080/doc](http://localhost:8080/doc)
