@@ -63,7 +63,7 @@ class ZoneManager
      */
     public function getZonesForAddress(Address $address, float $precision, int $deep = 0): ?array
     {
-        // we transform longitude and latitude to keep calculation simple : 
+        // we transform longitude and latitude to keep calculation simple :
         // - longitude > 0 => no change
         // - longitude < 0 => we add 360 (-1 will become 359, -179 will become 181...)
         // - we add 90 to the latitude to keep positive values : new latitude now goes from 0 to 180 instead of -90 to 90
@@ -89,7 +89,7 @@ class ZoneManager
         } else {
             $nzones = [];
             $nearbyZones = $this->getNear($col, $row, $nzones, $deep);
-            $zones = array_unique(array_merge($zones, $nearbyZones),SORT_REGULAR);
+            $zones = array_unique(array_merge($zones, $nearbyZones), SORT_REGULAR);
             sort($zones);
             return $zones;
         }
@@ -117,7 +117,7 @@ class ZoneManager
                 $col+(360*($row-1)),    // X7
                 $col+1+(360*($row-1)),  // X8
             ];
-            $zones = array_unique(array_merge($zones,$nearZones),SORT_REGULAR);
+            $zones = array_unique(array_merge($zones, $nearZones), SORT_REGULAR);
             foreach ($nearZones as $nzone) {
                 // completer pour trouver col et row
                 //$zones = array_unique(array_merge($zones, $this->getNear($col,$row,$zones,$deep-1)),SORT_REGULAR);
@@ -125,5 +125,4 @@ class ZoneManager
         }
         return $zones;
     }
-    
 }

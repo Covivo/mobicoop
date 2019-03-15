@@ -49,7 +49,7 @@ class ZoneController extends AbstractController
         // $address->setLongitude("0");
         // $address->setLatitude("-90");
 
-        $zones = $zoneManager->getZonesForAddress($address,1,2);
+        $zones = $zoneManager->getZonesForAddress($address, 1, 2);
         var_dump($zones);
         exit;
     }
