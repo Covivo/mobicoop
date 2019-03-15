@@ -24,9 +24,9 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Geography\Service\ZoneManager;
+use App\Geography\Entity\Address as Address;
 
 /**
  * FOR R&D PURPOSE ONLY
@@ -39,11 +39,18 @@ use App\Geography\Service\ZoneManager;
 class ZoneController extends AbstractController
 {
     /**
-     * @Route("/create_zones")
+     * @Route("/rd/getzone")
      */
-    public function createZones(ZoneManager $zoneManager)
+    public function getZones(ZoneManager $zoneManager)
     {
-        $zoneManager->createZones();
+        $address = new Address();
+        $address->setLongitude("6.181201");
+        $address->setLatitude("48.691836");
+        // $address->setLongitude("0");
+        // $address->setLatitude("-90");
+
+        $zones = $zoneManager->getZonesForAddress($address,1,2);
+        var_dump($zones);
         exit;
     }
 }
