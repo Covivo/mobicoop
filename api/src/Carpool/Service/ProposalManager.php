@@ -47,7 +47,7 @@ class ProposalManager
     private $geoRouter;
     private $zoneManager;
 
-    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $matchingAnalyzer, ProposalRepository $proposalRepository, GeoRouter $geoRouter, ZoneManager $zoneManager)
+    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, GeoRouter $geoRouter, ZoneManager $zoneManager)
     {
         $this->entityManager = $entityManager;
         $this->proposalMatcher = $proposalMatcher;
