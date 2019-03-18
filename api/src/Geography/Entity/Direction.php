@@ -127,9 +127,7 @@ class Direction
     private $format;
     
     /**
-     * @var Zone[]|null The geographical zones covered by the direction.
-     *
-     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Zone")
+     * @var array|null The geographical zones covered by the direction.
      */
     private $zones;
 
@@ -269,25 +267,14 @@ class Direction
         return $this;
     }
     
-    public function getZones(): Collection
+    public function getZones(): array
     {
         return $this->zones;
     }
     
-    public function addZone(Zone $zone): self
+    public function setZones(array $zones): self
     {
-        if (!$this->zones->contains($zone)) {
-            $this->zones[] = $zone;
-        }
-        
-        return $this;
-    }
-    
-    public function removeZone(Zone $zone): self
-    {
-        if ($this->zones->contains($zone)) {
-            $this->zones->removeElement($zone);
-        }
+        $this->zones[] = $zones;
         
         return $this;
     }

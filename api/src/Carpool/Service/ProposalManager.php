@@ -42,15 +42,15 @@ use App\Geography\Service\ZoneManager;
 class ProposalManager
 {
     private $entityManager;
-    private $matchingAnalyzer;
+    private $proposalMatcher;
     private $proposalRepository;
     private $geoRouter;
     private $zoneManager;
 
-    public function __construct(EntityManagerInterface $entityManager, MatchingAnalyzer $matchingAnalyzer, ProposalRepository $proposalRepository, GeoRouter $geoRouter, ZoneManager $zoneManager)
+    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, GeoRouter $geoRouter, ZoneManager $zoneManager)
     {
         $this->entityManager = $entityManager;
-        $this->matchingAnalyzer = $matchingAnalyzer;
+        $this->proposalMatcher = $proposalMatcher;
         $this->proposalRepository = $proposalRepository;
         $this->geoRouter = $geoRouter;
         $this->zoneManager = $zoneManager;
@@ -63,12 +63,9 @@ class ProposalManager
      */
     public function createProposal(Proposal $proposal)
     {
-        //$proposal->setType(Proposal::TYPE_OUTWARD);
-
         // temporary initialisation, will be dumped when implementation of these fields will be done
         $proposal->getCriteria()->setSeats(1);
         $proposal->getCriteria()->setAnyRouteAsPassenger(true);
-        //$proposal->getCriteria()->setFromTime($proposal->getCriteria()->getFromDate());
 
         // creation of the directions
         $addresses = [];
@@ -76,11 +73,6 @@ class ProposalManager
             $addresses[] = $waypoint->getAddress();
         }
         if ($routes = $this->geoRouter->getRoutes($addresses)) {
-            // creation of the zones
-            $zones = $this->zoneManager->getZonesForAddresses($routes[0]->getPoints());
-            foreach ($zones as $zone) {
-                $routes[0]->addZone($zone);
-            }
             if ($proposal->getCriteria()->isDriver()) {
                 $proposal->getCriteria()->setDirectionDriver($routes[0]);
             }
@@ -90,79 +82,11 @@ class ProposalManager
         }
 
         $this->entityManager->persist($proposal);
-
-        return $proposal;
-        
-        /*
-        // the linked proposal (return for an outward)
-        $proposalLinked = null;
-        // the waypoints in reverse order if return trip
-        // /!\ for now we assume that the return trip uses the same waypoints as the outward) /!\
-        $reversedWaypoints = [];
-        $nbWaypoints = 0;
-        if ($proposal->getType() == Proposal::TYPE_OUTWARD) {
-            // we will need the reverse waypoints
-            $nbWaypoints = count($proposal->getWaypoints());
-            // we need to get the waypoints in reverse order
-            // we will read the wappoints a first time to create an array with the position as index
-            $aWaypoints = [];
-            foreach ($proposal->getWaypoints() as $proposalWaypoint) {
-                $aWaypoints[$proposalWaypoint->getPosition()] = $proposalWaypoint;
-            }
-            // we sort the array by key
-            ksort($aWaypoints);
-            // our array is ordered by position, we read it backwards
-            $reversedWaypoints = array_reverse($aWaypoints);
-
-            $proposalLinked = clone $proposal;
-            $proposalLinked->setType(Proposal::TYPE_RETURN);
-            // criteria
-            $proposalLinked->setCriteria(clone $proposal->getCriteria());
-            foreach ($reversedWaypoints as $pos=>$proposalWaypoint) {
-                $waypoint = clone $proposalWaypoint;
-                $waypoint->setPosition($pos);
-                $waypoint->setIsDestination(false);
-                // address
-                $waypoint->setAddress(clone $proposalWaypoint->getAddress());
-                if ($pos == ($nbWaypoints-1)) {
-                    $waypoint->setIsDestination(true);
-                }
-                $proposalLinked->addWaypoint($waypoint);
-            }
-
-            // creation of the directions for the return trip (if relevant)
-            $addresses = [];
-            foreach ($proposalLinked->getWaypoints() as $waypoint) {
-                $addresses[] = $waypoint->getAddress();
-            }
-            if ($routes = $this->geoRouter->getRoutes($addresses)) {
-                // creation of the zones
-                $zones = $this->zoneManager->getZonesForAddresses($routes[0]->getPoints());
-                foreach ($zones as $zone) {
-                    $routes[0]->addZone($zone);
-                }
-                if ($proposalLinked->getCriteria()->isDriver()) {
-                    $proposalLinked->getCriteria()->setDirectionDriver($routes[0]);
-                }
-                if ($proposalLinked->getCriteria()->isPassenger()) {
-                    $proposalLinked->getCriteria()->setDirectionPassenger($routes[0]);
-                }
-            }
-
-            $proposal->setProposalLinked($proposalLinked);
-            $this->entityManager->persist($proposalLinked);
-        }
-
-        $this->entityManager->flush();
-        */
         
         // matching analyze
-        // => should be replaced by path analyzer when it's created
-        // => the analyze would be asked when all paths are analyzed and returned
-        // $this->matchingAnalyzer->createMatchingsForProposal($proposal);
-        // if (!is_null($proposalLinked)) {
-        //     $this->matchingAnalyzer->createMatchingsForProposal($proposalLinked);
-        // }
+        $this->proposalMatcher->createMatchingsForProposal($proposal);
+        
+        return $proposal;
     }
     
     /**

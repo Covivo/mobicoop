@@ -21,39 +21,13 @@
  *    LICENSE
  **************************/
 
-namespace App\Controller;
-
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
-use App\Geography\Service\ZoneManager;
-use App\Geography\Entity\Address as Address;
+namespace App\Carpool\Service\Matcher;
 
 /**
- * FOR R&D PURPOSE ONLY
+ * Geographical Matching service.
  *
- * Creation of geographic zones.
- *
- * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class ZoneController extends AbstractController
+class GeoMatcher
 {
-    /**
-     * @Route("/rd/getzone")
-     */
-    public function getZones(ZoneManager $zoneManager)
-    {
-        $address = new Address();
-        // $address->setLongitude("6.181201");
-        // $address->setLatitude("48.691836");
-        $address->setLongitude("6.5");
-        $address->setLatitude("7.8");
-
-        $start = microtime(true);
-        $zones = $zoneManager->getZonesForAddress($address, 0.01, 1);
-        $time_elapsed_secs = microtime(true) - $start;
-        var_dump($time_elapsed_secs);
-        var_dump($zones);
-        exit;
-    }
 }

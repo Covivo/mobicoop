@@ -25,7 +25,7 @@ namespace App\Carpool\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Carpool\Service\MatchingAnalyzer;
+use App\Carpool\Service\ProposalMatcher;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Proposal;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,7 +44,7 @@ class TestController extends AbstractController
      * @Route("/matcher/{id}", name="matcher", requirements={"id"="\d+"})
      *
      */
-    public function matcher($id, EntityManagerInterface $entityManager, MatchingAnalyzer $matchingAnalyzer)
+    public function matcher($id, EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher)
     {
         if ($proposal = $entityManager->getRepository(Proposal::class)->find($id)) {
             // we search for the starting and ending point
@@ -67,7 +67,7 @@ class TestController extends AbstractController
             echo "<li>" . $proposal->getCriteria()->getFromDate()->format('d/m/Y') . "</li>";
             echo "</ul>";
             echo($proposal->getProposalType() == Proposal::PROPOSAL_TYPE_OFFER ? "Requests" : "Offers") . " found :";
-            if ($proposals = $matchingAnalyzer->findMatchingProposals($proposal)) {
+            if ($proposals = $proposalMatcher->findMatchingProposals($proposal)) {
                 echo "<ul>";
                 foreach ($proposals as $proposalFound) {
                     $startLocalityFound = null;
@@ -102,14 +102,14 @@ class TestController extends AbstractController
      * @Route("/matcher/all", name="matcher_all")
      *
      */
-    public function matcherAll(EntityManagerInterface $entityManager, MatchingAnalyzer $matchingAnalyzer)
+    public function matcherAll(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher)
     {
         $proposals = $entityManager->getRepository(Proposal::class)->findAll();
         echo "Finding matching for " . count($proposals) . " proposals.";
         echo "<ul>";
         foreach ($proposals as $proposal) {
             echo "<li>Creating matchings for proposals #" . $proposal->getId() . "</li>";
-            $matchingAnalyzer->createMatchingsForProposal($proposal);
+            $proposalMatcher->createMatchingsForProposal($proposal);
         }
         echo "</ul>";
         return new Response();

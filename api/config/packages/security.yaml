@@ -30,6 +30,12 @@ security:
             stateless: true
             anonymous: true
 
+        # firewall for R&D
+        rd:
+            pattern:  ^/rd/
+            stateless: true
+            anonymous: true
+
         # firewall for dev (profiler)
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -53,4 +59,5 @@ security:
         # - { path: ^/profile, roles: ROLE_USER }
         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/rd/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
