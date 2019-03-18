@@ -87,7 +87,6 @@ class ProposalManager
         $this->proposalMatcher->createMatchingsForProposal($proposal);
         
         return $proposal;
-
     }
     
     /**

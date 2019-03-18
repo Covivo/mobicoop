@@ -30,5 +30,4 @@ namespace App\Matching\Service\Matcher;
  */
 class GeoMatcher
 {
-    
 }

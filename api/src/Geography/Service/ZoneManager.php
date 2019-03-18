@@ -63,8 +63,10 @@ class ZoneManager
      */
     public function getZonesForAddress(Address $address, float $precision, int $deep = 0): ?array
     {
-        $zones[] = $this->getZoneForAddress($address,$precision);
-        if ($deep == 0) return $zones;
+        $zones[] = $this->getZoneForAddress($address, $precision);
+        if ($deep == 0) {
+            return $zones;
+        }
             
         $nzones = [];
         $nearbyZones = $this->getNear($address, $precision, $nzones, $deep);
@@ -103,13 +105,15 @@ class ZoneManager
      */
     public function getNear(Address $address, float $precision, array $zones, int $deep): ?array
     {
-        if ($deep<0) return null;
+        if ($deep<0) {
+            return null;
+        }
         
         // we search for nearby zones
-        // we nearby zones of the XX zone are defined like this : 
+        // we nearby zones of the XX zone are defined like this :
         // X1 X2 X3
         // X4 XX X5
-        // X6 X7 X8  
+        // X6 X7 X8
 
         // we search the GPS point of each X? zone
         $x1 = new Address();
@@ -137,16 +141,16 @@ class ZoneManager
         $x8->setLatitude((string)((float)($address->getLatitude())-$precision));
         $x8->setLongitude((string)((float)($address->getLongitude())+$precision));
 
-        $nearX1 = $this->getZonesForAddress($x1,$precision,$deep-1);
-        $nearX2 = $this->getZonesForAddress($x2,$precision,$deep-1);
-        $nearX3 = $this->getZonesForAddress($x3,$precision,$deep-1);
-        $nearX4 = $this->getZonesForAddress($x4,$precision,$deep-1);
-        $nearX5 = $this->getZonesForAddress($x5,$precision,$deep-1);
-        $nearX6 = $this->getZonesForAddress($x6,$precision,$deep-1);
-        $nearX7 = $this->getZonesForAddress($x7,$precision,$deep-1);
-        $nearX8 = $this->getZonesForAddress($x8,$precision,$deep-1);
+        $nearX1 = $this->getZonesForAddress($x1, $precision, $deep-1);
+        $nearX2 = $this->getZonesForAddress($x2, $precision, $deep-1);
+        $nearX3 = $this->getZonesForAddress($x3, $precision, $deep-1);
+        $nearX4 = $this->getZonesForAddress($x4, $precision, $deep-1);
+        $nearX5 = $this->getZonesForAddress($x5, $precision, $deep-1);
+        $nearX6 = $this->getZonesForAddress($x6, $precision, $deep-1);
+        $nearX7 = $this->getZonesForAddress($x7, $precision, $deep-1);
+        $nearX8 = $this->getZonesForAddress($x8, $precision, $deep-1);
         
-        $zones = array_merge($zones,$nearX1,$nearX2,$nearX3,$nearX4,$nearX5,$nearX6,$nearX7,$nearX8);
+        $zones = array_merge($zones, $nearX1, $nearX2, $nearX3, $nearX4, $nearX5, $nearX6, $nearX7, $nearX8);
 
         return $zones;
     }

@@ -277,7 +277,7 @@ class Direction
         $this->zones[] = $zones;
         
         return $this;
-    }    
+    }
 
     public function getPoints(): array
     {

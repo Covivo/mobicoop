@@ -134,5 +134,4 @@ class ProposalMatcher
         }
         $this->entityManager->flush();
     }
-
 }

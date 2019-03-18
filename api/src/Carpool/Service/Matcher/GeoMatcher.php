@@ -30,5 +30,4 @@ namespace App\Carpool\Service\Matcher;
  */
 class GeoMatcher
 {
-    
 }
