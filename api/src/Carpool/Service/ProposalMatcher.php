@@ -28,21 +28,27 @@ use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Repository\ProposalRepository;
+use App\Matching\Service\Matcher\GeoMatcher;
+use App\Matching\Service\Matcher\TimeMatcher;
 
 /**
  * Matching analyzer service.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class MatchingAnalyzer
+class ProposalMatcher
 {
     private $entityManager;
     private $proposalRepository;
+    private $geoMatcher;
+    private $timeMatcher;
     
-    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository)
+    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, GeoMatcher $geoMatcher, TimeMatcher $timeMatcher)
     {
         $this->entityManager = $entityManager;
         $this->proposalRepository = $proposalRepository;
+        $this->geoMatcher = $geoMatcher;
+        $this->timeMatcher = $timeMatcher;
     }
     
     /**
@@ -76,6 +82,7 @@ class MatchingAnalyzer
                 ]))) {
                     break;
                 }
+                
                 // for now we just set the points to the start and destination points
                 foreach ($proposal->getPoints() as $point) {
                     if ($point->getPosition() == 0) {
@@ -127,4 +134,5 @@ class MatchingAnalyzer
         }
         $this->entityManager->flush();
     }
+
 }
