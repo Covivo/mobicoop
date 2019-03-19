@@ -1,4 +1,5 @@
-# Mobicoop-api
+Mobicoop-api
+=============
 
 ![Logo Mobicoop](logo.png)
 
@@ -6,40 +7,40 @@
   <a href="https://www.gnu.org/licenses/agpl-3.0" ><img alt="License: AGPL v3" src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg"/></a>
 </p>
 
-### About mobicoo-api
+# About mobicoo-api
 
 Simple API based on [api-plateform](https://api-platform.com), which is a symfony like project to build RESTAPI
 
 
-### Requirements
+## Requirements
 
 - PHP: =>7.1
 - Composer =>1.7
 - Node.js => 10
 - xdebug (needed for code-coverage)
 
-- for Windows check the [windows requirement](#windows-requirements) part
-
 - MariaDB Database with access user connection with an [already existing bu empty](https://dev.mysql.com/doc/refman/8.0/en/creating-database.html) database for api
 
-### Install
+## Install
 
-`npm install` will do the necessary jobs
+`npm install` will do the necessary jobs 
 
 *DUPLICATE THE [config.json.dist](config.json.dist) INTO A `config.json` FILE IF YOU WANT TO ADD ANY EXTERNAL PROVIDER*
 
-#### Install Databases needs
+*DUPLICATE .env to .env.local*
+
+### Install Databases needs
 
 ⚠️ Don't forget to setup your SQL before !
 
 - Create a new database schema needed for api based on the name you gave in .env file
 - Configure environment variable DATABASE_URL in .env
-- Migrate all tables using : `php bin/console doctrine:migrations:migrate -n`
+- Migrate all tables using : `npm run migrate`
 - You're finally ready to simply run it !
 
 If you want to check that you are up-to-date in your SQL schema : `npm run updateDb`
 
-#### Security
+### Security
 
 The api is secured using JWT (Json Web Token), so you need to generate ssl keys in config/jwt : 
 - private.pem
