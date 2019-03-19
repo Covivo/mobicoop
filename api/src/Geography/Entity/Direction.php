@@ -64,7 +64,7 @@ class Direction
     private $distance;
     
     /**
-     * @var int The total duration of the direction in seconds.
+     * @var int The total duration of the direction in milliseconds.
      * @ORM\Column(type="integer")
      * @Groups({"read","write"})
      */
@@ -125,7 +125,7 @@ class Direction
      * @Groups({"read","write"})
      */
     private $format;
-    
+
     /**
      * @var array|null The geographical zones covered by the direction.
      */

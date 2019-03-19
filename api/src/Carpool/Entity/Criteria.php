@@ -298,20 +298,20 @@ class Criteria
     private $sunMarginTime;
     
     /**
-     * @var int|null The maximum deviation time (in seconds) as a driver to accept a request proposal.
+     * @var int|null The maximum detour time (in seconds) as a driver to accept a request proposal.
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
-    private $maxDeviationTime;
+    private $maxDetourTime;
     
     /**
-     * @var int|null The maximum deviation distance (in metres) as a driver to accept a request proposal.
+     * @var int|null The maximum detour distance (in metres) as a driver to accept a request proposal.
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
-    private $maxDeviationDistance;
+    private $maxDetourDistance;
     
     /**
      * @var boolean The user accepts any route as a passenger from its origin to the destination.
@@ -723,33 +723,33 @@ class Criteria
         return $this;
     }
     
-    public function getMaxDeviationTime(): ?int
+    public function getMaxDetourTime(): ?int
     {
-        return $this->maxDeviationTime;
+        return $this->maxDetourTime;
     }
     
-    public function getMaxDeviationDistance(): ?int
+    public function getMaxDetourDistance(): ?int
     {
-        return $this->maxDeviationDistance;
+        return $this->maxDetourDistance;
+    }
+    
+    public function setMaxDetourTime(?int $maxDetourTime): self
+    {
+        $this->maxDetourTime = $maxDetourTime;
+        
+        return $this;
+    }
+    
+    public function setMaxDetourDistance(?int $maxDetourDistance): self
+    {
+        $this->maxDetourDistance = $maxDetourDistance;
+        
+        return $this;
     }
     
     public function getAnyRouteAsPassenger(): bool
     {
         return $this->anyRouteAsPassenger;
-    }
-    
-    public function setMaxDeviationTime(?int $maxDeviationTime): self
-    {
-        $this->maxDeviationTime = $maxDeviationTime;
-        
-        return $this;
-    }
-    
-    public function setMaxDeviationDistance(?int $maxDeviationDistance): self
-    {
-        $this->maxDeviationDistance = $maxDeviationDistance;
-        
-        return $this;
     }
     
     public function setAnyRouteAsPassenger(bool $anyRouteAsPassenger): self

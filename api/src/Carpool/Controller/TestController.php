@@ -29,6 +29,10 @@ use App\Carpool\Service\ProposalMatcher;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Proposal;
 use Symfony\Component\HttpFoundation\Response;
+use App\Match\Service\GeoMatcher;
+use App\Match\Entity\Candidate;
+use App\Geography\Entity\Address;
+use App\Geography\Service\GeoRouter;
 
 /**
  * Controller class for API testing purpose.
@@ -113,5 +117,52 @@ class TestController extends AbstractController
         }
         echo "</ul>";
         return new Response();
+    }
+
+    /**
+     * Test of the matcher.
+     *
+     * @Route("/rd/matcher/simple", name="matcher_simple")
+     *
+     */
+    public function matcherSimple(GeoMatcher $geoMatcher, GeoRouter $geoRouter)
+    {
+        echo "simple matcher<br />";
+
+        $candidate1 = new Candidate();
+        $candidate2 = new Candidate();
+
+        $address1 = new Address();
+        $address1b = new Address();
+        $address1c = new Address();
+        $address2 = new Address();
+        $address3 = new Address();
+        $address4 = new Address();
+
+        $address1->setLatitude("48.682839");
+        $address1->setLongitude("6.175954");
+        $address1b->setLatitude("48.966277");
+        $address1b->setLongitude("6.105825");
+        $address1c->setLatitude("49.057861");
+        $address1c->setLongitude("6.122703");
+        $address2->setLatitude("49.599326");
+        $address2->setLongitude("6.132797");
+        $address3->setLatitude("49.125015");
+        $address3->setLongitude("6.164381");
+        $address4->setLatitude("49.261915");
+        $address4->setLongitude("6.169167");
+
+        $candidate1->setAddresses([$address1,$address1b,$address1c,$address2]);
+        $candidate2->setAddresses([$address3,$address4]);
+        
+        $candidate1->setMaxDetourDistance(15000);
+        $candidate1->setMaxDetourDuration(1200000);
+
+        if ($routes = $geoRouter->getRoutes($candidate1->getAddresses())) {
+            $candidate1->setDirection($routes[0]);
+            $matches = $geoMatcher->singleMatch($candidate1,[$candidate2],true);
+            echo "<pre>" . print_r($matches,true) . "</pre>";
+        }
+        exit;
     }
 }

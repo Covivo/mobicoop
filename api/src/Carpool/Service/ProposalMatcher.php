@@ -28,8 +28,8 @@ use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Repository\ProposalRepository;
-use App\Matching\Service\Matcher\GeoMatcher;
-use App\Matching\Service\Matcher\TimeMatcher;
+use App\Match\Service\GeoMatcher;
+use App\Match\Service\TimeMatcher;
 
 /**
  * Matching analyzer service.
