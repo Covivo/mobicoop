@@ -4,7 +4,7 @@
   "description": "API, Front & admin mobicoop carpool app",
   "main": "package.json",
   "scripts": {
-    "install": "npm run install-api && npm run install-admin && npm run install-mobicoop && npm run download-tools",
+    "install": "npm run install-api && npm run install-mobicoop && npm run download-tools",
     "install-api": "cd api && npm i --no-save",
     "install-admin": "cd interfaces/admin && npm i --no-save",
     "install-mobicoop": "cd interfaces/mobicoop && npm i --no-save",
@@ -15,7 +15,7 @@
     "test-admin": "cd interfaces/admin && npm run test",
     "test-mobicoop": "cd interfaces/mobicoop && npm run test",
     "testAndCoverage-mobicoop": "cd interfaces/mobicoop && npm run testAndCoverage",
-    "start": "npm-run-all --parallel start-api start-admin start-mobicoop",
+    "start": "npm-run-all --parallel start-api start-mobicoop",
     "start-api": "cd api && npm start",
     "start-admin": "cd interfaces/admin && npm start",
     "start-mobicoop": "cd interfaces/mobicoop && npm start",
