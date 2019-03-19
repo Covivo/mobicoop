@@ -45,7 +45,7 @@ class GeoMatcher
      *
      * @param Candidate $candidate      The candidate for which we want to find matchings
      * @param Candidate[] $candidates   The array of candidates to match
-     * @param bool $master              The candidate is the master side (meaning that the have to take account of its maximum detour) 
+     * @param bool $master              The candidate is the master side (meaning that the have to take account of its maximum detour)
      * @return array|null               The array of results
      */
     public function singleMatch(Candidate $candidate, array $candidates, bool $master=true): ?array
@@ -53,10 +53,10 @@ class GeoMatcher
         $matches = [];
         
         foreach ($candidates as $candidateToMatch) {
-            if ($master && $match = $this->match($candidate,$candidateToMatch)) {
+            if ($master && $match = $this->match($candidate, $candidateToMatch)) {
                 // if we stream, we should return the result here !
                 $matches[] = $match;
-            } elseif (!$master && $match = $this->match($candidate,$candidateToMatch)) {
+            } elseif (!$master && $match = $this->match($candidate, $candidateToMatch)) {
                 // if we stream, we should return the result here !
                 $matches[] = $match;
             }
@@ -84,16 +84,16 @@ class GeoMatcher
         // The second candidate has 2 or more waypoints
         // It's a Travel salesman problem (TSP) : https://en.wikipedia.org/wiki/Travelling_salesman_problem
 
-        // for now, with the routing engine : 
+        // for now, with the routing engine :
         // - we just try the classic ACDB path if we have only 2 points for the first candidate
-        // - or we try the combinations of : 
-        //   - inner points of the first candidate 
+        // - or we try the combinations of :
+        //   - inner points of the first candidate
         //   - the start and end point of the second candidate
 
         // we will write Axx for first candidate points, Bxx for second candidate points
 
         // TODO : solve the TSP using the optimization engine
-        // TODO : we should also try to remove one or more inner points of the first candidate and see if the whole route is faster 
+        // TODO : we should also try to remove one or more inner points of the first candidate and see if the whole route is faster
         // (it could be the case for example if an inner point and a B0/B1 point are close)
 
         if (count($candidate1->getAddresses()) == 2) {
@@ -124,14 +124,20 @@ class GeoMatcher
                 $take = false;
                 foreach ($combination as $key=>$value) {
                     $take = false;
-                    if ($key[0] == 'A' && in_array('A'.(substr($key,1)+1),$check)) break;
-                    if ($key[0] == 'B' && in_array('B'.(substr($key,1)+1),$check)) break;
+                    if ($key[0] == 'A' && in_array('A'.(substr($key, 1)+1), $check)) {
+                        break;
+                    }
+                    if ($key[0] == 'B' && in_array('B'.(substr($key, 1)+1), $check)) {
+                        break;
+                    }
                     $take = true;
                     $check[] = $key;
                     $address[$key] = $value;
                 }
                 $address['A'.(count($candidate1->getAddresses())-1)] = $candidate1->getAddresses()[count($candidate1->getAddresses())-1];
-                if ($take) $addresses[] = $address;
+                if ($take) {
+                    $addresses[] = $address;
+                }
             }
         }
         
@@ -147,14 +153,22 @@ class GeoMatcher
                 $detourDuration = false;
     
                 if ($candidate1->getMaxDetourDistance()) {
-                    if ($routes[0]->getDistance()<=($candidate1->getDirection()->getDistance()+$candidate1->getMaxDetourDistance())) $detourDistance = true;
+                    if ($routes[0]->getDistance()<=($candidate1->getDirection()->getDistance()+$candidate1->getMaxDetourDistance())) {
+                        $detourDistance = true;
+                    }
                 } elseif ($candidate1->getMaxDetourDistancePercent()) {
-                    if ($routes[0]->getDistance()<=($candidate1->getDirection()->getDistance()*$candidate1->getMaxDetourDistancePercent()+$candidate1->getDirection()->getDistance())) $detourDistance = true;
-                } 
+                    if ($routes[0]->getDistance()<=($candidate1->getDirection()->getDistance()*$candidate1->getMaxDetourDistancePercent()+$candidate1->getDirection()->getDistance())) {
+                        $detourDistance = true;
+                    }
+                }
                 if ($candidate1->getMaxDetourDuration()) {
-                    if ($routes[0]->getDuration()<=($candidate1->getDirection()->getDuration()+$candidate1->getMaxDetourDuration())) $detourDuration = true;
+                    if ($routes[0]->getDuration()<=($candidate1->getDirection()->getDuration()+$candidate1->getMaxDetourDuration())) {
+                        $detourDuration = true;
+                    }
                 } elseif ($candidate1->getMaxDetourDurationPercent()) {
-                    if ($routes[0]->getDuration()<=($candidate1->getDirection()->getDuration()*$candidate1->getMaxDetourDurationPercent()+$candidate1->getDirection()->getDuration())) $detourDuration = true;
+                    if ($routes[0]->getDuration()<=($candidate1->getDirection()->getDuration()*$candidate1->getMaxDetourDurationPercent()+$candidate1->getDirection()->getDuration())) {
+                        $detourDuration = true;
+                    }
                 }
     
                 if ($detourDistance && $detourDuration) {
@@ -162,12 +176,12 @@ class GeoMatcher
                         'order' => array_keys($points),
                         'distance' => $routes[0]->getDistance(),
                         'detourDistance' => $routes[0]->getDistance()-$candidate1->getDirection()->getDistance(),
-                        'detourDistancePercent' => round($routes[0]->getDistance()*100/$candidate1->getDirection()->getDistance()-100,2),
+                        'detourDistancePercent' => round($routes[0]->getDistance()*100/$candidate1->getDirection()->getDistance()-100, 2),
                         'duration' => $routes[0]->getDuration(),
                         'detourDuration' => $routes[0]->getDuration()-$candidate1->getDirection()->getDuration(),
-                        'detourDurationPercent' => round($routes[0]->getDuration()*100/$candidate1->getDirection()->getDuration()-100,2)
+                        'detourDurationPercent' => round($routes[0]->getDuration()*100/$candidate1->getDirection()->getDuration()-100, 2)
                     ];
-                } 
+                }
             }
         }
         return $result;

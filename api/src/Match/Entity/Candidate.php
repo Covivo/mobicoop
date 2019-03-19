@@ -58,12 +58,12 @@ class Candidate
     /**
      * @var int The maximum detour distance (in percentage of the original distance) accepted to match.
      */
-    private $maxDetourDistancePercent;    
+    private $maxDetourDistancePercent;
 
     /**
      * @var int The minimum common travel distance in percentage of the original distance accepted to match.
      */
-    private $minCommonDistancePercent;    
+    private $minCommonDistancePercent;
 
     /**
      * @return Waypoint[]
@@ -151,5 +151,4 @@ class Candidate
         
         return $this;
     }
-
 }

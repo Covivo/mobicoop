@@ -160,8 +160,8 @@ class TestController extends AbstractController
 
         if ($routes = $geoRouter->getRoutes($candidate1->getAddresses())) {
             $candidate1->setDirection($routes[0]);
-            $matches = $geoMatcher->singleMatch($candidate1,[$candidate2],true);
-            echo "<pre>" . print_r($matches,true) . "</pre>";
+            $matches = $geoMatcher->singleMatch($candidate1, [$candidate2], true);
+            echo "<pre>" . print_r($matches, true) . "</pre>";
         }
         exit;
     }
