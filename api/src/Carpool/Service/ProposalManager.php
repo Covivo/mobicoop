@@ -66,6 +66,50 @@ class ProposalManager
         // temporary initialisation, will be dumped when implementation of these fields will be done
         $proposal->getCriteria()->setSeats(1);
         $proposal->getCriteria()->setAnyRouteAsPassenger(true);
+        $proposal->getCriteria()->setIsStrictDate(true);
+
+        // calculation of the min and max times
+        if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+            list($minTime,$maxTime) = self::getMinMaxTime($proposal->getCriteria()->getFromTime(),$proposal->getCriteria()->getMarginTime());
+            $proposal->getCriteria()->setMinTime($minTime);
+            $proposal->getCriteria()->setMaxTime($maxTime);
+        } else {
+            if ($proposal->getCriteria()->getMonCheck()) {
+                list($minTime,$maxTime) = self::getMinMaxTime($proposal->getCriteria()->getMonTime(),$proposal->getCriteria()->getMonMarginTime());
+                $proposal->getCriteria()->setMonMinTime($minTime);
+                $proposal->getCriteria()->setMonMaxTime($maxTime);
+            }
+            if ($proposal->getCriteria()->getTueCheck()) {
+                list($minTime,$maxTime) = self::getMinMaxTime($proposal->getCriteria()->getTueTime(),$proposal->getCriteria()->getTueMarginTime());
+                $proposal->getCriteria()->setTueMinTime($minTime);
+                $proposal->getCriteria()->setTueMaxTime($maxTime);
+            }
+            if ($proposal->getCriteria()->getWedCheck()) {
+                list($minTime,$maxTime) = self::getMinMaxTime($proposal->getCriteria()->getWedTime(),$proposal->getCriteria()->getWedMarginTime());
+                $proposal->getCriteria()->setWedMinTime($minTime);
+                $proposal->getCriteria()->setWedMaxTime($maxTime);
+            }
+            if ($proposal->getCriteria()->getThuCheck()) {
+                list($minTime,$maxTime) = self::getMinMaxTime($proposal->getCriteria()->getThuTime(),$proposal->getCriteria()->getThuMarginTime());
+                $proposal->getCriteria()->setThuMinTime($minTime);
+                $proposal->getCriteria()->setThuMaxTime($maxTime);
+            }
+            if ($proposal->getCriteria()->getFriCheck()) {
+                list($minTime,$maxTime) = self::getMinMaxTime($proposal->getCriteria()->getFriTime(),$proposal->getCriteria()->getFriMarginTime());
+                $proposal->getCriteria()->setFriMinTime($minTime);
+                $proposal->getCriteria()->setFriMaxTime($maxTime);
+            }
+            if ($proposal->getCriteria()->getSatCheck()) {
+                list($minTime,$maxTime) = self::getMinMaxTime($proposal->getCriteria()->getSatTime(),$proposal->getCriteria()->getSatMarginTime());
+                $proposal->getCriteria()->setSatMinTime($minTime);
+                $proposal->getCriteria()->setSatMaxTime($maxTime);
+            }
+            if ($proposal->getCriteria()->getSunCheck()) {
+                list($minTime,$maxTime) = self::getMinMaxTime($proposal->getCriteria()->getSunTime(),$proposal->getCriteria()->getSunMarginTime());
+                $proposal->getCriteria()->setSunMinTime($minTime);
+                $proposal->getCriteria()->setSunMaxTime($maxTime);
+            }
+        }
 
         // creation of the directions
         $addresses = [];
@@ -84,7 +128,7 @@ class ProposalManager
         $this->entityManager->persist($proposal);
         
         // matching analyze
-        $this->proposalMatcher->createMatchingsForProposal($proposal);
+        //$this->proposalMatcher->createMatchingsForProposal($proposal);
         
         return $proposal;
     }
@@ -181,5 +225,26 @@ class ProposalManager
         // for now we don't use the time parameters
         // @todo add the time parameters
         return $this->proposalRepository->findMatchingProposals($proposal, false);
+    }
+
+    // returns the min and max time from a time and a margin
+    private static function getMinMaxTime($time,$margin) 
+    {
+        $minTime = clone $time;
+        $maxTime = clone $time;
+        $minTime->sub(new DateInterval('PT' . $margin . 'S'));
+        if ($minTime->format('j') <> $time->format('j')) {
+            // the day has changed => we keep '00:00' as min time
+            $minTime = new \Datetime('00:00:00');
+        }
+        $maxTime->add(new DateInterval('PT' . $margin . 'S'));
+        if ($maxTime->format('j') <> $time->format('j')) {
+            // the day has changed => we keep '23:59:00' as max time
+            $maxTime = new \Datetime('23:59:00');
+        }
+        return [
+            $minTime,
+            $maxTime
+        ];
     }
 }

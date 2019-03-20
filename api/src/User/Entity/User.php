@@ -65,7 +65,7 @@ use Doctrine\Common\Collections\Collection;
  */
 class User
 {
-    const MAX_DETOUR_TIME = 600;
+    const MAX_DETOUR_DURATION = 600;
     const MAX_DETOUR_DISTANCE = 10000;
     
     const STATUS_ACTIVE = 1;
@@ -175,12 +175,12 @@ class User
     private $telephone;
     
     /**
-     * @var int|null The maximum detour time (in seconds) as a driver to accept a request proposal.
+     * @var int|null The maximum detour duration (in seconds) as a driver to accept a request proposal.
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
-    private $maxDetourTime;
+    private $maxDetourDuration;
     
     /**
      * @var int|null The maximum detour distance (in metres) as a driver to accept a request proposal.
@@ -367,14 +367,14 @@ class User
         return $this;
     }
 
-    public function getMaxDetourTime(): int
+    public function getMaxDetourDuration(): int
     {
-        return (!is_null($this->maxDetourTime) ? $this->maxDetourTime : self::MAX_DETOUR_TIME);
+        return (!is_null($this->maxDetourDuration) ? $this->maxDetourDuration : self::MAX_DETOUR_DURATION);
     }
     
-    public function setMaxDetourTime(?int $maxDetourTime): self
+    public function setMaxDetourDuration(?int $maxDetourDuration): self
     {
-        $this->maxDetourTime = $maxDetourTime;
+        $this->maxDetourDuration = $maxDetourDuration;
         
         return $this;
     }

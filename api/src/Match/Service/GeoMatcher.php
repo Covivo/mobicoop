@@ -84,17 +84,18 @@ class GeoMatcher
         // The second candidate has 2 or more waypoints
         // It's a Travel salesman problem (TSP) : https://en.wikipedia.org/wiki/Travelling_salesman_problem
 
-        // for now, with the routing engine :
-        // - we just try the classic ACDB path if we have only 2 points for the first candidate
-        // - or we try the combinations of :
-        //   - inner points of the first candidate
-        //   - the start and end point of the second candidate
-
         // we will write Axx for first candidate points, Bxx for second candidate points
 
+        // for now, we use the routing engine and :
+        // - we just try the classic ACDB path if we have only 2 points for the first candidate
+        // - or we try the combinations of :
+        //   - inner points of the first candidate (=> we exclude the start and end point as they must stay start and end)
+        //   - the start and end point of the second candidate
+        //   - note : we keep only the combinations that respect the order of the points for the 2 candidates (B0 will always be before B1, A1 will always be before A2 etc...)
+        //   - TODO : maybe we should also try to remove one or more inner points of the first candidate and see if the whole route is faster
+        //     (it could be the case for example if an inner point and a B0/B1 point are close)
+
         // TODO : solve the TSP using the optimization engine
-        // TODO : we should also try to remove one or more inner points of the first candidate and see if the whole route is faster
-        // (it could be the case for example if an inner point and a B0/B1 point are close)
 
         if (count($candidate1->getAddresses()) == 2) {
             $addresses[] = [
@@ -107,8 +108,8 @@ class GeoMatcher
             // innerAddresses will contain the first candidate addresses without the start and end point
             $innerAddresses = [];
             $addresses1 = $candidate1->getAddresses();
-            array_pop($addresses1);
-            array_shift($addresses1);
+            array_pop($addresses1);     // get rid of the last point
+            array_shift($addresses1);   // get rid of the first point
             for ($i=1;$i<=count($addresses1);$i++) {
                 $innerAddresses['A'.$i] = $addresses1[$i-1];
             }
@@ -118,24 +119,26 @@ class GeoMatcher
             $generator = new CombinationsGenerator();
             foreach ($generator->generate($innerAddresses) as $combination) {
                 $address = [];
-                $address['A0'] = $candidate1->getAddresses()[0];
+                $address['A0'] = $candidate1->getAddresses()[0];    // first candidate start
                 // we use the following array to check the order of points (eg. if B1 is before B0 we skip)
                 $check=[];
                 $take = false;
                 foreach ($combination as $key=>$value) {
                     $take = false;
                     if ($key[0] == 'A' && in_array('A'.(substr($key, 1)+1), $check)) {
+                        // 'A' order not respected !
                         break;
                     }
                     if ($key[0] == 'B' && in_array('B'.(substr($key, 1)+1), $check)) {
+                        // 'B' order not respected !
                         break;
                     }
                     $take = true;
                     $check[] = $key;
                     $address[$key] = $value;
                 }
-                $address['A'.(count($candidate1->getAddresses())-1)] = $candidate1->getAddresses()[count($candidate1->getAddresses())-1];
                 if ($take) {
+                    $address['A'.(count($candidate1->getAddresses())-1)] = $candidate1->getAddresses()[count($candidate1->getAddresses())-1]; // first candidate end
                     $addresses[] = $address;
                 }
             }
@@ -143,12 +146,12 @@ class GeoMatcher
         
         foreach ($addresses as $points) {
             if ($routes = $this->geoRouter->getRoutes(array_values($points))) {
-                // echo $routes[0]->getDistance() . "<br />";
-                // echo $candidate1->getDirection()->getDistance() . "<br />";
-                // echo $candidate1->getMaxDetourDistance() . "<br />";
-                // echo $routes[0]->getDuration() . "<br />";
-                // echo $candidate1->getDirection()->getDuration() . "<br />";
-                // echo $candidate1->getMaxDetourDuration() . "<br />";
+                echo $routes[0]->getDistance() . "<br />";
+                echo $candidate1->getDirection()->getDistance() . "<br />";
+                echo $candidate1->getMaxDetourDistance() . "<br />";
+                echo $routes[0]->getDuration() . "<br />";
+                echo $candidate1->getDirection()->getDuration() . "<br />";
+                echo $candidate1->getMaxDetourDuration() . "<br />";
                 $detourDistance = false;
                 $detourDuration = false;
     

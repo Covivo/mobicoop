@@ -55,12 +55,6 @@ class ProposalRepository
      */
     public function findMatchingProposals(Proposal $proposal, bool $excludeProposalUser=true)
     {
-        
-        // LIMITATIONS :
-        // - only punctual journeys
-        // - only 2 points : origin and destination
-        // - only for the same day
-        
         switch ($proposal->getCriteria()->getFrequency()) {
             case Criteria::FREQUENCY_PUNCTUAL:
                 return $this->findMatchingForPunctualProposal($proposal, $excludeProposalUser);
@@ -82,33 +76,10 @@ class ProposalRepository
      */
     private function findMatchingForPunctualProposal(Proposal $proposal, bool $excludeProposalUser=true)
     {
-        // LIMITATIONS :
-        // - only 2 points : origin and destination
-        // - the matching is made only on the locality, for the same day
-        
-        // we search for the origin and destination of the proposal
-        $originLocality = null;
-        $destinationLocality = null;
-        foreach ($proposal->getWaypoints() as $waypoint) {
-            if ($waypoint->getPosition() == 0) {
-                $originLocality = $waypoint->getAddress()->getAddressLocality();
-            }
-            if ($waypoint->isDestination()) {
-                $destinationLocality = $waypoint->getAddress()->getAddressLocality();
-            }
-            if (!is_null($originLocality) && !is_null($destinationLocality)) {
-                break;
-            }
-        }
-        
         // we search the matchings in the proposal entity
         $query = $this->repository->createQueryBuilder('p')
-        // we also need the criteria (for the dates, number of seats...) and the starting/ending points/addresses for the location
-        ->join('p.criteria', 'c')
-        ->join('p.points', 'startPoint')
-        ->join('p.points', 'endPoint')
-        ->join('startPoint.address', 'startAddress')
-        ->join('endPoint.address', 'endAddress');
+        // we also need the criteria (for the dates, number of seats...)
+        ->join('p.criteria', 'c');
         
         // do we exclude the user itself ?
         if ($excludeProposalUser) {
@@ -125,24 +96,58 @@ class ProposalRepository
             $query->andWhere('c.isDriver = 1');
         }
         
-        // dates
-        // we limit the search to the days after the fromDate and before toDate if it's defined
-        // @todo limit automatically the search to the x next days if toDate is not defined ?
-        $query->andWhere('c.fromDate >= :fromDate')
-        ->setParameter('fromDate', $proposal->getCriteria()->getFromDate()->format('Y-m-d'));
-        if (!is_null($proposal->getCriteria()->getToDate())) {
-            $query->andWhere('c.fromDate <= :toDate')
-            ->setParameter('toDate', $proposal->getCriteria()->getToDate()->format('Y-m-d'));
+        // DATES AND TIME
+
+        // for a punctual proposal, we search for punctual or regular candidate proposals
+
+        // - punctual candidates, we limit the search : 
+        //   - exactly to fromDate if strictDate is true
+        //   - to the days after the fromDate and before toDate if it's defined (if the user wants to travel any day within a certain range)
+        //   (@todo limit automatically the search to the x next days if toDate is not defined ?)
+        // - regular candidates, we limit the search : 
+        //   - to the week day of the proposal
+
+        $regularDay = '';
+        $regularTime = '';
+        switch ($proposal->getCriteria()->getFromDate()->format('w')) {
+            case 0 :    $regularDay = ' and c.sunCheck = 1';
+                        $regularTime = ' and c.sunTime between ';
+                        break;
+            case 1 :    $regularDay = ' and c.monCheck = 1';
+                        break;
+            case 2 :    $regularDay = ' and c.tueCheck = 1';
+                        break;
+            case 3 :    $regularDay = ' and c.wedCheck = 1';
+                        break;
+            case 4 :    $regularDay = ' and c.thuCheck = 1';
+                        break;
+            case 5 :    $regularDay = ' and c.friCheck = 1';
+                        break;
+            case 6 :    $regularDay = ' and c.satCheck = 1';
+                        break;
         }
-        
-        // we limit the search to the starting and ending point locality
-        // @todo use the coordinates
-        $query->andWhere('startPoint.position = 0')
-        ->andWhere('endPoint.lastPoint = 1');
-        $query->andWhere('startAddress.addressLocality = :startLocality')
-        ->andWhere('endAddress.addressLocality = :endLocality')
-        ->setParameter('startLocality', $originLocality)
-        ->setParameter('endLocality', $destinationLocality);
+
+        $setToDate = false;
+        if ($proposal->getCriteria()->isStrictDate()) {
+            $punctualAndWhere = '(c.frequency=' . Criteria::FREQUENCY_PUNCTUAL . ' and c.fromDate = :fromDate)';
+        } else {
+            $punctualAndWhere = '(c.frequency=' . Criteria::FREQUENCY_PUNCTUAL . ' and c.fromDate >= :fromDate';
+            if (!is_null($proposal->getCriteria()->getToDate())) {
+                $punctualAndWhere .= (' and c.fromDate <= :toDate');
+                $setToDate = true;
+            }
+            $punctualAndWhere .= ')';
+        }
+        $regularAndWhere = '(c.frequency=' . Criteria::FREQUENCY_REGULAR . ' and c.fromDate <= :fromDate and c.toDate >= :fromDate' . $regularDay . ')';
+
+        $query->andWhere('(' . $punctualAndWhere . ' or ' .$regularAndWhere . ')')
+        ->setParameter('fromDate', $proposal->getCriteria()->getFromDate()->format('Y-m-d'));   
+        if ($setToDate) {
+            $query->setParameter('toDate', $proposal->getCriteria()->getToDate()->format('Y-m-d'));
+        } 
+
+        // TIME
+        $query->andWhere();
         
         // we launch the request and return the result
         return $query->getQuery()->getResult();

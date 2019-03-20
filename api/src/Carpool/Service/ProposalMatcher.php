@@ -30,6 +30,7 @@ use App\Carpool\Entity\Criteria;
 use App\Carpool\Repository\ProposalRepository;
 use App\Match\Service\GeoMatcher;
 use App\Match\Service\TimeMatcher;
+use App\Match\Entity\Candidate;
 
 /**
  * Matching analyzer service.
@@ -59,7 +60,76 @@ class ProposalMatcher
      */
     public function findMatchingProposals(Proposal $proposal)
     {
-        return $this->proposalRepository->findMatchingProposals($proposal);
+        $proposals = [];
+
+        // we search matching proposals in the database
+        $proposalsFound = $this->proposalRepository->findMatchingProposals($proposal);
+
+        return $proposalsFound;
+
+        // we filter with geomatcher
+        $candidateProposal = new Candidate();
+        $addresses = [];
+        foreach ($proposal->getWaypoints() as $waypoint) {
+            $addresses[] = $waypoint->getAddress();
+        }
+        $candidateProposal->setAddresses($addresses);
+        $candidateProposal->setMaxDetourDistance($proposal->getCriteria()->getMaxDetourDistance());
+        $candidateProposal->setMaxDetourDuration($proposal->getCriteria()->getMaxDetourDuration());
+
+        if ($proposal->getCriteria()->isDriver()) {
+            $candidateProposal->setDirection($proposal->getCriteria()->getDirectionDriver());
+            foreach ($proposalsFound as $proposalToMatch) {
+                $candidate = new Candidate();
+                $addressesCandidate = [];
+                foreach ($proposalToMatch->getWaypoints() as $waypoint) {
+                    $addressesCandidate[] = $waypoint->getAddress();
+                }
+                $candidate->setAddresses($addressesCandidate);
+                $candidate->setMaxDetourDistance($proposalToMatch->getCriteria()->getMaxDetourDistance());
+                $candidate->setMaxDetourDuration($proposalToMatch->getCriteria()->getMaxDetourDuration());
+                if ($matches = $this->geoMatcher->singleMatch($candidateProposal, [$candidate], true)) {
+                    if (is_array($matches) && count($matches)>0) {
+                        $proposals[] = [
+                            "role" => "driver",
+                            "proposal" => $proposalsFound,
+                            "matches" => $matches
+                        ];
+                    } else {
+                        echo "no match for " . $proposalsFound->getId();
+                    }
+                }
+            }
+        }
+
+        if ($proposal->getCriteria()->isPassenger()) {
+            $candidateProposal->setDirection($proposal->getCriteria()->getDirectionPassenger());
+            foreach ($proposalsFound as $proposalToMatch) {
+                $candidate = new Candidate();
+                $addressesCandidate = [];
+                foreach ($proposalToMatch->getWaypoints() as $waypoint) {
+                    $addressesCandidate[] = $waypoint->getAddress();
+                }
+                $candidate->setAddresses($addressesCandidate);
+                $candidate->setMaxDetourDistance($proposalToMatch->getCriteria()->getMaxDetourDistance());
+                $candidate->setMaxDetourDuration($proposalToMatch->getCriteria()->getMaxDetourDuration());
+                if ($matches = $this->geoMatcher->singleMatch($candidateProposal, [$candidate], false)) {
+                    if (is_array($matches) && count($matches)>0) {
+                        $proposals[] = [
+                            "role" => "passenger",
+                            "proposal" => $proposalsFound,
+                            "matches" => $matches
+                        ];
+                    } else {
+                        echo "no match for " . $proposalsFound->getId();
+                    }
+                } else {
+                    echo "error ";
+                }
+            }
+        }
+
+        return $proposals;
     }
     
     /**

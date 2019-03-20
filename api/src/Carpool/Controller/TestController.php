@@ -28,6 +28,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Carpool\Service\ProposalMatcher;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Proposal;
+use App\Carpool\Entity\Criteria;
 use Symfony\Component\HttpFoundation\Response;
 use App\Match\Service\GeoMatcher;
 use App\Match\Entity\Candidate;
@@ -45,51 +46,31 @@ class TestController extends AbstractController
     /**
      * Show matching proposals for a given proposal.
      *
-     * @Route("/matcher/{id}", name="matcher", requirements={"id"="\d+"})
+     * @Route("/rd/matcher/{id}", name="matcher", requirements={"id"="\d+"})
      *
      */
     public function matcher($id, EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher)
     {
+        $time1 = new \Datetime('00:01');
+        
+        var_dump($time1);
+
+        $time1->sub(new \DateInterval('PT120S'));
+
+        var_dump($time1);
+
+        exit;
         if ($proposal = $entityManager->getRepository(Proposal::class)->find($id)) {
-            // we search for the starting and ending point
-            $startLocality = null;
-            $endLocality = null;
-            foreach ($proposal->getPoints() as $point) {
-                if ($point->getPosition() == 0) {
-                    $startLocality = $point->getAddress()->getStreetAddress() . " " . $point->getAddress()->getAddressLocality();
-                }
-                if ($point->getLastPoint()) {
-                    $endLocality = $point->getAddress()->getStreetAddress() . " " . $point->getAddress()->getAddressLocality();
-                }
-                if (!is_null($startLocality) && !is_null($endLocality)) {
-                    break;
-                }
-            }
-            echo($proposal->getProposalType() == Proposal::PROPOSAL_TYPE_OFFER ? "Offer" : "Request") . " #$id : <ul>";
+            echo "#$id : <ul>";
             echo "<li>" . $proposal->getUser()->getEmail() . "</li>";
-            echo "<li>$startLocality => $endLocality</li>";
             echo "<li>" . $proposal->getCriteria()->getFromDate()->format('d/m/Y') . "</li>";
             echo "</ul>";
-            echo($proposal->getProposalType() == Proposal::PROPOSAL_TYPE_OFFER ? "Requests" : "Offers") . " found :";
             if ($proposals = $proposalMatcher->findMatchingProposals($proposal)) {
                 echo "<ul>";
                 foreach ($proposals as $proposalFound) {
-                    $startLocalityFound = null;
-                    $endLocalityFound = null;
-                    foreach ($proposalFound->getPoints() as $point) {
-                        if ($point->getPosition() == 0) {
-                            $startLocalityFound = $point->getAddress()->getStreetAddress() . " " . $point->getAddress()->getAddressLocality();
-                        }
-                        if ($point->getLastPoint()) {
-                            $endLocalityFound = $point->getAddress()->getStreetAddress() . " " . $point->getAddress()->getAddressLocality();
-                        }
-                        if (!is_null($startLocalityFound) && !is_null($endLocalityFound)) {
-                            break;
-                        }
-                    }
                     echo "<li>Proposal #" . $proposalFound->getId() . "<ul>";
+                    echo "<li>" . (($proposalFound->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) ? "Punctual" : "Regular") . "</li>";
                     echo "<li>" . $proposalFound->getUser()->getEmail() . "</li>";
-                    echo "<li>$startLocalityFound => $endLocalityFound</li>";
                     echo "<li>" . $proposalFound->getCriteria()->getFromDate()->format('d/m/Y') . "</li></ul>";
                 }
                 echo "</ul>";
