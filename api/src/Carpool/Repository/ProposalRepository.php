@@ -100,30 +100,30 @@ class ProposalRepository
 
         // for a punctual proposal, we search for punctual or regular candidate proposals
 
-        // - punctual candidates, we limit the search : 
+        // - punctual candidates, we limit the search :
         //   - exactly to fromDate if strictDate is true
         //   - to the days after the fromDate and before toDate if it's defined (if the user wants to travel any day within a certain range)
         //   (@todo limit automatically the search to the x next days if toDate is not defined ?)
-        // - regular candidates, we limit the search : 
+        // - regular candidates, we limit the search :
         //   - to the week day of the proposal
 
         $regularDay = '';
         $regularTime = '';
         switch ($proposal->getCriteria()->getFromDate()->format('w')) {
-            case 0 :    $regularDay = ' and c.sunCheck = 1';
+            case 0:    $regularDay = ' and c.sunCheck = 1';
                         $regularTime = ' and c.sunTime between ';
                         break;
-            case 1 :    $regularDay = ' and c.monCheck = 1';
+            case 1:    $regularDay = ' and c.monCheck = 1';
                         break;
-            case 2 :    $regularDay = ' and c.tueCheck = 1';
+            case 2:    $regularDay = ' and c.tueCheck = 1';
                         break;
-            case 3 :    $regularDay = ' and c.wedCheck = 1';
+            case 3:    $regularDay = ' and c.wedCheck = 1';
                         break;
-            case 4 :    $regularDay = ' and c.thuCheck = 1';
+            case 4:    $regularDay = ' and c.thuCheck = 1';
                         break;
-            case 5 :    $regularDay = ' and c.friCheck = 1';
+            case 5:    $regularDay = ' and c.friCheck = 1';
                         break;
-            case 6 :    $regularDay = ' and c.satCheck = 1';
+            case 6:    $regularDay = ' and c.satCheck = 1';
                         break;
         }
 
@@ -141,10 +141,10 @@ class ProposalRepository
         $regularAndWhere = '(c.frequency=' . Criteria::FREQUENCY_REGULAR . ' and c.fromDate <= :fromDate and c.toDate >= :fromDate' . $regularDay . ')';
 
         $query->andWhere('(' . $punctualAndWhere . ' or ' .$regularAndWhere . ')')
-        ->setParameter('fromDate', $proposal->getCriteria()->getFromDate()->format('Y-m-d'));   
+        ->setParameter('fromDate', $proposal->getCriteria()->getFromDate()->format('Y-m-d'));
         if ($setToDate) {
             $query->setParameter('toDate', $proposal->getCriteria()->getToDate()->format('Y-m-d'));
-        } 
+        }
 
         // TIME
         $query->andWhere();

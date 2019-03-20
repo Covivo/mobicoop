@@ -70,42 +70,42 @@ class ProposalManager
 
         // calculation of the min and max times
         if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
-            list($minTime,$maxTime) = self::getMinMaxTime($proposal->getCriteria()->getFromTime(),$proposal->getCriteria()->getMarginTime());
+            list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getFromTime(), $proposal->getCriteria()->getMarginTime());
             $proposal->getCriteria()->setMinTime($minTime);
             $proposal->getCriteria()->setMaxTime($maxTime);
         } else {
             if ($proposal->getCriteria()->getMonCheck()) {
-                list($minTime,$maxTime) = self::getMinMaxTime($proposal->getCriteria()->getMonTime(),$proposal->getCriteria()->getMonMarginTime());
+                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getMonTime(), $proposal->getCriteria()->getMonMarginTime());
                 $proposal->getCriteria()->setMonMinTime($minTime);
                 $proposal->getCriteria()->setMonMaxTime($maxTime);
             }
             if ($proposal->getCriteria()->getTueCheck()) {
-                list($minTime,$maxTime) = self::getMinMaxTime($proposal->getCriteria()->getTueTime(),$proposal->getCriteria()->getTueMarginTime());
+                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getTueTime(), $proposal->getCriteria()->getTueMarginTime());
                 $proposal->getCriteria()->setTueMinTime($minTime);
                 $proposal->getCriteria()->setTueMaxTime($maxTime);
             }
             if ($proposal->getCriteria()->getWedCheck()) {
-                list($minTime,$maxTime) = self::getMinMaxTime($proposal->getCriteria()->getWedTime(),$proposal->getCriteria()->getWedMarginTime());
+                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getWedTime(), $proposal->getCriteria()->getWedMarginTime());
                 $proposal->getCriteria()->setWedMinTime($minTime);
                 $proposal->getCriteria()->setWedMaxTime($maxTime);
             }
             if ($proposal->getCriteria()->getThuCheck()) {
-                list($minTime,$maxTime) = self::getMinMaxTime($proposal->getCriteria()->getThuTime(),$proposal->getCriteria()->getThuMarginTime());
+                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getThuTime(), $proposal->getCriteria()->getThuMarginTime());
                 $proposal->getCriteria()->setThuMinTime($minTime);
                 $proposal->getCriteria()->setThuMaxTime($maxTime);
             }
             if ($proposal->getCriteria()->getFriCheck()) {
-                list($minTime,$maxTime) = self::getMinMaxTime($proposal->getCriteria()->getFriTime(),$proposal->getCriteria()->getFriMarginTime());
+                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getFriTime(), $proposal->getCriteria()->getFriMarginTime());
                 $proposal->getCriteria()->setFriMinTime($minTime);
                 $proposal->getCriteria()->setFriMaxTime($maxTime);
             }
             if ($proposal->getCriteria()->getSatCheck()) {
-                list($minTime,$maxTime) = self::getMinMaxTime($proposal->getCriteria()->getSatTime(),$proposal->getCriteria()->getSatMarginTime());
+                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getSatTime(), $proposal->getCriteria()->getSatMarginTime());
                 $proposal->getCriteria()->setSatMinTime($minTime);
                 $proposal->getCriteria()->setSatMaxTime($maxTime);
             }
             if ($proposal->getCriteria()->getSunCheck()) {
-                list($minTime,$maxTime) = self::getMinMaxTime($proposal->getCriteria()->getSunTime(),$proposal->getCriteria()->getSunMarginTime());
+                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getSunTime(), $proposal->getCriteria()->getSunMarginTime());
                 $proposal->getCriteria()->setSunMinTime($minTime);
                 $proposal->getCriteria()->setSunMaxTime($maxTime);
             }
@@ -228,7 +228,7 @@ class ProposalManager
     }
 
     // returns the min and max time from a time and a margin
-    private static function getMinMaxTime($time,$margin) 
+    private static function getMinMaxTime($time, $margin)
     {
         $minTime = clone $time;
         $maxTime = clone $time;

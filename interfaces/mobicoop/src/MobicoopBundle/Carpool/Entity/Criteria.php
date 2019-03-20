@@ -100,6 +100,20 @@ class Criteria
     private $fromTime;
 
     /**
+     * @var int Accepted margin time for punctual proposal in seconds.
+     *
+     * @Groups({"post","put"})
+     */
+    private $marginTime;
+
+    /**
+     * @var boolean For punctual proposals, the user accepts only matchings for the defined date (no ranges).
+     *
+     * @Groups({"post","put"})
+     */
+    private $strictDate;
+
+    /**
      * @var \DateTimeInterface|null The end date if regular proposal.
      * @Assert\Date()
      *
@@ -384,6 +398,30 @@ class Criteria
     public function setFromTime(?\DateTimeInterface $fromTime): self
     {
         $this->fromTime = $fromTime;
+        
+        return $this;
+    }
+
+    public function getMarginTime(): ?int
+    {
+        return $this->marginTime;
+    }
+
+    public function setMarginTime(?int $marginTime): self
+    {
+        $this->marginTime = $marginTime;
+
+        return $this;
+    }
+
+    public function isStrictDate(): ?bool
+    {
+        return $this->strictDate;
+    }
+    
+    public function setIsStrictDate(bool $isStrictDate): self
+    {
+        $this->strictDate = $isStrictDate;
         
         return $this;
     }
