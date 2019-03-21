@@ -3,6 +3,7 @@
 // any CSS you require will output into a single css file (app.css in this case)
 import Vue from 'vue';
 import Buefy from 'buefy';
+import axios from 'axios';
 import '../../../css/page/home.scss';
 
 // Vue components
@@ -40,10 +41,24 @@ new Vue({
     return {
       timeStart: new Date(),
       timeReturn: new Date(),
-      days: ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche']
+      days: ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'],
+      form: {
+        origin: '',
+        destination: '',
+        role: '',
+        type: false,
+        frequency: null,
+        fromDate: '',
+        toDate: ''
+      }
     };
   },
   mounted(){
     console.log('freq', this.outward);
+  },
+  methods:{
+    sendForm(){
+      console.log('Will send form');
+    }
   }
 })

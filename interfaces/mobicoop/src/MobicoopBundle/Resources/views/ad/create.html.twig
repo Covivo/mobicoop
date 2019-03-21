@@ -4,8 +4,10 @@
 
 {% block title %}{% trans from 'ui' %}carpool.ad_create.title{% endtrans %}{% endblock %}
 
+
 {% block stylesheets %}
 {{ encore_entry_link_tags('bundle_ad/create') }}
+<script src="http://localhost:8098"></script>
 {% endblock %}
 
 {% block body %}
@@ -21,42 +23,62 @@
 </section>
 
 <script type="text/x-template" id="ad-create-template">
-  <section>
-    <b-field>
-      <b-radio-button v-model="role" name="frequency" native-value="1" type="is-danger">
-        <b-icon icon="close"></b-icon>
-        <span>Conducteur</span>
-      </b-radio-button>
-      <b-radio-button v-model="role" name="role" native-value="2" type="is-success">
-        <b-icon icon="check"></b-icon>
-        <span>Passager</span>
-      </b-radio-button>
-      <b-radio-button v-model="role" name="role" native-value="3">Passager Conducteur</b-radio-button>
-    </b-field>
-    <b-field>
-      <b-radio-button v-model="type" name="type" native-value="1" type="is-danger">
-        <b-icon icon="close"></b-icon>
-        <span>Allez</span>
-      </b-radio-button>
-      <b-radio-button v-model="type" name="type" native-value="2" type="is-success">
-        <b-icon icon="check"></b-icon>
-        <span>Allez/Retour</span>
-      </b-radio-button>
-    </b-field>
-    <b-field>
-      <b-radio-button v-model="frequency" name="frequency" native-value="1" type="is-danger">
-        <b-icon icon="close"></b-icon>
-        <span>Ponctuel</span>
-      </b-radio-button>
-      <b-radio-button v-model="frequency" name="frequency" native-value="2" type="is-success">
-        <b-icon icon="check"></b-icon>
-        <span>Regulier</span>
-      </b-radio-button>
-    </b-field>
+  <section class="section">
+    <div class="tile is-ancestor">
+      <div class="tile is-vertical is-12">
+        {# Choose Role #}
+        <div class="tile is-child notification center-all">
+          <h3>Je suis:</h3>
+            <b-field>
+              <b-radio-button v-model="role" name="role" native-value="1" type="is-mobicoop-blue">
+                <b-icon icon="close"></b-icon>
+                <span>🚙 Conducteur</span>
+              </b-radio-button>
+              <b-radio-button v-model="role" name="role" native-value="2" type="is-mobicoop-pink">
+                <b-icon icon="check"></b-icon>
+                <span>👨‍⚖️ Passager</span>
+              </b-radio-button>
+              <b-radio-button v-model="role" name="role" native-value="3" type="is-mobicoop-green">Passager ou Conducteur</b-radio-button>
+            </b-field>
+        </div>
+        {# Choose type #}
+        <div class="tile is-parent is-12">
+          <div class="tile is-child notification is-6 center-all">
+            <h3>Type de trajet:</h3>
+            <b-field>
+              <b-radio-button v-model="type" name="type" native-value="1" type="is-mobicoop-blue">
+                <b-icon icon="close"></b-icon>
+                <span>Allez</span>
+              </b-radio-button>
+              <b-radio-button v-model="type" name="type" native-value="2"  type="is-mobicoop-green">
+                <b-icon icon="check"></b-icon>
+                <span>Allez/Retour</span>
+              </b-radio-button>
+            </b-field>
+          </div>
+          {# Choose Frequency #}
+          <div class="tile is-child notification is-6 center-all">
+            <h3>Fréquence du trajet:</h3>
+            <b-field>
+              <b-radio-button v-model="frequency" name="frequency" native-value="1" type="is-mobicoop-blue">
+                <b-icon icon="close"></b-icon>
+                <span>Ponctuel</span>
+              </b-radio-button>
+              <b-radio-button v-model="frequency" name="frequency" native-value="2" type="is-mobicoop-green">
+                <b-icon icon="check"></b-icon>
+                <span>Regulier</span>
+              </b-radio-button>
+            </b-field>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
     <div v-if="frequency === '2'" >      
       <div class="columns"v-for="(day,index) in days" :key="index">
         <div class="column">
-          <h2 class="title">Aller (${day})</h2>
+          <h5 class="title">Aller (${day})</h5>
           <b-datepicker
             placeholder="Date de départ..."
             icon="calendar-today">
@@ -76,7 +98,7 @@
           </b-timepicker>
         </div>
         <div class="column" v-if="type === '2'">
-          <h2 class="title">Retour (${day})</h2>
+          <h5 class="title">Retour (${day})</h5>
           <b-datepicker
             placeholder="Date de retour..."
             icon="calendar-today">
@@ -97,10 +119,9 @@
         </div>
       </div>
     </div>
-    <!-- Ponctuel -->
     <div class="columns" v-else>
       <div class="column">
-        <h2 class="title">Aller</h2>
+        <h5 class="title">Aller</h5>
         <b-datepicker
           placeholder="Date de départ..."
           icon="calendar-today">
@@ -140,6 +161,11 @@
         </b-timepicker>
       </div>
     </div>
+      <a @click="sendForm" class="button is-success">Je partage mon annonce</a>
+      {# {{ form_start(form) }}
+      {# {{ form_row(form._token) }} #}
+      {# {{ form_row(form.submit) }}
+      {{ form_end(form, {'render_rest': false}) }}  #}
     <p class="content">
       <b>Selection:</b>
       ${ role }
