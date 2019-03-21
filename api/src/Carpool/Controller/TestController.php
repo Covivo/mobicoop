@@ -51,15 +51,6 @@ class TestController extends AbstractController
      */
     public function matcher($id, EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher)
     {
-        $time1 = new \Datetime('00:01');
-        
-        var_dump($time1);
-
-        $time1->sub(new \DateInterval('PT120S'));
-
-        var_dump($time1);
-
-        exit;
         if ($proposal = $entityManager->getRepository(Proposal::class)->find($id)) {
             echo "#$id : <ul>";
             echo "<li>" . $proposal->getUser()->getEmail() . "</li>";

@@ -232,12 +232,12 @@ class ProposalManager
     {
         $minTime = clone $time;
         $maxTime = clone $time;
-        $minTime->sub(new DateInterval('PT' . $margin . 'S'));
+        $minTime->sub(new \DateInterval('PT' . $margin . 'S'));
         if ($minTime->format('j') <> $time->format('j')) {
             // the day has changed => we keep '00:00' as min time
             $minTime = new \Datetime('00:00:00');
         }
-        $maxTime->add(new DateInterval('PT' . $margin . 'S'));
+        $maxTime->add(new \DateInterval('PT' . $margin . 'S'));
         if ($maxTime->format('j') <> $time->format('j')) {
             // the day has changed => we keep '23:59:00' as max time
             $maxTime = new \Datetime('23:59:00');
