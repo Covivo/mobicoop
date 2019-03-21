@@ -480,4 +480,7 @@ $RECYCLE.BIN/
 *.lnk
 
 
+#VScode
+.vscode
+
 # End of https://www.gitignore.io/api/vim,osx,node,macos,linux,windows,symfony,eclipse,netbeans,composer,jetbrains,sublimetext,phpstorm+all
