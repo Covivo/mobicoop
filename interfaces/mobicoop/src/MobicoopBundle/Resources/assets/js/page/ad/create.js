@@ -10,55 +10,15 @@ import '../../../css/page/home.scss';
 import Geocomplete from '../../components/Geocomplete';
 import Datepicker from '../../components/Datepicker';
 import Timepicker from '../../components/Timepicker';
+import AdCreateForm from '../../components/AdCreateForm';
 // import Vradio from '../../components/Vradio';
+
+console.log(AdCreateForm)
 
 Vue.use(Buefy);
 
 new Vue({
   delimiters: ['${', '}'],
-  el: '#app',
-  'template': '#ad-create-template',
-  components: { Geocomplete, Datepicker, Timepicker},
-  props:{
-    frequency: {
-      type: String,
-      default: '1'
-    },
-    role: {
-      type: String,
-      default: ''
-    },
-    type: {
-      type: String,
-      default: '1'
-    },
-    outward: {
-      type: String,
-      default: ''
-    }
-  },
-  data() {
-    return {
-      timeStart: new Date(),
-      timeReturn: new Date(),
-      days: ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'],
-      form: {
-        origin: '',
-        destination: '',
-        role: '',
-        type: false,
-        frequency: null,
-        fromDate: '',
-        toDate: ''
-      }
-    };
-  },
-  mounted(){
-    console.log('freq', this.outward);
-  },
-  methods:{
-    sendForm(){
-      console.log('Will send form');
-    }
-  }
+  el: '#adFormCreate',
+  components: { Geocomplete, Datepicker, Timepicker, AdCreateForm }
 })
