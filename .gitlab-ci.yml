@@ -206,18 +206,18 @@ master_tests:
   only:     # job executed only on master branch
     - master
 
-#pages:
-#  stage: deploy
-#  script:
-#    - echo 'Deploying the doc...'
-#    - npm run generateDocs
-#  dependencies:
-#    - test:prod
-#  artifacts:
-#    paths:
-#    - interfaces/mobicoop/public/doc
-#  only:
-#    - master
+pages:
+ stage: deploy
+ script:
+   - echo 'Deploying all the doc...'
+   - npm run generateDocs
+ dependencies:
+   - test:prod
+ artifacts:
+   paths:
+   - docs
+ only:
+   - master
 
 #
 # Deployment for master branch
