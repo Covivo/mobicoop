@@ -22,9 +22,7 @@
   </div>
 </section>
 
-<section id="adFormCreate">
-  <AdCreateForm></AdCreateForm>
-</section>
+<Adcreateform :sent-frequency="'{{ form.frequency.vars.value }}'" :sent-type="'{{ form.type.vars.value }}'" :sent-role="'{{ form.role.vars.value }}'"></Adcreateform>
 
 <script type="text/x-template" id="ad-create-template-old">
   <section class="section">

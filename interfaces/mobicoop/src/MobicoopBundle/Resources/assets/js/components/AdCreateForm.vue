@@ -68,7 +68,7 @@
     <div v-if="frequency === '2'">
       <div class="columns" v-for="(day,index) in days" :key="index">
         <div class="column">
-          <h5 class="title">Aller (${day})</h5>
+          <h5 class="title">Aller ({{day}})</h5>
           <b-datepicker placeholder="Date de départ..." icon="calendar-today"></b-datepicker>
           <b-timepicker v-model="timeStart" placeholder="Heure de départ...">
             <button class="button is-primary" @click="time = new Date()">
@@ -82,7 +82,7 @@
           </b-timepicker>
         </div>
         <div class="column" v-if="type === '2'">
-          <h5 class="title">Retour (${day})</h5>
+          <h5 class="title">Retour ({{day}})</h5>
           <b-datepicker placeholder="Date de retour..." icon="calendar-today"></b-datepicker>
           <b-timepicker v-model="timeReturn" placeholder="heure de retour...">
             <button class="button is-primary" @click="time = new Date()">
@@ -128,40 +128,35 @@
       </div>
     </div>
     <a @click="sendForm" class="button is-success">Je partage mon annonce</a>
-    {# {{ form_start(form) }}
-    {# {{ form_row(form._token) }} #}
-    {# {{ form_row(form.submit) }}
-    {{ form_end(form, {'render_rest': false}) }} #}
-    <p class="content">
-      <b>Selection:</b>
-      ${ role }
-    </p>
   </section>
 </template>
 
 <script>
 export default {
-  name: 'AdCreateForm',
   props:{
-    frequency: {
-      type: String,
-      default: '1'
+    sentFrequency: {
+      type: Number,
+      default: 1
     },
-    role: {
-      type: String,
-      default: ''
+    sentRole: {
+      type: Number,
+      default: 1
     },
-    type: {
-      type: String,
-      default: '1'
+    sentType: {
+      type: Number,
+      default: 1
     },
-    outward: {
+    sentOutward: {
       type: String,
       default: ''
     }
   },
   data() {
     return {
+      frequency: this.sentFrequency,
+      role: this.sentRole,
+      type: this.sentType,
+      outward: this.sentOutward,
       timeStart: new Date(),
       timeReturn: new Date(),
       days: ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'],
@@ -177,7 +172,7 @@ export default {
     };
   },
   mounted(){
-    console.log('freq', this.outward);
+    console.log('sentRole', this.sentRole);
   },
   methods:{
     sendForm(){
@@ -186,6 +181,3 @@ export default {
   }
 };
 </script>
-
-<style>
-</style>
