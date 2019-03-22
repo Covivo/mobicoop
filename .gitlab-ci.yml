@@ -212,7 +212,7 @@ pages:
    - echo 'Deploying all the doc...'
    - npm run generateDocs
  dependencies:
-   - test:prod
+   - master_tests
  artifacts:
    paths:
    - docs
