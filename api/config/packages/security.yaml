@@ -1,24 +1,63 @@
 security:
-    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+
+    encoders:
+        Symfony\Component\Security\Core\User\User: 'bcrypt'
+
+    # providers for authentication, should be externalized in a config file or database
     providers:
-        in_memory: { memory: ~ }
+        server: 
+            memory:
+                users:
+                    front: {password: '$2y$13$ZmXMawAMfTITXntmHimJBOnE3ukVNi1NT6t6141SgaXvlm0Q8Ga52', roles: ['ROLE_USER']}
+
+    # firewalls
     firewalls:
+
+        # firewall for server to server authentication
+        login:
+            pattern:  ^/auth
+            stateless: true
+            anonymous: true
+            provider: server
+            json_login:
+                check_path: /auth
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
+        # firewall for documentation
+        doc:
+            pattern:  ^/doc
+            stateless: true
+            anonymous: true
+
+        # firewall for R&D
+        rd:
+            pattern:  ^/rd/
+            stateless: true
+            anonymous: true
+
+        # firewall for dev (profiler)
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        
+        # firewall for any other route
         main:
-            anonymous: true
-
-            # activate different ways to authenticate
-
-            # http_basic: true
-            # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
-
-            # form_login: true
-            # https://symfony.com/doc/current/security/form_login_setup.html
+            # anonymous: true
+            pattern:   ^/
+            # provider: server
+            stateless: true
+            # anonymous: true
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/rd/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }

@@ -25,8 +25,12 @@ namespace App\Carpool\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\User\Entity\Car;
+use App\Geography\Entity\Direction;
+use App\PublicTransport\Entity\PTJourney;
 
 /**
  * Carpooling : criteria (restriction for an offer / selection for a request).
@@ -37,7 +41,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={},
+ *      collectionOperations={"post"},
  *      itemOperations={"get"}
  * )
  */
@@ -56,6 +60,22 @@ class Criteria
      */
     private $id;
 
+    /**
+     * @var boolean The user can be a driver.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $isDriver;
+
+    /**
+     * @var boolean The user can be a passenger.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $isPassenger;
+    
     /**
      * @var int The proposal frequency (1 = punctual; 2 = regular).
      *
@@ -222,16 +242,173 @@ class Criteria
     private $sunTime;
 
     /**
-     * @var int Accepted margin for starting time in seconds.
+     * @var int Accepted margin for monday starting time in seconds.
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
-    private $marginTime;
+    private $monMarginTime;
+
+    /**
+     * @var int Accepted margin for tuesday starting time in seconds.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $tueMarginTime;
+    
+    /**
+     * @var int Accepted margin for wednesday starting time in seconds.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $wedMarginTime;
+    
+    /**
+     * @var int Accepted margin for thursday starting time in seconds.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $thuMarginTime;
+    
+    /**
+     * @var int Accepted margin for friday starting time in seconds.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $friMarginTime;
+    
+    /**
+     * @var int Accepted margin for saturday starting time in seconds.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $satMarginTime;
+    
+    /**
+     * @var int Accepted margin for sunday starting time in seconds.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $sunMarginTime;
+    
+    /**
+     * @var int|null The maximum deviation time (in seconds) as a driver to accept a request proposal.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $maxDeviationTime;
+    
+    /**
+     * @var int|null The maximum deviation distance (in metres) as a driver to accept a request proposal.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $maxDeviationDistance;
+    
+    /**
+     * @var boolean The user accepts any route as a passenger from its origin to the destination.
+     *
+     * @ORM\Column(type="boolean")
+     * @Groups({"read","write"})
+     */
+    private $anyRouteAsPassenger;
+    
+    /**
+     * @var boolean|null The user accepts any transportation mode.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $multiTransportMode;
+    
+    /**
+    * @var float|null The price per km.
+    *
+    * @ORM\Column(type="decimal", precision=4, scale=2, nullable=true)
+    * @Groups({"read","write"})
+    */
+    private $priceKm;
+    
+    /**
+     * @var Car|null The car used in the journey.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\Car")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $car;
+    
+    /**
+     * @var Direction|null The direction used in the journey as a driver.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $directionDriver;
+    
+    /**
+     * @var Direction|null The direction used in the journey as a passenger.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $directionPassenger;
+    
+    /**
+     * @var PTJourney|null The public transport journey used.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\PublicTransport\Entity\PTJourney")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $ptjourney;
+
+    /**
+     * @var Proposal The proposal that uses this criteria.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="criteria")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $proposal;
     
     public function getId(): ?int
     {
         return $this->id;
+    }
+    
+    public function isDriver(): bool
+    {
+        return $this->isDriver;
+    }
+    
+    public function setIsDriver(bool $isDriver): self
+    {
+        $this->isDriver = $isDriver;
+        
+        return $this;
+    }
+    
+    public function isPassenger(): bool
+    {
+        return $this->isPassenger;
+    }
+    
+    public function setIsPassenger(bool $isPassenger): self
+    {
+        $this->isPassenger = $isPassenger;
+        
+        return $this;
     }
 
     public function getFrequency(): ?int
@@ -462,14 +639,204 @@ class Criteria
         return $this;
     }
 
-    public function getMarginTime(): ?int
+    public function getMonMarginTime(): ?int
     {
-        return $this->marginTime;
+        return $this->monMarginTime;
     }
 
-    public function setMarginTime(?int $marginTime): self
+    public function setMonMarginTime(?int $monMarginTime): self
     {
-        $this->marginTime = $marginTime;
+        $this->monMarginTime = $monMarginTime;
+
+        return $this;
+    }
+    
+    public function getTueMarginTime(): ?int
+    {
+        return $this->tueMarginTime;
+    }
+    
+    public function setTueMarginTime(?int $tueMarginTime): self
+    {
+        $this->tueMarginTime = $tueMarginTime;
+        
+        return $this;
+    }
+    
+    public function getWedMarginTime(): ?int
+    {
+        return $this->wedMarginTime;
+    }
+    
+    public function setWedMarginTime(?int $wedMarginTime): self
+    {
+        $this->wedMarginTime = $wedMarginTime;
+        
+        return $this;
+    }
+    
+    public function getThuMarginTime(): ?int
+    {
+        return $this->thuMarginTime;
+    }
+    
+    public function setThuMarginTime(?int $thuMarginTime): self
+    {
+        $this->thuMarginTime = $thuMarginTime;
+        
+        return $this;
+    }
+    
+    public function getFriMarginTime(): ?int
+    {
+        return $this->friMarginTime;
+    }
+    
+    public function setFriMarginTime(?int $friMarginTime): self
+    {
+        $this->friMarginTime = $friMarginTime;
+        
+        return $this;
+    }
+    
+    public function getSatMarginTime(): ?int
+    {
+        return $this->satMarginTime;
+    }
+    
+    public function setSatMarginTime(?int $satMarginTime): self
+    {
+        $this->satMarginTime = $satMarginTime;
+        
+        return $this;
+    }
+    
+    public function getSunMarginTime(): ?int
+    {
+        return $this->sunMarginTime;
+    }
+    
+    public function setSunMarginTime(?int $sunMarginTime): self
+    {
+        $this->sunMarginTime = $sunMarginTime;
+        
+        return $this;
+    }
+    
+    public function getMaxDeviationTime(): ?int
+    {
+        return $this->maxDeviationTime;
+    }
+    
+    public function getMaxDeviationDistance(): ?int
+    {
+        return $this->maxDeviationDistance;
+    }
+    
+    public function getAnyRouteAsPassenger(): bool
+    {
+        return $this->anyRouteAsPassenger;
+    }
+    
+    public function setMaxDeviationTime(?int $maxDeviationTime): self
+    {
+        $this->maxDeviationTime = $maxDeviationTime;
+        
+        return $this;
+    }
+    
+    public function setMaxDeviationDistance(?int $maxDeviationDistance): self
+    {
+        $this->maxDeviationDistance = $maxDeviationDistance;
+        
+        return $this;
+    }
+    
+    public function setAnyRouteAsPassenger(bool $anyRouteAsPassenger): self
+    {
+        $this->anyRouteAsPassenger = $anyRouteAsPassenger;
+        
+        return $this;
+    }
+    
+    public function getMultiTransportMode(): bool
+    {
+        return (!is_null($this->multiTransportMode) ? $this->multiTransportMode : true);
+    }
+    
+    public function setMultiTransportMode(?bool $multiTransportMode): self
+    {
+        $this->multiTransportMode = $multiTransportMode;
+        
+        return $this;
+    }
+    
+    public function getPriceKm(): ?string
+    {
+        return $this->priceKm;
+    }
+    
+    public function setPriceKm(?string $priceKm)
+    {
+        $this->priceKm = $priceKm;
+    }
+    
+    public function getCar(): ?Car
+    {
+        return $this->car;
+    }
+    
+    public function setCar(?Car $car): self
+    {
+        $this->car = $car;
+        
+        return $this;
+    }
+    
+    public function getDirectionDriver(): ?Direction
+    {
+        return $this->directionDriver;
+    }
+    
+    public function setDirectionDriver(?Direction $directionDriver): self
+    {
+        $this->directionDriver = $directionDriver;
+        
+        return $this;
+    }
+    
+    public function getDirectionPassenger(): ?Direction
+    {
+        return $this->directionPassenger;
+    }
+    
+    public function setDirectionPassenger(?Direction $directionPassenger): self
+    {
+        $this->directionPassenger = $directionPassenger;
+        
+        return $this;
+    }
+    
+    public function getPTJourney(): ?PTJourney
+    {
+        return $this->ptjourney;
+    }
+    
+    public function setPTJourney(?PTJourney $ptjourney): self
+    {
+        $this->ptjourney = $ptjourney;
+        
+        return $this;
+    }
+
+    public function getProposal(): ?Proposal
+    {
+        return $this->proposal;
+    }
+
+    public function setProposal(Proposal $proposal): self
+    {
+        $this->proposal = $proposal;
 
         return $this;
     }

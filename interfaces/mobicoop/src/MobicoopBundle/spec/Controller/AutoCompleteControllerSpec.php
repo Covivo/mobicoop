@@ -42,7 +42,7 @@ describe('AutoComplete', function () {
             $request = $this->request->create('/aut', 'GET');
             $response = $this->kernel->handle($request);
             $status = $response->getStatusCode();
-
+            
             expect($status)->toEqual(200);
         });
     });

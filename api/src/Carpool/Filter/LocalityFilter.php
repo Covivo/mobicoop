@@ -11,13 +11,13 @@ final class LocalityFilter extends AbstractContextAwareFilter
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
         switch ($property) {
-            case 'startLocality':
+            case 'originLocality':
                 $queryBuilder
                 ->join('o.points', 'startPoint')
                 ->join('startPoint.address', 'startAddress')
                 ->andWhere('startPoint.position = 0')
-                ->andWhere('startAddress.addressLocality = :startLocality')
-                ->setParameter('startLocality', $value);
+                ->andWhere('startAddress.addressLocality = :originLocality')
+                ->setParameter('originLocality', $value);
                 break;
             case 'destinationLocality':
                 $queryBuilder
@@ -40,14 +40,14 @@ final class LocalityFilter extends AbstractContextAwareFilter
         $description = [];
         foreach ($this->properties as $property => $strategy) {
             switch ($property) {
-                case 'startLocality':
-                    $description["startLocality"] = [
+                case 'originLocality':
+                    $description["originLocality"] = [
                             'property' => $property,
                             'type' => 'string',
                             'required' => false,
                             'swagger' => [
-                                    'description' => 'startLocality',
-                                    'name' => 'startLocality',
+                                    'description' => 'originLocality',
+                                    'name' => 'originLocality',
                                     'type' => 'string',
                             ],
                     ];

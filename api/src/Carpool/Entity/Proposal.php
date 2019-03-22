@@ -37,16 +37,19 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Controller\ProposalPost;
+use App\Travel\Entity\TravelMode;
 use App\User\Entity\User;
 use App\Carpool\Filter\LocalityFilter;
 
 /**
  * Carpooling : proposal (offer from a driver / request from a passenger).
+ * Note : force eager is set to false to avoid max number of nested relations (can occure despite of maxdepth... https://github.com/api-platform/core/issues/1910)
  *
- * @ORM\Entity(repositoryClass="App\Carpool\Repository\ProposalRepository")
+ * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -60,18 +63,14 @@ use App\Carpool\Filter\LocalityFilter;
  *      },
  *      itemOperations={"get","put","delete"}
  * )
- * @ApiFilter(LocalityFilter::class, properties={"startLocality","destinationLocality"})
  * @ApiFilter(NumericFilter::class, properties={"proposalType"})
  * @ApiFilter(DateFilter::class, properties={"criteria.fromDate"})
  */
 class Proposal
 {
-    const PROPOSAL_TYPE_OFFER = 1;
-    const PROPOSAL_TYPE_REQUEST = 2;
-    const PROPOSAL_TYPE_BOTH = 3;
-    const JOURNEY_TYPE_ONE_WAY = 1;
-    const JOURNEY_TYPE_OUTWARD = 2;
-    const JOURNEY_TYPE_RETURN = 3;
+    const TYPE_ONE_WAY = 1;
+    const TYPE_OUTWARD = 2;
+    const TYPE_RETURN = 3;
     
     /**
      * @var int The id of this proposal.
@@ -84,22 +83,20 @@ class Proposal
     private $id;
 
     /**
-     * @var int The proposal type (1 = offer (as a driver); 2 = request (as a passenger)).
+     * @var int The proposal type (1 = one way trip; 2 = outward of a round trip; 3 = return of a round trip)).
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
      * @Groups({"read","write"})
      */
-    private $proposalType;
-
+    private $type;
+    
     /**
-     * @var int The journey type (1 = one way trip; 2 = outward of a round trip; 3 = return of a round trip)).
-     *
-     * @Assert\NotBlank
-     * @ORM\Column(type="smallint")
+     * @var string A comment about the proposal.
+     * @ORM\Column(type="text", nullable=true)
      * @Groups({"read","write"})
      */
-    private $journeyType;
+    private $comment;
 
     /**
      * @var \DateTimeInterface Creation date of the proposal.
@@ -109,92 +106,40 @@ class Proposal
     private $createdDate;
 
     /**
-     * @var int|null Real distance of the full journey in metres.
+     * @var Proposal|null Linked proposal for a round trip (return or outward journey).
      *
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read"})
-     */
-    private $distanceReal;
-
-    /**
-     * @var int|null Flying distance of the full journey in metres.
-     *
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read"})
-     */
-    private $distanceFly;
-
-    /**
-     * @var int|null Estimated duration of the full journey in seconds (based on real distance).
-     *
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read"})
-     */
-    private $duration;
-
-    /**
-     * @var string|null Main cape of the journey (N/S/E/W)
-     *
-     * @ORM\Column(type="string", length=3, nullable=true)
-     * @Groups({"read"})
-     */
-    private $cape;
-
-    /**
-     * @var Proposal|null Linked proposal for an offer AND request proposal (= request linked for an offer proposal, offer linked for a request proposal).
-     *
-     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Proposal", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Groups({"read"})
+     * @Groups({"read","write"})
      * @MaxDepth(1)
-     *
      */
     private $proposalLinked;
     
     /**
-     * @var Proposal|null Linked proposal for a round trip (return or outward journey).
-     *
-     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Proposal", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $proposalLinkedJourney;
-    
-    /**
-     * @var Proposal|null Original proposal if calculated proposal.
-     *
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Proposal")
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $proposalOrigin;
-    
-    /**
      * @var User|null User who submits the proposal.
      *
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="proposals")
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposals")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
     private $user;
 
     /**
-     * @var Point[] The points of the proposal.
+     * @var Waypoint[] The waypoints of the proposal.
      *
      * @Assert\NotBlank
-     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Point", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"read","write"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
-    private $points;
+    private $waypoints;
     
     /**
      * @var TravelMode[]|null The travel modes accepted if the proposal is a request.
      *
-     * @ORM\ManyToMany(targetEntity="App\Carpool\Entity\TravelMode")
+     * @ORM\ManyToMany(targetEntity="\App\Travel\Entity\TravelMode")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -203,7 +148,7 @@ class Proposal
     /**
      * @var Matching[]|null The matching of the proposal (if proposal is an offer).
      *
-     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Matching", mappedBy="proposalOffer")
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer")
      * @ApiSubresource(maxDepth=1)
      */
     private $matchingRequests;
@@ -211,68 +156,83 @@ class Proposal
     /**
      * @var Matching[]|null The matching of the proposal (if proposal is a request).
      *
-     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Matching", mappedBy="proposalRequest")
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest")
      * @ApiSubresource(maxDepth=1)
      */
     private $matchingOffers;
 
     /**
      * @var Criteria The criteria applied to the proposal.
+     * Note :
+     * The criteria is set as a nullable column, BUT it is in fact MANDATORY.
+     * It is set as nullable because the owning side of a one-to-one association is saved first, so the inverse side does not exist yet.
+     * Other solution : make the proposal as the inverse side, and the criteria as the owning side.
+     * But it is not acceptable as a criteria can be related with other entities (ask and matching) so we would have multiple nullable foreign keys.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="proposal", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
     private $criteria;
     
-    private $startLocality;
-    private $destinationLocality;
-    
+    /**
+     * @var IndividualStop[] The individual stops of the proposal.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\IndividualStop", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OrderBy({"position" = "ASC"})
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
+     */
+    private $individualStops;
+        
     public function __construct()
     {
-        $this->points = new ArrayCollection();
+        $this->waypoints = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
-        $this->matchingOffers = new ArrayCollection();
         $this->matchingRequests = new ArrayCollection();
+        $this->matchingOffers = new ArrayCollection();
+        $this->individualStops = new ArrayCollection();
     }
     
     public function __clone()
     {
         // when we clone a Proposal we keep only the basic properties, we re-initialize all the collections
-        $this->points = new ArrayCollection();
+        $this->waypoints = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
-        $this->matchingOffers = new ArrayCollection();
         $this->matchingRequests = new ArrayCollection();
+        $this->matchingOffers = new ArrayCollection();
+        $this->individualStops = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
     }
-    
-    public function getProposalType(): ?int
+
+    public function getType(): ?int
     {
-        return $this->proposalType;
+        return $this->type;
     }
 
-    public function setProposalType(int $proposalType): self
+    public function setType(int $type): self
     {
-        $this->proposalType = $proposalType;
+        $this->type = $type;
 
         return $this;
     }
-
-    public function getJourneyType(): ?int
+    
+    public function getComment(): ?string
     {
-        return $this->journeyType;
+        return $this->comment;
     }
-
-    public function setJourneyType(int $journeyType): self
+    
+    public function setComment(?string $comment): self
     {
-        $this->journeyType = $journeyType;
-
+        $this->comment = $comment;
+        
         return $this;
     }
 
@@ -285,54 +245,6 @@ class Proposal
     {
         $this->createdDate = $createdDate;
 
-        return $this;
-    }
-
-    public function getDistanceReal(): ?int
-    {
-        return $this->distanceReal;
-    }
-
-    public function setDistanceReal(?int $distanceReal): self
-    {
-        $this->distanceReal = $distanceReal;
-
-        return $this;
-    }
-
-    public function getDistanceFly(): ?int
-    {
-        return $this->distanceFly;
-    }
-
-    public function setDistanceFly(?int $distanceFly): self
-    {
-        $this->distanceFly = $distanceFly;
-
-        return $this;
-    }
-
-    public function getDuration(): ?int
-    {
-        return $this->duration;
-    }
-
-    public function setDuration(?int $duration): self
-    {
-        $this->duration = $duration;
-
-        return $this;
-    }
-
-    public function getCape(): ?string
-    {
-        return $this->cape;
-    }
-    
-    public function setCape(string $cape): self
-    {
-        $this->cape = $cape;
-        
         return $this;
     }
     
@@ -354,42 +266,6 @@ class Proposal
         return $this;
     }
     
-    public function getProposalLinkedJourney(): ?self
-    {
-        return $this->proposalLinkedJourney;
-    }
-    
-    public function setProposalLinkedJourney(?self $proposalLinkedJourney): self
-    {
-        $this->proposalLinkedJourney = $proposalLinkedJourney;
-        
-        // set (or unset) the owning side of the relation if necessary
-        $newProposalLinkedJourney = $proposalLinkedJourney === null ? null : $this;
-        if ($newProposalLinkedJourney !== $proposalLinkedJourney->getProposalLinkedJourney()) {
-            $proposalLinkedJourney->setProposalLinkedJourney($newProposalLinkedJourney);
-        }
-        
-        return $this;
-    }
-    
-    public function getProposalOrigin(): ?self
-    {
-        return $this->proposalOrigin;
-    }
-    
-    public function setProposalOrigin(?self $proposalOrigin): self
-    {
-        $this->proposalOrigin = $proposalOrigin;
-        
-        // set (or unset) the owning side of the relation if necessary
-        $newProposalOrigin = $proposalOrigind === null ? null : $this;
-        if ($newProposalOrigin !== $proposalOrigin->getProposalOrigin()) {
-            $proposalOrigin->setProposalOrigin($newProposalOrigin);
-        }
-        
-        return $this;
-    }
-    
     public function getUser(): ?User
     {
         return $this->user;
@@ -403,30 +279,30 @@ class Proposal
     }
 
     /**
-     * @return Collection|Point[]
+     * @return Collection|Waypoint[]
      */
-    public function getPoints(): Collection
+    public function getWaypoints(): Collection
     {
-        return $this->points;
+        return $this->waypoints;
     }
 
-    public function addPoint(Point $point): self
+    public function addWaypoint(Waypoint $waypoint): self
     {
-        if (!$this->points->contains($point)) {
-            $this->points[] = $point;
-            $point->setProposal($this);
+        if (!$this->waypoints->contains($waypoint)) {
+            $this->waypoints[] = $waypoint;
+            $waypoint->setProposal($this);
         }
 
         return $this;
     }
 
-    public function removePoint(Point $point): self
+    public function removeWaypoint(Waypoint $waypoint): self
     {
-        if ($this->points->contains($point)) {
-            $this->points->removeElement($point);
+        if ($this->waypoints->contains($waypoint)) {
+            $this->waypoints->removeElement($waypoint);
             // set the owning side to null (unless already changed)
-            if ($point->getProposal() === $this) {
-                $point->setProposal(null);
+            if ($waypoint->getProposal() === $this) {
+                $waypoint->setProposal(null);
             }
         }
 
@@ -440,56 +316,25 @@ class Proposal
     {
         return $this->travelModes;
     }
-
+    
     public function addTravelMode(TravelMode $travelMode): self
     {
         if (!$this->travelModes->contains($travelMode)) {
             $this->travelModes[] = $travelMode;
         }
-
+        
         return $this;
     }
-
+    
     public function removeTravelMode(TravelMode $travelMode): self
     {
         if ($this->travelModes->contains($travelMode)) {
             $this->travelModes->removeElement($travelMode);
         }
-
+        
         return $this;
     }
-
-    /**
-     * @return Collection|Matching[]
-     */
-    public function getMatchingOffers(): Collection
-    {
-        return $this->matchingOffers;
-    }
-
-    public function addMatchingOffer(Matching $matchingOffer): self
-    {
-        if (!$this->matchingOffers->contains($matchingOffer)) {
-            $this->matchingOffers[] = $matchingOffer;
-            $matchingOffer->setProposalRequest($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMatchingOffer(Matching $matchingOffer): self
-    {
-        if ($this->matchingOffers->contains($matchingOffer)) {
-            $this->matchingOffers->removeElement($matchingOffer);
-            // set the owning side to null (unless already changed)
-            if ($matchingOffer->getProposalRequest() === $this) {
-                $matchingOffer->setProposalRequest(null);
-            }
-        }
-
-        return $this;
-    }
-
+    
     /**
      * @return Collection|Matching[]
      */
@@ -520,6 +365,37 @@ class Proposal
 
         return $this;
     }
+    
+    /**
+     * @return Collection|Matching[]
+     */
+    public function getMatchingOffers(): Collection
+    {
+        return $this->matchingOffers;
+    }
+    
+    public function addMatchingOffer(Matching $matchingOffer): self
+    {
+        if (!$this->matchingOffers->contains($matchingOffer)) {
+            $this->matchingOffers[] = $matchingOffer;
+            $matchingOffer->setProposalRequest($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeMatchingOffer(Matching $matchingOffer): self
+    {
+        if ($this->matchingOffers->contains($matchingOffer)) {
+            $this->matchingOffers->removeElement($matchingOffer);
+            // set the owning side to null (unless already changed)
+            if ($matchingOffer->getProposalRequest() === $this) {
+                $matchingOffer->setProposalRequest(null);
+            }
+        }
+        
+        return $this;
+    }
 
     public function getCriteria(): ?Criteria
     {
@@ -528,31 +404,45 @@ class Proposal
 
     public function setCriteria(Criteria $criteria): self
     {
+        if ($criteria->getProposal() !== $this) {
+            $criteria->setProposal($this);
+        }
         $this->criteria = $criteria;
-
+        
         return $this;
     }
     
-    public function getStartLocality()
+    /**
+     * @return Collection|IndividualStop[]
+     */
+    public function getIndividualStops(): Collection
     {
-        return $this->startLocality;
-    }
-
-    public function setStartLocality($startLocality)
-    {
-        $this->startLocality = $startLocality;
+        return $this->individualStops;
     }
     
-    public function getDestinationLocality()
+    public function addIndividualStop(IndividualStop $individualStop): self
     {
-        return $this->destinationLocality;
+        if (!$this->individualStops->contains($individualStop)) {
+            $this->individualStops[] = $individualStop;
+            $individualStop->setProposal($this);
+        }
+        
+        return $this;
     }
-
-    public function setDestinationLocality($destinationLocality)
+    
+    public function removeIndividualStop(IndividualStop $individualStop): self
     {
-        $this->destinationLocality = $destinationLocality;
+        if ($this->individualStops->contains($individualStop)) {
+            $this->individualStops->removeElement($individualStop);
+            // set the owning side to null (unless already changed)
+            if ($individualStop->getProposal() === $this) {
+                $individualStop->setProposal(null);
+            }
+        }
+        
+        return $this;
     }
-
+    
     // DOCTRINE EVENTS
     
     /**

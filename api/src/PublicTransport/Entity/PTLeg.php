@@ -27,10 +27,14 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use App\Travel\Entity\TravelMode;
 
 /**
  * A leg of a journey.
  *
+ * @ORM\Entity
  * @ApiResource(
  *      routePrefix="/public_transport",
  *      attributes={
@@ -45,6 +49,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 class PTLeg
 {
     /**
+     * @var int The id of this leg.
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -52,6 +61,7 @@ class PTLeg
     /**
      * @var string The indication of this leg.
      *
+     * @ORM\Column(type="text", nullable=true)
      * @Groups("pt")
      */
     private $indication;
@@ -59,13 +69,15 @@ class PTLeg
     /**
      * @var int The distance of this leg.
      *
+     * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
      */
     private $distance;
     
     /**
-     * @var int The duration of this leg.
+     * @var string The duration of this leg (in iso8601 format).
      *
+     * @ORM\Column(type="integer", length=100, nullable=true)
      * @Groups("pt")
      */
     private $duration;
@@ -73,20 +85,23 @@ class PTLeg
     /**
      * @var int The position of this leg.
      *
+     * @ORM\Column(type="integer")
      * @Groups("pt")
      */
-    private $pos;
+    private $position;
     
     /**
      * @var bool The leg is the last leg of the journey.
      *
+     * @ORM\Column(type="boolean")
      * @Groups("pt")
      */
-    private $last;
+    private $isLast;
     
     /**
      * @var string The magnetic direction of this leg.
      *
+     * @ORM\Column(type="string", length=10, nullable=true)
      * @Groups("pt")
      */
     private $magneticDirection;
@@ -94,6 +109,7 @@ class PTLeg
     /**
      * @var string The relative direction of this leg.
      *
+     * @ORM\Column(type="string", length=10, nullable=true)
      * @Groups("pt")
      */
     private $relativeDirection;
@@ -101,6 +117,7 @@ class PTLeg
     /**
      * @var PTJourney The parent journey of this leg.
      *
+     * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTJourney", inversedBy="ptlegs")
      * @Groups("pt")
      */
     private $ptjourney;
@@ -108,6 +125,7 @@ class PTLeg
     /**
      * @var PTDeparture The departure of this leg.
      *
+     * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTDeparture")
      * @Groups("pt")
      */
     private $ptdeparture;
@@ -115,20 +133,23 @@ class PTLeg
     /**
      * @var PTArrival The arrival of this leg.
      *
+     * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTArrival")
      * @Groups("pt")
      */
     private $ptarrival;
     
     /**
-     * @var PTMode The transport mode of this leg.
+     * @var TravelMode The transport mode of this leg.
      *
+     * @ORM\ManyToOne(targetEntity="App\Travel\Entity\TravelMode")
      * @Groups("pt")
      */
-    private $ptmode;
+    private $travelMode;
     
     /**
      * @var PTLine The public transport line of this leg.
      *
+     * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTLine")
      * @Groups("pt")
      */
     private $ptline;
@@ -136,6 +157,7 @@ class PTLeg
     /**
      * @var string The direction of the public transport line of this leg.
      *
+     * @ORM\Column(type="string", length=45, nullable=true)
      * @Groups("pt")
      */
     private $direction;
@@ -143,6 +165,7 @@ class PTLeg
     /**
      * @var PTStep[] The steps of this leg.
      *
+     * @ORM\OneToMany(targetEntity="App\PublicTransport\Entity\PTStep", mappedBy="ptleg", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups("pt")
      */
     private $ptsteps;
@@ -150,157 +173,210 @@ class PTLeg
     public function __construct($id)
     {
         $this->id = $id;
-        $this->setPos($id);
+        $this->setPosition($id);
         $this->ptsteps = new ArrayCollection();
     }
     
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
     
-    public function setId($id)
+    public function setId(int $id): self
     {
         $this->id = $id;
+        
+        return $this;
     }
     
-    public function getIndication()
+    public function getIndication(): ?string
     {
         return $this->indication;
     }
+    
+    public function setIndication(?string $indication): self
+    {
+        $this->indication = $indication;
+        
+        return $this;
+    }
 
-    public function getDistance()
+    public function getDistance(): ?int
     {
         return $this->distance;
     }
     
-    public function getDuration()
+    public function setDistance(?int $distance): self
+    {
+        $this->distance = $distance;
+        
+        return $this;
+    }
+    
+    public function getDuration(): ?string
     {
         return $this->duration;
     }
-
-    public function getPos()
-    {
-        return $this->pos;
-    }
-
-    public function isLast()
-    {
-        return $this->last;
-    }
-
-    public function getPTJourney()
-    {
-        return $this->ptjourney;
-    }
-
-    public function getPTDeparture()
-    {
-        return $this->ptdeparture;
-    }
-
-    public function getPTArrival()
-    {
-        return $this->ptarrival;
-    }
-
-    public function getPTMode()
-    {
-        return $this->ptmode;
-    }
-
-    public function getPTLine()
-    {
-        return $this->ptline;
-    }
-
-    public function getDirection()
-    {
-        return $this->direction;
-    }
-
-    public function setIndication($indication)
-    {
-        $this->indication = $indication;
-    }
-
-    public function setDistance($distance)
-    {
-        $this->distance = $distance;
-    }
     
-    public function setDuration($duration)
+    public function setDuration(?string $duration): self
     {
         $this->duration = $duration;
+        
+        return $this;
     }
 
-    public function setPos($pos)
+    public function getPosition(): int
     {
-        $this->pos = $pos;
-    }
-
-    public function setLast($last)
-    {
-        $this->last = $last;
-    }
-
-    public function setPTJourney($ptjourney)
-    {
-        $this->ptjourney = $ptjourney;
-    }
-
-    public function setPTDeparture($ptdeparture)
-    {
-        $this->ptdeparture = $ptdeparture;
-    }
-
-    public function setPTArrival($ptarrival)
-    {
-        $this->ptarrival = $ptarrival;
-    }
-
-    public function setPTMode($ptmode)
-    {
-        $this->ptmode = $ptmode;
-    }
-
-    public function setPTLine($ptline)
-    {
-        $this->ptline = $ptline;
-    }
-
-    public function setDirection($direction)
-    {
-        $this->direction = $direction;
+        return $this->position;
     }
     
-    public function getMagneticDirection()
+    public function setPosition(int $position): self
+    {
+        $this->position = $position;
+        
+        return $this;
+    }
+
+    public function isLast(): bool
+    {
+        return $this->isLast;
+    }
+    
+    public function setIsLast(bool $isLast): self
+    {
+        $this->isLast = $isLast;
+        
+        return $this;
+    }
+    
+    public function getMagneticDirection(): ?string
     {
         return $this->magneticDirection;
     }
-
-    public function getRelativeDirection()
+    
+    public function setMagneticDirection(?string $magneticDirection): self
+    {
+        $this->magneticDirection = $magneticDirection;
+        
+        return $this;
+    }
+    
+    public function getRelativeDirection(): ?string
     {
         return $this->relativeDirection;
     }
-
-    public function setMagneticDirection($magneticDirection)
-    {
-        $this->magneticDirection = $magneticDirection;
-    }
-
-    public function setRelativeDirection($relativeDirection)
+    
+    public function setRelativeDirection(?string $relativeDirection): self
     {
         $this->relativeDirection = $relativeDirection;
+        
+        return $this;
+    }
+
+    public function getPTJourney(): PTJourney
+    {
+        return $this->ptjourney;
     }
     
-    public function getPTSteps()
+    public function setPTJourney(PTJourney $ptjourney): self
+    {
+        $this->ptjourney = $ptjourney;
+        
+        return $this;
+    }
+
+    public function getPTDeparture(): ?PTDeparture
+    {
+        return $this->ptdeparture;
+    }
+    
+    public function setPTDeparture(?PTDeparture $ptdeparture): self
+    {
+        $this->ptdeparture = $ptdeparture;
+        
+        return $this;
+    }
+
+    public function getPTArrival(): ?PTArrival
+    {
+        return $this->ptarrival;
+    }
+    
+    public function setPTArrival(?PTArrival $ptarrival): self
+    {
+        $this->ptarrival = $ptarrival;
+        
+        return $this;
+    }
+
+    public function getTravelMode(): TravelMode
+    {
+        return $this->travelMode;
+    }
+    
+    public function setTravelMode(TravelMode $travelMode): self
+    {
+        $this->travelMode = $travelMode;
+        
+        return $this;
+    }
+
+    public function getPTLine(): ?PTLine
+    {
+        return $this->ptline;
+    }
+    
+    public function setPTLine(?PTLine $ptline): self
+    {
+        $this->ptline = $ptline;
+        
+        return $this;
+    }
+
+    public function getDirection(): ?string
+    {
+        return $this->direction;
+    }
+    
+    public function setDirection(?string $direction): self
+    {
+        $this->direction = $direction;
+        
+        return $this;
+    }
+    
+    public function getPTSteps(): Collection
     {
         return $this->ptsteps;
     }
 
-    public function setPTSteps($ptsteps)
+    public function setPTSteps(ArrayCollection $ptsteps): self
     {
         $this->ptsteps = $ptsteps;
+        
+        return $this;
+    }
+    
+    public function addPTStep(PTStep $ptstep): self
+    {
+        if (!$this->ptsteps->contains($ptstep)) {
+            $this->ptsteps->add($ptstep);
+            $ptstep->setPTLeg($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removePTLeg(PTStep $ptstep): self
+    {
+        if ($this->ptsteps->contains($ptstep)) {
+            $this->ptsteps->removeElement($ptstep);
+            // set the owning side to null (unless already changed)
+            if ($ptstep->getPTLeg() === $this) {
+                $ptstep->setPTLeg(null);
+            }
+        }
+        
+        return $this;
     }
 }

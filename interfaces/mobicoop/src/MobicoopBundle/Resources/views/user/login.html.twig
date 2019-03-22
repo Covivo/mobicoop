@@ -1,0 +1,25 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}{% trans from 'ui' %}user.login.title{% endtrans %}{% endblock %}
+
+{% block body %}
+
+<section class="hero is-primary">
+	<div class="hero-body">
+    	<div class="container">
+      		<h1 class="title">
+				Mobicoop - {% trans from 'ui' %}user.login.h1{% endtrans %}
+      		</h1>
+    	</div>
+  	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        {{ form_end(form) }}
+    </div>
+</section>
+
+{% endblock %}

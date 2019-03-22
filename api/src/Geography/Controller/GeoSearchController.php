@@ -24,7 +24,7 @@ namespace App\Geography\Controller;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use App\Address\Entity\Address;
+use App\Geography\Entity\Address;
 use Geocoder\Plugin\PluginProvider;
 use Geocoder\Query\GeocodeQuery;
 
@@ -73,13 +73,13 @@ class GeoSearchController
             $streetNumber = $value->getStreetNumber();
             $streetName = $value->getStreetName();
             $address->setStreetAddress($streetNumber.' '.$streetName);
-            $address->setAddressLocality($value->getLocality());
+            //SubLocality or Locality of Geocoder-php
+            $address->setAddressLocality($value->getSubLocality() ?: $value->getLocality());
             $address->setPostalCode($value->getPostalCode());
             $address->setAddressCountry($value->getCountry()->getName());
 
             $resultArray[] = $address;
         }
-
         return $resultArray;
     }
 }

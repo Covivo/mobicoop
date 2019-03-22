@@ -26,10 +26,13 @@ namespace App\Carpool\Service;
 use App\Carpool\Entity\Proposal;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Criteria;
-use App\Address\Entity\Address;
-use App\Carpool\Entity\Point;
-use App\Rdex\Entity\RdexJourney;
-use App\User\Entity\User;
+use App\Geography\Entity\Address;
+use App\Carpool\Entity\Waypoint;
+use App\Carpool\Repository\ProposalRepository;
+use App\Geography\Service\GeoRouter;
+use App\Geography\Entity\Direction;
+use App\DataProvider\Entity\GeoRouterProvider;
+use App\Geography\Service\ZoneManager;
 
 /**
  * Proposal manager service.
@@ -39,12 +42,18 @@ use App\User\Entity\User;
 class ProposalManager
 {
     private $entityManager;
-    private $matchingAnalyzer;
-    
-    public function __construct(EntityManagerInterface $entityManager, MatchingAnalyzer $matchingAnalyzer)
+    private $proposalMatcher;
+    private $proposalRepository;
+    private $geoRouter;
+    private $zoneManager;
+
+    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, GeoRouter $geoRouter, ZoneManager $zoneManager)
     {
         $this->entityManager = $entityManager;
-        $this->matchingAnalyzer = $matchingAnalyzer;
+        $this->proposalMatcher = $proposalMatcher;
+        $this->proposalRepository = $proposalRepository;
+        $this->geoRouter = $geoRouter;
+        $this->zoneManager = $zoneManager;
     }
     
     /**
@@ -54,152 +63,30 @@ class ProposalManager
      */
     public function createProposal(Proposal $proposal)
     {
-        // we will have to analyze the proposal to check the work to do (instead of simply persist the Proposal entity)
-        // - proposalType : offer ? request ? both ?
-        // - journeyType : one-way ? return trip ?
-        
-        // potentially we will create 4 proposals :
-        $proposalOfferOutward = null;
-        $proposalOfferReturn = null;
-        $proposalRequestOutward = null;
-        $proposalRequestReturn = null;
-        
-        // Proposal Type
-        // offer/request or both ?
-        if ($proposal->getProposalType() == Proposal::PROPOSAL_TYPE_OFFER || $proposal->getProposalType() == Proposal::PROPOSAL_TYPE_BOTH) {
-            $proposalOfferOutward = clone $proposal;
-            $proposalOfferOutward->setProposalType(Proposal::PROPOSAL_TYPE_OFFER);
-            // criteria
-            $proposalOfferOutward->setCriteria(clone $proposal->getCriteria());
-            // points
-            foreach ($proposal->getPoints() as $proposalPoint) {
-                $point = clone $proposalPoint;
-                // address
-                $point->setAddress(clone $proposalPoint->getAddress());
-                $proposalOfferOutward->addPoint($point);
+        // temporary initialisation, will be dumped when implementation of these fields will be done
+        $proposal->getCriteria()->setSeats(1);
+        $proposal->getCriteria()->setAnyRouteAsPassenger(true);
+
+        // creation of the directions
+        $addresses = [];
+        foreach ($proposal->getWaypoints() as $waypoint) {
+            $addresses[] = $waypoint->getAddress();
+        }
+        if ($routes = $this->geoRouter->getRoutes($addresses)) {
+            if ($proposal->getCriteria()->isDriver()) {
+                $proposal->getCriteria()->setDirectionDriver($routes[0]);
+            }
+            if ($proposal->getCriteria()->isPassenger()) {
+                $proposal->getCriteria()->setDirectionPassenger($routes[0]);
             }
         }
-        if ($proposal->getProposalType() == Proposal::PROPOSAL_TYPE_REQUEST || $proposal->getProposalType() == Proposal::PROPOSAL_TYPE_BOTH) {
-            $proposalRequestOutward = clone $proposal;
-            $proposalRequestOutward->setProposalType(Proposal::PROPOSAL_TYPE_REQUEST);
-            // criteria
-            $proposalRequestOutward->setCriteria(clone $proposal->getCriteria());
-            // points
-            foreach ($proposal->getPoints() as $proposalPoint) {
-                $point = clone $proposalPoint;
-                // address
-                $point->setAddress(clone $proposalPoint->getAddress());
-                $proposalRequestOutward->addPoint($point);
-            }
-        }
-        
-        // link between offer outward and request outward ?
-        if (!is_null($proposalOfferOutward) && !is_null($proposalRequestOutward)) {
-            $proposalOfferOutward->setProposalLinked($proposalRequestOutward);
-        }
-        
-        // Journey Type
-        // one way or outward/return ?
-        $reversedPoints = [];
-        $nbPoints = 0;
-        if ($proposal->getJourneyType() == Proposal::JOURNEY_TYPE_OUTWARD) {
-            // we will need the reverse points
-            $nbPoints = count($proposal->getPoints());
-            // we need to get the points in reverse order
-            // we will read the points a first time to create an array with the position as index
-            $apoints = [];
-            foreach ($proposal->getPoints() as $proposalPoint) {
-                $apoints[$proposalPoint->getPosition()] = $proposalPoint;
-            }
-            // we sort the array by key
-            ksort($apoints);
-            // our array is ordered by position, we read it backwards
-            $reversedPoints = array_reverse($apoints);
-        }
-        
-        if ($proposal->getJourneyType() == Proposal::JOURNEY_TYPE_OUTWARD && !is_null($proposalOfferOutward)) {
-            $proposalOfferReturn = clone $proposal;
-            $proposalOfferReturn->setProposalType(Proposal::PROPOSAL_TYPE_OFFER);
-            $proposalOfferReturn->setJourneyType(Proposal::JOURNEY_TYPE_RETURN);
-            // criteria
-            $proposalOfferReturn->setCriteria(clone $proposal->getCriteria());
-            foreach ($reversedPoints as $pos=>$proposalPoint) {
-                $point = clone $proposalPoint;
-                $point->setPosition($pos);
-                $point->setLastPoint(false);
-                // address
-                $point->setAddress(clone $proposalPoint->getAddress());
-                if ($pos == ($nbPoints-1)) {
-                    $point->setLastPoint(true);
-                }
-                $proposalOfferReturn->addPoint($point);
-            }
-            $proposalOfferOutward->setProposalLinkedJourney($proposalOfferReturn);
-        }
-        
-        if ($proposal->getJourneyType() == Proposal::JOURNEY_TYPE_OUTWARD && !is_null($proposalRequestOutward)) {
-            $proposalRequestReturn = clone $proposal;
-            $proposalRequestReturn->setProposalType(Proposal::PROPOSAL_TYPE_REQUEST);
-            $proposalRequestReturn->setJourneyType(Proposal::JOURNEY_TYPE_RETURN);
-            // criteria
-            $proposalRequestReturn->setCriteria(clone $proposal->getCriteria());
-            foreach ($reversedPoints as $pos=>$proposalPoint) {
-                $point = clone $proposalPoint;
-                $point->setPosition($pos);
-                $point->setLastPoint(false);
-                // address
-                $point->setAddress(clone $proposalPoint->getAddress());
-                if ($pos == ($nbPoints-1)) {
-                    $point->setLastPoint(true);
-                }
-                $proposalRequestReturn->addPoint($point);
-            }
-            $proposalRequestOutward->setProposalLinkedJourney($proposalRequestReturn);
-        }
-        
-        // link between offer return and request return
-        if (!is_null($proposalOfferReturn) && !is_null($proposalRequestReturn)) {
-            $proposalOfferReturn->setProposalLinked($proposalRequestReturn);
-        }
-        
-        // persistence
-        if (!is_null($proposalOfferOutward)) {
-            $this->entityManager->persist($proposalOfferOutward);
-        }
-        if (!is_null($proposalOfferReturn)) {
-            $this->entityManager->persist($proposalOfferReturn);
-        }
-        if (!is_null($proposalRequestOutward)) {
-            $this->entityManager->persist($proposalRequestOutward);
-        }
-        if (!is_null($proposalRequestReturn)) {
-            $this->entityManager->persist($proposalRequestReturn);
-        }
-        $this->entityManager->flush();
+
+        $this->entityManager->persist($proposal);
         
         // matching analyze
-        // => should be replaced by path analyzer when it's created
-        // => the analyze would be asked when all paths are analyzed and returned
-        if (!is_null($proposalOfferOutward)) {
-            $this->matchingAnalyzer->createMatchingsForProposal($proposalOfferOutward);
-        }
-        if (!is_null($proposalOfferReturn)) {
-            $this->matchingAnalyzer->createMatchingsForProposal($proposalOfferReturn);
-        }
-        if (!is_null($proposalRequestOutward)) {
-            $this->matchingAnalyzer->createMatchingsForProposal($proposalRequestOutward);
-        }
-        if (!is_null($proposalRequestReturn)) {
-            $this->matchingAnalyzer->createMatchingsForProposal($proposalRequestReturn);
-        }
+        $this->proposalMatcher->createMatchingsForProposal($proposal);
         
-        // return the proposal (not really necessary, but good practice ?)
-        if (!is_null($proposalOfferOutward)) {
-            return $proposalOfferOutward;
-        }
-        if (!is_null($proposalRequestOutward)) {
-            return $proposalRequestOutward;
-        }
+        return $proposal;
     }
     
     /**
@@ -258,30 +145,28 @@ class ProposalManager
         // test : we return all proposals
         // we create a proposal with the parameters
         $proposal = new Proposal();
-        // warning : usually we search for matching proposal after a proposal post, so we usually search for opposite proposals (it is made automatically inside the matchingProposal method of the repository)
-        // in rdex protocol we already indicate the final proposal type we want, so we need to switch here !
-        $proposal->setProposalType($offer ? Proposal::PROPOSAL_TYPE_REQUEST : Proposal::PROPOSAL_TYPE_OFFER);
-        $proposal->setJourneyType(Proposal::JOURNEY_TYPE_ONE_WAY);
+        $proposal->setType(Proposal::TYPE_ONE_WAY);
         $addressFrom = new Address();
-        $addressFrom->setLongitude($from_longitude);
-        $addressFrom->setLatitude($from_latitude);
+        $addressFrom->setLongitude((string)$from_longitude);
+        $addressFrom->setLatitude((string)$from_latitude);
         // for now we don't search with coordinates, we force the localities for testing purpose
         // @todo delete the locality search only
         $addressFrom->setAddressLocality("Nancy");
         $addressTo = new Address();
-        $addressTo->setLongitude($to_longitude);
-        $addressTo->setLatitude($to_latitude);
+        $addressTo->setLongitude((string)$to_longitude);
+        $addressTo->setLatitude((string)$to_latitude);
         $addressTo->setAddressLocality("Metz");
-        $pointFrom = new Point();
-        $pointFrom->setAddress($addressFrom);
-        $pointFrom->setPosition(0);
-        $pointFrom->setLastPoint(false);
-        $pointTo = new Point();
-        $pointTo->setAddress($addressTo);
-        $pointTo->setPosition(1);
-        $pointTo->setLastPoint(true);
+        $waypointFrom = new Waypoint();
+        $waypointFrom->setAddress($addressFrom);
+        $waypointFrom->setPosition(0);
+        $waypointFrom->setIsDestination(false);
+        $waypointTo = new Waypoint();
+        $waypointTo->setAddress($addressTo);
+        $waypointTo->setPosition(1);
+        $waypointTo->setIsDestination(true);
         $criteria = new Criteria();
-        $criteria->setFrequency($frequency == RdexJourney::FREQUENCY_REGULAR ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL);
+        $criteria->setIsDriver(!$offer);
+        $criteria->setIsPassenger(!$request);
         if (!is_null($outward_mindate)) {
             $criteria->setFromDate($outward_mindate);
         } else {
@@ -291,10 +176,10 @@ class ProposalManager
             $criteria->setToDate($outward_maxdate);
         }
         $proposal->setCriteria($criteria);
-        $proposal->addPoint($pointFrom);
-        $proposal->addPoint($pointTo);
+        $proposal->addWaypoint($waypointFrom);
+        $proposal->addWaypoint($waypointTo);
         // for now we don't use the time parameters
         // @todo add the time parameters
-        return $this->entityManager->getRepository(Proposal::class)->findMatchingProposals($proposal, false);
+        return $this->proposalRepository->findMatchingProposals($proposal, false);
     }
 }

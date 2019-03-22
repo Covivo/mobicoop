@@ -1,6 +1,6 @@
 {
     "type": "project",
-    "license": "proprietary",
+    "license": "AGPL-3.0-or-later",
     "require": {
         "php": "^7.1.3",
         "ext-ctype": "*",
@@ -12,15 +12,20 @@
         "geocoder-php/chain-provider": "^4.0",
         "geocoder-php/google-maps-provider": "^4.2",
         "geocoder-php/here-provider": "^0.1.0",
-        "geocoder-php/locationiq-provider": "^1.0",
         "geocoder-php/open-cage-provider": "^4.0",
+        "lexik/jwt-authentication-bundle": "^2.6",
+        "liip/imagine-bundle": "^2.1",
         "php-http/guzzle6-adapter": "1.1.1",
         "php-http/message": "^1.7",
+        "sensio/framework-extra-bundle": "^5.2",
         "symfony/console": "*",
         "symfony/dotenv": "*",
         "symfony/flex": "^1.1",
         "symfony/framework-bundle": "*",
+        "symfony/monolog-bundle": "^3.3",
+        "symfony/security-bundle": "4.2.*",
         "symfony/yaml": "*",
+        "vich/uploader-bundle": "^1.8",
         "willdurand/geocoder-bundle": "^5.3"
     },
     "require-dev": {
@@ -69,7 +74,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "4.1.*"
+            "require": "4.2.*"
         }
     }
 }

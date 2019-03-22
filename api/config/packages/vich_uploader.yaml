@@ -1,0 +1,13 @@
+vich_uploader:
+    db_driver: orm
+
+    mappings:
+        event:
+            uri_prefix: /upload/events/images/
+            upload_destination: '%kernel.project_dir%/public/upload/events/images/'
+            namer:
+                service: Vich\UploaderBundle\Naming\PropertyNamer
+                options: { property: 'fileName'}
+        user:
+            uri_prefix: /upload/users/images/
+            upload_destination: '%kernel.project_dir%/public/upload/users/images/'    

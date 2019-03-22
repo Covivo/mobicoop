@@ -24,7 +24,7 @@
 namespace App\Geography\ProviderFactory;
 
 use Bazinga\GeocoderBundle\ProviderFactory\AbstractFactory;
-use Geocoder\Provider\LocationIQ\LocationIQ;
+use App\Geography\ProviderFactory\LocationIQ;
 use Geocoder\Provider\Provider;
 use Http\Discovery\HttpClientDiscovery;
 use Symfony\Component\OptionsResolver\OptionsResolver;

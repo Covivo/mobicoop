@@ -24,7 +24,7 @@
 namespace App\Geography\Service;
 
 use App\DataProvider\Entity\GeoRouterProvider;
-use App\Geography\Entity\Route;
+use App\Geography\Entity\Direction;
 
 /**
  * The routing service.
@@ -44,11 +44,10 @@ class GeoRouter
      */
     public function getRoutes(array $addresses): ?array
     {
-        $routes = [];
         $georouter = new GeoRouterProvider();
         $params = [];
         $params['points'] = $addresses;
-        $routes = $georouter->getCollection(Route::class, '', $params);
+        $routes = $georouter->getCollection(Direction::class, '', $params);
         return $routes;
     }
 }

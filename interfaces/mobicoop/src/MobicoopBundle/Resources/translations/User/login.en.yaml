@@ -1,0 +1,6 @@
+username:
+    label: 'Email'
+    placeholder: 'Set your email'
+password:
+    label: 'Password'
+    placeholder: 'Enter your password'

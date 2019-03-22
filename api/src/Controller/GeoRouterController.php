@@ -27,7 +27,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Geography\Service\GeoRouter;
-use App\Address\Entity\Address;
+use App\Geography\Entity\Address;
 use App\Geography\Service\ZoneManager;
 
 /**
@@ -90,7 +90,25 @@ class GeoRouterController extends AbstractController
         $address14 = new Address(6);
         $address14->setLatitude(49.181491);
         $address14->setLongitude(5.695852);
-        
+
+        // nancy metz
+        $address15 = new Address(15);
+        $address15->setLatitude(48.693900);
+        $address15->setLongitude(6.178986);
+
+        $address16 = new Address(16);
+        $address16->setLatitude(49.120602);
+        $address16->setLongitude(6.174711);
+
+        // hambourg séville
+        $address17 = new Address(17);
+        $address17->setLatitude(53.50900);
+        $address17->setLongitude(9.999634);
+
+        $address18 = new Address(18);
+        $address18->setLatitude(37.268897);
+        $address18->setLongitude(-5.682345);
+
         $addresses1 = [
             $address1,
             $address2
@@ -137,71 +155,95 @@ class GeoRouterController extends AbstractController
             $address14,
             $address2
         ];
-        
+
+        $addresses8 = [
+            $address15,
+            $address16
+        ];
+
+        $addresses9 = [
+            $address17,
+            $address18
+        ];
+
+        $addressespool = [
+            $address15,
+            $address16,
+            $address17,
+            $address18
+        ];
+        $addresses100 = [];
+
+
+        for ($i=1;$i<=50;$i++) {
+            $addresses100[] = $addressespool[rand(0, count($addressespool)-1)];
+        }
+
         $start = microtime(true);
-        $routes1 = $geoRouter->getRoutes($addresses1);
-        $routes2 = $geoRouter->getRoutes($addresses2);
-        $routes3 = $geoRouter->getRoutes($addresses3);
-        $routes4 = $geoRouter->getRoutes($addresses4);
-        $routes5 = $geoRouter->getRoutes($addresses5);
-        $routes6 = $geoRouter->getRoutes($addresses6);
-        $routes7 = $geoRouter->getRoutes($addresses7);
+        $routes8 = $geoRouter->getRoutes($addresses100);
         $time_elapsed_secs = microtime(true) - $start;
         
-        $route1 = $routes1[0];
+        /*$route1 = $routes1[0];
         $route2 = $routes2[0];
         $route3 = $routes3[0];
         $route4 = $routes4[0];
         $route5 = $routes5[0];
         $route6 = $routes6[0];
-        $route7 = $routes7[0];
+        $route7 = $routes7[0];*/
+        $route8 = $routes8[0];
         
-        $duration1 = $route1->getTime()/1000/60;
-        $duration2 = $route2->getTime()/1000/60;
-        $duration3 = $route3->getTime()/1000/60;
-        $duration4 = $route4->getTime()/1000/60;
-        $duration5 = $route5->getTime()/1000/60;
-        $duration6 = $route6->getTime()/1000/60;
-        $duration7 = $route7->getTime()/1000/60;
-        
-        $distance1 = $route1->getDistance()/1000;
+        /*$duration1 = $route1->getDuration()/1000/60;
+        $duration2 = $route2->getDuration()/1000/60;
+        $duration3 = $route3->getDuration()/1000/60;
+        $duration4 = $route4->getDuration()/1000/60;
+        $duration5 = $route5->getDuration()/1000/60;
+        $duration6 = $route6->getDuration()/1000/60;
+        $duration7 = $route7->getDuration()/1000/60;*/
+        $duration8 = $route8->getDuration()/1000/60;
+
+        /*$distance1 = $route1->getDistance()/1000;
         $distance2 = $route2->getDistance()/1000;
         $distance3 = $route3->getDistance()/1000;
         $distance4 = $route4->getDistance()/1000;
         $distance5 = $route5->getDistance()/1000;
         $distance6 = $route6->getDistance()/1000;
-        $distance7 = $route7->getDistance()/1000;
+        $distance7 = $route7->getDistance()/1000;*/
+        $distance8 = $route8->getDistance()/1000;
+
         
-        
-        echo "Route 1 // duration = $duration1 minutes, distance = $distance1 kms<br />";
-        foreach ($route1->getWaypoints() as $waypoint) {
+        //echo "Route 1 // duration = $duration1 minutes, distance = $distance1 kms<br />";
+        /*foreach ($route1->getWaypoints() as $waypoint) {
             echo $waypoint ->getLatitude() . ", " . $waypoint->getLongitude() . "<br />";
-        }
+        }*/
         //echo "<pre>" . print_r($route1->getPoints(),true) . "</pre>";
-        echo "Route 2 // duration = $duration2 minutes, distance = $distance2 kms<br />";
-        foreach ($route2->getWaypoints() as $waypoint) {
+        //echo "Route 2 // duration = $duration2 minutes, distance = $distance2 kms<br />";
+        /*foreach ($route2->getWaypoints() as $waypoint) {
             echo $waypoint ->getLatitude() . ", " . $waypoint->getLongitude() . "<br />";
-        }
-        echo "Route 3 // duration = $duration3 minutes, distance = $distance3 kms<br />";
-        foreach ($route3->getWaypoints() as $waypoint) {
+        }*/
+        //echo "Route 3 // duration = $duration3 minutes, distance = $distance3 kms<br />";
+        /*foreach ($route3->getWaypoints() as $waypoint) {
             echo $waypoint ->getLatitude() . ", " . $waypoint->getLongitude() . "<br />";
-        }
-        echo "Route 4 // duration = $duration4 minutes, distance = $distance4 kms<br />";
-        foreach ($route4->getWaypoints() as $waypoint) {
+        }*/
+        //echo "Route 4 // duration = $duration4 minutes, distance = $distance4 kms<br />";
+        /*foreach ($route4->getWaypoints() as $waypoint) {
             echo $waypoint ->getLatitude() . ", " . $waypoint->getLongitude() . "<br />";
-        }
-        echo "Route 5 // duration = $duration5 minutes, distance = $distance5 kms<br />";
-        foreach ($route5->getWaypoints() as $waypoint) {
+        }*/
+        //echo "Route 5 // duration = $duration5 minutes, distance = $distance5 kms<br />";
+        /*foreach ($route5->getWaypoints() as $waypoint) {
             echo $waypoint ->getLatitude() . ", " . $waypoint->getLongitude() . "<br />";
-        }
-        echo "Route 6 // duration = $duration6 minutes, distance = $distance6 kms<br />";
-        foreach ($route6->getWaypoints() as $waypoint) {
+        }*/
+        //echo "Route 6 // duration = $duration6 minutes, distance = $distance6 kms<br />";
+        /*foreach ($route6->getWaypoints() as $waypoint) {
             echo $waypoint ->getLatitude() . ", " . $waypoint->getLongitude() . "<br />";
-        }
-        echo "Route 7 // duration = $duration7 minutes, distance = $distance7 kms<br />";
-        foreach ($route7->getWaypoints() as $waypoint) {
+        }*/
+        //echo "Route 7 // duration = $duration7 minutes, distance = $distance7 kms<br />";
+        /*foreach ($route7->getWaypoints() as $waypoint) {
             echo $waypoint ->getLatitude() . ", " . $waypoint->getLongitude() . "<br />";
-        }
+        }*/
+        echo "Route 8 // duration = $duration8 minutes, distance = $distance8 kms<br />";
+        /*foreach ($route7->getWaypoints() as $waypoint) {
+            echo $waypoint ->getLatitude() . ", " . $waypoint->getLongitude() . "<br />";
+        }*/
         echo "Calculation duration = $time_elapsed_secs s";
         exit;
     }

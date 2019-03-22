@@ -26,13 +26,13 @@ namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
-use Mobicoop\Bundle\MobicoopBundle\Service\PublicTransportManager;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Service\PublicTransportManager;
 
 class DefaultController extends AbstractController
 {
     /**
      * HomePage
-     * @Route("/")
+     * @Route("/", name="home")
      *
      */
     public function index()

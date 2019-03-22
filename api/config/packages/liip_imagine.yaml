@@ -1,0 +1,79 @@
+liip_imagine:
+    # valid drivers options include "gd" or "gmagick" or "imagick"
+    driver: "gd"
+
+    # define your filter sets under this option
+    filter_sets:
+
+        max:
+            jpeg_quality: 70
+            png_compression_level: 8
+            filters:
+                downscale:
+                    max: [3072, 3072]           
+        square_800:
+            jpeg_quality: 70
+            png_compression_level: 8
+            filters:
+                thumbnail: 
+                    size: [800, 800]
+                    mode: inset
+                background: { size: [800, 800], position: center, color: '#FFFFFF' }
+        square_250:
+            jpeg_quality: 70
+            png_compression_level: 8
+            filters:
+                thumbnail: 
+                    size: [250, 250]
+                    mode: inset
+                background: { size: [250, 250], position: center, color: '#FFFFFF' }
+        square_100:
+            jpeg_quality: 70
+            png_compression_level: 8
+            filters:
+                thumbnail: 
+                    size: [100, 100]
+                    mode: inset
+                background: { size: [100, 100], position: center, color: '#FFFFFF' }
+        169_800:
+            jpeg_quality: 70
+            png_compression_level: 8
+            filters:
+                thumbnail: 
+                    size: [800, 450]
+                    mode: outbound
+        169_250:
+            jpeg_quality: 70
+            png_compression_level: 8
+            filters:
+                thumbnail: 
+                    size: [250, 140]
+                    mode: outbound
+        169_100:
+            jpeg_quality: 70
+            png_compression_level: 8
+            filters:
+                thumbnail: 
+                    size: [100, 56]
+                    mode: outbound
+        43_800:
+            jpeg_quality: 70
+            png_compression_level: 8
+            filters:
+                thumbnail: 
+                    size: [800, 600]
+                    mode: outbound
+        43_250:
+            jpeg_quality: 70
+            png_compression_level: 8
+            filters:
+                thumbnail: 
+                    size: [250, 187]
+                    mode: outbound
+        43_100:
+            jpeg_quality: 70
+            png_compression_level: 8
+            filters:
+                thumbnail: 
+                    size: [100, 75]
+                    mode: outbound

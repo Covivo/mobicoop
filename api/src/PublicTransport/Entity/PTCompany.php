@@ -24,11 +24,14 @@
 namespace App\PublicTransport\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * A public transport company.
  *
+ * @ORM\Entity
  * @ApiResource(
  *      routePrefix="/public_transport",
  *      attributes={
@@ -43,19 +46,49 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class PTCompany
 {
     /**
+     * @var int The id of this company.
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     * @ApiProperty(identifier=true)
+     */
+    private $id;
+    
+    /**
      * @var string The name of this company.
      *
+     * @ORM\Column(type="string", length=100)
      * @Groups("pt")
      */
     private $name;
     
-    public function getName()
+    public function __construct($id)
+    {
+        $this->id = $id;
+    }
+    
+    public function getId(): int
+    {
+        return $this->id;
+    }
+    
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+        
+        return $this;
+    }
+    
+    public function getName(): string
     {
         return $this->name;
     }
     
-    public function setName($name)
+    public function setName(string $name): self
     {
         $this->name = $name;
+        
+        return $this;
     }
 }

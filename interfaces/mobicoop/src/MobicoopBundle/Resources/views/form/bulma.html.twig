@@ -185,18 +185,12 @@
 {# Rows #}
 
 {%- block form_row -%}
-    <div class="field is-horizontal">
-    	<div class="field-label">
-	        {{- form_label(form) -}}
-	    </div>
-	    <div class="field-body">
-    		<div class="field">
-                {{- form_widget(form) -}}
-                {%- if form.vars.attr.help_text is defined -%}
-                    <p class="help">{{ form.vars.attr.help_text }}</p>
-                {%- endif -%}
-            </div>
-        </div>
+    <div class="field">
+        {{- form_label(form) -}}
+        {{- form_widget(form) -}}
+        {%- if form.vars.attr.help_text is defined -%}
+            <p class="help">{{ form.vars.attr.help_text }}</p>
+        {%- endif -%}
     </div>
 {%- endblock form_row -%}
 

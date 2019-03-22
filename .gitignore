@@ -267,7 +267,7 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
-.env
+.env.local
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -479,5 +479,5 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-
+.vscode/
 # End of https://www.gitignore.io/api/vim,osx,node,macos,linux,windows,symfony,eclipse,netbeans,composer,jetbrains,sublimetext,phpstorm+all

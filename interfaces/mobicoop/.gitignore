@@ -1,11 +1,18 @@
 
 # Created by https://www.gitignore.io/api/osx,linux,windows,webstorm,phpstorm,jetbrains,sublimetext,symphonycms,zendframework
 
+### VS Code ###
+
+/.vscode/
+
 ### JetBrains ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 .idea
+
+*.css
+.env.test
 
 # User-specific stuff
 .idea/**/workspace.xml
@@ -284,7 +291,9 @@ extras/documentation
 
 
 ###> symfony/framework-bundle ###
-/.env
+/.env.local
+/.env.local.php
+/.env.*.local
 /public/bundles/
 /var/
 /vendor/

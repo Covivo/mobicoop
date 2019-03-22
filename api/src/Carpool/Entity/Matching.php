@@ -28,6 +28,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Events;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
+use App\Geography\Entity\Direction;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -66,34 +68,10 @@ class Matching
     private $createdDate;
 
     /**
-     * @var int|null Real distance in metres of the matching route.
-     *
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read"})
-     */
-    private $distanceReal;
-
-    /**
-     * @var int|null Flying distance in metres of the matching route.
-     *
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read"})
-     */
-    private $distanceFly;
-
-    /**
-     * @var int|null Duration in seconds of the matching route (based on real distance).
-     *
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read"})
-     */
-    private $duration;
-
-    /**
      * @var Proposal The offer proposal.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Proposal", inversedBy="matchingRequests")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingRequests")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
      * @MaxDepth(1)
@@ -104,7 +82,7 @@ class Matching
      * @var Proposal The request proposal.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Proposal", inversedBy="matchingOffers")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingOffers")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
      * @MaxDepth(1)
@@ -112,57 +90,44 @@ class Matching
     private $proposalRequest;
 
     /**
-     * @var Point|null Starting point of the offer proposal used for the matching.
-     *
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Point")
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $pointOfferFrom;
-
-    /**
-     * @var Point|null Ending point of the offer proposal used for the matching.
-     *
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Point")
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $pointOfferTo;
-
-    /**
-     * @var Point Starting point of the request used for the matching (if multimodal travel, otherwise it's always the starting point).
-     *
-     * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\Point")
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $pointRequestFrom;
-
-    /**
-     * @var Solicitation[]|null The solicitations created with this matching as a source.
-     *
-     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Solicitation", mappedBy="matching")
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $solicitations;
-
-    /**
-     * @var Criteria The criteria applied to this solicitation.
+     * @var Criteria The criteria applied to this matching.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read"})
      * @MaxDepth(1)
      */
     private $criteria;
 
+    /**
+     * @var Ask[] The asks made for this matching.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\ask", mappedBy="matching", cascade={"remove"}, orphanRemoval=true)
+     * @Groups({"read"})
+     * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
+     */
+    private $asks;
+
+    /**
+     * @var Waypoint[] The waypoints of the proposal.
+     *
+     * @Assert\NotBlank
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="matching", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OrderBy({"position" = "ASC"})
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
+     */
+    private $waypoints;
+    
     public function __construct()
     {
-        $this->solicitations = new ArrayCollection();
+        $this->asks = new ArrayCollection();
+        $this->waypoints = new ArrayCollection();
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -176,42 +141,6 @@ class Matching
     public function setCreatedDate(\DateTimeInterface $createdDate): self
     {
         $this->createdDate = $createdDate;
-
-        return $this;
-    }
-
-    public function getDistanceReal(): ?int
-    {
-        return $this->distanceReal;
-    }
-
-    public function setDistanceReal(?int $distanceReal): self
-    {
-        $this->distanceReal = $distanceReal;
-
-        return $this;
-    }
-
-    public function getDistanceFly(): ?int
-    {
-        return $this->distanceFly;
-    }
-
-    public function setDistanceFly(?int $distanceFly): self
-    {
-        $this->distanceFly = $distanceFly;
-
-        return $this;
-    }
-
-    public function getDuration(): ?int
-    {
-        return $this->duration;
-    }
-
-    public function setDuration(?int $duration): self
-    {
-        $this->duration = $duration;
 
         return $this;
     }
@@ -240,73 +169,6 @@ class Matching
         return $this;
     }
 
-    public function getPointOfferFrom(): ?Point
-    {
-        return $this->pointOfferFrom;
-    }
-
-    public function setPointOfferFrom(?Point $pointOfferFrom): self
-    {
-        $this->pointOfferFrom = $pointOfferFrom;
-
-        return $this;
-    }
-
-    public function getPointOfferTo(): ?Point
-    {
-        return $this->pointOfferTo;
-    }
-
-    public function setPointOfferTo(?Point $pointOfferTo): self
-    {
-        $this->pointOfferTo = $pointOfferTo;
-
-        return $this;
-    }
-
-    public function getPointRequestFrom(): ?Point
-    {
-        return $this->pointRequestFrom;
-    }
-
-    public function setPointRequestFrom(?Point $pointRequestFrom): self
-    {
-        $this->pointRequestFrom = $pointRequestFrom;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Solicitation[]
-     */
-    public function getSolicitations(): Collection
-    {
-        return $this->solicitations;
-    }
-
-    public function addSolicitation(Solicitation $solicitation): self
-    {
-        if (!$this->solicitations->contains($solicitation)) {
-            $this->solicitations[] = $solicitation;
-            $solicitation->setMatching($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSolicitation(Solicitation $solicitation): self
-    {
-        if ($this->solicitations->contains($solicitation)) {
-            $this->solicitations->removeElement($solicitation);
-            // set the owning side to null (unless already changed)
-            if ($solicitation->getMatching() === $this) {
-                $solicitation->setMatching(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getCriteria(): ?Criteria
     {
         return $this->criteria;
@@ -315,6 +177,68 @@ class Matching
     public function setCriteria(Criteria $criteria): self
     {
         $this->criteria = $criteria;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Ask[]
+     */
+    public function getAsks(): Collection
+    {
+        return $this->asks;
+    }
+
+    public function addAsk(Ask $ask): self
+    {
+        if (!$this->asks->contains($ask)) {
+            $this->asks[] = $ask;
+            $ask->setMatching($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAsk(Ask $ask): self
+    {
+        if ($this->asks->contains($ask)) {
+            $this->asks->removeElement($ask);
+            // set the owning side to null (unless already changed)
+            if ($ask->getMatching() === $this) {
+                $ask->setMatching(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Waypoint[]
+     */
+    public function getWaypoints(): Collection
+    {
+        return $this->waypoints;
+    }
+
+    public function addWaypoint(Waypoint $waypoint): self
+    {
+        if (!$this->waypoints->contains($waypoint)) {
+            $this->waypoints[] = $waypoint;
+            $waypoint->setMatching($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWaypoint(Waypoint $waypoint): self
+    {
+        if ($this->waypoints->contains($waypoint)) {
+            $this->waypoints->removeElement($waypoint);
+            // set the owning side to null (unless already changed)
+            if ($waypoint->getMatching() === $this) {
+                $waypoint->setMatching(null);
+            }
+        }
 
         return $this;
     }

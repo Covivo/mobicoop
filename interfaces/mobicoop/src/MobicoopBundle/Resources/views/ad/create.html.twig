@@ -1,0 +1,187 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}{% trans from 'ui' %}carpool.ad_create.title{% endtrans %}{% endblock %}
+
+{% block stylesheets %}
+    {{ encore_entry_link_tags('bundle_ad/create') }}
+{% endblock %}
+
+{% block body %}
+
+<section class="hero is-primary">
+	<div class="hero-body">
+    	<div class="container">
+      		<h1 class="title">
+        		Mobicoop - {% trans from 'ui' %}carpool.ad_create.h1{% endtrans %}
+      		</h1>
+    	</div>
+  	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+		{% if error %}
+		<span class="tag is-danger">An error occured.</span>
+		{% endif %}
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        {{ form_row(form.origin) }}
+        {{ form_row(form.destination) }}
+        {{ form_row(form.role) }}
+        {{ form_row(form.type) }}
+        {{ form_row(form.frequency) }}
+        <div class="box">
+            <h4 class="title is-4">Trajet ponctuel</h4>
+            <div class="columns">
+                <div class="column">
+                    <h5 class="title is-5">Aller</h5>
+                    {{ form_row(form.outwardDate) }}
+                    {{ form_row(form.outwardTime) }}
+                    {{ form_row(form.outwardMargin) }}
+                </div>
+                <div class="column">
+                    <h5 class="title is-5">Retour</h5>
+                    {{ form_row(form.returnDate) }}
+                    {{ form_row(form.returnTime) }}
+                    {{ form_row(form.returnMargin) }}
+                </div>
+            </div>
+        </div>
+        <div class="box">
+            <h4 class="title is-4">Trajet régulier</h4>
+            {{ form_row(form.fromDate) }}
+            {{ form_row(form.toDate) }}
+            <div class="columns">
+                <div class="column">
+                    <h5 class="title is-5">Aller</h5>
+                    <div class="field is-horizontal">
+                        <div class="field-label">{{ form_label(form.outwardMonTime) }}</div>
+                        {{ form_errors(form.outwardMonTime) }}
+                        {{ form_widget(form.outwardMonTime) }}
+                        <div class="field-label">{{ form_label(form.outwardMonMargin) }}</div>
+                        {{ form_errors(form.outwardMonMargin) }}
+                        {{ form_widget(form.outwardMonMargin) }}
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label">{{ form_label(form.outwardTueTime) }}</div>
+                        {{ form_errors(form.outwardTueTime) }}
+                        {{ form_widget(form.outwardTueTime) }}
+                        <div class="field-label">{{ form_label(form.outwardTueMargin) }}</div>
+                        {{ form_errors(form.outwardTueMargin) }}
+                        {{ form_widget(form.outwardTueMargin) }}
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label">{{ form_label(form.outwardWedTime) }}</div>
+                        {{ form_errors(form.outwardWedTime) }}
+                        {{ form_widget(form.outwardWedTime) }}
+                        <div class="field-label">{{ form_label(form.outwardWedMargin) }}</div>
+                        {{ form_errors(form.outwardWedMargin) }}
+                        {{ form_widget(form.outwardWedMargin) }}
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label">{{ form_label(form.outwardThuTime) }}</div>
+                        {{ form_errors(form.outwardThuTime) }}
+                        {{ form_widget(form.outwardThuTime) }}
+                        <div class="field-label">{{ form_label(form.outwardThuMargin) }}</div>
+                        {{ form_errors(form.outwardThuMargin) }}
+                        {{ form_widget(form.outwardThuMargin) }}
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label">{{ form_label(form.outwardFriTime) }}</div>
+                        {{ form_errors(form.outwardFriTime) }}
+                        {{ form_widget(form.outwardFriTime) }}
+                        <div class="field-label">{{ form_label(form.outwardFriMargin) }}</div>
+                        {{ form_errors(form.outwardFriMargin) }}
+                        {{ form_widget(form.outwardFriMargin) }}
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label">{{ form_label(form.outwardSatTime) }}</div>
+                        {{ form_errors(form.outwardSatTime) }}
+                        {{ form_widget(form.outwardSatTime) }}
+                        <div class="field-label">{{ form_label(form.outwardSatMargin) }}</div>
+                        {{ form_errors(form.outwardSatMargin) }}
+                        {{ form_widget(form.outwardSatMargin) }}
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label">{{ form_label(form.outwardSunTime) }}</div>
+                        {{ form_errors(form.outwardSunTime) }}
+                        {{ form_widget(form.outwardSunTime) }}
+                        <div class="field-label">{{ form_label(form.outwardSunMargin) }}</div>
+                        {{ form_errors(form.outwardSunMargin) }}
+                        {{ form_widget(form.outwardSunMargin) }}
+                    </div>
+                </div>
+                <div class="column">
+                    <h5 class="title is-5">Retour</h5>
+                    <div class="field is-horizontal">
+                        <div class="field-label">{{ form_label(form.returnMonTime) }}</div>
+                        {{ form_errors(form.returnMonTime) }}
+                        {{ form_widget(form.returnMonTime) }}
+                        <div class="field-label">{{ form_label(form.returnMonMargin) }}</div>
+                        {{ form_errors(form.returnMonMargin) }}
+                        {{ form_widget(form.returnMonMargin) }}
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label">{{ form_label(form.returnTueTime) }}</div>
+                        {{ form_errors(form.returnTueTime) }}
+                        {{ form_widget(form.returnTueTime) }}
+                        <div class="field-label">{{ form_label(form.returnTueMargin) }}</div>
+                        {{ form_errors(form.returnTueMargin) }}
+                        {{ form_widget(form.returnTueMargin) }}
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label">{{ form_label(form.returnWedTime) }}</div>
+                        {{ form_errors(form.returnWedTime) }}
+                        {{ form_widget(form.returnWedTime) }}
+                        <div class="field-label">{{ form_label(form.returnWedMargin) }}</div>
+                        {{ form_errors(form.returnWedMargin) }}
+                        {{ form_widget(form.returnWedMargin) }}
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label">{{ form_label(form.returnThuTime) }}</div>
+                        {{ form_errors(form.returnThuTime) }}
+                        {{ form_widget(form.returnThuTime) }}
+                        <div class="field-label">{{ form_label(form.returnThuMargin) }}</div>
+                        {{ form_errors(form.returnThuMargin) }}
+                        {{ form_widget(form.returnThuMargin) }}
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label">{{ form_label(form.returnFriTime) }}</div>
+                        {{ form_errors(form.returnFriTime) }}
+                        {{ form_widget(form.returnFriTime) }}
+                        <div class="field-label">{{ form_label(form.returnFriMargin) }}</div>
+                        {{ form_errors(form.returnFriMargin) }}
+                        {{ form_widget(form.returnFriMargin) }}
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label">{{ form_label(form.returnSatTime) }}</div>
+                        {{ form_errors(form.returnSatTime) }}
+                        {{ form_widget(form.returnSatTime) }}
+                        <div class="field-label">{{ form_label(form.returnSatMargin) }}</div>
+                        {{ form_errors(form.returnSatMargin) }}
+                        {{ form_widget(form.returnSatMargin) }}
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-label">{{ form_label(form.returnSunTime) }}</div>
+                        {{ form_errors(form.returnSunTime) }}
+                        {{ form_widget(form.returnSunTime) }}
+                        <div class="field-label">{{ form_label(form.returnSunMargin) }}</div>
+                        {{ form_errors(form.returnSunMargin) }}
+                        {{ form_widget(form.returnSunMargin) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{ form_row(form.comment) }}
+        {{ form_row(form.price) }}
+        {{ form_row(form._token) }}
+        {{ form_row(form.submit) }}
+        {{ form_end(form, {'render_rest': false}) }}
+    </div>
+</section>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('bundle_ad/create') }}
+{% endblock %}

@@ -1,0 +1,46 @@
+givenName:
+    label: 'Prénom'
+    placeholder: 'Saisissez votre prénom'
+familyName:
+    label: 'Nom'
+    placeholder: 'Saisissez votre nom'
+email:
+    label: 'Email'
+    placeholder: 'Saisissez votre adresse email'
+password:
+    label: 'Mot de passe'
+    label_repeat: 'Mot de passe (confirmation)'
+    placeholder: 'Saisissez votre mot de passe'
+    placeholder_repeat: 'Confirmez votre mot de passe'
+gender:
+    label: 'Civilité'
+    placeholder: 'Choisissez votre civilité'
+    choice:
+        female: 'Femme'
+        male: 'Homme'
+        nc: 'Autre'
+nationality:
+    label: 'Nationalité'
+    placeholder: 'Saisissez votre nationalité'
+birthDate:
+    label: 'Date de naissance'
+birthYear:
+    label: 'Année de naissance'
+    placeholder: 'Choisissez votre année de naissance'
+telephone:
+    label: 'Telephone'
+    placeholder: 'Saisissez votre numéro de téléphone'
+maxDeviationTime:
+    label: 'Temps de détour maximum'
+    placeholder: 'Saisissez le temps de détour maximum accepté en minutes'
+maxDeviationDistance:
+    label: 'Distance de détour maximum'
+    placeholder: 'Saisissez la distance de détour maximum accepté en km'
+anyRouteAsPassenger:
+    label: 'En tant que passager, j''accepte tout itinéraire proposé par le conducteur'
+multiTransportMode:
+    label: 'En tant que passager, j''accepte tous les moyens de transport'
+conditions:
+    label: 'Je valide la charte et les conditions générales d''utilisation'
+signup:
+    label: 'Je m''inscris'

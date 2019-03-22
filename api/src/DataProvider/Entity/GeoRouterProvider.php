@@ -25,16 +25,8 @@ namespace App\DataProvider\Entity;
 
 use App\DataProvider\Interfaces\ProviderInterface;
 use App\DataProvider\Service\DataProvider;
-use App\Geography\Entity\Route;
-use App\PublicTransport\Entity\PTJourney;
-use App\PublicTransport\Entity\PTArrival;
-use App\PublicTransport\Entity\PTDeparture;
-use App\PublicTransport\Entity\PTSection;
-use App\PublicTransport\Entity\PTMode;
-use App\Address\Entity\Address;
-use App\PublicTransport\Entity\PTStep;
-use App\PublicTransport\Entity\PTLine;
-use App\PublicTransport\Service\PTDataProvider;
+use App\Geography\Entity\Address;
+use App\Geography\Entity\Direction;
 
 /**
  * GeoRouter data provider : provides route calculation between 2 or more addresses.
@@ -48,7 +40,7 @@ use App\PublicTransport\Service\PTDataProvider;
  */
 class GeoRouterProvider implements ProviderInterface
 {
-    private const URI = "http://89.158.96.31:8989/";
+    private const URI = "http://149.202.205.240:8989/";
     private const COLLECTION_RESOURCE = "route";
     private const GR_MODE_CAR = "CAR";
     private const GR_LOCALE = "fr-FR";
@@ -70,8 +62,8 @@ class GeoRouterProvider implements ProviderInterface
     public function getCollection(string $class, string $apikey, array $params)
     {
         switch ($class) {
-            case Route::class:
-                $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESOURCE);
+            case Direction::class:
+            $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESOURCE);
                 $getParams = "";
                 foreach ($params['points'] as $address) {
                     $getParams .= "point=" . $address->getLatitude() . "," . $address->getLongitude() . "&";
@@ -109,7 +101,7 @@ class GeoRouterProvider implements ProviderInterface
     public function deserialize(string $class, array $data)
     {
         switch ($class) {
-            case Route::class:
+            case Direction::class:
                 return self::deserializePath($data);
                 break;
             default:
@@ -119,51 +111,58 @@ class GeoRouterProvider implements ProviderInterface
     
     private function deserializePath($data)
     {
-        $route = new Route();
+        $direction = new Direction();
         if (isset($data["distance"])) {
-            $route->setDistance($data["distance"]);
+            $direction->setDistance($data["distance"]);
         }
         if (isset($data["time"])) {
-            $route->setTime($data["time"]);
+            $direction->setDuration($data["time"]);
         }
         if (isset($data["ascend"])) {
-            $route->setAscend($data["ascend"]);
+            $direction->setAscend($data["ascend"]);
         }
         if (isset($data["descend"])) {
-            $route->setDescend($data["descend"]);
+            $direction->setDescend($data["descend"]);
         }
         if (isset($data["bbox"])) {
             if (isset($data["bbox"][0])) {
-                $route->setBbox_minLon($data["bbox"][0]);
+                $direction->setBboxMinLon($data["bbox"][0]);
             }
             if (isset($data["bbox"][1])) {
-                $route->setBbox_minLat($data["bbox"][1]);
+                $direction->setBboxMinLat($data["bbox"][1]);
             }
             if (isset($data["bbox"][2])) {
-                $route->setBbox_maxLon($data["bbox"][2]);
+                $direction->setBboxMaxLon($data["bbox"][2]);
             }
             if (isset($data["bbox"][3])) {
-                $route->setBbox_maxLat($data["bbox"][3]);
+                $direction->setBboxMaxLat($data["bbox"][3]);
             }
         }
-        if (isset($data['points'])) {
+        if (isset($data["points"])) {
+            // we keep the encoded AND the decoded points
+            // the decoded points are not stored in the database
+            $direction->setDetail($data["points"]);
+            $direction->setPoints($this->deserializePoints($data['points'], true, filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
+        }
+        $direction->setFormat('graphhopper');
+        /*if (isset($data['points'])) {
             if (isset($data['points_encoded']) && $data['points_encoded'] === false) {
-                $route->setPoints($this->deserializePoints($data['points'], false, filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
+                $direction->setPoints($this->deserializePoints($data['points'], false, filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
             } else {
-                $route->setPoints($this->deserializePoints($data['points'], true, filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
+                $direction->setPoints($this->deserializePoints($data['points'], true, filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
             }
         }
         if (isset($data['snapped_waypoints'])) {
             if (isset($data['points_encoded']) && $data['points_encoded'] === false) {
-                $route->setWaypoints($this->deserializePoints($data['snapped_waypoints'], false, false));
+                $direction->setWaypoints($this->deserializePoints($data['snapped_waypoints'], false, false));
             } else {
-                $route->setWaypoints($this->deserializePoints($data['snapped_waypoints'], true, false));
+                $direction->setWaypoints($this->deserializePoints($data['snapped_waypoints'], true, false));
             }
-        }
-        return $route;
+        }*/
+        return $direction;
     }
     
-    private function deserializePoints($data, $encoded, $is3D)
+    public function deserializePoints($data, $encoded, $is3D)
     {
         $addresses = [];
         if ($encoded) {
