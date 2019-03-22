@@ -191,14 +191,17 @@ master_tests:
 pages:
  stage: deploy
  script:
-   - echo 'Deploying all the doc...'
-   - npm run download-tools
-   - npm run generateDocs
+  - echo 'Deploying all the doc...'
+  - npm run download-tools
+  - npm run generateDocs
+  - mkdir .public
+  - cp -r docs/* .public
+  - mv .public public
  dependencies:
    - master_tests
  artifacts:
    paths:
-   - docs
+   - public
  only:
    - master
 
