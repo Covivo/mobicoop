@@ -242,9 +242,9 @@ We use buefy which is a vue adaptation of bulma as a front-end scss framework, y
 - Change any default [bulma variables](https://bulma.io/documentation/customize/variables/) in [variable.scss](assets/css/_variables.scss) such as [mobile variables](https://bulma.io/documentation/overview/responsiveness/#variables)
 - Use bulma variables inside vue-js components as in the [parrot sample](assets/js/components/Parrot.vue)
 
-## PHP tech doc
+##  ℹ️ PHP tech doc
 
-You can find our php technical doc for api & interface [here](https://mobicoop.gitlab.io/mobicoop/docs/php)
+You can find our php technical doc for api & interface [here](https://mobicoop.gitlab.io/mobicoop/php/)
 
 
 ## ℹ️ Is Windows supported ？
