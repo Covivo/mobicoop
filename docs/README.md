@@ -76,6 +76,8 @@ The api is secured using JWT (Json Web Token), so you need to generate ssl keys 
 - private.pem
 - public.pem
 
+*You will be asked for a passphrase, you can use the one in the [.env](.env) file or change this passphrase to use your own*
+
 To generate ssl keys, use these commands in a terminal: 
 
 ```bash
@@ -83,8 +85,6 @@ $ cd api
 $ openssl genrsa -out config/jwt/private.pem -aes256 4096
 $ openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem
 ```
-
-You will be asked for a passphrase, you can use the one in the [.env](.env) file or change this passphrase to use your own (see *stuff for devs* below for your local .env).
 
 
 ## install problems    
