@@ -23,13 +23,13 @@
 </section>
 
 <script type="text/x-template" id="ad-create-template">
-  <section class="section">
+  <section class="section" >
     <div class="tile is-ancestor">
       <div class="tile is-vertical is-12">
         {# Choose Role #}
         <div class="tile is-child notification center-all">
           <h3>Je suis:</h3>
-            <b-field>
+            <b-field v-bind:role="{{form.type.vars.value}}">
               <b-radio-button v-model="role" name="role" native-value="1" type="is-mobicoop-blue">
                 <b-icon icon="close"></b-icon>
                 <span>🚙 Conducteur</span>

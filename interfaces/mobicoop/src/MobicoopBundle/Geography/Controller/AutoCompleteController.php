@@ -40,22 +40,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AutoCompleteController extends AbstractController
 {
-
-    /**
-     * Retrieve all geosearch results of an input
-     *
-     * @Route("/aut")
-     */
-    public function AutoCompleteIndex(GeoSearchManager $geoSearchManager)
-    {
-        return $this->render(
-            '@Mobicoop/autocomplete/index.html.twig',
-            [
-                'GeoSearch' => $geoSearchManager->getGeoSearch(['input'=>'Nancy'])
-            ]
-        );
-    }
-    
     /**
      * Retrieve all geosearch results of an input
      *

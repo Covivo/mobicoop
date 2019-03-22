@@ -22,7 +22,7 @@ new Vue({
   props:{
     frequency: {
       type: String,
-      default: ''
+      default: '1'
     },
     role: {
       type: String,
@@ -30,7 +30,7 @@ new Vue({
     },
     type: {
       type: String,
-      default: ''
+      default: '1'
     },
     outward: {
       type: String,
