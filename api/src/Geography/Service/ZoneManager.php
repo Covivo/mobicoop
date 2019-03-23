@@ -149,7 +149,5 @@ class ZoneManager
         $nearX8 = $this->getZonesForAddress($x8, $precision, $deep-1);
         
         return array_merge($nearX1, $nearX2, $nearX3, $nearX4, $nearX5, $nearX6, $nearX7, $nearX8);
-
     }
-    
 }

@@ -120,10 +120,10 @@ class ProposalManager
         if ($routes = $this->geoRouter->getRoutes($addresses)) {
             $direction = $routes[0];
             // creation of the crossed zones for 1, 1/2, 1/4 and 1/8 degree precision
-            $crossedOne = $this->zoneManager->getZonesForAddresses($direction->getPoints(),1,0);
-            $crossedHalf = $this->zoneManager->getZonesForAddresses($direction->getPoints(),0.5,0);
-            $crossedQuarter = $this->zoneManager->getZonesForAddresses($direction->getPoints(),0.25,0);
-            $crossedEighth = $this->zoneManager->getZonesForAddresses($direction->getPoints(),0.125,0);
+            $crossedOne = $this->zoneManager->getZonesForAddresses($direction->getPoints(), 1, 0);
+            $crossedHalf = $this->zoneManager->getZonesForAddresses($direction->getPoints(), 0.5, 0);
+            $crossedQuarter = $this->zoneManager->getZonesForAddresses($direction->getPoints(), 0.25, 0);
+            $crossedEighth = $this->zoneManager->getZonesForAddresses($direction->getPoints(), 0.125, 0);
 
             foreach ($crossedOne as $zone) {
                 $cross = new Cross();
@@ -160,7 +160,6 @@ class ProposalManager
             if ($proposal->getCriteria()->isPassenger()) {
                 $proposal->getCriteria()->setDirectionPassenger($direction);
             }
-            
         }
 
         $this->entityManager->persist($proposal);

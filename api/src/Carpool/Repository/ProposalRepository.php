@@ -73,16 +73,16 @@ class ProposalRepository
     
     /**
      * Search matchings for a punctual proposal.
-     * 
-     * Here we search for proposal that have similar properties : 
+     *
+     * Here we search for proposal that have similar properties :
      * - drivers for passenger proposal, passengers for driver proposal
      * - similar dates
      * - similar times
      * - similar basic geographical zones
-     * 
+     *
      * It is a pre-filter, the idea is to limit the next step : the route calculations (that cannot be done directly in the model).
      * The fine time matching will be done during the route calculation process.
-     * 
+     *
      * @param Proposal $proposal        The proposal to match
      * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
      * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
@@ -129,7 +129,7 @@ class ProposalRepository
 
         // for a punctual proposal, we search for punctual or regular candidate proposals
 
-        // dates : 
+        // dates :
         // - punctual candidates, we limit the search :
         //   - exactly to fromDate if strictDate is true
         //   - to the days after the fromDate and before toDate if it's defined (if the user wants to travel any day within a certain range)
@@ -137,7 +137,7 @@ class ProposalRepository
         // - regular candidates, we limit the search :
         //   - to the week day of the proposal
 
-        // times : 
+        // times :
         // we limit the search to the passengers that have their max starting time after the min starting time of the driver :
         //
         //      min             max
@@ -331,7 +331,7 @@ class ProposalRepository
         return null;
     }
 
-    private function getPrecision(Proposal $proposal) 
+    private function getPrecision(Proposal $proposal)
     {
         return 1;
     }

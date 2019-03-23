@@ -54,20 +54,38 @@ class TestController extends AbstractController
         if ($proposal = $entityManager->getRepository(Proposal::class)->find($id)) {
             echo "#$id : <l>";
             echo "<li>" . $proposal->getUser()->getEmail() . "</li>";
-            if ($proposal->getCriteria()->isDriver()) echo "<li>Conducteur</li>";
-            if ($proposal->getCriteria()->isPassenger()) echo "<li>Passager</li>";
+            if ($proposal->getCriteria()->isDriver()) {
+                echo "<li>Conducteur</li>";
+            }
+            if ($proposal->getCriteria()->isPassenger()) {
+                echo "<li>Passager</li>";
+            }
             if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                 echo "<li>Punctual</li>";
                 echo "<li>" . $proposal->getCriteria()->getFromDate()->format('D d/m/Y') . " " . $proposal->getCriteria()->getMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getMaxTime()->format('H:i') ."</li>";
             } else {
                 echo "<li>Regular <ul>";
-                if ($proposal->getCriteria()->getMonCheck()) echo "<li>L " . $proposal->getCriteria()->getMonMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getMonMaxTime()->format('H:i') . "</li>";
-                if ($proposal->getCriteria()->getTueCheck()) echo "<li>M " . $proposal->getCriteria()->getTueMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getTueMaxTime()->format('H:i') . "</li>";
-                if ($proposal->getCriteria()->getWedCheck()) echo "<li>Me " . $proposal->getCriteria()->getWedMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getWedMaxTime()->format('H:i') . "</li>";
-                if ($proposal->getCriteria()->getThuCheck()) echo "<li>J " . $proposal->getCriteria()->getThuMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getThuMaxTime()->format('H:i') . "</li>";
-                if ($proposal->getCriteria()->getFriCheck()) echo "<li>V " . $proposal->getCriteria()->getFriMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getFriMaxTime()->format('H:i') . "</li>";
-                if ($proposal->getCriteria()->getSatCheck()) echo "<li>S " . $proposal->getCriteria()->getSatMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getSatMaxTime()->format('H:i') . "</li>";
-                if ($proposal->getCriteria()->getSunCheck()) echo "<li>D " . $proposal->getCriteria()->getSunMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getSunMaxTime()->format('H:i') . "</li>";
+                if ($proposal->getCriteria()->getMonCheck()) {
+                    echo "<li>L " . $proposal->getCriteria()->getMonMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getMonMaxTime()->format('H:i') . "</li>";
+                }
+                if ($proposal->getCriteria()->getTueCheck()) {
+                    echo "<li>M " . $proposal->getCriteria()->getTueMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getTueMaxTime()->format('H:i') . "</li>";
+                }
+                if ($proposal->getCriteria()->getWedCheck()) {
+                    echo "<li>Me " . $proposal->getCriteria()->getWedMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getWedMaxTime()->format('H:i') . "</li>";
+                }
+                if ($proposal->getCriteria()->getThuCheck()) {
+                    echo "<li>J " . $proposal->getCriteria()->getThuMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getThuMaxTime()->format('H:i') . "</li>";
+                }
+                if ($proposal->getCriteria()->getFriCheck()) {
+                    echo "<li>V " . $proposal->getCriteria()->getFriMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getFriMaxTime()->format('H:i') . "</li>";
+                }
+                if ($proposal->getCriteria()->getSatCheck()) {
+                    echo "<li>S " . $proposal->getCriteria()->getSatMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getSatMaxTime()->format('H:i') . "</li>";
+                }
+                if ($proposal->getCriteria()->getSunCheck()) {
+                    echo "<li>D " . $proposal->getCriteria()->getSunMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getSunMaxTime()->format('H:i') . "</li>";
+                }
                 echo "</ul></li>";
                 echo "<li>" . $proposal->getCriteria()->getFromDate()->format('D d/m/Y') . " - " . $proposal->getCriteria()->getToDate()->format('D d/m/Y') . "</li>";
             }
@@ -77,20 +95,38 @@ class TestController extends AbstractController
                 foreach ($proposals as $proposalFound) {
                     echo "<li>Proposal #" . $proposalFound->getId() . "<ul>";
                     echo "<li>" . $proposalFound->getUser()->getEmail() . "</li>";
-                    if ($proposalFound->getCriteria()->isDriver()) echo "<li>Conducteur</li>";
-                    if ($proposalFound->getCriteria()->isPassenger()) echo "<li>Passager</li>";
+                    if ($proposalFound->getCriteria()->isDriver()) {
+                        echo "<li>Conducteur</li>";
+                    }
+                    if ($proposalFound->getCriteria()->isPassenger()) {
+                        echo "<li>Passager</li>";
+                    }
                     if ($proposalFound->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                         echo "<li>Punctual</li>";
                         echo "<li>" . $proposalFound->getCriteria()->getFromDate()->format('D d/m/Y') . " " . $proposalFound->getCriteria()->getMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getMaxTime()->format('H:i') ."</li>";
                     } else {
                         echo "<li>Regular <ul>";
-                        if ($proposalFound->getCriteria()->getMonCheck()) echo "<li>L " . $proposalFound->getCriteria()->getMonMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getMonMaxTime()->format('H:i') . "</li>";
-                        if ($proposalFound->getCriteria()->getTueCheck()) echo "<li>M " . $proposalFound->getCriteria()->getTueMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getTueMaxTime()->format('H:i') . "</li>";
-                        if ($proposalFound->getCriteria()->getWedCheck()) echo "<li>Me " . $proposalFound->getCriteria()->getWedMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getWedMaxTime()->format('H:i') . "</li>";
-                        if ($proposalFound->getCriteria()->getThuCheck()) echo "<li>J " . $proposalFound->getCriteria()->getThuMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getThuMaxTime()->format('H:i') . "</li>";
-                        if ($proposalFound->getCriteria()->getFriCheck()) echo "<li>V " . $proposalFound->getCriteria()->getFriMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getFriMaxTime()->format('H:i') . "</li>";
-                        if ($proposalFound->getCriteria()->getSatCheck()) echo "<li>S " . $proposalFound->getCriteria()->getSatMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getSatMaxTime()->format('H:i') . "</li>";
-                        if ($proposalFound->getCriteria()->getSunCheck()) echo "<li>D " . $proposalFound->getCriteria()->getSunMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getSunMaxTime()->format('H:i') . "</li>";
+                        if ($proposalFound->getCriteria()->getMonCheck()) {
+                            echo "<li>L " . $proposalFound->getCriteria()->getMonMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getMonMaxTime()->format('H:i') . "</li>";
+                        }
+                        if ($proposalFound->getCriteria()->getTueCheck()) {
+                            echo "<li>M " . $proposalFound->getCriteria()->getTueMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getTueMaxTime()->format('H:i') . "</li>";
+                        }
+                        if ($proposalFound->getCriteria()->getWedCheck()) {
+                            echo "<li>Me " . $proposalFound->getCriteria()->getWedMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getWedMaxTime()->format('H:i') . "</li>";
+                        }
+                        if ($proposalFound->getCriteria()->getThuCheck()) {
+                            echo "<li>J " . $proposalFound->getCriteria()->getThuMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getThuMaxTime()->format('H:i') . "</li>";
+                        }
+                        if ($proposalFound->getCriteria()->getFriCheck()) {
+                            echo "<li>V " . $proposalFound->getCriteria()->getFriMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getFriMaxTime()->format('H:i') . "</li>";
+                        }
+                        if ($proposalFound->getCriteria()->getSatCheck()) {
+                            echo "<li>S " . $proposalFound->getCriteria()->getSatMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getSatMaxTime()->format('H:i') . "</li>";
+                        }
+                        if ($proposalFound->getCriteria()->getSunCheck()) {
+                            echo "<li>D " . $proposalFound->getCriteria()->getSunMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getSunMaxTime()->format('H:i') . "</li>";
+                        }
                         echo "</ul></li>";
                         echo "<li>" . $proposalFound->getCriteria()->getFromDate()->format('D d/m/Y') . " - " . $proposalFound->getCriteria()->getToDate()->format('D d/m/Y') . "</li>";
                     }
