@@ -68,8 +68,7 @@ class ZoneManager
             return $zones;
         }
             
-        $nzones = [];
-        $nearbyZones = $this->getNear($address, $precision, $nzones, $deep);
+        $nearbyZones = $this->getNear($address, $precision, $deep);
         $zones = array_unique(array_merge($zones, $nearbyZones), SORT_REGULAR);
         sort($zones);
         return $zones;
@@ -99,11 +98,10 @@ class ZoneManager
      *
      * @param Address $address  The address
      * @param float $precision  The precision of the grid in degrees
-     * @param array $zones      The array that contains the nearby zones
      * @param int $deep         The deepness of the search (1 = direct nearby zones, 2 = nearby zone and their nearby zones, etc...)
      * @return array|NULL       The list of nearby zones.
      */
-    public function getNear(Address $address, float $precision, array $zones, int $deep): ?array
+    public function getNear(Address $address, float $precision, int $deep): ?array
     {
         if ($deep<0) {
             return null;
@@ -150,8 +148,8 @@ class ZoneManager
         $nearX7 = $this->getZonesForAddress($x7, $precision, $deep-1);
         $nearX8 = $this->getZonesForAddress($x8, $precision, $deep-1);
         
-        $zones = array_merge($zones, $nearX1, $nearX2, $nearX3, $nearX4, $nearX5, $nearX6, $nearX7, $nearX8);
+        return array_merge($nearX1, $nearX2, $nearX3, $nearX4, $nearX5, $nearX6, $nearX7, $nearX8);
 
-        return $zones;
     }
+    
 }

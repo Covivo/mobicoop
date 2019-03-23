@@ -27,6 +27,7 @@ use App\Carpool\Entity\Proposal;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use App\Carpool\Entity\Criteria;
+use App\Geography\Service\ZoneManager;
 
 /**
  * @method Proposal|null find($id, $lockMode = null, $lockVersion = null)
@@ -40,10 +41,13 @@ class ProposalRepository
      * @var EntityRepository
      */
     private $repository;
+
+    private $zoneManager;
     
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, ZoneManager $zoneManager)
     {
         $this->repository = $entityManager->getRepository(Proposal::class);
+        $this->zoneManager = $zoneManager;
     }
     
     /**
@@ -69,13 +73,25 @@ class ProposalRepository
     
     /**
      * Search matchings for a punctual proposal.
-     *
+     * 
+     * Here we search for proposal that have similar properties : 
+     * - drivers for passenger proposal, passengers for driver proposal
+     * - similar dates
+     * - similar times
+     * - similar basic geographical zones
+     * 
+     * It is a pre-filter, the idea is to limit the next step : the route calculations (that cannot be done directly in the model).
+     * The fine time matching will be done during the route calculation process.
+     * 
      * @param Proposal $proposal        The proposal to match
      * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
      * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
      */
     private function findMatchingsForPunctualProposal(Proposal $proposal, bool $excludeProposalUser=true)
     {
+        // the "master" proposal is simply called the "proposal"
+        // the potential matching proposals are called the "candidates"
+
         // we search the matchings in the proposal entity
         $query = $this->repository->createQueryBuilder('p')
         // we also need the criteria (for the dates, number of seats...)
@@ -87,15 +103,28 @@ class ProposalRepository
             ->setParameter('user', $proposal->getUser());
         }
         
+        // GEOGRAPHICAL ZONES
+        // TODO :   search the flying distance between the starting and end point of the proposal
+        //          to determine the precision of the grid to search
+        $precision = $this->getPrecision($proposal);
+        $zonesAsDriver = [];
+        $zonesAsPassenger = [];
+
         // we search if the user can be passenger and/or driver
         if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
             $query->andWhere('c.isDriver = 1 OR c.isPassenger = 1');
+            $zonesAsDriver = $proposal->getCriteria()->getDirectionDriver()->getCrosses();
+            $zonesAsPassenger = $proposal->getCriteria()->getDirectionPassenger()->getCrosses();
         } elseif ($proposal->getCriteria()->isDriver()) {
             $query->andWhere('c.isPassenger = 1');
+            $zonesAsDriver = $proposal->getCriteria()->getDirectionDriver()->getCrosses();
         } elseif ($proposal->getCriteria()->isPassenger()) {
             $query->andWhere('c.isDriver = 1');
+            $zonesAsPassenger = $proposal->getCriteria()->getDirectionPassenger()->getCrosses();
         }
-        
+
+        // CONTINUER ICI
+
         // DATES AND TIME
 
         // for a punctual proposal, we search for punctual or regular candidate proposals
@@ -109,7 +138,12 @@ class ProposalRepository
         //   - to the week day of the proposal
 
         // times : 
-        // we limit the search to the passengers that have their max starting time after the min starting time of the driver
+        // we limit the search to the passengers that have their max starting time after the min starting time of the driver :
+        //
+        //      min             max
+        //      >|-------D-------|
+        //          |-------P-------|<
+        //          min             max
 
         $setToDate = false;
         $setMinTime = false;
@@ -295,5 +329,10 @@ class ProposalRepository
     private function findMatchingsForRegularProposal(Proposal $proposal)
     {
         return null;
+    }
+
+    private function getPrecision(Proposal $proposal) 
+    {
+        return 1;
     }
 }

@@ -127,9 +127,11 @@ class Direction
     private $format;
 
     /**
-     * @var array|null The geographical zones covered by the direction.
+     * @var Cross[] The geographical zones crossed by the direction.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Cross", mappedBy="direction", cascade={"persist","remove"}, orphanRemoval=true)
      */
-    private $zones;
+    private $crosses;
 
     /**
      * @var Address[]|null The decoded points (from detail) of the direction.
@@ -139,7 +141,7 @@ class Direction
     
     public function __construct()
     {
-        $this->zones = new ArrayCollection();
+        $this->crosses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -267,14 +269,33 @@ class Direction
         return $this;
     }
     
-    public function getZones(): array
+    /**
+     * @return Collection|Cross[]
+     */
+    public function getCrosses(): Collection
     {
-        return $this->zones;
+        return $this->crosses;
     }
     
-    public function setZones(array $zones): self
+    public function addCross(Cross $cross): self
     {
-        $this->zones[] = $zones;
+        if (!$this->crosses->contains($cross)) {
+            $this->crosses[] = $cross;
+            $cross->setDirection($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeCross(Cross $cross): self
+    {
+        if ($this->crosses->contains($cross)) {
+            $this->crosses->removeElement($cross);
+            // set the owning side to null (unless already changed)
+            if ($cross->getDirection() === $this) {
+                $cross->setDirection(null);
+            }
+        }
         
         return $this;
     }

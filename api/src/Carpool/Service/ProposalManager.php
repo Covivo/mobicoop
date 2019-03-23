@@ -33,6 +33,7 @@ use App\Geography\Service\GeoRouter;
 use App\Geography\Entity\Direction;
 use App\DataProvider\Entity\GeoRouterProvider;
 use App\Geography\Service\ZoneManager;
+use App\Geography\Entity\Cross;
 
 /**
  * Proposal manager service.
@@ -117,12 +118,49 @@ class ProposalManager
             $addresses[] = $waypoint->getAddress();
         }
         if ($routes = $this->geoRouter->getRoutes($addresses)) {
+            $direction = $routes[0];
+            // creation of the crossed zones for 1, 1/2, 1/4 and 1/8 degree precision
+            $crossedOne = $this->zoneManager->getZonesForAddresses($direction->getPoints(),1,0);
+            $crossedHalf = $this->zoneManager->getZonesForAddresses($direction->getPoints(),0.5,0);
+            $crossedQuarter = $this->zoneManager->getZonesForAddresses($direction->getPoints(),0.25,0);
+            $crossedEighth = $this->zoneManager->getZonesForAddresses($direction->getPoints(),0.125,0);
+
+            foreach ($crossedOne as $zone) {
+                $cross = new Cross();
+                $cross->setDirection($direction);
+                $cross->setZone($zone);
+                $cross->setPrecision(1);
+                $cross->persist();
+            }
+            foreach ($crossedHalf as $zone) {
+                $cross = new Cross();
+                $cross->setDirection($direction);
+                $cross->setZone($zone);
+                $cross->setPrecision(0.5);
+                $cross->persist();
+            }
+            foreach ($crossedQuarter as $zone) {
+                $cross = new Cross();
+                $cross->setDirection($direction);
+                $cross->setZone($zone);
+                $cross->setPrecision(0.25);
+                $cross->persist();
+            }
+            foreach ($crossedEighth as $zone) {
+                $cross = new Cross();
+                $cross->setDirection($direction);
+                $cross->setZone($zone);
+                $cross->setPrecision(0.125);
+                $cross->persist();
+            }
+
             if ($proposal->getCriteria()->isDriver()) {
-                $proposal->getCriteria()->setDirectionDriver($routes[0]);
+                $proposal->getCriteria()->setDirectionDriver($direction);
             }
             if ($proposal->getCriteria()->isPassenger()) {
-                $proposal->getCriteria()->setDirectionPassenger($routes[0]);
+                $proposal->getCriteria()->setDirectionPassenger($direction);
             }
+            
         }
 
         $this->entityManager->persist($proposal);
