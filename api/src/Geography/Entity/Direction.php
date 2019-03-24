@@ -127,11 +127,11 @@ class Direction
     private $format;
 
     /**
-     * @var Cross[] The geographical zones crossed by the direction.
+     * @var Zone[] The geographical zones crossed by the direction.
      *
-     * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Cross", mappedBy="direction", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Zone", mappedBy="direction", cascade={"persist","remove"}, orphanRemoval=true)
      */
-    private $crosses;
+    private $zones;
 
     /**
      * @var Address[]|null The decoded points (from detail) of the direction.
@@ -141,7 +141,7 @@ class Direction
     
     public function __construct()
     {
-        $this->crosses = new ArrayCollection();
+        $this->zones = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -270,30 +270,30 @@ class Direction
     }
     
     /**
-     * @return Collection|Cross[]
+     * @return Collection|Zone[]
      */
-    public function getCrosses(): Collection
+    public function getZones(): Collection
     {
-        return $this->crosses;
+        return $this->zones;
     }
     
-    public function addCross(Cross $cross): self
+    public function addZone(Zone $zone): self
     {
-        if (!$this->crosses->contains($cross)) {
-            $this->crosses[] = $cross;
-            $cross->setDirection($this);
+        if (!$this->zones->contains($zone)) {
+            $this->zones[] = $zone;
+            $zone->setDirection($this);
         }
         
         return $this;
     }
     
-    public function removeCross(Cross $cross): self
+    public function removeZone(Zone $zone): self
     {
-        if ($this->crosses->contains($cross)) {
-            $this->crosses->removeElement($cross);
+        if ($this->zones->contains($zone)) {
+            $this->zones->removeElement($zone);
             // set the owning side to null (unless already changed)
-            if ($cross->getDirection() === $this) {
-                $cross->setDirection(null);
+            if ($zone->getDirection() === $this) {
+                $zone->setDirection(null);
             }
         }
         

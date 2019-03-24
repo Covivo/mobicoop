@@ -33,7 +33,7 @@ use App\Geography\Service\GeoRouter;
 use App\Geography\Entity\Direction;
 use App\DataProvider\Entity\GeoRouterProvider;
 use App\Geography\Service\ZoneManager;
-use App\Geography\Entity\Cross;
+use App\Geography\Entity\Zone;
 
 /**
  * Proposal manager service.
@@ -42,6 +42,14 @@ use App\Geography\Entity\Cross;
  */
 class ProposalManager
 {
+    // zones precisions to generate when adding a direction
+    private const THINNESSES = [
+        1,
+        0.5,
+        0.25,
+        0.125
+    ];
+
     private $entityManager;
     private $proposalMatcher;
     private $proposalRepository;
@@ -119,41 +127,25 @@ class ProposalManager
         }
         if ($routes = $this->geoRouter->getRoutes($addresses)) {
             $direction = $routes[0];
-            // creation of the crossed zones for 1, 1/2, 1/4 and 1/8 degree precision
-            $crossedOne = $this->zoneManager->getZonesForAddresses($direction->getPoints(), 1, 0);
-            $crossedHalf = $this->zoneManager->getZonesForAddresses($direction->getPoints(), 0.5, 0);
-            $crossedQuarter = $this->zoneManager->getZonesForAddresses($direction->getPoints(), 0.25, 0);
-            $crossedEighth = $this->zoneManager->getZonesForAddresses($direction->getPoints(), 0.125, 0);
-
-            foreach ($crossedOne as $zone) {
-                $cross = new Cross();
-                $cross->setDirection($direction);
-                $cross->setZone($zone);
-                $cross->setPrecision(1);
-                $cross->persist();
+            // creation of the crossed zones 
+            $zones = [];
+            foreach (self::THINNESSES as $thinness) {
+                // $zones[$thinness] would be simpler and better... but we can't use a float as a key with php (transformed to string)
+                // so we use an inner value for thinness 
+                $zones[] = [
+                    'thinness' => $thinness, 
+                    'crossed' => $this->zoneManager->getZonesForAddresses($direction->getPoints(), $thinness, 0)
+                ];
             }
-            foreach ($crossedHalf as $zone) {
-                $cross = new Cross();
-                $cross->setDirection($direction);
-                $cross->setZone($zone);
-                $cross->setPrecision(0.5);
-                $cross->persist();
+            foreach ($zones as $crossed) {
+                foreach ($crossed['crossed'] as $zoneCrossed) {
+                    $zone = new Zone();
+                    $zone->setZoneid($zoneCrossed);
+                    $zone->setThinness($crossed['thinness']);
+                    $direction->addZone($zone);   
+                }
             }
-            foreach ($crossedQuarter as $zone) {
-                $cross = new Cross();
-                $cross->setDirection($direction);
-                $cross->setZone($zone);
-                $cross->setPrecision(0.25);
-                $cross->persist();
-            }
-            foreach ($crossedEighth as $zone) {
-                $cross = new Cross();
-                $cross->setDirection($direction);
-                $cross->setZone($zone);
-                $cross->setPrecision(0.125);
-                $cross->persist();
-            }
-
+            
             if ($proposal->getCriteria()->isDriver()) {
                 $proposal->getCriteria()->setDirectionDriver($direction);
             }

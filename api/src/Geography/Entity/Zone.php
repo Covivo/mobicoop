@@ -31,13 +31,13 @@ use App\Geography\Entity\Direction;
  *
  * @ORM\Entity
  */
-class Cross
+class Zone
 {
     /**
      * @var Direction|null The direction.
      *
      * @ORM\Id()
-     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", inversedBy="crosses")
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", inversedBy="zones")
      * @ORM\JoinColumn(nullable=false)
      */
     private $direction;
@@ -46,8 +46,9 @@ class Cross
      * @var int The zone.
      *
      * @ORM\Id()
+     * @ORM\Column(type="integer")
      */
-    private $zone;
+    private $zoneid;
 
     /**
      * @var float|null The precision of the grid in degrees.
@@ -55,7 +56,7 @@ class Cross
      * @ORM\Id()
      * @ORM\Column(type="decimal", precision=10, scale=6)
      */
-    private $precision;
+    private $thinness;
 
     public function getDirection(): ?Direction
     {
@@ -69,26 +70,26 @@ class Cross
         return $this;
     }
 
-    public function getZone(): ?int
+    public function getZoneid(): ?int
     {
-        return $this->zone;
+        return $this->zoneid;
     }
     
-    public function setZone(?int $zone): self
+    public function setZoneid(?int $zoneid): self
     {
-        $this->zone = $zone;
+        $this->zoneid = $zoneid;
         
         return $this;
     }
 
-    public function getPrecision(): ?float
+    public function getThinness(): ?float
     {
-        return $this->precision;
+        return $this->thinness;
     }
 
-    public function setPrecision(?float $precision): self
+    public function setThinness(?float $thinness): self
     {
-        $this->precision = $precision;
+        $this->thinness = $thinness;
         
         return $this;
     }
