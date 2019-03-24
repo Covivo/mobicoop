@@ -127,13 +127,13 @@ class ProposalManager
         }
         if ($routes = $this->geoRouter->getRoutes($addresses)) {
             $direction = $routes[0];
-            // creation of the crossed zones 
+            // creation of the crossed zones
             $zones = [];
             foreach (self::THINNESSES as $thinness) {
                 // $zones[$thinness] would be simpler and better... but we can't use a float as a key with php (transformed to string)
-                // so we use an inner value for thinness 
+                // so we use an inner value for thinness
                 $zones[] = [
-                    'thinness' => $thinness, 
+                    'thinness' => $thinness,
                     'crossed' => $this->zoneManager->getZonesForAddresses($direction->getPoints(), $thinness, 0)
                 ];
             }
@@ -142,7 +142,7 @@ class ProposalManager
                     $zone = new Zone();
                     $zone->setZoneid($zoneCrossed);
                     $zone->setThinness($crossed['thinness']);
-                    $direction->addZone($zone);   
+                    $direction->addZone($zone);
                 }
             }
             
