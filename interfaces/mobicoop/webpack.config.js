@@ -71,7 +71,7 @@ Encore
     // babelConfig.presets.push('stage-3');
   })
   // This will add compatibility for old nav
-  // .enablePostCssLoader()
+  .enablePostCssLoader()
   .enableVueLoader()
   //fixed dev-server
   .setManifestKeyPrefix('/build')

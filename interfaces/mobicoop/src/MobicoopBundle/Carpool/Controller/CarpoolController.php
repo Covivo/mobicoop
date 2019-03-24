@@ -45,13 +45,9 @@ class CarpoolController extends AbstractController
 {
     /**
      * Create a carpooling ad.
-     * @IsGranted("ROLE_USER")
      */
     public function ad(AdManager $adManager, UserManager $userManager, Request $request)
     {
-        // $encoders = [new XmlEncoder(), new JsonEncoder()];
-        // $normalizers = [new ObjectNormalizer()];
-        // $serializer = new Serializer($normalizers, $encoders);
 
         $date = new \DateTime();
         $ad = new Ad();
@@ -62,14 +58,14 @@ class CarpoolController extends AbstractController
         $ad->setOutwardDate($date->format('Y-m-d H:i'));
         $ad->setUser($userManager->getLoggedUser());
 
-        // if(!$form){
-        //     return;
-        // }
-
         $form = $this->createForm(AdForm::class, $ad);
-        $form->handleRequest($request);
         $error = false;
         $sucess = false;
+        
+        if ($request->isMethod('POST')) {
+            $form->submit($request->request->all());
+            $form->handleRequest($request);
+        }
 
         // If it's a get, just render the form !
         if (!$form->isSubmitted()) {

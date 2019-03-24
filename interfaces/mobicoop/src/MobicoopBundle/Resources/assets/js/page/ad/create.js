@@ -9,7 +9,6 @@ import 'vue-form-wizard/dist/vue-form-wizard.min.css';
 import '../../../css/page/home.scss';
 
 // Vue components
-import Geocomplete from '../../components/Geocomplete';
 import Datepicker from '../../components/Datepicker';
 import Timepicker from '../../components/Timepicker';
 import Adcreateform from '../../components/Adcreateform';
@@ -21,7 +20,6 @@ new Vue({
   el: '#app',
   components: {
     Adcreateform,
-    Geocomplete,
     Datepicker,
     Timepicker
   }

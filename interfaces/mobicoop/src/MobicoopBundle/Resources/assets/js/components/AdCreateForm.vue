@@ -13,6 +13,7 @@
             color="#023D7F"
             class="tile is-vertical is-6"
           >
+            <!-- ROLE -->
             <tab-content title="Vous êtes" icon="fa fa-user-friends" class="tabContent">
               <h3>Je suis:</h3>
               <b-field class="fieldsContainer">
@@ -42,8 +43,9 @@
                 >Passager ou Conducteur</b-radio-button>
               </b-field>
             </tab-content>
-            <tab-content title="Type" icon="fa fa-route" class="tabContent">
-              <h3>Type de trajet:</h3>
+            <!-- Trajet -->
+            <tab-content title="Trajet" icon="fa fa-route" class="tabContent">
+              <h3>Détails de votre trajet</h3>
               <b-field class="fieldsContainer">
                 <b-radio-button
                   v-model="type"
@@ -64,7 +66,10 @@
                   <span>Allez/Retour</span>
                 </b-radio-button>
               </b-field>
+              <geocomplete placeholder="Depuis" :url="geoSearchUrl"></geocomplete>
+              <geocomplete placeholder="Vers" :url="geoSearchUrl"></geocomplete>
             </tab-content>
+            <!-- FREQUENCY & Submit -->
             <tab-content title="Fréquence" icon="fa fa-calendar-check" class="tabContent">
               <h3>Fréquence du trajet:</h3>
               <b-field class="fieldsContainer">
@@ -158,7 +163,12 @@
 </template>
 
 <script>
+import axios from "axios";
+import Geocomplete from "./Geocomplete";
 export default {
+  components: {
+    Geocomplete
+  },
   props: {
     sentFrequency: {
       type: Number,
@@ -171,6 +181,10 @@ export default {
     sentType: {
       type: Number,
       default: 1
+    },
+    geoSearchUrl: {
+      type: String,
+      default: ""
     },
     sentOutward: {
       type: String,
@@ -213,7 +227,24 @@ export default {
       console.log("Will send form");
     },
     onComplete() {
-      alert("yeah");
+      let adForm = new FormData();
+      for (let prop in this.form) {
+        console.log(prop, this.form[prop]);
+        adForm.append(prop, this.form[prop]);
+      }
+      console.log(adForm);
+      axios
+        .post("/covoiturage/annonce/poster", adForm, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        })
+        .then(function(response) {
+          console.log(response);
+        })
+        .catch(function(error) {
+          console.error(error);
+        });
     }
   }
 };

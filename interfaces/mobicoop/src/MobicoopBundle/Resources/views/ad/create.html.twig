@@ -1,13 +1,14 @@
 {% extends '@Mobicoop/base.html.twig' %}
 {# LOAD  #}
 {% block title %}
-  {% trans from 'ui' %}carpool.ad_create.title{% endtrans %}{% endblock %}
+  {% trans from 'ui' %}carpool.ad_create.title{% endtrans %}
+{% endblock %}
 {% block stylesheets %}
   {{ encore_entry_link_tags('bundle_ad/create') }}
   <script src="http://localhost:8098"></script>
 {% endblock %}
 {% block body %}
-  <Adcreateform :sent-frequency="{{ form.frequency.vars.value }}" :sent-type="{{ form.type.vars.value }}" :sent-role="{{ form.role.vars.value }}"></Adcreateform>
+  <Adcreateform :url="'{{ form.vars.url }}'" :sent-frequency="{{ form.frequency.vars.value }}" :sent-type="{{ form.type.vars.value }}" :sent-role="{{ form.role.vars.value }}"></Adcreateform>
   <script id="ad-create-template-old" type="text/x-template">
     <section class="section">
       <div class="container">
