@@ -97,11 +97,10 @@ class TestController extends AbstractController
             // echo "Done.<br />";
 
             if ($proposals = $proposalMatcher->findMatchingProposals($proposal)) {
-
                 echo "<ul>";
                 foreach ($proposals as $proposal) {
                     echo "<li>role : " . $proposal["role"]  . "</li>";
-                    echo "<li>geomatch : <pre>" . print_r($proposal['match'],true) . "</pre></li>";
+                    echo "<li>geomatch : <pre>" . print_r($proposal['match'], true) . "</pre></li>";
                     echo "<li>Proposal #" . $proposal['proposal']->getId() . "<ul>";
                     echo "<li>" . $proposal['proposal']->getUser()->getEmail() . "</li>";
                     if ($proposal['proposal']->getCriteria()->isDriver()) {
@@ -141,13 +140,12 @@ class TestController extends AbstractController
                     }
                     echo "</ul>";
                     echo "</ul></li>";
-                    
                 }
                 echo "</ul>";
 
                 // echo "<ul>";
                 // foreach ($proposals['proposal'] as $proposalFound) {
-                //     
+                //
                 // }
                 // echo "</ul>";
             }

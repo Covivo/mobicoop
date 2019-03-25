@@ -39,7 +39,7 @@ use App\Geography\Entity\Direction;
  */
 class ProposalRepository
 {
-    CONST METERS_BY_DEGREE = 111319;
+    const METERS_BY_DEGREE = 111319;
     
     private $repository;
     private $zoneManager;
@@ -97,8 +97,8 @@ class ProposalRepository
         // we need the criteria (for the dates, number of seats...)
         ->join('p.criteria', 'c')
         // we need the directions and the geographical zones
-        ->leftJoin('c.directionDriver', 'dd')->leftJoin('dd.zones','zd')
-        ->leftJoin('c.directionPassenger', 'dp')->leftJoin('dp.zones','zp');
+        ->leftJoin('c.directionDriver', 'dd')->leftJoin('dd.zones', 'zd')
+        ->leftJoin('c.directionPassenger', 'dp')->leftJoin('dp.zones', 'zp');
 
         // do we exclude the user itself ?
         if ($excludeProposalUser) {
@@ -124,8 +124,8 @@ class ProposalRepository
             foreach ($zonesAsDriver as $zone) {
                 $zones[] = $zone->getZoneid();
             }
-            $query->andWhere('zp.thinness = :thinnessPassenger and zp.zoneid IN(' . implode(',',$zones) . ')');
-            $query->setParameter('thinnessPassenger',$this->getPrecision($proposal->getCriteria()->getDirectionDriver()));
+            $query->andWhere('zp.thinness = :thinnessPassenger and zp.zoneid IN(' . implode(',', $zones) . ')');
+            $query->setParameter('thinnessPassenger', $this->getPrecision($proposal->getCriteria()->getDirectionDriver()));
         }
         if ($proposal->getCriteria()->isPassenger()) {
             $zonesAsPassenger = $proposal->getCriteria()->getDirectionPassenger()->getZones();
@@ -133,8 +133,8 @@ class ProposalRepository
             foreach ($zonesAsPassenger as $zone) {
                 $zones[] = $zone->getZoneid();
             }
-            $query->andWhere('zd.thinness = :thinnessDriver and zd.zoneid IN(' . implode(',',$zones) . ')');
-            $query->setParameter('thinnessDriver',$this->getPrecision($proposal->getCriteria()->getDirectionPassenger()));
+            $query->andWhere('zd.thinness = :thinnessDriver and zd.zoneid IN(' . implode(',', $zones) . ')');
+            $query->setParameter('thinnessDriver', $this->getPrecision($proposal->getCriteria()->getDirectionPassenger()));
         }
 
         // DATES AND TIME

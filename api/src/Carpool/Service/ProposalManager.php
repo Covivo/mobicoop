@@ -176,7 +176,7 @@ class ProposalManager
                 if (is_null($direction->getPoints())) {
                     // we use the GeoRouterProvider as a service
                     $georouter = new GeoRouterProvider();
-                    $direction->setPoints($georouter->deserializePoints($direction->getDetail(),true,$georouter::GR_ELEVATION));
+                    $direction->setPoints($georouter->deserializePoints($direction->getDetail(), true, $georouter::GR_ELEVATION));
                 }
                 // creation of the crossed zones
                 $zones = [];

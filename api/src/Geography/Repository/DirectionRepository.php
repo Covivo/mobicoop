@@ -26,7 +26,7 @@ class DirectionRepository
     
     /**
      * Return all directions without zones.
-     * 
+     *
      * @return mixed|NULL|\Doctrine\DBAL\Driver\Statement|array     The directions found
      */
     public function findAllWithoutZones()

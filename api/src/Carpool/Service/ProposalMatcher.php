@@ -92,7 +92,7 @@ class ProposalMatcher
                 }
                 $candidate->setAddresses($addressesCandidate);
                 $candidate->setDirection($proposalToMatch->getCriteria()->getDirectionPassenger());
-                // the 2 following are not taken in account right now as only the driver detour matters 
+                // the 2 following are not taken in account right now as only the driver detour matters
                 $candidate->setMaxDetourDistance($proposalToMatch->getCriteria()->getMaxDetourDistance() ? $proposalToMatch->getCriteria()->getMaxDetourDistance() : ($proposalToMatch->getCriteria()->getDirectionPassenger()->getDistance()*self::MAX_DETOUR_DISTANCE_PERCENT/100));
                 $candidate->setMaxDetourDuration($proposalToMatch->getCriteria()->getMaxDetourDuration() ? $proposalToMatch->getCriteria()->getMaxDetourDuration() : ($proposalToMatch->getCriteria()->getDirectionPAssenger()->getDuration()*self::MAX_DETOUR_DURATION_PERCENT/100));
                 if ($matches = $this->geoMatcher->singleMatch($candidateProposal, [$candidate], true)) {
