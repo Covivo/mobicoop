@@ -300,7 +300,7 @@ class Direction
         return $this;
     }
 
-    public function getPoints(): array
+    public function getPoints(): ?array
     {
         return $this->points;
     }

@@ -100,11 +100,11 @@ class Criteria
     private $fromTime;
 
     /**
-     * @var int Accepted margin time for punctual proposal in seconds.
+     * @var int Accepted margin duration for punctual proposal in seconds.
      *
      * @Groups({"post","put"})
      */
-    private $marginTime;
+    private $marginDuration;
 
     /**
      * @var boolean For punctual proposals, the user accepts only matchings for the defined date (no ranges).
@@ -223,52 +223,52 @@ class Criteria
      * @var int Accepted margin for monday starting time in seconds.
      * @Groups({"post","put"})
      */
-    private $monMarginTime;
+    private $monMarginDuration;
 
     /**
      * @var int Accepted margin for tuesday starting time in seconds.
      * @Groups({"post","put"})
      */
-    private $tueMarginTime;
+    private $tueMarginDuration;
     
     /**
      * @var int Accepted margin for wednesday starting time in seconds.
      * @Groups({"post","put"})
      */
-    private $wedMarginTime;
+    private $wedMarginDuration;
     
     /**
      * @var int Accepted margin for thursday starting time in seconds.
      * @Groups({"post","put"})
      */
-    private $thuMarginTime;
+    private $thuMarginDuration;
     
     /**
      * @var int Accepted margin for friday starting time in seconds.
      * @Groups({"post","put"})
      */
-    private $friMarginTime;
+    private $friMarginDuration;
     
     /**
      * @var int Accepted margin for saturday starting time in seconds.
      * @Groups({"post","put"})
      */
-    private $satMarginTime;
+    private $satMarginDuration;
     
     /**
      * @var int Accepted margin for sunday starting time in seconds.
      * @Groups({"post","put"})
      */
-    private $sunMarginTime;
+    private $sunMarginDuration;
     
     /**
-     * @var int|null The maximum deviation time (in seconds) as a driver to accept a request proposal.
+     * @var int|null The maximum deviation duration (in seconds) as a driver to accept a request proposal.
      * @Groups({"post","put"})
      */
-    private $maxDeviationTime;
+    private $maxDeviationDuration;
     
     /**
-     * @var int|null The maximum deviation distance (in metres) as a driver to accept a request proposal.
+     * @var int|null The maximum deviation duration (in metres) as a driver to accept a request proposal.
      * @Groups({"post","put"})
      */
     private $maxDeviationDistance;
@@ -402,14 +402,14 @@ class Criteria
         return $this;
     }
 
-    public function getMarginTime(): ?int
+    public function getMarginDuration(): ?int
     {
-        return $this->marginTime;
+        return $this->marginDuration;
     }
 
-    public function setMarginTime(?int $marginTime): self
+    public function setMarginDuration(?int $marginDuration): self
     {
-        $this->marginTime = $marginTime;
+        $this->marginDuration = $marginDuration;
 
         return $this;
     }
@@ -606,93 +606,93 @@ class Criteria
         return $this;
     }
     
-    public function getMonMarginTime(): ?int
+    public function getMonMarginDuration(): ?int
     {
-        return $this->monMarginTime;
+        return $this->monMarginDuration;
     }
     
-    public function setMonMarginTime(?int $monMarginTime): self
+    public function setMonMarginDuration(?int $monMarginDuration): self
     {
-        $this->monMarginTime = $monMarginTime;
+        $this->monMarginDuration = $monMarginDuration;
         
         return $this;
     }
     
-    public function getTueMarginTime(): ?int
+    public function getTueMarginDuration(): ?int
     {
-        return $this->tueMarginTime;
+        return $this->tueMarginDuration;
     }
     
-    public function setTueMarginTime(?int $tueMarginTime): self
+    public function setTueMarginDuration(?int $tueMarginDuration): self
     {
-        $this->tueMarginTime = $tueMarginTime;
+        $this->tueMarginDuration = $tueMarginDuration;
         
         return $this;
     }
     
-    public function getWedMarginTime(): ?int
+    public function getWedMarginDuration(): ?int
     {
-        return $this->wedMarginTime;
+        return $this->wedMarginDuration;
     }
     
-    public function setWedMarginTime(?int $wedMarginTime): self
+    public function setWedMarginDuration(?int $wedMarginDuration): self
     {
-        $this->wedMarginTime = $wedMarginTime;
+        $this->wedMarginDuration = $wedMarginDuration;
         
         return $this;
     }
     
-    public function getThuMarginTime(): ?int
+    public function getThuMarginDuration(): ?int
     {
-        return $this->thuMarginTime;
+        return $this->thuMarginDuration;
     }
     
-    public function setThuMarginTime(?int $thuMarginTime): self
+    public function setThuMarginDuration(?int $thuMarginDuration): self
     {
-        $this->thuMarginTime = $thuMarginTime;
+        $this->thuMarginDuration = $thuMarginDuration;
         
         return $this;
     }
     
-    public function getFriMarginTime(): ?int
+    public function getFriMarginDuration(): ?int
     {
-        return $this->friMarginTime;
+        return $this->friMarginDuration;
     }
     
-    public function setFriMarginTime(?int $friMarginTime): self
+    public function setFriMarginDuration(?int $friMarginDuration): self
     {
-        $this->friMarginTime = $friMarginTime;
+        $this->friMarginDuration = $friMarginDuration;
         
         return $this;
     }
     
-    public function getSatMarginTime(): ?int
+    public function getSatMarginDuration(): ?int
     {
-        return $this->satMarginTime;
+        return $this->satMarginDuration;
     }
     
-    public function setSatMarginTime(?int $satMarginTime): self
+    public function setSatMarginDuration(?int $satMarginDuration): self
     {
-        $this->satMarginTime = $satMarginTime;
+        $this->satMarginDuration = $satMarginDuration;
         
         return $this;
     }
     
-    public function getSunMarginTime(): ?int
+    public function getSunMarginDuration(): ?int
     {
-        return $this->sunMarginTime;
+        return $this->sunMarginDuration;
     }
     
-    public function setSunMarginTime(?int $sunMarginTime): self
+    public function setSunMarginDuration(?int $sunMarginDuration): self
     {
-        $this->sunMarginTime = $sunMarginTime;
+        $this->sunMarginDuration = $sunMarginDuration;
         
         return $this;
     }
     
-    public function getMaxDeviationTime(): ?int
+    public function getMaxDeviationDuration(): ?int
     {
-        return $this->maxDeviationTime;
+        return $this->maxDeviationDuration;
     }
     
     public function getMaxDeviationDistance(): ?int
@@ -705,9 +705,9 @@ class Criteria
         return $this->anyRouteAsPassenger;
     }
     
-    public function setMaxDeviationTime(?int $maxDeviationTime): self
+    public function setMaxDeviationDuration(?int $maxDeviationDuration): self
     {
-        $this->maxDeviationTime = $maxDeviationTime;
+        $this->maxDeviationDuration = $maxDeviationDuration;
         
         return $this;
     }

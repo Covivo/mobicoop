@@ -28,6 +28,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use App\Carpool\Entity\Criteria;
 use App\Geography\Service\ZoneManager;
+use App\Carpool\Service\ProposalManager;
+use App\Geography\Entity\Direction;
 
 /**
  * @method Proposal|null find($id, $lockMode = null, $lockVersion = null)
@@ -37,11 +39,9 @@ use App\Geography\Service\ZoneManager;
  */
 class ProposalRepository
 {
-    /**
-     * @var EntityRepository
-     */
+    CONST METERS_BY_DEGREE = 111319;
+    
     private $repository;
-
     private $zoneManager;
     
     public function __construct(EntityManagerInterface $entityManager, ZoneManager $zoneManager)
@@ -94,36 +94,48 @@ class ProposalRepository
 
         // we search the matchings in the proposal entity
         $query = $this->repository->createQueryBuilder('p')
-        // we also need the criteria (for the dates, number of seats...)
-        ->join('p.criteria', 'c');
-        
+        // we need the criteria (for the dates, number of seats...)
+        ->join('p.criteria', 'c')
+        // we need the directions and the geographical zones
+        ->leftJoin('c.directionDriver', 'dd')->leftJoin('dd.zones','zd')
+        ->leftJoin('c.directionPassenger', 'dp')->leftJoin('dp.zones','zp');
+
         // do we exclude the user itself ?
         if ($excludeProposalUser) {
             $query->andWhere('p.user != :user')
             ->setParameter('user', $proposal->getUser());
         }
-        
-        // GEOGRAPHICAL ZONES
-        // TODO :   search the flying distance between the starting and end point of the proposal
-        //          to determine the precision of the grid to search
-        $precision = $this->getPrecision($proposal);
-        $zonesAsDriver = [];
-        $zonesAsPassenger = [];
 
         // we search if the user can be passenger and/or driver
         if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
             $query->andWhere('c.isDriver = 1 OR c.isPassenger = 1');
-            $zonesAsDriver = $proposal->getCriteria()->getDirectionDriver()->getCrosses();
-            $zonesAsPassenger = $proposal->getCriteria()->getDirectionPassenger()->getCrosses();
         } elseif ($proposal->getCriteria()->isDriver()) {
             $query->andWhere('c.isPassenger = 1');
-            $zonesAsDriver = $proposal->getCriteria()->getDirectionDriver()->getCrosses();
         } elseif ($proposal->getCriteria()->isPassenger()) {
             $query->andWhere('c.isDriver = 1');
-            $zonesAsPassenger = $proposal->getCriteria()->getDirectionPassenger()->getCrosses();
         }
-
-        // CONTINUER ICI
+        
+        // GEOGRAPHICAL ZONES
+        
+        // we search the zones where the user is passenger and/or driver
+        if ($proposal->getCriteria()->isDriver()) {
+            $zonesAsDriver = $proposal->getCriteria()->getDirectionDriver()->getZones();
+            $zones = [];
+            foreach ($zonesAsDriver as $zone) {
+                $zones[] = $zone->getZoneid();
+            }
+            $query->andWhere('zp.thinness = :thinnessPassenger and zp.zoneid IN(' . implode(',',$zones) . ')');
+            $query->setParameter('thinnessPassenger',$this->getPrecision($proposal->getCriteria()->getDirectionDriver()));
+        }
+        if ($proposal->getCriteria()->isPassenger()) {
+            $zonesAsPassenger = $proposal->getCriteria()->getDirectionPassenger()->getZones();
+            $zones = [];
+            foreach ($zonesAsPassenger as $zone) {
+                $zones[] = $zone->getZoneid();
+            }
+            $query->andWhere('zd.thinness = :thinnessDriver and zd.zoneid IN(' . implode(',',$zones) . ')');
+            $query->setParameter('thinnessDriver',$this->getPrecision($proposal->getCriteria()->getDirectionPassenger()));
+        }
 
         // DATES AND TIME
 
@@ -331,8 +343,26 @@ class ProposalRepository
         return null;
     }
 
-    private function getPrecision(Proposal $proposal)
+    /**
+     * Get the precision of the grid for a direction.
+     * For now we divide the length of the direction by a 4 factor to estimate the precision degree.
+     *
+     * @param Direction $direction The direction to check
+     * @return int The precision in degrees
+     */
+    private function getPrecision(Direction $direction)
     {
-        return 1;
+        $thinnesses = ProposalManager::THINNESSES;
+        sort($thinnesses);
+        $i = 0;
+        $found = false;
+        while (!$found) {
+            if (($direction->getDistance()/4)<($thinnesses[$i]*self::METERS_BY_DEGREE)) {
+                $found = true;
+            } else {
+                $i++;
+            }
+        }
+        return $thinnesses[$i];
     }
 }

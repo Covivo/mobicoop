@@ -34,6 +34,7 @@ use App\Match\Service\GeoMatcher;
 use App\Match\Entity\Candidate;
 use App\Geography\Entity\Address;
 use App\Geography\Service\GeoRouter;
+use App\Carpool\Service\ProposalManager;
 
 /**
  * Controller class for API testing purpose.
@@ -49,7 +50,7 @@ class TestController extends AbstractController
      * @Route("/rd/matcher/{id}", name="matcher", requirements={"id"="\d+"})
      *
      */
-    public function matcher($id, EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher)
+    public function matcher($id, EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalManager $proposalManager)
     {
         if ($proposal = $entityManager->getRepository(Proposal::class)->find($id)) {
             echo "#$id : <l>";
@@ -90,49 +91,65 @@ class TestController extends AbstractController
                 echo "<li>" . $proposal->getCriteria()->getFromDate()->format('D d/m/Y') . " - " . $proposal->getCriteria()->getToDate()->format('D d/m/Y') . "</li>";
             }
             echo "</ul>";
+
+            // echo "Updating zones...<br />";
+            // $proposalManager->updateZones();
+            // echo "Done.<br />";
+
             if ($proposals = $proposalMatcher->findMatchingProposals($proposal)) {
+
                 echo "<ul>";
-                foreach ($proposals as $proposalFound) {
-                    echo "<li>Proposal #" . $proposalFound->getId() . "<ul>";
-                    echo "<li>" . $proposalFound->getUser()->getEmail() . "</li>";
-                    if ($proposalFound->getCriteria()->isDriver()) {
+                foreach ($proposals as $proposal) {
+                    echo "<li>role : " . $proposal["role"]  . "</li>";
+                    echo "<li>geomatch : <pre>" . print_r($proposal['match'],true) . "</pre></li>";
+                    echo "<li>Proposal #" . $proposal['proposal']->getId() . "<ul>";
+                    echo "<li>" . $proposal['proposal']->getUser()->getEmail() . "</li>";
+                    if ($proposal['proposal']->getCriteria()->isDriver()) {
                         echo "<li>Conducteur</li>";
                     }
-                    if ($proposalFound->getCriteria()->isPassenger()) {
+                    if ($proposal['proposal']->getCriteria()->isPassenger()) {
                         echo "<li>Passager</li>";
                     }
-                    if ($proposalFound->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                    if ($proposal['proposal']->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                         echo "<li>Punctual</li>";
-                        echo "<li>" . $proposalFound->getCriteria()->getFromDate()->format('D d/m/Y') . " " . $proposalFound->getCriteria()->getMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getMaxTime()->format('H:i') ."</li>";
+                        echo "<li>" . $proposal['proposal']->getCriteria()->getFromDate()->format('D d/m/Y') . " " . $proposal['proposal']->getCriteria()->getMinTime()->format('H:i') . " - " . $proposal['proposal']->getCriteria()->getMaxTime()->format('H:i') ."</li>";
                     } else {
                         echo "<li>Regular <ul>";
-                        if ($proposalFound->getCriteria()->getMonCheck()) {
-                            echo "<li>L " . $proposalFound->getCriteria()->getMonMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getMonMaxTime()->format('H:i') . "</li>";
+                        if ($proposal['proposal']->getCriteria()->getMonCheck()) {
+                            echo "<li>L " . $proposal['proposal']->getCriteria()->getMonMinTime()->format('H:i') . " - " . $proposal['proposal']->getCriteria()->getMonMaxTime()->format('H:i') . "</li>";
                         }
-                        if ($proposalFound->getCriteria()->getTueCheck()) {
-                            echo "<li>M " . $proposalFound->getCriteria()->getTueMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getTueMaxTime()->format('H:i') . "</li>";
+                        if ($proposal['proposal']->getCriteria()->getTueCheck()) {
+                            echo "<li>M " . $proposal['proposal']->getCriteria()->getTueMinTime()->format('H:i') . " - " . $proposal['proposal']->getCriteria()->getTueMaxTime()->format('H:i') . "</li>";
                         }
-                        if ($proposalFound->getCriteria()->getWedCheck()) {
-                            echo "<li>Me " . $proposalFound->getCriteria()->getWedMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getWedMaxTime()->format('H:i') . "</li>";
+                        if ($proposal['proposal']->getCriteria()->getWedCheck()) {
+                            echo "<li>Me " . $proposal['proposal']->getCriteria()->getWedMinTime()->format('H:i') . " - " . $proposal['proposal']->getCriteria()->getWedMaxTime()->format('H:i') . "</li>";
                         }
-                        if ($proposalFound->getCriteria()->getThuCheck()) {
-                            echo "<li>J " . $proposalFound->getCriteria()->getThuMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getThuMaxTime()->format('H:i') . "</li>";
+                        if ($proposal['proposal']->getCriteria()->getThuCheck()) {
+                            echo "<li>J " . $proposal['proposal']->getCriteria()->getThuMinTime()->format('H:i') . " - " . $proposal['proposal']->getCriteria()->getThuMaxTime()->format('H:i') . "</li>";
                         }
-                        if ($proposalFound->getCriteria()->getFriCheck()) {
-                            echo "<li>V " . $proposalFound->getCriteria()->getFriMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getFriMaxTime()->format('H:i') . "</li>";
+                        if ($proposal['proposal']->getCriteria()->getFriCheck()) {
+                            echo "<li>V " . $proposal['proposal']->getCriteria()->getFriMinTime()->format('H:i') . " - " . $proposal['proposal']->getCriteria()->getFriMaxTime()->format('H:i') . "</li>";
                         }
-                        if ($proposalFound->getCriteria()->getSatCheck()) {
-                            echo "<li>S " . $proposalFound->getCriteria()->getSatMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getSatMaxTime()->format('H:i') . "</li>";
+                        if ($proposal['proposal']->getCriteria()->getSatCheck()) {
+                            echo "<li>S " . $proposal['proposal']->getCriteria()->getSatMinTime()->format('H:i') . " - " . $proposal['proposal']->getCriteria()->getSatMaxTime()->format('H:i') . "</li>";
                         }
-                        if ($proposalFound->getCriteria()->getSunCheck()) {
-                            echo "<li>D " . $proposalFound->getCriteria()->getSunMinTime()->format('H:i') . " - " . $proposalFound->getCriteria()->getSunMaxTime()->format('H:i') . "</li>";
+                        if ($proposal['proposal']->getCriteria()->getSunCheck()) {
+                            echo "<li>D " . $proposal['proposal']->getCriteria()->getSunMinTime()->format('H:i') . " - " . $proposal['proposal']->getCriteria()->getSunMaxTime()->format('H:i') . "</li>";
                         }
                         echo "</ul></li>";
-                        echo "<li>" . $proposalFound->getCriteria()->getFromDate()->format('D d/m/Y') . " - " . $proposalFound->getCriteria()->getToDate()->format('D d/m/Y') . "</li>";
+                        echo "<li>" . $proposal['proposal']->getCriteria()->getFromDate()->format('D d/m/Y') . " - " . $proposal['proposal']->getCriteria()->getToDate()->format('D d/m/Y') . "</li>";
                     }
                     echo "</ul>";
+                    echo "</ul></li>";
+                    
                 }
                 echo "</ul>";
+
+                // echo "<ul>";
+                // foreach ($proposals['proposal'] as $proposalFound) {
+                //     
+                // }
+                // echo "</ul>";
             }
         } else {
             echo "No proposal found with id #$id";

@@ -29,11 +29,11 @@ use App\Carpool\Entity\Criteria;
 use App\Geography\Entity\Address;
 use App\Carpool\Entity\Waypoint;
 use App\Carpool\Repository\ProposalRepository;
+use App\Geography\Repository\DirectionRepository;
 use App\Geography\Service\GeoRouter;
-use App\Geography\Entity\Direction;
-use App\DataProvider\Entity\GeoRouterProvider;
 use App\Geography\Service\ZoneManager;
 use App\Geography\Entity\Zone;
+use App\DataProvider\Entity\GeoRouterProvider;
 
 /**
  * Proposal manager service.
@@ -43,7 +43,7 @@ use App\Geography\Entity\Zone;
 class ProposalManager
 {
     // zones precisions to generate when adding a direction
-    private const THINNESSES = [
+    public const THINNESSES = [
         1,
         0.5,
         0.25,
@@ -55,12 +55,14 @@ class ProposalManager
     private $proposalRepository;
     private $geoRouter;
     private $zoneManager;
+    private $directionRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, GeoRouter $geoRouter, ZoneManager $zoneManager)
+    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager)
     {
         $this->entityManager = $entityManager;
         $this->proposalMatcher = $proposalMatcher;
         $this->proposalRepository = $proposalRepository;
+        $this->directionRepository = $directionRepository;
         $this->geoRouter = $geoRouter;
         $this->zoneManager = $zoneManager;
     }
@@ -79,42 +81,42 @@ class ProposalManager
 
         // calculation of the min and max times
         if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
-            list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getFromTime(), $proposal->getCriteria()->getMarginTime());
+            list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getFromTime(), $proposal->getCriteria()->getMarginDuration());
             $proposal->getCriteria()->setMinTime($minTime);
             $proposal->getCriteria()->setMaxTime($maxTime);
         } else {
             if ($proposal->getCriteria()->getMonCheck()) {
-                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getMonTime(), $proposal->getCriteria()->getMonMarginTime());
+                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getMonTime(), $proposal->getCriteria()->getMonMarginDuration());
                 $proposal->getCriteria()->setMonMinTime($minTime);
                 $proposal->getCriteria()->setMonMaxTime($maxTime);
             }
             if ($proposal->getCriteria()->getTueCheck()) {
-                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getTueTime(), $proposal->getCriteria()->getTueMarginTime());
+                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getTueTime(), $proposal->getCriteria()->getTueMarginDuration());
                 $proposal->getCriteria()->setTueMinTime($minTime);
                 $proposal->getCriteria()->setTueMaxTime($maxTime);
             }
             if ($proposal->getCriteria()->getWedCheck()) {
-                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getWedTime(), $proposal->getCriteria()->getWedMarginTime());
+                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getWedTime(), $proposal->getCriteria()->getWedMarginDuration());
                 $proposal->getCriteria()->setWedMinTime($minTime);
                 $proposal->getCriteria()->setWedMaxTime($maxTime);
             }
             if ($proposal->getCriteria()->getThuCheck()) {
-                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getThuTime(), $proposal->getCriteria()->getThuMarginTime());
+                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getThuTime(), $proposal->getCriteria()->getThuMarginDuration());
                 $proposal->getCriteria()->setThuMinTime($minTime);
                 $proposal->getCriteria()->setThuMaxTime($maxTime);
             }
             if ($proposal->getCriteria()->getFriCheck()) {
-                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getFriTime(), $proposal->getCriteria()->getFriMarginTime());
+                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getFriTime(), $proposal->getCriteria()->getFriMarginDuration());
                 $proposal->getCriteria()->setFriMinTime($minTime);
                 $proposal->getCriteria()->setFriMaxTime($maxTime);
             }
             if ($proposal->getCriteria()->getSatCheck()) {
-                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getSatTime(), $proposal->getCriteria()->getSatMarginTime());
+                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getSatTime(), $proposal->getCriteria()->getSatMarginDuration());
                 $proposal->getCriteria()->setSatMinTime($minTime);
                 $proposal->getCriteria()->setSatMaxTime($maxTime);
             }
             if ($proposal->getCriteria()->getSunCheck()) {
-                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getSunTime(), $proposal->getCriteria()->getSunMarginTime());
+                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getSunTime(), $proposal->getCriteria()->getSunMarginDuration());
                 $proposal->getCriteria()->setSunMinTime($minTime);
                 $proposal->getCriteria()->setSunMaxTime($maxTime);
             }
@@ -160,6 +162,44 @@ class ProposalManager
         //$this->proposalMatcher->createMatchingsForProposal($proposal);
         
         return $proposal;
+    }
+
+    /**
+     * Updates directions without zones (so by extension, updates the related proposals, that's why it's in this file...)
+     *
+     * @return void
+     */
+    public function updateZones()
+    {
+        if ($directions = $this->directionRepository->findAllWithoutZones()) {
+            foreach ($directions as $direction) {
+                if (is_null($direction->getPoints())) {
+                    // we use the GeoRouterProvider as a service
+                    $georouter = new GeoRouterProvider();
+                    $direction->setPoints($georouter->deserializePoints($direction->getDetail(),true,$georouter::GR_ELEVATION));
+                }
+                // creation of the crossed zones
+                $zones = [];
+                foreach (self::THINNESSES as $thinness) {
+                    // $zones[$thinness] would be simpler and better... but we can't use a float as a key with php (transformed to string)
+                    // so we use an inner value for thinness
+                    $zones[] = [
+                        'thinness' => $thinness,
+                        'crossed' => $this->zoneManager->getZonesForAddresses($direction->getPoints(), $thinness, 0)
+                    ];
+                }
+                foreach ($zones as $crossed) {
+                    foreach ($crossed['crossed'] as $zoneCrossed) {
+                        $zone = new Zone();
+                        $zone->setZoneid($zoneCrossed);
+                        $zone->setThinness($crossed['thinness']);
+                        $direction->addZone($zone);
+                    }
+                }
+                $this->entityManager->persist($direction);
+            }
+            $this->entityManager->flush();
+        }
     }
     
     /**

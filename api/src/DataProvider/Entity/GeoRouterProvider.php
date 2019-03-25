@@ -47,7 +47,7 @@ class GeoRouterProvider implements ProviderInterface
     private const GR_WEIGHTING = "fastest";
     private const GR_INSTRUCTIONS = "false";
     private const GR_POINTS_ENCODED = "true";
-    private const GR_ELEVATION = "false";           // NOT SUPPORTED YET
+    public const GR_ELEVATION = "false";           // NOT SUPPORTED YET
     
     private $collection;
     
@@ -116,7 +116,8 @@ class GeoRouterProvider implements ProviderInterface
             $direction->setDistance($data["distance"]);
         }
         if (isset($data["time"])) {
-            $direction->setDuration($data["time"]);
+            // time is in milliseconds, we transform in seconds
+            $direction->setDuration($data["time"]/1000);
         }
         if (isset($data["ascend"])) {
             $direction->setAscend($data["ascend"]);
@@ -162,18 +163,26 @@ class GeoRouterProvider implements ProviderInterface
         return $direction;
     }
     
-    public function deserializePoints($data, $encoded, $is3D)
+    /**
+     * Deserializes geographical points to Addresses.
+     *
+     * @param string $data      The data to deserialize
+     * @param bool $encoded     Data encoded
+     * @param bool $is3D        Data has elevation information
+     * @return Address[]        The deserialized Addresses
+     */
+    public static function deserializePoints(string $data, bool $encoded, bool $is3D)
     {
         $addresses = [];
         if ($encoded) {
-            if ($coordinates = $this->decodePath($data, $is3D)) {
+            if ($coordinates = self::decodePath($data, $is3D)) {
                 foreach ($coordinates as $coordinate) {
-                    $addresses[] = $this->createAddress($coordinate);
+                    $addresses[] = self::createAddress($coordinate);
                 }
             }
         } elseif (isset($data['coordinates'])) {
             foreach ($data['coordinates'] as $coordinate) {
-                $addresses[] = $this->createAddress($coordinate);
+                $addresses[] = self::createAddress($coordinate);
             }
         }
         return $addresses;
@@ -182,7 +191,7 @@ class GeoRouterProvider implements ProviderInterface
     // Graphhopper path decoding function
     // This function is transposed from the JS function found in the points_encoded doc
     // (see https://github.com/graphhopper/graphhopper/blob/0.11/docs/web/api-doc.md)
-    private function decodePath($encoded, $is3D)
+    private static function decodePath($encoded, $is3D)
     {
         $length = strlen($encoded);
         $index = 0;
@@ -238,12 +247,12 @@ class GeoRouterProvider implements ProviderInterface
         return $decoded;
     }
     
-    private function charCodeAt($str, $i)
+    private static function charCodeAt($str, $i)
     {
         return ord(substr($str, $i, 1));
     }
     
-    private function createAddress($coordinate)
+    private static function createAddress($coordinate)
     {
         $address = new Address(1);
         if (isset($coordinate[0])) {
