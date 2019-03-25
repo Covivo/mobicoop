@@ -18,6 +18,10 @@
               <img width="32" :src="`https://image.tmdb.org/t/p/w500/${props.option.poster_path}`">
             </div>
             <div class="media-content searchResult">
+              <l-map :zoom="10" width="200" heigth="100">
+                <l-tile-layer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></l-tile-layer>
+              </l-map>
+              <em>{{ props.option.streetAddress }}</em>
               <small>
                 <b>{{ props.option.addressLocality }}</b>
                 <b v-if="props.option.postalCode">({{ props.option.postalCode }})</b>
@@ -53,12 +57,18 @@
 // import Autocomplete from "vuejs-auto-complete";
 import axios from "axios";
 import debounce from "lodash/debounce";
+import { LMap, LTileLayer } from "vue2-leaflet";
+
 const defaultString = {
   type: String,
   default: ""
 };
 export default {
   name: "geocomplete",
+  components: {
+    LMap,
+    LTileLayer
+  },
   props: {
     url: defaultString,
     name: defaultString,
