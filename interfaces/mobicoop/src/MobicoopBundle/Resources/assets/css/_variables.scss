@@ -3,12 +3,19 @@
 * the _ in the name means it's a partial file dude! So it will not be generated as a _variable.css 👌
 */
 
+@import '~bulma/sass/utilities/_all';
+
 /* mobicoop palette */
 $mb-white: #FFF;
 $mb-pink: #F13FA8;
 $mb-green: #81F19A;
 $mb-blue: #023D7F;
 $mb-dark-green: #005933;
+
+$mb-pink-invert: findColorInvert($mb-pink);
+$mb-green-invert: findColorInvert($mb-green);
+$mb-blue-invert: findColorInvert($mb-blue);
+$mb-dark-green-invert: findColorInvert($mb-dark-green);
 
 $main-font-color: #000;
 $main-background-color: #FFF;

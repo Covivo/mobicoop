@@ -15,9 +15,9 @@ $colors: (
   'success': ($success, $success-invert),
   'warning': ($warning, $warning-invert),
   'danger': ($danger, $danger-invert),
-  'mobicoop-blue': ($mb-blue, $mb-white),
-  'mobicoop-pink': ($mb-pink, $mb-white),
-  'mobicoop-green': ($mb-green, $main-font-color)
+  'mobicoopblue': ($mb-blue, $mb-blue-invert),
+  'mobicooppink': ($mb-pink, $mb-pink-invert),
+  'mobicoopgreen': ($mb-green, $mb-green-invert)
 );
 
 @import '~bulma';

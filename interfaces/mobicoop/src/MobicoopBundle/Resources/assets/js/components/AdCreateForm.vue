@@ -17,21 +17,11 @@
             <tab-content title="Vous êtes" icon="fa fa-user-friends" class="tabContent">
               <h3>Je suis:</h3>
               <b-field class="fieldsContainer">
-                <b-radio-button
-                  v-model="role"
-                  name="role"
-                  :native-value="1"
-                  type="is-mobicoop-blue"
-                >
+                <b-radio-button v-model="role" name="role" :native-value="1" type="is-mobicoopblue">
                   <b-icon icon="close"></b-icon>
                   <span>🚙 Conducteur</span>
                 </b-radio-button>
-                <b-radio-button
-                  v-model="role"
-                  name="role"
-                  :native-value="2"
-                  type="is-mobicoop-pink"
-                >
+                <b-radio-button v-model="role" name="role" :native-value="2" type="is-mobicooppink">
                   <b-icon icon="check"></b-icon>
                   <span>👨‍⚖️ Passager</span>
                 </b-radio-button>
@@ -39,7 +29,7 @@
                   v-model="role"
                   name="role"
                   :native-value="3"
-                  type="is-mobicoop-green"
+                  type="is-mobicoopgreen"
                 >Passager ou Conducteur</b-radio-button>
               </b-field>
             </tab-content>
@@ -47,26 +37,22 @@
             <tab-content title="Trajet" icon="fa fa-route" class="tabContent">
               <h3>Détails de votre trajet</h3>
               <b-field class="fieldsContainer">
-                <b-radio-button
-                  v-model="type"
-                  name="type"
-                  :native-value="1"
-                  type="is-mobicoop-blue"
-                >
-                  <b-icon icon="close"></b-icon>
+                <b-radio-button v-model="type" name="type" :native-value="1" type="is-mobicoopblue">
+                  <b-icon pack="fas" icon="long-arrow-alt-right"></b-icon>
                   <span>Allez</span>
                 </b-radio-button>
-                <b-radio-button
-                  v-model="type"
-                  name="type"
-                  :native-value="2"
-                  type="is-mobicoop-blue"
-                >
-                  <b-icon icon="check"></b-icon>
+                <b-radio-button v-model="type" name="type" :native-value="2" type="is-mobicoopblue">
+                  <b-icon pack="fas" icon="exchange-alt"></b-icon>
                   <span>Allez/Retour</span>
                 </b-radio-button>
               </b-field>
               <geocomplete placeholder="Depuis" :url="geoSearchUrl"></geocomplete>
+              <b-icon
+                pack="fas"
+                type="is-mobicoopblue"
+                :icon="type === 2 ? 'arrows-alt-v' : 'long-arrow-alt-down'"
+                size="is-large"
+              ></b-icon>
               <geocomplete placeholder="Vers" :url="geoSearchUrl"></geocomplete>
             </tab-content>
             <!-- FREQUENCY & Submit -->
@@ -77,7 +63,7 @@
                   v-model="frequency"
                   name="frequency"
                   :native-value="1"
-                  type="is-mobicoop-blue"
+                  type="is-mobicoopblue"
                 >
                   <b-icon icon="close"></b-icon>
                   <span>Ponctuel</span>
@@ -86,7 +72,7 @@
                   v-model="frequency"
                   name="frequency"
                   :native-value="2"
-                  type="is-mobicoop-blue"
+                  type="is-mobicoopblue"
                 >
                   <b-icon icon="check"></b-icon>
                   <span>Regulier</span>
