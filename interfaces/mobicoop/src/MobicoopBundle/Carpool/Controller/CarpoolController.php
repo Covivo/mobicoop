@@ -48,7 +48,6 @@ class CarpoolController extends AbstractController
      */
     public function ad(AdManager $adManager, UserManager $userManager, Request $request)
     {
-
         $date = new \DateTime();
         $ad = new Ad();
         $ad->setRole(Ad::ROLE_BOTH);
