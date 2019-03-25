@@ -8,7 +8,7 @@
   <script src="http://localhost:8098"></script>
 {% endblock %}
 {% block body %}
-  <Adcreateform :url="'{{ form.vars.url }}'" :sent-frequency="{{ form.frequency.vars.value }}" :sent-type="{{ form.type.vars.value }}" :sent-role="{{ form.role.vars.value }}"></Adcreateform>
+  <Adcreateform geo-search-url="/geosearch?search=" :sent-frequency="{{ form.frequency.vars.value }}" :sent-type="{{ form.type.vars.value }}" :sent-role="{{ form.role.vars.value }}"></Adcreateform>
   <script id="ad-create-template-old" type="text/x-template">
     <section class="section">
       <div class="container">
