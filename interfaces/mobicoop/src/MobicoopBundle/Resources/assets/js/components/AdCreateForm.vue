@@ -2,7 +2,7 @@
   <section class="section">
     <div class="tile is-ancestor">
       <div class="tile is-vertical is-12">
-        <div class="tile is-child notification center-all">
+        <div class="tile is-child center-all">
           <form-wizard
             @on-complete="onComplete"
             back-button-text="Précèdent"
@@ -46,7 +46,7 @@
                   <span>Allez/Retour</span>
                 </b-radio-button>
               </b-field>
-              <geocomplete placeholder="Depuis" :url="geoSearchUrl"></geocomplete>
+              <geocomplete v-model="origin" placeholder="Depuis" :url="geoSearchUrl" @geoSelected="selectedGeo('test',val)"></geocomplete>
               <b-icon
                 pack="fas"
                 type="is-mobicoopblue"
@@ -179,6 +179,7 @@ export default {
   },
   data() {
     return {
+      origin: null,
       frequency: this.sentFrequency,
       role: this.sentRole,
       type: this.sentType,
@@ -196,9 +197,13 @@ export default {
       ],
       form: {
         origin: "",
+        originLatitude: null,
+        originLongitude: null,
+        destinationLatitude: null,
+        destinationLongitude: null,
         destination: "",
         role: "",
-        type: false,
+        type: null,
         frequency: null,
         fromDate: "",
         toDate: ""
@@ -209,6 +214,9 @@ export default {
     console.log("sentRole", this.sentRole);
   },
   methods: {
+    selectedGeo(name,val){
+      console.log('received ', name, val);
+    },
     sendForm() {
       console.log("Will send form");
     },

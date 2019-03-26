@@ -78,16 +78,13 @@ class CarpoolController extends AbstractController
         if (!$form->isValid()) {
             $error = [];
             // Fields
-            foreach ($form as $child /** @var Form $child */) {
+            foreach ($form as $child) {
                 if (!$child->isValid()) {
-                    foreach ($child->getErrors() as $err) {
+                    foreach ($child->getErrors(true) as $err) {
                         $error[$child->getName()][] = $err->getMessage();
                     }
                 }
             }
-            // $error = $form->getErrors(true);
-            // $jsonContent = $serializer->serialize($error, 'json');
-            // $this->json();
             return $this->json(['error' => $error, 'sucess'=> $sucess]);
         }
 

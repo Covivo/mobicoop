@@ -1,26 +1,24 @@
 <template>
   <section>
     <b-field>
+  
       <b-autocomplete
-        v-model="address"
         :data="data"
         :placeholder="placeholder"
-        field="Depart"
+        field="addressLocality"
+        :open-on-focus=true
         icon="search-location"
         icon-pack="fa"
         :loading="isFetching"
         @input="getAsyncData"
-        @select="option => selected = option"
+        @select="onSelected"
       >
         <template slot-scope="props">
           <div class="media">
             <div class="media-left">
-              <img width="32" :src="`https://image.tmdb.org/t/p/w500/${props.option.poster_path}`">
+              <b-icon pack="fas" icon="arrow-alt-circle-right" type="is-mobicoopblue"></b-icon>
             </div>
-            <div class="media-content searchResult">
-              <l-map :zoom="10" width="200" heigth="100">
-                <l-tile-layer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></l-tile-layer>
-              </l-map>
+            <div class="searchResult">
               <em>{{ props.option.streetAddress }}</em>
               <small>
                 <b>{{ props.option.addressLocality }}</b>
@@ -34,30 +32,12 @@
       </b-autocomplete>
     </b-field>
   </section>
-  <!-- <div>
-    <autocomplete
-      :source="url"
-      :results-display="formattedDisplay"
-      :name="name"
-      :placeholder="placeholder"
-      :input-class="iclass"
-      :required="required"
-      @selected="onSelected"
-    ></autocomplete>
-    <input type="hidden" :name="streetaddress" :value="valstreetAddress">
-    <input type="hidden" :name="postalcode" :value="valpostalCode">
-    <input type="hidden" :name="addresslocality" :value="valaddressLocality">
-    <input type="hidden" :name="addresscountry" :value="valaddressCountry">
-    <input type="hidden" :name="longitude" :value="vallongitude">
-    <input type="hidden" :name="latitude" :value="vallatitude">
-  </div>-->
 </template>
 
 <script>
 // import Autocomplete from "vuejs-auto-complete";
 import axios from "axios";
 import debounce from "lodash/debounce";
-import { LMap, LTileLayer } from "vue2-leaflet";
 
 const defaultString = {
   type: String,
@@ -65,10 +45,6 @@ const defaultString = {
 };
 export default {
   name: "geocomplete",
-  components: {
-    LMap,
-    LTileLayer
-  },
   props: {
     url: defaultString,
     name: defaultString,
@@ -122,12 +98,8 @@ export default {
       return resultToShow.trim();
     },
     onSelected(value) {
-      for (let property in value.selectedObject) {
-        this["val" + property] =
-          typeof value.selectedObject[property] === "string"
-            ? value.selectedObject[property].trim()
-            : value.selectedObject[property];
-      }
+      this.selected = value;
+      this.$emit('geoSelected', value);
     }
   }
 };
@@ -137,5 +109,10 @@ export default {
 @import "../../css/_variables";
 .searchResult {
   color: $mb-blue;
+  text-decoration: none !important;
+}
+
+.dropdown-item{
+  text-decoration:  none !important;
 }
 </style>
