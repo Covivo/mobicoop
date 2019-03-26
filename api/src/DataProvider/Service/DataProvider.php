@@ -41,7 +41,13 @@ class DataProvider
     private $client;
     private $resource;
     
-    public function __construct($uri, $resource)
+    /**
+     * Constructor.
+     *
+     * @param string $uri
+     * @param string $resource
+     */
+    public function __construct(string $uri, string $resource)
     {
         $this->client = new Client([
                 'base_uri' => $uri

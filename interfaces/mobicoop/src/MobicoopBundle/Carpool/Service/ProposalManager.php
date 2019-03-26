@@ -35,6 +35,11 @@ class ProposalManager
 {
     private $dataProvider;
     
+    /**
+     * Constructor.
+     *
+     * @param DataProvider $dataProvider
+     */
     public function __construct(DataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;

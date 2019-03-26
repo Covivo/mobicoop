@@ -40,6 +40,12 @@ class Response
      */
     private $value;
     
+    /**
+     * Constructor.
+     *
+     * @param integer $code
+     * @param [type] $value
+     */
     public function __construct(int $code=self::DEFAULT_CODE, $value=null)
     {
         $this->setCode($code);

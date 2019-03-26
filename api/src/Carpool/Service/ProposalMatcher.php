@@ -49,6 +49,14 @@ class ProposalMatcher
     private $geoMatcher;
     private $timeMatcher;
     
+    /**
+     * Constructor.
+     *
+     * @param EntityManagerInterface $entityManager
+     * @param ProposalRepository $proposalRepository
+     * @param GeoMatcher $geoMatcher
+     * @param TimeMatcher $timeMatcher
+     */
     public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, GeoMatcher $geoMatcher, TimeMatcher $timeMatcher)
     {
         $this->entityManager = $entityManager;

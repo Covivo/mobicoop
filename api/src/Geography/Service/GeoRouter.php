@@ -37,7 +37,12 @@ class GeoRouter
 {
     private $uri;
 
-    public function __construct($uri)
+    /**
+     * Constructor.
+     *
+     * @param string $uri
+     */
+    public function __construct(string $uri)
     {
         $this->uri = $uri;
         $this->collection = [];

@@ -38,6 +38,13 @@ class UserManager
     private $encoder;
     private $tokenStorage;
     
+    /**
+     * Constructor.
+     *
+     * @param DataProvider $dataProvider
+     * @param UserPasswordEncoderInterface $encoder
+     * @param TokenStorageInterface $tokenStorage
+     */
     public function __construct(DataProvider $dataProvider, UserPasswordEncoderInterface $encoder, TokenStorageInterface $tokenStorage)
     {
         $this->dataProvider = $dataProvider;

@@ -57,6 +57,16 @@ class ProposalManager
     private $zoneManager;
     private $directionRepository;
 
+    /**
+     * Constructor.
+     *
+     * @param EntityManagerInterface $entityManager
+     * @param ProposalMatcher $proposalMatcher
+     * @param ProposalRepository $proposalRepository
+     * @param DirectionRepository $directionRepository
+     * @param GeoRouter $geoRouter
+     * @param ZoneManager $zoneManager
+     */
     public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager)
     {
         $this->entityManager = $entityManager;
