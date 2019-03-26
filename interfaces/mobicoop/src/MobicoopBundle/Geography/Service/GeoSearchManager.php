@@ -38,6 +38,11 @@ class GeoSearchManager
 {
     private $dataProvider;
 
+    /**
+     * Constructor.
+     *
+     * @param DataProvider $dataProvider
+     */
     public function __construct(DataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
@@ -47,6 +52,7 @@ class GeoSearchManager
     /**
      * Get all Geosearch results
      *
+     * @param array $params The params to send for geosearching
      * @return array|GeoSearch|null
      */
     public function getGeoSearch(array $params)

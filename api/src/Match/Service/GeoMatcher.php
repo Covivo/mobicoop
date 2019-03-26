@@ -35,6 +35,11 @@ class GeoMatcher
 {
     private $geoRouter;
 
+    /**
+     * Constructor.
+     *
+     * @param GeoRouter $geoRouter
+     */
     public function __construct(GeoRouter $geoRouter)
     {
         $this->geoRouter = $geoRouter;
@@ -201,6 +206,12 @@ class GeoMatcher
 // Will be dumped when optimization engine will work
 class CombinationsGenerator
 {
+    /**
+     * Generate combinations for an array.
+     *
+     * @param array $list
+     * @return \Generator
+     */
     public function generate(array $list): \Generator
     {
         if (count($list) > 2) {

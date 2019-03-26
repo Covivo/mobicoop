@@ -36,6 +36,11 @@ class AdManager
 {
     private $proposalManager;
 
+    /**
+     * Constructor.
+     *
+     * @param ProposalManager $proposalManager
+     */
     public function __construct(ProposalManager $proposalManager)
     {
         $this->proposalManager = $proposalManager;
