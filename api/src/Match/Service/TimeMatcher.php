@@ -21,13 +21,13 @@
  *    LICENSE
  **************************/
 
-namespace App\Matching\Service\Matcher;
+namespace App\Match\Service;
 
 /**
- * Geographical Matching service.
+ * Time Matching service.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class GeoMatcher
+class TimeMatcher
 {
 }

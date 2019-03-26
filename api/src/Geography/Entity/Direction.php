@@ -64,7 +64,7 @@ class Direction
     private $distance;
     
     /**
-     * @var int The total duration of the direction in seconds.
+     * @var int The total duration of the direction in milliseconds.
      * @ORM\Column(type="integer")
      * @Groups({"read","write"})
      */
@@ -125,9 +125,11 @@ class Direction
      * @Groups({"read","write"})
      */
     private $format;
-    
+
     /**
-     * @var array|null The geographical zones covered by the direction.
+     * @var Zone[] The geographical zones crossed by the direction.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Zone", mappedBy="direction", cascade={"persist","remove"}, orphanRemoval=true)
      */
     private $zones;
 
@@ -267,19 +269,38 @@ class Direction
         return $this;
     }
     
-    public function getZones(): array
+    /**
+     * @return Collection|Zone[]
+     */
+    public function getZones(): Collection
     {
         return $this->zones;
     }
     
-    public function setZones(array $zones): self
+    public function addZone(Zone $zone): self
     {
-        $this->zones[] = $zones;
+        if (!$this->zones->contains($zone)) {
+            $this->zones[] = $zone;
+            $zone->setDirection($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeZone(Zone $zone): self
+    {
+        if ($this->zones->contains($zone)) {
+            $this->zones->removeElement($zone);
+            // set the owning side to null (unless already changed)
+            if ($zone->getDirection() === $this) {
+                $zone->setDirection(null);
+            }
+        }
         
         return $this;
     }
 
-    public function getPoints(): array
+    public function getPoints(): ?array
     {
         return $this->points;
     }

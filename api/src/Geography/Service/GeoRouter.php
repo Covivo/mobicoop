@@ -35,7 +35,14 @@ use App\Geography\Entity\Direction;
  */
 class GeoRouter
 {
-      
+    private $uri;
+
+    public function __construct($uri)
+    {
+        $this->uri = $uri;
+        $this->collection = [];
+    }
+
     /**
      * Get the routes alternative between two or more addresses.
      *
@@ -44,7 +51,7 @@ class GeoRouter
      */
     public function getRoutes(array $addresses): ?array
     {
-        $georouter = new GeoRouterProvider();
+        $georouter = new GeoRouterProvider($this->uri);
         $params = [];
         $params['points'] = $addresses;
         $routes = $georouter->getCollection(Direction::class, '', $params);
