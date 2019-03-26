@@ -487,17 +487,17 @@ class ProposalRepository
                 }
 
                 // delete the last comma
-                $days = substr($days,0,-1);
+                $days = substr($days, 0, -1);
 
                 // delete the last OR
-                $minTime = substr($minTime,0,-4) . ')';
-                $maxTime = substr($maxTime,0,-4) . ')';
+                $minTime = substr($minTime, 0, -4) . ')';
+                $maxTime = substr($maxTime, 0, -4) . ')';
 
                 // 'where' part of punctual candidates
 
                 // ICIIIIII
                 $punctualAndWhere = '(';
-                $punctualAndWhere .= 'c.frequency=' . Criteria::FREQUENCY_PUNCTUAL . ' and c.fromDate >= :fromDate and c.fromDate <= :toDate and DAYOFWEEK(c.fromDate) IN (' . $days . ')'; 
+                $punctualAndWhere .= 'c.frequency=' . Criteria::FREQUENCY_PUNCTUAL . ' and c.fromDate >= :fromDate and c.fromDate <= :toDate and DAYOFWEEK(c.fromDate) IN (' . $days . ')';
                 if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                     $punctualAndWhere .= ' and (
                         (c.isPassenger = 1 and ' . $minTime . ') or 
@@ -515,16 +515,16 @@ class ProposalRepository
                 $punctualAndWhere .= ')';
 
                 // 'where' part of regular candidates
-                $regularAndWhere = '(c.frequency=' . Criteria::FREQUENCY_REGULAR . ' and c.fromDate <= :fromDate and c.toDate >= :fromDate and (' . 
-                (($regularSunDay<>"") ? '(' . $regularSunDay . ') OR ' : '') . 
-                (($regularMonDay<>"") ? '(' . $regularMonDay . ') OR ' : '') . 
-                (($regularTueDay<>"") ? '(' . $regularTueDay . ') OR ' : '') . 
-                (($regularWedDay<>"") ? '(' . $regularWedDay . ') OR ' : '') . 
-                (($regularThuDay<>"") ? '(' . $regularThuDay . ') OR ' : '') . 
+                $regularAndWhere = '(c.frequency=' . Criteria::FREQUENCY_REGULAR . ' and c.fromDate <= :fromDate and c.toDate >= :fromDate and (' .
+                (($regularSunDay<>"") ? '(' . $regularSunDay . ') OR ' : '') .
+                (($regularMonDay<>"") ? '(' . $regularMonDay . ') OR ' : '') .
+                (($regularTueDay<>"") ? '(' . $regularTueDay . ') OR ' : '') .
+                (($regularWedDay<>"") ? '(' . $regularWedDay . ') OR ' : '') .
+                (($regularThuDay<>"") ? '(' . $regularThuDay . ') OR ' : '') .
                 (($regularFriDay<>"") ? '(' . $regularFriDay . ') OR ' : '') .
                 (($regularSatDay<>"") ? '(' . $regularSatDay . ') OR ' : '');
                 // delete the last OR
-                $regularAndWhere = substr($regularAndWhere,0,-4) . '))';
+                $regularAndWhere = substr($regularAndWhere, 0, -4) . '))';
 
                 if ($setMonMinTime && $setMinTime) {
                     $query->setParameter('monMinTime', $proposal->getCriteria()->getMonMinTime()->format('H:i'));
