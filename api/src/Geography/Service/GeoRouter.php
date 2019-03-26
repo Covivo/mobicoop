@@ -41,7 +41,7 @@ class GeoRouter
     {
         $this->uri = $uri;
         $this->collection = [];
-    }  
+    }
 
     /**
      * Get the routes alternative between two or more addresses.
