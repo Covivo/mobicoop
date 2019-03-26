@@ -65,7 +65,7 @@ class JwtToken
 
     /**
      * Check is token is still valid
-     * 
+     *
      * @return bool
      */
     public function isValid()
