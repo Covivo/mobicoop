@@ -158,21 +158,21 @@ class TestController extends AbstractController
     /**
      * Create matching proposals for all proposals.
      *
-     * @Route("/matcher/all", name="matcher_all")
+     * @Route("/rd/matcher/all", name="matcher_all")
      *
      */
-    public function matcherAll(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher)
-    {
-        $proposals = $entityManager->getRepository(Proposal::class)->findAll();
-        echo "Finding matching for " . count($proposals) . " proposals.";
-        echo "<ul>";
-        foreach ($proposals as $proposal) {
-            echo "<li>Creating matchings for proposals #" . $proposal->getId() . "</li>";
-            $proposalMatcher->createMatchingsForProposal($proposal);
-        }
-        echo "</ul>";
-        return new Response();
-    }
+    // public function matcherAll(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher)
+    // {
+    //     $proposals = $entityManager->getRepository(Proposal::class)->findAll();
+    //     echo "Finding matching for " . count($proposals) . " proposals.";
+    //     echo "<ul>";
+    //     foreach ($proposals as $proposal) {
+    //         echo "<li>Creating matchings for proposals #" . $proposal->getId() . "</li>";
+    //         $proposalMatcher->createMatchingsForProposal($proposal);
+    //     }
+    //     echo "</ul>";
+    //     return new Response();
+    // }
 
     /**
      * Test of the matcher.

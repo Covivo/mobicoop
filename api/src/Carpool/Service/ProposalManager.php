@@ -42,7 +42,7 @@ use App\DataProvider\Entity\GeoRouterProvider;
  */
 class ProposalManager
 {
-    // zones precisions to generate when adding a direction
+    // zones precisions (in degrees) to generate when adding a direction
     public const THINNESSES = [
         1,
         0.5,
@@ -139,6 +139,7 @@ class ProposalManager
                     'crossed' => $this->zoneManager->getZonesForAddresses($direction->getPoints(), $thinness, 0)
                 ];
             }
+
             foreach ($zones as $crossed) {
                 foreach ($crossed['crossed'] as $zoneCrossed) {
                     $zone = new Zone();
@@ -166,6 +167,7 @@ class ProposalManager
 
     /**
      * Updates directions without zones (so by extension, updates the related proposals, that's why it's in this file...)
+     * Used for testing purpose, shouldn't be useful as zones are added when proposals/directions are posted.
      *
      * @return void
      */

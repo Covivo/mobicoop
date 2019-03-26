@@ -40,7 +40,6 @@ use App\Geography\Entity\Direction;
  */
 class GeoRouterProvider implements ProviderInterface
 {
-    private const URI = "http://149.202.205.240:8989/";
     private const COLLECTION_RESOURCE = "route";
     private const GR_MODE_CAR = "CAR";
     private const GR_LOCALE = "fr-FR";
@@ -50,9 +49,11 @@ class GeoRouterProvider implements ProviderInterface
     public const GR_ELEVATION = "false";           // NOT SUPPORTED YET
     
     private $collection;
+    private $uri;
     
-    public function __construct()
+    public function __construct($uri=null)
     {
+        $this->uri = $uri;
         $this->collection = [];
     }
     
@@ -63,7 +64,7 @@ class GeoRouterProvider implements ProviderInterface
     {
         switch ($class) {
             case Direction::class:
-            $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESOURCE);
+            $dataProvider = new DataProvider($this->uri, self::COLLECTION_RESOURCE);
                 $getParams = "";
                 foreach ($params['points'] as $address) {
                     $getParams .= "point=" . $address->getLatitude() . "," . $address->getLongitude() . "&";
@@ -146,6 +147,8 @@ class GeoRouterProvider implements ProviderInterface
             $direction->setPoints($this->deserializePoints($data['points'], true, filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
         }
         $direction->setFormat('graphhopper');
+
+        // use the following code if the points are not encoded
         /*if (isset($data['points'])) {
             if (isset($data['points_encoded']) && $data['points_encoded'] === false) {
                 $direction->setPoints($this->deserializePoints($data['points'], false, filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
@@ -153,6 +156,8 @@ class GeoRouterProvider implements ProviderInterface
                 $direction->setPoints($this->deserializePoints($data['points'], true, filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
             }
         }
+
+        // use the following code to keep the snapped waypoints
         if (isset($data['snapped_waypoints'])) {
             if (isset($data['points_encoded']) && $data['points_encoded'] === false) {
                 $direction->setWaypoints($this->deserializePoints($data['snapped_waypoints'], false, false));
@@ -160,6 +165,7 @@ class GeoRouterProvider implements ProviderInterface
                 $direction->setWaypoints($this->deserializePoints($data['snapped_waypoints'], true, false));
             }
         }*/
+
         return $direction;
     }
     

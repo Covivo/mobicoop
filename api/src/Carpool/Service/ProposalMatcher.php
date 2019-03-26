@@ -39,8 +39,10 @@ use App\Match\Entity\Candidate;
  */
 class ProposalMatcher
 {
-    private const MAX_DETOUR_DISTANCE_PERCENT = 10;
-    private const MAX_DETOUR_DURATION_PERCENT = 10;
+    // max default detour distance
+    // TODO : should depend on the total distance : total distance => max detour allowed
+    private const MAX_DETOUR_DISTANCE_PERCENT = 40;
+    private const MAX_DETOUR_DURATION_PERCENT = 40;
 
     private $entityManager;
     private $proposalRepository;
@@ -66,7 +68,6 @@ class ProposalMatcher
         // we search matching proposals in the database
         // if not proposals are found we return an empty array
         if (!$proposalsFound = $this->proposalRepository->findMatchingProposals($proposal)) {
-            echo "no direct proposals found !";
             return [];
         }
 

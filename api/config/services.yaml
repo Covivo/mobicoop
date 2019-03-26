@@ -64,3 +64,8 @@ services:
         arguments: ['@App\Image\Service\ImageManager']
         tags:
             - { name: doctrine.orm.entity_listener }
+
+    # inject SIG uri to GeoRouter service
+    App\Geography\Service\GeoRouter:
+        arguments:
+            $uri: '%env(resolve:SIG_URI)%'
