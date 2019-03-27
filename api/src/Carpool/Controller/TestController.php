@@ -53,14 +53,21 @@ class TestController extends AbstractController
     public function matcher($id, EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalManager $proposalManager)
     {
         if ($proposal = $entityManager->getRepository(Proposal::class)->find($id)) {
-            echo "#$id : <l>";
+            echo "#$id : <ul>";
             echo "<li>" . $proposal->getUser()->getEmail() . "</li>";
+            echo "<li>";
+            foreach ($proposal->getWaypoints() as $waypoint) {
+                echo $waypoint->getAddress()->getAddressLocality() . " " . $waypoint->getAddress()->getLatitude() . " " . $waypoint->getAddress()->getLongitude() . " ";
+            }
+            echo "</li>";
+            echo "<li>";
             if ($proposal->getCriteria()->isDriver()) {
-                echo "<li>Conducteur</li>";
+                echo "Conducteur ";
             }
             if ($proposal->getCriteria()->isPassenger()) {
-                echo "<li>Passager</li>";
+                echo "Passager";
             }
+            echo "</li>";
             if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                 echo "<li>Punctual</li>";
                 echo "<li>" . $proposal->getCriteria()->getFromDate()->format('D d/m/Y') . " " . $proposal->getCriteria()->getMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getMaxTime()->format('H:i') ."</li>";
@@ -97,18 +104,24 @@ class TestController extends AbstractController
             // echo "Done.<br />";
 
             if ($proposals = $proposalMatcher->findMatchingProposals($proposal)) {
-                echo "<ul>";
                 foreach ($proposals as $proposal) {
+                    echo "<hr /><ul>";
                     echo "<li>role : " . $proposal["role"]  . "</li>";
-                    echo "<li>geomatch : <pre>" . print_r($proposal['match'], true) . "</pre></li>";
                     echo "<li>Proposal #" . $proposal['proposal']->getId() . "<ul>";
                     echo "<li>" . $proposal['proposal']->getUser()->getEmail() . "</li>";
+                    echo "<li>";
+                    foreach ($proposal['proposal']->getWaypoints() as $waypoint) {
+                        echo $waypoint->getAddress()->getAddressLocality() . " " . $waypoint->getAddress()->getLatitude() . " " . $waypoint->getAddress()->getLongitude() . " ";
+                    }
+                    echo "</li>";
+                    echo "<li>";
                     if ($proposal['proposal']->getCriteria()->isDriver()) {
-                        echo "<li>Conducteur</li>";
+                        echo "Conducteur ";
                     }
                     if ($proposal['proposal']->getCriteria()->isPassenger()) {
-                        echo "<li>Passager</li>";
+                        echo "Passager";
                     }
+                    echo "</li>";
                     if ($proposal['proposal']->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                         echo "<li>Punctual</li>";
                         echo "<li>" . $proposal['proposal']->getCriteria()->getFromDate()->format('D d/m/Y') . " " . $proposal['proposal']->getCriteria()->getMinTime()->format('H:i') . " - " . $proposal['proposal']->getCriteria()->getMaxTime()->format('H:i') ."</li>";
@@ -138,16 +151,10 @@ class TestController extends AbstractController
                         echo "</ul></li>";
                         echo "<li>" . $proposal['proposal']->getCriteria()->getFromDate()->format('D d/m/Y') . " - " . $proposal['proposal']->getCriteria()->getToDate()->format('D d/m/Y') . "</li>";
                     }
-                    echo "</ul>";
+                    echo "<li>geomatch : <pre>" . print_r($proposal['match'], true) . "</pre></li>";
                     echo "</ul></li>";
+                    echo "</ul>";
                 }
-                echo "</ul>";
-
-                // echo "<ul>";
-                // foreach ($proposals['proposal'] as $proposalFound) {
-                //
-                // }
-                // echo "</ul>";
             }
         } else {
             echo "No proposal found with id #$id";

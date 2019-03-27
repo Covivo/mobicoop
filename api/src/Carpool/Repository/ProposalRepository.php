@@ -25,7 +25,6 @@ namespace App\Carpool\Repository;
 
 use App\Carpool\Entity\Proposal;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use App\Carpool\Entity\Criteria;
 use App\Geography\Service\ZoneManager;
 use App\Carpool\Service\ProposalManager;
@@ -525,10 +524,10 @@ class ProposalRepository
                 // (5)  |--C--|                                NOT OK
                 // (6)                              |---C---|  NOT OK
                 
-                $regularAndWhere .= '(c.fromDate <= :fromDate and c.fromDate <= :toDate and c.toDate >= :toDate and c.toDate >= :toDate) OR ';  // (1)
-                $regularAndWhere .= '(c.fromDate >= :fromDate and c.fromDate <= :toDate and c.toDate <= :toDate and c.toDate >= :toDate) OR ';  // (2)
-                $regularAndWhere .= '(c.fromDate <= :fromDate and c.fromDate <= :toDate and c.toDate <= :toDate and c.toDate >= :toDate) OR ';  // (3)
-                $regularAndWhere .= '(c.fromDate >= :fromDate and c.fromDate <= :toDate and c.toDate >= :toDate and c.toDate >= :toDate)';      // (4)
+                $regularAndWhere .= '(c.fromDate <= :fromDate and c.fromDate <= :toDate and c.toDate >= :toDate and c.toDate >= :fromDate) OR ';  // (1)
+                $regularAndWhere .= '(c.fromDate >= :fromDate and c.fromDate <= :toDate and c.toDate <= :toDate and c.toDate >= :fromDate) OR ';  // (2)
+                $regularAndWhere .= '(c.fromDate <= :fromDate and c.fromDate <= :toDate and c.toDate <= :toDate and c.toDate >= :fromDate) OR ';  // (3)
+                $regularAndWhere .= '(c.fromDate >= :fromDate and c.fromDate <= :toDate and c.toDate >= :toDate and c.toDate >= :fromDate)';      // (4)
                 $regularAndWhere .= ") and (" .
                 (($regularSunDay<>"") ? '(' . $regularSunDay . ') OR ' : '') .
                 (($regularMonDay<>"") ? '(' . $regularMonDay . ') OR ' : '') .
@@ -593,8 +592,6 @@ class ProposalRepository
         if ($setToDate) {
             $query->setParameter('toDate', $proposal->getCriteria()->getToDate()->format('Y-m-d'));
         }
-
-        //echo "<pre>" . print_r($query->getQuery()->getSql(),true) . "</pre>";
         
         // we launch the request and return the result
         return $query->getQuery()->getResult();
