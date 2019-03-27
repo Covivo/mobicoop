@@ -57,7 +57,7 @@ class GeoRouter
      */
     public function getRoutes(array $addresses, bool $detailDuration=false): ?array
     {
-        $georouter = new GeoRouterProvider($this->uri,$detailDuration);
+        $georouter = new GeoRouterProvider($this->uri, $detailDuration);
         $params = [];
         $params['points'] = $addresses;
         $routes = $georouter->getCollection(Direction::class, '', $params);

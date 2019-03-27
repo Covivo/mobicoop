@@ -150,7 +150,7 @@ class Direction
      * @var Address[]|null The decoded snapped waypoints of the direction.
      * The snapped waypoints are the mandatory waypoints of the direction.
      * These points can slightly differ from the original waypoints as they are given by the router.
-     * /!\ different than Waypoint entity /!\ 
+     * /!\ different than Waypoint entity /!\
      */
     private $snappedWaypoints;
 

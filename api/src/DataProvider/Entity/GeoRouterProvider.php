@@ -164,16 +164,20 @@ class GeoRouterProvider implements ProviderInterface
 
         if ($this->detailDuration && isset($data["details"]["time"])) {
             // if we get the detail of duration between points, we can get the duration between the waypoints
-            // first we search the snapped waypoints in the points 
+            // first we search the snapped waypoints in the points
             $waypoints = [];
             $numpoint = 0;
             foreach ($direction->getPoints() as $point) {
                 foreach ($direction->getSnappedWaypoints() as $key=>$waypoint) {
-                    if (in_array($waypoint,$waypoints,true)) continue;
+                    if (in_array($waypoint, $waypoints, true)) {
+                        continue;
+                    }
                     if ($point->getLongitude() == $waypoint->getLongitude() && $point->getLatitude() == $waypoint->getLatitude()) {
                         // we have found a waypoint in the points
                         $waypoints[$key] = $numpoint;
-                        if (count($waypoints) == count($direction->getSnappedWaypoints())) break(2);
+                        if (count($waypoints) == count($direction->getSnappedWaypoints())) {
+                            break(2);
+                        }
                         break;
                     }
                 }
@@ -184,11 +188,11 @@ class GeoRouterProvider implements ProviderInterface
             $durations = [];
             $duration = 0;
             foreach ($data["details"]["time"] as $time) {
-                list($fromRef,$toRef,$value) = $time;
+                list($fromRef, $toRef, $value) = $time;
                 $set = false;
                 // if fromRef refers to a waypoint, we set it to the current duration
-                if (in_array($fromRef,$waypoints)) {
-                    $durations[array_search($fromRef,$waypoints)] = [
+                if (in_array($fromRef, $waypoints)) {
+                    $durations[array_search($fromRef, $waypoints)] = [
                         // time is in milliseconds, we transform in seconds
                         "duration" => $duration/1000,
                         "approx" => false
@@ -196,14 +200,14 @@ class GeoRouterProvider implements ProviderInterface
                     $set = true;
                 }
                 // if toRef refers to a waypoint, we set it to the current duration
-                if (in_array($toRef,$waypoints)) {
-                    $durations[array_search($toRef,$waypoints)] = [
+                if (in_array($toRef, $waypoints)) {
+                    $durations[array_search($toRef, $waypoints)] = [
                         // time is in milliseconds, we transform in seconds
                         "duration" => ($duration+$value)/1000,
                         "approx" => false
                     ];
                     $set = true;
-                }               
+                }
                 if (!$set) {
                     // no waypoint found as a fromRef or toRef, we search if it's in between
                     foreach ($waypoints as $key=>$waypoint) {
@@ -217,7 +221,7 @@ class GeoRouterProvider implements ProviderInterface
                         }
                     }
                 }
-                $duration += $value; 
+                $duration += $value;
             }
             
             $direction->setDurations($durations);

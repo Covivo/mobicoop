@@ -150,7 +150,7 @@ class GeoMatcher
         }
 
         foreach ($addresses as $points) {
-            if ($routes = $this->geoRouter->getRoutes(array_values($points),true)) {
+            if ($routes = $this->geoRouter->getRoutes(array_values($points), true)) {
                 $detourDistance = false;
                 $detourDuration = false;
     
