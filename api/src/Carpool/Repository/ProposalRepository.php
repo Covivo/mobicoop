@@ -494,8 +494,6 @@ class ProposalRepository
                 $maxTime = substr($maxTime, 0, -4) . ')';
 
                 // 'where' part of punctual candidates
-
-                // ICIIIIII
                 $punctualAndWhere = '(';
                 $punctualAndWhere .= 'c.frequency=' . Criteria::FREQUENCY_PUNCTUAL . ' and c.fromDate >= :fromDate and c.fromDate <= :toDate and DAYOFWEEK(c.fromDate) IN (' . $days . ')';
                 if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
@@ -515,7 +513,23 @@ class ProposalRepository
                 $punctualAndWhere .= ')';
 
                 // 'where' part of regular candidates
-                $regularAndWhere = '(c.frequency=' . Criteria::FREQUENCY_REGULAR . ' and c.fromDate <= :fromDate and c.toDate >= :fromDate and (' .
+                $regularAndWhere = '(c.frequency=' . Criteria::FREQUENCY_REGULAR . ' and (';
+
+                // we have to check that date ranges match (P = proposal; C = candidate)
+                //              min             max
+                //               |-------P-------|
+                // (1)        |----------C----------|          OK
+                // (2)               |---C---|                 OK
+                // (3)      |-----C-----|                      OK
+                // (4)                       |-----C-----|     OK
+                // (5)  |--C--|                                NOT OK
+                // (6)                              |---C---|  NOT OK
+                
+                $regularAndWhere .= '(c.fromDate <= :fromDate and c.fromDate <= :toDate and c.toDate >= :toDate and c.toDate >= :toDate) OR ';  // (1)
+                $regularAndWhere .= '(c.fromDate >= :fromDate and c.fromDate <= :toDate and c.toDate <= :toDate and c.toDate >= :toDate) OR ';  // (2)
+                $regularAndWhere .= '(c.fromDate <= :fromDate and c.fromDate <= :toDate and c.toDate <= :toDate and c.toDate >= :toDate) OR ';  // (3)
+                $regularAndWhere .= '(c.fromDate >= :fromDate and c.fromDate <= :toDate and c.toDate >= :toDate and c.toDate >= :toDate)';      // (4)
+                $regularAndWhere .= ") and (" .
                 (($regularSunDay<>"") ? '(' . $regularSunDay . ') OR ' : '') .
                 (($regularMonDay<>"") ? '(' . $regularMonDay . ') OR ' : '') .
                 (($regularTueDay<>"") ? '(' . $regularTueDay . ') OR ' : '') .
@@ -579,6 +593,8 @@ class ProposalRepository
         if ($setToDate) {
             $query->setParameter('toDate', $proposal->getCriteria()->getToDate()->format('Y-m-d'));
         }
+
+        //echo "<pre>" . print_r($query->getQuery()->getSql(),true) . "</pre>";
         
         // we launch the request and return the result
         return $query->getQuery()->getResult();
