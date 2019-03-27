@@ -17,16 +17,26 @@
             <tab-content title="Vous êtes" icon="fa fa-user-friends" class="tabContent">
               <h3>Je suis:</h3>
               <b-field class="fieldsContainer">
-                <b-radio-button v-model="role" name="role" :native-value="1" type="is-mobicoopblue">
+                <b-radio-button
+                  v-model="form.role"
+                  name="role"
+                  :native-value="1"
+                  type="is-mobicoopblue"
+                >
                   <b-icon icon="close"></b-icon>
                   <span>🚙 Conducteur</span>
                 </b-radio-button>
-                <b-radio-button v-model="role" name="role" :native-value="2" type="is-mobicooppink">
+                <b-radio-button
+                  v-model="form.role"
+                  name="role"
+                  :native-value="2"
+                  type="is-mobicooppink"
+                >
                   <b-icon icon="check"></b-icon>
                   <span>👨‍⚖️ Passager</span>
                 </b-radio-button>
                 <b-radio-button
-                  v-model="role"
+                  v-model="form.role"
                   name="role"
                   :native-value="3"
                   type="is-mobicoopgreen"
@@ -37,30 +47,50 @@
             <tab-content title="Trajet" icon="fa fa-route" class="tabContent">
               <h3>Détails de votre trajet</h3>
               <b-field class="fieldsContainer">
-                <b-radio-button v-model="type" name="type" :native-value="1" type="is-mobicoopblue">
+                <b-radio-button
+                  v-model="form.type"
+                  name="type"
+                  :native-value="1"
+                  type="is-mobicoopblue"
+                >
                   <b-icon pack="fas" icon="long-arrow-alt-right"></b-icon>
                   <span>Allez</span>
                 </b-radio-button>
-                <b-radio-button v-model="type" name="type" :native-value="2" type="is-mobicoopblue">
+                <b-radio-button
+                  v-model="form.type"
+                  name="type"
+                  :native-value="2"
+                  type="is-mobicoopblue"
+                >
                   <b-icon pack="fas" icon="exchange-alt"></b-icon>
                   <span>Allez/Retour</span>
                 </b-radio-button>
               </b-field>
-              <geocomplete v-model="origin" placeholder="Depuis" :url="geoSearchUrl" @geoSelected="selectedGeo('test',val)"></geocomplete>
+              <geocomplete
+                name="origin"
+                placeholder="Depuis"
+                :url="geoSearchUrl"
+                @geoSelected="selectedGeo"
+              ></geocomplete>
               <b-icon
                 pack="fas"
                 type="is-mobicoopblue"
-                :icon="type === 2 ? 'arrows-alt-v' : 'long-arrow-alt-down'"
+                :icon="form.type === 2 ? 'arrows-alt-v' : 'long-arrow-alt-down'"
                 size="is-large"
               ></b-icon>
-              <geocomplete placeholder="Vers" :url="geoSearchUrl"></geocomplete>
+              <geocomplete
+                placeholder="Vers"
+                :url="geoSearchUrl"
+                name="destination"
+                @geoSelected="selectedGeo"
+              ></geocomplete>
             </tab-content>
             <!-- FREQUENCY & Submit -->
             <tab-content title="Fréquence" icon="fa fa-calendar-check" class="tabContent">
               <h3>Fréquence du trajet:</h3>
               <b-field class="fieldsContainer">
                 <b-radio-button
-                  v-model="frequency"
+                  v-model="form.frequency"
                   name="frequency"
                   :native-value="1"
                   type="is-mobicoopblue"
@@ -69,7 +99,7 @@
                   <span>Ponctuel</span>
                 </b-radio-button>
                 <b-radio-button
-                  v-model="frequency"
+                  v-model="form.frequency"
                   name="frequency"
                   :native-value="2"
                   type="is-mobicoopblue"
@@ -78,7 +108,8 @@
                   <span>Regulier</span>
                 </b-radio-button>
               </b-field>
-              <div v-if="frequency === 2">
+              <!-- DATE, TIME , MARGIN -->
+              <div v-if="form.frequency === 2">
                 <div class="columns" v-for="(day,index) in days" :key="index">
                   <div class="column">
                     <h5 class="title">Aller ({{day}})</h5>
@@ -111,21 +142,41 @@
                 </div>
               </div>
               <div class="columns" v-else>
-                <div class="column">
-                  <h5 class="title">Aller</h5>
-                  <b-datepicker placeholder="Date de départ..." icon="calendar-today"></b-datepicker>
-                  <b-timepicker v-model="timeStart" placeholder="Heure de départ...">
-                    <button class="button is-primary" @click="time = new Date()">
-                      <b-icon icon="clock"></b-icon>
-                      <span>Maintenant</span>
-                    </button>
-                    <button class="button is-danger" @click="time = null">
-                      <b-icon icon="close"></b-icon>
-                      <span>Effacer</span>
-                    </button>
-                  </b-timepicker>
+                <div class="column tile is-ancestor">
+                  <h5>Aller</h5>
+                  <b-datepicker
+                    placeholder="Date de départ..."
+                    v-model="form.outwardDate"
+                    :day-names="daysShort"
+                    :month-names="months"
+                    :first-day-of-week="1"
+                    class="tile is-parent is-12"
+                  ></b-datepicker>
+                  <div class="tile is-parent is-12">
+                    <b-timepicker
+                      v-model="form.outwardTime"
+                      placeholder="Heure de départ..."
+                      class="tile is-8"
+                    >
+                      <button class="button is-primary" @click="form.outwardTime = new Date()">
+                        <b-icon icon="clock"></b-icon>
+                        <span>Maintenant</span>
+                      </button>
+                      <button class="button is-danger" @click="form.outwardTime = null">
+                        <b-icon icon="close"></b-icon>
+                        <span>Effacer</span>
+                      </button>
+                    </b-timepicker>
+                    <b-select placeholder="Marge" class="tile is-4">
+                      <option
+                        v-for="(margin,key) in marginsMn"
+                        :value="margin"
+                        :key="key"
+                      >{{ (1 > margin/60 > 0) ? margin : `${Math.trunc(margin/60)}H${margin%60}` }}</option>
+                    </b-select>
+                  </div>
                 </div>
-                <div class="column" v-if="type === 2">
+                <div class="column" v-if="form.type === 2">
                   <h2 class="title">Retour</h2>
                   <b-datepicker placeholder="Date de retour..." icon="calendar-today"></b-datepicker>
                   <b-timepicker v-model="timeReturn" placeholder="heure de retour...">
@@ -180,21 +231,34 @@ export default {
   data() {
     return {
       origin: null,
-      frequency: this.sentFrequency,
-      role: this.sentRole,
-      type: this.sentType,
       outward: this.sentOutward,
       timeStart: new Date(),
       timeReturn: new Date(),
       days: [
+        "dimanche",
         "lundi",
         "mardi",
         "mercredi",
         "jeudi",
         "vendredi",
-        "samedi",
-        "dimanche"
+        "samedi"
       ],
+      months: [
+        "Janvier",
+        "Fevrier",
+        "Mars",
+        "Avril",
+        "Mai",
+        "Juin",
+        "Juillet",
+        "Aout",
+        "Septembre",
+        "Octobre",
+        "Novembre",
+        "Décembre"
+      ],
+      // margins in minutes
+      marginsMn: [5, 10, 15, 20, 25, 30, 45, 60, 90, 120, 150],
       form: {
         origin: "",
         originLatitude: null,
@@ -202,20 +266,32 @@ export default {
         destinationLatitude: null,
         destinationLongitude: null,
         destination: "",
-        role: "",
-        type: null,
-        frequency: null,
-        fromDate: "",
-        toDate: ""
+        role: this.sentRole,
+        type: this.sentType,
+        frequency: this.sentFrequency,
+        outwardDate: null,
+        outwardMargin: null,
+        outwardTime: null
       }
     };
   },
-  mounted() {
-    console.log("sentRole", this.sentRole);
+  computed: {
+    daysShort() {
+      return this.days.map(day => day.substring(0, 2));
+    }
   },
   methods: {
-    selectedGeo(name,val){
-      console.log('received ', name, val);
+    selectedGeo(val) {
+      let name = val.name;
+      this.form[name] = `${val.streetAddress ? val.streetAddress + " " : ""}${
+        val.addressLocality
+      } ${val.addressCountry}`;
+      this.form[name + "Latitude"] = val.latitude;
+      this.form[name + "Longitude"] = val.longitude;
+
+      // this.form.destination = `${val.streetAddress ? streetAddress+' ': ''}${val.addressLocality} ${val.addressCountry}`;
+      // this.form.destinationLongitude = val.longitude;
+      // this.form.destinationLatitude = val.latitude;
     },
     sendForm() {
       console.log("Will send form");

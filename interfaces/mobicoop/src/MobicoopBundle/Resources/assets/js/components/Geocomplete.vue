@@ -1,12 +1,11 @@
 <template>
   <section>
     <b-field>
-  
       <b-autocomplete
         :data="data"
         :placeholder="placeholder"
         field="addressLocality"
-        :open-on-focus=true
+        :open-on-focus="true"
         icon="search-location"
         icon-pack="fa"
         :loading="isFetching"
@@ -99,7 +98,7 @@ export default {
     },
     onSelected(value) {
       this.selected = value;
-      this.$emit('geoSelected', value);
+      this.$emit("geoSelected", { ...value, name: this.name });
     }
   }
 };
@@ -112,7 +111,7 @@ export default {
   text-decoration: none !important;
 }
 
-.dropdown-item{
-  text-decoration:  none !important;
+.dropdown-item {
+  text-decoration: none !important;
 }
 </style>
