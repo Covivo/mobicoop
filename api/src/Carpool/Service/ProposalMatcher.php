@@ -95,7 +95,9 @@ class ProposalMatcher
             $candidateProposal->setDirection($proposal->getCriteria()->getDirectionDriver());
             foreach ($proposalsFound as $proposalToMatch) {
                 // if the candidate is not passenger we skip (the 2 candidates could be driver AND passenger, and the second one match only as a driver)
-                if (!$proposalToMatch->getCriteria()->isPassenger()) continue;
+                if (!$proposalToMatch->getCriteria()->isPassenger()) {
+                    continue;
+                }
                 $candidate = new Candidate();
                 $addressesCandidate = [];
                 foreach ($proposalToMatch->getWaypoints() as $waypoint) {
@@ -125,7 +127,9 @@ class ProposalMatcher
             $candidateProposal->setMaxDetourDuration($proposal->getCriteria()->getMaxDetourDuration() ? $proposal->getCriteria()->getMaxDetourDuration() : ($proposal->getCriteria()->getDirectionPassenger()->getDuration()*self::MAX_DETOUR_DURATION_PERCENT/100));
             foreach ($proposalsFound as $proposalToMatch) {
                 // if the candidate is not driver we skip (the 2 candidates could be driver AND passenger, and the second one match only as a passenger)
-                if (!$proposalToMatch->getCriteria()->isDriver()) continue;
+                if (!$proposalToMatch->getCriteria()->isDriver()) {
+                    continue;
+                }
                 $candidate = new Candidate();
                 $addressesCandidate = [];
                 foreach ($proposalToMatch->getWaypoints() as $waypoint) {
