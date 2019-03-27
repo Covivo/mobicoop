@@ -96,7 +96,7 @@ class ProposalRepository
             foreach ($zonesAsDriver as $zone) {
                 $zones[] = $zone->getZoneid();
             }
-            $zoneDriverWhere = 'zp.thinness = :thinnessPassenger and zp.zoneid IN(' . implode(',', $zones) . ')';
+            $zonePassengerWhere = 'zp.thinness = :thinnessPassenger and zp.zoneid IN(' . implode(',', $zones) . ')';
             $query->setParameter('thinnessPassenger', $this->getPrecision($proposal->getCriteria()->getDirectionDriver()));
         }
         if ($proposal->getCriteria()->isPassenger()) {
@@ -105,7 +105,7 @@ class ProposalRepository
             foreach ($zonesAsPassenger as $zone) {
                 $zones[] = $zone->getZoneid();
             }
-            $zonePassengerWhere = 'zd.thinness = :thinnessDriver and zd.zoneid IN(' . implode(',', $zones) . ')';
+            $zoneDriverWhere = 'zd.thinness = :thinnessDriver and zd.zoneid IN(' . implode(',', $zones) . ')';
             $query->setParameter('thinnessDriver', $this->getPrecision($proposal->getCriteria()->getDirectionPassenger()));
         }
 
@@ -113,9 +113,9 @@ class ProposalRepository
         if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
             $query->andWhere('((c.isDriver = 1 and ' . $zoneDriverWhere . ') OR (c.isPassenger = 1 and ' . $zonePassengerWhere . '))');
         } elseif ($proposal->getCriteria()->isDriver()) {
-            $query->andWhere('(c.isPassenger = 1 and ' . $zoneDriverWhere . ')');
+            $query->andWhere('(c.isPassenger = 1 and ' . $zonePassengerWhere . ')');
         } elseif ($proposal->getCriteria()->isPassenger()) {
-            $query->andWhere('(c.isDriver = 1 and ' . $zonePassengerWhere . ')');
+            $query->andWhere('(c.isDriver = 1 and ' . $zoneDriverWhere . ')');
         }
         
         switch ($proposal->getCriteria()->getFrequency()) {
