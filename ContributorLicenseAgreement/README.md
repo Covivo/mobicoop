@@ -1,6 +1,8 @@
 # Mobicoop Contributor License Agreement
 
-Mobicoop Contributor License Agreement v1.0*****************************************************************************************************************************
+Mobicoop Contributor License Agreement v1.0
+
+*****************************************************************************************************************************
 IMPORTANT - PLEASE READ CAREFULLY:
 
 This document ("Agreement") constitutes a legal agreement. By signing this Agreement below, You, either an individual or the organization indicated below ("You"), agree to be legally bound. You may want to consult an attorney before signing. You acknowledge that you are entering into this Agreement in consideration of the opportunity to contribute to and participate in Mobicoop's open source software projects, which opportunity is of value to You. By signing this agreement you represent and warrant that you are at least 18 years of age.
