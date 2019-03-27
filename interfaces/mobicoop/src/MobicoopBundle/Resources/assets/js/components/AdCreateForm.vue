@@ -11,7 +11,7 @@
             title="Déposer une annonce"
             subtitle="Suivez les étapes.."
             color="#023D7F"
-            class="tile is-vertical is-6"
+            class="tile is-vertical is-8"
           >
             <!-- ROLE -->
             <tab-content title="Vous êtes" icon="fa fa-user-friends" class="tabContent">
@@ -43,7 +43,7 @@
                 >Passager ou Conducteur</b-radio-button>
               </b-field>
             </tab-content>
-            <!-- Trajet -->
+            <!-- TYPE TRAJET -->
             <tab-content title="Trajet" icon="fa fa-route" class="tabContent">
               <h3>Détails de votre trajet</h3>
               <b-field class="fieldsContainer">
@@ -109,6 +109,7 @@
                 </b-radio-button>
               </b-field>
               <!-- DATE, TIME , MARGIN -->
+              <!-- REGULAR -->
               <div v-if="form.frequency === 2">
                 <div class="columns" v-for="(day,index) in days" :key="index">
                   <div class="column">
@@ -141,50 +142,71 @@
                   </div>
                 </div>
               </div>
+              <!-- PONCTUAL -->
               <div class="columns" v-else>
-                <div class="column tile is-ancestor">
-                  <h5>Aller</h5>
+                <div class="column">
+                  <h5 class="title column is-full">Aller</h5>
                   <b-datepicker
                     placeholder="Date de départ..."
                     v-model="form.outwardDate"
                     :day-names="daysShort"
                     :month-names="months"
                     :first-day-of-week="1"
-                    class="tile is-parent is-12"
+                    class="column is-full"
+                    position="is-top-right"
+                    icon-pack="fas"
                   ></b-datepicker>
-                  <div class="tile is-parent is-12">
-                    <b-timepicker
-                      v-model="form.outwardTime"
-                      placeholder="Heure de départ..."
-                      class="tile is-8"
-                    >
-                      <button class="button is-primary" @click="form.outwardTime = new Date()">
-                        <b-icon icon="clock"></b-icon>
-                        <span>Maintenant</span>
-                      </button>
-                      <button class="button is-danger" @click="form.outwardTime = null">
-                        <b-icon icon="close"></b-icon>
-                        <span>Effacer</span>
-                      </button>
-                    </b-timepicker>
-                    <b-select placeholder="Marge" class="tile is-4">
-                      <option
-                        v-for="(margin,key) in marginsMn"
-                        :value="margin"
-                        :key="key"
-                      >{{ (1 > margin/60 > 0) ? margin : `${Math.trunc(margin/60)}H${margin%60}` }}</option>
-                    </b-select>
+                  <div class="column is-full">
+                    <div class="columns">
+                      <b-timepicker
+                        class="column is-8"
+                        v-model="form.outwardTime"
+                        placeholder="Heure de départ..."
+                      >
+                        <button
+                          class="button is-mobicoopgreen"
+                          @click="form.outwardTime = new Date()"
+                        >
+                          <b-icon icon="clock"></b-icon>
+                          <span>Maintenant</span>
+                        </button>
+                        <button class="button is-mobicooppink" @click="form.outwardTime = null">
+                          <b-icon icon="close"></b-icon>
+                          <span>Effacer</span>
+                        </button>
+                      </b-timepicker>
+                      <b-select
+                        class="column is-4"
+                        placeholder="Marge"
+                        v-model="form.outwardMargin"
+                      >
+                        <option
+                          v-for="(margin,key) in marginsMn"
+                          :value="margin"
+                          :key="key"
+                        >{{ (1 > margin/60 > 0) ? margin : `${Math.trunc(margin/60)}H${margin%60}` }}</option>
+                      </b-select>
+                    </div>
                   </div>
                 </div>
+                <!-- RETURN -->
                 <div class="column" v-if="form.type === 2">
-                  <h2 class="title">Retour</h2>
-                  <b-datepicker placeholder="Date de retour..." icon="calendar-today"></b-datepicker>
-                  <b-timepicker v-model="timeReturn" placeholder="heure de retour...">
-                    <button class="button is-primary" @click="time = new Date()">
+                  <h2 class="title column is-full">Retour</h2>
+                  <b-datepicker
+                    placeholder="Date de retour..."
+                    icon="calendar-today"
+                    class="column is-full"
+                  ></b-datepicker>
+                  <b-timepicker
+                    v-model="timeReturn"
+                    placeholder="heure de retour..."
+                    class="column is-full"
+                  >
+                    <button class="button is-mobicoopgreen" @click="time = new Date()">
                       <b-icon icon="clock"></b-icon>
                       <span>Maintenant</span>
                     </button>
-                    <button class="button is-danger" @click="time = null">
+                    <button class="button is-mobicooppink" @click="time = null">
                       <b-icon icon="close"></b-icon>
                       <span>Effacer</span>
                     </button>

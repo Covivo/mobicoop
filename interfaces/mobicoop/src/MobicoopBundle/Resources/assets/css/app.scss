@@ -20,6 +20,10 @@ $colors: (
   'mobicoopgreen': ($mb-green, $mb-green-invert)
 );
 
+$link: $mb-green;
+$link-invert: $mb-green-invert;
+$link-focus-border: $mb-green;
+
 @import '~bulma';
 @import '~buefy/src/scss/buefy';
 @import '_header';
