@@ -150,15 +150,7 @@ class GeoMatcher
         }
 
         foreach ($addresses as $points) {
-            if ($routes = $this->geoRouter->getRoutes(array_values($points))) {
-                // echo "distance without detour : " . $candidate1->getDirection()->getDistance()/1000 . " km<br />";
-                // echo "max detour distance : " . $candidate1->getMaxDetourDistance()/1000 . " km<br />";
-                // echo "max total distance : " . (($candidate1->getDirection()->getDistance()/1000) + ($candidate1->getMaxDetourDistance()/1000)) . " km<br />";
-                // echo "distance with detour : " . $routes[0]->getDistance()/1000 . " km<br />";
-                // echo "duration without detour : " . $candidate1->getDirection()->getDuration()/60000 . " min<br />";
-                // echo "max duration detour : " . $candidate1->getMaxDetourDuration()/60000 . "<br />";
-                // echo "max total duration : " . (($candidate1->getDirection()->getDuration()/60000) + ($candidate1->getMaxDetourDuration()/60000)) . " min<br />";
-                // echo "duration with detour : " . $routes[0]->getDuration()/60000 . " min<br />";
+            if ($routes = $this->geoRouter->getRoutes(array_values($points),true)) {
                 $detourDistance = false;
                 $detourDuration = false;
     
@@ -184,6 +176,7 @@ class GeoMatcher
                 if ($detourDistance && $detourDuration) {
                     $result[] = [
                         'order' => array_keys($points),
+                        'durations' => $routes[0]->getDurations(),
                         'originalDistance' => $candidate1->getDirection()->getDistance()/1000,
                         'acceptedDetourDistance' => $candidate1->getMaxDetourDistance()/1000,
                         'newDistance' => $routes[0]->getDistance()/1000,
