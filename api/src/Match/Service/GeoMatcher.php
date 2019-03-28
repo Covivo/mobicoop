@@ -98,7 +98,7 @@ class GeoMatcher
         //   - the start and end point of the second candidate
         //   - note : we keep only the combinations that respect the order of the points for the 2 candidates (B0 will always be before B1, A1 will always be before A2 etc...)
         //   - TODO : maybe we should also try to remove one or more inner points of the first candidate and see if the whole route is faster
-        //     (it could be the case for example if an inner point and a B0/B1 point are close)
+        //     (it could be the case for example if an AXX inner point and a B0/B1 point are close)
 
         // TODO : solve the TSP using the optimization engine
 
@@ -149,41 +149,42 @@ class GeoMatcher
             }
         }
 
+        // for each possible route, we check if it's acceptable
         foreach ($addresses as $points) {
-            if ($routes = $this->geoRouter->getRoutes(array_values($points))) {
-                // echo "distance without detour : " . $candidate1->getDirection()->getDistance()/1000 . " km<br />";
-                // echo "max detour distance : " . $candidate1->getMaxDetourDistance()/1000 . " km<br />";
-                // echo "max total distance : " . (($candidate1->getDirection()->getDistance()/1000) + ($candidate1->getMaxDetourDistance()/1000)) . " km<br />";
-                // echo "distance with detour : " . $routes[0]->getDistance()/1000 . " km<br />";
-                // echo "duration without detour : " . $candidate1->getDirection()->getDuration()/60000 . " min<br />";
-                // echo "max duration detour : " . $candidate1->getMaxDetourDuration()/60000 . "<br />";
-                // echo "max total duration : " . (($candidate1->getDirection()->getDuration()/60000) + ($candidate1->getMaxDetourDuration()/60000)) . " min<br />";
-                // echo "duration with detour : " . $routes[0]->getDuration()/60000 . " min<br />";
+            if ($routes = $this->geoRouter->getRoutes(array_values($points), true)) {
                 $detourDistance = false;
                 $detourDuration = false;
     
+                // we check the detour distance
                 if ($candidate1->getMaxDetourDistance()) {
+                    // in meters
                     if ($routes[0]->getDistance()<=($candidate1->getDirection()->getDistance()+$candidate1->getMaxDetourDistance())) {
                         $detourDistance = true;
                     }
                 } elseif ($candidate1->getMaxDetourDistancePercent()) {
+                    // in percentage
                     if ($routes[0]->getDistance()<=($candidate1->getDirection()->getDistance()*$candidate1->getMaxDetourDistancePercent()+$candidate1->getDirection()->getDistance())) {
                         $detourDistance = true;
                     }
                 }
+                // we check the detour duration
                 if ($candidate1->getMaxDetourDuration()) {
+                    // in seconds
                     if ($routes[0]->getDuration()<=($candidate1->getDirection()->getDuration()+$candidate1->getMaxDetourDuration())) {
                         $detourDuration = true;
                     }
                 } elseif ($candidate1->getMaxDetourDurationPercent()) {
+                    // in percentage
                     if ($routes[0]->getDuration()<=($candidate1->getDirection()->getDuration()*$candidate1->getMaxDetourDurationPercent()+$candidate1->getDirection()->getDuration())) {
                         $detourDuration = true;
                     }
                 }
     
+                // if the detour is acceptable we keep the candidate
                 if ($detourDistance && $detourDuration) {
                     $result[] = [
                         'order' => array_keys($points),
+                        'durations' => $routes[0]->getDurations(),
                         'originalDistance' => $candidate1->getDirection()->getDistance()/1000,
                         'acceptedDetourDistance' => $candidate1->getMaxDetourDistance()/1000,
                         'newDistance' => $routes[0]->getDistance()/1000,

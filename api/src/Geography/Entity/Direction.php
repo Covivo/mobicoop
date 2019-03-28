@@ -118,6 +118,13 @@ class Direction
      * @Groups({"read","write"})
      */
     private $detail;
+
+    /**
+     * @var string The textual encoded snapped waypoints of the direction.
+     * @ORM\Column(type="text")
+     * @Groups({"read","write"})
+     */
+    private $snapped;
     
     /**
      * @var string The encoding format of the detail.
@@ -138,6 +145,19 @@ class Direction
      * Can be used to draw the path on a map.
      */
     private $points;
+
+    /**
+     * @var Address[]|null The decoded snapped waypoints of the direction.
+     * The snapped waypoints are the mandatory waypoints of the direction.
+     * These points can slightly differ from the original waypoints as they are given by the router.
+     * /!\ different than Waypoint entity /!\
+     */
+    private $snappedWaypoints;
+
+    /**
+     * @var int[]|null The duration from the start to the each snapped waypoint.
+     */
+    private $durations;
     
     public function __construct()
     {
@@ -256,6 +276,18 @@ class Direction
         
         return $this;
     }
+
+    public function getSnapped(): string
+    {
+        return $this->snapped;
+    }
+    
+    public function setSnapped(string $snapped): self
+    {
+        $this->snapped = $snapped;
+        
+        return $this;
+    }
     
     public function getFormat(): string
     {
@@ -308,6 +340,30 @@ class Direction
     public function setPoints(array $points): self
     {
         $this->points = $points;
+        
+        return $this;
+    }
+
+    public function getSnappedWaypoints(): ?array
+    {
+        return $this->snappedWaypoints;
+    }
+    
+    public function setSnappedWaypoints(array $snappedWaypoints): self
+    {
+        $this->snappedWaypoints = $snappedWaypoints;
+        
+        return $this;
+    }
+
+    public function getDurations(): ?array
+    {
+        return $this->durations;
+    }
+    
+    public function setDurations(array $durations): self
+    {
+        $this->durations = $durations;
         
         return $this;
     }

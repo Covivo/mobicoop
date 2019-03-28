@@ -50,10 +50,18 @@ class GeoRouterProvider implements ProviderInterface
     
     private $collection;
     private $uri;
+    private $detailDuration;
     
-    public function __construct($uri=null)
+    /**
+     * Constructor.
+     *
+     * @param string $uri               The uri of the provider
+     * @param boolean $detailDuration   Set to true to get the duration between 2 points
+     */
+    public function __construct(string $uri=null, bool $detailDuration=false)
     {
         $this->uri = $uri;
+        $this->detailDuration = $detailDuration;
         $this->collection = [];
     }
     
@@ -74,6 +82,7 @@ class GeoRouterProvider implements ProviderInterface
                     "&weighting=" . self::GR_WEIGHTING .
                     "&instructions=" . self::GR_INSTRUCTIONS .
                     "&points_encoded=".self::GR_POINTS_ENCODED .
+                    ($this->detailDuration?'&details=time':'').
                     "&elevation=" . self::GR_ELEVATION;
                 $response = $dataProvider->getCollection($getParams);
                 if ($response->getCode() == 200) {
@@ -146,7 +155,79 @@ class GeoRouterProvider implements ProviderInterface
             $direction->setDetail($data["points"]);
             $direction->setPoints($this->deserializePoints($data['points'], true, filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
         }
+        if (isset($data['snapped_waypoints'])) {
+            // we keep the encoded AND the decoded snapped waypoints
+            // the decoded snapped waypoints are not stored in the database
+            $direction->setSnapped($data["snapped_waypoints"]);
+            $direction->setSnappedWaypoints($this->deserializePoints($data['snapped_waypoints'], true, false));
+        }
         $direction->setFormat('graphhopper');
+
+        if ($this->detailDuration && isset($data["details"]["time"])) {
+            // if we get the detail of duration between points, we can get the duration between the waypoints
+            // first we search the snapped waypoints in the points
+            $waypoints = [];
+            $numpoint = 0;
+            foreach ($direction->getPoints() as $point) {
+                foreach ($direction->getSnappedWaypoints() as $key=>$waypoint) {
+                    if (in_array($waypoint, $waypoints, true)) {
+                        continue;
+                    }
+                    if ($point->getLongitude() == $waypoint->getLongitude() && $point->getLatitude() == $waypoint->getLatitude()) {
+                        // we have found a waypoint in the points
+                        $waypoints[$key] = $numpoint;
+                        if (count($waypoints) == count($direction->getSnappedWaypoints())) {
+                            break(2);
+                        }
+                        break;
+                    }
+                }
+                $numpoint++;
+            }
+
+            // then we search the duration between the waypoints
+            $durations = [];
+            $duration = 0;
+            foreach ($data["details"]["time"] as $time) {
+                list($fromRef, $toRef, $value) = $time;
+                $set = false;
+                // if fromRef refers to a waypoint, we set it to the current duration
+                if (in_array($fromRef, $waypoints)) {
+                    $durations[array_search($fromRef, $waypoints)] = [
+                        // time is in milliseconds, we transform in seconds
+                        "duration" => $duration/1000,
+                        "approx" => false
+                    ];
+                    $set = true;
+                }
+                // if toRef refers to a waypoint, we set it to the current duration
+                if (in_array($toRef, $waypoints)) {
+                    $durations[array_search($toRef, $waypoints)] = [
+                        // time is in milliseconds, we transform in seconds
+                        "duration" => ($duration+$value)/1000,
+                        "approx" => false
+                    ];
+                    $set = true;
+                }
+                if (!$set) {
+                    // no waypoint found as a fromRef or toRef, we search if it's in between
+                    // it's an approximative duration
+                    foreach ($waypoints as $key=>$waypoint) {
+                        if ($fromRef<$waypoint && $waypoint<$toRef) {
+                            $durations[$key] = [
+                                // time is in milliseconds, we transform in seconds
+                                "duration" => ($duration+($value/2))/1000,
+                                "approx" => true
+                            ];
+                            break;
+                        }
+                    }
+                }
+                $duration += $value;
+            }
+            
+            $direction->setDurations($durations);
+        }
 
         // use the following code if the points are not encoded
         /*if (isset($data['points'])) {
@@ -156,13 +237,11 @@ class GeoRouterProvider implements ProviderInterface
                 $direction->setPoints($this->deserializePoints($data['points'], true, filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
             }
         }
-
-        // use the following code to keep the snapped waypoints
         if (isset($data['snapped_waypoints'])) {
             if (isset($data['points_encoded']) && $data['points_encoded'] === false) {
-                $direction->setWaypoints($this->deserializePoints($data['snapped_waypoints'], false, false));
+                $direction->setSnappedWaypoints($this->deserializePoints($data['snapped_waypoints'], false, false));
             } else {
-                $direction->setWaypoints($this->deserializePoints($data['snapped_waypoints'], true, false));
+                $direction->setSnappedWaypoints($this->deserializePoints($data['snapped_waypoints'], true, false));
             }
         }*/
 

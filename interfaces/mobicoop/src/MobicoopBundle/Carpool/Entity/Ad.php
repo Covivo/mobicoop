@@ -522,7 +522,7 @@ class Ad
     
     public function setReturnMonMargin(?int $returnMonMargin): self
     {
-        $this->oreturnMonMargin = $returnMonMargin;
+        $this->returnMonMargin = $returnMonMargin;
         
         return $this;
     }
@@ -570,7 +570,7 @@ class Ad
     
     public function setReturnTueMargin(?int $returnTueMargin): self
     {
-        $this->oreturnTueMargin = $returnTueMargin;
+        $this->returnTueMargin = $returnTueMargin;
         
         return $this;
     }
@@ -618,7 +618,7 @@ class Ad
     
     public function setReturnWedMargin(?int $returnWedMargin): self
     {
-        $this->oreturnWedMargin = $returnWedMargin;
+        $this->returnWedMargin = $returnWedMargin;
         
         return $this;
     }
@@ -666,7 +666,7 @@ class Ad
     
     public function setReturnThuMargin(?int $returnThuMargin): self
     {
-        $this->oreturnThuMargin = $returnThuMargin;
+        $this->returnThuMargin = $returnThuMargin;
         
         return $this;
     }
@@ -714,7 +714,7 @@ class Ad
     
     public function setReturnFriMargin(?int $returnFriMargin): self
     {
-        $this->oreturnFriMargin = $returnFriMargin;
+        $this->returnFriMargin = $returnFriMargin;
         
         return $this;
     }
@@ -762,7 +762,7 @@ class Ad
     
     public function setReturnSatMargin(?int $returnSatMargin): self
     {
-        $this->oreturnSatMargin = $returnSatMargin;
+        $this->returnSatMargin = $returnSatMargin;
         
         return $this;
     }
@@ -810,7 +810,7 @@ class Ad
     
     public function setReturnSunMargin(?int $returnSunMargin): self
     {
-        $this->oreturnSunMargin = $returnSunMargin;
+        $this->returnSunMargin = $returnSunMargin;
         
         return $this;
     }
