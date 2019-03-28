@@ -158,6 +158,7 @@ class GeoRouterProvider implements ProviderInterface
         if (isset($data['snapped_waypoints'])) {
             // we keep the encoded AND the decoded snapped waypoints
             // the decoded snapped waypoints are not stored in the database
+            $direction->setSnapped($data["snapped_waypoints"]);
             $direction->setSnappedWaypoints($this->deserializePoints($data['snapped_waypoints'], true, false));
         }
         $direction->setFormat('graphhopper');
@@ -241,10 +242,7 @@ class GeoRouterProvider implements ProviderInterface
             } else {
                 $direction->setSnappedWaypoints($this->deserializePoints($data['snapped_waypoints'], true, false));
             }
-        }
-
-
-        */
+        }*/
 
         return $direction;
     }

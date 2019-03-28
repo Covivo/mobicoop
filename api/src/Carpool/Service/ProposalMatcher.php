@@ -74,7 +74,7 @@ class ProposalMatcher
     public function findMatchingProposals(Proposal $proposal)
     {
         // we search matching proposals in the database
-        // if not proposals are found we return an empty array
+        // if no proposals are found we return an empty array
         if (!$proposalsFound = $this->proposalRepository->findMatchingProposals($proposal)) {
             return [];
         }
@@ -150,6 +150,9 @@ class ProposalMatcher
                 }
             }
         }
+
+        // we filter again to check that times are still valid depending on the directions
+
 
         return $proposals;
     }
