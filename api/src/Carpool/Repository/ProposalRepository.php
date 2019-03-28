@@ -596,13 +596,16 @@ class ProposalRepository
         sort($thinnesses);
         $i = 0;
         $found = false;
-        while (!$found) {
+        while (!$found && $i < count($thinnesses)) {
             if (($direction->getDistance()/4)<($thinnesses[$i]*self::METERS_BY_DEGREE)) {
                 $found = true;
             } else {
                 $i++;
             }
         }
-        return $thinnesses[$i];
+        if ($found) {
+            return $thinnesses[$i];
+        }
+        return array_pop($thinnesses);
     }
 }
