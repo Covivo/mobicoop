@@ -45,6 +45,7 @@ class CarpoolController extends AbstractController
 {
     /**
      * Create a carpooling ad.
+     * @IsGranted("ROLE_USER")
      */
     public function ad(AdManager $adManager, UserManager $userManager, Request $request)
     {

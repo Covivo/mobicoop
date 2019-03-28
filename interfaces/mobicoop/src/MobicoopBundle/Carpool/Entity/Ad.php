@@ -108,7 +108,6 @@ class Ad
     
     /**
      * @var int Margin time of the outward travel if punctual.
-     * @Assert\NotBlank(groups={"punctual"})
      */
     private $outwardMargin;
 
@@ -126,7 +125,6 @@ class Ad
     
     /**
      * @var int Margin time of the return travel if punctual.
-     * @Assert\NotBlank(groups={"punctualReturnTrip"})
      */
     private $returnMargin;
     
