@@ -28,7 +28,13 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Carpool\Service\ProposalMatcher;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Proposal;
+use App\Carpool\Entity\Criteria;
 use Symfony\Component\HttpFoundation\Response;
+use App\Match\Service\GeoMatcher;
+use App\Match\Entity\Candidate;
+use App\Geography\Entity\Address;
+use App\Geography\Service\GeoRouter;
+use App\Carpool\Service\ProposalManager;
 
 /**
  * Controller class for API testing purpose.
@@ -41,54 +47,114 @@ class TestController extends AbstractController
     /**
      * Show matching proposals for a given proposal.
      *
-     * @Route("/matcher/{id}", name="matcher", requirements={"id"="\d+"})
+     * @Route("/rd/matcher/{id}", name="matcher", requirements={"id"="\d+"})
      *
      */
-    public function matcher($id, EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher)
+    public function matcher($id, EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalManager $proposalManager)
     {
         if ($proposal = $entityManager->getRepository(Proposal::class)->find($id)) {
-            // we search for the starting and ending point
-            $startLocality = null;
-            $endLocality = null;
-            foreach ($proposal->getPoints() as $point) {
-                if ($point->getPosition() == 0) {
-                    $startLocality = $point->getAddress()->getStreetAddress() . " " . $point->getAddress()->getAddressLocality();
-                }
-                if ($point->getLastPoint()) {
-                    $endLocality = $point->getAddress()->getStreetAddress() . " " . $point->getAddress()->getAddressLocality();
-                }
-                if (!is_null($startLocality) && !is_null($endLocality)) {
-                    break;
-                }
-            }
-            echo($proposal->getProposalType() == Proposal::PROPOSAL_TYPE_OFFER ? "Offer" : "Request") . " #$id : <ul>";
+            echo "#$id : <ul>";
             echo "<li>" . $proposal->getUser()->getEmail() . "</li>";
-            echo "<li>$startLocality => $endLocality</li>";
-            echo "<li>" . $proposal->getCriteria()->getFromDate()->format('d/m/Y') . "</li>";
-            echo "</ul>";
-            echo($proposal->getProposalType() == Proposal::PROPOSAL_TYPE_OFFER ? "Requests" : "Offers") . " found :";
-            if ($proposals = $proposalMatcher->findMatchingProposals($proposal)) {
-                echo "<ul>";
-                foreach ($proposals as $proposalFound) {
-                    $startLocalityFound = null;
-                    $endLocalityFound = null;
-                    foreach ($proposalFound->getPoints() as $point) {
-                        if ($point->getPosition() == 0) {
-                            $startLocalityFound = $point->getAddress()->getStreetAddress() . " " . $point->getAddress()->getAddressLocality();
-                        }
-                        if ($point->getLastPoint()) {
-                            $endLocalityFound = $point->getAddress()->getStreetAddress() . " " . $point->getAddress()->getAddressLocality();
-                        }
-                        if (!is_null($startLocalityFound) && !is_null($endLocalityFound)) {
-                            break;
-                        }
-                    }
-                    echo "<li>Proposal #" . $proposalFound->getId() . "<ul>";
-                    echo "<li>" . $proposalFound->getUser()->getEmail() . "</li>";
-                    echo "<li>$startLocalityFound => $endLocalityFound</li>";
-                    echo "<li>" . $proposalFound->getCriteria()->getFromDate()->format('d/m/Y') . "</li></ul>";
+            echo "<li>";
+            foreach ($proposal->getWaypoints() as $waypoint) {
+                echo $waypoint->getAddress()->getAddressLocality() . " " . $waypoint->getAddress()->getLatitude() . " " . $waypoint->getAddress()->getLongitude() . " ";
+            }
+            echo "</li>";
+            echo "<li>";
+            if ($proposal->getCriteria()->isDriver()) {
+                echo "Conducteur ";
+            }
+            if ($proposal->getCriteria()->isPassenger()) {
+                echo "Passager";
+            }
+            echo "</li>";
+            if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                echo "<li>Punctual</li>";
+                echo "<li>" . $proposal->getCriteria()->getFromDate()->format('D d/m/Y') . " " . $proposal->getCriteria()->getMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getMaxTime()->format('H:i') ."</li>";
+            } else {
+                echo "<li>Regular <ul>";
+                if ($proposal->getCriteria()->getMonCheck()) {
+                    echo "<li>L " . $proposal->getCriteria()->getMonMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getMonMaxTime()->format('H:i') . "</li>";
                 }
-                echo "</ul>";
+                if ($proposal->getCriteria()->getTueCheck()) {
+                    echo "<li>M " . $proposal->getCriteria()->getTueMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getTueMaxTime()->format('H:i') . "</li>";
+                }
+                if ($proposal->getCriteria()->getWedCheck()) {
+                    echo "<li>Me " . $proposal->getCriteria()->getWedMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getWedMaxTime()->format('H:i') . "</li>";
+                }
+                if ($proposal->getCriteria()->getThuCheck()) {
+                    echo "<li>J " . $proposal->getCriteria()->getThuMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getThuMaxTime()->format('H:i') . "</li>";
+                }
+                if ($proposal->getCriteria()->getFriCheck()) {
+                    echo "<li>V " . $proposal->getCriteria()->getFriMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getFriMaxTime()->format('H:i') . "</li>";
+                }
+                if ($proposal->getCriteria()->getSatCheck()) {
+                    echo "<li>S " . $proposal->getCriteria()->getSatMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getSatMaxTime()->format('H:i') . "</li>";
+                }
+                if ($proposal->getCriteria()->getSunCheck()) {
+                    echo "<li>D " . $proposal->getCriteria()->getSunMinTime()->format('H:i') . " - " . $proposal->getCriteria()->getSunMaxTime()->format('H:i') . "</li>";
+                }
+                echo "</ul></li>";
+                echo "<li>" . $proposal->getCriteria()->getFromDate()->format('D d/m/Y') . " - " . $proposal->getCriteria()->getToDate()->format('D d/m/Y') . "</li>";
+            }
+            echo "</ul>";
+
+            // echo "Updating zones...<br />";
+            // $proposalManager->updateZones();
+            // echo "Done.<br />";
+
+            if ($proposals = $proposalMatcher->findMatchingProposals($proposal)) {
+                foreach ($proposals as $proposal) {
+                    echo "<hr /><ul>";
+                    echo "<li>role : " . $proposal["role"]  . "</li>";
+                    echo "<li>Proposal #" . $proposal['proposal']->getId() . "<ul>";
+                    echo "<li>" . $proposal['proposal']->getUser()->getEmail() . "</li>";
+                    echo "<li>";
+                    foreach ($proposal['proposal']->getWaypoints() as $waypoint) {
+                        echo $waypoint->getAddress()->getAddressLocality() . " " . $waypoint->getAddress()->getLatitude() . " " . $waypoint->getAddress()->getLongitude() . " ";
+                    }
+                    echo "</li>";
+                    echo "<li>";
+                    if ($proposal['proposal']->getCriteria()->isDriver()) {
+                        echo "Conducteur ";
+                    }
+                    if ($proposal['proposal']->getCriteria()->isPassenger()) {
+                        echo "Passager";
+                    }
+                    echo "</li>";
+                    if ($proposal['proposal']->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                        echo "<li>Punctual</li>";
+                        echo "<li>" . $proposal['proposal']->getCriteria()->getFromDate()->format('D d/m/Y') . " " . $proposal['proposal']->getCriteria()->getMinTime()->format('H:i') . " - " . $proposal['proposal']->getCriteria()->getMaxTime()->format('H:i') ."</li>";
+                    } else {
+                        echo "<li>Regular <ul>";
+                        if ($proposal['proposal']->getCriteria()->getMonCheck()) {
+                            echo "<li>L " . $proposal['proposal']->getCriteria()->getMonMinTime()->format('H:i') . " - " . $proposal['proposal']->getCriteria()->getMonMaxTime()->format('H:i') . "</li>";
+                        }
+                        if ($proposal['proposal']->getCriteria()->getTueCheck()) {
+                            echo "<li>M " . $proposal['proposal']->getCriteria()->getTueMinTime()->format('H:i') . " - " . $proposal['proposal']->getCriteria()->getTueMaxTime()->format('H:i') . "</li>";
+                        }
+                        if ($proposal['proposal']->getCriteria()->getWedCheck()) {
+                            echo "<li>Me " . $proposal['proposal']->getCriteria()->getWedMinTime()->format('H:i') . " - " . $proposal['proposal']->getCriteria()->getWedMaxTime()->format('H:i') . "</li>";
+                        }
+                        if ($proposal['proposal']->getCriteria()->getThuCheck()) {
+                            echo "<li>J " . $proposal['proposal']->getCriteria()->getThuMinTime()->format('H:i') . " - " . $proposal['proposal']->getCriteria()->getThuMaxTime()->format('H:i') . "</li>";
+                        }
+                        if ($proposal['proposal']->getCriteria()->getFriCheck()) {
+                            echo "<li>V " . $proposal['proposal']->getCriteria()->getFriMinTime()->format('H:i') . " - " . $proposal['proposal']->getCriteria()->getFriMaxTime()->format('H:i') . "</li>";
+                        }
+                        if ($proposal['proposal']->getCriteria()->getSatCheck()) {
+                            echo "<li>S " . $proposal['proposal']->getCriteria()->getSatMinTime()->format('H:i') . " - " . $proposal['proposal']->getCriteria()->getSatMaxTime()->format('H:i') . "</li>";
+                        }
+                        if ($proposal['proposal']->getCriteria()->getSunCheck()) {
+                            echo "<li>D " . $proposal['proposal']->getCriteria()->getSunMinTime()->format('H:i') . " - " . $proposal['proposal']->getCriteria()->getSunMaxTime()->format('H:i') . "</li>";
+                        }
+                        echo "</ul></li>";
+                        echo "<li>" . $proposal['proposal']->getCriteria()->getFromDate()->format('D d/m/Y') . " - " . $proposal['proposal']->getCriteria()->getToDate()->format('D d/m/Y') . "</li>";
+                    }
+                    echo "<li>geomatch : <pre>" . print_r($proposal['match'], true) . "</pre></li>";
+                    echo "</ul></li>";
+                    echo "</ul>";
+                }
             }
         } else {
             echo "No proposal found with id #$id";
@@ -99,19 +165,66 @@ class TestController extends AbstractController
     /**
      * Create matching proposals for all proposals.
      *
-     * @Route("/matcher/all", name="matcher_all")
+     * @Route("/rd/matcher/all", name="matcher_all")
      *
      */
-    public function matcherAll(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher)
+    // public function matcherAll(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher)
+    // {
+    //     $proposals = $entityManager->getRepository(Proposal::class)->findAll();
+    //     echo "Finding matching for " . count($proposals) . " proposals.";
+    //     echo "<ul>";
+    //     foreach ($proposals as $proposal) {
+    //         echo "<li>Creating matchings for proposals #" . $proposal->getId() . "</li>";
+    //         $proposalMatcher->createMatchingsForProposal($proposal);
+    //     }
+    //     echo "</ul>";
+    //     return new Response();
+    // }
+
+    /**
+     * Test of the matcher.
+     *
+     * @Route("/rd/matcher/simple", name="matcher_simple")
+     *
+     */
+    public function matcherSimple(GeoMatcher $geoMatcher, GeoRouter $geoRouter)
     {
-        $proposals = $entityManager->getRepository(Proposal::class)->findAll();
-        echo "Finding matching for " . count($proposals) . " proposals.";
-        echo "<ul>";
-        foreach ($proposals as $proposal) {
-            echo "<li>Creating matchings for proposals #" . $proposal->getId() . "</li>";
-            $proposalMatcher->createMatchingsForProposal($proposal);
+        echo "simple matcher<br />";
+
+        $candidate1 = new Candidate();
+        $candidate2 = new Candidate();
+
+        $address1 = new Address();
+        $address1b = new Address();
+        $address1c = new Address();
+        $address2 = new Address();
+        $address3 = new Address();
+        $address4 = new Address();
+
+        $address1->setLatitude("48.682839");
+        $address1->setLongitude("6.175954");
+        $address1b->setLatitude("48.966277");
+        $address1b->setLongitude("6.105825");
+        $address1c->setLatitude("49.057861");
+        $address1c->setLongitude("6.122703");
+        $address2->setLatitude("49.599326");
+        $address2->setLongitude("6.132797");
+        $address3->setLatitude("49.125015");
+        $address3->setLongitude("6.164381");
+        $address4->setLatitude("49.261915");
+        $address4->setLongitude("6.169167");
+
+        $candidate1->setAddresses([$address1,$address1b,$address1c,$address2]);
+        $candidate2->setAddresses([$address3,$address4]);
+        
+        $candidate1->setMaxDetourDistance(15000);
+        $candidate1->setMaxDetourDuration(1200000);
+
+        if ($routes = $geoRouter->getRoutes($candidate1->getAddresses())) {
+            $candidate1->setDirection($routes[0]);
+            $matches = $geoMatcher->singleMatch($candidate1, [$candidate2], true);
+            echo "<pre>" . print_r($matches, true) . "</pre>";
         }
-        echo "</ul>";
-        return new Response();
+        exit;
     }
 }

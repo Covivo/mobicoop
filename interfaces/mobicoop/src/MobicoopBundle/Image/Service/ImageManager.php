@@ -33,6 +33,11 @@ class ImageManager
 {
     private $dataProvider;
     
+    /**
+     * Constructor.
+     *
+     * @param DataProvider $dataProvider    The data provider that provides the images
+     */
     public function __construct(DataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;

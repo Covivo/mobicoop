@@ -64,7 +64,7 @@ class Direction
     private $distance;
     
     /**
-     * @var int The total duration of the direction in seconds.
+     * @var int The total duration of the direction in milliseconds.
      * @ORM\Column(type="integer")
      * @Groups({"read","write"})
      */
@@ -118,6 +118,13 @@ class Direction
      * @Groups({"read","write"})
      */
     private $detail;
+
+    /**
+     * @var string The textual encoded snapped waypoints of the direction.
+     * @ORM\Column(type="text")
+     * @Groups({"read","write"})
+     */
+    private $snapped;
     
     /**
      * @var string The encoding format of the detail.
@@ -125,9 +132,11 @@ class Direction
      * @Groups({"read","write"})
      */
     private $format;
-    
+
     /**
-     * @var array|null The geographical zones covered by the direction.
+     * @var Zone[] The geographical zones crossed by the direction.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Zone", mappedBy="direction", cascade={"persist","remove"}, orphanRemoval=true)
      */
     private $zones;
 
@@ -136,6 +145,19 @@ class Direction
      * Can be used to draw the path on a map.
      */
     private $points;
+
+    /**
+     * @var Address[]|null The decoded snapped waypoints of the direction.
+     * The snapped waypoints are the mandatory waypoints of the direction.
+     * These points can slightly differ from the original waypoints as they are given by the router.
+     * /!\ different than Waypoint entity /!\
+     */
+    private $snappedWaypoints;
+
+    /**
+     * @var int[]|null The duration from the start to the each snapped waypoint.
+     */
+    private $durations;
     
     public function __construct()
     {
@@ -254,6 +276,18 @@ class Direction
         
         return $this;
     }
+
+    public function getSnapped(): string
+    {
+        return $this->snapped;
+    }
+    
+    public function setSnapped(string $snapped): self
+    {
+        $this->snapped = $snapped;
+        
+        return $this;
+    }
     
     public function getFormat(): string
     {
@@ -267,19 +301,38 @@ class Direction
         return $this;
     }
     
-    public function getZones(): array
+    /**
+     * @return Collection|Zone[]
+     */
+    public function getZones(): Collection
     {
         return $this->zones;
     }
     
-    public function setZones(array $zones): self
+    public function addZone(Zone $zone): self
     {
-        $this->zones[] = $zones;
+        if (!$this->zones->contains($zone)) {
+            $this->zones[] = $zone;
+            $zone->setDirection($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeZone(Zone $zone): self
+    {
+        if ($this->zones->contains($zone)) {
+            $this->zones->removeElement($zone);
+            // set the owning side to null (unless already changed)
+            if ($zone->getDirection() === $this) {
+                $zone->setDirection(null);
+            }
+        }
         
         return $this;
     }
 
-    public function getPoints(): array
+    public function getPoints(): ?array
     {
         return $this->points;
     }
@@ -287,6 +340,30 @@ class Direction
     public function setPoints(array $points): self
     {
         $this->points = $points;
+        
+        return $this;
+    }
+
+    public function getSnappedWaypoints(): ?array
+    {
+        return $this->snappedWaypoints;
+    }
+    
+    public function setSnappedWaypoints(array $snappedWaypoints): self
+    {
+        $this->snappedWaypoints = $snappedWaypoints;
+        
+        return $this;
+    }
+
+    public function getDurations(): ?array
+    {
+        return $this->durations;
+    }
+    
+    public function setDurations(array $durations): self
+    {
+        $this->durations = $durations;
         
         return $this;
     }

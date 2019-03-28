@@ -35,16 +35,29 @@ use App\Geography\Entity\Direction;
  */
 class GeoRouter
 {
-      
+    private $uri;
+
+    /**
+     * Constructor.
+     *
+     * @param string $uri
+     */
+    public function __construct(string $uri)
+    {
+        $this->uri = $uri;
+        $this->collection = [];
+    }
+
     /**
      * Get the routes alternative between two or more addresses.
      *
-     * @param array $addresses[]    The array of addresses
-     * @return array                The routes found
+     * @param array $addresses[]        The array of addresses
+     * @param boolean $detailDuration   Set to true to get the duration between 2 points
+     * @return array                    The routes found
      */
-    public function getRoutes(array $addresses): ?array
+    public function getRoutes(array $addresses, bool $detailDuration=false): ?array
     {
-        $georouter = new GeoRouterProvider();
+        $georouter = new GeoRouterProvider($this->uri, $detailDuration);
         $params = [];
         $params['points'] = $addresses;
         $routes = $georouter->getCollection(Direction::class, '', $params);
