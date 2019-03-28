@@ -55,6 +55,16 @@ class ImageManager
     private $dataManager;
     private $logger;
     
+    /**
+     * Constructor.
+     *
+     * @param EventRepository $eventRepository
+     * @param ImageRepository $imageRepository
+     * @param FileManager $fileManager
+     * @param ContainerInterface $container
+     * @param LoggerInterface $logger
+     * @param array $types
+     */
     public function __construct(EventRepository $eventRepository, ImageRepository $imageRepository, FileManager $fileManager, ContainerInterface $container, LoggerInterface $logger, array $types)
     {
         $this->eventRepository = $eventRepository;

@@ -15,12 +15,22 @@ class ExternalJourneyManager
 {
     private $dataProvider;
 
+    /**
+     * Constructor.
+     *
+     * @param DataProvider $dataProvider
+     */
     public function __construct(DataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(ExternalJourney::class);
     }
 
+    /**
+     * Get external journeys.
+     *
+     * @return void
+     */
     public function getExternalJourney()
     {
         $response = $this->dataProvider->getCollection();

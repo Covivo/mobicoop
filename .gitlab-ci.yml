@@ -94,7 +94,6 @@ dependency_scanning:
     paths: [gl-dependency-scanning-report.json]
   only:     # job executed only on dev & master branches
     - master
-    - dev
     
 #
 # Static Application Security Testing (SAST)
@@ -121,7 +120,6 @@ sast:
       sast: gl-sast-report.json
   only:     # job executed only on dev & master branches
     - master
-    - dev
 
 #
 # License Management
@@ -139,26 +137,10 @@ license_management:
       license_management: gl-license-management-report.json
   only:     # job executed only on dev & master branches
     - master
-    - dev
-
 
 ###############################################################################################
 ############# Everything under this is execute only for Tests (dev) ############################
 ###############################################################################################
-
-#
-# Tests for dev branch
-#
-dev_tests:
-  stage: test
-#  variables:
-#    APP_ENV: dev    # /!\ important : symfony env variable /!\
-  before_script:
-    - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
-  script:
-    - npm run testAndCoverage   # run the tests and code coverage
-  only: # job executed only on dev branch
-    - dev
 
 #
 # Deployment for dev branch
@@ -206,18 +188,22 @@ master_tests:
   only:     # job executed only on master branch
     - master
 
-#pages:
-#  stage: deploy
-#  script:
-#    - echo 'Deploying the doc...'
-#    - npm run generateDocs
-#  dependencies:
-#    - test:prod
-#  artifacts:
-#    paths:
-#    - interfaces/mobicoop/public/doc
-#  only:
-#    - master
+pages:
+ stage: deploy
+ script:
+  - echo 'Deploying all the doc...'
+  - npm run download-tools
+  - npm run generateDocs
+  - mkdir .public
+  - cp -r docs/* .public
+  - mv .public public
+ dependencies:
+   - master_tests
+ artifacts:
+   paths:
+   - public
+ only:
+   - master
 
 #
 # Deployment for master branch

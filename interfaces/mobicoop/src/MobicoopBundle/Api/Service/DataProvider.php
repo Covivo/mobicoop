@@ -72,8 +72,17 @@ class DataProvider
     private $class;
     private $serializer;
     private $deserializer;
-    
-    public function __construct($uri, $username, $password, $authPath, Deserializer $deserializer)
+   
+    /**
+     * Constructor.
+     *
+     * @param string $uri
+     * @param string $username
+     * @param string $password
+     * @param string $authPath
+     * @param Deserializer $deserializer
+     */
+    public function __construct(string $uri, string $username, string $password, string $authPath, Deserializer $deserializer)
     {
         //Create your auth strategy
         $authStrategy = new JsonAuthStrategy(

@@ -33,17 +33,28 @@ class UserProvider implements UserProviderInterface
 {
     private $dataProvider;
 
+    /**
+     * Constructor.
+     *
+     * @param DataProvider $dataProvider
+     */
     public function __construct(DataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(User::class);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function loadUserByUsername($username)
     {
         return $this->fetchUser($username);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function refreshUser(UserInterface $user)
     {
         if (!$user instanceof User) {
@@ -57,11 +68,17 @@ class UserProvider implements UserProviderInterface
         return $this->fetchUser($username);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function supportsClass($class)
     {
         return User::class === $class;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     private function fetchUser($username)
     {
         $response = $this->dataProvider->getCollection(array("email"=>$username));

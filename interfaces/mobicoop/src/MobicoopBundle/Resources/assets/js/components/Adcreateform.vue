@@ -109,45 +109,11 @@
                 </b-radio-button>
               </b-field>
               <!-- DATE, TIME , MARGIN -->
-              <!-- REGULAR -->
-              <div v-if="form.frequency === 2">
-                <div class="columns" v-for="(day,index) in days" :key="index">
-                  <div class="column">
-                    <h5 class="title">Aller ({{day}})</h5>
-                    <b-datepicker placeholder="Date de départ..." icon="calendar-today"></b-datepicker>
-                    <b-timepicker v-model="timeStart" placeholder="Heure de départ...">
-                      <button class="button is-primary" @click="time = new Date()">
-                        <b-icon icon="clock"></b-icon>
-                        <span>Maintenant</span>
-                      </button>
-                      <button class="button is-danger" @click="time = null">
-                        <b-icon icon="close"></b-icon>
-                        <span>Effacer</span>
-                      </button>
-                    </b-timepicker>
-                  </div>
-                  <div class="column" v-if="type === 2">
-                    <h5 class="title">Retour ({{day}})</h5>
-                    <b-datepicker placeholder="Date de retour..." icon="calendar-today"></b-datepicker>
-                    <b-timepicker v-model="timeReturn" placeholder="heure de retour...">
-                      <button class="button is-primary" @click="time = new Date()">
-                        <b-icon icon="clock"></b-icon>
-                        <span>Maintenant</span>
-                      </button>
-                      <button class="button is-danger" @click="time = null">
-                        <b-icon icon="close"></b-icon>
-                        <span>Effacer</span>
-                      </button>
-                    </b-timepicker>
-                  </div>
-                </div>
-              </div>
-              <!-- PONCTUAL -->
-              <div class="columns" v-else>
+              <div class="columns" >
                 <div class="column">
                   <h5 class="title column is-full">Aller</h5>
                   <b-datepicker
-                    placeholder="Date de départ..."
+                    :placeholder="form.frequency ===2 ? 'Date de début' : 'Date de départ...'"
                     v-model="form.outwardDate"
                     :day-names="daysShort"
                     :month-names="months"
@@ -157,9 +123,12 @@
                     icon-pack="fas"
                   ></b-datepicker>
                   <div class="column is-full">
-                    <div class="columns">
+                    <div class="columns" v-for="(day,index) in nbOfDaysToPlan" :key="index">
+                      <div v-if="nbOfDaysToPlan>1" class="column is-2 dayNameColumn">
+                        <a class="button is-mobicoopblue is-2">{{days[index]}}</a>
+                      </div>
                       <b-timepicker
-                        class="column is-8"
+                        class="column"
                         v-model="form.outwardTime"
                         placeholder="Heure de départ..."
                       >
@@ -175,6 +144,7 @@
                           <span>Effacer</span>
                         </button>
                       </b-timepicker>
+                      <!-- MARGIN -->
                       <b-select
                         class="column is-4"
                         placeholder="Marge"
@@ -193,24 +163,42 @@
                 <div class="column" v-if="form.type === 2">
                   <h2 class="title column is-full">Retour</h2>
                   <b-datepicker
-                    placeholder="Date de retour..."
+                    :placeholder="form.frequency ===2 ? 'Date de fin' : 'Date de retour...'"
                     icon="calendar-today"
                     class="column is-full"
+                    v-model="form.returnDate"
                   ></b-datepicker>
-                  <b-timepicker
-                    v-model="timeReturn"
-                    placeholder="heure de retour..."
-                    class="column is-full"
-                  >
-                    <button class="button is-mobicoopgreen" @click="time = new Date()">
-                      <b-icon icon="clock"></b-icon>
-                      <span>Maintenant</span>
-                    </button>
-                    <button class="button is-mobicooppink" @click="time = null">
-                      <b-icon icon="close"></b-icon>
-                      <span>Effacer</span>
-                    </button>
-                  </b-timepicker>
+                  <div class="columns" v-for="(day,index) in nbOfDaysToPlan" :key="index">
+                    <div v-if="nbOfDaysToPlan>1" class="column is-2 dayNameColumn">
+                      <a class="button is-mobicoopblue is-2">{{days[index]}}</a>
+                    </div>
+                    <b-timepicker
+                      v-model="form.returnTime"
+                      placeholder="heure de retour..."
+                      class="column"
+                    >
+                      <button class="button is-mobicoopgreen" @click="form.returnTime = new Date()">
+                        <b-icon icon="clock"></b-icon>
+                        <span>Maintenant</span>
+                      </button>
+                      <button class="button is-mobicooppink" @click="form.returnTime = null">
+                        <b-icon icon="close"></b-icon>
+                        <span>Effacer</span>
+                      </button>
+                    </b-timepicker>
+                    <!-- MARGIN -->
+                    <b-select
+                      class="column is-4"
+                      placeholder="Marge"
+                      v-model="form.returnMargin"
+                    >
+                      <option
+                        v-for="(margin,key) in marginsMn"
+                        :value="margin"
+                        :key="key"
+                      >{{ (1 > margin/60 > 0) ? margin : `${Math.trunc(margin/60)}H${margin%60}` }}</option>
+                    </b-select>
+                  </div>
                 </div>
               </div>
             </tab-content>
@@ -223,6 +211,7 @@
 
 <script>
 import axios from "axios";
+import moment from 'moment'
 import Geocomplete from "./Geocomplete";
 export default {
   components: {
@@ -265,6 +254,15 @@ export default {
         "vendredi",
         "samedi"
       ],
+      daysEn: [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
       months: [
         "Janvier",
         "Fevrier",
@@ -293,13 +291,30 @@ export default {
         frequency: this.sentFrequency,
         outwardDate: null,
         outwardMargin: null,
-        outwardTime: null
+        outwardTime: null,
+        returnDate: null,
+        returnMargin: null,
+        returnTime: null,
+        // //Monday
+        // monday:{
+        //   outwardDate: null,
+        //   outwardMargin: null,
+        //   outwardTime: null,
+        // }
+        outwardMonTime: null,
+        outwardMonMargin: null,
+        returnMonTime: null,
+        returnMonMargin: null,
       }
     };
   },
   computed: {
     daysShort() {
       return this.days.map(day => day.substring(0, 2));
+    },
+    nbOfDaysToPlan(){
+      if(this.form.frequency === 2) return this.days.length;
+      return 1;
     }
   },
   methods: {
@@ -310,21 +325,26 @@ export default {
       } ${val.addressCountry}`;
       this.form[name + "Latitude"] = val.latitude;
       this.form[name + "Longitude"] = val.longitude;
-
-      // this.form.destination = `${val.streetAddress ? streetAddress+' ': ''}${val.addressLocality} ${val.addressCountry}`;
-      // this.form.destinationLongitude = val.longitude;
-      // this.form.destinationLatitude = val.latitude;
     },
-    sendForm() {
-      console.log("Will send form");
-    },
-    onComplete() {
+    onComplete() { // send the form
       let adForm = new FormData();
       for (let prop in this.form) {
-        console.log(prop, this.form[prop]);
-        adForm.append(prop, this.form[prop]);
+        let value = this.form[prop];
+        if(!value) continue;
+        // Convert date to required format
+        if(prop.toLowerCase().includes('date')){
+          value = moment(value).format('YYYY/MM/DD');
+        }
+        if(prop.toLowerCase().includes('time')){
+          value = moment(value).format('HH:mm');
+        }
+        if(prop.toLowerCase().includes('margin')){
+          value *= 60;
+        }
+        console.log('Will add', prop, ' ', value);
+        adForm.append(prop, value);
       }
-      console.log(adForm);
+      //  We post the form 🚀
       axios
         .post("/covoiturage/annonce/poster", adForm, {
           headers: {
@@ -351,5 +371,12 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.dayNameColumn{
+  text-align: left;
+  a{
+    width: 100%;
+  }
 }
 </style>

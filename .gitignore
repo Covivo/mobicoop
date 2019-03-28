@@ -479,6 +479,10 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+.vscode/
+
+# generated docs
+/docs/php/
 
 #VScode
 .vscode

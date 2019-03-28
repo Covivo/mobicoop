@@ -13,7 +13,9 @@ import Datepicker from '../../components/Datepicker';
 import Timepicker from '../../components/Timepicker';
 import Adcreateform from '../../components/Adcreateform';
 
-Vue.use(Buefy);
+Vue.use(Buefy,{
+  defaultTooltipType: 'is-mobicoopgreen'
+});
 Vue.use(VueFormWizard);
 
 new Vue({
