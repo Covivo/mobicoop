@@ -36,14 +36,14 @@ use Symfony\Component\DomCrawler\Form;
  */
 
 /* Functional tests */
-describe('AutoComplete', function () {
-    describe('/aut', function () {
-        it('AutoComplete page should return status code 200', function () {
-            $request = $this->request->create('/aut', 'GET');
-            $response = $this->kernel->handle($request);
-            $status = $response->getStatusCode();
+// describe('AutoComplete', function () {
+//     describe('/aut', function () {
+//         it('AutoComplete page should return status code 200', function () {
+//             $request = $this->request->create('/aut', 'GET');
+//             $response = $this->kernel->handle($request);
+//             $status = $response->getStatusCode();
             
-            expect($status)->toEqual(200);
-        });
-    });
-});
+//             expect($status)->toEqual(200);
+//         });
+//     });
+// });
