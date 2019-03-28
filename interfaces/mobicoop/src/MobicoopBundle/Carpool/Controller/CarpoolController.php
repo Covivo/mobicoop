@@ -30,6 +30,11 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Form\AdForm;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 /**
  * Controller class for carpooling related actions.
@@ -54,22 +59,44 @@ class CarpoolController extends AbstractController
         $ad->setUser($userManager->getLoggedUser());
 
         $form = $this->createForm(AdForm::class, $ad);
-        $form->handleRequest($request);
         $error = false;
-
-        if ($form->isSubmitted()) {
-            $ad = $adManager->prepareAd($ad, $request);
-            if ($form->isValid()) {
-                if ($ad = $adManager->createProposalFromAd($ad)) {
-                    return $this->redirectToRoute('home');
-                }
-                $error = true;
-            }
+        $sucess = false;
+        
+        if ($request->isMethod('POST')) {
+            $form->submit($request->request->all());
+            $form->handleRequest($request);
         }
 
-        return $this->render('@Mobicoop/ad/create.html.twig', [
-            'form' => $form->createView(),
-            'error' => $error
-        ]);
+        // If it's a get, just render the form !
+        if (!$form->isSubmitted()) {
+            return $this->render('@Mobicoop/ad/create.html.twig', [
+                'form' => $form->createView(),
+                'error' => $error
+            ]);
+        }
+
+        // Not Valid populate error
+        if (!$form->isValid()) {
+            $error = [];
+            // Fields
+            foreach ($form as $child) {
+                if (!$child->isValid()) {
+                    foreach ($child->getErrors(true) as $err) {
+                        $error[$child->getName()][] = $err->getMessage();
+                    }
+                }
+            }
+            return $this->json(['error' => $error, 'sucess'=> $sucess]);
+        }
+
+        // Error happen durring proposol creation
+        try {
+            $ad = $adManager->createProposalFromAd($ad);
+            $sucess = true;
+        } catch (Error $err) {
+            $error = $err;
+        }
+
+        return $this->json(['error' => $error, 'sucess'=> $sucess]);
     }
 }

@@ -108,7 +108,6 @@ class Ad
     
     /**
      * @var int Margin time of the outward travel if punctual.
-     * @Assert\NotBlank(groups={"punctual"})
      */
     private $outwardMargin;
 
@@ -126,7 +125,6 @@ class Ad
     
     /**
      * @var int Margin time of the return travel if punctual.
-     * @Assert\NotBlank(groups={"punctualReturnTrip"})
      */
     private $returnMargin;
     
@@ -372,7 +370,7 @@ class Ad
         return $this->role;
     }
 
-    public function setRole(int $role): self
+    public function setRole(?int $role): self
     {
         $this->role = $role;
 
@@ -820,7 +818,7 @@ class Ad
         return $this->type;
     }
     
-    public function setType(int $type): self
+    public function setType(?int $type): self
     {
         $this->type = $type;
         
@@ -832,7 +830,7 @@ class Ad
         return $this->frequency;
     }
 
-    public function setFrequency(int $frequency): self
+    public function setFrequency(?int $frequency): self
     {
         $this->frequency = $frequency;
 
@@ -892,7 +890,7 @@ class Ad
         return $this->originLongitude;
     }
 
-    public function setOriginLongitude(float $originLongitude): self
+    public function setOriginLongitude(?float $originLongitude): self
     {
         $this->originLongitude = $originLongitude;
 
@@ -904,7 +902,7 @@ class Ad
         return $this->destinationLatitude;
     }
 
-    public function setDestinationLatitude(float $destinationLatitude): self
+    public function setDestinationLatitude(?float $destinationLatitude): self
     {
         $this->destinationLatitude = $destinationLatitude;
 
@@ -916,7 +914,7 @@ class Ad
         return $this->destinationLongitude;
     }
 
-    public function setDestinationLongitude(float $destinationLongitude): self
+    public function setDestinationLongitude(?float $destinationLongitude): self
     {
         $this->destinationLongitude = $destinationLongitude;
 
@@ -928,7 +926,7 @@ class Ad
         return $this->originAddress;
     }
     
-    public function setOriginAddress(Address $originAddress): self
+    public function setOriginAddress(?Address $originAddress): self
     {
         $this->originAddress = $originAddress;
         
@@ -940,7 +938,7 @@ class Ad
         return $this->destinationAddress;
     }
     
-    public function setDestinationAddress(Address $destinationAddress): self
+    public function setDestinationAddress(?Address $destinationAddress): self
     {
         $this->destinationAddress = $destinationAddress;
         

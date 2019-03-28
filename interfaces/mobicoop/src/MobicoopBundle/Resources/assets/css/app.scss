@@ -1,10 +1,38 @@
 /* Welcome to Mobicoop main SASS file, this file require all the sub-elements */
 // Import Bulma and Buefy styles
 // @import '~bulma/sass/utilities/_all'; // not sure if this is useful
+
+// Setup $colors to use as bulma classes (e.g. 'is-twitter')
+@import '~bulma/sass/utilities/_all';
+@import '_variables';
+$colors: (
+  'white': ($white, $black),
+  'black': ($black, $white),
+  'light': ($light, $light-invert),
+  'dark': ($dark, $dark-invert),
+  'primary': ($primary, $primary-invert),
+  'info': ($info, $info-invert),
+  'success': ($success, $success-invert),
+  'warning': ($warning, $warning-invert),
+  'danger': ($danger, $danger-invert),
+  'mobicoopblue': ($mb-blue, $mb-blue-invert),
+  'mobicooppink': ($mb-pink, $mb-pink-invert),
+  'mobicoopgreen': ($mb-green, $mb-green-invert)
+);
+
+$link: $mb-green;
+$link-invert: $mb-green-invert;
+$link-focus-border: $mb-green;
+
 @import '~bulma';
 @import '~buefy/src/scss/buefy';
-@import '_variables';
 @import '_header';
+.center-all {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 body {
   background-color: $main-background-color;
   color: $main-font-color;
