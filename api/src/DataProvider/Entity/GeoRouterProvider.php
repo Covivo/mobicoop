@@ -211,6 +211,7 @@ class GeoRouterProvider implements ProviderInterface
                 }
                 if (!$set) {
                     // no waypoint found as a fromRef or toRef, we search if it's in between
+                    // it's an approximative duration
                     foreach ($waypoints as $key=>$waypoint) {
                         if ($fromRef<$waypoint && $waypoint<$toRef) {
                             $durations[$key] = [

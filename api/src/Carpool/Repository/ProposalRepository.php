@@ -329,29 +329,15 @@ class ProposalRepository
                 //          min             max
 
                 $setToDate = true;
-                $setMinTime = false;
-                $setMaxTime = false;
-                $setMonMinTime = false;
-                $setMonMaxTime = false;
-                $setTueMinTime = false;
-                $setTueMaxTime = false;
-                $setWedMinTime = false;
-                $setWedMaxTime = false;
-                $setThuMinTime = false;
-                $setThuMaxTime = false;
-                $setFriMinTime = false;
-                $setFriMaxTime = false;
-                $setSatMinTime = false;
-                $setSatMaxTime = false;
-                $setSunMinTime = false;
-                $setSunMaxTime = false;
-                $regularSunDay = "";
-                $regularMonDay = "";
-                $regularTueDay = "";
-                $regularWedDay = "";
-                $regularThuDay = "";
-                $regularFriDay = "";
-                $regularSatDay = "";
+                $setMinTime = $setMaxTime = false;
+                $setMonMinTime = $setMonMaxTime = false;
+                $setTueMinTime = $setTueMaxTime = false;
+                $setWedMinTime = $setWedMaxTime = false;
+                $setThuMinTime = $setThuMaxTime = false;
+                $setFriMinTime = $setFriMaxTime = false;
+                $setSatMinTime = $setSatMaxTime = false;
+                $setSunMinTime = $setSunMaxTime = false;
+                $regularSunDay = $regularMonDay = $regularTueDay = $regularWedDay = $regularThuDay = $regularFriDay = $regularSatDay = "";
 
                 $days = "";
                 $minTime = "(";
