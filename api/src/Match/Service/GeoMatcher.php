@@ -183,7 +183,7 @@ class GeoMatcher
                 // if the detour is acceptable we keep the candidate
                 if ($detourDistance && $detourDuration) {
                     $result[] = [
-                        'order' => $this->generateOrder(array_keys($points),$routes[0]->getDurations()),
+                        'order' => $this->generateOrder(array_keys($points), $routes[0]->getDurations()),
                         'originalDistance' => $candidate1->getDirection()->getDistance()/1000,
                         'acceptedDetourDistance' => $candidate1->getMaxDetourDistance()/1000,
                         'newDistance' => $routes[0]->getDistance()/1000,
@@ -208,20 +208,19 @@ class GeoMatcher
      * @param array $keys   The duration of each part
      * @return void
      */
-    private function generateOrder(array $keys, array $durations) 
+    private function generateOrder(array $keys, array $durations)
     {
         $order = [];
         foreach ($keys as $i=>$key) {
             $order[] = [
-                'candidate' => (substr($key,0,1) == 'A') ? 1 : 2,
-                'position'  => substr($key,1),
+                'candidate' => (substr($key, 0, 1) == 'A') ? 1 : 2,
+                'position'  => substr($key, 1),
                 'duration'  => $durations[$i]['duration'],
                 'approx'    => $durations[$i]['approx']
             ];
         }
         return $order;
     }
-
 }
 
 // Class used temporarily to generate path combinations
