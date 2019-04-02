@@ -42,6 +42,9 @@ body {
   a:focus {
     outline: 3px solid orange !important;
   }
+  a.navbar-burger {
+    color: #000;
+  }
   .header {
     background: url('images/header.png');
     width: 100vw;
@@ -66,6 +69,10 @@ body {
   .common-footer {
     background-color: $footer-background-color;
     color: $mb-dark-green;
+    img {
+      height: 75px;
+      width: 75px;
+    }
     a {
       color: $mb-dark-green;
     }
