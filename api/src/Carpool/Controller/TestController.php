@@ -216,6 +216,10 @@ class TestController extends AbstractController
 
         $candidate1->setAddresses([$address1,$address1b,$address1c,$address2]);
         $candidate2->setAddresses([$address3,$address4]);
+
+        if ($routes = $geoRouter->getRoutes($candidate2->getAddresses())) {
+            $candidate2->setDirection($routes[0]);
+        }
         
         $candidate1->setMaxDetourDistance(15000);
         $candidate1->setMaxDetourDuration(1200000);
