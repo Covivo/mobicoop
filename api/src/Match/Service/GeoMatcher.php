@@ -25,6 +25,7 @@ namespace App\Match\Service;
 
 use App\Match\Entity\Candidate;
 use App\Geography\Service\GeoRouter;
+use App\Carpool\Service\ProposalMatcher;
 
 /**
  * Geographical Matching service.
@@ -154,6 +155,7 @@ class GeoMatcher
             if ($routes = $this->geoRouter->getRoutes(array_values($points), true)) {
                 $detourDistance = false;
                 $detourDuration = false;
+                $commonDistance = false;
     
                 // we check the detour distance
                 if ($candidate1->getMaxDetourDistance()) {
@@ -179,9 +181,14 @@ class GeoMatcher
                         $detourDuration = true;
                     }
                 }
+                // we check the common distance
+                if (($candidate1->getDirection()->getDistance()<ProposalMatcher::MIN_COMMON_DISTANCE_CHECK) ||
+                    (($candidate2->getDirection()->getDistance()*100/$candidate1->getDirection()->getDistance()) > ProposalMatcher::MIN_COMMON_DISTANCE_PERCENT)) {
+                    $commonDistance = true;
+                }
                 
                 // if the detour is acceptable we keep the candidate
-                if ($detourDistance && $detourDuration) {
+                if ($detourDistance && $detourDuration && $commonDistance) {
                     $result[] = [
                         'order' => $this->generateOrder(array_keys($points), $routes[0]->getDurations()),
                         'originalDistance' => $candidate1->getDirection()->getDistance()/1000,
@@ -215,8 +222,9 @@ class GeoMatcher
             $order[] = [
                 'candidate' => (substr($key, 0, 1) == 'A') ? 1 : 2,
                 'position'  => substr($key, 1),
-                'duration'  => $durations[$i]['duration'],
-                'approx'    => $durations[$i]['approx']
+                'duration'  => isset($durations[$i]) ? $durations[$i]['duration'] : null,
+                'approx_duration'    => isset($durations[$i]) ? $durations[$i]['approx_duration'] : null,
+                'approx_point'    => isset($durations[$i]) ? $durations[$i]['approx_point'] : null
             ];
         }
         return $order;

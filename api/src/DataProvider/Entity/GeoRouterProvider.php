@@ -150,13 +150,13 @@ class GeoRouterProvider implements ProviderInterface
             }
         }
         if (isset($data["points"])) {
-            // we keep the encoded AND the decoded points
+            // we keep the encoded AND the decoded points (all the points of the path returned by the SIG)
             // the decoded points are not stored in the database
             $direction->setDetail($data["points"]);
             $direction->setPoints($this->deserializePoints($data['points'], true, filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
         }
         if (isset($data['snapped_waypoints'])) {
-            // we keep the encoded AND the decoded snapped waypoints
+            // we keep the encoded AND the decoded snapped waypoints (all the waypoints used to define the direction : start point, intermediate points, end point)
             // the decoded snapped waypoints are not stored in the database
             $direction->setSnapped($data["snapped_waypoints"]);
             $direction->setSnappedWaypoints($this->deserializePoints($data['snapped_waypoints'], true, false));
@@ -165,17 +165,21 @@ class GeoRouterProvider implements ProviderInterface
 
         if ($this->detailDuration && isset($data["details"]["time"])) {
             // if we get the detail of duration between points, we can get the duration between the waypoints
-            // first we search the snapped waypoints in the points
+            // the duration between points is set like this in the response : 
+            // [fromPointNumber,toPointNumber,duration], eg : [4,5,20150] means from point 4 to point 5 : 20150 seconds
+            // first we have to search for the position of the waypoints in the points
             $waypoints = [];
+            $waypointsFound = [];
             $numpoint = 0;
             foreach ($direction->getPoints() as $point) {
                 foreach ($direction->getSnappedWaypoints() as $key=>$waypoint) {
-                    if (in_array($waypoint, $waypoints, true)) {
+                    if (in_array($waypoint, $waypointsFound, true)) {
                         continue;
                     }
                     if ($point->getLongitude() == $waypoint->getLongitude() && $point->getLatitude() == $waypoint->getLatitude()) {
                         // we have found a waypoint in the points
                         $waypoints[$key] = $numpoint;
+                        $waypointsFound[] = $waypoint;
                         if (count($waypoints) == count($direction->getSnappedWaypoints())) {
                             break(2);
                         }
@@ -183,6 +187,36 @@ class GeoRouterProvider implements ProviderInterface
                     }
                 }
                 $numpoint++;
+            }
+            // if we missed some waypoints, we search the closest point with a second loop
+            $missed = [];
+            if (count($waypoints) < count($direction->getSnappedWaypoints())) {
+                // we search the missed waypoints
+                foreach ($direction->getSnappedWaypoints() as $key=>$waypoint) {
+                    if (!in_array($waypoint, $waypointsFound, true)) {
+                        $missed[$key] = [
+                            'waypoint' => $waypoint,
+                            'nearest' => null,
+                            'distance' => 9999999999
+                        ];
+                    }
+                }
+                // we search the closest point
+                $numpoint = 0;
+                foreach ($direction->getPoints() as $point) {
+                    foreach ($missed as $key=>$waypoint) {
+                        $distance = $this->haversineGreatCircleDistance($waypoint['waypoint']->getLatitude(),$waypoint['waypoint']->getLongitude(),$point->getLatitude(),$point->getLongitude());
+                        if ($distance<$waypoint['distance']) {
+                            $missed[$key]['distance'] = $distance;
+                            $missed[$key]['nearest'] = $numpoint;
+                        }
+                    }
+                    $numpoint++;
+                }
+                // we affected the closest point to the waypoint
+                foreach ($missed as $key=>$waypoint) {
+                    $waypoints[$key] = $waypoint['nearest'];
+                }                
             }
 
             // then we search the duration between the waypoints
@@ -196,7 +230,8 @@ class GeoRouterProvider implements ProviderInterface
                     $durations[array_search($fromRef, $waypoints)] = [
                         // time is in milliseconds, we transform in seconds
                         "duration" => $duration/1000,
-                        "approx" => false
+                        "approx_duration" => false,
+                        "approx_point" => array_key_exists(array_search($fromRef, $waypoints),$missed)
                     ];
                     $set = true;
                 }
@@ -205,7 +240,8 @@ class GeoRouterProvider implements ProviderInterface
                     $durations[array_search($toRef, $waypoints)] = [
                         // time is in milliseconds, we transform in seconds
                         "duration" => ($duration+$value)/1000,
-                        "approx" => false
+                        "approx_duration" => false,
+                        "approx_point" => array_key_exists(array_search($toRef, $waypoints),$missed)
                     ];
                     $set = true;
                 }
@@ -217,7 +253,8 @@ class GeoRouterProvider implements ProviderInterface
                             $durations[$key] = [
                                 // time is in milliseconds, we transform in seconds
                                 "duration" => ($duration+($value/2))/1000,
-                                "approx" => true
+                                "approx_duration" => true,
+                                "approx_point" => true
                             ];
                             break;
                         }
@@ -351,4 +388,32 @@ class GeoRouterProvider implements ProviderInterface
         }
         return $address;
     }
+
+    /**
+     * Calculates the great-circle distance between two points, with
+     * the Haversine formula.
+     * @param float $latitudeFrom Latitude of start point in [deg decimal]
+     * @param float $longitudeFrom Longitude of start point in [deg decimal]
+     * @param float $latitudeTo Latitude of target point in [deg decimal]
+     * @param float $longitudeTo Longitude of target point in [deg decimal]
+     * @param float $earthRadius Mean earth radius in [m]
+     * @return float Distance between points in [m] (same as earthRadius)
+     */
+    private function haversineGreatCircleDistance(
+        $latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371000)
+    {
+        // convert from degrees to radians
+        $latFrom = deg2rad($latitudeFrom);
+        $lonFrom = deg2rad($longitudeFrom);
+        $latTo = deg2rad($latitudeTo);
+        $lonTo = deg2rad($longitudeTo);
+    
+        $latDelta = $latTo - $latFrom;
+        $lonDelta = $lonTo - $lonFrom;
+    
+        $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) +
+        cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
+        return $angle * $earthRadius;
+    }
+      
 }
