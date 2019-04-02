@@ -220,11 +220,11 @@ class GeoMatcher
         $order = [];
         foreach ($keys as $i=>$key) {
             $order[] = [
-                'candidate' => (substr($key, 0, 1) == 'A') ? 1 : 2,
-                'position'  => substr($key, 1),
-                'duration'  => isset($durations[$i]) ? $durations[$i]['duration'] : null,
-                'approx_duration'    => isset($durations[$i]) ? $durations[$i]['approx_duration'] : null,
-                'approx_point'    => isset($durations[$i]) ? $durations[$i]['approx_point'] : null
+                'candidate'         => (substr($key, 0, 1) == 'A') ? 1 : 2,
+                'position'          => substr($key, 1),
+                'duration'          => isset($durations[$i]) ? $durations[$i]['duration'] : null,
+                'approx_duration'   => isset($durations[$i]) ? $durations[$i]['approx_duration'] : null,
+                'approx_point'      => isset($durations[$i]) ? $durations[$i]['approx_point'] : null
             ];
         }
         return $order;
