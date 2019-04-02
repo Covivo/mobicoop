@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Welcome!{% endblock %}</title>
@@ -10,12 +10,12 @@
     {% block stylesheets %}{% endblock %}
 </head>
 <body>
-<nav class="navbar has-shadow common-nav">
+<nav class="navbar has-shadow common-nav" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <a class="navbar-item" href="/">
             <img class="logo " src="{{ asset('images/logo.png') }}" alt="Mobicoop"/>
         </a>
-        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
@@ -23,7 +23,8 @@
     </div>
     <div class="navbar-menu" id="navMenu">
         <div class="navbar-end">
-            <div class="buttons">
+         <div class="navbar-item">
+                <div class="buttons">
                 {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                     <a href="{{ path('user_sign_up') }}" class="button is-light">
                         {% trans from 'ui' %}menu.signup{% endtrans %}
@@ -45,6 +46,7 @@
                 <a href="{{ path('ad') }}" class="button is-primary">
                     {% trans from 'ui' %}menu.ad_create{% endtrans %}
                 </a>
+                </div>
             </div>
         </div>
     </div>
