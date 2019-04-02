@@ -165,7 +165,7 @@ class GeoRouterProvider implements ProviderInterface
 
         if ($this->detailDuration && isset($data["details"]["time"])) {
             // if we get the detail of duration between points, we can get the duration between the waypoints
-            // the duration between points is set like this in the response : 
+            // the duration between points is set like this in the response :
             // [fromPointNumber,toPointNumber,duration], eg : [4,5,20150] means from point 4 to point 5 : 20150 seconds
             // first we have to search for the position of the waypoints in the points
             $waypoints = [];
@@ -205,7 +205,7 @@ class GeoRouterProvider implements ProviderInterface
                 $numpoint = 0;
                 foreach ($direction->getPoints() as $point) {
                     foreach ($missed as $key=>$waypoint) {
-                        $distance = $this->haversineGreatCircleDistance($waypoint['waypoint']->getLatitude(),$waypoint['waypoint']->getLongitude(),$point->getLatitude(),$point->getLongitude());
+                        $distance = $this->haversineGreatCircleDistance($waypoint['waypoint']->getLatitude(), $waypoint['waypoint']->getLongitude(), $point->getLatitude(), $point->getLongitude());
                         if ($distance<$waypoint['distance']) {
                             $missed[$key]['distance'] = $distance;
                             $missed[$key]['nearest'] = $numpoint;
@@ -216,7 +216,7 @@ class GeoRouterProvider implements ProviderInterface
                 // we affected the closest point to the waypoint
                 foreach ($missed as $key=>$waypoint) {
                     $waypoints[$key] = $waypoint['nearest'];
-                }                
+                }
             }
 
             // then we search the duration between the waypoints
@@ -231,7 +231,7 @@ class GeoRouterProvider implements ProviderInterface
                         // time is in milliseconds, we transform in seconds
                         "duration" => $duration/1000,
                         "approx_duration" => false,
-                        "approx_point" => array_key_exists(array_search($fromRef, $waypoints),$missed)
+                        "approx_point" => array_key_exists(array_search($fromRef, $waypoints), $missed)
                     ];
                     $set = true;
                 }
@@ -241,7 +241,7 @@ class GeoRouterProvider implements ProviderInterface
                         // time is in milliseconds, we transform in seconds
                         "duration" => ($duration+$value)/1000,
                         "approx_duration" => false,
-                        "approx_point" => array_key_exists(array_search($toRef, $waypoints),$missed)
+                        "approx_point" => array_key_exists(array_search($toRef, $waypoints), $missed)
                     ];
                     $set = true;
                 }
@@ -400,8 +400,12 @@ class GeoRouterProvider implements ProviderInterface
      * @return float Distance between points in [m] (same as earthRadius)
      */
     private function haversineGreatCircleDistance(
-        $latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371000)
-    {
+        $latitudeFrom,
+        $longitudeFrom,
+        $latitudeTo,
+        $longitudeTo,
+        $earthRadius = 6371000
+    ) {
         // convert from degrees to radians
         $latFrom = deg2rad($latitudeFrom);
         $lonFrom = deg2rad($longitudeFrom);
@@ -415,5 +419,4 @@ class GeoRouterProvider implements ProviderInterface
         cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
         return $angle * $earthRadius;
     }
-      
 }
