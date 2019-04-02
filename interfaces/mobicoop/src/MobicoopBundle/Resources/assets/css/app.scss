@@ -50,20 +50,51 @@ body {
     width: 100vw;
     height: 30vh;
   }
-  .common-nav {
-    justify-content: center;
-    align-items: center;
+  #siteHeader {
     width: 100vw;
     height: 80px;
+    display: inline-block;
     background-color: $nav-background-color;
-    .logo {
-      max-height: 4rem;
+    margin-bottom: -5px;
+    header {
+      //display: inline-block;
+      width: auto;
+      float: left;
+      margin-left: 5px;
+      margin-right: 5px;
+      img.logo {
+        max-height: 4rem;
+        margin: 17px;
+      }
     }
-    .navbar-brand {
-      margin-left: 2vw;
+    .common-nav {
+      float: left;
+      width: auto;
+      justify-content: center;
+      align-items: center;
+      background-color: $nav-background-color;
+      margin-left: 5px;
+      margin-right: 5px;
+      .navbar-brand {
+        margin-left: 2vw;
+      }
+      .navbar-end {
+        margin-right: 1vw;
+      }
     }
-    .navbar-end {
-      margin-right: 1vw;
+    ul {
+      width: auto;
+      float: right;
+      margin-right: 8px;
+      a {
+        color: $main-font-color;
+      }
+      button {
+        //background: transparent;
+        //color: $main-font-color;
+        //padding: 0;
+        //border: 0;
+      }
     }
   }
   .common-footer {

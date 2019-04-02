@@ -10,52 +10,142 @@
     {% block stylesheets %}{% endblock %}
 </head>
 <body>
-<nav class="navbar has-shadow common-nav" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-        <a class="navbar-item" href="/">
-            <img class="logo " src="{{ asset('images/logo.png') }}" alt="Mobicoop"/>
-        </a>
-        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-        </a>
-    </div>
-    <div class="navbar-menu" id="navMenu">
-        <div class="navbar-end">
-         <div class="navbar-item">
-                <div class="buttons">
-                {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                    <a href="{{ path('user_sign_up') }}" class="button is-light">
-                        {% trans from 'ui' %}menu.signup{% endtrans %}
-                    </a>
-                    <a href="{{ path('user_login') }}" class="button is-light">
-                        {% trans from 'ui' %}menu.login{% endtrans %}
-                    </a>
-                {% else %}
-                    <a href="{{ path('user_messages') }}" class="button is-light">
-                        {% trans from 'ui' %}menu.messages{% endtrans %}
-                    </a>
-                    <a href="{{ path('user_profile') }}" class="button is-light">
-                        {% trans from 'ui' %}menu.profile{% endtrans %}
-                    </a>
-                    <a href="{{ path('logout') }}" class="button is-light">
-                        {% trans from 'ui' %}menu.logout{% endtrans %}
-                    </a>
-                {% endif %}
-                <a href="{{ path('ad') }}" class="button is-primary">
-                    {% trans from 'ui' %}menu.ad_create{% endtrans %}
-                </a>
+<div id="siteHeader">
+    <header class="row">
+        <h1 class="">
+            <a tabindex="0" href="/">
+            <img class="logo" src="{{ asset('images/logo.png') }}" alt="Mobicoop"/>
+            </a>
+        </h1>
+    </header>
+    <nav class="navbar common-nav" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+             <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div class="navbar-menu" id="navMenu">
+            <div class="navbar-start">
+                <div class="navbar-item">
+                    <div class="buttons">
+                        {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                            <a href="{{ path('user_sign_up') }}" class="button is-light">
+                                {% trans from 'ui' %}menu.signup{% endtrans %}
+                            </a>
+                            <a href="{{ path('user_login') }}" class="button is-light">
+                                {% trans from 'ui' %}menu.login{% endtrans %}
+                            </a>
+                        {% else %}
+                            <a href="{{ path('user_messages') }}" class="button is-light">
+                                {% trans from 'ui' %}menu.messages{% endtrans %}
+                            </a>
+                            <a href="{{ path('user_profile') }}" class="button is-light">
+                                {% trans from 'ui' %}menu.profile{% endtrans %}
+                            </a>
+                            <a href="{{ path('logout') }}" class="button is-light">
+                                {% trans from 'ui' %}menu.logout{% endtrans %}
+                            </a>
+                        {% endif %}
+                        <a href="{{ path('ad') }}" class="button is-primary">
+                            {% trans from 'ui' %}menu.ad_create{% endtrans %}
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+        <div class="navbar-end">
+            <div class="navbar-item buttons">
+                <div>
+                    <a class="button is-light" href="#main">Aller au contenu</a>
+                    <button type="button" id="modal-button-c" class="button is-light">
+                        <span class="med-only">Accessibilité</span>
+                    </button>
+                </div>
+            </div>
+        </div>
 </nav>
 
-<div id="app">
-    {% block body %}{% endblock %}
+
+{#    <nav class="navbar" role="navigation" aria-label="main navigation">#}
+{#        <div class="navbar-brand">#}
+{#            <a class="navbar-item" href="https://bulma.io">#}
+{#                <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">#}
+{#            </a>#}
+
+{#            <header class="row">#}
+{#                <h1 class="">#}
+{#                    <a class="navbar-item" tabindex="0" href="/">#}
+{#                        <img class="logo" src="{{ asset('images/logo.png') }}" alt="Mobicoop"/>#}
+{#                    </a>#}
+{#                </h1>#}
+{#            </header>#}
+
+
+{#            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">#}
+{#                <span aria-hidden="true"></span>#}
+{#                <span aria-hidden="true"></span>#}
+{#                <span aria-hidden="true"></span>#}
+{#            </a>#}
+{#        </div>#}
+
+{#        <div id="navbarBasicExample" class="navbar-menu">#}
+{#            <div class="navbar-start">#}
+{#                <a class="navbar-item">#}
+{#                    Home#}
+{#                </a>#}
+
+{#                <a class="navbar-item">#}
+{#                    Documentation#}
+{#                </a>#}
+
+{#                <div class="navbar-item has-dropdown is-hoverable">#}
+{#                    <a class="navbar-link">#}
+{#                        More#}
+{#                    </a>#}
+
+{#                    <div class="navbar-dropdown">#}
+{#                        <a class="navbar-item">#}
+{#                            About#}
+{#                        </a>#}
+{#                        <a class="navbar-item">#}
+{#                            Jobs#}
+{#                        </a>#}
+{#                        <a class="navbar-item">#}
+{#                            Contact#}
+{#                        </a>#}
+{#                        <hr class="navbar-divider">#}
+{#                        <a class="navbar-item">#}
+{#                            Report an issue#}
+{#                        </a>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+
+{#            <div class="navbar-end">#}
+{#                <div class="navbar-item">#}
+{#                    <div class="buttons">#}
+{#                        <a class="button is-primary">#}
+{#                            <strong>Sign up</strong>#}
+{#                        </a>#}
+{#                        <a class="button is-light">#}
+{#                            Log in#}
+{#                        </a>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </nav>#}
+
+
+
 </div>
-<footer class="common-footer">
+<main role="main" id="main">
+    <div id="app">
+        {% block body %}{% endblock %}
+    </div></main>
+<footer class="common-footer" role="contentinfo">
     <div class="container content has-text-centered">
         <div>
             <p class="footer-font">Réseaux sociaux</p>
@@ -68,7 +158,6 @@
         </div>
         <div>
             <p class="footer-font">Mobicoop</p>
-
             <div>
                 <p>
                     <strong>Mobicoop</strong> by <a href="https://mobicoop.io">Mobicoop team</a>. The source code is
