@@ -187,44 +187,44 @@ class AdManager
             if ($ad->getFrequency() == Ad::FREQUENCY_PUNCTUAL) {
                 $criteriaReturn->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad->getReturnDate()));
                 $criteriaReturn->setFromTime(\DateTime::createFromFormat('H:i', $ad->getReturnTime()));
-                $criteriaReturn->setMarginDuration($ad->getReturnMargin()*60);
+                $criteriaReturn->setMarginDuration($ad->getReturnMargin());
             } else {
                 $criteriaReturn->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad->getFromDate()));
                 $criteriaReturn->setToDate(\DateTime::createFromFormat('Y-m-d', $ad->getToDate()));
                 $criteriaReturn->setMonCheck($ad->getReturnMonTime()<>null);
                 if ($ad->getReturnMonTime()) {
                     $criteriaReturn->setMonTime(\DateTime::createFromFormat('H:i', $ad->getReturnMonTime()));
-                    $criteriaReturn->setMonMarginDuration($ad->getReturnMonMargin()*60);
+                    $criteriaReturn->setMonMarginDuration($ad->getReturnMonMargin());
                 }
                 $criteriaReturn->setTueCheck($ad->getReturnTueTime()<>null);
                 if ($ad->getReturnTueTime()) {
                     $criteriaReturn->setTueTime(\DateTime::createFromFormat('H:i', $ad->getReturnTueTime()));
-                    $criteriaReturn->setTueMarginDuration($ad->getReturnTueMargin()*60);
+                    $criteriaReturn->setTueMarginDuration($ad->getReturnTueMargin());
                 }
                 $criteriaReturn->setWedCheck($ad->getReturnWedTime()<>null);
                 if ($ad->getReturnWedTime()) {
                     $criteriaReturn->setWedTime(\DateTime::createFromFormat('H:i', $ad->getReturnWedTime()));
-                    $criteriaReturn->setWedMarginDuration($ad->getReturnWedMargin()*60);
+                    $criteriaReturn->setWedMarginDuration($ad->getReturnWedMargin());
                 }
                 $criteriaReturn->setThuCheck($ad->getReturnThuTime()<>null);
                 if ($ad->getReturnThuTime()) {
                     $criteriaReturn->setThuTime(\DateTime::createFromFormat('H:i', $ad->getReturnThuTime()));
-                    $criteriaReturn->setThuMarginDuration($ad->getReturnThuMargin()*60);
+                    $criteriaReturn->setThuMarginDuration($ad->getReturnThuMargin());
                 }
                 $criteriaReturn->setFriCheck($ad->getReturnFriTime()<>null);
                 if ($ad->getReturnFriTime()) {
                     $criteriaReturn->setFriTime(\DateTime::createFromFormat('H:i', $ad->getReturnFriTime()));
-                    $criteriaReturn->setFriMarginDuration($ad->getReturnFriMargin()*60);
+                    $criteriaReturn->setFriMarginDuration($ad->getReturnFriMargin());
                 }
                 $criteriaReturn->setSatCheck($ad->getReturnSatTime()<>null);
                 if ($ad->getReturnSatTime()) {
                     $criteriaReturn->setSatTime(\DateTime::createFromFormat('H:i', $ad->getReturnSatTime()));
-                    $criteriaReturn->setSatMarginDuration($ad->getReturnSatMargin()*60);
+                    $criteriaReturn->setSatMarginDuration($ad->getReturnSatMargin());
                 }
                 $criteriaReturn->setSunCheck($ad->getReturnSunTime()<>null);
                 if ($ad->getReturnSunTime()) {
                     $criteriaReturn->setSunTime(\DateTime::createFromFormat('H:i', $ad->getReturnSunTime()));
-                    $criteriaReturn->setSunMarginDuration($ad->getReturnSunMargin()*60);
+                    $criteriaReturn->setSunMarginDuration($ad->getReturnSunMargin());
                 }
             }
 

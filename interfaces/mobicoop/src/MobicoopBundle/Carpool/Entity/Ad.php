@@ -94,7 +94,7 @@ class Ad
     // PUNCTUAL
 
     /**
-     * @var string Date of the outward travel if punctual (in string format as we use a datepicker).
+     * @var \DateInterface Date of the outward travel if punctual (in string format as we use a datepicker).
      * @Assert\NotBlank(groups={"punctual"})
      *
      */
@@ -112,7 +112,7 @@ class Ad
     private $outwardMargin;
 
     /**
-     * @var string Date of the return travel if punctual (in string format as we use a datepicker).
+     * @var \DateInterface Date of the return travel if punctual (in string format as we use a datepicker).
      * @Assert\NotBlank(groups={"punctualReturnTrip"})
      */
     private $returnDate;
@@ -132,13 +132,13 @@ class Ad
     // REGULAR
 
     /**
-     * @var string Date of the first travel if regular.
+     * @var \DateInterface Date of the first travel if regular.
      * @Assert\NotBlank(groups={"regular"})
      */
     private $fromDate;
 
     /**
-     * @var string Date of the last travel if regular.
+     * @var \DateInterface Date of the last travel if regular.
      * @Assert\NotBlank(groups={"regular"})
      */
     private $toDate;
@@ -379,12 +379,12 @@ class Ad
 
     // PUNCTUAL
     
-    public function getOutwardDate(): ?string
+    public function getOutwardDate(): ?\DateInterface
     {
         return $this->outwardDate;
     }
     
-    public function setOutwardDate(?string $outwardDate): self
+    public function setOutwardDate(?\DateInterface $outwardDate): self
     {
         $this->outwardDate = $outwardDate;
         
@@ -415,12 +415,12 @@ class Ad
         return $this;
     }
     
-    public function getReturnDate(): ?string
+    public function getReturnDate(): ?\DateInterface
     {
         return $this->returnDate;
     }
     
-    public function setReturnDate(?string $returnDate): self
+    public function setReturnDate(?\DateInterface $returnDate): self
     {
         $this->returnDate = $returnDate;
         
@@ -453,24 +453,24 @@ class Ad
 
     // REGULAR
 
-    public function getFromDate(): ?string
+    public function getFromDate(): ?\DateInterface
     {
         return $this->fromDate;
     }
     
-    public function setFromDate(?string $fromDate): self
+    public function setFromDate(?\DateInterfae $fromDate): self
     {
         $this->fromDate = $fromDate;
         
         return $this;
     }
 
-    public function getToDate(): ?string
+    public function getToDate(): ?\DateInterface
     {
         return $this->toDate;
     }
     
-    public function setToDate(?string $toDate): self
+    public function setToDate(?\DateInterface $toDate): self
     {
         $this->toDate = $toDate;
         
