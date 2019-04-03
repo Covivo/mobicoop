@@ -342,7 +342,7 @@ export default {
           value *= 60;
         }
         console.log('Will add', prop, ' ', value);
-        adForm.append(prop, value);
+        adForm.append(`ad_form[${prop}]`, value);
       }
       //  We post the form 🚀
       axios

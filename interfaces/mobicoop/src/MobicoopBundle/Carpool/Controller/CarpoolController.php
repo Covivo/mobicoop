@@ -49,13 +49,13 @@ class CarpoolController extends AbstractController
      */
     public function ad(AdManager $adManager, UserManager $userManager, Request $request)
     {
-        $date = new \DateInterface();
+        $date = new \DateTime();
         $ad = new Ad();
         $ad->setRole(Ad::ROLE_BOTH);
         $ad->setType(Ad::TYPE_ONE_WAY);
         $ad->setFrequency(Ad::FREQUENCY_PUNCTUAL);
         $ad->setPrice(Ad::PRICE);
-        $ad->setOutwardDate($date);
+        $ad->setOutwardDate($date->format('Y/m/d'));
         $ad->setUser($userManager->getLoggedUser());
 
         $form = $this->createForm(AdForm::class, $ad);
@@ -63,7 +63,7 @@ class CarpoolController extends AbstractController
         $sucess = false;
         
         if ($request->isMethod('POST')) {
-            $form->submit($request->request->all());
+            // $form->submit($request->request->all());
             $form->handleRequest($request);
         }
 
@@ -74,7 +74,7 @@ class CarpoolController extends AbstractController
                 'error' => $error
             ]);
         }
-
+        
         // Not Valid populate error
         if (!$form->isValid()) {
             $error = [];

@@ -26,6 +26,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * Carpooling : an ad on the platform (offer from a driver / request from a passenger).
@@ -94,7 +95,7 @@ class Ad
     // PUNCTUAL
 
     /**
-     * @var \DateInterface Date of the outward travel if punctual (in string format as we use a datepicker).
+     * @var \DateTimeInterface Date of the outward travel if punctual (in string format as we use a datepicker).
      * @Assert\NotBlank(groups={"punctual"})
      *
      */
@@ -112,7 +113,7 @@ class Ad
     private $outwardMargin;
 
     /**
-     * @var \DateInterface Date of the return travel if punctual (in string format as we use a datepicker).
+     * @var \DateTimeInterface Date of the return travel if punctual (in string format as we use a datepicker).
      * @Assert\NotBlank(groups={"punctualReturnTrip"})
      */
     private $returnDate;
@@ -132,13 +133,13 @@ class Ad
     // REGULAR
 
     /**
-     * @var \DateInterface Date of the first travel if regular.
+     * @var \DateTimeInterface Date of the first travel if regular.
      * @Assert\NotBlank(groups={"regular"})
      */
     private $fromDate;
 
     /**
-     * @var \DateInterface Date of the last travel if regular.
+     * @var \DateTimeInterface Date of the last travel if regular.
      * @Assert\NotBlank(groups={"regular"})
      */
     private $toDate;
@@ -379,16 +380,19 @@ class Ad
 
     // PUNCTUAL
     
-    public function getOutwardDate(): ?\DateInterface
+    public function getOutwardDate(): ?\DateTimeInterface
     {
         return $this->outwardDate;
     }
     
-    public function setOutwardDate(?\DateInterface $outwardDate): self
-    {
-        $this->outwardDate = $outwardDate;
-        
-        return $this;
+    public function setOutwardDate(?string $outwardDate): self
+    {   
+        if ($outwardDate = \DateTime::createFromFormat('Y/m/d', $outwardDate)) {           
+             $this->outwardDate = $outwardDate;
+             echo "in setter " . print_r($this->outwardDate,true);
+             return $this;
+        }
+        return null;
     }
 
     public function getOutwardTime(): ?string
@@ -415,12 +419,12 @@ class Ad
         return $this;
     }
     
-    public function getReturnDate(): ?\DateInterface
+    public function getReturnDate(): ?\DateTimeInterface
     {
         return $this->returnDate;
     }
     
-    public function setReturnDate(?\DateInterface $returnDate): self
+    public function setReturnDate(?\DateTimeInterface $returnDate): self
     {
         $this->returnDate = $returnDate;
         
@@ -453,24 +457,24 @@ class Ad
 
     // REGULAR
 
-    public function getFromDate(): ?\DateInterface
+    public function getFromDate(): ?\DateTimeInterface
     {
         return $this->fromDate;
     }
     
-    public function setFromDate(?\DateInterfae $fromDate): self
+    public function setFromDate(?\DateTimeInterface $fromDate): self
     {
         $this->fromDate = $fromDate;
         
         return $this;
     }
 
-    public function getToDate(): ?\DateInterface
+    public function getToDate(): ?\DateTimeInterface
     {
         return $this->toDate;
     }
     
-    public function setToDate(?\DateInterface $toDate): self
+    public function setToDate(?\DateTimeInterface $toDate): self
     {
         $this->toDate = $toDate;
         
