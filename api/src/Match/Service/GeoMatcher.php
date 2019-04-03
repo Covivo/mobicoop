@@ -69,7 +69,7 @@ class GeoMatcher
                     $matchesReturned[] = $match;
                 }
             }
-        }                        
+        }
         return $matchesReturned;
     }
 

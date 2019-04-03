@@ -175,7 +175,7 @@ class ProposalMatcher
         foreach ($matchings as $matching) {
             $pickupDuration = null;
             $pickupTimes = [];
-            $filters = $matching->getFilters();    
+            $filters = $matching->getFilters();
             foreach ($filters['order'] as $value) {
                 if ($value['candidate'] == 2 && $value['position'] == 0) {
                     $pickupDuration = (int)round($value['duration']);
