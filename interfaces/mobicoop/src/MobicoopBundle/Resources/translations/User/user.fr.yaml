@@ -5,7 +5,7 @@ familyName:
     label: 'Nom'
     placeholder: 'Saisissez votre nom'
 email:
-    label: 'Email'
+    label: 'Email *'
     placeholder: 'Saisissez votre adresse email'
 password:
     label: 'Mot de passe'

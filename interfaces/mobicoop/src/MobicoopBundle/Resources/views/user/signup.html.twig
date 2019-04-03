@@ -19,6 +19,7 @@
 		{% if error %}
 		<span class="tag is-danger">An error occured.</span>
 		{% endif %}
+		<p>Les champs précédés d'une étoile (*) sont obligatoires</p>
         {{ form_start(form) }}
 		{{ form_row(form.email) }}
 		{{ form_row(form.givenName) }}
