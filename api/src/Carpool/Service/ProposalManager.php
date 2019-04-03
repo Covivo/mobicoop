@@ -170,7 +170,7 @@ class ProposalManager
         $this->entityManager->persist($proposal);
         
         // matching analyze
-        //$this->proposalMatcher->createMatchingsForProposal($proposal);
+        $this->proposalMatcher->createMatchingsForProposal($proposal);
         
         return $proposal;
     }

@@ -203,7 +203,8 @@ class GeoMatcher
                         'newDuration' => $routes[0]->getDuration(),
                         'detourDuration' => ($routes[0]->getDuration()-$candidate1->getDirection()->getDuration()),
                         'detourDurationPercent' => round($routes[0]->getDuration()*100/$candidate1->getDirection()->getDuration()-100, 2),
-                        'commonDistance' => $candidate2->getDirection()->getDistance()
+                        'commonDistance' => $candidate2->getDirection()->getDistance(),
+                        'direction' => $routes[0]
                     ];
                 }
             }

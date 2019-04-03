@@ -30,6 +30,7 @@ use App\Carpool\Entity\Criteria;
 use App\Carpool\Repository\ProposalRepository;
 use App\Match\Service\GeoMatcher;
 use App\Match\Entity\Candidate;
+use App\Carpool\Entity\Waypoint;
 
 /**
  * Matching analyzer service.
@@ -160,6 +161,44 @@ class ProposalMatcher
 
         // we check if the pickup times match
         $matchings = $this->checkPickUp($matchings);
+
+        // we complete the matchings with the waypoints and criteria
+        foreach ($matchings as $matching) {
+            
+            // waypoints
+            foreach ($matching->getFilter()['order'] as $key=>$point) {
+                $waypoint = new Waypoint();
+                $waypoint->setPosition($key);
+                if ($key == count(($matching->getFilter()['order'])-1)) $waypoint->setIsDestination(true);
+                $waypoint->setAddress(clone $point['address']);
+                $matching->addWaypoint($waypoint);
+            }
+
+            // criteria
+            $matchingCriteria = new Criteria();
+            $matchingCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);            
+            if ($matching->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && $matching->getProposalRequest()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+                $matchingCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
+                $matchingCriteria->setFromDate(max($matching->getProposalOffer()->getCriteria()->getFromDate(),$matching->getProposalRequest()->getCriteria()->getFromDate()));
+                $matchingCriteria->setToDate(min($matching->getProposalOffer()->getCriteria()->getToDate(),$matching->getProposalRequest()->getCriteria()->getToDate()));
+            } elseif ($matching->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                $matchingCriteria->setFromDate($matching->getProposalOffer()->getCriteria()->getFromDate());
+            } else {
+                $matchingCriteria->setFromDate($matching->getProposalRequest()->getCriteria()->getFromDate());
+            }
+            $matchingCriteria->setSeats(1);
+            if (isset($matching->getFilter()['pickup']['minPickupTime']) && isset($matching->getFilter()['pickup']['maxPickupTime'])) {
+                $matchingCriteria->setMinTime($matching->getFilter()['pickup']['minPickupTime']);
+                $matchingCriteria->setMaxTime($matching->getFilter()['pickup']['maxPickupTime']);
+                $matchingCriteria->setMarginDuration(round(($matching->getFilter()['pickup']['minPickupTime']->diff($matching->getFilter()['pickup']['maxPickupTime'])->format('%s')))/2);
+                $fromTime = clone $matching->getFilter()['pickup']['minPickupTime'];
+                $matchingCriteria->setFromTime($fromTime->add(new DateInterval('P' . $matchingCriteria->getMarginDuration() .'S')));
+                // continue here
+            }
+            
+            $matching->setCriteria($matchingCriteria);
+        }
+
         return $matchings;
     }
 
@@ -581,63 +620,18 @@ class ProposalMatcher
      */
     public function createMatchingsForProposal(Proposal $proposal)
     {
-        $proposals = $this->findMatchingProposals($proposal);
-        foreach ($proposals as $matchingProposal) {
-            $matching = new Matching();
-            if ($proposal->getProposalType() == Proposal::PROPOSAL_TYPE_OFFER) {
-                $matching->setProposalOffer($proposal);
-                $matching->setProposalRequest($matchingProposal);
-                // if the matching already exists between the proposal and the matchingProposal => we jump to the next proposal
-                if (!is_null($this->entityManager->getRepository(Matching::class)->findOneBy([
-                        'proposalOffer'     => $proposal,
-                        'proposalRequest'   => $matchingProposal
-                ]))) {
-                    break;
-                }
-                
-                // for now we just set the points to the start and destination points
-                foreach ($proposal->getPoints() as $point) {
-                    if ($point->getPosition() == 0) {
-                        $matching->setPointOfferFrom($point);
-                    }
-                    if ($point->getLastPoint()) {
-                        $matching->setPointOfferTo($point);
-                    }
-                }
-                foreach ($matchingProposal->getPoints() as $point) {
-                    if ($point->getPosition() == 0) {
-                        $matching->setPointRequestFrom($point);
-                        break;
-                    }
-                }
-            } else {
-                $matching->setProposalOffer($matchingProposal);
-                $matching->setProposalRequest($proposal);
-                // if the matching already exists between the proposal and the matchingProposal => we jump to the next proposal
-                if (!is_null($this->entityManager->getRepository(Matching::class)->findOneBy([
-                        'proposalOffer'     => $matchingProposal,
-                        'proposalRequest'   => $proposal
-                ]))) {
-                    break;
-                }
-                // for now we just set the points to the start and destination points
-                foreach ($matchingProposal->getPoints() as $point) {
-                    if ($point->getPosition() == 0) {
-                        $matching->setPointOfferFrom($point);
-                    }
-                    if ($point->getLastPoint()) {
-                        $matching->setPointOfferTo($point);
-                    }
-                }
-                foreach ($proposal->getPoints() as $point) {
-                    if ($point->getPosition() == 0) {
-                        $matching->setPointRequestFrom($point);
-                        break;
-                    }
-                }
-            }
+        // we search the matchings
+        $matchings = $this->findMatchingProposals($proposal);
+
+        // we complete the matchings with the waypoints and criteria
+        foreach ($matchings as $matching) {
             
+            // waypoints
+
+
+            // criteria
             $matchingCriteria = new Criteria();
+
             // for now we just clone some properties of the proposal criteria
             // in the future when the algorythm will be more efficient we will create a criteria based on most matching properties between the proposals criteria
             $matchingCriteria->clone($proposal->getCriteria());
