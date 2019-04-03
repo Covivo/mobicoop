@@ -47,284 +47,81 @@ class AdForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        ->add('origin', TextType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.origin.label',
-            'required' => true,
-            'attr' => [
-                'placeholder' => 'ad.origin.placeholder'
-            ]
-        ])
-        ->add('destination', TextType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.destination.label',
-            'required' => true,
-            'attr' => [
-                'placeholder' => 'ad.destination.placeholder'
-            ]
-        ])
-        ->add('originAddress', AddressForm::class)      // not displayed directly => displayed by geocomplete; must be present here for validation
-        ->add('destinationAddress', AddressForm::class) // not displayed directly => displayed by geocomplete; must be present here for validation
-        ->add('role', ChoiceType::class, [
-            // 'model' => 'role',
-            'expanded' => true,
-            'choices'  => Ad::ROLES,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => true,
-            'label' => 'ad.role.label',
-        ])
-        ->add('type', ChoiceType::class, [
-            // 'model' => 'type',
-            'choices'  => Ad::TYPES,
-            'expanded' => true,
-            'placeholder' => 'ad.type.placeholder',
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => true,
-            'label' => 'ad.type.label',
-        ])
-        ->add('frequency', ChoiceType::class, [
-            // 'model' => 'frequency',
-            'choices'  => Ad::FREQUENCIES,
-            'expanded' => true,
-            'placeholder' => 'ad.frequency.placeholder',
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => true,
-            'label' => 'ad.frequency.label'
-        ])
-
+        ->add('origin')
+        ->add('destination')
+        ->add('originAddress')      // not displayed directly => displayed by geocomplete; must be present here for validation
+        ->add('originLatitude')      // not displayed directly => displayed by geocomplete; must be present here for validation
+        ->add('originLongitude')      // not displayed directly => displayed by geocomplete; must be present here for validation
+        ->add('destinationLatitude')      // not displayed directly => displayed by geocomplete; must be present here for validation
+        ->add('destinationLongitude')      // not displayed directly => displayed by geocomplete; must be present here for validation
+        ->add('destinationAddress') // not displayed directly => displayed by geocomplete; must be present here for validation
+        ->add('role')
+        ->add('type')
+        ->add('frequency')
         // PUNCTUAL
-        ->add('outwardDate', DateType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_date.label',
-            'required' => false
-        ])
-        ->add('outwardTime', TimeType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_time.label',
-            'required' => false
-        ])
-        ->add('outwardMargin', ChoiceType::class, [
-            'placeholder' => 'ad.margin.placeholder',
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label',
-            'required' => false
-        ])
-        ->add('returnDate', DateType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_date.label',
-            'required' => false
-        ])
-        ->add('returnTime', TimeType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_time.label',
-            'required' => false
-        ])
-        ->add('returnMargin', ChoiceType::class, [
-            'placeholder' => 'ad.margin.placeholder',
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label',
-            'required' => false
-        ])
+        ->add('outwardDate')
+        ->add('outwardTime')
+        ->add('outwardMargin')
+        ->add('returnDate')
+        ->add('returnTime')
+        ->add('returnMargin')
         // REGULAR
-        ->add('fromDate', DateType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.from_date.label',
-            'required' => false
-        ])
-        ->add('toDate', DateType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.to_date.label',
-            'required' => false
-        ])
-        ->add('outwardMonTime', TimeType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_mon_time.label',
-            'required' => false
-        ])
-        ->add('outwardMonMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('outwardTueTime', TimeType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_tue_time.label'
-        ])
-        ->add('outwardTueMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('outwardWedTime', TimeType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_wed_time.label'
-        ])
-        ->add('outwardWedMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('outwardThuTime', TimeType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_thu_time.label'
-        ])
-        ->add('outwardThuMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('outwardFriTime', TimeType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_fri_time.label'
-        ])
-        ->add('outwardFriMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('outwardSatTime', TimeType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_sat_time.label'
-        ])
-        ->add('outwardSatMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('outwardSunTime', TimeType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_sun_time.label'
-        ])
-        ->add('outwardSunMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('returnMonTime', TimeType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_mon_time.label'
-        ])
-        ->add('returnMonMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('returnTueTime', TimeType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_tue_time.label'
-        ])
-        ->add('returnTueMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('returnWedTime', TimeType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_wed_time.label'
-        ])
-        ->add('returnWedMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('returnThuTime', TimeType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_thu_time.label'
-        ])
-        ->add('returnThuMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('returnFriTime', TimeType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_fri_time.label'
-        ])
-        ->add('returnFriMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('returnSatTime', TimeType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_sat_time.label'
-        ])
-        ->add('returnSatMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('returnSunTime', TimeType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_sun_time.label'
-        ])
-        ->add('returnSunMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-
-        ->add('comment', TextareaType::class, [
-            'required' => false,
-            'translation_domain' => 'carpool',
-            'label' => 'ad.comment.label',
-            'attr' => [
-                'placeholder' => 'ad.comment.placeholder'
-            ]
-        ])
-        ->add('price', TextType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.price.label',
-            'attr' => [
-                'placeholder' => 'ad.price.placeholder'
-            ]
-        ])
-        ->add('submit', SubmitType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.submit.label'
-        ])
-        ;
+        ->add('fromDate')
+        ->add('toDate')
+        ->add('outwardMonTime')
+        ->add('outwardMonMargin')
+        ->add('outwardTueTime')
+        ->add('outwardTueMargin')
+        ->add('outwardWedTime')
+        ->add('outwardWedMargin')
+        ->add('outwardThuTime')
+        ->add('outwardThuMargin')
+        ->add('outwardFriTime')
+        ->add('outwardFriMargin')
+        ->add('outwardSatTime')
+        ->add('outwardSatMargin')
+        ->add('outwardSunTime')
+        ->add('outwardSunMargin')
+        ->add('returnMonTime')
+        ->add('returnMonMargin')
+        ->add('returnTueTime')
+        ->add('returnTueMargin')
+        ->add('returnWedTime')
+        ->add('returnWedMargin')
+        ->add('returnThuTime')
+        ->add('returnThuMargin')
+        ->add('returnFriTime')
+        ->add('returnFriMargin')
+        ->add('returnSatTime')
+        ->add('returnSatMargin')
+        ->add('returnSunTime')
+        ->add('returnSunMargin')
+        ->add('comment');
     }
     
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
-                'data_class' => Ad::class,
-                'validation_groups' => function (FormInterface $form) {
-                    $data = $form->getData();
-                    $groups[] = 'Default';
-                    if (Ad::FREQUENCY_PUNCTUAL == $data->getFrequency()) {
-                        if (Ad::TYPE_RETURN_TRIP == $data->getType()) {
-                            $groups[] = 'punctualReturnTrip';
-                        } else {
-                            $groups[] = 'punctual';
-                        }
+        $resolver->setDefaults([
+            'data_class' => Ad::class,
+            'validation_groups' => function (FormInterface $form) {
+                $data = $form->getData();
+                $groups[] = 'Default';
+                if (Ad::FREQUENCY_PUNCTUAL == $data->getFrequency()) {
+                    if (Ad::TYPE_RETURN_TRIP == $data->getType()) {
+                        $groups[] = 'punctualReturnTrip';
                     } else {
-                        if (Ad::TYPE_RETURN_TRIP == $data->getType()) {
-                            $groups[] = 'regular';
-                        } else {
-                            $groups[] = 'regular';
-                        }
+                        $groups[] = 'punctual';
                     }
-                    
-                    return $groups;
-                },
-        ));
+                } else {
+                    if (Ad::TYPE_RETURN_TRIP == $data->getType()) {
+                        $groups[] = 'regular';
+                    } else {
+                        $groups[] = 'regular';
+                    }
+                }
+                
+                return $groups;
+            },
+        ]);
     }
 }

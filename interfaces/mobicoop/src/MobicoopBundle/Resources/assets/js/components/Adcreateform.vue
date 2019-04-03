@@ -237,6 +237,10 @@ export default {
     sentOutward: {
       type: String,
       default: ""
+    },
+    sentToken: {
+      type: String,
+      default: ""
     }
   },
   data() {
@@ -280,6 +284,7 @@ export default {
       // margins in minutes
       marginsMn: [5, 10, 15, 20, 25, 30, 45, 60, 90, 120, 150],
       form: {
+        createToken: this.sentToken,
         origin: "",
         originLatitude: null,
         originLongitude: null,
@@ -326,23 +331,29 @@ export default {
       this.form[name + "Latitude"] = val.latitude;
       this.form[name + "Longitude"] = val.longitude;
     },
-    onComplete() { // send the form
+    /**
+     * Send the form to the route /covoiturage/annonce/poster
+     */
+    onComplete() { 
       let adForm = new FormData();
       for (let prop in this.form) {
         let value = this.form[prop];
-        if(!value) continue;
+        if(!value) continue; // Value is empty, just skip it!
         // Convert date to required format
         if(prop.toLowerCase().includes('date')){
           value = moment(value).format('YYYY/MM/DD');
         }
+        // Convert time to required format
         if(prop.toLowerCase().includes('time')){
           value = moment(value).format('HH:mm');
         }
+        // Convert margin from min to sec
         if(prop.toLowerCase().includes('margin')){
           value *= 60;
         }
-        console.log('Will add', prop, ' ', value);
-        adForm.append(`ad_form[${prop}]`, value);
+        // rename prop to be usable in the controller
+        let renamedProp = prop === "createToken" ? prop : `ad_form[${prop}]`;
+        adForm.append(renamedProp, value);
       }
       //  We post the form 🚀
       axios

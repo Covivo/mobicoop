@@ -30,6 +30,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Form\AdForm;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
@@ -55,16 +56,22 @@ class CarpoolController extends AbstractController
         $ad->setType(Ad::TYPE_ONE_WAY);
         $ad->setFrequency(Ad::FREQUENCY_PUNCTUAL);
         $ad->setPrice(Ad::PRICE);
-        $ad->setOutwardDate($date->format('Y/m/d'));
+        // $ad->setOutwardDate($date->format('Y/m/d'));
         $ad->setUser($userManager->getLoggedUser());
 
         $form = $this->createForm(AdForm::class, $ad);
         $error = false;
         $sucess = false;
+
+        
         
         if ($request->isMethod('POST')) {
+            $createToken = $request->request->get('createToken');
+            if (!$this->isCsrfTokenValid('ad-create', $createToken)) {
+                return  new Response('Broken Token CSRF ', 403);
+            }
+            $form->submit($request->request->get($form->getName()));
             // $form->submit($request->request->all());
-            $form->handleRequest($request);
         }
 
         // If it's a get, just render the form !

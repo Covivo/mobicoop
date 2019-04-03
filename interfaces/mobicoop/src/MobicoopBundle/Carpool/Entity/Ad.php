@@ -95,7 +95,7 @@ class Ad
     // PUNCTUAL
 
     /**
-     * @var \DateTimeInterface Date of the outward travel if punctual (in string format as we use a datepicker).
+     * @var \DateTime Date of the outward travel if punctual (in string format as we use a datepicker).
      * @Assert\NotBlank(groups={"punctual"})
      *
      */
@@ -380,17 +380,16 @@ class Ad
 
     // PUNCTUAL
     
-    public function getOutwardDate(): ?\DateTimeInterface
+    public function getOutwardDate()
     {
         return $this->outwardDate;
     }
     
-    public function setOutwardDate(?string $outwardDate): self
+    public function setOutwardDate(?string $outwardDate): ?\DateTime
     {   
         if ($outwardDate = \DateTime::createFromFormat('Y/m/d', $outwardDate)) {           
              $this->outwardDate = $outwardDate;
-             echo "in setter " . print_r($this->outwardDate,true);
-             return $this;
+             return $outwardDate;
         }
         return null;
     }
