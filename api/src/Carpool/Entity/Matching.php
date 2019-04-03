@@ -121,6 +121,12 @@ class Matching
      * @ApiSubresource(maxDepth=1)
      */
     private $waypoints;
+
+    /**
+     * @var array The filters returned to the user. The user can then filter and sort the results.
+     * @Groups({"read","write"})
+     */
+    private $filters;
     
     public function __construct()
     {
@@ -239,6 +245,18 @@ class Matching
                 $waypoint->setMatching(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getFilters(): ?array
+    {
+        return $this->filters;
+    }
+
+    public function setFilters(array $filters): self
+    {
+        $this->filters = $filters;
 
         return $this;
     }

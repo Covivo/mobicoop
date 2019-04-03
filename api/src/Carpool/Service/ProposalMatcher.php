@@ -29,7 +29,6 @@ use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Repository\ProposalRepository;
 use App\Match\Service\GeoMatcher;
-use App\Match\Service\TimeMatcher;
 use App\Match\Entity\Candidate;
 
 /**
@@ -52,7 +51,6 @@ class ProposalMatcher
     private $entityManager;
     private $proposalRepository;
     private $geoMatcher;
-    private $timeMatcher;
     
     /**
      * Constructor.
@@ -60,21 +58,20 @@ class ProposalMatcher
      * @param EntityManagerInterface $entityManager
      * @param ProposalRepository $proposalRepository
      * @param GeoMatcher $geoMatcher
-     * @param TimeMatcher $timeMatcher
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, GeoMatcher $geoMatcher, TimeMatcher $timeMatcher)
+    public function __construct(EntityManagerInterface $entityManager, ProposalRepository $proposalRepository, GeoMatcher $geoMatcher)
     {
         $this->entityManager = $entityManager;
         $this->proposalRepository = $proposalRepository;
         $this->geoMatcher = $geoMatcher;
-        $this->timeMatcher = $timeMatcher;
     }
     
     /**
      * Find matching proposals for a proposal.
+     * Returns an array of Matching objects.
      *
      * @param Proposal $proposal
-     * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
+     * @return array|NULL
      */
     public function findMatchingProposals(Proposal $proposal)
     {
@@ -84,7 +81,7 @@ class ProposalMatcher
             return [];
         }
 
-        $proposals = [];
+        $matchings = [];
 
         // we filter with geomatcher
         $candidateProposal = new Candidate();
@@ -113,12 +110,15 @@ class ProposalMatcher
                 $candidate->setMaxDetourDistance($proposalToMatch->getCriteria()->getMaxDetourDistance() ? $proposalToMatch->getCriteria()->getMaxDetourDistance() : ($proposalToMatch->getCriteria()->getDirectionPassenger()->getDistance()*self::MAX_DETOUR_DISTANCE_PERCENT/100));
                 $candidate->setMaxDetourDuration($proposalToMatch->getCriteria()->getMaxDetourDuration() ? $proposalToMatch->getCriteria()->getMaxDetourDuration() : ($proposalToMatch->getCriteria()->getDirectionPassenger()->getDuration()*self::MAX_DETOUR_DURATION_PERCENT/100));
                 if ($matches = $this->geoMatcher->singleMatch($candidateProposal, [$candidate], true)) {
+                    // many matches can be found for 2 candidates : if multiple routes satisfy the criteria
                     if (is_array($matches) && count($matches)>0) {
-                        $proposals[] = [
-                            "role" => "driver",
-                            "proposal" => $proposalToMatch,
-                            "match" => $matches[0]
-                        ];
+                        foreach ($matches as $match) {
+                            $matching = new Matching();
+                            $matching->setProposalOffer($proposal);
+                            $matching->setProposalRequest($proposalToMatch);
+                            $matching->setFilters($match);
+                            $matchings[] = $matching;
+                        }
                     }
                 }
             }
@@ -144,55 +144,52 @@ class ProposalMatcher
                 $candidate->setMaxDetourDistance($proposalToMatch->getCriteria()->getMaxDetourDistance() ? $proposalToMatch->getCriteria()->getMaxDetourDistance() : ($proposalToMatch->getCriteria()->getDirectionDriver()->getDistance()*self::MAX_DETOUR_DISTANCE_PERCENT/100));
                 $candidate->setMaxDetourDuration($proposalToMatch->getCriteria()->getMaxDetourDuration() ? $proposalToMatch->getCriteria()->getMaxDetourDuration() : ($proposalToMatch->getCriteria()->getDirectionDriver()->getDuration()*self::MAX_DETOUR_DURATION_PERCENT/100));
                 if ($matches = $this->geoMatcher->singleMatch($candidateProposal, [$candidate], false)) {
+                    // many matches can be found for 2 candidates : if multiple routes satisfy the criteria
                     if (is_array($matches) && count($matches)>0) {
-                        $proposals[] = [
-                            "role" => "passenger",
-                            "proposal" => $proposalToMatch,
-                            "match" => $matches[0]
-                        ];
+                        foreach ($matches as $match) {
+                            $matching = new Matching();
+                            $matching->setProposalOffer($proposalToMatch);
+                            $matching->setProposalRequest($proposal);
+                            $matching->setFilters($match);
+                            $matchings[] = $matching;
+                        }
                     }
                 }
             }
         }
 
         // we check if the pickup times match
-        $proposals = $this->checkPickUp($proposal, $proposals);
-
-        return $proposals;
+        $matchings = $this->checkPickUp($matchings);
+        return $matchings;
     }
 
     /**
      * Check that pickup times are valid against the given proposals.
      *
-     * @param Proposal $proposal    The proposal
-     * @param array $proposals      The candidates
+     * @param array $matchings  The candidates
      * @return void
      */
-    private function checkPickUp(Proposal $proposal, array $proposals)
+    private function checkPickUp(array $matchings)
     {
-        $validProposals = [];
-        foreach ($proposals as $candidate) {
+        $validMatchings = [];
+        foreach ($matchings as $matching) {
             $pickupDuration = null;
             $pickupTimes = [];
-            foreach ($candidate['match'][0]['order'] as $value) {
+            $filters = $matching->getFilters();
+            foreach ($filters['order'] as $value) {
                 if ($value['candidate'] == 2 && $value['position'] == 0) {
                     $pickupDuration = (int)round($value['duration']);
                     break;
                 }
             }
-            if ($candidate['role'] == 'driver') {
-                // driver proposal
-                $pickupTimes = $this->getPickupTimes($proposal, $candidate['proposal'], $pickupDuration);
-            } else {
-                // passenger proposal
-                $pickupTimes = $this->getPickupTimes($candidate['proposal'], $proposal, $pickupDuration);
-            }
+            $pickupTimes = $this->getPickupTimes($matching->getProposalOffer(), $matching->getProposalRequest(), $pickupDuration);
             if (count($pickupTimes)>0) {
-                $candidate['match']['pickup'] = $pickupTimes;
-                $validProposals[] = $candidate;
+                $filters['pickup'] = $pickupTimes;
+                $matching->setFilters($filters);
+                $validMatchings[] = $matching;
             }
         }
-        return $validProposals;
+        return $validMatchings;
     }
 
     /**

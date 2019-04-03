@@ -56,19 +56,21 @@ class GeoMatcher
      */
     public function singleMatch(Candidate $candidate, array $candidates, bool $master=true): ?array
     {
-        $matches = [];
-        
+        $matchesReturned = [];
         foreach ($candidates as $candidateToMatch) {
-            if ($master && $match = $this->match($candidate, $candidateToMatch)) {
+            if ($master && $matches = $this->match($candidate, $candidateToMatch)) {
                 // if we stream, we should return the result here !
-                $matches[] = $match;
-            } elseif (!$master && $match = $this->match($candidateToMatch, $candidate)) {
+                foreach ($matches as $match) {
+                    $matchesReturned[] = $match;
+                }
+            } elseif (!$master && $matches = $this->match($candidateToMatch, $candidate)) {
                 // if we stream, we should return the result here !
-                $matches[] = $match;
+                foreach ($matches as $match) {
+                    $matchesReturned[] = $match;
+                }
             }
         }
-
-        return $matches;
+        return $matchesReturned;
     }
 
     /**
@@ -190,17 +192,18 @@ class GeoMatcher
                 // if the detour is acceptable we keep the candidate
                 if ($detourDistance && $detourDuration && $commonDistance) {
                     $result[] = [
-                        'order' => $this->generateOrder(array_keys($points), $routes[0]->getDurations()),
-                        'originalDistance' => $candidate1->getDirection()->getDistance()/1000,
-                        'acceptedDetourDistance' => $candidate1->getMaxDetourDistance()/1000,
-                        'newDistance' => $routes[0]->getDistance()/1000,
-                        'detourDistance' => ($routes[0]->getDistance()-$candidate1->getDirection()->getDistance())/1000,
+                        'order' => $this->generateOrder($points, $routes[0]->getDurations()),
+                        'originalDistance' => $candidate1->getDirection()->getDistance(),
+                        'acceptedDetourDistance' => $candidate1->getMaxDetourDistance(),
+                        'newDistance' => $routes[0]->getDistance(),
+                        'detourDistance' => ($routes[0]->getDistance()-$candidate1->getDirection()->getDistance()),
                         'detourDistancePercent' => round($routes[0]->getDistance()*100/$candidate1->getDirection()->getDistance()-100, 2),
-                        'originalDuration' => $candidate1->getDirection()->getDuration()/60,
-                        'acceptedDetourDuration' => $candidate1->getMaxDetourDuration()/60,
-                        'newDuration' => $routes[0]->getDuration()/60,
-                        'detourDuration' => ($routes[0]->getDuration()-$candidate1->getDirection()->getDuration())/60,
-                        'detourDurationPercent' => round($routes[0]->getDuration()*100/$candidate1->getDirection()->getDuration()-100, 2)
+                        'originalDuration' => $candidate1->getDirection()->getDuration(),
+                        'acceptedDetourDuration' => $candidate1->getMaxDetourDuration(),
+                        'newDuration' => $routes[0]->getDuration(),
+                        'detourDuration' => ($routes[0]->getDuration()-$candidate1->getDirection()->getDuration()),
+                        'detourDurationPercent' => round($routes[0]->getDuration()*100/$candidate1->getDirection()->getDuration()-100, 2),
+                        'commonDistance' => $candidate2->getDirection()->getDistance()
                     ];
                 }
             }
@@ -211,21 +214,24 @@ class GeoMatcher
     /**
      * Returns the order of the points.
      *
-     * @param array $keys   The keys representing the order
-     * @param array $keys   The duration of each part
+     * @param array $points     The points in order
+     * @param array $durations  The duration of each part
      * @return void
      */
-    private function generateOrder(array $keys, array $durations)
+    private function generateOrder(array $points, array $durations)
     {
         $order = [];
-        foreach ($keys as $i=>$key) {
+        $i = 0;
+        foreach ($points as $key=>$point) {
             $order[] = [
                 'candidate'         => (substr($key, 0, 1) == 'A') ? 1 : 2,
                 'position'          => substr($key, 1),
                 'duration'          => isset($durations[$i]) ? $durations[$i]['duration'] : null,
-                'approx_duration'   => isset($durations[$i]) ? $durations[$i]['approx_duration'] : null,
-                'approx_point'      => isset($durations[$i]) ? $durations[$i]['approx_point'] : null
+                'approx_duration'   => isset($durations[$i]) ? $durations[$i]['approx_duration'] : null,    // approx_duration : if the duration to the waypoint isn't strictly returned by the SIG
+                'approx_point'      => isset($durations[$i]) ? $durations[$i]['approx_point'] : null,       // approx_point : if the position of the waypoint isn't strictly returned by the SIG
+                'address'           => $point
             ];
+            $i++;
         }
         return $order;
     }
