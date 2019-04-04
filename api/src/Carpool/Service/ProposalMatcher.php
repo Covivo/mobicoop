@@ -202,50 +202,50 @@ class ProposalMatcher
                     $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getFromTime());
                 } else {
                     switch ($matchingCriteria->getFromDate()->format('w')) {
-                        case 0 : 
+                        case 0:
                             $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getSunMinTime());
                             $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getSunMaxTime());
                             $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getSunMarginDuration());
                             $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getSunTime());
                             break;
-                        case 1 : 
+                        case 1:
                             $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getMonMinTime());
                             $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getMonMaxTime());
                             $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getMonMarginDuration());
                             $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getMonTime());
                             break;
-                        case 2 : 
+                        case 2:
                             $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getTueMinTime());
                             $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getTueMaxTime());
                             $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getTueMarginDuration());
                             $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getTueTime());
                             break;
-                        case 3 : 
+                        case 3:
                             $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getWedMinTime());
                             $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getWedMaxTime());
                             $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getWedMarginDuration());
                             $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getWedTime());
                             break;
-                        case 4 : 
+                        case 4:
                             $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getThuMinTime());
                             $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getThuMaxTime());
                             $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getThuMarginDuration());
                             $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getThuTime());
                             break;
-                        case 5 : 
+                        case 5:
                             $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getFriMinTime());
                             $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getFriMaxTime());
                             $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getFriMarginDuration());
                             $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getFriTime());
                             break;
-                        case 6 : 
+                        case 6:
                             $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getSatMinTime());
                             $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getSatMaxTime());
                             $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getSatMarginDuration());
                             $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getSatTime());
                             break;
                     }
-                }                
+                }
             }
             if (isset($matching->getFilters()['pickup']['monMinPickupTime']) && isset($matching->getFilters()['pickup']['monMaxPickupTime'])) {
                 $matchingCriteria->setMonCheck(true);
@@ -298,7 +298,7 @@ class ProposalMatcher
             }
 
             $matching->setCriteria($matchingCriteria);
-            // we remove the direction from the filter to reduce the size of the returned object 
+            // we remove the direction from the filter to reduce the size of the returned object
             // (it is already affected to the driver direction)
             $filters = $matching->getFilters();
             unset($filters['direction']);
