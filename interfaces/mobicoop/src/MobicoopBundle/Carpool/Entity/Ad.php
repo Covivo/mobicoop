@@ -386,10 +386,10 @@ class Ad
     }
     
     public function setOutwardDate(?string $outwardDate): ?\DateTime
-    {   
-        if ($outwardDate = \DateTime::createFromFormat('Y/m/d', $outwardDate)) {           
-             $this->outwardDate = $outwardDate;
-             return $outwardDate;
+    {
+        if ($outwardDate = \DateTime::createFromFormat('Y/m/d', $outwardDate)) {
+            $this->outwardDate = $outwardDate;
+            return $outwardDate;
         }
         return null;
     }
