@@ -39,7 +39,7 @@ body {
   //h1 {
   // font-size: 75px;
   //}
-  a:focus {
+  *:focus {
     outline: 3px solid orange !important;
   }
   label.required::after {
@@ -74,7 +74,7 @@ body {
       margin-right: 5px;
       img.logo {
         max-height: 4rem;
-        margin: 17px;
+        margin: 14px;
       }
     }
     .common-nav {

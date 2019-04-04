@@ -55,9 +55,7 @@ class UserForm extends AbstractType
             'label' => 'givenName.label',
             'attr' => [
                 'placeholder' => 'givenName.placeholder',
-                'aria-labelledby' => 'givenName.arialabelledby',
-                'aria-required' => 'true',
-                'test' => 'givenName.test'
+                'aria-labelledby' => $this->translator->trans('givenName.aria-required')
             ]
         ])
         ->add('familyName', TextType::class, [
@@ -78,6 +76,7 @@ class UserForm extends AbstractType
             'type' => PasswordType::class,
             'translation_domain' => 'user',
             'invalid_message' => 'password.password_match',
+            'help' => 'Make sure to add a valid email',
             'first_options'  => [
                 'label' => 'password.label',
                 'attr' => [

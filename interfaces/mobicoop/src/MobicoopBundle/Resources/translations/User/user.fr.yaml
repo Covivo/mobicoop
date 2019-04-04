@@ -1,6 +1,7 @@
 givenName:
     label: 'Prénom'
     placeholder: 'Saisissez votre prénom'
+    aria-required: 'true'
 familyName:
     label: 'Nom'
     placeholder: 'Saisissez votre nom'
