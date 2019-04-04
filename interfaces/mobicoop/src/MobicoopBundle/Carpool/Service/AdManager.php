@@ -105,10 +105,10 @@ class AdManager
         // creation of the criteria
         $criteria = new Criteria();
         if ($ad->getRole() == Ad::ROLE_BOTH || $ad->getRole() == Ad::ROLE_DRIVER) {
-            $criteria->setIsDriver(true);
+            $criteria->setDriver(true);
         }
         if ($ad->getRole() == Ad::ROLE_BOTH || $ad->getRole() == Ad::ROLE_PASSENGER) {
-            $criteria->setIsPassenger(true);
+            $criteria->setPassenger(true);
         }
         $criteria->setPriceKm($ad->getPrice());
 
@@ -160,12 +160,12 @@ class AdManager
         $waypointOrigin = new Waypoint();
         $waypointOrigin->setAddress($ad->getOriginAddress());
         $waypointOrigin->setPosition(0);
-        $waypointOrigin->setIsDestination(false);
+        $waypointOrigin->setDestination(false);
 
         $waypointDestination = new Waypoint();
         $waypointDestination->setAddress($ad->getDestinationAddress());
         $waypointDestination->setPosition(1);
-        $waypointDestination->setIsDestination(true);
+        $waypointDestination->setDestination(true);
 
         $proposal->setCriteria($criteria);
         $proposal->addWaypoint($waypointOrigin);
@@ -250,11 +250,11 @@ class AdManager
             foreach ($reversedWaypoints as $pos=>$proposalWaypoint) {
                 $waypoint = clone $proposalWaypoint;
                 $waypoint->setPosition($pos);
-                $waypoint->setIsDestination(false);
+                $waypoint->setDestination(false);
                 // address
                 $waypoint->setAddress(clone $proposalWaypoint->getAddress());
                 if ($pos == ($nbWaypoints-1)) {
-                    $waypoint->setIsDestination(true);
+                    $waypoint->setDestination(true);
                 }
                 $proposalReturn->addWaypoint($waypoint);
             }

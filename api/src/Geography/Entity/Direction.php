@@ -143,6 +143,7 @@ class Direction
     /**
      * @var Address[]|null The decoded points (from detail) of the direction.
      * Can be used to draw the path on a map.
+     * @Groups("read")
      */
     private $points;
 

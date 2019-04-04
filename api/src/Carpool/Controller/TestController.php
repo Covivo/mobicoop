@@ -154,6 +154,8 @@ class TestController extends AbstractController
                         echo "</ul></li>";
                         echo "<li>" . $matchingProposal->getCriteria()->getFromDate()->format('D d/m/Y') . " - " . $matchingProposal->getCriteria()->getToDate()->format('D d/m/Y') . "</li>";
                     }
+                    echo "<li>waypoints : " . count($matching->getWaypoints()) . "</li>";
+                    echo "<li>criteria : <pre>" . print_r($matching->getCriteria(), true) . "</pre></li>";
                     echo "<li>geomatch : <pre>" . print_r($matching->getFilters(), true) . "</pre></li>";
                     echo "</ul></li>";
                     echo "</ul>";

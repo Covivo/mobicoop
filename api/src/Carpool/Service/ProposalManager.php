@@ -42,14 +42,6 @@ use App\DataProvider\Entity\GeoRouterProvider;
  */
 class ProposalManager
 {
-    // zones precisions (in degrees) to generate when adding a direction
-    public const THINNESSES = [
-        1,
-        0.5,
-        0.25,
-        0.125
-    ];
-
     private $entityManager;
     private $proposalMatcher;
     private $proposalRepository;
@@ -87,7 +79,7 @@ class ProposalManager
         // temporary initialisation, will be dumped when implementation of these fields will be done
         $proposal->getCriteria()->setSeats(1);
         $proposal->getCriteria()->setAnyRouteAsPassenger(true);
-        $proposal->getCriteria()->setIsStrictDate(true);
+        $proposal->getCriteria()->setStrictDate(true);
 
         // calculation of the min and max times
         if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
@@ -140,24 +132,7 @@ class ProposalManager
         if ($routes = $this->geoRouter->getRoutes($addresses)) {
             $direction = $routes[0];
             // creation of the crossed zones
-            $zones = [];
-            foreach (self::THINNESSES as $thinness) {
-                // $zones[$thinness] would be simpler and better... but we can't use a float as a key with php (transformed to string)
-                // so we use an inner value for thinness
-                $zones[] = [
-                    'thinness' => $thinness,
-                    'crossed' => $this->zoneManager->getZonesForAddresses($direction->getPoints(), $thinness, 0)
-                ];
-            }
-
-            foreach ($zones as $crossed) {
-                foreach ($crossed['crossed'] as $zoneCrossed) {
-                    $zone = new Zone();
-                    $zone->setZoneid($zoneCrossed);
-                    $zone->setThinness($crossed['thinness']);
-                    $direction->addZone($zone);
-                }
-            }
+            $direction = $this->zoneManager->createZonesForDirection($direction);
             
             if ($proposal->getCriteria()->isDriver()) {
                 $proposal->getCriteria()->setDirectionDriver($direction);
@@ -167,11 +142,11 @@ class ProposalManager
             }
         }
 
-        $this->entityManager->persist($proposal);
-        
         // matching analyze
-        $this->proposalMatcher->createMatchingsForProposal($proposal);
-        
+        $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal);
+
+        $this->entityManager->persist($proposal);
+
         return $proposal;
     }
 
@@ -284,14 +259,14 @@ class ProposalManager
         $waypointFrom = new Waypoint();
         $waypointFrom->setAddress($addressFrom);
         $waypointFrom->setPosition(0);
-        $waypointFrom->setIsDestination(false);
+        $waypointFrom->setDestination(false);
         $waypointTo = new Waypoint();
         $waypointTo->setAddress($addressTo);
         $waypointTo->setPosition(1);
-        $waypointTo->setIsDestination(true);
+        $waypointTo->setDestination(true);
         $criteria = new Criteria();
-        $criteria->setIsDriver(!$offer);
-        $criteria->setIsPassenger(!$request);
+        $criteria->setDriver(!$offer);
+        $criteria->setPassenger(!$request);
         if (!is_null($outward_mindate)) {
             $criteria->setFromDate($outward_mindate);
         } else {

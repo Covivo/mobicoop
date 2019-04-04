@@ -26,6 +26,7 @@ namespace App\Match\Service;
 use App\Match\Entity\Candidate;
 use App\Geography\Service\GeoRouter;
 use App\Carpool\Service\ProposalMatcher;
+use App\Geography\Service\ZoneManager;
 
 /**
  * Geographical Matching service.
@@ -35,15 +36,17 @@ use App\Carpool\Service\ProposalMatcher;
 class GeoMatcher
 {
     private $geoRouter;
+    private $zoneManager;
 
     /**
      * Constructor.
      *
      * @param GeoRouter $geoRouter
      */
-    public function __construct(GeoRouter $geoRouter)
+    public function __construct(GeoRouter $geoRouter, ZoneManager $zoneManager)
     {
         $this->geoRouter = $geoRouter;
+        $this->zoneManager = $zoneManager;
     }
 
     /**
@@ -191,6 +194,8 @@ class GeoMatcher
                 
                 // if the detour is acceptable we keep the candidate
                 if ($detourDistance && $detourDuration && $commonDistance) {
+                    // we had the zones to the direction
+                    $direction = $this->zoneManager->createZonesForDirection($routes[0]);
                     $result[] = [
                         'order' => $this->generateOrder($points, $routes[0]->getDurations()),
                         'originalDistance' => $candidate1->getDirection()->getDistance(),
@@ -204,7 +209,7 @@ class GeoMatcher
                         'detourDuration' => ($routes[0]->getDuration()-$candidate1->getDirection()->getDuration()),
                         'detourDurationPercent' => round($routes[0]->getDuration()*100/$candidate1->getDirection()->getDuration()-100, 2),
                         'commonDistance' => $candidate2->getDirection()->getDistance(),
-                        'direction' => $routes[0]
+                        'direction' => $direction
                     ];
                 }
             }

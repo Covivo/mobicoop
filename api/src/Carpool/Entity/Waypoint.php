@@ -74,7 +74,7 @@ class Waypoint
      * @ORM\Column(type="boolean")
      * @Groups({"read","write"})
      */
-    private $isDestination;
+    private $destination;
 
     /**
      * @var Proposal|null The proposal that created the point.
@@ -127,12 +127,12 @@ class Waypoint
 
     public function isDestination(): ?bool
     {
-        return $this->isDestination;
+        return $this->destination;
     }
 
-    public function setIsDestination(bool $isDestination): self
+    public function setDestination(bool $isDestination): self
     {
-        $this->isDestination = $isDestination;
+        $this->destination = $isDestination;
 
         return $this;
     }
