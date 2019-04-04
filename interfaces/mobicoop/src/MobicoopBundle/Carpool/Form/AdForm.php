@@ -103,6 +103,8 @@ class AdForm extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Ad::class,
+            'csrf_field_name' => 'createToken',
+            'csrf_token_id'   => 'ad-create',
             'validation_groups' => function (FormInterface $form) {
                 $data = $form->getData();
                 $groups[] = 'Default';

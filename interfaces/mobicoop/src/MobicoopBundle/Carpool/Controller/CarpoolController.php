@@ -59,7 +59,7 @@ class CarpoolController extends AbstractController
         // $ad->setOutwardDate($date->format('Y/m/d'));
         $ad->setUser($userManager->getLoggedUser());
 
-        $form = $this->createForm(AdForm::class, $ad);
+        $form = $this->createForm(AdForm::class, $ad, ['csrf_protection' => false]);
         $error = false;
         $sucess = false;
 

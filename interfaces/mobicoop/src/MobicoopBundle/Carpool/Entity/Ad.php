@@ -876,43 +876,43 @@ class Ad
         return $this;
     }
 
-    public function getOriginLatitude(): ?float
+    public function getOriginLatitude(): float
     {
         return $this->originLatitude;
     }
 
-    public function setOriginLatitude(float $originLatitude): self
+    public function setOriginLatitude(string $originLatitude): float
     {
-        $this->originLatitude = $originLatitude;
+        $originLatitude = $this->originLatitude = floatval($originLatitude);
 
-        return $this;
+        return $originLatitude;
     }
 
-    public function getOriginLongitude(): ?float
+    public function getOriginLongitude(): float
     {
         return $this->originLongitude;
     }
 
-    public function setOriginLongitude(?float $originLongitude): self
+    public function setOriginLongitude(string $originLongitude): float
     {
-        $this->originLongitude = $originLongitude;
+        $originLongitude = $this->originLongitude = floatval($originLongitude);
 
-        return $this;
+        return $originLongitude;
     }
 
-    public function getDestinationLatitude(): ?float
+    public function getDestinationLatitude(): float
     {
         return $this->destinationLatitude;
     }
 
-    public function setDestinationLatitude(?float $destinationLatitude): self
+    public function setDestinationLatitude(string $destinationLatitude): float
     {
-        $this->destinationLatitude = $destinationLatitude;
+        $destinationLatitude = $this->destinationLatitude = floatval($destinationLatitude);
 
-        return $this;
+        return $destinationLatitude;
     }
 
-    public function getDestinationLongitude(): ?float
+    public function getDestinationLongitude(): float
     {
         return $this->destinationLongitude;
     }

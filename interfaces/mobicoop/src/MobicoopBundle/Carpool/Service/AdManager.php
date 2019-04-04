@@ -94,7 +94,6 @@ class AdManager
      */
     public function createProposalFromAd(Ad $ad)
     {
-        //echo "<pre>" . print_r($ad,true) . "</pre>";exit;
 
         // OUTWARD
         $proposal = new Proposal();
@@ -114,7 +113,7 @@ class AdManager
 
         $criteria->setFrequency($ad->getFrequency());
         if ($ad->getFrequency() == Ad::FREQUENCY_PUNCTUAL) {
-            $criteria->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad->getOutwardDate()));
+            $criteria->setFromDate($ad->getOutwardDate());
             $criteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
             $criteria->setMarginDuration($ad->getOutwardMargin()*60);
         } else {
@@ -123,37 +122,37 @@ class AdManager
             $criteria->setMonCheck($ad->getOutwardMonTime()<>null);
             if ($ad->getOutwardMonTime()) {
                 $criteria->setMonTime(\DateTime::createFromFormat('H:i', $ad->getOutwardMonTime()));
-                $criteria->setMonMarginDuration($ad->getOutwardMonMargin()*60);
+                $criteria->setMonMarginDuration($ad->getOutwardMonMargin());
             }
             $criteria->setTueCheck($ad->getOutwardTueTime()<>null);
             if ($ad->getOutwardTueTime()) {
                 $criteria->setTueTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTueTime()));
-                $criteria->setTueMarginDuration($ad->getOutwardTueMargin()*60);
+                $criteria->setTueMarginDuration($ad->getOutwardTueMargin());
             }
             $criteria->setWedCheck($ad->getOutwardWedTime()<>null);
             if ($ad->getOutwardWedTime()) {
                 $criteria->setWedTime(\DateTime::createFromFormat('H:i', $ad->getOutwardWedTime()));
-                $criteria->setWedMarginDuration($ad->getOutwardWedMargin()*60);
+                $criteria->setWedMarginDuration($ad->getOutwardWedMargin());
             }
             $criteria->setThuCheck($ad->getOutwardThuTime()<>null);
             if ($ad->getOutwardThuTime()) {
                 $criteria->setThuTime(\DateTime::createFromFormat('H:i', $ad->getOutwardThuTime()));
-                $criteria->setThuMarginDuration($ad->getOutwardThuMargin()*60);
+                $criteria->setThuMarginDuration($ad->getOutwardThuMargin());
             }
             $criteria->setFriCheck($ad->getOutwardFriTime()<>null);
             if ($ad->getOutwardFriTime()) {
                 $criteria->setFriTime(\DateTime::createFromFormat('H:i', $ad->getOutwardFriTime()));
-                $criteria->setFriMarginDuration($ad->getOutwardFriMargin()*60);
+                $criteria->setFriMarginDuration($ad->getOutwardFriMargin());
             }
             $criteria->setSatCheck($ad->getOutwardSatTime()<>null);
             if ($ad->getOutwardSatTime()) {
                 $criteria->setSatTime(\DateTime::createFromFormat('H:i', $ad->getOutwardSatTime()));
-                $criteria->setSatMarginDuration($ad->getOutwardSatMargin()*60);
+                $criteria->setSatMarginDuration($ad->getOutwardSatMargin());
             }
             $criteria->setSunCheck($ad->getOutwardSunTime()<>null);
             if ($ad->getOutwardSunTime()) {
                 $criteria->setSunTime(\DateTime::createFromFormat('H:i', $ad->getOutwardSunTime()));
-                $criteria->setSunMarginDuration($ad->getOutwardSunMargin()*60);
+                $criteria->setSunMarginDuration($ad->getOutwardSunMargin());
             }
         }
         
@@ -170,9 +169,6 @@ class AdManager
         $proposal->setCriteria($criteria);
         $proposal->addWaypoint($waypointOrigin);
         $proposal->addWaypoint($waypointDestination);
-
-        // echo "<pre>" . print_r($proposal,true) . "</pre>";
-        // exit;
 
         // creation of the outward proposal
         if (!$proposalOutward = $this->proposalManager->createProposal($proposal)) {
