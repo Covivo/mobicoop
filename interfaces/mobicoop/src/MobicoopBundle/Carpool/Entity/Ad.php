@@ -418,16 +418,19 @@ class Ad
         return $this;
     }
     
-    public function getReturnDate(): ?\DateTimeInterface
+    public function getReturnDate(): ?\DateTime
     {
         return $this->returnDate;
     }
     
-    public function setReturnDate(?\DateTimeInterface $returnDate): self
+    public function setReturnDate(?\DateTimeInterface $returnDate): ?\DateTime
     {
-        $this->returnDate = $returnDate;
+        if ($returnDate = \DateTime::createFromFormat('Y/m/d', $returnDate)) {
+            $this->returnDate = $returnDate;
+            return $returnDate;
+        }
         
-        return $this;
+        return null;
     }
 
     public function getReturnTime(): ?string
@@ -876,43 +879,43 @@ class Ad
         return $this;
     }
 
-    public function getOriginLatitude(): float
+    public function getOriginLatitude(): ?float
     {
         return $this->originLatitude;
     }
 
-    public function setOriginLatitude(string $originLatitude): float
+    public function setOriginLatitude(string $originLatitude): ?float
     {
         $originLatitude = $this->originLatitude = floatval($originLatitude);
 
         return $originLatitude;
     }
 
-    public function getOriginLongitude(): float
+    public function getOriginLongitude(): ?float
     {
         return $this->originLongitude;
     }
 
-    public function setOriginLongitude(string $originLongitude): float
+    public function setOriginLongitude(string $originLongitude): ?float
     {
         $originLongitude = $this->originLongitude = floatval($originLongitude);
 
         return $originLongitude;
     }
 
-    public function getDestinationLatitude(): float
+    public function getDestinationLatitude(): ?float
     {
         return $this->destinationLatitude;
     }
 
-    public function setDestinationLatitude(string $destinationLatitude): float
+    public function setDestinationLatitude(string $destinationLatitude): ?float
     {
         $destinationLatitude = $this->destinationLatitude = floatval($destinationLatitude);
 
         return $destinationLatitude;
     }
 
-    public function getDestinationLongitude(): float
+    public function getDestinationLongitude(): ?float
     {
         return $this->destinationLongitude;
     }
