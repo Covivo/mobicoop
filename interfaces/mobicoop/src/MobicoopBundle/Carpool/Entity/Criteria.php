@@ -57,14 +57,14 @@ class Criteria
      *
      * @Groups({"post","put"})
      */
-    private $isDriver;
+    private $driver;
     
     /**
      * @var boolean The user can be a passenger.
      *
      * @Groups({"post","put"})
      */
-    private $isPassenger;
+    private $passenger;
 
     /**
      * @var int The proposal frequency (1 = punctual; 2 = regular).
@@ -332,24 +332,24 @@ class Criteria
     
     public function isDriver(): ?bool
     {
-        return $this->isDriver;
+        return $this->driver;
     }
     
-    public function setIsDriver(bool $isDriver): self
+    public function setDriver(bool $isDriver): self
     {
-        $this->isDriver = $isDriver;
+        $this->driver = $isDriver;
         
         return $this;
     }
     
     public function isPassenger(): ?bool
     {
-        return $this->isPassenger;
+        return $this->passenger;
     }
     
-    public function setIsPassenger(bool $isPassenger): self
+    public function setPassenger(bool $isPassenger): self
     {
-        $this->isPassenger = $isPassenger;
+        $this->passenger = $isPassenger;
         
         return $this;
     }
@@ -419,7 +419,7 @@ class Criteria
         return $this->strictDate;
     }
     
-    public function setIsStrictDate(bool $isStrictDate): self
+    public function setStrictDate(bool $isStrictDate): self
     {
         $this->strictDate = $isStrictDate;
         

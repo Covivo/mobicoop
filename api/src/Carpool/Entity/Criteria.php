@@ -66,7 +66,7 @@ class Criteria
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
-    private $isDriver;
+    private $driver;
 
     /**
      * @var boolean The user can be a passenger.
@@ -74,7 +74,7 @@ class Criteria
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
-    private $isPassenger;
+    private $passenger;
     
     /**
      * @var int The proposal frequency (1 = punctual; 2 = regular).
@@ -549,24 +549,24 @@ class Criteria
     
     public function isDriver(): ?bool
     {
-        return $this->isDriver;
+        return $this->driver;
     }
     
-    public function setIsDriver(bool $isDriver): self
+    public function setDriver(bool $isDriver): self
     {
-        $this->isDriver = $isDriver;
+        $this->driver = $isDriver;
         
         return $this;
     }
     
     public function isPassenger(): ?bool
     {
-        return $this->isPassenger;
+        return $this->passenger;
     }
     
-    public function setIsPassenger(bool $isPassenger): self
+    public function setPassenger(bool $isPassenger): self
     {
-        $this->isPassenger = $isPassenger;
+        $this->passenger = $isPassenger;
         
         return $this;
     }
@@ -609,7 +609,10 @@ class Criteria
 
     public function getFromTime(): ?\DateTimeInterface
     {
-        return $this->fromTime;
+        if ($this->fromTime) {
+            return \DateTime::createFromFormat('His', $this->fromTime->format('His'));
+        }
+        return null;
     }
 
     public function setFromTime(?\DateTimeInterface $fromTime): self
@@ -633,7 +636,10 @@ class Criteria
 
     public function getMinTime(): ?\DateTimeInterface
     {
-        return $this->minTime;
+        if ($this->minTime) {
+            return \DateTime::createFromFormat('His', $this->minTime->format('His'));
+        }
+        return null;
     }
 
     public function setMinTime(?\DateTimeInterface $minTime): self
@@ -645,7 +651,10 @@ class Criteria
 
     public function getMaxTime(): ?\DateTimeInterface
     {
-        return $this->maxTime;
+        if ($this->maxTime) {
+            return \DateTime::createFromFormat('His', $this->maxTime->format('His'));
+        }
+        return null;
     }
 
     public function setMaxTime(?\DateTimeInterface $maxTime): self
@@ -660,7 +669,7 @@ class Criteria
         return $this->strictDate;
     }
     
-    public function setIsStrictDate(bool $isStrictDate): self
+    public function setStrictDate(bool $isStrictDate): self
     {
         $this->strictDate = $isStrictDate;
         
@@ -679,7 +688,7 @@ class Criteria
         return $this;
     }
 
-    public function getMonCheck(): ?bool
+    public function isMonCheck(): ?bool
     {
         return $this->monCheck;
     }
@@ -691,7 +700,7 @@ class Criteria
         return $this;
     }
 
-    public function getTueCheck(): ?bool
+    public function isTueCheck(): ?bool
     {
         return $this->tueCheck;
     }
@@ -703,7 +712,7 @@ class Criteria
         return $this;
     }
 
-    public function getWedCheck(): ?bool
+    public function isWedCheck(): ?bool
     {
         return $this->wedCheck;
     }
@@ -715,7 +724,7 @@ class Criteria
         return $this;
     }
 
-    public function getThuCheck(): ?bool
+    public function isThuCheck(): ?bool
     {
         return $this->thuCheck;
     }
@@ -727,7 +736,7 @@ class Criteria
         return $this;
     }
 
-    public function getFriCheck(): ?bool
+    public function isFriCheck(): ?bool
     {
         return $this->friCheck;
     }
@@ -739,7 +748,7 @@ class Criteria
         return $this;
     }
 
-    public function getSatCheck(): ?bool
+    public function isSatCheck(): ?bool
     {
         return $this->satCheck;
     }
@@ -751,7 +760,7 @@ class Criteria
         return $this;
     }
 
-    public function getSunCheck(): ?bool
+    public function isSunCheck(): ?bool
     {
         return $this->sunCheck;
     }
@@ -765,7 +774,10 @@ class Criteria
 
     public function getMonTime(): ?\DateTimeInterface
     {
-        return $this->monTime;
+        if ($this->monTime) {
+            return \DateTime::createFromFormat('His', $this->monTime->format('His'));
+        }
+        return null;
     }
 
     public function setMonTime(?\DateTimeInterface $monTime): self
@@ -777,7 +789,10 @@ class Criteria
 
     public function getMonMinTime(): ?\DateTimeInterface
     {
-        return $this->monMinTime;
+        if ($this->monMinTime) {
+            return \DateTime::createFromFormat('His', $this->monMinTime->format('His'));
+        }
+        return null;
     }
 
     public function setMonMinTime(?\DateTimeInterface $monMinTime): self
@@ -789,7 +804,10 @@ class Criteria
 
     public function getMonMaxTime(): ?\DateTimeInterface
     {
-        return $this->monMaxTime;
+        if ($this->monMaxTime) {
+            return \DateTime::createFromFormat('His', $this->monMaxTime->format('His'));
+        }
+        return null;
     }
 
     public function setMonMaxTime(?\DateTimeInterface $monMaxTime): self
@@ -801,7 +819,10 @@ class Criteria
 
     public function getTueTime(): ?\DateTimeInterface
     {
-        return $this->tueTime;
+        if ($this->tueTime) {
+            return \DateTime::createFromFormat('His', $this->tueTime->format('His'));
+        }
+        return null;
     }
 
     public function setTueTime(?\DateTimeInterface $tueTime): self
@@ -813,7 +834,10 @@ class Criteria
 
     public function getTueMinTime(): ?\DateTimeInterface
     {
-        return $this->tueMinTime;
+        if ($this->tueMinTime) {
+            return \DateTime::createFromFormat('His', $this->tueMinTime->format('His'));
+        }
+        return null;
     }
 
     public function setTueMinTime(?\DateTimeInterface $tueMinTime): self
@@ -825,7 +849,10 @@ class Criteria
 
     public function getTueMaxTime(): ?\DateTimeInterface
     {
-        return $this->tueMaxTime;
+        if ($this->tueMaxTime) {
+            return \DateTime::createFromFormat('His', $this->tueMaxTime->format('His'));
+        }
+        return null;
     }
 
     public function setTueMaxTime(?\DateTimeInterface $tueMaxTime): self
@@ -837,7 +864,10 @@ class Criteria
 
     public function getWedTime(): ?\DateTimeInterface
     {
-        return $this->wedTime;
+        if ($this->wedTime) {
+            return \DateTime::createFromFormat('His', $this->wedTime->format('His'));
+        }
+        return null;
     }
 
     public function setWedTime(?\DateTimeInterface $wedTime): self
@@ -849,7 +879,10 @@ class Criteria
 
     public function getWedMinTime(): ?\DateTimeInterface
     {
-        return $this->wedMinTime;
+        if ($this->wedMinTime) {
+            return \DateTime::createFromFormat('His', $this->wedMinTime->format('His'));
+        }
+        return null;
     }
 
     public function setWedMinTime(?\DateTimeInterface $wedMinTime): self
@@ -861,7 +894,10 @@ class Criteria
 
     public function getWedMaxTime(): ?\DateTimeInterface
     {
-        return $this->wedMaxTime;
+        if ($this->wedMaxTime) {
+            return \DateTime::createFromFormat('His', $this->wedMaxTime->format('His'));
+        }
+        return null;
     }
 
     public function setWedMaxTime(?\DateTimeInterface $wedMaxTime): self
@@ -873,7 +909,10 @@ class Criteria
 
     public function getThuTime(): ?\DateTimeInterface
     {
-        return $this->thuTime;
+        if ($this->thuTime) {
+            return \DateTime::createFromFormat('His', $this->thuTime->format('His'));
+        }
+        return null;
     }
 
     public function setThuTime(?\DateTimeInterface $thuTime): self
@@ -885,7 +924,10 @@ class Criteria
 
     public function getThuMinTime(): ?\DateTimeInterface
     {
-        return $this->thuMinTime;
+        if ($this->thuMinTime) {
+            return \DateTime::createFromFormat('His', $this->thuMinTime->format('His'));
+        }
+        return null;
     }
 
     public function setThuMinTime(?\DateTimeInterface $thuMinTime): self
@@ -897,7 +939,10 @@ class Criteria
 
     public function getThuMaxTime(): ?\DateTimeInterface
     {
-        return $this->thuMaxTime;
+        if ($this->thuMaxTime) {
+            return \DateTime::createFromFormat('His', $this->thuMaxTime->format('His'));
+        }
+        return null;
     }
 
     public function setThuMaxTime(?\DateTimeInterface $thuMaxTime): self
@@ -909,7 +954,10 @@ class Criteria
 
     public function getFriTime(): ?\DateTimeInterface
     {
-        return $this->friTime;
+        if ($this->friTime) {
+            return \DateTime::createFromFormat('His', $this->friTime->format('His'));
+        }
+        return null;
     }
 
     public function setFriTime(?\DateTimeInterface $friTime): self
@@ -921,7 +969,10 @@ class Criteria
 
     public function getFriMinTime(): ?\DateTimeInterface
     {
-        return $this->friMinTime;
+        if ($this->friMinTime) {
+            return \DateTime::createFromFormat('His', $this->friMinTime->format('His'));
+        }
+        return null;
     }
 
     public function setFriMinTime(?\DateTimeInterface $friMinTime): self
@@ -933,7 +984,10 @@ class Criteria
 
     public function getFriMaxTime(): ?\DateTimeInterface
     {
-        return $this->friMaxTime;
+        if ($this->friMaxTime) {
+            return \DateTime::createFromFormat('His', $this->friMaxTime->format('His'));
+        }
+        return null;
     }
 
     public function setFriMaxTime(?\DateTimeInterface $friMaxTime): self
@@ -945,7 +999,10 @@ class Criteria
 
     public function getSatTime(): ?\DateTimeInterface
     {
-        return $this->satTime;
+        if ($this->satTime) {
+            return \DateTime::createFromFormat('His', $this->satTime->format('His'));
+        }
+        return null;
     }
 
     public function setSatTime(?\DateTimeInterface $satTime): self
@@ -957,7 +1014,10 @@ class Criteria
 
     public function getSatMinTime(): ?\DateTimeInterface
     {
-        return $this->satMinTime;
+        if ($this->satMinTime) {
+            return \DateTime::createFromFormat('His', $this->satMinTime->format('His'));
+        }
+        return null;
     }
 
     public function setSatMinTime(?\DateTimeInterface $satMinTime): self
@@ -969,7 +1029,10 @@ class Criteria
 
     public function getSatMaxTime(): ?\DateTimeInterface
     {
-        return $this->satMaxTime;
+        if ($this->satMaxTime) {
+            return \DateTime::createFromFormat('His', $this->satMaxTime->format('His'));
+        }
+        return null;
     }
 
     public function setSatMaxTime(?\DateTimeInterface $satMaxTime): self
@@ -981,7 +1044,10 @@ class Criteria
 
     public function getSunTime(): ?\DateTimeInterface
     {
-        return $this->sunTime;
+        if ($this->sunTime) {
+            return \DateTime::createFromFormat('His', $this->sunTime->format('His'));
+        }
+        return null;
     }
     
     public function setSunTime(?\DateTimeInterface $sunTime): self
@@ -993,7 +1059,10 @@ class Criteria
 
     public function getSunMinTime(): ?\DateTimeInterface
     {
-        return $this->sunMinTime;
+        if ($this->sunMinTime) {
+            return \DateTime::createFromFormat('His', $this->sunMinTime->format('His'));
+        }
+        return null;
     }
 
     public function setSunMinTime(?\DateTimeInterface $sunMinTime): self
@@ -1005,7 +1074,10 @@ class Criteria
 
     public function getSunMaxTime(): ?\DateTimeInterface
     {
-        return $this->sunMaxTime;
+        if ($this->sunMaxTime) {
+            return \DateTime::createFromFormat('His', $this->sunMaxTime->format('His'));
+        }
+        return null;
     }
 
     public function setSunMaxTime(?\DateTimeInterface $sunMaxTime): self

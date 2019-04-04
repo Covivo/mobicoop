@@ -148,18 +148,20 @@ class Proposal
     /**
      * @var Matching[]|null The matching of the proposal (if proposal is an offer).
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer")
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"read","write"})
      * @ApiSubresource(maxDepth=1)
      */
-    private $matchingRequests;
+    private $matchingOffers;
 
     /**
      * @var Matching[]|null The matching of the proposal (if proposal is a request).
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest")
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"read","write"})
      * @ApiSubresource(maxDepth=1)
      */
-    private $matchingOffers;
+    private $matchingRequests;
 
     /**
      * @var Criteria The criteria applied to the proposal.
@@ -192,8 +194,8 @@ class Proposal
     {
         $this->waypoints = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
-        $this->matchingRequests = new ArrayCollection();
         $this->matchingOffers = new ArrayCollection();
+        $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
     }
     
@@ -202,8 +204,8 @@ class Proposal
         // when we clone a Proposal we keep only the basic properties, we re-initialize all the collections
         $this->waypoints = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
-        $this->matchingRequests = new ArrayCollection();
         $this->matchingOffers = new ArrayCollection();
+        $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
     }
 
@@ -347,7 +349,7 @@ class Proposal
     {
         if (!$this->matchingRequests->contains($matchingRequest)) {
             $this->matchingRequests[] = $matchingRequest;
-            $matchingRequest->setProposalOffer($this);
+            $matchingRequest->setProposalRequest($this);
         }
 
         return $this;
@@ -358,8 +360,8 @@ class Proposal
         if ($this->matchingRequests->contains($matchingRequest)) {
             $this->matchingRequests->removeElement($matchingRequest);
             // set the owning side to null (unless already changed)
-            if ($matchingRequest->getProposalOffer() === $this) {
-                $matchingRequest->setProposalOffer(null);
+            if ($matchingRequest->getProposalRequest() === $this) {
+                $matchingRequest->setProposalRequest(null);
             }
         }
 
@@ -378,7 +380,7 @@ class Proposal
     {
         if (!$this->matchingOffers->contains($matchingOffer)) {
             $this->matchingOffers[] = $matchingOffer;
-            $matchingOffer->setProposalRequest($this);
+            $matchingOffer->setProposalOffer($this);
         }
         
         return $this;
@@ -389,8 +391,8 @@ class Proposal
         if ($this->matchingOffers->contains($matchingOffer)) {
             $this->matchingOffers->removeElement($matchingOffer);
             // set the owning side to null (unless already changed)
-            if ($matchingOffer->getProposalRequest() === $this) {
-                $matchingOffer->setProposalRequest(null);
+            if ($matchingOffer->getProposalOffer() === $this) {
+                $matchingOffer->setProposalOffer(null);
             }
         }
         

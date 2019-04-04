@@ -30,6 +30,7 @@ use App\Carpool\Entity\Criteria;
 use App\Carpool\Repository\ProposalRepository;
 use App\Match\Service\GeoMatcher;
 use App\Match\Entity\Candidate;
+use App\Carpool\Entity\Waypoint;
 
 /**
  * Matching analyzer service.
@@ -157,9 +158,153 @@ class ProposalMatcher
                 }
             }
         }
-
+        
         // we check if the pickup times match
         $matchings = $this->checkPickUp($matchings);
+
+        // we complete the matchings with the waypoints and criteria (it's a match criteria so we consider it's for a driver)
+        foreach ($matchings as $matching) {
+            
+            // waypoints
+            foreach ($matching->getFilters()['order'] as $key=>$point) {
+                $waypoint = new Waypoint();
+                $waypoint->setPosition($key);
+                $waypoint->setDestination(false);
+                if ($key == (count($matching->getFilters()['order'])-1)) {
+                    $waypoint->setDestination(true);
+                }
+                $waypoint->setAddress(clone $point['address']);
+                $matching->addWaypoint($waypoint);
+            }
+
+            // criteria
+            $matchingCriteria = new Criteria();
+            $matchingCriteria->setDriver(true);
+            $matchingCriteria->setDirectionDriver($matching->getFilters()['direction']);
+            $matchingCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
+            $matchingCriteria->setStrictDate($matching->getProposalOffer()->getCriteria()->isStrictDate());
+            $matchingCriteria->setAnyRouteAsPassenger(true);
+            if ($matching->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && $matching->getProposalRequest()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+                $matchingCriteria->setFrequency(Criteria::FREQUENCY_REGULAR);
+                $matchingCriteria->setFromDate(max($matching->getProposalOffer()->getCriteria()->getFromDate(), $matching->getProposalRequest()->getCriteria()->getFromDate()));
+                $matchingCriteria->setToDate(min($matching->getProposalOffer()->getCriteria()->getToDate(), $matching->getProposalRequest()->getCriteria()->getToDate()));
+            } elseif ($matching->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                $matchingCriteria->setFromDate($matching->getProposalOffer()->getCriteria()->getFromDate());
+            } else {
+                $matchingCriteria->setFromDate($matching->getProposalRequest()->getCriteria()->getFromDate());
+            }
+            $matchingCriteria->setSeats(1);
+            if (isset($matching->getFilters()['pickup']['minPickupTime']) && isset($matching->getFilters()['pickup']['maxPickupTime'])) {
+                if ($matching->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                    $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getMinTime());
+                    $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getMaxTime());
+                    $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getMarginDuration());
+                    $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getFromTime());
+                } else {
+                    switch ($matchingCriteria->getFromDate()->format('w')) {
+                        case 0:
+                            $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getSunMinTime());
+                            $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getSunMaxTime());
+                            $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getSunMarginDuration());
+                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getSunTime());
+                            break;
+                        case 1:
+                            $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getMonMinTime());
+                            $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getMonMaxTime());
+                            $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getMonMarginDuration());
+                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getMonTime());
+                            break;
+                        case 2:
+                            $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getTueMinTime());
+                            $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getTueMaxTime());
+                            $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getTueMarginDuration());
+                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getTueTime());
+                            break;
+                        case 3:
+                            $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getWedMinTime());
+                            $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getWedMaxTime());
+                            $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getWedMarginDuration());
+                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getWedTime());
+                            break;
+                        case 4:
+                            $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getThuMinTime());
+                            $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getThuMaxTime());
+                            $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getThuMarginDuration());
+                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getThuTime());
+                            break;
+                        case 5:
+                            $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getFriMinTime());
+                            $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getFriMaxTime());
+                            $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getFriMarginDuration());
+                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getFriTime());
+                            break;
+                        case 6:
+                            $matchingCriteria->setMinTime($matching->getProposalOffer()->getCriteria()->getSatMinTime());
+                            $matchingCriteria->setMaxTime($matching->getProposalOffer()->getCriteria()->getSatMaxTime());
+                            $matchingCriteria->setMarginDuration($matching->getProposalOffer()->getCriteria()->getSatMarginDuration());
+                            $matchingCriteria->setFromTime($matching->getProposalOffer()->getCriteria()->getSatTime());
+                            break;
+                    }
+                }
+            }
+            if (isset($matching->getFilters()['pickup']['monMinPickupTime']) && isset($matching->getFilters()['pickup']['monMaxPickupTime'])) {
+                $matchingCriteria->setMonCheck(true);
+                $matchingCriteria->setMonMinTime($matching->getProposalOffer()->getCriteria()->getMonMinTime());
+                $matchingCriteria->setMonMaxTime($matching->getProposalOffer()->getCriteria()->getMonMaxTime());
+                $matchingCriteria->setMonMarginDuration($matching->getProposalOffer()->getCriteria()->getMonMarginDuration());
+                $matchingCriteria->setMonTime($matching->getProposalOffer()->getCriteria()->getMonTime());
+            }
+            if (isset($matching->getFilters()['pickup']['tueMinPickupTime']) && isset($matching->getFilters()['pickup']['tueMaxPickupTime'])) {
+                $matchingCriteria->setTueCheck(true);
+                $matchingCriteria->setTueMinTime($matching->getProposalOffer()->getCriteria()->getTueMinTime());
+                $matchingCriteria->setTueMaxTime($matching->getProposalOffer()->getCriteria()->getTueMaxTime());
+                $matchingCriteria->setTueMarginDuration($matching->getProposalOffer()->getCriteria()->getTueMarginDuration());
+                $matchingCriteria->setTueTime($matching->getProposalOffer()->getCriteria()->getTueTime());
+            }
+            if (isset($matching->getFilters()['pickup']['wedMinPickupTime']) && isset($matching->getFilters()['pickup']['wedMaxPickupTime'])) {
+                $matchingCriteria->setWedCheck(true);
+                $matchingCriteria->setWedMinTime($matching->getProposalOffer()->getCriteria()->getWedMinTime());
+                $matchingCriteria->setWedMaxTime($matching->getProposalOffer()->getCriteria()->getWedMaxTime());
+                $matchingCriteria->setWedMarginDuration($matching->getProposalOffer()->getCriteria()->getWedMarginDuration());
+                $matchingCriteria->setWedTime($matching->getProposalOffer()->getCriteria()->getWedTime());
+            }
+            if (isset($matching->getFilters()['pickup']['thuMinPickupTime']) && isset($matching->getFilters()['pickup']['thuMaxPickupTime'])) {
+                $matchingCriteria->setThuCheck(true);
+                $matchingCriteria->setThuMinTime($matching->getProposalOffer()->getCriteria()->getThuMinTime());
+                $matchingCriteria->setThuMaxTime($matching->getProposalOffer()->getCriteria()->getThuMaxTime());
+                $matchingCriteria->setThuMarginDuration($matching->getProposalOffer()->getCriteria()->getThuMarginDuration());
+                $matchingCriteria->setThuTime($matching->getProposalOffer()->getCriteria()->getThuTime());
+            }
+            if (isset($matching->getFilters()['pickup']['friMinPickupTime']) && isset($matching->getFilters()['pickup']['friMaxPickupTime'])) {
+                $matchingCriteria->setFriCheck(true);
+                $matchingCriteria->setFriMinTime($matching->getProposalOffer()->getCriteria()->getFriMinTime());
+                $matchingCriteria->setFriMaxTime($matching->getProposalOffer()->getCriteria()->getFriMaxTime());
+                $matchingCriteria->setFriMarginDuration($matching->getProposalOffer()->getCriteria()->getFriMarginDuration());
+                $matchingCriteria->setFriTime($matching->getProposalOffer()->getCriteria()->getFriTime());
+            }
+            if (isset($matching->getFilters()['pickup']['satMinPickupTime']) && isset($matching->getFilters()['pickup']['satMaxPickupTime'])) {
+                $matchingCriteria->setSatCheck(true);
+                $matchingCriteria->setSatMinTime($matching->getProposalOffer()->getCriteria()->getSatMinTime());
+                $matchingCriteria->setSatMaxTime($matching->getProposalOffer()->getCriteria()->getSatMaxTime());
+                $matchingCriteria->setSatMarginDuration($matching->getProposalOffer()->getCriteria()->getSatMarginDuration());
+                $matchingCriteria->setSatTime($matching->getProposalOffer()->getCriteria()->getSatTime());
+            }
+            if (isset($matching->getFilters()['pickup']['sunMinPickupTime']) && isset($matching->getFilters()['pickup']['sunMaxPickupTime'])) {
+                $matchingCriteria->setSunCheck(true);
+                $matchingCriteria->setSunMinTime($matching->getProposalOffer()->getCriteria()->getSunMinTime());
+                $matchingCriteria->setSunMaxTime($matching->getProposalOffer()->getCriteria()->getSunMaxTime());
+                $matchingCriteria->setSunMarginDuration($matching->getProposalOffer()->getCriteria()->getSunMarginDuration());
+                $matchingCriteria->setSunTime($matching->getProposalOffer()->getCriteria()->getSunTime());
+            }
+
+            $matching->setCriteria($matchingCriteria);
+            // we remove the direction from the filter to reduce the size of the returned object
+            // (it is already affected to the driver direction)
+            $filters = $matching->getFilters();
+            unset($filters['direction']);
+            $matching->setFilters($filters);
+        }
+
         return $matchings;
     }
 
@@ -578,72 +723,20 @@ class ProposalMatcher
      * Create Matching proposal entities for a proposal.
      *
      * @param Proposal $proposal    The proposal for which we want the matchings
+     * @return Proposal The proposal with the matchings
      */
     public function createMatchingsForProposal(Proposal $proposal)
     {
-        $proposals = $this->findMatchingProposals($proposal);
-        foreach ($proposals as $matchingProposal) {
-            $matching = new Matching();
-            if ($proposal->getProposalType() == Proposal::PROPOSAL_TYPE_OFFER) {
-                $matching->setProposalOffer($proposal);
-                $matching->setProposalRequest($matchingProposal);
-                // if the matching already exists between the proposal and the matchingProposal => we jump to the next proposal
-                if (!is_null($this->entityManager->getRepository(Matching::class)->findOneBy([
-                        'proposalOffer'     => $proposal,
-                        'proposalRequest'   => $matchingProposal
-                ]))) {
-                    break;
-                }
-                
-                // for now we just set the points to the start and destination points
-                foreach ($proposal->getPoints() as $point) {
-                    if ($point->getPosition() == 0) {
-                        $matching->setPointOfferFrom($point);
-                    }
-                    if ($point->getLastPoint()) {
-                        $matching->setPointOfferTo($point);
-                    }
-                }
-                foreach ($matchingProposal->getPoints() as $point) {
-                    if ($point->getPosition() == 0) {
-                        $matching->setPointRequestFrom($point);
-                        break;
-                    }
-                }
+        // we search the matchings
+        $matchings = $this->findMatchingProposals($proposal);
+        // we assign the matchings to the proposal
+        foreach ($matchings as $matching) {
+            if ($matching->getProposalOffer() === $proposal) {
+                $proposal->addMatchingOffer($matching);
             } else {
-                $matching->setProposalOffer($matchingProposal);
-                $matching->setProposalRequest($proposal);
-                // if the matching already exists between the proposal and the matchingProposal => we jump to the next proposal
-                if (!is_null($this->entityManager->getRepository(Matching::class)->findOneBy([
-                        'proposalOffer'     => $matchingProposal,
-                        'proposalRequest'   => $proposal
-                ]))) {
-                    break;
-                }
-                // for now we just set the points to the start and destination points
-                foreach ($matchingProposal->getPoints() as $point) {
-                    if ($point->getPosition() == 0) {
-                        $matching->setPointOfferFrom($point);
-                    }
-                    if ($point->getLastPoint()) {
-                        $matching->setPointOfferTo($point);
-                    }
-                }
-                foreach ($proposal->getPoints() as $point) {
-                    if ($point->getPosition() == 0) {
-                        $matching->setPointRequestFrom($point);
-                        break;
-                    }
-                }
+                $proposal->addMatchingRequest($matching);
             }
-            
-            $matchingCriteria = new Criteria();
-            // for now we just clone some properties of the proposal criteria
-            // in the future when the algorythm will be more efficient we will create a criteria based on most matching properties between the proposals criteria
-            $matchingCriteria->clone($proposal->getCriteria());
-            $matching->setCriteria($matchingCriteria);
-            $this->entityManager->persist($matching);
         }
-        $this->entityManager->flush();
+        return $proposal;
     }
 }
