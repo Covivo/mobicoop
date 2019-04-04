@@ -118,7 +118,7 @@
 
 {%- block submit_widget -%}
     {%- set type = type|default('submit') -%}
-    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' button is-primary')|trim}) -%}
+    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' button is-dark')|trim}) -%}
     {{- block('button_widget') -}}
 {%- endblock submit_widget -%}
 

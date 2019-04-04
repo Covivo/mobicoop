@@ -4,7 +4,7 @@
 
 {% block body %}
 
-<section class="hero is-primary">
+<section class="hero is-passur">
 	<div class="hero-body">
     	<div class="container">
       		<h1 class="title">
@@ -19,7 +19,7 @@
 		{% if error %}
 		<span class="tag is-danger">An error occured.</span>
 		{% endif %}
-		<p>Les champs précédés d'une étoile (*) sont obligatoires</p>
+		<p>Les champs suivis d'une étoile (*) sont obligatoires</p>
         {{ form_start(form) }}
 		{{ form_row(form.email) }}
 		{{ form_row(form.givenName) }}

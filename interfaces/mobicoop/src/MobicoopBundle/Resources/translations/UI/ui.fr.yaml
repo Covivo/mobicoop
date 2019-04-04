@@ -2,6 +2,7 @@
 button:
     submit: 'Envoyer'
     delete: 'Supprimer'
+    connexion: 'Se connecter'
     
 # menus
 menu:

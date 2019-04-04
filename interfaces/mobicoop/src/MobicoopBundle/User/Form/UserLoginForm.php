@@ -57,7 +57,7 @@ class UserLoginForm extends AbstractType
         ])
         ->add('login', SubmitType::class, [
             'translation_domain' => 'ui',
-            'label' => 'button.submit'
+            'label' => 'button.connexion'
         ]);
     }
 

@@ -42,8 +42,18 @@ body {
   a:focus {
     outline: 3px solid orange !important;
   }
+  label.required::after {
+    content: '*';
+    font-weight: bold;
+  }
+  //input[required='required'] {
+  //  background-color: #FF6060;
+  //}
   a.navbar-burger {
     color: #000;
+  }
+  .hero.is-passur {
+    background-color: #CCCC98;
   }
   .header {
     background: url('images/header.png');
