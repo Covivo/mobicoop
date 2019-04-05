@@ -156,6 +156,29 @@
 </div>
 {%- endblock timepicker_widget -%}
 
+{%- block ariatext_row -%}
+	<div class="field is-horizontal">
+		<div class="field-label">
+			{{- form_label(form) -}}
+		</div>
+		<div class="field-body">
+			<div class="field">
+				{%- if form.vars.attr.help_text is defined -%}
+					<p class="help">{{ form.vars.attr.help_text }}</p>
+				{%- endif -%}
+				<ariatext
+						:aria-label="'{{ form.vars.aria_label }}'"
+						:aria-required="'{{ form.vars.aria_required }}'"
+						:aria-describedby="'{{ form.vars.aria_describedby }}'"
+						:aria-labelledby="'{{ form.vars.aria_labelledby }}'"
+						:placeholder="`{{ translation_domain is same as(false) ? form.vars.attr.placeholder : form.vars.attr.placeholder|trans({}, translation_domain) }}`"
+						:name="'{{ full_name }}'"
+				></ariatext>
+			</div>
+			{{- block('form_errors') -}}
+		</div>
+	</div>
+{%- endblock ariatext_row -%}
 {# Errors #}
 
 {# Support #}

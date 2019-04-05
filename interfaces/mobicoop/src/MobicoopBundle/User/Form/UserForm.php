@@ -33,6 +33,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Mobicoop\Bundle\MobicoopBundle\Form\Type\AriaTextType;
+
 
 /**
  * User form.
@@ -50,22 +52,24 @@ class UserForm extends AbstractType
         }
 
         $builder
-        ->add('givenName', TextType::class, [
+        ->add('givenName', AriaTextType::class, [
             'translation_domain' => 'user',
             'label' => 'givenName.label',
+            'aria-label' => 'givenName.aria_label',
             'attr' => [
                 'placeholder' => 'givenName.placeholder',
-                'aria-labelledby' => $this->translator->trans('givenName.aria-required')
+                'aria-label' => 'givenName.aria_label'
             ]
         ])
-        ->add('familyName', TextType::class, [
+        ->add('familyName', AriaTextType::class, [
             'translation_domain' => 'user',
             'label' => 'familyName.label',
+            'aria-label' => 'oui',
             'attr' => [
                 'placeholder' => 'familyName.placeholder'
             ]
         ])
-        ->add('email', TextType::class, [
+        ->add('email', AriaTextType::class, [
             'translation_domain' => 'user',
             'label' => 'email.label',
             'attr' => [
