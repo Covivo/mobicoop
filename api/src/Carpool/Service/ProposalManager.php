@@ -147,7 +147,9 @@ class ProposalManager
         // matching analyze
         $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal);
 
-        if ($persist) $this->entityManager->persist($proposal);
+        if ($persist) {
+            $this->entityManager->persist($proposal);
+        }
 
         return $proposal;
     }
@@ -161,7 +163,7 @@ class ProposalManager
      */
     public function getMatchings(Proposal $proposal)
     {
-        return $this->createProposal($proposal,false);
+        return $this->createProposal($proposal, false);
     }
 
 
