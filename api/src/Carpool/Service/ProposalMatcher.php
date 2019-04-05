@@ -730,7 +730,7 @@ class ProposalMatcher
     public function createMatchingsForProposal(Proposal $proposal, bool $excludeProposalUser=true)
     {
         // we search the matchings
-        $matchings = $this->findMatchingProposals($proposal,$excludeProposalUser);
+        $matchings = $this->findMatchingProposals($proposal, $excludeProposalUser);
         
         // we assign the matchings to the proposal
         foreach ($matchings as $matching) {

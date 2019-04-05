@@ -146,7 +146,7 @@ class ProposalManager
         }
 
         // matching analyze
-        $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal,$excludeProposalUser);
+        $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
 
         if ($persist) {
             $this->entityManager->persist($proposal);
@@ -178,13 +178,12 @@ class ProposalManager
      * @return void
      */
     public function searchMatchings(
-        float $originLatitude, 
-        float $originLongitude, 
-        float $destinationLatitude, 
-        float $destinationLongitude, 
+        float $originLatitude,
+        float $originLongitude,
+        float $destinationLatitude,
+        float $destinationLongitude,
         \Datetime $date
-        )
-    {
+        ) {
         $proposal = new Proposal(1);
         $proposal->setType(Proposal::TYPE_ONE_WAY);
         $criteria = new Criteria(1);

@@ -59,6 +59,7 @@ final class MatchingSimpleSearchCollectionDataProvider implements CollectionData
             $this->request->get("origin_longitude"),
             $this->request->get("destination_latitude"),
             $this->request->get("destination_longitude"),
-            \DateTime::createFromFormat(\DateTime::RFC3339, $this->request->get("date")))];
+            \DateTime::createFromFormat(\DateTime::RFC3339, $this->request->get("date"))
+        )];
     }
 }
