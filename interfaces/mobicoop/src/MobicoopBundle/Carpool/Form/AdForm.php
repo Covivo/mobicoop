@@ -33,10 +33,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraints\GroupSequence;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Mobicoop\Bundle\MobicoopBundle\Form\Type\GeocompleteType;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Form\AddressForm;
-use Mobicoop\Bundle\MobicoopBundle\Form\Type\DatepickerType;
-use Mobicoop\Bundle\MobicoopBundle\Form\Type\TimepickerType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\TimeType;
 
 /**
  * Ad form.
@@ -48,290 +47,89 @@ class AdForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        ->add('origin', GeocompleteType::class, [
-            'url' => '/geosearch?search=',
-            'address' => 'originAddress',
-            'translation_domain' => 'carpool',
-            'label' => 'ad.origin.label',
-            'required' => true,
-            'attr' => [
-                'placeholder' => 'ad.origin.placeholder'
-            ]
-        ])
-        ->add('destination', GeocompleteType::class, [
-            'url' => '/geosearch?search=',
-            'address' => 'destinationAddress',
-            'translation_domain' => 'carpool',
-            'label' => 'ad.destination.label',
-            'required' => true,
-            'attr' => [
-                'placeholder' => 'ad.destination.placeholder'
-            ]
-        ])
-        ->add('originAddress', AddressForm::class)      // not displayed directly => displayed by geocomplete; must be present here for validation
-        ->add('destinationAddress', AddressForm::class) // not displayed directly => displayed by geocomplete; must be present here for validation
-        ->add('role', ChoiceType::class, [
-            // 'model' => 'role',
-            'expanded' => true,
-            'choices'  => Ad::ROLES,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => true,
-            'label' => 'ad.role.label',
-        ])
-        ->add('type', ChoiceType::class, [
-            // 'model' => 'type',
-            'choices'  => Ad::TYPES,
-            'expanded' => true,
-            'placeholder' => 'ad.type.placeholder',
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => true,
-            'label' => 'ad.type.label',
-        ])
-        ->add('frequency', ChoiceType::class, [
-            // 'model' => 'frequency',
-            'choices'  => Ad::FREQUENCIES,
-            'expanded' => true,
-            'placeholder' => 'ad.frequency.placeholder',
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => true,
-            'label' => 'ad.frequency.label'
-        ])
-
+        ->add('origin')
+        ->add('destination')
+        ->add('originStreetAddress')
+        ->add('originPostalCode')
+        ->add('originAddressLocality')
+        ->add('originAddressCountry')
+        ->add('originLatitude')
+        ->add('originLongitude')
+        ->add('destinationStreetAddress')
+        ->add('destinationPostalCode')
+        ->add('destinationAddressLocality')
+        ->add('destinationAddressCountry')
+        ->add('destinationLatitude')
+        ->add('destinationLongitude')
+        ->add('role')
+        ->add('type')
+        ->add('frequency')
         // PUNCTUAL
-        ->add('outwardDate', DatepickerType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_date.label',
-            'required' => false
-        ])
-        ->add('outwardTime', TimepickerType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_time.label',
-            'required' => false
-        ])
-        ->add('outwardMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'placeholder' => 'ad.margin.placeholder',
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label',
-            'required' => false
-        ])
-        ->add('returnDate', DatepickerType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_date.label',
-            'required' => false
-        ])
-        ->add('returnTime', TimepickerType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_time.label',
-            'required' => false
-        ])
-        ->add('returnMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'placeholder' => 'ad.margin.placeholder',
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label',
-            'required' => false
-        ])
+        ->add('outwardDate')
+        ->add('outwardTime')
+        ->add('outwardMargin')
+        ->add('returnDate')
+        ->add('returnTime')
+        ->add('returnMargin')
         // REGULAR
-        ->add('fromDate', DatepickerType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.from_date.label',
-            'required' => false
-        ])
-        ->add('toDate', DatepickerType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.to_date.label',
-            'required' => false
-        ])
-        ->add('outwardMonTime', TimepickerType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_mon_time.label',
-            'required' => false
-        ])
-        ->add('outwardMonMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('outwardTueTime', TimepickerType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_tue_time.label'
-        ])
-        ->add('outwardTueMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('outwardWedTime', TimepickerType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_wed_time.label'
-        ])
-        ->add('outwardWedMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('outwardThuTime', TimepickerType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_thu_time.label'
-        ])
-        ->add('outwardThuMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('outwardFriTime', TimepickerType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_fri_time.label'
-        ])
-        ->add('outwardFriMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('outwardSatTime', TimepickerType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_sat_time.label'
-        ])
-        ->add('outwardSatMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('outwardSunTime', TimepickerType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.outward_sun_time.label'
-        ])
-        ->add('outwardSunMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('returnMonTime', TimepickerType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_mon_time.label'
-        ])
-        ->add('returnMonMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('returnTueTime', TimepickerType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_tue_time.label'
-        ])
-        ->add('returnTueMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('returnWedTime', TimepickerType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_wed_time.label'
-        ])
-        ->add('returnWedMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('returnThuTime', TimepickerType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_thu_time.label'
-        ])
-        ->add('returnThuMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('returnFriTime', TimepickerType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_fri_time.label'
-        ])
-        ->add('returnFriMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('returnSatTime', TimepickerType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_sat_time.label'
-        ])
-        ->add('returnSatMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-        ->add('returnSunTime', TimepickerType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.return_sun_time.label'
-        ])
-        ->add('returnSunMargin', ChoiceType::class, [
-            'choices'  => Ad::MARGIN_TIME,
-            'translation_domain' => 'carpool',
-            'choice_translation_domain' => false,
-            'label' => 'ad.margin.label'
-        ])
-
-        ->add('comment', TextareaType::class, [
-            'required' => false,
-            'translation_domain' => 'carpool',
-            'label' => 'ad.comment.label',
-            'attr' => [
-                'placeholder' => 'ad.comment.placeholder'
-            ]
-        ])
-        ->add('price', TextType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.price.label',
-            'attr' => [
-                'placeholder' => 'ad.price.placeholder'
-            ]
-        ])
-        ->add('submit', SubmitType::class, [
-            'translation_domain' => 'carpool',
-            'label' => 'ad.submit.label'
-        ])
-        ;
+        ->add('fromDate')
+        ->add('toDate')
+        ->add('outwardMonTime')
+        ->add('outwardMonMargin')
+        ->add('outwardTueTime')
+        ->add('outwardTueMargin')
+        ->add('outwardWedTime')
+        ->add('outwardWedMargin')
+        ->add('outwardThuTime')
+        ->add('outwardThuMargin')
+        ->add('outwardFriTime')
+        ->add('outwardFriMargin')
+        ->add('outwardSatTime')
+        ->add('outwardSatMargin')
+        ->add('outwardSunTime')
+        ->add('outwardSunMargin')
+        ->add('returnMonTime')
+        ->add('returnMonMargin')
+        ->add('returnTueTime')
+        ->add('returnTueMargin')
+        ->add('returnWedTime')
+        ->add('returnWedMargin')
+        ->add('returnThuTime')
+        ->add('returnThuMargin')
+        ->add('returnFriTime')
+        ->add('returnFriMargin')
+        ->add('returnSatTime')
+        ->add('returnSatMargin')
+        ->add('returnSunTime')
+        ->add('returnSunMargin')
+        ->add('comment');
     }
     
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
-                'data_class' => Ad::class,
-                'validation_groups' => function (FormInterface $form) {
-                    $data = $form->getData();
-                    $groups[] = 'Default';
-                    if (Ad::FREQUENCY_PUNCTUAL == $data->getFrequency()) {
-                        if (Ad::TYPE_RETURN_TRIP == $data->getType()) {
-                            $groups[] = 'punctualReturnTrip';
-                        } else {
-                            $groups[] = 'punctual';
-                        }
+        $resolver->setDefaults([
+            'data_class' => Ad::class,
+            'csrf_field_name' => 'createToken',
+            'csrf_token_id'   => 'ad-create',
+            'validation_groups' => function (FormInterface $form) {
+                $data = $form->getData();
+                $groups[] = 'Default';
+                if (Ad::FREQUENCY_PUNCTUAL == $data->getFrequency()) {
+                    if (Ad::TYPE_RETURN_TRIP == $data->getType()) {
+                        $groups[] = 'punctualReturnTrip';
                     } else {
-                        if (Ad::TYPE_RETURN_TRIP == $data->getType()) {
-                            $groups[] = 'regular';
-                        } else {
-                            $groups[] = 'regular';
-                        }
+                        $groups[] = 'punctual';
                     }
-                    
-                    return $groups;
-                },
-        ));
+                } else {
+                    if (Ad::TYPE_RETURN_TRIP == $data->getType()) {
+                        $groups[] = 'regular';
+                    } else {
+                        $groups[] = 'regular';
+                    }
+                }
+                
+                return $groups;
+            },
+        ]);
     }
 }

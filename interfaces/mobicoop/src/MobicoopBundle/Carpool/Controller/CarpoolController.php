@@ -30,11 +30,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Form\AdForm;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller class for carpooling related actions.
@@ -55,16 +51,22 @@ class CarpoolController extends AbstractController
         $ad->setType(Ad::TYPE_ONE_WAY);
         $ad->setFrequency(Ad::FREQUENCY_PUNCTUAL);
         $ad->setPrice(Ad::PRICE);
-        $ad->setOutwardDate($date->format('Y-m-d H:i'));
+        // $ad->setOutwardDate($date->format('Y/m/d'));
         $ad->setUser($userManager->getLoggedUser());
 
-        $form = $this->createForm(AdForm::class, $ad);
+        $form = $this->createForm(AdForm::class, $ad, ['csrf_protection' => false]);
         $error = false;
         $sucess = false;
+
+        
         
         if ($request->isMethod('POST')) {
-            $form->submit($request->request->all());
-            $form->handleRequest($request);
+            $createToken = $request->request->get('createToken');
+            if (!$this->isCsrfTokenValid('ad-create', $createToken)) {
+                return  new Response('Broken Token CSRF ', 403);
+            }
+            $form->submit($request->request->get($form->getName()));
+            // $form->submit($request->request->all());
         }
 
         // If it's a get, just render the form !
@@ -74,7 +76,7 @@ class CarpoolController extends AbstractController
                 'error' => $error
             ]);
         }
-
+        
         // Not Valid populate error
         if (!$form->isValid()) {
             $error = [];
@@ -97,6 +99,6 @@ class CarpoolController extends AbstractController
             $error = $err;
         }
 
-        return $this->json(['error' => $error, 'sucess'=> $sucess]);
+        return $this->json(['error' => $error, 'sucess'=> $sucess, 'ad' => print_r($ad, true)]);
     }
 }
