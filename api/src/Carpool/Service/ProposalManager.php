@@ -72,9 +72,11 @@ class ProposalManager
     /**
      * Create a proposal.
      *
-     * @param Proposal $proposal
+     * @param Proposal $proposal    The proposal to create
+     * @param boolean $persist      If we persist the proposal in the database (false for a simple search)
+     * @return Proposal             The created proposal
      */
-    public function createProposal(Proposal $proposal)
+    public function createProposal(Proposal $proposal, $persist=true)
     {
         // temporary initialisation, will be dumped when implementation of these fields will be done
         $proposal->getCriteria()->setSeats(1);
@@ -145,10 +147,23 @@ class ProposalManager
         // matching analyze
         $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal);
 
-        $this->entityManager->persist($proposal);
+        if ($persist) $this->entityManager->persist($proposal);
 
         return $proposal;
     }
+
+    /**
+     * Get the matchings for the given proposal.
+     * USed for simple search.
+     *
+     * @param Proposal $proposal    The proposal for wich we search the matchings
+     * @return Proposal             The posted proposal with its matchings
+     */
+    public function getMatchings(Proposal $proposal)
+    {
+        return $this->createProposal($proposal,false);
+    }
+
 
     /**
      * Updates directions without zones (so by extension, updates the related proposals, that's why it's in this file...)

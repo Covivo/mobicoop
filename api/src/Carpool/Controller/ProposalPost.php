@@ -42,9 +42,7 @@ class ProposalPost
 
     /**
      * This method is invoked when a new proposal is posted.
-     * It returns the new proposal created :
-     * we don't return the matching proposals as we could expect, as it's maybe not a good practice to return another resource than the one that was created.
-     * If the sender needs the matching results, he should send another request.
+     * It returns the new proposal created, with its matchings as subresources.
      *
      * @param Proposal $data
      * @return Proposal
