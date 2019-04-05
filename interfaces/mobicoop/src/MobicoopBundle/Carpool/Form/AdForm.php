@@ -49,12 +49,18 @@ class AdForm extends AbstractType
         $builder
         ->add('origin')
         ->add('destination')
-        ->add('originAddress')      // not displayed directly => displayed by geocomplete; must be present here for validation
-        ->add('originLatitude')      // not displayed directly => displayed by geocomplete; must be present here for validation
-        ->add('originLongitude')      // not displayed directly => displayed by geocomplete; must be present here for validation
-        ->add('destinationLatitude')      // not displayed directly => displayed by geocomplete; must be present here for validation
-        ->add('destinationLongitude')      // not displayed directly => displayed by geocomplete; must be present here for validation
-        ->add('destinationAddress') // not displayed directly => displayed by geocomplete; must be present here for validation
+        ->add('originStreetAddress')
+        ->add('originPostalCode')
+        ->add('originAddressLocality')
+        ->add('originAddressCountry')
+        ->add('originLatitude')
+        ->add('originLongitude')
+        ->add('destinationStreetAddress')
+        ->add('destinationPostalCode')
+        ->add('destinationAddressLocality')
+        ->add('destinationAddressCountry')
+        ->add('destinationLatitude')
+        ->add('destinationLongitude')
         ->add('role')
         ->add('type')
         ->add('frequency')

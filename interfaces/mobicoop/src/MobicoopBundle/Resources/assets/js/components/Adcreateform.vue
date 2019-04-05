@@ -286,11 +286,19 @@ export default {
       form: {
         createToken: this.sentToken,
         origin: "",
+        originStreetAddress : null,
+        originPostalCode: null,
+        originAddressLocality: null,
+        originAddressCountry: null,
         originLatitude: null,
         originLongitude: null,
         destinationLatitude: null,
         destinationLongitude: null,
         destination: "",
+        destinationStreetAddress: null,
+        destinationPostalCode: null,
+        destinationAddressLocality: null,
+        destinationAddressCountry: null,
         role: this.sentRole,
         type: this.sentType,
         frequency: this.sentFrequency,
@@ -330,6 +338,12 @@ export default {
       } ${val.addressCountry}`;
       this.form[name + "Latitude"] = val.latitude;
       this.form[name + "Longitude"] = val.longitude;
+
+      this.form[name + "StreetAddress"] = val.streetAddress;
+      this.form[name + "PostalCode"] = val.postalCode;
+
+      this.form[name + "AddressCountry"] = val.addressCountry;
+      this.form[name + "AddressLocality"] = val.addressLocality;
     },
     /**
      * Send the form to the route /covoiturage/annonce/poster

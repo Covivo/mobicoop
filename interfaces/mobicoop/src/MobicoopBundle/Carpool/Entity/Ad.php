@@ -339,8 +339,14 @@ class Ad
      */
     private $destinationLongitude;
     
-    private $originAddress;
-    private $destinationAddress;
+    private $originStreetAddress;
+    private $originPostalCode;
+    private $originAddressLocality;
+    private $originAddressCountry;
+    private $destinationStreetAddress;
+    private $destinationPostalCode;
+    private $destinationAddressLocality;
+    private $destinationAddressCountry;
 
     public function getOrigin(): ?string
     {
@@ -927,26 +933,98 @@ class Ad
         return $this;
     }
     
-    public function getOriginAddress(): ?Address
+    public function getOriginStreetAddress(): ?string
     {
-        return $this->originAddress;
+        return $this->originStreetAddress;
     }
     
-    public function setOriginAddress(?Address $originAddress): self
+    public function setOriginStreetAddress(?string $originStreetAddress): self
     {
-        $this->originAddress = $originAddress;
+        $this->originStreetAddress = $originStreetAddress;
+        
+        return $this;
+    }
+
+    public function getOriginPostalCode(): ?string
+    {
+        return $this->originPostalCode;
+    }
+    
+    public function setOriginPostalCode(?string $originPostalCode): self
+    {
+        $this->originPostalCode = $originPostalCode;
+        
+        return $this;
+    }
+
+    public function getOriginAddressLocality(): ?string
+    {
+        return $this->originAddressLocality;
+    }
+    
+    public function setOriginAddressLocality(?string $originAddressLocality): self
+    {
+        $this->originAddressLocality = $originAddressLocality;
+        
+        return $this;
+    }
+
+    public function getOriginAddressCountry(): ?string
+    {
+        return $this->originAddressCountry;
+    }
+    
+    public function setOriginAddressCountry(?string $originAddressCountry): self
+    {
+        $this->originAddressCountry = $originAddressCountry;
         
         return $this;
     }
     
-    public function getDestinationAddress(): ?Address
+    public function getDestinationStreetAddress(): ?string
     {
-        return $this->destinationAddress;
+        return $this->destinationStreetAddress;
     }
     
-    public function setDestinationAddress(?Address $destinationAddress): self
+    public function setDestinationStreetAddress(?string $destinationStreetAddress): self
     {
-        $this->destinationAddress = $destinationAddress;
+        $this->destinationStreetAddress = $destinationStreetAddress;
+        
+        return $this;
+    }
+
+    public function getDestinationPostalCode(): ?string
+    {
+        return $this->destinationPostalCode;
+    }
+    
+    public function setDestinationPostalCode(?string $destinationPostalCode): self
+    {
+        $this->destinationPostalCode = $destinationPostalCode;
+        
+        return $this;
+    }
+
+    public function getDestinationAddressLocality(): ?string
+    {
+        return $this->destinationAddressLocality;
+    }
+    
+    public function setDestinationAddressLocality(?string $destinationAddressLocality): self
+    {
+        $this->destinationAddressLocality = $destinationAddressLocality;
+        
+        return $this;
+    }
+
+    public function getDestinationAddressCountry(): ?string
+    {
+        return $this->destinationAddressCountry;
+    }
+    
+    public function setDestinationAddressCountry(?string $destinationAddressCountry): self
+    {
+        $this->destinationAddressCountry = $destinationAddressCountry;
         
         return $this;
     }

@@ -31,11 +31,6 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Form\AdForm;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 /**
  * Controller class for carpooling related actions.
@@ -104,6 +99,6 @@ class CarpoolController extends AbstractController
             $error = $err;
         }
 
-        return $this->json(['error' => $error, 'sucess'=> $sucess]);
+        return $this->json(['error' => $error, 'sucess'=> $sucess, 'ad' => print_r($ad,true)]);
     }
 }

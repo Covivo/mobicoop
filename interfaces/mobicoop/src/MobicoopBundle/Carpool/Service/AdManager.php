@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Waypoint;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
  * Ad management service.
@@ -44,48 +45,6 @@ class AdManager
     public function __construct(ProposalManager $proposalManager)
     {
         $this->proposalManager = $proposalManager;
-    }
-
-    /**
-     * Prepare the ad before creating a proposal.
-     *
-     * @param Ad      $ad
-     * @param Request $request
-     *
-     * @return \Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad
-     */
-    public function prepareAd(Ad $ad, Request $request)
-    {
-        if ($origin = $request->get('ad_form')['originAddress']) {
-            if (isset($origin['longitude'])) {
-                $ad->setOriginLongitude($origin['longitude']);
-            }
-            if (isset($origin['latitude'])) {
-                $ad->setOriginLatitude($origin['latitude']);
-            }
-            $ad->setOrigin(
-                ($origin['streetAddress'] ? $origin['streetAddress'].' ' : '').
-                ($origin['postalCode'] ? $origin['postalCode'].' ' : '').
-                ($origin['addressLocality'] ? $origin['addressLocality'].' ' : '').
-                ($origin['addressCountry'] ? $origin['addressCountry'] : '')
-                );
-        }
-        if ($destination = $request->get('ad_form')['destinationAddress']) {
-            if (isset($destination['longitude'])) {
-                $ad->setDestinationLongitude($destination['longitude']);
-            }
-            if (isset($destination['latitude'])) {
-                $ad->setDestinationLatitude($destination['latitude']);
-            }
-            $ad->setDestination(
-                ($destination['streetAddress'] ? $destination['streetAddress'].' ' : '').
-                ($destination['postalCode'] ? $destination['postalCode'].' ' : '').
-                ($destination['addressLocality'] ? $destination['addressLocality'].' ' : '').
-                ($destination['addressCountry'] ? $destination['addressCountry'] : '')
-            );
-        }
-
-        return $ad;
     }
 
     /**
@@ -157,12 +116,26 @@ class AdManager
         }
         
         $waypointOrigin = new Waypoint();
-        $waypointOrigin->setAddress($ad->getOriginAddress());
+        $originAddress = new Address();
+        $originAddress->setStreetAddress($ad->getOriginStreetAddress());
+        $originAddress->setPostalCode($ad->getOriginPostalCode());
+        $originAddress->setAddressLocality($ad->getOriginAddressLocality());
+        $originAddress->setAddressCountry($ad->getOriginAddressCountry());
+        $originAddress->setLatitude($ad->getOriginLatitude());
+        $originAddress->setLongitude($ad->getOriginLongitude());
+        $waypointOrigin->setAddress($originAddress);
         $waypointOrigin->setPosition(0);
         $waypointOrigin->setDestination(false);
 
         $waypointDestination = new Waypoint();
-        $waypointDestination->setAddress($ad->getDestinationAddress());
+        $destinationAddress = new Address();
+        $destinationAddress->setStreetAddress($ad->getDestinationStreetAddress());
+        $destinationAddress->setPostalCode($ad->getDestinationPostalCode());
+        $destinationAddress->setAddressLocality($ad->getDestinationAddressLocality());
+        $destinationAddress->setAddressCountry($ad->getDestinationAddressCountry());
+        $destinationAddress->setLatitude($ad->getDestinationLatitude());
+        $destinationAddress->setLongitude($ad->getDestinationLongitude());
+        $waypointDestination->setAddress($destinationAddress);
         $waypointDestination->setPosition(1);
         $waypointDestination->setDestination(true);
 
