@@ -35,7 +35,6 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Mobicoop\Bundle\MobicoopBundle\Form\Type\AriaTextType;
 
-
 /**
  * User form.
  *
