@@ -48,6 +48,7 @@ use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLeg;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Waypoint;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\IndividualStop;
 use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Direction;
 
 /**
  * Custom deserializer service.
@@ -101,8 +102,6 @@ class Deserializer
                 break;
             default:
                 break;
-
-
         }
         return null;
     }
@@ -201,9 +200,6 @@ class Deserializer
         if (isset($data["address"])) {
             $waypoint->setAddress(self::deserializeAddress($data['address']));
         }
-        if (isset($data["travelMode"])) {
-            $waypoint->setTravelMode(self::deserializeTravelMode($data['travelMode']));
-        }
         return $waypoint;
     }
     
@@ -224,7 +220,30 @@ class Deserializer
         if (isset($data["@id"])) {
             $criteria->setIri($data["@id"]);
         }
+        if (isset($data["directionDriver"])) {
+            $criteria->setDirectionDriver(self::deserializeDirection($data['directionDriver']));
+        }
+        if (isset($data["directionPassenger"])) {
+            $criteria->setDirectionPassenger(self::deserializeDirection($data['directionPassenger']));
+        }
         return $criteria;
+    }
+
+    private function deserializeDirection(array $data): ?Direction
+    {
+        $direction = new Direction();
+        $direction = self::autoSet($direction, $data);
+        if (isset($data["@id"])) {
+            $direction->setIri($data["@id"]);
+        }
+        if (isset($data["points"])) {
+            $points = [];
+            foreach ($data["points"] as $address) {
+                $points[] = self::deserializeAddress($address);
+            }
+            $direction->setPoints($points);
+        }
+        return $direction;
     }
     
     private function deserializeIndividualStop(array $data): ?IndividualStop
