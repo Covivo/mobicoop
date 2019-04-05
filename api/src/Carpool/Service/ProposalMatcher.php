@@ -72,13 +72,14 @@ class ProposalMatcher
      * Returns an array of Matching objects.
      *
      * @param Proposal $proposal
+     * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
      * @return array|NULL
      */
-    public function findMatchingProposals(Proposal $proposal)
+    public function findMatchingProposals(Proposal $proposal, bool $excludeProposalUser=true)
     {
         // we search matching proposals in the database
         // if no proposals are found we return an empty array
-        if (!$proposalsFound = $this->proposalRepository->findMatchingProposals($proposal)) {
+        if (!$proposalsFound = $this->proposalRepository->findMatchingProposals($proposal, $excludeProposalUser)) {
             return [];
         }
 
@@ -158,10 +159,10 @@ class ProposalMatcher
                 }
             }
         }
-        
+
         // we check if the pickup times match
         $matchings = $this->checkPickUp($matchings);
-
+        
         // we complete the matchings with the waypoints and criteria (it's a match criteria so we consider it's for a driver)
         foreach ($matchings as $matching) {
             
@@ -723,12 +724,14 @@ class ProposalMatcher
      * Create Matching proposal entities for a proposal.
      *
      * @param Proposal $proposal    The proposal for which we want the matchings
+     * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
      * @return Proposal The proposal with the matchings
      */
-    public function createMatchingsForProposal(Proposal $proposal)
+    public function createMatchingsForProposal(Proposal $proposal, bool $excludeProposalUser=true)
     {
         // we search the matchings
-        $matchings = $this->findMatchingProposals($proposal);
+        $matchings = $this->findMatchingProposals($proposal,$excludeProposalUser);
+        
         // we assign the matchings to the proposal
         foreach ($matchings as $matching) {
             if ($matching->getProposalOffer() === $proposal) {

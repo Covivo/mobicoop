@@ -108,6 +108,11 @@ class Waypoint
      */
     private $address;
     
+    public function __construct()
+    {
+        $this->id = 1;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

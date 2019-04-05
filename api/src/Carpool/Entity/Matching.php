@@ -29,10 +29,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Events;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
-use App\Geography\Entity\Direction;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Carpool\Controller\MatchingSimpleSearch;
 
 /**
  * Carpooling : matching between an offer and a request.
@@ -44,7 +44,57 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={},
+ *      collectionOperations={
+ *          "get",
+ *          "simple_search"={
+ *              "method"="GET",
+ *              "path"="/matchings/search",
+ *              "swagger_context" = {
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "origin_latitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The latitude of the origin point"
+ *                      },
+ *                      {
+ *                          "name" = "origin_longitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The longitude of the origin point"
+ *                      },
+ *                      {
+ *                          "name" = "destination_latitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The latitude of the destination point"
+ *                      },
+ *                      {
+ *                          "name" = "destination_longitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The longitude of the destination point"
+ *                      },
+ *                      {
+ *                          "name" = "date",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "string",
+ *                          "format" = "date-time",
+ *                          "description" = "The date of the trip (on RFC3339 format)"
+ *                      },
+ *                  }
+ *              }
+ *          }
+ *      },
  *      itemOperations={"get"}
  * )
  */
@@ -103,7 +153,7 @@ class Matching
     /**
      * @var Ask[] The asks made for this matching.
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\ask", mappedBy="matching", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="matching", cascade={"remove"}, orphanRemoval=true)
      * @Groups({"read"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
@@ -127,9 +177,16 @@ class Matching
      * @Groups({"read","write"})
      */
     private $filters;
+
+    /**
+     * @var string Origin
+     * @Groups({"read","write"})
+     */
+    private $origin;
     
     public function __construct()
     {
+        $this->id = 1;
         $this->asks = new ArrayCollection();
         $this->waypoints = new ArrayCollection();
     }
@@ -257,6 +314,18 @@ class Matching
     public function setFilters(array $filters): self
     {
         $this->filters = $filters;
+
+        return $this;
+    }
+
+    public function getOrigin(): ?string
+    {
+        return $this->origin;
+    }
+
+    public function setOrigin(string $origin): self
+    {
+        $this->origin = $origin;
 
         return $this;
     }

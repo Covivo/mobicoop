@@ -541,6 +541,11 @@ class Criteria
      * @MaxDepth(1)
      */
     private $proposal;
+
+    public function __construct()
+    {
+        $this->id = 1;
+    }
     
     public function getId(): ?int
     {

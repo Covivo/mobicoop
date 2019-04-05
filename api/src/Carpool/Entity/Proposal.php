@@ -37,10 +37,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Controller\ProposalPost;
-use App\Carpool\Controller\ProposalSimpleSearch;
 use App\Travel\Entity\TravelMode;
 use App\User\Entity\User;
-use App\Carpool\Filter\LocalityFilter;
 
 /**
  * Carpooling : proposal (offer from a driver / request from a passenger).
@@ -60,11 +58,6 @@ use App\Carpool\Filter\LocalityFilter;
  *              "method"="POST",
  *              "path"="/proposals",
  *              "controller"=ProposalPost::class,
- *          },
- *          "simple_search"={
- *              "method"="GET",
- *              "path"="/search",
- *              "controller"=ProposalSimpleSearch::class,
  *          }
  *      },
  *      itemOperations={"get","put","delete"}
@@ -196,8 +189,9 @@ class Proposal
      */
     private $individualStops;
         
-    public function __construct()
+    public function __construct($id=null)
     {
+        $this->id = $id;
         $this->waypoints = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
         $this->matchingOffers = new ArrayCollection();
