@@ -99,6 +99,6 @@ class CarpoolController extends AbstractController
             $error = $err;
         }
 
-        return $this->json(['error' => $error, 'sucess'=> $sucess, 'ad' => print_r($ad,true)]);
+        return $this->json(['error' => $error, 'sucess'=> $sucess, 'ad' => print_r($ad, true)]);
     }
 }
