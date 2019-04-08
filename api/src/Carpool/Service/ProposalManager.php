@@ -169,6 +169,7 @@ class ProposalManager
 
     /**
      * Create a minimal proposal for a simple search.
+     * Only punctual and one way trip.
      *
      * @param float $originLatitude
      * @param float $originLongitude
@@ -184,9 +185,9 @@ class ProposalManager
         float $destinationLongitude,
         \Datetime $date
         ) {
-        $proposal = new Proposal(1);
+        $proposal = new Proposal();
         $proposal->setType(Proposal::TYPE_ONE_WAY);
-        $criteria = new Criteria(1);
+        $criteria = new Criteria();
         $criteria->setDriver(false);
         $criteria->setPassenger(true);
         $criteria->setFromDate($date);
@@ -195,16 +196,16 @@ class ProposalManager
         $criteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
         $proposal->setCriteria($criteria);
 
-        $waypointOrigin = new Waypoint(1);
-        $originAddress = new Address(1);
+        $waypointOrigin = new Waypoint();
+        $originAddress = new Address();
         $originAddress->setLatitude((string)$originLatitude);
         $originAddress->setLongitude((string)$originLongitude);
         $waypointOrigin->setAddress($originAddress);
         $waypointOrigin->setPosition(0);
         $waypointOrigin->setDestination(false);
 
-        $waypointDestination = new Waypoint(1);
-        $destinationAddress = new Address(1);
+        $waypointDestination = new Waypoint();
+        $destinationAddress = new Address();
         $destinationAddress->setLatitude((string)$destinationLatitude);
         $destinationAddress->setLongitude((string)$destinationLongitude);
         $waypointDestination->setAddress($destinationAddress);

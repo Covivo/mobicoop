@@ -100,6 +100,8 @@ use App\Carpool\Controller\MatchingSimpleSearch;
  */
 class Matching
 {
+    const DEFAULT_ID = 999999999999;
+    
     /**
      * @var int The id of this matching.
      *
@@ -186,7 +188,7 @@ class Matching
     
     public function __construct()
     {
-        $this->id = 1;
+        $this->id = self::DEFAULT_ID;
         $this->asks = new ArrayCollection();
         $this->waypoints = new ArrayCollection();
     }

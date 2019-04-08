@@ -48,6 +48,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class Direction
 {
+    const DEFAULT_ID = 999999999999;
+    
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -162,7 +164,7 @@ class Direction
     
     public function __construct()
     {
-        $this->id = 1;
+        $this->id = self::DEFAULT_ID;
         $this->zones = new ArrayCollection();
     }
 

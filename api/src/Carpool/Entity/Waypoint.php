@@ -48,6 +48,8 @@ use App\Geography\Entity\Direction;
  */
 class Waypoint
 {
+    const DEFAULT_ID = 999999999999;
+
     /**
      * @var int The id of this point.
      *
@@ -110,7 +112,7 @@ class Waypoint
     
     public function __construct()
     {
-        $this->id = 1;
+        $this->id = self::DEFAULT_ID;
     }
 
     public function getId(): ?int

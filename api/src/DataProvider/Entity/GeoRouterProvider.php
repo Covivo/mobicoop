@@ -376,7 +376,7 @@ class GeoRouterProvider implements ProviderInterface
     
     private static function createAddress($coordinate)
     {
-        $address = new Address(1);
+        $address = new Address();
         if (isset($coordinate[0])) {
             $address->setLongitude($coordinate[0]);
         }

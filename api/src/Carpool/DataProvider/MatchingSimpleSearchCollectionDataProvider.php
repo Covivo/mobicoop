@@ -31,6 +31,7 @@ use App\Carpool\Service\ProposalManager;
 
 /**
  * Collection data provider for Matching simple search.
+ * Only for punctual and one way trip.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  *

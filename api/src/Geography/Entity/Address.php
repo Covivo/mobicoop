@@ -53,6 +53,8 @@ use App\User\Entity\User;
  */
 class Address
 {
+    const DEFAULT_ID = 999999999999;
+    
     /**
      * @var int The id of this address.
      *
@@ -137,7 +139,10 @@ class Address
 
     public function __construct($id=null)
     {
-        $this->id = $id;
+        $this->id = self::DEFAULT_ID;
+        if ($id) {
+            $this->id = $id;
+        }
     }
 
     public function getId(): ?int
