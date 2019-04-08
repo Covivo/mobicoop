@@ -31,6 +31,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Form\AdForm;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Symfony\Component\HttpFoundation\Response;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
 
 /**
  * Controller class for carpooling related actions.
@@ -100,5 +101,14 @@ class CarpoolController extends AbstractController
         }
 
         return $this->json(['error' => $error, 'sucess'=> $sucess, 'ad' => print_r($ad, true)]);
+    }
+
+    /**
+     * Simple search results.
+     */
+    public function simpleSearchResults($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date, ProposalManager $proposalManager)
+    {
+        echo "<pre>" . print_r($proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("YmdHis", $date)), true) . "</pre>";
+        exit;
     }
 }
