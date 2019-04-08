@@ -174,6 +174,18 @@ class Deserializer
                 $proposal->addWaypoint(self::deserializeWaypoint($waypoint));
             }
         }
+        if (isset($data["matchingOffers"])) {
+            foreach ($data["matchingOffers"] as $matching) {
+                echo "ici ";
+                $proposal->addMatchingOffer(self::deserializeMatching($matching));
+            }
+        }
+        if (isset($data["matchingRequests"])) {
+            foreach ($data["matchingRequests"] as $matching) {
+                echo "la ";
+                $proposal->addMatchingRequest(self::deserializeMatching($matching));
+            }
+        }
         if (isset($data["travelModes"])) {
             foreach ($data["travelModes"] as $travelMode) {
                 $proposal->addTravelMode(self::deserializeTravelMode($travelMode));
@@ -187,6 +199,7 @@ class Deserializer
                 $proposal->addIndividualStop(self::deserializeIndividualStop($individualStop));
             }
         }
+        //echo "<pre>" . print_r($proposal,true) . "</pre>";exit;
         return $proposal;
     }
     
@@ -236,6 +249,7 @@ class Deserializer
         if (isset($data["@id"])) {
             $direction->setIri($data["@id"]);
         }
+        // ajouter filters !!!
         if (isset($data["points"])) {
             $points = [];
             foreach ($data["points"] as $address) {
@@ -269,14 +283,22 @@ class Deserializer
         if (isset($data["@id"])) {
             $matching->setIri($data["@id"]);
         }
-        if (isset($data["proposalOffer"])) {
+        if (isset($data["proposalOffer"]) && is_array($data["proposalOffer"])) {
             $matching->setProposalOffer(self::deserializeProposal($data['proposalOffer']));
         }
-        if (isset($data["proposalRequest"])) {
+        if (isset($data["proposalRequest"]) && is_array($data["proposalRequest"])) {
             $matching->setProposalRequest(self::deserializeProposal($data['proposalRequest']));
         }
         if (isset($data["criteria"])) {
             $matching->setCriteria(self::deserializeCriteria($data['criteria']));
+        }
+        if (isset($data["waypoints"])) {
+            foreach ($data["waypoints"] as $waypoint) {
+                $matching->addWaypoint(self::deserializeWaypoint($waypoint));
+            }
+        }
+        if (isset($data["filters"])) {
+            $matching->setFilters($data["filters"]);
         }
         return $matching;
     }

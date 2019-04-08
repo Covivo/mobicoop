@@ -37,6 +37,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Controller\ProposalPost;
+use App\Carpool\Controller\MatchingSimpleSearch;
 use App\Travel\Entity\TravelMode;
 use App\User\Entity\User;
 
@@ -58,6 +59,54 @@ use App\User\Entity\User;
  *              "method"="POST",
  *              "path"="/proposals",
  *              "controller"=ProposalPost::class,
+ *          },
+ *          "simple_search"={
+ *              "method"="GET",
+ *              "path"="/proposals/search",
+ *              "swagger_context" = {
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "origin_latitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The latitude of the origin point"
+ *                      },
+ *                      {
+ *                          "name" = "origin_longitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The longitude of the origin point"
+ *                      },
+ *                      {
+ *                          "name" = "destination_latitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The latitude of the destination point"
+ *                      },
+ *                      {
+ *                          "name" = "destination_longitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The longitude of the destination point"
+ *                      },
+ *                      {
+ *                          "name" = "date",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "string",
+ *                          "format" = "date-time",
+ *                          "description" = "The date of the trip (on RFC3339 format)"
+ *                      },
+ *                  }
+ *              }
  *          }
  *      },
  *      itemOperations={"get","put","delete"}

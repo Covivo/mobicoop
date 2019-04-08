@@ -108,7 +108,8 @@ class CarpoolController extends AbstractController
      */
     public function simpleSearchResults($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date, ProposalManager $proposalManager)
     {
-        echo "<pre>" . print_r($proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("YmdHis", $date)), true) . "</pre>";
-        exit;
+        return $this->render('@Mobicoop/search/simple_results.html.twig', [
+            'hydra' => $proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("YmdHis", $date))
+        ]);
     }
 }

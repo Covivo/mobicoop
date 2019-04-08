@@ -32,7 +32,6 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Carpool\Controller\MatchingSimpleSearch;
 
 /**
  * Carpooling : matching between an offer and a request.
@@ -44,57 +43,7 @@ use App\Carpool\Controller\MatchingSimpleSearch;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={
- *          "get",
- *          "simple_search"={
- *              "method"="GET",
- *              "path"="/matchings/search",
- *              "swagger_context" = {
- *                  "parameters" = {
- *                      {
- *                          "name" = "origin_latitude",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "number",
- *                          "format" = "float",
- *                          "description" = "The latitude of the origin point"
- *                      },
- *                      {
- *                          "name" = "origin_longitude",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "number",
- *                          "format" = "float",
- *                          "description" = "The longitude of the origin point"
- *                      },
- *                      {
- *                          "name" = "destination_latitude",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "number",
- *                          "format" = "float",
- *                          "description" = "The latitude of the destination point"
- *                      },
- *                      {
- *                          "name" = "destination_longitude",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "number",
- *                          "format" = "float",
- *                          "description" = "The longitude of the destination point"
- *                      },
- *                      {
- *                          "name" = "date",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "string",
- *                          "format" = "date-time",
- *                          "description" = "The date of the trip (on RFC3339 format)"
- *                      },
- *                  }
- *              }
- *          }
- *      },
+ *      collectionOperations={"get"},
  *      itemOperations={"get"}
  * )
  */
@@ -179,12 +128,6 @@ class Matching
      * @Groups({"read","write"})
      */
     private $filters;
-
-    /**
-     * @var string Origin
-     * @Groups({"read","write"})
-     */
-    private $origin;
     
     public function __construct()
     {
@@ -316,18 +259,6 @@ class Matching
     public function setFilters(array $filters): self
     {
         $this->filters = $filters;
-
-        return $this;
-    }
-
-    public function getOrigin(): ?string
-    {
-        return $this->origin;
-    }
-
-    public function setOrigin(string $origin): self
-    {
-        $this->origin = $origin;
 
         return $this;
     }

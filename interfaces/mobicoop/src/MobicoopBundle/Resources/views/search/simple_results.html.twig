@@ -1,0 +1,62 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}Hello{% endblock %}
+
+{% block body %}
+
+<section class="hero is-primary">
+	<div class="hero-body">
+    	<div class="container">
+      		<h1 class="title">
+        		Mobicoop - Résultats
+      		</h1>
+    	</div>
+  	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+	    {% if error is defined %}
+		<span class="tag is-danger">{{ error }}</span>
+		{% endif %}
+		<div class="content">
+    		<h2>Résultats</h2>
+        </div>
+		{% if hydra and hydra.member|length>0  %}
+		<table class="table">
+			<tr>
+				<th>#</th>
+				<th>Covoitureur</th>
+				<th>Type</th>
+				<th>Fréquence</th>
+				<th>Origine</th>
+				<th>Destination</th>
+				<th>Fréquence</th>
+				<th>Date</th>
+			</tr>
+			{% for proposal in hydra.member %}
+			{{ dump(proposal)}}
+				{% if proposal.matchingOffers|length>0  %}
+					{% for matching in proposal.matchingOffers %}
+						<tr>
+							<td>{{ matching.proposalOffer.id }}</td>
+						</tr>
+					{% endfor %}
+				{% endif %}
+				{% if proposal.matchingRequests|length>0  %}
+					{% for matching in proposal.matchingRequests %}
+						<tr>
+							<td>{{ dump(matching)}}</td>
+						</tr>
+					{% endfor %}
+				{% endif %}
+				
+			{% endfor %}
+		</table>
+		{% else %}
+			<span class="tag is-warning">No matchings found.</span>
+		{% endif %}
+	</div>
+</section>
+
+{% endblock %}
