@@ -106,10 +106,9 @@ class CarpoolController extends AbstractController
     /**
      * Simple search results.
      */
-    public function simpleSearchResults($origin_latitude,$origin_longitude,$destination_latitude,$destination_longitude,$date,ProposalManager $proposalManager)
+    public function simpleSearchResults($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date, ProposalManager $proposalManager)
     {
-        echo "<pre>" . print_r($proposalManager->getMatchingsForSearch($origin_latitude,$origin_longitude,$destination_latitude,$destination_longitude,\Datetime::createFromFormat("YmdHis",$date)),true) . "</pre>";
+        echo "<pre>" . print_r($proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("YmdHis", $date)), true) . "</pre>";
         exit;
     }
-
 }

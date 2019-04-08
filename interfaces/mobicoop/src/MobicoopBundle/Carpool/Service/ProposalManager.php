@@ -134,7 +134,7 @@ class ProposalManager
         ];
         // we will make a request on the Matching resource, so we chan ge it here (because the resource is initialized to Proposal in this class constructor)
         $this->dataProvider->setClass(Matching::class);
-        $response = $this->dataProvider->getSubCollection(null, Matching::class, "search",$params);
+        $response = $this->dataProvider->getSubCollection(null, Matching::class, "search", $params);
         if ($response->getCode() == 200) {
             return $response->getValue();
         }

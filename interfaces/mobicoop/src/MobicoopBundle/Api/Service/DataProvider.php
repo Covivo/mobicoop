@@ -212,7 +212,7 @@ class DataProvider
 
         try {
             if (is_null($id)) {
-               $clientResponse = $this->client->get($this->resource.'/'.$route, ['query'=>$params]);
+                $clientResponse = $this->client->get($this->resource.'/'.$route, ['query'=>$params]);
             } else {
                 $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route, ['query'=>$params]);
             }
@@ -220,7 +220,8 @@ class DataProvider
                 return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody(), $subClassName));
             }
         } catch (TransferException $e) {
-            echo "ici";exit;
+            echo "ici";
+            exit;
             return new Response($e->getCode());
         }
         return new Response();
