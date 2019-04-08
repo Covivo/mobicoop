@@ -34,6 +34,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Mobicoop\Bundle\MobicoopBundle\Form\Type\AriaTextType;
+use Mobicoop\Bundle\MobicoopBundle\Form\Type\AriaChoiceType;
 
 /**
  * User form.
@@ -55,16 +56,16 @@ class UserForm extends AbstractType
             'translation_domain' => 'user',
             'label' => 'givenName.label',
             'aria-label' => 'givenName.aria_label',
-            'help' => 'givenName.placeholder',
+            'help' => 'givenName.help',
             'attr' => [
                 'placeholder' => 'givenName.placeholder',
-                'help' => 'givenName.placeholder',
             ]
         ])
         ->add('familyName', AriaTextType::class, [
             'translation_domain' => 'user',
             'label' => 'familyName.label',
             'aria-label' => 'oui',
+            'help' => 'familyName.help',
             'attr' => [
                 'placeholder' => 'familyName.placeholder'
             ]
@@ -72,6 +73,7 @@ class UserForm extends AbstractType
         ->add('email', AriaTextType::class, [
             'translation_domain' => 'user',
             'label' => 'email.label',
+            'help' => 'email.help',
             'attr' => [
                 'placeholder' => 'email.placeholder'
             ]
@@ -80,7 +82,7 @@ class UserForm extends AbstractType
             'type' => PasswordType::class,
             'translation_domain' => 'user',
             'invalid_message' => 'password.password_match',
-            'help' => 'Make sure to add a valid email',
+            'help' => 'password.help',
             'first_options'  => [
                 'label' => 'password.label',
                 'attr' => [
@@ -94,7 +96,7 @@ class UserForm extends AbstractType
                 ],
             ]
         ])
-        ->add('gender', ChoiceType::class, [
+        ->add('gender', AriaChoiceType::class, [
             'placeholder' => 'gender.placeholder',
             'choices'  => User::GENDERS,
             'translation_domain' => 'user',
@@ -108,7 +110,7 @@ class UserForm extends AbstractType
                 'placeholder' => 'nationality.placeholder'
             ]
         ])
-        ->add('birthYear', ChoiceType::class, [
+        ->add('birthYear', AriaChoiceType::class, [
             'placeholder' => 'birthYear.placeholder',
             'choices'  => $birthYears,
             'translation_domain' => 'user',
@@ -118,6 +120,7 @@ class UserForm extends AbstractType
         ->add('telephone', TextType::class, [
             'translation_domain' => 'user',
             'label' => 'telephone.label',
+            'help' => 'telephone.help',
             'attr' => [
                 'placeholder' => 'telephone.placeholder'
             ]

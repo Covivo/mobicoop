@@ -3,18 +3,21 @@ givenName:
     placeholder: 'Saisissez votre prénom'
     aria_required: 'true'
     aria_label: 'aaaaaaaa'
-    help: 'aide de prénom'
+    help: 'Saisir votre prénom'
 familyName:
     label: 'Nom'
     placeholder: 'Saisissez votre nom'
+    help: 'Saisir votre nom'
 email:
     label: 'Email'
     placeholder: 'Saisissez votre adresse email'
+    help: 'Exemple nom@monsite.com'
 password:
     label: 'Mot de passe'
     label_repeat: 'Mot de passe (confirmation)'
     placeholder: 'Saisissez votre mot de passe'
     placeholder_repeat: 'Confirmez votre mot de passe'
+    help: 'Make sure to add a valid password'
 gender:
     label: 'Civilité'
     placeholder: 'Choisissez votre civilité'
@@ -33,6 +36,7 @@ birthYear:
 telephone:
     label: 'Telephone'
     placeholder: 'Saisissez votre numéro de téléphone'
+    help: 'Saisir un numéro de téléphone valide'
 maxDeviationTime:
     label: 'Temps de détour maximum'
     placeholder: 'Saisissez le temps de détour maximum accepté en minutes'

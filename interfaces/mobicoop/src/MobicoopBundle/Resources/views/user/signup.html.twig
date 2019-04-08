@@ -22,10 +22,17 @@
 		<p>Les champs suivis d'une étoile (*) sont obligatoires</p>
         {{ form_start(form) }}
 		{{ form_row(form.email) }}
-		{{ form_help(form.email) }}
+{#		{{ form_help(form.email) }}#}
+
 		{{ form_row(form.givenName) }}
-        {{ form_row(form.familyName) }}
+{#		{{ form_help(form.givenName) }}#}
+
+		{{ form_row(form.familyName) }}
+{#		{{ form_help(form.familyName) }}#}
+
 		{{ form_row(form.gender) }}
+{#		{{ form_help(form.gender) }}#}
+
 		{{ form_row(form.birthYear) }}
 		{{ form_row(form.telephone) }}
 		{{ form_row(form.password) }}
