@@ -55,9 +55,10 @@ class UserForm extends AbstractType
             'translation_domain' => 'user',
             'label' => 'givenName.label',
             'aria-label' => 'givenName.aria_label',
+            'help' => 'givenName.placeholder',
             'attr' => [
                 'placeholder' => 'givenName.placeholder',
-                'aria-label' => 'givenName.aria_label'
+                'help' => 'givenName.placeholder',
             ]
         ])
         ->add('familyName', AriaTextType::class, [

@@ -3,6 +3,7 @@ givenName:
     placeholder: 'Saisissez votre prénom'
     aria_required: 'true'
     aria_label: 'aaaaaaaa'
+    help: 'aide de prénom'
 familyName:
     label: 'Nom'
     placeholder: 'Saisissez votre nom'
