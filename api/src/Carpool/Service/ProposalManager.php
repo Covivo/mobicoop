@@ -72,9 +72,12 @@ class ProposalManager
     /**
      * Create a proposal.
      *
-     * @param Proposal $proposal
+     * @param Proposal $proposal    The proposal to create
+     * @param boolean $persist      If we persist the proposal in the database (false for a simple search)
+     * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
+     * @return Proposal             The created proposal
      */
-    public function createProposal(Proposal $proposal)
+    public function createProposal(Proposal $proposal, $persist=true, bool $excludeProposalUser=true)
     {
         // temporary initialisation, will be dumped when implementation of these fields will be done
         $proposal->getCriteria()->setSeats(1);
@@ -143,12 +146,78 @@ class ProposalManager
         }
 
         // matching analyze
-        $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal);
+        $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
 
-        $this->entityManager->persist($proposal);
+        if ($persist) {
+            $this->entityManager->persist($proposal);
+        }
 
         return $proposal;
     }
+
+    /**
+     * Get the matchings for the given proposal.
+     * Used for simple search.
+     *
+     * @param Proposal $proposal    The proposal for wich we search the matchings
+     * @return Proposal             The posted proposal with its matchings
+     */
+    public function getMatchings(Proposal $proposal)
+    {
+        return $this->createProposal($proposal, false, false);
+    }
+
+    /**
+     * Create a minimal proposal for a simple search.
+     * Only punctual and one way trip.
+     *
+     * @param float $originLatitude
+     * @param float $originLongitude
+     * @param float $destinationLatitude
+     * @param float $destinationLongitude
+     * @param \Datetime $date
+     * @return void
+     */
+    public function searchMatchings(
+        float $originLatitude,
+        float $originLongitude,
+        float $destinationLatitude,
+        float $destinationLongitude,
+        \Datetime $date
+        ) {
+        $proposal = new Proposal();
+        $proposal->setType(Proposal::TYPE_ONE_WAY);
+        $criteria = new Criteria();
+        $criteria->setDriver(false);
+        $criteria->setPassenger(true);
+        $criteria->setFromDate($date);
+        $criteria->setFromTime($date);
+        $criteria->setMarginDuration(900);
+        $criteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
+        $proposal->setCriteria($criteria);
+
+        $waypointOrigin = new Waypoint();
+        $originAddress = new Address();
+        $originAddress->setLatitude((string)$originLatitude);
+        $originAddress->setLongitude((string)$originLongitude);
+        $waypointOrigin->setAddress($originAddress);
+        $waypointOrigin->setPosition(0);
+        $waypointOrigin->setDestination(false);
+
+        $waypointDestination = new Waypoint();
+        $destinationAddress = new Address();
+        $destinationAddress->setLatitude((string)$destinationLatitude);
+        $destinationAddress->setLongitude((string)$destinationLongitude);
+        $waypointDestination->setAddress($destinationAddress);
+        $waypointDestination->setPosition(1);
+        $waypointDestination->setDestination(true);
+
+        $proposal->addWaypoint($waypointOrigin);
+        $proposal->addWaypoint($waypointDestination);
+
+        return $this->getMatchings($proposal);
+    }
+
 
     /**
      * Updates directions without zones (so by extension, updates the related proposals, that's why it's in this file...)

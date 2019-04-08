@@ -85,6 +85,11 @@ class Direction
      * @var string The encoding format of the detail.
      */
     private $format;
+
+    /**
+     * @var Address[]|null The decoded points (from detail) of the direction.
+     */
+    private $points;
         
     public function getDistance(): int
     {
@@ -202,6 +207,18 @@ class Direction
     public function setFormat(string $format): self
     {
         $this->format = $format;
+        
+        return $this;
+    }
+
+    public function getPoints(): ?array
+    {
+        return $this->points;
+    }
+    
+    public function setPoints(array $points): self
+    {
+        $this->points = $points;
         
         return $this;
     }

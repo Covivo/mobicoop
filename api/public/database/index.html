@@ -38,22 +38,21 @@
 <li><a href="#waypoint">waypoint </a></li>
 <li><a href="#criteria">criteria </a></li>
 <li><a href="#address">address </a></li>
-<li><a href="#mode">mode </a></li>
-<li><a href="#route">route </a></li>
-<li><a href="#proposal_mode">proposal_mode </a></li>
-<li><a href="#user_address">user_address </a></li>
 <li><a href="#ptjourney">ptjourney </a></li>
 <li><a href="#ptdeparture">ptdeparture </a></li>
 <li><a href="#ptarrival">ptarrival </a></li>
 <li><a href="#ptleg">ptleg </a></li>
-<li><a href="#ptmode">ptmode </a></li>
 <li><a href="#ptline">ptline </a></li>
 <li><a href="#ptcompany">ptcompany </a></li>
 <li><a href="#ptstep">ptstep </a></li>
 <li><a href="#car">car </a></li>
+<li><a href="#direction">direction </a></li>
+<li><a href="#travelMode">travelMode </a></li>
+<li><a href="#proposal_travelMode">proposal_travelMode </a></li>
+<li><a href="#individualStop">individualStop </a></li>
+<li><a href="#event">event </a></li>
+<li><a href="#image">image </a></li>
 <li><a href="#zone">zone </a></li>
-<li><a href="#near">near </a></li>
-<li><a href="#route_zone">route_zone </a></li>
 </ul>
 <a id="user"></a><table style="width:100%"><caption>Table: user </caption>
 <tr><td>Table Comments</td><td colspan="6">User table</td></tr>
@@ -68,17 +67,23 @@
         <th>Comment</th>
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>User status (1 = active; 2 = disabled; 3 = anonymized)</td></tr>
 <tr><td>givenName</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>First name</td></tr>
 <tr><td>familyName</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Family name</td></tr>
 <tr><td>email</td><td>VARCHAR(100)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Email</td></tr>
 <tr><td>password</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Password</td></tr>
-<tr><td>gender</td><td>VARCHAR(30)</td><td>No</td><td>No</td><td>No</td><td></td><td>Gender
-</td></tr>
+<tr><td>gender</td><td>SMALLINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Gender
+1=female
+2=male
+3=nc</td></tr>
 <tr><td>nationality</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Nationality</td></tr>
 <tr><td>birthDate</td><td>DATE</td><td>No</td><td>No</td><td>No</td><td></td><td>B‏irth date</td></tr>
 <tr><td>telephone</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Telephone number</td></tr>
-<tr><td>maxDeviationTime</td><td>INT</td><td>No</td><td>No</td><td>No</td><td>600</td><td>Maximum deviation time (in seconds) as a driver to accept a request proposal</td></tr>
-<tr><td>maxDeviationDistance</td><td>INT</td><td>No</td><td>No</td><td>No</td><td>5000</td><td>Maximum deviation length (in metres) as a driver to accept a request proposal</td></tr>
+<tr><td>maxDetourDuration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td>600</td><td>Maximum detour duration (in seconds) as a driver to accept a request proposal</td></tr>
+<tr><td>maxDetourDistance</td><td>INT</td><td>No</td><td>No</td><td>No</td><td>5000</td><td>Maximum detour length (in metres) as a driver to accept a request proposal</td></tr>
+<tr><td>anyRouteAsPassenger</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td>1</td><td>The user accepts any route as a passenger from its origin to the destination</td></tr>
+<tr><td>multiTransportMode</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The user accepts other transportation modes</td></tr>
+<tr><td>kmPrice</td><td>DECIMAL(4,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Price per km</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="proposal"></a><table style="width:100%"><caption>Table: proposal </caption>
 <tr><td>Table Comments</td><td colspan="6">Proposal table :
@@ -86,14 +91,14 @@
 - an offer from a driver
 - a request from a passenger
 
-An offer consists in 2 or more points : 
+An offer consists in 2 or more waypoints : 
 - an origin point
 - a destination point
 - zero or more middle points
 
 The origin point is numbered 0, other points are incremented.
 
-A request is initially composed of 2 points : 
+A request is initially composed of 2 waypoints : 
 - an origin point
 - a destination point
 
@@ -118,16 +123,13 @@ The proposal is linked with offer or request criteria.
 <tr><td>idcriteria</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Request or offer criteria
 </td></tr>
 <tr><td>idproposalLinked</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Linked proposal for a round trip (return or outward journey)</td></tr>
-<tr><td>idproposalOrigin</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Original proposal if calculated proposal</td></tr>
-<tr><td>iduser</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>User who submits the proposal</td></tr>
-<tr><td>journeyType</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Journey type : 
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>User who submits the proposal</td></tr>
+<tr><td>type</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Proposal type : 
 1 : one way trip
 2 : outward of a round trip
 3 : return of a round trip</td></tr>
-<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date of the proposal</td></tr>
-<tr><td>distance</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Distance of the full journey in metres</td></tr>
-<tr><td>duration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Estimated duration of the full journey in seconds (based on real distance)</td></tr>
-<tr><td>idcar</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>comment</td><td>TEXT</td><td>No</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>A comment about the proposal</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="ask"></a><table style="width:100%"><caption>Table: ask </caption>
 <tr><td>Table Comments</td><td colspan="6">An ask made by a user (as a driver or passenger) after matching between an offer and a request.
@@ -143,25 +145,19 @@ The user that creates the ask is either the driver or the passenger.</td></tr>
         <th>Comment</th>
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>idaddressOrigin</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Origin address</td></tr>
-<tr><td>idaddressDestination</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Destination address</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>User that creates the solicitation</td></tr>
-<tr><td>iduserOffer</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Driver (shortcut)</td></tr>
-<tr><td>iduserRequest</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Passenger (shortcut)</td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>User that creates the ask</td></tr>
 <tr><td>idmatching</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Matching</td></tr>
 <tr><td>idcriteria</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Criteria</td></tr>
 <tr><td>idaskLinked</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Linked ask if the user that responds proposes another ask</td></tr>
-<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Solicitation status : 
+<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Ask status : 
 0 : waiting
 1 : accepted
 2 : declined</td></tr>
-<tr><td>journeyType</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Journey type : 
+<tr><td>type</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Ask type : 
 1 : one way trip
 2 : outward of a round trip
 3 : return of a round trip</td></tr>
-<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date of the solicitation</td></tr>
-<tr><td>distance</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Distance in metres</td></tr>
-<tr><td>duration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Duration in seconds</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date of the ask</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="matching"></a><table style="width:100%"><caption>Table: matching </caption>
 <tr><td>Table Comments</td><td colspan="6">Matching between offer and request
@@ -177,23 +173,16 @@ Matching may be partial (only between certain points)</td></tr>
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID (créé pour faciliter la relation avec la sollicitation, pour éviter de faire le lien sur le couple idproposalOffer / idproposalSearch)</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
 <tr><td>idproposalOffer</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Offer proposal</td></tr>
 <tr><td>idproposalRequest</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Request proposal</td></tr>
 <tr><td>idcriteria</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Criteria used for the matching (may be a combination of offer and request criteria)</td></tr>
-<tr><td>idwaypointOfferOrigin</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Starting point of the offer proposal used for the matching</td></tr>
-<tr><td>idwaypointOfferDestination</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Ending point of the offer proposal used for the matching</td></tr>
-<tr><td>idwaypointRequestOrigin</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Starting point of the request used for the matching (if multimodal travel, otherwise it's always the starting point)</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date of the matching</td></tr>
-<tr><td>distance</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Distance in metres</td></tr>
-<tr><td>duration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Duration in seconds</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="waypoint"></a><table style="width:100%"><caption>Table: waypoint </caption>
-<tr><td>Table Comments</td><td colspan="6">Table of points for a journey
+<tr><td>Table Comments</td><td colspan="6">Table of waypoints for a route.
 
-A point may be created : 
-- by a user who offers a journey, and who wants to travel by certain points
-- by the matching algorythm for a request in case of a multimodal travel, or for successive carpooling rides
+A waypoint is created by a user who wants to travel by certain points.
 </td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
@@ -206,11 +195,12 @@ A point may be created :
         <th>Comment</th>
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>idproposal</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Proposal</td></tr>
-<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Address of the point</td></tr>
-<tr><td>idmode</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Travel mode</td></tr>
+<tr><td>idproposal</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Proposal if the waypoint is a proposal waypoint</td></tr>
+<tr><td>idmatching</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Matching if the waypoint is a matching waypoint (calculated by the georouting algorythm)</td></tr>
+<tr><td>idask</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Ask if the waypoint is an ask waypoint (calculated by the georouting algorythm and potentially modified by the user that creates the ask)</td></tr>
 <tr><td>position</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Position number</td></tr>
-<tr><td>isDestination</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>True if it's the last point</td></tr>
+<tr><td>destination</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>True if it's the last point</td></tr>
+<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="criteria"></a><table style="width:100%"><caption>Table: criteria </caption>
 <tr><td>Table Comments</td><td colspan="6">Criteria table : 
@@ -227,33 +217,66 @@ A point may be created :
         <th>Comment</th>
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>isDriver</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td></td></tr>
-<tr><td>isPassenger</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>driver</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>passenger</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td></td></tr>
 <tr><td>frequency</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Proposal frequency : 
 1 : punctual
 2 : regular</td></tr>
 <tr><td>seats</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Number of seats available</td></tr>
 <tr><td>fromDate</td><td>DATE</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Starting date (=proposal date if punctual)</td></tr>
 <tr><td>fromTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Starting time</td></tr>
+<tr><td>marginDuration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Margin time in seconds if punctual</td></tr>
+<tr><td>minTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Starting time min</td></tr>
+<tr><td>maxTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Starting time max</td></tr>
 <tr><td>toDate</td><td>DATE</td><td>No</td><td>No</td><td>No</td><td></td><td>End date if regular proposal</td></tr>
-<tr><td>isMonCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on mondays (if regular)</td></tr>
-<tr><td>isTueCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on tuesdays (if regular)</td></tr>
-<tr><td>isWedCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on wednesdays (if regular)</td></tr>
-<tr><td>isThuCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on thursdays (if regular)</td></tr>
-<tr><td>isFriCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on fridays (if regular)</td></tr>
-<tr><td>isSatCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on saturdays (if regular)</td></tr>
-<tr><td>isSunCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on sundays (if regular)</td></tr>
+<tr><td>strictDate</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>For a punctual proposal, accept only matchings for the define fromDate (no matchings for fluctuant dates)</td></tr>
+<tr><td>monCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on mondays (if regular)</td></tr>
+<tr><td>tueCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on tuesdays (if regular)</td></tr>
+<tr><td>wedCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on wednesdays (if regular)</td></tr>
+<tr><td>thuCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on thursdays (if regular)</td></tr>
+<tr><td>friCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on fridays (if regular)</td></tr>
+<tr><td>satCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on saturdays (if regular)</td></tr>
+<tr><td>sunCheck</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Proposal is available on sundays (if regular)</td></tr>
 <tr><td>monTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Mondays starting time (if regular)</td></tr>
+<tr><td>monMarginDuration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Accepted margin for monday starting time in seconds</td></tr>
+<tr><td>monMinTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Mondays min starting time (if regular)</td></tr>
+<tr><td>monMaxTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Mondays max starting time (if regular)</td></tr>
 <tr><td>tueTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Tuesdays starting time (if regular)</td></tr>
+<tr><td>tueMarginDuration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Accepted margin for tuesday starting time in seconds</td></tr>
+<tr><td>tueMinTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Tuesdays min starting time (if regular)</td></tr>
+<tr><td>tueMaxTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Tuesdays max starting time (if regular)</td></tr>
 <tr><td>wedTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Wednesdays starting time (if regular)</td></tr>
+<tr><td>wedMarginDuration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Accepted margin for wednesday starting time in seconds</td></tr>
+<tr><td>wedMinTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Wednesdays min starting time (if regular)</td></tr>
+<tr><td>wedMaxTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Wednesdays max starting time (if regular)</td></tr>
 <tr><td>thuTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Thursday starting time (if regular)</td></tr>
+<tr><td>thuMarginDuration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Accepted margin for thursday starting time in seconds</td></tr>
+<tr><td>thuMinTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Thursday min starting time (if regular)</td></tr>
+<tr><td>thuMaxTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Thursday max starting time (if regular)</td></tr>
 <tr><td>friTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Fridays starting time (if regular)</td></tr>
+<tr><td>friMarginDuration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Accepted margin for friday starting time in seconds</td></tr>
+<tr><td>friMinTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Fridays min starting time (if regular)</td></tr>
+<tr><td>friMaxTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Fridays max starting time (if regular)</td></tr>
 <tr><td>satTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Saturdays starting time (if regular)</td></tr>
+<tr><td>satMarginDuration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Accepted margin for saturday starting time in seconds</td></tr>
+<tr><td>satMinTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Saturdays min starting time (if regular)</td></tr>
+<tr><td>satMaxTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Saturdays max starting time (if regular)</td></tr>
 <tr><td>sunTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Sundays starting time (if regular)</td></tr>
-<tr><td>marginTime</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Accepted margin for starting time in seconds</td></tr>
+<tr><td>sunMarginDuration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Accepted margin for sunday starting time in seconds</td></tr>
+<tr><td>sunMinTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Sundays min starting time (if regular)</td></tr>
+<tr><td>sunMaxTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Sundays max starting time (if regular)</td></tr>
+<tr><td>maxDetourDuration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td>600</td><td>Maximum detour time (in seconds) as a driver to accept a request proposal</td></tr>
+<tr><td>maxDetourDistance</td><td>INT</td><td>No</td><td>No</td><td>No</td><td>5000</td><td>Maximum detour length (in metres) as a driver to accept a request proposal</td></tr>
+<tr><td>anyRouteAsPassenger</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td>1</td><td>The user accepts any route as a passenger from its origin to the destination</td></tr>
+<tr><td>multiTransportMode</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The user accepts other transportation modes</td></tr>
+<tr><td>kmPrice</td><td>DECIMAL(4,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Price per km</td></tr>
+<tr><td>idcar</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Car used as a driver</td></tr>
+<tr><td>iddirectionDriver</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Direction calculated by the georouter as a driver</td></tr>
+<tr><td>iddirectionPassenger</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Direction calculated by the georouter as a passenger</td></tr>
+<tr><td>idptjourney</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Public transport jourey in case of combined transport</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="address"></a><table style="width:100%"><caption>Table: address </caption>
-<tr><td>Table Comments</td><td colspan="6">Address table</td></tr>
+<tr><td>Table Comments</td><td colspan="6">Address table. The address contains the geopoint to keep things simple.</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -265,86 +288,15 @@ A point may be created :
         <th>Comment</th>
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>streetAddress</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Street address</td></tr>
+<tr><td>streetAddress</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Street address</td></tr>
 <tr><td>postalCode</td><td>VARCHAR(15)</td><td>No</td><td>No</td><td>No</td><td></td><td>Postal code</td></tr>
-<tr><td>addressLocality</td><td>VARCHAR(100)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Locality</td></tr>
-<tr><td>addressCountry</td><td>VARCHAR(100)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Country</td></tr>
+<tr><td>addressLocality</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Locality</td></tr>
+<tr><td>addressCountry</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Country</td></tr>
 <tr><td>longitude</td><td>DECIMAL(9,6)</td><td>No</td><td>No</td><td>No</td><td></td><td>Longitude</td></tr>
 <tr><td>latitude</td><td>DECIMAL(9,6)</td><td>No</td><td>No</td><td>No</td><td></td><td>Latitude</td></tr>
 <tr><td>elevation</td><td>DECIMAL(8,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Elevation in metres</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="mode"></a><table style="width:100%"><caption>Table: mode </caption>
-<tr><td>Table Comments</td><td colspan="6">Travel mode </td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name of the travel mode</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="route"></a><table style="width:100%"><caption>Table: route </caption>
-<tr><td>Table Comments</td><td colspan="6">Table of routes between 2 points
-
-A journey may have multiple routes : one main route and many alternative routes</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>idwaypointOrigin</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Starting point</td></tr>
-<tr><td>idwaypointDestination</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Destination point</td></tr>
-<tr><td>position</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Position number</td></tr>
-<tr><td>distanceReal</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Distance in metres</td></tr>
-<tr><td>duration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Duration in seconds (based on real distance)</td></tr>
-<tr><td>detail</td><td>TEXT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Route detail</td></tr>
-<tr><td>encodeFormat</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Encoding format 
-1 : JSON
-2 : XML</td></tr>
-<tr><td>idmode</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Travel mode for this path</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="proposal_mode"></a><table style="width:100%"><caption>Table: proposal_mode </caption>
-<tr><td>Table Comments</td><td colspan="6">Table of travel modes accepted for a request</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>idproposal</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Proposal</td></tr>
-<tr><td>idmode</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Travel mode</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="user_address"></a><table style="width:100%"><caption>Table: user_address </caption>
-<tr><td>Table Comments</td><td colspan="6">User addresses table</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Name of the address</td></tr>
-<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>User</td></tr>
-<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Address</td></tr>
+<tr><td>name</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>A name for this address</td></tr>
+<tr><td>iduser</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The owner of the address</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="ptjourney"></a><table style="width:100%"><caption>Table: ptjourney </caption>
 <tr><td>Table Comments</td><td colspan="6">Public transport journey</td></tr>
@@ -359,10 +311,11 @@ A journey may have multiple routes : one main route and many alternative routes<
         <th>Comment</th>
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>distance</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Distance in metres</td></tr>
-<tr><td>duration</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Duration in seconds</td></tr>
-<tr><td>price</td><td>DECIMAL(4,2)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Price</td></tr>
-<tr><td>co2</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>CO2</td></tr>
+<tr><td>distance</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Distance in metres</td></tr>
+<tr><td>duration</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Duration in ISO8601 format</td></tr>
+<tr><td>price</td><td>DECIMAL(4,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Price</td></tr>
+<tr><td>co2</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>CO2</td></tr>
+<tr><td>changeNumber</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Number of changes</td></tr>
 <tr><td>idptdeparture</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Departure</td></tr>
 <tr><td>idptarrival</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Arrival</td></tr>
 </table><a href="#home">Table List </a></br>
@@ -382,6 +335,7 @@ A journey may have multiple routes : one main route and many alternative routes<
 <tr><td>name</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Name</td></tr>
 <tr><td>date</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date</td></tr>
 <tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Address</td></tr>
+<tr><td>idindividualStop</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Individual stop if multimodal using carpool</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="ptarrival"></a><table style="width:100%"><caption>Table: ptarrival </caption>
 <tr><td>Table Comments</td><td colspan="6">Public transport arrival</td></tr>
@@ -399,6 +353,7 @@ A journey may have multiple routes : one main route and many alternative routes<
 <tr><td>name</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Name</td></tr>
 <tr><td>date</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Date</td></tr>
 <tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Address</td></tr>
+<tr><td>idindividualStop</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Individual stop if multimodal using carpool</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="ptleg"></a><table style="width:100%"><caption>Table: ptleg </caption>
 <tr><td>Table Comments</td><td colspan="6">Public transport leg</td></tr>
@@ -413,33 +368,19 @@ A journey may have multiple routes : one main route and many alternative routes<
         <th>Comment</th>
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>indication</td><td>TEXT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Textual indication</td></tr>
-<tr><td>distance</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Distance in metres</td></tr>
-<tr><td>duration</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Duration in seconds</td></tr>
+<tr><td>indication</td><td>TEXT</td><td>No</td><td>No</td><td>No</td><td></td><td>Textual indication</td></tr>
+<tr><td>distance</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Distance in metres</td></tr>
+<tr><td>duration</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Duration in ISO8601 format</td></tr>
 <tr><td>pos</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Position in the journey</td></tr>
 <tr><td>lastLeg</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Last leg of the journey</td></tr>
-<tr><td>magneticDirection</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Magentic direction</td></tr>
+<tr><td>magneticDirection</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Magnetic direction</td></tr>
 <tr><td>relativeDirection</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Relative direction</td></tr>
 <tr><td>idptjourney</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Journey</td></tr>
-<tr><td>idptdeparture</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Departure</td></tr>
-<tr><td>idptarrival</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Arrival</td></tr>
-<tr><td>idptmode</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Transport mode</td></tr>
+<tr><td>idptdeparture</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Departure</td></tr>
+<tr><td>idptarrival</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Arrival</td></tr>
 <tr><td>idptline</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Line</td></tr>
-</table><a href="#home">Table List </a></br>
-<a id="ptmode"></a><table style="width:100%"><caption>Table: ptmode </caption>
-<tr><td>Table Comments</td><td colspan="6">Public transport mode</td></tr>
-<tr><td colspan="7">Columns</td></tr>
-        <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-        <th>Nullable</th>
-        <th>PK</th>
-        <th>FK</th>
-        <th>Default</th>
-        <th>Comment</th>
-        </tr>
-<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name</td></tr>
+<tr><td>direction</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>idtravelMode</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Direction of the line</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="ptline"></a><table style="width:100%"><caption>Table: ptline </caption>
 <tr><td>Table Comments</td><td colspan="6">Public transport line</td></tr>
@@ -455,10 +396,12 @@ A journey may have multiple routes : one main route and many alternative routes<
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
 <tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name</td></tr>
-<tr><td>from</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Origin</td></tr>
-<tr><td>to</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Destination</td></tr>
+<tr><td>origin</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Origin</td></tr>
+<tr><td>destination</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Destination</td></tr>
+<tr><td>direction</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Direction if no origin/destination</td></tr>
 <tr><td>number</td><td>VARCHAR(10)</td><td>No</td><td>No</td><td>No</td><td></td><td>Line number</td></tr>
 <tr><td>idptcompany</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Company</td></tr>
+<tr><td>idtravelMode</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="ptcompany"></a><table style="width:100%"><caption>Table: ptcompany </caption>
 <tr><td>Table Comments</td><td colspan="6">Public transport company</td></tr>
@@ -488,8 +431,8 @@ A journey may have multiple routes : one main route and many alternative routes<
         <th>Comment</th>
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>distance</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Distance in metres</td></tr>
-<tr><td>duration</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Duration in seconds</td></tr>
+<tr><td>distance</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Distance in metres</td></tr>
+<tr><td>duration</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Duration in ISO8601 format</td></tr>
 <tr><td>pos</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Position of the step in the leg</td></tr>
 <tr><td>lastStep</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Last step of the leg</td></tr>
 <tr><td>magneticDirection</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Magnetic direction</td></tr>
@@ -515,13 +458,67 @@ A journey may have multiple routes : one main route and many alternative routes<
 <tr><td>model</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Model</td></tr>
 <tr><td>color</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Color</td></tr>
 <tr><td>siv</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Identification of the vehicle</td></tr>
-<tr><td>seats</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Number of seats in the car (excluding the driver seat)</td></tr>
-<tr><td>seatsAvailable</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Number of seats available for carpooling</td></tr>
+<tr><td>seats</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Number of seats available for carpooling</td></tr>
+<tr><td>kmPrice</td><td>DECIMAL(4,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Price per km</td></tr>
 <tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>User</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="zone"></a><table style="width:100%"><caption>Table: zone </caption>
-<tr><td>Table Comments</td><td colspan="6">Table of geographic zones
-The planet is subdivided into zones; each zone is bounded by a min and max lat/lon</td></tr>
+<a id="direction"></a><table style="width:100%"><caption>Table: direction </caption>
+<tr><td>Table Comments</td><td colspan="6">Direction to follow between 2 or more points. We keep  the detail of the direction in a textual encoded format to save space and stay simple.</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>distance</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Distance in metres</td></tr>
+<tr><td>duration</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Duration in seconds (based on real distance)</td></tr>
+<tr><td>ascend</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>The total ascend of the route in meter</td></tr>
+<tr><td>descend</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>The total descend of the route in meter</td></tr>
+<tr><td>bboxMinLon</td><td>DECIMAL(9,6)</td><td>No</td><td>No</td><td>No</td><td></td><td>The minimum longitude of the bounding box of the route</td></tr>
+<tr><td>bboxMinLat</td><td>DECIMAL(9,6)</td><td>No</td><td>No</td><td>No</td><td></td><td>The minimum latitude of the bounding box of the route</td></tr>
+<tr><td>bboxMaxLon</td><td>DECIMAL(9,6)</td><td>No</td><td>No</td><td>No</td><td></td><td>The maximum longitude of the bounding box of the route</td></tr>
+<tr><td>bboxMaxLat</td><td>DECIMAL(9,6)</td><td>No</td><td>No</td><td>No</td><td></td><td>The maximum latitude of the bounding box of the route</td></tr>
+<tr><td>detail</td><td>TEXT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Encoded detail of the direction</td></tr>
+<tr><td>snapped</td><td>TEXT</td><td>No</td><td>No</td><td>No</td><td></td><td>Encoded snapped waypoints of the direction</td></tr>
+<tr><td>format</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Encoding format of the detail</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="travelMode"></a><table style="width:100%"><caption>Table: travelMode </caption>
+<tr><td>Table Comments</td><td colspan="6">Travel modes available</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="proposal_travelMode"></a><table style="width:100%"><caption>Table: proposal_travelMode </caption>
+<tr><td>Table Comments</td><td colspan="6">Travel modes accepted by the creator of the proposal</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>idtravelMode</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>idproposal</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="individualStop"></a><table style="width:100%"><caption>Table: individualStop </caption>
+<tr><td>Table Comments</td><td colspan="6">Individual stop is a virtual public transport stop made from an offer proposal. It is used for multimodal calculation. It is calculated only for offer proposal, in regions that are covered by public transportation.</td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -533,13 +530,13 @@ The planet is subdivided into zones; each zone is bounded by a min and max lat/l
         <th>Comment</th>
         </tr>
 <tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
-<tr><td>fromLat</td><td>DECIMAL(10,6)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Minimum latitude of the zone</td></tr>
-<tr><td>toLat</td><td>DECIMAL(10,6)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Maximum latitude of the zone</td></tr>
-<tr><td>fromLon</td><td>DECIMAL(10,6)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Minimum longitude of the zone</td></tr>
-<tr><td>toLon</td><td>DECIMAL(10,6)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Maximum longitude of the zone</td></tr>
+<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Address</td></tr>
+<tr><td>position</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Position of the stop</td></tr>
+<tr><td>delay</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Estimated stop delay in seconds (calculated with 0 as origin)</td></tr>
+<tr><td>idproposal</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Proposal</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="near"></a><table style="width:100%"><caption>Table: near </caption>
-<tr><td>Table Comments</td><td colspan="6">Table of near zones : a zone is near other zones (between 5 and 8)</td></tr>
+<a id="event"></a><table style="width:100%"><caption>Table: event </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -550,11 +547,21 @@ The planet is subdivided into zones; each zone is bounded by a min and max lat/l
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>idzone1</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Zone 1</td></tr>
-<tr><td>idzone2</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Zone 2</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name</td></tr>
+<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Status (active/inactive)</td></tr>
+<tr><td>description</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Short description</td></tr>
+<tr><td>fullDescription</td><td>TEXT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Full description</td></tr>
+<tr><td>fromDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Starting date</td></tr>
+<tr><td>toDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Ending date</td></tr>
+<tr><td>useTime</td><td>TINYINT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Use time for dates</td></tr>
+<tr><td>url</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date of the event</td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>External information link for the event</td></tr>
+<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Address</td></tr>
 </table><a href="#home">Table List </a></br>
-<a id="route_zone"></a><table style="width:100%"><caption>Table: route_zone </caption>
-<tr><td>Table Comments</td><td colspan="6">Link table between routes and zones</td></tr>
+<a id="image"></a><table style="width:100%"><caption>Table: image </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
         <th>Name</th>
@@ -565,7 +572,38 @@ The planet is subdivided into zones; each zone is bounded by a min and max lat/l
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>idzone</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Zone</td></tr>
-<tr><td>idroute</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Route</td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Name</td></tr>
+<tr><td>title</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Html title</td></tr>
+<tr><td>alt</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Html alt</td></tr>
+<tr><td>cropX1</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>The left coordinate of the crop, in percentage of the full width.</td></tr>
+<tr><td>cropY1</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>The top coordinate of the crop, in percent of the full height.</td></tr>
+<tr><td>cropX2</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>The right coordinate of the crop, in percentage of the full width.</td></tr>
+<tr><td>cropY2</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>The bottom coordinate of the crop, in percent of the full height.</td></tr>
+<tr><td>fileName</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>File name</td></tr>
+<tr><td>originalName</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Original name</td></tr>
+<tr><td>width</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Width in pixels</td></tr>
+<tr><td>height</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Height in pixels</td></tr>
+<tr><td>size</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Size in bytes</td></tr>
+<tr><td>mimeType</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Mime type</td></tr>
+<tr><td>position</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Position of the image if mulitple images are related to the same entity</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date of the image</td></tr>
+<tr><td>idevent</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Event</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="zone"></a><table style="width:100%"><caption>Table: zone </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>iddirection</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>thinness</td><td>DECIMAL(9,6)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>Precision of the grid in degrees</td></tr>
+<tr><td>zoneid</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
 </table><a href="#home">Table List </a></br>
 </body></html>

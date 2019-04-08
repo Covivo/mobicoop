@@ -47,6 +47,8 @@ use App\PublicTransport\Entity\PTJourney;
  */
 class Criteria
 {
+    const DEFAULT_ID = 999999999999;
+    
     const FREQUENCY_PUNCTUAL = 1;
     const FREQUENCY_REGULAR = 2;
     
@@ -541,6 +543,11 @@ class Criteria
      * @MaxDepth(1)
      */
     private $proposal;
+
+    public function __construct()
+    {
+        $this->id = self::DEFAULT_ID;
+    }
     
     public function getId(): ?int
     {

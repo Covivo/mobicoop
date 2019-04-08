@@ -39,7 +39,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Controller\ProposalPost;
 use App\Travel\Entity\TravelMode;
 use App\User\Entity\User;
-use App\Carpool\Filter\LocalityFilter;
 
 /**
  * Carpooling : proposal (offer from a driver / request from a passenger).
@@ -68,6 +67,8 @@ use App\Carpool\Filter\LocalityFilter;
  */
 class Proposal
 {
+    const DEFAULT_ID = 999999999999;
+
     const TYPE_ONE_WAY = 1;
     const TYPE_OUTWARD = 2;
     const TYPE_RETURN = 3;
@@ -190,8 +191,12 @@ class Proposal
      */
     private $individualStops;
         
-    public function __construct()
+    public function __construct($id=null)
     {
+        $this->id = self::DEFAULT_ID;
+        if ($id) {
+            $this->id = $id;
+        }
         $this->waypoints = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
         $this->matchingOffers = new ArrayCollection();
