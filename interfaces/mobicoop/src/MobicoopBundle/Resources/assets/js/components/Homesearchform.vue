@@ -19,20 +19,21 @@
               @geoSelected="selectedGeo"
             ></geocomplete>
           </div>
-          <div class="columns">
-            <div class="column">
-              <b-datepicker
+          <div class="column">
+            <b-datepicker
                 :placeholder="'Date de départ...'"
                 v-model="form.outwardDate"
                 :day-names="daysShort"
                 :month-names="months"
-                :first-day-of-week="2"
+                :first-day-of-week="1"
                 class="column is-full"
                 position="is-top-right"
                 icon-pack="fas"
-              ></b-datepicker>
-            </div>
+            ></b-datepicker>
           </div>
+          <div class="column">
+            <button v-on:click="recherche">Chercher</button>
+          </div>  
         </div>
       </div>
     </div>
@@ -43,6 +44,7 @@
 import axios from "axios";
 import moment from "moment";
 import Geocomplete from "./Geocomplete";
+import _default from 'flatpickr/dist/l10n/fr';
 export default {
   components: {
     Geocomplete
@@ -52,13 +54,15 @@ export default {
       type: String,
       default: ""
     },
+    urlToCall: {
+      type: String,
+      default: ""
+    }
   },
   data() {
     return {
       origin: null,
       outward: this.sentOutward,
-      timeStart: new Date(),
-      timeReturn: new Date(),
       days: [
         "dimanche",
         "lundi",
@@ -83,6 +87,11 @@ export default {
         "Décembre"
       ],
       form: {
+        originLatitude: null,
+        originLongitude: null,
+        destinationLatitude: null,
+        destinationLongitude: null,
+        outwardDate: null,
 
       }
     };
@@ -112,10 +121,10 @@ export default {
       this.form[name + "AddressLocality"] = val.addressLocality;
     },
     /**
-     * Send the form to the route /covoiturage/annonce/poster
+     * Send the form to the route ???
      */
     onComplete() { 
-      let adForm = new FormData();
+      let homeSearchForm = new FormData();
       for (let prop in this.form) {
         let value = this.form[prop];
         if(!value) continue; // Value is empty, just skip it!
@@ -133,15 +142,11 @@ export default {
         }
         // rename prop to be usable in the controller
         let renamedProp = prop === "createToken" ? prop : `ad_form[${prop}]`;
-        adForm.append(renamedProp, value);
+        homeSearchForm.append(renamedProp, value);
       }
       //  We post the form 🚀
       axios
-        .post("/covoiturage/annonce/poster", adForm, {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        })
+        .post("/covoiturage/annonce/poster")
         .then(function(response) {
           console.log(response);
         })
