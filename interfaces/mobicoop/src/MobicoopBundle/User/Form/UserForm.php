@@ -23,6 +23,8 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Form;
 
+use Mobicoop\Bundle\MobicoopBundle\Form\Type\AriaPasswordType;
+use Mobicoop\Bundle\MobicoopBundle\Form\Type\RepeatedAriaPassType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -64,7 +66,7 @@ class UserForm extends AbstractType
         ->add('familyName', AriaTextType::class, [
             'translation_domain' => 'user',
             'label' => 'familyName.label',
-            'aria-label' => 'oui',
+            'aria-label' => 'familyName.label',
             'help' => 'familyName.help',
             'attr' => [
                 'placeholder' => 'familyName.placeholder'
@@ -79,18 +81,19 @@ class UserForm extends AbstractType
             ]
         ])
         ->add('password', RepeatedType::class, [
-            'type' => PasswordType::class,
+            'type' => AriaPasswordType::class,
             'translation_domain' => 'user',
             'invalid_message' => 'password.password_match',
-            'help' => 'password.help',
             'first_options'  => [
                 'label' => 'password.label',
+                'help' => 'password.help',
                 'attr' => [
-                    'placeholder' => 'password.placeholder'
+                    'placeholder' => 'password.placeholder',
                 ],
             ],
             'second_options' => [
                 'label' => 'password.label_repeat',
+                'help' => 'password.help',
                 'attr' => [
                     'placeholder' => 'password.placeholder_repeat'
                 ],
@@ -101,6 +104,7 @@ class UserForm extends AbstractType
             'choices'  => User::GENDERS,
             'translation_domain' => 'user',
             'choice_translation_domain' => true,
+            'help' => 'gender.placeholder',
             'label' => 'gender.label'
         ])
         ->add('nationality', TextType::class, [
@@ -115,7 +119,8 @@ class UserForm extends AbstractType
             'choices'  => $birthYears,
             'translation_domain' => 'user',
             'choice_translation_domain' => false,
-            'label' => 'birthYear.label'
+            'label' => 'birthYear.label',
+            'help' => 'birthYear.placeholder',
         ])
         ->add('telephone', TextType::class, [
             'translation_domain' => 'user',
@@ -155,7 +160,11 @@ class UserForm extends AbstractType
         ])
         ->add('submit', SubmitType::class, [
             'translation_domain' => 'user',
-            'label' => 'signup.label'
+            'label' => 'signup.label',
+            'attr' => [
+                'title' => 'Inscription au service de covoiturage Mobicoop'
+            ]
+
         ])
         ;
     }

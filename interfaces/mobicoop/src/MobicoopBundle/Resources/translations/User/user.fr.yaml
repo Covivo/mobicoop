@@ -15,9 +15,10 @@ email:
 password:
     label: 'Mot de passe'
     label_repeat: 'Mot de passe (confirmation)'
+    aria_label: 'tu le sais'
     placeholder: 'Saisissez votre mot de passe'
     placeholder_repeat: 'Confirmez votre mot de passe'
-    help: 'Make sure to add a valid password'
+    help: 'Mot de passe valide (format du mot de passe)'
 gender:
     label: 'Civilité'
     placeholder: 'Choisissez votre civilité'

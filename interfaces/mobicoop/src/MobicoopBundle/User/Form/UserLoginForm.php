@@ -44,6 +44,7 @@ class UserLoginForm extends AbstractType
         ->add('username', TextType::class, [
             'translation_domain' => 'login',
             'label' => 'username.label',
+            'help' => 'username.placeholder',
             'attr' => [
                 'placeholder' => 'username.placeholder'
             ]
@@ -51,13 +52,17 @@ class UserLoginForm extends AbstractType
         ->add('password', PasswordType::class, [
             'translation_domain' => 'login',
             'label' => 'password.label',
+            'help' => 'password.placeholder',
             'attr' => [
                 'placeholder' => 'password.placeholder'
             ]
         ])
         ->add('login', SubmitType::class, [
             'translation_domain' => 'ui',
-            'label' => 'button.connexion'
+            'label' => 'button.connexion',
+            'attr' => [
+                'title' => 'Se connecter au service Mobicoop'
+            ]
         ]);
     }
 

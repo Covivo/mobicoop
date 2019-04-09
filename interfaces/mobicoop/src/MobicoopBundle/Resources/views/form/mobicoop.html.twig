@@ -104,6 +104,35 @@
 	</div>
 {%- endblock form_row %}
 
+{#surcharge widget pour aria#}
+{%- block password_widget -%}
+	{%- set type = type|default('password') -%}
+
+	{%- if type == 'range' or type == 'color' -%}
+{#		 Attribute "required" is not supported#}
+		{%- set required = false -%}
+	{%- endif -%}
+	<input type="{{ type }}" class="input" {{ block('widget_attributes_pass') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+{#pas utile car rendu par le form_row mais peut etre à faiore autrement si surcharge différente pour rendre les contenus d'accessbilité#}
+	{#	{% if help|default %}#}
+{#	<span class="help-block" id="help-block-{{ id }}" style="font-style: italic; color: #187a20">{{ help|trans({}, translation_domain) }} </span>#}
+{#	{% endif %}#}
+{#	{{- form_errors(form) -}}#}
+
+{%- endblock password_widget -%}
+{%- block widget_attributes_pass -%}
+	id="{{ id }}" name="{{ full_name }}" label="{{ label|trans({}, translation_domain) }}"
+
+		{# set the aria-describedby attribute #}
+	{#	{% if help|default %}#}
+	{%- set attr = attr|merge({'aria-describedby': 'help-block-'~id, 'aria-labellebedby': label|trans({}, translation_domain) }) -%}
+	{#	{% endif %}#}
+
+
+	{%- if disabled %} disabled="disabled"{% endif -%}
+	{%- if required %} required="required"{% endif -%}
+	{{ block('attributes') }}
+{%- endblock widget_attributes_pass -%}
 
 
 {%- block geocomplete_row -%}
@@ -195,22 +224,23 @@
 
 
 
-{%- block choice_widget_collapsed -%}
-	{% spaceless %}
-		{%- set size_class = '' -%}
-		{%- for size in ['is-small', 'is-medium', 'is-large'] if size in form.vars.attr.class|default('') -%}
-			{%- set size_class = size -%}
-		{%- endfor -%}
-		{%- set is_multiple_class = multiple ? ' is-multiple' : '' -%}
-		<div {{ block('form_widget_container_attributes') }}>
-			<span>rien de rien</span>
-        <span class="{{ ('select ' ~ size_class ~ is_multiple_class)|trim }}">
-            {{- parent() -}}
-        </span>
-			{{- block('form_errors') -}}
-		</div>
-	{% endspaceless %}
-{%- endblock choice_widget_collapsed -%}
+{#{%- block choice_widget_collapsed -%}#}
+{#	{% spaceless %}#}
+{#		{%- set size_class = '' -%}#}
+{#		{%- for size in ['is-small', 'is-medium', 'is-large'] if size in form.vars.attr.class|default('') -%}#}
+{#			{%- set size_class = size -%}#}
+{#		{%- endfor -%}#}
+{#		{%- set is_multiple_class = multiple ? ' is-multiple' : '' -%}#}
+{#		<div {{ block('form_widget_container_attributes') }}>#}
+{#        <span class="{{ ('select ' ~ size_class ~ is_multiple_class)|trim }}">#}
+{#            {{- parent() -}}#}
+{#        </span>#}
+{#			{{- block('form_errors') -}}#}
+{#		</div>#}
+{#	{% endspaceless %}#}
+{#{%- endblock choice_widget_collapsed -%}#}
+
+
 
 {#{%- block ariatext_row -%}#}
 {#	<div class="field is-horizontal">#}
