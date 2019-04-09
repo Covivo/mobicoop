@@ -42,14 +42,6 @@ use App\DataProvider\Entity\GeoRouterProvider;
  */
 class ProposalManager
 {
-    // zones precisions (in degrees) to generate when adding a direction
-    public const THINNESSES = [
-        1,
-        0.5,
-        0.25,
-        0.125
-    ];
-
     private $entityManager;
     private $proposalMatcher;
     private $proposalRepository;
@@ -80,14 +72,17 @@ class ProposalManager
     /**
      * Create a proposal.
      *
-     * @param Proposal $proposal
+     * @param Proposal $proposal    The proposal to create
+     * @param boolean $persist      If we persist the proposal in the database (false for a simple search)
+     * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
+     * @return Proposal             The created proposal
      */
-    public function createProposal(Proposal $proposal)
+    public function createProposal(Proposal $proposal, $persist=true, bool $excludeProposalUser=true)
     {
         // temporary initialisation, will be dumped when implementation of these fields will be done
         $proposal->getCriteria()->setSeats(1);
         $proposal->getCriteria()->setAnyRouteAsPassenger(true);
-        $proposal->getCriteria()->setIsStrictDate(true);
+        $proposal->getCriteria()->setStrictDate(true);
 
         // calculation of the min and max times
         if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
@@ -140,24 +135,7 @@ class ProposalManager
         if ($routes = $this->geoRouter->getRoutes($addresses)) {
             $direction = $routes[0];
             // creation of the crossed zones
-            $zones = [];
-            foreach (self::THINNESSES as $thinness) {
-                // $zones[$thinness] would be simpler and better... but we can't use a float as a key with php (transformed to string)
-                // so we use an inner value for thinness
-                $zones[] = [
-                    'thinness' => $thinness,
-                    'crossed' => $this->zoneManager->getZonesForAddresses($direction->getPoints(), $thinness, 0)
-                ];
-            }
-
-            foreach ($zones as $crossed) {
-                foreach ($crossed['crossed'] as $zoneCrossed) {
-                    $zone = new Zone();
-                    $zone->setZoneid($zoneCrossed);
-                    $zone->setThinness($crossed['thinness']);
-                    $direction->addZone($zone);
-                }
-            }
+            $direction = $this->zoneManager->createZonesForDirection($direction);
             
             if ($proposal->getCriteria()->isDriver()) {
                 $proposal->getCriteria()->setDirectionDriver($direction);
@@ -167,13 +145,79 @@ class ProposalManager
             }
         }
 
-        $this->entityManager->persist($proposal);
-        
         // matching analyze
-        //$this->proposalMatcher->createMatchingsForProposal($proposal);
-        
+        $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
+
+        if ($persist) {
+            $this->entityManager->persist($proposal);
+        }
+
         return $proposal;
     }
+
+    /**
+     * Get the matchings for the given proposal.
+     * Used for simple search.
+     *
+     * @param Proposal $proposal    The proposal for wich we search the matchings
+     * @return Proposal             The posted proposal with its matchings
+     */
+    public function getMatchings(Proposal $proposal)
+    {
+        return $this->createProposal($proposal, false, false);
+    }
+
+    /**
+     * Create a minimal proposal for a simple search.
+     * Only punctual and one way trip.
+     *
+     * @param float $originLatitude
+     * @param float $originLongitude
+     * @param float $destinationLatitude
+     * @param float $destinationLongitude
+     * @param \Datetime $date
+     * @return void
+     */
+    public function searchMatchings(
+        float $originLatitude,
+        float $originLongitude,
+        float $destinationLatitude,
+        float $destinationLongitude,
+        \Datetime $date
+        ) {
+        $proposal = new Proposal();
+        $proposal->setType(Proposal::TYPE_ONE_WAY);
+        $criteria = new Criteria();
+        $criteria->setDriver(false);
+        $criteria->setPassenger(true);
+        $criteria->setFromDate($date);
+        $criteria->setFromTime($date);
+        $criteria->setMarginDuration(900);
+        $criteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
+        $proposal->setCriteria($criteria);
+
+        $waypointOrigin = new Waypoint();
+        $originAddress = new Address();
+        $originAddress->setLatitude((string)$originLatitude);
+        $originAddress->setLongitude((string)$originLongitude);
+        $waypointOrigin->setAddress($originAddress);
+        $waypointOrigin->setPosition(0);
+        $waypointOrigin->setDestination(false);
+
+        $waypointDestination = new Waypoint();
+        $destinationAddress = new Address();
+        $destinationAddress->setLatitude((string)$destinationLatitude);
+        $destinationAddress->setLongitude((string)$destinationLongitude);
+        $waypointDestination->setAddress($destinationAddress);
+        $waypointDestination->setPosition(1);
+        $waypointDestination->setDestination(true);
+
+        $proposal->addWaypoint($waypointOrigin);
+        $proposal->addWaypoint($waypointDestination);
+
+        return $this->getMatchings($proposal);
+    }
+
 
     /**
      * Updates directions without zones (so by extension, updates the related proposals, that's why it's in this file...)
@@ -284,14 +328,14 @@ class ProposalManager
         $waypointFrom = new Waypoint();
         $waypointFrom->setAddress($addressFrom);
         $waypointFrom->setPosition(0);
-        $waypointFrom->setIsDestination(false);
+        $waypointFrom->setDestination(false);
         $waypointTo = new Waypoint();
         $waypointTo->setAddress($addressTo);
         $waypointTo->setPosition(1);
-        $waypointTo->setIsDestination(true);
+        $waypointTo->setDestination(true);
         $criteria = new Criteria();
-        $criteria->setIsDriver(!$offer);
-        $criteria->setIsPassenger(!$request);
+        $criteria->setDriver(!$offer);
+        $criteria->setPassenger(!$request);
         if (!is_null($outward_mindate)) {
             $criteria->setFromDate($outward_mindate);
         } else {

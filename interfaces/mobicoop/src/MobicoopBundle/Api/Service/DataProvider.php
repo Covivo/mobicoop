@@ -203,21 +203,25 @@ class DataProvider
      * @return Response The response of the operation.
      * @throws \ReflectionException
      */
-    public function getSubCollection(int $id, string $subClassName, string $subClassRoute=null, array $params=null): Response
+    public function getSubCollection(?int $id=null, string $subClassName, ?string $subClassRoute=null, ?array $params=null): Response
     {
-        // @todo : send the params to the request in the json body of the request
-
         $route = $subClassRoute;
         if (is_null($route)) {
             $route = self::pluralize((new \ReflectionClass($subClassName))->getShortName());
         }
 
         try {
-            $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route);
+            if (is_null($id)) {
+                $clientResponse = $this->client->get($this->resource.'/'.$route, ['query'=>$params]);
+            } else {
+                $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route, ['query'=>$params]);
+            }
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody(), $subClassName));
             }
         } catch (TransferException $e) {
+            echo "ici";
+            exit;
             return new Response($e->getCode());
         }
         return new Response();

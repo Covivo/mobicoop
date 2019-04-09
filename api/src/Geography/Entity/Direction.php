@@ -48,6 +48,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class Direction
 {
+    const DEFAULT_ID = 999999999999;
+    
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -143,6 +145,7 @@ class Direction
     /**
      * @var Address[]|null The decoded points (from detail) of the direction.
      * Can be used to draw the path on a map.
+     * @Groups("read")
      */
     private $points;
 
@@ -161,6 +164,7 @@ class Direction
     
     public function __construct()
     {
+        $this->id = self::DEFAULT_ID;
         $this->zones = new ArrayCollection();
     }
 

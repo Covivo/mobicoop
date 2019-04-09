@@ -35,6 +35,11 @@ class Direction
      * @var int The id of this direction.
      */
     private $id;
+
+    /**
+     * @var string|null The iri of this user.
+     */
+    private $iri;
     
     /**
      * @var int The total distance of the direction in meter.
@@ -85,6 +90,31 @@ class Direction
      * @var string The encoding format of the detail.
      */
     private $format;
+
+    /**
+     * @var Address[]|null The decoded points (from detail) of the direction.
+     */
+    private $points;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+    
+    public function setId(int $id)
+    {
+        $this->id = $id;
+    }
+    
+    public function getIri()
+    {
+        return $this->iri;
+    }
+    
+    public function setIri($iri)
+    {
+        $this->iri = $iri;
+    }
         
     public function getDistance(): int
     {
@@ -202,6 +232,18 @@ class Direction
     public function setFormat(string $format): self
     {
         $this->format = $format;
+        
+        return $this;
+    }
+
+    public function getPoints(): ?array
+    {
+        return $this->points;
+    }
+    
+    public function setPoints(array $points): self
+    {
+        $this->points = $points;
         
         return $this;
     }

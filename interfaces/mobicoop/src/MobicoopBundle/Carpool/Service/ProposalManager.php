@@ -111,6 +111,35 @@ class ProposalManager
         }
         return null;
     }
+
+    /**
+     * Get all matchings for a search.
+     *
+     * @param float $origin_latitude        The origin latitude
+     * @param float $origin_longitude       The origin longitude
+     * @param float $destination_latitude   The destination latitude
+     * @param float $destination_longitude  The destination longitude
+     * @param \Datetime $date               The date and time in a Datetime object
+     * @return array|null The matchings found or null if not found.
+     */
+    public function getMatchingsForSearch(float $origin_latitude, float $origin_longitude, float $destination_latitude, float $destination_longitude, \Datetime $date)
+    {
+        // we set the params
+        $params = [
+            "origin_latitude" => $origin_latitude,
+            "origin_longitude" => $origin_longitude,
+            "destination_latitude" => $destination_latitude,
+            "destination_longitude" => $destination_longitude,
+            "date" => $date->format('Y-m-d\TH:i:s\Z')
+        ];
+        // we will make a request on the Matching resource, so we chan ge it here (because the resource is initialized to Proposal in this class constructor)
+        $this->dataProvider->setClass(Matching::class);
+        $response = $this->dataProvider->getSubCollection(null, Matching::class, "search", $params);
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
     
     /**
      * Delete a proposal
