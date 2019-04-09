@@ -3,38 +3,62 @@
     <div class="tile is-ancestor">
       <div class="tile is-vertical is-12">
         <div class="tile is-child center-all">
-          <div class="column">
-            <geocomplete
-              name="origin"
-              placeholder="Depuis"
-              :url="geoSearchUrl"
-              @geoSelected="selectedGeo"
-            />
-          </div>
-          <div class="column">
-            <geocomplete
-              placeholder="Vers"
-              :url="geoSearchUrl"
-              name="destination"
-              @geoSelected="selectedGeo"
-            />
-          </div>
-          <div class="column">
-            <b-datepicker
-              v-model="outwardDate"
-              :placeholder="'Date de départ...'"
-              :day-names="daysShort"
-              :month-names="months"
-              :first-day-of-week="1"
-              class="column is-full"
-              position="is-top-right"
-              icon-pack="fas"
-            />
-          </div>
-          <div class="column">
-            <button @click="onClick">
-              rechercher
-            </button>
+          <div class="columns">
+            <b-field class="fieldsContainer">
+              <geocomplete
+                expanded
+                name="origin"
+                placeholder="Depuis"
+                :url="geoSearchUrl"
+                @geoSelected="selectedGeo"
+              />
+              <geocomplete
+                name="destination"
+                placeholder="Vers"
+                :url="geoSearchUrl"
+                @geoSelected="selectedGeo"
+              />
+              <b-datepicker
+                v-model="outwardDate"
+                :placeholder="'Date de départ...'"
+                :day-names="daysShort"
+                :month-names="months"
+                :first-day-of-week="1"
+                position="is-top-right"
+                icon-pack="fas"
+              />
+              <b-timepicker
+                v-model="outwardTime"
+                placeholder="Heure de départ..."
+              >
+                <button
+                  class="button is-mobicoopgreen"
+                  @click="outwardTime = new Date()"
+                >
+                  <b-icon icon="clock" />
+                  <span>Maintenant</span>
+                </button>
+                <button
+                  class="button is-mobicooppink"
+                  @click="outwardTime = null"
+                >
+                  <b-icon icon="close" />
+                  <span>Effacer</span>
+                </button>
+              </b-timepicker>
+              <a
+                class="button is-mobicoopblue"
+                :href="urlToCall"
+                :disabled="!checkUrlValid"
+              >
+                <b-icon
+                  pack="fas"
+                  icon="search"
+                  size="is-small"
+                >
+                  />
+                </b-icon></a>
+            </b-field>
           </div>
         </div>
       </div>
@@ -56,7 +80,7 @@ export default {
       type: String,
       default: ""
     },
-    baseUrl: {
+    route: {
       type: String,
       default: ""
     }
@@ -91,11 +115,22 @@ export default {
       destinationLatitude: null,
       destinationLongitude: null,
       outwardDate: null,
+      outwardTime: null,
+      baseUrl: window.location.origin,
     };
   },
   computed: {
+    checkUrlValid(){
+      return this.originLatitude && this.originLongitude && this.destinationLatitude && this.destinationLongitude && this.outwardDate && this.outwardTime
+    },
+    dateFormated() {
+      return this.outwardDate ? moment(this.outwardDate).format('YYYYMMDD') : null ;
+    },
+    timeFormated() {
+      return this.outwardTime ? moment(this.outwardTime).format('HHMMSS') : null;
+    },
     urlToCall() {
-      return `${this.baseUrl}/${this.originLatitude}/${this.originLongitude}/${this.destinationLatitude}/${this.destinationLongitude}/resultats`
+      return this.checkUrlValid != null ? `${this.baseUrl}/${this.route}/${this.originLatitude}/${this.originLongitude}/${this.destinationLatitude}/${this.destinationLongitude}/${this.dateFormated}${this.timeFormated}/resultats` : '#'
     } 
   },
 
@@ -105,41 +140,15 @@ export default {
       this[name + "Latitude"] = val.latitude;
       this[name + "Longitude"] = val.longitude;
     },
-
-    /**
-     * Send the search to the route /covoiturage/recherche/origin_lat/origin_lon/destination_lat/destination_lon/yyyymmddhhiiss/resultats
-     */
-    onClick() { 
-      //  We send the seach 🚀
-      axios
-        .get(`${this.urlToCall}`, {
-        })
-        .then(function(response) {
-          console.log(response);
-        })
-        .catch(function(error) {
-          console.error(error);
-        });
-    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.tabContent {
-  text-align: center;
-}
 
 .fieldsContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.dayNameColumn{
-  text-align: left;
-  a{
-    width: 100%;
-  }
 }
 </style>
