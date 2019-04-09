@@ -112,8 +112,14 @@ export default {
       ],
       originLatitude: null,
       originLongitude: null,
+      originStreetAddress : null,
+      originPostalCode: null,
+      originAddressLocality: null,
       destinationLatitude: null,
       destinationLongitude: null,
+      destinationStreetAddress: null,
+      destinationPostalCode: null,
+      destinationAddressLocality: null,
       outwardDate: null,
       outwardTime: null,
       baseUrl: window.location.origin,
@@ -129,8 +135,15 @@ export default {
     timeFormated() {
       return this.outwardTime ? moment(this.outwardTime).format('HHMMSS') : null;
     },
+    originStreetAddressFormated() {
+      return this.originStreetAddress ? this.originStreetAddress.toLowerCase().replace(/ /g, '+') : null;
+    },
+    destinationStreetAddressFormated() {
+      return this.destinationStreetAddress ? this.destinationStreetAddress.toLowerCase().replace(/ /g, '+') : null;
+    },
+    
     urlToCall() {
-      return  `${this.baseUrl}/${this.route}/${this.originLatitude}/${this.originLongitude}/${this.destinationLatitude}/${this.destinationLongitude}/${this.dateFormated}${this.timeFormated}/resultats`; 
+      return `${this.baseUrl}/${this.route}/${this.originStreetAddressFormated}+${this.originPostalCode}+${this.originAddressLocality}/${this.destinationStreetAddressFormated}+${this.destinationPostalCode}+${this.destinationAddressLocality}/${this.originLatitude}/${this.originLongitude}/${this.destinationLatitude}/${this.destinationLongitude}/${this.dateFormated}/${this.timeFormated}/resultats`; 
     } 
   },
 
@@ -139,6 +152,10 @@ export default {
       let name = val.name;
       this[name + "Latitude"] = val.latitude;
       this[name + "Longitude"] = val.longitude;
+      this[name + "StreetAddress"] = val.streetAddress;
+      this[name + "PostalCode"] = val.postalCode;
+      this[name + "AddressCountry"] = val.addressCountry;
+      this[name + "AddressLocality"] = val.addressLocality;
     },
   }
 };
