@@ -15,7 +15,11 @@
         <template slot-scope="props">
           <div class="media">
             <div class="media-left">
-              <b-icon pack="fas" icon="arrow-alt-circle-right" type="is-mobicoopblue"></b-icon>
+              <b-icon
+                pack="fas"
+                icon="arrow-alt-circle-right"
+                type="is-mobicoopblue"
+              />
             </div>
             <div class="searchResult">
               <em>{{ props.option.streetAddress }}</em>
@@ -43,7 +47,7 @@ const defaultString = {
   default: ""
 };
 export default {
-  name: "geocomplete",
+  name: "Geocomplete",
   props: {
     url: defaultString,
     name: defaultString,

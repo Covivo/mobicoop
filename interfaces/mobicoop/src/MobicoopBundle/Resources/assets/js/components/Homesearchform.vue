@@ -9,7 +9,7 @@
               placeholder="Depuis"
               :url="geoSearchUrl"
               @geoSelected="selectedGeo"
-            ></geocomplete>
+            />
           </div>
           <div class="column">
             <geocomplete
@@ -17,23 +17,25 @@
               :url="geoSearchUrl"
               name="destination"
               @geoSelected="selectedGeo"
-            ></geocomplete>
+            />
           </div>
           <div class="column">
             <b-datepicker
-                :placeholder="'Date de départ...'"
-                v-model="form.outwardDate"
-                :day-names="daysShort"
-                :month-names="months"
-                :first-day-of-week="1"
-                class="column is-full"
-                position="is-top-right"
-                icon-pack="fas"
-            ></b-datepicker>
+              v-model="outwardDate"
+              :placeholder="'Date de départ...'"
+              :day-names="daysShort"
+              :month-names="months"
+              :first-day-of-week="1"
+              class="column is-full"
+              position="is-top-right"
+              icon-pack="fas"
+            />
           </div>
           <div class="column">
-            <button v-on:click="recherche">Chercher</button>
-          </div>  
+            <button @click="onClick">
+              rechercher
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -54,23 +56,21 @@ export default {
       type: String,
       default: ""
     },
-    urlToCall: {
+    baseUrl: {
       type: String,
       default: ""
     }
   },
   data() {
     return {
-      origin: null,
-      outward: this.sentOutward,
-      days: [
-        "dimanche",
-        "lundi",
-        "mardi",
-        "mercredi",
-        "jeudi",
-        "vendredi",
-        "samedi"
+      daysShort: [
+        "Dim",
+        "Lun",
+        "Mar",
+        "Mer",
+        "Jeu",
+        "Ven",
+        "Sam"
       ],
       months: [
         "Janvier",
@@ -86,67 +86,34 @@ export default {
         "Novembre",
         "Décembre"
       ],
-      form: {
-        originLatitude: null,
-        originLongitude: null,
-        destinationLatitude: null,
-        destinationLongitude: null,
-        outwardDate: null,
-
-      }
+      originLatitude: null,
+      originLongitude: null,
+      destinationLatitude: null,
+      destinationLongitude: null,
+      outwardDate: null,
     };
   },
   computed: {
-    daysShort() {
-      return this.days.map(day => day.substring(0, 2));
-    },
-    nbOfDaysToPlan(){
-      if(this.form.frequency === 2) return this.days.length;
-      return 1;
-    }
+    urlToCall() {
+      return `${this.baseUrl}/${this.originLatitude}/${this.originLongitude}/${this.destinationLatitude}/${this.destinationLongitude}/resultats`
+    } 
   },
+
   methods: {
     selectedGeo(val) {
       let name = val.name;
-      this.form[name] = `${val.streetAddress ? val.streetAddress + " " : ""}${
-        val.addressLocality
-      } ${val.addressCountry}`;
-      this.form[name + "Latitude"] = val.latitude;
-      this.form[name + "Longitude"] = val.longitude;
-
-      this.form[name + "StreetAddress"] = val.streetAddress;
-      this.form[name + "PostalCode"] = val.postalCode;
-
-      this.form[name + "AddressCountry"] = val.addressCountry;
-      this.form[name + "AddressLocality"] = val.addressLocality;
+      this[name + "Latitude"] = val.latitude;
+      this[name + "Longitude"] = val.longitude;
     },
+
     /**
-     * Send the form to the route ???
+     * Send the search to the route /covoiturage/recherche/origin_lat/origin_lon/destination_lat/destination_lon/yyyymmddhhiiss/resultats
      */
-    onComplete() { 
-      let homeSearchForm = new FormData();
-      for (let prop in this.form) {
-        let value = this.form[prop];
-        if(!value) continue; // Value is empty, just skip it!
-        // Convert date to required format
-        if(prop.toLowerCase().includes('date')){
-          value = moment(value).format('YYYY/MM/DD');
-        }
-        // Convert time to required format
-        if(prop.toLowerCase().includes('time')){
-          value = moment(value).format('HH:mm');
-        }
-        // Convert margin from min to sec
-        if(prop.toLowerCase().includes('margin')){
-          value *= 60;
-        }
-        // rename prop to be usable in the controller
-        let renamedProp = prop === "createToken" ? prop : `ad_form[${prop}]`;
-        homeSearchForm.append(renamedProp, value);
-      }
-      //  We post the form 🚀
+    onClick() { 
+      //  We send the seach 🚀
       axios
-        .post("/covoiturage/annonce/poster")
+        .get(`${this.urlToCall}`, {
+        })
         .then(function(response) {
           console.log(response);
         })

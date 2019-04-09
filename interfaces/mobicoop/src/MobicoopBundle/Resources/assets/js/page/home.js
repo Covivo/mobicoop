@@ -15,13 +15,13 @@ import '../../css/page/home.scss';
 import Homesearchform from '../components/Homesearchform';
 
 Vue.use(Buefy,{
-    defaultTooltipType: 'is-mobicoopgreen'
-  });
-  Vue.use(VueFormWizard);
+  defaultTooltipType: 'is-mobicoopgreen'
+});
+Vue.use(VueFormWizard);
   
-  new Vue({
-    el: '#app',
-    components: {
-      Homesearchform,
-    }
-  })
+new Vue({
+  el: '#app',
+  components: {
+    Homesearchform,
+  }
+})
