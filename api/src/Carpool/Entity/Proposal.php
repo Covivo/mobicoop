@@ -37,7 +37,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Controller\ProposalPost;
-use App\Carpool\Controller\MatchingSimpleSearch;
 use App\Travel\Entity\TravelMode;
 use App\User\Entity\User;
 
@@ -63,6 +62,7 @@ use App\User\Entity\User;
  *          "simple_search"={
  *              "method"="GET",
  *              "path"="/proposals/search",
+ *              "normalization_context"={"groups"={"read"}},
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -200,6 +200,7 @@ class Proposal
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
     private $matchingOffers;
@@ -209,6 +210,7 @@ class Proposal
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
     private $matchingRequests;

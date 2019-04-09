@@ -176,13 +176,11 @@ class Deserializer
         }
         if (isset($data["matchingOffers"])) {
             foreach ($data["matchingOffers"] as $matching) {
-                echo "ici ";
                 $proposal->addMatchingOffer(self::deserializeMatching($matching));
             }
         }
         if (isset($data["matchingRequests"])) {
             foreach ($data["matchingRequests"] as $matching) {
-                echo "la ";
                 $proposal->addMatchingRequest(self::deserializeMatching($matching));
             }
         }
@@ -249,7 +247,6 @@ class Deserializer
         if (isset($data["@id"])) {
             $direction->setIri($data["@id"]);
         }
-        // ajouter filters !!!
         if (isset($data["points"])) {
             $points = [];
             foreach ($data["points"] as $address) {

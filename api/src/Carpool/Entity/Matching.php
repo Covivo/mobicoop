@@ -40,6 +40,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -75,7 +76,6 @@ class Matching
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingOffers")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
-     * @MaxDepth(1)
      */
     private $proposalOffer;
 
@@ -86,7 +86,6 @@ class Matching
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingRequests")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
-     * @MaxDepth(1)
      */
     private $proposalRequest;
 
@@ -128,7 +127,7 @@ class Matching
      * @Groups({"read","write"})
      */
     private $filters;
-    
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -262,7 +261,7 @@ class Matching
 
         return $this;
     }
-    
+
     // DOCTRINE EVENTS
     
     /**

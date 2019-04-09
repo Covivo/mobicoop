@@ -231,6 +231,7 @@ class User
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      * @ApiSubresource(maxDepth=1)
+     * @MaxDepth(1)
      */
     private $proposals;
 

@@ -40,13 +40,11 @@ final class ProposalSimpleSearchCollectionDataProvider implements CollectionData
 {
     protected $request;
     
-    
     public function __construct(RequestStack $requestStack, ProposalManager $proposalManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->proposalManager = $proposalManager;
     }
-    
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
