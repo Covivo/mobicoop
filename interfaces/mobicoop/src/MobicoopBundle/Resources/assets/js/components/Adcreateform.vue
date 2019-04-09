@@ -4,7 +4,6 @@
       <div class="tile is-vertical is-12">
         <div class="tile is-child center-all">
           <form-wizard
-            @on-complete="onComplete"
             back-button-text="Précèdent"
             next-button-text="Suivant"
             finish-button-text="Je partage mon annonce"
@@ -12,9 +11,14 @@
             subtitle="Suivez les étapes.."
             color="#023D7F"
             class="tile is-vertical is-8"
+            @on-complete="onComplete"
           >
             <!-- ROLE -->
-            <tab-content title="Vous êtes" icon="fa fa-user-friends" class="tabContent">
+            <tab-content
+              title="Vous êtes"
+              icon="fa fa-user-friends"
+              class="tabContent"
+            >
               <h3>Je suis:</h3>
               <b-field class="fieldsContainer">
                 <b-radio-button
@@ -23,7 +27,7 @@
                   :native-value="1"
                   type="is-mobicoopblue"
                 >
-                  <b-icon icon="close"></b-icon>
+                  <b-icon icon="close" />
                   <span>🚙 Conducteur</span>
                 </b-radio-button>
                 <b-radio-button
@@ -32,7 +36,7 @@
                   :native-value="2"
                   type="is-mobicooppink"
                 >
-                  <b-icon icon="check"></b-icon>
+                  <b-icon icon="check" />
                   <span>👨‍⚖️ Passager</span>
                 </b-radio-button>
                 <b-radio-button
@@ -40,11 +44,17 @@
                   name="role"
                   :native-value="3"
                   type="is-mobicoopgreen"
-                >Passager ou Conducteur</b-radio-button>
+                >
+                  Passager ou Conducteur
+                </b-radio-button>
               </b-field>
             </tab-content>
             <!-- TYPE TRAJET -->
-            <tab-content title="Trajet" icon="fa fa-route" class="tabContent">
+            <tab-content
+              title="Trajet"
+              icon="fa fa-route"
+              class="tabContent"
+            >
               <h3>Détails de votre trajet</h3>
               <b-field class="fieldsContainer">
                 <b-radio-button
@@ -53,7 +63,10 @@
                   :native-value="1"
                   type="is-mobicoopblue"
                 >
-                  <b-icon pack="fas" icon="long-arrow-alt-right"></b-icon>
+                  <b-icon
+                    pack="fas"
+                    icon="long-arrow-alt-right"
+                  />
                   <span>Allez</span>
                 </b-radio-button>
                 <b-radio-button
@@ -62,7 +75,10 @@
                   :native-value="2"
                   type="is-mobicoopblue"
                 >
-                  <b-icon pack="fas" icon="exchange-alt"></b-icon>
+                  <b-icon
+                    pack="fas"
+                    icon="exchange-alt"
+                  />
                   <span>Allez/Retour</span>
                 </b-radio-button>
               </b-field>
@@ -71,22 +87,26 @@
                 placeholder="Depuis"
                 :url="geoSearchUrl"
                 @geoSelected="selectedGeo"
-              ></geocomplete>
+              />
               <b-icon
                 pack="fas"
                 type="is-mobicoopblue"
                 :icon="form.type === 2 ? 'arrows-alt-v' : 'long-arrow-alt-down'"
                 size="is-large"
-              ></b-icon>
+              />
               <geocomplete
                 placeholder="Vers"
                 :url="geoSearchUrl"
                 name="destination"
                 @geoSelected="selectedGeo"
-              ></geocomplete>
+              />
             </tab-content>
             <!-- FREQUENCY & Submit -->
-            <tab-content title="Fréquence" icon="fa fa-calendar-check" class="tabContent">
+            <tab-content
+              title="Fréquence"
+              icon="fa fa-calendar-check"
+              class="tabContent"
+            >
               <h3>Fréquence du trajet:</h3>
               <b-field class="fieldsContainer">
                 <b-radio-button
@@ -95,7 +115,7 @@
                   :native-value="1"
                   type="is-mobicoopblue"
                 >
-                  <b-icon icon="close"></b-icon>
+                  <b-icon icon="close" />
                   <span>Ponctuel</span>
                 </b-radio-button>
                 <b-radio-button
@@ -104,99 +124,133 @@
                   :native-value="2"
                   type="is-mobicoopblue"
                 >
-                  <b-icon icon="check"></b-icon>
+                  <b-icon icon="check" />
                   <span>Regulier</span>
                 </b-radio-button>
               </b-field>
               <!-- DATE, TIME , MARGIN -->
-              <div class="columns" >
+              <div class="columns">
                 <div class="column">
-                  <h5 class="title column is-full">Aller</h5>
+                  <h5 class="title column is-full">
+                    Aller
+                  </h5>
                   <b-datepicker
-                    :placeholder="form.frequency ===2 ? 'Date de début' : 'Date de départ...'"
                     v-model="form.outwardDate"
+                    :placeholder="form.frequency ===2 ? 'Date de début' : 'Date de départ...'"
                     :day-names="daysShort"
                     :month-names="months"
                     :first-day-of-week="1"
                     class="column is-full"
                     position="is-top-right"
                     icon-pack="fas"
-                  ></b-datepicker>
+                  />
                   <div class="column is-full">
-                    <div class="columns" v-for="(day,index) in nbOfDaysToPlan" :key="index">
-                      <div v-if="nbOfDaysToPlan>1" class="column is-2 dayNameColumn">
-                        <a class="button is-mobicoopblue is-2">{{days[index]}}</a>
+                    <div
+                      v-for="(day,index) in nbOfDaysToPlan"
+                      :key="index"
+                      class="columns"
+                    >
+                      <div
+                        v-if="nbOfDaysToPlan>1"
+                        class="column is-2 dayNameColumn"
+                      >
+                        <a class="button is-mobicoopblue is-2">{{ days[index] }}</a>
                       </div>
                       <b-timepicker
-                        class="column"
                         v-model="form.outwardTime"
+                        class="column"
                         placeholder="Heure de départ..."
                       >
                         <button
                           class="button is-mobicoopgreen"
                           @click="form.outwardTime = new Date()"
                         >
-                          <b-icon icon="clock"></b-icon>
+                          <b-icon icon="clock" />
                           <span>Maintenant</span>
                         </button>
-                        <button class="button is-mobicooppink" @click="form.outwardTime = null">
-                          <b-icon icon="close"></b-icon>
+                        <button
+                          class="button is-mobicooppink"
+                          @click="form.outwardTime = null"
+                        >
+                          <b-icon icon="close" />
                           <span>Effacer</span>
                         </button>
                       </b-timepicker>
                       <!-- MARGIN -->
                       <b-select
+                        v-model="form.outwardMargin"
                         class="column is-4"
                         placeholder="Marge"
-                        v-model="form.outwardMargin"
                       >
                         <option
                           v-for="(margin,key) in marginsMn"
-                          :value="margin"
                           :key="key"
-                        >{{ (1 > margin/60 > 0) ? margin : `${Math.trunc(margin/60)}H${margin%60}` }}</option>
+                          :value="margin"
+                        >
+                          {{ (1 > margin/60 > 0) ? margin : `${Math.trunc(margin/60)}H${margin%60}` }}
+                        </option>
                       </b-select>
                     </div>
                   </div>
                 </div>
                 <!-- RETURN -->
-                <div class="column" v-if="form.type === 2">
-                  <h2 class="title column is-full">Retour</h2>
+                <div
+                  v-if="form.type === 2"
+                  class="column"
+                >
+                  <h2 class="title column is-full">
+                    Retour
+                  </h2>
                   <b-datepicker
+                    v-model="form.returnDate"
                     :placeholder="form.frequency ===2 ? 'Date de fin' : 'Date de retour...'"
                     icon="calendar-today"
                     class="column is-full"
-                    v-model="form.returnDate"
-                  ></b-datepicker>
-                  <div class="columns" v-for="(day,index) in nbOfDaysToPlan" :key="index">
-                    <div v-if="nbOfDaysToPlan>1" class="column is-2 dayNameColumn">
-                      <a class="button is-mobicoopblue is-2">{{days[index]}}</a>
+                  />
+                  <div
+                    v-for="(day,index) in nbOfDaysToPlan"
+                    :key="index"
+                    class="columns"
+                  >
+                    <div
+                      v-if="nbOfDaysToPlan>1"
+                      class="column is-2 dayNameColumn"
+                    >
+                      <a class="button is-mobicoopblue is-2">{{ days[index] }}</a>
                     </div>
                     <b-timepicker
                       v-model="form.returnTime"
                       placeholder="heure de retour..."
                       class="column"
                     >
-                      <button class="button is-mobicoopgreen" @click="form.returnTime = new Date()">
-                        <b-icon icon="clock"></b-icon>
+                      <button
+                        class="button is-mobicoopgreen"
+                        @click="form.returnTime = new Date()"
+                      >
+                        <b-icon icon="clock" />
                         <span>Maintenant</span>
                       </button>
-                      <button class="button is-mobicooppink" @click="form.returnTime = null">
-                        <b-icon icon="close"></b-icon>
+                      <button
+                        class="button is-mobicooppink"
+                        @click="form.returnTime = null"
+                      >
+                        <b-icon icon="close" />
                         <span>Effacer</span>
                       </button>
                     </b-timepicker>
                     <!-- MARGIN -->
                     <b-select
+                      v-model="form.returnMargin"
                       class="column is-4"
                       placeholder="Marge"
-                      v-model="form.returnMargin"
                     >
                       <option
                         v-for="(margin,key) in marginsMn"
-                        :value="margin"
                         :key="key"
-                      >{{ (1 > margin/60 > 0) ? margin : `${Math.trunc(margin/60)}H${margin%60}` }}</option>
+                        :value="margin"
+                      >
+                        {{ (1 > margin/60 > 0) ? margin : `${Math.trunc(margin/60)}H${margin%60}` }}
+                      </option>
                     </b-select>
                   </div>
                 </div>

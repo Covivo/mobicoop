@@ -92,4 +92,9 @@ for (let file of filesBundle) {
   Encore.addEntry(`bundle_${file.split('.js')[0]}`, `./src/MobicoopBundle/Resources/assets/js/page/${file}`)
 }
 
-module.exports = Encore.getWebpackConfig();
+let encoreConfig = Encore.getWebpackConfig();
+encoreConfig.watchOptions = {
+ aggregateTimeout: 600
+}
+
+module.exports = encoreConfig;

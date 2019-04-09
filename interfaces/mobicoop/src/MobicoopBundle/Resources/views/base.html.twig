@@ -51,7 +51,10 @@
 </nav>
 
 <div id="app">
-    {% block body %}{% endblock %}
+    {% block body %}
+    {% block simpleSearch %}
+    {% endblock %}
+    {% endblock %}
 </div>
 <footer class="common-footer">
     <div class="container content has-text-centered">

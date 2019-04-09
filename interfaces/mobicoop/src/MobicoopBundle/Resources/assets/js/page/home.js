@@ -6,25 +6,22 @@ import 'babel-polyfill';
 import Vue from 'vue';
 import Buefy from 'buefy';
 import Affix from 'vue-affix';
+import axios from 'axios';
+import VueFormWizard from 'vue-form-wizard';
+import 'vue-form-wizard/dist/vue-form-wizard.min.css';
 import '../../css/page/home.scss';
 
 // Vue components
-import Journey from '../components/Journey';
-import Searchgeocoding from '../components/Searchgeocoding';
-Vue.use(Affix);
-Vue.use(Buefy);
+import Homesearchform from '../components/Homesearchform';
 
-// eslint-disable-next-line
-let app = new Vue({
-    el: '#app',
-    components: {Journey,Searchgeocoding},
-    data: {
-        geoInfos:{
-            longStart: null,
-            longEnd: null,
-            latStart: null,
-            latEnd: null
-        },
-        searchUser: ""
-    }
+Vue.use(Buefy,{
+  defaultTooltipType: 'is-mobicoopgreen'
 });
+Vue.use(VueFormWizard);
+  
+new Vue({
+  el: '#app',
+  components: {
+    Homesearchform,
+  }
+})
