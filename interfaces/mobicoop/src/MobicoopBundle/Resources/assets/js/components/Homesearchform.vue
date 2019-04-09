@@ -48,7 +48,7 @@
               </b-timepicker>
               <a
                 class="button is-mobicoopblue"
-                :href="urlToCall"
+                :href="checkUrlValid ? urlToCall : null"
                 :disabled="!checkUrlValid"
               >
                 <b-icon
@@ -130,7 +130,7 @@ export default {
       return this.outwardTime ? moment(this.outwardTime).format('HHMMSS') : null;
     },
     urlToCall() {
-      return this.checkUrlValid != null ? `${this.baseUrl}/${this.route}/${this.originLatitude}/${this.originLongitude}/${this.destinationLatitude}/${this.destinationLongitude}/${this.dateFormated}${this.timeFormated}/resultats` : '#'
+      return  `${this.baseUrl}/${this.route}/${this.originLatitude}/${this.originLongitude}/${this.destinationLatitude}/${this.destinationLongitude}/${this.dateFormated}${this.timeFormated}/resultats`; 
     } 
   },
 
