@@ -133,17 +133,24 @@ export default {
       return this.outwardDate ? moment(this.outwardDate).format('YYYYMMDD') : null ;
     },
     timeFormated() {
-      return this.outwardTime ? moment(this.outwardTime).format('HHMMSS') : null;
+      return this.outwardTime ? moment(this.outwardTime).format('HHmmss') : null;
     },
     originStreetAddressFormated() {
-      return this.originStreetAddress ? this.originStreetAddress.toLowerCase().replace(/ /g, '+') : null;
+      let originStreetAddress = this.originStreetAddress.trim().toLowerCase().replace(/ /g, '+')
+      return originStreetAddress !="" ? `${originStreetAddress}+` : "";
     },
     destinationStreetAddressFormated() {
-      return this.destinationStreetAddress ? this.destinationStreetAddress.toLowerCase().replace(/ /g, '+') : null;
+      let destinationStreetAddress = this.destinationStreetAddress.trim().toLowerCase().replace(/ /g, '+')
+      return destinationStreetAddress !="" ? `${destinationStreetAddress}+` : "";
     },
-    
+    originPostalCodeFormated() {
+      return this.originPostalCode ? `${this.originPostalCode}+` : "";
+    },
+    destinationPostalCodeFormated() {
+      return this.destinationPostalCode ? `${this.destinationPostalCode}+` : "";
+    },
     urlToCall() {
-      return `${this.baseUrl}/${this.route}/${this.originStreetAddressFormated}+${this.originPostalCode}+${this.originAddressLocality}/${this.destinationStreetAddressFormated}+${this.destinationPostalCode}+${this.destinationAddressLocality}/${this.originLatitude}/${this.originLongitude}/${this.destinationLatitude}/${this.destinationLongitude}/${this.dateFormated}/${this.timeFormated}/resultats`; 
+      return `${this.baseUrl}/${this.route}/${this.originStreetAddressFormated}${this.originPostalCodeFormated}${this.originAddressLocality}/${this.destinationStreetAddressFormated}${this.destinationPostalCodeFormated}${this.destinationAddressLocality}/${this.originLatitude}/${this.originLongitude}/${this.destinationLatitude}/${this.destinationLongitude}/${this.dateFormated}${this.timeFormated}/resultats`;  
     } 
   },
 
