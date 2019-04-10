@@ -5,59 +5,96 @@
         <div class="tile is-child center-all">
           <div class="columns">
             <b-field class="fieldsContainer">
-              <geocomplete
-                expanded
-                name="origin"
-                placeholder="Depuis"
-                :url="geoSearchUrl"
-                @geoSelected="selectedGeo"
-              />
-              <geocomplete
-                name="destination"
-                placeholder="Vers"
-                :url="geoSearchUrl"
-                @geoSelected="selectedGeo"
-              />
-              <b-datepicker
-                v-model="outwardDate"
-                :placeholder="'Date de départ...'"
-                :day-names="daysShort"
-                :month-names="months"
-                :first-day-of-week="1"
-                position="is-top-right"
-                icon-pack="fas"
-              />
-              <b-timepicker
-                v-model="outwardTime"
-                placeholder="Heure de départ..."
+              <label
+                class="label"
+                for="origin"
               >
-                <button
-                  class="button is-mobicoopgreen"
-                  @click="outwardTime = new Date()"
+                Départ
+                <geocomplete
+                  id="origin"
+                  expanded
+                  name="origin"
+                  placeholder="Depuis"
+                  title="Depuis"
+                  aria-label="Départ"
+                  :url="geoSearchUrl"
+                  @geoSelected="selectedGeo"
+                />
+              </label>
+              <label
+                class="label"
+                for="destination"
+              >Destination
+                <geocomplete
+                  id="destination"
+                  name="destination"
+                  placeholder="Vers"
+                  title="Vers"
+                  :url="geoSearchUrl"
+                  @geoSelected="selectedGeo"
+                />
+              </label>
+              <label
+                class="label"
+                for="dateDepart"
+              >Date de départ
+                <b-datepicker
+                  id="dateDepart"
+                  v-model="outwardDate"
+                  :placeholder="'Date de départ...'"
+                  title="Date de départ"
+                  :day-names="daysShort"
+                  :month-names="months"
+                  :first-day-of-week="1"
+                  position="is-top-right"
+                  icon-pack="fas"
+                />
+              </label>
+              <label
+                class="label"
+                for="heureDepart"
+              >Heure de départ
+                <b-timepicker
+                  v-model="outwardTime"
+                  placeholder="Heure de départ..."
+                  title="Heure de départ"
                 >
-                  <b-icon icon="clock" />
-                  <span>Maintenant</span>
-                </button>
-                <button
-                  class="button is-mobicooppink"
-                  @click="outwardTime = null"
-                >
-                  <b-icon icon="close" />
-                  <span>Effacer</span>
-                </button>
-              </b-timepicker>
-              <a
-                class="button is-mobicoopblue"
-                :href="checkUrlValid ? urlToCall : null"
-                :disabled="!checkUrlValid"
+                  <button
+                    class="button is-mobicoopgreen"
+                    @click="outwardTime = new Date()"
+                  >
+                    <b-icon icon="clock" />
+                    <span>Maintenant</span>
+                  </button>
+                  <button
+                    class="button is-mobicooppink"
+                    @click="outwardTime = null"
+                  >
+                    <b-icon icon="close" />
+                    <span>Effacer</span>
+                  </button>
+                </b-timepicker>
+              </label>
+              <label
+                for="rechercher"
+                class="label"
               >
-                <b-icon
-                  pack="fas"
-                  icon="search"
-                  size="is-small"
-                >
-                  />
-                </b-icon></a>
+                <button id="rechercher">
+                  <a
+                    style="width: 100%"
+                    class="button is-mobicoopblue"
+                    :href="checkUrlValid ? urlToCall : null"
+                    :disabled="!checkUrlValid"
+                    alt="Rechercher un covoiturage"
+                  ><span>Rechercher</span>
+                    <b-icon
+                      pack="fas"
+                      icon="search"
+                      size="is-small"
+                    />
+                  </a>
+                </button>
+              </label>
             </b-field>
           </div>
         </div>
@@ -174,5 +211,12 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+#rechercher {
+  padding: 0 !important;
+  margin-top: 24px;
+  font-size: 100% !important;
+  font-family: inherit !important;
+  border: 0 !important;
 }
 </style>
