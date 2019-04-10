@@ -85,3 +85,12 @@ carpool_results:
         destination_latitude: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?).\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)'
         destination_longitude: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?).\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)'
         date: '\d+'
+
+# ad results
+ad_results:
+    path:
+        fr: /covoiturage/annonce/{id}/resultats
+        en: /carpool/ad/{id}/results
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::adPostResults
+    requirements:
+        id: '\d+'

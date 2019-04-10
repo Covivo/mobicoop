@@ -5,7 +5,6 @@
 {% endblock %}
 {% block stylesheets %}
   {{ encore_entry_link_tags('bundle_ad/create') }}
-  <script src="http://localhost:8098"></script>
 {% endblock %}
 {% block body %}
   <Adcreateform geo-search-url="/geosearch?search=" :sent-frequency="{{ form.frequency.vars.value }}" :sent-type="{{ form.type.vars.value }}" :sent-role="{{ form.role.vars.value }}" sent-token="{{ csrf_token('ad-create') }}"></Adcreateform>

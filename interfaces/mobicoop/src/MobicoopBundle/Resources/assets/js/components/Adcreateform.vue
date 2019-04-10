@@ -4,10 +4,10 @@
       <div class="tile is-vertical is-12">
         <div class="tile is-child center-all">
           <form-wizard
-            back-button-text="Précèdent"
+            back-button-text="Précédent"
             next-button-text="Suivant"
             finish-button-text="Je partage mon annonce"
-            title="Déposer une annonce"
+            title="Partager une annonce"
             subtitle="Suivez les étapes.."
             color="#023D7F"
             class="tile is-vertical is-8"
@@ -67,7 +67,7 @@
                     pack="fas"
                     icon="long-arrow-alt-right"
                   />
-                  <span>Allez</span>
+                  <span>Aller</span>
                 </b-radio-button>
                 <b-radio-button
                   v-model="form.type"
@@ -79,7 +79,7 @@
                     pack="fas"
                     icon="exchange-alt"
                   />
-                  <span>Allez/Retour</span>
+                  <span>Aller-retour</span>
                 </b-radio-button>
               </b-field>
               <geocomplete
@@ -125,7 +125,7 @@
                   type="is-mobicoopblue"
                 >
                   <b-icon icon="check" />
-                  <span>Regulier</span>
+                  <span>Régulier</span>
                 </b-radio-button>
               </b-field>
               <!-- DATE, TIME , MARGIN -->
@@ -431,7 +431,8 @@ export default {
           }
         })
         .then(function(response) {
-          console.log(response);
+          window.location.href = '/covoiturage/annonce/'+response.data.proposal+'/resultats';
+          //console.log(response.data.proposal);
         })
         .catch(function(error) {
           console.error(error);
