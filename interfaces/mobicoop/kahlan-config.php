@@ -40,6 +40,7 @@ Filters::apply($this, 'coverage', function($next) {
             'src/MobicoopBundle/User/Form/*',
             /* Services (disabled until we are able to launch api in gitlab-ci) */
             'src/MobicoopBundle/Api/Service/DataProvider.php',
+            'src/MobicoopBundle/Api/Service/JwtManager.php',
             'src/MobicoopBundle/Carpool/Service/ProposalManager.php',
             'src/MobicoopBundle/ExternalJourney/Service/ExternalJourneyManager.php',
             'src/MobicoopBundle/Geography/Service/GeoSearchManager.php',

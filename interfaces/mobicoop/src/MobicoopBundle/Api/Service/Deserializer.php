@@ -174,14 +174,18 @@ class Deserializer
                 $proposal->addWaypoint(self::deserializeWaypoint($waypoint));
             }
         }
-        if (isset($data["matchingOffers"])) {
+        if (isset($data["matchingOffers"]) && is_array($data["matchingOffers"])) {
             foreach ($data["matchingOffers"] as $matching) {
-                $proposal->addMatchingOffer(self::deserializeMatching($matching));
+                if (!is_null($matching)) {
+                    $proposal->addMatchingOffer(self::deserializeMatching($matching));
+                }
             }
         }
-        if (isset($data["matchingRequests"])) {
+        if (isset($data["matchingRequests"]) && is_array($data["matchingRequests"])) {
             foreach ($data["matchingRequests"] as $matching) {
-                $proposal->addMatchingRequest(self::deserializeMatching($matching));
+                if (!is_null($matching)) {
+                    $proposal->addMatchingRequest(self::deserializeMatching($matching));
+                }
             }
         }
         if (isset($data["travelModes"])) {
