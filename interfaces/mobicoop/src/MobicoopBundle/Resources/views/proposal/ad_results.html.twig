@@ -21,20 +21,42 @@
 		{% endif %}
 		<div class="content">
 			<div class="box">
-				<h3 class="title">Votre recherche</h3>
+				<h3 class="title">Votre annonce {{ proposal.criteria.driver == 1 ? (proposal.criteria.passenger == 1 ? "conducteur/passager" : "conducteur") : "passager" }}</h3>
 				<div class="columns">
 					<div class="column">
-						<p><strong>Origine : </strong>{{ proposal.waypoints[0].address.addressLocality }}</p>
+						<p><strong>Origine : </strong>{{ proposal.waypoints[0].address.streetAddress }} {{ proposal.waypoints[0].address.postalCode }} {{ proposal.waypoints[0].address.addressLocality }}</p>
+						<p><strong>Fréquence : </strong>{{ proposal.criteria.frequency == 1 ? "Ponctuel" : "Régulier" }}</p>
+						<p><strong>Distance : </strong>{{ proposal.criteria.driver == 1 ? (proposal.criteria.directionDriver.distance / 1000)|round(2) : (proposal.criteria.directionPassenger.distance / 1000)|round(2) }} km</p>
 					</div>
 					<div class="column">
-						<p><strong>Destination : </strong>{{ proposal.waypoints[1].address.addressLocality }}</p>
+						<p><strong>Destination : </strong>{{ proposal.waypoints[1].address.streetAddress }} {{ proposal.waypoints[1].address.postalCode }} {{ proposal.waypoints[1].address.addressLocality }}</p>
+						{% if proposal.criteria.frequency == 1 %}
+						<p><strong>Date : </strong>le {{ proposal.criteria.fromDate|date('d/m/Y') }} à {{ proposal.criteria.fromTime|date('H:i') }}</p>
+						{% else %}
+						<p><strong>Date : </strong>du {{ proposal.criteria.fromDate|date('d/m/Y') }} au {{ proposal.criteria.toDate|date('d/m/Y') }}</p>
+						{% endif %}
+						<p><strong>Durée : </strong>{{ proposal.criteria.driver == 1 ? (proposal.criteria.directionDriver.duration / 60)|round : (proposal.criteria.directionPassenger.duration / 60)|round }} minutes</p>
 					</div>
 					<div class="column">
-						<p><strong>Date : </strong>{{ proposal.criteria.fromDate|date('d/m/Y') }}</p>
+						<p><strong>Type : </strong>{{ proposal.type == 1 ? "Aller simple" : "Aller-retour" }}</p>
+						{% if proposal.criteria.frequency == 2 %}
+						<p><strong>Jours : </strong>
+							{% if proposal.criteria.monCheck %}L {% endif %}
+							{% if proposal.criteria.tueCheck %}M {% endif %}
+							{% if proposal.criteria.wedCheck %}Me {% endif %}
+							{% if proposal.criteria.thuCheck %}J {% endif %}
+							{% if proposal.criteria.friCheck %}V {% endif %}
+							{% if proposal.criteria.satCheck %}S {% endif %}
+							{% if proposal.criteria.sunCheck %}D {% endif %}
+						</p>
+						{% else %}
+						<p></p>
+						{% endif %}
 					</div>
 				</div>
 			</div>
     		<h2 class="title">Résultats</h2>
+			{% if proposal.criteria.passenger %}
 			<div class="box">
 				<h3 class="title">Conducteurs</h3>
 				{% if proposal.matchingRequests and proposal.matchingRequests|length>0  %}
@@ -60,9 +82,9 @@
 								<td>{{ matching.proposalOffer.criteria.frequency == 1 ? "Ponctuel" : "Régulier" }}</td>
 								<td>{{ matching.proposalOffer.waypoints[0].address.addressLocality }}</td>
 								<td>{{ matching.proposalOffer.waypoints[1].address.addressLocality }}</td>
-								<td>{% if matching.filters and matching.filters.newDistance %} {{ (matching.filters.newDistance / 1000) | round(2) }}km {% else %} NC {% endif %}</td>
-								<td>{% if matching.filters and matching.filters.detourDistance %} {{ (matching.filters.detourDistance / 1000) | round(2) }}km {% else %} NC {% endif %}</td>
-								<td>{% if matching.filters and matching.filters.newDuration %} {{ (matching.filters.newDuration / 60) | round}} minutes {% else %} NC {% endif %}</td>
+								<td>{{ (matching.criteria.directionDriver.distance / 1000) | round(2) }}km</td>
+								<td>{{ ((matching.criteria.directionDriver.distance - matching.proposalOffer.criteria.directionDriver.distance)/ 1000) | round(2) }}km</td>
+								<td>{{ (matching.criteria.directionDriver.duration / 60) | round}} minutes</td>
 							</tr>
 						{% endfor %}							
 					</table>
@@ -70,6 +92,8 @@
 					<span class="tag is-warning">Pas de conducteur trouvé.</span>
 				{% endif %}
 			</div>
+			{% endif %}
+			{% if proposal.criteria.driver %}
 			<div class="box">
 				<h3 class="title">Passagers</h3>
 				{% if proposal.matchingOffers and proposal.matchingOffers|length>0  %}
@@ -95,9 +119,9 @@
 								<td>{{ matching.proposalRequest.criteria.frequency == 1 ? "Ponctuel" : "Régulier" }}</td>
 								<td>{{ matching.proposalRequest.waypoints[0].address.addressLocality }}</td>
 								<td>{{ matching.proposalRequest.waypoints[1].address.addressLocality }}</td>
-								<td>{% if matching.filters and matching.filters.newDistance %} {{ (matching.filters.newDistance / 1000) | round(2) }}km {% else %} NC {% endif %}</td>
-								<td>{% if matching.filters and matching.filters.detourDistance %} {{ (matching.filters.detourDistance / 1000) | round(2) }}km {% else %} NC {% endif %}</td>
-								<td>{% if matching.filters and matching.filters.newDuration %} {{ (matching.filters.newDuration / 60) | round}} minutes {% else %} NC {% endif %}</td>
+								<td>{{ (matching.criteria.directionDriver.distance / 1000) | round(2) }}km</td>
+								<td>{{ ((matching.criteria.directionDriver.distance - proposal.criteria.directionDriver.distance)/ 1000) | round(2) }}km</td>
+								<td>{{ (matching.criteria.directionDriver.duration / 60) | round}} minutes</td>
 							</tr>
 						{% endfor %}							
 					</table>
@@ -105,6 +129,7 @@
 					<span class="tag is-warning">Pas de passager trouvé.</span>
 				{% endif %}
 			</div>
+			{% endif %}
 		</div>
 		
 	</div>
