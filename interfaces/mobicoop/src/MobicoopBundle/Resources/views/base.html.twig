@@ -48,7 +48,7 @@
                                 {% trans from 'ui' %}menu.logout{% endtrans %}
                             </a>
                         {% endif %}
-                        <a href="{{ path('ad') }}" class="button is-primary">
+                        <a href="{{ path('carpool_ad') }}" class="button is-primary">
                             {% trans from 'ui' %}menu.ad_create{% endtrans %}
                         </a>
                     </div>
@@ -67,15 +67,12 @@
         </div>
 </nav>
 
-<div id="app">
-    {% block body %}
-    {% block simpleSearch %}
-    {% endblock %}
-    {% endblock %}
-</div>
 <main role="main" id="main">
     <div id="app">
-        {% block body %}{% endblock %}
+        {% block body %}
+            {% block simpleSearch %}
+            {% endblock %}
+        {% endblock %}
     </div></main>
 <footer class="common-footer" role="contentinfo">
     <div class="container content has-text-centered">
