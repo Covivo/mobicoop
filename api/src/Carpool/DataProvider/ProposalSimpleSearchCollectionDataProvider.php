@@ -25,9 +25,9 @@ namespace App\Carpool\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Carpool\Entity\Matching;
 use Symfony\Component\HttpFoundation\RequestStack;
 use App\Carpool\Service\ProposalManager;
+use App\Carpool\Entity\Proposal;
 
 /**
  * Collection data provider for Matching simple search.
@@ -36,10 +36,9 @@ use App\Carpool\Service\ProposalManager;
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  *
  */
-final class MatchingSimpleSearchCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class ProposalSimpleSearchCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $request;
-    
     
     public function __construct(RequestStack $requestStack, ProposalManager $proposalManager)
     {
@@ -47,10 +46,9 @@ final class MatchingSimpleSearchCollectionDataProvider implements CollectionData
         $this->proposalManager = $proposalManager;
     }
     
-    
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Matching::class === $resourceClass && $operationName === "simple_search";
+        return Proposal::class === $resourceClass && $operationName === "simple_search";
     }
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array

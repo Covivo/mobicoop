@@ -72,16 +72,19 @@ class ProposalRepository
 
         // we search the matchings in the proposal entity
         $query = $this->repository->createQueryBuilder('p')
+        ->select(['p','u'])
         // we need the criteria (for the dates, number of seats...)
         ->join('p.criteria', 'c')
+        // we will need the user informations
+        ->join('p.user', 'u')
         // we need the directions and the geographical zones
         ->leftJoin('c.directionDriver', 'dd')->leftJoin('dd.zones', 'zd')
         ->leftJoin('c.directionPassenger', 'dp')->leftJoin('dp.zones', 'zp');
 
         // do we exclude the user itself ?
         if ($excludeProposalUser) {
-            $query->andWhere('p.user != :user')
-            ->setParameter('user', $proposal->getUser());
+            $query->andWhere('p.user != :userProposal')
+            ->setParameter('userProposal', $proposal->getUser());
         }
 
         // GEOGRAPHICAL ZONES

@@ -188,7 +188,7 @@ class ProposalManager
         $proposal = new Proposal();
         $proposal->setType(Proposal::TYPE_ONE_WAY);
         $criteria = new Criteria();
-        $criteria->setDriver(false);
+        $criteria->setDriver(true);
         $criteria->setPassenger(true);
         $criteria->setFromDate($date);
         $criteria->setFromTime($date);

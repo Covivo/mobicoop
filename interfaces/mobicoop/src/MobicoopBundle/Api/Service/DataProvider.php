@@ -194,6 +194,27 @@ class DataProvider
     }
 
     /**
+     * Get special collection operation
+     *
+     * @param string        $operation      The name of the special operation
+     * @param array|null    $params         An array of parameters
+     *
+     * @return Response The response of the operation.
+     */
+    public function getSpecialCollection(string $operation, ?array $params=null): Response
+    {
+        try {
+            $clientResponse = $this->client->get($this->resource.'/'.$operation, ['query'=>$params]);
+            if ($clientResponse->getStatusCode() == 200) {
+                return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody()));
+            }
+        } catch (TransferException $e) {
+            return new Response($e->getCode());
+        }
+        return new Response();
+    }
+
+    /**
      * Get sub collection operation
      *
      * @param int           $id             The id of the item
@@ -203,7 +224,7 @@ class DataProvider
      * @return Response The response of the operation.
      * @throws \ReflectionException
      */
-    public function getSubCollection(?int $id=null, string $subClassName, ?string $subClassRoute=null, ?array $params=null): Response
+    public function getSubCollection(int $id, string $subClassName, ?string $subClassRoute=null, ?array $params=null): Response
     {
         $route = $subClassRoute;
         if (is_null($route)) {
@@ -211,17 +232,11 @@ class DataProvider
         }
 
         try {
-            if (is_null($id)) {
-                $clientResponse = $this->client->get($this->resource.'/'.$route, ['query'=>$params]);
-            } else {
-                $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route, ['query'=>$params]);
-            }
+            $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route, ['query'=>$params]);
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody(), $subClassName));
             }
         } catch (TransferException $e) {
-            echo "ici";
-            exit;
             return new Response($e->getCode());
         }
         return new Response();

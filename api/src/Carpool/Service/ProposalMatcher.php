@@ -159,7 +159,6 @@ class ProposalMatcher
                 }
             }
         }
-
         // we check if the pickup times match
         $matchings = $this->checkPickUp($matchings);
         
@@ -305,7 +304,6 @@ class ProposalMatcher
             unset($filters['direction']);
             $matching->setFilters($filters);
         }
-
         return $matchings;
     }
 

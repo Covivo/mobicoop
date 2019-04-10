@@ -32,7 +32,6 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Carpool\Controller\MatchingSimpleSearch;
 
 /**
  * Carpooling : matching between an offer and a request.
@@ -41,60 +40,11 @@ use App\Carpool\Controller\MatchingSimpleSearch;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={
- *          "get",
- *          "simple_search"={
- *              "method"="GET",
- *              "path"="/matchings/search",
- *              "swagger_context" = {
- *                  "parameters" = {
- *                      {
- *                          "name" = "origin_latitude",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "number",
- *                          "format" = "float",
- *                          "description" = "The latitude of the origin point"
- *                      },
- *                      {
- *                          "name" = "origin_longitude",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "number",
- *                          "format" = "float",
- *                          "description" = "The longitude of the origin point"
- *                      },
- *                      {
- *                          "name" = "destination_latitude",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "number",
- *                          "format" = "float",
- *                          "description" = "The latitude of the destination point"
- *                      },
- *                      {
- *                          "name" = "destination_longitude",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "number",
- *                          "format" = "float",
- *                          "description" = "The longitude of the destination point"
- *                      },
- *                      {
- *                          "name" = "date",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "string",
- *                          "format" = "date-time",
- *                          "description" = "The date of the trip (on RFC3339 format)"
- *                      },
- *                  }
- *              }
- *          }
- *      },
+ *      collectionOperations={"get"},
  *      itemOperations={"get"}
  * )
  */
@@ -126,7 +76,6 @@ class Matching
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingOffers")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
-     * @MaxDepth(1)
      */
     private $proposalOffer;
 
@@ -137,7 +86,6 @@ class Matching
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingRequests")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
-     * @MaxDepth(1)
      */
     private $proposalRequest;
 
@@ -180,12 +128,6 @@ class Matching
      */
     private $filters;
 
-    /**
-     * @var string Origin
-     * @Groups({"read","write"})
-     */
-    private $origin;
-    
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -320,18 +262,6 @@ class Matching
         return $this;
     }
 
-    public function getOrigin(): ?string
-    {
-        return $this->origin;
-    }
-
-    public function setOrigin(string $origin): self
-    {
-        $this->origin = $origin;
-
-        return $this;
-    }
-    
     // DOCTRINE EVENTS
     
     /**

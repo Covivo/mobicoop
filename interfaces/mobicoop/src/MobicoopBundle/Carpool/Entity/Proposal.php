@@ -282,7 +282,7 @@ class Proposal implements Resource
     {
         if (!$this->matchingRequests->contains($matchingRequest)) {
             $this->matchingRequests[] = $matchingRequest;
-            $matchingRequest->setProposalOffer($this);
+            $matchingRequest->setProposalRequest($this);
         }
         
         return $this;
@@ -293,8 +293,8 @@ class Proposal implements Resource
         if ($this->matchingRequests->contains($matchingRequest)) {
             $this->matchingRequests->removeElement($matchingRequest);
             // set the owning side to null (unless already changed)
-            if ($matchingRequest->getProposalOffer() === $this) {
-                $matchingRequest->setProposalOffer(null);
+            if ($matchingRequest->getProposalRequest() === $this) {
+                $matchingRequest->setProposalRequest(null);
             }
         }
         
@@ -313,7 +313,7 @@ class Proposal implements Resource
     {
         if (!$this->matchingOffers->contains($matchingOffer)) {
             $this->matchingOffers[] = $matchingOffer;
-            $matchingOffer->setProposalRequest($this);
+            $matchingOffer->setProposalOffer($this);
         }
         
         return $this;
@@ -324,8 +324,8 @@ class Proposal implements Resource
         if ($this->matchingOffers->contains($matchingOffer)) {
             $this->matchingOffers->removeElement($matchingOffer);
             // set the owning side to null (unless already changed)
-            if ($matchingOffer->getProposalRequest() === $this) {
-                $matchingOffer->setProposalRequest(null);
+            if ($matchingOffer->getProposalOffer() === $this) {
+                $matchingOffer->setProposalOffer(null);
             }
         }
         

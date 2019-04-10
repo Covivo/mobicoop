@@ -58,6 +58,55 @@ use App\User\Entity\User;
  *              "method"="POST",
  *              "path"="/proposals",
  *              "controller"=ProposalPost::class,
+ *          },
+ *          "simple_search"={
+ *              "method"="GET",
+ *              "path"="/proposals/search",
+ *              "normalization_context"={"groups"={"read"}},
+ *              "swagger_context" = {
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "origin_latitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The latitude of the origin point"
+ *                      },
+ *                      {
+ *                          "name" = "origin_longitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The longitude of the origin point"
+ *                      },
+ *                      {
+ *                          "name" = "destination_latitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The latitude of the destination point"
+ *                      },
+ *                      {
+ *                          "name" = "destination_longitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The longitude of the destination point"
+ *                      },
+ *                      {
+ *                          "name" = "date",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "string",
+ *                          "format" = "date-time",
+ *                          "description" = "The date of the trip (on RFC3339 format)"
+ *                      },
+ *                  }
+ *              }
  *          }
  *      },
  *      itemOperations={"get","put","delete"}
@@ -151,6 +200,7 @@ class Proposal
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
     private $matchingOffers;
@@ -160,6 +210,7 @@ class Proposal
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
     private $matchingRequests;

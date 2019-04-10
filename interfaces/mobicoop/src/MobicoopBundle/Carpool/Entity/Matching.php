@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Carpooling : matching between an offer and a request.
@@ -60,6 +61,27 @@ class Matching
      * @Assert\NotBlank
      */
     private $criteria;
+
+    /**
+     * @var Waypoint[] The waypoints of the matching.
+     *
+     * @Assert\NotBlank
+     */
+    private $waypoints;
+
+    /**
+     * @var array|null The resulting filters of the matching.
+     */
+    private $filters;
+
+    public function __construct($id=null)
+    {
+        if ($id) {
+            $this->setId($id);
+            $this->setIri("/matchings/".$id);
+        }
+        $this->waypoints = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -113,6 +135,49 @@ class Matching
     public function setCriteria(Criteria $criteria): self
     {
         $this->criteria = $criteria;
+        
+        return $this;
+    }
+
+    public function getFilters(): ?array
+    {
+        return $this->filters;
+    }
+    
+    public function setFilters(array $filters): self
+    {
+        $this->filters = $filters;
+        
+        return $this;
+    }
+
+    /**
+     * @return Collection|Waypoint[]
+     */
+    public function getWaypoints(): Collection
+    {
+        return $this->waypoints;
+    }
+    
+    public function addWaypoint(Waypoint $waypoint): self
+    {
+        if (!$this->waypoints->contains($waypoint)) {
+            $this->waypoints[] = $waypoint;
+            $waypoint->setMatching($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeWaypoint(Waypoint $waypoint): self
+    {
+        if ($this->waypoints->contains($waypoint)) {
+            $this->waypoints->removeElement($waypoint);
+            // set the owning side to null (unless already changed)
+            if ($waypoint->getMatching() === $this) {
+                $waypoint->setMatching(null);
+            }
+        }
         
         return $this;
     }
