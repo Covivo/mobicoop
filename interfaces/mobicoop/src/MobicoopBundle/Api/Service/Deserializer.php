@@ -176,14 +176,14 @@ class Deserializer
         }
         if (isset($data["matchingOffers"]) && is_array($data["matchingOffers"])) {
             foreach ($data["matchingOffers"] as $matching) {
-                if (!is_null($matching)) {
+                if (!is_null($matching) && is_array($matching)) {
                     $proposal->addMatchingOffer(self::deserializeMatching($matching));
                 }
             }
         }
         if (isset($data["matchingRequests"]) && is_array($data["matchingRequests"])) {
             foreach ($data["matchingRequests"] as $matching) {
-                if (!is_null($matching)) {
+                if (!is_null($matching) && is_array($matching)) {
                     $proposal->addMatchingRequest(self::deserializeMatching($matching));
                 }
             }

@@ -24,7 +24,6 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
-use Symfony\Component\HttpFoundation\Request;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Waypoint;
@@ -69,15 +68,31 @@ class AdManager
             $criteria->setPassenger(true);
         }
         $criteria->setPriceKm($ad->getPrice());
-
+        
+        // temp as long as regular post doesnt work
+        $ad->setOutwardMonTime($ad->getOutwardTime());
+        $ad->setOutwardTueTime($ad->getOutwardTime());
+        $ad->setOutwardWedTime($ad->getOutwardTime());
+        $ad->setOutwardThuTime($ad->getOutwardTime());
+        $ad->setOutwardFriTime($ad->getOutwardTime());
+        $ad->setOutwardSatTime($ad->getOutwardTime());
+        $ad->setOutwardSunTime($ad->getOutwardTime());
+        $ad->setOutwardMonMargin($ad->getOutwardMargin());
+        $ad->setOutwardTueMargin($ad->getOutwardMargin());
+        $ad->setOutwardWedMargin($ad->getOutwardMargin());
+        $ad->setOutwardThuMargin($ad->getOutwardMargin());
+        $ad->setOutwardFriMargin($ad->getOutwardMargin());
+        $ad->setOutwardSatMargin($ad->getOutwardMargin());
+        $ad->setOutwardSunMargin($ad->getOutwardMargin());
+        
         $criteria->setFrequency($ad->getFrequency());
         if ($ad->getFrequency() == Ad::FREQUENCY_PUNCTUAL) {
             $criteria->setFromDate($ad->getOutwardDate());
             $criteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
-            $criteria->setMarginDuration($ad->getOutwardMargin()*60);
+            $criteria->setMarginDuration($ad->getOutwardMargin());
         } else {
-            $criteria->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad->getFromDate()));
-            $criteria->setToDate(\DateTime::createFromFormat('Y-m-d', $ad->getToDate()));
+            $criteria->setFromDate($ad->getOutwardDate());
+            $criteria->setToDate($ad->getReturnDate());
             $criteria->setMonCheck($ad->getOutwardMonTime()<>null);
             if ($ad->getOutwardMonTime()) {
                 $criteria->setMonTime(\DateTime::createFromFormat('H:i', $ad->getOutwardMonTime()));
@@ -149,17 +164,33 @@ class AdManager
         }
         
         if ($ad->getType() == Ad::TYPE_RETURN_TRIP) {
+
+            // temp as long as regular post doesnt work
+            $ad->setReturnMonTime($ad->getReturnTime());
+            $ad->setReturnTueTime($ad->getReturnTime());
+            $ad->setReturnWedTime($ad->getReturnTime());
+            $ad->setReturnThuTime($ad->getReturnTime());
+            $ad->setReturnFriTime($ad->getReturnTime());
+            $ad->setReturnSatTime($ad->getReturnTime());
+            $ad->setReturnSunTime($ad->getReturnTime());
+            $ad->setReturnMonMargin($ad->getReturnMargin());
+            $ad->setReturnTueMargin($ad->getReturnMargin());
+            $ad->setReturnWedMargin($ad->getReturnMargin());
+            $ad->setReturnThuMargin($ad->getReturnMargin());
+            $ad->setReturnFriMargin($ad->getReturnMargin());
+            $ad->setReturnSatMargin($ad->getReturnMargin());
+            $ad->setReturnSunMargin($ad->getReturnMargin());
             
             // creation of the return trip
             $proposalReturn = clone $proposal;
             $criteriaReturn = clone $criteria;
             if ($ad->getFrequency() == Ad::FREQUENCY_PUNCTUAL) {
-                $criteriaReturn->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad->getReturnDate()));
+                $criteriaReturn->setFromDate($ad->getOutwardDate());
                 $criteriaReturn->setFromTime(\DateTime::createFromFormat('H:i', $ad->getReturnTime()));
                 $criteriaReturn->setMarginDuration($ad->getReturnMargin());
             } else {
-                $criteriaReturn->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad->getFromDate()));
-                $criteriaReturn->setToDate(\DateTime::createFromFormat('Y-m-d', $ad->getToDate()));
+                $criteriaReturn->setFromDate($ad->getOutwardDate());
+                $criteriaReturn->setToDate($ad->getReturnDate());
                 $criteriaReturn->setMonCheck($ad->getReturnMonTime()<>null);
                 if ($ad->getReturnMonTime()) {
                     $criteriaReturn->setMonTime(\DateTime::createFromFormat('H:i', $ad->getReturnMonTime()));

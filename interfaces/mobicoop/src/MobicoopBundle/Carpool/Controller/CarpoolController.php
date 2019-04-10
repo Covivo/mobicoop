@@ -46,20 +46,16 @@ class CarpoolController extends AbstractController
      */
     public function ad(AdManager $adManager, UserManager $userManager, Request $request)
     {
-        $date = new \DateTime();
         $ad = new Ad();
         $ad->setRole(Ad::ROLE_BOTH);
         $ad->setType(Ad::TYPE_ONE_WAY);
         $ad->setFrequency(Ad::FREQUENCY_PUNCTUAL);
         $ad->setPrice(Ad::PRICE);
-        // $ad->setOutwardDate($date->format('Y/m/d'));
         $ad->setUser($userManager->getLoggedUser());
 
         $form = $this->createForm(AdForm::class, $ad, ['csrf_protection' => false]);
         $error = false;
-        $sucess = false;
-
-        
+        $success = false;
         
         if ($request->isMethod('POST')) {
             $createToken = $request->request->get('createToken');
@@ -89,18 +85,18 @@ class CarpoolController extends AbstractController
                     }
                 }
             }
-            return $this->json(['error' => $error, 'sucess'=> $sucess]);
+            return $this->json(['error' => $error, 'success'=> $success]);
         }
 
         // Error happen durring proposol creation
         try {
-            $ad = $adManager->createProposalFromAd($ad);
-            $sucess = true;
+            $proposal = $adManager->createProposalFromAd($ad);
+            $success = true;
         } catch (Error $err) {
             $error = $err;
         }
 
-        return $this->json(['error' => $error, 'sucess'=> $sucess, 'ad' => print_r($ad, true)]);
+        return $this->json(['error' => $error, 'success'=> $success, 'proposal' => $proposal->getId()]);
     }
 
     /**
@@ -113,6 +109,16 @@ class CarpoolController extends AbstractController
             'destination' => urldecode($destination),
             'date' =>  \Datetime::createFromFormat("YmdHis", $date)->format('d/m/Y à H:i'),
             'hydra' => $proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("YmdHis", $date))
+        ]);
+    }
+
+    /**
+     * Ad post results.
+     */
+    public function adPostResults($id, ProposalManager $proposalManager)
+    {
+        return $this->render('@Mobicoop/proposal/ad_results.html.twig', [
+            'proposal' => $proposalManager->getProposal($id)
         ]);
     }
 }
