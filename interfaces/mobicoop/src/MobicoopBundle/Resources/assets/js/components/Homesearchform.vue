@@ -5,8 +5,8 @@
         <div class="tile is-child center-all">
           <div class="columns">
             <b-field class="fieldsContainer">
+              <!-- inputs outward/destination -->
               <geocomplete
-                expanded
                 name="origin"
                 placeholder="Depuis"
                 :url="geoSearchUrl"
@@ -18,6 +18,7 @@
                 :url="geoSearchUrl"
                 @geoSelected="selectedGeo"
               />
+              <!-- datepicker -->
               <b-datepicker
                 v-model="outwardDate"
                 :placeholder="'Date de départ...'"
@@ -27,6 +28,7 @@
                 position="is-top-right"
                 icon-pack="fas"
               />
+              <!-- timepicker -->
               <b-timepicker
                 v-model="outwardTime"
                 placeholder="Heure de départ..."
@@ -46,6 +48,7 @@
                   <span>Effacer</span>
                 </button>
               </b-timepicker>
+              <!-- search button -->
               <a
                 class="button is-mobicoopblue"
                 :href="checkUrlValid ? urlToCall : null"
@@ -126,15 +129,19 @@ export default {
     };
   },
   computed: {
+    // check if the minimal infos are available to have a valid url to launch the search 
     checkUrlValid(){
-      return this.originLatitude && this.originLongitude && this.destinationLatitude && this.destinationLongitude && this.outwardDate && this.outwardTime
+      return this.originAddressLocality && this.destinationAddressLocality && this.originLatitude && this.originLongitude && this.destinationLatitude && this.destinationLongitude && this.outwardDate && this.outwardTime 
     },
+    // formate the date
     dateFormated() {
       return this.outwardDate ? moment(this.outwardDate).format('YYYYMMDD') : null ;
     },
+    // format the time
     timeFormated() {
       return this.outwardTime ? moment(this.outwardTime).format('HHmmss') : null;
     },
+    // formate the addresses and return nothing if not defined
     originStreetAddressFormated() {
       let originStreetAddress = this.originStreetAddress.trim().toLowerCase().replace(/ /g, '+')
       return originStreetAddress !="" ? `${originStreetAddress}+` : "";
@@ -143,12 +150,14 @@ export default {
       let destinationStreetAddress = this.destinationStreetAddress.trim().toLowerCase().replace(/ /g, '+')
       return destinationStreetAddress !="" ? `${destinationStreetAddress}+` : "";
     },
+    // formate the postalCodes and return nothing if not defined
     originPostalCodeFormated() {
       return this.originPostalCode ? `${this.originPostalCode}+` : "";
     },
     destinationPostalCodeFormated() {
       return this.destinationPostalCode ? `${this.destinationPostalCode}+` : "";
     },
+    // creation of the url to call
     urlToCall() {
       return `${this.baseUrl}/${this.route}/${this.originStreetAddressFormated}${this.originPostalCodeFormated}${this.originAddressLocality}/${this.destinationStreetAddressFormated}${this.destinationPostalCodeFormated}${this.destinationAddressLocality}/${this.originLatitude}/${this.originLongitude}/${this.destinationLatitude}/${this.destinationLongitude}/${this.dateFormated}${this.timeFormated}/resultats`;  
     } 

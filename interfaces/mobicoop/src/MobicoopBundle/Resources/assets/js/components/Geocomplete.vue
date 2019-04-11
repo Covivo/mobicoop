@@ -3,14 +3,15 @@
     <b-field>
       <b-autocomplete
         :data="data"
+        field="concatenedAddr"
         :placeholder="placeholder"
-        field="addressLocality"
         :open-on-focus="true"
         icon="search-location"
         icon-pack="fa"
         :loading="isFetching"
         @input="getAsyncData"
         @select="onSelected"
+        @focus="setFocus"
       >
         <template slot-scope="props">
           <div class="media">
@@ -67,6 +68,7 @@ export default {
   methods: {
     initialData() {
       return {
+        focus: false,
         valstreetAddress: "",
         valpostalCode: "",
         valaddressLocality: "",
@@ -79,11 +81,23 @@ export default {
         isFetching: false
       };
     },
+    setFocus(){
+      this.focus = true;
+    },
     getAsyncData: debounce(function(address) {
+      if(!this.focus) return; // We did not select the value, so we stop here
       this.isFetching = true;
       axios
         .get(`${this.url}${address}`)
         .then(res => {
+          // Add a property concatenedAddr to be shown into the autocomplete field after selection
+          let addresses = res.data;
+          addresses.forEach( (adress,adressKey) => {
+            let streetAddress = addresses[adressKey].streetAddress ? `${addresses[adressKey].streetAddress} ` : '';
+            let postalCode = addresses[adressKey].postalCode ? `${addresses[adressKey].postalCode} ` : '';
+            let addressLocality = addresses[adressKey].addressLocality ? addresses[adressKey].addressLocality : '';
+            addresses[adressKey].concatenedAddr = `${streetAddress}${postalCode}${addressLocality}`
+          })
           this.data = [...res.data];
         })
         .catch(err => {
@@ -92,6 +106,7 @@ export default {
         })
         .then(_ => {
           this.isFetching = false;
+          this.focus = false;
         });
     }, 700),
     formattedDisplay(result) {
