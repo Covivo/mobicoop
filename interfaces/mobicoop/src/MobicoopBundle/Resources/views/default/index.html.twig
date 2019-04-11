@@ -18,7 +18,9 @@
         </div>
     </section>
 {% block simpleSearch %}
-<Homesearchform geo-search-url="/geosearch?search=" route="covoiturage/recherche"></Homesearchform>
+    <section id="home">
+        <homesearchform geo-search-url="/geosearch?search=" route="covoiturage/recherche"></homesearchform>
+    </section>
 {% endblock %}
 {% endblock %}
 {% block javascripts %}

@@ -20,8 +20,8 @@ Vue.use(Buefy,{
 Vue.use(VueFormWizard);
   
 new Vue({
-  el: '#app',
+  el: '#home',
   components: {
-    Homesearchform,
+    Homesearchform
   }
 })
