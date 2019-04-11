@@ -5,48 +5,49 @@
         <div class="tile is-child center-all">
           <div class="columns">
             <b-field class="fieldsContainer">
+              <!-- inputs outward destination -->
               <label
                 class="label"
                 for="origin"
-              <!-- inputs outward/destination -->
-              <geocomplete
-                name="origin"
-                placeholder="Depuis"
-                :url="geoSearchUrl"
-                @geoSelected="selectedGeo"
-              />
-              <geocomplete
-                name="destination"
-                placeholder="Vers"
-                :url="geoSearchUrl"
-                @geoSelected="selectedGeo"
-              />
-              <!-- datepicker -->
-              <b-datepicker
-                v-model="outwardDate"
-                :placeholder="'Date de départ...'"
-                :day-names="daysShort"
-                :month-names="months"
-                :first-day-of-week="1"
-                position="is-top-right"
-                icon-pack="fas"
-              />
-              <!-- timepicker -->
-              <b-timepicker
-                v-model="outwardTime"
-                placeholder="Heure de départ..."
               >
-                Départ
                 <geocomplete
-                  expanded
                   name="origin"
                   placeholder="Depuis"
-                  title="Depuis"
-                  aria-label="Départ"
                   :url="geoSearchUrl"
                   @geoSelected="selectedGeo"
                 />
-              </label>
+                <geocomplete
+                  name="destination"
+                  placeholder="Vers"
+                  :url="geoSearchUrl"
+                  @geoSelected="selectedGeo"
+                />
+                <!-- datepicker -->
+                <b-datepicker
+                  v-model="outwardDate"
+                  :placeholder="'Date de départ...'"
+                  :day-names="daysShort"
+                  :month-names="months"
+                  :first-day-of-week="1"
+                  position="is-top-right"
+                  icon-pack="fas"
+                />
+                <!-- timepicker -->
+                <b-timepicker
+                  v-model="outwardTime"
+                  placeholder="Heure de départ..."
+                >
+                  Départ
+                  <geocomplete
+                    expanded
+                    name="origin"
+                    placeholder="Depuis"
+                    title="Depuis"
+                    aria-label="Départ"
+                    :url="geoSearchUrl"
+                    @geoSelected="selectedGeo"
+                  />
+                </b-timepicker></label>
               <label
                 class="label"
                 for="destination"
@@ -126,7 +127,6 @@
                   </a>
                 </button>
               </label>
-              </b-timepicker>
               <!-- search button -->
               <a
                 class="button is-mobicoopblue"
