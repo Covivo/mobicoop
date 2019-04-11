@@ -11,7 +11,6 @@
               >
                 Départ
                 <geocomplete
-                  id="origin"
                   expanded
                   name="origin"
                   placeholder="Depuis"
@@ -26,7 +25,6 @@
                 for="destination"
               >Destination
                 <geocomplete
-                  id="destination"
                   name="destination"
                   placeholder="Vers"
                   title="Vers"
@@ -48,6 +46,8 @@
                   :first-day-of-week="1"
                   position="is-top-right"
                   icon-pack="fas"
+                  readonly="a"
+                  editable
                 />
               </label>
               <label
@@ -55,6 +55,7 @@
                 for="heureDepart"
               >Heure de départ
                 <b-timepicker
+                  id="heureDepart"
                   v-model="outwardTime"
                   placeholder="Heure de départ..."
                   title="Heure de départ"
@@ -79,13 +80,16 @@
                 for="rechercher"
                 class="label"
               >
-                <button id="rechercher">
+                <button
+                  id="rechercher"
+                >
                   <a
                     style="width: 100%"
                     class="button is-mobicoopblue"
                     :href="checkUrlValid ? urlToCall : null"
                     :disabled="!checkUrlValid"
                     alt="Rechercher un covoiturage"
+                    title="Rechercher"
                   ><span>Rechercher</span>
                     <b-icon
                       pack="fas"
@@ -108,8 +112,10 @@ import axios from "axios";
 import moment from "moment";
 import Geocomplete from "./Geocomplete";
 import _default from 'flatpickr/dist/l10n/fr';
+import BDatepicker from "buefy/src/components/datepicker/Datepicker";
 export default {
   components: {
+    BDatepicker,
     Geocomplete
   },
   props: {
@@ -211,12 +217,5 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-#rechercher {
-  padding: 0 !important;
-  margin-top: 24px;
-  font-size: 100% !important;
-  font-family: inherit !important;
-  border: 0 !important;
 }
 </style>
