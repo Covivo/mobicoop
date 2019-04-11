@@ -8,7 +8,7 @@
 	<div class="hero-body">
     	<div class="container">
       		<h1 class="title">
-        		Mobicoop - Proposals for the user #{{ user.id }}
+        		Mobicoop - Mes annonces
       		</h1>
     	</div>
   	</div>
@@ -19,67 +19,48 @@
 	    {% if error is defined %}
 		<span class="tag is-danger">{{ error }}</span>
 		{% endif %}
-		<a class="button is-primary" href="{{ path('user_proposal_create',{'id':user.id}) }}">Add proposal</a>
-		{% if hydra %}
-      	<table class="table">
-          	<tr>
-          		<th>#</th>
-          		<th>proposalType</th>
-          		<th>journeyType</th>
-          		<th>start</th>
-          		<th>destination</th>
-          		<th>frequency</th>
-          		<th>fromDate</th>
-          		<th>Action</th>
-          	</tr>
+		{% if hydra and hydra.member|length > 0 %}
           	{% for proposal in hydra.member %}
-          	<tr>
-          		<td>{{ proposal.id }}</td>
-          		<td>
-          			{% if proposal.proposalType == constant('Mobicoop\\Bundle\\MobicoopBundle\\Entity\\Proposal::PROPOSAL_TYPE_OFFER') %}
-          			Offer
-          			{% else %}
-          			Request
-          			{% endif %}
-          		</td>
-          		<td>
-          			{% if proposal.journeyType == constant('Mobicoop\\Bundle\\MobicoopBundle\\Entity\\Proposal::JOURNEY_TYPE_ONE_WAY') %}
-          			One way
-          			{% else %}
-          			Return trip
-          			{% endif %}
-          		</td>
-          		<td>
-          			{% for point in proposal.points %}
-          				{% if point.position == 0 %}
-          				    {{ point.address.streetAddress }} {{ point.address.postalCode }} {{ point.address.addressLocality }}
-          				{% endif %}
-          			{% endfor %}	
-          		</td>
-          		<td>
-          			{% for point in proposal.points %}
-          				{% if point.lastPoint %}
-          				    {{ point.address.streetAddress }} {{ point.address.postalCode }} {{ point.address.addressLocality }}
-          				{% endif %}
-          			{% endfor %}	
-          		</td>
-          		<td>
-          			{% if proposal.criteria.frequency == constant('Mobicoop\\Bundle\\MobicoopBundle\\Entity\\Criteria::FREQUENCY_PUNCTUAL') %}
-          			Punctual
-          			{% else %}
-          			Regular
-          			{% endif %}
-          		</td>
-          		<td>{{ proposal.criteria.fromDate|date('Y-m-d') }}</td>
-          		<td>
-          			<a class="button is-link" href="{{ path('user_proposal_matchings',{'id':user.id,'idProposal':proposal.id}) }}"> Matchings</a>
-          			<a class="button is-danger" href="{{ path('user_proposal_delete',{'id':user.id,'idProposal':proposal.id}) }}"> Delete</a>
-          		</td>
-          	</tr>
+          	<div class="box">
+				<h3 class="title">Votre annonce {{ proposal.criteria.driver == 1 ? (proposal.criteria.passenger == 1 ? "conducteur/passager" : "conducteur") : "passager" }}</h3>
+				<div class="columns">
+					<div class="column">
+						<p><strong>Origine : </strong>{{ proposal.waypoints[0].address.streetAddress }} {{ proposal.waypoints[0].address.postalCode }} {{ proposal.waypoints[0].address.addressLocality }}</p>
+						<p><strong>Fréquence : </strong>{{ proposal.criteria.frequency == 1 ? "Ponctuel" : "Régulier" }}</p>
+						<p><strong>Distance : </strong>{{ proposal.criteria.driver == 1 ? (proposal.criteria.directionDriver.distance / 1000)|round(2) : (proposal.criteria.directionPassenger.distance / 1000)|round(2) }} km</p>
+						<p><a class="button is-primary" href="{{ path('ad_results',{'id':proposal.id}) }}">Résultats</a></p>
+					</div>
+					<div class="column">
+						<p><strong>Destination : </strong>{{ proposal.waypoints[1].address.streetAddress }} {{ proposal.waypoints[1].address.postalCode }} {{ proposal.waypoints[1].address.addressLocality }}</p>
+						{% if proposal.criteria.frequency == 1 %}
+						<p><strong>Date : </strong>le {{ proposal.criteria.fromDate|date('d/m/Y') }} à {{ proposal.criteria.fromTime|date('H:i') }}</p>
+						{% else %}
+						<p><strong>Date : </strong>du {{ proposal.criteria.fromDate|date('d/m/Y') }} au {{ proposal.criteria.toDate|date('d/m/Y') }}</p>
+						{% endif %}
+						<p><strong>Durée : </strong>{{ proposal.criteria.driver == 1 ? (proposal.criteria.directionDriver.duration / 60)|round : (proposal.criteria.directionPassenger.duration / 60)|round }} minutes</p>
+					</div>
+					<div class="column">
+						<p><strong>Type : </strong>{{ proposal.type == 1 ? "Aller simple" : "Aller-retour" }}</p>
+						{% if proposal.criteria.frequency == 2 %}
+						<p><strong>Jours : </strong>
+							{% if proposal.criteria.monCheck %}L {% endif %}
+							{% if proposal.criteria.tueCheck %}M {% endif %}
+							{% if proposal.criteria.wedCheck %}Me {% endif %}
+							{% if proposal.criteria.thuCheck %}J {% endif %}
+							{% if proposal.criteria.friCheck %}V {% endif %}
+							{% if proposal.criteria.satCheck %}S {% endif %}
+							{% if proposal.criteria.sunCheck %}D {% endif %}
+						</p>
+						{% else %}
+						<p></p>
+						{% endif %}
+					</div>
+				</div>
+			</div>
       	    {% endfor %}
       	</table>
       	{% else %}
-      	<span class="tag is-warning">No proposals found.</span>
+      	<span class="tag is-warning">Vous n'avez pas publié d'annonces.</span>
       	{% endif %}
   	</div>
 </section>

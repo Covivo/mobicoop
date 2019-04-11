@@ -23,6 +23,13 @@ user_proposal_create:
         en: /user/proposal/create
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProposalCreate
 
+# proposals
+user_proposals:
+    path:
+        fr: /utilisateur/annonces
+        en: /user/ads
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProposals
+
 # profile
 user_profile:
     path:

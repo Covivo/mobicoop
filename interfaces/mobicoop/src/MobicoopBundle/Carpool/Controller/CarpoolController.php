@@ -32,6 +32,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Symfony\Component\HttpFoundation\Response;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 
 /**
  * Controller class for carpooling related actions.
@@ -117,8 +118,39 @@ class CarpoolController extends AbstractController
      */
     public function adPostResults($id, ProposalManager $proposalManager)
     {
+        $proposal = $proposalManager->getProposal($id);
+
+        // foreach ($proposal->getMatchingOffers() as $matching) {
+        //     if ($matching->getProposalOffer() instanceof Proposal) {
+        //         if (!$matching->getProposalOffer()->getUser() instanceof User) {
+        //             $proposalOffer = $proposalManager->getProposal($matching->getProposalOffer()->getId());
+        //             $matching->getProposalOffer()->setUser($proposalOffer->getUser());
+        //         }
+        //     }
+        //     if ($matching->getProposalRequest() instanceof Proposal) {
+        //         if (!$matching->getProposalRequest()->getUser() instanceof User) {
+        //             $proposalRequest = $proposalManager->getProposal($matching->getProposalRequest()->getId());
+        //             $matching->getProposalRequest()->setUser($proposalRequest->getUser());
+        //         }
+        //     }
+        // }
+        // foreach ($proposal->getMatchingRequests() as $matching) {
+        //     if ($matching->getProposalOffer() instanceof Proposal) {
+        //         if (!$matching->getProposalOffer()->getUser() instanceof User) {
+        //             $proposalOffer = $proposalManager->getProposal($matching->getProposalOffer()->getId());
+        //             $matching->getProposalOffer()->setUser($proposalOffer->getUser());
+        //         }
+        //     }
+        //     if ($matching->getProposalRequest() instanceof Proposal) {
+        //         if (!$matching->getProposalRequest()->getUser() instanceof User) {
+        //             $proposalRequest = $proposalManager->getProposal($matching->getProposalRequest()->getId());
+        //             $matching->getProposalRequest()->setUser($proposalRequest->getUser());
+        //         }
+        //     }
+        // }
+
         return $this->render('@Mobicoop/proposal/ad_results.html.twig', [
-            'proposal' => $proposalManager->getProposal($id)
+            'proposal' => $proposal
         ]);
     }
 }

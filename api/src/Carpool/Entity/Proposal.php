@@ -152,6 +152,7 @@ class Proposal
      * @var \DateTimeInterface Creation date of the proposal.
      *
      * @ORM\Column(type="datetime")
+     * @Groups("read")
      */
     private $createdDate;
 
@@ -161,7 +162,6 @@ class Proposal
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","write"})
-     * @MaxDepth(1)
      */
     private $proposalLinked;
     
@@ -170,7 +170,6 @@ class Proposal
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposals")
      * @Groups({"read","write"})
-     * @MaxDepth(1)
      */
     private $user;
 
@@ -181,8 +180,6 @@ class Proposal
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"read","write"})
-     * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
      */
     private $waypoints;
     
@@ -191,7 +188,6 @@ class Proposal
      *
      * @ORM\ManyToMany(targetEntity="\App\Travel\Entity\TravelMode")
      * @Groups({"read","write"})
-     * @MaxDepth(1)
      */
     private $travelModes;
 
@@ -200,8 +196,6 @@ class Proposal
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
-     * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
      */
     private $matchingOffers;
 
@@ -210,8 +204,6 @@ class Proposal
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
-     * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
      */
     private $matchingRequests;
 
@@ -227,7 +219,6 @@ class Proposal
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="proposal", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups({"read","write"})
-     * @MaxDepth(1)
      */
     private $criteria;
     
@@ -237,8 +228,6 @@ class Proposal
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\IndividualStop", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"read","write"})
-     * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
      */
     private $individualStops;
         

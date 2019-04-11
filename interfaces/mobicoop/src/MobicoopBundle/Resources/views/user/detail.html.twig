@@ -20,6 +20,7 @@
     	<a class="button is-primary" href="{{ path('user_profile_update') }}">{% trans from 'ui' %}user.profile.buttons.update{% endtrans %}</a>
     	<a class="button is-warning" href="{{ path('user_password_update') }}">{% trans from 'ui' %}user.profile.buttons.password{% endtrans %}</a>
     	<a class="button is-danger" href="{{ path('user_profile_delete') }}">{% trans from 'ui' %}user.profile.buttons.delete{% endtrans %}</a>
+		<a class="button is-link" href="{{ path('user_proposals') }}">{% trans from 'ui' %}user.profile.buttons.ads{% endtrans %}</a>
     	<table class="table">
 			<tr><th>{% trans from 'user' %}email.label{% endtrans %}</th><td>{{ user.email }}</td></tr>
 			<tr><th>{% trans from 'user' %}givenName.label{% endtrans %}</th><td>{{ user.givenName }}</td></tr>
