@@ -7,11 +7,11 @@ import Buefy from 'buefy';
 import '../css/app.scss';
 
 
-Vue.use(Buefy);
-
-new Vue({
-  el: '#app'
-});
+// Vue.use(Buefy);
+//
+// new Vue({
+//   el: '#app'
+// });
 
 //
 document.addEventListener('DOMContentLoaded', () => {

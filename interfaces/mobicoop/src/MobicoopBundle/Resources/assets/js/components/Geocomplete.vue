@@ -2,6 +2,7 @@
   <section>
     <b-field>
       <b-autocomplete
+        :id="name"
         :data="data"
         field="concatenedAddr"
         :placeholder="placeholder"

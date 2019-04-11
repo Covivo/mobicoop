@@ -39,6 +39,13 @@ body {
   //h1 {
   // font-size: 75px;
   //}
+  button#rechercher {
+    padding: 0 !important;
+    margin-top: 24px;
+    font-size: 100% !important;
+    font-family: inherit !important;
+    border: 0 !important;
+  }
   *:focus {
     outline: 3px solid orange !important;
   }
