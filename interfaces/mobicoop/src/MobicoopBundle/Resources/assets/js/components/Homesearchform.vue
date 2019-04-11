@@ -9,45 +9,17 @@
               <label
                 class="label"
                 for="origin"
-              >
+              >Départ
                 <geocomplete
+                  expanded
                   name="origin"
                   placeholder="Depuis"
+                  title="Depuis"
+                  aria-label="Départ"
                   :url="geoSearchUrl"
                   @geoSelected="selectedGeo"
                 />
-                <geocomplete
-                  name="destination"
-                  placeholder="Vers"
-                  :url="geoSearchUrl"
-                  @geoSelected="selectedGeo"
-                />
-                <!-- datepicker -->
-                <b-datepicker
-                  v-model="outwardDate"
-                  :placeholder="'Date de départ...'"
-                  :day-names="daysShort"
-                  :month-names="months"
-                  :first-day-of-week="1"
-                  position="is-top-right"
-                  icon-pack="fas"
-                />
-                <!-- timepicker -->
-                <b-timepicker
-                  v-model="outwardTime"
-                  placeholder="Heure de départ..."
-                >
-                  Départ
-                  <geocomplete
-                    expanded
-                    name="origin"
-                    placeholder="Depuis"
-                    title="Depuis"
-                    aria-label="Départ"
-                    :url="geoSearchUrl"
-                    @geoSelected="selectedGeo"
-                  />
-                </b-timepicker></label>
+              </label>
               <label
                 class="label"
                 for="destination"
@@ -60,6 +32,7 @@
                   @geoSelected="selectedGeo"
                 />
               </label>
+              <!-- datepicker -->
               <label
                 class="label"
                 for="dateDepart"
@@ -74,10 +47,10 @@
                   :first-day-of-week="1"
                   position="is-top-right"
                   icon-pack="fas"
-                  readonly="a"
                   editable
                 />
               </label>
+              <!-- timepicker -->
               <label
                 class="label"
                 for="heureDepart"
@@ -104,6 +77,7 @@
                   </button>
                 </b-timepicker>
               </label>
+              <!-- search button -->
               <label
                 for="rechercher"
                 class="label"
@@ -127,19 +101,6 @@
                   </a>
                 </button>
               </label>
-              <!-- search button -->
-              <a
-                class="button is-mobicoopblue"
-                :href="checkUrlValid ? urlToCall : null"
-                :disabled="!checkUrlValid"
-              >
-                <b-icon
-                  pack="fas"
-                  icon="search"
-                  size="is-small"
-                >
-                  />
-                </b-icon></a>
             </b-field>
           </div>
         </div>
