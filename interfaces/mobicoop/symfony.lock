@@ -5,6 +5,9 @@
     "symfony/contracts": {
         "version": "v1.0.2"
     },
+    "symfony/polyfill-intl-idn": {
+        "version": "v1.11.0"
+    },
     "symfony/security-core": {
         "version": "v4.2.3"
     },
