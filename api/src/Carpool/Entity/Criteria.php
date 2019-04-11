@@ -504,7 +504,6 @@ class Criteria
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\Car")
      * @Groups({"read","write"})
-     * @MaxDepth(1)
      */
     private $car;
     
@@ -513,7 +512,6 @@ class Criteria
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
      * @Groups({"read","write"})
-     * @MaxDepth(1)
      */
     private $directionDriver;
     
@@ -522,7 +520,6 @@ class Criteria
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
      * @Groups({"read","write"})
-     * @MaxDepth(1)
      */
     private $directionPassenger;
     
@@ -531,7 +528,6 @@ class Criteria
      *
      * @ORM\ManyToOne(targetEntity="\App\PublicTransport\Entity\PTJourney")
      * @Groups({"read","write"})
-     * @MaxDepth(1)
      */
     private $ptjourney;
 
@@ -540,7 +536,6 @@ class Criteria
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="criteria")
      * @Groups({"read","write"})
-     * @MaxDepth(1)
      */
     private $proposal;
 

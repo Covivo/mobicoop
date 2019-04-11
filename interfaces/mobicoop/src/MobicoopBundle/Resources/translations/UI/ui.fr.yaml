@@ -29,6 +29,7 @@ user:
             update: 'Mettre à jour'
             password: 'Mot de passe'
             delete: 'Supprimer mon compte'
+            ads: 'Mes annonces'
     profile_update:
         title: 'Mettre à jour mon profil'
         h1: 'Mettre à jour mon profil'

@@ -52,7 +52,6 @@ use Doctrine\Common\Collections\Collection;
  * @UniqueEntity("email")
  * @ApiResource(
  *      attributes={
- *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -211,8 +210,6 @@ class User
      *
      * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Address", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
-     * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
      */
     private $addresses;
     
@@ -221,8 +218,6 @@ class User
      *
      * @ORM\OneToMany(targetEntity="\App\User\Entity\Car", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
-     * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
      */
     private $cars;
 
@@ -230,8 +225,7 @@ class User
      * @var Proposal[]|null The proposals made by this user.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
-     * @ApiSubresource(maxDepth=1)
-     * @MaxDepth(1)
+     * @Apisubresource
      */
     private $proposals;
 
@@ -239,7 +233,6 @@ class User
      * @var Ask[]|null The asks made by this user.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
-     * @ApiSubresource(maxDepth=1)
      */
     private $asks;
     

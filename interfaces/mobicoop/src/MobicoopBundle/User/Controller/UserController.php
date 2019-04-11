@@ -206,6 +206,16 @@ class UserController extends AbstractController
         ]);
     }
 
+    /**
+     * Retrieve all proposals for the current user.
+     * @IsGranted("ROLE_USER")
+     */
+    public function userProposals(UserManager $userManager, ProposalManager $proposalManager)
+    {
+        return $this->render('@Mobicoop/proposal/index.html.twig', [
+            'hydra' => $proposalManager->getProposals($userManager->getLoggedUser())
+        ]);
+    }
 
     // ADMIN
 
@@ -253,23 +263,6 @@ class UserController extends AbstractController
         }
     }
     
-
-
-    /**
-     * Retrieve all proposals for a user.
-     *
-     * @Route("/user/{id}/proposals", name="user_proposals", requirements={"id"="\d+"})
-     *
-     */
-    public function userProposals($id, ProposalManager $proposalManager)
-    {
-        $user = new User($id);
-        return $this->render('@Mobicoop/proposal/index.html.twig', [
-            'user' => $user,
-            'hydra' => $proposalManager->getProposals($user)
-        ]);
-    }
-
     /**
      * Retrieve all matchings for a proposal.
      *

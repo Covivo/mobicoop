@@ -40,7 +40,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
- *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -96,7 +95,6 @@ class Matching
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read"})
-     * @MaxDepth(1)
      */
     private $criteria;
 
@@ -105,8 +103,6 @@ class Matching
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="matching", cascade={"remove"}, orphanRemoval=true)
      * @Groups({"read"})
-     * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
      */
     private $asks;
 
@@ -117,8 +113,6 @@ class Matching
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="matching", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"read","write"})
-     * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
      */
     private $waypoints;
 
