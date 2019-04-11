@@ -11,7 +11,7 @@
                 for="origin"
               >Départ
                 <geocomplete
-                  expanded
+                  id="origin"
                   name="origin"
                   placeholder="Depuis"
                   title="Depuis"
@@ -25,6 +25,7 @@
                 for="destination"
               >Destination
                 <geocomplete
+                  id="destination"
                   name="destination"
                   placeholder="Vers"
                   title="Vers"
