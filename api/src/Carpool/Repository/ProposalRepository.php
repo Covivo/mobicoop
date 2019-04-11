@@ -346,7 +346,7 @@ class ProposalRepository
                 $maxTime = "(";
                 $regularDay = "";
                 $regularTime = "";
-                if ($proposal->getCriteria()->getSunCheck()) {
+                if ($proposal->getCriteria()->isSunCheck()) {
                     $minTime .= '(DAYOFWEEK(c.fromDate) = 1 and c.maxTime >= :sunMinTime) OR ';
                     $maxTime .= '(DAYOFWEEK(c.fromDate) = 1 and c.minTime <= :sunMaxTime) OR ';
                     $regularSunDay = 'c.sunCheck = 1';
@@ -364,7 +364,7 @@ class ProposalRepository
                     $setSunMaxTime = true;
                     $days .= "1,";
                 }
-                if ($proposal->getCriteria()->getMonCheck()) {
+                if ($proposal->getCriteria()->isMonCheck()) {
                     $minTime .= '(DAYOFWEEK(c.fromDate) = 2 and c.maxTime >= :monMinTime) OR ';
                     $maxTime .= '(DAYOFWEEK(c.fromDate) = 2 and c.minTime <= :monMaxTime) OR ';
                     $regularMonDay = 'c.monCheck = 1';
@@ -382,7 +382,7 @@ class ProposalRepository
                     $setMonMaxTime = true;
                     $days .= "2,";
                 }
-                if ($proposal->getCriteria()->getTueCheck()) {
+                if ($proposal->getCriteria()->isTueCheck()) {
                     $minTime .= '(DAYOFWEEK(c.fromDate) = 3 and c.maxTime >= :tueMinTime) OR ';
                     $maxTime .= '(DAYOFWEEK(c.fromDate) = 3 and c.minTime <= :tueMaxTime) OR ';
                     $regularTueDay = 'c.tueCheck = 1';
@@ -400,7 +400,7 @@ class ProposalRepository
                     $setTueMaxTime = true;
                     $days .= "3,";
                 }
-                if ($proposal->getCriteria()->getWedCheck()) {
+                if ($proposal->getCriteria()->isWedCheck()) {
                     $minTime .= '(DAYOFWEEK(c.fromDate) = 4 and c.maxTime >= :wedMinTime) OR ';
                     $maxTime .= '(DAYOFWEEK(c.fromDate) = 4 and c.minTime <= :wedMaxTime) OR ';
                     $regularWedDay = 'c.wedCheck = 1';
@@ -418,7 +418,7 @@ class ProposalRepository
                     $setWedMaxTime = true;
                     $days .= "4,";
                 }
-                if ($proposal->getCriteria()->getThuCheck()) {
+                if ($proposal->getCriteria()->isThuCheck()) {
                     $minTime .= '(DAYOFWEEK(c.fromDate) = 5 and c.maxTime >= :thuMinTime) OR ';
                     $maxTime .= '(DAYOFWEEK(c.fromDate) = 5 and c.minTime <= :thuMaxTime) OR ';
                     $regularThuDay = 'c.thuCheck = 1';
@@ -436,7 +436,7 @@ class ProposalRepository
                     $setThuMaxTime = true;
                     $days .= "5,";
                 }
-                if ($proposal->getCriteria()->getFriCheck()) {
+                if ($proposal->getCriteria()->isFriCheck()) {
                     $minTime .= '(DAYOFWEEK(c.fromDate) = 6 and c.maxTime >= :friMinTime) OR ';
                     $maxTime .= '(DAYOFWEEK(c.fromDate) = 6 and c.minTime <= :friMaxTime) OR ';
                     $regularFriDay = 'c.friCheck = 1';
@@ -454,7 +454,7 @@ class ProposalRepository
                     $setFriMaxTime = true;
                     $days .= "6,";
                 }
-                if ($proposal->getCriteria()->getSatCheck()) {
+                if ($proposal->getCriteria()->isSatCheck()) {
                     $minTime .= '(DAYOFWEEK(c.fromDate) = 7 and c.maxTime >= :satMinTime) OR ';
                     $maxTime .= '(DAYOFWEEK(c.fromDate) = 7 and c.minTime <= :satMaxTime) OR ';
                     $regularSatDay = 'c.satCheck = 1';

@@ -25,8 +25,6 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
 use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
-use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * Carpooling : an ad on the platform (offer from a driver / request from a passenger).
@@ -95,8 +93,8 @@ class Ad
     // PUNCTUAL
 
     /**
-     * @var \DateTime Date of the outward travel if punctual (in string format as we use a datepicker).
-     * @Assert\NotBlank(groups={"punctual"})
+     * @var \DateTimeInterface Date of the outward travel if punctual (in string format as we use a datepicker).
+     * @Assert\NotBlank(groups={"punctual","regular"})
      *
      */
     private $outwardDate;
@@ -114,7 +112,7 @@ class Ad
 
     /**
      * @var \DateTimeInterface Date of the return travel if punctual (in string format as we use a datepicker).
-     * @Assert\NotBlank(groups={"punctualReturnTrip"})
+     * @Assert\NotBlank(groups={"punctualReturnTrip","regular"})
      */
     private $returnDate;
 
@@ -134,13 +132,11 @@ class Ad
 
     /**
      * @var \DateTimeInterface Date of the first travel if regular.
-     * @Assert\NotBlank(groups={"regular"})
      */
     private $fromDate;
 
     /**
      * @var \DateTimeInterface Date of the last travel if regular.
-     * @Assert\NotBlank(groups={"regular"})
      */
     private $toDate;
 
@@ -386,7 +382,7 @@ class Ad
 
     // PUNCTUAL
     
-    public function getOutwardDate()
+    public function getOutwardDate(): ?\DateTimeInterface
     {
         return $this->outwardDate;
     }
@@ -429,7 +425,7 @@ class Ad
         return $this->returnDate;
     }
     
-    public function setReturnDate(?\DateTimeInterface $returnDate): ?\DateTime
+    public function setReturnDate(?string $returnDate): ?\DateTime
     {
         if ($returnDate = \DateTime::createFromFormat('Y/m/d', $returnDate)) {
             $this->returnDate = $returnDate;
@@ -470,11 +466,13 @@ class Ad
         return $this->fromDate;
     }
     
-    public function setFromDate(?\DateTimeInterface $fromDate): self
+    public function setFromDate(?string $fromDate): ?\DateTime
     {
-        $this->fromDate = $fromDate;
-        
-        return $this;
+        if ($fromDate = \DateTime::createFromFormat('Y/m/d', $fromDate)) {
+            $this->fromDate = $fromDate;
+            return $fromDate;
+        }
+        return null;
     }
 
     public function getToDate(): ?\DateTimeInterface
@@ -482,11 +480,13 @@ class Ad
         return $this->toDate;
     }
     
-    public function setToDate(?\DateTimeInterface $toDate): self
+    public function setToDate(?string $toDate): ?\DateTime
     {
-        $this->toDate = $toDate;
-        
-        return $this;
+        if ($toDate = \DateTime::createFromFormat('Y/m/d', $toDate)) {
+            $this->toDate = $toDate;
+            return $toDate;
+        }
+        return null;
     }
 
     public function getOutwardMonTime(): ?string

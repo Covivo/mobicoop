@@ -90,37 +90,37 @@ class ProposalManager
             $proposal->getCriteria()->setMinTime($minTime);
             $proposal->getCriteria()->setMaxTime($maxTime);
         } else {
-            if ($proposal->getCriteria()->getMonCheck()) {
+            if ($proposal->getCriteria()->isMonCheck()) {
                 list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getMonTime(), $proposal->getCriteria()->getMonMarginDuration());
                 $proposal->getCriteria()->setMonMinTime($minTime);
                 $proposal->getCriteria()->setMonMaxTime($maxTime);
             }
-            if ($proposal->getCriteria()->getTueCheck()) {
+            if ($proposal->getCriteria()->isTueCheck()) {
                 list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getTueTime(), $proposal->getCriteria()->getTueMarginDuration());
                 $proposal->getCriteria()->setTueMinTime($minTime);
                 $proposal->getCriteria()->setTueMaxTime($maxTime);
             }
-            if ($proposal->getCriteria()->getWedCheck()) {
+            if ($proposal->getCriteria()->isWedCheck()) {
                 list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getWedTime(), $proposal->getCriteria()->getWedMarginDuration());
                 $proposal->getCriteria()->setWedMinTime($minTime);
                 $proposal->getCriteria()->setWedMaxTime($maxTime);
             }
-            if ($proposal->getCriteria()->getThuCheck()) {
+            if ($proposal->getCriteria()->isThuCheck()) {
                 list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getThuTime(), $proposal->getCriteria()->getThuMarginDuration());
                 $proposal->getCriteria()->setThuMinTime($minTime);
                 $proposal->getCriteria()->setThuMaxTime($maxTime);
             }
-            if ($proposal->getCriteria()->getFriCheck()) {
+            if ($proposal->getCriteria()->isFriCheck()) {
                 list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getFriTime(), $proposal->getCriteria()->getFriMarginDuration());
                 $proposal->getCriteria()->setFriMinTime($minTime);
                 $proposal->getCriteria()->setFriMaxTime($maxTime);
             }
-            if ($proposal->getCriteria()->getSatCheck()) {
+            if ($proposal->getCriteria()->isSatCheck()) {
                 list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getSatTime(), $proposal->getCriteria()->getSatMarginDuration());
                 $proposal->getCriteria()->setSatMinTime($minTime);
                 $proposal->getCriteria()->setSatMaxTime($maxTime);
             }
-            if ($proposal->getCriteria()->getSunCheck()) {
+            if ($proposal->getCriteria()->isSunCheck()) {
                 list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getSunTime(), $proposal->getCriteria()->getSunMarginDuration());
                 $proposal->getCriteria()->setSunMinTime($minTime);
                 $proposal->getCriteria()->setSunMaxTime($maxTime);
@@ -149,6 +149,7 @@ class ProposalManager
         $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
 
         if ($persist) {
+            // TODO : here we should remove the previously matched proposal if they already exist
             $this->entityManager->persist($proposal);
         }
 
