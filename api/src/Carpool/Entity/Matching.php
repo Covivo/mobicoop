@@ -29,7 +29,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Events;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
-use App\Geography\Entity\Direction;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -44,12 +43,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={},
+ *      collectionOperations={"get"},
  *      itemOperations={"get"}
  * )
  */
 class Matching
 {
+    const DEFAULT_ID = 999999999999;
+    
     /**
      * @var int The id of this matching.
      *
@@ -71,10 +72,9 @@ class Matching
      * @var Proposal The offer proposal.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingRequests")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingOffers")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
-     * @MaxDepth(1)
      */
     private $proposalOffer;
 
@@ -82,10 +82,9 @@ class Matching
      * @var Proposal The request proposal.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingOffers")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingRequests")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
-     * @MaxDepth(1)
      */
     private $proposalRequest;
 
@@ -96,17 +95,14 @@ class Matching
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read"})
-     * @MaxDepth(1)
      */
     private $criteria;
 
     /**
      * @var Ask[] The asks made for this matching.
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\ask", mappedBy="matching", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="matching", cascade={"remove"}, orphanRemoval=true)
      * @Groups({"read"})
-     * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
      */
     private $asks;
 
@@ -117,13 +113,18 @@ class Matching
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="matching", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"read","write"})
-     * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
      */
     private $waypoints;
-    
+
+    /**
+     * @var array The filters returned to the user. The user can then filter and sort the results.
+     * @Groups({"read","write"})
+     */
+    private $filters;
+
     public function __construct()
     {
+        $this->id = self::DEFAULT_ID;
         $this->asks = new ArrayCollection();
         $this->waypoints = new ArrayCollection();
     }
@@ -242,7 +243,19 @@ class Matching
 
         return $this;
     }
-    
+
+    public function getFilters(): ?array
+    {
+        return $this->filters;
+    }
+
+    public function setFilters(array $filters): self
+    {
+        $this->filters = $filters;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
     
     /**

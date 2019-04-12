@@ -66,7 +66,7 @@ class GeoSearchController
 
         $resultArray = [];
         foreach ($result as $value) {
-            $address = new Address(1);
+            $address = new Address();
             $address->setLatitude($value->getCoordinates()->getLatitude());
             $address->setLongitude($value->getCoordinates()->getLongitude()) ;
 

@@ -11,6 +11,9 @@
             "ref": "18727d8f229306860b46955f438e1897421da689"
         }
     },
+    "beberlei/doctrineextensions": {
+        "version": "v1.2.0"
+    },
     "behat/transliterator": {
         "version": "v1.2.0"
     },
@@ -82,6 +85,9 @@
     },
     "doctrine/reflection": {
         "version": "v1.0.0"
+    },
+    "fig/link-util": {
+        "version": "1.0.0"
     },
     "geocoder-php/bing-maps-provider": {
         "version": "4.0.0"
@@ -202,6 +208,9 @@
     },
     "psr/http-message": {
         "version": "1.0.1"
+    },
+    "psr/link": {
+        "version": "1.0.0"
     },
     "psr/log": {
         "version": "1.1.0"
@@ -406,6 +415,9 @@
     },
     "symfony/var-exporter": {
         "version": "v4.2.3"
+    },
+    "symfony/web-link": {
+        "version": "v4.2.5"
     },
     "symfony/web-server-bundle": {
         "version": "3.3",

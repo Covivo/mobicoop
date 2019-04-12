@@ -96,12 +96,12 @@ class Proposal implements Resource
     /**
      * @var Matching[]|null The matching of the proposal (if proposal is an offer).
      */
-    private $matchingRequests;
+    private $matchingOffers;
 
     /**
      * @var Matching[]|null The matching of the proposal (if proposal is a request).
      */
-    private $matchingOffers;
+    private $matchingRequests;
 
     /**
      * @var Criteria The criteria applied to the proposal.
@@ -124,8 +124,8 @@ class Proposal implements Resource
         }
         $this->waypoints = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
-        $this->matchingRequests = new ArrayCollection();
         $this->matchingOffers = new ArrayCollection();
+        $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
     }
 
@@ -134,8 +134,8 @@ class Proposal implements Resource
         // when we clone a Proposal we keep only the basic properties, we re-initialize all the collections
         $this->waypoints = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
-        $this->matchingRequests = new ArrayCollection();
         $this->matchingOffers = new ArrayCollection();
+        $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
     }
 
@@ -179,18 +179,6 @@ class Proposal implements Resource
     public function setComment(?string $comment): self
     {
         $this->comment = $comment;
-        
-        return $this;
-    }
-    
-    public function getCreatedDate(): ?\DateTimeInterface
-    {
-        return $this->createdDate;
-    }
-    
-    public function setCreatedDate(\DateTimeInterface $createdDate): self
-    {
-        $this->createdDate = $createdDate;
         
         return $this;
     }
@@ -294,7 +282,7 @@ class Proposal implements Resource
     {
         if (!$this->matchingRequests->contains($matchingRequest)) {
             $this->matchingRequests[] = $matchingRequest;
-            $matchingRequest->setProposalOffer($this);
+            $matchingRequest->setProposalRequest($this);
         }
         
         return $this;
@@ -305,8 +293,8 @@ class Proposal implements Resource
         if ($this->matchingRequests->contains($matchingRequest)) {
             $this->matchingRequests->removeElement($matchingRequest);
             // set the owning side to null (unless already changed)
-            if ($matchingRequest->getProposalOffer() === $this) {
-                $matchingRequest->setProposalOffer(null);
+            if ($matchingRequest->getProposalRequest() === $this) {
+                $matchingRequest->setProposalRequest(null);
             }
         }
         
@@ -325,7 +313,7 @@ class Proposal implements Resource
     {
         if (!$this->matchingOffers->contains($matchingOffer)) {
             $this->matchingOffers[] = $matchingOffer;
-            $matchingOffer->setProposalRequest($this);
+            $matchingOffer->setProposalOffer($this);
         }
         
         return $this;
@@ -336,8 +324,8 @@ class Proposal implements Resource
         if ($this->matchingOffers->contains($matchingOffer)) {
             $this->matchingOffers->removeElement($matchingOffer);
             // set the owning side to null (unless already changed)
-            if ($matchingOffer->getProposalRequest() === $this) {
-                $matchingOffer->setProposalRequest(null);
+            if ($matchingOffer->getProposalOffer() === $this) {
+                $matchingOffer->setProposalOffer(null);
             }
         }
         

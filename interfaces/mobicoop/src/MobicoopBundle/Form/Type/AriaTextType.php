@@ -29,29 +29,36 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
-class DatepickerType extends AbstractType
+class AriaTextType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            
+            'aria-required' => '',
+            'aria-describedby' => '',
+            'aria-labelledby' => '',
+            'aria-label' => ''
         ]);
     }
-    
+
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
+        $view->vars['aria_required'] = $options['aria-required'];
+        $view->vars['aria_describedby'] = $options['aria-describedby'];
+        $view->vars['aria_labelledby'] = $options['aria-labelledby'];
+        $view->vars['aria_label'] = $options['aria-label'];
     }
-    
+
     public function getParent()
     {
         return TextType::class;
     }
-    
+
     /**
      * {@inheritdoc}
      */
     public function getBlockPrefix()
     {
-        return 'datepicker';
+        return 'ariatext';
     }
 }

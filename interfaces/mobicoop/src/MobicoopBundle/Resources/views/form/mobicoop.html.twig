@@ -52,22 +52,88 @@
 
 {# Rows #}
 
-{%- block form_row -%}
-    <div class="field is-horizontal">
-    	<div class="field-label">
-	        {{- form_label(form) -}}
-	    </div>
-	    <div class="field-body">
-    		<div class="field">
-                {{- form_widget(form) -}}
-                {%- if form.vars.attr.help_text is defined -%}
-                    <p class="help">{{ form.vars.attr.help_text }}</p>
-                {%- endif -%}
-                {{- block('form_errors') -}}
-            </div>
-        </div>
-    </div>
-{%- endblock form_row -%}
+{#{%- block form_row -%}#}
+{#    <div class="field is-horizontal">#}
+{#    	<div class="field-label">#}
+{#	        {{- form_label(form) -}}#}
+{#	    </div>#}
+{#	    <div class="field-body">#}
+{#    		<div class="field">#}
+{#                {{- form_widget(form) -}}#}
+{#                {%- if form.vars.attr.help_text is defined -%}#}
+{#                    <p class="help">{{ form.vars.attr.help_text }}</p>#}
+{#                {%- endif -%}#}
+{#                {{- block('form_errors') -}}#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#{%- endblock form_row -%}#}
+{#{%- block widget_attributes -%}#}
+{#	id="{{ id }}" name="{{ full_name }}" aria-describedby="{{ id }}" aria-labelledby="{{ label }}" aria-label="{{ label }}"#}
+{#	{%- if disabled %} disabled="disabled"{% endif -%}#}
+{#	{%- if required %} required="required"{% endif -%}#}
+{#	{{ block('attributes') }}#}
+{#{%- endblock widget_attributes -%}#}
+
+{% block form_row -%}
+{#	{% set showErrorIcon = (not compound or force_error|default(false)) and not valid %}#}
+	<div class="field is-horizontal
+{#{% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}{{ showErrorIcon ? ' has-feedback' : '' }}#}
+">
+{#		{{ dump(label) }}#}
+		<div class="field-label">
+			{{- form_label(form) -}}
+		</div>
+		<div class="field-body">
+			<div class="field">
+				{% if help|default %}
+					{#			{% trans %}label{% endtrans %}#}
+					{# set the aria-describedby attribute #}
+					{%- set attr = attr|merge({'aria-describedby': 'help-block-'~id, 'aria-labellebedby': label|trans({}, translation_domain) }) -%}
+					{#			{{ dump(attr) }}#}
+				{% endif %}
+				{{- form_widget(form, {
+					'attr': attr
+				}) -}}
+			</div>
+			{% if help|default %}
+				<span class="help-block" id="help-block-{{ id }}" style="font-style: italic; color: #187a20">{{ help|trans({}, translation_domain) }} </span>
+			{% endif %}
+			{{- form_errors(form) -}}
+		</div>
+	</div>
+{%- endblock form_row %}
+
+{#surcharge widget pour aria#}
+{%- block password_widget -%}
+	{%- set type = type|default('password') -%}
+
+	{%- if type == 'range' or type == 'color' -%}
+{#		 Attribute "required" is not supported#}
+		{%- set required = false -%}
+	{%- endif -%}
+	<input type="{{ type }}" class="input" {{ block('widget_attributes_pass') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+{#pas utile car rendu par le form_row mais peut etre à faiore autrement si surcharge différente pour rendre les contenus d'accessbilité#}
+	{#	{% if help|default %}#}
+{#	<span class="help-block" id="help-block-{{ id }}" style="font-style: italic; color: #187a20">{{ help|trans({}, translation_domain) }} </span>#}
+{#	{% endif %}#}
+{#	{{- form_errors(form) -}}#}
+
+{%- endblock password_widget -%}
+{%- block widget_attributes_pass -%}
+	id="{{ id }}" name="{{ full_name }}" label="{{ label|trans({}, translation_domain) }}"
+
+		{# set the aria-describedby attribute #}
+	{#	{% if help|default %}#}
+	{%- set attr = attr|merge({'aria-describedby': 'help-block-'~id, 'aria-labellebedby': label|trans({}, translation_domain) }) -%}
+	{#	{% endif %}#}
+
+
+	{%- if disabled %} disabled="disabled"{% endif -%}
+	{%- if required %} required="required"{% endif -%}
+	{{ block('attributes') }}
+{%- endblock widget_attributes_pass -%}
+
 
 {%- block geocomplete_row -%}
     <div class="field is-horizontal">
@@ -156,6 +222,59 @@
 </div>
 {%- endblock timepicker_widget -%}
 
+
+
+{#{%- block choice_widget_collapsed -%}#}
+{#	{% spaceless %}#}
+{#		{%- set size_class = '' -%}#}
+{#		{%- for size in ['is-small', 'is-medium', 'is-large'] if size in form.vars.attr.class|default('') -%}#}
+{#			{%- set size_class = size -%}#}
+{#		{%- endfor -%}#}
+{#		{%- set is_multiple_class = multiple ? ' is-multiple' : '' -%}#}
+{#		<div {{ block('form_widget_container_attributes') }}>#}
+{#        <span class="{{ ('select ' ~ size_class ~ is_multiple_class)|trim }}">#}
+{#            {{- parent() -}}#}
+{#        </span>#}
+{#			{{- block('form_errors') -}}#}
+{#		</div>#}
+{#	{% endspaceless %}#}
+{#{%- endblock choice_widget_collapsed -%}#}
+
+
+
+{#{%- block ariatext_row -%}#}
+{#	<div class="field is-horizontal">#}
+{#		<div class="field-label">#}
+{#			{{- form_label(form) -}}#}
+{#		</div>#}
+{#		<div class="field-body">#}
+{#			<div class="field">#}
+{#				{% if help|default %}#}
+{#					#}{# set the aria-describedby attribute #}
+{#					{%- set attr = attr|merge({'aria-describedby': 'help-block-'~id }) -%}#}
+{#				{% endif %}#}
+{#				{{- form_widget(form, {#}
+{#					'attr': attr#}
+{#				}) -}}#}
+{#				{% if help|default %}#}
+{#					<span class="help-block" id="help-block-{{ id }}">{{ help }}</span>#}
+{#				{% endif %}#}
+{#				{{- form_errors(form) -}}#}
+{#				{%- if form.vars.attr.help_text is defined -%}#}
+{#					<p class="help">{{ form.vars.attr.help_text }}</p>#}
+{#				{%- endif -%}#}
+
+
+{#				{{ block('widget_attributes') }}#}
+{#						aria-label="'{{ form.vars.aria_label }}'"#}
+{#						aria-required="'{{ form.vars.aria_required }}'"#}
+{#						aria-describedby="'{{ form.vars.aria_describedby }}'"#}
+{#						aria-labelledby="'{{ form.vars.aria_labelledby }}'"#}
+{#			</div>#}
+{#			{{- block('form_errors') -}}#}
+{#		</div>#}
+{#	</div>#}
+{#{%- endblock ariatext_row -%}#}
 {# Errors #}
 
 {# Support #}
@@ -173,20 +292,4 @@
             {%- endif -%}
         {%- endfor -%}
     {%- endif -%}
-{%- endblock attributes -%}
-
-{%- block vwidget_attributes -%}
-    id="{{ id }}" name="{{ full_name }}"
-    {%- if disabled %} disabled="disabled"{% endif -%}
-    {%- if required %} required="required"{% endif -%}
-    {{ block('vattributes') }}
-{%- endblock vwidget_attributes -%}
-
-{% block vattributes -%}
-    {%- for attrname, attrvalue in attr -%}
-        {%- if attrname not in ['class'] -%}
-            {{- " " -}}    
-            {{- attrname }}="{{ attrvalue }}"
-        {%- endif -%}
-    {%- endfor -%}
-{%- endblock vattributes -%} #}
+{%- endblock attributes -%} #}

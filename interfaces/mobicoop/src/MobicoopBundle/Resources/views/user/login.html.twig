@@ -4,7 +4,7 @@
 
 {% block body %}
 
-<section class="hero is-primary">
+<section class="hero connexion">
 	<div class="hero-body">
     	<div class="container">
       		<h1 class="title">
@@ -16,8 +16,9 @@
 
 <section class="section">
 	<div class="container">
-        {{ form_start(form) }}
-        {{ form_errors(form) }}
+		<p>Les champs suivis d'une étoile (*) sont obligatoires</p>
+		{{ form_start(form) }}
+		{{ form_errors(form) }}
         {{ form_end(form) }}
     </div>
 </section>

@@ -24,35 +24,43 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
-class VueRadioType extends AbstractType
+class RepeatedAriaPassType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'model' => ''
+            'aria-required' => '',
+            'aria-describedby' => '',
+            'aria-labelledby' => '',
+            'aria-label' => ''
         ]);
     }
-    
+
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['model'] = $options['model'];
+        $view->vars['aria_required'] = $options['aria-required'];
+        $view->vars['aria_describedby'] = $options['aria-describedby'];
+        $view->vars['aria_labelledby'] = $options['aria-labelledby'];
+        $view->vars['aria_label'] = $options['aria-label'];
     }
-    
+
     public function getParent()
     {
-        return ChoiceType::class;
+        return RepeatedType::class;
     }
-    
+
     /**
      * {@inheritdoc}
      */
     public function getBlockPrefix()
     {
-        return 'vueradio';
+        return 'repeatedariapassword';
     }
 }

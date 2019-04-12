@@ -30,6 +30,9 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Form\AdForm;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
+use Symfony\Component\HttpFoundation\Response;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 
 /**
  * Controller class for carpooling related actions.
@@ -44,32 +47,110 @@ class CarpoolController extends AbstractController
      */
     public function ad(AdManager $adManager, UserManager $userManager, Request $request)
     {
-        $date = new \DateTime();
         $ad = new Ad();
         $ad->setRole(Ad::ROLE_BOTH);
         $ad->setType(Ad::TYPE_ONE_WAY);
         $ad->setFrequency(Ad::FREQUENCY_PUNCTUAL);
         $ad->setPrice(Ad::PRICE);
-        $ad->setOutwardDate($date->format('Y-m-d H:i'));
         $ad->setUser($userManager->getLoggedUser());
 
-        $form = $this->createForm(AdForm::class, $ad);
-        $form->handleRequest($request);
+        $form = $this->createForm(AdForm::class, $ad, ['csrf_protection' => false]);
         $error = false;
-
-        if ($form->isSubmitted()) {
-            $ad = $adManager->prepareAd($ad, $request);
-            if ($form->isValid()) {
-                if ($ad = $adManager->createProposalFromAd($ad)) {
-                    return $this->redirectToRoute('home');
-                }
-                $error = true;
+        $success = false;
+        
+        if ($request->isMethod('POST')) {
+            $createToken = $request->request->get('createToken');
+            if (!$this->isCsrfTokenValid('ad-create', $createToken)) {
+                return  new Response('Broken Token CSRF ', 403);
             }
+            $form->submit($request->request->get($form->getName()));
+            // $form->submit($request->request->all());
         }
 
-        return $this->render('@Mobicoop/ad/create.html.twig', [
-            'form' => $form->createView(),
-            'error' => $error
+        // If it's a get, just render the form !
+        if (!$form->isSubmitted()) {
+            return $this->render('@Mobicoop/ad/create.html.twig', [
+                'form' => $form->createView(),
+                'error' => $error
+            ]);
+        }
+        
+        // Not Valid populate error
+        if (!$form->isValid()) {
+            $error = [];
+            // Fields
+            foreach ($form as $child) {
+                if (!$child->isValid()) {
+                    foreach ($child->getErrors(true) as $err) {
+                        $error[$child->getName()][] = $err->getMessage();
+                    }
+                }
+            }
+            return $this->json(['error' => $error, 'success'=> $success]);
+        }
+
+        // Error happen durring proposol creation
+        try {
+            $proposal = $adManager->createProposalFromAd($ad);
+            $success = true;
+        } catch (Error $err) {
+            $error = $err;
+        }
+
+        return $this->json(['error' => $error, 'success'=> $success, 'proposal' => $proposal->getId()]);
+    }
+
+    /**
+     * Simple search results.
+     */
+    public function simpleSearchResults($origin, $destination, $origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date, ProposalManager $proposalManager)
+    {
+        return $this->render('@Mobicoop/search/simple_results.html.twig', [
+            'origin' => urldecode($origin),
+            'destination' => urldecode($destination),
+            'date' =>  \Datetime::createFromFormat("YmdHis", $date)->format('d/m/Y à H:i'),
+            'hydra' => $proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("YmdHis", $date))
+        ]);
+    }
+
+    /**
+     * Ad post results.
+     */
+    public function adPostResults($id, ProposalManager $proposalManager)
+    {
+        $proposal = $proposalManager->getProposal($id);
+
+        // foreach ($proposal->getMatchingOffers() as $matching) {
+        //     if ($matching->getProposalOffer() instanceof Proposal) {
+        //         if (!$matching->getProposalOffer()->getUser() instanceof User) {
+        //             $proposalOffer = $proposalManager->getProposal($matching->getProposalOffer()->getId());
+        //             $matching->getProposalOffer()->setUser($proposalOffer->getUser());
+        //         }
+        //     }
+        //     if ($matching->getProposalRequest() instanceof Proposal) {
+        //         if (!$matching->getProposalRequest()->getUser() instanceof User) {
+        //             $proposalRequest = $proposalManager->getProposal($matching->getProposalRequest()->getId());
+        //             $matching->getProposalRequest()->setUser($proposalRequest->getUser());
+        //         }
+        //     }
+        // }
+        // foreach ($proposal->getMatchingRequests() as $matching) {
+        //     if ($matching->getProposalOffer() instanceof Proposal) {
+        //         if (!$matching->getProposalOffer()->getUser() instanceof User) {
+        //             $proposalOffer = $proposalManager->getProposal($matching->getProposalOffer()->getId());
+        //             $matching->getProposalOffer()->setUser($proposalOffer->getUser());
+        //         }
+        //     }
+        //     if ($matching->getProposalRequest() instanceof Proposal) {
+        //         if (!$matching->getProposalRequest()->getUser() instanceof User) {
+        //             $proposalRequest = $proposalManager->getProposal($matching->getProposalRequest()->getId());
+        //             $matching->getProposalRequest()->setUser($proposalRequest->getUser());
+        //         }
+        //     }
+        // }
+
+        return $this->render('@Mobicoop/proposal/ad_results.html.twig', [
+            'proposal' => $proposal
         ]);
     }
 }

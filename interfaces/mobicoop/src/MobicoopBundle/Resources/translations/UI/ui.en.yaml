@@ -28,6 +28,7 @@ user:
             update: 'Update'
             password: 'Password'
             delete: 'Delete my account'
+            ads: 'My proposals'
     profile_update:
         title: 'Update my profile'
         h1: 'Update my profile'

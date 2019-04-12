@@ -29,6 +29,8 @@ install & enable in your .ini all its php extensions : [Docker file](https://git
 ## API
 
 - MariaDB Database with access user connection with an [already existing bu empty](https://dev.mysql.com/doc/refman/8.0/en/creating-database.html) database for api
+- A Geographic Information System (GIS), needed for direction calculation; we use the [Grapphopper routine engine](https://github.com/graphhopper/graphhopper) on a separate server; for now it's the only router supported but it could be replaced by any routing engine with little developments
+- A Geocoder for reverse geocoding, we use [BazingaGeocoderBundle](https://github.com/geocoder-php/BazingaGeocoderBundle) that can use any geocoder (locationiq, google maps, bing...)
 
 ## Admin (Back office)
 

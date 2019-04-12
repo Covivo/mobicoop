@@ -72,8 +72,17 @@ class DataProvider
     private $class;
     private $serializer;
     private $deserializer;
-    
-    public function __construct($uri, $username, $password, $authPath, Deserializer $deserializer)
+   
+    /**
+     * Constructor.
+     *
+     * @param string $uri
+     * @param string $username
+     * @param string $password
+     * @param string $authPath
+     * @param Deserializer $deserializer
+     */
+    public function __construct(string $uri, string $username, string $password, string $authPath, Deserializer $deserializer)
     {
         //Create your auth strategy
         $authStrategy = new JsonAuthStrategy(
@@ -185,6 +194,27 @@ class DataProvider
     }
 
     /**
+     * Get special collection operation
+     *
+     * @param string        $operation      The name of the special operation
+     * @param array|null    $params         An array of parameters
+     *
+     * @return Response The response of the operation.
+     */
+    public function getSpecialCollection(string $operation, ?array $params=null): Response
+    {
+        try {
+            $clientResponse = $this->client->get($this->resource.'/'.$operation, ['query'=>$params]);
+            if ($clientResponse->getStatusCode() == 200) {
+                return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody()));
+            }
+        } catch (TransferException $e) {
+            return new Response($e->getCode());
+        }
+        return new Response();
+    }
+
+    /**
      * Get sub collection operation
      *
      * @param int           $id             The id of the item
@@ -194,17 +224,15 @@ class DataProvider
      * @return Response The response of the operation.
      * @throws \ReflectionException
      */
-    public function getSubCollection(int $id, string $subClassName, string $subClassRoute=null, array $params=null): Response
+    public function getSubCollection(int $id, string $subClassName, ?string $subClassRoute=null, ?array $params=null): Response
     {
-        // @todo : send the params to the request in the json body of the request
-
         $route = $subClassRoute;
         if (is_null($route)) {
             $route = self::pluralize((new \ReflectionClass($subClassName))->getShortName());
         }
 
         try {
-            $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route);
+            $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route, ['query'=>$params]);
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody(), $subClassName));
             }

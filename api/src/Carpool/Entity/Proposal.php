@@ -39,7 +39,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Controller\ProposalPost;
 use App\Travel\Entity\TravelMode;
 use App\User\Entity\User;
-use App\Carpool\Filter\LocalityFilter;
 
 /**
  * Carpooling : proposal (offer from a driver / request from a passenger).
@@ -59,6 +58,55 @@ use App\Carpool\Filter\LocalityFilter;
  *              "method"="POST",
  *              "path"="/proposals",
  *              "controller"=ProposalPost::class,
+ *          },
+ *          "simple_search"={
+ *              "method"="GET",
+ *              "path"="/proposals/search",
+ *              "normalization_context"={"groups"={"read"}},
+ *              "swagger_context" = {
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "origin_latitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The latitude of the origin point"
+ *                      },
+ *                      {
+ *                          "name" = "origin_longitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The longitude of the origin point"
+ *                      },
+ *                      {
+ *                          "name" = "destination_latitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The latitude of the destination point"
+ *                      },
+ *                      {
+ *                          "name" = "destination_longitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The longitude of the destination point"
+ *                      },
+ *                      {
+ *                          "name" = "date",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "string",
+ *                          "format" = "date-time",
+ *                          "description" = "The date of the trip (on RFC3339 format)"
+ *                      },
+ *                  }
+ *              }
  *          }
  *      },
  *      itemOperations={"get","put","delete"}
@@ -68,6 +116,8 @@ use App\Carpool\Filter\LocalityFilter;
  */
 class Proposal
 {
+    const DEFAULT_ID = 999999999999;
+
     const TYPE_ONE_WAY = 1;
     const TYPE_OUTWARD = 2;
     const TYPE_RETURN = 3;
@@ -102,6 +152,7 @@ class Proposal
      * @var \DateTimeInterface Creation date of the proposal.
      *
      * @ORM\Column(type="datetime")
+     * @Groups("read")
      */
     private $createdDate;
 
@@ -111,7 +162,6 @@ class Proposal
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","write"})
-     * @MaxDepth(1)
      */
     private $proposalLinked;
     
@@ -120,7 +170,6 @@ class Proposal
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposals")
      * @Groups({"read","write"})
-     * @MaxDepth(1)
      */
     private $user;
 
@@ -131,8 +180,6 @@ class Proposal
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"read","write"})
-     * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
      */
     private $waypoints;
     
@@ -141,25 +188,24 @@ class Proposal
      *
      * @ORM\ManyToMany(targetEntity="\App\Travel\Entity\TravelMode")
      * @Groups({"read","write"})
-     * @MaxDepth(1)
      */
     private $travelModes;
 
     /**
      * @var Matching[]|null The matching of the proposal (if proposal is an offer).
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer")
-     * @ApiSubresource(maxDepth=1)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"read","write"})
      */
-    private $matchingRequests;
+    private $matchingOffers;
 
     /**
      * @var Matching[]|null The matching of the proposal (if proposal is a request).
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest")
-     * @ApiSubresource(maxDepth=1)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"read","write"})
      */
-    private $matchingOffers;
+    private $matchingRequests;
 
     /**
      * @var Criteria The criteria applied to the proposal.
@@ -173,7 +219,6 @@ class Proposal
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="proposal", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups({"read","write"})
-     * @MaxDepth(1)
      */
     private $criteria;
     
@@ -183,17 +228,19 @@ class Proposal
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\IndividualStop", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"read","write"})
-     * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
      */
     private $individualStops;
         
-    public function __construct()
+    public function __construct($id=null)
     {
+        $this->id = self::DEFAULT_ID;
+        if ($id) {
+            $this->id = $id;
+        }
         $this->waypoints = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
-        $this->matchingRequests = new ArrayCollection();
         $this->matchingOffers = new ArrayCollection();
+        $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
     }
     
@@ -202,8 +249,8 @@ class Proposal
         // when we clone a Proposal we keep only the basic properties, we re-initialize all the collections
         $this->waypoints = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
-        $this->matchingRequests = new ArrayCollection();
         $this->matchingOffers = new ArrayCollection();
+        $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
     }
 
@@ -347,7 +394,7 @@ class Proposal
     {
         if (!$this->matchingRequests->contains($matchingRequest)) {
             $this->matchingRequests[] = $matchingRequest;
-            $matchingRequest->setProposalOffer($this);
+            $matchingRequest->setProposalRequest($this);
         }
 
         return $this;
@@ -358,8 +405,8 @@ class Proposal
         if ($this->matchingRequests->contains($matchingRequest)) {
             $this->matchingRequests->removeElement($matchingRequest);
             // set the owning side to null (unless already changed)
-            if ($matchingRequest->getProposalOffer() === $this) {
-                $matchingRequest->setProposalOffer(null);
+            if ($matchingRequest->getProposalRequest() === $this) {
+                $matchingRequest->setProposalRequest(null);
             }
         }
 
@@ -378,7 +425,7 @@ class Proposal
     {
         if (!$this->matchingOffers->contains($matchingOffer)) {
             $this->matchingOffers[] = $matchingOffer;
-            $matchingOffer->setProposalRequest($this);
+            $matchingOffer->setProposalOffer($this);
         }
         
         return $this;
@@ -389,8 +436,8 @@ class Proposal
         if ($this->matchingOffers->contains($matchingOffer)) {
             $this->matchingOffers->removeElement($matchingOffer);
             // set the owning side to null (unless already changed)
-            if ($matchingOffer->getProposalRequest() === $this) {
-                $matchingOffer->setProposalRequest(null);
+            if ($matchingOffer->getProposalOffer() === $this) {
+                $matchingOffer->setProposalOffer(null);
             }
         }
         

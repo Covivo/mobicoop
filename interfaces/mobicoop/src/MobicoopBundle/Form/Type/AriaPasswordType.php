@@ -24,37 +24,43 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
-class GeocompleteType extends AbstractType
+class AriaPasswordType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'url' => '',
-            'address' => ''
+            'aria-required' => '',
+            'aria-describedby' => '',
+            'aria-labelledby' => '',
+            'aria-label' => ''
         ]);
     }
-    
+
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['url'] = $options['url'];
-        $view->vars['address'] = $options['address'];
+        $view->vars['aria_required'] = $options['aria-required'];
+        $view->vars['aria_describedby'] = $options['aria-describedby'];
+        $view->vars['aria_labelledby'] = $options['aria-labelledby'];
+        $view->vars['aria_label'] = $options['aria-label'];
     }
-    
+
     public function getParent()
     {
-        return TextType::class;
+        return PasswordType::class;
     }
-    
+
     /**
      * {@inheritdoc}
      */
     public function getBlockPrefix()
     {
-        return 'geocomplete';
+        return 'ariapassword';
     }
 }

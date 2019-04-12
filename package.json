@@ -1,6 +1,6 @@
 {
   "name": "Mobicoop",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "API, Front & admin mobicoop carpool app",
   "main": "package.json",
   "scripts": {
@@ -46,6 +46,7 @@
   "homepage": "https://gitlab.com/mobicoop/mobicoop#README",
   "dependencies": {
     "await-to-js": "^2.0.1",
+    "axios": "^0.18.0",
     "commander": "^2.19.0",
     "fs-extra": "^7.0.0",
     "fs-readdir-recursive": "^1.1.0",

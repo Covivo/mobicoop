@@ -24,72 +24,77 @@ Encore
    * and one CSS file (e.g. app.css) if you JavaScript imports CSS.
   */
 
-    //.addEntry('app', './src/MobicoopBundle/Resources/assets/js/app.js')
-    
-    .addEntry('app', './src/MobicoopBundle/Resources/assets/js/app.js')
-//    .addEntry('autocomplete', './src/MobicoopBundle/Resources/assets/js/page/autocomplete.js')
-//    .addEntry('ad_create', './src/MobicoopBundle/Resources/assets/js/page/ad/create.js')
-//    .addEntry('home', './src/MobicoopBundle/Resources/assets/js/page/home.js')
-//    .addEntry('users', './src/MobicoopBundle/Resources/assets/js/page/users.js')
-    
-    .splitEntryChunks()
+  //.addEntry('app', './src/MobicoopBundle/Resources/assets/js/app.js')
 
-    /*
-     * FEATURE CONFIG
-     *
-     * Enable & configure other features below. For a full
-     * list of features, see:
-     * https://symfony.com/doc/current/frontend.html#adding-more-features
-     */
-    .cleanupOutputBeforeBuild()
-    // .enableBuildNotifications()
-    .enableSourceMaps(!Encore.isProduction())
-    // enables hashed filenames (e.g. app.abc123.css)
-    .enableVersioning(Encore.isProduction())
-    .addLoader({
-        test: /\.(js|vue)$/,
-        enforce: 'pre',
-        loader: 'eslint-loader',
-        exclude: ['/node_modules','/vendor','/public'],
-        options: {
-          fix: true
-        }
-    })
-    .addPlugin(new StyleLintPlugin({
-      failOnWarning: false,
-      failOnError: false,
-      testing: false,
-      fix: true,
-      emitErrors: false,
-      syntax : 'scss'
-    }))
-    // enables Sass/SCSS support
-    .enableSassLoader()
-    .configureBabel(function(babelConfig) {
-        // add additional presets
-        babelConfig.plugins.push('transform-class-properties');
-        // babelConfig.presets.push('stage-3');
-    })
-    // This will add compatibility for old nav
-    .enablePostCssLoader()
-    .enableVueLoader()
-    //fixed dev-server
-    .setManifestKeyPrefix('/build')
-    // uncomment if you use TypeScript
-    //.enableTypeScriptLoader()
+  .addEntry('app', './src/MobicoopBundle/Resources/assets/js/app.js')
+  //    .addEntry('autocomplete', './src/MobicoopBundle/Resources/assets/js/page/autocomplete.js')
+  //    .addEntry('ad_create', './src/MobicoopBundle/Resources/assets/js/page/ad/create.js')
+  //    .addEntry('home', './src/MobicoopBundle/Resources/assets/js/page/home.js')
+  //    .addEntry('users', './src/MobicoopBundle/Resources/assets/js/page/users.js')
 
-    // uncomment if you're having problems with a jQuery plugin
-    //.autoProvidejQuery()
-;
+  .splitEntryChunks()
+
+  /*
+   * FEATURE CONFIG
+   *
+   * Enable & configure other features below. For a full
+   * list of features, see:
+   * https://symfony.com/doc/current/frontend.html#adding-more-features
+   */
+  .cleanupOutputBeforeBuild()
+  // .enableBuildNotifications()
+  .enableSourceMaps(!Encore.isProduction())
+  // enables hashed filenames (e.g. app.abc123.css)
+  .enableVersioning(Encore.isProduction())
+  .addLoader({
+    test: /\.(js|vue)$/,
+    enforce: 'pre',
+    loader: 'eslint-loader',
+    exclude: ['/node_modules', '/vendor', '/public'],
+    options: {
+      fix: true
+    }
+  })
+  .addPlugin(new StyleLintPlugin({
+    failOnWarning: false,
+    failOnError: false,
+    testing: false,
+    fix: true,
+    emitErrors: false,
+    syntax: 'scss'
+  }))
+  // enables Sass/SCSS support
+  .enableSassLoader()
+  .configureBabel(function (babelConfig) {
+    // add additional presets
+    babelConfig.plugins.push('transform-class-properties');
+    // babelConfig.presets.push('stage-3');
+  })
+  // This will add compatibility for old nav
+  .enablePostCssLoader()
+  .enableVueLoader()
+  //fixed dev-server
+  .setManifestKeyPrefix('/build')
+  // uncomment if you use TypeScript
+  //.enableTypeScriptLoader()
+
+  // uncomment if you're having problems with a jQuery plugin
+  //.autoProvidejQuery()
+  ;
 
 // Add base assets
-for (let file of files){
+for (let file of files) {
   Encore.addEntry(file.split('.js')[0], `./assets/js/page/${file}`)
 }
 
 // Add bundle assets
-for (let file of filesBundle){
+for (let file of filesBundle) {
   Encore.addEntry(`bundle_${file.split('.js')[0]}`, `./src/MobicoopBundle/Resources/assets/js/page/${file}`)
 }
 
-module.exports = Encore.getWebpackConfig();
+let encoreConfig = Encore.getWebpackConfig();
+encoreConfig.watchOptions = {
+ aggregateTimeout: 600
+}
+
+module.exports = encoreConfig;

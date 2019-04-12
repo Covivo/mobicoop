@@ -24,6 +24,8 @@
 namespace App\Geography\Service;
 
 use App\Geography\Entity\Address;
+use App\Geography\Entity\Direction;
+use App\Geography\Entity\Zone;
 
 /**
  * Zone management service.
@@ -35,6 +37,43 @@ use App\Geography\Entity\Address;
  */
 class ZoneManager
 {
+    // zones precisions (in degrees) to generate when adding a direction
+    public const THINNESSES = [
+        1,
+        0.5,
+        0.25,
+        0.125
+    ];
+
+    /**
+     * Create the zones for a direction.
+     *
+     * @param Direction $direction The direction.
+     * @return Direction The direction with the associated zones.
+     */
+    public function createZonesForDirection(Direction $direction)
+    {
+        $zones = [];
+        foreach (self::THINNESSES as $thinness) {
+            // $zones[$thinness] would be simpler and better... but we can't use a float as a key with php (transformed to string)
+            // so we use an inner value for thinness
+            $zones[] = [
+                'thinness' => $thinness,
+                'crossed' => $this->getZonesForAddresses($direction->getPoints(), $thinness, 0)
+            ];
+        }
+
+        foreach ($zones as $crossed) {
+            foreach ($crossed['crossed'] as $zoneCrossed) {
+                $zone = new Zone();
+                $zone->setZoneid($zoneCrossed);
+                $zone->setThinness($crossed['thinness']);
+                $direction->addZone($zone);
+            }
+        }
+        return $direction;
+    }
+
     /**
      * Get the zones for a list of addresses.
      *
@@ -68,8 +107,7 @@ class ZoneManager
             return $zones;
         }
             
-        $nzones = [];
-        $nearbyZones = $this->getNear($address, $precision, $nzones, $deep);
+        $nearbyZones = $this->getNear($address, $precision, $deep);
         $zones = array_unique(array_merge($zones, $nearbyZones), SORT_REGULAR);
         sort($zones);
         return $zones;
@@ -99,11 +137,10 @@ class ZoneManager
      *
      * @param Address $address  The address
      * @param float $precision  The precision of the grid in degrees
-     * @param array $zones      The array that contains the nearby zones
      * @param int $deep         The deepness of the search (1 = direct nearby zones, 2 = nearby zone and their nearby zones, etc...)
      * @return array|NULL       The list of nearby zones.
      */
-    public function getNear(Address $address, float $precision, array $zones, int $deep): ?array
+    public function getNear(Address $address, float $precision, int $deep): ?array
     {
         if ($deep<0) {
             return null;
@@ -150,8 +187,6 @@ class ZoneManager
         $nearX7 = $this->getZonesForAddress($x7, $precision, $deep-1);
         $nearX8 = $this->getZonesForAddress($x8, $precision, $deep-1);
         
-        $zones = array_merge($zones, $nearX1, $nearX2, $nearX3, $nearX4, $nearX5, $nearX6, $nearX7, $nearX8);
-
-        return $zones;
+        return array_merge($nearX1, $nearX2, $nearX3, $nearX4, $nearX5, $nearX6, $nearX7, $nearX8);
     }
 }

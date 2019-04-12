@@ -24,10 +24,10 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
-use Symfony\Component\HttpFoundation\Request;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Waypoint;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
  * Ad management service.
@@ -36,51 +36,14 @@ class AdManager
 {
     private $proposalManager;
 
+    /**
+     * Constructor.
+     *
+     * @param ProposalManager $proposalManager
+     */
     public function __construct(ProposalManager $proposalManager)
     {
         $this->proposalManager = $proposalManager;
-    }
-
-    /**
-     * Prepare the ad before creating a proposal.
-     *
-     * @param Ad      $ad
-     * @param Request $request
-     *
-     * @return \Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad
-     */
-    public function prepareAd(Ad $ad, Request $request)
-    {
-        if ($origin = $request->get('ad_form')['originAddress']) {
-            if (isset($origin['longitude'])) {
-                $ad->setOriginLongitude($origin['longitude']);
-            }
-            if (isset($origin['latitude'])) {
-                $ad->setOriginLatitude($origin['latitude']);
-            }
-            $ad->setOrigin(
-                ($origin['streetAddress'] ? $origin['streetAddress'].' ' : '').
-                ($origin['postalCode'] ? $origin['postalCode'].' ' : '').
-                ($origin['addressLocality'] ? $origin['addressLocality'].' ' : '').
-                ($origin['addressCountry'] ? $origin['addressCountry'] : '')
-                );
-        }
-        if ($destination = $request->get('ad_form')['destinationAddress']) {
-            if (isset($destination['longitude'])) {
-                $ad->setDestinationLongitude($destination['longitude']);
-            }
-            if (isset($destination['latitude'])) {
-                $ad->setDestinationLatitude($destination['latitude']);
-            }
-            $ad->setDestination(
-                ($destination['streetAddress'] ? $destination['streetAddress'].' ' : '').
-                ($destination['postalCode'] ? $destination['postalCode'].' ' : '').
-                ($destination['addressLocality'] ? $destination['addressLocality'].' ' : '').
-                ($destination['addressCountry'] ? $destination['addressCountry'] : '')
-            );
-        }
-
-        return $ad;
     }
 
     /**
@@ -89,7 +52,6 @@ class AdManager
      */
     public function createProposalFromAd(Ad $ad)
     {
-        //echo "<pre>" . print_r($ad,true) . "</pre>";exit;
 
         // OUTWARD
         $proposal = new Proposal();
@@ -100,73 +62,101 @@ class AdManager
         // creation of the criteria
         $criteria = new Criteria();
         if ($ad->getRole() == Ad::ROLE_BOTH || $ad->getRole() == Ad::ROLE_DRIVER) {
-            $criteria->setIsDriver(true);
+            $criteria->setDriver(true);
         }
         if ($ad->getRole() == Ad::ROLE_BOTH || $ad->getRole() == Ad::ROLE_PASSENGER) {
-            $criteria->setIsPassenger(true);
+            $criteria->setPassenger(true);
         }
         $criteria->setPriceKm($ad->getPrice());
-
+        
+        // temp as long as regular post doesnt work
+        $ad->setOutwardMonTime($ad->getOutwardTime());
+        $ad->setOutwardTueTime($ad->getOutwardTime());
+        $ad->setOutwardWedTime($ad->getOutwardTime());
+        $ad->setOutwardThuTime($ad->getOutwardTime());
+        $ad->setOutwardFriTime($ad->getOutwardTime());
+        $ad->setOutwardSatTime($ad->getOutwardTime());
+        $ad->setOutwardSunTime($ad->getOutwardTime());
+        $ad->setOutwardMonMargin($ad->getOutwardMargin());
+        $ad->setOutwardTueMargin($ad->getOutwardMargin());
+        $ad->setOutwardWedMargin($ad->getOutwardMargin());
+        $ad->setOutwardThuMargin($ad->getOutwardMargin());
+        $ad->setOutwardFriMargin($ad->getOutwardMargin());
+        $ad->setOutwardSatMargin($ad->getOutwardMargin());
+        $ad->setOutwardSunMargin($ad->getOutwardMargin());
+        
         $criteria->setFrequency($ad->getFrequency());
         if ($ad->getFrequency() == Ad::FREQUENCY_PUNCTUAL) {
-            $criteria->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad->getOutwardDate()));
+            $criteria->setFromDate($ad->getOutwardDate());
             $criteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
+            $criteria->setMarginDuration($ad->getOutwardMargin());
         } else {
-            $criteria->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad->getFromDate()));
-            $criteria->setToDate(\DateTime::createFromFormat('Y-m-d', $ad->getToDate()));
+            $criteria->setFromDate($ad->getOutwardDate());
+            $criteria->setToDate($ad->getReturnDate());
             $criteria->setMonCheck($ad->getOutwardMonTime()<>null);
             if ($ad->getOutwardMonTime()) {
                 $criteria->setMonTime(\DateTime::createFromFormat('H:i', $ad->getOutwardMonTime()));
-                $criteria->setMonMarginTime($ad->getOutwardMonMargin());
+                $criteria->setMonMarginDuration($ad->getOutwardMonMargin());
             }
             $criteria->setTueCheck($ad->getOutwardTueTime()<>null);
             if ($ad->getOutwardTueTime()) {
                 $criteria->setTueTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTueTime()));
-                $criteria->setTueMarginTime($ad->getOutwardTueMargin());
+                $criteria->setTueMarginDuration($ad->getOutwardTueMargin());
             }
             $criteria->setWedCheck($ad->getOutwardWedTime()<>null);
             if ($ad->getOutwardWedTime()) {
                 $criteria->setWedTime(\DateTime::createFromFormat('H:i', $ad->getOutwardWedTime()));
-                $criteria->setWedMarginTime($ad->getOutwardWedMargin());
+                $criteria->setWedMarginDuration($ad->getOutwardWedMargin());
             }
             $criteria->setThuCheck($ad->getOutwardThuTime()<>null);
             if ($ad->getOutwardThuTime()) {
                 $criteria->setThuTime(\DateTime::createFromFormat('H:i', $ad->getOutwardThuTime()));
-                $criteria->setThuMarginTime($ad->getOutwardThuMargin());
+                $criteria->setThuMarginDuration($ad->getOutwardThuMargin());
             }
             $criteria->setFriCheck($ad->getOutwardFriTime()<>null);
             if ($ad->getOutwardFriTime()) {
                 $criteria->setFriTime(\DateTime::createFromFormat('H:i', $ad->getOutwardFriTime()));
-                $criteria->setFriMarginTime($ad->getOutwardFriMargin());
+                $criteria->setFriMarginDuration($ad->getOutwardFriMargin());
             }
             $criteria->setSatCheck($ad->getOutwardSatTime()<>null);
             if ($ad->getOutwardSatTime()) {
                 $criteria->setSatTime(\DateTime::createFromFormat('H:i', $ad->getOutwardSatTime()));
-                $criteria->setSatMarginTime($ad->getOutwardSatMargin());
+                $criteria->setSatMarginDuration($ad->getOutwardSatMargin());
             }
             $criteria->setSunCheck($ad->getOutwardSunTime()<>null);
             if ($ad->getOutwardSunTime()) {
                 $criteria->setSunTime(\DateTime::createFromFormat('H:i', $ad->getOutwardSunTime()));
-                $criteria->setSunMarginTime($ad->getOutwardSunMargin());
+                $criteria->setSunMarginDuration($ad->getOutwardSunMargin());
             }
         }
         
         $waypointOrigin = new Waypoint();
-        $waypointOrigin->setAddress($ad->getOriginAddress());
+        $originAddress = new Address();
+        $originAddress->setStreetAddress($ad->getOriginStreetAddress());
+        $originAddress->setPostalCode($ad->getOriginPostalCode());
+        $originAddress->setAddressLocality($ad->getOriginAddressLocality());
+        $originAddress->setAddressCountry($ad->getOriginAddressCountry());
+        $originAddress->setLatitude($ad->getOriginLatitude());
+        $originAddress->setLongitude($ad->getOriginLongitude());
+        $waypointOrigin->setAddress($originAddress);
         $waypointOrigin->setPosition(0);
-        $waypointOrigin->setIsDestination(false);
+        $waypointOrigin->setDestination(false);
 
         $waypointDestination = new Waypoint();
-        $waypointDestination->setAddress($ad->getDestinationAddress());
+        $destinationAddress = new Address();
+        $destinationAddress->setStreetAddress($ad->getDestinationStreetAddress());
+        $destinationAddress->setPostalCode($ad->getDestinationPostalCode());
+        $destinationAddress->setAddressLocality($ad->getDestinationAddressLocality());
+        $destinationAddress->setAddressCountry($ad->getDestinationAddressCountry());
+        $destinationAddress->setLatitude($ad->getDestinationLatitude());
+        $destinationAddress->setLongitude($ad->getDestinationLongitude());
+        $waypointDestination->setAddress($destinationAddress);
         $waypointDestination->setPosition(1);
-        $waypointDestination->setIsDestination(true);
+        $waypointDestination->setDestination(true);
 
         $proposal->setCriteria($criteria);
         $proposal->addWaypoint($waypointOrigin);
         $proposal->addWaypoint($waypointDestination);
-
-        // echo "<pre>" . print_r($proposal,true) . "</pre>";
-        // exit;
 
         // creation of the outward proposal
         if (!$proposalOutward = $this->proposalManager->createProposal($proposal)) {
@@ -174,50 +164,67 @@ class AdManager
         }
         
         if ($ad->getType() == Ad::TYPE_RETURN_TRIP) {
+
+            // temp as long as regular post doesnt work
+            $ad->setReturnMonTime($ad->getReturnTime());
+            $ad->setReturnTueTime($ad->getReturnTime());
+            $ad->setReturnWedTime($ad->getReturnTime());
+            $ad->setReturnThuTime($ad->getReturnTime());
+            $ad->setReturnFriTime($ad->getReturnTime());
+            $ad->setReturnSatTime($ad->getReturnTime());
+            $ad->setReturnSunTime($ad->getReturnTime());
+            $ad->setReturnMonMargin($ad->getReturnMargin());
+            $ad->setReturnTueMargin($ad->getReturnMargin());
+            $ad->setReturnWedMargin($ad->getReturnMargin());
+            $ad->setReturnThuMargin($ad->getReturnMargin());
+            $ad->setReturnFriMargin($ad->getReturnMargin());
+            $ad->setReturnSatMargin($ad->getReturnMargin());
+            $ad->setReturnSunMargin($ad->getReturnMargin());
             
             // creation of the return trip
             $proposalReturn = clone $proposal;
             $criteriaReturn = clone $criteria;
             if ($ad->getFrequency() == Ad::FREQUENCY_PUNCTUAL) {
-                $criteriaReturn->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad->getReturnDate()));
-                $criteriaReturn->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
+                $criteriaReturn->setFromDate($ad->getOutwardDate());
+                $criteriaReturn->setFromTime(\DateTime::createFromFormat('H:i', $ad->getReturnTime()));
+                $criteriaReturn->setMarginDuration($ad->getReturnMargin());
             } else {
-                $criteriaReturn->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad->getFromDate()));
-                $criteriaReturn->setToDate(\DateTime::createFromFormat('Y-m-d', $ad->getToDate()));
-                $criteria->setMonCheck($ad->getOutwardMonTime()<>null);
+                $criteriaReturn->setFromDate($ad->getOutwardDate());
+                $criteriaReturn->setToDate($ad->getReturnDate());
+                $criteriaReturn->setMonCheck($ad->getReturnMonTime()<>null);
                 if ($ad->getReturnMonTime()) {
-                    $criteria->setMonTime(\DateTime::createFromFormat('H:i', $ad->getReturnMonTime()));
-                    $criteria->setMonMarginTime($ad->getReturnMonMargin());
+                    $criteriaReturn->setMonTime(\DateTime::createFromFormat('H:i', $ad->getReturnMonTime()));
+                    $criteriaReturn->setMonMarginDuration($ad->getReturnMonMargin());
                 }
-                $criteria->setTueCheck($ad->getReturnTueTime()<>null);
+                $criteriaReturn->setTueCheck($ad->getReturnTueTime()<>null);
                 if ($ad->getReturnTueTime()) {
                     $criteriaReturn->setTueTime(\DateTime::createFromFormat('H:i', $ad->getReturnTueTime()));
-                    $criteriaReturn->setTueMarginTime($ad->getReturnTueMargin());
+                    $criteriaReturn->setTueMarginDuration($ad->getReturnTueMargin());
                 }
                 $criteriaReturn->setWedCheck($ad->getReturnWedTime()<>null);
                 if ($ad->getReturnWedTime()) {
                     $criteriaReturn->setWedTime(\DateTime::createFromFormat('H:i', $ad->getReturnWedTime()));
-                    $criteriaReturn->setWedMarginTime($ad->getReturnWedMargin());
+                    $criteriaReturn->setWedMarginDuration($ad->getReturnWedMargin());
                 }
                 $criteriaReturn->setThuCheck($ad->getReturnThuTime()<>null);
                 if ($ad->getReturnThuTime()) {
                     $criteriaReturn->setThuTime(\DateTime::createFromFormat('H:i', $ad->getReturnThuTime()));
-                    $criteriaReturn->setThuMarginTime($ad->getReturnThuMargin());
+                    $criteriaReturn->setThuMarginDuration($ad->getReturnThuMargin());
                 }
                 $criteriaReturn->setFriCheck($ad->getReturnFriTime()<>null);
                 if ($ad->getReturnFriTime()) {
                     $criteriaReturn->setFriTime(\DateTime::createFromFormat('H:i', $ad->getReturnFriTime()));
-                    $criteriaReturn->setFriMarginTime($ad->getReturnFriMargin());
+                    $criteriaReturn->setFriMarginDuration($ad->getReturnFriMargin());
                 }
                 $criteriaReturn->setSatCheck($ad->getReturnSatTime()<>null);
                 if ($ad->getReturnSatTime()) {
                     $criteriaReturn->setSatTime(\DateTime::createFromFormat('H:i', $ad->getReturnSatTime()));
-                    $criteriaReturn->setSatMarginTime($ad->getReturnSatMargin());
+                    $criteriaReturn->setSatMarginDuration($ad->getReturnSatMargin());
                 }
                 $criteriaReturn->setSunCheck($ad->getReturnSunTime()<>null);
                 if ($ad->getReturnSunTime()) {
                     $criteriaReturn->setSunTime(\DateTime::createFromFormat('H:i', $ad->getReturnSunTime()));
-                    $criteriaReturn->setSunMarginTime($ad->getReturnSunMargin());
+                    $criteriaReturn->setSunMarginDuration($ad->getReturnSunMargin());
                 }
             }
 
@@ -243,11 +250,11 @@ class AdManager
             foreach ($reversedWaypoints as $pos=>$proposalWaypoint) {
                 $waypoint = clone $proposalWaypoint;
                 $waypoint->setPosition($pos);
-                $waypoint->setIsDestination(false);
+                $waypoint->setDestination(false);
                 // address
                 $waypoint->setAddress(clone $proposalWaypoint->getAddress());
                 if ($pos == ($nbWaypoints-1)) {
-                    $waypoint->setIsDestination(true);
+                    $waypoint->setDestination(true);
                 }
                 $proposalReturn->addWaypoint($waypoint);
             }

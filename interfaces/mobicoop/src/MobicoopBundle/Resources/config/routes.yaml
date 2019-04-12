@@ -23,6 +23,13 @@ user_proposal_create:
         en: /user/proposal/create
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProposalCreate
 
+# proposals
+user_proposals:
+    path:
+        fr: /utilisateur/annonces
+        en: /user/ads
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProposals
+
 # profile
 user_profile:
     path:
@@ -65,9 +72,32 @@ logout:
 ##################
 # carpool routes #
 ##################
-# messages
-ad:
+
+# post an ad
+carpool_ad:
     path:
         fr: /covoiturage/annonce/poster
         en: /carpool/ad/share
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::ad
+
+# simple search results
+carpool_results:
+    path:
+        fr: /covoiturage/recherche/{origin}/{destination}/{origin_latitude}/{origin_longitude}/{destination_latitude}/{destination_longitude}/{date}/resultats
+        en: /carpool/search/{origin}/{destination}/{origin_latitude}/{origin_longitude}/{destination_latitude}/{destination_longitude}/{date}/results
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::simpleSearchResults
+    requirements:
+        origin_latitude: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?).\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)'
+        origin_longitude: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?).\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)'
+        destination_latitude: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?).\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)'
+        destination_longitude: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?).\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)'
+        date: '\d+'
+
+# ad results
+ad_results:
+    path:
+        fr: /covoiturage/annonce/{id}/resultats
+        en: /carpool/ad/{id}/results
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::adPostResults
+    requirements:
+        id: '\d+'

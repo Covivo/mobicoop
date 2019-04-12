@@ -1,40 +1,126 @@
 /* Welcome to Mobicoop main SASS file, this file require all the sub-elements */
 // Import Bulma and Buefy styles
 // @import '~bulma/sass/utilities/_all'; // not sure if this is useful
+
+// Setup $colors to use as bulma classes (e.g. 'is-twitter')
+@import '~bulma/sass/utilities/_all';
+@import '_variables';
+$colors: (
+  'white': ($white, $black),
+  'black': ($black, $white),
+  'light': ($light, $light-invert),
+  'dark': ($dark, $dark-invert),
+  'primary': ($primary, $primary-invert),
+  'info': ($info, $info-invert),
+  'success': ($success, $success-invert),
+  'warning': ($warning, $warning-invert),
+  'danger': ($danger, $danger-invert),
+  'mobicoopblue': ($mb-blue, $mb-blue-invert),
+  'mobicooppink': ($mb-pink, $mb-pink-invert),
+  'mobicoopgreen': ($mb-green, $mb-green-invert)
+);
+
+$link: $mb-green;
+$link-invert: $mb-green-invert;
+$link-focus-border: $mb-green;
+
 @import '~bulma';
 @import '~buefy/src/scss/buefy';
-@import '_variables';
 @import '_header';
+.center-all {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 body {
   background-color: $main-background-color;
   color: $main-font-color;
   //h1 {
   // font-size: 75px;
   //}
+  button#rechercher {
+    padding: 0 !important;
+    margin-top: 24px;
+    font-size: 100% !important;
+    font-family: inherit !important;
+    border: 0 !important;
+  }
+  *:focus {
+    outline: 3px solid orange !important;
+  }
+  label.required::after {
+    content: '*';
+    font-weight: bold;
+  }
+  //input[required='required'] {
+  //  background-color: #FF6060;
+  //}
+  a.navbar-burger {
+    color: #000;
+  }
+  .hero.is-passur {
+    background-color: #CCCC98;
+  }
   .header {
     background: url('images/header.png');
     width: 100vw;
     height: 30vh;
   }
-  .common-nav {
-    justify-content: center;
-    align-items: center;
+  #siteHeader {
     width: 100vw;
     height: 80px;
+    display: inline-block;
     background-color: $nav-background-color;
-    .logo {
-      max-height: 4rem;
+    margin-bottom: -5px;
+    header {
+      //display: inline-block;
+      width: auto;
+      float: left;
+      margin-left: 5px;
+      margin-right: 5px;
+      img.logo {
+        max-height: 4rem;
+        margin: 14px;
+      }
     }
-    .navbar-brand {
-      margin-left: 2vw;
+    .common-nav {
+      float: left;
+      width: auto;
+      justify-content: center;
+      align-items: center;
+      background-color: $nav-background-color;
+      margin-left: 5px;
+      margin-right: 5px;
+      .navbar-brand {
+        margin-left: 2vw;
+      }
+      .navbar-end {
+        margin-right: 1vw;
+      }
     }
-    .navbar-end {
-      margin-right: 1vw;
+    ul {
+      width: auto;
+      float: right;
+      margin-right: 8px;
+      a {
+        color: $main-font-color;
+      }
+      button {
+        //background: transparent;
+        //color: $main-font-color;
+        //padding: 0;
+        //border: 0;
+      }
     }
   }
   .common-footer {
     background-color: $footer-background-color;
     color: $mb-dark-green;
+    img {
+      height: 75px;
+      width: 75px;
+    }
     a {
       color: $mb-dark-green;
     }

@@ -48,6 +48,8 @@ use App\Geography\Entity\Direction;
  */
 class Waypoint
 {
+    const DEFAULT_ID = 999999999999;
+
     /**
      * @var int The id of this point.
      *
@@ -74,7 +76,7 @@ class Waypoint
      * @ORM\Column(type="boolean")
      * @Groups({"read","write"})
      */
-    private $isDestination;
+    private $destination;
 
     /**
      * @var Proposal|null The proposal that created the point.
@@ -108,6 +110,11 @@ class Waypoint
      */
     private $address;
     
+    public function __construct()
+    {
+        $this->id = self::DEFAULT_ID;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -127,12 +134,12 @@ class Waypoint
 
     public function isDestination(): ?bool
     {
-        return $this->isDestination;
+        return $this->destination;
     }
 
-    public function setIsDestination(bool $isDestination): self
+    public function setDestination(bool $isDestination): self
     {
-        $this->isDestination = $isDestination;
+        $this->destination = $isDestination;
 
         return $this;
     }

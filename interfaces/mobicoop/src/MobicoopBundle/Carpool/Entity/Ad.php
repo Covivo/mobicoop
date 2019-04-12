@@ -25,7 +25,6 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
 use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
  * Carpooling : an ad on the platform (offer from a driver / request from a passenger).
@@ -94,8 +93,8 @@ class Ad
     // PUNCTUAL
 
     /**
-     * @var string Date of the outward travel if punctual (in string format as we use a datepicker).
-     * @Assert\NotBlank(groups={"punctual"})
+     * @var \DateTimeInterface Date of the outward travel if punctual (in string format as we use a datepicker).
+     * @Assert\NotBlank(groups={"punctual","regular"})
      *
      */
     private $outwardDate;
@@ -108,13 +107,12 @@ class Ad
     
     /**
      * @var int Margin time of the outward travel if punctual.
-     * @Assert\NotBlank(groups={"punctual"})
      */
     private $outwardMargin;
 
     /**
-     * @var string Date of the return travel if punctual (in string format as we use a datepicker).
-     * @Assert\NotBlank(groups={"punctualReturnTrip"})
+     * @var \DateTimeInterface Date of the return travel if punctual (in string format as we use a datepicker).
+     * @Assert\NotBlank(groups={"punctualReturnTrip","regular"})
      */
     private $returnDate;
 
@@ -126,7 +124,6 @@ class Ad
     
     /**
      * @var int Margin time of the return travel if punctual.
-     * @Assert\NotBlank(groups={"punctualReturnTrip"})
      */
     private $returnMargin;
     
@@ -134,14 +131,12 @@ class Ad
     // REGULAR
 
     /**
-     * @var string Date of the first travel if regular.
-     * @Assert\NotBlank(groups={"regular"})
+     * @var \DateTimeInterface Date of the first travel if regular.
      */
     private $fromDate;
 
     /**
-     * @var string Date of the last travel if regular.
-     * @Assert\NotBlank(groups={"regular"})
+     * @var \DateTimeInterface Date of the last travel if regular.
      */
     private $toDate;
 
@@ -340,8 +335,14 @@ class Ad
      */
     private $destinationLongitude;
     
-    private $originAddress;
-    private $destinationAddress;
+    private $originStreetAddress;
+    private $originPostalCode;
+    private $originAddressLocality;
+    private $originAddressCountry;
+    private $destinationStreetAddress;
+    private $destinationPostalCode;
+    private $destinationAddressLocality;
+    private $destinationAddressCountry;
 
     public function getOrigin(): ?string
     {
@@ -372,7 +373,7 @@ class Ad
         return $this->role;
     }
 
-    public function setRole(int $role): self
+    public function setRole(?int $role): self
     {
         $this->role = $role;
 
@@ -381,16 +382,18 @@ class Ad
 
     // PUNCTUAL
     
-    public function getOutwardDate(): ?string
+    public function getOutwardDate(): ?\DateTimeInterface
     {
         return $this->outwardDate;
     }
     
-    public function setOutwardDate(?string $outwardDate): self
+    public function setOutwardDate(?string $outwardDate): ?\DateTime
     {
-        $this->outwardDate = $outwardDate;
-        
-        return $this;
+        if ($outwardDate = \DateTime::createFromFormat('Y/m/d', $outwardDate)) {
+            $this->outwardDate = $outwardDate;
+            return $outwardDate;
+        }
+        return null;
     }
 
     public function getOutwardTime(): ?string
@@ -417,16 +420,19 @@ class Ad
         return $this;
     }
     
-    public function getReturnDate(): ?string
+    public function getReturnDate(): ?\DateTime
     {
         return $this->returnDate;
     }
     
-    public function setReturnDate(?string $returnDate): self
+    public function setReturnDate(?string $returnDate): ?\DateTime
     {
-        $this->returnDate = $returnDate;
+        if ($returnDate = \DateTime::createFromFormat('Y/m/d', $returnDate)) {
+            $this->returnDate = $returnDate;
+            return $returnDate;
+        }
         
-        return $this;
+        return null;
     }
 
     public function getReturnTime(): ?string
@@ -455,28 +461,32 @@ class Ad
 
     // REGULAR
 
-    public function getFromDate(): ?string
+    public function getFromDate(): ?\DateTimeInterface
     {
         return $this->fromDate;
     }
     
-    public function setFromDate(?string $fromDate): self
+    public function setFromDate(?string $fromDate): ?\DateTime
     {
-        $this->fromDate = $fromDate;
-        
-        return $this;
+        if ($fromDate = \DateTime::createFromFormat('Y/m/d', $fromDate)) {
+            $this->fromDate = $fromDate;
+            return $fromDate;
+        }
+        return null;
     }
 
-    public function getToDate(): ?string
+    public function getToDate(): ?\DateTimeInterface
     {
         return $this->toDate;
     }
     
-    public function setToDate(?string $toDate): self
+    public function setToDate(?string $toDate): ?\DateTime
     {
-        $this->toDate = $toDate;
-        
-        return $this;
+        if ($toDate = \DateTime::createFromFormat('Y/m/d', $toDate)) {
+            $this->toDate = $toDate;
+            return $toDate;
+        }
+        return null;
     }
 
     public function getOutwardMonTime(): ?string
@@ -522,7 +532,7 @@ class Ad
     
     public function setReturnMonMargin(?int $returnMonMargin): self
     {
-        $this->oreturnMonMargin = $returnMonMargin;
+        $this->returnMonMargin = $returnMonMargin;
         
         return $this;
     }
@@ -570,7 +580,7 @@ class Ad
     
     public function setReturnTueMargin(?int $returnTueMargin): self
     {
-        $this->oreturnTueMargin = $returnTueMargin;
+        $this->returnTueMargin = $returnTueMargin;
         
         return $this;
     }
@@ -618,7 +628,7 @@ class Ad
     
     public function setReturnWedMargin(?int $returnWedMargin): self
     {
-        $this->oreturnWedMargin = $returnWedMargin;
+        $this->returnWedMargin = $returnWedMargin;
         
         return $this;
     }
@@ -666,7 +676,7 @@ class Ad
     
     public function setReturnThuMargin(?int $returnThuMargin): self
     {
-        $this->oreturnThuMargin = $returnThuMargin;
+        $this->returnThuMargin = $returnThuMargin;
         
         return $this;
     }
@@ -714,7 +724,7 @@ class Ad
     
     public function setReturnFriMargin(?int $returnFriMargin): self
     {
-        $this->oreturnFriMargin = $returnFriMargin;
+        $this->returnFriMargin = $returnFriMargin;
         
         return $this;
     }
@@ -762,7 +772,7 @@ class Ad
     
     public function setReturnSatMargin(?int $returnSatMargin): self
     {
-        $this->oreturnSatMargin = $returnSatMargin;
+        $this->returnSatMargin = $returnSatMargin;
         
         return $this;
     }
@@ -810,7 +820,7 @@ class Ad
     
     public function setReturnSunMargin(?int $returnSunMargin): self
     {
-        $this->oreturnSunMargin = $returnSunMargin;
+        $this->returnSunMargin = $returnSunMargin;
         
         return $this;
     }
@@ -820,7 +830,7 @@ class Ad
         return $this->type;
     }
     
-    public function setType(int $type): self
+    public function setType(?int $type): self
     {
         $this->type = $type;
         
@@ -832,7 +842,7 @@ class Ad
         return $this->frequency;
     }
 
-    public function setFrequency(int $frequency): self
+    public function setFrequency(?int $frequency): self
     {
         $this->frequency = $frequency;
 
@@ -880,11 +890,11 @@ class Ad
         return $this->originLatitude;
     }
 
-    public function setOriginLatitude(float $originLatitude): self
+    public function setOriginLatitude(string $originLatitude): ?float
     {
-        $this->originLatitude = $originLatitude;
+        $originLatitude = $this->originLatitude = floatval($originLatitude);
 
-        return $this;
+        return $originLatitude;
     }
 
     public function getOriginLongitude(): ?float
@@ -892,11 +902,11 @@ class Ad
         return $this->originLongitude;
     }
 
-    public function setOriginLongitude(float $originLongitude): self
+    public function setOriginLongitude(string $originLongitude): ?float
     {
-        $this->originLongitude = $originLongitude;
+        $originLongitude = $this->originLongitude = floatval($originLongitude);
 
-        return $this;
+        return $originLongitude;
     }
 
     public function getDestinationLatitude(): ?float
@@ -904,11 +914,11 @@ class Ad
         return $this->destinationLatitude;
     }
 
-    public function setDestinationLatitude(float $destinationLatitude): self
+    public function setDestinationLatitude(string $destinationLatitude): ?float
     {
-        $this->destinationLatitude = $destinationLatitude;
+        $destinationLatitude = $this->destinationLatitude = floatval($destinationLatitude);
 
-        return $this;
+        return $destinationLatitude;
     }
 
     public function getDestinationLongitude(): ?float
@@ -916,33 +926,105 @@ class Ad
         return $this->destinationLongitude;
     }
 
-    public function setDestinationLongitude(float $destinationLongitude): self
+    public function setDestinationLongitude(?float $destinationLongitude): self
     {
         $this->destinationLongitude = $destinationLongitude;
 
         return $this;
     }
     
-    public function getOriginAddress(): ?Address
+    public function getOriginStreetAddress(): ?string
     {
-        return $this->originAddress;
+        return $this->originStreetAddress;
     }
     
-    public function setOriginAddress(Address $originAddress): self
+    public function setOriginStreetAddress(?string $originStreetAddress): self
     {
-        $this->originAddress = $originAddress;
+        $this->originStreetAddress = $originStreetAddress;
+        
+        return $this;
+    }
+
+    public function getOriginPostalCode(): ?string
+    {
+        return $this->originPostalCode;
+    }
+    
+    public function setOriginPostalCode(?string $originPostalCode): self
+    {
+        $this->originPostalCode = $originPostalCode;
+        
+        return $this;
+    }
+
+    public function getOriginAddressLocality(): ?string
+    {
+        return $this->originAddressLocality;
+    }
+    
+    public function setOriginAddressLocality(?string $originAddressLocality): self
+    {
+        $this->originAddressLocality = $originAddressLocality;
+        
+        return $this;
+    }
+
+    public function getOriginAddressCountry(): ?string
+    {
+        return $this->originAddressCountry;
+    }
+    
+    public function setOriginAddressCountry(?string $originAddressCountry): self
+    {
+        $this->originAddressCountry = $originAddressCountry;
         
         return $this;
     }
     
-    public function getDestinationAddress(): ?Address
+    public function getDestinationStreetAddress(): ?string
     {
-        return $this->destinationAddress;
+        return $this->destinationStreetAddress;
     }
     
-    public function setDestinationAddress(Address $destinationAddress): self
+    public function setDestinationStreetAddress(?string $destinationStreetAddress): self
     {
-        $this->destinationAddress = $destinationAddress;
+        $this->destinationStreetAddress = $destinationStreetAddress;
+        
+        return $this;
+    }
+
+    public function getDestinationPostalCode(): ?string
+    {
+        return $this->destinationPostalCode;
+    }
+    
+    public function setDestinationPostalCode(?string $destinationPostalCode): self
+    {
+        $this->destinationPostalCode = $destinationPostalCode;
+        
+        return $this;
+    }
+
+    public function getDestinationAddressLocality(): ?string
+    {
+        return $this->destinationAddressLocality;
+    }
+    
+    public function setDestinationAddressLocality(?string $destinationAddressLocality): self
+    {
+        $this->destinationAddressLocality = $destinationAddressLocality;
+        
+        return $this;
+    }
+
+    public function getDestinationAddressCountry(): ?string
+    {
+        return $this->destinationAddressCountry;
+    }
+    
+    public function setDestinationAddressCountry(?string $destinationAddressCountry): self
+    {
+        $this->destinationAddressCountry = $destinationAddressCountry;
         
         return $this;
     }

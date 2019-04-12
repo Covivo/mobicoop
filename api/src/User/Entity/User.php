@@ -52,7 +52,6 @@ use Doctrine\Common\Collections\Collection;
  * @UniqueEntity("email")
  * @ApiResource(
  *      attributes={
- *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -65,8 +64,8 @@ use Doctrine\Common\Collections\Collection;
  */
 class User
 {
-    const MAX_DEVIATION_TIME = 600;
-    const MAX_DEVIATION_DISTANCE = 10000;
+    const MAX_DETOUR_DURATION = 600;
+    const MAX_DETOUR_DISTANCE = 10000;
     
     const STATUS_ACTIVE = 1;
     const STATUS_DISABLED = 2;
@@ -175,20 +174,20 @@ class User
     private $telephone;
     
     /**
-     * @var int|null The maximum deviation time (in seconds) as a driver to accept a request proposal.
+     * @var int|null The maximum detour duration (in seconds) as a driver to accept a request proposal.
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
-    private $maxDeviationTime;
+    private $maxDetourDuration;
     
     /**
-     * @var int|null The maximum deviation distance (in metres) as a driver to accept a request proposal.
+     * @var int|null The maximum detour distance (in metres) as a driver to accept a request proposal.
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
-    private $maxDeviationDistance;
+    private $maxDetourDistance;
     
     /**
      * @var boolean|null The user accepts any route as a passenger from its origin to the destination.
@@ -211,8 +210,6 @@ class User
      *
      * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Address", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
-     * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
      */
     private $addresses;
     
@@ -221,8 +218,6 @@ class User
      *
      * @ORM\OneToMany(targetEntity="\App\User\Entity\Car", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
-     * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
      */
     private $cars;
 
@@ -230,7 +225,7 @@ class User
      * @var Proposal[]|null The proposals made by this user.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
-     * @ApiSubresource(maxDepth=1)
+     * @Apisubresource
      */
     private $proposals;
 
@@ -238,7 +233,6 @@ class User
      * @var Ask[]|null The asks made by this user.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
-     * @ApiSubresource(maxDepth=1)
      */
     private $asks;
     
@@ -367,26 +361,26 @@ class User
         return $this;
     }
 
-    public function getMaxDeviationTime(): int
+    public function getMaxDetourDuration(): int
     {
-        return (!is_null($this->maxDeviationTime) ? $this->maxDeviationTime : self::MAX_DEVIATION_TIME);
+        return (!is_null($this->maxDetourDuration) ? $this->maxDetourDuration : self::MAX_DETOUR_DURATION);
     }
     
-    public function setMaxDeviationTime(?int $maxDeviationTime): self
+    public function setMaxDetourDuration(?int $maxDetourDuration): self
     {
-        $this->maxDeviationTime = $maxDeviationTime;
+        $this->maxDetourDuration = $maxDetourDuration;
         
         return $this;
     }
 
-    public function getMaxDeviationDistance(): int
+    public function getMaxDetourDistance(): int
     {
-        return (!is_null($this->maxDeviationDistance) ? $this->maxDeviationDistance : self::MAX_DEVIATION_DISTANCE);
+        return (!is_null($this->maxDetourDistance) ? $this->maxDetourDistance : self::MAX_DETOUR_DISTANCE);
     }
     
-    public function setMaxDeviationDistance(?int $maxDeviationDistance): self
+    public function setMaxDetourDistance(?int $maxDetourDistance): self
     {
-        $this->maxDeviationDistance = $maxDeviationDistance;
+        $this->maxDetourDistance = $maxDetourDistance;
         
         return $this;
     }

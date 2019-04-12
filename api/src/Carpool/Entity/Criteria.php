@@ -47,6 +47,8 @@ use App\PublicTransport\Entity\PTJourney;
  */
 class Criteria
 {
+    const DEFAULT_ID = 999999999999;
+    
     const FREQUENCY_PUNCTUAL = 1;
     const FREQUENCY_REGULAR = 2;
     
@@ -66,7 +68,7 @@ class Criteria
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
-    private $isDriver;
+    private $driver;
 
     /**
      * @var boolean The user can be a passenger.
@@ -74,7 +76,7 @@ class Criteria
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
-    private $isPassenger;
+    private $passenger;
     
     /**
      * @var int The proposal frequency (1 = punctual; 2 = regular).
@@ -112,6 +114,40 @@ class Criteria
      * @Groups({"read","write"})
      */
     private $fromTime;
+
+    /**
+     * @var \DateTimeInterface|null The min starting time if punctual.
+     *
+     * @Assert\Time()
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $minTime;
+
+    /**
+     * @var \DateTimeInterface|null The max starting time if punctual.
+     *
+     * @Assert\Time()
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $maxTime;
+
+    /**
+     * @var int Accepted margin duration for punctual proposal in seconds.
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $marginDuration;
+
+    /**
+     * @var boolean For punctual proposals, the user accepts only matchings for the defined date (no ranges).
+     *
+     * @ORM\Column(type="boolean")
+     * @Groups({"read","write"})
+     */
+    private $strictDate;
 
     /**
      * @var \DateTimeInterface|null The end date if regular proposal, the last accepted date if punctual.
@@ -188,6 +224,24 @@ class Criteria
     private $monTime;
 
     /**
+     * @var \DateTimeInterface|null Mondays min starting time (if regular).
+     *
+     * @Assert\Time()
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $monMinTime;
+
+    /**
+     * @var \DateTimeInterface|null Mondays max starting time (if regular).
+     *
+     * @Assert\Time()
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $monMaxTime;
+
+    /**
      * @var \DateTimeInterface|null Tuesdays starting time (if regular).
      *
      * @Assert\Time()
@@ -195,6 +249,24 @@ class Criteria
      * @Groups({"read","write"})
      */
     private $tueTime;
+
+    /**
+     * @var \DateTimeInterface|null Tuesdays min starting time (if regular).
+     *
+     * @Assert\Time()
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $tueMinTime;
+
+    /**
+     * @var \DateTimeInterface|null Tuesdays max starting time (if regular).
+     *
+     * @Assert\Time()
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $tueMaxTime;
 
     /**
      * @var \DateTimeInterface|null Wednesdays starting time (if regular).
@@ -206,6 +278,24 @@ class Criteria
     private $wedTime;
 
     /**
+     * @var \DateTimeInterface|null Wednesdays min starting time (if regular).
+     *
+     * @Assert\Time()
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $wedMinTime;
+
+    /**
+     * @var \DateTimeInterface|null Wednesdays max starting time (if regular).
+     *
+     * @Assert\Time()
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $wedMaxTime;
+
+    /**
      * @var \DateTimeInterface|null Thursdays starting time (if regular).
      *
      * @Assert\Time()
@@ -213,6 +303,24 @@ class Criteria
      * @Groups({"read","write"})
      */
     private $thuTime;
+
+    /**
+     * @var \DateTimeInterface|null Thursdays min starting time (if regular).
+     *
+     * @Assert\Time()
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $thuMinTime;
+
+    /**
+     * @var \DateTimeInterface|null Thursdays max starting time (if regular).
+     *
+     * @Assert\Time()
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $thuMaxTime;
 
     /**
      * @var \DateTimeInterface|null Fridays starting time (if regular).
@@ -224,6 +332,24 @@ class Criteria
     private $friTime;
 
     /**
+     * @var \DateTimeInterface|null Fridays min starting time (if regular).
+     *
+     * @Assert\Time()
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $friMinTime;
+
+    /**
+     * @var \DateTimeInterface|null Fridays max starting time (if regular).
+     *
+     * @Assert\Time()
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $friMaxTime;
+
+    /**
      * @var \DateTimeInterface|null Saturdays starting time (if regular).
      *
      * @Assert\Time()
@@ -231,6 +357,24 @@ class Criteria
      * @Groups({"read","write"})
      */
     private $satTime;
+
+    /**
+     * @var \DateTimeInterface|null Saturdays min starting time (if regular).
+     *
+     * @Assert\Time()
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $satMinTime;
+
+    /**
+     * @var \DateTimeInterface|null Saturdays max starting time (if regular).
+     *
+     * @Assert\Time()
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $satMaxTime;
 
     /**
      * @var \DateTimeInterface|null Sundays starting time (if regular).
@@ -242,12 +386,30 @@ class Criteria
     private $sunTime;
 
     /**
+     * @var \DateTimeInterface|null Sundays min starting time (if regular).
+     *
+     * @Assert\Time()
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $sunMinTime;
+
+    /**
+     * @var \DateTimeInterface|null Sundays max starting time (if regular).
+     *
+     * @Assert\Time()
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $sunMaxTime;
+
+    /**
      * @var int Accepted margin for monday starting time in seconds.
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
-    private $monMarginTime;
+    private $monMarginDuration;
 
     /**
      * @var int Accepted margin for tuesday starting time in seconds.
@@ -255,7 +417,7 @@ class Criteria
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
-    private $tueMarginTime;
+    private $tueMarginDuration;
     
     /**
      * @var int Accepted margin for wednesday starting time in seconds.
@@ -263,7 +425,7 @@ class Criteria
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
-    private $wedMarginTime;
+    private $wedMarginDuration;
     
     /**
      * @var int Accepted margin for thursday starting time in seconds.
@@ -271,7 +433,7 @@ class Criteria
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
-    private $thuMarginTime;
+    private $thuMarginDuration;
     
     /**
      * @var int Accepted margin for friday starting time in seconds.
@@ -279,7 +441,7 @@ class Criteria
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
-    private $friMarginTime;
+    private $friMarginDuration;
     
     /**
      * @var int Accepted margin for saturday starting time in seconds.
@@ -287,7 +449,7 @@ class Criteria
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
-    private $satMarginTime;
+    private $satMarginDuration;
     
     /**
      * @var int Accepted margin for sunday starting time in seconds.
@@ -295,23 +457,23 @@ class Criteria
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
-    private $sunMarginTime;
+    private $sunMarginDuration;
     
     /**
-     * @var int|null The maximum deviation time (in seconds) as a driver to accept a request proposal.
+     * @var int|null The maximum detour duration (in milliseconds) as a driver to accept a request proposal.
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
-    private $maxDeviationTime;
+    private $maxDetourDuration;
     
     /**
-     * @var int|null The maximum deviation distance (in metres) as a driver to accept a request proposal.
+     * @var int|null The maximum detour distance (in metres) as a driver to accept a request proposal.
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
-    private $maxDeviationDistance;
+    private $maxDetourDistance;
     
     /**
      * @var boolean The user accepts any route as a passenger from its origin to the destination.
@@ -342,7 +504,6 @@ class Criteria
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\Car")
      * @Groups({"read","write"})
-     * @MaxDepth(1)
      */
     private $car;
     
@@ -351,7 +512,6 @@ class Criteria
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
      * @Groups({"read","write"})
-     * @MaxDepth(1)
      */
     private $directionDriver;
     
@@ -360,7 +520,6 @@ class Criteria
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
      * @Groups({"read","write"})
-     * @MaxDepth(1)
      */
     private $directionPassenger;
     
@@ -369,7 +528,6 @@ class Criteria
      *
      * @ORM\ManyToOne(targetEntity="\App\PublicTransport\Entity\PTJourney")
      * @Groups({"read","write"})
-     * @MaxDepth(1)
      */
     private $ptjourney;
 
@@ -378,35 +536,39 @@ class Criteria
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="criteria")
      * @Groups({"read","write"})
-     * @MaxDepth(1)
      */
     private $proposal;
+
+    public function __construct()
+    {
+        $this->id = self::DEFAULT_ID;
+    }
     
     public function getId(): ?int
     {
         return $this->id;
     }
     
-    public function isDriver(): bool
+    public function isDriver(): ?bool
     {
-        return $this->isDriver;
+        return $this->driver;
     }
     
-    public function setIsDriver(bool $isDriver): self
+    public function setDriver(bool $isDriver): self
     {
-        $this->isDriver = $isDriver;
+        $this->driver = $isDriver;
         
         return $this;
     }
     
-    public function isPassenger(): bool
+    public function isPassenger(): ?bool
     {
-        return $this->isPassenger;
+        return $this->passenger;
     }
     
-    public function setIsPassenger(bool $isPassenger): self
+    public function setPassenger(bool $isPassenger): self
     {
-        $this->isPassenger = $isPassenger;
+        $this->passenger = $isPassenger;
         
         return $this;
     }
@@ -449,13 +611,70 @@ class Criteria
 
     public function getFromTime(): ?\DateTimeInterface
     {
-        return $this->fromTime;
+        if ($this->fromTime) {
+            return \DateTime::createFromFormat('His', $this->fromTime->format('His'));
+        }
+        return null;
     }
 
     public function setFromTime(?\DateTimeInterface $fromTime): self
     {
         $this->fromTime = $fromTime;
 
+        return $this;
+    }
+
+    public function getMarginDuration(): ?int
+    {
+        return $this->marginDuration;
+    }
+
+    public function setMarginDuration(?int $marginDuration): self
+    {
+        $this->marginDuration = $marginDuration;
+
+        return $this;
+    }
+
+    public function getMinTime(): ?\DateTimeInterface
+    {
+        if ($this->minTime) {
+            return \DateTime::createFromFormat('His', $this->minTime->format('His'));
+        }
+        return null;
+    }
+
+    public function setMinTime(?\DateTimeInterface $minTime): self
+    {
+        $this->minTime = $minTime;
+
+        return $this;
+    }
+
+    public function getMaxTime(): ?\DateTimeInterface
+    {
+        if ($this->maxTime) {
+            return \DateTime::createFromFormat('His', $this->maxTime->format('His'));
+        }
+        return null;
+    }
+
+    public function setMaxTime(?\DateTimeInterface $maxTime): self
+    {
+        $this->maxTime = $maxTime;
+
+        return $this;
+    }
+
+    public function isStrictDate(): ?bool
+    {
+        return $this->strictDate;
+    }
+    
+    public function setStrictDate(bool $isStrictDate): self
+    {
+        $this->strictDate = $isStrictDate;
+        
         return $this;
     }
 
@@ -471,7 +690,7 @@ class Criteria
         return $this;
     }
 
-    public function getMonCheck(): ?bool
+    public function isMonCheck(): ?bool
     {
         return $this->monCheck;
     }
@@ -483,7 +702,7 @@ class Criteria
         return $this;
     }
 
-    public function getTueCheck(): ?bool
+    public function isTueCheck(): ?bool
     {
         return $this->tueCheck;
     }
@@ -495,7 +714,7 @@ class Criteria
         return $this;
     }
 
-    public function getWedCheck(): ?bool
+    public function isWedCheck(): ?bool
     {
         return $this->wedCheck;
     }
@@ -507,7 +726,7 @@ class Criteria
         return $this;
     }
 
-    public function getThuCheck(): ?bool
+    public function isThuCheck(): ?bool
     {
         return $this->thuCheck;
     }
@@ -519,7 +738,7 @@ class Criteria
         return $this;
     }
 
-    public function getFriCheck(): ?bool
+    public function isFriCheck(): ?bool
     {
         return $this->friCheck;
     }
@@ -531,7 +750,7 @@ class Criteria
         return $this;
     }
 
-    public function getSatCheck(): ?bool
+    public function isSatCheck(): ?bool
     {
         return $this->satCheck;
     }
@@ -543,7 +762,7 @@ class Criteria
         return $this;
     }
 
-    public function getSunCheck(): ?bool
+    public function isSunCheck(): ?bool
     {
         return $this->sunCheck;
     }
@@ -557,7 +776,10 @@ class Criteria
 
     public function getMonTime(): ?\DateTimeInterface
     {
-        return $this->monTime;
+        if ($this->monTime) {
+            return \DateTime::createFromFormat('His', $this->monTime->format('His'));
+        }
+        return null;
     }
 
     public function setMonTime(?\DateTimeInterface $monTime): self
@@ -567,9 +789,42 @@ class Criteria
         return $this;
     }
 
+    public function getMonMinTime(): ?\DateTimeInterface
+    {
+        if ($this->monMinTime) {
+            return \DateTime::createFromFormat('His', $this->monMinTime->format('His'));
+        }
+        return null;
+    }
+
+    public function setMonMinTime(?\DateTimeInterface $monMinTime): self
+    {
+        $this->monMinTime = $monMinTime;
+
+        return $this;
+    }
+
+    public function getMonMaxTime(): ?\DateTimeInterface
+    {
+        if ($this->monMaxTime) {
+            return \DateTime::createFromFormat('His', $this->monMaxTime->format('His'));
+        }
+        return null;
+    }
+
+    public function setMonMaxTime(?\DateTimeInterface $monMaxTime): self
+    {
+        $this->monMaxTime = $monMaxTime;
+
+        return $this;
+    }
+
     public function getTueTime(): ?\DateTimeInterface
     {
-        return $this->tueTime;
+        if ($this->tueTime) {
+            return \DateTime::createFromFormat('His', $this->tueTime->format('His'));
+        }
+        return null;
     }
 
     public function setTueTime(?\DateTimeInterface $tueTime): self
@@ -579,9 +834,42 @@ class Criteria
         return $this;
     }
 
+    public function getTueMinTime(): ?\DateTimeInterface
+    {
+        if ($this->tueMinTime) {
+            return \DateTime::createFromFormat('His', $this->tueMinTime->format('His'));
+        }
+        return null;
+    }
+
+    public function setTueMinTime(?\DateTimeInterface $tueMinTime): self
+    {
+        $this->tueMinTime = $tueMinTime;
+
+        return $this;
+    }
+
+    public function getTueMaxTime(): ?\DateTimeInterface
+    {
+        if ($this->tueMaxTime) {
+            return \DateTime::createFromFormat('His', $this->tueMaxTime->format('His'));
+        }
+        return null;
+    }
+
+    public function setTueMaxTime(?\DateTimeInterface $tueMaxTime): self
+    {
+        $this->tueMaxTime = $tueMaxTime;
+
+        return $this;
+    }
+
     public function getWedTime(): ?\DateTimeInterface
     {
-        return $this->wedTime;
+        if ($this->wedTime) {
+            return \DateTime::createFromFormat('His', $this->wedTime->format('His'));
+        }
+        return null;
     }
 
     public function setWedTime(?\DateTimeInterface $wedTime): self
@@ -591,9 +879,42 @@ class Criteria
         return $this;
     }
 
+    public function getWedMinTime(): ?\DateTimeInterface
+    {
+        if ($this->wedMinTime) {
+            return \DateTime::createFromFormat('His', $this->wedMinTime->format('His'));
+        }
+        return null;
+    }
+
+    public function setWedMinTime(?\DateTimeInterface $wedMinTime): self
+    {
+        $this->wedMinTime = $wedMinTime;
+
+        return $this;
+    }
+
+    public function getWedMaxTime(): ?\DateTimeInterface
+    {
+        if ($this->wedMaxTime) {
+            return \DateTime::createFromFormat('His', $this->wedMaxTime->format('His'));
+        }
+        return null;
+    }
+
+    public function setWedMaxTime(?\DateTimeInterface $wedMaxTime): self
+    {
+        $this->wedMaxTime = $wedMaxTime;
+
+        return $this;
+    }
+
     public function getThuTime(): ?\DateTimeInterface
     {
-        return $this->thuTime;
+        if ($this->thuTime) {
+            return \DateTime::createFromFormat('His', $this->thuTime->format('His'));
+        }
+        return null;
     }
 
     public function setThuTime(?\DateTimeInterface $thuTime): self
@@ -603,9 +924,42 @@ class Criteria
         return $this;
     }
 
+    public function getThuMinTime(): ?\DateTimeInterface
+    {
+        if ($this->thuMinTime) {
+            return \DateTime::createFromFormat('His', $this->thuMinTime->format('His'));
+        }
+        return null;
+    }
+
+    public function setThuMinTime(?\DateTimeInterface $thuMinTime): self
+    {
+        $this->thuMinTime = $thuMinTime;
+
+        return $this;
+    }
+
+    public function getThuMaxTime(): ?\DateTimeInterface
+    {
+        if ($this->thuMaxTime) {
+            return \DateTime::createFromFormat('His', $this->thuMaxTime->format('His'));
+        }
+        return null;
+    }
+
+    public function setThuMaxTime(?\DateTimeInterface $thuMaxTime): self
+    {
+        $this->thuMaxTime = $thuMaxTime;
+
+        return $this;
+    }
+
     public function getFriTime(): ?\DateTimeInterface
     {
-        return $this->friTime;
+        if ($this->friTime) {
+            return \DateTime::createFromFormat('His', $this->friTime->format('His'));
+        }
+        return null;
     }
 
     public function setFriTime(?\DateTimeInterface $friTime): self
@@ -615,9 +969,42 @@ class Criteria
         return $this;
     }
 
+    public function getFriMinTime(): ?\DateTimeInterface
+    {
+        if ($this->friMinTime) {
+            return \DateTime::createFromFormat('His', $this->friMinTime->format('His'));
+        }
+        return null;
+    }
+
+    public function setFriMinTime(?\DateTimeInterface $friMinTime): self
+    {
+        $this->friMinTime = $friMinTime;
+
+        return $this;
+    }
+
+    public function getFriMaxTime(): ?\DateTimeInterface
+    {
+        if ($this->friMaxTime) {
+            return \DateTime::createFromFormat('His', $this->friMaxTime->format('His'));
+        }
+        return null;
+    }
+
+    public function setFriMaxTime(?\DateTimeInterface $friMaxTime): self
+    {
+        $this->friMaxTime = $friMaxTime;
+
+        return $this;
+    }
+
     public function getSatTime(): ?\DateTimeInterface
     {
-        return $this->satTime;
+        if ($this->satTime) {
+            return \DateTime::createFromFormat('His', $this->satTime->format('His'));
+        }
+        return null;
     }
 
     public function setSatTime(?\DateTimeInterface $satTime): self
@@ -627,9 +1014,42 @@ class Criteria
         return $this;
     }
 
+    public function getSatMinTime(): ?\DateTimeInterface
+    {
+        if ($this->satMinTime) {
+            return \DateTime::createFromFormat('His', $this->satMinTime->format('His'));
+        }
+        return null;
+    }
+
+    public function setSatMinTime(?\DateTimeInterface $satMinTime): self
+    {
+        $this->satMinTime = $satMinTime;
+
+        return $this;
+    }
+
+    public function getSatMaxTime(): ?\DateTimeInterface
+    {
+        if ($this->satMaxTime) {
+            return \DateTime::createFromFormat('His', $this->satMaxTime->format('His'));
+        }
+        return null;
+    }
+
+    public function setSatMaxTime(?\DateTimeInterface $satMaxTime): self
+    {
+        $this->satMaxTime = $satMaxTime;
+
+        return $this;
+    }
+
     public function getSunTime(): ?\DateTimeInterface
     {
-        return $this->sunTime;
+        if ($this->sunTime) {
+            return \DateTime::createFromFormat('His', $this->sunTime->format('His'));
+        }
+        return null;
     }
     
     public function setSunTime(?\DateTimeInterface $sunTime): self
@@ -639,117 +1059,147 @@ class Criteria
         return $this;
     }
 
-    public function getMonMarginTime(): ?int
+    public function getSunMinTime(): ?\DateTimeInterface
     {
-        return $this->monMarginTime;
+        if ($this->sunMinTime) {
+            return \DateTime::createFromFormat('His', $this->sunMinTime->format('His'));
+        }
+        return null;
     }
 
-    public function setMonMarginTime(?int $monMarginTime): self
+    public function setSunMinTime(?\DateTimeInterface $sunMinTime): self
     {
-        $this->monMarginTime = $monMarginTime;
+        $this->sunMinTime = $sunMinTime;
+
+        return $this;
+    }
+
+    public function getSunMaxTime(): ?\DateTimeInterface
+    {
+        if ($this->sunMaxTime) {
+            return \DateTime::createFromFormat('His', $this->sunMaxTime->format('His'));
+        }
+        return null;
+    }
+
+    public function setSunMaxTime(?\DateTimeInterface $sunMaxTime): self
+    {
+        $this->sunMaxTime = $sunMaxTime;
+
+        return $this;
+    }
+
+    public function getMonMarginDuration(): ?int
+    {
+        return $this->monMarginDuration;
+    }
+
+    public function setMonMarginDuration(?int $monMarginDuration): self
+    {
+        $this->monMarginDuration = $monMarginDuration;
 
         return $this;
     }
     
-    public function getTueMarginTime(): ?int
+    public function getTueMarginDuration(): ?int
     {
-        return $this->tueMarginTime;
+        return $this->tueMarginDuration;
     }
     
-    public function setTueMarginTime(?int $tueMarginTime): self
+    public function setTueMarginDuration(?int $tueMarginDuration): self
     {
-        $this->tueMarginTime = $tueMarginTime;
+        $this->tueMarginDuration = $tueMarginDuration;
         
         return $this;
     }
     
-    public function getWedMarginTime(): ?int
+    public function getWedMarginDuration(): ?int
     {
-        return $this->wedMarginTime;
+        return $this->wedMarginDuration;
     }
     
-    public function setWedMarginTime(?int $wedMarginTime): self
+    public function setWedMarginDuration(?int $wedMarginDuration): self
     {
-        $this->wedMarginTime = $wedMarginTime;
+        $this->wedMarginDuration = $wedMarginDuration;
         
         return $this;
     }
     
-    public function getThuMarginTime(): ?int
+    public function getThuMarginDuration(): ?int
     {
-        return $this->thuMarginTime;
+        return $this->thuMarginDuration;
     }
     
-    public function setThuMarginTime(?int $thuMarginTime): self
+    public function setThuMarginDuration(?int $thuMarginDuration): self
     {
-        $this->thuMarginTime = $thuMarginTime;
+        $this->thuMarginDuration = $thuMarginDuration;
         
         return $this;
     }
     
-    public function getFriMarginTime(): ?int
+    public function getFriMarginDuration(): ?int
     {
-        return $this->friMarginTime;
+        return $this->friMarginDuration;
     }
     
-    public function setFriMarginTime(?int $friMarginTime): self
+    public function setFriMarginDuration(?int $friMarginDuration): self
     {
-        $this->friMarginTime = $friMarginTime;
+        $this->friMarginDuration = $friMarginDuration;
         
         return $this;
     }
     
-    public function getSatMarginTime(): ?int
+    public function getSatMarginDuration(): ?int
     {
-        return $this->satMarginTime;
+        return $this->satMarginDuration;
     }
     
-    public function setSatMarginTime(?int $satMarginTime): self
+    public function setSatMarginDuration(?int $satMarginDuration): self
     {
-        $this->satMarginTime = $satMarginTime;
+        $this->satMarginDuration = $satMarginDuration;
         
         return $this;
     }
     
-    public function getSunMarginTime(): ?int
+    public function getSunMarginDuration(): ?int
     {
-        return $this->sunMarginTime;
+        return $this->sunMarginDuration;
     }
     
-    public function setSunMarginTime(?int $sunMarginTime): self
+    public function setSunMarginDuration(?int $sunMarginDuration): self
     {
-        $this->sunMarginTime = $sunMarginTime;
+        $this->sunMarginDuration = $sunMarginDuration;
         
         return $this;
     }
     
-    public function getMaxDeviationTime(): ?int
+    public function getMaxDetourDistance(): ?int
     {
-        return $this->maxDeviationTime;
+        return $this->maxDetourDistance;
     }
     
-    public function getMaxDeviationDistance(): ?int
+    public function setMaxDetourDistance(?int $maxDetourDistance): self
     {
-        return $this->maxDeviationDistance;
+        $this->maxDetourDistance = $maxDetourDistance;
+        
+        return $this;
+    }
+
+    public function getMaxDetourDuration(): ?int
+    {
+        return $this->maxDetourDuration;
+    }
+
+    public function setMaxDetourDuration(?int $maxDetourDuration): self
+    {
+        $this->maxDetourDuration = $maxDetourDuration;
+        
+        return $this;
     }
     
     public function getAnyRouteAsPassenger(): bool
     {
         return $this->anyRouteAsPassenger;
-    }
-    
-    public function setMaxDeviationTime(?int $maxDeviationTime): self
-    {
-        $this->maxDeviationTime = $maxDeviationTime;
-        
-        return $this;
-    }
-    
-    public function setMaxDeviationDistance(?int $maxDeviationDistance): self
-    {
-        $this->maxDeviationDistance = $maxDeviationDistance;
-        
-        return $this;
     }
     
     public function setAnyRouteAsPassenger(bool $anyRouteAsPassenger): self
