@@ -77,7 +77,30 @@
 							<tr>
 								<td>{{ matching.proposalOffer.id }}</td>
 								<td><a href="mailto:{{ matching.proposalOffer.user.email }}">{{ matching.proposalOffer.user.givenName|capitalize }} {{ matching.proposalOffer.user.familyName|first|upper }}</a></td>
-								<td>{{ matching.proposalOffer.criteria.fromDate|date('d/m/Y') }} à {{ matching.proposalOffer.criteria.fromTime|date('H:i') }}</td>
+								<td>
+									{% if matching.proposalOffer.criteria.frequency == 1 %}
+										{# punctual #}
+										{{ matching.proposalOffer.criteria.fromDate|date('d/m/Y') }} à {{ matching.proposalOffer.criteria.fromTime|date('H:i') }}
+									{% else %}
+										{# regular #}
+										{{ matching.proposalRequest.criteria.fromDate|date('d/m/Y') }} à 
+										{% if matching.proposalRequest.criteria.fromDate|date('w') == 0 %}
+											{{ matching.proposalOffer.criteria.sunTime|date('H:i') }}
+										{% elseif matching.proposalRequest.criteria.fromDate|date('w') == 1 %}
+											{{ matching.proposalOffer.criteria.sunTime|date('H:i') }}
+										{% elseif matching.proposalRequest.criteria.fromDate|date('w') == 2 %}
+											{{ matching.proposalOffer.criteria.sunTime|date('H:i') }}
+										{% elseif matching.proposalRequest.criteria.fromDate|date('w') == 3 %}
+											{{ matching.proposalOffer.criteria.sunTime|date('H:i') }}
+										{% elseif matching.proposalRequest.criteria.fromDate|date('w') == 4 %}
+											{{ matching.proposalOffer.criteria.sunTime|date('H:i') }}
+										{% elseif matching.proposalRequest.criteria.fromDate|date('w') == 5 %}
+											{{ matching.proposalOffer.criteria.sunTime|date('H:i') }}
+										{% elseif matching.proposalRequest.criteria.fromDate|date('w') == 6 %}
+											{{ matching.proposalOffer.criteria.sunTime|date('H:i') }}
+										{% endif %}								
+									{% endif %}
+								</td>
 								<td>{{ matching.proposalOffer.type == 1 ? "Aller simple" : "Aller-retour" }}</td>
 								<td>{{ matching.proposalOffer.criteria.frequency == 1 ? "Ponctuel" : "Régulier" }}</td>
 								<td>{{ matching.proposalOffer.waypoints[0].address.addressLocality }}</td>
@@ -114,7 +137,30 @@
 							<tr>
 								<td>{{ matching.proposalRequest.id }}</td>
 								<td><a href="mailto:{{ matching.proposalRequest.user.email }}">{{ matching.proposalRequest.user.givenName|capitalize }} {{ matching.proposalRequest.user.familyName|first|upper }}</a></td>
-								<td>{{ matching.proposalRequest.criteria.fromDate|date('d/m/Y') }} à {{ matching.proposalRequest.criteria.fromTime|date('H:i') }}</td>
+								<td>
+									{% if matching.proposalRequest.criteria.frequency == 1 %}
+										{# punctual #}
+										{{ matching.proposalRequest.criteria.fromDate|date('d/m/Y') }} à {{ matching.proposalRequest.criteria.fromTime|date('H:i') }}
+									{% else %}
+										{# regular #}
+										{{ matching.proposalOffer.criteria.fromDate|date('d/m/Y') }} à 
+										{% if matching.proposalOffer.criteria.fromDate|date('w') == 0 %}
+											{{ matching.proposalRequest.criteria.sunTime|date('H:i') }}
+										{% elseif matching.proposalOffer.criteria.fromDate|date('w') == 1 %}
+											{{ matching.proposalRequest.criteria.sunTime|date('H:i') }}
+										{% elseif matching.proposalOffer.criteria.fromDate|date('w') == 2 %}
+											{{ matching.proposalRequest.criteria.sunTime|date('H:i') }}
+										{% elseif matching.proposalOffer.criteria.fromDate|date('w') == 3 %}
+											{{ matching.proposalRequest.criteria.sunTime|date('H:i') }}
+										{% elseif matching.proposalOffer.criteria.fromDate|date('w') == 4 %}
+											{{ matching.proposalRequest.criteria.sunTime|date('H:i') }}
+										{% elseif matching.proposalOffer.criteria.fromDate|date('w') == 5 %}
+											{{ matching.proposalRequest.criteria.sunTime|date('H:i') }}
+										{% elseif matching.proposalOffer.criteria.fromDate|date('w') == 6 %}
+											{{ matching.proposalRequest.criteria.sunTime|date('H:i') }}
+										{% endif %}								
+									{% endif %}
+								</td>
 								<td>{{ matching.proposalRequest.type == 1 ? "Aller simple" : "Aller-retour" }}</td>
 								<td>{{ matching.proposalRequest.criteria.frequency == 1 ? "Ponctuel" : "Régulier" }}</td>
 								<td>{{ matching.proposalRequest.waypoints[0].address.addressLocality }}</td>
