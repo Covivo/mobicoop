@@ -100,7 +100,6 @@ class JwtManager
         if ($token->isHit()) {
             $this->token = $token->get();
         }
-
     }
 
     /**
