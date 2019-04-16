@@ -23,12 +23,12 @@ Carpool apps available on a territory, allows connection between carpoolers maki
 - xdebug (needed for code-coverage)
 - Google Chrome (for functionnals tests)
 - Openssl (for api certificats)
-- If you have missing requirements during installation check this docker file
+- If you have missing requirements during the installation check this docker file
 install & enable in your .ini all its php extensions : [Docker file](https://github.com/vyuldashev/docker-ci-php-node/blob/master/Dockerfile)
 
 ## API
 
-- MariaDB Database with access user connection with an [already existing bu empty](https://dev.mysql.com/doc/refman/8.0/en/creating-database.html) database for api
+- MariaDB Database with a dedicated user on an [already existing bu empty](https://dev.mysql.com/doc/refman/8.0/en/creating-database.html) database
 - A Geographic Information System (GIS), needed for direction calculation; we use the [Grapphopper routine engine](https://github.com/graphhopper/graphhopper) on a separate server; for now it's the only router supported but it could be replaced by any routing engine with little developments
 - A Geocoder for reverse geocoding, we use [BazingaGeocoderBundle](https://github.com/geocoder-php/BazingaGeocoderBundle) that can use any geocoder (locationiq, google maps, bing...)
 
@@ -42,9 +42,8 @@ install & enable in your .ini all its php extensions : [Docker file](https://git
 ## Clone
 
 - Clone the repo
-
-`git clone https://gitlab.com/mobicoop/mobicoop`
-
+    - with ssh : `git clone git@gitlab.com:mobicoop/mobicoop.git`
+    - with https : `git clone https://gitlab.com/mobicoop/mobicoop.git`
 
 ## Install deps
 
@@ -185,7 +184,7 @@ A developer doc is available [here](https://mobicoop.gitlab.io/mobicoop/build/do
 When you push on this repo, pipeline are automatically trigerred, if you do not want that, please add the message `skip` into your commit; for eg: `git commit -m"update readme, skip"`
 
 
-## ℹ️ I do not understand what .env to edit  ？
+## ℹ️ I do not understand which .env to edit  ？
 
 If you are in developpement mod, after `composer install` you could see a new `.env`. This file is the default configuration file and *is versioned* (this is a new behavior in Symfony 4.2). *DO NOT* modify this file for your own needs, create instead a [.env.local](.env.file), which *won't be versioned*.
 
@@ -212,12 +211,6 @@ You can do it using an app like Postman with the following settings :
   ```
 
 The swagger documentation can be found after install to see all route @ [http://localhost:8080/doc](http://localhost:8080/doc)
-To send queries using a token you first need to get a token (see above), and copy it.
-Then use this token to authorize queries :
-- click on Authorize button
-- on 'Value' write : bearer \<your token\>
-- click on Authorize
-
 
 ## ℹ️ What kind of technos do you use ？
 
