@@ -73,6 +73,6 @@ class JwtToken
         if (!$this->expiration) {
             return false;
         }
-        return (new \DateTime()) < $this->expiration;
+        return (new \DateTime("UTC")) < $this->expiration;
     }
 }
