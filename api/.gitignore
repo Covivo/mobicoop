@@ -359,4 +359,4 @@ $RECYCLE.BIN/
 # Rdex
 /config/rdex/operator.json
 /config/rdex/clients.json
-/config/rdex/providers.json.dist
+/config/rdex/providers.json
