@@ -1,7 +1,12 @@
 monolog:
     handlers:
+        carpool:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/carpool.log"
+            channels: [carpool]
         main:
             type: stream
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
-            channels: ["!event"]
+            channels: ["!event", "!carpool"]

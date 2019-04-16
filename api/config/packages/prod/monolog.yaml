@@ -11,6 +11,12 @@ monolog:
             type: stream
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
+            channels: ["!carpool"]
+        carpool:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/carpool.log"
+            channels: [carpool]
         console:
             type: console
             process_psr_3_messages: false

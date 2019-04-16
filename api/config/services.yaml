@@ -69,3 +69,7 @@ services:
     App\Geography\Service\GeoRouter:
         arguments:
             $uri: '%env(resolve:SIG_URI)%'
+
+    App\Carpool\Service\ProposalManager:
+        tags:   
+            - { name: monolog.logger, channel: carpool }
