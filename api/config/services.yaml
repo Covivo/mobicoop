@@ -8,7 +8,6 @@ parameters:
 
 imports:
     - { resource: images.yaml }
-    - { resource: 'rdex/rdex.yaml' }
 
 services:
     # default configuration for services in *this* file
@@ -79,6 +78,6 @@ services:
     # inject rdex parameters to ExternalJourneyManager 
     App\ExternalJourney\Service\ExternalJourneyManager:
         arguments:
-            $operator: '%rdex_operator%'
-            $clients: '%rdex_clients%'
-            $providers: '%rdex_providers%'
+            $operator: '%env(json:file:resolve:RDEX_OPERATOR)%'
+            $clients: '%env(json:file:resolve:RDEX_CLIENTS)%'
+            $providers: '%env(json:file:resolve:RDEX_PROVIDERS)%'

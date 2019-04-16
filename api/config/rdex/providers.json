@@ -1,0 +1,26 @@
+{
+    "mobicoop": {
+        "url": "http://api.test.ouestgo.fr", 
+        "resource": "journeys", 
+        "api_key": "rdex_mobicoop", 
+        "private_key": "rdex_mobicoop_uijdhdh4822444;jhduudd854128AJSjhhh-42"
+    },
+    "itinisere": { 
+        "url": "http://www.covivo.eu", 
+        "resource": "journeys", 
+        "api_key": "rdex_itinisere", 
+        "private_key": "rdex_itinisere_&aer-açàuhb2-/!.1a51a-541?!auigyzur-42"
+    },
+    "ouestgo": { 
+        "url": "http://www.covivo.eu", 
+        "resource": "journeys", 
+        "api_key": "rdex_ouestgo", 
+        "private_key": "rdex_ouestgo_ujzaar740azara048az0rr87a08uraraz#0254&a-73-(-09jrt-42"
+    },
+    "tictactrip": { 
+        "url": "http://www.covivo.eu", 
+        "resource": "journeys",
+        "api_key": "rdex_tictactrip", 
+        "private_key": "rdex_tictactrip_-èajrh-r+aaae0tvaqlgdh6326z40gzz!;lzeajcazra-42"
+    }
+}
