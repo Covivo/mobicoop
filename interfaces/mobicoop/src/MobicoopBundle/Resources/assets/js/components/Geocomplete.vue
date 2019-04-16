@@ -10,9 +10,11 @@
         icon="search-location"
         icon-pack="fa"
         :loading="isFetching"
-        @input="getAsyncData"
+        @input="getAsyncData()"
         @select="onSelected"
-        @focus="setFocus"
+        @focus="setFocus(true)"
+        @typing="setFocus(true)"
+        @blur="setFocus(false)"
       >
         <template slot-scope="props">
           <div class="media">
@@ -79,11 +81,12 @@ export default {
         address: "",
         data: [],
         selected: null,
-        isFetching: false
+        isFetching: false,
+        nbOfRequest: 0
       };
     },
-    setFocus(){
-      this.focus = true;
+    setFocus(val){
+      this.focus = val;
     },
     getAsyncData: debounce(function(address) {
       if(!this.focus) return; // We did not select the value, so we stop here
@@ -91,34 +94,32 @@ export default {
       axios
         .get(`${this.url}${address}`)
         .then(res => {
+          this.isFetching = false;
+          console.log('Got result', res.data)
           // Add a property concatenedAddr to be shown into the autocomplete field after selection
           let addresses = res.data;
+          // No Adresses return, we stop here
+          if(!addresses.length){return;}
           addresses.forEach( (adress,adressKey) => {
             let streetAddress = addresses[adressKey].streetAddress ? `${addresses[adressKey].streetAddress} ` : '';
             let postalCode = addresses[adressKey].postalCode ? `${addresses[adressKey].postalCode} ` : '';
             let addressLocality = addresses[adressKey].addressLocality ? addresses[adressKey].addressLocality : '';
             addresses[adressKey].concatenedAddr = `${streetAddress}${postalCode}${addressLocality}`
           })
+          // Set Data & show them
+          if(this.isFetching) return; // Another request is fetching, we do not show the previous one
           this.data = [...res.data];
         })
         .catch(err => {
           this.data = [];
           console.error(err);
-        })
-        .then(_ => {
           this.isFetching = false;
-          this.focus = false;
-        });
+        })
     }, 700),
-    formattedDisplay(result) {
-      let resultToShow = `${result.streetAddress} ${result.postalCode} ${
-        result.addressLocality
-      } ${result.addressCountry}`;
-      return resultToShow.trim();
-    },
     onSelected(value) {
       this.selected = value;
       this.$emit("geoSelected", { ...value, name: this.name });
+      // this.focus = false;
     }
   }
 };
