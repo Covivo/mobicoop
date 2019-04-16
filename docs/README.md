@@ -54,9 +54,6 @@ install & enable in your .ini all its php extensions : [Docker file](https://git
 
 ## Config
 
-- *Duplicate, rename without .dist & config files:*
-    - [config.json api](api/config.json.dist)
-
 - *Duplicate, rename with .env.local & edit some env.local:*  
     - [.env api](api/.env)   
     - [.env mobicoop](interfaces/mobicoop/.env) 

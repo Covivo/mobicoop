@@ -7,7 +7,8 @@ parameters:
     locale: 'fr'
 
 imports:
-    resource: 'images.yaml'
+    - { resource: images.yaml }
+    - { resource: rdex.yaml }
 
 services:
     # default configuration for services in *this* file
@@ -70,6 +71,14 @@ services:
         arguments:
             $uri: '%env(resolve:SIG_URI)%'
 
+    # set the monolog channel to use for ProposalManager
     App\Carpool\Service\ProposalManager:
         tags:   
             - { name: monolog.logger, channel: carpool }
+
+    # inject rdex parameters to ExternalJourneyManager 
+    App\ExternalJourney\Service\ExternalJourneyManager:
+        arguments:
+            $operator: '%rdex_operator%'
+            $clients: '%rdex_clients%'
+            $providers: '%rdex_providers%'

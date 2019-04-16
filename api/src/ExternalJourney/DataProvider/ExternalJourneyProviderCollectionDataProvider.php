@@ -29,6 +29,7 @@ use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 
 
 use App\ExternalJourney\Entity\ExternalJourneyProvider;
+use App\ExternalJourney\Service\ExternalJourneyManager;
 
 /**
  * Collection data provider for External Journey Provider entity.
@@ -40,8 +41,12 @@ use App\ExternalJourney\Entity\ExternalJourneyProvider;
  */
 final class ExternalJourneyProviderCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    private const EXTERNAL_JOURNEY_CONFIG_FILE = "../config.json";
-    private const EXTERNAL_JOURNEY_API_KEY = "rdexApi";
+    private $externalJourneyManager;
+
+    public function __construct(ExternalJourneyManager $externalJourneyManager)
+    {
+        $this->externalJourneyManager = $externalJourneyManager;
+    }
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
@@ -50,11 +55,6 @@ final class ExternalJourneyProviderCollectionDataProvider implements CollectionD
 
     public function getCollection(string $resourceClass, string $operationName = null): array
     {
-        if (file_exists(self::EXTERNAL_JOURNEY_CONFIG_FILE)) {
-            $apiList = json_decode(file_get_contents(self::EXTERNAL_JOURNEY_CONFIG_FILE), true);
-            $rdexApi = array_keys($apiList[self::EXTERNAL_JOURNEY_API_KEY]);
-            return $rdexApi;
-        }
-        return [];
+        return $this->externalJourneyManager->getProviders();
     }
 }
