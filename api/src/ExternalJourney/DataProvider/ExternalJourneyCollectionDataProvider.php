@@ -99,7 +99,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
                     'timestamp' => time(),
                     'apikey'    => $provider["api_key"],
                     'p'         => $searchParameters
-                );                
+                );
                 // construct the requested url
                 $url = $provider["url"].'/'.$provider["resource"].'?'.http_build_query($query);
                 $signature = hash_hmac(self::EXTERNAL_JOURNEY_HASH, $url, $provider["private_key"]);

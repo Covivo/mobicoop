@@ -41,20 +41,18 @@ class ExternalJourneyManager
         $this->providers = $providers;
     }
 
-    public function getOperator() 
+    public function getOperator()
     {
         return $this->operator;
     }
 
-    public function getClients() 
+    public function getClients()
     {
         return $this->clients;
     }
 
-    public function getProviders() 
+    public function getProviders()
     {
         return $this->providers;
     }
-
-
 }
