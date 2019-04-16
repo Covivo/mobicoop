@@ -27,7 +27,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Entity\JwtToken;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Strategy\Auth\AuthStrategyInterface;
 use GuzzleHttp\ClientInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Cache\Simple\FilesystemCache;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 /**
  * JwtManager
@@ -66,7 +66,7 @@ class JwtManager
     /**
      * $cache Cache system.
      *
-     * @var FilesystemCache
+     * @var FilesystemAdapter
      */
     protected $cache;
 
@@ -95,9 +95,10 @@ class JwtManager
         $this->options = $resolver->resolve($options);
 
         // search for a token in the cache
-        $this->cache = new FilesystemCache();
-        if ($this->cache->has('mobicoop.jwt.token')) {
-            $this->token = $this->cache->get('mobicoop.jwt.token');
+        $this->cache = new FilesystemAdapter();
+        $token = $this->cache->getItem('mobicoop.jwt.token');
+        if ($token->isHit()) {
+            $this->token = $token->get();
         }
     }
 
@@ -111,6 +112,8 @@ class JwtManager
         if ($this->token && $this->token->isValid()) {
             return $this->token;
         }
+        // no token found or token invalid => clear cache
+        $this->cache->deleteItem('mobicoop.jwt.token');
         $url = $this->options['token_url'];
         $requestOptions = array_merge(
             $this->getDefaultHeaders(),
@@ -120,21 +123,23 @@ class JwtManager
         $body = json_decode($response->getBody(), true);
         $expiresIn = isset($body[$this->options['expire_key']]) ? $body[$this->options['expire_key']] : null;
         if ($expiresIn) {
-            $expiration = new \DateTime('now + ' . $expiresIn . ' seconds');
+            $expiration = new \DateTime('now + ' . $expiresIn . ' seconds', new \DateTimeZone('UTC'));
         } elseif (count($jwtParts = explode('.', $body[$this->options['token_key']])) === 3
             && is_array($payload = json_decode(base64_decode($jwtParts[1]), true))
             // https://tools.ietf.org/html/rfc7519.html#section-4.1.4
             && array_key_exists('exp', $payload)
         ) {
             // Manually process the payload part to avoid having to drag in a new library
-            $expiration = new \DateTime('@' . $payload['exp']);
+            $expiration = new \DateTime('@' . $payload['exp'], new \DateTimeZone('UTC'));
         } else {
             $expiration = null;
         }
         $this->token = new JwtToken($body[$this->options['token_key']], $expiration);
 
         // save the token in the cache
-        $this->cache->set('mobicoop.jwt.token', $this->token);
+        $token = $this->cache->getItem('mobicoop.jwt.token');
+        $token->set($this->token);
+        $this->cache->save($token);
 
         return $this->token;
     }
