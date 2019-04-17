@@ -67,7 +67,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
             'timeout'  => 10.0,
         ]);
         // we collect search parameters here
-        $providerName = $this->request->get("provider_name");
+        $providerName = $this->request->get("provider");
         $driver = $this->request->get("driver");
         $passenger = $this->request->get("passenger");
         $fromLatitude = $this->request->get("from_latitude");
@@ -94,15 +94,15 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
 
         // @todo error management (api not responding, bad parameters...)
         foreach ($this->externalJourneyManager->getProviders() as $provider) {
-            if ($provider["provider"] == $providerName) {
+            if ($provider->getName() == $providerName) {
                 $query = array(
                     'timestamp' => time(),
-                    'apikey'    => $provider["api_key"],
+                    'apikey'    => $provider->getApiKey(),
                     'p'         => $searchParameters
                 );
                 // construct the requested url
-                $url = $provider["url"].'/'.$provider["resource"].'?'.http_build_query($query);
-                $signature = hash_hmac(self::EXTERNAL_JOURNEY_HASH, $url, $provider["private_key"]);
+                $url = $provider->getUrl().'/'.$provider->getResource().'?'.http_build_query($query);
+                $signature = hash_hmac(self::EXTERNAL_JOURNEY_HASH, $url, $provider->getPrivateKey());
                 $signedUrl = $url.'&signature='.$signature;
                 // request url
                 $data = $client->request('GET', $signedUrl);

@@ -23,6 +23,8 @@
 
 namespace App\ExternalJourney\Service;
 
+use App\ExternalJourney\Entity\ExternalJourneyProvider;
+
 /**
  * External journey service.
  *
@@ -38,7 +40,15 @@ class ExternalJourneyManager
     {
         $this->operator = $operator;
         $this->clients = $clients;
-        $this->providers = $providers;
+        foreach ($providers as $providerName=>$details) {
+            $provider = new ExternalJourneyProvider();
+            $provider->setName($providerName);
+            $provider->setUrl($details['url']);
+            $provider->setResource($details['resource']);
+            $provider->setApiKey($details['api_key']);
+            $provider->setPrivateKey($details['private_key']);
+            $this->providers[] = $provider;
+        }
     }
 
     public function getOperator()

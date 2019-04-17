@@ -25,28 +25,58 @@ namespace App\ExternalJourney\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * An external journey provider.
+ * For now providers are configured in a json config file, but maybe it should be in the database.
  *
  * @ApiResource(
- *     collectionOperations={"get"={"method"="GET"}},
- *     itemOperations={}
+ *      attributes={
+ *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"}
+ *      },
+ *      collectionOperations={"get"}
  * )
- *
- * @todo: complete the provider with useful informations : name, url, logo, description...
  *
  * @author Sofiane Belaribi <sofiane.belaribi@covivo.eu>
  */
 class ExternalJourneyProvider
 {
     /**
-    * @var int $id  The id of the provider
+    * @var int $id  The id of the provider (not useful yet but needed for api)
+    * @ApiProperty(identifier=true)
     */
     private $id;
 
+    /**
+     * @var string $name        The name of the provider
+     * @Groups("read")
+     */
+    private $name;
+
+    /**
+     * @var string $url         The url of the provider
+     */
+    private $url;
+
+    /**
+     * @var string $resource    The name of the resource of the provider
+     */
+    private $resource;
+
+    /**
+     * @var string $apiKey      The api key of the provider
+     */
+    private $apiKey;
+
+    /**
+     * @var string $privateKey  The private key of the provider
+     */
+    private $privateKey;
+
     public function __construct()
     {
+        $this->id = 1;
     }
 
     public function getId()
@@ -58,4 +88,65 @@ class ExternalJourneyProvider
     {
         return $this->id = $id;
     }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+    
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
+        
+        return $this;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+    
+    public function setUrl(?string $url): self
+    {
+        $this->url = $url;
+        
+        return $this;
+    }
+
+    public function getResource(): ?string
+    {
+        return $this->resource;
+    }
+    
+    public function setResource(?string $resource): self
+    {
+        $this->resource = $resource;
+        
+        return $this;
+    }
+
+    public function getApiKey(): ?string
+    {
+        return $this->apiKey;
+    }
+    
+    public function setApiKey(?string $apiKey): self
+    {
+        $this->apiKey = $apiKey;
+        
+        return $this;
+    }
+
+    public function getPrivateKey(): ?string
+    {
+        return $this->privateKey;
+    }
+    
+    public function setPrivateKey(?string $privateKey): self
+    {
+        $this->privateKey = $privateKey;
+        
+        return $this;
+    }
+
 }
