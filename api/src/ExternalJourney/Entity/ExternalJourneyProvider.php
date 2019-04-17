@@ -148,5 +148,4 @@ class ExternalJourneyProvider
         
         return $this;
     }
-
 }
