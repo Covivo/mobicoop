@@ -34,7 +34,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *      "swagger_context"={
  *           "parameters"={
  *              {
- *                  "name" = "provider_name",
+ *                  "name" = "provider",
  *                  "in" = "query",
  *                  "required" = "true",
  *                  "type" = "string",
