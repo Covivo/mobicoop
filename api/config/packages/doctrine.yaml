@@ -27,8 +27,8 @@ doctrine:
             App:
                 is_bundle: false
                 type: annotation
-                dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'App\Entity'
+                dir: '%kernel.project_dir%/src/App/Entity'
+                prefix: 'App\App\Entity'
                 alias: App
             Carpool:
                 is_bundle: false
@@ -72,4 +72,10 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Image/Entity'
                 prefix: 'App\Image\Entity'
                 alias: Image
+            Role:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Role/Entity'
+                prefix: 'App\Role\Entity'
+                alias: Role
                 
