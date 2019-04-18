@@ -40,7 +40,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use App\Geography\Entity\Address;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Ask;
-use App\Role\Entity\Role;
+use App\Right\Entity\Role;
 use Doctrine\Common\Collections\Collection;
 
 /**
@@ -236,14 +236,6 @@ class User
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      */
     private $asks;
-
-    /**
-     * @var Role[]|null The roles granted to the user.
-     *
-     * @ORM\ManyToMany(targetEntity="\App\Role\Entity\Role")
-     * @Groups({"read","write"})
-     */
-    private $roles;
     
     public function __construct($status=null)
     {
@@ -251,7 +243,6 @@ class User
         $this->cars = new ArrayCollection();
         $this->proposals = new ArrayCollection();
         $this->asks = new ArrayCollection();
-        $this->roles = new ArrayCollection();
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -531,29 +522,4 @@ class User
         return $this;
     }
 
-    /**
-     * @return Collection|Role[]
-     */
-    public function getRoles(): Collection
-    {
-        return $this->roles;
-    }
-    
-    public function addRole(Role $role): self
-    {
-        if (!$this->roles->contains($role)) {
-            $this->roles[] = $role;
-        }
-        
-        return $this;
-    }
-    
-    public function removeRole(Role $role): self
-    {
-        if ($this->roles->contains($role)) {
-            $this->roles->removeElement($role);
-        }
-        
-        return $this;
-    }
 }

@@ -21,33 +21,35 @@
  *    LICENSE
  **************************/
 
-namespace App\App\Entity;
+namespace App\Right\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\Common\Collections\ArrayCollection;
-use App\Right\Entity\Role;
 
 /**
- * An app which can access to the api (front, mobile app...).
+ * A role.
  *
  * @ORM\Entity
+ * @UniqueEntity("name")
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"}
+ *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get"},
- *      itemOperations={"get"}
+ *      collectionOperations={"get","post"},
+ *      itemOperations={"get","put","delete"}
  * )
  */
-class App
+class Role
 {
     // default role
-    const DEFAULT_ROLE = 4;
+    const DEFAULT_ROLE = 1;
     
     /**
-     * @var int The id of this app.
+     * @var int The id of this role.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -55,9 +57,17 @@ class App
      * @Groups("read")
      */
     private $id;
-            
+        
     /**
-     * @var string|null The name of the app.
+     * @var string The title of the role (user friendly name).
+     *
+     * @ORM\Column(type="string", length=45)
+     * @Groups("read")
+     */
+    private $title;
+    
+    /**
+     * @var string|null The name of the role.
      *
      * @ORM\Column(type="string", length=45)
      * @Groups("read")
@@ -65,16 +75,16 @@ class App
     private $name;
 
     /**
-     * @var Role[]|null The roles granted to the app.
+     * @var Right[]|null The rights of the role.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Right\Entity\Role")
+     * @ORM\ManyToMany(targetEntity="\App\Right\Entity\Right")
      * @Groups({"read","write"})
      */
-    private $roles;
-    
+    private $rights;
+
     public function __construct()
     {
-        $this->roles = new ArrayCollection();
+        $this->rights = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -82,6 +92,18 @@ class App
         return $this->id;
     }
         
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(?string $title): self
+    {
+        $this->title = $title;
+        
+        return $this;
+    }
+    
     public function getName(): ?string
     {
         return $this->name;
@@ -95,26 +117,26 @@ class App
     }
 
     /**
-     * @return Collection|Role[]
+     * @return Collection|Right[]
      */
-    public function getRoles(): Collection
+    public function getRights(): Collection
     {
-        return $this->roles;
+        return $this->rights;
     }
     
-    public function addRole(Role $role): self
+    public function addRight(Right $right): self
     {
-        if (!$this->roles->contains($role)) {
-            $this->roles[] = $role;
+        if (!$this->rights->contains($right)) {
+            $this->rights[] = $right;
         }
         
         return $this;
     }
     
-    public function removeRole(Role $role): self
+    public function removeRight(Right $right): self
     {
-        if ($this->roles->contains($role)) {
-            $this->roles->removeElement($role);
+        if ($this->rights->contains($right)) {
+            $this->rights->removeElement($right);
         }
         
         return $this;

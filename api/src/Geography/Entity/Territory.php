@@ -21,33 +21,31 @@
  *    LICENSE
  **************************/
 
-namespace App\App\Entity;
+namespace App\Geography\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
-use App\Right\Entity\Role;
 
 /**
- * An app which can access to the api (front, mobile app...).
+ * A teritory.
  *
  * @ORM\Entity
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"}
+ *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get"},
- *      itemOperations={"get"}
+ *      collectionOperations={"get","post"},
+ *      itemOperations={"get","put","delete"}
  * )
  */
-class App
+class Territory
 {
-    // default role
-    const DEFAULT_ROLE = 4;
     
     /**
-     * @var int The id of this app.
+     * @var int The id of this territory.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -57,31 +55,31 @@ class App
     private $id;
             
     /**
-     * @var string|null The name of the app.
+     * @var string The name of the territory.
      *
-     * @ORM\Column(type="string", length=45)
-     * @Groups("read")
+     * @ORM\Column(type="string", length=100)
+     * @Groups({"read","write"})
      */
     private $name;
 
     /**
-     * @var Role[]|null The roles granted to the app.
+     * @var Territory[]|null The parents of the territory.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Right\Entity\Role")
+     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
      * @Groups({"read","write"})
      */
-    private $roles;
-    
+    private $parents;
+
     public function __construct()
     {
-        $this->roles = new ArrayCollection();
+        $this->parents = new ArrayCollection();
     }
     
     public function getId(): ?int
     {
         return $this->id;
     }
-        
+            
     public function getName(): ?string
     {
         return $this->name;
@@ -95,28 +93,29 @@ class App
     }
 
     /**
-     * @return Collection|Role[]
+     * @return Collection|Territory[]
      */
-    public function getRoles(): Collection
+    public function getParents(): Collection
     {
-        return $this->roles;
+        return $this->parents;
     }
     
-    public function addRole(Role $role): self
+    public function addParent(Territory $parent): self
     {
-        if (!$this->roles->contains($role)) {
-            $this->roles[] = $role;
+        if (!$this->parents->contains($parent)) {
+            $this->parents[] = $parent;
         }
         
         return $this;
     }
     
-    public function removeRole(Role $role): self
+    public function removeParent(Territory $parent): self
     {
-        if ($this->roles->contains($role)) {
-            $this->roles->removeElement($role);
+        if ($this->parents->contains($parent)) {
+            $this->parents->removeElement($parent);
         }
         
         return $this;
     }
+
 }

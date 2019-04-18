@@ -21,33 +21,35 @@
  *    LICENSE
  **************************/
 
-namespace App\Role\Entity;
+namespace App\Right\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * A role.
+ * A right.
  *
  * @ORM\Entity
  * @UniqueEntity("name")
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"}
+ *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get"},
- *      itemOperations={"get"}
+ *      collectionOperations={"get","post"},
+ *      itemOperations={"get","put","delete"}
  * )
  */
-class Role
+class Right
 {
-    // default role
-    CONST DEFAULT_ROLE = 1;
+    const RIGHT_TYPE_ITEM = 1;
+    const RIGHT_TYPE_GROUP = 2;
     
     /**
-     * @var int The id of this role.
+     * @var int The id of this right.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -57,34 +59,47 @@ class Role
     private $id;
         
     /**
-     * @var string The title of the role (user friendly name).
+     * @var int The type of the right (1=item; 2=group).
      *
-     * @ORM\Column(type="string", length=45)
-     * @Groups("read")
+     * @ORM\Column(type="smallint")
+     * @Groups({"read","write"})
      */
-    private $title;
+    private $type;
     
     /**
-     * @var string|null The name of the role.
+     * @var string The name of the right.
      *
-     * @ORM\Column(type="string", length=45)
-     * @Groups("read")
+     * @ORM\Column(type="string", length=100)
+     * @Groups({"read","write"})
      */
     private $name;
+
+    /**
+     * @var Right[]|null The groups of the right.
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Right\Entity\Right")
+     * @Groups({"read","write"})
+     */
+    private $groups;
+
+    public function __construct()
+    {
+        $this->groups = new ArrayCollection();
+    }
     
     public function getId(): ?int
     {
         return $this->id;
     }
         
-    public function getTitle(): ?string
+    public function getType(): ?int
     {
-        return $this->title;
+        return $this->type;
     }
 
-    public function setTitle(?string $title): self
+    public function setType(?int $type): self
     {
-        $this->title = $title;
+        $this->type = $type;
         
         return $this;
     }
@@ -97,6 +112,32 @@ class Role
     public function setName(?string $name): self
     {
         $this->name = $name;
+        
+        return $this;
+    }
+
+    /**
+     * @return Collection|Right[]
+     */
+    public function getGroups(): Collection
+    {
+        return $this->groups;
+    }
+    
+    public function addGroup(Right $group): self
+    {
+        if (!$this->groups->contains($group)) {
+            $this->groups[] = $group;
+        }
+        
+        return $this;
+    }
+    
+    public function removeGroup(Right $group): self
+    {
+        if ($this->groups->contains($group)) {
+            $this->groups->removeElement($group);
+        }
         
         return $this;
     }

@@ -72,10 +72,10 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Image/Entity'
                 prefix: 'App\Image\Entity'
                 alias: Image
-            Role:
+            Right:
                 is_bundle: false
                 type: annotation
-                dir: '%kernel.project_dir%/src/Role/Entity'
-                prefix: 'App\Role\Entity'
-                alias: Role
+                dir: '%kernel.project_dir%/src/Right/Entity'
+                prefix: 'App\Right\Entity'
+                alias: Right
                 
