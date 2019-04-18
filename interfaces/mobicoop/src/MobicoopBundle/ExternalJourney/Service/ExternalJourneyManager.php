@@ -10,6 +10,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourney;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourneyProvider;
 
 class ExternalJourneyManager
 {
@@ -24,6 +25,7 @@ class ExternalJourneyManager
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(ExternalJourney::class);
+    
     }
 
     /**
@@ -38,5 +40,20 @@ class ExternalJourneyManager
             return $response->getValue();
         }
         return null;
+    }
+
+    /**
+     * Get external journey providers.
+     * 
+     * @return void
+     */
+    public function getExternalJourneyProviders()
+    {   
+        $this->dataProvider->setClass(ExternalJourneyProvider::class);
+        $response = $this->dataProvider->getCollection();
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null; 
     }
 }

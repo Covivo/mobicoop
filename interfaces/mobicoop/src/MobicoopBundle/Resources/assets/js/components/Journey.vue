@@ -9,7 +9,8 @@
             v-for="(partner,indexApi) in listExternalApi"
             :key="indexApi" 
             class="control"
-          ><span :class="`tag is-${indexApi} is-large`">{{ indexApi }} {{ partner.result }}</span>
+          >
+            <span :class="`tag is-${indexApi} is-large`">{{ indexApi }} {{ partner.result }}</span>
           </div>
           <div class="spinerDiv">
             <!-- This is the spinner loader when data are comming -->
@@ -46,7 +47,7 @@
                 <li 
                   v-for="(partner,indexApi) in listExternalApi"
                   :key="
-                  indexApi"
+                    indexApi"
                 >
                   <div class="field">
                     <input
@@ -83,7 +84,6 @@
           tag="div" 
           class="tile is-multiline section row columns"
         >
-
           <div 
             v-for="(apiResult,index) in allApiResults" 
             :key="index" 

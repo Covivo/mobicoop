@@ -49,6 +49,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Waypoint;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\IndividualStop;
 use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Direction;
+use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourneyProvider;
 
 /**
  * Custom deserializer service.
@@ -97,6 +98,9 @@ class Deserializer
             case PTJourney::class:
                 return self::deserializePTJourney($data);
                 break;
+            case ExternalJourneyProvider::class:
+                return self::deserializeExternalJourneyProvider($data);
+                break;    
             case ExternalJourney::class:
                 return $data;
                 break;
@@ -408,6 +412,13 @@ class Deserializer
             $PTStep->setPTArrival(self::deserializePTArrival($data["ptarrival"]));
         }
         return $PTStep;
+    }
+
+    private function deserializeExternalJourneyProvider(array $data): ?ExternalJourneyProvider
+    {
+        $provider = new ExternalJourneyProvider();
+        $provider = self::autoSet($provider, $data);
+        return $provider;
     }
     
     private function autoSet($object, $data)

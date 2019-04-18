@@ -33,6 +33,7 @@ use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Symfony\Component\HttpFoundation\Response;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManager;
 
 /**
  * Controller class for carpooling related actions.
@@ -103,13 +104,14 @@ class CarpoolController extends AbstractController
     /**
      * Simple search results.
      */
-    public function simpleSearchResults($origin, $destination, $origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date, ProposalManager $proposalManager)
+    public function simpleSearchResults($origin, $destination, $origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date, ProposalManager $proposalManager, ExternalJourneyManager $externalJourneyManager)
     {
         return $this->render('@Mobicoop/search/simple_results.html.twig', [
             'origin' => urldecode($origin),
             'destination' => urldecode($destination),
             'date' =>  \Datetime::createFromFormat("YmdHis", $date)->format('d/m/Y à H:i'),
-            'hydra' => $proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("YmdHis", $date))
+            'hydra' => $proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("YmdHis", $date)),
+            'providers' => $externalJourneyManager->getExternalJourneyProviders()->getMember(),
         ]);
     }
 

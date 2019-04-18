@@ -161,5 +161,20 @@
 		
 	</div>
 </section>
+<section id="home">
+        <Journey></Journey>
+</section>
 
+<section>
+<ul>
+{% for provider in providers %}
+<li>{{ provider.name }}</li>
+{% endfor %}
+</ul>
+</section>
+
+
+{% endblock %}
+{% block javascripts %}
+  {{ encore_entry_script_tags('bundle_search/simpleResults') }}
 {% endblock %}
