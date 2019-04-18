@@ -117,5 +117,4 @@ class Territory
         
         return $this;
     }
-
 }

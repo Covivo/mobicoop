@@ -45,7 +45,7 @@ use App\Geography\Entity\Territory;
  * )
  */
 class UserRight
-{    
+{
     /**
      * @var int The id of this user right.
      *

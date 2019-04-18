@@ -45,7 +45,7 @@ use App\Geography\Entity\Territory;
  * )
  */
 class UserRole
-{    
+{
     /**
      * @var int The id of this user role.
      *
