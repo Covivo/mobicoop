@@ -25,7 +25,6 @@ class ExternalJourneyManager
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(ExternalJourney::class);
-    
     }
 
     /**
@@ -44,16 +43,20 @@ class ExternalJourneyManager
 
     /**
      * Get external journey providers.
-     * 
+     *
      * @return void
      */
-    public function getExternalJourneyProviders()
-    {   
+    public function getExternalJourneyProviders($format = null)
+    {
         $this->dataProvider->setClass(ExternalJourneyProvider::class);
+        if (is_null($format)) {
+            $format = $this->dataProvider::RETURN_OBJECT;
+        }
+        $this->dataProvider->setFormat($format);
         $response = $this->dataProvider->getCollection();
         if ($response->getCode() == 200) {
             return $response->getValue();
         }
-        return null; 
+        return null;
     }
 }

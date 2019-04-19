@@ -34,6 +34,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManager;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 
 /**
  * Controller class for carpooling related actions.
@@ -104,15 +105,34 @@ class CarpoolController extends AbstractController
     /**
      * Simple search results.
      */
-    public function simpleSearchResults($origin, $destination, $origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date, ProposalManager $proposalManager, ExternalJourneyManager $externalJourneyManager)
+    public function simpleSearchResults($origin, $destination, $origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date, ProposalManager $proposalManager)
     {
         return $this->render('@Mobicoop/search/simple_results.html.twig', [
             'origin' => urldecode($origin),
             'destination' => urldecode($destination),
+            'origin_latitude' => urldecode($origin_latitude),
+            'origin_longitude' => urldecode($origin_longitude),
+            'destination_latitude' => urldecode($destination_latitude),
+            'destination_longitude' => urldecode($destination_longitude),
             'date' =>  \Datetime::createFromFormat("YmdHis", $date)->format('d/m/Y à H:i'),
             'hydra' => $proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("YmdHis", $date)),
-            'providers' => $externalJourneyManager->getExternalJourneyProviders()->getMember(),
         ]);
+    }
+
+    /**
+     * Provider rdex
+     */
+    public function rdexProvider(ExternalJourneyManager $externalJourneyManager)
+    {
+        return $this->json($externalJourneyManager->getExternalJourneyProviders(DataProvider::RETURN_JSON));
+    }
+
+    /**
+     * Journey rdex
+     */
+    public function rdexJourney(ExternalJourneyManager $externalJourneyManager)
+    {
+        return $this->json($externalJourneyManager->getExternalJourney(DataProvider::RETURN_JSON));
     }
 
     /**

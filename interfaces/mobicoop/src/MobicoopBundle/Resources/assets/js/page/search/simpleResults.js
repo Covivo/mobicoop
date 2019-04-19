@@ -9,6 +9,7 @@ import Affix from 'vue-affix';
 import axios from 'axios';
 import VueFormWizard from 'vue-form-wizard';
 import 'vue-form-wizard/dist/vue-form-wizard.min.css';
+import '../../../css/page/search/simpleResults.scss';
 
 
 

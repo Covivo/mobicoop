@@ -180,7 +180,7 @@ class DataProvider
                 $clientResponse = $this->client->get($this->resource."/".$id);
                 $value = json_decode((string) $clientResponse->getBody(), true);
             } elseif ($this->format == self::RETURN_JSON) {
-                $clientResponse = $this->client->get($this->resource."/".$id,['headers' => ['accept' => 'application/json']]);
+                $clientResponse = $this->client->get($this->resource."/".$id, ['headers' => ['accept' => 'application/json']]);
                 $value = (string) $clientResponse->getBody();
             } else {
                 $clientResponse = $this->client->get($this->resource."/".$id);
@@ -209,7 +209,7 @@ class DataProvider
                 $clientResponse = $this->client->get($this->resource, ['query'=>$params, 'headers' => ['accept' => 'application/json']]);
             } else {
                 $clientResponse = $this->client->get($this->resource, ['query'=>$params]);
-            }       
+            }
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody()));
             }
@@ -234,7 +234,7 @@ class DataProvider
                 $clientResponse = $this->client->get($this->resource.'/'.$operation, ['query'=>$params, 'headers' => ['accept' => 'application/json']]);
             } else {
                 $clientResponse = $this->client->get($this->resource.'/'.$operation, ['query'=>$params]);
-            }  
+            }
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody()));
             }
@@ -266,7 +266,7 @@ class DataProvider
                 $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route, ['query'=>$params, 'headers' => ['accept' => 'application/json']]);
             } else {
                 $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route, ['query'=>$params]);
-            }  
+            }
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody(), $subClassName));
             }

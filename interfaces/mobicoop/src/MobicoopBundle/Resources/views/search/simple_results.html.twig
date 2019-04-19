@@ -161,16 +161,12 @@
 		
 	</div>
 </section>
-<section id="home">
-        <Journey></Journey>
+
+<section id="simpleResults">
+  <Journey origin-latitude="{{origin_latitude}}" origin-longitude="{{origin_longitude}}" destination-latitude="{{destination_latitude}}" destination-longitude="{{destination_longitude}}"></Journey>
 </section>
 
 <section>
-<ul>
-{% for provider in providers %}
-<li>{{ provider.name }}</li>
-{% endfor %}
-</ul>
 </section>
 
 

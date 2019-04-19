@@ -93,6 +93,21 @@ carpool_results:
         destination_longitude: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?).\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)'
         date: '\d+'
 
+# rdex provider (called with ajax)
+rdex_provider:
+    path:
+        fr: /provider/rdex/ 
+        en: /provider/rdex/
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexProvider  
+    
+# rdex journey (called with ajax)
+rdex_journey:
+    path:
+        fr: /journey/rdex/ 
+        en: /journey/rdex/
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexJourney    
+
+
 # ad results
 ad_results:
     path:
