@@ -75,7 +75,7 @@ class Role
     private $name;
 
     /**
-     * @var Right[]|null The rights of the role.
+     * @var ArrayCollection|null The rights of the role.
      *
      * @ORM\ManyToMany(targetEntity="\App\Right\Entity\Right")
      * @Groups({"read","write"})
@@ -117,9 +117,9 @@ class Role
     }
 
     /**
-     * @return Collection|Right[]
+     * @return ArrayCollection|null
      */
-    public function getRights(): Collection
+    public function getRights(): ?ArrayCollection
     {
         return $this->rights;
     }

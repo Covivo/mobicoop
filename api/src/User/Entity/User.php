@@ -44,6 +44,7 @@ use App\Right\Entity\Role;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
+use App\Right\Entity\UserRole;
 
 /**
  * A user.
@@ -238,6 +239,13 @@ class User implements UserInterface, EquatableInterface
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      */
     private $asks;
+
+    /**
+     * @var Car[]|null A user may have many cars.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Right\Entity\UserRole", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     */
+    private $userRoles;
     
     public function __construct($status=null)
     {
@@ -524,9 +532,42 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getUserRoles(): Collection
+    {
+        return $this->userRoles;
+    }
+    
+    public function addUserRole(UserRole $userRole): self
+    {
+        if (!$this->userRoles->contains($userRole)) {
+            $this->userRoles->add($userRole);
+            $userRole->setUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeUserRole(Car $userRole): self
+    {
+        if ($this->userRoles->contains($userRole)) {
+            $this->userRoles->removeElement($userRole);
+            // set the owning side to null (unless already changed)
+            if ($userRole->getUser() === $this) {
+                $userRole->setUser(null);
+            }
+        }
+        
+        return $this;
+    }
+
     public function getRoles()
     {
-        return array('ROLE_USER');
+        // we return an array of ROLE_***
+        $roles = [];
+        foreach ($this->userRoles as $userRole) {
+            $roles[] = $userRole->getRole()->getName();
+        }
+        return $roles;
     }
 
 
