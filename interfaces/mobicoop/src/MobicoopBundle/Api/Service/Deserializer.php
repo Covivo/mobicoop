@@ -100,7 +100,7 @@ class Deserializer
                 break;
             case ExternalJourneyProvider::class:
                 return self::deserializeExternalJourneyProvider($data);
-                break;    
+                break;
             case ExternalJourney::class:
                 return $data;
                 break;
