@@ -2,7 +2,7 @@ security:
 
     encoders:
         Symfony\Component\Security\Core\User\User: 
-            algorithm: 'bcrypt'
+            algorithm: bcrypt
         App\App\Entity\App:
             algorithm: bcrypt
         App\User\Entity\User:
@@ -81,5 +81,6 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/docs.json, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/rd/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }

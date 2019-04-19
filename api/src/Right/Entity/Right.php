@@ -31,8 +31,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * A right.
+ * Note : we change the name of the table to 'uright' to avoid sql errors as 'right' is a reserved word.
  *
  * @ORM\Entity
+ * @ORM\Table(name="uright")
  * @UniqueEntity("name")
  * @ApiResource(
  *      attributes={
