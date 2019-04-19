@@ -26,8 +26,10 @@ namespace App\App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use App\Right\Entity\Role;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\EquatableInterface;
 
 /**
  * An app which can access to the api (front, mobile app...).
@@ -41,7 +43,7 @@ use App\Right\Entity\Role;
  *      itemOperations={"get"}
  * )
  */
-class App
+class App implements UserInterface, EquatableInterface
 {
     // default role
     const DEFAULT_ROLE = 4;
@@ -65,7 +67,23 @@ class App
     private $name;
 
     /**
-     * @var Role[]|null The roles granted to the app.
+     * @var string|null The username of the app (for authentication).
+     *
+     * @ORM\Column(type="string", length=45)
+     * @Groups("read")
+     */
+    private $username;
+
+    /**
+     * @var string The encoded password of the app.
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $password;
+
+    /**
+     * @var Collection|null The roles granted to the app.
      *
      * @ORM\ManyToMany(targetEntity="\App\Right\Entity\Role")
      * @Groups({"read","write"})
@@ -74,7 +92,7 @@ class App
     
     public function __construct()
     {
-        $this->roles = new ArrayCollection();
+        $this->roles = new Collection();
     }
     
     public function getId(): ?int
@@ -94,12 +112,38 @@ class App
         return $this;
     }
 
-    /**
-     * @return Collection|Role[]
-     */
-    public function getRoles(): Collection
+    public function getUsername(): ?string
     {
-        return $this->roles;
+        return $this->username;
+    }
+    
+    public function setUsername(?string $username): self
+    {
+        $this->username = $username;
+        
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(?string $password): self
+    {
+        $this->password = $password;
+        
+        return $this;
+    }
+
+    public function getRoles(): array
+    {
+        // we return an array of ROLE_***
+        $roles = [];
+        foreach ($this->roles as $role) {
+            $roles[] = $role->getName();
+        }
+        return $roles;
     }
     
     public function addRole(Role $role): self
@@ -118,5 +162,32 @@ class App
         }
         
         return $this;
+    }
+
+
+    public function getSalt()
+    {
+        return  null;
+    }
+
+    public function eraseCredentials()
+    {
+    }
+
+    public function isEqualTo(UserInterface $app)
+    {
+        if (!$app instanceof App) {
+            return false;
+        }
+
+        if ($this->password !== $app->getPassword()) {
+            return false;
+        }
+
+        if ($this->email !== $app->getUsername()) {
+            return false;
+        }
+
+        return true;
     }
 }

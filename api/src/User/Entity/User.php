@@ -42,6 +42,8 @@ use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Ask;
 use App\Right\Entity\Role;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\EquatableInterface;
 
 /**
  * A user.
@@ -63,7 +65,7 @@ use Doctrine\Common\Collections\Collection;
  * @ApiFilter(SearchFilter::class, properties={"email":"exact"})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate"}, arguments={"orderParameterName"="order"})
  */
-class User
+class User implements UserInterface, EquatableInterface
 {
     const MAX_DETOUR_DURATION = 600;
     const MAX_DETOUR_DISTANCE = 10000;
@@ -520,5 +522,42 @@ class User
         }
 
         return $this;
+    }
+
+    public function getRoles()
+    {
+        return array('ROLE_USER');
+    }
+
+
+    public function getSalt()
+    {
+        return  null;
+    }
+
+    public function getUsername()
+    {
+        return $this->email;
+    }
+
+    public function eraseCredentials()
+    {
+    }
+
+    public function isEqualTo(UserInterface $user)
+    {
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        if ($this->password !== $user->getPassword()) {
+            return false;
+        }
+
+        if ($this->email !== $user->getUsername()) {
+            return false;
+        }
+
+        return true;
     }
 }

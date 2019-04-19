@@ -1,31 +1,53 @@
 security:
 
-    # roles
-    role_hierarchy:
-        ROLE_ADMIN: ROLE_USER
-        ROLE_SUPER_ADMIN: ROLE_ADMIN
-
     encoders:
-        Symfony\Component\Security\Core\User\User: 'bcrypt'
+        Symfony\Component\Security\Core\User\User: 
+            algorithm: 'bcrypt'
+        App\App\Entity\App:
+            algorithm: bcrypt
+        App\User\Entity\User:
+            algorithm: bcrypt
 
-    # providers for authentication, should be externalized in a config file or database
+    # providers for authentication
     providers:
-        server: 
-            memory:
-                users:
-                    front: {password: '$2y$13$ZmXMawAMfTITXntmHimJBOnE3ukVNi1NT6t6141SgaXvlm0Q8Ga52', roles: ['ROLE_USER']}
+        # chain provider will try the other providers in sequence
+        # useful as many authentications systems exist : by app (frontend), by users (with mobile app)...
+        chain_provider:
+            chain:
+                providers: [servers, users]
+        # provider for apps (eg. frontend)
+        servers: 
+            entity:
+                class: 'App\App\Entity\App'
+                property: 'username'
+        # provider for users (eg. mobile apps, admin)
+        users: 
+            entity:
+                class: 'App\User\Entity\User'
+                property: 'email'
 
     # firewalls
     firewalls:
 
         # firewall for server to server authentication
-        login:
+        login_server:
             pattern:  ^/auth
             stateless: true
             anonymous: true
-            provider: server
+            provider: servers
             json_login:
                 check_path: /auth
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        
+        # firewall for user to server authentication
+        login_user:
+            pattern:  ^/login
+            stateless: true
+            anonymous: true
+            provider: users
+            json_login:
+                check_path: /login
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
@@ -48,11 +70,9 @@ security:
         
         # firewall for any other route
         main:
-            # anonymous: true
             pattern:   ^/
-            # provider: server
+            provider: chain_provider
             stateless: true
-            # anonymous: true
             guard:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
@@ -60,9 +80,6 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
-        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/rd/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
