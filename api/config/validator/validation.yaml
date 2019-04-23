@@ -19,3 +19,9 @@ App\Image\Entity\Image:
                 maxWidth: 4000
                 minHeight: 200
                 maxHeight: 4000
+# mass matching
+App\Match\Entity\Mass:
+    properties:
+        file:
+            - File:
+                maxSize: 4M

@@ -52,6 +52,10 @@ services:
         resource: '../src/Image/Controller'
         tags: ['controller.service_arguments']
 
+    App\Match\Controller\:
+        resource: '../src/Match/Controller'
+        tags: ['controller.service_arguments']
+
     # alias to allow this type to be autowired
     Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'
     

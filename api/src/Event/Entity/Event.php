@@ -168,7 +168,7 @@ class Event
     private $address;
     
     /**
-     * @var Image[]|null The images of the event.
+     * @var Collection|null The images of the event.
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="event", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
