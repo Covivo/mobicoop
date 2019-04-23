@@ -75,6 +75,7 @@ class Matching
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingOffers")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
+     * @MaxDepth(1)
      */
     private $proposalOffer;
 
@@ -85,6 +86,7 @@ class Matching
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingRequests")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
+     * @MaxDepth(1)
      */
     private $proposalRequest;
 

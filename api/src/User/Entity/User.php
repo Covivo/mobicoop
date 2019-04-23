@@ -40,7 +40,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use App\Geography\Entity\Address;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Ask;
+use App\Right\Entity\Role;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\EquatableInterface;
+use App\Right\Entity\UserRole;
 
 /**
  * A user.
@@ -62,7 +66,7 @@ use Doctrine\Common\Collections\Collection;
  * @ApiFilter(SearchFilter::class, properties={"email":"exact"})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate"}, arguments={"orderParameterName"="order"})
  */
-class User
+class User implements UserInterface, EquatableInterface
 {
     const MAX_DETOUR_DURATION = 600;
     const MAX_DETOUR_DISTANCE = 10000;
@@ -235,6 +239,13 @@ class User
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      */
     private $asks;
+
+    /**
+     * @var Car[]|null A user may have many cars.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Right\Entity\UserRole", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     */
+    private $userRoles;
     
     public function __construct($status=null)
     {
@@ -519,5 +530,75 @@ class User
         }
 
         return $this;
+    }
+
+    public function getUserRoles(): Collection
+    {
+        return $this->userRoles;
+    }
+    
+    public function addUserRole(UserRole $userRole): self
+    {
+        if (!$this->userRoles->contains($userRole)) {
+            $this->userRoles->add($userRole);
+            $userRole->setUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeUserRole(Car $userRole): self
+    {
+        if ($this->userRoles->contains($userRole)) {
+            $this->userRoles->removeElement($userRole);
+            // set the owning side to null (unless already changed)
+            if ($userRole->getUser() === $this) {
+                $userRole->setUser(null);
+            }
+        }
+        
+        return $this;
+    }
+
+    public function getRoles()
+    {
+        // we return an array of ROLE_***
+        $roles = [];
+        foreach ($this->userRoles as $userRole) {
+            $roles[] = $userRole->getRole()->getName();
+        }
+        return $roles;
+    }
+
+
+    public function getSalt()
+    {
+        return  null;
+    }
+
+    public function getUsername()
+    {
+        return $this->email;
+    }
+
+    public function eraseCredentials()
+    {
+    }
+
+    public function isEqualTo(UserInterface $user)
+    {
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        if ($this->password !== $user->getPassword()) {
+            return false;
+        }
+
+        if ($this->email !== $user->getUsername()) {
+            return false;
+        }
+
+        return true;
     }
 }
