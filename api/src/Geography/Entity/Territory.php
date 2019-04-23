@@ -26,7 +26,7 @@ namespace App\Geography\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * A teritory.
@@ -63,7 +63,7 @@ class Territory
     private $name;
 
     /**
-     * @var Territory[]|null The parents of the territory.
+     * @var Collection|null The parents of the territory.
      *
      * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
      * @Groups({"read","write"})
@@ -72,7 +72,7 @@ class Territory
 
     public function __construct()
     {
-        $this->parents = new ArrayCollection();
+        $this->parents = new Collection();
     }
     
     public function getId(): ?int
