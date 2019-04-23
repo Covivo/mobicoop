@@ -103,8 +103,8 @@ rdex_provider:
 # rdex journey (called with ajax)
 rdex_journey:
     path:
-        fr: /journey/rdex/ 
-        en: /journey/rdex/
+        fr: /journey/rdex
+        en: /journey/rdex
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexJourney    
 
 

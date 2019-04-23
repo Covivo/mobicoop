@@ -32,9 +32,13 @@ class ExternalJourneyManager
      *
      * @return void
      */
-    public function getExternalJourney()
+    public function getExternalJourney(array $params = null,$format = null)
     {
-        $response = $this->dataProvider->getCollection();
+        if (is_null($format)) {
+            $format = $this->dataProvider::RETURN_OBJECT;
+        }
+        $this->dataProvider->setFormat($format);
+        $response = $this->dataProvider->getCollection($params);
         if ($response->getCode() == 200) {
             return $response->getValue();
         }

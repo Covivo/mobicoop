@@ -391,10 +391,8 @@ class DataProvider
         if (!$class) {
             $class = $this->class;
         }
-        if ($this->format == self::RETURN_ARRAY) {
+        if ($this->format != self::RETURN_OBJECT) {
             return json_decode((string) $data, true);
-        } elseif ($this->format == self::RETURN_JSON) {
-            return (string) $data;
         }
         
         // $data comes from a GuzzleHttp request; it's a json hydra collection so when need to parse the json to an array
