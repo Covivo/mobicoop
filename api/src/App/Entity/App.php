@@ -46,7 +46,7 @@ use Symfony\Component\Security\Core\User\EquatableInterface;
 class App implements UserInterface, EquatableInterface
 {
     // default role
-    const DEFAULT_ROLE = 4;
+    const DEFAULT_ROLE = 1;
     
     /**
      * @var int The id of this app.

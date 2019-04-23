@@ -43,6 +43,10 @@ final class Version20190419143916 extends AbstractMigration
         $this->addSql('ALTER TABLE user_role ADD CONSTRAINT FK_2DE8C6A3D60322AC FOREIGN KEY (role_id) REFERENCES role (id)');
         $this->addSql('ALTER TABLE user_role_territory ADD CONSTRAINT FK_D30535E38E0E3CA6 FOREIGN KEY (user_role_id) REFERENCES user_role (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE user_role_territory ADD CONSTRAINT FK_D30535E373F74AD4 FOREIGN KEY (territory_id) REFERENCES territory (id) ON DELETE CASCADE');
+        // insert FO app user and default roles
+        $this->addSql('INSERT INTO `app` (`id`, `name`, `username`, `password`) VALUES (1, \'FO\', \'front\', \'$2y$13$ZmXMawAMfTITXntmHimJBOnE3ukVNi1NT6t6141SgaXvlm0Q8Ga52\');');
+        $this->addSql('INSERT INTO `role` (`id`, `title`, `name`) VALUES (1, \'User\', \'ROLE_USER\'),(2, \'Admin\', \'ROLE_ADMIN\');');
+        $this->addSql('INSERT INTO `app_role` (`app_id`, `role_id`) VALUES (1, 1);');
     }
 
     public function down(Schema $schema) : void

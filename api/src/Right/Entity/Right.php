@@ -77,7 +77,7 @@ class Right
     private $name;
 
     /**
-     * @var Right[]|null The groups of the right.
+     * @var Collection|null The groups of the right.
      *
      * @ORM\ManyToMany(targetEntity="\App\Right\Entity\Right")
      * @Groups({"read","write"})
