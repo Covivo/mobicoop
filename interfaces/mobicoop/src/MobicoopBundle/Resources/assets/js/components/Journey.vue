@@ -65,7 +65,7 @@
       </div>
     </transition-group>
     <span 
-      v-if="!externalsJourneys" 
+      v-if="externalsJourneys.length == 0" 
       class="tag is-warning"
     >No external journey found.</span>
   </div>
