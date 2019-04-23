@@ -27,7 +27,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * A right.
@@ -86,7 +86,7 @@ class Right
 
     public function __construct()
     {
-        $this->groups = new ArrayCollection();
+        $this->groups = new Collection();
     }
     
     public function getId(): ?int
@@ -119,7 +119,7 @@ class Right
     }
 
     /**
-     * @return Collection|Right[]
+     * @return Collection|null
      */
     public function getGroups(): Collection
     {

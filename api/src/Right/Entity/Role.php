@@ -84,7 +84,7 @@ class Role
 
     public function __construct()
     {
-        $this->rights = new ArrayCollection();
+        $this->rights = new Collection();
     }
     
     public function getId(): ?int

@@ -27,7 +27,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use App\Geography\Entity\Territory;
 
 /**
@@ -75,7 +75,7 @@ class UserRight
     private $right;
 
     /**
-     * @var Territory[]|null The territories associated with the user role.
+     * @var Collection|null The territories associated with the user role.
      *
      * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
      * @Groups({"read","write"})
@@ -84,7 +84,7 @@ class UserRight
 
     public function __construct()
     {
-        $this->territories = new ArrayCollection();
+        $this->territories = new Collection();
     }
     
     public function getId(): ?int
@@ -117,7 +117,7 @@ class UserRight
     }
 
     /**
-     * @return Collection|Territory[]
+     * @return Collection|null
      */
     public function getTerritories(): Collection
     {
