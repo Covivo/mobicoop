@@ -32,7 +32,7 @@ class ExternalJourneyManager
      *
      * @return void
      */
-    public function getExternalJourney(array $params = null,$format = null)
+    public function getExternalJourney(array $params = null, $format = null)
     {
         if (is_null($format)) {
             $format = $this->dataProvider::RETURN_OBJECT;
