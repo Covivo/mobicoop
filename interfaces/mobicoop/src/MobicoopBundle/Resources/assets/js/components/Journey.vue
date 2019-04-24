@@ -15,8 +15,7 @@
           <article class="media">
             <div class="media-left">
               <i 
-                :class="journey.frequency === 'regular' ? 'far fa-calendar-alt' : 'far fa-calendar'" 
-                :alt="journeyfrequency"
+                :class="journey.frequency === 'regular' ? 'far fa-calendar-alt' : 'far fa-calendar'"
               />
             </div>
             <div class="media-content">
@@ -53,7 +52,7 @@
                         class="tag" 
                         :alt="journey.origin"
                       >
-                        <a :href="journey.url">{{ journey.origin }} </a>
+                        <a :href="journey.url.includes(journey.origin) ? `https://${journey.url}` : `https://${journey.origin}${journey.url}`">{{ journey.origin }} </a>
                       </span>
                     </div>
                   </div>
@@ -64,10 +63,12 @@
         </div>
       </div>
     </transition-group>
-    <span 
-      v-if="externalsJourneys.length == 0" 
-      class="tag is-warning"
-    >No external journey found.</span>
+    <div class="column is-full is-centered">
+      <span 
+        v-if="externalsJourneys.length == 0" 
+        class="tag is-warning"
+      >Pas de voyage trouvé.</span>
+    </div>
   </div>
 </template>
 
@@ -119,7 +120,7 @@ export default {
             }) 
             .catch(err=> {
               console.error(err)
-            }) 
+            })
         };
       })
   },
@@ -129,7 +130,7 @@ export default {
     },  
     constructJourneyURL(providerName) {
       return window.location.origin+`/journey/rdex?provider=${providerName}&driver=1&passenger=1&from_latitude=${this.destinationLatitude}&from_longitude=${this.destinationLongitude}&to_latitude=${this.originLatitude}&to_longitude=${this.originLongitude}`
-    } 
+    },
   }
 };
 </script>

@@ -111,10 +111,9 @@
 </template>
 
 <script>
-import axios from "axios";
+
 import moment from "moment";
 import Geocomplete from "./Geocomplete";
-import _default from 'flatpickr/dist/l10n/fr';
 import BDatepicker from "buefy/src/components/datepicker/Datepicker";
 export default {
   name: 'Homesearchform',

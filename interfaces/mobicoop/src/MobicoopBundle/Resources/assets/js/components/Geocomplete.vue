@@ -95,7 +95,7 @@ export default {
         .get(`${this.url}${address}`)
         .then(res => {
           this.isFetching = false;
-          console.log('Got result', res.data)
+          
           // Add a property concatenedAddr to be shown into the autocomplete field after selection
           let addresses = res.data;
           // No Adresses return, we stop here
