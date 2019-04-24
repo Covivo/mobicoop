@@ -15,8 +15,7 @@
           <article class="media">
             <div class="media-left">
               <i 
-                :class="journey.frequency === 'regular' ? 'far fa-calendar-alt' : 'far fa-calendar'" 
-                :alt="journeyfrequency"
+                :class="journey.frequency === 'regular' ? 'far fa-calendar-alt' : 'far fa-calendar'"
               />
             </div>
             <div class="media-content">
@@ -64,10 +63,12 @@
         </div>
       </div>
     </transition-group>
-    <span 
-      v-if="externalsJourneys.length == 0" 
-      class="tag is-warning"
-    >No external journey found.</span>
+    <div class="column is-full is-centered">
+      <span 
+        v-if="externalsJourneys.length == 0" 
+        class="tag is-warning"
+      >Pas de voyage trouvé.</span>
+    </div>
   </div>
 </template>
 
