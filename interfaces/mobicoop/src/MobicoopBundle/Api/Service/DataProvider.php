@@ -66,12 +66,18 @@ class DataProvider
     
     // original name property for file-based entities
     const FILE_ORIGINAL_NAME_PROPERTY = 'originalName';
+    
+    // accepted return format
+    const RETURN_OBJECT = 1;
+    const RETURN_ARRAY = 2;
+    const RETURN_JSON = 3;
         
     private $client;
     private $resource;
     private $class;
     private $serializer;
     private $deserializer;
+    private $format;
    
     /**
      * Constructor.
@@ -121,6 +127,8 @@ class DataProvider
         $normalizers = array(new DateTimeNormalizer(), new RemoveNullObjectNormalizer($classMetadataFactory));
         $this->serializer = new Serializer($normalizers, $encoders);
         $this->deserializer = $deserializer;
+
+        $this->format = self::RETURN_OBJECT;
     }
 
     /**
@@ -137,16 +145,26 @@ class DataProvider
             $this->resource = self::pluralize((new \ReflectionClass($class))->getShortName());
         }
     }
+
+    /**
+     * Set format
+     *
+     * @param integer $format
+     * @return void
+     */
+    public function setFormat(int $format)
+    {
+        $this->format = $format;
+    }
     
     /**
      * Get item operation
      *
      * @param int       $id         The id of the item
-     * @param Boolean   $asArray    Return the result as an array instead of an object
      *
      * @return Response The response of the operation.
      */
-    public function getItem(int $id, bool $asArray = false): Response
+    public function getItem(int $id): Response
     {
         /*
          * deserialization of nested array of objects doesn't work...
@@ -158,10 +176,14 @@ class DataProvider
          */
         
         try {
-            $clientResponse = $this->client->get($this->resource."/".$id);
-            if ($asArray) {
+            if ($this->format == self::RETURN_ARRAY) {
+                $clientResponse = $this->client->get($this->resource."/".$id);
                 $value = json_decode((string) $clientResponse->getBody(), true);
+            } elseif ($this->format == self::RETURN_JSON) {
+                $clientResponse = $this->client->get($this->resource."/".$id, ['headers' => ['accept' => 'application/json']]);
+                $value = (string) $clientResponse->getBody();
             } else {
+                $clientResponse = $this->client->get($this->resource."/".$id);
                 $value = $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true));
             }
             if ($clientResponse->getStatusCode() == 200) {
@@ -183,7 +205,11 @@ class DataProvider
     public function getCollection(array $params=null): Response
     {
         try {
-            $clientResponse = $this->client->get($this->resource, ['query'=>$params]);
+            if ($this->format == self::RETURN_JSON) {
+                $clientResponse = $this->client->get($this->resource, ['query'=>$params, 'headers' => ['accept' => 'application/json']]);
+            } else {
+                $clientResponse = $this->client->get($this->resource, ['query'=>$params]);
+            }
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody()));
             }
@@ -204,7 +230,11 @@ class DataProvider
     public function getSpecialCollection(string $operation, ?array $params=null): Response
     {
         try {
-            $clientResponse = $this->client->get($this->resource.'/'.$operation, ['query'=>$params]);
+            if ($this->format == self::RETURN_JSON) {
+                $clientResponse = $this->client->get($this->resource.'/'.$operation, ['query'=>$params, 'headers' => ['accept' => 'application/json']]);
+            } else {
+                $clientResponse = $this->client->get($this->resource.'/'.$operation, ['query'=>$params]);
+            }
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody()));
             }
@@ -232,7 +262,11 @@ class DataProvider
         }
 
         try {
-            $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route, ['query'=>$params]);
+            if ($this->format == self::RETURN_JSON) {
+                $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route, ['query'=>$params, 'headers' => ['accept' => 'application/json']]);
+            } else {
+                $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route, ['query'=>$params]);
+            }
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody(), $subClassName));
             }
@@ -356,6 +390,9 @@ class DataProvider
         // if $class is defined, it's because our request concerns a subresource
         if (!$class) {
             $class = $this->class;
+        }
+        if ($this->format != self::RETURN_OBJECT) {
+            return json_decode((string) $data, true);
         }
         
         // $data comes from a GuzzleHttp request; it's a json hydra collection so when need to parse the json to an array

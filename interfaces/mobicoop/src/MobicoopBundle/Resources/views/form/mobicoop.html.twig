@@ -1,4 +1,5 @@
 {%- use "@Mobicoop/form/bulma.html.twig" -%}
+
 {# mobicoop form theme #}
 
 {# Widgets #}
@@ -76,28 +77,27 @@
 {#{%- endblock widget_attributes -%}#}
 
 {% block form_row -%}
-{#	{% set showErrorIcon = (not compound or force_error|default(false)) and not valid %}#}
+	{% set showErrorIcon = (not compound or force_error|default(false)) and not valid %}
 	<div class="field is-horizontal
-{#{% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}{{ showErrorIcon ? ' has-feedback' : '' }}#}
+{% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}{{ showErrorIcon ? ' has-feedback' : '' }}
 ">
-{#		{{ dump(label) }}#}
-		<div class="field-label">
+		<div class="field-label ">
 			{{- form_label(form) -}}
 		</div>
 		<div class="field-body">
 			<div class="field">
 				{% if help|default %}
-					{#			{% trans %}label{% endtrans %}#}
-					{# set the aria-describedby attribute #}
+{#								{% trans %}label{% endtrans %}#}
+{#					 set the aria-describedby attribute#}
 					{%- set attr = attr|merge({'aria-describedby': 'help-block-'~id, 'aria-labellebedby': label|trans({}, translation_domain) }) -%}
-					{#			{{ dump(attr) }}#}
+{#								{{ dump(attr) }}#}
 				{% endif %}
 				{{- form_widget(form, {
 					'attr': attr
 				}) -}}
 			</div>
 			{% if help|default %}
-				<span class="help-block" id="help-block-{{ id }}" style="font-style: italic; color: #187a20">{{ help|trans({}, translation_domain) }} </span>
+				<span class="help-block" id="help-block-{{ id }}" style="font-style: italic">{{ help|trans({}, translation_domain) }} </span>
 			{% endif %}
 			{{- form_errors(form) -}}
 		</div>

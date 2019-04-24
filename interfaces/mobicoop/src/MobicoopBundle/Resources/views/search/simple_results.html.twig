@@ -162,4 +162,15 @@
 	</div>
 </section>
 
+<section id="simpleResults">
+  <Journey origin-latitude="{{origin_latitude}}" origin-longitude="{{origin_longitude}}" destination-latitude="{{destination_latitude}}" destination-longitude="{{destination_longitude}}"></Journey>
+</section>
+
+<section>
+</section>
+
+
+{% endblock %}
+{% block javascripts %}
+  {{ encore_entry_script_tags('bundle_search/simpleResults') }}
 {% endblock %}
