@@ -130,9 +130,6 @@ export default {
     constructJourneyURL(providerName) {
       return window.location.origin+`/journey/rdex?provider=${providerName}&driver=1&passenger=1&from_latitude=${this.destinationLatitude}&from_longitude=${this.destinationLongitude}&to_latitude=${this.originLatitude}&to_longitude=${this.originLongitude}`
     },
-    // urlToCall() {
-    //   return this.journey.url = this.journey.origin ? `https://${this.journey.url}` : `https://${this.journey.origin}${this.journey.url}`
-    // } 
   }
 };
 </script>
