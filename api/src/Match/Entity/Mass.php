@@ -36,7 +36,7 @@ use App\User\Entity\User;
 
 /**
  * A mass matching file import.
- * 
+ *
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
@@ -60,7 +60,7 @@ use App\User\Entity\User;
  */
 class Mass
 {
-/**
+    /**
      * @var int The id of this import.
      *
      * @ORM\Id
@@ -70,7 +70,7 @@ class Mass
      * @ApiProperty(identifier=true)
      */
     private $id;
-    
+
     /**
      * @var string The final file name of the import.
      *
@@ -78,7 +78,7 @@ class Mass
      * @Groups({"read","write"})
      */
     private $fileName;
-    
+
     /**
      * @var string The original file name of the import.
      *
@@ -86,7 +86,7 @@ class Mass
      * @Groups({"read","write"})
      */
     private $originalName;
-    
+
     /**
      * @var int The size in bytes of the import.
      *
@@ -94,7 +94,7 @@ class Mass
      * @Groups({"read","write"})
      */
     private $size;
-    
+
     /**
      * @var string The mime type of the import.
      *
@@ -102,7 +102,7 @@ class Mass
      * @Groups("read")
      */
     private $mimeType;
-        
+
     /**
      * @var \DateTimeInterface Creation date of the import.
      *
@@ -118,7 +118,7 @@ class Mass
      * @Groups("write")
      */
     private $user;
-        
+
     /**
      * @var File|null
      * @Vich\UploadableField(mapping="mass", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType")
@@ -130,73 +130,86 @@ class Mass
      * @Groups({"write"})
      */
     private $userId;
-                
-    public function __construct($id=null)
+
+    /**
+     * @var array The errors.
+     * @Groups("read")
+     */
+    private $errors;
+
+    /**
+     * @var string The result.
+     * @Groups("read")
+     */
+    private $result;
+
+    public function __construct($id = null)
     {
         $this->id = $id;
+        $this->errors = [];
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId($id)
     {
         $this->id = $id;
     }
-    
+
     public function getFileName(): ?string
     {
         return $this->fileName;
     }
-    
+
     public function setFileName(?string $fileName)
     {
         $this->fileName = $fileName;
     }
-    
+
     public function getOriginalName(): ?string
     {
         return $this->originalName;
     }
-    
+
     public function setOriginalName(?string $originalName)
     {
         $this->originalName = $originalName;
     }
-        
+
     public function getSize(): ?int
     {
         return $this->size;
     }
-    
+
     public function setSize(?int $size): self
     {
         $this->size = $size;
-        
+
         return $this;
     }
-    
+
     public function getMimeType(): ?string
     {
         return $this->mimeType;
     }
-    
+
     public function setMimeType(?string $mimeType)
     {
         $this->mimeType = $mimeType;
     }
-    
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
     }
-    
+
     public function setCreatedDate(\DateTimeInterface $createdDate): self
     {
         $this->createdDate = $createdDate;
-        
+
         return $this;
     }
 
@@ -204,19 +217,19 @@ class Mass
     {
         return $this->user;
     }
-    
+
     public function setUser(User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
-    
+
     public function getFile(): ?File
     {
         return $this->file;
     }
-    
+
     public function setFile(?File $file)
     {
         $this->file = $file;
@@ -226,19 +239,39 @@ class Mass
     {
         return $this->userId;
     }
-    
+
     public function setUserId($userId)
     {
         $this->userId = $userId;
     }
-        
+
+    public function getErrors(): ?array
+    {
+        return $this->errors;
+    }
+
+    public function setErrors(?array $errors)
+    {
+        $this->errors = $errors;
+    }
+
+    public function getResult(): ?string
+    {
+        return $this->result;
+    }
+
+    public function setResult(?string $result)
+    {
+        $this->result = $result;
+    }
+
     public function preventSerialization()
     {
-        $this->setImportFile(null);
+        $this->setFile(null);
     }
-    
+
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

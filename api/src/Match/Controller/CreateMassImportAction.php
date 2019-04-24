@@ -39,7 +39,7 @@ final class CreateMassImportAction
     private $doctrine;
     private $factory;
     private $massImportManager;
-    
+
     public function __construct(RegistryInterface $doctrine, FormFactoryInterface $factory, ValidatorInterface $validator, MassImportManager $massImportManager)
     {
         $this->validator = $validator;
@@ -47,55 +47,43 @@ final class CreateMassImportAction
         $this->factory = $factory;
         $this->massImportManager = $massImportManager;
     }
-    
+
     /**
      * @IsGranted("ROLE_USER")
      */
     public function __invoke(Request $request): Mass
     {
         $mass = new Mass();
-        
+
         $form = $this->factory->create(MassImportForm::class, $mass);
         $form->handleRequest($request);
-        
-        // TODO : check if the following code (before submit) could be managed by VichUploaderBundle events
-        // see https://github.com/dustin10/VichUploaderBundle/blob/master/Resources/doc/events.md
-        
-        $originalName = null;
 
-        // we search the owner of the file
+        // we search the user of the file
         if ($user = $this->massImportManager->getUser($mass)) {
             // we associate the user and the mass
             $user->addMass($mass);
-            if ($mass->getOriginalName()) {
-                $originalName = $mass->getOriginalName();
-            }
+            // we rename the file
+            $mass->setFileName($this->massImportManager->generateFilename($mass));
+            if ($mass->getFile()->getClientOriginalName()) $mass->setOriginalName($mass->getFile()->getClientOriginalName());
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // the form is valid and the image has a valid owner
-            // we persist the image to fill the fields automatically (size, dimensions, mimetype...)
+            // the form is valid and the image has a valid user
+            // we persist the file to fill the fields automatically (size, mimetype...)
             $em = $this->doctrine->getManager();
             $em->persist($mass);
-            
-            // we eventually write the originalName
-            if ($originalName) {
-                $mass->setOriginalName($originalName);
-            }
 
             // Prevent the serialization of the file property
             $mass->preventSerialization();
-            
+
             $em->persist($mass);
             $em->flush();
-            
+
+            // the file is uploaded, we treat it and return it
+            $mass = $this->massImportManager->treatMass($mass);
             return $mass;
         }
 
-        foreach($form->getErrors(true, false) as $er) {
-            print_r($er->getMessage());
-        }
-        exit;
         // This will be handled by API Platform and returns a validation error.
         throw new ValidationException($this->validator->validate($mass));
     }

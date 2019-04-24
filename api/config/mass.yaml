@@ -1,0 +1,11 @@
+# configuration file for mass matching import
+parameters:
+  mass:
+    # upload folder
+    folder: "/upload/mass/files/"
+    # temp folder
+    temp: "/upload/mass/files/temp/"
+    # xml schema
+    xml_schema: "upload/mass/schema.xsd"
+    # csv schema
+    csv_schema: "upload/mass/schema.csv"

@@ -54,7 +54,7 @@ use App\User\Entity\User;
 class Address
 {
     const DEFAULT_ID = 999999999999;
-    
+
     /**
      * @var int The id of this address.
      *
@@ -65,31 +65,34 @@ class Address
      * @ApiProperty(identifier=true)
      */
     private $id;
-    
+
     /**
      * @var string The street address.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"read","write","pt"})
+     * @Assert\NotBlank(groups={"mass"})
      */
     private $streetAddress;
-    
+
     /**
      * @var string|null The postal code of the address.
      *
      * @ORM\Column(type="string", length=15, nullable=true)
      * @Groups({"read","write","pt"})
+     * @Assert\NotBlank(groups={"mass"})
      */
     private $postalCode;
-    
+
     /**
      * @var string|null The locality of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups({"read","write","pt"})
+     * @Assert\NotBlank(groups={"mass"})
      */
     private $addressLocality;
-    
+
     /**
      * @var string|null The country of the address.
      *
@@ -97,7 +100,7 @@ class Address
      * @Groups({"read","write","pt"})
      */
     private $addressCountry;
-    
+
     /**
      * @var float|null The latitude of the address.
      *
@@ -105,7 +108,7 @@ class Address
      * @Groups({"read","write","pt"})
      */
     private $latitude;
-    
+
     /**
      * @var float|null The longitude of the address.
      *
@@ -113,7 +116,7 @@ class Address
      * @Groups({"read","write","pt"})
      */
     private $longitude;
-    
+
     /**
      * @var int|null The elevation of the address in metres.
      *
@@ -121,7 +124,7 @@ class Address
      * @Groups({"read","write","pt"})
      */
     private $elevation;
-    
+
     /**
      * @var string|null The name of this address.
      *
@@ -129,7 +132,7 @@ class Address
      * @Groups({"read","write"})
      */
     private $name;
-    
+
     /**
      * @var User|null The owner of the address.
      *
@@ -137,7 +140,7 @@ class Address
      */
     private $user;
 
-    public function __construct($id=null)
+    public function __construct($id = null)
     {
         $this->id = self::DEFAULT_ID;
         if ($id) {
@@ -149,17 +152,17 @@ class Address
     {
         return $this->id;
     }
-    
+
     public function setId($id)
     {
         $this->id = $id;
     }
-    
+
     public function getStreetAddress(): ?string
     {
         return $this->streetAddress;
     }
-    
+
     public function setStreetAddress(?string $streetAddress)
     {
         $this->streetAddress = $streetAddress;
@@ -169,7 +172,7 @@ class Address
     {
         return $this->postalCode;
     }
-    
+
     public function setPostalCode(?string $postalCode)
     {
         $this->postalCode = $postalCode;
@@ -179,7 +182,7 @@ class Address
     {
         return $this->addressLocality;
     }
-    
+
     public function setAddressLocality(?string $addressLocality)
     {
         $this->addressLocality = $addressLocality;
@@ -189,7 +192,7 @@ class Address
     {
         return $this->addressCountry;
     }
-    
+
     public function setAddressCountry(?string $addressCountry)
     {
         $this->addressCountry = $addressCountry;
@@ -204,12 +207,12 @@ class Address
     {
         $this->latitude = $latitude;
     }
-    
+
     public function getLongitude(): ?string
     {
         return $this->longitude;
     }
-    
+
     public function setLongitude(?string $longitude)
     {
         $this->longitude = $longitude;
@@ -219,17 +222,17 @@ class Address
     {
         return $this->elevation;
     }
-    
+
     public function setElevation(?int $elevation)
     {
         $this->elevation = $elevation;
     }
-    
+
     public function getName(): ?string
     {
         return $this->name;
     }
-    
+
     public function setName(?string $name)
     {
         $this->name = $name;
@@ -239,7 +242,7 @@ class Address
     {
         return $this->user;
     }
-    
+
     public function setUser(?User $user)
     {
         $user->setAddress($this);
