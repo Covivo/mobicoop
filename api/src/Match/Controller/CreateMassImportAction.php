@@ -64,7 +64,9 @@ final class CreateMassImportAction
             $user->addMass($mass);
             // we rename the file
             $mass->setFileName($this->massImportManager->generateFilename($mass));
-            if ($mass->getFile()->getClientOriginalName()) $mass->setOriginalName($mass->getFile()->getClientOriginalName());
+            if ($mass->getFile()->getClientOriginalName()) {
+                $mass->setOriginalName($mass->getFile()->getClientOriginalName());
+            }
         }
 
         if ($form->isSubmitted() && $form->isValid()) {

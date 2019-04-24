@@ -113,7 +113,7 @@ class MassImportManager
             $mass->setResult('Treatment pending');
         }
 
-        // then we treat the file 
+        // then we treat the file
         // ...
 
         // we return the mass object
@@ -185,8 +185,10 @@ class MassImportManager
     private function getDataFromZip(string $zip)
     {
         $zipArchive = new \ZipArchive();
-        if ($zipArchive->open($zip) === TRUE) {
-            if ($zipArchive->numFiles > 1) throw new MassException('Zip file can contain only a single file');
+        if ($zipArchive->open($zip) === true) {
+            if ($zipArchive->numFiles > 1) {
+                throw new MassException('Zip file can contain only a single file');
+            }
             $filename = $zipArchive->getNameIndex(0);
             if ($zipArchive->extractTo('.' . $this->params['temp'], $filename)) {
                 $mimeType = mime_content_type('.' . $this->params['temp'] . $filename);
@@ -245,12 +247,16 @@ class MassImportManager
             // we have errors in xml : we stop here
             $massData->setErrors($errors);
             // the file was temporary we remove it
-            if ($temp) unlink($xml);
+            if ($temp) {
+                unlink($xml);
+            }
             return $massData;
         } elseif ($error) {
             // other error, we stop
             // the file was temporary we remove it
-            if ($temp) unlink($xml);
+            if ($temp) {
+                unlink($xml);
+            }
             throw new MassException('Cannot open file');
         }
 
@@ -277,7 +283,9 @@ class MassImportManager
         $massData->setData($persons);
 
         // the file was temporary we remove it
-        if ($temp) unlink($xml);
+        if ($temp) {
+            unlink($xml);
+        }
 
         return $massData;
     }
@@ -363,19 +371,25 @@ class MassImportManager
                 // we have errors in xml : we stop here
                 $massData->setErrors($errors);
                 // the file was temporary we remove it
-                if ($temp) unlink($csv);
+                if ($temp) {
+                    unlink($csv);
+                }
                 return $massData;
             } elseif ($error) {
                 // other error, we stop
                 // the file was temporary we remove it
-                if ($temp) unlink($csv);
+                if ($temp) {
+                    unlink($csv);
+                }
                 throw new MassException('Cannot open file');
             }
 
             $massData->setData($persons);
 
             // the file was temporary we remove it
-            if ($temp) unlink($csv);
+            if ($temp) {
+                unlink($csv);
+            }
 
             return $massData;
         } else {
@@ -383,9 +397,13 @@ class MassImportManager
         }
 
         // the file was temporary we remove it
-        if ($temp) unlink($csv);
+        if ($temp) {
+            unlink($csv);
+        }
 
-        if ($errors) throw new MassException('Cannot open file');
+        if ($errors) {
+            throw new MassException('Cannot open file');
+        }
     }
 
     /**
@@ -399,9 +417,13 @@ class MassImportManager
     {
         $errors = false;
         // the file was temporary we remove it
-        if ($temp) unlink($json);
+        if ($temp) {
+            unlink($json);
+        }
 
-        if ($errors) throw new MassException('Cannot open file');
+        if ($errors) {
+            throw new MassException('Cannot open file');
+        }
     }
 }
 
