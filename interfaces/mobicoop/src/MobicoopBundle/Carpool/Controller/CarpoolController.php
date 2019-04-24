@@ -124,8 +124,7 @@ class CarpoolController extends AbstractController
      */
     public function rdexProvider(ExternalJourneyManager $externalJourneyManager)
     {
-        $test = $externalJourneyManager->getExternalJourneyProviders(DataProvider::RETURN_JSON);
-        return $this->json($test);
+        return $this->json($externalJourneyManager->getExternalJourneyProviders(DataProvider::RETURN_JSON));
     }
 
     /**
@@ -133,8 +132,6 @@ class CarpoolController extends AbstractController
      */
     public function rdexJourney(ExternalJourneyManager $externalJourneyManager, Request $request)
     {
-        //var_dump($request->query->get('provider'));
-        //     exit;
         $params = [
             'provider' => $request->query->get('provider'),
             'driver'=> $request->query->get('driver'),
