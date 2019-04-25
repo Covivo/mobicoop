@@ -54,6 +54,7 @@ final class CreateMassImportAction
     public function __invoke(Request $request): Mass
     {
         $mass = new Mass();
+        $mass->setStatus(Mass::STATUS_INCOMING);
 
         $form = $this->factory->create(MassImportForm::class, $mass);
         $form->handleRequest($request);
@@ -83,6 +84,20 @@ final class CreateMassImportAction
 
             // the file is uploaded, we treat it and return it
             $mass = $this->massImportManager->treatMass($mass);
+
+            // if we have an error we remove the file
+            if (count($mass->getErrors()) > 0) {
+                $mass->setStatus(Mass::STATUS_INVALID);
+                $originalMass = clone $mass;
+                $em->remove($mass);
+                $em->flush();
+                return $originalMass;
+            }
+
+            $mass->setStatus(Mass::STATUS_VALID);
+            $em->persist($mass);
+            $em->flush();
+
             return $mass;
         }
 

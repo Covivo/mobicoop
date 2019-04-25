@@ -32,6 +32,7 @@ use App\Match\Entity\MassData;
 use App\Match\Entity\MassPerson;
 use App\Geography\Entity\Address;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Mass import manager.
@@ -49,6 +50,7 @@ class MassImportManager
     const MIMETYPE_PLAIN = 'text/plain';
     const MIMETYPE_JSON = 'application/json';
 
+    private $entityManager;
     private $userRepository;
     private $fileManager;
     private $logger;
@@ -56,13 +58,18 @@ class MassImportManager
     private $validator;
 
     /**
-     * Constructor.
+     * Constructor
      *
+     * @param EntityManagerInterface $entityManager
+     * @param UserRepository $userRepository
      * @param FileManager $fileManager
      * @param LoggerInterface $logger
+     * @param ValidatorInterface $validator
+     * @param array $params
      */
-    public function __construct(UserRepository $userRepository, FileManager $fileManager, LoggerInterface $logger, ValidatorInterface $validator, array $params)
+    public function __construct(EntityManagerInterface $entityManager, UserRepository $userRepository, FileManager $fileManager, LoggerInterface $logger, ValidatorInterface $validator, array $params)
     {
+        $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
         $this->fileManager = $fileManager;
         $this->logger = $logger;
@@ -110,12 +117,9 @@ class MassImportManager
             // the are errors in the file
             $mass->setErrors($data->getErrors());
         } else {
-            $mass->setResult('Treatment pending');
+            // we import the persons
+            $this->importPersons($data, $mass);
         }
-
-        // then we treat the file
-        // ...
-
         // we return the mass object
         return $mass;
     }
@@ -265,7 +269,7 @@ class MassImportManager
         $persons = [];
         foreach ($data->person as $person) {
             $massPerson = new MassPerson();
-            $massPerson->setId($person->id);
+            $massPerson->setGivenId($person->givenId);
             $massPerson->setGivenName($person->givenName);
             $massPerson->setFamilyName($person->familyName);
             $personalAddress = new Address();
@@ -424,6 +428,23 @@ class MassImportManager
         if ($errors) {
             throw new MassException('Cannot open file');
         }
+    }
+
+    /**
+     * Import persons
+     *
+     * @param MassData  $data    The data to import
+     * @param Mass      $mass    The parent Mass object
+     * @return void
+     */
+    private function importPersons(MassData $data, Mass $mass)
+    {
+        // the data property of the MassData contains the MassPerson objects
+        foreach ($data->getData() as $massPerson) {
+            $massPerson->setMass($mass);
+            $this->entityManager->persist($massPerson);
+        }
+        $this->entityManager->flush();
     }
 }
 

@@ -60,6 +60,11 @@ use App\User\Entity\User;
  */
 class Mass
 {
+    const STATUS_INCOMING = 0;
+    const STATUS_VALID = 1;
+    const STATUS_INVALID = 2;
+    const STATUS_TREATED = 3;
+
     /**
      * @var int The id of this import.
      *
@@ -70,6 +75,14 @@ class Mass
      * @ApiProperty(identifier=true)
      */
     private $id;
+
+    /**
+     * @var int The status of this import.
+     *
+     * @ORM\Column(type="integer")
+     * @Groups("read")
+     */
+    private $status;
 
     /**
      * @var string The final file name of the import.
@@ -122,7 +135,7 @@ class Mass
     /**
      * @var \DateTimeInterface Calculation date of the import.
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      * @Groups("read")
      */
     private $calculationDate;
@@ -145,12 +158,6 @@ class Mass
      */
     private $errors;
 
-    /**
-     * @var string The result.
-     * @Groups("read")
-     */
-    private $result;
-
     public function __construct($id = null)
     {
         $this->id = $id;
@@ -165,6 +172,16 @@ class Mass
     public function setId($id)
     {
         $this->id = $id;
+    }
+
+    public function getStatus(): ?int
+    {
+        return $this->status;
+    }
+
+    public function setStatus(int $status)
+    {
+        $this->status = $status;
     }
 
     public function getFileName(): ?string
@@ -273,16 +290,6 @@ class Mass
     public function setErrors(?array $errors)
     {
         $this->errors = $errors;
-    }
-
-    public function getResult(): ?string
-    {
-        return $this->result;
-    }
-
-    public function setResult(?string $result)
-    {
-        $this->result = $result;
     }
 
     public function preventSerialization()

@@ -40,7 +40,6 @@ class MassPerson
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Assert\NotBlank(groups={"mass"})
      */
     private $id;
 
@@ -87,7 +86,7 @@ class MassPerson
      * @var Mass The original mass file of the person.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Match\Entity\MAss", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\ManyToOne(targetEntity="\App\Match\Entity\Mass", cascade={"persist","remove"})
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $mass;
