@@ -26,6 +26,7 @@ namespace App\Match\Service;
 use App\Match\Entity\Mass;
 use App\Service\FileManager;
 use App\User\Repository\UserRepository;
+use App\Match\Repository\MassPersonRepository;
 use Psr\Log\LoggerInterface;
 use App\Match\Exception\MassException;
 use App\Match\Entity\MassData;
@@ -33,6 +34,9 @@ use App\Match\Entity\MassPerson;
 use App\Geography\Entity\Address;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Geography\Service\GeoSearcher;
+use App\Geography\Service\GeoRouter;
+use App\Geography\Service\ZoneManager;
 
 /**
  * Mass import manager.
@@ -50,12 +54,18 @@ class MassImportManager
     const MIMETYPE_PLAIN = 'text/plain';
     const MIMETYPE_JSON = 'application/json';
 
+    const DELAY_BETWEEN_REQUESTS = 1000000; // 1 second delay between 2 requests
+
     private $entityManager;
     private $userRepository;
+    private $massPersonRepository;
     private $fileManager;
     private $logger;
     private $params;
     private $validator;
+    private $geoSearcher;
+    private $geoRouter;
+    private $zoneManager;
 
     /**
      * Constructor
@@ -67,14 +77,28 @@ class MassImportManager
      * @param ValidatorInterface $validator
      * @param array $params
      */
-    public function __construct(EntityManagerInterface $entityManager, UserRepository $userRepository, FileManager $fileManager, LoggerInterface $logger, ValidatorInterface $validator, array $params)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        UserRepository $userRepository,
+        MassPersonRepository $massPersonRepository,
+        FileManager $fileManager,
+        LoggerInterface $logger,
+        ValidatorInterface $validator,
+        GeoSearcher $geoSearcher,
+        GeoRouter $geoRouter,
+        ZoneManager $zoneManager,
+        array $params
+    ) {
         $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
+        $this->massPersonRepository = $massPersonRepository;
         $this->fileManager = $fileManager;
         $this->logger = $logger;
         $this->params = $params;
         $this->validator = $validator;
+        $this->geoSearcher = $geoSearcher;
+        $this->geoRouter = $geoRouter;
+        $this->zoneManager = $zoneManager;
     }
 
     /**
@@ -125,6 +149,111 @@ class MassImportManager
     }
 
     /**
+     * Analyze mass file data.
+     *
+     * @param Mass $mass The mass to analyze
+     * @return void
+     */
+    public function analyzeMass(Mass $mass)
+    {
+        set_time_limit(120);
+        // we search all destinations
+        $destinations = $this->massPersonRepository->findAllDestinationsForMass($mass);
+        // we geocode the destinations
+        $geocodedDestinations = [];
+        foreach ($destinations as $key => $destination) {
+            $address = trim($destination['streetAddress'] . " " . $destination['postalCode'] . " " . $destination['addressLocality'] . " " . $destination['addressCountry']);
+            if ($addresses = $this->geoSearcher->geoCode($address)) {
+                if (count($addresses) > 0) {
+                    // we use the first result as best result
+                    $geocodedDestinations[$key] = $addresses[0];
+                } else {
+                    throw new MassException('Destination address <' . $address . '> not found');
+                }
+            } else {
+                throw new MassException('Destination address <' . $address . '> not found');
+            }
+            usleep(self::DELAY_BETWEEN_REQUESTS);
+        }
+
+        // we geocode the personal addresses
+        foreach ($mass->getPersons() as $massPerson) {
+            // maybe we already have the gps points
+            if (
+                !is_null($massPerson->getPersonalAddress()->getLongitude()) &&
+                !is_null($massPerson->getPersonalAddress()->getLongitude()) &&
+                !is_null($massPerson->getWorkAddress()->getLongitude()) &&
+                !is_null($massPerson->getWorkAddress()->getLongitude())
+            ) {
+                continue;
+            }
+            // no gps points
+            $address = trim(
+                $massPerson->getPersonalAddress()->getStreetAddress() . " " .
+                    $massPerson->getPersonalAddress()->getPostalCode() . " " .
+                    $massPerson->getPersonalAddress()->getAddressLocality() . " " .
+                    $massPerson->getPersonalAddress()->getAddressCountry()
+            );
+            if ($addresses = $this->geoSearcher->geoCode($address)) {
+                if (count($addresses) > 0) {
+                    // we use the first result as best result
+                    $massPerson->getPersonalAddress()->setLongitude($addresses[0]->getLongitude());
+                    $massPerson->getPersonalAddress()->setLatitude($addresses[0]->getLatitude());
+                    // we search the destination (already calculated in the previous step)
+                    foreach ($destinations as $key => $destination) {
+                        if (
+                            $destination['streetAddress'] == $massPerson->getWorkAddress()->getStreetAddress() &&
+                            $destination['postalCode'] == $massPerson->getWorkAddress()->getPostalCode() &&
+                            $destination['addressLocality'] == $massPerson->getWorkAddress()->getAddressLocality() &&
+                            $destination['addressCountry'] == $massPerson->getWorkAddress()->getAddressCountry()
+                        ) {
+                            $massPerson->getWorkAddress()->setLongitude($geocodedDestinations[$key]->getLongitude());
+                            $massPerson->getWorkAddress()->setLatitude($geocodedDestinations[$key]->getLatitude());
+                            break;
+                        }
+                    }
+                    $this->entityManager->persist($massPerson);
+                } else {
+                    throw new MassException('Personal address <' . $address . '> not found');
+                }
+            } else {
+                throw new MassException('Personal address <' . $address . '> not found');
+            }
+            usleep(self::DELAY_BETWEEN_REQUESTS);
+        }
+        $this->entityManager->flush();
+
+        // all addresses are geocoded, we can get the directions
+        foreach ($mass->getPersons() as $massPerson) {
+            $addresses = [];
+            $addresses[] = $massPerson->getPersonalAddress();
+            $addresses[] = $massPerson->getWorkAddress();
+            if ($routes = $this->geoRouter->getRoutes($addresses)) {
+                $direction = $routes[0];
+                // creation of the crossed zones
+                $direction = $this->zoneManager->createZonesForDirection($direction);
+                $massPerson->setDirection($direction);
+            } else {
+                $origin = trim(
+                    $massPerson->getPersonalAddress()->getStreetAddress() . " " .
+                        $massPerson->getPersonalAddress()->getPostalCode() . " " .
+                        $massPerson->getPersonalAddress()->getAddressLocality() . " " .
+                        $massPerson->getPersonalAddress()->getAddressCountry()
+                );
+                $destination = trim(
+                    $massPerson->getWorkAddress()->getStreetAddress() . " " .
+                        $massPerson->getWorkAddress()->getPostalCode() . " " .
+                        $massPerson->getWorkAddress()->getAddressLocality() . " " .
+                        $massPerson->getWorkAddress()->getAddressCountry()
+                );
+                throw new MassException('No route found for <' . $origin . '> => <' . $destination . '>');
+            }
+            $this->entityManager->persist($massPerson);
+        }
+        $this->entityManager->flush();
+    }
+
+    /**
      * Get The validated data from the file.
      *
      * @param Mass $mass
@@ -147,9 +276,9 @@ class MassImportManager
             case self::MIMETYPE_CSV:
                 return $this->getDataFromCsv('.' . $this->params['folder'] . $mass->getFileName());
                 break;
-            case self::MIMETYPE_JSON:
-                return $this->getDataFromJson('.' . $this->params['folder'] . $mass->getFileName());
-                break;
+                // case self::MIMETYPE_JSON:
+                //     return $this->getDataFromJson('.' . $this->params['folder'] . $mass->getFileName());
+                //     break;
             default:
                 throw new MassException('This file type is not accepted');
                 break;
@@ -207,9 +336,9 @@ class MassImportManager
                     case self::MIMETYPE_CSV:
                         return $this->getDataFromCsv('.' . $this->params['temp'] . $filename, true);
                         break;
-                    case self::MIMETYPE_JSON:
-                        return $this->getDataFromJson('.' . $this->params['temp'] . $filename, true);
-                        break;
+                        // case self::MIMETYPE_JSON:
+                        //     return $this->getDataFromJson('.' . $this->params['temp'] . $filename, true);
+                        //     break;
                     default:
                         throw new MassException('The extracted file type is not accepted');
                         break;

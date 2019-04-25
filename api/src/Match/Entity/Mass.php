@@ -30,9 +30,12 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Match\Controller\CreateMassImportAction;
+use App\Match\Controller\MassAnalyzeAction;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use App\User\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * A mass matching file import.
@@ -54,7 +57,15 @@ use App\User\Entity\User;
  *              "defaults"={"_api_receive"=false},
  *          }
  *      },
- *      itemOperations={"get","delete"}
+ *      itemOperations={
+ *          "get",
+ *          "delete",
+ *          "analyze"={
+ *              "method"="GET",
+ *              "path"="/masses/{id}/analyze",
+ *              "controller"=MassAnalyzeAction::class
+ *          },
+ *      }
  * )
  * @Vich\Uploadable
  */
@@ -141,6 +152,13 @@ class Mass
     private $calculationDate;
 
     /**
+     * @var ArrayCollecction|null The persons concerned by the file.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassPerson", mappedBy="mass", cascade={"persist","remove"}, orphanRemoval=true)
+     */
+    private $persons;
+
+    /**
      * @var File|null
      * @Vich\UploadableField(mapping="mass", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType")
      */
@@ -162,6 +180,7 @@ class Mass
     {
         $this->id = $id;
         $this->errors = [];
+        $this->persons = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -258,6 +277,34 @@ class Mass
     public function setCalculationDate(?\DateTimeInterface $calculationDate): self
     {
         $this->calculationDate = $calculationDate;
+
+        return $this;
+    }
+
+    public function getPersons(): Collection
+    {
+        return $this->persons;
+    }
+
+    public function addPerson(MassPerson $person): self
+    {
+        if (!$this->persons->contains($person)) {
+            $this->persons->add($person);
+            $person->setMass($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAddress(MassPerson $person): self
+    {
+        if ($this->persons->contains($person)) {
+            $this->persons->removeElement($person);
+            // set the owning side to null (unless already changed)
+            if ($person->getMass() === $this) {
+                $person->setMass(null);
+            }
+        }
 
         return $this;
     }

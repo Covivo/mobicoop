@@ -1,33 +1,34 @@
 bazinga_geocoder:
   providers:
-
     opencage:
       factory: Bazinga\GeocoderBundle\ProviderFactory\OpenCageFactory
-      locale: 'fr'
+      locale: "fr"
       aliases:
         - OpenCage
       options:
-        api_key: '%env(API_KEY_OPEN_CAGE)%'
+        api_key: "%env(API_KEY_OPEN_CAGE)%"
 
     bing:
       factory: Bazinga\GeocoderBundle\ProviderFactory\BingMapsFactory
-      locale: 'fr'
+      locale: "fr"
       aliases:
         - Bing
       options:
-        api_key: '%env(API_KEY_BING_MAPS_DEV)%'
+        api_key: "%env(API_KEY_BING_MAPS_DEV)%"
 
     locationiq:
       factory: App\Geography\ProviderFactory\LocationIQFactory
-      locale: 'fr'
+      # cache: "cache"
+      # cache_lifetime: 3600
+      locale: "fr"
       aliases:
         - LocationIQ
       options:
-        api_key: '%env(API_KEY_LOCATION_IQ)%'
+        api_key: "%env(API_KEY_LOCATION_IQ)%"
 
     # List of providers
     chain:
       factory: Bazinga\GeocoderBundle\ProviderFactory\ChainFactory
       options:
         # This is the order in which Providers will be called. Note that it stops its iteration when a provider returns a result.
-        services: ['@LocationIQ','@OpenCage', '@Bing']
+        services: ["@LocationIQ", "@OpenCage", "@Bing"]

@@ -23,10 +23,7 @@
 namespace App\Geography\Controller;
 
 use Symfony\Component\HttpFoundation\RequestStack;
-
-use App\Geography\Entity\Address;
-use Geocoder\Plugin\PluginProvider;
-use Geocoder\Query\GeocodeQuery;
+use App\Geography\Service\GeoSearcher;
 
 /**
  * GeoSearchController.php
@@ -38,48 +35,27 @@ use Geocoder\Query\GeocodeQuery;
  */
 class GeoSearchController
 {
+    private $geoSearcher;
     protected $request;
-    protected $container;
 
     /**
      * GeoSearchController constructor.
      * @param RequestStack $requestStack
-     * @param PluginProvider $chain
+     * @param GeoSearcher $geoSearcher
      */
-    public function __construct(RequestStack $requestStack, PluginProvider $chain)
+    public function __construct(RequestStack $requestStack, GeoSearcher $geoSearcher)
     {
         $this->request = $requestStack->getCurrentRequest();
-        $this->container = $chain;
+        $this->geoSearcher = $geoSearcher;
     }
 
     /**
      * This method is invoked when autocomplete function is called.
      * @param array $data
      * @return array
-     * @throws \Geocoder\Exception\Exception
      */
     public function __invoke(array $data): array
     {
-        $input = $this->request->get("input");
-        $result= $this->container
-            ->geocodeQuery(GeocodeQuery::create($input))->all();
-
-        $resultArray = [];
-        foreach ($result as $value) {
-            $address = new Address();
-            $address->setLatitude($value->getCoordinates()->getLatitude());
-            $address->setLongitude($value->getCoordinates()->getLongitude()) ;
-
-            $streetNumber = $value->getStreetNumber();
-            $streetName = $value->getStreetName();
-            $address->setStreetAddress($streetNumber.' '.$streetName);
-            //SubLocality or Locality of Geocoder-php
-            $address->setAddressLocality($value->getSubLocality() ?: $value->getLocality());
-            $address->setPostalCode($value->getPostalCode());
-            $address->setAddressCountry($value->getCountry()->getName());
-
-            $resultArray[] = $address;
-        }
-        return $resultArray;
+        return $this->geoSearcher->geoCode($this->request->get("input"));
     }
 }
