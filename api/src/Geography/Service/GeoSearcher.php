@@ -27,7 +27,6 @@ use App\Geography\Entity\Address;
 use Geocoder\Plugin\PluginProvider;
 use Geocoder\Query\GeocodeQuery;
 
-
 /**
  * The geo searcher service.
  *
