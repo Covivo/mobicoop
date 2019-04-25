@@ -30,7 +30,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A mass matching person.
- * 
+ *
  * @ORM\Entity
  */
 class MassPerson

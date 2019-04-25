@@ -28,7 +28,7 @@ use App\Geography\Entity\Direction;
 
 /**
  * A potential matching between 2 persons from a mass file import.
- * 
+ *
  * @ORM\Entity
  */
 class MassMatching
