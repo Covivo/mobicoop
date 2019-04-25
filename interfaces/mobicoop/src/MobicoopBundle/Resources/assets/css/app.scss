@@ -141,7 +141,8 @@ body {
     }
   }
   .input,
-  .button {
+  .button,
+  .ariaSelect {
     @include outlinedFocus($focusColor);
   }
   .help-block {
