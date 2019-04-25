@@ -23,34 +23,52 @@
 
 namespace App\Match\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 use App\Geography\Entity\Address;
+use App\Geography\Entity\Direction;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A mass matching person.
+ * 
+ * @ORM\Entity
  */
 class MassPerson
 {
     /**
-     * @var string The id of this person.
+     * @var int The id of this person.
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
      * @Assert\NotBlank(groups={"mass"})
      */
     private $id;
 
     /**
+     * @var string|null The given id of the person.
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(groups={"mass"})
+     */
+    private $givenId;
+
+    /**
      * @var string|null The first name of the person.
+     * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"mass"})
      */
     private $givenName;
 
     /**
      * @var string|null The family name of the person.
+     * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"mass"})
      */
     private $familyName;
 
     /**
      * @var Address The personal address of the person.
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Assert\NotBlank(groups={"mass"})
      * @Assert\Valid
      */
@@ -58,19 +76,42 @@ class MassPerson
 
     /**
      * @var Address The work address of the person.
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Assert\NotBlank(groups={"mass"})
      * @Assert\Valid
      */
     private $workAddress;
 
-    public function getId(): ?string
+    /**
+     * @var Mass The original mass file of the person.
+     *
+     * @Assert\NotBlank
+     * @ORM\OneToOne(targetEntity="\App\Match\Entity\MAss", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     */
+    private $mass;
+
+    /**
+     * @var Direction|null The direction between the personal address and the work address.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
+     */
+    private $direction;
+
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(?string $id): self
+    public function getGivenId(): string
     {
-        $this->id = $id;
+        return $this->givenId;
+    }
+
+    public function setGivenId(string $givenId): self
+    {
+        $this->givenId = $givenId;
 
         return $this;
     }
@@ -119,6 +160,30 @@ class MassPerson
     public function setWorkAddress(Address $address): self
     {
         $this->workAddress = $address;
+
+        return $this;
+    }
+
+    public function getMass(): Mass
+    {
+        return $this->mass;
+    }
+
+    public function setMass(Mass $mass): self
+    {
+        $this->mass = $mass;
+
+        return $this;
+    }
+
+    public function getDirection(): ?Direction
+    {
+        return $this->direction;
+    }
+
+    public function setDirection(?Direction $direction): self
+    {
+        $this->direction = $direction;
 
         return $this;
     }

@@ -120,6 +120,14 @@ class Mass
     private $user;
 
     /**
+     * @var \DateTimeInterface Calculation date of the import.
+     *
+     * @ORM\Column(type="datetime")
+     * @Groups("read")
+     */
+    private $calculationDate;
+
+    /**
      * @var File|null
      * @Vich\UploadableField(mapping="mass", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType")
      */
@@ -221,6 +229,18 @@ class Mass
     public function setUser(User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getCalculationDate(): ?\DateTimeInterface
+    {
+        return $this->calculationDate;
+    }
+
+    public function setCalculationDate(?\DateTimeInterface $calculationDate): self
+    {
+        $this->calculationDate = $calculationDate;
 
         return $this;
     }
