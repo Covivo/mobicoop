@@ -1,6 +1,6 @@
 <template>
   <div>
-    <transition-group 
+    <div 
       name="list" 
       tag="div" 
       class="tile is-multiline section row columns"
@@ -62,7 +62,7 @@
           </article>
         </div>
       </div>
-    </transition-group>
+    </div>
     <div class="column is-full is-centered">
       <span 
         v-if="externalsJourneys.length == 0" 

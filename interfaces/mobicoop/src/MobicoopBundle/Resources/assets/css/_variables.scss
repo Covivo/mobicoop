@@ -23,13 +23,20 @@ $second-background-color: #0FF;
 $nav-background-color: $mb-green;
 $footer-background-color: $mb-green;
 
+$focusColor:  rgba(255, 166, 0, 0.979);
+
 @mixin is-mobicoop($color) {
   background: $color;
   border-color: transparent;
   color: $mb-white;
 }
 
-/*
+@mixin outlinedFocus($color) {
+  &:focus {
+    outline: 3px solid $color;
+  }
+}
+
 $partners: (
   mobicoop: (
     base: rgba(217, 0, 0, 0.5),
@@ -48,4 +55,3 @@ $partners: (
     url: 'covoiturage-libre.fr'
   )
 );
-*/
