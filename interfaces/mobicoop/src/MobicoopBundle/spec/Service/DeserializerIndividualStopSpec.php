@@ -26,7 +26,6 @@ namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\IndividualStop;
 
-
 describe('deserializeIndividualStop', function () {
     describe('deserialize IndividualStop', function () {
         it('deserializeIndividualStop should return data given', function () {

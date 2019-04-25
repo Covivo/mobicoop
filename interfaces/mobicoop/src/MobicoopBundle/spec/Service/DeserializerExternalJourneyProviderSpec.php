@@ -26,7 +26,6 @@ namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourneyProvider;
 
-
 describe('deserializeExternalJourneyProvider', function () {
     describe('deserialize ExternalJourneyProvider', function () {
         it('deserializeExternalJourneyProvider should return data given', function () {

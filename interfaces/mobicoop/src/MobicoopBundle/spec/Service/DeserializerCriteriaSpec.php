@@ -26,7 +26,6 @@ namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
 
-
 describe('deserializeCriteria', function () {
     describe('deserialize Criteria', function () {
         it('deserializeCriteria should return data given', function () {

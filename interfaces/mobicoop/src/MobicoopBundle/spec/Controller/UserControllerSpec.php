@@ -66,7 +66,6 @@ describe('UserController', function () {
 
             expect($form->has('user_login_form[username]'))->toBe(true);
             expect($form->has('user_login_form[password]'))->toBe(true);
-
         });
     });
 });

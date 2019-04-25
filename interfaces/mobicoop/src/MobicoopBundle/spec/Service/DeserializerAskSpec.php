@@ -26,7 +26,6 @@ namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 
-
 describe('deserializeAsk', function () {
     describe('deserialize Ask', function () {
         it('deserializeAsk should return data given', function () {

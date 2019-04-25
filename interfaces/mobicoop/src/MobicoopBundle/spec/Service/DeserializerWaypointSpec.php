@@ -26,7 +26,6 @@ namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Waypoint;
 
-
 describe('deserializeWaypoint', function () {
     describe('deserialize Waypoint', function () {
         it('deserializeWaypoint should return data given', function () {
