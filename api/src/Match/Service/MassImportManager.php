@@ -230,7 +230,7 @@ class MassImportManager
             $addresses[] = $massPerson->getWorkAddress();
             if ($routes = $this->geoRouter->getRoutes($addresses)) {
                 $direction = $routes[0];
-                // creation of the crossed zones
+                // creation of the crossed zones (maybe useless as most persons will obviously share at least one zone)
                 $direction = $this->zoneManager->createZonesForDirection($direction);
                 $massPerson->setDirection($direction);
             } else {

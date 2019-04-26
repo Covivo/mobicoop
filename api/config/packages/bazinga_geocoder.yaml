@@ -18,8 +18,8 @@ bazinga_geocoder:
 
     locationiq:
       factory: App\Geography\ProviderFactory\LocationIQFactory
-      # cache: "cache"
-      # cache_lifetime: 3600
+      cache: 'app.simple_cache'
+      cache_lifetime: 3600
       locale: "fr"
       aliases:
         - LocationIQ
