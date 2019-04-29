@@ -402,12 +402,14 @@ class MassImportManager
             $massPerson->setGivenName($person->givenName);
             $massPerson->setFamilyName($person->familyName);
             $personalAddress = new Address();
-            $personalAddress->setStreetAddress($person->personalAddress->streetAddress);
+            $personalAddress->setHouseNumber($person->personalAddress->houseNumber);
+            $personalAddress->setStreet($person->personalAddress->street);
             $personalAddress->setPostalCode($person->personalAddress->postalCode);
             $personalAddress->setAddressLocality($person->personalAddress->addressLocality);
             $massPerson->setPersonalAddress($personalAddress);
             $workAddress = new Address();
-            $workAddress->setStreetAddress($person->workAddress->streetAddress);
+            $workAddress->setHouseNumber($person->workAddress->houseNumber);
+            $workAddress->setStreet($person->workAddress->street);
             $workAddress->setPostalCode($person->workAddress->postalCode);
             $workAddress->setAddressLocality($person->workAddress->addressLocality);
             $massPerson->setWorkAddress($workAddress);

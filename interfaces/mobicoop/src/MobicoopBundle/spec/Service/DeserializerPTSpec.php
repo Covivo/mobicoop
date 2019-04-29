@@ -42,140 +42,183 @@ describe('deserializePT', function () {
         it('deserialize PTJourney should return a PTJourney object', function () {
             $jsonPTJourney = <<<JSON
 {
-    "distance": 0,
-    "duration": "string",
-    "changeNumber": 0,
-    "price": "string",
-    "co2": 0,
-    "ptdeparture": {
-      "name": "string",
-      "date": "2019-01-08T15:06:18.329Z",
-      "address": {
-        "streetAddress": "string",
-        "postalCode": "string",
-        "addressLocality": "string",
-        "addressCountry": "string",
-        "latitude": "string",
-        "longitude": "string",
-        "elevation": 0,
+  "distance": 0,
+  "duration": "string",
+  "changeNumber": 0,
+  "price": "string",
+  "co2": 0,
+  "ptdeparture": {
+    "name": "string",
+    "date": "2019-04-29T15:36:55.474Z",
+    "address": {
+      "houseNumber": "string",
+      "street": "string",
+      "streetAddress": "string",
+      "postalCode": "string",
+      "subLocality": "string",
+      "addressLocality": "string",
+      "localAdmin": "string",
+      "county": "string",
+      "macroCounty": "string",
+      "region": "string",
+      "macroRegion": "string",
+      "addressCountry": "string",
+      "countryCode": "string",
+      "latitude": "string",
+      "longitude": "string",
+      "elevation": 0
+    }
+  },
+  "ptarrival": {
+    "name": "string",
+    "date": "2019-04-29T15:36:55.474Z",
+    "address": {
+      "houseNumber": "string",
+      "street": "string",
+      "streetAddress": "string",
+      "postalCode": "string",
+      "subLocality": "string",
+      "addressLocality": "string",
+      "localAdmin": "string",
+      "county": "string",
+      "macroCounty": "string",
+      "region": "string",
+      "macroRegion": "string",
+      "addressCountry": "string",
+      "countryCode": "string",
+      "latitude": "string",
+      "longitude": "string",
+      "elevation": 0
+    }
+  },
+  "ptlegs": [
+    {
+      "indication": "string",
+      "distance": 0,
+      "duration": 0,
+      "position": 0,
+      "isLast": true,
+      "magneticDirection": "string",
+      "relativeDirection": "string",
+      "ptdeparture": {
         "name": "string",
-        "user": {}
-      }
-    },
-    "ptarrival": {
-      "name": "string",
-      "date": "2019-01-08T15:06:18.329Z",
-      "address": {
-        "streetAddress": "string",
-        "postalCode": "string",
-        "addressLocality": "string",
-        "addressCountry": "string",
-        "latitude": "string",
-        "longitude": "string",
-        "elevation": 0,
+        "date": "2019-04-29T15:36:55.474Z",
+        "address": {
+          "houseNumber": "string",
+          "street": "string",
+          "streetAddress": "string",
+          "postalCode": "string",
+          "subLocality": "string",
+          "addressLocality": "string",
+          "localAdmin": "string",
+          "county": "string",
+          "macroCounty": "string",
+          "region": "string",
+          "macroRegion": "string",
+          "addressCountry": "string",
+          "countryCode": "string",
+          "latitude": "string",
+          "longitude": "string",
+          "elevation": 0
+        }
+      },
+      "ptarrival": {
         "name": "string",
-        "user": {}
-      }
-    },
-    "ptlegs": [
-      {
-        "indication": "string",
-        "distance": 0,
-        "duration": 0,
-        "position": 0,
-        "isLast": true,
-        "magneticDirection": "string",
-        "relativeDirection": "string",
-        "ptdeparture": {
-          "name": "string",
-          "date": "2019-01-08T15:06:18.329Z",
-          "address": {
-            "streetAddress": "string",
-            "postalCode": "string",
-            "addressLocality": "string",
-            "addressCountry": "string",
-            "latitude": "string",
-            "longitude": "string",
-            "elevation": 0,
-            "name": "string",
-            "user": {}
-          }
-        },
-        "ptarrival": {
-          "name": "string",
-          "date": "2019-01-08T15:06:18.329Z",
-          "address": {
-            "streetAddress": "string",
-            "postalCode": "string",
-            "addressLocality": "string",
-            "addressCountry": "string",
-            "latitude": "string",
-            "longitude": "string",
-            "elevation": 0,
-            "name": "string",
-            "user": {}
-          }
+        "date": "2019-04-29T15:36:55.474Z",
+        "address": {
+          "houseNumber": "string",
+          "street": "string",
+          "streetAddress": "string",
+          "postalCode": "string",
+          "subLocality": "string",
+          "addressLocality": "string",
+          "localAdmin": "string",
+          "county": "string",
+          "macroCounty": "string",
+          "region": "string",
+          "macroRegion": "string",
+          "addressCountry": "string",
+          "countryCode": "string",
+          "latitude": "string",
+          "longitude": "string",
+          "elevation": 0
+        }
+      },
+      "travelMode": {
+        "name": "string"
+      },
+      "ptline": {
+        "name": "string",
+        "number": "string",
+        "origin": "string",
+        "destination": "string",
+        "direction": "string",
+        "ptcompany": {
+          "name": "string"
         },
         "travelMode": {
           "name": "string"
-        },
-        "ptline": {
-          "name": "string",
-          "number": "string",
-          "origin": "string",
-          "destination": "string",
-          "direction": "string",
-          "ptcompany": {
-            "name": "string"
-          },
-          "travelMode": {
-            "name": "string"
-          }
-        },
-        "direction": "string",
-        "ptsteps": [
-          {
-            "distance": 0,
-            "duration": 0,
-            "position": 0,
-            "isLast": true,
-            "magneticDirection": "string",
-            "relativeDirection": "string",
-            "ptdeparture": {
-              "name": "string",
-              "date": "2019-01-08T15:06:18.329Z",
-              "address": {
-                "streetAddress": "string",
-                "postalCode": "string",
-                "addressLocality": "string",
-                "addressCountry": "string",
-                "latitude": "string",
-                "longitude": "string",
-                "elevation": 0,
-                "name": "string",
-                "user": {}
-              }
-            },
-            "ptarrival": {
-              "name": "string",
-              "date": "2019-01-08T15:06:18.329Z",
-              "address": {
-                "streetAddress": "string",
-                "postalCode": "string",
-                "addressLocality": "string",
-                "addressCountry": "string",
-                "latitude": "string",
-                "longitude": "string",
-                "elevation": 0,
-                "name": "string",
-                "user": {}
-              }
+        }
+      },
+      "direction": "string",
+      "ptsteps": [
+        {
+          "distance": 0,
+          "duration": 0,
+          "position": 0,
+          "isLast": true,
+          "magneticDirection": "string",
+          "relativeDirection": "string",
+          "ptdeparture": {
+            "name": "string",
+            "date": "2019-04-29T15:36:55.474Z",
+            "address": {
+              "houseNumber": "string",
+              "street": "string",
+              "streetAddress": "string",
+              "postalCode": "string",
+              "subLocality": "string",
+              "addressLocality": "string",
+              "localAdmin": "string",
+              "county": "string",
+              "macroCounty": "string",
+              "region": "string",
+              "macroRegion": "string",
+              "addressCountry": "string",
+              "countryCode": "string",
+              "latitude": "string",
+              "longitude": "string",
+              "elevation": 0
             }
-          }
-        ]
-      }
-    ]
-  }
+          },
+          "ptarrival": {
+            "name": "string",
+            "date": "2019-04-29T15:36:55.474Z",
+            "address": {
+              "houseNumber": "string",
+              "street": "string",
+              "streetAddress": "string",
+              "postalCode": "string",
+              "subLocality": "string",
+              "addressLocality": "string",
+              "localAdmin": "string",
+              "county": "string",
+              "macroCounty": "string",
+              "region": "string",
+              "macroRegion": "string",
+              "addressCountry": "string",
+              "countryCode": "string",
+              "latitude": "string",
+              "longitude": "string",
+              "elevation": 0
+            }
+          },
+          "geometry": "string"
+        }
+      ]
+    }
+  ]
+}
 JSON;
 
             $deserializer = new Deserializer();

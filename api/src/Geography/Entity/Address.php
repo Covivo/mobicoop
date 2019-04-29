@@ -88,7 +88,6 @@ class Address
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"read","write","pt"})
-     * @Assert\NotBlank(groups={"mass"})
      */
     private $streetAddress;
 

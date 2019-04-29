@@ -39,51 +39,60 @@ describe('deserializeEvent', function () {
     describe('deserialize Event', function () {
         it('deserialize Event should return an Event object', function () {
             $jsonEvent = <<<JSON
-    {
+{
+  "id": 0,
+  "name": "string",
+  "status": 0,
+  "description": "string",
+  "fullDescription": "string",
+  "fromDate": "2019-04-29T15:34:47.496Z",
+  "toDate": "2019-04-29T15:34:47.496Z",
+  "useTime": true,
+  "url": "string",
+  "address": {
     "id": 0,
-    "name": "string",
-    "status": 0,
-    "description": "string",
-    "fullDescription": "string",
-    "fromDate": "2019-04-24T12:54:10.868Z",
-    "toDate": "2019-04-24T12:54:10.868Z",
-    "useTime": true,
-    "url": "string",
-    "address": {
-        "id": 0,
-        "streetAddress": "string",
-        "postalCode": "string",
-        "addressLocality": "string",
-        "addressCountry": "string",
-        "latitude": "string",
-        "longitude": "string",
-        "elevation": 0,
-        "name": "string"
-    },
-    "images": [
-        {
-        "id": 0,
-        "name": "string",
-        "title": "string",
-        "alt": "string",
-        "cropX1": 0,
-        "cropY1": 0,
-        "cropX2": 0,
-        "cropY2": 0,
-        "fileName": "string",
-        "originalName": "string",
-        "width": 0,
-        "height": 0,
-        "size": 0,
-        "mimeType": "string",
-        "position": 0,
-        "eventId": 0,
-        "versions": [
-            "string"
-        ]
-        }
-    ]
+    "houseNumber": "string",
+    "street": "string",
+    "streetAddress": "string",
+    "postalCode": "string",
+    "subLocality": "string",
+    "addressLocality": "string",
+    "localAdmin": "string",
+    "county": "string",
+    "macroCounty": "string",
+    "region": "string",
+    "macroRegion": "string",
+    "addressCountry": "string",
+    "countryCode": "string",
+    "latitude": "string",
+    "longitude": "string",
+    "elevation": 0,
+    "name": "string"
+  },
+  "images": [
+    {
+      "id": 0,
+      "name": "string",
+      "title": "string",
+      "alt": "string",
+      "cropX1": 0,
+      "cropY1": 0,
+      "cropX2": 0,
+      "cropY2": 0,
+      "fileName": "string",
+      "originalName": "string",
+      "width": 0,
+      "height": 0,
+      "size": 0,
+      "mimeType": "string",
+      "position": 0,
+      "eventId": 0,
+      "versions": [
+        "string"
+      ]
     }
+  ]
+}
 JSON;
 
             $deserializer = new Deserializer();

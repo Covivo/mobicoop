@@ -98,6 +98,22 @@ class MassPerson
      */
     private $direction;
 
+    /**
+     * @var \DateTimeInterface|null The outward time.
+     *
+     * @Assert\Time()
+     * @ORM\Column(type="time", nullable=true)
+     */
+    private $outwardTime;
+
+    /**
+     * @var \DateTimeInterface|null The return time.
+     *
+     * @Assert\Time()
+     * @ORM\Column(type="time", nullable=true)
+     */
+    private $returnTime;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -183,6 +199,34 @@ class MassPerson
     public function setDirection(?Direction $direction): self
     {
         $this->direction = $direction;
+
+        return $this;
+    }
+
+    public function getOutwardTime(): ?\DateTimeInterface
+    {
+        return $this->outwardTime;
+    }
+
+    public function setOutwardTime(?string $outwardTime): self
+    {
+        if ($outwardTime) {
+            $this->outwardTime = \Datetime::createFromFormat('H:i:s',$outwardTime);
+        }
+
+        return $this;
+    }
+
+    public function getReturnTime(): ?\DateTimeInterface
+    {
+        return $this->returnTime;
+    }
+
+    public function setReturnTime(?string $returnTime): self
+    {
+        if ($returnTime) {
+            $this->returnTime = \Datetime::createFromFormat('H:i:s',$returnTime);
+        }
 
         return $this;
     }

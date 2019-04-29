@@ -1,1 +1,1 @@
-givenId;givenName;familyName;personalAddress.streetAddress;personalAddress.postalCode;personalAddress.addressLocality;workAddress.streetAddress;workAddress.postalCode;workAddress.addressLocality
+givenId;givenName;familyName;personalAddress.houseNumber;personalAddress.street;personalAddress.postalCode;personalAddress.addressLocality;workAddress.houseNumber;workAddress.street;workAddress.postalCode;workAddress.addressLocality;outwardTime;returnTime
