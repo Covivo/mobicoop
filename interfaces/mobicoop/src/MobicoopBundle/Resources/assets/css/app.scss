@@ -11,7 +11,7 @@ $colors: (
   'light': ($light, $light-invert),
   'dark': ($mb-dark-green, $mb-green),
   'primary': ($mb-blue, $mb-blue-invert),
-  'info': ($mb-pink, $mb-pink-invert),
+  'info': ($mb-pink, $mb-white),
   'success': ($mb-green, $mb-green-invert),
   'warning': ($warning, $warning-invert),
   'danger': ($danger, $danger-invert),
@@ -57,12 +57,16 @@ body {
     width: 45vw;
     padding: 1vw;
     #rechercher {
+      background-color: $mb-white;
       box-shadow: 2px 2px 2px #000;
       padding: 0;
       font-size: 100%;
       font-family: inherit;
       border-radius: 20px;
-      color: $mb-white;
+      &:hover {
+        color: $mb-white;
+        background-color: $mb-pink;
+      }
 
       @include outlinedFocus($focusColor);
     }
@@ -72,16 +76,16 @@ body {
       border-right: 0;
       border-left: 0;
       outline: none;
-      border-bottom: solid 1px $mb-blue;
+      border-bottom: solid 1px $mb-white;
       border-radius: 0;
       background-color: $mb-pink;
 
       @include outlinedFocus($focusColor);
       .input {
-        color: $mb-green;
+        color: $mb-white;
       }
       ::placeholder {
-        color: $mb-green;
+        color: $mb-white;
         opacity: 1;
       }
     }
@@ -89,16 +93,16 @@ body {
       box-shadow: none;
       border: 0;
       outline: 0;
-      border-bottom: solid 1px $mb-blue;
+      border-bottom: solid 1px $mb-white;
       border-radius: 0;
       background-color: $mb-pink;
 
       @include outlinedFocus($focusColor);
       .input {
-        color: $mb-green;
+        color: $mb-white;
       }
       ::placeholder {
-        color: $mb-green;
+        color: $mb-white;
         opacity: 1;
       }
     }

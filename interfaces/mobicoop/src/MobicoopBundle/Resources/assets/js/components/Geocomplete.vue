@@ -8,7 +8,6 @@
         :placeholder="placeholder"
         :open-on-focus="true"
         icon-pack="fa"
-        class="test"
         :loading="isFetching"
         @input="getAsyncData"
         @select="onSelected"
