@@ -45,6 +45,7 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use App\Right\Entity\UserRole;
+use App\Match\Entity\Mass;
 
 /**
  * A user.
@@ -241,11 +242,21 @@ class User implements UserInterface, EquatableInterface
     private $asks;
 
     /**
-     * @var Car[]|null A user may have many cars.
+     * @var Collection|null A user may have many roles.
      *
      * @ORM\OneToMany(targetEntity="\App\Right\Entity\UserRole", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      */
     private $userRoles;
+
+    /**
+     * @var Collection|null The mass import files of the user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Match\Entity\Mass", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
+     */
+    private $masses;
     
     public function __construct($status=null)
     {
@@ -253,6 +264,8 @@ class User implements UserInterface, EquatableInterface
         $this->cars = new ArrayCollection();
         $this->proposals = new ArrayCollection();
         $this->asks = new ArrayCollection();
+        $this->userRoles = new Collection();
+        $this->masses = new Collection();
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -547,13 +560,41 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
     
-    public function removeUserRole(Car $userRole): self
+    public function removeUserRole(UserRole $userRole): self
     {
         if ($this->userRoles->contains($userRole)) {
             $this->userRoles->removeElement($userRole);
             // set the owning side to null (unless already changed)
             if ($userRole->getUser() === $this) {
                 $userRole->setUser(null);
+            }
+        }
+        
+        return $this;
+    }
+
+    public function getMasses(): Collection
+    {
+        return $this->masses;
+    }
+    
+    public function addMass(Mass $mass): self
+    {
+        if (!$this->masses->contains($mass)) {
+            $this->masses->add($mass);
+            $mass->setUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeMass(Mass $mass): self
+    {
+        if ($this->masses->contains($mass)) {
+            $this->masses->removeElement($mass);
+            // set the owning side to null (unless already changed)
+            if ($mass->getUser() === $this) {
+                $mass->setUser(null);
             }
         }
         

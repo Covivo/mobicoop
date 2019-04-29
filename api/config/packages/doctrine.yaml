@@ -36,6 +36,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Carpool/Entity'
                 prefix: 'App\Carpool\Entity'
                 alias: Carpool
+            Match:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Match/Entity'
+                prefix: 'App\Match\Entity'
+                alias: Match
             User:
                 is_bundle: false
                 type: annotation

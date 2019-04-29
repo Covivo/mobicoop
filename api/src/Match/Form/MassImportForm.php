@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,42 +21,39 @@
  *    LICENSE
  **************************/
 
-namespace App\Geography\Controller;
+namespace App\Match\Form;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-use App\Geography\Service\GeoSearcher;
+use App\Match\Entity\Mass;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * GeoSearchController.php
- * Controller that requests a provider list
- * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 16/11/2018
- * Time: 9:25
- *
- */
-class GeoSearchController
+final class MassImportForm extends AbstractType
 {
-    private $geoSearcher;
-    protected $request;
-
-    /**
-     * GeoSearchController constructor.
-     * @param RequestStack $requestStack
-     * @param GeoSearcher $geoSearcher
-     */
-    public function __construct(RequestStack $requestStack, GeoSearcher $geoSearcher)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $this->request = $requestStack->getCurrentRequest();
-        $this->geoSearcher = $geoSearcher;
+        $builder
+        // Configure each fields you want to be submitted here, like a classic form.
+        ->add('file', FileType::class, [
+            'label' => 'label.file',
+            'required' => false,
+        ])
+        ->add('originalName')
+        ->add('userId')
+        ;
     }
-
-    /**
-     * This method is invoked when autocomplete function is called.
-     * @param array $data
-     * @return array
-     */
-    public function __invoke(array $data): array
+    
+    public function configureOptions(OptionsResolver $resolver)
     {
-        return $this->geoSearcher->geoCode($this->request->get("input"));
+        $resolver->setDefaults([
+            'data_class' => Mass::class,
+            'csrf_protection' => false,
+        ]);
+    }
+    
+    public function getBlockPrefix()
+    {
+        return '';
     }
 }

@@ -8,6 +8,7 @@ parameters:
 
 imports:
     - { resource: images.yaml }
+    - { resource: mass.yaml }
 
 services:
     # default configuration for services in *this* file
@@ -17,6 +18,11 @@ services:
         public: false       # Allows optimizing the container by removing unused services; this also means
                             # fetching services directly from the container via $container->get() won't work.
                             # The best practice is to be explicit about your dependencies anyway.
+
+    # cache
+    app.simple_cache:
+        class: Symfony\Component\Cache\Simple\Psr6Cache
+        arguments: ['@app.cache.mobicoop']
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -52,6 +58,10 @@ services:
         resource: '../src/Image/Controller'
         tags: ['controller.service_arguments']
 
+    App\Match\Controller\:
+        resource: '../src/Match/Controller'
+        tags: ['controller.service_arguments']
+
     # alias to allow this type to be autowired
     Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'
     
@@ -81,3 +91,8 @@ services:
             $operator: '%env(json:file:resolve:RDEX_OPERATOR)%'
             $clients: '%env(json:file:resolve:RDEX_CLIENTS)%'
             $providers: '%env(json:file:resolve:RDEX_PROVIDERS)%'
+    
+    # inject mass parameters to MassImportManager 
+    App\Match\Service\MassImportManager:
+        arguments:
+            $params: '%mass%'

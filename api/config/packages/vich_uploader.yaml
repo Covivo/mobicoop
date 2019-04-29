@@ -2,12 +2,24 @@ vich_uploader:
     db_driver: orm
 
     mappings:
+
+        # mapping for event images
         event:
             uri_prefix: /upload/events/images/
             upload_destination: '%kernel.project_dir%/public/upload/events/images/'
             namer:
                 service: Vich\UploaderBundle\Naming\PropertyNamer
                 options: { property: 'fileName'}
+        
+        # mapping for user images (avatar)
         user:
             uri_prefix: /upload/users/images/
             upload_destination: '%kernel.project_dir%/public/upload/users/images/'    
+        
+        # mapping for mass import files
+        mass:
+            uri_prefix: /upload/mass/files/
+            upload_destination: '%kernel.project_dir%/public/upload/mass/files/'  
+            namer:
+                service: Vich\UploaderBundle\Naming\PropertyNamer
+                options: { property: 'fileName'}  
