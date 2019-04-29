@@ -3,14 +3,14 @@
 {% block title %}{{ metaDescription }}{% endblock %}
 
 {% block body %}
-    <section class="header hero">
+<section class="hero firstSection">
     </section>
 {% block simpleSearch %}
     <section id="home">
         <Homesearchform geo-search-url="/geosearch?search=" route="covoiturage/recherche"></Homesearchform>
     </section>
 {% endblock %}
-     <section class="hero">
+     <section class="hero lastSection">
     </section>
 {% endblock %}
 {% block javascripts %}

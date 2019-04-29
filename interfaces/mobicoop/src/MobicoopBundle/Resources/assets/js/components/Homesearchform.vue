@@ -3,38 +3,43 @@
     <div class="tile is-ancestor">
       <div class="tile is-vertical is-12">
         <div class="tile is-child center-all">
-          <div class="columns">
-            <b-field class="fieldsContainer">
+          <div
+            class="columns is-centered is-vcentered SearchBar"
+          >
+            <div class="column has-text-centered">
               <!-- inputs outward destination -->
               <label
                 class="label"
                 for="origin"
-              >Départ
+              >
                 <geocomplete
                   id="origin"
                   name="origin"
-                  placeholder="Depuis"
+                  placeholder="Lieu de départ"
                   title="Depuis"
                   aria-label="Départ"
                   :url="geoSearchUrl"
                   @geoSelected="selectedGeo"
                 />
               </label>
+            </div>
+            <div class="column has-text-centered">
               <label
                 class="label"
                 for="destination"
-              >Destination
+              >
                 <geocomplete
                   id="destination"
                   name="destination"
-                  placeholder="Vers"
+                  placeholder="Lieu d'arrivée"
                   title="Vers"
                   :url="geoSearchUrl"
                   @geoSelected="selectedGeo"
                 />
               </label>
-              <!-- datepicker -->
-              <!-- <label
+            </div>
+            <!-- datepicker -->
+            <!-- <label
                 class="label"
                 for="dateDepart"
               >Date de départ
@@ -51,8 +56,8 @@
                   editable
                 />
               </label> -->
-              <!-- timepicker -->
-              <!-- <label
+            <!-- timepicker -->
+            <!-- <label
                 class="label"
                 for="heureDepart"
               >Heure de départ
@@ -78,31 +83,24 @@
                   </button>
                 </b-timepicker>
               </label> -->
-              <!-- search button -->
+            <!-- search button -->
+            <div class="column is-3 has-text-centered">
               <label
                 for="rechercher"
                 class="label"
               >
-                <button
+                <a
                   id="rechercher"
-                >
-                  <a
-                    style="width: 100%"
-                    class="button is-mobicoopblue"
-                    :href="checkUrlValid ? urlToCall : null"
-                    :disabled="!checkUrlValid"
-                    alt="Rechercher un covoiturage"
-                    title="Rechercher"
-                  ><span>Rechercher</span>
-                    <b-icon
-                      pack="fas"
-                      icon="search"
-                      size="is-small"
-                    />
-                  </a>
-                </button>
+                  style="width: 100%"
+                  class="button is-mobicoopgreen"
+                  :href="checkUrlValid ? urlToCall : null"
+                  :disabled="!checkUrlValid"
+                  alt="Rechercher un covoiturage"
+                  title="Rechercher"
+                ><span>Rechercher</span>
+                </a>
               </label>
-            </b-field>
+            </div>
           </div>
         </div>
       </div>
