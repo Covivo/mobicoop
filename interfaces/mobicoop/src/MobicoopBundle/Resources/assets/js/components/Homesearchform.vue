@@ -95,7 +95,6 @@
                   style="width: 100%"
                   class="button is-info is-outlined"
                   :href="checkUrlValid ? urlToCall : null"
-                  :disabled="!checkUrlValid"
                   alt="Rechercher un covoiturage"
                   title="Rechercher"
                 ><span>Rechercher</span>
