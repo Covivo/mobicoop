@@ -1,10 +1,13 @@
 
-describe('Profil', () => {
-    it('user_login -> Connexion mobicoop -> localhost:8081', function() {
+describe('Delete Profil', () => {
+
+    const baseUrl = Cypress.env('CYPRESS_BASEURL');
+
+    it('user_login -> Connexion to mobicoop ', () => {
         /* Home */
-        cy.visit('/')
+        cy.visit(baseUrl)
         cy.contains('Connexion').click()
-        cy.url().should('include', '/utilisateur/connexion')
+        cy.url().should('include', baseUrl + 'utilisateur/connexion')
 
         /* Connexion */
         // Email
@@ -21,14 +24,14 @@ describe('Profil', () => {
   
         /* Profil */
         cy.contains('Mon profil').click()
-        cy.url().should('include', '/utilisateur/profil')
+        cy.url().should('include', baseUrl + 'utilisateur/profil')
 
         /* Delete */
         cy.contains('Supprimer mon compte').click()
-        cy.url().should('include', '/utilisateur/profil/supprimer')
+        cy.url().should('include', baseUrl + 'utilisateur/profil/supprimer')
 
-        cy.get('button[id=user_delete_form_submit]').click()   // à mettre modifier, valider....
-        cy.url().should('include', '/')           
+        cy.get('button[id=user_delete_form_submit]').click()
+        cy.url().should('include', baseUrl) // should be redirected to home    
 
     })
 

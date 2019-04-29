@@ -1,9 +1,12 @@
 
 describe('Connexion', () => {
-    it('Visits mobicoop -> localhost:8081', function() {
-        cy.visit('/')
+
+    const baseUrl = Cypress.env('CYPRESS_BASEURL');
+
+    it('Visits mobicoop', function() {
+        cy.visit(baseUrl)
         cy.contains('Connexion').click()
-        cy.url().should('include', '/utilisateur/connexion')
+        cy.url().should('include', baseUrl + 'utilisateur/connexion')
   
             /* Email */
             cy.get('input[id=user_login_form_username]')

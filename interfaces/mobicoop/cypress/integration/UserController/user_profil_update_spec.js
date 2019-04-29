@@ -1,10 +1,13 @@
 
-describe('Profil', () => {
-    it('user_login -> Connexion mobicoop -> localhost:8081', function() {
+describe('Update Profil', () => {
+
+    const baseUrl = Cypress.env('CYPRESS_BASEURL');
+
+    it('user_login -> Connexion to mobicoop ', () => {
         /* Home */
-        cy.visit('/')
+        cy.visit(baseUrl)
         cy.contains('Connexion').click()
-        cy.url().should('include', '/utilisateur/connexion')
+        cy.url().should('include', baseUrl + 'utilisateur/connexion')
 
         /* Connexion */
         // Email
@@ -22,11 +25,11 @@ describe('Profil', () => {
 
         /* Profil */
         cy.contains('Mon profil').click()
-        cy.url().should('include', '/utilisateur/profil')
+        cy.url().should('include', baseUrl + 'utilisateur/profil')
 
         /* Update */
         cy.contains('Mettre à jour').click()
-        cy.url().should('include', '/utilisateur/profil/modifier')
+        cy.url().should('include', baseUrl + 'utilisateur/profil/modifier')
 
         /* Gender */
         cy.get('select[id=user_form_gender]')
@@ -38,6 +41,8 @@ describe('Profil', () => {
         .should('have.attr','placeholder','Saisissez votre numéro de téléphone')
         .type('0610111214')
 
-        cy.get('button[id=user_form_submit]').click()   // à mettre modifier, valider....
+        cy.get('button[id=user_form_submit]').click()
+        cy.url().should('include', baseUrl) // should be redirected to home    
+
     })
 })

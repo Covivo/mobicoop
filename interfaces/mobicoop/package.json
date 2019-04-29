@@ -56,6 +56,7 @@
     "bulma-checkradio": "^2.1.0",
     "casual": "^1.5.19",
     "commander": "^2.18.0",
+    "dotenv": "^7.0.0",
     "epic-spinners": "^1.0.4",
     "eslint-config-prettier": "^3.0.1",
     "gsap": "^2.0.2",
