@@ -58,14 +58,33 @@ class GeoSearcher
             $address = new Address();
             $address->setLatitude((string)$geoResult->getCoordinates()->getLatitude());
             $address->setLongitude((string)$geoResult->getCoordinates()->getLongitude());
-
-            $streetNumber = $geoResult->getStreetNumber();
-            $streetName = $geoResult->getStreetName();
-            $address->setStreetAddress($streetNumber . ' ' . $streetName);
-            //SubLocality or Locality of Geocoder-php
-            $address->setAddressLocality($geoResult->getSubLocality() ?: $geoResult->getLocality());
+            $address->setHouseNumber($geoResult->getStreetNumber());
+            $address->setStreet($geoResult->getStreetName());
+            $address->setStreetAddress($geoResult->getStreetName() ? trim(($geoResult->getStreetNumber() ? $geoResult->getStreetNumber() : '') . ' ' . $geoResult->getStreetName()) : null);
+            $address->setSubLocality($geoResult->getSubLocality());
+            $address->setAddressLocality($geoResult->getLocality());
+            foreach ($geoResult->getAdminLevels() as $level) {
+                switch ($level->getLevel()) {
+                    case 1:
+                        $address->setLocalAdmin($level->getName());
+                        break;
+                    case 2:
+                        $address->setCounty($level->getName());
+                        break;
+                    case 3:
+                        $address->setMacroCounty($level->getName());
+                        break;
+                    case 4:
+                        $address->setRegion($level->getName());
+                        break;
+                    case 5:
+                        $address->setMacroRegion($level->getName());
+                        break;
+                }
+            }
             $address->setPostalCode($geoResult->getPostalCode());
             $address->setAddressCountry($geoResult->getCountry()->getName());
+            $address->setCountryCode($geoResult->getCountry()->getCode());
 
             $result[] = $address;
         }
