@@ -93,7 +93,7 @@
                 <a
                   id="rechercher"
                   style="width: 100%"
-                  class="button is-mobicoopgreen"
+                  class="button is-success"
                   :href="checkUrlValid ? urlToCall : null"
                   :disabled="!checkUrlValid"
                   alt="Rechercher un covoiturage"

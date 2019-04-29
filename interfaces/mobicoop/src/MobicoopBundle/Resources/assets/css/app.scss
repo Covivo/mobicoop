@@ -9,15 +9,12 @@ $colors: (
   'white': ($white, $black),
   'black': ($black, $white),
   'light': ($light, $light-invert),
-  'dark': ($dark, $dark-invert),
+  'dark': ($mb-dark-green, $mb-green),
   'primary': ($mb-blue, $mb-blue-invert),
   'info': ($mb-pink, $mb-pink-invert),
   'success': ($mb-green, $mb-green-invert),
   'warning': ($warning, $warning-invert),
   'danger': ($danger, $danger-invert),
-  'mobicoopblue': ($mb-blue, $mb-blue-invert),
-  'mobicooppink': ($mb-pink, $mb-pink-invert),
-  'mobicoopgreen': ($mb-green, $mb-green-invert)
 );
 
 $link: $mb-green;
@@ -111,11 +108,6 @@ body {
   .hero.is-passur {
     background-color: #CCCC98;
   }
-  .header {
-    // background: url('images/header.png');
-    width: 100vw;
-    height: 30vh;
-  }
   .common-footer {
     background-color: $footer-background-color;
     color: $mb-dark-green;
@@ -193,14 +185,6 @@ body {
   .buttons {
     .button {
       font-weight: bold;
-      &.is-primary {
-        background-color: $mb-dark-green;
-        color: $mb-green;
-      }
-      &.is-light {
-        background-color: $mb-green;
-        color: $mb-dark-green;
-      }
       &:hover {
         color: $mb-white;
       }

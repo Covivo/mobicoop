@@ -38,26 +38,26 @@
                 <div class="navbar-item buttons">
                     <div class="buttons">
                         {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                        <a href="{{ path('user_sign_up') }}" class="button is-light">
+                        <a href="{{ path('user_sign_up') }}" class="button is-success">
                             <i class="fas fa-pencil-alt"></i>
                             {% trans from 'ui' %}menu.signup{% endtrans %}  
                         </a>
-                        <a href="{{ path('user_login') }}" class="button is-light">
+                        <a href="{{ path('user_login') }}" class="button is-success">
                             <i class="fas fa-user"></i>
                             {% trans from 'ui' %}menu.login{% endtrans %}
                         </a>
                             {% else %}
-                        <a href="{{ path('user_messages') }}" class="button is-light">
+                        <a href="{{ path('user_messages') }}" class="button is-success">
                             {% trans from 'ui' %}menu.messages{% endtrans %}
                         </a>
-                        <a href="{{ path('user_profile') }}" class="button is-light">
+                        <a href="{{ path('user_profile') }}" class="button is-success">
                             {% trans from 'ui' %}menu.profile{% endtrans %}
                         </a>
-                        <a href="{{ path('logout') }}" class="button is-light">
+                        <a href="{{ path('logout') }}" class="button is-success">
                             {% trans from 'ui' %}menu.logout{% endtrans %}
                         </a>
                             {% endif %}
-                        <a href="{{ path('carpool_ad') }}" class="button is-primary">
+                        <a href="{{ path('carpool_ad') }}" class="button is-dark">
                             <i class="fas fa-car"></i>
                             {% trans from 'ui' %}menu.ad_create{% endtrans %}
                         </a>
