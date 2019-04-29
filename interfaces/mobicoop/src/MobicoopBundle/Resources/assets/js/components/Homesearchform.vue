@@ -38,6 +38,7 @@
                 />
               </label>
             </div>
+            <!-- Commented and not removed because it can be usefull later if we'll implement the possibility to choose a date and an hour for the simple search -->
             <!-- datepicker -->
             <!-- <label
                 class="label"
@@ -164,7 +165,7 @@ export default {
       destinationStreetAddress: null,
       destinationPostalCode: null,
       destinationAddressLocality: null,
-      outwardDate: new Date(),
+      outwardDate: new Date(), 
       outwardTime: new Date(),
       baseUrl: window.location.origin,
     };

@@ -10,16 +10,12 @@
     {% block stylesheets %}{% endblock %}
 </head>
 <body>
-<div id="siteHeader">
-    <header class="row">
-        <h1 class="">
-            <a tabindex="0" href="/">
-            <img class="logo" src="{{ asset('images/logo.png') }}" alt="Mobicoop"/>
-            </a>
-        </h1>
-    </header>
+
     <nav class="navbar common-nav" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
+             <a tabindex="0" href="/">
+            <img class="logo" src="{{ asset('images/logo.png') }}" alt="Mobicoop"/>
+            </a>
              <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
@@ -38,39 +34,38 @@
                     
                 </div>
             </div>
-        </div>
-        <div class="navbar-end">
-            <div class="navbar-item buttons">
-                <div class="buttons">
-                    {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                    <a href="{{ path('user_sign_up') }}" class="button is-light">
-                        <i class="fas fa-pencil-alt"></i>
-                        {% trans from 'ui' %}menu.signup{% endtrans %}  
-                    </a>
-                    <a href="{{ path('user_login') }}" class="button is-light">
-                        <i class="fas fa-user"></i>
-                        {% trans from 'ui' %}menu.login{% endtrans %}
-                    </a>
-                        {% else %}
-                    <a href="{{ path('user_messages') }}" class="button is-light">
-                        {% trans from 'ui' %}menu.messages{% endtrans %}
-                    </a>
-                    <a href="{{ path('user_profile') }}" class="button is-light">
-                        {% trans from 'ui' %}menu.profile{% endtrans %}
-                    </a>
-                    <a href="{{ path('logout') }}" class="button is-light">
-                        {% trans from 'ui' %}menu.logout{% endtrans %}
-                    </a>
-                        {% endif %}
-                    <a href="{{ path('carpool_ad') }}" class="button is-primary">
-                        <i class="fas fa-car"></i>
-                        {% trans from 'ui' %}menu.ad_create{% endtrans %}
-                    </a>
-                </div>    
+            <div class="navbar-end">
+                <div class="navbar-item buttons">
+                    <div class="buttons">
+                        {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                        <a href="{{ path('user_sign_up') }}" class="button is-light">
+                            <i class="fas fa-pencil-alt"></i>
+                            {% trans from 'ui' %}menu.signup{% endtrans %}  
+                        </a>
+                        <a href="{{ path('user_login') }}" class="button is-light">
+                            <i class="fas fa-user"></i>
+                            {% trans from 'ui' %}menu.login{% endtrans %}
+                        </a>
+                            {% else %}
+                        <a href="{{ path('user_messages') }}" class="button is-light">
+                            {% trans from 'ui' %}menu.messages{% endtrans %}
+                        </a>
+                        <a href="{{ path('user_profile') }}" class="button is-light">
+                            {% trans from 'ui' %}menu.profile{% endtrans %}
+                        </a>
+                        <a href="{{ path('logout') }}" class="button is-light">
+                            {% trans from 'ui' %}menu.logout{% endtrans %}
+                        </a>
+                            {% endif %}
+                        <a href="{{ path('carpool_ad') }}" class="button is-primary">
+                            <i class="fas fa-car"></i>
+                            {% trans from 'ui' %}menu.ad_create{% endtrans %}
+                        </a>
+                    </div>    
+                </div>
             </div>
         </div>
     </nav>
-</div>
 
 <main role="main" id="main">
     <div id="app">
