@@ -23,7 +23,7 @@
                 />
               </label>
             </div>
-            <div class="column has-text-centered">
+            <div class="column has-text-centered test">
               <label
                 class="label"
                 for="destination"
