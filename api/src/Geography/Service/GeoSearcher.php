@@ -65,19 +65,19 @@ class GeoSearcher
             $address->setAddressLocality($geoResult->getLocality());
             foreach ($geoResult->getAdminLevels() as $level) {
                 switch ($level->getLevel()) {
-                    case 1 : 
+                    case 1:
                         $address->setLocalAdmin($level->getName());
                         break;
-                    case 2 :     
+                    case 2:
                         $address->setCounty($level->getName());
                         break;
-                    case 3 : 
+                    case 3:
                         $address->setMacroCounty($level->getName());
                         break;
-                    case 4 : 
+                    case 4:
                         $address->setRegion($level->getName());
                         break;
-                    case 5 : 
+                    case 5:
                         $address->setMacroRegion($level->getName());
                         break;
                 }

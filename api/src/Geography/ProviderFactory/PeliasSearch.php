@@ -70,7 +70,7 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
     public function geocodeQuery(GeocodeQuery $query): Collection
     {
         $address = $query->getText();
-        $url = sprintf($this->uri.self::GEOCODE_ENDPOINT_URL, urlencode($address), $query->getLimit(),$query->getLocale());
+        $url = sprintf($this->uri.self::GEOCODE_ENDPOINT_URL, urlencode($address), $query->getLimit(), $query->getLocale());
         return $this->executeQuery($url);
     }
     /**
@@ -81,7 +81,7 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
         $coordinates = $query->getCoordinates();
         $longitude = $coordinates->getLongitude();
         $latitude = $coordinates->getLatitude();
-        $url = sprintf($this->uri.self::REVERSE_ENDPOINT_URL, $latitude, $longitude, $query->getLimit(),$query->getLocale());
+        $url = sprintf($this->uri.self::REVERSE_ENDPOINT_URL, $latitude, $longitude, $query->getLimit(), $query->getLocale());
         return $this->executeQuery($url);
     }
     /**
