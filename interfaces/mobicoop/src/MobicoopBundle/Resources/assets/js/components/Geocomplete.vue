@@ -7,7 +7,6 @@
         field="concatenedAddr"
         :placeholder="placeholder"
         :open-on-focus="true"
-        icon="search-location"
         icon-pack="fa"
         :loading="isFetching"
         @input="getAsyncData"
@@ -22,10 +21,12 @@
               <b-icon
                 pack="fas"
                 icon="arrow-alt-circle-right"
-                type="is-mobicoopblue"
+                type="is-primary"
               />
             </div>
-            <div class="searchResult">
+            <div
+              class="searchResult"
+            >
               <em>{{ props.option.streetAddress }}</em>
               <small>
                 <b>{{ props.option.addressLocality }}</b>
@@ -128,11 +129,8 @@ export default {
 <style lang="scss" scoped>
 @import "../../css/_variables";
 .searchResult {
-  color: $mb-blue;
+  color: red !important;
   text-decoration: none !important;
 }
 
-.dropdown-item {
-  text-decoration: none !important;
-}
 </style>

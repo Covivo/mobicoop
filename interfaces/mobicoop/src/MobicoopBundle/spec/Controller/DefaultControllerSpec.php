@@ -34,7 +34,7 @@ describe('DefaultController', function () {
 
             $status = $response->getStatusCode();
             $crawler = new Crawler($response->getContent());
-            $logo = trim($crawler->filter('body header img')->attr('src'));
+            $logo = trim($crawler->filter('body img')->attr('src'));
 
             expect($status)->toEqual(200);
             expect($logo)->toContain('/images/logo.png');

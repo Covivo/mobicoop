@@ -9,15 +9,12 @@ $colors: (
   'white': ($white, $black),
   'black': ($black, $white),
   'light': ($light, $light-invert),
-  'dark': ($dark, $dark-invert),
-  'primary': ($primary, $primary-invert),
-  'info': ($info, $info-invert),
-  'success': ($success, $success-invert),
+  'dark': ($mb-dark-green, $mb-green),
+  'primary': ($mb-blue, $mb-blue-invert),
+  'info': ($mb-pink, $mb-white),
+  'success': ($mb-green, $mb-green-invert),
   'warning': ($warning, $warning-invert),
   'danger': ($danger, $danger-invert),
-  'mobicoopblue': ($mb-blue, $mb-blue-invert),
-  'mobicooppink': ($mb-pink, $mb-pink-invert),
-  'mobicoopgreen': ($mb-green, $mb-green-invert)
 );
 
 $link: $mb-green;
@@ -39,15 +36,82 @@ body {
   //h1 {
   // font-size: 75px;
   //}
-  #rechercher {
-    padding: 0;
-    margin-top: 24px;
-    font-size: 100%;
-    font-family: inherit;
-    border: 0;
+  .fas {
+    padding-right: 5px;
+  }
+  .firstSection {
+    height: 2vw;
+  }
+  .lastSection {
+    height: 25vw;
+  }
+  .input,
+  .button,
+  .ariaSelect {
+    @include outlinedFocus($focusColor);
+  }
+  .SearchBar {
+    background-color: $mb-pink;
+    border-radius: 10px;
+    height: 10vw;
+    width: 45vw;
+    padding: 1vw;
+    #rechercher {
+      background-color: $mb-white;
+      box-shadow: 2px 2px 2px #000;
+      padding: 0;
+      font-size: 100%;
+      font-family: inherit;
+      border-radius: 20px;
+      &:hover {
+        color: $mb-white;
+        background-color: $mb-pink;
+      }
+
+      @include outlinedFocus($focusColor);
+    }
+    #origin {
+      box-shadow: none;
+      border-top: 0;
+      border-right: 0;
+      border-left: 0;
+      outline: none;
+      border-bottom: solid 1px $mb-white;
+      border-radius: 0;
+      background-color: $mb-pink;
+
+      @include outlinedFocus($focusColor);
+      .input {
+        color: $mb-white;
+      }
+      ::placeholder {
+        color: $mb-white;
+        opacity: 1;
+      }
+    }
+    #destination {
+      box-shadow: none;
+      border: 0;
+      outline: 0;
+      border-bottom: solid 1px $mb-white;
+      border-radius: 0;
+      background-color: $mb-pink;
+
+      @include outlinedFocus($focusColor);
+      .input {
+        color: $mb-white;
+      }
+      ::placeholder {
+        color: $mb-white;
+        opacity: 1;
+      }
+    }
   }
   *:focus {
-    outline: 3px solid rgba(255, 166, 0, 0.979);
+    outline: 3px solid #F8D613;
+  }
+  .label {
+    color: $mb-blue;
   }
   label.required::after {
     content: '*';
@@ -60,12 +124,10 @@ body {
     color: #000;
   }
   .hero.is-passur {
-    background-color: #CCCC98;
-  }
-  .header {
-    // background: url('images/header.png');
-    width: 100vw;
-    height: 30vh;
+    background-color: $mb-blue;
+    .title {
+      color: $mb-white;
+    }
   }
   .common-footer {
     background-color: $footer-background-color;
@@ -88,47 +150,42 @@ body {
       color: $mb-dark-green;
     }
   }
-  #siteHeader {
+  .navbar {
     width: 100vw;
     height: 80px;
-    display: inline-block;
     background-color: $nav-background-color;
-    margin-bottom: -5px;
-    header {
+
+    @include outlinedFocus($focusColor);
+    .navbar-brand {
       //display: inline-block;
       width: auto;
       float: left;
-      margin-left: 5px;
-      margin-right: 5px;
+      margin-left: 2vw;
+      margin-right: 2vw;
       img.logo {
         max-height: 4rem;
-        margin: 14px;
+        margin: 1vw;
       }
     }
-    .common-nav {
-      float: left;
-      width: auto;
-      justify-content: center;
-      align-items: center;
-      background-color: $nav-background-color;
-      margin-left: 5px;
-      margin-right: 5px;
-      .navbar-brand {
-        margin-left: 2vw;
-      }
-      > * {
-        a.button {
-          @include outlinedFocus($focusColor);
-        }
+    .navbar-menu {
+      .navbar-start {
+        float: left;
       }
       .navbar-end {
-        margin-right: 1vw;
+        float: right;
+        margin-right: 2vw;
+      }
+    }
+    > * {
+      a.button {
+        @include outlinedFocus($focusColor);
       }
     }
     ul {
       width: auto;
       float: right;
       margin-right: 8px;
+      background-color: $mb-green;
       a {
         color: $main-font-color;
       }
@@ -140,27 +197,36 @@ body {
       }
     }
   }
-  .input,
-  .button,
-  .ariaSelect {
-    @include outlinedFocus($focusColor);
-  }
   .help-block {
     color: $mb-dark-green;
   }
   .buttons {
     .button {
       font-weight: bold;
-      &.is-primary {
-        background-color: $mb-dark-green;
-        color: $mb-green;
-      }
-      &.is-light {
-        background-color: $mb-green;
-        color: $mb-dark-green;
-      }
       &:hover {
         color: $mb-white;
+      }
+      &.skip {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: 1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+      }
+      &.skip:focus {
+        padding: 3px;
+        width: auto;
+        height: auto;
+        margin: 0;
+        overflow: auto;
+        clip: auto;
+        // some explicit visual styles
+        background: $mb-dark-green;
+        color: $mb-green;
+        text-decoration: underline;
       }
     }
   }

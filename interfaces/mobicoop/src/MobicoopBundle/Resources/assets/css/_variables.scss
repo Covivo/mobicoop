@@ -17,13 +17,12 @@ $mb-green-invert: findColorInvert($mb-green);
 $mb-blue-invert: findColorInvert($mb-blue);
 $mb-dark-green-invert: findColorInvert($mb-dark-green);
 
-$main-font-color: #000;
+$main-font-color: $mb-dark-green;
 $main-background-color: #FFF;
-$second-background-color: #0FF;
 $nav-background-color: $mb-green;
 $footer-background-color: $mb-green;
 
-$focusColor:  rgba(255, 166, 0, 0.979);
+$focusColor:  #F8D613;
 
 @mixin is-mobicoop($color) {
   background: $color;
