@@ -39,6 +39,9 @@ body {
   //h1 {
   // font-size: 75px;
   //}
+  .fas {
+    padding-right: 5px;
+  }
   #rechercher {
     padding: 0;
     margin-top: 24px;
@@ -113,6 +116,13 @@ body {
       background-color: $nav-background-color;
       margin-left: 5px;
       margin-right: 5px;
+      .navbar-menu {
+        width: 45vw;
+        .navbar-end {
+          float: right;
+          margin-right: 1vw;
+        }
+      }
       .navbar-brand {
         margin-left: 2vw;
       }
@@ -120,9 +130,6 @@ body {
         a.button {
           @include outlinedFocus($focusColor);
         }
-      }
-      .navbar-end {
-        margin-right: 1vw;
       }
     }
     ul {
@@ -161,6 +168,28 @@ body {
       }
       &:hover {
         color: $mb-white;
+      }
+      &.skip {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: 1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+      }
+      &.skip:focus {
+        padding: 3px;
+        width: auto;
+        height: auto;
+        margin: 0;
+        overflow: auto;
+        clip: auto;
+        // some explicit visual styles
+        background: $mb-dark-green;
+        color: $mb-green;
+        text-decoration: underline;
       }
     }
   }

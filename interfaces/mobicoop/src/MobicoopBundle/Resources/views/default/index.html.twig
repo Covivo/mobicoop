@@ -5,23 +5,13 @@
 {% block body %}
     <section class="header hero">
     </section>
-    <section class="hero">
-        <div class="hero-body">
-            <div class="container content has-text-centered">
-                <h1 class="title">
-                    Mobicoop!
-                </h1>
-                <h2 class="subtitle">
-                    Le covoiturage gratuit et libre
-                </h2>
-            </div>
-        </div>
-    </section>
 {% block simpleSearch %}
     <section id="home">
         <Homesearchform geo-search-url="/geosearch?search=" route="covoiturage/recherche"></Homesearchform>
     </section>
 {% endblock %}
+     <section class="hero">
+    </section>
 {% endblock %}
 {% block javascripts %}
   {{ encore_entry_script_tags('bundle_home') }}

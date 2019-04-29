@@ -34,7 +34,7 @@
                 />
               </label>
               <!-- datepicker -->
-              <label
+              <!-- <label
                 class="label"
                 for="dateDepart"
               >Date de départ
@@ -50,9 +50,9 @@
                   icon-pack="fas"
                   editable
                 />
-              </label>
+              </label> -->
               <!-- timepicker -->
-              <label
+              <!-- <label
                 class="label"
                 for="heureDepart"
               >Heure de départ
@@ -77,7 +77,7 @@
                     <span>Effacer</span>
                   </button>
                 </b-timepicker>
-              </label>
+              </label> -->
               <!-- search button -->
               <label
                 for="rechercher"
@@ -114,11 +114,11 @@
 
 import moment from "moment";
 import Geocomplete from "./Geocomplete";
-import BDatepicker from "buefy/src/components/datepicker/Datepicker";
+// import BDatepicker from "buefy/src/components/datepicker/Datepicker";
 export default {
   name: 'Homesearchform',
   components: {
-    BDatepicker,
+    // BDatepicker,
     Geocomplete
   },
   props: {
@@ -166,8 +166,8 @@ export default {
       destinationStreetAddress: null,
       destinationPostalCode: null,
       destinationAddressLocality: null,
-      outwardDate: null,
-      outwardTime: null,
+      outwardDate: new Date(),
+      outwardTime: new Date(),
       baseUrl: window.location.origin,
     };
   },
