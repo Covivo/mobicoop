@@ -67,7 +67,24 @@ class Address
     private $id;
 
     /**
-     * @var string The street address.
+     * @var string The house number.
+     *
+     * @ORM\Column(type="string", length=45, nullable=true)
+     * @Groups({"read","write","pt"})
+     */
+    private $houseNumber;
+
+    /**
+     * @var string The street.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write","pt"})
+     * @Assert\NotBlank(groups={"mass"})
+     */
+    private $street;
+
+    /**
+     * @var string The full street address.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"read","write","pt"})
@@ -85,6 +102,14 @@ class Address
     private $postalCode;
 
     /**
+     * @var string|null The sublocality of the address.
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write","pt"})
+     */
+    private $subLocality;
+
+    /**
      * @var string|null The locality of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
@@ -94,12 +119,60 @@ class Address
     private $addressLocality;
 
     /**
+     * @var string|null The locality admin of the address.
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write","pt"})
+     */
+    private $localAdmin;
+
+    /**
+     * @var string|null The county of the address.
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write","pt"})
+     */
+    private $county;
+
+    /**
+     * @var string|null The macro county of the address.
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write","pt"})
+     */
+    private $macroCounty;
+
+    /**
+     * @var string|null The region of the address.
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write","pt"})
+     */
+    private $region;
+
+    /**
+     * @var string|null The macro region of the address.
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write","pt"})
+     */
+    private $macroRegion;
+
+    /**
      * @var string|null The country of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups({"read","write","pt"})
      */
     private $addressCountry;
+
+    /**
+     * @var string|null The country code of the address.
+     *
+     * @ORM\Column(type="string", length=10, nullable=true)
+     * @Groups({"read","write","pt"})
+     */
+    private $countryCode;
 
     /**
      * @var float|null The latitude of the address.
@@ -158,6 +231,26 @@ class Address
         $this->id = $id;
     }
 
+    public function getHouseNumber(): ?string
+    {
+        return $this->houseNumber;
+    }
+
+    public function setHouseNumber(?string $houseNumber)
+    {
+        $this->houseNumber = $houseNumber;
+    }
+
+    public function getStreet(): ?string
+    {
+        return $this->street;
+    }
+
+    public function setStreet(?string $street)
+    {
+        $this->street = $street;
+    }
+
     public function getStreetAddress(): ?string
     {
         return $this->streetAddress;
@@ -178,6 +271,16 @@ class Address
         $this->postalCode = $postalCode;
     }
 
+    public function getSubLocality(): ?string
+    {
+        return $this->subLocality;
+    }
+
+    public function setSubLocality(?string $subLocality)
+    {
+        $this->subLocality = $subLocality;
+    }
+
     public function getAddressLocality(): ?string
     {
         return $this->addressLocality;
@@ -188,6 +291,56 @@ class Address
         $this->addressLocality = $addressLocality;
     }
 
+    public function getLocalAdmin(): ?string
+    {
+        return $this->localAdmin;
+    }
+
+    public function setLocalAdmin(?string $localAdmin)
+    {
+        $this->localAdmin = $localAdmin;
+    }
+
+    public function getCounty(): ?string
+    {
+        return $this->county;
+    }
+
+    public function setCounty(?string $county)
+    {
+        $this->county = $county;
+    }
+
+    public function getMacroCounty(): ?string
+    {
+        return $this->macroCounty;
+    }
+
+    public function setMacroCounty(?string $macroCounty)
+    {
+        $this->macroCounty = $macroCounty;
+    }
+
+    public function getRegion(): ?string
+    {
+        return $this->region;
+    }
+
+    public function setRegion(?string $region)
+    {
+        $this->region = $region;
+    }
+
+    public function getMacroRegion(): ?string
+    {
+        return $this->macroRegion;
+    }
+
+    public function setMacroRegion(?string $macroRegion)
+    {
+        $this->macroRegion = $macroRegion;
+    }
+
     public function getAddressCountry(): ?string
     {
         return $this->addressCountry;
@@ -196,6 +349,16 @@ class Address
     public function setAddressCountry(?string $addressCountry)
     {
         $this->addressCountry = $addressCountry;
+    }
+
+    public function getCountryCode(): ?string
+    {
+        return $this->countryCode;
+    }
+
+    public function setCountryCode(?string $countryCode)
+    {
+        $this->countryCode = $countryCode;
     }
 
     public function getLatitude(): ?string

@@ -78,7 +78,7 @@ services:
     # inject SIG uri to GeoRouter service
     App\Geography\Service\GeoRouter:
         arguments:
-            $uri: '%env(resolve:SIG_URI)%'
+            $uri: '%env(resolve:SIG_GEOROUTER_URI)%'
 
     # set the monolog channel to use for ProposalManager
     App\Carpool\Service\ProposalManager:
