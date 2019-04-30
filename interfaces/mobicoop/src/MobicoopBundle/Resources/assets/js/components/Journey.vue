@@ -30,7 +30,7 @@
                       <br>
                       <span class="tag is-primary is-rounded">To</span>
                       <br>
-                      <span class="tag is-info is-rounded">Info</span>
+                      <span class="tag is-tertiary is-rounded">Info</span>
                       <br>
                       <span 
                         class="icon has-text-info" 

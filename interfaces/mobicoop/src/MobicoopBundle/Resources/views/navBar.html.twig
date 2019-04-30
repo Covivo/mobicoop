@@ -25,22 +25,22 @@
                 <div class="navbar-item buttons">
                     <div class="buttons">
                         {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                        <a href="{{ path('user_sign_up') }}" class="button is-success">
+                        <a href="{{ path('user_sign_up') }}" class="button is-primary">
                             <i class="fas fa-pencil-alt"></i>
                             {% trans from 'ui' %}menu.signup{% endtrans %}  
                         </a>
-                        <a href="{{ path('user_login') }}" class="button is-success">
+                        <a href="{{ path('user_login') }}" class="button is-primary">
                             <i class="fas fa-user"></i>
                             {% trans from 'ui' %}menu.login{% endtrans %}
                         </a>
                             {% else %}
-                        <a href="{{ path('user_messages') }}" class="button is-success">
+                        <a href="{{ path('user_messages') }}" class="button is-primary">
                             {% trans from 'ui' %}menu.messages{% endtrans %}
                         </a>
-                        <a href="{{ path('user_profile') }}" class="button is-success">
+                        <a href="{{ path('user_profile') }}" class="button is-primary">
                             {% trans from 'ui' %}menu.profile{% endtrans %}
                         </a>
-                        <a href="{{ path('logout') }}" class="button is-success">
+                        <a href="{{ path('logout') }}" class="button is-primary">
                             {% trans from 'ui' %}menu.logout{% endtrans %}
                         </a>
                             {% endif %}

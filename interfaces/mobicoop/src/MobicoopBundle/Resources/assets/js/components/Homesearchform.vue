@@ -93,7 +93,7 @@
                 <a
                   id="rechercher"
                   style="width: 100%"
-                  class="button is-info is-outlined"
+                  class="button is-tertiary is-outlined"
                   :href="checkUrlValid ? urlToCall : null"
                   alt="Rechercher un covoiturage"
                   title="Rechercher"
