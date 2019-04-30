@@ -38,6 +38,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Controller\ProposalPost;
 use App\Travel\Entity\TravelMode;
+use App\Community\Entity\Community;
 use App\User\Entity\User;
 
 /**
@@ -192,6 +193,14 @@ class Proposal
     private $travelModes;
 
     /**
+     * @var Community[]|null The communities related to the proposal.
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Community\Entity\Community")
+     * @Groups({"read","write"})
+     */
+    private $communities;
+
+    /**
      * @var Matching[]|null The matching of the proposal (if proposal is an offer).
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
@@ -239,6 +248,7 @@ class Proposal
         }
         $this->waypoints = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
+        $this->communities = new ArrayCollection();
         $this->matchingOffers = new ArrayCollection();
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
@@ -249,6 +259,7 @@ class Proposal
         // when we clone a Proposal we keep only the basic properties, we re-initialize all the collections
         $this->waypoints = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
+        $this->communities = new ArrayCollection();
         $this->matchingOffers = new ArrayCollection();
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
@@ -377,6 +388,32 @@ class Proposal
     {
         if ($this->travelModes->contains($travelMode)) {
             $this->travelModes->removeElement($travelMode);
+        }
+        
+        return $this;
+    }
+
+    /**
+     * @return Collection|Community[]
+     */
+    public function getCommunities(): Collection
+    {
+        return $this->communities;
+    }
+    
+    public function addCommunity(Community $community): self
+    {
+        if (!$this->communities->contains($community)) {
+            $this->communities[] = $community;
+        }
+        
+        return $this;
+    }
+    
+    public function removeCommunity(Community $community): self
+    {
+        if ($this->communities->contains($community)) {
+            $this->communities->removeElement($community);
         }
         
         return $this;
