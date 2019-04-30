@@ -6,20 +6,21 @@
 @import '~bulma/sass/utilities/_all';
 @import '_variables';
 $colors: (
+  'primary': ($primary, $primary-invert),
+  'secondary': ($secondary, $secondary-invert),
+  'tertiary': ($tertiary, $tertiary-invert),
+  'dark': ($primary-dark, $primary),
   'white': ($white, $black),
   'black': ($black, $white),
   'light': ($light, $light-invert),
-  'dark': ($mb-dark-green, $mb-green),
-  'primary': ($mb-blue, $mb-blue-invert),
-  'info': ($mb-pink, $mb-white),
-  'success': ($mb-green, $mb-green-invert),
+  'success': ($success, $success-invert),
   'warning': ($warning, $warning-invert),
   'danger': ($danger, $danger-invert),
 );
 
-$link: $mb-green;
-$link-invert: $mb-green-invert;
-$link-focus-border: $mb-green;
+$link: $primary;
+$link-invert: $primary-invert;
+$link-focus-border: $primary;
 
 @import '~bulma';
 @import '~buefy/src/scss/buefy';
@@ -51,21 +52,21 @@ body {
     @include outlinedFocus($focusColor);
   }
   .SearchBar {
-    background-color: $mb-pink;
+    background-color: $tertiary;
     border-radius: 10px;
     height: 10vw;
     width: 45vw;
     padding: 1vw;
     #rechercher {
-      background-color: $mb-white;
+      background-color: $white;
       box-shadow: 2px 2px 2px #000;
       padding: 0;
       font-size: 100%;
       font-family: inherit;
       border-radius: 20px;
       &:hover {
-        color: $mb-white;
-        background-color: $mb-pink;
+        color: $white;
+        background-color: $tertiary;
       }
 
       @include outlinedFocus($focusColor);
@@ -76,16 +77,16 @@ body {
       border-right: 0;
       border-left: 0;
       outline: none;
-      border-bottom: solid 1px $mb-white;
+      border-bottom: solid 1px $white;
       border-radius: 0;
-      background-color: $mb-pink;
+      background-color: $tertiary;
 
       @include outlinedFocus($focusColor);
       .input {
-        color: $mb-white;
+        color: $white;
       }
       ::placeholder {
-        color: $mb-white;
+        color: $white;
         opacity: 1;
       }
     }
@@ -93,16 +94,16 @@ body {
       box-shadow: none;
       border: 0;
       outline: 0;
-      border-bottom: solid 1px $mb-white;
+      border-bottom: solid 1px $white;
       border-radius: 0;
-      background-color: $mb-pink;
+      background-color: $tertiary;
 
       @include outlinedFocus($focusColor);
       .input {
-        color: $mb-white;
+        color: $white;
       }
       ::placeholder {
-        color: $mb-white;
+        color: $white;
         opacity: 1;
       }
     }
@@ -111,7 +112,7 @@ body {
     outline: 3px solid #F8D613;
   }
   .label {
-    color: $mb-blue;
+    color: $secondary;
   }
   label.required::after {
     content: '*';
@@ -124,20 +125,20 @@ body {
     color: #000;
   }
   .hero.is-passur {
-    background-color: $mb-blue;
+    background-color: $secondary;
     .title {
-      color: $mb-white;
+      color: $white;
     }
   }
   .common-footer {
     background-color: $footer-background-color;
-    color: $mb-dark-green;
+    color: $primary-dark;
     img {
       height: 75px;
       width: 75px;
     }
     a {
-      color: $mb-dark-green;
+      color: $primary-dark;
     }
     ul {
       color: #008282;
@@ -147,7 +148,7 @@ body {
       text-transform: uppercase;
       margin-bottom: 15px;
       font-weight: bold;
-      color: $mb-dark-green;
+      color: $primary-dark;
     }
   }
   .navbar {
@@ -185,7 +186,7 @@ body {
       width: auto;
       float: right;
       margin-right: 8px;
-      background-color: $mb-green;
+      background-color: $primary;
       a {
         color: $main-font-color;
       }
@@ -198,13 +199,13 @@ body {
     }
   }
   .help-block {
-    color: $mb-dark-green;
+    color: $primary-dark;
   }
   .buttons {
     .button {
       font-weight: bold;
       &:hover {
-        color: $mb-white;
+        color: $white;
       }
       &.skip {
         position: absolute;
@@ -224,8 +225,8 @@ body {
         overflow: auto;
         clip: auto;
         // some explicit visual styles
-        background: $mb-dark-green;
-        color: $mb-green;
+        background: $primary-dark;
+        color: $primary;
         text-decoration: underline;
       }
     }

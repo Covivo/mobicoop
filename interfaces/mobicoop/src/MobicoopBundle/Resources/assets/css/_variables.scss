@@ -6,28 +6,28 @@
 @import '~bulma/sass/utilities/_all';
 
 /* mobicoop palette */
-$mb-white: #FFF;
-$mb-pink: #F13FA8;
-$mb-green: #81F19A;
-$mb-blue: #023D7F;
-$mb-dark-green: #005933;
 
-$mb-pink-invert: findColorInvert($mb-pink);
-$mb-green-invert: findColorInvert($mb-green);
-$mb-blue-invert: findColorInvert($mb-blue);
-$mb-dark-green-invert: findColorInvert($mb-dark-green);
+$primary: #81F19A;
+$secondary: #023D7F;
+$tertiary: #F13FA8;
+$primary-dark: #005933;
 
-$main-font-color: $mb-dark-green;
-$main-background-color: #FFF;
-$nav-background-color: $mb-green;
-$footer-background-color: $mb-green;
+$primary-invert: findColorInvert($primary);
+$secondary-invert: findColorInvert($secondary);
+$tertiary-invert: findColorInvert($tertiary);
+$primary-dark-invert: findColorInvert($primary-dark);
+
+$main-font-color: $primary-dark;
+$main-background-color: $white;
+$nav-background-color: $primary;
+$footer-background-color: $primary;
 
 $focusColor:  #F8D613;
 
 @mixin is-mobicoop($color) {
   background: $color;
   border-color: transparent;
-  color: $mb-white;
+  color: $white;
 }
 
 @mixin outlinedFocus($color) {
