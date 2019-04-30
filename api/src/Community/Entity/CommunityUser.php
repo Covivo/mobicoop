@@ -46,7 +46,6 @@ use App\User\Entity\User;
  */
 class CommunityUser
 {
-
     const STATUS_PENDING = 0;
     const STATUS_ACCEPTED = 1;
     const STATUS_REFUSED = 2;
