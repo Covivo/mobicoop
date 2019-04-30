@@ -217,9 +217,9 @@ class Address implements Resource
     }
     
     public function getStreetAddress(): ?string
-    {   
+    {
         if (!$this->streetAddress || $this->streetAddress == '') {
-            return trim($this->houseNumber.' '.$this->street); 
+            return trim($this->houseNumber.' '.$this->street);
         }
         return $this->streetAddress;
     }
