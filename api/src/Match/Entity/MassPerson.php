@@ -53,14 +53,12 @@ class MassPerson
     /**
      * @var string|null The first name of the person.
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"mass"})
      */
     private $givenName;
 
     /**
      * @var string|null The family name of the person.
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"mass"})
      */
     private $familyName;
 
@@ -98,6 +96,22 @@ class MassPerson
      */
     private $direction;
 
+    /**
+     * @var \DateTimeInterface|null The outward time.
+     *
+     * @Assert\Time()
+     * @ORM\Column(type="time", nullable=true)
+     */
+    private $outwardTime;
+
+    /**
+     * @var \DateTimeInterface|null The return time.
+     *
+     * @Assert\Time()
+     * @ORM\Column(type="time", nullable=true)
+     */
+    private $returnTime;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -115,27 +129,31 @@ class MassPerson
         return $this;
     }
 
-    public function getGivenName(): string
+    public function getGivenName(): ?string
     {
         return $this->givenName;
     }
 
-    public function setGivenName(string $givenName): self
+    public function setGivenName(?string $givenName): self
     {
         $this->givenName = $givenName;
-
+        if ($this->givenName == '') {
+            $this->givenName = null;
+        }
         return $this;
     }
 
-    public function getFamilyName(): string
+    public function getFamilyName(): ?string
     {
         return $this->familyName;
     }
 
-    public function setFamilyName(string $familyName): self
+    public function setFamilyName(?string $familyName): self
     {
         $this->familyName = $familyName;
-
+        if ($this->familyName == '') {
+            $this->familyName = null;
+        }
         return $this;
     }
 
@@ -183,6 +201,34 @@ class MassPerson
     public function setDirection(?Direction $direction): self
     {
         $this->direction = $direction;
+
+        return $this;
+    }
+
+    public function getOutwardTime(): ?\DateTimeInterface
+    {
+        return $this->outwardTime;
+    }
+
+    public function setOutwardTime(?string $outwardTime): self
+    {
+        if ($outwardTime) {
+            $this->outwardTime = \Datetime::createFromFormat('H:i:s', $outwardTime);
+        }
+
+        return $this;
+    }
+
+    public function getReturnTime(): ?\DateTimeInterface
+    {
+        return $this->returnTime;
+    }
+
+    public function setReturnTime(?string $returnTime): self
+    {
+        if ($returnTime) {
+            $this->returnTime = \Datetime::createFromFormat('H:i:s', $returnTime);
+        }
 
         return $this;
     }

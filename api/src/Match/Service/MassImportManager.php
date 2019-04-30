@@ -54,7 +54,8 @@ class MassImportManager
     const MIMETYPE_PLAIN = 'text/plain';
     const MIMETYPE_JSON = 'application/json';
 
-    const DELAY_BETWEEN_REQUESTS = 1000000; // 1 second delay between 2 requests
+    //const DELAY_BETWEEN_REQUESTS = 1000000; // 1 second delay between 2 requests
+    const DELAY_BETWEEN_REQUESTS = 0; // 1 second delay between 2 requests
 
     private $entityManager;
     private $userRepository;
@@ -162,7 +163,7 @@ class MassImportManager
         // we geocode the destinations
         $geocodedDestinations = [];
         foreach ($destinations as $key => $destination) {
-            $address = trim($destination['streetAddress'] . " " . $destination['postalCode'] . " " . $destination['addressLocality'] . " " . $destination['addressCountry']);
+            $address = trim($destination['houseNumber'] . " " . $destination['street'] . " " . $destination['postalCode'] . " " . $destination['addressLocality'] . " " . $destination['addressCountry']);
             if ($addresses = $this->geoSearcher->geoCode($address)) {
                 if (count($addresses) > 0) {
                     // we use the first result as best result
@@ -189,10 +190,11 @@ class MassImportManager
             }
             // no gps points
             $address = trim(
-                $massPerson->getPersonalAddress()->getStreetAddress() . " " .
-                    $massPerson->getPersonalAddress()->getPostalCode() . " " .
-                    $massPerson->getPersonalAddress()->getAddressLocality() . " " .
-                    $massPerson->getPersonalAddress()->getAddressCountry()
+                $massPerson->getPersonalAddress()->getHouseNumber() . " " .
+                $massPerson->getPersonalAddress()->getStreet() . " " .
+                $massPerson->getPersonalAddress()->getPostalCode() . " " .
+                $massPerson->getPersonalAddress()->getAddressLocality() . " " .
+                $massPerson->getPersonalAddress()->getAddressCountry()
             );
             if ($addresses = $this->geoSearcher->geoCode($address)) {
                 if (count($addresses) > 0) {
@@ -202,7 +204,8 @@ class MassImportManager
                     // we search the destination (already calculated in the previous step)
                     foreach ($destinations as $key => $destination) {
                         if (
-                            $destination['streetAddress'] == $massPerson->getWorkAddress()->getStreetAddress() &&
+                            $destination['houseNumber'] == $massPerson->getWorkAddress()->getHouseNumber() &&
+                            $destination['street'] == $massPerson->getWorkAddress()->getStreet() &&
                             $destination['postalCode'] == $massPerson->getWorkAddress()->getPostalCode() &&
                             $destination['addressLocality'] == $massPerson->getWorkAddress()->getAddressLocality() &&
                             $destination['addressCountry'] == $massPerson->getWorkAddress()->getAddressCountry()
@@ -235,21 +238,26 @@ class MassImportManager
                 $massPerson->setDirection($direction);
             } else {
                 $origin = trim(
-                    $massPerson->getPersonalAddress()->getStreetAddress() . " " .
-                        $massPerson->getPersonalAddress()->getPostalCode() . " " .
-                        $massPerson->getPersonalAddress()->getAddressLocality() . " " .
-                        $massPerson->getPersonalAddress()->getAddressCountry()
+                    $massPerson->getPersonalAddress()->getHouseNumber() . " " .
+                    $massPerson->getPersonalAddress()->getStreet() . " " .
+                    $massPerson->getPersonalAddress()->getPostalCode() . " " .
+                    $massPerson->getPersonalAddress()->getAddressLocality() . " " .
+                    $massPerson->getPersonalAddress()->getAddressCountry()
                 );
                 $destination = trim(
-                    $massPerson->getWorkAddress()->getStreetAddress() . " " .
-                        $massPerson->getWorkAddress()->getPostalCode() . " " .
-                        $massPerson->getWorkAddress()->getAddressLocality() . " " .
-                        $massPerson->getWorkAddress()->getAddressCountry()
+                    $massPerson->getWorkAddress()->getHouseNumber() . " " .
+                    $massPerson->getWorkAddress()->getStreet() . " " .
+                    $massPerson->getWorkAddress()->getPostalCode() . " " .
+                    $massPerson->getWorkAddress()->getAddressLocality() . " " .
+                    $massPerson->getWorkAddress()->getAddressCountry()
                 );
                 throw new MassException('No route found for <' . $origin . '> => <' . $destination . '>');
             }
             $this->entityManager->persist($massPerson);
         }
+        $mass->setStatus(Mass::STATUS_ANALYZED);
+        $mass->setAnalyzeDate(new \Datetime());
+        $this->entityManager->persist($mass);
         $this->entityManager->flush();
     }
 
@@ -402,15 +410,19 @@ class MassImportManager
             $massPerson->setGivenName($person->givenName);
             $massPerson->setFamilyName($person->familyName);
             $personalAddress = new Address();
-            $personalAddress->setStreetAddress($person->personalAddress->streetAddress);
+            $personalAddress->setHouseNumber($person->personalAddress->houseNumber);
+            $personalAddress->setStreet($person->personalAddress->street);
             $personalAddress->setPostalCode($person->personalAddress->postalCode);
             $personalAddress->setAddressLocality($person->personalAddress->addressLocality);
             $massPerson->setPersonalAddress($personalAddress);
             $workAddress = new Address();
-            $workAddress->setStreetAddress($person->workAddress->streetAddress);
+            $workAddress->setHouseNumber($person->workAddress->houseNumber);
+            $workAddress->setStreet($person->workAddress->street);
             $workAddress->setPostalCode($person->workAddress->postalCode);
             $workAddress->setAddressLocality($person->workAddress->addressLocality);
             $massPerson->setWorkAddress($workAddress);
+            $massPerson->setOutwardTime($person->outwardTime);
+            $massPerson->setReturnTime($person->returnTime);
             $persons[] = $massPerson;
         }
         $massData->setData($persons);

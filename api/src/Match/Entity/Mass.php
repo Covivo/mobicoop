@@ -74,7 +74,8 @@ class Mass
     const STATUS_INCOMING = 0;
     const STATUS_VALID = 1;
     const STATUS_INVALID = 2;
-    const STATUS_TREATED = 3;
+    const STATUS_ANALYZED = 3;
+    const STATUS_TREATED = 4;
 
     /**
      * @var int The id of this import.
@@ -142,6 +143,14 @@ class Mass
      * @Groups("write")
      */
     private $user;
+
+    /**
+     * @var \DateTimeInterface Analyze date of the import.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups("read")
+     */
+    private $analyzeDate;
 
     /**
      * @var \DateTimeInterface Calculation date of the import.
@@ -265,6 +274,18 @@ class Mass
     public function setUser(User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getAnalyzeDate(): ?\DateTimeInterface
+    {
+        return $this->analyzeDate;
+    }
+
+    public function setAnalyzeDate(?\DateTimeInterface $analyzeDate): self
+    {
+        $this->analyzeDate = $analyzeDate;
 
         return $this;
     }

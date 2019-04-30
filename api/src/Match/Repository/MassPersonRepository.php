@@ -33,7 +33,7 @@ class MassPersonRepository
     public function findAllDestinationsForMass(Mass $mass)
     {
         $query = $this->repository->createQueryBuilder('mp')
-            ->select('DISTINCT wa.streetAddress, wa.postalCode, wa.addressLocality, wa.addressCountry')
+            ->select('DISTINCT wa.houseNumber, wa.street, wa.postalCode, wa.addressLocality, wa.addressCountry')
             ->leftJoin('mp.workAddress', 'wa')
             ->andWhere('mp.mass = :mass')
             ->setParameter('mass', $mass)
