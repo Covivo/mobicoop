@@ -38,6 +38,7 @@ elementFormDefault="qualified">
             </xs:element>
             <xs:element name="postalCode" type="xs:string"/>
             <xs:element name="addressLocality" type="xs:string"/>
+            <xs:element name="addressCountry" type="xs:string" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 

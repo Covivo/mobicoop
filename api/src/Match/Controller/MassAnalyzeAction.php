@@ -41,7 +41,9 @@ final class MassAnalyzeAction
      */
     public function __invoke(Mass $data): Mass
     {
-        $this->massImportManager->analyzeMass($data);
+        if ($data->getStatus() == Mass::STATUS_VALID) {
+            $this->massImportManager->analyzeMass($data);
+        }
         return $data;
     }
 }

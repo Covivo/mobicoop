@@ -53,14 +53,12 @@ class MassPerson
     /**
      * @var string|null The first name of the person.
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"mass"})
      */
     private $givenName;
 
     /**
      * @var string|null The family name of the person.
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"mass"})
      */
     private $familyName;
 
@@ -131,27 +129,31 @@ class MassPerson
         return $this;
     }
 
-    public function getGivenName(): string
+    public function getGivenName(): ?string
     {
         return $this->givenName;
     }
 
-    public function setGivenName(string $givenName): self
+    public function setGivenName(?string $givenName): self
     {
         $this->givenName = $givenName;
-
+        if ($this->givenName == '') {
+            $this->givenName = null;
+        }
         return $this;
     }
 
-    public function getFamilyName(): string
+    public function getFamilyName(): ?string
     {
         return $this->familyName;
     }
 
-    public function setFamilyName(string $familyName): self
+    public function setFamilyName(?string $familyName): self
     {
         $this->familyName = $familyName;
-
+        if ($this->familyName == '') {
+            $this->familyName = null;
+        }
         return $this;
     }
 
@@ -211,7 +213,7 @@ class MassPerson
     public function setOutwardTime(?string $outwardTime): self
     {
         if ($outwardTime) {
-            $this->outwardTime = \Datetime::createFromFormat('H:i:s',$outwardTime);
+            $this->outwardTime = \Datetime::createFromFormat('H:i:s', $outwardTime);
         }
 
         return $this;
@@ -225,7 +227,7 @@ class MassPerson
     public function setReturnTime(?string $returnTime): self
     {
         if ($returnTime) {
-            $this->returnTime = \Datetime::createFromFormat('H:i:s',$returnTime);
+            $this->returnTime = \Datetime::createFromFormat('H:i:s', $returnTime);
         }
 
         return $this;
