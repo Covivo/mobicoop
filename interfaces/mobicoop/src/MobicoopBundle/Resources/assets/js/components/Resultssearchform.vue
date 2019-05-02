@@ -2,39 +2,46 @@
   <section class="section">
     <div class="tile is-ancestor">
       <div class="tile is-vertical is-12">
-        <div class="tile is-child center-all search">
-          <div class="columns is-centered is-vcentered">
-            <div class="column is-one-half user is-vcentered">
-              <span class="dot is-pulled-left" />
+        <div class="tile is-child search">
+          <div class="columns is-vcentered">
+            <div class="column">
+              <p><span class="dot is-pulled-left" />    ~</p>
             </div>
-            <div class="column save">
-              <div class="button save is-tertiary is-pulled-right">
+            <div class="column is-3 save">
+              <div
+                id="save"
+                class="button save is-tertiary is-pulled-right"
+                style="width: 100%"
+              >
                 Enregistrer
               </div>
             </div>
           </div>
-          <div class="columns">
+          <div class="columns dateTime">
             <div class="column">
               <div class="departureDate">
-                <p class="is-underlined">
+                <p class="underlined">
                   {{ date }}
                 </p>
               </div>
             </div>
             <div class="column">
               <div class="departureTime">
-                <p class="is-underlined">
+                <p class="underlined">
                   {{ time }}
                 </p>
               </div>
             </div>
           </div>
-          <div class="columns">
+          <div class="columns SearchBar">
             <div class="column ">
               <div />
             </div>
-            <div class="column has-text-centered">
+            <div class="column">
               <!-- inputs outward destination -->
+              <p class="is-size-7 labelOrigin">
+                Lieu de départ
+              </p>
               <label
                 class="label"
                 for="origin"
@@ -50,7 +57,10 @@
                 />
               </label>
             </div>
-            <div class="column has-text-centered test">
+            <div class="column">
+              <p class="is-size-7 labelDestination">
+                Lieu de d'arrivée
+              </p>
               <label
                 class="label"
                 for="destination"
@@ -67,7 +77,8 @@
             </div>
           </div>
           <div class="columns">
-            <div class="column is-3 has-text-centered">
+            <div class="column" />
+            <div class="column is-3 is-pulled-right">
               <label
                 for="rechercher"
                 class="label"
