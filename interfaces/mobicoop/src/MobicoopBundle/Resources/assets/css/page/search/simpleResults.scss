@@ -10,7 +10,7 @@ body {
   .search {
     background-color: $tertiary;
     border-radius: 10px;
-    border: dashed;
+    border: dotted;
     height: 15vw;
     width: 50vw;
     padding: 1vw;
@@ -26,8 +26,8 @@ body {
     color: $primary;
   }
   .dot {
-    height: 30px;
-    width: 30px;
+    height: 35px;
+    width: 35px;
     background-color: $primary;
     border-radius: 50%;
     display: inline-block;
@@ -88,5 +88,13 @@ body {
       color: $white;
       opacity: 1;
     }
+  }
+  .results {
+    background-color: $primary;
+    border-radius: 10px;
+    height: 15vw;
+    width: 50vw;
+    padding: 1vw;
+    align-self: center;
   }
 }

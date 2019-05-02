@@ -28,30 +28,60 @@
     		<h2 class="title">Résultats</h2>
 			{% if hydra and hydra.member|length>0  %}
 				{% for proposal in hydra.member %}
-					<div class="box">
-						<h3 class="title">Conducteurs</h3>
 						{% if proposal.matchingRequests and proposal.matchingRequests|length>0  %}
-							<table class="table">
-								<tr>
-									<th>#</th>
-									<th>Covoitureur</th>
-									<th>Date de départ</th>
-									<th>Type</th>
-									<th>Fréquence</th>
-									<th>Origine</th>
-									<th>Destination</th>
-									<th>Distance</th>
-									<th>Détour</th>
-									<th>Durée</th>
-								</tr>
 								{% for matching in proposal.matchingRequests %}
-									<tr>
-										<td>{{ matching.proposalOffer.id }}</td>
-										<td><a href="mailto:{{ matching.proposalOffer.user.email }}">{{ matching.proposalOffer.user.givenName|capitalize }} {{ matching.proposalOffer.user.familyName|first|upper }}</a></td>
-										<td>
+								<section class="section">
+    <div class="tile is-ancestor">
+      <div class="tile is-vertical is-12">
+        <div class="tile is-child results">
+          <div class="columns is-vcentered ">
+            <div class="column">
+							<p>avatar</p>
+						</div>
+						<div class="column">
+							<p>typeU<p>
+						</div>
+						<div class="column">
+							<p>{{ matching.proposalOffer.user.givenName|capitalize }} {{ matching.proposalOffer.user.familyName|first|upper }}<p>
+						</div>
+						<div class="column">
+							<p>note<p>
+						</div>
+						<div class="column">
+							<a href="mailto:{{ matching.proposalOffer.user.email }}">contacter</a>
+						</div>		
+					</div>
+					<div class="columns is-vcentered ">
+						<div class="column">
+							<p>{{ matching.proposalOffer.criteria.fromDate|date('d/m/Y') }}<p>
+						</div>
+						<div class="column">
+							<p>{{ matching.proposalOffer.criteria.fromTime|date('H:i') }}</p>
+							<p>{{ matching.proposalOffer.criteria.fromTime|date('H:i') }}</p>
+						</div>
+						<div class="column">
+							<p>heure arrivée</p>
+							<p>ville arrivée</p>
+						</div>
+						<div class="column">
+							<p>tarif</p>
+						</div>
+					</div>
+					<div class="columns is-vcentered ">
+						<div class="column">
+							<p>bouton voir detail<p>
+						</div>
+						<div class="column">
+							<p>source</p>
+						</div>
+					</div>	
+				</div>
+			</div>
+		</div>
+</section>				
+									
 											{% if matching.proposalOffer.criteria.frequency == 1 %}
 												{# punctual #}
-												{{ matching.proposalOffer.criteria.fromDate|date('d/m/Y') }} à {{ matching.proposalOffer.criteria.fromTime|date('H:i') }}
 											{% else %}
 												{# regular #}
 												{{ matching.proposalRequest.criteria.fromDate|date('d/m/Y') }} à 

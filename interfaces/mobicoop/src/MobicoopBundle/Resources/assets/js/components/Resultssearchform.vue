@@ -5,7 +5,7 @@
         <div class="tile is-child search">
           <div class="columns is-vcentered">
             <div class="column">
-              <p><span class="dot is-pulled-left" />    ~</p>
+              <p><span class="dot is-pulled-left" /></p>
             </div>
             <div class="column is-3 save">
               <div
