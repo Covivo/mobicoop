@@ -14,7 +14,10 @@
     "compile": "encore dev",
     "compileAndWatch": "encore dev-server --port 8079",
     "compileAndWatchVue": "encore dev-server --hot --port 8079",
-    "postinstall": "composer install && npm run compile"
+    "postinstall": "composer install && npm run compile",
+    "cypress:open": "cypress open",
+    "cy:run": "cypress run"
+
   },
   "repository": {
     "type": "git",

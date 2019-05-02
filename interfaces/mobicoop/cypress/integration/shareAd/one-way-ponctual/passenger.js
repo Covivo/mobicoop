@@ -19,7 +19,7 @@
  *    LICENSE
  **************************/
 
- describe('Share an ad -> Passenger -> one way -> ponctual', () => {
+describe('Share an ad - Passenger - one way - ponctual', () => {
 
   const baseUrl = Cypress.env("baseUrl");
 
@@ -29,7 +29,7 @@
     cy.url().should('include', baseUrl + 'utilisateur/connexion')
   })
 
-  it('Connexion mobicoop + Share an ad', () => {
+  it('Connection + Share an ad', () => {
     /* Email */
     cy.get('input[id=user_login_form_username]')
       .should('have.attr', 'placeholder', 'Saisissez votre adresse email')
@@ -85,27 +85,31 @@
 
 
     /* One way - Date */
-    cy.get('.datepicker')
+    cy.get(':nth-child(1) > .datepicker > .dropdown > .dropdown-trigger > .control > .input')
+      .should('have.attr', 'placeholder', 'Date de départ...')
+      .click()
+    cy.get(':nth-child(1) > .datepicker > .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > :nth-child(1) > .pagination > .pagination-list > .field > :nth-child(1) > .select > select').select('Juin')
+    cy.get(':nth-child(1) > .datepicker > .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > :nth-child(1) > .pagination > .pagination-list > .field > :nth-child(2) > .select > select').select('2022')
+    cy.get(':nth-child(1) > .datepicker > .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > .datepicker-table > .datepicker-body > :nth-child(5) > :nth-child(4)').contains('30')
+      .click()
 
-      .click()
-    cy.get('.datepicker-body > :nth-child(5) > :nth-child(2)')
-      .contains('30')
-      .click()
+    // in order to close the window datepicker
+    cy.get('.title')
+      .click({ force: true })
 
     /* One way - Time */
-    cy.get('.timepicker > .dropdown > .dropdown-trigger > .control > .input')
+    cy.get(':nth-child(3) > .columns > .timepicker > .dropdown > .dropdown-trigger > .control > .input')
+      .should('have.attr', 'placeholder', 'Heure de départ...')
       .click()
-
-    cy.get('[data-v-31d6c94c]')
-    cy.get('.is-mobicoopgreen > :nth-child(2)')
+    cy.get(':nth-child(3) > .columns > .timepicker > .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > .timepicker-footer > .is-mobicoopgreen')
       .click()
 
     // in order to close the window timepicker
-    cy.get('section[class="datepicker-table"]')
+    cy.get('.title')
       .click({ force: true })
 
     /* Margin */
-    cy.get('.is-4 > .select > select').select('5')
+    cy.get(':nth-child(3) > .columns > .is-4 > .select > select').select('5')
 
     /* I share my ad */
     cy.get('.wizard-footer-right > span > .wizard-btn')

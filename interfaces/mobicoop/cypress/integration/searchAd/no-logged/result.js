@@ -19,7 +19,7 @@
  *    LICENSE
  **************************/
 
-describe('Search an ad - user no logged', () => {
+describe('Search an ad - no logged - result', () => {
 
   const baseUrl = Cypress.env("baseUrl");
 
@@ -29,7 +29,7 @@ describe('Search an ad - user no logged', () => {
     cy.url().should('include', baseUrl + 'utilisateur/connexion')
   })
 
-  it('Connexion mobicoop', () => {
+  it('Login + Share an ad', () => {
     /* Email */
     cy.get('input[id=user_login_form_username]')
       .should('have.attr', 'placeholder', 'Saisissez votre adresse email')
@@ -40,14 +40,12 @@ describe('Search an ad - user no logged', () => {
       .should('have.attr', 'placeholder', 'Saisissez votre mot de passe')
       .type('motdepasse')
 
-    cy.get('button[id=user_login_form_login]')
-      .click()
-  
+    cy.get('button[id=user_login_form_login]').click()
+
     /* Share an ad */
     cy.contains('Partager une annonce')
       .click()
     cy.url().should('include', baseUrl + 'covoiturage/annonce/poster')
-
 
     /* Passenger or Driver */
     cy.get(':nth-child(3) > .b-radio')
@@ -63,10 +61,10 @@ describe('Search an ad - user no logged', () => {
       .click()
     cy.get('.control > #origin')
       .should('have.attr', 'placeholder', 'Depuis')
-      .type('Lyon')
-    cy.get('[data-v-12259723]')
-      .contains('Lyon')
-      .click()
+      .type('Paris')
+    cy.get(':nth-child(2) > .media')
+      .contains('Paris')
+      .click({ force: true })
 
     /* To */
     cy.get('#destination')
@@ -86,11 +84,19 @@ describe('Search an ad - user no logged', () => {
 
 
     /* One way - Date */
-    cy.get('.datepicker')
+    cy.get('.datepicker > .dropdown > .dropdown-trigger > .control > .input')
+      .should('have.attr', 'placeholder', 'Date de départ...')
       .click()
-    cy.get('.datepicker-body > :nth-child(5) > :nth-child(2)')
-      .contains('30')
+    cy.get('.pagination > .pagination-list > .field > :nth-child(1) > .select > select')
+      .select('Juin')
+    cy.get('.pagination > .pagination-list > .field > :nth-child(2) > .select > select')
+      .select('2022')
+    cy.get(':nth-child(5) > :nth-child(4)')
       .click()
+
+    // in order to close the window datepicker
+    cy.get('.title')
+      .click({ force: true })
 
     /* One way - Time */
     cy.get('.timepicker > .dropdown > .dropdown-trigger > .control > .input')
@@ -101,7 +107,7 @@ describe('Search an ad - user no logged', () => {
       .click()
 
     // in order to close the window timepicker
-    cy.get('section[class="datepicker-table"]')
+    cy.get('.title')
       .click({ force: true })
 
     /* Margin */
@@ -112,29 +118,23 @@ describe('Search an ad - user no logged', () => {
       .click()
   })
 
-
-  it('Logout', () => {
-    
-    cy.get('.buttons > [href="/user/logout"]')
-      .click()
-  })
-
-
   it('Home', () => {
 
     cy.get('.logo')
       .click()
   })
 
-
   it('Search an ad with result', () => {
+
+    cy.get('.logo')
+      .click()
 
     /* Departure */
     cy.get('.control > #origin')
       .should('have.attr', 'placeholder', 'Depuis')
-      .type('Lyon')
+      .type('Paris')
     cy.get('[data-v-12259723]')
-      .contains('Lyon')
+      .contains('Paris')
       .click()
 
     /* To */
@@ -146,11 +146,19 @@ describe('Search an ad - user no logged', () => {
       .click()
 
     /* Datepicker */
-    cy.get('.datepicker')
+    cy.get('#dateDepart')
+      .should('have.attr', 'placeholder', 'Date de départ...')
       .click()
-    cy.get('.datepicker-body > :nth-child(5) > :nth-child(2)')
-      .contains('30')
+    cy.get('.pagination > .pagination-list > .field > :nth-child(1) > .select > select')
+      .select('Juin')
+    cy.get('.pagination > .pagination-list > .field > :nth-child(2) > .select > select')
+      .select('2022')
+    cy.get(':nth-child(5) > :nth-child(4)')
       .click()
+
+    // in order to close the window datepicker
+    cy.get('.title')
+      .click({ force: true })
 
     /* Timepicker */
     cy.get('.timepicker > .dropdown > .dropdown-trigger > .control > .input')

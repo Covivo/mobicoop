@@ -19,7 +19,7 @@
  *    LICENSE
  **************************/
 
- describe('Share an ad -> Passenger -> one way -> regular', () => {
+describe('Share an ad - Passenger - one way - regular', () => {
 
   const baseUrl = Cypress.env("baseUrl");
 
@@ -29,7 +29,7 @@
     cy.url().should('include', baseUrl + 'utilisateur/connexion')
   })
 
-  it('Connexion mobicoop + Share an ad', () => {
+  it('Connection + Share an ad', () => {
     /* Email */
     cy.get('input[id=user_login_form_username]')
       .should('have.attr', 'placeholder', 'Saisissez votre adresse email')
@@ -83,33 +83,40 @@
     cy.get('#Fréquence4 > .fieldsContainer > :nth-child(2) > .b-radio > :nth-child(2)')
       .click()
 
-
-    /* One way - Date*/
-    cy.get('.datepicker')
+    /* One way - Date */
+    cy.get('.datepicker > .dropdown > .dropdown-trigger > .control > .input')
+      .should('have.attr', 'placeholder', 'Date de début')
       .click()
-    cy.get('.datepicker-body > :nth-child(5) > :nth-child(2)')
+    cy.get('.pagination > .pagination-list > .field > :nth-child(1) > .select > select')
+      .select('Juin')
+    cy.get('.pagination > .pagination-list > .field > :nth-child(2) > .select > select')
+      .select('2022')
+    cy.get(':nth-child(5) > :nth-child(4)')
       .contains('30')
       .click()
 
+    // in order to close the window datepicker
+    cy.get('.title')
+      .click({ force: true })
+
     /* One way - Time */
     cy.get(':nth-child(1) > .timepicker > .dropdown > .dropdown-trigger > .control > .input')
+      .should('have.attr', 'placeholder', 'Heure de départ...')
       .click()
-
-    cy.get('[data-v-31d6c94c]')
     cy.get(':nth-child(1) > .timepicker > .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > .timepicker-footer > .is-mobicoopgreen')
       .click()
 
     // in order to close the window timepicker
-    cy.get('.datepicker')
+    cy.get('.title')
       .click({ force: true })
 
     /* Margin */
-    cy.get('.is-4 > .select > select').select('10')
+    cy.get(':nth-child(1) > .is-4 > .select > select')
+      .select('5')
 
     /* I share my ad */
     cy.get('.wizard-footer-right > span > .wizard-btn')
       .click()
   })
 })
-
 

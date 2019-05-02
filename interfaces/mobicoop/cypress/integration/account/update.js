@@ -23,7 +23,7 @@ describe('Update account', () => {
 
   const baseUrl = Cypress.env("baseUrl");
 
-  it('user_login -> Connexion to mobicoop ', () => {
+  it('Home', () => {
     /* Home */
     cy.visit(baseUrl)
     cy.contains('Connexion').click()

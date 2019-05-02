@@ -23,13 +23,16 @@ describe('My ads', () => {
 
   const baseUrl = Cypress.env("baseUrl");
 
-  it('user_login -> Connexion to mobicoop ', () => {
+  it('Home', () => {
     /* Home */
     cy.visit(baseUrl)
     cy.contains('Connexion').click()
     cy.url().should('include', baseUrl + 'utilisateur/connexion')
 
-    /* Connexion */
+  })
+
+  it('Connection', () => {
+    /* Connection */
     // Email
     cy.get('input[id=user_login_form_username]')
       .should('have.attr', 'placeholder', 'Saisissez votre adresse email')
@@ -54,9 +57,9 @@ describe('My ads', () => {
   })
 
   it('Results ', () => {
-    cy.get(':nth-child(1) > .columns > :nth-child(1) > :nth-child(4) > .button')    
-    .click()
-    cy.url().should('include', baseUrl + 'covoiturage/annonce/1/resultats')
+    cy.get(':nth-child(1) > .columns > :nth-child(1) > :nth-child(4) > .button')
+      .click()
+    cy.url().should('include', baseUrl + 'covoiturage/annonce/')
   })
 
 })

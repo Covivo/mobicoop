@@ -19,17 +19,16 @@
  *    LICENSE
  **************************/
 
- describe('Search an ad - user no logged', () => {
+describe('Search an ad - no logged - no result', () => {
 
   const baseUrl = Cypress.env("baseUrl");
 
-  it('user_login -> Connexion to mobicoop ', () => {
-    /* Home */
+  it('Home', () => {
     cy.visit(baseUrl)
+    cy.url().should('include', baseUrl)
   })
 
   it('Search an ad with no result', () => {
-
     /* Departure */
     cy.get('.control > #origin')
       .should('have.attr', 'placeholder', 'Depuis')
@@ -47,11 +46,19 @@
       .click()
 
     /* Datepicker */
-    cy.get('.datepicker')
+    cy.get('#dateDepart')
+      .should('have.attr', 'placeholder', 'Date de départ...')
       .click()
-    cy.get('.datepicker-body > :nth-child(5) > :nth-child(2)')
-      .contains('30')
+    cy.get('.pagination > .pagination-list > .field > :nth-child(1) > .select > select')
+      .select('Juin')
+    cy.get('.pagination > .pagination-list > .field > :nth-child(2) > .select > select')
+      .select('2022')
+    cy.get(':nth-child(5) > :nth-child(4)')
       .click()
+
+    // in order to close the window datepicker
+    cy.get('.title')
+      .click({ force: true })
 
     /* Timepicker */
     cy.get('.timepicker > .dropdown > .dropdown-trigger > .control > .input')

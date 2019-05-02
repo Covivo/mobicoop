@@ -19,27 +19,39 @@
  *    LICENSE
  **************************/
 
-describe('Login', () => {
+describe('My ads', () => {
 
   const baseUrl = Cypress.env("baseUrl");
 
   it('Home', () => {
+    /* Home */
     cy.visit(baseUrl)
     cy.contains('Connexion').click()
     cy.url().should('include', baseUrl + 'utilisateur/connexion')
   })
 
-  it('Login', () => {
-    /* Email */
+  it('Connection', () => {
+    // Email
     cy.get('input[id=user_login_form_username]')
       .should('have.attr', 'placeholder', 'Saisissez votre adresse email')
-      .type('totosmith@email.com')
+      .type('toto@gmail.com')
 
-    /* Password */
+    // Password
     cy.get('input[id=user_login_form_password]')
       .should('have.attr', 'placeholder', 'Saisissez votre mot de passe')
-      .type('motdepasse')
+      .type('totototo')
 
     cy.get('button[id=user_login_form_login]').click()
+
+
+    /* Profil */
+    cy.contains('Mon profil').click()
+      .click
+    cy.url().should('include', baseUrl + 'utilisateur/profil')
+
+    /* Update */
+    cy.contains('Mes annonces').click()
+    cy.url().should('include', baseUrl + 'utilisateur/annonces')
   })
+
 })

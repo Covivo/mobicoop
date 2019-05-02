@@ -19,17 +19,17 @@
  *    LICENSE
  **************************/
 
-describe('Share an ad -> Driver -> round trip -> ponctual', () => {
+describe('Share an ad - Driver - round trip - ponctual', () => {
 
   const baseUrl = Cypress.env("baseUrl");
 
-  it('Visits mobicoop', () => {
+  it('Home', () => {
     cy.visit(baseUrl)
     cy.contains('Connexion').click()
     cy.url().should('include', baseUrl + 'utilisateur/connexion')
   })
 
-  it('Connexion mobicoop + Share an ad', () => {
+  it('Connection mobicoop + Share an ad', () => {
     /* Email */
     cy.get('input[id=user_login_form_username]')
       .should('have.attr', 'placeholder', 'Saisissez votre adresse email')
@@ -61,17 +61,17 @@ describe('Share an ad -> Driver -> round trip -> ponctual', () => {
       .click()
     cy.get('.control > #origin')
       .should('have.attr', 'placeholder', 'Depuis')
-      .type('Lyon')
+      .type('Pont-à-Mousson')
     cy.get('[data-v-12259723]')
-      .contains('Lyon')
+      .contains('Pont-à-Mousson')
       .click()
 
     /* To */
     cy.get('#destination')
       .should('have.attr', 'placeholder', 'Vers')
-      .type('Strasbourg')
+      .type('Commercy')
     cy.get('[data-v-12259723]')
-      .contains('Strasbourg')
+      .contains('Commercy')
       .click()
 
     /* Next */
@@ -88,24 +88,31 @@ describe('Share an ad -> Driver -> round trip -> ponctual', () => {
     cy.get(':nth-child(1) > .datepicker > .dropdown > .dropdown-trigger > .control > .input')
       .should('have.attr', 'placeholder', 'Date de début')
       .click()
-    cy.get('.datepicker-body > :nth-child(5) > :nth-child(2)')
-      .contains('30')
+    cy.get(':nth-child(1) > .datepicker > .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > :nth-child(1) > .pagination > .pagination-list > .field > :nth-child(1) > .select > select')
+      .select('Juin')
+    cy.get(':nth-child(1) > .datepicker > .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > :nth-child(1) > .pagination > .pagination-list > .field > :nth-child(2) > .select > select')
+      .select('2022')
+    cy.get(':nth-child(1) > .datepicker > .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > .datepicker-table > .datepicker-body > :nth-child(5) > :nth-child(2)')
       .click()
+
+    // in order to close the window datepicker
+    cy.get(':nth-child(2) > .title')
+      .click({ force: true })
 
     /* One way - Time */
     cy.get(':nth-child(1) > .timepicker > .dropdown > .dropdown-trigger > .control > .input')
       .click()
-
     cy.get(':nth-child(1) > .timepicker > .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > .timepicker-footer > .is-mobicoopgreen')
       .contains('Maintenant')
       .click()
 
-    // in order to close the window timepicker
-    cy.get(':nth-child(1) > .timepicker > .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > .timepicker-footer > .is-mobicoopgreen')
+    // in order to close the window datepicker
+    cy.get(':nth-child(2) > .title')
       .click({ force: true })
 
     /* Margin */
-    cy.get('.is-4 > .select > select').select('5')
+    cy.get(':nth-child(1) > .is-4 > .select > select')
+      .select('5')
 
     /* ************************************* */
 
@@ -114,9 +121,16 @@ describe('Share an ad -> Driver -> round trip -> ponctual', () => {
     cy.get(':nth-child(2) > .datepicker > .dropdown > .dropdown-trigger > .control > .input')
       .should('have.attr', 'placeholder', 'Date de fin')
       .click()
+    cy.get(':nth-child(2) > .datepicker > .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > :nth-child(1) > .pagination > .pagination-list > .field > :nth-child(1) > .select > select')
+      .select('August')
+    cy.get(':nth-child(2) > .datepicker > .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > :nth-child(1) > .pagination > .pagination-list > .field > :nth-child(2) > .select > select')
+      .select('2022')
     cy.get(':nth-child(2) > .datepicker > .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > .datepicker-table > .datepicker-body > :nth-child(5) > :nth-child(3)')
-      .contains('30')
       .click()
+
+    // in order to close the window datepicker
+    cy.get(':nth-child(2) > .title')
+      .click({ force: true })
 
 
     /* Return - Time */
@@ -129,12 +143,14 @@ describe('Share an ad -> Driver -> round trip -> ponctual', () => {
       .click()
 
 
-    // in order to close the window timepicker
-    cy.get(':nth-child(1) > .datepicker > .dropdown > .dropdown-trigger > .control > .input')
+    // in order to close the window datepicker
+    cy.get(':nth-child(2) > .title')
       .click({ force: true })
 
+
     /* Margin */
-    cy.get('.is-4 > .select > select').select('5')
+    cy.get(':nth-child(2) > :nth-child(3) > .is-4 > .select > select')
+      .select('5')
 
     /* ************************************* */
 

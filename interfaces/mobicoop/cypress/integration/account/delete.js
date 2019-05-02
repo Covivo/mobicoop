@@ -23,24 +23,57 @@ describe('Delete account', () => {
 
   const baseUrl = Cypress.env("baseUrl");
 
-  it('user_login -> Connexion to mobicoop ', () => {
-    /* Home */
+
+  it('Inscription + Delete', () => {
     cy.visit(baseUrl)
-    cy.contains('Connexion').click()
-    cy.url().should('include', baseUrl + 'utilisateur/connexion')
+    cy.contains('Inscription').click()
+    cy.url().should('include', baseUrl + 'utilisateur/inscription')
 
-    /* Connexion */
-    // Email
-    cy.get('input[id=user_login_form_username]')
+    cy.get('input[id=user_form_email]')
       .should('have.attr', 'placeholder', 'Saisissez votre adresse email')
-      .type('totosmith@email.com')
+      .type('johndoe@email.com')
 
-    // Password
-    cy.get('input[id=user_login_form_password]')
+    /* Lastname */
+    cy.get('input[id=user_form_givenName]')
+      .should('have.attr', 'placeholder', 'Saisissez votre prénom')
+      .type('John')
+
+    /* Name */
+    cy.get('input[id=user_form_familyName]')
+      .should('have.attr', 'placeholder', 'Saisissez votre nom')
+      .type('Doe')
+
+    /* Gender */
+    cy.get('select[id=user_form_gender]')
+      .select('2')
+      .should('have.value', '2')
+
+    /* Birthyear */
+    cy.get('select[id=user_form_birthYear]')
+      .select('2000')
+      .should('have.value', '2000')
+
+    /* Phone */
+    cy.get('input[id=user_form_telephone]')
+      .should('have.attr', 'placeholder', 'Saisissez votre numéro de téléphone')
+      .type('0610111213')
+
+    /* Password */
+    cy.get('input[id=user_form_password_first]')
       .should('have.attr', 'placeholder', 'Saisissez votre mot de passe')
-      .type('motdepasse')
+      .type('totototo')
 
-    cy.contains('Se connecter').click()
+    /* Password (confirmation) */
+    cy.get('input[id=user_form_password_second]')
+      .should('have.attr', 'placeholder', 'Confirmez votre mot de passe')
+      .type('totototo')
+
+    /* Validation condition (confirmation) */
+    cy.get('input[id=user_form_conditions]').check()
+
+
+    cy.contains('Je m\'inscris').click()
+    cy.url().should('include', baseUrl) // should be redirected to home    
 
     /* Profil */
     cy.contains('Mon profil').click()
@@ -52,7 +85,6 @@ describe('Delete account', () => {
 
     cy.get('button[id=user_delete_form_submit]').click()
     cy.url().should('include', baseUrl) // should be redirected to home    
-
   })
 
 })
