@@ -186,7 +186,7 @@ class MassPerson
         return $this->mass;
     }
 
-    public function setMass(Mass $mass): self
+    public function setMass(?Mass $mass): self
     {
         $this->mass = $mass;
 

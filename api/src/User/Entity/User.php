@@ -54,9 +54,11 @@ use App\Match\Entity\Mass;
  * Note : force eager is set to false to avoid max number of nested relations (can occure despite of maxdepth... https://github.com/api-platform/core/issues/1910)
  *
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  * @UniqueEntity("email")
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -230,6 +232,7 @@ class User implements UserInterface, EquatableInterface
      * @var Proposal[]|null The proposals made by this user.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+     * @MaxDepth(1)
      * @Apisubresource
      */
     private $proposals;
@@ -257,6 +260,13 @@ class User implements UserInterface, EquatableInterface
      * @ApiSubresource(maxDepth=1)
      */
     private $masses;
+
+    /**
+    * @var \DateTimeInterface Creation date of the event.
+    *
+    * @ORM\Column(type="datetime")
+    */
+    private $createdDate;
     
     public function __construct($status=null)
     {
@@ -597,6 +607,18 @@ class User implements UserInterface, EquatableInterface
                 $mass->setUser(null);
             }
         }
+        
+        return $this;
+    }
+
+    public function getCreatedDate(): ?\DateTimeInterface
+    {
+        return $this->createdDate;
+    }
+    
+    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    {
+        $this->createdDate = $createdDate;
         
         return $this;
     }
