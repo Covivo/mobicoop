@@ -161,7 +161,7 @@ class Mass
     private $calculationDate;
 
     /**
-     * @var ArrayCollecction|null The persons concerned by the file.
+     * @var ArrayCollection|null The persons concerned by the file.
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassPerson", mappedBy="mass", cascade={"persist","remove"}, orphanRemoval=true)
      */

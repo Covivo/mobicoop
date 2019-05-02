@@ -113,7 +113,6 @@ class Community
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
      * @Groups("write")
-     * @MaxDepth(1)
      */
     private $user;
     
@@ -131,15 +130,15 @@ class Community
     /**
      * @var ArrayCollection|null The proposals in this community.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Carpool\Entity\proposal")
+     * @ORM\ManyToMany(targetEntity="\App\Carpool\Entity\Proposal")
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
     private $proposals;
     
     public function __construct($id=null)
     {
         $this->id = $id;
-        $this->communities = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -250,9 +249,9 @@ class Community
     }
 
     /**
-     * @return ArrayCollection
+     * @return Collection
      */
-    public function getProposals(): ArrayCollection
+    public function getProposals(): Collection
     {
         return $this->proposals;
     }

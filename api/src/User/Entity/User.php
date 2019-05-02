@@ -58,6 +58,7 @@ use App\Match\Entity\Mass;
  * @UniqueEntity("email")
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -231,6 +232,7 @@ class User implements UserInterface, EquatableInterface
      * @var Proposal[]|null The proposals made by this user.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+     * @MaxDepth(1)
      * @Apisubresource
      */
     private $proposals;
