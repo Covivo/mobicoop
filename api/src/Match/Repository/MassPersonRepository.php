@@ -41,4 +41,5 @@ class MassPersonRepository
 
         return $query->getResult();
     }
+
 }

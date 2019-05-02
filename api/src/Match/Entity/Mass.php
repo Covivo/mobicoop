@@ -31,6 +31,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Match\Controller\CreateMassImportAction;
 use App\Match\Controller\MassAnalyzeAction;
+use App\Match\Controller\MassMatchAction;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use App\User\Entity\User;
@@ -64,6 +65,11 @@ use Doctrine\Common\Collections\Collection;
  *              "method"="GET",
  *              "path"="/masses/{id}/analyze",
  *              "controller"=MassAnalyzeAction::class
+ *          },
+ *          "match"={
+ *              "method"="GET",
+ *              "path"="/masses/{id}/match",
+ *              "controller"=MassMatchAction::class
  *          },
  *      }
  * )

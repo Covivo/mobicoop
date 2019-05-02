@@ -66,6 +66,11 @@ class Candidate
     private $minCommonDistancePercent;
 
     /**
+     * @var MassPerson|null The mass person related to the candidate.
+     */
+    private $person;
+
+    /**
      * @return Waypoint[]
      */
     public function getAddresses(): array
@@ -148,6 +153,18 @@ class Candidate
     public function setMinCommonDistancePercent(int $minCommonDistancePercent): self
     {
         $this->minCommonDistancePercent = $minCommonDistancePercent;
+        
+        return $this;
+    }
+
+    public function getPerson(): ?MassPerson
+    {
+        return $this->person;
+    }
+    
+    public function setPerson(?MassPerson $person): self
+    {
+        $this->person = $person;
         
         return $this;
     }

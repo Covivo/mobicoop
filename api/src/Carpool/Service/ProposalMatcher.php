@@ -46,7 +46,7 @@ class ProposalMatcher
 
     // minimum distance to check the common distance
     public const MIN_COMMON_DISTANCE_CHECK = 100;
-    // minimum distance to check the common distance
+    // minimum common distance accepted
     public const MIN_COMMON_DISTANCE_PERCENT = 30;
 
     private $entityManager;

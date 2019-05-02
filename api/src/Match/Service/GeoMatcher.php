@@ -54,7 +54,7 @@ class GeoMatcher
      *
      * @param Candidate $candidate      The candidate for which we want to find matchings
      * @param Candidate[] $candidates   The array of candidates to match
-     * @param bool $master              The candidate is the master side (meaning that the have to take account of its maximum detour)
+     * @param bool $master              The candidate is the master side (meaning that we have to take account of its maximum detour)
      * @return array|null               The array of results
      */
     public function singleMatch(Candidate $candidate, array $candidates, bool $master=true): ?array
@@ -170,7 +170,7 @@ class GeoMatcher
                     }
                 } elseif ($candidate1->getMaxDetourDistancePercent()) {
                     // in percentage
-                    if ($routes[0]->getDistance()<=($candidate1->getDirection()->getDistance()*$candidate1->getMaxDetourDistancePercent()+$candidate1->getDirection()->getDistance())) {
+                    if ($routes[0]->getDistance()<=(($candidate1->getDirection()->getDistance()*($candidate1->getMaxDetourDistancePercent()/100))+$candidate1->getDirection()->getDistance())) {
                         $detourDistance = true;
                     }
                 }
@@ -182,7 +182,7 @@ class GeoMatcher
                     }
                 } elseif ($candidate1->getMaxDetourDurationPercent()) {
                     // in percentage
-                    if ($routes[0]->getDuration()<=($candidate1->getDirection()->getDuration()*$candidate1->getMaxDetourDurationPercent()+$candidate1->getDirection()->getDuration())) {
+                    if ($routes[0]->getDuration()<=(($candidate1->getDirection()->getDuration()*($candidate1->getMaxDetourDurationPercent()/100))+$candidate1->getDirection()->getDuration())) {
                         $detourDuration = true;
                     }
                 }
@@ -194,7 +194,7 @@ class GeoMatcher
                 
                 // if the detour is acceptable we keep the candidate
                 if ($detourDistance && $detourDuration && $commonDistance) {
-                    // we had the zones to the direction
+                    // we add the zones to the direction
                     $direction = $this->zoneManager->createZonesForDirection($routes[0]);
                     $result[] = [
                         'order' => $this->generateOrder($points, $routes[0]->getDurations()),
@@ -209,7 +209,8 @@ class GeoMatcher
                         'detourDuration' => ($routes[0]->getDuration()-$candidate1->getDirection()->getDuration()),
                         'detourDurationPercent' => round($routes[0]->getDuration()*100/$candidate1->getDirection()->getDuration()-100, 2),
                         'commonDistance' => $candidate2->getDirection()->getDistance(),
-                        'direction' => $direction
+                        'direction' => $direction,
+                        'person' => $candidate2->getPerson() ? $candidate2->getPerson() : ''
                     ];
                 }
             }

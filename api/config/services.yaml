@@ -93,6 +93,9 @@ services:
             $providers: '%env(json:file:resolve:RDEX_PROVIDERS)%'
     
     # inject mass parameters to MassImportManager 
+    # set the monolog channel to use for MassImportManager
     App\Match\Service\MassImportManager:
         arguments:
             $params: '%mass%'
+        tags:   
+            - { name: monolog.logger, channel: mass }

@@ -31,6 +31,7 @@ use Psr\Log\LoggerInterface;
 use App\Match\Exception\MassException;
 use App\Match\Entity\MassData;
 use App\Match\Entity\MassPerson;
+use App\Match\Entity\Candidate;
 use App\Geography\Entity\Address;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -57,6 +58,9 @@ class MassImportManager
     //const DELAY_BETWEEN_REQUESTS = 1000000; // 1 second delay between 2 requests
     const DELAY_BETWEEN_REQUESTS = 0; // 1 second delay between 2 requests
 
+    private const MAX_DETOUR_DISTANCE_PERCENT = 40;
+    private const MAX_DETOUR_DURATION_PERCENT = 40;
+
     private $entityManager;
     private $userRepository;
     private $massPersonRepository;
@@ -66,6 +70,7 @@ class MassImportManager
     private $validator;
     private $geoSearcher;
     private $geoRouter;
+    private $geoMatcher;
     private $zoneManager;
 
     /**
@@ -87,6 +92,7 @@ class MassImportManager
         ValidatorInterface $validator,
         GeoSearcher $geoSearcher,
         GeoRouter $geoRouter,
+        GeoMatcher $geoMatcher,
         ZoneManager $zoneManager,
         array $params
     ) {
@@ -99,6 +105,7 @@ class MassImportManager
         $this->validator = $validator;
         $this->geoSearcher = $geoSearcher;
         $this->geoRouter = $geoRouter;
+        $this->geoMatcher = $geoMatcher;
         $this->zoneManager = $zoneManager;
     }
 
@@ -157,11 +164,17 @@ class MassImportManager
      */
     public function analyzeMass(Mass $mass)
     {
-        set_time_limit(120);
+        set_time_limit(300);
+        
+        $this->logger->info('Mass analyze | Start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));    
+
         // we search all destinations
+        $this->logger->info('Mass analyze | Find all destinations start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $destinations = $this->massPersonRepository->findAllDestinationsForMass($mass);
+        $this->logger->info('Mass analyze | Find all destinations end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         // we geocode the destinations
         $geocodedDestinations = [];
+        $this->logger->info('Mass analyze | Geocode destinations start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         foreach ($destinations as $key => $destination) {
             $address = trim($destination['houseNumber'] . " " . $destination['street'] . " " . $destination['postalCode'] . " " . $destination['addressLocality'] . " " . $destination['addressCountry']);
             if ($addresses = $this->geoSearcher->geoCode($address)) {
@@ -176,8 +189,11 @@ class MassImportManager
             }
             usleep(self::DELAY_BETWEEN_REQUESTS);
         }
+        $this->logger->info('Mass analyze | Geocode destinations end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         // we geocode the personal addresses
+        $this->logger->info('Mass analyze | Geocode personal address start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $i = 1;
         foreach ($mass->getPersons() as $massPerson) {
             // maybe we already have the gps points
             if (
@@ -196,6 +212,7 @@ class MassImportManager
                 $massPerson->getPersonalAddress()->getAddressLocality() . " " .
                 $massPerson->getPersonalAddress()->getAddressCountry()
             );
+            $this->logger->info('Mass analyze | Geocode personal address n°' . $i . ' start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             if ($addresses = $this->geoSearcher->geoCode($address)) {
                 if (count($addresses) > 0) {
                     // we use the first result as best result
@@ -222,12 +239,18 @@ class MassImportManager
             } else {
                 throw new MassException('Personal address <' . $address . '> not found');
             }
+            $this->logger->info('Mass analyze | Geocode personal address n°' . $i . ' end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             usleep(self::DELAY_BETWEEN_REQUESTS);
+            $i++;
         }
         $this->entityManager->flush();
+        $this->logger->info('Mass analyze | Geocode personal address end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         // all addresses are geocoded, we can get the directions
+        $this->logger->info('Mass analyze | Direction personal address start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));    
+        $i=1;
         foreach ($mass->getPersons() as $massPerson) {
+            $this->logger->info('Mass analyze | Direction personal address n°' . $i . ' start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $addresses = [];
             $addresses[] = $massPerson->getPersonalAddress();
             $addresses[] = $massPerson->getWorkAddress();
@@ -254,11 +277,60 @@ class MassImportManager
                 throw new MassException('No route found for <' . $origin . '> => <' . $destination . '>');
             }
             $this->entityManager->persist($massPerson);
+            $this->logger->info('Mass analyze | Direction personal address n°' . $i . ' end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $i++;
         }
+        $this->logger->info('Mass analyze | Direction personal address end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));    
         $mass->setStatus(Mass::STATUS_ANALYZED);
         $mass->setAnalyzeDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
+        $this->logger->info('Mass analyze | End ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));    
+    }
+
+    /**
+     * Match mass file data.
+     *
+     * @param Mass $mass The mass to match
+     * @return void
+     */
+    public function matchMass(Mass $mass)
+    {
+        set_time_limit(30);
+        
+        $this->logger->info('Mass match | Start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));    
+
+        // we search the matches for all the persons
+        foreach ($mass->getPersons() as $person) {
+            $candidateDriver = new Candidate();
+            $candidateDriver->setAddresses([$person->getPersonalAddress(),$person->getWorkAddress()]);
+            $candidateDriver->setDirection($person->getDirection());            
+            $candidateDriver->setMaxDetourDurationPercent(self::MAX_DETOUR_DURATION_PERCENT);
+            $candidateDriver->setMaxDetourDistancePercent(self::MAX_DETOUR_DISTANCE_PERCENT);
+            $candidateDriver->setPerson($person);
+            $candidates = [];
+            foreach ($mass->getPersons() as $candidate) {
+                if ($person->getId() <> $candidate->getId()) {
+                    $candidatePassenger = new Candidate();
+                    $candidatePassenger->setAddresses([$candidate->getPersonalAddress(),$candidate->getWorkAddress()]);
+                    $candidatePassenger->setDirection($candidate->getDirection());
+                    $candidatePassenger->setPerson($candidate);
+                    $candidates[] = $candidatePassenger;
+                }
+            }
+            if ($matches = $this->geoMatcher->singleMatch($candidateDriver, $candidates, true)) {
+                if (is_array($matches) && count($matches)>0) {
+                    echo count($matches) . " found for person #" . $person->getId() . " : \n";
+                    $i=1;
+                    foreach ($matches as $match) {
+                        echo "match #$i with person #" . $match['person']->getId() . ": \n";
+                        echo "original : " . $match["originalDistance"] . " => new " . $match['newDistance'] . "\n";
+                        $i++;
+                    }
+                }
+            }
+        }
+        exit;
     }
 
     /**
