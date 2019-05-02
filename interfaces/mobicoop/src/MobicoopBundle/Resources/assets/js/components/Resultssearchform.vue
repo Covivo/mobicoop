@@ -2,10 +2,37 @@
   <section class="section">
     <div class="tile is-ancestor">
       <div class="tile is-vertical is-12">
-        <div class="tile is-child center-all">
-          <div
-            class="columns is-centered is-vcentered SearchBar"
-          >
+        <div class="tile is-child center-all search">
+          <div class="columns is-centered is-vcentered">
+            <div class="column is-one-half user is-vcentered">
+              <span class="dot is-pulled-left" />
+            </div>
+            <div class="column save">
+              <div class="button save is-tertiary is-pulled-right">
+                Enregistrer
+              </div>
+            </div>
+          </div>
+          <div class="columns">
+            <div class="column">
+              <div class="departureDate">
+                <p class="is-underlined">
+                  {{ date }}
+                </p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="departureTime">
+                <p class="is-underlined">
+                  {{ time }}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="columns">
+            <div class="column ">
+              <div />
+            </div>
             <div class="column has-text-centered">
               <!-- inputs outward destination -->
               <label
@@ -15,7 +42,7 @@
                 <geocomplete
                   id="origin"
                   name="origin"
-                  placeholder="Lieu de départ"
+                  :placeholder="origin"
                   title="Depuis"
                   aria-label="Départ"
                   :url="geoSearchUrl"
@@ -31,60 +58,15 @@
                 <geocomplete
                   id="destination"
                   name="destination"
-                  placeholder="Lieu d'arrivée"
+                  :placeholder="destination"
                   title="Vers"
                   :url="geoSearchUrl"
                   @geoSelected="selectedGeo"
                 />
               </label>
             </div>
-            <!-- Commented and not removed because it can be usefull later if we'll implement the possibility to choose a date and an hour for the simple search -->
-            <!-- datepicker -->
-            <!-- <label
-                class="label"
-                for="dateDepart"
-              >Date de départ
-                <b-datepicker
-                  id="dateDepart"
-                  v-model="outwardDate"
-                  :placeholder="'Date de départ...'"
-                  title="Date de départ"
-                  :day-names="daysShort"
-                  :month-names="months"
-                  :first-day-of-week="1"
-                  position="is-top-right"
-                  icon-pack="fas"
-                  editable
-                />
-              </label> -->
-            <!-- timepicker -->
-            <!-- <label
-                class="label"
-                for="heureDepart"
-              >Heure de départ
-                <b-timepicker
-                  id="heureDepart"
-                  v-model="outwardTime"
-                  placeholder="Heure de départ..."
-                  title="Heure de départ"
-                >
-                  <button
-                    class="button is-mobicoopgreen"
-                    @click="outwardTime = new Date()"
-                  >
-                    <b-icon icon="clock" />
-                    <span>Maintenant</span>
-                  </button>
-                  <button
-                    class="button is-mobicooppink"
-                    @click="outwardTime = null"
-                  >
-                    <b-icon icon="close" />
-                    <span>Effacer</span>
-                  </button>
-                </b-timepicker>
-              </label> -->
-            <!-- search button -->
+          </div>
+          <div class="columns">
             <div class="column is-3 has-text-centered">
               <label
                 for="rechercher"
@@ -127,7 +109,24 @@ export default {
     route: {
       type: String,
       default: ""
+    },
+    date: {
+      type: String,
+      default: ""
+    },
+    time: {
+      type: String,
+      default: ""
+    },
+    origin: {
+      type: String,
+      default: ""
+    },
+    destination: {
+      type: String,
+      default: ""
     }
+
   },
   data() {
     return {

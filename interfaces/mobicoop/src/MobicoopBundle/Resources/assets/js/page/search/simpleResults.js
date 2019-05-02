@@ -12,13 +12,20 @@ import '../../../css/page/search/simpleResults.scss';
 
 
 // Vue components
-import Journey from '../../components/Journey';
+import Resultssearchform from '../../components/Resultssearchform';
+import Journey from '../../components/Journey'
 
 Vue.use(Buefy,{
   defaultTooltipType: 'is-mobicoopgreen'
 });
 Vue.use(VueFormWizard);
   
+new Vue({
+  el: '#simple',
+  components: {
+    Resultssearchform,
+  }
+})
 new Vue({
   el: '#simpleResults',
   components: {

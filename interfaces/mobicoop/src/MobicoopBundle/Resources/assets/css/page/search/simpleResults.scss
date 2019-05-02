@@ -2,3 +2,40 @@
       SIMPLE SEARCH RESULTS
 ******************************/
 @import '../../app.scss';
+body {
+  #search {
+    margin-top: 2vw;
+    color: $white;
+  }
+  .search {
+    background-color: $primary;
+    border-radius: 10px;
+    border: dashed;
+    height: 15vw;
+    width: 50vw;
+    padding: 1vw;
+    align-self: center;
+  }
+  .textContent {
+    border-bottom: solid $white;
+  }
+  .labelOrigin {
+    color: $secondary;
+  }
+  .labelDestination {
+    color: $tertiary;
+  }
+  .dot {
+    height: 25px;
+    width: 25px;
+    background-color: #BBB;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .button {
+    border-radius: 20px;
+  }
+  .searchButton {
+    border-color: $tertiary;
+  }
+}
