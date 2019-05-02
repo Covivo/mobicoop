@@ -127,6 +127,10 @@ To start the application simply run :
 - We use [Kahlan](https://kahlan.github.io/docs/) to create unit/functional tests, you can launch them easily with:
 - For functional tests you can do it 3 ways, with [kernels](https://api.symfony.com/4.1/Symfony/Component/HttpKernel/Kernel.html) (limited--), with [client](https://api.symfony.com/4.1/Symfony/Component/HttpKernel/Client.html) (limited), with [panther](https://github.com/symfony/panther) for a real browser testing (click,form ..)
 
+# Cypress
+
+- *Duplicate, rename cypress.env.json
+    - [.cypress.json ](interfaces/mobicoop)   
 
 
 # Documentation
