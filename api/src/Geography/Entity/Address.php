@@ -212,6 +212,15 @@ class Address
      */
     private $user;
 
+
+    /**
+     * @var string|null Label for display
+     *
+     * @Groups({"read","pt"})
+     */
+    private $displayLabel;
+
+
     public function __construct($id = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -409,5 +418,15 @@ class Address
     {
         $user->setAddress($this);
         $this->user = $user;
+    }
+
+    public function getDisplayLabel(): ?string
+    {
+        return $this->displayLabel;
+    }
+
+    public function setDisplayLabel(?string $displayLabel)
+    {
+        $this->displayLabel = $displayLabel;
     }
 }

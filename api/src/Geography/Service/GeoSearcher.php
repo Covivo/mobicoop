@@ -35,13 +35,15 @@ use Geocoder\Query\GeocodeQuery;
 class GeoSearcher
 {
     private $geocoder;
+    private $params;
 
     /**
      * Constructor.
      */
-    public function __construct(PluginProvider $geocoder)
+    public function __construct(PluginProvider $geocoder, array $params)
     {
         $this->geocoder = $geocoder;
+        $this->params = $params;
     }
 
     /**
@@ -85,6 +87,11 @@ class GeoSearcher
             $address->setPostalCode($geoResult->getPostalCode());
             $address->setAddressCountry($geoResult->getCountry()->getName());
             $address->setCountryCode($geoResult->getCountry()->getCode());
+
+            var_dump($this->params);die;
+            $displayLabel = "toto";
+
+            $address->setDisplayLabel($displayLabel);
 
             $result[] = $address;
         }
