@@ -170,7 +170,12 @@ class Address implements Resource
      * @var User|null The owner of the address.
      */
     private $user;
-    
+
+    /**
+     * @var string|null Label for display
+     */
+    private $displayLabel;
+
     public function __construct()
     {
         $this->userAddresses = new ArrayCollection();
@@ -377,5 +382,15 @@ class Address implements Resource
     public function setUser(?User $user)
     {
         $this->user = $user;
+    }
+
+    public function getDisplayLabel(): ?string
+    {
+        return $this->displayLabel;
+    }
+
+    public function setDisplayLabel(?string $displayLabel)
+    {
+        $this->displayLabel = $displayLabel;
     }
 }
