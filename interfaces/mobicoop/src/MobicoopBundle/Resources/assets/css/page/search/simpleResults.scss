@@ -8,7 +8,7 @@ body {
     color: $white;
   }
   .search {
-    background-color: $tertiary;
+    background-color: $secondary;
     border-radius: 10px;
     border: dotted;
     height: 15vw;
@@ -20,7 +20,7 @@ body {
     border-bottom: solid $white;
   }
   .labelOrigin {
-    color: $secondary;
+    color: $tertiary;
   }
   .labelDestination {
     color: $primary;
@@ -61,7 +61,7 @@ body {
     outline: none;
     border-bottom: solid 1px $white;
     border-radius: 0;
-    background-color: $tertiary;
+    background-color: $secondary;
 
     @include outlinedFocus($focusColor);
     .input {
@@ -78,7 +78,7 @@ body {
     outline: 0;
     border-bottom: solid 1px $white;
     border-radius: 0;
-    background-color: $tertiary;
+    background-color: $secondary;
 
     @include outlinedFocus($focusColor);
     .input {

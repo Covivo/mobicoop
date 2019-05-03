@@ -26,6 +26,7 @@
 		<span class="tag is-danger">{{ error }}</span>
 		{% endif %}
     		<h2 class="title">Résultats</h2>
+				{{dump(hydra)}}
 			{% if hydra and hydra.member|length>0  %}
 				{% for proposal in hydra.member %}
 						{% if proposal.matchingRequests and proposal.matchingRequests|length>0  %}
