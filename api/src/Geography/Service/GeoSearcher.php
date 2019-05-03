@@ -91,26 +91,30 @@ class GeoSearcher
 
             // Determine the more logical display label considering the params
             $displayLabelTab = [];
-            if( trim($address->getStreetAddress())!=="" ){
+            if (trim($address->getStreetAddress())!=="") {
                 $displayLabelTab[] = $address->getStreetAddress();
             }
 
 
             $displayLabelTab[] = $address->getAddressLocality();
 
-            if( trim($address->getPostalCode())!=="" ){
+            if (trim($address->getPostalCode())!=="") {
                 $displayLabelTab[] = $address->getPostalCode();
             }
 
-            if(isset($this->params[0]['displayRegion']) && trim($this->params[0]['displayRegion'])==="true"){
-                if(trim($address->getMacroRegion())!=="") $displayLabelTab[] = $address->getMacroRegion();
+            if (isset($this->params[0]['displayRegion']) && trim($this->params[0]['displayRegion'])==="true") {
+                if (trim($address->getMacroRegion())!=="") {
+                    $displayLabelTab[] = $address->getMacroRegion();
+                }
             }
 
-            if(isset($this->params[0]['displayCountry']) && trim($this->params[0]['displayCountry'])==="true"){
-                if(trim($address->getCountryCode())!=="") $displayLabelTab[] = $address->getCountryCode();
+            if (isset($this->params[0]['displayCountry']) && trim($this->params[0]['displayCountry'])==="true") {
+                if (trim($address->getCountryCode())!=="") {
+                    $displayLabelTab[] = $address->getCountryCode();
+                }
             }
 
-            $address->setDisplayLabel(implode($this->params[0]['displaySeparator'],$displayLabelTab));
+            $address->setDisplayLabel(implode($this->params[0]['displaySeparator'], $displayLabelTab));
 
             $result[] = $address;
         }
