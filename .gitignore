@@ -284,6 +284,9 @@ typings/
 # Serverless directories
 .serverless
 
+# cypress environment variables file
+.env.json
+
 ### OSX ###
 # General
 
