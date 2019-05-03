@@ -88,7 +88,8 @@ class GeoSearcher
             $address->setAddressCountry($geoResult->getCountry()->getName());
             $address->setCountryCode($geoResult->getCountry()->getCode());
 
-            var_dump($this->params);die;
+            var_dump($this->params);
+            die;
             $displayLabel = "toto";
 
             $address->setDisplayLabel($displayLabel);
