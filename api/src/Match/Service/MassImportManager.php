@@ -55,11 +55,7 @@ class MassImportManager
     const MIMETYPE_PLAIN = 'text/plain';
     const MIMETYPE_JSON = 'application/json';
 
-    //const DELAY_BETWEEN_REQUESTS = 1000000; // 1 second delay between 2 requests
-    const DELAY_BETWEEN_REQUESTS = 0; // 1 second delay between 2 requests
-
-    private const MAX_DETOUR_DISTANCE_PERCENT = 40;
-    private const MAX_DETOUR_DURATION_PERCENT = 40;
+    const DELAY_BETWEEN_REQUESTS = 0; // 0 second delay between 2 requests
 
     private $entityManager;
     private $userRepository;
@@ -166,7 +162,7 @@ class MassImportManager
     {
         set_time_limit(300);
         
-        $this->logger->info('Mass analyze | Start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));    
+        $this->logger->info('Mass analyze | Start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         // we search all destinations
         $this->logger->info('Mass analyze | Find all destinations start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -247,7 +243,7 @@ class MassImportManager
         $this->logger->info('Mass analyze | Geocode personal address end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         // all addresses are geocoded, we can get the directions
-        $this->logger->info('Mass analyze | Direction personal address start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));    
+        $this->logger->info('Mass analyze | Direction personal address start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $i=1;
         foreach ($mass->getPersons() as $massPerson) {
             $this->logger->info('Mass analyze | Direction personal address n°' . $i . ' start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -280,57 +276,124 @@ class MassImportManager
             $this->logger->info('Mass analyze | Direction personal address n°' . $i . ' end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $i++;
         }
-        $this->logger->info('Mass analyze | Direction personal address end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));    
+        $this->logger->info('Mass analyze | Direction personal address end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $mass->setStatus(Mass::STATUS_ANALYZED);
         $mass->setAnalyzeDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
-        $this->logger->info('Mass analyze | End ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));    
+        $this->logger->info('Mass analyze | End ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
 
     /**
      * Match mass file data.
      *
-     * @param Mass $mass The mass to match
+     * @param Mass      $mass                       The mass to match
+     * @param float     $minOverlapRatio            The minimum overlap ratio between bouding boxes to try a match
+     * @param float     $maxSuperiorDistanceRatio   The maximum superior distance ratio between A and B to try a match
+     * @param boolean   $doubleCheck                If we want the result between A as a driver and B as a passenger if B as a driver already matches with A as a passenger
      * @return void
      */
-    public function matchMass(Mass $mass)
+    public function matchMass(
+        Mass $mass, 
+        int $maxDetourDurationPercent=40,
+        int $maxDetourDistancePercent=40,
+        float $minOverlapRatio=0, 
+        float $maxSuperiorDistanceRatio=1000, 
+        bool $doubleCheck=true)
     {
-        set_time_limit(30);
+        set_time_limit(300);
+        $matchers = [];
+        $matchers_detail = [];
+        $overlaps = [];
         
-        $this->logger->info('Mass match | Start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));    
+        $this->logger->info('Mass match | Start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         // we search the matches for all the persons
         foreach ($mass->getPersons() as $person) {
+            $this->logger->info('Mass match | Searching candidates for person n°' . $person->getId() . ' start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            // if the person is not driver we skip this person
+            if (!$person->isDriver()) {
+                continue;
+            }
             $candidateDriver = new Candidate();
             $candidateDriver->setAddresses([$person->getPersonalAddress(),$person->getWorkAddress()]);
-            $candidateDriver->setDirection($person->getDirection());            
-            $candidateDriver->setMaxDetourDurationPercent(self::MAX_DETOUR_DURATION_PERCENT);
-            $candidateDriver->setMaxDetourDistancePercent(self::MAX_DETOUR_DISTANCE_PERCENT);
+            $candidateDriver->setDirection($person->getDirection());
+            $candidateDriver->setMaxDetourDurationPercent($maxDetourDurationPercent);
+            $candidateDriver->setMaxDetourDistancePercent($maxDetourDistancePercent);
             $candidateDriver->setPerson($person);
             $candidates = [];
+            $bbox_person = [
+                $person->getDirection()->getBboxMinLon(),
+                $person->getDirection()->getBboxMinLat(),
+                $person->getDirection()->getBboxMaxLon(),
+                $person->getDirection()->getBboxMaxLat(),
+                $person->getId()
+            ];
             foreach ($mass->getPersons() as $candidate) {
-                if ($person->getId() <> $candidate->getId()) {
-                    $candidatePassenger = new Candidate();
-                    $candidatePassenger->setAddresses([$candidate->getPersonalAddress(),$candidate->getWorkAddress()]);
-                    $candidatePassenger->setDirection($candidate->getDirection());
-                    $candidatePassenger->setPerson($candidate);
-                    $candidates[] = $candidatePassenger;
+                // we check if the candidateDriver is the current candidate
+                if ($person->getId() == $candidate->getId()) {
+                    continue;
                 }
+                // we check if the candidate can be passenger
+                if (!$candidate->isPassenger()) {
+                    continue;
+                }  
+                $bbox_candidate = [
+                    $candidate->getDirection()->getBboxMinLon(),
+                    $candidate->getDirection()->getBboxMinLat(),
+                    $candidate->getDirection()->getBboxMaxLon(),
+                    $candidate->getDirection()->getBboxMaxLat(),
+                    $candidate->getId()
+                ];
+                // we check if the overlap ratio is ok
+                $overlap = $this->overlap_ratio($bbox_person,$bbox_candidate);
+                $overlaps[$person->getId()][$candidate->getId()] = $overlap;
+                if ($overlap < $minOverlapRatio) {
+                    continue;
+                }
+                // we check if the candidate distance is superior than the candidateDriver distance by the specified ratio
+                if (($candidateDriver->getDirection()->getDistance()<$candidate->getDirection()->getDistance()) &&
+                    (($candidate->getDirection()->getDistance()/$candidateDriver->getDirection()->getDistance())>$maxSuperiorDistanceRatio)) {
+                        continue;
+                }
+                // we check if we have to double check A and B
+                if (!$doubleCheck && array_key_exists($candidate->getId(),$matchers) && in_array($person->getId(),$matchers[$candidate->getId()])) {
+                    continue;
+                }
+                // here we know the candidate is really a potential candidate !
+                $candidatePassenger = new Candidate();
+                $candidatePassenger->setAddresses([$candidate->getPersonalAddress(),$candidate->getWorkAddress()]);
+                $candidatePassenger->setDirection($candidate->getDirection());
+                $candidatePassenger->setPerson($candidate);
+                $candidates[] = $candidatePassenger;
             }
+            $this->logger->info('Mass match | Searching candidates for person n°' . $person->getId() . ' end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $this->logger->info('Mass match | Calculate route matches for person n°' . $person->getId() . ' start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             if ($matches = $this->geoMatcher->singleMatch($candidateDriver, $candidates, true)) {
                 if (is_array($matches) && count($matches)>0) {
-                    echo count($matches) . " found for person #" . $person->getId() . " : \n";
-                    $i=1;
+                    // echo count($matches) . " found for person #" . $person->getId() . " " . $person->getFamilyName() . " : \n";
+                    // $i=1;
                     foreach ($matches as $match) {
-                        echo "match #$i with person #" . $match['person']->getId() . ": \n";
-                        echo "original : " . $match["originalDistance"] . " => new " . $match['newDistance'] . "\n";
-                        $i++;
+                        $matchers[$person->getId()][] = $match['person']->getId();
+                        $matchers_detail[$person->getId()][] = [
+                            'id' => $match['person']->getId(),
+                            'originalDistance' => $match["originalDistance"],
+                            'newDistance' => $match['newDistance'],
+                            'originalDuration' => $match["originalDuration"],
+                            'newDuration' => $match['newDuration'],
+                            'acceptedDetourDuration' => $match['acceptedDetourDuration'],
+                            'detourDurationPercent' => $match['detourDurationPercent'],
+                            'overlap' => $overlaps[$person->getId()][$match['person']->getId()]
+                        ];
+                        // echo "match #$i with person #" . $match['person']->getId() . " " . $match['person']->getFamilyName() . ": \n";
+                        // echo "original : " . $match["originalDistance"] . " => new " . $match['newDistance'] . "\n";
+                        // $i++;
                     }
                 }
             }
+            $this->logger->info('Mass match | Calculate route matches for person n°' . $person->getId() . ' end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
-        exit;
+        return $matchers_detail;
     }
 
     /**
@@ -495,6 +558,8 @@ class MassImportManager
             $massPerson->setWorkAddress($workAddress);
             $massPerson->setOutwardTime($person->outwardTime);
             $massPerson->setReturnTime($person->returnTime);
+            $massPerson->setDriver($person->driver);
+            $massPerson->setPassenger($person->passenger);
             $persons[] = $massPerson;
         }
         $massData->setData($persons);
@@ -658,6 +723,43 @@ class MassImportManager
             $this->entityManager->persist($massPerson);
         }
         $this->entityManager->flush();
+    }
+
+    /**
+     * Check if 2 bounding boxes have collision.
+     *
+     * @param array $bbox1
+     * @param array $bbox2
+     * @return boolean
+     */
+    private function hasCollisions(array $bbox1, array $bbox2) {
+        //return true;
+        // todo : refactor the values to be strictly positive, to avoid problems with negative coordinates
+        $x1 = $bbox1[0];
+        $y1 = $bbox1[1];
+        $w1 = $bbox1[2]-$bbox1[0];
+        $h1 = $bbox1[3]-$bbox1[1];
+        $x2 = $bbox2[0];
+        $y2 = $bbox2[1];
+        $w2 = $bbox2[2]-$bbox2[0];
+        $h2 = $bbox2[3]-$bbox2[1];
+        return ($x1<($x2+$w2)) && (($x1+$w1)>$x2) && ($y1<($y2+$h2)) && (($h1+$y1)>$y2);;
+    }
+
+    /**
+     * Calculate the overlap ratio between 2 bounding boxes
+     *
+     * @param array $bbox1
+     * @param array $bbox2
+     * @return void
+     */
+    private function overlap_ratio(array $bbox1, array $bbox2) {
+        $surface1 = ($bbox1[2]-$bbox1[0])*($bbox1[3]-$bbox1[1]);
+        $surface2 = ($bbox2[2]-$bbox2[0])*($bbox2[3]-$bbox2[1]);
+        $surface_intersect = max(0, min($bbox1[2], $bbox2[2]) - max($bbox1[0], $bbox2[0])) * max(0, min($bbox1[3], $bbox2[3]) - max($bbox1[1], $bbox2[1]));
+        $surface_union = $surface1+$surface2-$surface_intersect;
+        $ratio = $surface_intersect/$surface_union;
+        return $ratio;
     }
 }
 

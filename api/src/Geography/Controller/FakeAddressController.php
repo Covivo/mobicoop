@@ -46,11 +46,10 @@ class FakeAddressController extends AbstractController
     {
         $generated = 0;
         $fakes = [];
-        while ($generated < $number)
-        {
-            $lat = $this->randomFloat($min_lat,$max_lat);
-            $lon = $this->randomFloat($min_lon,$max_lon);
-            if ($address = $geoSearcher->reverseGeoCode($lat,$lon)) {
+        while ($generated < $number) {
+            $lat = $this->randomFloat($min_lat, $max_lat);
+            $lon = $this->randomFloat($min_lon, $max_lon);
+            if ($address = $geoSearcher->reverseGeoCode($lat, $lon)) {
                 $fakes[] = $address;
                 $generated++;
             }
@@ -62,7 +61,8 @@ class FakeAddressController extends AbstractController
         return new Response();
     }
 
-    private function randomFloat($min = 0, $max = 1) {
+    private function randomFloat($min = 0, $max = 1)
+    {
         return $min + mt_rand() / mt_getrandmax() * ($max - $min);
     }
 }

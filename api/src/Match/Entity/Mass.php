@@ -69,7 +69,50 @@ use Doctrine\Common\Collections\Collection;
  *          "match"={
  *              "method"="GET",
  *              "path"="/masses/{id}/match",
- *              "controller"=MassMatchAction::class
+ *              "controller"=MassMatchAction::class,
+ *              "swagger_context"={
+ *                  "parameters"={
+ *                     {
+ *                         "name" = "maxDetourDurationPercent",
+ *                         "in" = "query",
+ *                         "required" = "false",
+ *                         "type" = "number",
+ *                         "format" = "integer",
+ *                         "description" = "The maximum detour duration percent (default:40)"
+ *                     },
+ *                     {
+ *                         "name" = "maxDetourDistancePercent",
+ *                         "in" = "query",
+ *                         "required" = "false",
+ *                         "type" = "number",
+ *                         "format" = "integer",
+ *                         "description" = "The maximum detour distance percent (default:40)"
+ *                     },
+ *                     {
+ *                         "name" = "minOverlapRatio",
+ *                         "in" = "query",
+ *                         "required" = "false",
+ *                         "type" = "number",
+ *                         "format" = "float",
+ *                         "description" = "The minimum overlap ratio between bouding boxes to try a match (default:0)"
+ *                     },
+ *                     {
+ *                         "name" = "maxSuperiorDistanceRatio",
+ *                         "in" = "query",
+ *                         "required" = "false",
+ *                         "type" = "number",
+ *                         "format" = "integer",
+ *                         "description" = "The maximum superior distance ratio between A and B to try a match (default:1000)"
+ *                     },
+ *                     {
+ *                         "name" = "doubleCheck",
+ *                         "in" = "query",
+ *                         "required" = "false",
+ *                         "type" = "boolean",
+ *                         "description" = "The maximum superior distance ratio between A and B to try a match (default:false)"
+ *                     }
+ *                   }
+ *              }
  *          },
  *      }
  * )

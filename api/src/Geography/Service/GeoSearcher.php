@@ -101,13 +101,13 @@ class GeoSearcher
      */
     public function reverseGeoCode(float $lat, float $lon)
     {
-        if ($geoResults = $this->geocoder->reverseQuery(ReverseQuery::fromCoordinates($lat,$lon))) {
+        if ($geoResults = $this->geocoder->reverseQuery(ReverseQuery::fromCoordinates($lat, $lon))) {
             foreach ($geoResults as $geoResult) {
                 if (
-                    ($geoResult->getStreetNumber() <> "") && 
+                    ($geoResult->getStreetNumber() <> "") &&
                     ($geoResult->getStreetName() <> "") &&
                     ($geoResult->getPostalCode() <> "") &&
-                    ($geoResult->getLocality() <> "") && 
+                    ($geoResult->getLocality() <> "") &&
                     ($geoResult->getStreetNumber() < 500)
                 ) {
                     return $geoResult->getStreetNumber() . ";" . $geoResult->getStreetName() . ";" . $geoResult->getPostalCode() . ";" . $geoResult->getLocality();
