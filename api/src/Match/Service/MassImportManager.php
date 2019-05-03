@@ -294,13 +294,13 @@ class MassImportManager
      * @return void
      */
     public function matchMass(
-        Mass $mass, 
+        Mass $mass,
         int $maxDetourDurationPercent=40,
         int $maxDetourDistancePercent=40,
-        float $minOverlapRatio=0, 
-        float $maxSuperiorDistanceRatio=1000, 
-        bool $doubleCheck=true)
-    {
+        float $minOverlapRatio=0,
+        float $maxSuperiorDistanceRatio=1000,
+        bool $doubleCheck=true
+    ) {
         set_time_limit(300);
         $matchers = [];
         $matchers_detail = [];
@@ -337,7 +337,7 @@ class MassImportManager
                 // we check if the candidate can be passenger
                 if (!$candidate->isPassenger()) {
                     continue;
-                }  
+                }
                 $bbox_candidate = [
                     $candidate->getDirection()->getBboxMinLon(),
                     $candidate->getDirection()->getBboxMinLat(),
@@ -346,7 +346,7 @@ class MassImportManager
                     $candidate->getId()
                 ];
                 // we check if the overlap ratio is ok
-                $overlap = $this->overlap_ratio($bbox_person,$bbox_candidate);
+                $overlap = $this->overlap_ratio($bbox_person, $bbox_candidate);
                 $overlaps[$person->getId()][$candidate->getId()] = $overlap;
                 if ($overlap < $minOverlapRatio) {
                     continue;
@@ -354,10 +354,10 @@ class MassImportManager
                 // we check if the candidate distance is superior than the candidateDriver distance by the specified ratio
                 if (($candidateDriver->getDirection()->getDistance()<$candidate->getDirection()->getDistance()) &&
                     (($candidate->getDirection()->getDistance()/$candidateDriver->getDirection()->getDistance())>$maxSuperiorDistanceRatio)) {
-                        continue;
+                    continue;
                 }
                 // we check if we have to double check A and B
-                if (!$doubleCheck && array_key_exists($candidate->getId(),$matchers) && in_array($person->getId(),$matchers[$candidate->getId()])) {
+                if (!$doubleCheck && array_key_exists($candidate->getId(), $matchers) && in_array($person->getId(), $matchers[$candidate->getId()])) {
                     continue;
                 }
                 // here we know the candidate is really a potential candidate !
@@ -732,7 +732,8 @@ class MassImportManager
      * @param array $bbox2
      * @return boolean
      */
-    private function hasCollisions(array $bbox1, array $bbox2) {
+    private function hasCollisions(array $bbox1, array $bbox2)
+    {
         //return true;
         // todo : refactor the values to be strictly positive, to avoid problems with negative coordinates
         $x1 = $bbox1[0];
@@ -743,7 +744,8 @@ class MassImportManager
         $y2 = $bbox2[1];
         $w2 = $bbox2[2]-$bbox2[0];
         $h2 = $bbox2[3]-$bbox2[1];
-        return ($x1<($x2+$w2)) && (($x1+$w1)>$x2) && ($y1<($y2+$h2)) && (($h1+$y1)>$y2);;
+        return ($x1<($x2+$w2)) && (($x1+$w1)>$x2) && ($y1<($y2+$h2)) && (($h1+$y1)>$y2);
+        ;
     }
 
     /**
@@ -753,7 +755,8 @@ class MassImportManager
      * @param array $bbox2
      * @return void
      */
-    private function overlap_ratio(array $bbox1, array $bbox2) {
+    private function overlap_ratio(array $bbox1, array $bbox2)
+    {
         $surface1 = ($bbox1[2]-$bbox1[0])*($bbox1[3]-$bbox1[1]);
         $surface2 = ($bbox2[2]-$bbox2[0])*($bbox2[3]-$bbox2[1]);
         $surface_intersect = max(0, min($bbox1[2], $bbox2[2]) - max($bbox1[0], $bbox2[0])) * max(0, min($bbox1[3], $bbox2[3]) - max($bbox1[1], $bbox2[1]));

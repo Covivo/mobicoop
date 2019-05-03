@@ -50,13 +50,24 @@ final class MassMatchAction
             $minOverlapRatio = 0;
             $maxSuperiorDistanceRatio = 1000;
             $doubleCheck = true;
-            if ($this->request->get("maxDetourDurationPercent")) $maxDetourDurationPercent = $this->request->get("maxDetourDurationPercent");
-            if ($this->request->get("maxDetourDistancePercent")) $maxDetourDistancePercent = $this->request->get("maxDetourDistancePercent");
-            if ($this->request->get("minOverlapRatio")) $minOverlapRatio = $this->request->get("minOverlapRatio");
-            if ($this->request->get("maxSuperiorDistanceRatio")) $maxSuperiorDistanceRatio = $this->request->get("maxSuperiorDistanceRatio");
-            if ($this->request->get("doubleCheck")) $doubleCheck = $this->request->get("doubleCheck");
-            $result = $this->massImportManager->matchMass($data,$maxDetourDurationPercent,$maxDetourDistancePercent,$minOverlapRatio,$maxSuperiorDistanceRatio,$doubleCheck);
-            print_r($result);exit;
+            if ($this->request->get("maxDetourDurationPercent")) {
+                $maxDetourDurationPercent = $this->request->get("maxDetourDurationPercent");
+            }
+            if ($this->request->get("maxDetourDistancePercent")) {
+                $maxDetourDistancePercent = $this->request->get("maxDetourDistancePercent");
+            }
+            if ($this->request->get("minOverlapRatio")) {
+                $minOverlapRatio = $this->request->get("minOverlapRatio");
+            }
+            if ($this->request->get("maxSuperiorDistanceRatio")) {
+                $maxSuperiorDistanceRatio = $this->request->get("maxSuperiorDistanceRatio");
+            }
+            if ($this->request->get("doubleCheck")) {
+                $doubleCheck = $this->request->get("doubleCheck");
+            }
+            $result = $this->massImportManager->matchMass($data, $maxDetourDurationPercent, $maxDetourDistancePercent, $minOverlapRatio, $maxSuperiorDistanceRatio, $doubleCheck);
+            print_r($result);
+            exit;
         }
         return $data;
     }
