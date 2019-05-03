@@ -102,6 +102,7 @@ class GeoSearcher
                 $displayLabelTab[] = $address->getPostalCode();
             }
 
+            // Theses following parameters are in your .env.local
             if (isset($this->params[0]['displayRegion']) && trim($this->params[0]['displayRegion'])==="true") {
                 if (trim($address->getMacroRegion())!=="") {
                     $displayLabelTab[] = $address->getMacroRegion();
@@ -114,7 +115,13 @@ class GeoSearcher
                 }
             }
 
-            $address->setDisplayLabel(implode($this->params[0]['displaySeparator'], $displayLabelTab));
+            // if no separators in .env.local, we are using comma
+            $displaySeparator = ", ";
+            if (isset($this->params[0]['displaySeparator'])) {
+                $displaySeparator = $this->params[0]['displaySeparator'];
+            }
+
+            $address->setDisplayLabel(implode($displaySeparator, $displayLabelTab));
 
             $result[] = $address;
         }
