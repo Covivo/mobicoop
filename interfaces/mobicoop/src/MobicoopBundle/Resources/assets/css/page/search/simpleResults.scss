@@ -90,7 +90,23 @@ body {
     }
   }
   .results {
+    background-color: $secondary;
+    color: $primary;
+    border-radius: 10px;
+    height: 15vw;
+    width: 50vw;
+    padding: 1vw;
+    align-self: center;
+  }
+  .disabled {
+    color: #808080A9;
+    opacity: 0.5;
+  }
+  .dropDownResults {
+    margin-left: -1vw;
+    margin-top: 1.5vh;
     background-color: $primary;
+    color: $secondary;
     border-radius: 10px;
     height: 15vw;
     width: 50vw;

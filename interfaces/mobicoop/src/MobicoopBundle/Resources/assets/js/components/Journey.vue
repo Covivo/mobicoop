@@ -10,7 +10,6 @@
           <div
             v-for="(journey,index) in externalsJourneys"
             :key="index"
-            :alt="journey.origin" 
             class="tile is-child results "
           >
             <div class="columns is-vcentered ">
@@ -18,40 +17,34 @@
                 <p>{{ journey.driver.alias }}</p>
               </div>
               <div class="column">
-                <p>🚙</p><p />
+                <p class="is-pulled-right">
+                  <i 
+                    :class="journey.frequency === 'regular' ? 'far fa-calendar-alt' : 'far fa-calendar'"
+                  />
+                </p>
               </div>
-              <div class="column">
-                <p>{{ journey.driver.alias }}</p><p />
-              </div>
-              <div class="column">
-                <p>note</p><p />
-              </div>
-              <div class="column">
-                <a href="">contacter</a>
-              </div>		
             </div>
             <div class="columns is-vcentered ">
               <div class="column">
-                <p>{{ journey.outward.mindate }}</p><p />
+                <p>Du {{ journey.outward.mindate }}</p>
+                <p>au {{ journey.outward.maxdate }}</p>
               </div>
               <div class="column">
-                <p>{{ journey.outward.mindate }}</p>
                 <p>{{ journey.from.city }}</p>
               </div>
               <div class="column">
-                <p>{{ journey.outward.mindate }}</p>
                 <p>{{ journey.to.city }}</p>
-              </div>
-              <div class="column">
-                <p>tarif</p>
               </div>
             </div>
             <div class="columns is-vcentered ">
               <div class="column">
-                <p>bouton voir detail</p><p />
+                <p>bouton voir detail</p>
               </div>
-              <div class="column">
-                <p>source</p>
+              <div class="column is-pulled-right">
+                <a
+                  class="button is-tertiary is-outlined is-pulled-right"
+                  :href="journey.url.includes(journey.origin) ? `https://${journey.url}` : `https://${journey.origin}${journey.url}`"
+                >{{ journey.origin }} </a>
               </div>
             </div>	
           </div>
@@ -124,7 +117,7 @@ export default {
       return window.location.origin+'/provider/rdex?'
     },  
     constructJourneyURL(providerName) {
-      return window.location.origin+`/journey/rdex?provider=${providerName}&driver=1&passenger=1&from_latitude=${this.destinationLatitude}&from_longitude=${this.destinationLongitude}&to_latitude=${this.originLatitude}&to_longitude=${this.originLongitude}`
+      return window.location.origin+`/journey/rdex?provider=${providerName}&driver=1&passenger=1&from_latitude=${this.originLatitude}&from_longitude=${this.originLongitude}&to_latitude=${this.destinationLatitude}&to_longitude=${this.destinationLongitude}`
     },
   }
 };
