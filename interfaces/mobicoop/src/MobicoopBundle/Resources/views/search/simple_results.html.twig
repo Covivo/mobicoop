@@ -96,8 +96,7 @@
                                                     <p>{{ matching.proposalOffer.waypoints[1].address.addressLocality }}</p>
                                                 </div>
                                                 <div class="column">
-                                                    <p class="is-pulled-right">{{ matching.proposalOffer.criteria.priceKm * ((matching.filters.commonDistance + matching.filters.detourDistance) / 1000)|round(1) }}
-                                                        €</p>
+                                                    <p class="is-pulled-right">{{ matching.proposalOffer.criteria.priceKm * ((matching.filters.commonDistance + matching.filters.detourDistance) / 1000)|round(1) }}€</p>
                                                 </div>
                                             </div>
                                             <div class="columns is-vcentered">
@@ -107,7 +106,7 @@
                                                                 <i class="fas fa-angle-down" aria-hidden="true"></i>
                                                             </button>
                                                         <div class="dropdown-menu dropDownResults" role="menu">
-                                                            <div class="columns is-vcentered ">
+                                                            <div class="columns is-vcentered">
                                                                 <div class="column">
                                                                     {% if matching.proposalOffer.user.gender == 1 %}
                                                                         <p><i class="fas fa-mars"></i>XX ans</p>
