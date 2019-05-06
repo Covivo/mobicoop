@@ -10,9 +10,9 @@
           <div
             v-for="(journey,index) in externalsJourneys"
             :key="index"
-            class="tile is-child results "
+            class="tile is-child resultsV1 "
           >
-            <div class="columns is-vcentered ">
+            <div class="columns is-vcentered">
               <div class="column">
                 <p>{{ journey.driver.alias }}</p>
               </div>
@@ -24,7 +24,7 @@
                 </p>
               </div>
             </div>
-            <div class="columns is-vcentered ">
+            <div class="columns is-vcentered second">
               <div class="column">
                 <p>Du {{ journey.outward.mindate }}</p>
                 <p>au {{ journey.outward.maxdate }}</p>
@@ -33,16 +33,16 @@
                 <p>{{ journey.from.city }}</p>
               </div>
               <div class="column">
+                <p><i class="fas fa-long-arrow-alt-right" /></p>
+              </div>
+              <div class="column">
                 <p>{{ journey.to.city }}</p>
               </div>
             </div>
             <div class="columns is-vcentered ">
-              <div class="column">
-                <p>bouton voir detail</p>
-              </div>
               <div class="column is-pulled-right">
                 <a
-                  class="button is-tertiary is-outlined is-pulled-right"
+                  class="button source is-outlined is-pulled-right"
                   :href="journey.url.includes(journey.origin) ? `https://${journey.url}` : `https://${journey.origin}${journey.url}`"
                 >{{ journey.origin }} </a>
               </div>

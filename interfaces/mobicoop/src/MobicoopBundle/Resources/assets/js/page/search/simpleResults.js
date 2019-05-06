@@ -32,7 +32,6 @@ new Vue({
     Journey
   }
 })
-
 let dropdown = document.querySelector('.dropdown');
 dropdown.addEventListener('click', function(event) {
   event.stopPropagation();

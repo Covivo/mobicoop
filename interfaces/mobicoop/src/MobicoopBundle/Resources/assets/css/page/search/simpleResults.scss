@@ -37,10 +37,9 @@ body {
     text-decoration: underline;
   }
   #rechercher,
-  #save {
+  #save,
+  .contacter {
     background-color: $white;
-    box-shadow: 2px 2px 2px #000;
-    padding: 0;
     font-size: 100%;
     font-family: inherit;
     font-weight: bold;
@@ -97,10 +96,28 @@ body {
     width: 50vw;
     padding: 1vw;
     align-self: center;
+    .first {
+      background-color: #022650;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
   }
   .disabled {
     color: #808080A9;
     opacity: 0.5;
+  }
+  .dropdown {
+    .button {
+      background-color: $white;
+      color: $tertiary;
+      &:hover {
+        color: $white;
+        background-color: $tertiary;
+      }
+      .fas {
+        padding: 0;
+      }
+    }
   }
   .dropDownResults {
     margin-left: -1vw;
@@ -112,5 +129,33 @@ body {
     width: 50vw;
     padding: 1vw;
     align-self: center;
+    .offer {
+      color: $tertiary;
+    }
+    .retour {
+      background-color: $primary-dark;
+      color: $white;
+    }
+  }
+  .resultsV1 {
+    background-color: $secondary;
+    color: $primary;
+    border-radius: 10px;
+    height: 15vw;
+    width: 50vw;
+    padding: 1vw;
+    align-self: center;
+    .second {
+      background-color: #022650;
+    }
+    .source {
+      background-color: $white;
+      color: $tertiary;
+      border-radius: 20px;
+      &:hover {
+        color: $white;
+        background-color: $tertiary;
+      }
+    }
   }
 }

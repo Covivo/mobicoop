@@ -107,7 +107,7 @@ import moment from "moment";
 import Geocomplete from "./Geocomplete";
 // import BDatepicker from "buefy/src/components/datepicker/Datepicker";
 export default {
-  name: 'Homesearchform',
+  name: 'Resultssearchform',
   components: {
     // BDatepicker,
     Geocomplete
