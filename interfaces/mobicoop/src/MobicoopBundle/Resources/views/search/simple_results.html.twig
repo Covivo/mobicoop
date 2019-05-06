@@ -18,9 +18,7 @@
     </section>
 
     <section id="simple">
-        <Resultssearchform geo-search-url="/geosearch?search=" route="covoiturage/recherche"
-                           date="{{ date|date('m/d/Y') }}" time="{{ date|date('H:i') }}" origin="{{ origin }}"
-                           destination="{{ destination }}"></Resultssearchform>
+        <Resultssearchform geo-search-url="/geosearch?search=" route="covoiturage/recherche" date="{{ date|date('m/d/Y') }}" time="{{ date|date('H:i') }}" origin="{{ origin }}" destination="{{ destination }}"></Resultssearchform>
     </section>
 
     <section class="section">
@@ -96,7 +94,7 @@
                                                     <p>{{ matching.proposalOffer.waypoints[1].address.addressLocality }}</p>
                                                 </div>
                                                 <div class="column">
-                                                    <p class="is-pulled-right">{{ matching.proposalOffer.criteria.priceKm * ((matching.filters.commonDistance + matching.filters.detourDistance) / 1000)|round(1) }}€</p>
+                                                    <p class="is-pulled-right">{{ matching.proposalOffer.criteria.priceKm * ((matching.filters.commonDistance + matching.filters.detourDistance) / 1000)|round(1) }} €</p>
                                                 </div>
                                             </div>
                                             <div class="columns is-vcentered">
@@ -236,8 +234,7 @@
                                                     <p>{{ matching.proposalOffer.waypoints[1].address.addressLocality }}</p>
                                                 </div>
                                                 <div class="column">
-                                                    <p class="is-pulled-right">{{ matching.proposalRequest.criteria.priceKm * ((matching.filters.commonDistance + matching.filters.detourDistance) / 1000)|round(1) }}
-                                                        €</p>
+                                                    <p class="is-pulled-right">{{ matching.proposalRequest.criteria.priceKm * ((matching.filters.commonDistance + matching.filters.detourDistance) / 1000)|round(1) }} €</p>
                                                 </div>
                                             </div>
                                             <div class="columns is-vcentered">
@@ -330,9 +327,6 @@
                  destination-longitude="{{ destination_longitude }}"></Journey>
         </div>
     </section>
-
-
-
 
 {% endblock %}
 {% block javascripts %}
