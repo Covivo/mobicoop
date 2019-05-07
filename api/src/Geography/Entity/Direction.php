@@ -115,6 +115,13 @@ class Direction
     private $bboxMaxLat;
     
     /**
+     * @var int|null The initial bearing of the direction in degrees.
+     * @ORM\Column(type="integer",nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $bearing;
+
+    /**
      * @var string The textual encoded detail of the direction.
      * @ORM\Column(type="text")
      * @Groups({"read","write"})
@@ -265,6 +272,18 @@ class Direction
     public function setBboxMaxLat(?float $bboxMaxLat): self
     {
         $this->bboxMaxLat = $bboxMaxLat;
+        
+        return $this;
+    }
+
+    public function getBearing(): ?int
+    {
+        return $this->bearing;
+    }
+    
+    public function setBearing(?int $bearing): self
+    {
+        $this->bearing = $bearing;
         
         return $this;
     }

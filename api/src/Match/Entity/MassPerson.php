@@ -112,6 +112,24 @@ class MassPerson
      */
     private $returnTime;
 
+    /**
+     * @var boolean The person accepts to be a driver.
+     *
+     * @Assert\Type("bool")
+     * @Assert\NotBlank(groups={"mass"})
+     * @ORM\Column(type="boolean")
+     */
+    private $driver;
+
+    /**
+     * @var boolean The person accepts to be a passenger.
+     *
+     * @Assert\Type("bool")
+     * @Assert\NotBlank(groups={"mass"})
+     * @ORM\Column(type="boolean")
+     */
+    private $passenger;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -230,6 +248,30 @@ class MassPerson
             $this->returnTime = \Datetime::createFromFormat('H:i:s', $returnTime);
         }
 
+        return $this;
+    }
+
+    public function isDriver(): ?bool
+    {
+        return $this->driver;
+    }
+    
+    public function setDriver(bool $isDriver): self
+    {
+        $this->driver = $isDriver;
+        
+        return $this;
+    }
+    
+    public function isPassenger(): ?bool
+    {
+        return $this->passenger;
+    }
+    
+    public function setPassenger(bool $isPassenger): self
+    {
+        $this->passenger = $isPassenger;
+        
         return $this;
     }
 }
