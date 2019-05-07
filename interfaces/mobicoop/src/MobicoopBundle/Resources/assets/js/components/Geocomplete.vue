@@ -129,8 +129,8 @@ export default {
 <style lang="scss" scoped>
 @import "../../css/_variables";
 .searchResult {
-  color: red !important;
-  text-decoration: none !important;
+  color: $secondary ;
+  text-decoration: none;
 }
 
 </style>

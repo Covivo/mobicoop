@@ -114,7 +114,7 @@ class CarpoolController extends AbstractController
             'origin_longitude' => urldecode($origin_longitude),
             'destination_latitude' => urldecode($destination_latitude),
             'destination_longitude' => urldecode($destination_longitude),
-            'date' =>  \Datetime::createFromFormat("YmdHis", $date)->format('d/m/Y à H:i'),
+            'date' =>  \Datetime::createFromFormat("YmdHis", $date),
             'hydra' => $proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("YmdHis", $date)),
         ]);
     }

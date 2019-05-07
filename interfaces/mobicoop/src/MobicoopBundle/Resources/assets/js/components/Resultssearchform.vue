@@ -2,12 +2,46 @@
   <section class="section">
     <div class="tile is-ancestor">
       <div class="tile is-vertical is-12">
-        <div class="tile is-child center-all">
-          <div
-            class="columns is-centered is-vcentered SearchBar"
-          >
-            <div class="column has-text-centered">
+        <div class="tile is-child search">
+          <div class="columns is-vcentered">
+            <div class="column">
+              <p><span class="dot is-pulled-left" /></p>
+            </div>
+            <div class="column is-3 save">
+              <div
+                id="save"
+                class="button save is-tertiary is-pulled-right"
+                style="width: 100%"
+              >
+                Enregistrer
+              </div>
+            </div>
+          </div>
+          <div class="columns dateTime">
+            <div class="column">
+              <div class="departureDate">
+                <p class="underlined">
+                  {{ date }}
+                </p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="departureTime">
+                <p class="underlined">
+                  {{ time }}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="columns SearchBar">
+            <div class="column ">
+              <div />
+            </div>
+            <div class="column">
               <!-- inputs outward destination -->
+              <p class="is-size-7 labelOrigin">
+                Lieu de départ
+              </p>
               <label
                 class="label"
                 for="origin"
@@ -15,7 +49,7 @@
                 <geocomplete
                   id="origin"
                   name="origin"
-                  placeholder="Lieu de départ"
+                  :placeholder="origin"
                   title="Depuis"
                   aria-label="Départ"
                   :url="geoSearchUrl"
@@ -23,7 +57,10 @@
                 />
               </label>
             </div>
-            <div class="column has-text-centered test">
+            <div class="column">
+              <p class="is-size-7 labelDestination">
+                Lieu de d'arrivée
+              </p>
               <label
                 class="label"
                 for="destination"
@@ -31,61 +68,17 @@
                 <geocomplete
                   id="destination"
                   name="destination"
-                  placeholder="Lieu d'arrivée"
+                  :placeholder="destination"
                   title="Vers"
                   :url="geoSearchUrl"
                   @geoSelected="selectedGeo"
                 />
               </label>
             </div>
-            <!-- Commented and not removed because it can be usefull later if we'll implement the possibility to choose a date and an hour for the simple search -->
-            <!-- datepicker -->
-            <!-- <label
-                class="label"
-                for="dateDepart"
-              >Date de départ
-                <b-datepicker
-                  id="dateDepart"
-                  v-model="outwardDate"
-                  :placeholder="'Date de départ...'"
-                  title="Date de départ"
-                  :day-names="daysShort"
-                  :month-names="months"
-                  :first-day-of-week="1"
-                  position="is-top-right"
-                  icon-pack="fas"
-                  editable
-                />
-              </label> -->
-            <!-- timepicker -->
-            <!-- <label
-                class="label"
-                for="heureDepart"
-              >Heure de départ
-                <b-timepicker
-                  id="heureDepart"
-                  v-model="outwardTime"
-                  placeholder="Heure de départ..."
-                  title="Heure de départ"
-                >
-                  <button
-                    class="button is-mobicoopgreen"
-                    @click="outwardTime = new Date()"
-                  >
-                    <b-icon icon="clock" />
-                    <span>Maintenant</span>
-                  </button>
-                  <button
-                    class="button is-mobicooppink"
-                    @click="outwardTime = null"
-                  >
-                    <b-icon icon="close" />
-                    <span>Effacer</span>
-                  </button>
-                </b-timepicker>
-              </label> -->
-            <!-- search button -->
-            <div class="column is-3 has-text-centered">
+          </div>
+          <div class="columns">
+            <div class="column" />
+            <div class="column is-3 is-pulled-right">
               <label
                 for="rechercher"
                 class="label"
@@ -114,7 +107,7 @@ import moment from "moment";
 import Geocomplete from "./Geocomplete";
 // import BDatepicker from "buefy/src/components/datepicker/Datepicker";
 export default {
-  name: 'Homesearchform',
+  name: 'Resultssearchform',
   components: {
     // BDatepicker,
     Geocomplete
@@ -127,7 +120,24 @@ export default {
     route: {
       type: String,
       default: ""
+    },
+    date: {
+      type: String,
+      default: ""
+    },
+    time: {
+      type: String,
+      default: ""
+    },
+    origin: {
+      type: String,
+      default: ""
+    },
+    destination: {
+      type: String,
+      default: ""
     }
+
   },
   data() {
     return {
