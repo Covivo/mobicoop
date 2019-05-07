@@ -36,13 +36,15 @@ use Geocoder\Query\ReverseQuery;
 class GeoSearcher
 {
     private $geocoder;
+    private $params;
 
     /**
      * Constructor.
      */
-    public function __construct(PluginProvider $geocoder)
+    public function __construct(PluginProvider $geocoder, array $params)
     {
         $this->geocoder = $geocoder;
+        $this->params = $params;
     }
 
     /**
@@ -86,6 +88,41 @@ class GeoSearcher
             $address->setPostalCode($geoResult->getPostalCode());
             $address->setAddressCountry($geoResult->getCountry()->getName());
             $address->setCountryCode($geoResult->getCountry()->getCode());
+
+
+            // Determine the more logical display label considering the params
+            $displayLabelTab = [];
+            if (trim($address->getStreetAddress())!=="") {
+                $displayLabelTab[] = $address->getStreetAddress();
+            }
+
+
+            $displayLabelTab[] = $address->getAddressLocality();
+
+            if (trim($address->getPostalCode())!=="") {
+                $displayLabelTab[] = $address->getPostalCode();
+            }
+
+            // Theses following parameters are in your .env.local
+            if (isset($this->params[0]['displayRegion']) && trim($this->params[0]['displayRegion'])==="true") {
+                if (trim($address->getMacroRegion())!=="") {
+                    $displayLabelTab[] = $address->getMacroRegion();
+                }
+            }
+
+            if (isset($this->params[0]['displayCountry']) && trim($this->params[0]['displayCountry'])==="true") {
+                if (trim($address->getCountryCode())!=="") {
+                    $displayLabelTab[] = $address->getCountryCode();
+                }
+            }
+
+            // if no separators in .env.local, we are using comma
+            $displaySeparator = ", ";
+            if (isset($this->params[0]['displaySeparator'])) {
+                $displaySeparator = $this->params[0]['displaySeparator'];
+            }
+
+            $address->setDisplayLabel(implode($displaySeparator, $displayLabelTab));
 
             $result[] = $address;
         }

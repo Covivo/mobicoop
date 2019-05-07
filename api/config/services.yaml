@@ -99,3 +99,9 @@ services:
             $params: '%mass%'
         tags:   
             - { name: monolog.logger, channel: mass }
+
+    # inject parameters to GeoSearcher
+    App\Geography\Service\GeoSearcher:
+        arguments:
+            $params:
+                - { displayCountry: '%env(resolve:DISPLAY_COUNTRY)%', displayRegion: '%env(resolve:DISPLAY_REGION)%', displaySeparator: '%env(resolve:DISPLAY_SEPARATOR)%' }
