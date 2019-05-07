@@ -98,18 +98,18 @@ class GeoRouterProvider implements ProviderInterface
                                 "&points_encoded=".self::GR_POINTS_ENCODED .
                                 ($this->detailDuration?'&details=time':'').
                                 "&elevation=" . self::GR_ELEVATION;
-                            $getParams[$i] = $params; 
+                            $getParams[$i] = $params;
                             $requestsOwner[$i] = $ownerId;
                             $i++;
                         }
-                    }   
-                    $response = $dataProvider->getAsyncCollection($getParams); 
+                    }
+                    $response = $dataProvider->getAsyncCollection($getParams);
                     foreach ($response->getValue() as $key=>$value) {
                         $data = json_decode($value, true);
                         foreach ($data["paths"] as $path) {
                             $this->collection[$requestsOwner[$key]][] = self::deserialize($class, $path);
                         }
-                    }   
+                    }
                     return $this->collection;
                 } else {
                     $getParams = "";
@@ -124,7 +124,7 @@ class GeoRouterProvider implements ProviderInterface
                         ($this->detailDuration?'&details=time':'').
                         "&elevation=" . self::GR_ELEVATION;
                     $response = $dataProvider->getCollection($getParams);
-                    $this->bearing = $this->geoTools->getRhumbLineBearing($params['points'][0]->getLatitude(),$params['points'][0]->getLongitude(),$params['points'][count($params['points'])-1]->getLatitude(),$params['points'][count($params['points'])-1]->getLongitude());
+                    $this->bearing = $this->geoTools->getRhumbLineBearing($params['points'][0]->getLatitude(), $params['points'][0]->getLongitude(), $params['points'][count($params['points'])-1]->getLatitude(), $params['points'][count($params['points'])-1]->getLongitude());
                 }
                 if ($response->getCode() == 200) {
                     $data = json_decode($response->getValue(), true);
@@ -430,5 +430,4 @@ class GeoRouterProvider implements ProviderInterface
         }
         return $address;
     }
-
 }

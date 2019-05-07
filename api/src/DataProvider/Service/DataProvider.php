@@ -90,7 +90,7 @@ class DataProvider
         foreach ($params as $key=>$resource) {
             $promises[$key] = $this->client->getAsync($this->resource, ['query'=>$resource]);
         }
-        try { 
+        try {
             $results = Promise\unwrap($promises);
             $bodies = [];
             foreach ($results as $key=>$result) {

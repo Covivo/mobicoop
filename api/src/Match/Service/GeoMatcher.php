@@ -96,7 +96,7 @@ class GeoMatcher
             $ownerRoutes = $this->geoRouter->getAsyncRoutes($addressesForRoutes, true);
             // we treat the routes to check if they match
             foreach ($ownerRoutes as $ownerId=>$routes) {
-                if ($matches = $this->checkMatch($candidate,$candidatesById[$ownerId],$routes,$addressesForRoutes[$ownerId])) {
+                if ($matches = $this->checkMatch($candidate, $candidatesById[$ownerId], $routes, $addressesForRoutes[$ownerId])) {
                     foreach ($matches as $match) {
                         $matchesReturned[] = $match;
                     }
@@ -120,12 +120,12 @@ class GeoMatcher
     {
         $result = null;
         
-        $pointsArray = $this->generatePointsArray($candidate1,$candidate2);
+        $pointsArray = $this->generatePointsArray($candidate1, $candidate2);
 
         // for each possible route, we check if it's acceptable
         foreach ($pointsArray as $points) {
             if ($routes = $this->geoRouter->getRoutes(array_values($points), true)) {
-                $result = $this->checkMatch($candidate1,$candidate2,$routes,$points);
+                $result = $this->checkMatch($candidate1, $candidate2, $routes, $points);
             }
         }
         return $result;

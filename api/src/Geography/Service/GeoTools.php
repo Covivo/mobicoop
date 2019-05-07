@@ -83,11 +83,10 @@ class GeoTools
         $dPhi = log(tan(deg2rad($latitudeTo) / 2 + pi() / 4) / tan(deg2rad($latitudeFrom) / 2 + pi() / 4));
         
         //we need to recalculate $dLon if it is greater than pi
-        if(abs($dLon) > pi()) {
-            if($dLon > 0) {
+        if (abs($dLon) > pi()) {
+            if ($dLon > 0) {
                 $dLon = (2 * pi() - $dLon) * -1;
-            }
-            else {
+            } else {
                 $dLon = 2 * pi() + $dLon;
             }
         }

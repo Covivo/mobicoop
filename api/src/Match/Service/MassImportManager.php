@@ -254,7 +254,7 @@ class MassImportManager
             $addresses = [];
             $addresses[] = $massPerson->getPersonalAddress();
             $addresses[] = $massPerson->getWorkAddress();
-            if ($routes = $this->geoRouter->getRoutes($addresses,false)) {
+            if ($routes = $this->geoRouter->getRoutes($addresses, false)) {
                 $direction = $routes[0];
                 // creation of the crossed zones (maybe useless as most persons will obviously share at least one zone)
                 $direction = $this->zoneManager->createZonesForDirection($direction);
@@ -290,7 +290,7 @@ class MassImportManager
 
     /**
      * Match mass file data.
-     * 
+     *
      * @param Mass      $mass                       The mass to match
      * @param integer   $maxDetourDurationPercent   The maximum detour duration in percent of the original duration
      * @param integer   $maxDetourDistancePercent   The maximum detour distance in percent of the original distance
@@ -341,7 +341,7 @@ class MassImportManager
             ];
             $range=[];
             if ($bearingCheck) {
-                $range = $this->geoTools->getOppositeBearing($person->getDirection()->getBearing(),$bearingRange);
+                $range = $this->geoTools->getOppositeBearing($person->getDirection()->getBearing(), $bearingRange);
             }
             foreach ($mass->getPersons() as $candidate) {
                 // we check if the candidateDriver is the current candidate
