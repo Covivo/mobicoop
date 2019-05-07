@@ -87,6 +87,9 @@ class ProposalMatcher
 
         // we filter with geomatcher
         $candidateProposal = new Candidate();
+        if ($proposal->getUser()) {
+            $candidateProposal->setId($proposal->getUser()->getId());
+        }
         $addresses = [];
         foreach ($proposal->getWaypoints() as $waypoint) {
             $addresses[] = $waypoint->getAddress();
@@ -102,6 +105,7 @@ class ProposalMatcher
                     continue;
                 }
                 $candidate = new Candidate();
+                $candidate->setId($proposalToMatch->getUser()->getId());
                 $addressesCandidate = [];
                 foreach ($proposalToMatch->getWaypoints() as $waypoint) {
                     $addressesCandidate[] = $waypoint->getAddress();
@@ -137,6 +141,7 @@ class ProposalMatcher
                     continue;
                 }
                 $candidate = new Candidate();
+                $candidate->setId($proposalToMatch->getUser()->getId());
                 $addressesCandidate = [];
                 foreach ($proposalToMatch->getWaypoints() as $waypoint) {
                     $addressesCandidate[] = $waypoint->getAddress();

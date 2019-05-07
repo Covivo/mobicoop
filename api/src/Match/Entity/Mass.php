@@ -105,11 +105,26 @@ use Doctrine\Common\Collections\Collection;
  *                         "description" = "The maximum superior distance ratio between A and B to try a match (default:1000)"
  *                     },
  *                     {
+ *                         "name" = "bearingCheck",
+ *                         "in" = "query",
+ *                         "required" = "false",
+ *                         "type" = "boolean",
+ *                         "description" = "Check the bearings (default:true)"
+ *                     },
+ *                     {
+ *                         "name" = "bearingRange",
+ *                         "in" = "query",
+ *                         "required" = "false",
+ *                         "type" = "number",
+ *                         "format" = "integer",
+ *                         "description" = "The bearing range in degrees if check bearings (default:10)"
+ *                     },
+ *                     {
  *                         "name" = "doubleCheck",
  *                         "in" = "query",
  *                         "required" = "false",
  *                         "type" = "boolean",
- *                         "description" = "The maximum superior distance ratio between A and B to try a match (default:false)"
+ *                         "description" = "Check if B as a driver matches for A as a passenger if A as a driver already matches with B as a passenger (default:false)"
  *                     }
  *                   }
  *              }

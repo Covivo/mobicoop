@@ -31,6 +31,11 @@ use App\Geography\Entity\Direction;
 class Candidate
 {
     /**
+     * @var int The id of this candidate.
+     */
+    private $id;
+
+    /**
      * @var Address[] The address points of the candidate.
      */
     private $addresses;
@@ -65,14 +70,17 @@ class Candidate
      */
     private $minCommonDistancePercent;
 
-    /**
-     * @var MassPerson|null The mass person related to the candidate.
-     */
-    private $person;
+    
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
-    /**
-     * @return Waypoint[]
-     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
     public function getAddresses(): array
     {
         return $this->addresses;
@@ -157,15 +165,4 @@ class Candidate
         return $this;
     }
 
-    public function getPerson(): ?MassPerson
-    {
-        return $this->person;
-    }
-    
-    public function setPerson(?MassPerson $person): self
-    {
-        $this->person = $person;
-        
-        return $this;
-    }
 }

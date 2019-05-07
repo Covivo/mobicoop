@@ -26,8 +26,9 @@ namespace App\DataProvider\Service;
 use App\DataProvider\Entity\Response;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\RequestOptions;
+use GuzzleHttp\Promise;
 use GuzzleHttp\Exception\TransferException;
+use GuzzleHttp\Exception\ConnectException;
 
 /**
  * Data provider service.
@@ -40,12 +41,13 @@ class DataProvider
 {
     private $client;
     private $resource;
+    private $resources;
     
     /**
      * Constructor.
      *
-     * @param string $uri
-     * @param string $resource
+     * @param string        $uri
+     * @param string        $resource   Resource name for normal resource
      */
     public function __construct(string $uri, string $resource)
     {
@@ -70,6 +72,32 @@ class DataProvider
                 return new Response($clientResponse->getStatusCode(), $clientResponse->getBody());
             }
         } catch (TransferException $e) {
+            return new Response($e->getCode());
+        }
+        return new Response();
+    }
+
+    /**
+     * Get async collection operation
+     *
+     * @param mixed|null    $params         An array of parameters
+     *
+     * @return Response The response of the operation.
+     */
+    public function getAsyncCollection($params=null): Response
+    {
+        $promises = [];
+        foreach ($params as $key=>$resource) {
+            $promises[$key] = $this->client->getAsync($this->resource, ['query'=>$resource]);
+        }
+        try { 
+            $results = Promise\unwrap($promises);
+            $bodies = [];
+            foreach ($results as $key=>$result) {
+                $bodies[$key] = $result->getBody();
+            }
+            return new Response(200, $bodies);
+        } catch (ConnectException $e) {
             return new Response($e->getCode());
         }
         return new Response();

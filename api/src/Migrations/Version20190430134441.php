@@ -30,7 +30,7 @@ final class Version20190430134441 extends AbstractMigration
         $this->addSql('ALTER TABLE image ADD community_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE image ADD CONSTRAINT FK_C53D045FFDA7B0BF FOREIGN KEY (community_id) REFERENCES community (id)');
         $this->addSql('CREATE INDEX IDX_C53D045FFDA7B0BF ON image (community_id)');
-        $this->addSql('ALTER TABLE user ADD created_date DATETIME NOT NULL');
+        $this->addSql('ALTER TABLE user ADD created_date DATETIME DEFAULT NULL');
     }
 
     public function down(Schema $schema) : void

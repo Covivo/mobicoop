@@ -38,6 +38,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Geography\Service\GeoSearcher;
 use App\Geography\Service\GeoRouter;
 use App\Geography\Service\ZoneManager;
+use App\Geography\Service\GeoTools;
 
 /**
  * Mass import manager.
@@ -64,6 +65,7 @@ class MassImportManager
     private $logger;
     private $params;
     private $validator;
+    private $geoTools;
     private $geoSearcher;
     private $geoRouter;
     private $geoMatcher;
@@ -86,6 +88,7 @@ class MassImportManager
         FileManager $fileManager,
         LoggerInterface $logger,
         ValidatorInterface $validator,
+        GeoTools $geoTools,
         GeoSearcher $geoSearcher,
         GeoRouter $geoRouter,
         GeoMatcher $geoMatcher,
@@ -99,6 +102,7 @@ class MassImportManager
         $this->logger = $logger;
         $this->params = $params;
         $this->validator = $validator;
+        $this->geoTools = $geoTools;
         $this->geoSearcher = $geoSearcher;
         $this->geoRouter = $geoRouter;
         $this->geoMatcher = $geoMatcher;
@@ -250,7 +254,7 @@ class MassImportManager
             $addresses = [];
             $addresses[] = $massPerson->getPersonalAddress();
             $addresses[] = $massPerson->getWorkAddress();
-            if ($routes = $this->geoRouter->getRoutes($addresses)) {
+            if ($routes = $this->geoRouter->getRoutes($addresses,false)) {
                 $direction = $routes[0];
                 // creation of the crossed zones (maybe useless as most persons will obviously share at least one zone)
                 $direction = $this->zoneManager->createZonesForDirection($direction);
@@ -286,10 +290,14 @@ class MassImportManager
 
     /**
      * Match mass file data.
-     *
+     * 
      * @param Mass      $mass                       The mass to match
+     * @param integer   $maxDetourDurationPercent   The maximum detour duration in percent of the original duration
+     * @param integer   $maxDetourDistancePercent   The maximum detour distance in percent of the original distance
      * @param float     $minOverlapRatio            The minimum overlap ratio between bouding boxes to try a match
      * @param float     $maxSuperiorDistanceRatio   The maximum superior distance ratio between A and B to try a match
+     * @param boolean   $bearingCheck               Check the bearings
+     * @param int       $bearingRange               The bearing range if check bearings
      * @param boolean   $doubleCheck                If we want the result between A as a driver and B as a passenger if B as a driver already matches with A as a passenger
      * @return void
      */
@@ -299,9 +307,11 @@ class MassImportManager
         int $maxDetourDistancePercent=40,
         float $minOverlapRatio=0,
         float $maxSuperiorDistanceRatio=1000,
-        bool $doubleCheck=true
+        bool $bearingCheck=true,
+        int $bearingRange=10,
+        bool $doubleCheck=false
     ) {
-        set_time_limit(300);
+        set_time_limit(600);
         $matchers = [];
         $matchers_detail = [];
         $overlaps = [];
@@ -320,7 +330,7 @@ class MassImportManager
             $candidateDriver->setDirection($person->getDirection());
             $candidateDriver->setMaxDetourDurationPercent($maxDetourDurationPercent);
             $candidateDriver->setMaxDetourDistancePercent($maxDetourDistancePercent);
-            $candidateDriver->setPerson($person);
+            $candidateDriver->setId($person->getId());
             $candidates = [];
             $bbox_person = [
                 $person->getDirection()->getBboxMinLon(),
@@ -329,6 +339,10 @@ class MassImportManager
                 $person->getDirection()->getBboxMaxLat(),
                 $person->getId()
             ];
+            $range=[];
+            if ($bearingCheck) {
+                $range = $this->geoTools->getOppositeBearing($person->getDirection()->getBearing(),$bearingRange);
+            }
             foreach ($mass->getPersons() as $candidate) {
                 // we check if the candidateDriver is the current candidate
                 if ($person->getId() == $candidate->getId()) {
@@ -337,6 +351,18 @@ class MassImportManager
                 // we check if the candidate can be passenger
                 if (!$candidate->isPassenger()) {
                     continue;
+                }
+                // we check if bearings are to be checked
+                if ($bearingCheck && $range['min']<=$range['max']) {
+                    if ($range['min']<=$candidate->getDirection()->getBearing() && $range['max']>=$candidate->getDirection()->getBearing()) {
+                        // usual case, eg. 140 to 160
+                        continue;
+                    }
+                } elseif ($bearingCheck && $range['min']>$range['max']) {
+                    if ($range['min']<=$candidate->getDirection()->getBearing() || $range['max']>=$candidate->getDirection()->getBearing()) {
+                        // the range is like between 350 and 10, we have to check 350->360 and 0->10
+                        continue;
+                    }
                 }
                 $bbox_candidate = [
                     $candidate->getDirection()->getBboxMinLon(),
@@ -364,30 +390,28 @@ class MassImportManager
                 $candidatePassenger = new Candidate();
                 $candidatePassenger->setAddresses([$candidate->getPersonalAddress(),$candidate->getWorkAddress()]);
                 $candidatePassenger->setDirection($candidate->getDirection());
-                $candidatePassenger->setPerson($candidate);
+                $candidatePassenger->setId($candidate->getId());
                 $candidates[] = $candidatePassenger;
             }
             $this->logger->info('Mass match | Searching candidates for person n°' . $person->getId() . ' end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $this->logger->info('Mass match | Calculate route matches for person n°' . $person->getId() . ' start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-            if ($matches = $this->geoMatcher->singleMatch($candidateDriver, $candidates, true)) {
+            // we try to match with the candidates
+            // TODO : multimatch (for now we treat each driver successively, we should treat them by batch)
+            if ($matches = $this->geoMatcher->singleMatch($candidateDriver, $candidates, true, true)) {
+                $this->logger->info('Mass match | Calculate route matches for person n°' . $person->getId() . ' done ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 if (is_array($matches) && count($matches)>0) {
-                    // echo count($matches) . " found for person #" . $person->getId() . " " . $person->getFamilyName() . " : \n";
-                    // $i=1;
                     foreach ($matches as $match) {
-                        $matchers[$person->getId()][] = $match['person']->getId();
+                        $matchers[$person->getId()][] = $match['id'];
                         $matchers_detail[$person->getId()][] = [
-                            'id' => $match['person']->getId(),
+                            'id' => $match['id'],
                             'originalDistance' => $match["originalDistance"],
                             'newDistance' => $match['newDistance'],
                             'originalDuration' => $match["originalDuration"],
                             'newDuration' => $match['newDuration'],
                             'acceptedDetourDuration' => $match['acceptedDetourDuration'],
                             'detourDurationPercent' => $match['detourDurationPercent'],
-                            'overlap' => $overlaps[$person->getId()][$match['person']->getId()]
+                            'overlap' => $overlaps[$person->getId()][$match['id']]
                         ];
-                        // echo "match #$i with person #" . $match['person']->getId() . " " . $match['person']->getFamilyName() . ": \n";
-                        // echo "original : " . $match["originalDistance"] . " => new " . $match['newDistance'] . "\n";
-                        // $i++;
                     }
                 }
             }
@@ -492,8 +516,6 @@ class MassImportManager
         } else {
             throw new MassException('Cannot open file');
         }
-
-        return "test";
     }
 
     /**
@@ -745,7 +767,6 @@ class MassImportManager
         $w2 = $bbox2[2]-$bbox2[0];
         $h2 = $bbox2[3]-$bbox2[1];
         return ($x1<($x2+$w2)) && (($x1+$w1)>$x2) && ($y1<($y2+$h2)) && (($h1+$y1)>$y2);
-        ;
     }
 
     /**

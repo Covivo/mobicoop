@@ -49,7 +49,9 @@ final class MassMatchAction
             $maxDetourDistancePercent = 40;
             $minOverlapRatio = 0;
             $maxSuperiorDistanceRatio = 1000;
-            $doubleCheck = true;
+            $bearingCheck = true;
+            $bearingRange = 10;
+            $doubleCheck = false;
             if ($this->request->get("maxDetourDurationPercent")) {
                 $maxDetourDurationPercent = $this->request->get("maxDetourDurationPercent");
             }
@@ -62,10 +64,16 @@ final class MassMatchAction
             if ($this->request->get("maxSuperiorDistanceRatio")) {
                 $maxSuperiorDistanceRatio = $this->request->get("maxSuperiorDistanceRatio");
             }
+            if ($this->request->get("bearingCheck")) {
+                $bearingCheck = $this->request->get("bearingCheck");
+            }
+            if ($this->request->get("bearingRange")) {
+                $bearingRange = $this->request->get("bearingRange");
+            }
             if ($this->request->get("doubleCheck")) {
                 $doubleCheck = $this->request->get("doubleCheck");
             }
-            $result = $this->massImportManager->matchMass($data, $maxDetourDurationPercent, $maxDetourDistancePercent, $minOverlapRatio, $maxSuperiorDistanceRatio, $doubleCheck);
+            $result = $this->massImportManager->matchMass($data, $maxDetourDurationPercent, $maxDetourDistancePercent, $minOverlapRatio, $maxSuperiorDistanceRatio, $bearingCheck, $bearingRange, $doubleCheck);
             print_r($result);
             exit;
         }

@@ -27,6 +27,7 @@ use App\DataProvider\Interfaces\ProviderInterface;
 use App\DataProvider\Service\DataProvider;
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
+use App\Geography\Service\GeoTools;
 
 /**
  * GeoRouter data provider : provides route calculation between 2 or more addresses.
@@ -51,6 +52,8 @@ class GeoRouterProvider implements ProviderInterface
     private $collection;
     private $uri;
     private $detailDuration;
+    private $geoTools;
+    private $bearing;           // bearing will be common to all routes, we will calculate it once for all and share the value
     
     /**
      * Constructor.
@@ -58,11 +61,13 @@ class GeoRouterProvider implements ProviderInterface
      * @param string $uri               The uri of the provider
      * @param boolean $detailDuration   Set to true to get the duration between 2 points
      */
-    public function __construct(string $uri=null, bool $detailDuration=false)
+    public function __construct(string $uri=null, bool $detailDuration=false, GeoTools $geoTools)
     {
         $this->uri = $uri;
+        $this->bearing = 0;
         $this->detailDuration = $detailDuration;
         $this->collection = [];
+        $this->geoTools = $geoTools;
     }
     
     /**
@@ -72,19 +77,55 @@ class GeoRouterProvider implements ProviderInterface
     {
         switch ($class) {
             case Direction::class:
-            $dataProvider = new DataProvider($this->uri, self::COLLECTION_RESOURCE);
-                $getParams = "";
-                foreach ($params['points'] as $address) {
-                    $getParams .= "point=" . $address->getLatitude() . "," . $address->getLongitude() . "&";
+                $dataProvider = new DataProvider($this->uri, self::COLLECTION_RESOURCE);
+                if (isset($params['async']) && $params['async'] && isset($params['arrayPoints'])) {
+                    $getParams = [];
+                    // we have to send multiple requests to the georouter, we need to know the 'owner' of each request
+                    // but the owner is not sent with the request, so we need to keep it in a dedicated array => each key of the request will be associated to its owner
+                    // so after the requests we will be able to know who is the owner
+                    $requestsOwner = [];
+                    $i = 0;
+                    foreach ($params['arrayPoints'] as $ownerId => $addresses) {
+                        foreach ($addresses as $points) {
+                            $params = "";
+                            foreach ($points as $address) {
+                                $params .= "point=" . $address->getLatitude() . "," . $address->getLongitude() . "&";
+                            }
+                            $params .= "locale=" . self::GR_LOCALE .
+                                "&vehicle=" . self::GR_MODE_CAR .
+                                "&weighting=" . self::GR_WEIGHTING .
+                                "&instructions=" . self::GR_INSTRUCTIONS .
+                                "&points_encoded=".self::GR_POINTS_ENCODED .
+                                ($this->detailDuration?'&details=time':'').
+                                "&elevation=" . self::GR_ELEVATION;
+                            $getParams[$i] = $params; 
+                            $requestsOwner[$i] = $ownerId;
+                            $i++;
+                        }
+                    }   
+                    $response = $dataProvider->getAsyncCollection($getParams); 
+                    foreach ($response->getValue() as $key=>$value) {
+                        $data = json_decode($value, true);
+                        foreach ($data["paths"] as $path) {
+                            $this->collection[$requestsOwner[$key]][] = self::deserialize($class, $path);
+                        }
+                    }   
+                    return $this->collection;
+                } else {
+                    $getParams = "";
+                    foreach ($params['points'] as $address) {
+                        $getParams .= "point=" . $address->getLatitude() . "," . $address->getLongitude() . "&";
+                    }
+                    $getParams .= "locale=" . self::GR_LOCALE .
+                        "&vehicle=" . self::GR_MODE_CAR .
+                        "&weighting=" . self::GR_WEIGHTING .
+                        "&instructions=" . self::GR_INSTRUCTIONS .
+                        "&points_encoded=".self::GR_POINTS_ENCODED .
+                        ($this->detailDuration?'&details=time':'').
+                        "&elevation=" . self::GR_ELEVATION;
+                    $response = $dataProvider->getCollection($getParams);
+                    $this->bearing = $this->geoTools->getRhumbLineBearing($params['points'][0]->getLatitude(),$params['points'][0]->getLongitude(),$params['points'][count($params['points'])-1]->getLatitude(),$params['points'][count($params['points'])-1]->getLongitude());
                 }
-                $getParams .= "locale=" . self::GR_LOCALE .
-                    "&vehicle=" . self::GR_MODE_CAR .
-                    "&weighting=" . self::GR_WEIGHTING .
-                    "&instructions=" . self::GR_INSTRUCTIONS .
-                    "&points_encoded=".self::GR_POINTS_ENCODED .
-                    ($this->detailDuration?'&details=time':'').
-                    "&elevation=" . self::GR_ELEVATION;
-                $response = $dataProvider->getCollection($getParams);
                 if ($response->getCode() == 200) {
                     $data = json_decode($response->getValue(), true);
                     foreach ($data["paths"] as $path) {
@@ -162,6 +203,7 @@ class GeoRouterProvider implements ProviderInterface
             $direction->setSnappedWaypoints($this->deserializePoints($data['snapped_waypoints'], true, false));
         }
         $direction->setFormat('graphhopper');
+        $direction->setBearing($this->bearing); // already calculated
 
         if ($this->detailDuration && isset($data["details"]["time"])) {
             // if we get the detail of duration between points, we can get the duration between the waypoints
@@ -205,7 +247,7 @@ class GeoRouterProvider implements ProviderInterface
                 $numpoint = 0;
                 foreach ($direction->getPoints() as $point) {
                     foreach ($missed as $key=>$waypoint) {
-                        $distance = $this->haversineGreatCircleDistance($waypoint['waypoint']->getLatitude(), $waypoint['waypoint']->getLongitude(), $point->getLatitude(), $point->getLongitude());
+                        $distance = $this->geoTools->haversineGreatCircleDistance($waypoint['waypoint']->getLatitude(), $waypoint['waypoint']->getLongitude(), $point->getLatitude(), $point->getLongitude());
                         if ($distance<$waypoint['distance']) {
                             $missed[$key]['distance'] = $distance;
                             $missed[$key]['nearest'] = $numpoint;
@@ -389,34 +431,4 @@ class GeoRouterProvider implements ProviderInterface
         return $address;
     }
 
-    /**
-     * Calculates the great-circle distance between two points, with
-     * the Haversine formula.
-     * @param float $latitudeFrom Latitude of start point in [deg decimal]
-     * @param float $longitudeFrom Longitude of start point in [deg decimal]
-     * @param float $latitudeTo Latitude of target point in [deg decimal]
-     * @param float $longitudeTo Longitude of target point in [deg decimal]
-     * @param float $earthRadius Mean earth radius in [m]
-     * @return float Distance between points in [m] (same as earthRadius)
-     */
-    private function haversineGreatCircleDistance(
-        $latitudeFrom,
-        $longitudeFrom,
-        $latitudeTo,
-        $longitudeTo,
-        $earthRadius = 6371000
-    ) {
-        // convert from degrees to radians
-        $latFrom = deg2rad($latitudeFrom);
-        $lonFrom = deg2rad($longitudeFrom);
-        $latTo = deg2rad($latitudeTo);
-        $lonTo = deg2rad($longitudeTo);
-    
-        $latDelta = $latTo - $latFrom;
-        $lonDelta = $lonTo - $lonFrom;
-    
-        $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) +
-        cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
-        return $angle * $earthRadius;
-    }
 }
