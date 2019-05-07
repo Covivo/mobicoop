@@ -10,7 +10,6 @@ import 'vue-form-wizard/dist/vue-form-wizard.min.css';
 import '../../../css/page/search/simpleResults.scss';
 
 
-
 // Vue components
 import Resultssearchform from '../../components/Resultssearchform';
 import Journey from '../../components/Journey'
@@ -29,10 +28,10 @@ new Vue({
 new Vue({
   el: '#simpleResults',
   components: {
-    Journey
+    Journey,
   }
 })
+
 let dropdown = document.querySelector('.dropdown');
 dropdown.addEventListener('click', function(event) {
-  dropdown.classList.toggle('is-active');
-});
+  dropdown.classList.toggle('is-active');})

@@ -4,9 +4,7 @@
 {% block stylesheets %}
     {{ encore_entry_link_tags('bundle_search/simpleResults') }}
 {% endblock %}
-
 {% block body %}
-
     <section class="hero is-secondary">
         <div class="hero-body">
             <div class="container">
@@ -16,11 +14,9 @@
             </div>
         </div>
     </section>
-
     <section id="simple">
         <Resultssearchform geo-search-url="/geosearch?search=" route="covoiturage/recherche" date="{{ date|date('m/d/Y') }}" time="{{ date|date('H:i') }}" origin="{{ origin }}" destination="{{ destination }}"></Resultssearchform>
     </section>
-
     <section class="section">
         <div class="container">
             {% if error is defined %}
@@ -28,7 +24,6 @@
             {% endif %}
             <h2>Résultats</h2>
             {% if hydra and hydra.member|length>0 %}
-                
                 {% for proposal in hydra.member %}
                     <h3>Conducteurs</h3>
                     {% if proposal.matchingRequests and proposal.matchingRequests|length>0 %}
@@ -84,14 +79,14 @@
                                                 </div>
                                                 <div class="column has-text-centered">
                                                     <p>{{ matching.proposalOffer.criteria.fromTime|date('H:i') }}</p>
-                                                    <p>{{ matching.proposalOffer.waypoints[0].address.addressLocality }}</p>
+                                                    <p>{{ origin }}</p>
                                                 </div>
                                                 <div class="column has-text-centered">
                                                     <p><i class="fas fa-long-arrow-alt-right"></i></p>
                                                 </div>
                                                 <div class="column has-text-centered">
                                                     <p>{{ matching.proposalOffer.criteria.fromTime|date_modify("+ " ~ (matching.filters.originalDuration / 60) | round ~ " minutes")|date('H:i') }}</p>
-                                                    <p>{{ matching.proposalOffer.waypoints[1].address.addressLocality }}</p>
+                                                    <p>{{ destination }}</p>
                                                 </div>
                                                 <div class="column">
                                                     <p class="is-pulled-right">{{ matching.proposalOffer.criteria.priceKm * ((matching.filters.commonDistance + matching.filters.detourDistance) / 1000)|round(1) }} €</p>
@@ -100,7 +95,7 @@
                                             <div class="columns is-vcentered">
                                                 <div class="column">
                                                     <div class="dropdown is-pulled-left">
-                                                            <button class="button dropdown" aria-haspopup="true" aria-controls="dropdown-menu">
+                                                            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
                                                                 <i class="fas fa-angle-down" aria-hidden="true"></i>
                                                             </button>
                                                         <div class="dropdown-menu dropDownResults" role="menu">
@@ -115,7 +110,8 @@
                                                                     <p class="disabled"><i class="fas fa-walking"></i></p>
                                                                 </div>
                                                                 <div class="column ">
-                                                                    {% if matching.proposalOffer.waypoints[0].address.addressLocality != matching.proposalRequest.waypoints[0].address.addressLocality %}
+																					
+                                                                    {% if matching.proposalOffer.waypoints[0].address.addressLocality != origin %}
                                                                         <p class="offer">{{ matching.proposalOffer.waypoints[0].address.addressLocality }}</p>
                                                                     {% endif %}
                                                                 </div>
@@ -123,7 +119,7 @@
                                                                     <p>Détour: {{ (matching.filters.detourDuration / 60) | round }} min</p>
                                                                 </div>
                                                                 <div class="column">
-                                                                    {% if matching.proposalOffer.waypoints[1].address.addressLocality != matching.proposalRequest.waypoints[1].address.addressLocality %}
+                                                                    {% if matching.proposalOffer.waypoints[1].address.addressLocality != destination %}
                                                                         <p class="offer">{{ matching.proposalOffer.waypoints[1].address.addressLocality }}</p>
                                                                     {% endif %}
                                                                 </div>
@@ -132,10 +128,10 @@
                                                                 <div class="column ">
                                                                 </div>
                                                                 <div class="column">
-                                                                    <p>{{ matching.proposalRequest.waypoints[0].address.addressLocality }}</p>
+                                                                    <p>{{ origin }}</p>
                                                                 </div>
                                                                 <div class="column">
-                                                                    <p>{{ matching.proposalRequest.waypoints[1].address.addressLocality }}</p>
+                                                                    <p>{{ destination }}</p>
                                                                 </div>
                                                                 <div class="column is-1">
                                                                     <p>{{ matching.proposalOffer.criteria.seats }}</p>
@@ -164,13 +160,12 @@
                                         </div>
                                     </div>
                                 </div>
-                            </section>
+                            </section> 
                         {% endfor %}
                     {% else %}
                         <span class="tag is-warning">Pas de conducteur trouvé.</span>
                     {% endif %}
-
-                    <h3>Passagers</h3>
+                    <h3>Passagers</h3> 
                     {% if proposal.matchingOffers and proposal.matchingOffers|length>0 %}
                         {% for matching in proposal.matchingOffers %}
                             <section class="section">
@@ -224,14 +219,14 @@
                                                 </div>
                                                 <div class="column has-text-centered">
                                                     <p>{{ matching.proposalRequest.criteria.fromTime|date('H:i') }}</p>
-                                                    <p>{{ matching.proposalRequest.waypoints[0].address.addressLocality }}</p>
+                                                    <p>{{ origin }}</p>
                                                 </div>
                                                 <div class="column has-text-centered">
                                                     <p><i class="fas fa-long-arrow-alt-right"></i></p>
                                                 </div>
                                                 <div class="column has-text-centered">
-                                                    <p>{{ matching.proposalOffer.criteria.fromTime|date_modify("+ " ~ (matching.filters.originalDuration / 60) | round ~ " minutes")|date('H:i') }}</p>
-                                                    <p>{{ matching.proposalOffer.waypoints[1].address.addressLocality }}</p>
+                                                    <p>{{ matching.proposalRequest.criteria.fromTime|date_modify("+ " ~ (matching.filters.originalDuration / 60) | round ~ " minutes")|date('H:i') }}</p>
+                                                    <p>{{ destination }}</p>
                                                 </div>
                                                 <div class="column">
                                                     <p class="is-pulled-right">{{ matching.proposalRequest.criteria.priceKm * ((matching.filters.commonDistance + matching.filters.detourDistance) / 1000)|round(1) }} €</p>
@@ -240,33 +235,31 @@
                                             <div class="columns is-vcentered">
                                                 <div class="column">
                                                     <div class="dropdown is-pulled-left">
-                                                        <div class="dropdown-trigger has-text-centered">
-                                                            <button class="button" aria-haspopup="true"  aria-controls="dropdown-menu">
+                                                            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
                                                                 <i class="fas fa-angle-down" aria-hidden="true"></i>
                                                             </button>
-                                                        </div>
                                                         <div class="dropdown-menu dropDownResults" role="menu">
-                                                            <div class="columns is-vcentered ">
+                                                            <div class="columns is-vcentered">
                                                                 <div class="column">
                                                                     {% if matching.proposalRequest.user.gender == 1 %}
                                                                         <p><i class="fas fa-mars"></i>XX ans</p>
                                                                     {% else %}
                                                                         <p><i class="fas fa-venus"></i>XX ans</p>
                                                                     {% endif %}
-                                                                    <p><i class="fas fa-car"></i></p>
-                                                                    <p class="disabled"><i class="fas fa-walking"></i>Passag.er.ère</p>
+                                                                    <p class="disabled"><i class="fas fa-car"></i></p>
+                                                                    <p><i class="fas fa-walking"></i>Passag.er.ère</p>
                                                                 </div>
                                                                 <div class="column ">
-                                                                    {% if matching.proposalOffer.waypoints[0].address.addressLocality != matching.proposalRequest.waypoints[0].address.addressLocality %}
-                                                                        <p class="offer">{{ matching.proposalOffer.waypoints[0].address.addressLocality }}</p>
+                                                                    {% if origin != matching.proposalRequest.waypoints[0].address.addressLocality %}
+                                                                        <p class="offer">{{ origin }}</p>
                                                                     {% endif %}
                                                                 </div>
                                                                 <div class="column is-one-third">
                                                                     <p>Détour: {{ (matching.filters.detourDuration / 60) | round }}min</p>
                                                                 </div>
                                                                 <div class="column">
-                                                                    {% if matching.proposalOffer.waypoints[1].address.addressLocality != matching.proposalRequest.waypoints[1].address.addressLocality %}
-                                                                        <p class="offer">{{ matching.proposalOffer.waypoints[1].address.addressLocality }}</p>
+                                                                    {% if destination != matching.proposalRequest.waypoints[1].address.addressLocality %}
+                                                                        <p class="offer">{{ destination }}</p>
                                                                     {% endif %}
                                                                 </div>
                                                             </div>
@@ -318,16 +311,12 @@
             {% endif %}
         </div>    
     </section>
-
     <section id="simpleResults">
         <div class="container">
             <h2>Résultats chez nos partenaires</h2>
-            <Journey origin-latitude="{{ origin_latitude }}" origin-longitude="{{ origin_longitude }}"
-                 destination-latitude="{{ destination_latitude }}"
-                 destination-longitude="{{ destination_longitude }}"></Journey>
+            <Journey origin-latitude="{{ origin_latitude }}" origin-longitude="{{ origin_longitude }}" destination-latitude="{{ destination_latitude }}" destination-longitude="{{ destination_longitude }}"></Journey>
         </div>
     </section>
-
 {% endblock %}
 {% block javascripts %}
     {{ encore_entry_script_tags('bundle_search/simpleResults') }}
