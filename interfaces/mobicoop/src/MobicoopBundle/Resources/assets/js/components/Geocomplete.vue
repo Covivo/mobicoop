@@ -21,7 +21,6 @@
               <b-icon
                 pack="fas"
                 icon="arrow-alt-circle-right"
-                type="is-primary"
               />
             </div>
             <div
@@ -128,9 +127,4 @@ export default {
 
 <style lang="scss" scoped>
 @import "../../css/_variables";
-.searchResult {
-  color: $secondary ;
-  text-decoration: none;
-}
-
 </style>
