@@ -5,7 +5,7 @@ import Vue from 'vue';
 import Buefy from 'buefy';
 import VueFormWizard from 'vue-form-wizard';
 import 'vue-form-wizard/dist/vue-form-wizard.min.css';
-import '../../../css/page/home.scss';
+import '../../../css/page/ad/create.scss';
 
 // Vue components
 import Adcreateform from '../../components/Adcreateform';
