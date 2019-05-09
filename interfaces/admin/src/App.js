@@ -5,6 +5,7 @@ import parseHydraDocumentation from '@api-platform/api-doc-parser/lib/hydra/pars
 import { hydraClient, fetchHydra as baseFetchHydra  } from '@api-platform/admin';
 import authProvider from './authProvider';
 import { createMuiTheme } from '@material-ui/core/styles';
+import frenchMessages from 'ra-language-french';
 // import Layout from './Component/Layout';
 import { UserShow } from './Component/User/Show';
 import { UserEdit } from './Component/User/Edit';
@@ -20,6 +21,11 @@ const theme = createMuiTheme({
         type: 'light'
     },
 });
+
+const messages = {
+  fr: frenchMessages,
+}
+const i18nProvider = locale => messages[locale];
 
 require('dotenv').config();
 
@@ -67,6 +73,7 @@ export default class extends Component {
       if (null === this.state.api) return <div>Loading...</div>;
       return (
           <Admin api={ this.state.api }
+                  locale="fr" i18nProvider={i18nProvider}
                   apiDocumentationParser={ apiDocumentationParser }
                   dataProvider= { dataProvider(this.state.api) }
                   theme={ theme }
