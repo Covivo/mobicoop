@@ -103,6 +103,7 @@ class Community
     * @var \DateTimeInterface Creation date of the event.
     *
     * @ORM\Column(type="datetime")
+    * @Groups("read")
     */
     private $createdDate;
     
@@ -112,7 +113,7 @@ class Community
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups("write")
+     * @Groups({"read","write"})
      */
     private $user;
     

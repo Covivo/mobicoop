@@ -75,6 +75,15 @@ class Role
     private $name;
 
     /**
+     * @var Role|null Parent role.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Right\Entity\Role", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @Groups({"read","write"})
+     */
+    private $parent;
+
+    /**
      * @var Collection|null The rights of the role.
      *
      * @ORM\ManyToMany(targetEntity="\App\Right\Entity\Right")
@@ -112,6 +121,18 @@ class Role
     public function setName(?string $name): self
     {
         $this->name = $name;
+        
+        return $this;
+    }
+
+    public function getParent(): ?Role
+    {
+        return $this->parent;
+    }
+    
+    public function setParent(?Role $parent): self
+    {
+        $this->parent = $parent;
         
         return $this;
     }

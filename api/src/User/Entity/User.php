@@ -274,8 +274,8 @@ class User implements UserInterface, EquatableInterface
         $this->cars = new ArrayCollection();
         $this->proposals = new ArrayCollection();
         $this->asks = new ArrayCollection();
-        $this->userRoles = new Collection();
-        $this->masses = new Collection();
+        $this->userRoles = new ArrayCollection();
+        $this->masses = new ArrayCollection();
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -347,12 +347,12 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
     
-    public function getGender(): ?string
+    public function getGender()
     {
         return $this->gender;
     }
     
-    public function setGender(?string $gender): self
+    public function setGender($gender): self
     {
         $this->gender = $gender;
         
