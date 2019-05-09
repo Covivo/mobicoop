@@ -12,6 +12,17 @@
   height: 10vw;
   width: 45vw;
   padding: 1vw;
+  .searchResult {
+    color: $secondary;
+    text-decoration: none;
+  }
+  .field {
+    .dropdown-item {
+      .icon {
+        color: $tertiary;
+      }
+    }
+  }
   #rechercher {
     background-color: $white;
     box-shadow: 2px 2px 2px #000;

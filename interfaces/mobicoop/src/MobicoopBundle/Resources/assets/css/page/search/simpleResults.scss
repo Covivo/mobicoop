@@ -26,6 +26,17 @@ body {
     width: 50vw;
     padding: 1vw;
     align-self: center;
+    .searchResult {
+      color: $secondary;
+      text-decoration: none;
+    }
+    .field {
+      .dropdown-item {
+        .icon {
+          color: $tertiary;
+        }
+      }
+    }
   }
   .textContent {
     border-bottom: solid $white;
