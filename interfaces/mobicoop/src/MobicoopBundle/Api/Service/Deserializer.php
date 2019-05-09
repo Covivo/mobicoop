@@ -26,6 +26,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Api\Service;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourney;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
@@ -103,6 +104,9 @@ class Deserializer
                 break;
             case ExternalJourney::class:
                 return $data;
+                break;
+            case Mass::class:
+                return self::deserializeMass($data);
                 break;
             default:
                 break;
@@ -412,6 +416,16 @@ class Deserializer
             $PTStep->setPTArrival(self::deserializePTArrival($data["ptarrival"]));
         }
         return $PTStep;
+    }
+
+    private function deserializeMass(array $data): ?Mass
+    {
+        $mass = new Mass();
+        $mass = self::autoSet($mass, $data);
+        if (isset($data["@id"])) {
+            $mass->setIri($data["@id"]);
+        }
+        return $mass;
     }
 
     private function deserializeExternalJourneyProvider(array $data): ?ExternalJourneyProvider
