@@ -106,7 +106,7 @@ class PTStep
     private $relativeDirection;
     
     /**
-     * @var PTJourney The parent leg of this step.
+     * @var PTLeg The parent leg of this step.
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTLeg", inversedBy="ptsteps")
      * @Groups("pt")
@@ -231,7 +231,7 @@ class PTStep
         return $this->ptleg;
     }
     
-    public function setPTLeg(PTLeg $ptleg): self
+    public function setPTLeg(?PTLeg $ptleg): self
     {
         $this->ptleg = $ptleg;
         

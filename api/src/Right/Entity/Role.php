@@ -27,7 +27,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * A role.
@@ -84,7 +84,7 @@ class Role
     private $parent;
 
     /**
-     * @var Collection|null The rights of the role.
+     * @var ArrayCollection|null The rights of the role.
      *
      * @ORM\ManyToMany(targetEntity="\App\Right\Entity\Right")
      * @Groups({"read","write"})
@@ -93,7 +93,7 @@ class Role
 
     public function __construct()
     {
-        $this->rights = new Collection();
+        $this->rights = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -137,12 +137,9 @@ class Role
         return $this;
     }
 
-    /**
-     * @return Collection|null
-     */
-    public function getRights(): ?Collection
+    public function getRights()
     {
-        return $this->rights;
+        return $this->rights->getValues();
     }
     
     public function addRight(Right $right): self

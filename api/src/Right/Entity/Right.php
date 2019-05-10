@@ -84,11 +84,6 @@ class Right
      * @Groups({"read","write"})
      */
     private $parent;
-
-    public function __construct()
-    {
-        $this->groups = new Collection();
-    }
     
     public function getId(): ?int
     {

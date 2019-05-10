@@ -214,7 +214,7 @@ class PTJourney
     private $ptarrival;
     
     /**
-     * @var PTLeg[] The legs of this journey.
+     * @var ArrayCollection The legs of this journey.
      *
      * @ORM\OneToMany(targetEntity="\App\PublicTransport\Entity\PTLeg", mappedBy="ptjourney", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups("pt")
@@ -323,9 +323,9 @@ class PTJourney
         return $this;
     }
     
-    public function getPTLegs(): Collection
+    public function getPTLegs()
     {
-        return $this->ptlegs;
+        return $this->ptlegs->getValues();
     }
 
     public function setPTLegs(ArrayCollection $ptlegs): self
