@@ -21,3 +21,4 @@
 /api/public/upload/mass/files/*.json
 /interfaces/mobicoop/.env.local
 /interfaces/mobicoop/var/log/
+/interfaces/admin/.env
