@@ -25,7 +25,7 @@ export default (type, params) => {
         .then(({ token }) => {
           const decodedToken = decodeJwt(token);
           var authorized = decodedToken.roles.find(function(element) {
-            return (element == 'ROLE_ADMIN' || element == 'ROLE_SUPER_ADMIN');
+            return (element === 'ROLE_ADMIN' || element === 'ROLE_SUPER_ADMIN');
           });
           if (!authorized) throw new Error('Unauthorized');
           localStorage.setItem('token', token); // The JWT token is stored in the browser's local storage

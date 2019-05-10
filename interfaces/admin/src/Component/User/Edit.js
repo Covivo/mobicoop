@@ -1,5 +1,5 @@
 import React from 'react';
-import { Edit, SimpleForm, DisabledInput, TextInput, email, ArrayInput, SimpleFormIterator, DateInput, SelectInput } from 'react-admin';
+import { Edit, SimpleForm, DisabledInput, TextInput, email, DateInput, SelectInput } from 'react-admin';
 
 const choices = [
     { id: 1, name: 'Femme' },

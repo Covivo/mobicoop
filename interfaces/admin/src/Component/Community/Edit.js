@@ -1,5 +1,5 @@
 import React from 'react';
-import { Edit, SimpleForm, DisabledInput, TextInput, email, ArrayInput, SimpleFormIterator, DateInput, BooleanInput, ReferenceInput, SelectInput } from 'react-admin';
+import { Edit, SimpleForm, DisabledInput, TextInput, DateInput, BooleanInput, ReferenceInput, SelectInput } from 'react-admin';
 import RichTextInput from 'ra-input-rich-text';
 
 const optionRenderer = choice => `${choice.givenName} ${choice.familyName}`;
