@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import { Admin, Resource } from 'react-admin';
 import { Route, Redirect } from 'react-router-dom';
-import parseHydraDocumentation from '@api-platform/api-doc-parser/lib/hydra/parseHydraDocumentation';
 import { hydraClient, fetchHydra as baseFetchHydra  } from '@api-platform/admin';
+import parseHydraDocumentation from '@api-platform/api-doc-parser/lib/hydra/parseHydraDocumentation';
 import authProvider from './authProvider';
+
 import { createMuiTheme } from '@material-ui/core/styles';
+import { cyan, lightBlue, teal } from '@material-ui/core/colors';
+
 import frenchMessages from 'ra-language-french';
-// import Layout from './Component/Layout';
+
 import { UserShow } from './Component/User/Show';
 import { UserEdit } from './Component/User/Edit';
 import { UserCreate } from './Component/User/Create';
@@ -15,7 +18,9 @@ import { CommunityShow } from './Component/Community/Show';
 import { CommunityEdit } from './Component/Community/Edit';
 import { CommunityCreate } from './Component/Community/Create';
 import { CommunityList } from './Component/Community/List';
-import { cyan, lightBlue, teal } from '@material-ui/core/colors';
+
+import { RoleList } from './Component/Right/Role/List';
+
 
 const theme = createMuiTheme({
     palette: {
@@ -93,16 +98,9 @@ export default class extends Component {
           >                
               <Resource name="users" list={ UserList } create={ UserCreate } show={ UserShow } edit={ UserEdit } title="Utilisateurs" options={{ label: 'Utilisateurs' }} />
               <Resource name="communities" list={ CommunityList } create={ CommunityCreate } show={ CommunityShow } edit={ CommunityEdit } title="Communautés" options={{ label: 'Communautés' }} />
+              <Resource name="roles" list={ RoleList } title="Rôles" options={{ label: 'Rôles' }} />
+              
           </Admin>
       )
   }
 }
-
-// export default () => (
-//     <HydraAdmin
-//         apiDocumentationParser={apiDocumentationParser}
-//         authProvider={authProvider}
-//         entrypoint={entrypoint}
-//         dataProvider={dataProvider}
-//     />
-// );
