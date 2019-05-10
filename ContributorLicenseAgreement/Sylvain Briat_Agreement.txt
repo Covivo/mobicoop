@@ -38,7 +38,7 @@ copy of this Agreement will be binding upon the parties to the same effect as or
 
 *****************************************************************************************************************************
 
-France, 21th of November 2018
+France, 2018-11-21 10:15:29
 
 I hereby agree to the terms of the Mobicoop Contributor License Agreement.
 I declare that I am authorized and able to make this agreement and sign this declaration.
