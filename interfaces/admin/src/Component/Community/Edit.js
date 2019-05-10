@@ -4,12 +4,6 @@ import RichTextInput from 'ra-input-rich-text';
 
 const optionRenderer = choice => `${choice.givenName} ${choice.familyName}`;
 
-const choices = [
-    { id: 1, name: 'Femme' },
-    { id: 2, name: 'Homme' },
-    { id: 3, name: 'Autre' },
-];
-
 export const CommunityEdit = (props) => (
     <Edit {...props}>
         <SimpleForm>
