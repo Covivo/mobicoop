@@ -83,7 +83,7 @@ class App implements UserInterface, EquatableInterface
     private $password;
 
     /**
-     * @var Collection|null The roles granted to the app.
+     * @var ArrayCollection|null The roles granted to the app.
      *
      * @ORM\ManyToMany(targetEntity="\App\Right\Entity\Role")
      * @Groups({"read","write"})
@@ -92,7 +92,7 @@ class App implements UserInterface, EquatableInterface
     
     public function __construct()
     {
-        $this->roles = new Collection();
+        $this->roles = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -136,7 +136,7 @@ class App implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getRoles(): array
+    public function getRoles()
     {
         // we return an array of ROLE_***
         $roles = [];

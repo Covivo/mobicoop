@@ -175,7 +175,7 @@ class Proposal
     private $user;
 
     /**
-     * @var Waypoint[] The waypoints of the proposal.
+     * @var ArrayCollection The waypoints of the proposal.
      *
      * @Assert\NotBlank
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
@@ -185,7 +185,7 @@ class Proposal
     private $waypoints;
     
     /**
-     * @var TravelMode[]|null The travel modes accepted if the proposal is a request.
+     * @var ArrayCollection|null The travel modes accepted if the proposal is a request.
      *
      * @ORM\ManyToMany(targetEntity="\App\Travel\Entity\TravelMode")
      * @Groups({"read","write"})
@@ -193,7 +193,7 @@ class Proposal
     private $travelModes;
 
     /**
-     * @var Community[]|null The communities related to the proposal.
+     * @var ArrayCollection|null The communities related to the proposal.
      *
      * @ORM\ManyToMany(targetEntity="\App\Community\Entity\Community")
      * @Groups({"read","write"})
@@ -201,7 +201,7 @@ class Proposal
     private $communities;
 
     /**
-     * @var Matching[]|null The matching of the proposal (if proposal is an offer).
+     * @var ArrayCollection|null The matching of the proposal (if proposal is an offer).
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
@@ -209,7 +209,7 @@ class Proposal
     private $matchingOffers;
 
     /**
-     * @var Matching[]|null The matching of the proposal (if proposal is a request).
+     * @var ArrayCollection|null The matching of the proposal (if proposal is a request).
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
@@ -232,7 +232,7 @@ class Proposal
     private $criteria;
     
     /**
-     * @var IndividualStop[] The individual stops of the proposal.
+     * @var ArrayCollection The individual stops of the proposal.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\IndividualStop", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
@@ -336,12 +336,9 @@ class Proposal
         return $this;
     }
 
-    /**
-     * @return Collection|Waypoint[]
-     */
-    public function getWaypoints(): Collection
+    public function getWaypoints()
     {
-        return $this->waypoints;
+        return $this->waypoints->getValues();
     }
 
     public function addWaypoint(Waypoint $waypoint): self
@@ -367,12 +364,9 @@ class Proposal
         return $this;
     }
     
-    /**
-     * @return Collection|TravelMode[]
-     */
-    public function getTravelModes(): Collection
+    public function getTravelModes()
     {
-        return $this->travelModes;
+        return $this->travelModes->getValues();
     }
     
     public function addTravelMode(TravelMode $travelMode): self
@@ -393,12 +387,9 @@ class Proposal
         return $this;
     }
 
-    /**
-     * @return Collection|Community[]
-     */
-    public function getCommunities(): Collection
+    public function getCommunities()
     {
-        return $this->communities;
+        return $this->communities->getValues();
     }
     
     public function addCommunity(Community $community): self
@@ -419,12 +410,9 @@ class Proposal
         return $this;
     }
     
-    /**
-     * @return Collection|Matching[]
-     */
-    public function getMatchingRequests(): Collection
+    public function getMatchingRequests()
     {
-        return $this->matchingRequests;
+        return $this->matchingRequests->getValues();
     }
 
     public function addMatchingRequest(Matching $matchingRequest): self
@@ -450,12 +438,9 @@ class Proposal
         return $this;
     }
     
-    /**
-     * @return Collection|Matching[]
-     */
-    public function getMatchingOffers(): Collection
+    public function getMatchingOffers()
     {
-        return $this->matchingOffers;
+        return $this->matchingOffers->getValues();
     }
     
     public function addMatchingOffer(Matching $matchingOffer): self
@@ -496,12 +481,9 @@ class Proposal
         return $this;
     }
     
-    /**
-     * @return Collection|IndividualStop[]
-     */
-    public function getIndividualStops(): Collection
+    public function getIndividualStops()
     {
-        return $this->individualStops;
+        return $this->individualStops->getValues();
     }
     
     public function addIndividualStop(IndividualStop $individualStop): self

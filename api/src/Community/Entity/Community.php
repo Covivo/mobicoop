@@ -118,7 +118,7 @@ class Community
     private $user;
     
     /**
-     * @var Collection|null The images of the event.
+     * @var ArrayCollection|null The images of the event.
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
@@ -140,6 +140,8 @@ class Community
     public function __construct($id=null)
     {
         $this->id = $id;
+        $this->images = new ArrayCollection();
+        $this->proposals = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -218,12 +220,9 @@ class Community
         return $this;
     }
     
-    /**
-     * @return Collection|Image[]
-     */
-    public function getImages(): Collection
+    public function getImages()
     {
-        return $this->images;
+        return $this->images->getValues();
     }
     
     public function addImage(Image $image): self
@@ -249,12 +248,9 @@ class Community
         return $this;
     }
 
-    /**
-     * @return Collection
-     */
-    public function getProposals(): Collection
+    public function getProposals()
     {
-        return $this->proposals;
+        return $this->proposals->getValues();
     }
     
     public function addProposal(Proposal $proposal): self

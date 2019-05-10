@@ -143,7 +143,7 @@ class Direction
     private $format;
 
     /**
-     * @var Zone[] The geographical zones crossed by the direction.
+     * @var ArrayCollection The geographical zones crossed by the direction.
      *
      * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Zone", mappedBy="direction", cascade={"persist","remove"}, orphanRemoval=true)
      */
@@ -324,12 +324,9 @@ class Direction
         return $this;
     }
     
-    /**
-     * @return Collection|Zone[]
-     */
-    public function getZones(): Collection
+    public function getZones()
     {
-        return $this->zones;
+        return $this->zones->getValues();
     }
     
     public function addZone(Zone $zone): self

@@ -82,11 +82,6 @@ class UserRight
      * @Groups({"read","write"})
      */
     private $territory;
-
-    public function __construct()
-    {
-        $this->territories = new Collection();
-    }
     
     public function getId(): ?int
     {

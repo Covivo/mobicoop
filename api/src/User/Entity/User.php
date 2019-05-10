@@ -213,7 +213,7 @@ class User implements UserInterface, EquatableInterface
     private $multiTransportMode;
     
     /**
-     * @var Address[]|null A user may have many addresses.
+     * @var ArrayCollection|null A user may have many addresses.
      *
      * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Address", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
@@ -221,7 +221,7 @@ class User implements UserInterface, EquatableInterface
     private $addresses;
     
     /**
-     * @var Car[]|null A user may have many cars.
+     * @var ArrayCollection|null A user may have many cars.
      *
      * @ORM\OneToMany(targetEntity="\App\User\Entity\Car", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
@@ -229,7 +229,7 @@ class User implements UserInterface, EquatableInterface
     private $cars;
 
     /**
-     * @var Proposal[]|null The proposals made by this user.
+     * @var ArrayCollection|null The proposals made by this user.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      * @MaxDepth(1)
@@ -238,21 +238,21 @@ class User implements UserInterface, EquatableInterface
     private $proposals;
 
     /**
-     * @var Ask[]|null The asks made by this user.
+     * @var ArrayCollection|null The asks made by this user.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      */
     private $asks;
 
     /**
-     * @var Collection|null A user may have many roles.
+     * @var ArrayCollection|null A user may have many roles.
      *
      * @ORM\OneToMany(targetEntity="\App\Right\Entity\UserRole", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      */
     private $userRoles;
 
     /**
-     * @var Collection|null The mass import files of the user.
+     * @var ArrayCollection|null The mass import files of the user.
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\Mass", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
@@ -443,9 +443,9 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
     
-    public function getAddresses(): Collection
+    public function getAddresses()
     {
-        return $this->addresses;
+        return $this->addresses->getValues();
     }
     
     public function addAddress(Address $address): self
@@ -471,9 +471,9 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
     
-    public function getCars(): Collection
+    public function getCars()
     {
-        return $this->cars;
+        return $this->cars->getValues();
     }
     
     public function addCar(Car $car): self
@@ -499,9 +499,9 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
     
-    public function getProposals(): Collection
+    public function getProposals()
     {
-        return $this->proposals;
+        return $this->proposals->getValues();
     }
 
     public function addProposal(Proposal $proposal): self
@@ -527,9 +527,9 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getAsks(): Collection
+    public function getAsks()
     {
-        return $this->asks;
+        return $this->asks->getValues();
     }
 
     public function addAsk(Ask $ask): self
@@ -555,9 +555,9 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getUserRoles(): Collection
+    public function getUserRoles()
     {
-        return $this->userRoles;
+        return $this->userRoles->getValues();
     }
     
     public function addUserRole(UserRole $userRole): self
@@ -583,9 +583,9 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getMasses(): Collection
+    public function getMasses()
     {
-        return $this->masses;
+        return $this->masses->getValues();
     }
     
     public function addMass(Mass $mass): self

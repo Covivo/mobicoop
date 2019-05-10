@@ -26,7 +26,6 @@ namespace App\Right\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\Collection;
 use App\Geography\Entity\Territory;
 use App\User\Entity\User;
 
@@ -81,11 +80,6 @@ class UserRole
      * @Groups({"read","write"})
      */
     private $territory;
-
-    public function __construct()
-    {
-        $this->territories = new Collection();
-    }
     
     public function getId(): ?int
     {

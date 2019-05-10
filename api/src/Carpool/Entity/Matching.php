@@ -101,7 +101,7 @@ class Matching
     private $criteria;
 
     /**
-     * @var Ask[] The asks made for this matching.
+     * @var ArrayCollection The asks made for this matching.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="matching", cascade={"remove"}, orphanRemoval=true)
      * @Groups({"read"})
@@ -109,7 +109,7 @@ class Matching
     private $asks;
 
     /**
-     * @var Waypoint[] The waypoints of the proposal.
+     * @var ArrayCollection The waypoints of the proposal.
      *
      * @Assert\NotBlank
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="matching", cascade={"persist","remove"}, orphanRemoval=true)
@@ -184,12 +184,9 @@ class Matching
         return $this;
     }
 
-    /**
-     * @return Collection|Ask[]
-     */
-    public function getAsks(): Collection
+    public function getAsks()
     {
-        return $this->asks;
+        return $this->asks->getValues();
     }
 
     public function addAsk(Ask $ask): self
@@ -215,12 +212,9 @@ class Matching
         return $this;
     }
 
-    /**
-     * @return Collection|Waypoint[]
-     */
-    public function getWaypoints(): Collection
+    public function getWaypoints()
     {
-        return $this->waypoints;
+        return $this->waypoints->getValues();
     }
 
     public function addWaypoint(Waypoint $waypoint): self
