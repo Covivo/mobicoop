@@ -77,12 +77,13 @@ class Right
     private $name;
 
     /**
-     * @var Collection|null The groups of the right.
+     * @var Right|null Parent right.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Right\Entity\Right")
+     * @ORM\OneToOne(targetEntity="\App\Right\Entity\Right", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","write"})
      */
-    private $groups;
+    private $parent;
 
     public function __construct()
     {
@@ -118,28 +119,14 @@ class Right
         return $this;
     }
 
-    /**
-     * @return Collection|null
-     */
-    public function getGroups(): Collection
+    public function getParent(): ?Right
     {
-        return $this->groups;
+        return $this->parent;
     }
     
-    public function addGroup(Right $group): self
+    public function setParent(?Right $parent): self
     {
-        if (!$this->groups->contains($group)) {
-            $this->groups[] = $group;
-        }
-        
-        return $this;
-    }
-    
-    public function removeGroup(Right $group): self
-    {
-        if ($this->groups->contains($group)) {
-            $this->groups->removeElement($group);
-        }
+        $this->parent = $parent;
         
         return $this;
     }

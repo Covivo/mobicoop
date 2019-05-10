@@ -76,12 +76,12 @@ class UserRight
     private $right;
 
     /**
-     * @var Collection|null The territories associated with the user role.
+     * @var Territory|null The territory associated with the user role.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Territory")
      * @Groups({"read","write"})
      */
-    private $territories;
+    private $territory;
 
     public function __construct()
     {
@@ -117,28 +117,14 @@ class UserRight
         return $this;
     }
 
-    /**
-     * @return Collection|null
-     */
-    public function getTerritories(): Collection
+    public function getTerritory(): ?Territory
     {
-        return $this->territories;
+        return $this->territory;
     }
-    
-    public function addTerritory(Territory $territory): self
+
+    public function setTerritory(?Territory $territory): self
     {
-        if (!$this->territories->contains($territory)) {
-            $this->territories[] = $territory;
-        }
-        
-        return $this;
-    }
-    
-    public function removeTerritory(Territory $territory): self
-    {
-        if ($this->territories->contains($territory)) {
-            $this->territories->removeElement($territory);
-        }
+        $this->territory = $territory;
         
         return $this;
     }

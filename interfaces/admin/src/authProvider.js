@@ -1,4 +1,6 @@
 import { AUTH_LOGIN, AUTH_LOGOUT, AUTH_ERROR, AUTH_CHECK } from 'react-admin';
+import decodeJwt from 'jwt-decode';
+
 require('dotenv').config();
 
 // Change this to be your own authentication token URI.
@@ -21,18 +23,25 @@ export default (type, params) => {
           return response.json();
         })
         .then(({ token }) => {
+          const decodedToken = decodeJwt(token);
+          var authorized = decodedToken.roles.find(function(element) {
+            return (element === 'ROLE_ADMIN' || element === 'ROLE_SUPER_ADMIN');
+          });
+          if (!authorized) throw new Error('Unauthorized');
           localStorage.setItem('token', token); // The JWT token is stored in the browser's local storage
+          localStorage.setItem('roles', decodedToken.roles);
           window.location.replace('/');
         });
 
     case AUTH_LOGOUT:
       localStorage.removeItem('token');
+      localStorage.removeItem('roles');
       break;
 
     case AUTH_ERROR:
       if (401 === params.status || 403 === params.status) {
         localStorage.removeItem('token');
-
+        localStorage.removeItem('roles');
         return Promise.reject();
       }
       break;
