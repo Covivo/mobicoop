@@ -8,6 +8,11 @@ import authProvider from './authProvider';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { cyan, lightBlue, teal } from '@material-ui/core/colors';
 
+import PersonIcon from '@material-ui/icons/Person';
+import PeopleIcon from '@material-ui/icons/People';
+import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
+import LockIcon from '@material-ui/icons/Lock';
+
 import frenchMessages from 'ra-language-french';
 
 import { UserShow } from './Component/User/Show';
@@ -19,7 +24,14 @@ import { CommunityEdit } from './Component/Community/Edit';
 import { CommunityCreate } from './Component/Community/Create';
 import { CommunityList } from './Component/Community/List';
 
+import { RoleShow } from './Component/Right/Role/Show';
+import { RoleEdit } from './Component/Right/Role/Edit';
+import { RoleCreate } from './Component/Right/Role/Create';
 import { RoleList } from './Component/Right/Role/List';
+import { RightShow } from './Component/Right/Right/Show';
+import { RightList } from './Component/Right/Right/List';
+import { RightEdit } from './Component/Right/Right/Edit';
+import { RightCreate } from './Component/Right/Right/Create';
 
 
 const theme = createMuiTheme({
@@ -96,9 +108,10 @@ export default class extends Component {
                   // appLayout={ Layout }
                   authProvider={ authProvider }          
           >                
-              <Resource name="users" list={ UserList } create={ UserCreate } show={ UserShow } edit={ UserEdit } title="Utilisateurs" options={{ label: 'Utilisateurs' }} />
-              <Resource name="communities" list={ CommunityList } create={ CommunityCreate } show={ CommunityShow } edit={ CommunityEdit } title="Communautés" options={{ label: 'Communautés' }} />
-              <Resource name="roles" list={ RoleList } title="Rôles" options={{ label: 'Rôles' }} />
+              <Resource name="users" list={ UserList } create={ UserCreate } show={ UserShow } edit={ UserEdit } title="Utilisateurs" options={{ label: 'Utilisateurs' }} icon={PersonIcon} />
+              <Resource name="communities" list={ CommunityList } create={ CommunityCreate } show={ CommunityShow } edit={ CommunityEdit } title="Communautés" options={{ label: 'Communautés' }} icon={PeopleIcon} />
+              <Resource name="roles" list={ RoleList } create={ RoleCreate} show={ RoleShow} edit={ RoleEdit} title="Rôles" options={{ label: 'Rôles' }} icon={SupervisorAccountIcon} />
+              <Resource name="rights" list={ RightList } create={ RightCreate} show={ RightShow} edit={ RightEdit} title="Droits" options={{ label: 'Droits' }} icon={LockIcon} />
               
           </Admin>
       )
