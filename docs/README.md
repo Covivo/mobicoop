@@ -59,6 +59,7 @@ install & enable in your .ini all its php extensions : [Docker file](https://git
     - [.env mobicoop](interfaces/mobicoop/.env) 
 
 - *Duplicate, rename without .dist & edit the rdex json config files:*
+  *Files .json are needed but you can let them with examples if you do not use RDEX*
     - [rdex operator api](api/config/rdex/operator.json.dist)
     - [rdex clients api](api/config/rdex/clients.json.dist)
     - [rdex providers api](api/config/rdex/providers.dist)
@@ -127,10 +128,12 @@ To start the application simply run :
 - We use [Kahlan](https://kahlan.github.io/docs/) to create unit/functional tests, you can launch them easily with:
 - For functional tests you can do it 3 ways, with [kernels](https://api.symfony.com/4.1/Symfony/Component/HttpKernel/Kernel.html) (limited--), with [client](https://api.symfony.com/4.1/Symfony/Component/HttpKernel/Client.html) (limited), with [panther](https://github.com/symfony/panther) for a real browser testing (click,form ..)
 
-# Cypress
+# Functional tests
 
-- *Duplicate, rename cypress.env.json
-    - [.cypress.json ](interfaces/mobicoop)   
+- *Duplicate, rename cypress.json.dist
+    - [.cypress.json ](interfaces/mobicoop)
+- Start mobicoop in prod mode (important) `npm run start-production`
+- On another terminal start functional/design tests `npm run test-functional-ci`   
 
 
 # Documentation
