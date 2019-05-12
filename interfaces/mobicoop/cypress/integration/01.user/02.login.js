@@ -27,6 +27,8 @@ describe('Login', () => {
     cy.visit(baseUrl)
     cy.contains('Connexion').click()
     cy.url().should('include', baseUrl + 'utilisateur/connexion')
+    cy.wait(1500)
+    cy.percySnapshot('Home')
   })
 
   it('Login', () => {
@@ -34,6 +36,8 @@ describe('Login', () => {
     cy.get('input[id=user_login_form_username]')
       .should('have.attr', 'placeholder', 'Saisissez votre adresse email')
       .type('totosmith@email.com')
+    cy.wait(1500)
+    cy.percySnapshot('Login')
 
     /* Password */
     cy.get('input[id=user_login_form_password]')
@@ -41,5 +45,8 @@ describe('Login', () => {
       .type('motdepasse')
 
     cy.get('button[id=user_login_form_login]').click()
+    cy.percySnapshot('Loged')
+    // TODO CHECK WHAT SHOULD HAPPEN AFTER THE CLICK 🧐
+    // We should be redirected to the home page & have a logout button I think..
   })
 })

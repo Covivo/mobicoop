@@ -10,15 +10,29 @@ const pathEncore = path.resolve(__dirname, './node_modules/.bin/encore');
 program
   .parse(process.argv);
 
+// port == False => Production or bad params
+// port == undefined => Dev default port 8079
+// port == XXXX [NUMBER] => a port to use for webpack
+
+let port = program.args[0] && !!parseInt(program.args[0]) && parseInt(program.args[0]);
+let production = port === false && String(program.args[0]) === 'production';
+
 /*We try to check if we are on unix || windows & apply the right path to execute */
 let command = os.platform() === 'win32' ? 'cmd.exe' : 'php';
 let encoreCommand = os.platform() === 'win32' ? 'cmd.exe' : pathEncore;
 // Start test only, or with coverage if asked
-let host = program.args[0] ? `127.0.0.1:${program.args[0]}` : '127.0.0.1:8081';
-let encorePort = program.args[0] ? parseInt(program.args[0]) + 100 : 8079;
+let host = port ? `127.0.0.1:${program.args[0]}` : '127.0.0.1:8081';
+let encorePort = 8079;
+
+console.log('We are in dev mod the port is', port, production, encorePort)
+
+
+if (!production && port) {
+  encorePort = parseInt(program.args[0]) + 100; // We are in dev mod + a setted port
+}
 
 let options = [pathStart, 'server:run', host];
-let optionsEncore = ['dev-server', '--port', encorePort]
+let optionsEncore = ['dev-server', '--port', encorePort];
 
 if (os.platform() === 'win32') {
   options = ['/c', 'php', ...options]
@@ -26,7 +40,6 @@ if (os.platform() === 'win32') {
 }
 
 let startCmd = spawn(command, options, { stdio: 'inherit' });
-let encoreStart = spawn(encoreCommand, optionsEncore, { stdio: 'inherit' });
 
 startCmd.on('close', (code) => {
   if (code != 0) {
@@ -34,14 +47,20 @@ startCmd.on('close', (code) => {
   }
 });
 
-encoreStart.on('close', (code) => {
-  if (code != 0) {
-    process.exit(code);
-  }
-});
 
 process.on('exit', (code) => {
   console.log('killing subprocess ..');
   startCmd.kill();
-  encoreStart.kill();
+  if (!production) {
+    encoreStart.kill();
+  }
+});
+
+// We do not use webpack encore dev-server for production
+if (!production) return;
+let encoreStart = spawn(encoreCommand, optionsEncore, { stdio: 'inherit' });
+encoreStart.on('close', (code) => {
+  if (code != 0) {
+    process.exit(code);
+  }
 });

@@ -10,14 +10,15 @@
     "start": "node runstart.js",
     "test": "node src/MobicoopBundle/spec/runtests.js",
     "testAndCoverage": "node src/MobicoopBundle/spec/runtests.js -c",
+    "testFunctional": "PERCY_TOKEN=aaabbbcccdddeeefff PERCY_BRANCH=local percy exec -- cypress run",
+    "testFunctionalCI": "percy exec -- cypress run",
     "testFixAndCoverage": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src &&  php vendor/bin/php-cs-fixer.phar fix --using-cache=false src/MobicoopBundle/spec && node src/MobicoopBundle/spec/runtests.js -c",
     "compile": "encore dev",
     "compileAndWatch": "encore dev-server --port 8079",
     "compileAndWatchVue": "encore dev-server --hot --port 8079",
     "postinstall": "composer install && npm run compile",
-    "cypress:open": "cypress open",
-    "cy:run": "cypress run"
-
+    "cypress": "cypress open",
+    "cy": "cypress run"
   },
   "repository": {
     "type": "git",
@@ -34,6 +35,7 @@
   ],
   "homepage": "https://gitlab.com/mobicoop/mobicoop#README",
   "devDependencies": {
+    "@percy/cypress": "^1.0.9",
     "babel-eslint": "^8.2.6",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-stage-3": "^6.24.1",
