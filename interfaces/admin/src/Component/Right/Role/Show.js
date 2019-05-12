@@ -1,10 +1,5 @@
 import React from 'react';
-import { Show, SimpleShowLayout, TextField, ReferenceField, SelectField, ReferenceArrayField, SingleFieldList, ChipField, EditButton } from 'react-admin';
-
-const choices = [
-    { id: 1, name: 'Item' },
-    { id: 2, name: 'Groupe' },
-];
+import { Show, SimpleShowLayout, TextField, ReferenceField, ReferenceArrayField, SingleFieldList, ChipField, EditButton } from 'react-admin';
 
 export const RoleShow = (props) => (
     <Show { ...props }>
