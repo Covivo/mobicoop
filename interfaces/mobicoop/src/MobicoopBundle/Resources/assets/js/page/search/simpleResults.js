@@ -32,6 +32,13 @@ new Vue({
   }
 })
 
-let dropdown = document.querySelector('.dropdown');
-dropdown.addEventListener('click', function(event) {
-  dropdown.classList.toggle('is-active');})
+// dropdown. Details of results. queryselector don't return an array 
+
+let dropdowns = [...document.querySelectorAll('.dropdown')];
+//console.error(dropdowns);
+dropdowns.map ((dropdown, index) => {
+  dropdown.addEventListener('click',  (event) => {
+    dropdown.classList.toggle('is-active');
+  })
+})
+

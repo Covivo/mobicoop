@@ -92,7 +92,7 @@
                                                     <p class="is-pulled-right">{{ matching.proposalOffer.criteria.priceKm * ((matching.filters.commonDistance + matching.filters.detourDistance) / 1000)|round(1) }} €</p>
                                                 </div>
                                             </div>
-                                            <div class="columns is-vcentered">
+                                             <div class="columns is-vcentered">
                                                 <div class="column">
                                                     <div class="dropdown is-pulled-left">
                                                             <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
@@ -235,7 +235,7 @@
                                             <div class="columns is-vcentered">
                                                 <div class="column">
                                                     <div class="dropdown is-pulled-left">
-                                                            <button class="button" slot="trigger">
+                                                            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
                                                                 <i class="fas fa-angle-down" aria-hidden="true"></i>
                                                             </button>
                                                         <div class="dropdown-menu dropDownResults" role="menu">
