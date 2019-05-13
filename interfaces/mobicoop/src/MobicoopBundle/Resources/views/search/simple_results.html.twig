@@ -101,13 +101,16 @@
                                                         <div class="dropdown-menu dropDownResults" role="menu">
                                                             <div class="columns is-vcentered">
                                                                 <div class="column">
-                                                                    {% if matching.proposalOffer.user.gender == 1 %}
+                                                                    {% if matching.proposalOffer.user.gender == 2 %}
                                                                         <p><i class="fas fa-mars"></i>XX ans</p>
+                                                                        <p><i class="fas fa-car"></i>Conducteur</p>
+                                                                        <p class="disabled"><i class="fas fa-walking"></i></p>
                                                                     {% else %}
                                                                         <p><i class="fas fa-venus"></i>XX ans</p>
+                                                                        <p><i class="fas fa-car"></i>Conductrice </p>
+                                                                        <p class="disabled"><i class="fas fa-walking"></i></p>
                                                                     {% endif %}
-                                                                    <p><i class="fas fa-car"></i>Conducteur.trice </p>
-                                                                    <p class="disabled"><i class="fas fa-walking"></i></p>
+                                                                    
                                                                 </div>
                                                                 <div class="column ">
 																					
@@ -241,13 +244,16 @@
                                                         <div class="dropdown-menu dropDownResults" role="menu">
                                                             <div class="columns is-vcentered">
                                                                 <div class="column">
-                                                                    {% if matching.proposalRequest.user.gender == 1 %}
+                                                                    {% if matching.proposalRequest.user.gender == 2 %}
                                                                         <p><i class="fas fa-mars"></i>XX ans</p>
+                                                                         <p class="disabled"><i class="fas fa-car"></i></p>
+                                                                    <p><i class="fas fa-walking"></i>Passager</p>
                                                                     {% else %}
                                                                         <p><i class="fas fa-venus"></i>XX ans</p>
+                                                                        <p class="disabled"><i class="fas fa-car"></i></p>
+                                                                    <p><i class="fas fa-walking"></i>Passagère</p>
                                                                     {% endif %}
-                                                                    <p class="disabled"><i class="fas fa-car"></i></p>
-                                                                    <p><i class="fas fa-walking"></i>Passag.er.ère</p>
+                                                                   
                                                                 </div>
                                                                 <div class="column ">
                                                                     {% if origin != matching.proposalRequest.waypoints[0].address.addressLocality %}
