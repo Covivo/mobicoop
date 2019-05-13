@@ -25,6 +25,9 @@ namespace App\Community\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\Collection;
 use App\User\Entity\User;
@@ -43,6 +46,7 @@ use App\User\Entity\User;
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
  * )
+ * @ApiFilter(NumericFilter::class, properties={"community"})
  */
 class CommunityUser
 {
@@ -144,12 +148,12 @@ class CommunityUser
         return $this;
     }
     
-    public function getStatus(): int
+    public function getStatus()
     {
         return $this->status;
     }
     
-    public function setStatus(int $status)
+    public function setStatus(?int $status)
     {
         $this->status = $status;
     }

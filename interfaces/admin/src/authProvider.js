@@ -30,18 +30,21 @@ export default (type, params) => {
           if (!authorized) throw new Error('Unauthorized');
           localStorage.setItem('token', token); // The JWT token is stored in the browser's local storage
           localStorage.setItem('roles', decodedToken.roles);
+          localStorage.setItem('id', decodedToken.id);
           window.location.replace('/');
         });
 
     case AUTH_LOGOUT:
       localStorage.removeItem('token');
       localStorage.removeItem('roles');
+      localStorage.removeItem('id');
       break;
 
     case AUTH_ERROR:
       if (401 === params.status || 403 === params.status) {
         localStorage.removeItem('token');
         localStorage.removeItem('roles');
+        localStorage.removeItem('id');
         return Promise.reject();
       }
       break;

@@ -7,7 +7,7 @@ const optionRenderer = choice => `${choice.givenName} ${choice.familyName}`;
 export const CommunityEdit = (props) => (
     <Edit {...props}>
         <SimpleForm>
-            <DisabledInput source="id" label="ID"/>
+            <DisabledInput source="originId" label="ID"/>
             <ReferenceInput label="Créateur" source="user" reference="users">
                 <SelectInput optionText={optionRenderer} />
             </ReferenceInput>

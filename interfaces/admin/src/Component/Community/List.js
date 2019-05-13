@@ -4,7 +4,7 @@ import { List, Datagrid, TextField, BooleanField, DateField, ShowButton, EditBut
 export const CommunityList = (props) => (
     <List {...props} title="Communities" perPage={ 30 }>
         <Datagrid>
-            <TextField source="id" label="ID"/>
+            <TextField source="originId" label="ID"/>
             <TextField source="name" label="Nom"/>
             <BooleanField source="private" label="Privée" />
             <TextField source="description" label="Description"/>

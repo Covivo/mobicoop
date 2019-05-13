@@ -4,7 +4,7 @@ import { Show, SimpleShowLayout, TextField, DateField, EmailField, EditButton } 
 export const UserShow = (props) => (
     <Show { ...props }>
         <SimpleShowLayout>
-            <TextField source="id" label="ID"/>
+            <TextField source="originId" label="ID"/>
             <TextField source="givenName" label="Prénom"/>
             <TextField source="familyName" label="Nom"/>
             <EmailField source="email" label="Email" />

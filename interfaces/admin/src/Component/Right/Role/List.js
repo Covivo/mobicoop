@@ -4,7 +4,7 @@ import { List, Datagrid, TextField, ReferenceField, ShowButton, EditButton } fro
 export const RoleList = (props) => (
     <List {...props} title="Roles" perPage={ 30 }>
         <Datagrid>
-            <TextField source="id" label="ID"/>
+            <TextField source="originId" label="ID"/>
             <TextField source="title" label="Titre"/>
             <TextField source="name" label="Nom"/>
             <ReferenceField label="Rôle parent" source="parent" reference="roles" allowEmpty>

@@ -136,12 +136,23 @@ class Community
      * @MaxDepth(1)
      */
     private $proposals;
+
+    /**
+     * @var ArrayCollection|null The members of the community.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
+     */
+    private $communityUsers;
     
     public function __construct($id=null)
     {
         $this->id = $id;
         $this->images = new ArrayCollection();
         $this->proposals = new ArrayCollection();
+        $this->communityUsers = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -266,6 +277,34 @@ class Community
     {
         if ($this->proposals->contains($proposal)) {
             $this->proposals->removeElement($proposal);
+        }
+        
+        return $this;
+    }
+
+    public function getCommunityUsers()
+    {
+        return $this->communityUsers->getValues();
+    }
+    
+    public function addCommunityUser(CommunityUser $communityUser): self
+    {
+        if (!$this->communityUsers->contains($communityUser)) {
+            $this->communityUsers[] = $communityUser;
+            $communityUser->setCommunity($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeCommunityUser(CommunityUser $communityUser): self
+    {
+        if ($this->communityUsers->contains($communityUser)) {
+            $this->communityUsers->removeElement($communityUser);
+            // set the owning side to null (unless already changed)
+            if ($communityUser->getCommunity() === $this) {
+                $communityUser->setCommunity(null);
+            }
         }
         
         return $this;

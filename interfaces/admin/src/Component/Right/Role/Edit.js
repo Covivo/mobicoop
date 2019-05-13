@@ -6,7 +6,7 @@ const validateName = regex(/^ROLE_[A-Z_]+$/, 'Nom invalide');
 export const RoleEdit = (props) => (
     <Edit {...props}>
         <SimpleForm>
-            <DisabledInput source="id" label="ID"/>
+            <DisabledInput source="originId" label="ID"/>
             <TextInput source="title" label="Titre"/>
             <TextInput source="name" label="Nom" validate={validateName} />
             <ReferenceInput label="Rôle parent" source="parent" reference="roles">

@@ -9,7 +9,7 @@ const choices = [
 export const RightEdit = (props) => (
     <Edit {...props}>
         <SimpleForm>
-            <DisabledInput source="id" label="ID"/>
+            <DisabledInput source="originId" label="ID"/>
             <SelectInput label="Type" source="type" choices={choices} />
             <TextInput source="name" label="Nom" />
             <ReferenceInput label="Groupe" source="parent" reference="rights" filter={{ type: 2 }}>

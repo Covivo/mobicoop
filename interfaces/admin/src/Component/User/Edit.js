@@ -10,7 +10,7 @@ const choices = [
 export const UserEdit = (props) => (
     <Edit {...props}>
         <SimpleForm>
-            <DisabledInput source="id" label="ID"/>
+            <DisabledInput source="originId" label="ID"/>
             <TextInput source="givenName" label="Prénom"/>
             <TextInput source="familyName" label="Nom"/>
             <SelectInput label="Sexe" source="gender" choices={choices} />

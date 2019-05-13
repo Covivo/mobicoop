@@ -23,6 +23,7 @@ import { CommunityShow } from './Component/Community/Show';
 import { CommunityEdit } from './Component/Community/Edit';
 import { CommunityCreate } from './Component/Community/Create';
 import { CommunityList } from './Component/Community/List';
+import { CommunityUserCreate } from './Component/Community/Members/Create';
 
 import { RoleShow } from './Component/Right/Role/Show';
 import { RoleEdit } from './Component/Right/Role/Edit';
@@ -112,7 +113,7 @@ export default class extends Component {
               <Resource name="communities" list={ CommunityList } create={ CommunityCreate } show={ CommunityShow } edit={ CommunityEdit } title="Communautés" options={{ label: 'Communautés' }} icon={PeopleIcon} />
               <Resource name="roles" list={ RoleList } create={ RoleCreate} show={ RoleShow} edit={ RoleEdit} title="Rôles" options={{ label: 'Rôles' }} icon={SupervisorAccountIcon} />
               <Resource name="rights" list={ RightList } create={ RightCreate} show={ RightShow} edit={ RightEdit} title="Droits" options={{ label: 'Droits' }} icon={LockIcon} />
-              
+              <Resource name="community_users" create={ CommunityUserCreate} />
           </Admin>
       )
   }

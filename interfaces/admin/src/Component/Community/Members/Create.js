@@ -3,12 +3,12 @@ import { Create, SimpleForm, TextInput, BooleanInput, ReferenceInput, SelectInpu
 import RichTextInput from 'ra-input-rich-text';
 
 const optionRenderer = choice => `${choice.givenName} ${choice.familyName}`;
-const userId = `/users/${localStorage.getItem('id')}`;
 
-export const CommunityCreate = (props) => (
+export const CommunityUserCreate = (props) => (
     <Create { ...props }>
-        <SimpleForm>
-            <ReferenceInput label="Créateur" source="user" reference="users" defaultValue={userId}>
+        <SimpleForm
+        >
+            <ReferenceInput label="Membre" source="user" reference="users">
                 <SelectInput optionText={optionRenderer}/>
             </ReferenceInput>
             <TextInput source="name" label="Nom"/>

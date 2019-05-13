@@ -15,7 +15,7 @@ const RightFilter = (props) => (
 export const RightList = (props) => (
     <List {...props} title="Rights" perPage={ 30 } filters={<RightFilter />}>
         <Datagrid>
-            <TextField source="id" label="ID"/>
+            <TextField source="originId" label="ID"/>
             <SelectField label="Type" source="type" choices={choices} sortable={false} />
             <TextField source="name" label="Nom"/>
             <ReferenceField label="Groupe" source="parent" reference="rights" allowEmpty>

@@ -4,10 +4,10 @@ import { Show, SimpleShowLayout, TextField, ReferenceField, ReferenceArrayField,
 export const RoleShow = (props) => (
     <Show { ...props }>
         <SimpleShowLayout>
-            <TextField source="id" label="ID"/>
+            <TextField source="originId" label="ID"/>
             <TextField source="title" label="Titre"/>
             <TextField source="name" label="Nom"/>
-            <ReferenceField label="Groupe" source="parent" reference="rights" allowEmpty>
+            <ReferenceField label="Rôle parent" source="parent" reference="rights" allowEmpty>
                 <TextField source="name" />
             </ReferenceField>
             <ReferenceArrayField label="Droits" reference="rights" source="rights">
