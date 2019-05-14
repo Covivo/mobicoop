@@ -37,16 +37,16 @@ use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
  */
 
 describe('deserializeGeoSearch', function () {
-  it('deserialize GeoSearch should return an Address object', function () {
-    $jsonGeoSearch = <<<JSON
+    it('deserialize GeoSearch should return an Address object', function () {
+        $jsonGeoSearch = <<<JSON
   {
     "@id": "\/addresses\/1",
     "id": 0
   }
 JSON;
 
-    $deserializer = new Deserializer();
-    $GeoSearch = $deserializer->deserialize(GeoSearch::class, json_decode($jsonGeoSearch, true));
-    expect($GeoSearch)->toBeAnInstanceOf(Address::class);
-  });
+        $deserializer = new Deserializer();
+        $GeoSearch = $deserializer->deserialize(GeoSearch::class, json_decode($jsonGeoSearch, true));
+        expect($GeoSearch)->toBeAnInstanceOf(Address::class);
+    });
 });

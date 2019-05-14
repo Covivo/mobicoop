@@ -27,15 +27,15 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourneyProvider;
 
 describe('deserializeExternalJourneyProvider', function () {
-  it('deserializeExternalJourneyProvider should return data given', function () {
-    $jsonExternalJourneyProvider = <<<JSON
+    it('deserializeExternalJourneyProvider should return data given', function () {
+        $jsonExternalJourneyProvider = <<<JSON
   {
     "name": "mobicoop"
   }
 JSON;
 
-    $deserializer = new Deserializer();
-    $externalJourneyProvider = $deserializer->deserialize(ExternalJourneyProvider::class, json_decode($jsonExternalJourneyProvider, true));
-    expect($externalJourneyProvider)->toBe($externalJourneyProvider);
-  });
+        $deserializer = new Deserializer();
+        $externalJourneyProvider = $deserializer->deserialize(ExternalJourneyProvider::class, json_decode($jsonExternalJourneyProvider, true));
+        expect($externalJourneyProvider)->toBe($externalJourneyProvider);
+    });
 });

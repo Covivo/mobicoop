@@ -36,8 +36,8 @@ use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
  */
 
 describe('deserializeImage', function () {
-  it('deserialize Image should return an Image object', function () {
-    $jsonImage = <<<JSON
+    it('deserialize Image should return an Image object', function () {
+        $jsonImage = <<<JSON
     {
   "id": 0,
   "name": "string",
@@ -61,8 +61,8 @@ describe('deserializeImage', function () {
 }
 JSON;
 
-    $deserializer = new Deserializer();
-    $Image = $deserializer->deserialize(Image::class, json_decode($jsonImage, true));
-    expect($Image)->toBeAnInstanceOf(Image::class);
-  });
+        $deserializer = new Deserializer();
+        $Image = $deserializer->deserialize(Image::class, json_decode($jsonImage, true));
+        expect($Image)->toBeAnInstanceOf(Image::class);
+    });
 });

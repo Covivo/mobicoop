@@ -34,9 +34,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\Strategy\Auth\FormAuthStrategy;
 
 
 describe('AuthStrategyTest', function () {
-
     it('should return true and equal if the given keys is set in the array - Auth', function () {
-
         $authStrategy = new FormAuthStrategy(
             [
                 'username' => 'admin',
@@ -52,7 +50,6 @@ describe('AuthStrategyTest', function () {
     });
 
     it('should return true and equal if the given keys is set in the array - Query', function () {
-
         $authStrategy = new QueryAuthStrategy(
             [
                 'username' => 'admin',
@@ -70,7 +67,6 @@ describe('AuthStrategyTest', function () {
 
 
     it('should contain the username and the password and should be equal to value', function () {
-
         $authStrategy = new HttpBasicAuthStrategy(
             [
                 'username' => 'admin',
@@ -83,7 +79,6 @@ describe('AuthStrategyTest', function () {
     });
 
     it('should return true and equal if the given keys is set in the array - JSON', function () {
-
         $authStrategy = new JsonAuthStrategy(
             [
                 'username' => 'admin',

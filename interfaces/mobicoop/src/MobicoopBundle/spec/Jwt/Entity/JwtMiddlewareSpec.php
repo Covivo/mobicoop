@@ -47,7 +47,7 @@ describe('JwtMiddlewareSpec', function () {
             new Response(
                 200,
                 ['Content-Type' => 'application/json'],
-                json_encode(['token' => 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9']) 
+                json_encode(['token' => 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9'])
             ),
         ]);
 
@@ -59,8 +59,6 @@ describe('JwtMiddlewareSpec', function () {
 
         $mockHandler =  new MockHandler([
             function (RequestInterface $request) {
-
-
                 expect($request->hasHeader('Authorization'))->toBeTruthy();
                 expect($request->getHeader('Authorization')[0])->toEqual('Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9');
 
@@ -77,7 +75,6 @@ describe('JwtMiddlewareSpec', function () {
 
 
     it('should return Authorization in header and should be equal to JWT + token value', function () {
-
         $baseUri = $_ENV['API_URI'];
 
         $authMockHandler = new MockHandler([
@@ -95,7 +92,6 @@ describe('JwtMiddlewareSpec', function () {
 
         $mockHandler = new MockHandler([
             function (RequestInterface $request) {
-
                 expect($request->hasHeader('Authorization'))->toBeTruthy();
                 expect($request->getHeader('Authorization')[0])->toEqual('JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9');
 

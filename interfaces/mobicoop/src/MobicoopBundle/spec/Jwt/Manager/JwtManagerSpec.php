@@ -37,9 +37,7 @@ use Psr\Http\Message\RequestInterface;
  */
 
 describe('JwtManagerSpec', function () {
-
     it('getToken', function () {
-
         $mockHandler = new MockHandler([
             function (RequestInterface $request) {
                 expect($request->hasHeader('timeout'))->toBeTruthy();
