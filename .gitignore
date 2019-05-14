@@ -490,4 +490,13 @@ $RECYCLE.BIN/
 #VScode
 .vscode
 
+# Sonarqube
+.scannerwork/.sonar_lock
+.scannerwork/report-task.txt
+.scannerwork/css-bundle/package.json
+.scannerwork/css-bundle/stylelintconfig.json
+
+
 # End of https://www.gitignore.io/api/vim,osx,node,macos,linux,windows,symfony,eclipse,netbeans,composer,jetbrains,sublimetext,phpstorm+all
+
+

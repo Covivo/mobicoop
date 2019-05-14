@@ -27,9 +27,8 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 
 describe('deserializeAsk', function () {
-    describe('deserialize Ask', function () {
-        it('deserializeAsk should return data given', function () {
-            $jsonAsk = <<<JSON
+  it('deserializeAsk should return data given', function () {
+    $jsonAsk = <<<JSON
 {
   "id": 0,
   "status": 0,
@@ -975,9 +974,8 @@ describe('deserializeAsk', function () {
 }
 JSON;
 
-            $deserializer = new Deserializer();
-            $ask = $deserializer->deserialize(Ask::class, json_decode($jsonAsk, true));
-            expect($ask)->toBe($ask);
-        });
-    });
+    $deserializer = new Deserializer();
+    $ask = $deserializer->deserialize(Ask::class, json_decode($jsonAsk, true));
+    expect($ask)->toBe($ask);
+  });
 });

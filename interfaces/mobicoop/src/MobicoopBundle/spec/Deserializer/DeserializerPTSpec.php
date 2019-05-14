@@ -38,9 +38,8 @@ use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTStep;
  */
 
 describe('deserializePT', function () {
-    describe('deserialize PTJourney', function () {
-        it('deserialize PTJourney should return a PTJourney object', function () {
-            $jsonPTJourney = <<<JSON
+  it('deserialize PTJourney should return a PTJourney object', function () {
+    $jsonPTJourney = <<<JSON
 {
   "distance": 0,
   "duration": "string",
@@ -221,11 +220,10 @@ describe('deserializePT', function () {
 }
 JSON;
 
-            $deserializer = new Deserializer();
-            $PTJourney = $deserializer->deserialize(PTJourney::class, json_decode($jsonPTJourney, true));
-            expect($PTJourney)->toBeAnInstanceOf(PTJourney::class);
-            expect($PTJourney->getPTLegs()[0])->toBeAnInstanceOf(PTLeg::class);
-            expect($PTJourney->getPTLegs()[0]->getPTSteps()[0])->toBeAnInstanceOf(PTStep::class);
-        });
-    });
+    $deserializer = new Deserializer();
+    $PTJourney = $deserializer->deserialize(PTJourney::class, json_decode($jsonPTJourney, true));
+    expect($PTJourney)->toBeAnInstanceOf(PTJourney::class);
+    expect($PTJourney->getPTLegs()[0])->toBeAnInstanceOf(PTLeg::class);
+    expect($PTJourney->getPTLegs()[0]->getPTSteps()[0])->toBeAnInstanceOf(PTStep::class);
+  });
 });

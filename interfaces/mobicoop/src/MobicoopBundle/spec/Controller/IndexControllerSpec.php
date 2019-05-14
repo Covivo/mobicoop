@@ -34,14 +34,11 @@ namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 
 /* Functional tests */
 describe('Index', function () {
-    describe('/index', function () {
-        it('Index page should return status code 200', function () {
-            $request = $this->request->create('/index', 'GET');
-            $response = $this->kernel->handle($request);
-            $status = $response->getStatusCode();
+    it('Index page should return status code 200', function () {
+        $request = $this->request->create('/index', 'GET');
+        $response = $this->kernel->handle($request);
+        $status = $response->getStatusCode();
 
-            expect($status)->toEqual(200);
-        });
+        expect($status)->toEqual(200);
     });
-});
-;
+});;

@@ -24,47 +24,29 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
-use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
- * DeserializerImageSpec.php
- * Tests for Deserializer - Image
- * @author Celine Jacquet and Remi Wortemann <celine.jacquet@mobicoop.org>
- * Date: 24/04/2019
- * Time: 14:50
+ * DeserializerGeoSearchSpec.php
+ * Tests for Deserializer - GeoSearch
+ * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
+ * Date: 24/12/2018
+ * Time: 13:46
  *
  */
 
-describe('deserializeImage', function () {
-    describe('deserialize Image', function () {
-        it('deserialize Image should return an Image object', function () {
-            $jsonImage = <<<JSON
-    {
-  "id": 0,
-  "name": "string",
-  "title": "string",
-  "alt": "string",
-  "cropX1": 0,
-  "cropY1": 0,
-  "cropX2": 0,
-  "cropY2": 0,
-  "fileName": "string",
-  "originalName": "string",
-  "width": 0,
-  "height": 0,
-  "size": 0,
-  "mimeType": "string",
-  "position": 0,
-  "eventId": 0,
-  "versions": [
-    "string"
-  ]
-}
+describe('deserializeGeoSearch', function () {
+  it('deserialize GeoSearch should return an Address object', function () {
+    $jsonGeoSearch = <<<JSON
+  {
+    "@id": "\/addresses\/1",
+    "id": 0
+  }
 JSON;
 
-            $deserializer = new Deserializer();
-            $Image = $deserializer->deserialize(Image::class, json_decode($jsonImage, true));
-            expect($Image)->toBeAnInstanceOf(Image::class);
-        });
-    });
+    $deserializer = new Deserializer();
+    $GeoSearch = $deserializer->deserialize(GeoSearch::class, json_decode($jsonGeoSearch, true));
+    expect($GeoSearch)->toBeAnInstanceOf(Address::class);
+  });
 });

@@ -36,9 +36,8 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Matching;
  */
 
 describe('deserializeMatching', function () {
-    describe('deserialize Matching', function () {
-        it('deserialize Matching should return a Matching object', function () {
-            $jsonMatching = <<<JSON
+  it('deserialize Matching should return a Matching object', function () {
+    $jsonMatching = <<<JSON
 {
   "id": 0,
   "proposalOffer": {
@@ -985,9 +984,8 @@ describe('deserializeMatching', function () {
 }
 JSON;
 
-            $deserializer = new Deserializer();
-            $Matching = $deserializer->deserialize(Matching::class, json_decode($jsonMatching, true));
-            expect($Matching)->toBeAnInstanceOf(Matching::class);
-        });
-    });
+    $deserializer = new Deserializer();
+    $Matching = $deserializer->deserialize(Matching::class, json_decode($jsonMatching, true));
+    expect($Matching)->toBeAnInstanceOf(Matching::class);
+  });
 });

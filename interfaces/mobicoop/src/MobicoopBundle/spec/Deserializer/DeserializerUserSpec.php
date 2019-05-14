@@ -36,9 +36,9 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
  *
  */
 
-describe('deserializeSimpleUser', function () {
-    it('deserializeSimpleUser should return a simple user object', function () {
-        $jsonUser = <<<JSON
+describe('deserializeUser', function () {
+  it('deserializeSimpleUser should return a simple user object', function () {
+    $jsonUser = <<<JSON
 {
   "@context": "/api/contexts/User",
   "@id": "/api/users/1",
@@ -49,19 +49,18 @@ describe('deserializeSimpleUser', function () {
 }
 JSON;
 
-        $deserializer = new Deserializer();
-        $user = $deserializer->deserialize(User::class, json_decode($jsonUser, true));
+    $deserializer = new Deserializer();
+    $user = $deserializer->deserialize(User::class, json_decode($jsonUser, true));
 
-        expect($user)->toBeAnInstanceOf(User::class);
-        expect($user->getGivenName())->toBe('Jean');
-        expect($user->getFamilyName())->not->toBe('dupont');
-        expect($user->getGender())->toBeNull();
-    });
-});
+    expect($user)->toBeAnInstanceOf(User::class);
+    expect($user->getGivenName())->toBe('Jean');
+    expect($user->getFamilyName())->not->toBe('dupont');
+    expect($user->getGender())->toBeNull();
+  });
 
-describe('deserializeComplexUser', function () {
-    it('deserializeComplexUser should return a complex user object with nested address', function () {
-        $jsonUser = <<<JSON
+
+  it('deserializeComplexUser should return a complex user object with nested address', function () {
+    $jsonUser = <<<JSON
 {
   "@context": "/api/contexts/User",
   "@id": "/api/users/1",
@@ -95,24 +94,22 @@ describe('deserializeComplexUser', function () {
 }
 JSON;
 
-        $deserializer = new Deserializer();
-        $user = $deserializer->deserialize(User::class, json_decode($jsonUser, true));
+    $deserializer = new Deserializer();
+    $user = $deserializer->deserialize(User::class, json_decode($jsonUser, true));
 
-        expect($user)->toBeAnInstanceOf(User::class);
-        expect($user->getGivenName())->toBe('Jean');
-        expect($user->getFamilyName())->toBe('Dupont');
-        expect($user->getFamilyName())->not->toBe('jean.dupont@covivo.eu');
-        expect($user->getAddresses())->toBeA('object');
-        expect($user->getAddresses()[0])->toBeAnInstanceOf(Address::class);
-        expect($user->getAddresses()[0]->getPostalCode())->toBe('54000');
-        expect($user->getAddresses()[0]->getLatitude())->toBeNull();
-    });
-});
+    expect($user)->toBeAnInstanceOf(User::class);
+    expect($user->getGivenName())->toBe('Jean');
+    expect($user->getFamilyName())->toBe('Dupont');
+    expect($user->getFamilyName())->not->toBe('jean.dupont@covivo.eu');
+    expect($user->getAddresses())->toBeA('object');
+    expect($user->getAddresses()[0])->toBeAnInstanceOf(Address::class);
+    expect($user->getAddresses()[0]->getPostalCode())->toBe('54000');
+    expect($user->getAddresses()[0]->getLatitude())->toBeNull();
+  });
 
-describe('deserializeAddress', function () {
-    describe('deserialize Address', function () {
-        it('deserializeAddress should return an Address object', function () {
-            $jsonAddress = <<<JSON
+
+  it('deserializeAddress should return an Address object', function () {
+    $jsonAddress = <<<JSON
 {
   "id": 0,
   "streetAddress": "string",
@@ -125,9 +122,8 @@ describe('deserializeAddress', function () {
 }
 JSON;
 
-            $deserializer = new Deserializer();
-            $Address = $deserializer->deserialize(Address::class, json_decode($jsonAddress, true));
-            expect($Address)->toBeAnInstanceOf(Address::class);
-        });
-    });
+    $deserializer = new Deserializer();
+    $Address = $deserializer->deserialize(Address::class, json_decode($jsonAddress, true));
+    expect($Address)->toBeAnInstanceOf(Address::class);
+  });
 });

@@ -24,31 +24,18 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourneyProvider;
 
-/**
- * DeserializerGeoSearchSpec.php
- * Tests for Deserializer - GeoSearch
- * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 24/12/2018
- * Time: 13:46
- *
- */
-
-describe('deserializeGeoSearch', function () {
-    describe('deserialize GeoSearch', function () {
-        it('deserialize GeoSearch should return an Address object', function () {
-            $jsonGeoSearch = <<<JSON
+describe('deserializeExternalJourneyProvider', function () {
+  it('deserializeExternalJourneyProvider should return data given', function () {
+    $jsonExternalJourneyProvider = <<<JSON
   {
-    "@id": "\/addresses\/1",
-    "id": 0
+    "name": "mobicoop"
   }
 JSON;
 
-            $deserializer = new Deserializer();
-            $GeoSearch = $deserializer->deserialize(GeoSearch::class, json_decode($jsonGeoSearch, true));
-            expect($GeoSearch)->toBeAnInstanceOf(Address::class);
-        });
-    });
+    $deserializer = new Deserializer();
+    $externalJourneyProvider = $deserializer->deserialize(ExternalJourneyProvider::class, json_decode($jsonExternalJourneyProvider, true));
+    expect($externalJourneyProvider)->toBe($externalJourneyProvider);
+  });
 });
