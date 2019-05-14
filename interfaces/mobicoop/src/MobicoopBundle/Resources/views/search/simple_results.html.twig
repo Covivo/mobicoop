@@ -15,7 +15,7 @@
         </div>
     </section>
     <section id="simple">
-        <Resultssearchform geo-search-url="/geosearch?search=" route="covoiturage/recherche" date="{{ date|date('m/d/Y') }}" time="{{ date|date('H:i') }}" origin="{{ origin }}" destination="{{ destination }}"></Resultssearchform>
+        <Resultssearchform geo-search-url="/geosearch?search=" route="covoiturage/recherche" date="{{ date|date('d/m/Y') }}" time="{{ date|date('H:i') }}" origin="{{ origin }}" destination="{{ destination }}"></Resultssearchform>
     </section>
     <section class="section">
         <div class="container">
@@ -92,7 +92,7 @@
                                                     <p class="is-pulled-right">{{ matching.proposalOffer.criteria.priceKm * ((matching.filters.commonDistance + matching.filters.detourDistance) / 1000)|round(1) }} €</p>
                                                 </div>
                                             </div>
-                                            <div class="columns is-vcentered">
+                                             <div class="columns is-vcentered">
                                                 <div class="column">
                                                     <div class="dropdown is-pulled-left">
                                                             <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
@@ -101,13 +101,16 @@
                                                         <div class="dropdown-menu dropDownResults" role="menu">
                                                             <div class="columns is-vcentered">
                                                                 <div class="column">
-                                                                    {% if matching.proposalOffer.user.gender == 1 %}
+                                                                    {% if matching.proposalOffer.user.gender == 2 %}
                                                                         <p><i class="fas fa-mars"></i>XX ans</p>
+                                                                        <p><i class="fas fa-car"></i>Conducteur</p>
+                                                                        <p class="disabled"><i class="fas fa-walking"></i></p>
                                                                     {% else %}
                                                                         <p><i class="fas fa-venus"></i>XX ans</p>
+                                                                        <p><i class="fas fa-car"></i>Conductrice </p>
+                                                                        <p class="disabled"><i class="fas fa-walking"></i></p>
                                                                     {% endif %}
-                                                                    <p><i class="fas fa-car"></i>Conducteur.trice </p>
-                                                                    <p class="disabled"><i class="fas fa-walking"></i></p>
+                                                                    
                                                                 </div>
                                                                 <div class="column ">
 																					
@@ -235,19 +238,22 @@
                                             <div class="columns is-vcentered">
                                                 <div class="column">
                                                     <div class="dropdown is-pulled-left">
-                                                            <button class="button" slot="trigger">
+                                                            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
                                                                 <i class="fas fa-angle-down" aria-hidden="true"></i>
                                                             </button>
                                                         <div class="dropdown-menu dropDownResults" role="menu">
                                                             <div class="columns is-vcentered">
                                                                 <div class="column">
-                                                                    {% if matching.proposalRequest.user.gender == 1 %}
+                                                                    {% if matching.proposalRequest.user.gender == 2 %}
                                                                         <p><i class="fas fa-mars"></i>XX ans</p>
+                                                                         <p class="disabled"><i class="fas fa-car"></i></p>
+                                                                    <p><i class="fas fa-walking"></i>Passager</p>
                                                                     {% else %}
                                                                         <p><i class="fas fa-venus"></i>XX ans</p>
+                                                                        <p class="disabled"><i class="fas fa-car"></i></p>
+                                                                    <p><i class="fas fa-walking"></i>Passagère</p>
                                                                     {% endif %}
-                                                                    <p class="disabled"><i class="fas fa-car"></i></p>
-                                                                    <p><i class="fas fa-walking"></i>Passag.er.ère</p>
+                                                                   
                                                                 </div>
                                                                 <div class="column ">
                                                                     {% if origin != matching.proposalRequest.waypoints[0].address.addressLocality %}

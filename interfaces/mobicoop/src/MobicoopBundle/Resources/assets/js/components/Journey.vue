@@ -26,8 +26,8 @@
             </div>
             <div class="columns is-vcentered second">
               <div class="column">
-                <p>Du {{ journey.outward.mindate }}</p>
-                <p>au {{ journey.outward.maxdate }}</p>
+                <p>Du {{ journey.outward.mindate | formatDate }}</p>
+                <p>au {{ journey.outward.maxdate | formatDate }}</p>
               </div>
               <div class="column">
                 <p>{{ journey.from.city }}</p>
@@ -103,7 +103,7 @@ export default {
             .get(this.constructJourneyURL(provider.name))
             .then(res => {
               let journeysList = (res.data);
-              let journeysListFixed = journeysList.map(journey=> journey.journeys);
+              let journeysListFixed = journeysList.map(journey => journey.journeys);
               this.externalsJourneys.push(...journeysListFixed);
             }) 
             .catch(err=> {

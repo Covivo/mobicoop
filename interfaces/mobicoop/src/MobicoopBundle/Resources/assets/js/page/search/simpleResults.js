@@ -4,6 +4,7 @@
 import 'bulma-checkradio';
 import 'babel-polyfill';
 import Vue from 'vue';
+import moment from 'moment';
 import Buefy from 'buefy';
 import VueFormWizard from 'vue-form-wizard';
 import 'vue-form-wizard/dist/vue-form-wizard.min.css';
@@ -18,6 +19,13 @@ Vue.use(Buefy,{
   defaultTooltipType: 'is-mobicoopgreen'
 });
 Vue.use(VueFormWizard);
+// add possibility to format date by using moment
+Vue.config.productionTip = false;
+Vue.filter('formatDate', function(value) {
+  if (value) {
+    return moment(String(value)).format('DD-MM-YYYY')
+  }
+});
   
 new Vue({
   el: '#simple',
@@ -32,6 +40,13 @@ new Vue({
   }
 })
 
-let dropdown = document.querySelector('.dropdown');
-dropdown.addEventListener('click', function(event) {
-  dropdown.classList.toggle('is-active');})
+// dropdown. Details of results. queryselector don't return an array 
+
+let dropdowns = [...document.querySelectorAll('.dropdown')];
+//console.error(dropdowns);
+dropdowns.map ((dropdown, index) => {
+  dropdown.addEventListener('click',  (event) => {
+    dropdown.classList.toggle('is-active');
+  })
+})
+
