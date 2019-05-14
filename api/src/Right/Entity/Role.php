@@ -25,6 +25,8 @@ namespace App\Right\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -42,6 +44,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
  * )
+ * @ApiFilter(OrderFilter::class, properties={"id", "title", "name", "parent"}, arguments={"orderParameterName"="order"})
  */
 class Role
 {
@@ -62,7 +65,7 @@ class Role
      * @var string The title of the role (user friendly name).
      *
      * @ORM\Column(type="string", length=45)
-     * @Groups("read")
+     * @Groups({"read","write"})
      */
     private $title;
     
@@ -70,7 +73,7 @@ class Role
      * @var string|null The name of the role.
      *
      * @ORM\Column(type="string", length=45)
-     * @Groups("read")
+     * @Groups({"read","write"})
      */
     private $name;
 

@@ -1,21 +1,26 @@
 import React, { Component } from 'react';
 import { Admin, Resource } from 'react-admin';
 import { Route, Redirect } from 'react-router-dom';
-import parseHydraDocumentation from '@api-platform/api-doc-parser/lib/hydra/parseHydraDocumentation';
 import { hydraClient, fetchHydra as baseFetchHydra  } from '@api-platform/admin';
+import parseHydraDocumentation from '@api-platform/api-doc-parser/lib/hydra/parseHydraDocumentation';
 import authProvider from './authProvider';
+
 import { createMuiTheme } from '@material-ui/core/styles';
-import frenchMessages from 'ra-language-french';
-// import Layout from './Component/Layout';
-import { UserShow } from './Component/User/Show';
-import { UserEdit } from './Component/User/Edit';
-import { UserCreate } from './Component/User/Create';
-import { UserList } from './Component/User/List';
-import { CommunityShow } from './Component/Community/Show';
-import { CommunityEdit } from './Component/Community/Edit';
-import { CommunityCreate } from './Component/Community/Create';
-import { CommunityList } from './Component/Community/List';
 import { cyan, lightBlue, teal } from '@material-ui/core/colors';
+
+import PersonIcon from '@material-ui/icons/Person';
+import PeopleIcon from '@material-ui/icons/People';
+import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
+import LockIcon from '@material-ui/icons/Lock';
+
+import frenchMessages from 'ra-language-french';
+
+import { UserShow, UserEdit, UserCreate, UserList } from './Component/User/users';
+import { CommunityShow, CommunityEdit, CommunityCreate, CommunityList } from './Component/Community/communities';
+import { CommunityUserCreate, CommunityUserEdit } from './Component/Community/community_users';
+import { RoleShow, RoleEdit, RoleCreate, RoleList } from './Component/Right/roles';
+import { RightShow , RightList, RightEdit, RightCreate } from './Component/Right/rights';
+
 
 const theme = createMuiTheme({
     palette: {
@@ -88,21 +93,14 @@ export default class extends Component {
                   apiDocumentationParser={ apiDocumentationParser }
                   dataProvider= { dataProvider(this.state.api) }
                   theme={ theme }
-                  // appLayout={ Layout }
                   authProvider={ authProvider }          
           >                
-              <Resource name="users" list={ UserList } create={ UserCreate } show={ UserShow } edit={ UserEdit } title="Utilisateurs" options={{ label: 'Utilisateurs' }} />
-              <Resource name="communities" list={ CommunityList } create={ CommunityCreate } show={ CommunityShow } edit={ CommunityEdit } title="Communautés" options={{ label: 'Communautés' }} />
+              <Resource name="users" list={ UserList } create={ UserCreate } show={ UserShow } edit={ UserEdit } title="Utilisateurs" options={{ label: 'Utilisateurs' }} icon={PersonIcon} />
+              <Resource name="communities" list={ CommunityList } create={ CommunityCreate } show={ CommunityShow } edit={ CommunityEdit } title="Communautés" options={{ label: 'Communautés' }} icon={PeopleIcon} />
+              <Resource name="roles" list={ RoleList } create={ RoleCreate} show={ RoleShow} edit={ RoleEdit} title="Rôles" options={{ label: 'Rôles' }} icon={SupervisorAccountIcon} />
+              <Resource name="rights" list={ RightList } create={ RightCreate} show={ RightShow} edit={ RightEdit} title="Droits" options={{ label: 'Droits' }} icon={LockIcon} />
+              <Resource name="community_users" create={ CommunityUserCreate} edit={ CommunityUserEdit} />
           </Admin>
       )
   }
 }
-
-// export default () => (
-//     <HydraAdmin
-//         apiDocumentationParser={apiDocumentationParser}
-//         authProvider={authProvider}
-//         entrypoint={entrypoint}
-//         dataProvider={dataProvider}
-//     />
-// );
