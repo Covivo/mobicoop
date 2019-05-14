@@ -17,7 +17,7 @@ import frenchMessages from 'ra-language-french';
 
 import { UserShow, UserEdit, UserCreate, UserList } from './Component/User/users';
 import { CommunityShow, CommunityEdit, CommunityCreate, CommunityList } from './Component/Community/communities';
-import { CommunityUserCreate } from './Component/Community/community_users';
+import { CommunityUserCreate, CommunityUserEdit } from './Component/Community/community_users';
 import { RoleShow, RoleEdit, RoleCreate, RoleList } from './Component/Right/roles';
 import { RightShow , RightList, RightEdit, RightCreate } from './Component/Right/rights';
 
@@ -93,14 +93,13 @@ export default class extends Component {
                   apiDocumentationParser={ apiDocumentationParser }
                   dataProvider= { dataProvider(this.state.api) }
                   theme={ theme }
-                  // appLayout={ Layout }
                   authProvider={ authProvider }          
           >                
               <Resource name="users" list={ UserList } create={ UserCreate } show={ UserShow } edit={ UserEdit } title="Utilisateurs" options={{ label: 'Utilisateurs' }} icon={PersonIcon} />
               <Resource name="communities" list={ CommunityList } create={ CommunityCreate } show={ CommunityShow } edit={ CommunityEdit } title="Communautés" options={{ label: 'Communautés' }} icon={PeopleIcon} />
               <Resource name="roles" list={ RoleList } create={ RoleCreate} show={ RoleShow} edit={ RoleEdit} title="Rôles" options={{ label: 'Rôles' }} icon={SupervisorAccountIcon} />
               <Resource name="rights" list={ RightList } create={ RightCreate} show={ RightShow} edit={ RightEdit} title="Droits" options={{ label: 'Droits' }} icon={LockIcon} />
-              <Resource name="community_users" create={ CommunityUserCreate} />
+              <Resource name="community_users" create={ CommunityUserCreate} edit={ CommunityUserEdit} />
           </Admin>
       )
   }

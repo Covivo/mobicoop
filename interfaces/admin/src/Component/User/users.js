@@ -4,7 +4,7 @@ import {
     SimpleForm, 
     SimpleShowLayout,
     Datagrid,
-    TextInput, DisabledInput, DateInput, SelectInput,
+    TextInput, DisabledInput, SelectInput,
     email,
     TextField, EmailField, DateField, 
     ShowButton, EditButton,
@@ -18,10 +18,11 @@ const genderChoices = [
 
 // Create
 export const UserCreate = (props) => (
-    <Create { ...props }>
+    <Create { ...props } title="Utilisateurs > ajouter">
         <SimpleForm>
             <TextInput source="givenName" label="Prénom"/>
             <TextInput source="familyName" label="Nom"/>
+            <SelectInput label="Sexe" source="gender" choices={genderChoices} />
             <TextInput source="email" label="Email" validate={ email() } />
         </SimpleForm>
     </Create>
@@ -29,21 +30,20 @@ export const UserCreate = (props) => (
 
 // Edit
 export const UserEdit = (props) => (
-    <Edit {...props}>
+    <Edit {...props} title="Utilisateurs > éditer">
         <SimpleForm>
             <DisabledInput source="originId" label="ID"/>
             <TextInput source="givenName" label="Prénom"/>
             <TextInput source="familyName" label="Nom"/>
             <SelectInput label="Sexe" source="gender" choices={genderChoices} />
             <TextInput source="email" label="Email" validate={ email() } />
-            <DateInput disabled source="createdDate" label="Date de création"/>
         </SimpleForm>
     </Edit>
 );
 
 // List
 export const UserList = (props) => (
-    <List {...props} title="Users" perPage={ 30 }>
+    <List {...props} title="Utilisateurs > liste" perPage={ 30 }>
         <Datagrid>
             <TextField source="originId" label="ID"/>
             <TextField source="givenName" label="Prénom"/>
@@ -58,7 +58,7 @@ export const UserList = (props) => (
 
 // Show
 export const UserShow = (props) => (
-    <Show { ...props }>
+    <Show { ...props } title="Utilisateurs > afficher">
         <SimpleShowLayout>
             <TextField source="originId" label="ID"/>
             <TextField source="givenName" label="Prénom"/>

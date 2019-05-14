@@ -5,7 +5,7 @@ import {
     SimpleShowLayout,
     Datagrid, 
     TextInput, SelectInput, ReferenceInput, DisabledInput, 
-    Filter, 
+    Filter, required,
     TextField, SelectField, ReferenceField, 
     ShowButton, EditButton,
 } from 'react-admin';
@@ -17,10 +17,10 @@ const typeChoices = [
 
 // Create
 export const RightCreate = (props) => (
-    <Create { ...props }>
+    <Create { ...props } title="Droits > ajouter">
         <SimpleForm>
-            <SelectInput source="type" label="Type" choices={typeChoices} />
-            <TextInput source="name" label="Nom" />
+            <SelectInput source="type" label="Type" choices={typeChoices} validate={required()} />
+            <TextInput source="name" label="Nom" validate={required()} />
             <ReferenceInput label="Groupe" source="parent" reference="rights" filter={{ type: 2 }}>
                 <SelectInput optionText="name" />
             </ReferenceInput>
@@ -30,11 +30,11 @@ export const RightCreate = (props) => (
 
 // Edit
 export const RightEdit = (props) => (
-    <Edit {...props}>
+    <Edit {...props} title="Droits > éditer">
         <SimpleForm>
             <DisabledInput source="originId" label="ID"/>
-            <SelectInput label="Type" source="type" choices={typeChoices} />
-            <TextInput source="name" label="Nom" />
+            <SelectInput label="Type" source="type" choices={typeChoices} validate={required()} />
+            <TextInput source="name" label="Nom" validate={required()} />
             <ReferenceInput label="Groupe" source="parent" reference="rights" filter={{ type: 2 }}>
                 <SelectInput optionText="name" />
             </ReferenceInput>
@@ -50,7 +50,7 @@ const RightFilter = (props) => (
 );
 
 export const RightList = (props) => (
-    <List {...props} title="Rights" perPage={ 30 } filters={<RightFilter />}>
+    <List {...props} title="Droits > liste" perPage={ 30 } filters={<RightFilter />}>
         <Datagrid>
             <TextField source="originId" label="ID"/>
             <SelectField label="Type" source="type" choices={typeChoices} sortable={false} />
@@ -66,7 +66,7 @@ export const RightList = (props) => (
 
 // Show
 export const RightShow = (props) => (
-    <Show { ...props }>
+    <Show { ...props } title="Droits > afficher">
         <SimpleShowLayout>
             <TextField source="originId" label="ID"/>
             <SelectField label="Type" source="type" choices={typeChoices} sortable={false} />

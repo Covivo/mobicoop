@@ -5,7 +5,7 @@ import {
     SimpleShowLayout,
     Datagrid, 
     TextInput, ReferenceInput, SelectInput, ReferenceArrayInput, SelectArrayInput, DisabledInput, 
-    regex,
+    regex, required,
     TextField, ReferenceField, ReferenceArrayField, SingleFieldList, ChipField,
     ShowButton, EditButton,
 } from 'react-admin';
@@ -14,10 +14,10 @@ const validateName = regex(/^ROLE_[A-Z_]+$/, 'Nom invalide');
 
 // Create
 export const RoleCreate = (props) => (
-    <Create { ...props }>
+    <Create { ...props } title="Rôles > ajouter">
         <SimpleForm>
-            <TextInput source="title" label="Titre"/>
-            <TextInput source="name" label="Nom" validate={validateName} />
+            <TextInput source="title" label="Titre" validate={required()}/>
+            <TextInput source="name" label="Nom" validate={[validateName,required()]} />
             <ReferenceInput label="Rôle parent" source="parent_id" reference="roles">
                 <SelectInput optionText="title" />
             </ReferenceInput>
@@ -30,11 +30,11 @@ export const RoleCreate = (props) => (
 
 // Edit
 export const RoleEdit = (props) => (
-    <Edit {...props}>
+    <Edit {...props} title="Rôles > éditer">
         <SimpleForm>
             <DisabledInput source="originId" label="ID"/>
-            <TextInput source="title" label="Titre"/>
-            <TextInput source="name" label="Nom" validate={validateName} />
+            <TextInput source="title" label="Titre" validate={required()}/>
+            <TextInput source="name" label="Nom" validate={[validateName,required()]} />
             <ReferenceInput label="Rôle parent" source="parent" reference="roles">
                 <SelectInput optionText="title" />
             </ReferenceInput>
@@ -47,7 +47,7 @@ export const RoleEdit = (props) => (
 
 // List
 export const RoleList = (props) => (
-    <List {...props} title="Roles" perPage={ 30 }>
+    <List {...props} title="Rôles > liste" perPage={ 30 }>
         <Datagrid>
             <TextField source="originId" label="ID"/>
             <TextField source="title" label="Titre"/>
@@ -63,7 +63,7 @@ export const RoleList = (props) => (
 
 // Show
 export const RoleShow = (props) => (
-    <Show { ...props }>
+    <Show { ...props } title="Rôles > afficher">
         <SimpleShowLayout>
             <TextField source="originId" label="ID"/>
             <TextField source="title" label="Titre"/>

@@ -4,9 +4,9 @@ import {
     Tab, TabbedShowLayout, 
     Link, 
     Datagrid,
-    SimpleForm, 
+    SimpleForm, required,
     DisabledInput, TextInput, DateInput, BooleanInput, ReferenceInput, SelectInput,
-    Button, ShowButton, EditButton,
+    Button, ShowButton, EditButton, DeleteButton,
     BooleanField, TextField, DateField, RichTextField, SelectField, ReferenceArrayField, ReferenceField
 } from 'react-admin';
 import RichTextInput from 'ra-input-rich-text';
@@ -21,31 +21,31 @@ const statusChoices = [
 
 // Create
 export const CommunityCreate = (props) => (
-    <Create { ...props }>
+    <Create { ...props } title="Communautés > ajouter">
         <SimpleForm>
             <ReferenceInput label="Créateur" source="user" reference="users" defaultValue={userId}>
                 <SelectInput optionText={userOptionRenderer}/>
             </ReferenceInput>
-            <TextInput source="name" label="Nom"/>
+            <TextInput source="name" label="Nom" validate={required()}/>
             <BooleanInput source="private" label="Privée" />
-            <TextInput source="description" label="Description"/>
-            <RichTextInput source="fullDescription" label="Description complète"/>
+            <TextInput source="description" label="Description" validate={required()}/>
+            <RichTextInput source="fullDescription" label="Description complète" validate={required()}/>
         </SimpleForm>
     </Create>
 );
 
 // Edit
 export const CommunityEdit = (props) => (
-    <Edit {...props}>
+    <Edit {...props } title="Communautés > éditer">
         <SimpleForm>
             <DisabledInput source="originId" label="ID"/>
             <ReferenceInput label="Créateur" source="user" reference="users">
                 <SelectInput optionText={userOptionRenderer} />
             </ReferenceInput>
-            <TextInput source="name" label="Nom"/>
+            <TextInput source="name" label="Nom" validate={required()}/>
             <BooleanInput source="private" label="Privée" />
-            <TextInput source="description" label="Description"/>
-            <RichTextInput source="fullDescription" label="Description complète" />
+            <TextInput source="description" label="Description" validate={required()}/>
+            <RichTextInput source="fullDescription" label="Description complète" validate={required()} />
             <DateInput disabled source="createdDate" label="Date de création"/>
         </SimpleForm>
     </Edit>
@@ -53,7 +53,7 @@ export const CommunityEdit = (props) => (
 
 // List
 export const CommunityList = (props) => (
-    <List {...props} title="Communities" perPage={ 30 }>
+    <List {...props} title="Communautés > liste" perPage={ 30 }>
         <Datagrid>
             <TextField source="originId" label="ID"/>
             <TextField source="name" label="Nom"/>
@@ -72,7 +72,7 @@ const AddNewMemberButton = ({ record }) => (
         component={Link}
         to={{
             pathname: `/community_users/create`,
-            search: `?community=${record.originId}`
+            search: `?community=${record.id}`
         }}
         label="Ajouter un membre"
     >
@@ -80,7 +80,7 @@ const AddNewMemberButton = ({ record }) => (
 );
 
 export const CommunityShow = (props) => (
-    <Show { ...props }>
+    <Show { ...props } title="Communautés > afficher">
         <TabbedShowLayout>
             <Tab label="Détails">
                 <TextField source="originId" label="ID"/>
@@ -101,6 +101,7 @@ export const CommunityShow = (props) => (
                         </ReferenceField>
                         <SelectField label="Status" source="status" choices={statusChoices} />
                         <EditButton />
+                        <DeleteButton />
                     </Datagrid>
                 </ReferenceArrayField>
                 <AddNewMemberButton />
