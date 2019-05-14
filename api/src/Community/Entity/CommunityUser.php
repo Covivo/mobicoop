@@ -108,14 +108,14 @@ class CommunityUser
     /**
     * @var \DateTimeInterface Accepted date.
     *
-    * @ORM\Column(type="datetime")
+    * @ORM\Column(type="datetime", nullable=true)
     */
     private $acceptedDate;
 
     /**
     * @var \DateTimeInterface Refusal date.
     *
-    * @ORM\Column(type="datetime")
+    * @ORM\Column(type="datetime", nullable=true)
     */
     private $refusedDate;
     
@@ -187,7 +187,7 @@ class CommunityUser
         return $this->acceptedDate;
     }
     
-    public function setAcceptedDate(\DateTimeInterface $acceptedDate): self
+    public function setAcceptedDate(?\DateTimeInterface $acceptedDate): self
     {
         $this->acceptedDate = $acceptedDate;
         
@@ -199,7 +199,7 @@ class CommunityUser
         return $this->refusedDate;
     }
     
-    public function setRefusedDate(\DateTimeInterface $refusedDate): self
+    public function setRefusedDate(?\DateTimeInterface $refusedDate): self
     {
         $this->refusedDate = $refusedDate;
         
@@ -216,5 +216,20 @@ class CommunityUser
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+        $this->setAutoAcceptedOrRefusedDate();
+    }
+
+    /**
+     * Accepted / refused date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoAcceptedOrRefusedDate()
+    {
+        if ($this->status == self::STATUS_ACCEPTED && is_null($this->acceptedDate)) {
+            $this->setAcceptedDate(new \Datetime());
+        } elseif ($this->status == self::STATUS_REFUSED && is_null($this->refusedDate)) {
+            $this->setRefusedDate(new \Datetime());
+        }
     }
 }

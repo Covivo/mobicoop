@@ -15,24 +15,11 @@ import LockIcon from '@material-ui/icons/Lock';
 
 import frenchMessages from 'ra-language-french';
 
-import { UserShow } from './Component/User/Show';
-import { UserEdit } from './Component/User/Edit';
-import { UserCreate } from './Component/User/Create';
-import { UserList } from './Component/User/List';
-import { CommunityShow } from './Component/Community/Show';
-import { CommunityEdit } from './Component/Community/Edit';
-import { CommunityCreate } from './Component/Community/Create';
-import { CommunityList } from './Component/Community/List';
-import { CommunityUserCreate } from './Component/Community/Members/Create';
-
-import { RoleShow } from './Component/Right/Role/Show';
-import { RoleEdit } from './Component/Right/Role/Edit';
-import { RoleCreate } from './Component/Right/Role/Create';
-import { RoleList } from './Component/Right/Role/List';
-import { RightShow } from './Component/Right/Right/Show';
-import { RightList } from './Component/Right/Right/List';
-import { RightEdit } from './Component/Right/Right/Edit';
-import { RightCreate } from './Component/Right/Right/Create';
+import { UserShow, UserEdit, UserCreate, UserList } from './Component/User/users';
+import { CommunityShow, CommunityEdit, CommunityCreate, CommunityList } from './Component/Community/communities';
+import { CommunityUserCreate } from './Component/Community/community_users';
+import { RoleShow, RoleEdit, RoleCreate, RoleList } from './Component/Right/roles';
+import { RightShow , RightList, RightEdit, RightCreate } from './Component/Right/rights';
 
 
 const theme = createMuiTheme({
