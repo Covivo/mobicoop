@@ -118,7 +118,7 @@ class Community
     private $user;
     
     /**
-     * @var ArrayCollection|null The images of the event.
+     * @var ArrayCollection|null The images of the community.
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})

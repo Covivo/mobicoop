@@ -31,6 +31,7 @@ api_platform:
             '%kernel.project_dir%/src/Image/Entity',
             '%kernel.project_dir%/src/Match/Entity',
             '%kernel.project_dir%/src/PublicTransport/Entity',
+            '%kernel.project_dir%/src/RelayPoint/Entity',
             '%kernel.project_dir%/src/Travel/Entity',
             '%kernel.project_dir%/src/User/Entity',
             '%kernel.project_dir%/src/Rdex/Entity',
@@ -47,6 +48,7 @@ api_platform:
         - '%kernel.project_dir%/src/Image/Entity'
         - '%kernel.project_dir%/src/Match/Entity'
         - '%kernel.project_dir%/src/PublicTransport/Entity'
+        - '%kernel.project_dir%/src/RelayPoint/Entity'
         - '%kernel.project_dir%/src/Rdex/Entity'
         - '%kernel.project_dir%/src/Right/Entity'
         - '%kernel.project_dir%/src/Travel/Entity'

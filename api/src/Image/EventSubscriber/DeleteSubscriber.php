@@ -31,6 +31,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use App\Image\Service\ImageManager;
+use App\User\Entity\User;
+use App\RelayPoint\Entity\RelayPoint;
+use App\RelayPoint\Entity\RelayPointType;
 
 final class DeleteSubscriber implements EventSubscriberInterface
 {
@@ -54,13 +57,13 @@ final class DeleteSubscriber implements EventSubscriberInterface
         $method = $event->getRequest()->getMethod();
 
         // needs to be modified for each new related entity (event, user etc...)
-        if ((!($object instanceof Image) && !($object instanceof Event)) || Request::METHOD_DELETE !== $method) {
+        if ((!($object instanceof Image) && !($object instanceof Event) && !($object instanceof User) && !($object instanceof RelayPoint) && !($object instanceof RelayPointType)) || Request::METHOD_DELETE !== $method) {
             return;
         }
         if ($object instanceof Image) {
             // deletion of Image => we delete the versions
             $this->imageManager->deleteVersions($object);
-        } elseif ($object instanceof Event) {
+        } elseif ($object instanceof Event || $object instanceof User || $object instanceof RelayPoint || $object instanceof RelayPointType) {
             // deletion of Event => we delete the versions of all related images
             foreach ($object->getImages() as $image) {
                 $this->imageManager->deleteVersions($image);
