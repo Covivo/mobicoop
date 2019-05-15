@@ -1,119 +1,329 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
 {% block title %}Résultats{% endblock %}
-
+{% block stylesheets %}
+    {{ encore_entry_link_tags('bundle_search/simpleResults') }}
+{% endblock %}
 {% block body %}
-
-<section class="hero is-primary">
-	<div class="hero-body">
-    	<div class="container">
-      		<h1 class="title">
-        		Mobicoop - Résultats
-      		</h1>
-    	</div>
-  	</div>
-</section>
-
-<section class="section">
-	<div class="container">
-	    {% if error is defined %}
-		<span class="tag is-danger">{{ error }}</span>
-		{% endif %}
-		<div class="content">
-			<div class="box">
-				<h3 class="title">Votre recherche</h3>
-				<div class="columns">
-					<div class="column">
-						<p><strong>Origine : </strong>{{ origin }}</p>
-					</div>
-					<div class="column">
-						<p><strong>Destination : </strong>{{ destination }}</p>
-					</div>
-					<div class="column">
-						<p><strong>Date : </strong>{{ date }}</p>
-					</div>
-				</div>
-			</div>
-    		<h2 class="title">Résultats</h2>
-			{% if hydra and hydra.member|length>0  %}
-				{% for proposal in hydra.member %}
-					<div class="box">
-						<h3 class="title">Conducteurs</h3>
-						{% if proposal.matchingRequests and proposal.matchingRequests|length>0  %}
-							<table class="table">
-								<tr>
-									<th>#</th>
-									<th>Covoitureur</th>
-									<th>Date de départ</th>
-									<th>Type</th>
-									<th>Fréquence</th>
-									<th>Origine</th>
-									<th>Destination</th>
-									<th>Distance</th>
-									<th>Détour</th>
-									<th>Durée</th>
-								</tr>
-								{% for matching in proposal.matchingRequests %}
-									<tr>
-										<td>{{ matching.proposalOffer.id }}</td>
-										<td><a href="mailto:{{ matching.proposalOffer.user.email }}">{{ matching.proposalOffer.user.givenName|capitalize }} {{ matching.proposalOffer.user.familyName|first|upper }}</a></td>
-										<td>{{ matching.proposalOffer.criteria.fromDate|date('d/m/Y') }} à {{ matching.proposalOffer.criteria.fromTime|date('H:i') }}</td>
-										<td>{{ matching.proposalOffer.type == 1 ? "Aller simple" : "Aller-retour" }}</td>
-										<td>{{ matching.proposalOffer.criteria.frequency == 1 ? "Ponctuel" : "Régulier" }}</td>
-										<td>{{ matching.proposalOffer.waypoints[0].address.addressLocality }}</td>
-										<td>{{ matching.proposalOffer.waypoints[1].address.addressLocality }}</td>
-										<td>{{ (matching.filters.newDistance / 1000) | round(2) }}km</td>
-										<td>{{ (matching.filters.detourDistance / 1000) | round(2) }}km</td>
-										<td>{{ (matching.filters.newDuration / 60) | round}} minutes</td>
-									</tr>
-								{% endfor %}							
-							</table>
-						{% else %}
-							<span class="tag is-warning">Pas de conducteur trouvé.</span>
-						{% endif %}
-					</div>
-					<div class="box">
-						<h3 class="title">Passagers</h3>
-						{% if proposal.matchingOffers and proposal.matchingOffers|length>0  %}
-							<table class="table">
-								<tr>
-									<th>#</th>
-									<th>Covoitureur</th>
-									<th>Date de départ souhaitée</th>
-									<th>Type</th>
-									<th>Fréquence</th>
-									<th>Origine</th>
-									<th>Destination</th>
-									<th>Distance</th>
-									<th>Détour</th>
-									<th>Durée</th>
-								</tr>
-								{% for matching in proposal.matchingOffers %}
-									<tr>
-										<td>{{ matching.proposalRequest.id }}</td>
-										<td><a href="mailto:{{ matching.proposalRequest.user.email }}">{{ matching.proposalRequest.user.givenName|capitalize }} {{ matching.proposalRequest.user.familyName|first|upper }}</a></td>
-										<td>{{ matching.proposalRequest.criteria.fromDate|date('d/m/Y') }} à {{ matching.proposalRequest.criteria.fromTime|date('H:i') }}</td>
-										<td>{{ matching.proposalRequest.type == 1 ? "Aller simple" : "Aller-retour" }}</td>
-										<td>{{ matching.proposalRequest.criteria.frequency == 1 ? "Ponctuel" : "Régulier" }}</td>
-										<td>{{ matching.proposalRequest.waypoints[0].address.addressLocality }}</td>
-										<td>{{ matching.proposalRequest.waypoints[1].address.addressLocality }}</td>
-										<td>{{ (matching.filters.newDistance / 1000) | round(2) }}km</td>
-										<td>{{ (matching.filters.detourDistance / 1000) | round(2) }}km</td>
-										<td>{{ (matching.filters.newDuration / 60) | round}} minutes</td>
-									</tr>
-								{% endfor %}							
-							</table>
-						{% else %}
-							<span class="tag is-warning">Pas de passager trouvé.</span>
-						{% endif %}
-					</div>
-				{% endfor %}
-			{% else %}
-				<span class="tag is-warning">Pas de covoiturage trouvé.</span>
-			{% endif %}
-		</div>
-		
-	</div>
-</section>
-
+    <section class="hero is-secondary">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">
+                    Résultats de recherche
+                </h1>
+            </div>
+        </div>
+    </section>
+    <section id="simple">
+        <Resultssearchform geo-search-url="/geosearch?search=" route="covoiturage/recherche" date="{{ date|date('d/m/Y') }}" time="{{ date|date('H:i') }}" origin="{{ origin }}" destination="{{ destination }}"></Resultssearchform>
+    </section>
+    <section class="section">
+        <div class="container">
+            {% if error is defined %}
+                <span class="tag is-danger">{{ error }}</span>
+            {% endif %}
+            <h2>Résultats</h2>
+            {% if hydra and hydra.member|length>0 %}
+                {% for proposal in hydra.member %}
+                    <h3>Conducteurs</h3>
+                    {% if proposal.matchingRequests and proposal.matchingRequests|length>0 %}
+                        {% for matching in proposal.matchingRequests %}
+                            <section class="section">
+                                <div class="tile is-ancestor">
+                                    <div class="tile is-vertical is-12">
+                                        <div class="tile is-child results">
+                                            <div class="columns is-vcentered first">
+                                                <div class="column is-1">
+                                                    <p><span class="dot is-pulled-left"/></p>
+                                                </div>
+                                                <div class="column is-1">
+                                                    <p><i class="fas fa-car"></i></p>
+                                                    <p class="disabled"><i class="fas fa-walking"></i></p>
+                                                </div>
+                                                <div class="column has-text-left">
+                                                    <p>{{ matching.proposalOffer.user.givenName|capitalize }} {{ matching.proposalOffer.user.familyName|first|upper }}</p>
+                                                </div>
+                                                <div class="column">
+                                                    <p>4.5 <i class="fas fa-star fa-1x"></i>
+                                                </div>
+                                                <div class="column is-3 is-pulled-right">
+                                                    <a class="button contacter"
+                                                    href="mailto:{{ matching.proposalOffer.user.email }}"
+                                                    style="width: 100%"><i class="fas fa-envelope fa-1x"></i>Contacter</a>
+                                                </div>
+                                            </div>
+                                            <div class="columns is-vcentered ">
+                                                <div class="column">
+                                                    {% if matching.proposalOffer.criteria.frequency == 1 %}
+                                                    {# punctual #}
+                                                    <p>{{ matching.proposalOffer.criteria.fromDate|date('D d M') }}<p>
+                                                        {% else %}
+                                                        {# regular #}
+                                                    <p>{{ matching.proposalRequest.criteria.fromDate|date('D d M') }} à
+                                                        {% if matching.proposalRequest.criteria.fromDate|date('w') == 0 %}
+                                                            {{ matching.proposalOffer.criteria.sunTime|date('H:i') }}
+                                                        {% elseif matching.proposalRequest.criteria.fromDate|date('w') == 1 %}
+                                                            {{ matching.proposalOffer.criteria.sunTime|date('H:i') }}
+                                                        {% elseif matching.proposalRequest.criteria.fromDate|date('w') == 2 %}
+                                                            {{ matching.proposalOffer.criteria.sunTime|date('H:i') }}
+                                                        {% elseif matching.proposalRequest.criteria.fromDate|date('w') == 3 %}
+                                                            {{ matching.proposalOffer.criteria.sunTime|date('H:i') }}
+                                                        {% elseif matching.proposalRequest.criteria.fromDate|date('w') == 4 %}
+                                                            {{ matching.proposalOffer.criteria.sunTime|date('H:i') }}
+                                                        {% elseif matching.proposalRequest.criteria.fromDate|date('w') == 5 %}
+                                                            {{ matching.proposalOffer.criteria.sunTime|date('H:i') }}
+                                                        {% elseif matching.proposalRequest.criteria.fromDate|date('w') == 6 %}
+                                                            {{ matching.proposalOffer.criteria.sunTime|date('H:i') }}
+                                                        {% endif %}
+                                                        {% endif %}</p>
+                                                </div>
+                                                <div class="column has-text-centered">
+                                                    <p>{{ matching.proposalOffer.criteria.fromTime|date('H:i') }}</p>
+                                                    <p>{{ origin }}</p>
+                                                </div>
+                                                <div class="column has-text-centered">
+                                                    <p><i class="fas fa-long-arrow-alt-right"></i></p>
+                                                </div>
+                                                <div class="column has-text-centered">
+                                                    <p>{{ matching.proposalOffer.criteria.fromTime|date_modify("+ " ~ (matching.filters.originalDuration / 60) | round ~ " minutes")|date('H:i') }}</p>
+                                                    <p>{{ destination }}</p>
+                                                </div>
+                                                <div class="column">
+                                                    <p class="is-pulled-right">{{ matching.proposalOffer.criteria.priceKm * ((matching.filters.commonDistance + matching.filters.detourDistance) / 1000)|round(1) }} €</p>
+                                                </div>
+                                            </div>
+                                             <div class="columns is-vcentered">
+                                                <div class="column">
+                                                    <div class="dropdown is-pulled-left">
+                                                            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+                                                                <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                                            </button>
+                                                        <div class="dropdown-menu dropDownResults" role="menu">
+                                                            <div class="columns is-vcentered">
+                                                                <div class="column">
+                                                                    {% if matching.proposalOffer.user.gender == 2 %}
+                                                                        <p><i class="fas fa-mars"></i>XX ans</p>
+                                                                        <p><i class="fas fa-car"></i>Conducteur</p>
+                                                                        <p class="disabled"><i class="fas fa-walking"></i></p>
+                                                                    {% else %}
+                                                                        <p><i class="fas fa-venus"></i>XX ans</p>
+                                                                        <p><i class="fas fa-car"></i>Conductrice </p>
+                                                                        <p class="disabled"><i class="fas fa-walking"></i></p>
+                                                                    {% endif %}
+                                                                    
+                                                                </div>
+                                                                <div class="column ">
+																					
+                                                                    {% if matching.proposalOffer.waypoints[0].address.addressLocality != origin %}
+                                                                        <p class="offer">{{ matching.proposalOffer.waypoints[0].address.addressLocality }}</p>
+                                                                    {% endif %}
+                                                                </div>
+                                                                <div class="column is-one-third">
+                                                                    <p>Détour: {{ (matching.filters.detourDuration / 60) | round }} min</p>
+                                                                </div>
+                                                                <div class="column">
+                                                                    {% if matching.proposalOffer.waypoints[1].address.addressLocality != destination %}
+                                                                        <p class="offer">{{ matching.proposalOffer.waypoints[1].address.addressLocality }}</p>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                            <div class="columns is-vcentered ">
+                                                                <div class="column ">
+                                                                </div>
+                                                                <div class="column">
+                                                                    <p>{{ origin }}</p>
+                                                                </div>
+                                                                <div class="column">
+                                                                    <p>{{ destination }}</p>
+                                                                </div>
+                                                                <div class="column is-1">
+                                                                    <p>{{ matching.proposalOffer.criteria.seats }}</p>
+                                                                    {% if matching.proposalOffer.criteria.seats == 1 %}
+                                                                        <p>Place</p>
+                                                                        <p>restante</p>
+                                                                    {% else %}
+                                                                        <p>Places</p>
+                                                                        <p>restantes</p>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                            <div class="columns is-vcentered ">
+                                                                <div class="column is-two-thirds">
+                                                                    <p>Détails: {{ matching.proposalOffer.comment }}</p>
+                                                                </div>
+                                                                <div class="column retour">
+                                                                    <p>Retour:</p>
+                                                                    <p>{{ matching.proposalOffer.type == 1 ? "Aucun" : "Oui" }}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section> 
+                        {% endfor %}
+                    {% else %}
+                        <span class="tag is-warning">Pas de conducteur trouvé.</span>
+                    {% endif %}
+                    <h3>Passagers</h3> 
+                    {% if proposal.matchingOffers and proposal.matchingOffers|length>0 %}
+                        {% for matching in proposal.matchingOffers %}
+                            <section class="section">
+                                <div class="tile is-ancestor">
+                                    <div class="tile is-vertical is-12">
+                                        <div class="tile is-child results">
+                                            <div class="columns is-vcentered first">
+                                                <div class="column is-1">
+                                                    <p><span class="dot is-pulled-left"/></p>
+                                                </div>
+                                                <div class="column is-1">
+                                                    <p class="disabled"><i class="fas fa-car"></i></p>
+                                                    <p><i class="fas fa-walking"></i></p>
+                                                </div>
+                                                <div class="column has-text-left">
+                                                    <p>{{ matching.proposalRequest.user.givenName|capitalize }} {{ matching.proposalRequest.user.familyName|first|upper }} </p>
+                                                </div>
+                                                <div class="column">
+                                                    <p>4.5 <i class="fas fa-star fa-1x"></i>
+                                                </div>
+                                                <div class="column is-3 is-pulled-right">
+                                                    <a class="button contacter"
+                                                    href="mailto:{{ matching.proposalRequest.user.email }}"
+                                                    style="width: 100%"><i class="fas fa-envelope fa-1x"></i>Contacter</a>
+                                                </div>
+                                            </div>
+                                            <div class="columns is-vcentered ">
+                                                <div class="column">
+                                                    {% if matching.proposalRequest.criteria.frequency == 1 %}
+                                                    {# punctual #}
+                                                    <p>{{ matching.proposalRequest.criteria.fromDate|date('D d M') }}<p>
+                                                        {% else %}
+                                                            {# regular #}
+                                                            {{ matching.proposalOffer.criteria.fromDate|date('d/m/Y') }} à
+                                                            {% if matching.proposalOffer.criteria.fromDate|date('w') == 0 %}
+                                                                {{ matching.proposalRequest.criteria.sunTime|date('H:i') }}
+                                                            {% elseif matching.proposalOffer.criteria.fromDate|date('w') == 1 %}
+                                                                {{ matching.proposalRequest.criteria.sunTime|date('H:i') }}
+                                                            {% elseif matching.proposalOffer.criteria.fromDate|date('w') == 2 %}
+                                                                {{ matching.proposalRequest.criteria.sunTime|date('H:i') }}
+                                                            {% elseif matching.proposalOffer.criteria.fromDate|date('w') == 3 %}
+                                                                {{ matching.proposalRequest.criteria.sunTime|date('H:i') }}
+                                                            {% elseif matching.proposalOffer.criteria.fromDate|date('w') == 4 %}
+                                                                {{ matching.proposalRequest.criteria.sunTime|date('H:i') }}
+                                                            {% elseif matching.proposalOffer.criteria.fromDate|date('w') == 5 %}
+                                                                {{ matching.proposalRequest.criteria.sunTime|date('H:i') }}
+                                                            {% elseif matching.proposalOffer.criteria.fromDate|date('w') == 6 %}
+                                                                {{ matching.proposalRequest.criteria.sunTime|date('H:i') }}
+                                                            {% endif %}
+                                                        {% endif %}</p>
+                                                </div>
+                                                <div class="column has-text-centered">
+                                                    <p>{{ matching.proposalRequest.criteria.fromTime|date('H:i') }}</p>
+                                                    <p>{{ origin }}</p>
+                                                </div>
+                                                <div class="column has-text-centered">
+                                                    <p><i class="fas fa-long-arrow-alt-right"></i></p>
+                                                </div>
+                                                <div class="column has-text-centered">
+                                                    <p>{{ matching.proposalRequest.criteria.fromTime|date_modify("+ " ~ (matching.filters.originalDuration / 60) | round ~ " minutes")|date('H:i') }}</p>
+                                                    <p>{{ destination }}</p>
+                                                </div>
+                                                <div class="column">
+                                                    <p class="is-pulled-right">{{ matching.proposalRequest.criteria.priceKm * ((matching.filters.commonDistance + matching.filters.detourDistance) / 1000)|round(1) }} €</p>
+                                                </div>
+                                            </div>
+                                            <div class="columns is-vcentered">
+                                                <div class="column">
+                                                    <div class="dropdown is-pulled-left">
+                                                            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+                                                                <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                                            </button>
+                                                        <div class="dropdown-menu dropDownResults" role="menu">
+                                                            <div class="columns is-vcentered">
+                                                                <div class="column">
+                                                                    {% if matching.proposalRequest.user.gender == 2 %}
+                                                                        <p><i class="fas fa-mars"></i>XX ans</p>
+                                                                         <p class="disabled"><i class="fas fa-car"></i></p>
+                                                                    <p><i class="fas fa-walking"></i>Passager</p>
+                                                                    {% else %}
+                                                                        <p><i class="fas fa-venus"></i>XX ans</p>
+                                                                        <p class="disabled"><i class="fas fa-car"></i></p>
+                                                                    <p><i class="fas fa-walking"></i>Passagère</p>
+                                                                    {% endif %}
+                                                                   
+                                                                </div>
+                                                                <div class="column ">
+                                                                    {% if origin != matching.proposalRequest.waypoints[0].address.addressLocality %}
+                                                                        <p class="offer">{{ origin }}</p>
+                                                                    {% endif %}
+                                                                </div>
+                                                                <div class="column is-one-third">
+                                                                    <p>Détour: {{ (matching.filters.detourDuration / 60) | round }}min</p>
+                                                                </div>
+                                                                <div class="column">
+                                                                    {% if destination != matching.proposalRequest.waypoints[1].address.addressLocality %}
+                                                                        <p class="offer">{{ destination }}</p>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                            <div class="columns is-vcentered ">
+                                                                <div class="column ">
+                                                                </div>
+                                                                <div class="column">
+                                                                    <p>{{ matching.proposalRequest.waypoints[0].address.addressLocality }}</p>
+                                                                </div>
+                                                                <div class="column">
+                                                                    <p>{{ matching.proposalRequest.waypoints[1].address.addressLocality }}</p>
+                                                                </div>
+                                                                <div class="column is-1">
+                                                                    <p>{{ matching.proposalOffer.criteria.seats }}</p>
+                                                                    {% if matching.proposalOffer.criteria.seats == 1 %}
+                                                                        <p>Place</p>
+                                                                        <p>restante</p>
+                                                                    {% else %}
+                                                                        <p>Places</p>
+                                                                        <p>restantes</p>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                            <div class="columns is-vcentered ">
+                                                                <div class="column is-two-thirds">
+                                                                    <p>Détails: {{ matching.proposalRequest.comment }}</p>
+                                                                </div>
+                                                                <div class="column retour">
+                                                                    <p>Retour:</p>
+                                                                    <p>{{ matching.proposalRequest.type == 1 ? "Aucun" : "Oui" }}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        {% endfor %}
+                    {% else %}
+                        <span class="tag is-warning">Pas de passager trouvé.</span>
+                    {% endif %}
+                {% endfor %}
+        
+            {% else %}
+                <span class="tag is-warning">Pas de covoiturage trouvé.</span>
+            {% endif %}
+        </div>    
+    </section>
+    <section id="simpleResults">
+        <div class="container">
+            <h2>Résultats chez nos partenaires</h2>
+            <Journey origin-latitude="{{ origin_latitude }}" origin-longitude="{{ origin_longitude }}" destination-latitude="{{ destination_latitude }}" destination-longitude="{{ destination_longitude }}"></Journey>
+        </div>
+    </section>
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('bundle_search/simpleResults') }}
 {% endblock %}

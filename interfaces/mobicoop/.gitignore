@@ -340,3 +340,8 @@ local.properties
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
+
+
+## Cypress/Percy
+cypress/videos/
+cypress/screenshots

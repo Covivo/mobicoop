@@ -41,7 +41,7 @@ use App\PublicTransport\Entity\PTJourney;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"post"},
+ *      collectionOperations={"get","post"},
  *      itemOperations={"get"}
  * )
  */
@@ -504,6 +504,7 @@ class Criteria
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\Car")
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
     private $car;
     

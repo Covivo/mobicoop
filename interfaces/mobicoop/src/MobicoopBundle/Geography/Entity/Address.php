@@ -47,6 +47,20 @@ class Address implements Resource
     private $iri;
 
     /**
+     * @var string|null The house number.
+     *
+     * @Groups({"post","put"})
+     */
+    private $houseNumber;
+
+    /**
+     * @var string|null The street.
+     *
+     *@Groups({"post","put"})
+     */
+    private $street;
+
+    /**
      * @var string The street address.
      * @Assert\NotBlank
      *
@@ -62,6 +76,13 @@ class Address implements Resource
     private $postalCode;
 
     /**
+     * @var string|null The sublocality of the address.
+     *
+     * @Groups({"post","put"})
+     */
+    private $subLocality;
+
+    /**
      * @var string The locality of the address.
      *
      * @Assert\NotBlank
@@ -71,6 +92,41 @@ class Address implements Resource
     private $addressLocality;
 
     /**
+     * @var string|null The locality admin of the address.
+     *
+     * @Groups({"post","put"})
+     */
+    private $localAdmin;
+
+    /**
+     * @var string|null The county of the address.
+     *
+     * @Groups({"post","put"})
+     */
+    private $county;
+
+    /**
+     * @var string|null The macro county of the address.
+     *
+     * @Groups({"post","put"})
+     */
+    private $macroCounty;
+
+    /**
+     * @var string|null The region of the address.
+     *
+     * @Groups({"post","put"})
+     */
+    private $region;
+
+    /**
+     * @var string|null The macro region of the address.
+     *
+     * @Groups({"post","put"})
+     */
+    private $macroRegion;
+
+    /**
      * @var string The country of the address.
      *
      * @Assert\NotBlank
@@ -78,6 +134,13 @@ class Address implements Resource
      * @Groups({"post","put"})
      */
     private $addressCountry;
+
+    /**
+     * @var string|null The country code of the address.
+     *
+     * @Groups({"post","put"})
+     */
+    private $countryCode;
     
     /**
      * @var float|null The latitude of the address.
@@ -107,7 +170,12 @@ class Address implements Resource
      * @var User|null The owner of the address.
      */
     private $user;
-    
+
+    /**
+     * @var string|null Label for display
+     */
+    private $displayLabel;
+
     public function __construct()
     {
         $this->userAddresses = new ArrayCollection();
@@ -132,9 +200,32 @@ class Address implements Resource
     {
         $this->iri = $iri;
     }
+
+    public function getHouseNumber(): ?string
+    {
+        return $this->houseNumber;
+    }
+
+    public function setHouseNumber(?string $houseNumber)
+    {
+        $this->houseNumber = $houseNumber;
+    }
+
+    public function getStreet(): ?string
+    {
+        return $this->street;
+    }
+
+    public function setStreet(?string $street)
+    {
+        $this->street = $street;
+    }
     
     public function getStreetAddress(): ?string
     {
+        if (!$this->streetAddress || $this->streetAddress == '') {
+            return trim($this->houseNumber.' '.$this->street);
+        }
         return $this->streetAddress;
     }
     
@@ -152,6 +243,16 @@ class Address implements Resource
     {
         $this->postalCode = $postalCode;
     }
+
+    public function getSubLocality(): ?string
+    {
+        return $this->subLocality;
+    }
+
+    public function setSubLocality(?string $subLocality)
+    {
+        $this->subLocality = $subLocality;
+    }
     
     public function getAddressLocality(): ?string
     {
@@ -162,6 +263,56 @@ class Address implements Resource
     {
         $this->addressLocality = $addressLocality;
     }
+
+    public function getLocalAdmin(): ?string
+    {
+        return $this->localAdmin;
+    }
+
+    public function setLocalAdmin(?string $localAdmin)
+    {
+        $this->localAdmin = $localAdmin;
+    }
+
+    public function getCounty(): ?string
+    {
+        return $this->county;
+    }
+
+    public function setCounty(?string $county)
+    {
+        $this->county = $county;
+    }
+
+    public function getMacroCounty(): ?string
+    {
+        return $this->macroCounty;
+    }
+
+    public function setMacroCounty(?string $macroCounty)
+    {
+        $this->macroCounty = $macroCounty;
+    }
+
+    public function getRegion(): ?string
+    {
+        return $this->region;
+    }
+
+    public function setRegion(?string $region)
+    {
+        $this->region = $region;
+    }
+
+    public function getMacroRegion(): ?string
+    {
+        return $this->macroRegion;
+    }
+
+    public function setMacroRegion(?string $macroRegion)
+    {
+        $this->macroRegion = $macroRegion;
+    }
     
     public function getAddressCountry(): ?string
     {
@@ -171,6 +322,16 @@ class Address implements Resource
     public function setAddressCountry(?string $addressCountry)
     {
         $this->addressCountry = $addressCountry;
+    }
+
+    public function getCountryCode(): ?string
+    {
+        return $this->countryCode;
+    }
+
+    public function setCountryCode(?string $countryCode)
+    {
+        $this->countryCode = $countryCode;
     }
     
     public function getLatitude(): ?string
@@ -221,5 +382,15 @@ class Address implements Resource
     public function setUser(?User $user)
     {
         $this->user = $user;
+    }
+
+    public function getDisplayLabel(): ?string
+    {
+        return $this->displayLabel;
+    }
+
+    public function setDisplayLabel(?string $displayLabel)
+    {
+        $this->displayLabel = $displayLabel;
     }
 }

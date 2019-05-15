@@ -40,7 +40,12 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use App\Geography\Entity\Address;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Ask;
+use App\Right\Entity\Role;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\EquatableInterface;
+use App\Right\Entity\UserRole;
+use App\Match\Entity\Mass;
 
 /**
  * A user.
@@ -49,9 +54,11 @@ use Doctrine\Common\Collections\Collection;
  * Note : force eager is set to false to avoid max number of nested relations (can occure despite of maxdepth... https://github.com/api-platform/core/issues/1910)
  *
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  * @UniqueEntity("email")
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -62,7 +69,7 @@ use Doctrine\Common\Collections\Collection;
  * @ApiFilter(SearchFilter::class, properties={"email":"exact"})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate"}, arguments={"orderParameterName"="order"})
  */
-class User
+class User implements UserInterface, EquatableInterface
 {
     const MAX_DETOUR_DURATION = 600;
     const MAX_DETOUR_DISTANCE = 10000;
@@ -206,7 +213,7 @@ class User
     private $multiTransportMode;
     
     /**
-     * @var Address[]|null A user may have many addresses.
+     * @var ArrayCollection|null A user may have many addresses.
      *
      * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Address", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
@@ -214,7 +221,7 @@ class User
     private $addresses;
     
     /**
-     * @var Car[]|null A user may have many cars.
+     * @var ArrayCollection|null A user may have many cars.
      *
      * @ORM\OneToMany(targetEntity="\App\User\Entity\Car", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
@@ -222,19 +229,44 @@ class User
     private $cars;
 
     /**
-     * @var Proposal[]|null The proposals made by this user.
+     * @var ArrayCollection|null The proposals made by this user.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+     * @MaxDepth(1)
      * @Apisubresource
      */
     private $proposals;
 
     /**
-     * @var Ask[]|null The asks made by this user.
+     * @var ArrayCollection|null The asks made by this user.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      */
     private $asks;
+
+    /**
+     * @var ArrayCollection|null A user may have many roles.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Right\Entity\UserRole", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     */
+    private $userRoles;
+
+    /**
+     * @var ArrayCollection|null The mass import files of the user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Match\Entity\Mass", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
+     */
+    private $masses;
+
+    /**
+    * @var \DateTimeInterface Creation date of the event.
+    *
+    * @ORM\Column(type="datetime")
+    */
+    private $createdDate;
     
     public function __construct($status=null)
     {
@@ -242,6 +274,8 @@ class User
         $this->cars = new ArrayCollection();
         $this->proposals = new ArrayCollection();
         $this->asks = new ArrayCollection();
+        $this->userRoles = new ArrayCollection();
+        $this->masses = new ArrayCollection();
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -313,12 +347,12 @@ class User
         return $this;
     }
     
-    public function getGender(): ?string
+    public function getGender()
     {
         return $this->gender;
     }
     
-    public function setGender(?string $gender): self
+    public function setGender($gender): self
     {
         $this->gender = $gender;
         
@@ -409,9 +443,9 @@ class User
         return $this;
     }
     
-    public function getAddresses(): Collection
+    public function getAddresses()
     {
-        return $this->addresses;
+        return $this->addresses->getValues();
     }
     
     public function addAddress(Address $address): self
@@ -437,9 +471,9 @@ class User
         return $this;
     }
     
-    public function getCars(): Collection
+    public function getCars()
     {
-        return $this->cars;
+        return $this->cars->getValues();
     }
     
     public function addCar(Car $car): self
@@ -465,9 +499,9 @@ class User
         return $this;
     }
     
-    public function getProposals(): Collection
+    public function getProposals()
     {
-        return $this->proposals;
+        return $this->proposals->getValues();
     }
 
     public function addProposal(Proposal $proposal): self
@@ -493,9 +527,9 @@ class User
         return $this;
     }
 
-    public function getAsks(): Collection
+    public function getAsks()
     {
-        return $this->asks;
+        return $this->asks->getValues();
     }
 
     public function addAsk(Ask $ask): self
@@ -519,5 +553,115 @@ class User
         }
 
         return $this;
+    }
+
+    public function getUserRoles()
+    {
+        return $this->userRoles->getValues();
+    }
+    
+    public function addUserRole(UserRole $userRole): self
+    {
+        if (!$this->userRoles->contains($userRole)) {
+            $this->userRoles->add($userRole);
+            $userRole->setUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeUserRole(UserRole $userRole): self
+    {
+        if ($this->userRoles->contains($userRole)) {
+            $this->userRoles->removeElement($userRole);
+            // set the owning side to null (unless already changed)
+            if ($userRole->getUser() === $this) {
+                $userRole->setUser(null);
+            }
+        }
+        
+        return $this;
+    }
+
+    public function getMasses()
+    {
+        return $this->masses->getValues();
+    }
+    
+    public function addMass(Mass $mass): self
+    {
+        if (!$this->masses->contains($mass)) {
+            $this->masses->add($mass);
+            $mass->setUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeMass(Mass $mass): self
+    {
+        if ($this->masses->contains($mass)) {
+            $this->masses->removeElement($mass);
+            // set the owning side to null (unless already changed)
+            if ($mass->getUser() === $this) {
+                $mass->setUser(null);
+            }
+        }
+        
+        return $this;
+    }
+
+    public function getCreatedDate(): ?\DateTimeInterface
+    {
+        return $this->createdDate;
+    }
+    
+    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    {
+        $this->createdDate = $createdDate;
+        
+        return $this;
+    }
+
+    public function getRoles()
+    {
+        // we return an array of ROLE_***
+        $roles = [];
+        foreach ($this->userRoles as $userRole) {
+            $roles[] = $userRole->getRole()->getName();
+        }
+        return $roles;
+    }
+
+
+    public function getSalt()
+    {
+        return  null;
+    }
+
+    public function getUsername()
+    {
+        return $this->email;
+    }
+
+    public function eraseCredentials()
+    {
+    }
+
+    public function isEqualTo(UserInterface $user)
+    {
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        if ($this->password !== $user->getPassword()) {
+            return false;
+        }
+
+        if ($this->email !== $user->getUsername()) {
+            return false;
+        }
+
+        return true;
     }
 }

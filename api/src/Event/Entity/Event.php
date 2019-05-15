@@ -168,7 +168,7 @@ class Event
     private $address;
     
     /**
-     * @var Image[]|null The images of the event.
+     * @var ArrayCollection The images of the event.
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="event", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
@@ -181,6 +181,7 @@ class Event
     public function __construct($id=null)
     {
         $this->id = $id;
+        $this->images = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -315,12 +316,9 @@ class Event
         return $this;
     }
     
-    /**
-     * @return Collection|Image[]
-     */
-    public function getImages(): Collection
+    public function getImages()
     {
-        return $this->images;
+        return $this->images->getValues();
     }
     
     public function addImage(Image $image): self

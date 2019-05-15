@@ -34,7 +34,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *      "swagger_context"={
  *           "parameters"={
  *              {
- *                  "name" = "provider_name",
+ *                  "name" = "provider",
  *                  "in" = "query",
  *                  "required" = "true",
  *                  "type" = "string",
@@ -46,14 +46,14 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *                  "required" = "true",
  *                  "type" = "string",
  *                  "description" = "1 if you want to display drivers journeys, 0 instead"
-                },
-                {
+ *              },
+ *              {
  *                  "name" = "passenger",
  *                  "in" = "query",
  *                  "required" = "true",
  *                  "type" = "string",
  *                  "description" = "1 if you want to display passengers journeys, 0 instead"
-                },
+ *              },
  *              {
  *                  "name" = "from_latitude",
  *                  "in" = "query",

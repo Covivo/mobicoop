@@ -1,6 +1,5 @@
 bazinga_geocoder:
   providers:
-
     opencage:
       factory: Bazinga\GeocoderBundle\ProviderFactory\OpenCageFactory
       locale: 'fr'
@@ -19,15 +18,37 @@ bazinga_geocoder:
 
     locationiq:
       factory: App\Geography\ProviderFactory\LocationIQFactory
+      cache: 'app.simple_cache'
+      cache_lifetime: 3600
       locale: 'fr'
       aliases:
         - LocationIQ
       options:
         api_key: '%env(API_KEY_LOCATION_IQ)%'
+    
+    pelias_autocomplete:
+      factory: App\Geography\ProviderFactory\PeliasAutocompleteFactory
+      # cache: 'app.simple_cache'
+      # cache_lifetime: 3600
+      locale: 'fr'
+      aliases:
+        - PeliasAutocomplete
+      options:
+        uri: '%env(SIG_GEOCODER_URI)%'
+
+    pelias_search:
+      factory: App\Geography\ProviderFactory\PeliasSearchFactory
+      # cache: 'app.simple_cache'
+      # cache_lifetime: 3600
+      locale: 'fr'
+      aliases:
+        - PeliasSearch
+      options:
+        uri: '%env(SIG_GEOCODER_URI)%'
 
     # List of providers
     chain:
       factory: Bazinga\GeocoderBundle\ProviderFactory\ChainFactory
       options:
         # This is the order in which Providers will be called. Note that it stops its iteration when a provider returns a result.
-        services: ['@LocationIQ','@OpenCage', '@Bing']
+        services: ['@PeliasSearch', '@PeliasAutocomplete', '@LocationIQ']

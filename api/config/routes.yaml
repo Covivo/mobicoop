@@ -1,6 +1,9 @@
-# api authentication
-api_login_check:
+# api authentication for servers
+api_login_check_server:
     path: /auth
+# api authentication for users
+api_login_check_user:
+    path: /login
 # api documentation
 swagger_ui:
     path: /doc

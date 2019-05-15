@@ -10,7 +10,7 @@ api_platform:
     version: '0.1.0'
 
     # we disable the original swagger to change the path of the documentation
-    enable_swagger_ui: false
+    enable_swagger_ui: true
     
     # enable token bearer
     swagger:
@@ -20,22 +20,37 @@ api_platform:
                 type: header
 
     mapping:
-        paths: ['%kernel.project_dir%/src/Entity','%kernel.project_dir%/src/Carpool/Entity','%kernel.project_dir%/src/User/Entity',
-            '%kernel.project_dir%/src/PublicTransport/Entity','%kernel.project_dir%/src/Geography/Entity','%kernel.project_dir%/src/Travel/Entity',
-            '%kernel.project_dir%/src/ExternalJourney/Entity','%kernel.project_dir%/src/Rdex/Entity','%kernel.project_dir%/src/Event/Entity',
-            '%kernel.project_dir%/src/Image/Entity']
+        paths: [
+            '%kernel.project_dir%/src/Entity',
+            '%kernel.project_dir%/src/App/Entity',
+            '%kernel.project_dir%/src/Carpool/Entity',
+            '%kernel.project_dir%/src/Community/Entity',
+            '%kernel.project_dir%/src/Event/Entity',
+            '%kernel.project_dir%/src/ExternalJourney/Entity',
+            '%kernel.project_dir%/src/Geography/Entity',
+            '%kernel.project_dir%/src/Image/Entity',
+            '%kernel.project_dir%/src/Match/Entity',
+            '%kernel.project_dir%/src/PublicTransport/Entity',
+            '%kernel.project_dir%/src/Travel/Entity',
+            '%kernel.project_dir%/src/User/Entity',
+            '%kernel.project_dir%/src/Rdex/Entity',
+            '%kernel.project_dir%/src/Right/Entity']
             
     resource_class_directories:
         - '%kernel.project_dir%/src/Entity'
+        - '%kernel.project_dir%/src/App/Entity'
         - '%kernel.project_dir%/src/Carpool/Entity'
-        - '%kernel.project_dir%/src/User/Entity'
-        - '%kernel.project_dir%/src/PublicTransport/Entity'
+        - '%kernel.project_dir%/src/Community/Entity'
         - '%kernel.project_dir%/src/ExternalJourney/Entity'
-        - '%kernel.project_dir%/src/Geography/Entity'
-        - '%kernel.project_dir%/src/Travel/Entity'
-        - '%kernel.project_dir%/src/Rdex/Entity'
         - '%kernel.project_dir%/src/Event/Entity'
+        - '%kernel.project_dir%/src/Geography/Entity'
         - '%kernel.project_dir%/src/Image/Entity'
+        - '%kernel.project_dir%/src/Match/Entity'
+        - '%kernel.project_dir%/src/PublicTransport/Entity'
+        - '%kernel.project_dir%/src/Rdex/Entity'
+        - '%kernel.project_dir%/src/Right/Entity'
+        - '%kernel.project_dir%/src/Travel/Entity'
+        - '%kernel.project_dir%/src/User/Entity'
         
     formats:
         jsonld:   ['application/ld+json']

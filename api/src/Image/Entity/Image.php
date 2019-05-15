@@ -34,6 +34,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Event\Entity\Event;
+use App\Community\Entity\Community;
 use App\Image\Controller\CreateImageAction;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -205,7 +206,7 @@ class Image
      * @ORM\ManyToOne(targetEntity="\App\Event\Entity\Event", inversedBy="images")
      */
     private $event;
-    
+
     /**
      * @var File|null
      * @Vich\UploadableField(mapping="event", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
@@ -217,6 +218,25 @@ class Image
      * @Groups({"read","write"})
      */
     private $eventId;
+
+    /**
+     * @var Community|null The community associated with the image.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="images")
+     */
+    private $community;
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="community", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     */
+    private $communityFile;
+    
+    /**
+     * @var int|null The community id associated with the image.
+     * @Groups({"read","write"})
+     */
+    private $communityId;
     
     /**
      * @var File|null
@@ -461,6 +481,38 @@ class Image
     public function setEventId($eventId)
     {
         $this->eventId = $eventId;
+    }
+
+    public function getCommunity(): ?Community
+    {
+        return $this->community;
+    }
+    
+    public function setCommunity(?Community $community): self
+    {
+        $this->community = $community;
+        
+        return $this;
+    }
+    
+    public function getCommunityFile(): ?File
+    {
+        return $this->communityFile;
+    }
+    
+    public function setCommunityFile(?File $communityFile)
+    {
+        $this->communityFile = $communityFile;
+    }
+    
+    public function getCommunityId(): ?int
+    {
+        return $this->communityId;
+    }
+    
+    public function setCommunityId($communityId)
+    {
+        $this->communityId = $communityId;
     }
     
     public function getUserFile(): ?File

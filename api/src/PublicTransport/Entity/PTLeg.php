@@ -278,7 +278,7 @@ class PTLeg
         return $this->ptjourney;
     }
     
-    public function setPTJourney(PTJourney $ptjourney): self
+    public function setPTJourney(?PTJourney $ptjourney): self
     {
         $this->ptjourney = $ptjourney;
         
@@ -345,9 +345,9 @@ class PTLeg
         return $this;
     }
     
-    public function getPTSteps(): Collection
+    public function getPTSteps()
     {
-        return $this->ptsteps;
+        return $this->ptsteps->getValues();
     }
 
     public function setPTSteps(ArrayCollection $ptsteps): self

@@ -36,30 +36,49 @@ use App\Geography\Entity\Direction;
 class GeoRouter
 {
     private $uri;
+    private $geoTools;
 
     /**
      * Constructor.
      *
      * @param string $uri
      */
-    public function __construct(string $uri)
+    public function __construct(string $uri, GeoTools $geoTools)
     {
         $this->uri = $uri;
         $this->collection = [];
+        $this->geoTools = $geoTools;
     }
 
     /**
      * Get the routes alternative between two or more addresses.
      *
-     * @param array $addresses[]        The array of addresses
+     * @param array $addresses[]        The array of addresses (representing one route)
      * @param boolean $detailDuration   Set to true to get the duration between 2 points
      * @return array                    The routes found
      */
     public function getRoutes(array $addresses, bool $detailDuration=false): ?array
     {
-        $georouter = new GeoRouterProvider($this->uri, $detailDuration);
+        $georouter = new GeoRouterProvider($this->uri, $detailDuration, $this->geoTools);
         $params = [];
         $params['points'] = $addresses;
+        $routes = $georouter->getCollection(Direction::class, '', $params);
+        return $routes;
+    }
+    
+    /**
+     * Get the all the routes alternative between two or more addresses, async.
+     *
+     * @param array $addresses[]        The array of addresses, indexed by owner id (representing all the routes to send by the async request)
+     * @param boolean $detailDuration   Set to true to get the duration between 2 points
+     * @return array                    The routes found
+     */
+    public function getAsyncRoutes(array $addresses, bool $detailDuration=false): ?array
+    {
+        $georouter = new GeoRouterProvider($this->uri, $detailDuration, $this->geoTools);
+        $params = [];
+        $params['arrayPoints'] = $addresses;
+        $params['async'] = true;
         $routes = $georouter->getCollection(Direction::class, '', $params);
         return $routes;
     }

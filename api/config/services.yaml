@@ -7,7 +7,8 @@ parameters:
     locale: 'fr'
 
 imports:
-    resource: 'images.yaml'
+    - { resource: images.yaml }
+    - { resource: mass.yaml }
 
 services:
     # default configuration for services in *this* file
@@ -17,6 +18,11 @@ services:
         public: false       # Allows optimizing the container by removing unused services; this also means
                             # fetching services directly from the container via $container->get() won't work.
                             # The best practice is to be explicit about your dependencies anyway.
+
+    # cache
+    app.simple_cache:
+        class: Symfony\Component\Cache\Simple\Psr6Cache
+        arguments: ['@app.cache.mobicoop']
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -29,6 +35,13 @@ services:
     App\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
+
+    # JWT Event Listener
+    mobicoop.event.jwt_created_listener:
+        class: App\Security\EventListener\JWTCreatedListener
+        arguments: [ '@request_stack' ]
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
@@ -52,6 +65,10 @@ services:
         resource: '../src/Image/Controller'
         tags: ['controller.service_arguments']
 
+    App\Match\Controller\:
+        resource: '../src/Match/Controller'
+        tags: ['controller.service_arguments']
+
     # alias to allow this type to be autowired
     Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'
     
@@ -68,4 +85,30 @@ services:
     # inject SIG uri to GeoRouter service
     App\Geography\Service\GeoRouter:
         arguments:
-            $uri: '%env(resolve:SIG_URI)%'
+            $uri: '%env(resolve:SIG_GEOROUTER_URI)%'
+
+    # set the monolog channel to use for ProposalManager
+    App\Carpool\Service\ProposalManager:
+        tags:   
+            - { name: monolog.logger, channel: carpool }
+
+    # inject rdex parameters to ExternalJourneyManager 
+    App\ExternalJourney\Service\ExternalJourneyManager:
+        arguments:
+            $operator: '%env(json:file:resolve:RDEX_OPERATOR)%'
+            $clients: '%env(json:file:resolve:RDEX_CLIENTS)%'
+            $providers: '%env(json:file:resolve:RDEX_PROVIDERS)%'
+    
+    # inject mass parameters to MassImportManager 
+    # set the monolog channel to use for MassImportManager
+    App\Match\Service\MassImportManager:
+        arguments:
+            $params: '%mass%'
+        tags:   
+            - { name: monolog.logger, channel: mass }
+
+    # inject parameters to GeoSearcher
+    App\Geography\Service\GeoSearcher:
+        arguments:
+            $params:
+                - { displayCountry: '%env(resolve:DISPLAY_COUNTRY)%', displayRegion: '%env(resolve:DISPLAY_REGION)%', displaySeparator: '%env(resolve:DISPLAY_SEPARATOR)%' }

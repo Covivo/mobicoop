@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+elementFormDefault="qualified">
+
+    <xs:element name="persons">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="person" type="personType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="uniqueid">
+            <xs:selector xpath="person/givenId" />
+            <xs:field xpath="." />
+        </xs:unique>
+    </xs:element>
+    
+    <xs:complexType name="personType">
+        <xs:sequence>
+            <xs:element name="givenId" type="xs:string"/>
+            <xs:element name="givenName" type="xs:string"/>
+            <xs:element name="familyName" type="xs:string"/>
+            <xs:element name="personalAddress" type="address" />
+            <xs:element name="workAddress" type="address"/>
+            <xs:element name="outwardTime" type="xs:time" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="returnTime" type="xs:time" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="driver" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="passenger" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="address">
+        <xs:sequence>
+            <xs:element name="houseNumber" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="street">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:whiteSpace value="collapse"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="postalCode" type="xs:string"/>
+            <xs:element name="addressLocality" type="xs:string"/>
+            <xs:element name="addressCountry" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

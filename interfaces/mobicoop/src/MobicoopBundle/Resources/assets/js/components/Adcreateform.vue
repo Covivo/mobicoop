@@ -1,5 +1,8 @@
 <template>
-  <section class="section">
+  <section
+    id="adCreateForm"
+    class="section"
+  >
     <div class="tile is-ancestor">
       <div class="tile is-vertical is-12">
         <div class="tile is-child center-all">
@@ -25,7 +28,7 @@
                   v-model="form.role"
                   name="role"
                   :native-value="1"
-                  type="is-mobicoopblue"
+                  type="is-secondary"
                 >
                   <b-icon icon="close" />
                   <span>🚙 Conducteur</span>
@@ -34,7 +37,7 @@
                   v-model="form.role"
                   name="role"
                   :native-value="2"
-                  type="is-mobicooppink"
+                  type="is-tertiary"
                 >
                   <b-icon icon="check" />
                   <span>👨‍⚖️ Passager</span>
@@ -43,7 +46,7 @@
                   v-model="form.role"
                   name="role"
                   :native-value="3"
-                  type="is-mobicoopgreen"
+                  type="is-primary"
                 >
                   Passager ou Conducteur
                 </b-radio-button>
@@ -61,7 +64,7 @@
                   v-model="form.type"
                   name="type"
                   :native-value="1"
-                  type="is-mobicoopblue"
+                  type="is-secondary"
                 >
                   <b-icon
                     pack="fas"
@@ -73,7 +76,7 @@
                   v-model="form.type"
                   name="type"
                   :native-value="2"
-                  type="is-mobicoopblue"
+                  type="is-secondary"
                 >
                   <b-icon
                     pack="fas"
@@ -90,7 +93,7 @@
               />
               <b-icon
                 pack="fas"
-                type="is-mobicoopblue"
+                type="is-secondary"
                 :icon="form.type === 2 ? 'arrows-alt-v' : 'long-arrow-alt-down'"
                 size="is-large"
               />
@@ -113,7 +116,7 @@
                   v-model="form.frequency"
                   name="frequency"
                   :native-value="1"
-                  type="is-mobicoopblue"
+                  type="is-secondary"
                 >
                   <b-icon icon="close" />
                   <span>Ponctuel</span>
@@ -122,7 +125,7 @@
                   v-model="form.frequency"
                   name="frequency"
                   :native-value="2"
-                  type="is-mobicoopblue"
+                  type="is-secondary"
                 >
                   <b-icon icon="check" />
                   <span>Régulier</span>
@@ -154,7 +157,7 @@
                         v-if="nbOfDaysToPlan>1"
                         class="column is-2 dayNameColumn"
                       >
-                        <a class="button is-mobicoopblue is-2">{{ days[index] }}</a>
+                        <a class="button is-secondary is-2">{{ days[index] }}</a>
                       </div>
                       <b-timepicker
                         v-model="form.outwardTime"
@@ -162,14 +165,14 @@
                         placeholder="Heure de départ..."
                       >
                         <button
-                          class="button is-mobicoopgreen"
+                          class="button is-primary"
                           @click="form.outwardTime = new Date()"
                         >
                           <b-icon icon="clock" />
                           <span>Maintenant</span>
                         </button>
                         <button
-                          class="button is-mobicooppink"
+                          class="button is-tertiary"
                           @click="form.outwardTime = null"
                         >
                           <b-icon icon="close" />
@@ -216,7 +219,7 @@
                       v-if="nbOfDaysToPlan>1"
                       class="column is-2 dayNameColumn"
                     >
-                      <a class="button is-mobicoopblue is-2">{{ days[index] }}</a>
+                      <a class="button is-secondary is-2">{{ days[index] }}</a>
                     </div>
                     <b-timepicker
                       v-model="form.returnTime"
@@ -224,14 +227,14 @@
                       class="column"
                     >
                       <button
-                        class="button is-mobicoopgreen"
+                        class="button is-primary"
                         @click="form.returnTime = new Date()"
                       >
                         <b-icon icon="clock" />
                         <span>Maintenant</span>
                       </button>
                       <button
-                        class="button is-mobicooppink"
+                        class="button is-tertiary"
                         @click="form.returnTime = null"
                       >
                         <b-icon icon="close" />

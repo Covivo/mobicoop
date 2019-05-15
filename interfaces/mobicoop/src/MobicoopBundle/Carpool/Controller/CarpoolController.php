@@ -33,6 +33,8 @@ use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Symfony\Component\HttpFoundation\Response;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManager;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 
 /**
  * Controller class for carpooling related actions.
@@ -108,9 +110,38 @@ class CarpoolController extends AbstractController
         return $this->render('@Mobicoop/search/simple_results.html.twig', [
             'origin' => urldecode($origin),
             'destination' => urldecode($destination),
-            'date' =>  \Datetime::createFromFormat("YmdHis", $date)->format('d/m/Y à H:i'),
-            'hydra' => $proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("YmdHis", $date))
+            'origin_latitude' => urldecode($origin_latitude),
+            'origin_longitude' => urldecode($origin_longitude),
+            'destination_latitude' => urldecode($destination_latitude),
+            'destination_longitude' => urldecode($destination_longitude),
+            'date' =>  \Datetime::createFromFormat("YmdHis", $date),
+            'hydra' => $proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("YmdHis", $date)),
         ]);
+    }
+
+    /**
+     * Provider rdex
+     */
+    public function rdexProvider(ExternalJourneyManager $externalJourneyManager)
+    {
+        return $this->json($externalJourneyManager->getExternalJourneyProviders(DataProvider::RETURN_JSON));
+    }
+
+    /**
+     * Journey rdex
+     */
+    public function rdexJourney(ExternalJourneyManager $externalJourneyManager, Request $request)
+    {
+        $params = [
+            'provider' => $request->query->get('provider'),
+            'driver'=> $request->query->get('driver'),
+            'passenger'=> $request->query->get('pssenger'),
+            'from_latitude'=> $request->query->get('from_latitude'),
+            'from_longitude'=> $request->query->get('from_longitude'),
+            'to_latitude'=> $request->query->get('to_latitude'),
+            'to_longitude'=> $request->query->get('to_longitude')
+        ];
+        return $this->json($externalJourneyManager->getExternalJourney($params, DataProvider::RETURN_JSON));
     }
 
     /**

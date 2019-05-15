@@ -105,7 +105,10 @@ class UserForm extends AbstractType
             'translation_domain' => 'user',
             'choice_translation_domain' => true,
             'help' => 'gender.placeholder',
-            'label' => 'gender.label'
+            'label' => 'gender.label',
+            'attr' => [
+                'class' => 'ariaSelect'
+            ]
         ])
         ->add('nationality', TextType::class, [
             'translation_domain' => 'user',
@@ -121,6 +124,9 @@ class UserForm extends AbstractType
             'choice_translation_domain' => false,
             'label' => 'birthYear.label',
             'help' => 'birthYear.placeholder',
+            'attr' => [
+                'class' => 'ariaSelect'
+            ]
         ])
         ->add('telephone', TextType::class, [
             'translation_domain' => 'user',

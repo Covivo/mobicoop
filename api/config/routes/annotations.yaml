@@ -6,3 +6,7 @@ controllers:
 carpool:
     resource: 'Carpool/Controller/'
     type: annotation
+
+geography:
+    resource: 'Geography/Controller/'
+    type: annotation

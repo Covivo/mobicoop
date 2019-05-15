@@ -1,0 +1,184 @@
+/*****************************
+      SIMPLE SEARCH RESULTS
+******************************/
+@import '../../app.scss';
+body {
+  h2 {
+    color: $secondary;
+    text-decoration: underline;
+    font-size: 3rem;
+    font-weight: bold;
+  }
+  h3 {
+    color: $primary-dark;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+  #search {
+    margin-top: 2vw;
+    color: $white;
+  }
+  .search {
+    background-color: $secondary;
+    border-radius: 10px;
+    border: dotted;
+    height: 15vw;
+    width: 50vw;
+    padding: 1vw;
+    align-self: center;
+    .searchResult {
+      color: $secondary;
+      text-decoration: none;
+    }
+    .field {
+      .dropdown-item {
+        .icon {
+          color: $tertiary;
+        }
+      }
+    }
+  }
+  .textContent {
+    border-bottom: solid $white;
+  }
+  .labelOrigin {
+    color: $tertiary;
+  }
+  .labelDestination {
+    color: $primary;
+  }
+  .dot {
+    height: 35px;
+    width: 35px;
+    background-color: $primary;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .underlined {
+    color: $white;
+    text-decoration: underline;
+  }
+  #rechercher,
+  #save,
+  .contacter {
+    background-color: $white;
+    font-size: 100%;
+    font-family: inherit;
+    font-weight: bold;
+    border-radius: 20px;
+    color: $tertiary;
+    &:hover {
+      color: $white;
+      background-color: $tertiary;
+    }
+
+    @include outlinedFocus($focusColor);
+  }
+  #origin {
+    box-shadow: none;
+    border-top: 0;
+    border-right: 0;
+    border-left: 0;
+    outline: none;
+    border-bottom: solid 1px $white;
+    border-radius: 0;
+    background-color: $secondary;
+
+    @include outlinedFocus($focusColor);
+    .input {
+      color: $white;
+    }
+    ::placeholder {
+      color: $white;
+      opacity: 1;
+    }
+  }
+  #destination {
+    box-shadow: none;
+    border: 0;
+    outline: 0;
+    border-bottom: solid 1px $white;
+    border-radius: 0;
+    background-color: $secondary;
+
+    @include outlinedFocus($focusColor);
+    .input {
+      color: $white;
+    }
+    ::placeholder {
+      color: $white;
+      opacity: 1;
+    }
+  }
+  .results {
+    background-color: $secondary;
+    color: $primary;
+    border-radius: 10px;
+    height: 15vw;
+    width: 50vw;
+    padding: 1vw;
+    align-self: center;
+    .first {
+      background-color: #022650;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+  }
+  .disabled {
+    color: #808080A9;
+    opacity: 0.5;
+  }
+  .dropdown,
+  .dropdown2 {
+    .button {
+      background-color: $white;
+      color: $tertiary;
+      &:hover {
+        color: $white;
+        background-color: $tertiary;
+      }
+      .fas {
+        padding: 0;
+      }
+    }
+  }
+  .dropDownResults {
+    margin-left: -1vw;
+    margin-top: 1.5vh;
+    background-color: $primary;
+    color: $secondary;
+    border-radius: 10px;
+    height: 15vw;
+    width: 50vw;
+    padding: 1vw;
+    align-self: center;
+    .offer {
+      color: $tertiary;
+    }
+    .retour {
+      background-color: $primary-dark;
+      color: $white;
+    }
+  }
+  .resultsV1 {
+    background-color: $secondary;
+    color: $primary;
+    border-radius: 10px;
+    height: 15vw;
+    width: 50vw;
+    padding: 1vw;
+    align-self: center;
+    .second {
+      background-color: #022650;
+    }
+    .source {
+      background-color: $white;
+      color: $tertiary;
+      border-radius: 20px;
+      &:hover {
+        color: $white;
+        background-color: $tertiary;
+      }
+    }
+  }
+}

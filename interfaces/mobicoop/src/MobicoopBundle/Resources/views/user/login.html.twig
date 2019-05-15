@@ -1,26 +1,54 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
 {% block title %}{% trans from 'ui' %}user.login.title{% endtrans %}{% endblock %}
-
+{% block stylesheets %}
+    {{ encore_entry_link_tags('bundle_user/login') }}
+{% endblock %}
 {% block body %}
 
-<section class="hero connexion">
+<section class="hero connexion is-passur">
 	<div class="hero-body">
     	<div class="container">
-      		<h1 class="title">
-				Mobicoop - {% trans from 'ui' %}user.login.h1{% endtrans %}
+      		<h1 class="title has-text-centered">
+				Connexion
       		</h1>
     	</div>
   	</div>
 </section>
 
-<section class="section">
-	<div class="container">
-		<p>Les champs suivis d'une étoile (*) sont obligatoires</p>
-		{{ form_start(form) }}
-		{{ form_errors(form) }}
-        {{ form_end(form) }}
-    </div>
+<section class="section loginForm">
+{{ form_start(form) }}
+		<div class="columns is-centered email">
+			{{ form_row(form.username)}}
+		</div>
+		<div class="columns is-centered ou">		
+			<p> ou </p>
+		</div>	
+		<div class="columns is-centered phone">	
+		{# fake form_row(phone) because she don't exist yet and it's why she's disabled... #}
+			<div class="field is-horizontal" >
+				<div class="field-label">
+					<label class="label">Téléphone</label>
+				</div>
+				<div class="field-body">
+					<div>
+						<input class="input" placeholder="téléphone portable" disabled/>
+					</div>
+				</div>	
+			</div>
+		</div>
+		<div class="columns is-centered password">		
+			{{form_row(form.password)}}
+		</div>	
+		<div class="columns is-centered login">		
+			{{form_row(form.login)}}
+		</div>	
+			{{ form_errors(form) }}
+			{{ form_end(form) }}
 </section>
 
 {% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('bundle_user/login') }}
+{% endblock %}
+ 

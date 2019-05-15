@@ -30,6 +30,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use GuzzleHttp\Client;
 
 use App\ExternalJourney\Entity\ExternalJourney;
+use App\ExternalJourney\Service\ExternalJourneyManager;
 
 /**
  * Collection data provider for External Journey entity.
@@ -41,15 +42,16 @@ use App\ExternalJourney\Entity\ExternalJourney;
  */
 final class ExternalJourneyCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    private const EXTERNAL_JOURNEY_CONFIG_FILE = "../config.json";
-    private const EXTERNAL_JOURNEY_API_KEY = "rdexApi";
     private const EXTERNAL_JOURNEY_HASH = "sha256";         // hash algorithm
-    
+
+    private $externalJourneyManager;
+
     protected $request;
 
-    public function __construct(RequestStack $requestStack)
+    public function __construct(RequestStack $requestStack, ExternalJourneyManager $externalJourneyManager)
     {
         $this->request = $requestStack->getCurrentRequest();
+        $this->externalJourneyManager = $externalJourneyManager;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -65,7 +67,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
             'timeout'  => 10.0,
         ]);
         // we collect search parameters here
-        $providerName = $this->request->get("provider_name");
+        $providerName = $this->request->get("provider");
         $driver = $this->request->get("driver");
         $passenger = $this->request->get("passenger");
         $fromLatitude = $this->request->get("from_latitude");
@@ -75,51 +77,39 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
         // then we set these parameters
         $searchParameters  = [
             'driver'  => [
-                'state'   => $driver //1
+                'state'   => $driver
             ],
             'passenger' => [
-                'state'   => $passenger //1
+                'state'   => $passenger
             ],
             'from'    => [
-                'latitude'  => $fromLatitude, //Nancy=48.69278
-                'longitude' => $fromLongitude //6.18361
+                'latitude'  => $fromLatitude,
+                'longitude' => $fromLongitude
             ],
             'to'    => [
-                'latitude'  => $toLatitude,//Metz=49.11972
-                'longitude' => $toLongitude//6.17694
+                'latitude'  => $toLatitude,
+                'longitude' => $toLongitude
             ]
         ];
 
         // @todo error management (api not responding, bad parameters...)
-        // if config.json exists we collect its parameters and request all apis
-        if (file_exists(self::EXTERNAL_JOURNEY_CONFIG_FILE)) {
-            // read config.json
-            $providerList = json_decode(file_get_contents(self::EXTERNAL_JOURNEY_CONFIG_FILE), true);
-            if (isset($providerList[self::EXTERNAL_JOURNEY_API_KEY][$providerName])) {
-                $provider = $providerList[self::EXTERNAL_JOURNEY_API_KEY][$providerName];
-                $apiUrl = $provider["apiUrl"];
-                $apiResource = $provider["apiResource"];
-                $apiKey = $provider["apiKey"];
-                $privateKey = $provider["privateKey"];
-                
+        foreach ($this->externalJourneyManager->getProviders() as $provider) {
+            if ($provider->getName() == $providerName) {
                 $query = array(
                     'timestamp' => time(),
-                    'apikey'    => $apiKey,
-                    'p'         => $searchParameters //optional if POST
+                    'apikey'    => $provider->getApiKey(),
+                    'p'         => $searchParameters
                 );
-                
                 // construct the requested url
-                $url = $apiUrl.$apiResource.'?'.http_build_query($query);
-                $signature = hash_hmac(self::EXTERNAL_JOURNEY_HASH, $url, $privateKey);
+                $url = $provider->getUrl().'/'.$provider->getResource().'?'.http_build_query($query);
+                $signature = hash_hmac(self::EXTERNAL_JOURNEY_HASH, $url, $provider->getPrivateKey());
                 $signedUrl = $url.'&signature='.$signature;
-                
                 // request url
                 $data = $client->request('GET', $signedUrl);
                 $data = $data->getBody()->getContents();
                 return json_decode($data, true);
             }
-            return [];
         }
-        return ["no config.json found"];
+        return [];
     }
 }

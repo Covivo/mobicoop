@@ -34,6 +34,7 @@ use App\Geography\Service\GeoRouter;
 use App\Geography\Service\ZoneManager;
 use App\Geography\Entity\Zone;
 use App\DataProvider\Entity\GeoRouterProvider;
+use Psr\Log\LoggerInterface;
 
 /**
  * Proposal manager service.
@@ -48,6 +49,7 @@ class ProposalManager
     private $geoRouter;
     private $zoneManager;
     private $directionRepository;
+    private $logger;
 
     /**
      * Constructor.
@@ -59,7 +61,7 @@ class ProposalManager
      * @param GeoRouter $geoRouter
      * @param ZoneManager $zoneManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager)
+    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, LoggerInterface $logger)
     {
         $this->entityManager = $entityManager;
         $this->proposalMatcher = $proposalMatcher;
@@ -67,6 +69,7 @@ class ProposalManager
         $this->directionRepository = $directionRepository;
         $this->geoRouter = $geoRouter;
         $this->zoneManager = $zoneManager;
+        $this->logger = $logger;
     }
     
     /**
@@ -79,6 +82,9 @@ class ProposalManager
      */
     public function createProposal(Proposal $proposal, $persist=true, bool $excludeProposalUser=true)
     {
+        $date = new \DateTime("UTC");
+        $this->logger->info('Proposal creation | Start ' . $date->format("Ymd H:i:s.u"));
+
         // temporary initialisation, will be dumped when implementation of these fields will be done
         $proposal->getCriteria()->setSeats(1);
         $proposal->getCriteria()->setAnyRouteAsPassenger(true);
@@ -147,11 +153,16 @@ class ProposalManager
 
         // matching analyze
         $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
+        $this->logger->info('Proposal creation | End matching ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         if ($persist) {
             // TODO : here we should remove the previously matched proposal if they already exist
             $this->entityManager->persist($proposal);
+            $this->logger->info('Proposal creation | End persist ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
+
+        $end = new \DateTime("UTC");
+        $this->logger->info('Proposal creation | Total duration ' . ($end->diff($date))->format("%s.%f seconds"));
 
         return $proposal;
     }
@@ -160,7 +171,7 @@ class ProposalManager
      * Get the matchings for the given proposal.
      * Used for simple search.
      *
-     * @param Proposal $proposal    The proposal for wich we search the matchings
+     * @param Proposal $proposal    The proposal for which we search the matchings
      * @return Proposal             The posted proposal with its matchings
      */
     public function getMatchings(Proposal $proposal)
@@ -186,6 +197,8 @@ class ProposalManager
         float $destinationLongitude,
         \Datetime $date
         ) {
+
+        // we create a new Proposal object with its Criteria and Waypoints
         $proposal = new Proposal();
         $proposal->setType(Proposal::TYPE_ONE_WAY);
         $criteria = new Criteria();
