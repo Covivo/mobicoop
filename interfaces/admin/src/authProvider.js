@@ -19,7 +19,6 @@ export default (type, params) => {
       return fetch(request)
         .then(response => {
           if (response.status < 200 || response.status >= 300) throw new Error(response.statusText);
-
           return response.json();
         })
         .then(({ token }) => {
@@ -31,7 +30,7 @@ export default (type, params) => {
           localStorage.setItem('token', token); // The JWT token is stored in the browser's local storage
           localStorage.setItem('roles', decodedToken.roles);
           localStorage.setItem('id', decodedToken.id);
-          window.location.replace('/');
+          return Promise.resolve();
         });
 
     case AUTH_LOGOUT:
@@ -41,7 +40,7 @@ export default (type, params) => {
       break;
 
     case AUTH_ERROR:
-      if (401 === params.status || 403 === params.status) {
+      if (401 === params.response.status || 403 === params.response.status) {
         localStorage.removeItem('token');
         localStorage.removeItem('roles');
         localStorage.removeItem('id');
@@ -52,7 +51,7 @@ export default (type, params) => {
     case AUTH_CHECK:
       return localStorage.getItem('token') ? Promise.resolve() : Promise.reject();
 
-      default:
-          return Promise.resolve();
+    default:
+      return Promise.resolve();
   }
 }

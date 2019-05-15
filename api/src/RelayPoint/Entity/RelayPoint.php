@@ -52,7 +52,7 @@ use App\Travel\Entity\RelayPointType;
  * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
  */
 class RelayPoint
-{    
+{
     const STATUS_PENDING = 0;
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 2;
@@ -123,36 +123,36 @@ class RelayPoint
      */
     private $placesDisabled;
 
-     /**
-     * @var boolean|null The relay point is free.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
-     */
+    /**
+    * @var boolean|null The relay point is free.
+    *
+    * @ORM\Column(type="boolean", nullable=true)
+    * @Groups({"read","write"})
+    */
     private $free;
 
-     /**
-     * @var boolean|null The relay point is secured.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
-     */
+    /**
+    * @var boolean|null The relay point is secured.
+    *
+    * @ORM\Column(type="boolean", nullable=true)
+    * @Groups({"read","write"})
+    */
     private $secured;
 
-     /**
-     * @var boolean|null The relay point is official.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
-     */
+    /**
+    * @var boolean|null The relay point is official.
+    *
+    * @ORM\Column(type="boolean", nullable=true)
+    * @Groups({"read","write"})
+    */
     private $official;
 
-     /**
-     * @var boolean|null The relay point appears in the autocompletion.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
-     */
+    /**
+    * @var boolean|null The relay point appears in the autocompletion.
+    *
+    * @ORM\Column(type="boolean", nullable=true)
+    * @Groups({"read","write"})
+    */
     private $suggested;
 
     /**

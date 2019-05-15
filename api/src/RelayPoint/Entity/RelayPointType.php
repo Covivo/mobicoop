@@ -46,7 +46,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * )
  */
 class RelayPointType
-{    
+{
     /**
      * @var int The id of this relay point type.
      *
@@ -67,15 +67,15 @@ class RelayPointType
      */
     private $name;
 
-     /**
-     * @var ArrayCollection|null The images of the relay point type.
-     *
-     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="relayPointType", cascade={"persist","remove"}, orphanRemoval=true)
-     * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"read","write"})
-     * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
-     */
+    /**
+    * @var ArrayCollection|null The images of the relay point type.
+    *
+    * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="relayPointType", cascade={"persist","remove"}, orphanRemoval=true)
+    * @ORM\OrderBy({"position" = "ASC"})
+    * @Groups({"read","write"})
+    * @MaxDepth(1)
+    * @ApiSubresource(maxDepth=1)
+    */
     private $images;
 
     public function __construct()

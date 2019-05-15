@@ -3,6 +3,7 @@ import { Admin, Resource } from 'react-admin';
 import { Route, Redirect } from 'react-router-dom';
 import { hydraClient, fetchHydra as baseFetchHydra  } from '@api-platform/admin';
 import parseHydraDocumentation from '@api-platform/api-doc-parser/lib/hydra/parseHydraDocumentation';
+
 import authProvider from './authProvider';
 
 import { createMuiTheme } from '@material-ui/core/styles';
@@ -96,7 +97,7 @@ export default class extends Component {
                   apiDocumentationParser={ apiDocumentationParser }
                   dataProvider= { dataProvider(this.state.api) }
                   theme={ theme }
-                  authProvider={ authProvider }          
+                  authProvider={ authProvider }  
           >                
               <Resource name="users" list={ UserList } create={ UserCreate } show={ UserShow } edit={ UserEdit } title="Utilisateurs" options={{ label: 'Utilisateurs' }} icon={PersonIcon} />
               <Resource name="communities" list={ CommunityList } create={ CommunityCreate } show={ CommunityShow } edit={ CommunityEdit } title="Communautés" options={{ label: 'Communautés' }} icon={PeopleIcon} />

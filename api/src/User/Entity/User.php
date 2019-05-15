@@ -255,7 +255,7 @@ class User implements UserInterface, EquatableInterface
      * @var ArrayCollection|null The mass import files of the user.
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\Mass", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","write"})
+     * @Groups({"read"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
