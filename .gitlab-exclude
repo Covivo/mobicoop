@@ -1,6 +1,6 @@
 .env.local
 /api/.env.local
-/api/config/rdex/
+/api/config/rdex/*.json.dist
 /api/config/jwt/
 /api/var/log/
 /api/public/upload/events/images/*.jpg

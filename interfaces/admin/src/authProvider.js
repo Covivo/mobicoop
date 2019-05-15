@@ -30,26 +30,25 @@ export default (type, params) => {
           localStorage.setItem('token', token); // The JWT token is stored in the browser's local storage
           localStorage.setItem('roles', decodedToken.roles);
           localStorage.setItem('id', decodedToken.id);
-          return Promise.resolve();
         });
 
     case AUTH_LOGOUT:
       localStorage.removeItem('token');
       localStorage.removeItem('roles');
       localStorage.removeItem('id');
-      break;
+      return Promise.resolve();
 
-    case AUTH_ERROR:
-      if (401 === params.response.status || 403 === params.response.status) {
+    case AUTH_ERROR:  
+      if (401 === params.status || 403 === params.status) {
         localStorage.removeItem('token');
         localStorage.removeItem('roles');
         localStorage.removeItem('id');
         return Promise.reject();
       }
-      break;
+      return Promise.resolve();
 
     case AUTH_CHECK:
-      return localStorage.getItem('token') ? Promise.resolve() : Promise.reject();
+      return localStorage.getItem('token') ? Promise.resolve() : Promise.reject({ redirectTo: '/login' });
 
     default:
       return Promise.resolve();

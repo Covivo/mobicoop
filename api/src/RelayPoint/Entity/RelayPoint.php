@@ -41,6 +41,7 @@ use App\Travel\Entity\RelayPointType;
  * A relay point.
  *
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
@@ -195,7 +196,6 @@ class RelayPoint
     /**
      * @var Community|null The community of the relay point.
      *
-     * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Community\Entity\Community")
      * @ORM\JoinColumn(nullable=true)
      * @Groups({"read","write"})
@@ -459,5 +459,17 @@ class RelayPoint
         $this->createdDate = $createdDate;
         
         return $this;
+    }
+
+    // DOCTRINE EVENTS
+    
+    /**
+     * Creation date.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoCreatedDate()
+    {
+        $this->setCreatedDate(new \Datetime());
     }
 }

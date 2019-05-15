@@ -63,8 +63,8 @@ const apiDocumentationParser = entrypoint =>
     ({ api }) => ({ api }),
     result => {
       const { api, status } = result;
-
-      if (status === 401) {
+      
+      if (status === 401) {      
         return Promise.resolve({
           api,
           status,
@@ -82,11 +82,11 @@ export default class extends Component {
   state = { api: null };
 
   componentDidMount() {
-      apiDocumentationParser(entrypoint).then(({ api }) => {
-          this.setState({ api });
-      }).catch((e) => {
-          console.log(e);
-      });
+    apiDocumentationParser(entrypoint).then(({ api }) => {
+      this.setState({ api });
+    }).catch((e) => {
+      console.log(e);
+    });
   }
 
   render() {
