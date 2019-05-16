@@ -35,7 +35,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use App\User\Entity\User;
 use App\Community\Entity\Community;
 use App\Geography\Entity\Address;
-use App\Travel\Entity\RelayPointType;
+use App\RelayPoint\Entity\RelayPointType;
 
 /**
  * A relay point.
