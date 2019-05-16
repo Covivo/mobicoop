@@ -188,7 +188,7 @@ class RelayPoint
      * @var User The creator of the relay point.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="App\User\Entity\User")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      */
@@ -248,7 +248,7 @@ class RelayPoint
         return $this->private;
     }
     
-    public function setPrivate(bool $isPrivate): self
+    public function setPrivate(?bool $isPrivate): self
     {
         $this->private = $isPrivate;
         
@@ -310,7 +310,7 @@ class RelayPoint
         return $this->free;
     }
     
-    public function setFree(bool $isFree): self
+    public function setFree(?bool $isFree): self
     {
         $this->free = $isFree;
         
@@ -322,7 +322,7 @@ class RelayPoint
         return $this->secured;
     }
     
-    public function setSecured(bool $isSecured): self
+    public function setSecured(?bool $isSecured): self
     {
         $this->secured = $isSecured;
         
@@ -334,7 +334,7 @@ class RelayPoint
         return $this->official;
     }
     
-    public function setOfficial(bool $isOfficial): self
+    public function setOfficial(?bool $isOfficial): self
     {
         $this->official = $isOfficial;
         
@@ -346,7 +346,7 @@ class RelayPoint
         return $this->suggested;
     }
     
-    public function setSuggested(bool $isSuggested): self
+    public function setSuggested(?bool $isSuggested): self
     {
         $this->suggested = $isSuggested;
         
@@ -358,7 +358,7 @@ class RelayPoint
         return $this->permalink;
     }
     
-    public function setPermalink(string $permalink)
+    public function setPermalink(?string $permalink)
     {
         $this->permalink = $permalink;
     }

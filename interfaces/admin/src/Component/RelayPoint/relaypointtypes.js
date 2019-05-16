@@ -5,7 +5,7 @@ import {
     SimpleShowLayout,
     Datagrid, required,
     TextInput, DisabledInput, 
-    TextField, DateField, 
+    TextField, 
     ShowButton, EditButton,
 } from 'react-admin';
 
@@ -34,7 +34,6 @@ export const RelayPointTypeList = (props) => (
         <Datagrid>
             <TextField source="originId" label="ID"/>
             <TextField source="name" label="Nom"/>
-            <DateField source="createdDate" label="Date de création"/>
             <ShowButton />
             <EditButton />
         </Datagrid>
@@ -47,7 +46,6 @@ export const RelayPointTypeShow = (props) => (
         <SimpleShowLayout>
             <TextField source="originId" label="ID"/>
             <TextField source="name" label="Nom"/>
-            <DateField source="createdDate" label="Date de création"/>
             <EditButton />
         </SimpleShowLayout>
     </Show>
