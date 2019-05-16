@@ -106,6 +106,8 @@ export default class extends Component {
               <Resource name="relay_points" list={ RelayPointList } create={ RelayPointCreate} show={ RelayPointShow} edit={ RelayPointEdit} title="Points relais" options={{ label: 'Points relais' }} icon={LocalParkingIcon} />
               <Resource name="relay_point_types" list={ RelayPointTypeList } create={ RelayPointTypeCreate} show={ RelayPointTypeShow} edit={ RelayPointTypeEdit} title="Types de points relais" options={{ label: 'Types de points relais' }} icon={LocalParkingIcon} />
               <Resource name="community_users" create={ CommunityUserCreate} edit={ CommunityUserEdit} />
+              <Resource name="geo_search" />
+              <Resource name="addresses" />
           </Admin>
       )
   }
