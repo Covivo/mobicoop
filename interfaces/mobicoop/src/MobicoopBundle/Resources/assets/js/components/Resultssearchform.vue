@@ -35,7 +35,7 @@
             </div>
             <div class="column">
               <p class="is-size-7 labelDestination">
-                Lieu de d'arrivée
+                Lieu d'arrivée
               </p>
               <label
                 class="label"
