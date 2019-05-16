@@ -145,6 +145,21 @@ class CarpoolController extends AbstractController
     }
 
     /**
+     * Filter
+     * @Route("/covoiturage/recherche/filtrer", name="filters")
+     */
+    public function filters($origin, $destination, $date)
+    {   
+        $origin = "origin test";
+        $destination = "destination test";
+        return $this->render('@Mobicoop/search/filters_results.html.twig', [
+            'origin' => $origin,
+            'destination' => $destination,
+            'date' => \Datetime::createFromFormat("YmdHis", $date)
+        ]);
+    }
+
+    /**
      * Ad post results.
      */
     public function adPostResults($id, ProposalManager $proposalManager)
