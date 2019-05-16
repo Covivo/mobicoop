@@ -88,7 +88,7 @@ export const RelayPointEdit = (props) => (
                 <RichTextInput source="fullDescription" label="Description complète" validate={required()}/>
             </FormTab>
             <FormTab label="Adresse">
-                <TextInput source="address.streetAddress" label="Rue" />
+                <TextInput source="address[0].streetAddress" label="Rue" />
             </FormTab>
             <FormTab label="Communauté">
                 <ReferenceInput label="Communauté" source="community" reference="communities" resettable>
