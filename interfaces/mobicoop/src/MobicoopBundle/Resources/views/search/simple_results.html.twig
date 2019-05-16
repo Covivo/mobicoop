@@ -17,8 +17,6 @@
     <section id="simple">
         <Resultssearchform geo-search-url="/geosearch?search=" route="covoiturage/recherche" date="{{ date|date('d/m/Y') }}" time="{{ date|date('H:i') }}" origin="{{ origin }}" destination="{{ destination }}"></Resultssearchform>
     </section>
-    <section class="section">
-        <div class="container">
             {% if error is defined %}
                 <span class="tag is-danger">{{ error }}</span>
             {% endif %}
@@ -28,7 +26,7 @@
                     <h3>Conducteurs</h3>
                     {% if proposal.matchingRequests and proposal.matchingRequests|length>0 %}
                         {% for matching in proposal.matchingRequests %}
-                            <section class="section">
+                            <section class="section driver">
                                 <div class="tile is-ancestor">
                                     <div class="tile is-vertical is-12">
                                         <div class="tile is-child results">
@@ -91,10 +89,8 @@
                                                 <div class="column">
                                                     <p class="is-pulled-right">{{ matching.proposalOffer.criteria.priceKm * ((matching.filters.commonDistance + matching.filters.detourDistance) / 1000)|round(1) }} €</p>
                                                 </div>
-                                            </div>
-                                             <div class="columns is-vcentered">
                                                 <div class="column">
-                                                    <div class="dropdown is-pulled-left">
+                                                    <div class="dropdown is-pulled-right">
                                                             <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
                                                                 <i class="fas fa-angle-down" aria-hidden="true"></i>
                                                             </button>
@@ -110,10 +106,8 @@
                                                                         <p><i class="fas fa-car"></i>Conductrice </p>
                                                                         <p class="disabled"><i class="fas fa-walking"></i></p>
                                                                     {% endif %}
-                                                                    
                                                                 </div>
                                                                 <div class="column ">
-																					
                                                                     {% if matching.proposalOffer.waypoints[0].address.addressLocality != origin %}
                                                                         <p class="offer">{{ matching.proposalOffer.waypoints[0].address.addressLocality }}</p>
                                                                     {% endif %}
@@ -171,7 +165,7 @@
                     <h3>Passagers</h3> 
                     {% if proposal.matchingOffers and proposal.matchingOffers|length>0 %}
                         {% for matching in proposal.matchingOffers %}
-                            <section class="section">
+                            <section class="section passenger">
                                 <div class="tile is-ancestor">
                                     <div class="tile is-vertical is-12">
                                         <div class="tile is-child results">
@@ -234,10 +228,8 @@
                                                 <div class="column">
                                                     <p class="is-pulled-right">{{ matching.proposalRequest.criteria.priceKm * ((matching.filters.commonDistance + matching.filters.detourDistance) / 1000)|round(1) }} €</p>
                                                 </div>
-                                            </div>
-                                            <div class="columns is-vcentered">
                                                 <div class="column">
-                                                    <div class="dropdown is-pulled-left">
+                                                    <div class="dropdown is-pulled-right">
                                                             <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
                                                                 <i class="fas fa-angle-down" aria-hidden="true"></i>
                                                             </button>
@@ -315,11 +307,10 @@
             {% else %}
                 <span class="tag is-warning">Pas de covoiturage trouvé.</span>
             {% endif %}
-        </div>    
-    </section>
+            
+    
     <section id="simpleResults">
         <div class="container">
-            <h2>Résultats chez nos partenaires</h2>
             <Journey origin-latitude="{{ origin_latitude }}" origin-longitude="{{ origin_longitude }}" destination-latitude="{{ destination_latitude }}" destination-longitude="{{ destination_longitude }}"></Journey>
         </div>
     </section>

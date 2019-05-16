@@ -3,40 +3,16 @@
     <div class="tile is-ancestor">
       <div class="tile is-vertical is-12">
         <div class="tile is-child search">
-          <div class="columns is-vcentered">
-            <div class="column">
-              <p><span class="dot is-pulled-left" /></p>
-            </div>
-            <div class="column is-3 save">
-              <div
-                id="save"
-                class="button save is-tertiary is-pulled-right"
-                style="width: 100%"
-              >
-                Enregistrer
-              </div>
-            </div>
-          </div>
           <div class="columns dateTime">
             <div class="column">
-              <div class="departureDate">
-                <p class="underlined">
-                  {{ date }}
-                </p>
-              </div>
-            </div>
-            <div class="column">
-              <div class="departureTime">
-                <p class="underlined">
-                  {{ time }}
+              <div>
+                <p>
+                  Récapitulatif de votre recherche du {{ date }} à {{ time }}
                 </p>
               </div>
             </div>
           </div>
           <div class="columns SearchBar">
-            <div class="column ">
-              <div />
-            </div>
             <div class="column">
               <!-- inputs outward destination -->
               <p class="is-size-7 labelOrigin">
@@ -75,9 +51,6 @@
                 />
               </label>
             </div>
-          </div>
-          <div class="columns">
-            <div class="column" />
             <div class="column is-3 is-pulled-right">
               <label
                 for="rechercher"

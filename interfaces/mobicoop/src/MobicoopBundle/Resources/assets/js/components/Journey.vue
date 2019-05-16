@@ -24,7 +24,7 @@
                 </p>
               </div>
             </div>
-            <div class="columns is-vcentered second">
+            <div class="columns is-vcentered">
               <div class="column">
                 <p>Du {{ journey.outward.mindate | formatDate }}</p>
                 <p>au {{ journey.outward.maxdate | formatDate }}</p>
@@ -38,15 +38,13 @@
               <div class="column">
                 <p>{{ journey.to.city }}</p>
               </div>
-            </div>
-            <div class="columns is-vcentered ">
-              <div class="column is-pulled-right">
+              <div class="column">
                 <a
                   class="button source is-outlined is-pulled-right"
                   :href="journey.url.includes(journey.origin) ? `https://${journey.url}` : `https://${journey.origin}${journey.url}`"
                 >{{ journey.origin }} </a>
               </div>
-            </div>	
+            </div>
           </div>
         </div>
       </div>
