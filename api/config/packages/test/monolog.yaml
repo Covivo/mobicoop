@@ -5,8 +5,13 @@ monolog:
             level: debug
             path: "%kernel.logs_dir%/carpool.log"
             channels: [carpool]
+        mass:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/mass.log"
+            channels: [mass]
         main:
             type: stream
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
-            channels: ["!event", "!carpool"]
+            channels: ["!event", "!carpool", "!mass"]

@@ -369,22 +369,22 @@ class Address
         $this->countryCode = $countryCode;
     }
 
-    public function getLatitude(): ?string
+    public function getLatitude()
     {
         return $this->latitude;
     }
 
-    public function setLatitude(?string $latitude)
+    public function setLatitude($latitude)
     {
         $this->latitude = $latitude;
     }
 
-    public function getLongitude(): ?string
+    public function getLongitude()
     {
         return $this->longitude;
     }
 
-    public function setLongitude(?string $longitude)
+    public function setLongitude($longitude)
     {
         $this->longitude = $longitude;
     }
