@@ -12,7 +12,7 @@
             :key="index"
             class="tile is-child resultsV1 "
           >
-            <div class="columns is-vcentered first">
+            <div class="columns is-vcentered top">
               <div class="column">
                 <p>{{ journey.driver.alias }}</p>
               </div>
