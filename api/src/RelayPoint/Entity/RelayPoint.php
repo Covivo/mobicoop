@@ -36,6 +36,7 @@ use App\User\Entity\User;
 use App\Community\Entity\Community;
 use App\Geography\Entity\Address;
 use App\RelayPoint\Entity\RelayPointType;
+use App\Image\Entity\Image;
 
 /**
  * A relay point.
