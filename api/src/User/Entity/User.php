@@ -664,4 +664,16 @@ class User implements UserInterface, EquatableInterface
 
         return true;
     }
+
+    // DOCTRINE EVENTS
+    
+    /**
+     * Creation date.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoCreatedDate()
+    {
+        $this->setCreatedDate(new \Datetime());
+    }
 }

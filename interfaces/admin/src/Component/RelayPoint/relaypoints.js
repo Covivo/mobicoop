@@ -1,10 +1,10 @@
 import React from 'react';
 import { 
     Create, Edit, List, Show,
-    SimpleForm, TabbedForm, FormTab, 
+    TabbedForm, FormTab, 
     SimpleShowLayout,
     Datagrid, required, number, 
-    TextInput, DisabledInput, BooleanInput, ReferenceInput, SelectInput, ReferenceArrayInput, SelectArrayInput, NumberInput, 
+    TextInput, BooleanInput, ReferenceInput, SelectInput, ReferenceArrayInput, SelectArrayInput, NumberInput, 
     //ImageInput, ImageField,
     FormDataConsumer,
     TextField, DateField, 
@@ -88,7 +88,7 @@ export const RelayPointEdit = (props) => (
                 <RichTextInput source="fullDescription" label="Description complète" validate={required()}/>
             </FormTab>
             <FormTab label="Adresse">
-                
+                <TextInput source="address.streetAddress" label="Rue" />
             </FormTab>
             <FormTab label="Communauté">
                 <ReferenceInput label="Communauté" source="community" reference="communities" resettable>
