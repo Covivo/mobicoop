@@ -157,7 +157,7 @@ dev_deploy:
   before_script:
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
   script:
-    - npm run testAndCoverage                                                   # run the tests and code coverage
+    - npm run test-and-coverage                                                   # run the tests and code coverage
     - php interfaces/mobicoop/bin/console cache:clear --env=test --no-debug     # clear the cache for the interfaces
     - php api/bin/console cache:clear --env=test --no-debug                     # clear the cache for the api
     - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa                   # 
@@ -184,7 +184,7 @@ master_tests:
   before_script:
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
   script:
-    - npm run testAndCoverage   # run the tests and code coverage
+    - npm run test-and-coverage   # run the tests and code coverage
   only:     # job executed only on master branch
     - master
 
@@ -215,7 +215,7 @@ master_deploy:
  # variables:
  #   APP_ENV: prod   # /!\ important : symfony env variable /!\
   script:
-    - npm run testAndCoverage                                                   # run the tests and code coverage
+    - npm run test-and-coverage                                                  # run the tests and code coverage
     - php interfaces/mobicoop/bin/console cache:clear --env=prod --no-debug     # clear the cache for the interfaces
     - php api/bin/console cache:clear --env=prod --no-debug                     # clear the cache for the api
     - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa                       #

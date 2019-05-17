@@ -71,7 +71,7 @@ install & enable in your .ini all its php extensions : [Docker file](https://git
 
 - Create a new database schema needed for api based on the name you gave in .env file
 - Configure environment variable DATABASE_URL in .env to connect your mysql/mariadb database
-- Migrate all tables using : `cd api && npm run updateDb`
+- Migrate all tables using : `cd api && npm run update-db`
 - You're finally ready to simply run it !
 
 ## Security

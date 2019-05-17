@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
