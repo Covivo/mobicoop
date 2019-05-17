@@ -20,24 +20,28 @@
  *    Licence MOBICOOP described in the file
  *    LICENSE
  **************************/
+namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service\Entity;
 
-namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\JwtToken;
 
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
-use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourneyProvider;
+/**
+ * JwtToken
+ * based on https://github.com/eljam/guzzle-jwt-middleware
+ */
 
-describe('deserializeExternalJourneyProvider', function () {
-    describe('deserialize ExternalJourneyProvider', function () {
-        it('deserializeExternalJourneyProvider should return data given', function () {
-            $jsonExternalJourneyProvider = <<<JSON
-  {
-    "name": "mobicoop"
-  }
-JSON;
+describe('JwtTokenSpec', function () {
+    it('should not be valid if expiration in the past', function () {
+        $token = new JwtToken('foo', new \DateTime('now - 5 minutes'));
+        expect($token->isValid())->toBeFalsy();
+    });
 
-            $deserializer = new Deserializer();
-            $externalJourneyProvider = $deserializer->deserialize(ExternalJourneyProvider::class, json_decode($jsonExternalJourneyProvider, true));
-            expect($externalJourneyProvider)->toBe($externalJourneyProvider);
-        });
+    it('should not be valid if expiration is now', function () {
+        $token = new JwtToken('foo', new \DateTime('now'));
+        expect($token->isValid())->toBeFalsy();
+    });
+
+    it('should be valid if expiration is in the future', function () {
+        $token = new JwtToken('foo', new \DateTime('now + 5 minutes'));
+        expect($token->isValid())->toBeTruthy();
     });
 });

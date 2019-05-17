@@ -36,9 +36,8 @@ use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
  */
 
 describe('deserializeEvent', function () {
-    describe('deserialize Event', function () {
-        it('deserialize Event should return an Event object', function () {
-            $jsonEvent = <<<JSON
+    it('deserialize Event should return an Event object', function () {
+        $jsonEvent = <<<JSON
 {
   "id": 0,
   "name": "string",
@@ -95,9 +94,8 @@ describe('deserializeEvent', function () {
 }
 JSON;
 
-            $deserializer = new Deserializer();
-            $Event = $deserializer->deserialize(Event::class, json_decode($jsonEvent, true));
-            expect($Event)->toBeAnInstanceOf(Event::class);
-        });
+        $deserializer = new Deserializer();
+        $Event = $deserializer->deserialize(Event::class, json_decode($jsonEvent, true));
+        expect($Event)->toBeAnInstanceOf(Event::class);
     });
 });

@@ -36,7 +36,7 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
  *
  */
 
-describe('deserializeSimpleUser', function () {
+describe('deserializeUser', function () {
     it('deserializeSimpleUser should return a simple user object', function () {
         $jsonUser = <<<JSON
 {
@@ -57,9 +57,8 @@ JSON;
         expect($user->getFamilyName())->not->toBe('dupont');
         expect($user->getGender())->toBeNull();
     });
-});
 
-describe('deserializeComplexUser', function () {
+
     it('deserializeComplexUser should return a complex user object with nested address', function () {
         $jsonUser = <<<JSON
 {
@@ -107,12 +106,10 @@ JSON;
         expect($user->getAddresses()[0]->getPostalCode())->toBe('54000');
         expect($user->getAddresses()[0]->getLatitude())->toBeNull();
     });
-});
 
-describe('deserializeAddress', function () {
-    describe('deserialize Address', function () {
-        it('deserializeAddress should return an Address object', function () {
-            $jsonAddress = <<<JSON
+
+    it('deserializeAddress should return an Address object', function () {
+        $jsonAddress = <<<JSON
 {
   "id": 0,
   "streetAddress": "string",
@@ -125,9 +122,8 @@ describe('deserializeAddress', function () {
 }
 JSON;
 
-            $deserializer = new Deserializer();
-            $Address = $deserializer->deserialize(Address::class, json_decode($jsonAddress, true));
-            expect($Address)->toBeAnInstanceOf(Address::class);
-        });
+        $deserializer = new Deserializer();
+        $Address = $deserializer->deserialize(Address::class, json_decode($jsonAddress, true));
+        expect($Address)->toBeAnInstanceOf(Address::class);
     });
 });

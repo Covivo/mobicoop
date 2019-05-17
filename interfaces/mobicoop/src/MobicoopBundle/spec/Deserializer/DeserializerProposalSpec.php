@@ -36,9 +36,8 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
  */
 
 describe('deserializeProposal', function () {
-    describe('deserialize Proposal', function () {
-        it('deserialize Proposal should return a Proposal object', function () {
-            $jsonProposal = <<<JSON
+    it('deserialize Proposal should return a Proposal object', function () {
+        $jsonProposal = <<<JSON
 {
   "id": 0,
   "type": 0,
@@ -1114,9 +1113,8 @@ describe('deserializeProposal', function () {
 }
 JSON;
 
-            $deserializer = new Deserializer();
-            $Proposal = $deserializer->deserialize(Proposal::class, json_decode($jsonProposal, true));
-            expect($Proposal)->toBeAnInstanceOf(Proposal::class);
-        });
+        $deserializer = new Deserializer();
+        $Proposal = $deserializer->deserialize(Proposal::class, json_decode($jsonProposal, true));
+        expect($Proposal)->toBeAnInstanceOf(Proposal::class);
     });
 });

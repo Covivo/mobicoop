@@ -21,22 +21,29 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Spec\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
 
-use Symfony\Component\DomCrawler\Crawler;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
+use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourney;
 
-/* This is a sample functionnal Test */
+/**
+ * DeserializerAdressSpec.php
+ * Tests for Deserializer - ExternalJourney
+ * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
+ * Date: 24/12/2018
+ * Time: 10:34
+ *
+ */
+describe('deserializeExternalJourney', function () {
+    it('deserializeExternalJourney should return data given', function () {
+        $jsonExternalJourney = <<<JSON
+  {
+    "@id": 0
+  }
+JSON;
 
-describe('DefaultController', function () {
-    it('Index page should return status code 200 & contains an image with src = /images/logo.jpg', function () {
-        $request = $this->request->create('/', 'GET');
-        $response = $this->kernel->handle($request);
-
-        $status = $response->getStatusCode();
-        $crawler = new Crawler($response->getContent());
-        $logo = trim($crawler->filter('body img')->attr('src'));
-
-        expect($status)->toEqual(200);
-        expect($logo)->toContain('/images/logo.png');
+        $deserializer = new Deserializer();
+        $externalJourney = $deserializer->deserialize(ExternalJourney::class, json_decode($jsonExternalJourney, true));
+        expect($externalJourney)->toBe($externalJourney);
     });
 });
