@@ -19,11 +19,12 @@ body {
     color: $white;
   }
   .search {
-    background-color: $secondary;
+    color: $white;
+    background-color: #585858;
     border-radius: 10px;
     border: dotted;
     height: 15vw;
-    width: 50vw;
+    width: 70vw;
     padding: 1vw;
     align-self: center;
     .searchResult {
@@ -54,10 +55,6 @@ body {
     border-radius: 50%;
     display: inline-block;
   }
-  .underlined {
-    color: $white;
-    text-decoration: underline;
-  }
   #rechercher,
   #save,
   .contacter {
@@ -82,7 +79,7 @@ body {
     outline: none;
     border-bottom: solid 1px $white;
     border-radius: 0;
-    background-color: $secondary;
+    background-color: #585858;
 
     @include outlinedFocus($focusColor);
     .input {
@@ -99,7 +96,7 @@ body {
     outline: 0;
     border-bottom: solid 1px $white;
     border-radius: 0;
-    background-color: $secondary;
+    background-color: #585858;
 
     @include outlinedFocus($focusColor);
     .input {
@@ -110,18 +107,44 @@ body {
       opacity: 1;
     }
   }
-  .results {
-    background-color: $secondary;
-    color: $primary;
-    border-radius: 10px;
-    height: 15vw;
-    width: 50vw;
-    padding: 1vw;
-    align-self: center;
-    .first {
-      background-color: #022650;
-      border-top-left-radius: 10px;
-      border-top-right-radius: 10px;
+  .driver {
+    margin-top: -2vh;
+    .results {
+      border: solid 0.5px #E9E7E7;
+      box-shadow: 2px 2px 2px #CECCCC;
+      background-color: $white;
+      color: #585858;
+      border-radius: 10px;
+      height: 9vw;
+      width: 70vw;
+      padding: 1vw;
+      align-self: center;
+      .first {
+        color: $white;
+        background-color: #585858;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+      }
+    }
+  }
+  .passenger {
+    margin-top: -2vh;
+    .results {
+      border: solid 0.5px #E9E7E7;
+      box-shadow: 2px 2px 2px #CECCCC;
+      background-color: #585858;
+      color: $white;
+      border-radius: 10px;
+      height: 9vw;
+      width: 70vw;
+      padding: 1vw;
+      align-self: center;
+      .first {
+        color: #585858;
+        background-color: $white;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+      }
     }
   }
   .disabled {
@@ -143,33 +166,39 @@ body {
     }
   }
   .dropDownResults {
-    margin-left: -1vw;
+    margin-left: -67vw;
+    box-shadow: 2px 2px 2px #CECCCC;
     margin-top: 1.5vh;
-    background-color: $primary;
-    color: $secondary;
+    background-color: #E9E7E7;
+    color: #585858A9;
     border-radius: 10px;
     height: 15vw;
-    width: 50vw;
+    width: 70vw;
     padding: 1vw;
     align-self: center;
     .offer {
-      color: $tertiary;
+      color: $primary-dark;
     }
     .retour {
-      background-color: $primary-dark;
+      background-color: #585858A9;
       color: $white;
     }
   }
   .resultsV1 {
-    background-color: $secondary;
-    color: $primary;
+    border: solid 0.5px #E9E7E7;
+    box-shadow: 2px 2px 2px #CECCCC;
+    background-color: $white;
+    color: #585858;
     border-radius: 10px;
     height: 15vw;
-    width: 50vw;
+    width: 70vw;
     padding: 1vw;
     align-self: center;
-    .second {
-      background-color: #022650;
+    .top {
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      background-color: #585858;
+      color: $white;
     }
     .source {
       background-color: $white;
