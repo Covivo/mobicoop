@@ -143,7 +143,6 @@ class CarpoolController extends AbstractController
         ];
         return $this->json($externalJourneyManager->getExternalJourney($params, DataProvider::RETURN_JSON));
     }
-
     /**
      * Ad post results.
      */

@@ -22,10 +22,8 @@
             {% if error is defined %}
                 <span class="tag is-danger">{{ error }}</span>
             {% endif %}
-            <h2>Résultats</h2>
             {% if hydra and hydra.member|length>0 %}
                 {% for proposal in hydra.member %}
-                    <h3>Conducteurs</h3>
                     {% if proposal.matchingRequests and proposal.matchingRequests|length>0 %}
                         {% for matching in proposal.matchingRequests %}
                             <section class="section">
@@ -168,7 +166,6 @@
                     {% else %}
                         <span class="tag is-warning">Pas de conducteur trouvé.</span>
                     {% endif %}
-                    <h3>Passagers</h3> 
                     {% if proposal.matchingOffers and proposal.matchingOffers|length>0 %}
                         {% for matching in proposal.matchingOffers %}
                             <section class="section">
@@ -319,7 +316,6 @@
     </section>
     <section id="simpleResults">
         <div class="container">
-            <h2>Résultats chez nos partenaires</h2>
             <Journey origin-latitude="{{ origin_latitude }}" origin-longitude="{{ origin_longitude }}" destination-latitude="{{ destination_latitude }}" destination-longitude="{{ destination_longitude }}"></Journey>
         </div>
     </section>
