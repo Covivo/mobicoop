@@ -14,8 +14,13 @@ doctrine:
         default_table_options:
             charset: utf8mb4
             collate: utf8mb4_unicode_ci
-
         url: '%env(resolve:DATABASE_URL)%'
+        types:
+            geometry:   CrEOF\Spatial\DBAL\Types\GeometryType
+            point:      CrEOF\Spatial\DBAL\Types\Geometry\PointType
+            polygon:    CrEOF\Spatial\DBAL\Types\Geometry\PolygonType
+            multipolygon:    CrEOF\Spatial\DBAL\Types\Geometry\MultiPolygonType
+            linestring: CrEOF\Spatial\DBAL\Types\Geometry\LineStringType
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
         naming_strategy: doctrine.orm.naming_strategy.underscore
@@ -23,6 +28,14 @@ doctrine:
         dql:
             datetime_functions:
                 dayofweek: DoctrineExtensions\Query\Mysql\DayOfWeek
+            numeric_functions:
+                st_contains:     CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STContains
+                contains:     CrEOF\Spatial\ORM\Query\AST\Functions\MySql\Contains
+                st_area:         CrEOF\Spatial\ORM\Query\AST\Functions\MySql\Area
+                st_geomfromtext: CrEOF\Spatial\ORM\Query\AST\Functions\MySql\GeomFromText
+                st_intersects:     CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STIntersects
+                st_buffer:     CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STBuffer
+                point: CrEOF\Spatial\ORM\Query\AST\Functions\MySql\Point
         mappings:
             App:
                 is_bundle: false

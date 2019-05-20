@@ -150,6 +150,14 @@ class Direction
     private $zones;
 
     /**
+     * @var ArrayCollection|null The territories of the direction.
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
+     * @Groups({"read","write"})
+     */
+    private $territories;
+
+    /**
      * @var Address[]|null The decoded points (from detail) of the direction.
      * Can be used to draw the path on a map.
      * @Groups("read")
@@ -173,6 +181,7 @@ class Direction
     {
         $this->id = self::DEFAULT_ID;
         $this->zones = new ArrayCollection();
+        $this->territories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -347,6 +356,29 @@ class Direction
             if ($zone->getDirection() === $this) {
                 $zone->setDirection(null);
             }
+        }
+        
+        return $this;
+    }
+
+    public function getTerritories()
+    {
+        return $this->territories->getValues();
+    }
+    
+    public function addTerritory(Territory $territory): self
+    {
+        if (!$this->territories->contains($territory)) {
+            $this->territories[] = $territory;
+        }
+        
+        return $this;
+    }
+    
+    public function removeTerritory(Territory $territory): self
+    {
+        if ($this->territories->contains($territory)) {
+            $this->territories->removeElement($territory);
         }
         
         return $this;

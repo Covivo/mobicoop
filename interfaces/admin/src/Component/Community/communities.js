@@ -18,7 +18,7 @@ const statusChoices = [
     { id: 1, name: 'Accepté' },
     { id: 2, name: 'Refusé' },
 ];
-
+console.log(userId);
 // Create
 export const CommunityCreate = (props) => (
     <Create { ...props } title="Communautés > ajouter">
