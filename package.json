@@ -14,6 +14,8 @@
     "test-api": "cd api && npm run test",
     "test-admin": "cd interfaces/admin && npm run test",
     "test-mobicoop": "cd interfaces/mobicoop && npm run test",
+    "test-functional": "cd interfaces/mobicoop && npm run testFunctional",
+    "test-functional-ci": "cd interfaces/mobicoop && npm run testFunctionalCI",
     "test-and-coverage-mobicoop": "cd interfaces/mobicoop && npm run test-and-coverage",
     "start": "npm-run-all --parallel start-api start-mobicoop",
     "start-api": "cd api && npm start",
