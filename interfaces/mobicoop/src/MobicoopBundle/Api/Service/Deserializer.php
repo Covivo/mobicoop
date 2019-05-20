@@ -27,6 +27,7 @@ use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourney;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassPerson;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
@@ -425,7 +426,28 @@ class Deserializer
         if (isset($data["@id"])) {
             $mass->setIri($data["@id"]);
         }
+        if (isset($data["persons"])) {
+            foreach ($data["persons"] as $person) {
+                $mass->addPerson(self::deserializeMassPerson($person));
+            }
+        }
         return $mass;
+    }
+
+    private function deserializeMassPerson(array $data): ?MassPerson
+    {
+        $massPerson = new MassPerson();
+        $massPerson = self::autoSet($massPerson, $data);
+        if (isset($data["@id"])) {
+            $massPerson->setIri($data["@id"]);
+        }
+        if (isset($data["personalAddress"])) {
+            $massPerson->setPersonalAddress(self::deserializeAddress($data["personalAddress"]));
+        }
+        if (isset($data["workAddress"])) {
+            $massPerson->setWorkAddress(self::deserializeAddress($data["workAddress"]));
+        }
+        return $massPerson;
     }
 
     private function deserializeExternalJourneyProvider(array $data): ?ExternalJourneyProvider
