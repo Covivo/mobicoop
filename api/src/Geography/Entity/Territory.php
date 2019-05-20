@@ -63,6 +63,14 @@ class Territory
     private $name;
 
     /**
+     * @var string The details of the territory.
+     *
+     * @ORM\Column(type="multipolygon")
+     * @Groups({"read","write"})
+     */
+    private $detail;
+
+    /**
      * @var ArrayCollection|null The parents of the territory.
      *
      * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
@@ -88,6 +96,18 @@ class Territory
     public function setName(?string $name): self
     {
         $this->name = $name;
+        
+        return $this;
+    }
+
+    public function getDetail()
+    {
+        return $this->detail;
+    }
+    
+    public function setDetail($detail): self
+    {
+        $this->detail = $detail;
         
         return $this;
     }

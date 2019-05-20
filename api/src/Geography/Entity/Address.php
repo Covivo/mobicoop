@@ -212,6 +212,13 @@ class Address
      */
     private $user;
 
+    /**
+     * @var ArrayCollection|null The territories of the direction.
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
+     * @Groups({"read","write"})
+     */
+    private $territories;
 
     /**
      * @var string|null Label for display
@@ -227,6 +234,7 @@ class Address
         if ($id) {
             $this->id = $id;
         }
+        $this->territories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -418,6 +426,29 @@ class Address
     {
         $user->setAddress($this);
         $this->user = $user;
+    }
+
+    public function getTerritories()
+    {
+        return $this->territories->getValues();
+    }
+    
+    public function addTerritory(Territory $territory): self
+    {
+        if (!$this->territories->contains($territory)) {
+            $this->territories[] = $territory;
+        }
+        
+        return $this;
+    }
+    
+    public function removeTerritory(Territory $territory): self
+    {
+        if ($this->territories->contains($territory)) {
+            $this->territories->removeElement($territory);
+        }
+        
+        return $this;
     }
 
     public function getDisplayLabel(): ?string

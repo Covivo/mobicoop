@@ -50,15 +50,17 @@ const i18nProvider = locale => messages[locale];
 require('dotenv').config();
 
 const entrypoint = process.env.REACT_APP_API;
-const fetchHeaders = {'Authorization': `Bearer ${localStorage.getItem('token')}`};
+const fetchHeaders = function () {
+  return {'Authorization': `Bearer ${localStorage.getItem('token')}`};
+};
 const fetchHydra = (url, options = {}) => baseFetchHydra(url, {
     ...options,
-    headers: new Headers(fetchHeaders),
+    headers: new Headers(fetchHeaders()),
 });
 const dataProvider = api => hydraClient(api, fetchHydra);
 const apiDocumentationParser = entrypoint =>
   parseHydraDocumentation(entrypoint, {
-    headers: new Headers(fetchHeaders),
+    headers: new Headers(fetchHeaders()),
   }).then(
     ({ api }) => ({ api }),
     result => {

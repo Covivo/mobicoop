@@ -20,6 +20,18 @@
     "clue/stream-filter": {
         "version": "v1.4.0"
     },
+    "creof/doctrine2-spatial": {
+        "version": "1.2.0"
+    },
+    "creof/geo-parser": {
+        "version": "2.1.0"
+    },
+    "creof/wkb-parser": {
+        "version": "v2.3.0"
+    },
+    "creof/wkt-parser": {
+        "version": "2.2.0"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
