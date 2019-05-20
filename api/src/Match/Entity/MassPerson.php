@@ -27,6 +27,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * A mass matching person.
@@ -47,6 +48,7 @@ class MassPerson
      * @var string|null The given id of the person.
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"mass"})
+     * @Groups("read")
      */
     private $givenId;
 
@@ -68,6 +70,7 @@ class MassPerson
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Assert\NotBlank(groups={"mass"})
      * @Assert\Valid
+     * @Groups("read")
      */
     private $personalAddress;
 
@@ -77,6 +80,7 @@ class MassPerson
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Assert\NotBlank(groups={"mass"})
      * @Assert\Valid
+     * @Groups("read")
      */
     private $workAddress;
 
@@ -101,6 +105,7 @@ class MassPerson
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
+     * @Groups("read")
      */
     private $outwardTime;
 
@@ -109,6 +114,7 @@ class MassPerson
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
+     * @Groups("read")
      */
     private $returnTime;
 

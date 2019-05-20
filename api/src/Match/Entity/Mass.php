@@ -164,6 +164,7 @@ class Mass
      * @var ArrayCollection|null The persons concerned by the file.
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassPerson", mappedBy="mass", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups("read")
      */
     private $persons;
 
