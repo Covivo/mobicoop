@@ -283,6 +283,4 @@ class Mass implements Resource
 
         return $this;
     }
-
-
 }
