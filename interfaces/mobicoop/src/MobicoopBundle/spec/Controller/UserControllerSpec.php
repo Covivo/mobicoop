@@ -28,7 +28,7 @@ use Symfony\Component\DomCrawler\Form;
 
 const LOCAL_PORT = '4242';
 const LOCAL_IP = '127.0.0.1';
-const LOCAL_URL = 'http://'.LOCAL_IP.':'.LOCAL_PORT;
+const LOCAL_URL = 'http://' . LOCAL_IP . ':' . LOCAL_PORT;
 
 /* Functional tests */
 describe('UserController', function () {
@@ -36,36 +36,33 @@ describe('UserController', function () {
     // given('client',function(){
     //     return new Client();
     // });
-    describe('/user', function () {
-        it('User page without id should return status code 404', function () {
-            $request = $this->request->create('/user', 'GET');
-            $response = $this->kernel->handle($request);
-            $status = $response->getStatusCode();
+    it('User page without id should return status code 404', function () {
+        $request = $this->request->create('/user', 'GET');
+        $response = $this->kernel->handle($request);
+        $status = $response->getStatusCode();
 
-            expect($status)->toEqual(404);
-        });
+        expect($status)->toEqual(404);
     });
-    describe('/user/signup', function () {
-        it('User sign up page should return status code 200 and contains a givenName form input', function () {
-            $request = $this->request->create('/user/signup', 'GET');
-            $response = $this->kernel->handle($request);
-            $status = $response->getStatusCode();
-            $crawler = new Crawler($response->getContent(), LOCAL_URL.'/user/signup');
-            $form = $crawler->filter('form')->form();
 
-            expect($form->has('user_form[givenName]'))->toBe(true);
-        });
+    it('User sign up page should return status code 200 and contains a givenName form input', function () {
+        $request = $this->request->create('/user/signup', 'GET');
+        $response = $this->kernel->handle($request);
+        $status = $response->getStatusCode();
+        $crawler = new Crawler($response->getContent(), LOCAL_URL . '/user/signup');
+        $form = $crawler->filter('form')->form();
+
+        expect($form->has('user_form[givenName]'))->toBe(true);
     });
-    describe('/user/login', function () {
-        it('User login should return status code 200 and contains a username form input', function () {
-            $request = $this->request->create('/user/login', 'GET');
-            $response = $this->kernel->handle($request);
-            $status = $response->getStatusCode();
-            $crawler = new Crawler($response->getContent(), LOCAL_URL.'/user/login');
-            $form = $crawler->filter('form')->form();
 
-            expect($form->has('user_login_form[username]'))->toBe(true);
-            expect($form->has('user_login_form[password]'))->toBe(true);
-        });
+
+    it('User login should return status code 200 and contains a username form input', function () {
+        $request = $this->request->create('/user/login', 'GET');
+        $response = $this->kernel->handle($request);
+        $status = $response->getStatusCode();
+        $crawler = new Crawler($response->getContent(), LOCAL_URL . '/user/login');
+        $form = $crawler->filter('form')->form();
+
+        expect($form->has('user_login_form[username]'))->toBe(true);
+        expect($form->has('user_login_form[password]'))->toBe(true);
     });
 });

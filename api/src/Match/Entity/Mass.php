@@ -31,6 +31,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Match\Controller\CreateMassImportAction;
 use App\Match\Controller\MassAnalyzeAction;
+use App\Match\Controller\MassMatchAction;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use App\User\Entity\User;
@@ -64,6 +65,69 @@ use Doctrine\Common\Collections\Collection;
  *              "method"="GET",
  *              "path"="/masses/{id}/analyze",
  *              "controller"=MassAnalyzeAction::class
+ *          },
+ *          "match"={
+ *              "method"="GET",
+ *              "path"="/masses/{id}/match",
+ *              "controller"=MassMatchAction::class,
+ *              "swagger_context"={
+ *                  "parameters"={
+ *                     {
+ *                         "name" = "maxDetourDurationPercent",
+ *                         "in" = "query",
+ *                         "required" = "false",
+ *                         "type" = "number",
+ *                         "format" = "integer",
+ *                         "description" = "The maximum detour duration percent (default:40)"
+ *                     },
+ *                     {
+ *                         "name" = "maxDetourDistancePercent",
+ *                         "in" = "query",
+ *                         "required" = "false",
+ *                         "type" = "number",
+ *                         "format" = "integer",
+ *                         "description" = "The maximum detour distance percent (default:40)"
+ *                     },
+ *                     {
+ *                         "name" = "minOverlapRatio",
+ *                         "in" = "query",
+ *                         "required" = "false",
+ *                         "type" = "number",
+ *                         "format" = "float",
+ *                         "description" = "The minimum overlap ratio between bouding boxes to try a match (default:0)"
+ *                     },
+ *                     {
+ *                         "name" = "maxSuperiorDistanceRatio",
+ *                         "in" = "query",
+ *                         "required" = "false",
+ *                         "type" = "number",
+ *                         "format" = "integer",
+ *                         "description" = "The maximum superior distance ratio between A and B to try a match (default:1000)"
+ *                     },
+ *                     {
+ *                         "name" = "bearingCheck",
+ *                         "in" = "query",
+ *                         "required" = "false",
+ *                         "type" = "boolean",
+ *                         "description" = "Check the bearings (default:true)"
+ *                     },
+ *                     {
+ *                         "name" = "bearingRange",
+ *                         "in" = "query",
+ *                         "required" = "false",
+ *                         "type" = "number",
+ *                         "format" = "integer",
+ *                         "description" = "The bearing range in degrees if check bearings (default:10)"
+ *                     },
+ *                     {
+ *                         "name" = "doubleCheck",
+ *                         "in" = "query",
+ *                         "required" = "false",
+ *                         "type" = "boolean",
+ *                         "description" = "Check if B as a driver matches for A as a passenger if A as a driver already matches with B as a passenger (default:false)"
+ *                     }
+ *                   }
+ *              }
  *          },
  *      }
  * )
@@ -272,7 +336,7 @@ class Mass
         return $this->user;
     }
 
-    public function setUser(User $user): self
+    public function setUser(?User $user): self
     {
         $this->user = $user;
 
@@ -303,9 +367,9 @@ class Mass
         return $this;
     }
 
-    public function getPersons(): Collection
+    public function getPersons()
     {
-        return $this->persons;
+        return $this->persons->getValues();
     }
 
     public function addPerson(MassPerson $person): self

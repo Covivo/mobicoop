@@ -1,14 +1,15 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
 {% block title %}{{ metaDescription }}{% endblock %}
+{% block stylesheets %}
+  {{ encore_entry_link_tags('bundle_home') }}
+{% endblock %}
 {% block body %}
 <section class="hero firstSection">
     </section>
-{% block simpleSearch %}
     <section id="home">
         <Homesearchform geo-search-url="/geosearch?search=" route="covoiturage/recherche"></Homesearchform>
     </section>
-{% endblock %}
      <section class="hero lastSection">
     </section>
 {% endblock %}

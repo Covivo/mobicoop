@@ -1,5 +1,8 @@
 <template>
-  <section class="section">
+  <section
+    id="adCreateForm"
+    class="section"
+  >
     <div class="tile is-ancestor">
       <div class="tile is-vertical is-12">
         <div class="tile is-child center-all">

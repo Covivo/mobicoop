@@ -115,6 +115,13 @@ class Direction
     private $bboxMaxLat;
     
     /**
+     * @var int|null The initial bearing of the direction in degrees.
+     * @ORM\Column(type="integer",nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $bearing;
+
+    /**
      * @var string The textual encoded detail of the direction.
      * @ORM\Column(type="text")
      * @Groups({"read","write"})
@@ -136,7 +143,7 @@ class Direction
     private $format;
 
     /**
-     * @var Zone[] The geographical zones crossed by the direction.
+     * @var ArrayCollection The geographical zones crossed by the direction.
      *
      * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Zone", mappedBy="direction", cascade={"persist","remove"}, orphanRemoval=true)
      */
@@ -269,6 +276,18 @@ class Direction
         return $this;
     }
 
+    public function getBearing(): ?int
+    {
+        return $this->bearing;
+    }
+    
+    public function setBearing(?int $bearing): self
+    {
+        $this->bearing = $bearing;
+        
+        return $this;
+    }
+
     public function getDetail(): string
     {
         return $this->detail;
@@ -305,12 +324,9 @@ class Direction
         return $this;
     }
     
-    /**
-     * @return Collection|Zone[]
-     */
-    public function getZones(): Collection
+    public function getZones()
     {
-        return $this->zones;
+        return $this->zones->getValues();
     }
     
     public function addZone(Zone $zone): self

@@ -25,9 +25,11 @@ namespace App\Right\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * A role.
@@ -42,6 +44,7 @@ use Doctrine\Common\Collections\Collection;
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
  * )
+ * @ApiFilter(OrderFilter::class, properties={"id", "title", "name", "parent"}, arguments={"orderParameterName"="order"})
  */
 class Role
 {
@@ -62,7 +65,7 @@ class Role
      * @var string The title of the role (user friendly name).
      *
      * @ORM\Column(type="string", length=45)
-     * @Groups("read")
+     * @Groups({"read","write"})
      */
     private $title;
     
@@ -70,12 +73,21 @@ class Role
      * @var string|null The name of the role.
      *
      * @ORM\Column(type="string", length=45)
-     * @Groups("read")
+     * @Groups({"read","write"})
      */
     private $name;
 
     /**
-     * @var Collection|null The rights of the role.
+     * @var Role|null Parent role.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Right\Entity\Role", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @Groups({"read","write"})
+     */
+    private $parent;
+
+    /**
+     * @var ArrayCollection|null The rights of the role.
      *
      * @ORM\ManyToMany(targetEntity="\App\Right\Entity\Right")
      * @Groups({"read","write"})
@@ -84,7 +96,7 @@ class Role
 
     public function __construct()
     {
-        $this->rights = new Collection();
+        $this->rights = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -116,12 +128,21 @@ class Role
         return $this;
     }
 
-    /**
-     * @return Collection|null
-     */
-    public function getRights(): ?Collection
+    public function getParent(): ?Role
     {
-        return $this->rights;
+        return $this->parent;
+    }
+    
+    public function setParent(?Role $parent): self
+    {
+        $this->parent = $parent;
+        
+        return $this;
+    }
+
+    public function getRights()
+    {
+        return $this->rights->getValues();
     }
     
     public function addRight(Right $right): self

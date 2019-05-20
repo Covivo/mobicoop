@@ -63,7 +63,7 @@ class Territory
     private $name;
 
     /**
-     * @var Collection|null The parents of the territory.
+     * @var ArrayCollection|null The parents of the territory.
      *
      * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
      * @Groups({"read","write"})
@@ -72,7 +72,7 @@ class Territory
 
     public function __construct()
     {
-        $this->parents = new Collection();
+        $this->parents = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -92,12 +92,9 @@ class Territory
         return $this;
     }
 
-    /**
-     * @return Collection|Territory[]
-     */
-    public function getParents(): Collection
+    public function getParents()
     {
-        return $this->parents;
+        return $this->parents->getValues();
     }
     
     public function addParent(Territory $parent): self

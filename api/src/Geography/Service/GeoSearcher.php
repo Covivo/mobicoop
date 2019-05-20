@@ -26,6 +26,7 @@ namespace App\Geography\Service;
 use App\Geography\Entity\Address;
 use Geocoder\Plugin\PluginProvider;
 use Geocoder\Query\GeocodeQuery;
+use Geocoder\Query\ReverseQuery;
 
 /**
  * The geo searcher service.
@@ -126,5 +127,62 @@ class GeoSearcher
             $result[] = $address;
         }
         return $result;
+    }
+
+    /**
+     * Returns an array of reversed geocoded addresses
+     *
+     * @param float $lat     The latitude
+     * @param float $lon     The longitude
+     * @return array            The results
+     */
+    public function reverseGeoCode(float $lat, float $lon)
+    {
+        if ($geoResults = $this->geocoder->reverseQuery(ReverseQuery::fromCoordinates($lat, $lon))) {
+            foreach ($geoResults as $geoResult) {
+                if (
+                    ($geoResult->getStreetNumber() <> "") &&
+                    ($geoResult->getStreetName() <> "") &&
+                    ($geoResult->getPostalCode() <> "") &&
+                    ($geoResult->getLocality() <> "") &&
+                    ($geoResult->getStreetNumber() < 500)
+                ) {
+                    return $geoResult->getStreetNumber() . ";" . $geoResult->getStreetName() . ";" . $geoResult->getPostalCode() . ";" . $geoResult->getLocality();
+                    break;
+                }
+            }
+        }
+        return false;
+
+        // $address = new Address();
+        // $address->setLatitude((string)$geoResult->getCoordinates()->getLatitude());
+        // $address->setLongitude((string)$geoResult->getCoordinates()->getLongitude());
+        // $address->setHouseNumber($geoResult->getStreetNumber());
+        // $address->setStreet($geoResult->getStreetName());
+        // $address->setStreetAddress($geoResult->getStreetName() ? trim(($geoResult->getStreetNumber() ? $geoResult->getStreetNumber() : '') . ' ' . $geoResult->getStreetName()) : null);
+        // $address->setSubLocality($geoResult->getSubLocality());
+        // $address->setAddressLocality($geoResult->getLocality());
+        // foreach ($geoResult->getAdminLevels() as $level) {
+        //     switch ($level->getLevel()) {
+        //         case 1:
+        //             $address->setLocalAdmin($level->getName());
+        //             break;
+        //         case 2:
+        //             $address->setCounty($level->getName());
+        //             break;
+        //         case 3:
+        //             $address->setMacroCounty($level->getName());
+        //             break;
+        //         case 4:
+        //             $address->setRegion($level->getName());
+        //             break;
+        //         case 5:
+        //             $address->setMacroRegion($level->getName());
+        //             break;
+        //     }
+        // }
+        // $address->setPostalCode($geoResult->getPostalCode());
+        // $address->setAddressCountry($geoResult->getCountry()->getName());
+        // $address->setCountryCode($geoResult->getCountry()->getCode());
     }
 }

@@ -1,5 +1,26 @@
 <?php declare(strict_types=1);
 
+/**
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * This project is dual licensed under AGPL and proprietary licence.
+ ***************************
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Affero General Public License as
+ *    published by the Free Software Foundation, either version 3 of the
+ *    License, or (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Affero General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Affero General Public License
+ *    along with this program.  If not, see <gnu.org/licenses>.
+ ***************************
+ *    Licence MOBICOOP described in the file
+ *    LICENSE
+ **************************/
+
 namespace DoctrineMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
@@ -30,7 +51,7 @@ final class Version20190430134441 extends AbstractMigration
         $this->addSql('ALTER TABLE image ADD community_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE image ADD CONSTRAINT FK_C53D045FFDA7B0BF FOREIGN KEY (community_id) REFERENCES community (id)');
         $this->addSql('CREATE INDEX IDX_C53D045FFDA7B0BF ON image (community_id)');
-        $this->addSql('ALTER TABLE user ADD created_date DATETIME NOT NULL');
+        $this->addSql('ALTER TABLE user ADD created_date DATETIME DEFAULT NULL');
     }
 
     public function down(Schema $schema) : void

@@ -25,6 +25,9 @@ namespace App\Right\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\Common\Collections\Collection;
@@ -44,6 +47,8 @@ use Doctrine\Common\Collections\Collection;
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
  * )
+ * @ApiFilter(NumericFilter::class, properties={"type"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "type", "name", "parent"}, arguments={"orderParameterName"="order"})
  */
 class Right
 {
@@ -77,17 +82,13 @@ class Right
     private $name;
 
     /**
-     * @var Collection|null The groups of the right.
+     * @var Right|null Parent right.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Right\Entity\Right")
+     * @ORM\OneToOne(targetEntity="\App\Right\Entity\Right", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","write"})
      */
-    private $groups;
-
-    public function __construct()
-    {
-        $this->groups = new Collection();
-    }
+    private $parent;
     
     public function getId(): ?int
     {
@@ -118,28 +119,14 @@ class Right
         return $this;
     }
 
-    /**
-     * @return Collection|null
-     */
-    public function getGroups(): Collection
+    public function getParent(): ?Right
     {
-        return $this->groups;
+        return $this->parent;
     }
     
-    public function addGroup(Right $group): self
+    public function setParent(?Right $parent): self
     {
-        if (!$this->groups->contains($group)) {
-            $this->groups[] = $group;
-        }
-        
-        return $this;
-    }
-    
-    public function removeGroup(Right $group): self
-    {
-        if ($this->groups->contains($group)) {
-            $this->groups->removeElement($group);
-        }
+        $this->parent = $parent;
         
         return $this;
     }

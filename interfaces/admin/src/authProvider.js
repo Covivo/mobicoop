@@ -1,4 +1,6 @@
 import { AUTH_LOGIN, AUTH_LOGOUT, AUTH_ERROR, AUTH_CHECK } from 'react-admin';
+import decodeJwt from 'jwt-decode';
+
 require('dotenv').config();
 
 // Change this to be your own authentication token URI.
@@ -17,30 +19,38 @@ export default (type, params) => {
       return fetch(request)
         .then(response => {
           if (response.status < 200 || response.status >= 300) throw new Error(response.statusText);
-
           return response.json();
         })
         .then(({ token }) => {
+          const decodedToken = decodeJwt(token);
+          var authorized = decodedToken.roles.find(function(element) {
+            return (element === 'ROLE_ADMIN' || element === 'ROLE_SUPER_ADMIN');
+          });
+          if (!authorized) throw new Error('Unauthorized');
           localStorage.setItem('token', token); // The JWT token is stored in the browser's local storage
-          window.location.replace('/');
+          localStorage.setItem('roles', decodedToken.roles);
+          localStorage.setItem('id', decodedToken.id);
         });
 
     case AUTH_LOGOUT:
       localStorage.removeItem('token');
-      break;
+      localStorage.removeItem('roles');
+      localStorage.removeItem('id');
+      return Promise.resolve();
 
-    case AUTH_ERROR:
+    case AUTH_ERROR:  
       if (401 === params.status || 403 === params.status) {
         localStorage.removeItem('token');
-
+        localStorage.removeItem('roles');
+        localStorage.removeItem('id');
         return Promise.reject();
       }
-      break;
+      return Promise.resolve();
 
     case AUTH_CHECK:
-      return localStorage.getItem('token') ? Promise.resolve() : Promise.reject();
+      return localStorage.getItem('token') ? Promise.resolve() : Promise.reject({ redirectTo: '/login' });
 
-      default:
-          return Promise.resolve();
+    default:
+      return Promise.resolve();
   }
 }

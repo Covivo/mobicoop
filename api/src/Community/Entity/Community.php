@@ -103,6 +103,7 @@ class Community
     * @var \DateTimeInterface Creation date of the event.
     *
     * @ORM\Column(type="datetime")
+    * @Groups("read")
     */
     private $createdDate;
     
@@ -112,12 +113,12 @@ class Community
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups("write")
+     * @Groups({"read","write"})
      */
     private $user;
     
     /**
-     * @var Collection|null The images of the event.
+     * @var ArrayCollection|null The images of the community.
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
@@ -135,10 +136,23 @@ class Community
      * @MaxDepth(1)
      */
     private $proposals;
+
+    /**
+     * @var ArrayCollection|null The members of the community.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
+     */
+    private $communityUsers;
     
     public function __construct($id=null)
     {
         $this->id = $id;
+        $this->images = new ArrayCollection();
+        $this->proposals = new ArrayCollection();
+        $this->communityUsers = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -217,12 +231,9 @@ class Community
         return $this;
     }
     
-    /**
-     * @return Collection|Image[]
-     */
-    public function getImages(): Collection
+    public function getImages()
     {
-        return $this->images;
+        return $this->images->getValues();
     }
     
     public function addImage(Image $image): self
@@ -248,12 +259,9 @@ class Community
         return $this;
     }
 
-    /**
-     * @return Collection
-     */
-    public function getProposals(): Collection
+    public function getProposals()
     {
-        return $this->proposals;
+        return $this->proposals->getValues();
     }
     
     public function addProposal(Proposal $proposal): self
@@ -269,6 +277,34 @@ class Community
     {
         if ($this->proposals->contains($proposal)) {
             $this->proposals->removeElement($proposal);
+        }
+        
+        return $this;
+    }
+
+    public function getCommunityUsers()
+    {
+        return $this->communityUsers->getValues();
+    }
+    
+    public function addCommunityUser(CommunityUser $communityUser): self
+    {
+        if (!$this->communityUsers->contains($communityUser)) {
+            $this->communityUsers[] = $communityUser;
+            $communityUser->setCommunity($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeCommunityUser(CommunityUser $communityUser): self
+    {
+        if ($this->communityUsers->contains($communityUser)) {
+            $this->communityUsers->removeElement($communityUser);
+            // set the owning side to null (unless already changed)
+            if ($communityUser->getCommunity() === $this) {
+                $communityUser->setCommunity(null);
+            }
         }
         
         return $this;

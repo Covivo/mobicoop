@@ -36,6 +36,13 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
+    # JWT Event Listener
+    mobicoop.event.jwt_created_listener:
+        class: App\Security\EventListener\JWTCreatedListener
+        arguments: [ '@request_stack' ]
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
     App\Carpool\Controller\:
@@ -93,9 +100,12 @@ services:
             $providers: '%env(json:file:resolve:RDEX_PROVIDERS)%'
     
     # inject mass parameters to MassImportManager 
+    # set the monolog channel to use for MassImportManager
     App\Match\Service\MassImportManager:
         arguments:
             $params: '%mass%'
+        tags:   
+            - { name: monolog.logger, channel: mass }
 
     # inject parameters to GeoSearcher
     App\Geography\Service\GeoSearcher:

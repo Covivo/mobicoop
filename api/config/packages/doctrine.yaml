@@ -72,6 +72,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/PublicTransport/Entity'
                 prefix: 'App\PublicTransport\Entity'
                 alias: PublicTransport
+            RelayPoint:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/RelayPoint/Entity'
+                prefix: 'App\RelayPoint\Entity'
+                alias: RelayPoint
             Right:
                 is_bundle: false
                 type: annotation

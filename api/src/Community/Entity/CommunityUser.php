@@ -25,6 +25,9 @@ namespace App\Community\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\Collection;
 use App\User\Entity\User;
@@ -43,6 +46,7 @@ use App\User\Entity\User;
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
  * )
+ * @ApiFilter(NumericFilter::class, properties={"community"})
  */
 class CommunityUser
 {
@@ -104,14 +108,14 @@ class CommunityUser
     /**
     * @var \DateTimeInterface Accepted date.
     *
-    * @ORM\Column(type="datetime")
+    * @ORM\Column(type="datetime", nullable=true)
     */
     private $acceptedDate;
 
     /**
     * @var \DateTimeInterface Refusal date.
     *
-    * @ORM\Column(type="datetime")
+    * @ORM\Column(type="datetime", nullable=true)
     */
     private $refusedDate;
     
@@ -144,12 +148,12 @@ class CommunityUser
         return $this;
     }
     
-    public function getStatus(): int
+    public function getStatus()
     {
         return $this->status;
     }
     
-    public function setStatus(int $status)
+    public function setStatus(?int $status)
     {
         $this->status = $status;
     }
@@ -183,7 +187,7 @@ class CommunityUser
         return $this->acceptedDate;
     }
     
-    public function setAcceptedDate(\DateTimeInterface $acceptedDate): self
+    public function setAcceptedDate(?\DateTimeInterface $acceptedDate): self
     {
         $this->acceptedDate = $acceptedDate;
         
@@ -195,7 +199,7 @@ class CommunityUser
         return $this->refusedDate;
     }
     
-    public function setRefusedDate(\DateTimeInterface $refusedDate): self
+    public function setRefusedDate(?\DateTimeInterface $refusedDate): self
     {
         $this->refusedDate = $refusedDate;
         
@@ -212,5 +216,20 @@ class CommunityUser
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+        $this->setAutoAcceptedOrRefusedDate();
+    }
+
+    /**
+     * Accepted / refused date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoAcceptedOrRefusedDate()
+    {
+        if ($this->status == self::STATUS_ACCEPTED && is_null($this->acceptedDate)) {
+            $this->setAcceptedDate(new \Datetime());
+        } elseif ($this->status == self::STATUS_REFUSED && is_null($this->refusedDate)) {
+            $this->setRefusedDate(new \Datetime());
+        }
     }
 }

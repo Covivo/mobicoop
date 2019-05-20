@@ -44,17 +44,17 @@ class UserLoginForm extends AbstractType
         ->add('username', TextType::class, [
             'translation_domain' => 'login',
             'label' => 'username.label',
-            'help' => 'username.placeholder',
+            // 'help' => 'username.placeholder',
             'attr' => [
-                'placeholder' => 'username.placeholder'
+                'placeholder' => 'adresse email'
             ]
         ])
         ->add('password', PasswordType::class, [
             'translation_domain' => 'login',
             'label' => 'password.label',
-            'help' => 'password.placeholder',
+            // 'help' => 'password.placeholder',
             'attr' => [
-                'placeholder' => 'password.placeholder'
+                'placeholder' => 'mot de passe'
             ]
         ])
         ->add('login', SubmitType::class, [

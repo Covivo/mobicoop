@@ -26,7 +26,6 @@ namespace App\Right\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\Collection;
 use App\Geography\Entity\Territory;
 use App\User\Entity\User;
 
@@ -75,17 +74,12 @@ class UserRole
     private $role;
 
     /**
-     * @var Collection|null The territories associated with the user role.
+     * @var Territory|null The territory associated with the user role.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Territory")
      * @Groups({"read","write"})
      */
-    private $territories;
-
-    public function __construct()
-    {
-        $this->territories = new Collection();
-    }
+    private $territory;
     
     public function getId(): ?int
     {
@@ -116,28 +110,14 @@ class UserRole
         return $this;
     }
 
-    /**
-     * @return Collection|null
-     */
-    public function getTerritories(): ?Collection
+    public function getTerritory(): ?Territory
     {
-        return $this->territories;
+        return $this->territory;
     }
-    
-    public function addTerritory(Territory $territory): self
+
+    public function setTerritory(?Territory $territory): self
     {
-        if (!$this->territories->contains($territory)) {
-            $this->territories[] = $territory;
-        }
-        
-        return $this;
-    }
-    
-    public function removeTerritory(Territory $territory): self
-    {
-        if ($this->territories->contains($territory)) {
-            $this->territories->removeElement($territory);
-        }
+        $this->territory = $territory;
         
         return $this;
     }
