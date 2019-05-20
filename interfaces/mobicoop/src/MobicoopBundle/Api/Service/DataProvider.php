@@ -331,7 +331,6 @@ class DataProvider
                 ];
             }
         }
-        dump($multipart);
         try {
             $clientResponse = $this->client->post($this->resource, [
                 'multipart' => $multipart
