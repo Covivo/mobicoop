@@ -81,4 +81,7 @@ services:
     # Image
     Mobicoop\Bundle\MobicoopBundle\Image\Service\:
         resource: '@MobicoopBundle/Image/Service/*'
-    
+
+    # Mass
+    Mobicoop\Bundle\MobicoopBundle\Match\Service\:
+        resource: '@MobicoopBundle/Match/Service/*'

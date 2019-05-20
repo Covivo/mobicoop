@@ -61,7 +61,8 @@ class DataProvider
     // possible file properties and associated getter, used for multipart/form-data
     const FILE_PROPERTIES = [
         'eventFile' => 'getEventFile',
-        'userFile'  => 'getUserFile'
+        'userFile'  => 'getUserFile',
+        'file' => 'getFile'
     ];
     
     // original name property for file-based entities
