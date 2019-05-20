@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,125 +21,99 @@
  *    LICENSE
  **************************/
 
-namespace App\Match\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\Match\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use App\Geography\Entity\Address;
-use App\Geography\Entity\Direction;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Direction;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * A mass matching person.
- *
- * @ORM\Entity
+ * An Mass.
  */
-class MassPerson
+class MassPerson implements Resource
 {
     /**
-     * @var int The id of this person.
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @var int The id of this event.
      */
     private $id;
 
     /**
+     * @var string|null The iri of this event.
+     */
+    private $iri;
+
+    /**
      * @var string|null The given id of the person.
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(groups={"mass"})
-     * @Groups("read")
      */
     private $givenId;
 
     /**
      * @var string|null The first name of the person.
-     * @ORM\Column(type="string", length=255)
      */
     private $givenName;
 
     /**
      * @var string|null The family name of the person.
-     * @ORM\Column(type="string", length=255)
      */
     private $familyName;
 
     /**
      * @var Address The personal address of the person.
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     * @Assert\NotBlank(groups={"mass"})
-     * @Assert\Valid
-     * @Groups("read")
      */
     private $personalAddress;
 
     /**
      * @var Address The work address of the person.
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     * @Assert\NotBlank(groups={"mass"})
-     * @Assert\Valid
-     * @Groups("read")
      */
     private $workAddress;
 
     /**
      * @var Mass The original mass file of the person.
-     *
-     * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="\App\Match\Entity\Mass", cascade={"persist","remove"})
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $mass;
 
     /**
      * @var Direction|null The direction between the personal address and the work address.
-     *
-     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
-     * @Groups("read")
      */
     private $direction;
 
     /**
      * @var \DateTimeInterface|null The outward time.
-     *
-     * @Assert\Time()
-     * @ORM\Column(type="time", nullable=true)
-     * @Groups("read")
      */
     private $outwardTime;
 
     /**
      * @var \DateTimeInterface|null The return time.
-     *
-     * @Assert\Time()
-     * @ORM\Column(type="time", nullable=true)
-     * @Groups("read")
      */
     private $returnTime;
 
-    /**
-     * @var boolean The person accepts to be a driver.
-     *
-     * @Assert\Type("bool")
-     * @Assert\NotBlank(groups={"mass"})
-     * @ORM\Column(type="boolean")
-     */
-    private $driver;
-
-    /**
-     * @var boolean The person accepts to be a passenger.
-     *
-     * @Assert\Type("bool")
-     * @Assert\NotBlank(groups={"mass"})
-     * @ORM\Column(type="boolean")
-     */
-    private $passenger;
+    public function __construct($id = null)
+    {
+        $this->id = $id;
+        $this->errors = [];
+    }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    public function getIri()
+    {
+        return $this->iri;
+    }
+
+    public function setIri($iri)
+    {
+        $this->iri = $iri;
     }
 
     public function getGivenId(): string
@@ -255,30 +229,6 @@ class MassPerson
             $this->returnTime = \Datetime::createFromFormat('H:i:s', $returnTime);
         }
 
-        return $this;
-    }
-
-    public function isDriver(): ?bool
-    {
-        return $this->driver;
-    }
-    
-    public function setDriver(bool $isDriver): self
-    {
-        $this->driver = $isDriver;
-        
-        return $this;
-    }
-    
-    public function isPassenger(): ?bool
-    {
-        return $this->passenger;
-    }
-    
-    public function setPassenger(bool $isPassenger): self
-    {
-        $this->passenger = $isPassenger;
-        
         return $this;
     }
 }
