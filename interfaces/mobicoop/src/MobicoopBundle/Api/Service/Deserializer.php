@@ -447,6 +447,9 @@ class Deserializer
         if (isset($data["workAddress"])) {
             $massPerson->setWorkAddress(self::deserializeAddress($data["workAddress"]));
         }
+        if (isset($data["direction"])) {
+            $massPerson->setDirection(self::deserializeDirection($data["direction"]));
+        }
         return $massPerson;
     }
 

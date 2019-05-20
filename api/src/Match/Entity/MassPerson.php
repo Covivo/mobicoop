@@ -97,6 +97,7 @@ class MassPerson
      * @var Direction|null The direction between the personal address and the work address.
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
+     * @Groups("read")
      */
     private $direction;
 
