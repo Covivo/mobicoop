@@ -59,11 +59,15 @@ use Doctrine\Common\Collections\Collection;
  *          }
  *      },
  *      itemOperations={
- *          "get",
+ *          "get"={
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"mass"}},
+ *          },
  *          "delete",
  *          "analyze"={
  *              "method"="GET",
  *              "path"="/masses/{id}/analyze",
+ *              "normalization_context"={"groups"={"mass"}},
  *              "controller"=MassAnalyzeAction::class
  *          },
  *          "match"={
