@@ -103,10 +103,17 @@ class Mass implements Resource
      */
     private $errors;
 
+    /**
+     * @var array The persons.
+     */
+    private $persons;
+
+
     public function __construct($id = null)
     {
         $this->id = $id;
         $this->errors = [];
+        $this->persons = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -247,5 +254,33 @@ class Mass implements Resource
     public function setErrors(?array $errors)
     {
         $this->errors = $errors;
+    }
+
+    public function getPersons(): Collection
+    {
+        return $this->persons;
+    }
+
+    public function addPerson(MassPerson $person): self
+    {
+        if (!$this->persons->contains($person)) {
+            $this->persons->add($person);
+            $person->setMass($this);
+        }
+
+        return $this;
+    }
+
+    public function removePerson(MassPerson $person): self
+    {
+        if ($this->persons->contains($person)) {
+            $this->persons->removeElement($person);
+            // set the owning side to null (unless already changed)
+            if ($person->getMass() === $this) {
+                $person->setMass(null);
+            }
+        }
+
+        return $this;
     }
 }
