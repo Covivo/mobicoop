@@ -69,6 +69,7 @@ use Doctrine\Common\Collections\Collection;
  *          "match"={
  *              "method"="GET",
  *              "path"="/masses/{id}/match",
+ *              "normalization_context"={"groups"={"mass"}},
  *              "controller"=MassMatchAction::class,
  *              "swagger_context"={
  *                  "parameters"={
@@ -147,7 +148,7 @@ class Mass
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups("mass")
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -156,7 +157,7 @@ class Mass
      * @var int The status of this import.
      *
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups("mass")
      */
     private $status;
 
@@ -164,7 +165,7 @@ class Mass
      * @var string The final file name of the import.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"mass","write"})
      */
     private $fileName;
 
@@ -172,7 +173,7 @@ class Mass
      * @var string The original file name of the import.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"mass","write"})
      */
     private $originalName;
 
@@ -180,7 +181,7 @@ class Mass
      * @var int The size in bytes of the import.
      *
      * @ORM\Column(type="integer")
-     * @Groups({"read","write"})
+     * @Groups({"mass","write"})
      */
     private $size;
 
@@ -188,7 +189,7 @@ class Mass
      * @var string The mime type of the import.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups("read")
+     * @Groups("mass")
      */
     private $mimeType;
 
@@ -212,7 +213,7 @@ class Mass
      * @var \DateTimeInterface Analyze date of the import.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("read")
+     * @Groups("mass")
      */
     private $analyzeDate;
 
@@ -220,7 +221,7 @@ class Mass
      * @var \DateTimeInterface Calculation date of the import.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("read")
+     * @Groups("mass")
      */
     private $calculationDate;
 
@@ -228,7 +229,7 @@ class Mass
      * @var ArrayCollection|null The persons concerned by the file.
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassPerson", mappedBy="mass", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups("read")
+     * @Groups("mass")
      */
     private $persons;
 
@@ -246,7 +247,7 @@ class Mass
 
     /**
      * @var array The errors.
-     * @Groups("read")
+     * @Groups("mass")
      */
     private $errors;
 

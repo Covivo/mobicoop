@@ -73,9 +73,7 @@ final class MassMatchAction
             if ($this->request->get("doubleCheck")) {
                 $doubleCheck = $this->request->get("doubleCheck");
             }
-            $result = $this->massImportManager->matchMass($data, $maxDetourDurationPercent, $maxDetourDistancePercent, $minOverlapRatio, $maxSuperiorDistanceRatio, $bearingCheck, $bearingRange, $doubleCheck);
-            print_r($result);
-            exit;
+            $this->massImportManager->matchMass($data, $maxDetourDurationPercent, $maxDetourDistancePercent, $minOverlapRatio, $maxSuperiorDistanceRatio, $bearingCheck, $bearingRange, $doubleCheck);
         }
         return $data;
     }

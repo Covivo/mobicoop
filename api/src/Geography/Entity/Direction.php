@@ -61,63 +61,63 @@ class Direction
     /**
      * @var int The total distance of the direction in meter.
      * @ORM\Column(type="integer")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $distance;
     
     /**
      * @var int The total duration of the direction in milliseconds.
      * @ORM\Column(type="integer")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $duration;
     
     /**
      * @var int The total ascend of the direction in meter.
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $ascend;
     
     /**
      * @var int The total descend of the direction in meter.
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $descend;
 
     /**
      * @var float The minimum longitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $bboxMinLon;
 
     /**
      * @var float The minimum latitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $bboxMinLat;
     
     /**
      * @var float The maximum longitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $bboxMaxLon;
     
     /**
      * @var float The maximum latitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $bboxMaxLat;
     
     /**
      * @var int|null The initial bearing of the direction in degrees.
      * @ORM\Column(type="integer",nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $bearing;
 
@@ -131,14 +131,14 @@ class Direction
     /**
      * @var string The textual encoded snapped waypoints of the direction.
      * @ORM\Column(type="text")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $snapped;
     
     /**
      * @var string The encoding format of the detail.
      * @ORM\Column(type="string", length=45)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $format;
 
@@ -153,9 +153,16 @@ class Direction
      * @var ArrayCollection|null The territories of the direction.
      *
      * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $territories;
+
+    /**
+     * @var int|null The CO2 emission for this direction.
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write","mass"})
+     */
+    private $co2;
 
     /**
      * @var Address[]|null The decoded points (from detail) of the direction.
@@ -381,6 +388,18 @@ class Direction
             $this->territories->removeElement($territory);
         }
         
+        return $this;
+    }
+
+    public function getCo2(): ?int
+    {
+        return $this->co2;
+    }
+
+    public function setCo2(?int $co2): self
+    {
+        $this->co2 = $co2;
+
         return $this;
     }
 
