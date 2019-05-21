@@ -132,7 +132,10 @@ class MassImportManager
     public function generateFilename(Mass $mass)
     {
         $date = new \Datetime();
-        return $this->fileManager->sanitize($date->format('YmdHis') . "-" . substr($mass->getFile()->getClientOriginalName(), 0, strrpos($mass->getFile()->getClientOriginalName(), ".")));
+        if ($mass->getOriginalName()) {
+            return $this->fileManager->sanitize($date->format('YmdHis') . "-" . substr($mass->getOriginalName(), 0, strrpos($mass->getOriginalName(), ".")));
+        }
+        return $this->fileManager->sanitize($date->format('YmdHis') . "-" . substr($mass->getFile()->getClientOriginalName(), 0, strrpos($mass->getFile()->getClientOriginalName(), ".")));        
     }
 
     /**
@@ -143,6 +146,8 @@ class MassImportManager
      */
     public function treatMass(Mass $mass)
     {
+        $this->logger->info('Mass match | Treating import file ' . $mass->getFileName() . ' start' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
         // we get the validated data from the file
         $data = $this->getData($mass);
 
@@ -153,6 +158,9 @@ class MassImportManager
             // we import the persons
             $this->importPersons($data, $mass);
         }
+
+        $this->logger->info('Mass match | Treating import file ' . $mass->getFileName() . ' end' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
         // we return the mass object
         return $mass;
     }
@@ -446,6 +454,9 @@ class MassImportManager
      */
     private function getData(Mass $mass)
     {
+        $this->logger->info('Mass match | Treating import file ' . $mass->getFileName() . ', getting data start' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $this->logger->info('Mass match | Treating import file ' . $mass->getFileName() . ', ' . $mass->getMimeType());
+
         // if it's a plain text we try to guess the real mimetype
         if ($mass->getMimeType() == self::MIMETYPE_PLAIN) {
             $mass->setMimeType($this->guessMimeType('.' . $this->params['folder'] . $mass->getFileName()));
@@ -479,6 +490,7 @@ class MassImportManager
     private function guessMimeType(string $filename)
     {
         switch (strtolower($this->fileManager->getExtension($filename))) {
+            case 'txt':
             case 'csv':
                 return self::MIMETYPE_CSV;
                 break;

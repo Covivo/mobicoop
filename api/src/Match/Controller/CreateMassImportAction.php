@@ -32,6 +32,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use App\Match\Service\MassImportManager;
 use App\Match\Entity\Mass;
 use App\Match\Form\MassImportForm;
+use Psr\Log\LoggerInterface;
 
 final class CreateMassImportAction
 {
@@ -39,13 +40,15 @@ final class CreateMassImportAction
     private $doctrine;
     private $factory;
     private $massImportManager;
+    private $logger;
 
-    public function __construct(RegistryInterface $doctrine, FormFactoryInterface $factory, ValidatorInterface $validator, MassImportManager $massImportManager)
+    public function __construct(RegistryInterface $doctrine, FormFactoryInterface $factory, ValidatorInterface $validator, MassImportManager $massImportManager,  LoggerInterface $logger)
     {
         $this->validator = $validator;
         $this->doctrine = $doctrine;
         $this->factory = $factory;
         $this->massImportManager = $massImportManager;
+        $this->logger = $logger;
     }
 
     /**
@@ -59,15 +62,18 @@ final class CreateMassImportAction
         $form = $this->factory->create(MassImportForm::class, $mass);
         $form->handleRequest($request);
 
+        $originalName = null;
+
         // we search the user of the file
         if ($user = $this->massImportManager->getUser($mass)) {
             // we associate the user and the mass
             $user->addMass($mass);
             // we rename the file
             $mass->setFileName($this->massImportManager->generateFilename($mass));
-            if ($mass->getFile()->getClientOriginalName()) {
-                $mass->setOriginalName($mass->getFile()->getClientOriginalName());
-            }
+            // we check if an originalName has been sent
+            if ($mass->getOriginalName()) {
+                $originalName = $mass->getOriginalName();
+            }            
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -75,6 +81,10 @@ final class CreateMassImportAction
             // we persist the file to fill the fields automatically (size, mimetype...)
             $em = $this->doctrine->getManager();
             $em->persist($mass);
+
+            if ($originalName) {
+                $mass->setOriginalName($originalName);
+            }
 
             // Prevent the serialization of the file property
             $mass->preventSerialization();
