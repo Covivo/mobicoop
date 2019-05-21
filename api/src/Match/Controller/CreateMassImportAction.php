@@ -42,7 +42,7 @@ final class CreateMassImportAction
     private $massImportManager;
     private $logger;
 
-    public function __construct(RegistryInterface $doctrine, FormFactoryInterface $factory, ValidatorInterface $validator, MassImportManager $massImportManager,  LoggerInterface $logger)
+    public function __construct(RegistryInterface $doctrine, FormFactoryInterface $factory, ValidatorInterface $validator, MassImportManager $massImportManager, LoggerInterface $logger)
     {
         $this->validator = $validator;
         $this->doctrine = $doctrine;
@@ -73,7 +73,7 @@ final class CreateMassImportAction
             // we check if an originalName has been sent
             if ($mass->getOriginalName()) {
                 $originalName = $mass->getOriginalName();
-            }            
+            }
         }
 
         if ($form->isSubmitted() && $form->isValid()) {

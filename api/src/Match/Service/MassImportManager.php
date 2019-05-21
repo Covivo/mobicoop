@@ -135,7 +135,7 @@ class MassImportManager
         if ($mass->getOriginalName()) {
             return $this->fileManager->sanitize($date->format('YmdHis') . "-" . substr($mass->getOriginalName(), 0, strrpos($mass->getOriginalName(), ".")));
         }
-        return $this->fileManager->sanitize($date->format('YmdHis') . "-" . substr($mass->getFile()->getClientOriginalName(), 0, strrpos($mass->getFile()->getClientOriginalName(), ".")));        
+        return $this->fileManager->sanitize($date->format('YmdHis') . "-" . substr($mass->getFile()->getClientOriginalName(), 0, strrpos($mass->getFile()->getClientOriginalName(), ".")));
     }
 
     /**
