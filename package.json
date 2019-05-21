@@ -35,7 +35,7 @@
     "ghooks": {
       "pre-commit": "php bin/php-cs-fixer.phar fix --using-cache=false api/src &&  php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src && php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src/MobicoopBundle/spec",
       "pre-push": "npm run contributor-checker",
-      "post-merge": "npm install && cd api && npm run updateDb"
+      "post-merge": "npm install && cd api && npm run update-db"
     }
   },
   "repository": {
