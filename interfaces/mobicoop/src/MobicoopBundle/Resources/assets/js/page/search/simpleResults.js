@@ -14,10 +14,9 @@ import '../../../css/page/search/simpleResults.scss';
 // Vue components
 import Resultssearchform from '../../components/Resultssearchform';
 import Journey from '../../components/Journey'
+import BDatepicker from "buefy/src/components/datepicker/Datepicker"
 
-Vue.use(Buefy,{
-  defaultTooltipType: 'is-mobicoopgreen'
-});
+Vue.use(Buefy);
 Vue.use(VueFormWizard);
 // add possibility to format date by using moment
 Vue.config.productionTip = false;
@@ -31,6 +30,7 @@ new Vue({
   el: '#simple',
   components: {
     Resultssearchform,
+    BDatepicker
   }
 })
 new Vue({
@@ -42,7 +42,7 @@ new Vue({
 
 // dropdown. Details of results. queryselector don't return an array 
 
-let dropdowns = [...document.querySelectorAll('.dropdown')];
+let dropdowns = [...document.querySelectorAll('.drop')];
 //console.error(dropdowns);
 dropdowns.map ((dropdown, index) => {
   dropdown.addEventListener('click',  (event) => {
