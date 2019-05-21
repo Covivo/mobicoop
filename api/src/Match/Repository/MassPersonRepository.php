@@ -46,6 +46,11 @@ class MassPersonRepository
         $this->repository = $entityManager->getRepository(MassPerson::class);
     }
 
+    public function find(int $id): ?MassPerson
+    {
+        return $this->repository->find($id);
+    }
+
     /**
      * Return all destinations for a mass.
      *

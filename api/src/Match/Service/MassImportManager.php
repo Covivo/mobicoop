@@ -39,6 +39,7 @@ use App\Geography\Service\GeoSearcher;
 use App\Geography\Service\GeoRouter;
 use App\Geography\Service\ZoneManager;
 use App\Geography\Service\GeoTools;
+use App\Match\Entity\MassMatching;
 
 /**
  * Mass import manager.
@@ -404,19 +405,36 @@ class MassImportManager
                         $matchers[$person->getId()][] = $match['id'];
                         $matchers_detail[$person->getId()][] = [
                             'id' => $match['id'],
+                            'person' => $person,
                             'originalDistance' => $match["originalDistance"],
                             'newDistance' => $match['newDistance'],
                             'originalDuration' => $match["originalDuration"],
                             'newDuration' => $match['newDuration'],
                             'acceptedDetourDuration' => $match['acceptedDetourDuration'],
                             'detourDurationPercent' => $match['detourDurationPercent'],
-                            'overlap' => $overlaps[$person->getId()][$match['id']]
+                            'overlap' => $overlaps[$person->getId()][$match['id']],
+                            'direction' => $match['direction']
                         ];
                     }
                 }
             }
             $this->logger->info('Mass match | Calculate route matches for person n°' . $person->getId() . ' end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
+        $this->logger->info('Mass match | Creating matches records start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        foreach ($matchers_detail as $matches) {
+            foreach ($matches as $match) {
+                $massMatching = new MassMatching();
+                $massMatching->setMassPerson1($match['person']);
+                $massMatching->setMassPerson2($this->massPersonRepository->find($match['id']));
+                $massMatching->setDirection($match['direction']);
+                $this->entityManager->persist($massMatching);
+            }
+        }
+        $mass->setStatus(Mass::STATUS_TREATED);
+        $mass->setCalculationDate(new \Datetime());
+        $this->entityManager->persist($mass);
+        $this->entityManager->flush();
+        $this->logger->info('Mass match | Creating matches records end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));    
         return $matchers_detail;
     }
 

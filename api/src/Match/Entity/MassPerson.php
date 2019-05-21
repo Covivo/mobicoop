@@ -24,15 +24,27 @@
 namespace App\Match\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * A mass matching person.
  *
  * @ORM\Entity
+ * @ApiResource(
+ *      attributes={
+ *          "force_eager"=false,
+ *          "normalization_context"={"groups"={"mass"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"write"}}
+ *      },
+ *      collectionOperations={"get"},
+ *      itemOperations={"get"}
+ * )
+ * 
  */
 class MassPerson
 {
@@ -48,7 +60,7 @@ class MassPerson
      * @var string|null The given id of the person.
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"mass"})
-     * @Groups("read")
+     * @Groups("mass")
      */
     private $givenId;
 
@@ -70,7 +82,7 @@ class MassPerson
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Assert\NotBlank(groups={"mass"})
      * @Assert\Valid
-     * @Groups("read")
+     * @Groups("mass")
      */
     private $personalAddress;
 
@@ -80,7 +92,7 @@ class MassPerson
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Assert\NotBlank(groups={"mass"})
      * @Assert\Valid
-     * @Groups("read")
+     * @Groups("mass")
      */
     private $workAddress;
 
@@ -94,18 +106,27 @@ class MassPerson
     private $mass;
 
     /**
-     * @var Direction|null The direction between the personal address and the work address.
+     * @var ArrayCollection|null The potential matchings if the person is driver.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassMatching", mappedBy="massPerson1", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups("mass")
      */
-    private $direction;
+    private $matchingsAsDriver;
+
+    /**
+     * @var ArrayCollection|null The potential matchings if the person is passenger.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassMatching", mappedBy="massPerson2", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups("mass")
+     */
+    private $matchingsAsPassenger;
 
     /**
      * @var \DateTimeInterface|null The outward time.
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups("read")
+     * @Groups("mass")
      */
     private $outwardTime;
 
@@ -114,7 +135,7 @@ class MassPerson
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups("read")
+     * @Groups("mass")
      */
     private $returnTime;
 
@@ -124,6 +145,7 @@ class MassPerson
      * @Assert\Type("bool")
      * @Assert\NotBlank(groups={"mass"})
      * @ORM\Column(type="boolean")
+     * @Groups("mass")
      */
     private $driver;
 
@@ -133,8 +155,23 @@ class MassPerson
      * @Assert\Type("bool")
      * @Assert\NotBlank(groups={"mass"})
      * @ORM\Column(type="boolean")
+     * @Groups("mass")
      */
     private $passenger;
+
+    /**
+     * @var Direction|null The direction between the personal address and the work address.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
+     * @Groups("mass")
+     */
+    private $direction;
+
+    public function __construct()
+    {
+        $this->matchingsAsDriver = new ArrayCollection();
+        $this->matchingsAsPassenger = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -227,6 +264,16 @@ class MassPerson
         $this->direction = $direction;
 
         return $this;
+    }
+
+    public function getMatchingsAsDriver()
+    {
+        return $this->matchingsAsDriver->getValues();
+    }
+
+    public function getMatchingsAsPassenger()
+    {
+        return $this->matchingsAsPassenger->getValues();
     }
 
     public function getOutwardTime(): ?\DateTimeInterface

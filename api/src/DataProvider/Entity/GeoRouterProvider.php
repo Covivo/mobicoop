@@ -165,6 +165,7 @@ class GeoRouterProvider implements ProviderInterface
         $direction = new Direction();
         if (isset($data["distance"])) {
             $direction->setDistance($data["distance"]);
+            $direction->setCo2($this->geoTools->getCO2($data["distance"]));
         }
         if (isset($data["time"])) {
             // time is in milliseconds, we transform in seconds

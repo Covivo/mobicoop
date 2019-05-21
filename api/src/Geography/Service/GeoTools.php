@@ -110,4 +110,16 @@ class GeoTools
             'max' => (($newBearing+$range)>360) ? ($newBearing+$range-360) : ($newBearing+$range)
         ];
     }
+
+    /**
+     * Returns the CO2 emission for the given distance 
+     * 
+     * @param integer   $distance   The distance in meters
+     * @param integer   $round      The precision
+     * @return integer  The CO2 emission in grams
+     */
+    public function getCO2(int $distance, int $round=2)
+    {
+        return round(((($distance)/1000) * 7 * 0.0232),$round);
+    }
 }
