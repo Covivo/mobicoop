@@ -434,7 +434,7 @@ class MassImportManager
         $mass->setCalculationDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
-        $this->logger->info('Mass match | Creating matches records end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));    
+        $this->logger->info('Mass match | Creating matches records end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         return $matchers_detail;
     }
 

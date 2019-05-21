@@ -114,5 +114,4 @@ class MassMatching
 
         return $this;
     }
-
 }

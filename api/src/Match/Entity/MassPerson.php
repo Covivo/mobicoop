@@ -44,7 +44,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      collectionOperations={"get"},
  *      itemOperations={"get"}
  * )
- * 
+ *
  */
 class MassPerson
 {
