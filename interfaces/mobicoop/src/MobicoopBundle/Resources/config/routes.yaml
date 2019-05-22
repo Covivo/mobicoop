@@ -116,3 +116,14 @@ ad_results:
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::adPostResults
     requirements:
         id: '\d+'
+
+###################
+# community routes #
+###################
+
+# display communities
+community_communities:
+    path:
+        fr: /communautes
+        en: /communities
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communities        
