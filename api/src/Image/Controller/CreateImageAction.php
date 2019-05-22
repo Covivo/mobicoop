@@ -62,6 +62,7 @@ final class CreateImageAction
         // see https://github.com/dustin10/VichUploaderBundle/blob/master/Resources/doc/events.md
         
         $originalName = null;
+        $em = $this->doctrine->getManager();
         
         // we search the future owner of the image (user ? event ?...)
         if ($owner = $this->imageManager->getOwner($image)) {
@@ -75,11 +76,12 @@ final class CreateImageAction
             if ($image->getOriginalName()) {
                 $originalName = $image->getOriginalName();
             }
+            $em->persist($owner);
         }
+        
         if ($form->isSubmitted() && $form->isValid()) {
             // the form is valid and the image has a valid owner
             // we persist the image to fill the fields automatically (size, dimensions, mimetype...)
-            $em = $this->doctrine->getManager();
             $em->persist($image);
             
             // we eventually write the originalName
