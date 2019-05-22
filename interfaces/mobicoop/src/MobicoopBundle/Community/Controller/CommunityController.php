@@ -45,5 +45,5 @@ class CommunityController extends AbstractController
         return $this->render('@Mobicoop/community/communities.twig', [
             'communities' => $communityManager->getCommunities(),
         ]);
-    }  
+    }
 }

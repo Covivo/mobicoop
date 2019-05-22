@@ -34,7 +34,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 
 /**
- * 
+ *
  */
 class Community
 {

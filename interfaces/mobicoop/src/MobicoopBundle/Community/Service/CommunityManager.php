@@ -23,13 +23,12 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Community\Service;
 
-
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
-use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community; 
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 
 /**
  * Community management service.
@@ -48,16 +47,15 @@ class CommunityManager
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Community::class);
     }
-      /**
+    /**
      * Create a community
      *
-     * @param Community 
+     * @param Community
      *
      * @return Community|null
      */
     public function createCommunity(Community $community)
     {
-
         $response = $this->dataProvider->post($community);
         if ($response->getCode() == 201) {
             return $response->getValue();
@@ -65,11 +63,11 @@ class CommunityManager
         return null;
     }
 
-     /**
-     * Get all communities
-     * @return array|null The communities found or null if not found.
-     * 
-     */
+    /**
+    * Get all communities
+    * @return array|null The communities found or null if not found.
+    *
+    */
     public function getCommunities()
     {
         $response = $this->dataProvider->getCollection();
