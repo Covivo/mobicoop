@@ -81,7 +81,6 @@ final class CreateImageAction
         }
         
         if ($form->isSubmitted() && $form->isValid()) {
-
             $em = $this->doctrine->getManager();
 
             // the form is valid and the image has a valid owner

@@ -64,16 +64,16 @@ final class ImageForm extends AbstractType
         ->add('cropY1')
         ->add('cropX2')
         ->add('cropY2')
-        ->add('eventId',TextType::class, [
+        ->add('eventId', TextType::class, [
             'required' => false,
         ])
-        ->add('communityId',TextType::class, [
+        ->add('communityId', TextType::class, [
             'required' => false,
         ])
-        ->add('relayPointId',TextType::class, [
+        ->add('relayPointId', TextType::class, [
             'required' => false,
         ])
-        ->add('relayPointTypeId',TextType::class, [
+        ->add('relayPointTypeId', TextType::class, [
             'required' => false,
         ])
         ;
