@@ -52,6 +52,8 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\IndividualStop;
 use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Direction;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourneyProvider;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 
 /**
  * Custom deserializer service.
@@ -108,6 +110,9 @@ class Deserializer
                 break;
             case Mass::class:
                 return self::deserializeMass($data);
+                break;
+            case Community::class:
+                return self::deserializeCommunity($data);
                 break;
             default:
                 break;
@@ -458,6 +463,53 @@ class Deserializer
         $provider = new ExternalJourneyProvider();
         $provider = self::autoSet($provider, $data);
         return $provider;
+    }
+
+    private function deserializeCommunityUser(array $data): ?CommunityUser
+    {
+        $communityUser = new communityUser();
+        $communityUser = self::autoSet($communityUser, $data);
+        if (isset($data["@id"])) {
+            $communityUser->setIri($data["@id"]);
+        }
+        if (isset($data["community"])) {
+            $communityUser->set>Community(self::deserializeCommunity($data["community"]));
+        }
+        if (isset($data["user"])) {
+            $communityUser->setUser(self::deserializeUser($data["user"]));
+        }
+        if (isset($data["admin"])) {
+            $communityUser->setAdmin(self::deserializeUser($data["admin"]));
+        }
+        return $communityUser;
+    }
+
+    private function deserializeCommunity(array $data): ?Community
+    {
+        $community = new Community();
+        $community = self::autoSet($community, $data);
+        if (isset($data["@id"])) {
+            $community->setIri($data["@id"]);
+        }
+        if (isset($data["user"])) {
+            $community->setUser(self::deserializeUser($data["user"]));
+        }
+        if (isset($data["images"])) {
+            foreach ($data["images"] as $image) {
+                $community->addImage(self::deserializeImage($image));
+            }
+        }
+        if (isset($data["proposals"])) {
+            foreach ($data["proposals"] as $proposal) {
+                $community->addProposal(self::deserializeProposal($proposal));
+            }
+        }
+        if (isset($data["communityUsers"])) {
+            foreach ($data["communityUsers"] as $communityUser) {
+                $community->addCommunityUser(self::deserializeCommunityUser($communityUser));
+            }
+        }
+        return $community;
     }
     
     private function autoSet($object, $data)

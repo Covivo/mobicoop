@@ -30,7 +30,6 @@ use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 
 /**
@@ -40,9 +39,13 @@ class Community
 {
     /**
      * @var int The id of this community.
-     * @Groups("post")
      */
     private $id;
+
+    /**
+     * @var string|null The iri of this community.
+     */
+    private $iri;
     
     /**
      * @var string The name of the community.
@@ -128,8 +131,18 @@ class Community
     {
         $this->id = $id;
     }
+
+    public function getIri()
+    {
+        return $this->iri;
+    }
     
-    public function getName(): string
+    public function setIri($iri)
+    {
+        $this->iri = $iri;
+    }
+    
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -151,7 +164,7 @@ class Community
         return $this;
     }
     
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -161,7 +174,7 @@ class Community
         $this->description = $description;
     }
     
-    public function getFullDescription(): string
+    public function getFullDescription(): ?string
     {
         return $this->fullDescription;
     }
@@ -183,7 +196,7 @@ class Community
         return $this;
     }
     
-    public function getUser(): User
+    public function getUser(): ?User
     {
         return $this->user;
     }

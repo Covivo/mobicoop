@@ -24,7 +24,6 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Community\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\Collection;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 
 /**
@@ -42,6 +41,11 @@ class CommunityUser
      * @Groups("post")
      */
     private $id;
+
+    /**
+     * @var string|null The iri of this community.
+     */
+    private $iri;
         
     /**
      * @var Community The community.
@@ -92,6 +96,16 @@ class CommunityUser
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getIri()
+    {
+        return $this->iri;
+    }
+    
+    public function setIri($iri)
+    {
+        $this->iri = $iri;
     }
 
     public function getCommunity(): ?Community
