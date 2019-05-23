@@ -112,3 +112,8 @@ services:
         arguments:
             $params:
                 - { displayCountry: '%env(resolve:DISPLAY_COUNTRY)%', displayRegion: '%env(resolve:DISPLAY_REGION)%', displaySeparator: '%env(resolve:DISPLAY_SEPARATOR)%' }
+
+    # set the monolog channel to use for UserManager
+    App\User\Service\UserManager:
+        tags: 
+            - { name: monolog.logger, channel: geomatcher }    

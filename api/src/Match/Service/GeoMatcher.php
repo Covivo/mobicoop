@@ -27,6 +27,8 @@ use App\Match\Entity\Candidate;
 use App\Geography\Service\GeoRouter;
 use App\Carpool\Service\ProposalMatcher;
 use App\Geography\Service\ZoneManager;
+use Psr\Log\LoggerInterface;
+
 
 /**
  * Geographical Matching service.
@@ -37,16 +39,21 @@ class GeoMatcher
 {
     private $geoRouter;
     private $zoneManager;
+    private $logger;
+
 
     /**
      * Constructor.
      *
      * @param GeoRouter $geoRouter
+     * @param LoggerInterface $logger
      */
-    public function __construct(GeoRouter $geoRouter, ZoneManager $zoneManager)
+    public function __construct(GeoRouter $geoRouter, ZoneManager $zoneManager, LoggerInterface $logger)
     {
         $this->geoRouter = $geoRouter;
         $this->zoneManager = $zoneManager;
+        $this->logger = $logger;
+
     }
 
     /**
@@ -104,6 +111,8 @@ class GeoMatcher
             }
         }
         return $matchesReturned;
+        $this->logger->info('Match | Check - create the points for the routes alternatives for each candidate ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
     }
 
     /**
@@ -129,6 +138,8 @@ class GeoMatcher
             }
         }
         return $result;
+        $this->logger->info('Match | Check - between 2 candidates ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
     }
 
     private function checkMatch(Candidate $candidate1, Candidate $candidate2, array $routes, ?array $points): ?array
@@ -144,11 +155,15 @@ class GeoMatcher
             // in meters
             if ($routes[0]->getDistance()<=($candidate1->getDirection()->getDistance()+$candidate1->getMaxDetourDistance())) {
                 $detourDistance = true;
+                $this->logger->info('Detour Distance | Check - in meters ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
             }
         } elseif ($candidate1->getMaxDetourDistancePercent()) {
             // in percentage
             if ($routes[0]->getDistance()<=(($candidate1->getDirection()->getDistance()*($candidate1->getMaxDetourDistancePercent()/100))+$candidate1->getDirection()->getDistance())) {
                 $detourDistance = true;
+                $this->logger->info('Detour Distance | Check - in percentage ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
             }
         }
         // we check the detour duration
@@ -156,17 +171,23 @@ class GeoMatcher
             // in seconds
             if ($routes[0]->getDuration()<=($candidate1->getDirection()->getDuration()+$candidate1->getMaxDetourDuration())) {
                 $detourDuration = true;
+                $this->logger->info('Detour Duration | Check in seconds ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
             }
         } elseif ($candidate1->getMaxDetourDurationPercent()) {
             // in percentage
             if ($routes[0]->getDuration()<=(($candidate1->getDirection()->getDuration()*($candidate1->getMaxDetourDurationPercent()/100))+$candidate1->getDirection()->getDuration())) {
                 $detourDuration = true;
+                $this->logger->info('Detour Duration | Check in percentage ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
             }
         }
         // we check the common distance
         if (($candidate1->getDirection()->getDistance()<ProposalMatcher::MIN_COMMON_DISTANCE_CHECK) ||
             (($candidate2->getDirection()->getDistance()*100/$candidate1->getDirection()->getDistance()) > ProposalMatcher::MIN_COMMON_DISTANCE_PERCENT)) {
             $commonDistance = true;
+            $this->logger->info('Common Distance | Check ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
         }
         
         // if the detour is acceptable we keep the candidate
@@ -189,8 +210,12 @@ class GeoMatcher
                 'direction' => $direction,
                 'id' => $candidate2->getId()
             ];
+            $this->logger->info('Detour | detour is acceptable ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
         }
         return $result;
+        $this->logger->info('Detour | No match ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
     }
 
     private function generatePointsArray(Candidate $candidate1, Candidate $candidate2): ?array

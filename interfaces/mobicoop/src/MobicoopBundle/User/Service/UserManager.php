@@ -27,6 +27,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Psr\Log\LoggerInterface;
 use DateTime;
 
 /**
@@ -37,6 +38,8 @@ class UserManager
     private $dataProvider;
     private $encoder;
     private $tokenStorage;
+    private $logger;
+
     
     /**
      * Constructor.
@@ -44,13 +47,16 @@ class UserManager
      * @param DataProvider $dataProvider
      * @param UserPasswordEncoderInterface $encoder
      * @param TokenStorageInterface $tokenStorage
+     * @param LoggerInterface $logger
      */
-    public function __construct(DataProvider $dataProvider, UserPasswordEncoderInterface $encoder, TokenStorageInterface $tokenStorage)
+    public function __construct(DataProvider $dataProvider, UserPasswordEncoderInterface $encoder, TokenStorageInterface $tokenStorage, LoggerInterface $logger)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(User::class);
         $this->encoder = $encoder;
         $this->tokenStorage = $tokenStorage;
+        $this->logger = $logger;
+
     }
     
     /**
@@ -69,8 +75,11 @@ class UserManager
                 $user->setBirthYear($user->getBirthDate()->format('Y'));
             }
             return $user;
+            $this->logger->info('User | Is found' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
         return null;
+        $this->logger->error('User | is Not found' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
     }
     
     /**
@@ -89,8 +98,11 @@ class UserManager
                 $user->setBirthYear($user->getBirthDate()->format('Y'));
             }
             return $user;
+            $this->logger->info('User | Is logged' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
         return null;
+        $this->logger->error('User | Not logged' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
     }
     
     /**
@@ -103,8 +115,11 @@ class UserManager
         $response = $this->dataProvider->getCollection();
         if ($response->getCode() == 200) {
             return $response->getValue();
+            $this->logger->info('User | Found' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
         }
         return null;
+        $this->logger->error('User | Not found' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
     
     /**
@@ -124,8 +139,10 @@ class UserManager
         $response = $this->dataProvider->post($user);
         if ($response->getCode() == 201) {
             return $response->getValue();
+            $this->logger->info ('User Creation | Start' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
         return null;
+        $this->logger->error('User Creation | Fail' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
     
     /**
@@ -140,6 +157,7 @@ class UserManager
         $response = $this->dataProvider->put($user);
         if ($response->getCode() == 200) {
             return $response->getValue();
+            $this->logger->info('User Update | Start' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
         return null;
     }
@@ -158,8 +176,11 @@ class UserManager
         $response = $this->dataProvider->put($user);
         if ($response->getCode() == 200) {
             return $response->getValue();
+            $this->logger->info('User Password Update | Start' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
         }
         return null;
+        $this->logger->info('User Password Update | Fail' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
     
     /**
@@ -174,7 +195,9 @@ class UserManager
         $response = $this->dataProvider->delete($id);
         if ($response->getCode() == 204) {
             return true;
+            $this->logger->info('User Deleta | Start' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
         return false;
+        $this->logger->info('User Delete | FaiL' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
 }

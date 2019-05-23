@@ -1,16 +1,27 @@
 monolog:
-    handlers:
+     handlers:
         main:
-            type: fingers_crossed
-            action_level: error
-            handler: nested
-            excluded_404s:
-                # regex: exclude all 404 errors from the logs
-                - ^/
-        nested:
+            type:               fingers_crossed
+            action_level:       info
+            handler:            grouped
+            channels:           ["!carpool", "!mass", "!geomatcher"]
+        grouped:
+            type:               group
+            members:            [streamed, swift]
+        streamed:
+            type:               stream
+            path:               "%kernel.logs_dir%/%kernel.environment%.log"
+            level:              debug
+        swift:
+            type:               swift_mailer
+            from_email:         celinetest324@gmail.com
+            to_email:           celinetest324@gmail.com
+            subject:            "Oops"
+            level:              debug
+        user:
             type: stream
-            path: "%kernel.logs_dir%/%kernel.environment%.log"
-            level: debug
+            path: "%kernel.logs_dir%/user.log"
+            channels: [user]    
         console:
             type: console
             process_psr_3_messages: false
@@ -23,3 +34,6 @@ monolog:
             handler: deprecation
             max_level: info
             channels: ["php"]
+
+
+

@@ -1,18 +1,24 @@
 monolog:
     handlers:
         main:
-            type: fingers_crossed
-            action_level: error
-            handler: nested
-            excluded_404s:
-                # regex: exclude all 404 errors from the logs
-                - ^/
-        nested:
-            type: stream
-            path: "%kernel.logs_dir%/%kernel.environment%.log"
-            level: debug
-            channels: ["!carpool","!mass"]
-        carpool:
+            type:               fingers_crossed
+            action_level:       info
+            handler:            grouped
+            channels:           ["!carpool", "!mass", "!geomatcher"]
+        grouped:
+            type:               group
+            members:            [streamed, swift]
+        streamed:
+            type:               stream
+            path:               "%kernel.logs_dir%/%kernel.environment%.log"
+            level:              debug
+        swift:
+            type:               swift_mailer
+            from_email:         celinetest324@gmail.com
+            to_email:           celinetest324@gmail.com
+            subject:            "Oops"
+            level:              debug
+        carpool:        
             type: stream
             level: debug
             path: "%kernel.logs_dir%/carpool.log"
@@ -22,15 +28,58 @@ monolog:
             level: debug
             path: "%kernel.logs_dir%/mass.log"
             channels: [mass]
-        console:
-            type: console
-            process_psr_3_messages: false
-            channels: ["!event", "!doctrine"]
-        deprecation:
+        geomatcher:
             type: stream
-            path: "%kernel.logs_dir%/%kernel.environment%.deprecations.log"
-        deprecation_filter:
-            type: filter
-            handler: deprecation
-            max_level: info
-            channels: ["php"]
+            level: debug
+            path: "%kernel.logs_dir%/geomatcher.log"
+            channels: [geomatcher]   
+
+
+
+# monolog:
+#     handlers:
+#         main:
+#             type: fingers_crossed
+#             action_level: error
+#             handler: nested
+#             excluded_404s:
+#                 # regex: exclude all 404 errors from the logs
+#                 - ^/
+#         nested:
+#             type: stream
+#             path: "%kernel.logs_dir%/%kernel.environment%.log"
+#             level: debug
+#             channels: ["!carpool", "!mass", "!geomatcher"]
+#         swift:
+#             type:               swift_mailer
+#             from_email:         '%MAILER_URL%'
+#             to_email:           '%MAILER_URL%'
+#             subject:            "Log de niveau ERROR sur l'application XXX"
+#             level:              debug
+#         carpool:
+#             type: stream
+#             level: debug
+#             path: "%kernel.logs_dir%/carpool.log"
+#             channels: [carpool]
+#         mass:
+#             type: stream
+#             level: debug
+#             path: "%kernel.logs_dir%/mass.log"
+#             channels: [mass]
+#         geomatcher:
+#             type: stream
+#             level: debug
+#             path: "%kernel.logs_dir%/geomatcher.log"
+#             channels: [geomatcher]       
+#         console:
+#             type: console
+#             process_psr_3_messages: false
+#             channels: ["!event", "!doctrine"]
+#         deprecation:
+#             type: stream
+#             path: "%kernel.logs_dir%/%kernel.environment%.deprecations.log"
+#         deprecation_filter:
+#             type: filter
+#             handler: deprecation
+#             max_level: info
+#             channels: ["php"]
