@@ -37,16 +37,18 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Form\CommunityForm;
 class CommunityController extends AbstractController
 {
     /**
+     * 
      * Get all communities.
      */
     public function list(CommunityManager $communityManager)
     {
         return $this->render('@Mobicoop/community/communities.html.twig', [
-            'communities' => $communityManager->getCommunities(),
+            'hydra' => $communityManager->getCommunities(),
         ]);
     }
 
     /**
+     * @IsGranted("ROLE_USER")
      * Create a community
      */
     public function create(CommunityManager $communityManager, UserManager $userManager, Request $request)

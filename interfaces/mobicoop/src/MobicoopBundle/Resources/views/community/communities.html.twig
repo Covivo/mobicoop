@@ -2,18 +2,50 @@
 
 {% block title %}Les Communautés{% endblock %}
 {% block stylesheets %}
+    {{ encore_entry_link_tags('bundle_community/communities') }}
 {% endblock %}
 {% block body %}
-    <section class="hero firstSection">
+   <section class="hero firstSection">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">
+                    Liste des communautés
+                </h1>
+            </div>
+        </div>
     </section>
-    <section>
-    {{dump(communities)}}
-    </section>
-    <section class="hero lastSection">
+    <section class="hero cardsSection">
+            <div class="columns">
+            {% if hydra and hydra.member|length>0 %}
+                {% for community in hydra.member %}
+                <div class="card column">
+                    <div class="card-image">
+                        <figure class="image is-3by1">
+                        <img src="https://bulma.io/images/placeholders/720x240.png" alt="Placeholder image">
+                        </figure>
+                    </div>
+                    <div class="card-content">
+                        <div class="media">
+                        <div class="media-content">
+                            <p class="title is-4">{{community.name}}</p>
+                        </div>
+                        </div>
+                        <div class="content">
+                            {{community.description}}     
+                        <br>
+                        {{community.fullDescription}}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+            </div>
     </section>
     <section class="hero communautes has-text-centered">
-    <a class="lien" href="{{ path('community_create') }}">Créer une communauté</a>
+    <a class="lien is-vcentered" href="{{ path('community_create') }}">Créer une communauté</a>
     </section>
+   
 {% endblock %}
 {% block javascripts %}
+    {{ encore_entry_script_tags('bundle_community/communities') }}
 {% endblock %}
