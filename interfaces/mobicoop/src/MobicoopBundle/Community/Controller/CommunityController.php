@@ -37,7 +37,7 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Form\CommunityForm;
 class CommunityController extends AbstractController
 {
     /**
-     * 
+     *
      * Get all communities.
      */
     public function list(CommunityManager $communityManager)
