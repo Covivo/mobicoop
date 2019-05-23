@@ -26,10 +26,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
+use Mobicoop\Bundle\MobicoopBundle\Community\Form\CommunityForm;
 
 /**
  * Controller class for community related actions.
@@ -38,12 +37,49 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 class CommunityController extends AbstractController
 {
     /**
-     * Simple search results.
+     * Get all communities.
      */
-    public function communities(CommunityManager $communityManager)
+    public function list(CommunityManager $communityManager)
     {
-        return $this->render('@Mobicoop/community/communities.twig', [
+        return $this->render('@Mobicoop/community/communities.html.twig', [
             'communities' => $communityManager->getCommunities(),
         ]);
+    }
+
+    /**
+     * Create a community
+     */
+    public function create(CommunityManager $communityManager, UserManager $userManager, Request $request)
+    {
+        $community = new Community();
+        $community->setUser($userManager->getLoggedUser());
+
+        $form = $this->createForm(CommunityForm::class, $community);
+        $error = false;
+        $success = false;
+       
+       
+        // If it's a get, just render the form !
+        if (!$form->isSubmitted()) {
+            return $this->render('@Mobicoop/community/createCommunity.html.twig', [
+                'form' => $form->createView(),
+                'error' => $error
+            ]);
+        }
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            ($community = $communityManager->createCommunity($community));
+            return $this->redirectToRoute('home');
+        }
+
+        // Error happen durring community creation
+        try {
+            $community = $communityManager->createCommunity($community);
+            $success = true;
+        } catch (Error $err) {
+            $error = $err;
+        }
+
+        return $this->json(['error' => $error, 'success' => $success]);
     }
 }

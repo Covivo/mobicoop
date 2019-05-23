@@ -51,7 +51,6 @@ class CommunityManager
      * Create a community
      *
      * @param Community
-     *
      * @return Community|null
      */
     public function createCommunity(Community $community)

@@ -121,9 +121,16 @@ ad_results:
 # community routes #
 ###################
 
+# create community
+community_create:
+    path:
+        fr: /creer/communaute
+        en: /create/community
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::create
+         
 # display communities
-community_communities:
+community_list:
     path:
         fr: /communautes
         en: /communities
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communities        
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::list       
