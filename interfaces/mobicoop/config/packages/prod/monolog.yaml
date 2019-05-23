@@ -2,7 +2,7 @@ monolog:
      handlers:
         main:
             type:               fingers_crossed
-            action_level:       info
+            action_level:       critical
             handler:            grouped
             channels:           ["!carpool", "!mass", "!geomatcher"]
         grouped:
@@ -14,10 +14,12 @@ monolog:
             level:              debug
         swift:
             type:               swift_mailer
-            from_email:         '%env(MAILER_URL)%'
-            to_email:           '%env(MAILER_URL)%'
-            subject:            "Oops"
-            level:              debug
+            from_email:         '%env(MAIL)%'
+            to_email:           '%env(MAIL)%'
+            subject:    'An Error Occurred! %%message%%'
+            level:      debug
+            formatter:  monolog.formatter.html
+            content_type: text/html
         user:
             type: stream
             path: "%kernel.logs_dir%/user.log"

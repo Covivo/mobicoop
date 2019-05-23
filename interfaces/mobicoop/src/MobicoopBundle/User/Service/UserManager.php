@@ -75,6 +75,7 @@ class UserManager
             }
             return $user;
             $this->logger->info('User | Is found' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
         }
         return null;
         $this->logger->error('User | is Not found' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
