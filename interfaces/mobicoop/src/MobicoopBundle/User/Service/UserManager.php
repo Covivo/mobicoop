@@ -56,7 +56,6 @@ class UserManager
         $this->encoder = $encoder;
         $this->tokenStorage = $tokenStorage;
         $this->logger = $logger;
-
     }
     
     /**
@@ -79,7 +78,6 @@ class UserManager
         }
         return null;
         $this->logger->error('User | is Not found' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
     }
     
     /**
@@ -102,7 +100,6 @@ class UserManager
         }
         return null;
         $this->logger->error('User | Not logged' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
     }
     
     /**
@@ -116,7 +113,6 @@ class UserManager
         if ($response->getCode() == 200) {
             return $response->getValue();
             $this->logger->info('User | Found' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
         }
         return null;
         $this->logger->error('User | Not found' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -139,7 +135,7 @@ class UserManager
         $response = $this->dataProvider->post($user);
         if ($response->getCode() == 201) {
             return $response->getValue();
-            $this->logger->info ('User Creation | Start' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $this->logger->info('User Creation | Start' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
         return null;
         $this->logger->error('User Creation | Fail' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -177,7 +173,6 @@ class UserManager
         if ($response->getCode() == 200) {
             return $response->getValue();
             $this->logger->info('User Password Update | Start' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
         }
         return null;
         $this->logger->info('User Password Update | Fail' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
