@@ -23,10 +23,6 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Community\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
-use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 
@@ -51,6 +47,7 @@ class CommunityManager
      * Create a community
      *
      * @param Community
+     *
      * @return Community|null
      */
     public function createCommunity(Community $community)

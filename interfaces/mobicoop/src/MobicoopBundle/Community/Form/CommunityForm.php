@@ -26,16 +26,11 @@ namespace Mobicoop\Bundle\MobicoopBundle\Community\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Validator\Constraints\GroupSequence;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Form\AddressForm;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\TimeType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 /**
  * Community form.
@@ -46,13 +41,18 @@ class CommunityForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        ->add('name')
-        ->add('private')
-        ->add('description')
-        ->add('fullDescription')
-        ->add('submit', SubmitType::class);
+        ->add('name', TextType::class)
+        ->add('description', TextType::class)
+        ->add('fullDescription', TextareaType::class)
+        ->add('private', CheckboxType::class, [
+            'label'    => 'Selectionnez si la communauté est privée',
+            'required' => false,
+        ])
+        ->add('submit', SubmitType::class, [
+            'label' => 'Créer la communauté'
+        ]);
     }
-    
+        
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

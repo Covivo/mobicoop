@@ -56,30 +56,20 @@ class CommunityController extends AbstractController
 
         $form = $this->createForm(CommunityForm::class, $community);
         $error = false;
-        $success = false;
        
-       
-        // If it's a get, just render the form !
-        if (!$form->isSubmitted()) {
-            return $this->render('@Mobicoop/community/createCommunity.html.twig', [
-                'form' => $form->createView(),
-                'error' => $error
-            ]);
-        }
+        $form->handleRequest($request);
+        $error = false;
 
         if ($form->isSubmitted() && $form->isValid()) {
-            ($community = $communityManager->createCommunity($community));
-            return $this->redirectToRoute('home');
+            if ($community = $communityManager->createCommunity($community)) {
+                return $this->redirectToRoute('community_list');
+            }
+            $error = true;
         }
 
-        // Error happen durring community creation
-        try {
-            $community = $communityManager->createCommunity($community);
-            $success = true;
-        } catch (Error $err) {
-            $error = $err;
-        }
-
-        return $this->json(['error' => $error, 'success' => $success]);
+        return $this->render('@Mobicoop/community/createCommunity.html.twig', [
+            'form' => $form->createView(),
+            'error' => $error
+        ]);
     }
 }
