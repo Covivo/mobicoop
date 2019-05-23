@@ -440,16 +440,16 @@ class DataProvider
                 $hydraView->setId($data['hydra:view']['@id']);
             }
             if (isset($data['hydra:view']['@type'])) {
-                $hydraView->setId($data['hydra:view']['@type']);
+                $hydraView->setType($data['hydra:view']['@type']);
             }
             if (isset($data['hydra:view']['hydra:first'])) {
-                $hydraView->setId($data['hydra:view']['hydra:first']);
+                $hydraView->setFirst($data['hydra:view']['hydra:first']);
             }
             if (isset($data['hydra:view']['hydra:last'])) {
-                $hydraView->setId($data['hydra:view']['hydra:last']);
+                $hydraView->setLast($data['hydra:view']['hydra:last']);
             }
             if (isset($data['hydra:view']['hydra:next'])) {
-                $hydraView->setId($data['hydra:view']['hydra:next']);
+                $hydraView->setNext($data['hydra:view']['hydra:next']);
             }
             $hydra->setView($hydraView);
         }
