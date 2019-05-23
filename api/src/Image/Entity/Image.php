@@ -51,6 +51,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"write"}},
  *      },
  *      collectionOperations={
  *          "get",
@@ -205,7 +206,7 @@ class Image
     /**
      * @var Event|null The event associated with the image.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Event\Entity\Event", inversedBy="images")
+     * @ORM\ManyToOne(targetEntity="\App\Event\Entity\Event", inversedBy="images", cascade="persist")
      */
     private $event;
 
@@ -224,7 +225,7 @@ class Image
     /**
      * @var Community|null The community associated with the image.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="images")
+     * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="images", cascade="persist")
      */
     private $community;
 
@@ -255,7 +256,7 @@ class Image
     /**
      * @var RelayPoint|null The relay point associated with the image.
      *
-     * @ORM\ManyToOne(targetEntity="\App\RelayPoint\Entity\RelayPoint", inversedBy="images")
+     * @ORM\ManyToOne(targetEntity="\App\RelayPoint\Entity\RelayPoint", inversedBy="images", cascade="persist")
      */
     private $relayPoint;
 
@@ -274,7 +275,7 @@ class Image
     /**
      * @var RelayPointType|null The relay point type associated with the image.
      *
-     * @ORM\ManyToOne(targetEntity="\App\RelayPoint\Entity\RelayPointType", inversedBy="images")
+     * @ORM\ManyToOne(targetEntity="\App\RelayPoint\Entity\RelayPointType", inversedBy="images", cascade="persist")
      */
     private $relayPointType;
 

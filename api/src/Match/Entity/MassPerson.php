@@ -100,7 +100,7 @@ class MassPerson
      * @var Mass The original mass file of the person.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="\App\Match\Entity\Mass", cascade={"persist","remove"})
+     * @ORM\ManyToOne(targetEntity="\App\Match\Entity\Mass", cascade={"persist","remove"}, inversedBy="persons")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $mass;

@@ -80,7 +80,7 @@ services:
     App\Image\EntityListener\ImageListener:
         arguments: ['@App\Image\Service\ImageManager']
         tags:
-            - { name: doctrine.orm.entity_listener }
+            - { name: doctrine.orm.entity_listener, lazy: true }    # lazy set to true to avoid doctrine UnitOfWork error on insert
 
     # inject SIG uri to GeoRouter service
     App\Geography\Service\GeoRouter:
