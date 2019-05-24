@@ -81,3 +81,12 @@
 .lastSection {
   height: 25vw;
 }
+.communautes {
+  background-color: $secondary;
+  .lien {
+    color: $white;
+    &:hover {
+      color: $tertiary;
+    }
+  }
+}

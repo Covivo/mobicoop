@@ -1,0 +1,35 @@
+@import '../../app.scss';
+body {
+  .hero {
+    margin-bottom: 5vh;
+  }
+  .firstSection {
+    height: 10vh;
+    background-color: $secondary;
+    .title {
+      color: $white;
+    }
+  }
+  .cardsSection {
+    height: 35vh;
+    .card {
+      margin-left: 0.5vw;
+      margin-right: 0.5vw;
+      .button {
+        background-color: $primary;
+        color: $white;
+        border-color: $white;
+      }
+    }
+  }
+  .communautes {
+    background-color: $secondary;
+    margin-bottom: 0;
+    .lien {
+      color: $white;
+      &:hover {
+        color: $tertiary;
+      }
+    }
+  }
+}

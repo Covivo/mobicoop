@@ -1,29 +1,31 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}Create a proposal{% endblock %}
+{% block title %}{% trans from 'ui' %}Communautés{% endtrans %}{% endblock %}
 
 {% block body %}
 
-<section class="hero is-primary">
+<section class="hero is-secondary">
 	<div class="hero-body">
     	<div class="container">
       		<h1 class="title">
-        		Mobicoop - Proposal create
+              Création d'une communauté
       		</h1>
     	</div>
   	</div>
 </section>
 
 <section class="section">
-	<div class="container">
+	<div class="container is-secondary">
 		{% if error %}
 		<span class="tag is-danger">An error occured.</span>
 		{% endif %}
         {{ form_start(form) }}
         {{ form_errors(form) }}
-		{{form_row(form.submit)}}
         {{ form_end(form) }}
     </div>
+</section>
+<section class="hero communautes has-text-centered">
+    <a class="lien" href="{{ path('community_list') }}">Liste des communautés</a>
 </section>
 
 {% endblock %}
