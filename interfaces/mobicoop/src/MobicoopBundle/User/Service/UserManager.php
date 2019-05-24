@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -72,7 +73,22 @@ class UserManager
         }
         return null;
     }
-    
+
+    /**
+     * Get masses of a user
+     *
+     * @param String $id The user id
+     *
+     * @return Mass[]|null The user found or null if not found.
+     */
+    public function getMasses($id)
+    {
+        $response = $this->dataProvider->getSubCollection($id,Mass::class);
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
     /**
      * Get the logged user.
      *
