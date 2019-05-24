@@ -3,6 +3,9 @@ body {
   .hero {
     margin-bottom: 5vh;
   }
+  h2 {
+    color: $secondary;
+  }
   .firstSection {
     height: 10vh;
     background-color: $secondary;
@@ -11,7 +14,6 @@ body {
     }
   }
   .cardsSection {
-    height: 35vh;
     .card {
       margin-left: 0.5vw;
       margin-right: 0.5vw;
