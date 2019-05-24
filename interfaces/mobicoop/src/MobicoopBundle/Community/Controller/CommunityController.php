@@ -74,4 +74,15 @@ class CommunityController extends AbstractController
             'error' => $error
         ]);
     }
+
+    /**
+     * @IsGranted("ROLE_USER")
+     * Show a community
+     */
+    public function show($id, CommunityManager $communityManager)
+    {
+        return $this->render('@Mobicoop/community/showCommunity.html.twig', [
+            'community' => $communityManager->getCommunity($id),
+        ]);
+    }
 }

@@ -72,4 +72,17 @@ class CommunityManager
         }
         return null;
     }
+    /**
+     * Get one community
+     *
+     * @return Community|null
+     */
+    public function getCommunity($id)
+    {
+        $response = $this->dataProvider->getItem($id);
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
 }

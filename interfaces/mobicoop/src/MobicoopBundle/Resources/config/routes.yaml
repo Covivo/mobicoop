@@ -133,4 +133,13 @@ community_list:
     path:
         fr: /communautes
         en: /communities
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::list       
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::list  
+
+# display one community
+community_show:
+    path:
+        fr: /communaute/{id}
+        en: /community/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::show  
+    requirements:
+        id: '\d+'            
