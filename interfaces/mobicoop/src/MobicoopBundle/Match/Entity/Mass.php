@@ -26,6 +26,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Match\Entity;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\File\File;
@@ -77,10 +78,10 @@ class Mass implements Resource
     private $createdDate;
 
     /**
-     * @var int Id of the user that imports the file.
+     * @var User User that imports the file.
      * @Groups({"post","put"})
      */
-    private $userId;
+    private $user;
 
     /**
      * @var \DateTimeInterface Analyze date of the import.
@@ -200,14 +201,14 @@ class Mass implements Resource
         return $this;
     }
 
-    public function getUserId(): int
+    public function getUser(): User
     {
-        return $this->userId;
+        return $this->user;
     }
 
-    public function setUserId(int $userId): self
+    public function setUser(User $user): self
     {
-        $this->userId = $userId;
+        $this->user = $user;
 
         return $this;
     }

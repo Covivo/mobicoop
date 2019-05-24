@@ -132,6 +132,11 @@ class Deserializer
                 $user->addAddress(self::deserializeAddress($address));
             }
         }
+        if (isset($data["masses"])) {
+            foreach ($data["masses"] as $mass) {
+                $user->addMass(self::deserializeMass($mass));
+            }
+        }
         return $user;
     }
     
