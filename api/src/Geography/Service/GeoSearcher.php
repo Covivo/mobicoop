@@ -93,7 +93,7 @@ class GeoSearcher
             if ($geoResult->getCountry() && $geoResult->getCountry()->getName()) {
                 $address->setAddressCountry($geoResult->getCountry()->getName());
             }
-            if ($geoResult->getCountry() && $geoResult->getCountry()->getCode()) {          
+            if ($geoResult->getCountry() && $geoResult->getCountry()->getCode()) {
                 $address->setCountryCode($geoResult->getCountry()->getCode());
             }
 
