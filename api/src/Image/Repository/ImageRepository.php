@@ -45,6 +45,11 @@ class ImageRepository
     {
         $this->repository = $entityManager->getRepository(Image::class);
     }
+
+    public function find(int $id): ?Image
+    {
+        return $this->repository->find($id);
+    }
     
     /**
      * Find the next image position for a given related entity (owner)

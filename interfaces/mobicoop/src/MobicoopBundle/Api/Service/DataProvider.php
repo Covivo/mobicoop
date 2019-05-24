@@ -62,6 +62,9 @@ class DataProvider
     const FILE_PROPERTIES = [
         'eventFile' => 'getEventFile',
         'userFile'  => 'getUserFile',
+        'communityFile' => 'getCommunityFile',
+        'relayPointFile' => 'getRelayPointFile',
+        'relayPointTypeFile' => 'getRelayPointTypeFile',
         'file' => 'getFile'
     ];
     

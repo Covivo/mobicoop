@@ -207,7 +207,7 @@ class Mass
     /**
      * @var User The user that imports the file.
      *
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="masses")
      * @ORM\JoinColumn(nullable=false)
      * @Groups("write")
      */

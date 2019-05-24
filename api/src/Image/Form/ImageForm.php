@@ -28,6 +28,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 final class ImageForm extends AbstractType
 {
@@ -43,6 +44,18 @@ final class ImageForm extends AbstractType
             'label' => 'label.file',
             'required' => false,
         ])
+        ->add('communityFile', FileType::class, [
+            'label' => 'label.file',
+            'required' => false,
+        ])
+        ->add('relayPointFile', FileType::class, [
+            'label' => 'label.file',
+            'required' => false,
+        ])
+        ->add('relayPointTypeFile', FileType::class, [
+            'label' => 'label.file',
+            'required' => false,
+        ])
         ->add('name')
         ->add('originalName')
         ->add('title')
@@ -51,7 +64,18 @@ final class ImageForm extends AbstractType
         ->add('cropY1')
         ->add('cropX2')
         ->add('cropY2')
-        ->add('eventId')
+        ->add('eventId', TextType::class, [
+            'required' => false,
+        ])
+        ->add('communityId', TextType::class, [
+            'required' => false,
+        ])
+        ->add('relayPointId', TextType::class, [
+            'required' => false,
+        ])
+        ->add('relayPointTypeId', TextType::class, [
+            'required' => false,
+        ])
         ;
     }
     

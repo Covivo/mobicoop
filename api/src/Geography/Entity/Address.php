@@ -213,7 +213,7 @@ class Address
     private $user;
 
     /**
-     * @var ArrayCollection|null The territories of the direction.
+     * @var ArrayCollection|null The territories of the adress.
      *
      * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
      * @Groups({"read","write"})
