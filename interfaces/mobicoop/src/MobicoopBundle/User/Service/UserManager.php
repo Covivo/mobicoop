@@ -83,7 +83,7 @@ class UserManager
      */
     public function getMasses($id)
     {
-        $response = $this->dataProvider->getSubCollection($id,Mass::class);
+        $response = $this->dataProvider->getSubCollection($id, Mass::class);
         if ($response->getCode() == 200) {
             return $response->getValue();
         }
