@@ -11,13 +11,13 @@ monolog:
         streamed:
             type:               stream
             path:               "%kernel.logs_dir%/%kernel.environment%.log"
-            level:              debug
+            level:              info
         swift:
             type:               swift_mailer
-            from_email:         "%env(MAIL)%"
-            to_email:           "%env(MAIL)%"
+            from_email:         "%env(MAIL_ERROR)%"
+            to_email:           "%env(MAIL_ERROR)%"
             subject:    'An Error Occurred! %%message%%'
-            level:      debug
+            level:     error
             formatter:  monolog.formatter.html
             content_type: text/html
         carpool:        
@@ -27,61 +27,23 @@ monolog:
             channels: [carpool]
         mass:
             type: stream
-            level: debug
+            level: info
             path: "%kernel.logs_dir%/mass.log"
             channels: [mass]
         geomatcher:
             type: stream
-            level: debug
+            level: info
             path: "%kernel.logs_dir%/geomatcher.log"
-            channels: [geomatcher]   
-
-
-
-# monolog:
-#     handlers:
-#         main:
-#             type: fingers_crossed
-#             action_level: error
-#             handler: nested
-#             excluded_404s:
-#                 # regex: exclude all 404 errors from the logs
-#                 - ^/
-#         nested:
-#             type: stream
-#             path: "%kernel.logs_dir%/%kernel.environment%.log"
-#             level: debug
-#             channels: ["!carpool", "!mass", "!geomatcher"]
-#         swift:
-#             type:               swift_mailer
-#             from_email:         '%MAILER_URL%'
-#             to_email:           '%MAILER_URL%'
-#             subject:            "Log de niveau ERROR sur l'application XXX"
-#             level:              debug
-#         carpool:
-#             type: stream
-#             level: debug
-#             path: "%kernel.logs_dir%/carpool.log"
-#             channels: [carpool]
-#         mass:
-#             type: stream
-#             level: debug
-#             path: "%kernel.logs_dir%/mass.log"
-#             channels: [mass]
-#         geomatcher:
-#             type: stream
-#             level: debug
-#             path: "%kernel.logs_dir%/geomatcher.log"
-#             channels: [geomatcher]       
-#         console:
-#             type: console
-#             process_psr_3_messages: false
-#             channels: ["!event", "!doctrine"]
-#         deprecation:
-#             type: stream
-#             path: "%kernel.logs_dir%/%kernel.environment%.deprecations.log"
-#         deprecation_filter:
-#             type: filter
-#             handler: deprecation
-#             max_level: info
-#             channels: ["php"]
+            channels: [geomatcher]       
+        console:
+            type: console
+            process_psr_3_messages: false
+            channels: ["!event", "!doctrine"]
+        deprecation:
+            type: stream
+            path: "%kernel.logs_dir%/%kernel.environment%.deprecations.log"
+        deprecation_filter:
+            type: filter
+            handler: deprecation
+            max_level: info
+            channels: ["php"]

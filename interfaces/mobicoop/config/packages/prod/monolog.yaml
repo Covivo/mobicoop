@@ -2,28 +2,24 @@ monolog:
      handlers:
         main:
             type:               fingers_crossed
-            action_level:       critical
+            action_level:       info
             handler:            grouped
-            channels:           ["!carpool", "!mass", "!geomatcher"]
+            channels:           ["!usermanger"]
         grouped:
             type:               group
             members:            [streamed, swift]
         streamed:
             type:               stream
             path:               "%kernel.logs_dir%/%kernel.environment%.log"
-            level:              debug
+            level:              info
         swift:
             type:               swift_mailer
-            from_email:         '%env(MAIL)%'
-            to_email:           '%env(MAIL)%'
+            from_email:         '%env(MAIL_ERROR)%'
+            to_email:           '%env(MAIL_ERROR)%'
             subject:    'An Error Occurred! %%message%%'
-            level:      debug
+            level:      error
             formatter:  monolog.formatter.html
             content_type: text/html
-        console:
-            type: console
-            process_psr_3_messages: false
-            channels: ["!event", "!doctrine"]
         deprecation:
             type: stream
             path: "%kernel.logs_dir%/%kernel.environment%.deprecations.log"
@@ -32,6 +28,4 @@ monolog:
             handler: deprecation
             max_level: info
             channels: ["php"]
-
-
 
