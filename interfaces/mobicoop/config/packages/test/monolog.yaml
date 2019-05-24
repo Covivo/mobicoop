@@ -5,7 +5,3 @@ monolog:
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
             channels: ["!event"]
-        user:
-            type: stream
-            path: "%kernel.logs_dir%/user.log"
-            channels: [user]    

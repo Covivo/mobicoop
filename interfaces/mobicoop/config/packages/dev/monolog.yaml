@@ -1,15 +1,20 @@
 monolog:
     handlers:
+        usermanager:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/usermanager.log"
+            channels: [usermanager]
+        usercontroller:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/usercontroller.log"
+            channels: [usercontroller]
         main:
             type: stream
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
-            channels: ["!event", "!user"]
-        user:
-            type: stream
-            path: "%kernel.logs_dir%/user.log"
-            channels: [user]
-
+            channels: ["!event", "!usermanager", "!usercontroller"]
         # uncomment to get logging in your browser
         # you may have to allow bigger header sizes in your Web server configuration
         #firephp:
@@ -21,4 +26,4 @@ monolog:
         console:
             type: console
             process_psr_3_messages: false
-            channels: ["!event", "!doctrine", "!console", "!user"]
+            channels: ["!event", "!doctrine", "!console", "!usermanager", "!usercontroller"]

@@ -38,6 +38,7 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\Form\Login;
 use Mobicoop\Bundle\MobicoopBundle\User\Form\UserLoginForm;
 use Mobicoop\Bundle\MobicoopBundle\User\Form\UserDeleteForm;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Psr\Log\LoggerInterface;
 
 /**
  * Controller class for user related actions.
@@ -50,7 +51,7 @@ class UserController extends AbstractController
     /**
      * User login.
      */
-    public function login(AuthenticationUtils $authenticationUtils)
+    public function login(AuthenticationUtils $authenticationUtils, LoggerInterface $logger)
     {
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
@@ -63,12 +64,13 @@ class UserController extends AbstractController
             "form"=>$form->createView(),
             "error"=>$error
             ]);
+        $logger->info('User | logged' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
 
     /**
      * User registration.
      */
-    public function userSignUp(UserManager $userManager, Request $request)
+    public function userSignUp(UserManager $userManager, Request $request, LoggerInterface $logger)
     {
         $user = new User();
 
@@ -89,8 +91,10 @@ class UserController extends AbstractController
                 $this->get('session')->set('_security_main', serialize($token));
                 // redirection to the user profile page
                 return $this->redirectToRoute('home');
+                $logger->info('User | Created' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             }
             $error = true;
+            $logger->error('User | No created' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
 
         return $this->render('@Mobicoop/user/signup.html.twig', [

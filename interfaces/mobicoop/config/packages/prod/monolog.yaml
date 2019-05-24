@@ -20,10 +20,6 @@ monolog:
             level:      debug
             formatter:  monolog.formatter.html
             content_type: text/html
-        user:
-            type: stream
-            path: "%kernel.logs_dir%/user.log"
-            channels: [user]    
         console:
             type: console
             process_psr_3_messages: false
