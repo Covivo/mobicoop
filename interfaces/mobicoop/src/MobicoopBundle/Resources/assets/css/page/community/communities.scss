@@ -13,7 +13,13 @@ body {
   .cardsSection {
     height: 35vh;
     .card {
-      margin-left: 1vw;
+      margin-left: 0.5vw;
+      margin-right: 0.5vw;
+      .button {
+        background-color: $primary;
+        color: $white;
+        border-color: $white;
+      }
     }
   }
   .communautes {
