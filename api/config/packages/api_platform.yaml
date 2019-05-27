@@ -23,6 +23,7 @@ api_platform:
         paths: [
             '%kernel.project_dir%/src/Entity',
             '%kernel.project_dir%/src/App/Entity',
+            '%kernel.project_dir%/src/Article/Entity',
             '%kernel.project_dir%/src/Carpool/Entity',
             '%kernel.project_dir%/src/Community/Entity',
             '%kernel.project_dir%/src/Event/Entity',
@@ -40,6 +41,7 @@ api_platform:
     resource_class_directories:
         - '%kernel.project_dir%/src/Entity'
         - '%kernel.project_dir%/src/App/Entity'
+        - '%kernel.project_dir%/src/Article/Entity'
         - '%kernel.project_dir%/src/Carpool/Entity'
         - '%kernel.project_dir%/src/Community/Entity'
         - '%kernel.project_dir%/src/ExternalJourney/Entity'

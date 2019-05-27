@@ -43,6 +43,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/App/Entity'
                 prefix: 'App\App\Entity'
                 alias: App
+            Article:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Article/Entity'
+                prefix: 'App\Article\Entity'
+                alias: Article
             Carpool:
                 is_bundle: false
                 type: annotation
