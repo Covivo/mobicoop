@@ -22,19 +22,17 @@ class UtilsService extends AbstractController
         $seconds = $time % 60;
 
         $humanReturn = "";
-        if($hours != 0){
+        if ($hours != 0) {
             $humanReturn .= $hours." h ";
         }
 
         $humanReturn .= $minutes." m";
 
-        if($seconds != 0){
+        if ($seconds != 0) {
             $humanReturn .= " ".$seconds." s";
         }
 
 
         return $humanReturn;
     }
-
-
 }

@@ -102,7 +102,6 @@ class MassManager
      */
     public function computeResults(Mass $mass)
     {
-
         $computedData = [
             "totalTravelDistance" => 0,
             "averageTravelDistance" => 0,
@@ -113,7 +112,7 @@ class MassManager
         $persons = $mass->getPersons();
 
         $tabCoords = array();
-        foreach($persons as $person){
+        foreach ($persons as $person) {
             $tabCoords[] = array(
                 "latitude"=>$person->getPersonalAddress()->getLatitude(),
                 "longitude"=>$person->getPersonalAddress()->getLongitude(),
@@ -142,5 +141,4 @@ class MassManager
 
         return null;
     }
-
 }
