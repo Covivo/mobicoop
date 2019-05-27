@@ -151,21 +151,26 @@ community_show:
 # display project page
 project:
     path:
-        fr: /projet
-        en: /project
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::project
+        fr: /projet/{id}
+        en: /project/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showProject
+    requirements:
+        id: '\d+'
 
 
 # display CGU page
 cgu:
     path:
-        fr: /cgu
-        en: /cgu
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::cgu
-
+        fr: /cgu/{id}
+        en: /cgu/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCgu
+    requirements:
+        id: '\d+'
 # display news page
 news:
     path:
-        fr: /nouveautes
-        en: /news
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::news
+        fr: /nouveautes/{id}
+        en: /news/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showNews
+    requirements:
+        id: '\d+'

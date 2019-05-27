@@ -24,9 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Article\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Article\Service\ArticleManager;
 
 /**
  * Controller class for articles actions.
@@ -36,28 +34,34 @@ class ArticleController extends AbstractController
 {
     /**
      * Display of the project page
-     * 
+     *
      */
-    public function project()
+    public function showProject($id, ArticleManager $articleManager)
     {
-        return $this->render('@Mobicoop/article/project.html.twig');
+        return $this->render('@Mobicoop/article/project.html.twig', [
+            'article' => $articleManager->getArticle($id),
+        ]);
     }
 
-     /**
+    /**
      * Display of the CGU page
-     * 
+     *
      */
-    public function cgu()
+    public function showCgu($id, ArticleManager $articleManager)
     {
-        return $this->render('@Mobicoop/article/cgu.html.twig');
+        return $this->render('@Mobicoop/article/cgu.html.twig', [
+            'article' => $articleManager->getArticle($id),
+        ]);
     }
 
-     /**
+    /**
      * Display of the news page
-     * 
+     *
      */
-    public function news()
+    public function showNews($id, ArticleManager $articleManager)
     {
-        return $this->render('@Mobicoop/article/news.html.twig');
+        return $this->render('@Mobicoop/article/news.html.twig', [
+            'article' => $articleManager->getArticle($id),
+        ]);
     }
 }

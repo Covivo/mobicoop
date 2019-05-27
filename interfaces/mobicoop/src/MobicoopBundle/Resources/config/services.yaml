@@ -95,3 +95,5 @@ services:
     # Article
     Mobicoop\Bundle\MobicoopBundle\Article\Controller\:
         resource: '@MobicoopBundle/Article/Controller/*'
+    Mobicoop\Bundle\MobicoopBundle\Article\Service\:
+        resource: '@MobicoopBundle/Article/Service/*'
