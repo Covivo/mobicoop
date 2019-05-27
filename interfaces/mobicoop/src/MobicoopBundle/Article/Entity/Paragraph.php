@@ -129,8 +129,8 @@ class Paragraph implements Resource
     {
         return $this->section;
     }
-
-    public function setArticle(?Section $section): self
+    
+    public function setSection(?Section $section): self
     {
         $this->section = $section;
 
