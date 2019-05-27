@@ -95,6 +95,21 @@ class Section implements Resource
     {
         return $this->id;
     }
+
+    public function setId(int $id)
+    {
+        $this->id = $id;
+    }
+
+    public function getIri()
+    {
+        return $this->iri;
+    }
+    
+    public function setIri($iri)
+    {
+        $this->iri = $iri;
+    }
             
     public function getTitle(): ?string
     {
