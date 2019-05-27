@@ -36,7 +36,7 @@ class MassManager
     
     /**
      * Constructor.
-     * @param DataProvider $dataProvider    The data provider that provides the images
+     * @param DataProvider $dataProvider The data provider that provides the Mass
      */
     public function __construct(DataProvider $dataProvider)
     {
