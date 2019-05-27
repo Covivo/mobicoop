@@ -26,7 +26,6 @@ namespace App\Article\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\Collection;
 
 /**
  * A paragraph of a section.
@@ -43,6 +42,8 @@ use Doctrine\Common\Collections\Collection;
  */
 class Paragraph
 {
+    const STATUS_PENDING = 0;
+    const STATUS_PUBLISHED = 1;
     
     /**
      * @var int The id of this paragraph.
@@ -69,6 +70,14 @@ class Paragraph
      * @Groups({"read","write"})
      */
     private $position;
+
+    /**
+     * @var int The status of publication of the paragraph.
+     *
+     * @ORM\Column(type="smallint")
+     * @Groups({"read","write"})
+     */
+    private $status;
 
     /**
      * @var Section|null The section related to the paragraph.
@@ -107,12 +116,22 @@ class Paragraph
         return $this;
     }
 
+    public function getStatus()
+    {
+        return $this->status;
+    }
+    
+    public function setStatus(?int $status)
+    {
+        $this->status = $status;
+    }
+
     public function getSection(): ?Section
     {
         return $this->section;
     }
 
-    public function setArticle(?Section $section): self
+    public function setSection(?Section $section): self
     {
         $this->section = $section;
 

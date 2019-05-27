@@ -31,6 +31,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class Paragraph implements Resource
 {
+    const STATUS_PENDING = 0;
+    const STATUS_PUBLISHED = 1;
     
     /**
      * @var int The id of this paragraph.
@@ -55,6 +57,13 @@ class Paragraph implements Resource
      * @Groups({"post","put"})
      */
     private $position;
+
+    /**
+     * @var int The status of publication of the paragraph.
+     *
+     * @Groups({"post","put"})
+     */
+    private $status;
 
     /**
      * @var Section|null The section related to the paragraph.
@@ -104,6 +113,16 @@ class Paragraph implements Resource
         $this->position = $position;
         
         return $this;
+    }
+
+    public function getStatus()
+    {
+        return $this->status;
+    }
+    
+    public function setStatus(?int $status)
+    {
+        $this->status = $status;
     }
 
     public function getSection(): ?Section

@@ -26,7 +26,7 @@ namespace App\Article\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * A section of an article.
@@ -43,6 +43,8 @@ use Doctrine\Common\Collections\Collection;
  */
 class Section
 {
+    const STATUS_PENDING = 0;
+    const STATUS_PUBLISHED = 1;
     
     /**
      * @var int The id of this section.
@@ -77,6 +79,14 @@ class Section
      * @Groups({"read","write"})
      */
     private $position;
+
+    /**
+     * @var int The status of publication of the section.
+     *
+     * @ORM\Column(type="smallint")
+     * @Groups({"read","write"})
+     */
+    private $status;
 
     /**
      * @var Article|null The article related to the section.
@@ -134,6 +144,16 @@ class Section
         $this->position = $position;
         
         return $this;
+    }
+
+    public function getStatus()
+    {
+        return $this->status;
+    }
+    
+    public function setStatus(?int $status)
+    {
+        $this->status = $status;
     }
 
     public function getArticle(): ?Article

@@ -32,6 +32,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Section implements Resource
 {
+    const STATUS_PENDING = 0;
+    const STATUS_PUBLISHED = 1;
     
     /**
      * @var int The id of this section.
@@ -58,6 +60,13 @@ class Section implements Resource
      * @Groups({"post","put"})
      */
     private $position;
+
+    /**
+     * @var int The status of publication of the section.
+     *
+     * @Groups({"post","put"})
+     */
+    private $status;
 
     /**
      * @var Article|null The article related to the section.
@@ -121,6 +130,16 @@ class Section implements Resource
         $this->position = $position;
         
         return $this;
+    }
+
+    public function getStatus()
+    {
+        return $this->status;
+    }
+    
+    public function setStatus(?int $status)
+    {
+        $this->status = $status;
     }
 
     public function getArticle(): ?Article

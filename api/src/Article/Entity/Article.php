@@ -26,7 +26,7 @@ namespace App\Article\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * An article.
@@ -43,6 +43,8 @@ use Doctrine\Common\Collections\Collection;
  */
 class Article
 {
+    const STATUS_PENDING = 0;
+    const STATUS_PUBLISHED = 1;
     
     /**
      * @var int The id of this article.
@@ -61,6 +63,14 @@ class Article
      * @Groups({"read","write"})
      */
     private $title;
+
+    /**
+     * @var int The status of publication of the article.
+     *
+     * @ORM\Column(type="smallint")
+     * @Groups({"read","write"})
+     */
+    private $status;
 
     /**
      * @var ArrayCollection The sections of the article.
@@ -91,6 +101,16 @@ class Article
         $this->title = $title;
         
         return $this;
+    }
+
+    public function getStatus()
+    {
+        return $this->status;
+    }
+    
+    public function setStatus(?int $status)
+    {
+        $this->status = $status;
     }
 
     public function getSections()
