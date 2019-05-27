@@ -4,7 +4,6 @@ monolog:
             type:               fingers_crossed
             action_level:       info
             handler:            grouped
-            channels:           ["!usermanger"]
         grouped:
             type:               group
             members:            [streamed, swift]
