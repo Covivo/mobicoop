@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Match\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Service\UtilsService;
 
 /**
  * Mass management service.
@@ -35,7 +36,6 @@ class MassManager
     
     /**
      * Constructor.
-     *
      * @param DataProvider $dataProvider    The data provider that provides the images
      */
     public function __construct(DataProvider $dataProvider)
@@ -55,7 +55,9 @@ class MassManager
     {
         $response = $this->dataProvider->getItem($id);
         if ($response->getCode() == 200) {
-            return $response->getValue();
+            $mass = $response->getValue();
+            $this->computeResults($mass);
+            return $mass;
         }
         return null;
     }
@@ -91,4 +93,54 @@ class MassManager
         }
         return false;
     }
+
+    /**
+     * Compute all necessary calculations for a mass
+     *
+     * @param Mass $mass
+     * @return null
+     */
+    public function computeResults(Mass $mass)
+    {
+
+        $computedData = [
+            "totalTravelDistance" => 0,
+            "averageTravelDistance" => 0,
+            "totalTravelDuration" => 0,
+            "averageTravelDuration" => 0
+        ];
+
+        $persons = $mass->getPersons();
+
+        $tabCoords = array();
+        foreach($persons as $person){
+            $tabCoords[] = array(
+                "latitude"=>$person->getPersonalAddress()->getLatitude(),
+                "longitude"=>$person->getPersonalAddress()->getLongitude(),
+                "distance"=>$person->getDirection()->getDistance(),
+                "duration"=>$person->getDirection()->getDuration()
+            );
+            $computedData["totalTravelDistance"] += $person->getDirection()->getDistance();
+            $computedData["totalTravelDuration"] += $person->getDirection()->getDuration();
+        }
+
+        $mass->setPersonsCoords($tabCoords);
+
+        // Enregistrement du lieu de travail
+        $mass->setLatWorkingPlace($persons[0]->getWorkAddress()->getLatitude());
+        $mass->setLonWorkingPlace($persons[0]->getWorkAddress()->getLongitude());
+
+        // Calcul des moyennes
+        $computedData["averageTravelDistance"] = $computedData["totalTravelDistance"] / count($persons);
+        $computedData["averageTravelDuration"] = $computedData["totalTravelDuration"] / count($persons);
+
+        // Calcul des affichages "humains" des durées (heurs, minutes, secondes)
+        $computedData["humanTotalTravelDuration"] = UtilsService::convertSecondsToHumain($computedData["totalTravelDuration"]);
+        $computedData["humanAverageTravelDuration"] = UtilsService::convertSecondsToHumain($computedData["averageTravelDuration"]);
+
+        $mass->setComputedData($computedData);
+
+        return null;
+    }
+
 }

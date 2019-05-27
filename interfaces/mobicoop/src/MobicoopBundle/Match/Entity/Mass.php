@@ -109,6 +109,27 @@ class Mass implements Resource
      */
     private $persons;
 
+    /**
+     * @var array Coordinates of all the people of this mass.
+     */
+    private $personsCoords;
+
+    /**
+     * @var float Latitude of the working place of the people of this mass.
+     */
+    private $latWorkingPlace;
+
+    /**
+     * @var float Longitude of all the people of this mass.
+     */
+    private $lonWorkingPlace;
+
+    /**
+     * @var array Computed data of this mass.
+     */
+    private $computedData;
+
+
 
     public function __construct($id = null)
     {
@@ -283,5 +304,45 @@ class Mass implements Resource
         }
 
         return $this;
+    }
+
+    public function getPersonsCoords(): ?array
+    {
+        return $this->personsCoords;
+    }
+
+    public function setPersonsCoords(?array $personsCoords)
+    {
+        $this->personsCoords = $personsCoords;
+    }
+
+    public function getLatWorkingPlace(): ?float
+    {
+        return $this->latWorkingPlace;
+    }
+
+    public function setLatWorkingPlace(?float $latWorkingPlace)
+    {
+        $this->latWorkingPlace = $latWorkingPlace;
+    }
+
+    public function getLonWorkingPlace(): ?float
+    {
+        return $this->lonWorkingPlace;
+    }
+
+    public function setLonWorkingPlace(?float $lonWorkingPlace)
+    {
+        $this->lonWorkingPlace = $lonWorkingPlace;
+    }
+
+    public function getComputedData(): ?array
+    {
+        return $this->computedData;
+    }
+
+    public function setComputedData(?array $computedData)
+    {
+        $this->computedData = $computedData;
     }
 }
