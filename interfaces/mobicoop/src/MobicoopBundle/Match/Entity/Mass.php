@@ -110,17 +110,17 @@ class Mass implements Resource
     private $persons;
 
     /**
-     * @var array Coordinates of all the people of this mass.
+     * @var array people's coordinates of this mass.
      */
     private $personsCoords;
 
     /**
-     * @var float Latitude of the working place of the people of this mass.
+     * @var float Working place latitude of the people of this mass.
      */
     private $latWorkingPlace;
 
     /**
-     * @var float Longitude of all the people of this mass.
+     * @var float Working place longitude of the people of this mass.
      */
     private $lonWorkingPlace;
 
