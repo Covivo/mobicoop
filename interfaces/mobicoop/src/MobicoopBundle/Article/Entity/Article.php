@@ -47,7 +47,7 @@ class Article implements Resource
 
     /**
      * @var string The title of the article.
-     * 
+     *
      * @Groups({"post","put"})
      */
     private $title;
