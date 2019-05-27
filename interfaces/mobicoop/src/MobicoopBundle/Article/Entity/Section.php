@@ -21,79 +21,66 @@
  *    LICENSE
  **************************/
 
-namespace App\Article\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\Article\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * A section of an article.
- *
- * @ORM\Entity
- * @ApiResource(
- *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
- *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
- * )
  */
-class Section
+class Section implements Resource
 {
     
     /**
      * @var int The id of this section.
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @Groups("read")
      */
     private $id;
             
     /**
      * @var string The title of the section.
      *
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $title;
 
     /**
      * @var string The subtitle of the section.
      *
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $subTitle;
 
     /**
      * @var int The position of the section in the article.
      *
-     * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $position;
 
     /**
      * @var Article|null The article related to the section.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Article\Entity\Article", inversedBy="sections")
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $article;
 
     /**
      * @var ArrayCollection The paragraphs of the section.
      *
-     * @ORM\OneToMany(targetEntity="\App\Article\Entity\Paragraph", mappedBy="section", cascade={"persist","remove"}, orphanRemoval=true)
-     * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $paragraphs;
+
+    public function __construct($id=null)
+    {
+        if ($id) {
+            $this->setId($id);
+            $this->setIri("/sections/".$id);
+        }
+        $this->paragraphs = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {

@@ -21,58 +21,48 @@
  *    LICENSE
  **************************/
 
-namespace App\Article\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\Article\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * An article.
- *
- * @ORM\Entity
- * @ApiResource(
- *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
- *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
- * )
  */
-class Article
+class Article implements Resource
 {
     
     /**
      * @var int The id of this article.
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @Groups("read")
      */
     private $id;
-            
+
+    /**
+     * @var string|null The iri of this article.
+     *
+     * @Groups({"post","put"})
+     */
+    private $iri;
+
     /**
      * @var string The title of the article.
-     *
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * 
+     * @Groups({"post","put"})
      */
     private $title;
 
     /**
-     * @var ArrayCollection The sections of the article.
-     *
-     * @ORM\OneToMany(targetEntity="\App\Article\Entity\Section", mappedBy="article", cascade={"persist","remove"}, orphanRemoval=true)
-     * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"read","write"})
+     * @var Section[] The sections of the article.
      */
     private $sections;
 
-    public function __construct()
+    public function __construct($id=null)
     {
+        if ($id) {
+            $this->setId($id);
+            $this->setIri("/articles/".$id);
+        }
         $this->sections = new ArrayCollection();
     }
 
@@ -80,7 +70,22 @@ class Article
     {
         return $this->id;
     }
-            
+    
+    public function setId(int $id)
+    {
+        $this->id = $id;
+    }
+    
+    public function getIri()
+    {
+        return $this->iri;
+    }
+    
+    public function setIri($iri)
+    {
+        $this->iri = $iri;
+    }
+
     public function getTitle(): ?string
     {
         return $this->title;

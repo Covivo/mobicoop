@@ -21,66 +21,65 @@
  *    LICENSE
  **************************/
 
-namespace App\Article\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\Article\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\Collection;
 
 /**
  * A paragraph of a section.
- *
- * @ORM\Entity
- * @ApiResource(
- *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
- *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
- * )
  */
-class Paragraph
+class Paragraph implements Resource
 {
     
     /**
      * @var int The id of this paragraph.
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @Groups("read")
      */
     private $id;
+
+    /**
+     * @var string|null The iri of this paragraph.
+     *
+     * @Groups({"post","put"})
+     */
+    private $iri;
             
     /**
      * @var string The text of the paragraph.
-     *
-     * @ORM\Column(type="text")
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $text;
 
     /**
      * @var int The position of the paragraph in the section.
-     *
-     * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $position;
 
     /**
      * @var Section|null The section related to the paragraph.
-     *
-     * @ORM\ManyToOne(targetEntity="\App\Article\Entity\Section", inversedBy="paragraphs")
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $section;
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+    
+    public function setId(int $id)
+    {
+        $this->id = $id;
+    }
+    
+    public function getIri()
+    {
+        return $this->iri;
+    }
+    
+    public function setIri($iri)
+    {
+        $this->iri = $iri;
     }
             
     public function getText(): ?string
