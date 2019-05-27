@@ -29,7 +29,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
-
 /**
  * A section of an article.
  *
