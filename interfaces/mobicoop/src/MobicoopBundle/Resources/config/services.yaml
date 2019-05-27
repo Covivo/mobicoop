@@ -86,8 +86,12 @@ services:
     Mobicoop\Bundle\MobicoopBundle\Match\Service\:
         resource: '@MobicoopBundle/Match/Service/*'
 
-    #Community
+    # Community
     Mobicoop\Bundle\MobicoopBundle\Community\Controller\:
         resource: '@MobicoopBundle/Community/Controller/*' 
     Mobicoop\Bundle\MobicoopBundle\Community\Service\:
-        resource: '@MobicoopBundle/Community/Service/*'       
+        resource: '@MobicoopBundle/Community/Service/*'    
+
+    # Article
+    Mobicoop\Bundle\MobicoopBundle\Article\Controller\:
+        resource: '@MobicoopBundle/Article/Controller/*'
