@@ -132,21 +132,20 @@ class MassManager
             // Can this person carpool ? AsDriver or AsPassenger ? Both ?
             $carpoolAsDriver = false;
             $carpoolAsPassenger = false;
-            if(count($person->getMatchingsAsDriver())>0){
+            if (count($person->getMatchingsAsDriver())>0) {
                 $computedData["nbCarpoolersAsDrivers"]++;
                 $carpoolAsDriver = true;
             }
-            if(count($person->getMatchingsAsPassenger())>0){
+            if (count($person->getMatchingsAsPassenger())>0) {
                 $computedData["nbCarpoolersAsPassengers"]++;
                 $carpoolAsPassenger = true;
             }
-            if($carpoolAsDriver && $carpoolAsPassenger){
+            if ($carpoolAsDriver && $carpoolAsPassenger) {
                 $computedData["nbCarpoolersAsBoth"]++;
             }
-            if($carpoolAsDriver || $carpoolAsPassenger){
+            if ($carpoolAsDriver || $carpoolAsPassenger) {
                 $computedData["nbCarpoolersTotal"]++;
             }
-
         }
 
         $mass->setPersonsCoords($tabCoords);
