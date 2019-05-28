@@ -461,12 +461,12 @@ class Deserializer
             $massPerson->setDirection(self::deserializeDirection($data["direction"]));
         }
         if (isset($data["matchingsAsDriver"])) {
-            foreach($data["matchingsAsDriver"] as $matchingsAsDriver) {
+            foreach ($data["matchingsAsDriver"] as $matchingsAsDriver) {
                 $massPerson->addMatchingsAsDriver(self::deserializeDirection($matchingsAsDriver));
             }
         }
         if (isset($data["matchingsAsPassenger"])) {
-            foreach($data["matchingsAsPassenger"] as $matchingsAsPassenger) {
+            foreach ($data["matchingsAsPassenger"] as $matchingsAsPassenger) {
                 $massPerson->addMatchingsAsPassenger(self::deserializeDirection($matchingsAsPassenger));
             }
         }

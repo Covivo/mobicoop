@@ -271,5 +271,4 @@ class MassPerson implements Resource
 
         return $this;
     }
-
 }
