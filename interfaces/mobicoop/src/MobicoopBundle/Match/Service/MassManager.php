@@ -163,7 +163,7 @@ class MassManager
         $computedData["humanAverageTravelDuration"] = UtilsService::convertSecondsToHumain($computedData["averageTravelDuration"]);
 
         $mass->setComputedData($computedData);
-        dump($mass);
+        
         return null;
     }
 }
