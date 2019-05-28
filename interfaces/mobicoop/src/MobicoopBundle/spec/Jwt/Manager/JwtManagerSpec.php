@@ -58,6 +58,7 @@ describe('JwtManagerSpec', function () {
         $jwtManager = new JwtManager(
             $authClient,
             $authStrategy,
+            "tokenid",
             ['token_url' => '/api/token', 'timeout' => 3]
         );
         $token = $jwtManager->getJwtToken();
@@ -87,6 +88,7 @@ describe('JwtManagerSpec', function () {
         $jwtManager = new JwtManager(
             $authClient,
             $authStrategy,
+            "tokenid",
             ['token_url' => '/api/token', 'timeout' => 3, 'token_key' => 'tokenkey']
         );
         $token = $jwtManager->getJwtToken();
@@ -128,6 +130,7 @@ describe('JwtManagerSpec', function () {
         $jwtManager = new JwtManager(
             $authClient,
             $authStrategy,
+            "tokenid",
             ['token_url' => '/api/token', 'timeout' => 3]
         );
         $token = $jwtManager->getJwtToken();
@@ -171,6 +174,7 @@ describe('JwtManagerSpec', function () {
         $jwtManager = new JwtManager(
             $authClient,
             $authStrategy,
+            "tokenid",
             ['token_url' => '/api/token', 'timeout' => 3]
         );
         $token = $jwtManager->getJwtToken();
