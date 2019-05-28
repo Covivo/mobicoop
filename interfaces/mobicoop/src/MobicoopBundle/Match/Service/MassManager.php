@@ -113,10 +113,10 @@ class MassManager
         ];
 
         $persons = $mass->getPersons();
-        dump($this->userManager->getMasses("4"));
 
         $tabCoords = array();
         foreach ($persons as $person) {
+            dump($person);
             $tabCoords[] = array(
                 "latitude"=>$person->getPersonalAddress()->getLatitude(),
                 "longitude"=>$person->getPersonalAddress()->getLongitude(),

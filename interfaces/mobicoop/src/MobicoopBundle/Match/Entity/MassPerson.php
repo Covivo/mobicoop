@@ -90,10 +90,22 @@ class MassPerson implements Resource
      */
     private $returnTime;
 
+    /**
+     * @var ArrayCollection|null The potential matchings if the person is driver.
+     */
+    private $matchingsAsDriver;
+
+    /**
+     * @var ArrayCollection|null The potential matchings if the person is passenger.
+     */
+    private $matchingsAsPassenger;
+
+
     public function __construct($id = null)
     {
         $this->id = $id;
-        $this->errors = [];
+        $this->matchingsAsDriver = new ArrayCollection();
+        $this->matchingsAsPassenger = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -231,4 +243,33 @@ class MassPerson implements Resource
 
         return $this;
     }
+
+    public function getMatchingsAsDriver()
+    {
+        return $this->matchingsAsDriver->getValues();
+    }
+
+    public function addMatchingsAsDriver(Direction $matchingsAsDriver): self
+    {
+        if (!$this->matchingsAsDriver->contains($matchingsAsDriver)) {
+            $this->matchingsAsDriver->add($matchingsAsDriver);
+        }
+
+        return $this;
+    }
+
+    public function getMatchingsAsPassenger()
+    {
+        return $this->matchingsAsPassenger->getValues();
+    }
+
+    public function addMatchingsAsPassenger(Direction $matchingsAsPassenger): self
+    {
+        if (!$this->matchingsAsPassenger->contains($matchingsAsPassenger)) {
+            $this->matchingsAsPassenger->add($matchingsAsPassenger);
+        }
+
+        return $this;
+    }
+
 }
