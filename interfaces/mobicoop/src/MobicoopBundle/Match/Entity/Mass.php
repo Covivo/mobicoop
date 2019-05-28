@@ -129,7 +129,10 @@ class Mass implements Resource
      */
     private $computedData;
 
-
+    /**
+     * @var int Number of potentials carpoolers
+     */
+    private $nbPotentialCarpoolers;
 
     public function __construct($id = null)
     {
@@ -344,5 +347,15 @@ class Mass implements Resource
     public function setComputedData(?array $computedData)
     {
         $this->computedData = $computedData;
+    }
+
+    public function getNbPotentialCarpoolers(): ?int
+    {
+        return $this->nbPotentialCarpoolers;
+    }
+
+    public function setNbPotentialCarpoolers(?int $nbPotentialCarpoolers)
+    {
+        $this->nbPotentialCarpoolers = $nbPotentialCarpoolers;
     }
 }

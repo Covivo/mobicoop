@@ -53,6 +53,7 @@ class MassPerson
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups("mass")
      */
     private $id;
 

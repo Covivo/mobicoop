@@ -26,6 +26,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Match\Service;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Service\UtilsService;
+use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 
 /**
  * Mass management service.
@@ -33,15 +34,17 @@ use Mobicoop\Bundle\MobicoopBundle\Service\UtilsService;
 class MassManager
 {
     private $dataProvider;
+    private $userManager;
     
     /**
      * Constructor.
      * @param DataProvider $dataProvider The data provider that provides the Mass
      */
-    public function __construct(DataProvider $dataProvider)
+    public function __construct(DataProvider $dataProvider, UserManager $userManager)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Mass::class);
+        $this->userManager = $userManager;
     }
     
     /**
@@ -110,6 +113,7 @@ class MassManager
         ];
 
         $persons = $mass->getPersons();
+        dump($this->userManager->getMasses("4"));
 
         $tabCoords = array();
         foreach ($persons as $person) {
