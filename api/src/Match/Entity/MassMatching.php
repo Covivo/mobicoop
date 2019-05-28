@@ -62,12 +62,24 @@ class MassMatching
     private $massPerson1;
 
     /**
+     * @var int id of the first person
+     * @Groups("mass")
+     */
+    private $massPerson1Id;
+
+    /**
      * @var MassPerson The second person.
      * @ORM\ManyToOne(targetEntity="\App\Match\Entity\MassPerson", cascade={"persist","remove"}, inversedBy="matchingsAsPassenger")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @MaxDepth(1)
      */
     private $massPerson2;
+
+    /**
+     * @var int id of the second person
+     * @Groups("mass")
+     */
+    private $massPerson2Id;
 
     /**
      * @var Direction|null The direction for the 2 persons to their final destination.
@@ -94,6 +106,11 @@ class MassMatching
         return $this;
     }
 
+    public function getMassPerson1Id(): int
+    {
+        return $this->massPerson1->getId();
+    }
+
     public function getMassPerson2(): MassPerson
     {
         return $this->massPerson2;
@@ -104,6 +121,11 @@ class MassMatching
         $this->massPerson2 = $massPerson2;
 
         return $this;
+    }
+
+    public function getMassPerson2Id(): int
+    {
+        return $this->massPerson2->getId();
     }
 
     public function getDirection(): ?Direction

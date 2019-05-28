@@ -48,9 +48,19 @@ class MassMatching implements Resource
     private $massPerson1;
 
     /**
+     * @var int The first person.
+     */
+    private $massPerson1Id;
+
+    /**
      * @var MassPerson The second person.
      */
     private $massPerson2;
+
+    /**
+     * @var int The second person.
+     */
+    private $massPerson2Id;
 
     /**
      * @var Direction|null The direction for the 2 persons to their final destination.
@@ -94,6 +104,11 @@ class MassMatching implements Resource
         return $this;
     }
 
+    public function getMassPerson1Id(): int
+    {
+        return $this->massPerson1;
+    }
+
     public function getMassPerson2(): MassPerson
     {
         return $this->massPerson2;
@@ -104,6 +119,11 @@ class MassMatching implements Resource
         $this->massPerson2 = $massPerson2;
 
         return $this;
+    }
+
+    public function getMassPerson2Id(): int
+    {
+        return $this->massPerson2;
     }
 
     public function getDirection(): ?Direction
