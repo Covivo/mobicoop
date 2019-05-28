@@ -109,7 +109,11 @@ class MassManager
             "totalTravelDistance" => 0,
             "averageTravelDistance" => 0,
             "totalTravelDuration" => 0,
-            "averageTravelDuration" => 0
+            "averageTravelDuration" => 0,
+            "nbCarpoolersAsDrivers" => 0,
+            "nbCarpoolersAsPassengers" => 0,
+            "nbCarpoolersAsBoth" => 0,
+            "nbCarpoolersTotal" => 0
         ];
 
         $persons = $mass->getPersons();
@@ -125,8 +129,24 @@ class MassManager
             $computedData["totalTravelDistance"] += $person->getDirection()->getDistance();
             $computedData["totalTravelDuration"] += $person->getDirection()->getDuration();
 
-            // Can this person carpool ? AsDriver or AsPassenger ?
-            dump($person->getMatchingsAsDriver());
+            // Can this person carpool ? AsDriver or AsPassenger ? Both ?
+            $carpoolAsDriver = false;
+            $carpoolAsPassenger = false;
+            if(count($person->getMatchingsAsDriver())>0){
+                $computedData["nbCarpoolersAsDrivers"]++;
+                $carpoolAsDriver = true;
+            }
+            if(count($person->getMatchingsAsPassenger())>0){
+                $computedData["nbCarpoolersAsPassengers"]++;
+                $carpoolAsPassenger = true;
+            }
+            if($carpoolAsDriver && $carpoolAsPassenger){
+                $computedData["nbCarpoolersAsBoth"]++;
+            }
+            if($carpoolAsDriver || $carpoolAsPassenger){
+                $computedData["nbCarpoolersTotal"]++;
+            }
+
         }
 
         $mass->setPersonsCoords($tabCoords);
@@ -144,7 +164,7 @@ class MassManager
         $computedData["humanAverageTravelDuration"] = UtilsService::convertSecondsToHumain($computedData["averageTravelDuration"]);
 
         $mass->setComputedData($computedData);
-
+        dump($mass);
         return null;
     }
 }
