@@ -150,20 +150,20 @@ class MassManager
 
         $mass->setPersonsCoords($tabCoords);
 
-        // Enregistrement du lieu de travail
+        // Workingplace storage
         $mass->setLatWorkingPlace($persons[0]->getWorkAddress()->getLatitude());
         $mass->setLonWorkingPlace($persons[0]->getWorkAddress()->getLongitude());
 
-        // Calcul des moyennes
+        // Averages
         $computedData["averageTravelDistance"] = $computedData["totalTravelDistance"] / count($persons);
         $computedData["averageTravelDuration"] = $computedData["totalTravelDuration"] / count($persons);
 
-        // Calcul des affichages "humains" des durées (heurs, minutes, secondes)
+        // Conversion of some data to human readable versions (like durations in hours, minutes, seconds)
         $computedData["humanTotalTravelDuration"] = UtilsService::convertSecondsToHumain($computedData["totalTravelDuration"]);
         $computedData["humanAverageTravelDuration"] = UtilsService::convertSecondsToHumain($computedData["averageTravelDuration"]);
 
         $mass->setComputedData($computedData);
-        
+
         return null;
     }
 }
