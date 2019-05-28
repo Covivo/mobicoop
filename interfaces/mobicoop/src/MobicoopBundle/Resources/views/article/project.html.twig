@@ -1,10 +1,24 @@
 {% extends '@Mobicoop/base.html.twig' %}
-
-{% block title %} Présentation du projet {% endblock %}
-
-
+{% block title %}
+    Projet
+{% endblock %}
+{% block stylesheets %}
+    {{ encore_entry_link_tags('bundle_article/article') }}
+{% endblock %}
 {% block body %}
-<h1>PROJET</h1>
-
-{{dump(article)}}
+    <div class="container">
+        <h1 class="title is-size-1">{{ article.title }}</h1>
+        {% for section in article.sections %}
+                <h2 class="title">{{ section.title }}</h2>
+                <h3 class="subtitle">{{ section.subTitle }}</h3>
+                {% for paragraph in  section.paragraphs %}
+                    <div class="paragraph has-text-justified">
+                        <p>{{ paragraph.text }}</p>
+                    </div>
+                {% endfor %}
+        {% endfor %}
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('bundle_article/article') }}
 {% endblock %}

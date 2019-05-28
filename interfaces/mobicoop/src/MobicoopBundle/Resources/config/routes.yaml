@@ -157,7 +157,6 @@ project:
     requirements:
         id: '\d+'
 
-
 # display CGU page
 cgu:
     path:
@@ -166,6 +165,7 @@ cgu:
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCgu
     requirements:
         id: '\d+'
+        
 # display news page
 news:
     path:
