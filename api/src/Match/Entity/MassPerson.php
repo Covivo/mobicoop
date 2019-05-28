@@ -27,6 +27,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -103,6 +104,7 @@ class MassPerson
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\Match\Entity\Mass", cascade={"persist","remove"}, inversedBy="persons")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     * @MaxDepth(1)
      */
     private $mass;
 
@@ -110,6 +112,7 @@ class MassPerson
      * @var ArrayCollection|null The potential matchings if the person is driver.
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassMatching", mappedBy="massPerson1", cascade={"persist","remove"}, orphanRemoval=true)
+     * @MaxDepth(1)
      * @Groups("mass")
      */
     private $matchingsAsDriver;
@@ -118,6 +121,7 @@ class MassPerson
      * @var ArrayCollection|null The potential matchings if the person is passenger.
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassMatching", mappedBy="massPerson2", cascade={"persist","remove"}, orphanRemoval=true)
+     * @MaxDepth(1)
      * @Groups("mass")
      */
     private $matchingsAsPassenger;
@@ -164,6 +168,7 @@ class MassPerson
      * @var Direction|null The direction between the personal address and the work address.
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
+     * @MaxDepth(1)
      * @Groups("mass")
      */
     private $direction;

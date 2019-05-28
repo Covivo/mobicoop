@@ -36,12 +36,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 class MassPerson implements Resource
 {
     /**
-     * @var int The id of this event.
+     * @var int The id of this person.
      */
     private $id;
 
     /**
-     * @var string|null The iri of this event.
+     * @var string|null The iri of this person.
      */
     private $iri;
 
@@ -249,7 +249,7 @@ class MassPerson implements Resource
         return $this->matchingsAsDriver->getValues();
     }
 
-    public function addMatchingsAsDriver(Direction $matchingsAsDriver): self
+    public function addMatchingsAsDriver(MassMatching $matchingsAsDriver): self
     {
         if (!$this->matchingsAsDriver->contains($matchingsAsDriver)) {
             $this->matchingsAsDriver->add($matchingsAsDriver);
@@ -263,7 +263,7 @@ class MassPerson implements Resource
         return $this->matchingsAsPassenger->getValues();
     }
 
-    public function addMatchingsAsPassenger(Direction $matchingsAsPassenger): self
+    public function addMatchingsAsPassenger(MassMatching $matchingsAsPassenger): self
     {
         if (!$this->matchingsAsPassenger->contains($matchingsAsPassenger)) {
             $this->matchingsAsPassenger->add($matchingsAsPassenger);

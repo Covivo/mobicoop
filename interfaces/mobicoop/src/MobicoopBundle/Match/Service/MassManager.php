@@ -116,7 +116,6 @@ class MassManager
 
         $tabCoords = array();
         foreach ($persons as $person) {
-            dump($person);
             $tabCoords[] = array(
                 "latitude"=>$person->getPersonalAddress()->getLatitude(),
                 "longitude"=>$person->getPersonalAddress()->getLongitude(),
@@ -125,6 +124,9 @@ class MassManager
             );
             $computedData["totalTravelDistance"] += $person->getDirection()->getDistance();
             $computedData["totalTravelDuration"] += $person->getDirection()->getDuration();
+
+            // Can this person carpool ? AsDriver or AsPassenger ?
+            dump($person->getMatchingsAsDriver());
         }
 
         $mass->setPersonsCoords($tabCoords);
