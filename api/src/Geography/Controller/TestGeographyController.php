@@ -49,5 +49,4 @@ class TestGeographyController extends AbstractController
         $territoryManager->associateDirectionsForTerritory($territory);
         return new Response();
     }
-
 }

@@ -41,7 +41,7 @@ class AddressRepository
      */
     private $repository;
     
-    private  $entityManager;
+    private $entityManager;
     
     public function __construct(EntityManagerInterface $entityManager)
     {

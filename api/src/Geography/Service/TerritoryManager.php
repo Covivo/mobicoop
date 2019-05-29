@@ -35,7 +35,7 @@ use App\Geography\Repository\TerritoryRepository;
 /**
  * Territory management service.
  *
- * This service is used to determine wether particular points is within given territories. 
+ * This service is used to determine wether particular points is within given territories.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
@@ -67,7 +67,7 @@ class TerritoryManager
     {
         // we create the Multipolygon object based on the data sent in the detail property
         // the data is a json string, we first decode it to make an array, then we pass the resulted array to the object constructor
-        $polygon = new MultiPolygon(json_decode($territory->getDetail(),true));
+        $polygon = new MultiPolygon(json_decode($territory->getDetail(), true));
         $territory->setDetail($polygon);
 
         // todo : check if the territory already exists !
@@ -102,14 +102,14 @@ class TerritoryManager
         // we have to search all the directions that are concerned by the territory
         // the points for directions are not stored individually in the database, they are stored in an encoded format
         // so we can't use geographical functions directly for points in the database
-        // we can however limit the number of directions to test by looking at their bounding box 
+        // we can however limit the number of directions to test by looking at their bounding box
         $directions = $this->directionRepository->findAllWithBoundingBoxInTerritory($territory);
 
         // now for each direction we check if a point in the path is in the territory
         foreach ($directions as $direction) {
             // we decode the points
-            $direction->setPoints(GeoRouterProvider::deserializePoints($direction->getDetail(),true,false));
-            if ($this->territoryRepository->directionIsInTerritory($direction,$territory)) {
+            $direction->setPoints(GeoRouterProvider::deserializePoints($direction->getDetail(), true, false));
+            if ($this->territoryRepository->directionIsInTerritory($direction, $territory)) {
                 $direction->addTerritory($territory);
                 $this->entityManager->persist($direction);
             }
@@ -137,7 +137,5 @@ class TerritoryManager
      */
     private function associateTerritoriesForDirection(Direction $direction)
     {
-
     }
-
 }

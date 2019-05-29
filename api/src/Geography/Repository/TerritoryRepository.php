@@ -41,7 +41,7 @@ class TerritoryRepository
      */
     private $repository;
     
-    private  $entityManager;
+    private $entityManager;
     
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -72,12 +72,12 @@ class TerritoryRepository
         while (!$stop) {
             $sql = "SELECT ST_INTERSECTS(t.detail,ST_GeomFromText('Multipoint(";
             $start = $nbLoops*$batch;
-            $end = min($start+$batch,count($points)); // count + 1 ???
+            $end = min($start+$batch, count($points)); // count + 1 ???
             for ($i=$start;$i<$end;$i++) {
                 $address = $points[$i];
                 $sql .= $address->getLongitude() . " " . $address->getLatitude() . ",";
             }
-            $sql = rtrim($sql,',');
+            $sql = rtrim($sql, ',');
             $sql .= ")')) as inTerritory from App\Geography\Entity\Territory t where t.id = " . $territory->getId();
             $query = $this->entityManager->createQuery($sql);
             if ($query->getResult()[0]['inTerritory'] == 1) {
