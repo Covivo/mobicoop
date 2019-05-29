@@ -203,18 +203,18 @@ class MassManager
 
 
         // Build the carpooler matrix
-        $matrix = $this->buildCarpoolersMatrix($persons,$matrix);
+        $matrix = $this->buildCarpoolersMatrix($persons, $matrix);
 
         // Store the original journey to calculate the gains between original and carpool
-/*        foreach ($matrix["link"] as $idCarpooler1 => $idCarpooler2){
-            foreach($persons as $person){
-                if($person->getId()==$idCarpooler1){
-                    $matrix["originalsJourneys"][$idCarpooler1]["distance"] = $person->getDirection()->getDistance();
-                    $matrix["originalsJourneys"][$idCarpooler1]["duration"] = $person->getDirection()->getDuration();
-                    $matrix["originalsJourneys"][$idCarpooler1]["co2"] = UtilsService::computeCO2($person->getDirection()->getDistance());
-                }
-            }
-        }*/
+        /*        foreach ($matrix["link"] as $idCarpooler1 => $idCarpooler2){
+                    foreach($persons as $person){
+                        if($person->getId()==$idCarpooler1){
+                            $matrix["originalsJourneys"][$idCarpooler1]["distance"] = $person->getDirection()->getDistance();
+                            $matrix["originalsJourneys"][$idCarpooler1]["duration"] = $person->getDirection()->getDuration();
+                            $matrix["originalsJourneys"][$idCarpooler1]["co2"] = UtilsService::computeCO2($person->getDirection()->getDistance());
+                        }
+                    }
+                }*/
 
         dump($matrix);
 
@@ -227,12 +227,12 @@ class MassManager
      * @param array $matrix
      * @return array
      */
-    private function buildCarpoolersMatrix(ArrayCollection $persons, array $matrix){
-
-        foreach ($persons as $person){
+    private function buildCarpoolersMatrix(ArrayCollection $persons, array $matrix)
+    {
+        foreach ($persons as $person) {
             $matchingsAsDriver = $person->getMatchingsAsDriver();
             $matchingsAsPassenger = $person->getMatchingsAsPassenger();
-            $matrix = $this->linkCarpoolersV2(array_merge($matchingsAsDriver,$matchingsAsPassenger), $matrix);
+            $matrix = $this->linkCarpoolersV2(array_merge($matchingsAsDriver, $matchingsAsPassenger), $matrix);
         }
 
         return $matrix;
@@ -244,15 +244,15 @@ class MassManager
      * @param array $matrix
      * @return array
      */
-    private function linkCarpoolers(array $matchings, array $matrix){
-
+    private function linkCarpoolers(array $matchings, array $matrix)
+    {
         $fastestMassPerson1Id = null;
         $fastestMassPerson2Id = null;
         $fastestDistance = 0;
         $fastestDuration = 0;
         $fastestCO2 = 0;
         $fastest = 9999999999999999;
-        if(count($matchings)>0) {
+        if (count($matchings)>0) {
             foreach ($matchings as $matching) {
                 if ($matching->getDirection()->getDuration() < $fastest) {
                     $fastest = $matching->getDirection()->getDuration();
@@ -283,9 +283,9 @@ class MassManager
      * @param array $matrix
      * @return array
      */
-    private function linkCarpoolersV2(array $matchings, array $matrix){
-        if(count($matchings)>0) {
-
+    private function linkCarpoolersV2(array $matchings, array $matrix)
+    {
+        if (count($matchings)>0) {
             $fastestMassPerson1Id = null;
             $fastestMassPerson2Id = null;
             $fastestDistance = 0;
@@ -326,5 +326,4 @@ class MassManager
 
         return $matrix;
     }
-
 }
