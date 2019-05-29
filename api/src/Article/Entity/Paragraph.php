@@ -26,11 +26,12 @@ namespace App\Article\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * A paragraph of a section.
  *
- * @ORM\Entity
+ * @ORM\Entity()
  * @ApiResource(
  *      attributes={
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
@@ -84,6 +85,7 @@ class Paragraph
      *
      * @ORM\ManyToOne(targetEntity="\App\Article\Entity\Section", inversedBy="paragraphs")
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
     private $section;
 

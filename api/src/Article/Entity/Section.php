@@ -27,11 +27,12 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * A section of an article.
  *
- * @ORM\Entity
+ * @ORM\Entity()
  * @ApiResource(
  *      attributes={
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
@@ -59,7 +60,7 @@ class Section
     /**
      * @var string The title of the section.
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"read","write"})
      */
     private $title;
@@ -67,7 +68,7 @@ class Section
     /**
      * @var string The subtitle of the section.
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"read","write"})
      */
     private $subTitle;
@@ -93,6 +94,7 @@ class Section
      *
      * @ORM\ManyToOne(targetEntity="\App\Article\Entity\Article", inversedBy="sections")
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
     private $article;
 
@@ -102,6 +104,7 @@ class Section
      * @ORM\OneToMany(targetEntity="\App\Article\Entity\Paragraph", mappedBy="section", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
     private $paragraphs;
 

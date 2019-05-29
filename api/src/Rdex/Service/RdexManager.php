@@ -185,6 +185,21 @@ class RdexManager
         
         return true;
     }
+
+    /**
+     * Checks if the request is empty.
+     *
+     * @param object $request
+     * @return RdexError|bool True if request is empty, false if not
+     */
+    public function isEmptyRequest(object $request)
+    {
+        // we check the mandatory parameters
+        if (is_null($request->get("timestamp")) && is_null($request->get("apikey")) && is_null($request->get("p")) && is_null($request->get("signature"))) {
+            return true;
+        }
+        return false;
+    }
     
     /**
      * Create an error array from an RdexError

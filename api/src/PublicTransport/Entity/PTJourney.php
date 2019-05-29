@@ -32,7 +32,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * A public transport journey.
- *
+ * 
  * @ORM\Entity
  * @ApiResource(
  *      routePrefix="/public_transport",
