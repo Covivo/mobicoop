@@ -26,6 +26,7 @@ namespace App\Geography\Repository;
 use App\Geography\Entity\Direction;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use App\Geography\Entity\Territory;
 
 /**
  * @method Direction|null find($id, $lockMode = null, $lockVersion = null)
@@ -39,9 +40,12 @@ class DirectionRepository
      * @var EntityRepository
      */
     private $repository;
+
+    private  $entityManager;
     
     public function __construct(EntityManagerInterface $entityManager)
     {
+        $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(Direction::class);
     }
     
@@ -56,6 +60,29 @@ class DirectionRepository
         ->leftJoin('d.zones', 'z')
         ->andWhere('z.direction IS NULL')
         ->getQuery();
+        
+        return $query->getResult()
+        ;
+    }
+
+    /**
+     * Return all directions that have thier bounding box in the given territory.
+     *
+     * @return mixed|NULL|\Doctrine\DBAL\Driver\Statement|array     The directions found
+     */
+    public function findAllWithBoundingBoxInTerritory(Territory $territory)
+    {
+        $query = $this->entityManager->createQuery("
+            SELECT d from App\Geography\Entity\Direction d, App\Geography\Entity\Territory t
+            where t.id = " . $territory->getId() . "
+            and ST_INTERSECTS(t.detail,ST_GeomFromText(CONCAT('POLYGON((',
+            d.bboxMinLon,' ',d.bboxMinLat,',',
+            d.bboxMinLon,' ',d.bboxMaxLat,',',
+            d.bboxMaxLon,' ',d.bboxMinLat,',',
+            d.bboxMaxLon,' ',d.bboxMaxLat,',',
+            d.bboxMinLon,' ',d.bboxMinLat,
+            '))')))=1
+        ");
         
         return $query->getResult()
         ;

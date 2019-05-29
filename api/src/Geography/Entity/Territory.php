@@ -27,9 +27,11 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\Collection;
+use App\Geography\Controller\TerritoryPost;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * A teritory.
+ * A territory.
  *
  * @ORM\Entity
  * @ApiResource(
@@ -37,7 +39,14 @@ use Doctrine\Common\Collections\Collection;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
+ *      collectionOperations={
+ *          "get",
+ *          "post"={
+ *              "method"="POST",
+ *              "path"="/territories",
+ *              "controller"=TerritoryPost::class,
+ *          }
+ *      },
  *      itemOperations={"get","put","delete"}
  * )
  */
