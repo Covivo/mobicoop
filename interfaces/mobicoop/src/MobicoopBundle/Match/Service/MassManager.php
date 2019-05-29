@@ -23,8 +23,10 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Match\Service;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassMatching;
 use Mobicoop\Bundle\MobicoopBundle\Service\UtilsService;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 
@@ -103,7 +105,7 @@ class MassManager
      * @param Mass $mass
      * @return null
      */
-    public function computeResults(Mass $mass)
+    private function computeResults(Mass $mass)
     {
         $computedData = [
             "totalTravelDistance" => 0,
@@ -129,7 +131,13 @@ class MassManager
 
         $persons = $mass->getPersons();
 
-        $tabCoords = array();
+        $tabCoords = [];
+        $matrix = [
+            "originalsJourneys" => [],
+            "link" => [],
+            "data" => []
+        ];
+
         foreach ($persons as $person) {
             $tabCoords[] = array(
                 "latitude"=>$person->getPersonalAddress()->getLatitude(),
@@ -157,6 +165,11 @@ class MassManager
             if ($carpoolAsDriver || $carpoolAsPassenger) {
                 $computedData["nbCarpoolersTotal"]++;
             }
+
+            // Store the original journey to calculate the gains between original and carpool
+            $matrix["originalsJourneys"][$person->getId()]["distance"] = $person->getDirection()->getDistance();
+            $matrix["originalsJourneys"][$person->getId()]["duration"] = $person->getDirection()->getDuration();
+            $matrix["originalsJourneys"][$person->getId()]["co2"] = UtilsService::computeCO2($person->getDirection()->getDistance());
         }
 
         $mass->setPersonsCoords($tabCoords);
@@ -185,11 +198,133 @@ class MassManager
         $computedData["totalTravelDistanceCO2"] = UtilsService::computeCO2($computedData["totalTravelDistance"]);
         $computedData["totalTravelDistancePerYearCO2"] = UtilsService::computeCO2($computedData["totalTravelDistancePerYear"]);
 
-        // Exemples
-
-
         $mass->setComputedData($computedData);
+
+
+
+        // Build the carpooler matrix
+        $matrix = $this->buildCarpoolersMatrix($persons,$matrix);
+
+        // Store the original journey to calculate the gains between original and carpool
+/*        foreach ($matrix["link"] as $idCarpooler1 => $idCarpooler2){
+            foreach($persons as $person){
+                if($person->getId()==$idCarpooler1){
+                    $matrix["originalsJourneys"][$idCarpooler1]["distance"] = $person->getDirection()->getDistance();
+                    $matrix["originalsJourneys"][$idCarpooler1]["duration"] = $person->getDirection()->getDuration();
+                    $matrix["originalsJourneys"][$idCarpooler1]["co2"] = UtilsService::computeCO2($person->getDirection()->getDistance());
+                }
+            }
+        }*/
+
+        dump($matrix);
 
         return null;
     }
+
+    /**
+     * Build the carpoolers matrix
+     * @param ArrayCollection $persons
+     * @param array $matrix
+     * @return array
+     */
+    private function buildCarpoolersMatrix(ArrayCollection $persons, array $matrix){
+
+        foreach ($persons as $person){
+            $matchingsAsDriver = $person->getMatchingsAsDriver();
+            $matchingsAsPassenger = $person->getMatchingsAsPassenger();
+            $matrix = $this->linkCarpoolersV2(array_merge($matchingsAsDriver,$matchingsAsPassenger), $matrix);
+        }
+
+        return $matrix;
+    }
+
+    /**
+     * Link carpoolers by keeping the fastest match for the current MassMatching
+     * @param array $matchings
+     * @param array $matrix
+     * @return array
+     */
+    private function linkCarpoolers(array $matchings, array $matrix){
+
+        $fastestMassPerson1Id = null;
+        $fastestMassPerson2Id = null;
+        $fastestDistance = 0;
+        $fastestDuration = 0;
+        $fastestCO2 = 0;
+        $fastest = 9999999999999999;
+        if(count($matchings)>0) {
+            foreach ($matchings as $matching) {
+                if ($matching->getDirection()->getDuration() < $fastest) {
+                    $fastest = $matching->getDirection()->getDuration();
+                    $fastestMassPerson1Id = $matching->getMassPerson1Id();
+                    $fastestMassPerson2Id = $matching->getMassPerson2Id();
+                    $fastestDuration = $matching->getDirection()->getDuration();
+                    $fastestDistance = $matching->getDirection()->getDistance();
+                    $fastestCO2 = UtilsService::computeCO2($matching->getDirection()->getDistance());
+                }
+            }
+            // As soon as they are linked, we ignore them both. We do not know if it's the best match of all the MassMatchings but it's good enough
+            if (!isset($matrix['link'][$fastestMassPerson1Id]) && !in_array($fastestMassPerson1Id, $matrix['link']) &&
+                !isset($matrix['link'][$fastestMassPerson2Id]) && !in_array($fastestMassPerson2Id, $matrix['link'])
+            ) {
+                $matrix['link'][$fastestMassPerson1Id] = $fastestMassPerson2Id;
+                $matrix['data'][$fastestMassPerson1Id]['distance'] = $fastestDistance;
+                $matrix['data'][$fastestMassPerson1Id]['duration'] = $fastestDuration;
+                $matrix['data'][$fastestMassPerson1Id]['co2'] = $fastestCO2;
+            }
+        }
+
+        return $matrix;
+    }
+
+    /**
+     * Link carpoolers by keeping the fastest match for the current MassMatching
+     * @param array $matchings
+     * @param array $matrix
+     * @return array
+     */
+    private function linkCarpoolersV2(array $matchings, array $matrix){
+        if(count($matchings)>0) {
+
+            $fastestMassPerson1Id = null;
+            $fastestMassPerson2Id = null;
+            $fastestDistance = 0;
+            $fastestDuration = 0;
+            $fastestCO2 = 0;
+            $biggestGain = -1;
+            foreach ($matchings as $matching) {
+                $durationJourneyPerson1 = $matrix["originalsJourneys"][$matching->getMassPerson1Id()]["duration"];
+                $durationJourneyPerson2 = $matrix["originalsJourneys"][$matching->getMassPerson2Id()]["duration"];
+
+                // This is the duration if the two peoples drive separately
+                $durationJourneySeparately = $durationJourneyPerson1 + $durationJourneyPerson2;
+
+                // This is the gain between the two peoples driving separately and their carpool
+                $gainDurationJourneyCarpool = $durationJourneySeparately-$matching->getDirection()->getDuration();
+
+                // We keep the biggest gain
+
+                if ($gainDurationJourneyCarpool > $biggestGain) {
+                    $biggestGain = $gainDurationJourneyCarpool;
+                    $fastestMassPerson1Id = $matching->getMassPerson1Id();
+                    $fastestMassPerson2Id = $matching->getMassPerson2Id();
+                    $fastestDuration = $matching->getDirection()->getDuration();
+                    $fastestDistance = $matching->getDirection()->getDistance();
+                    $fastestCO2 = UtilsService::computeCO2($matching->getDirection()->getDistance());
+                }
+            }
+            // As soon as they are linked, we ignore them both. We do not know if it's the best match of all the MassMatchings but it's good enough
+            if (!isset($matrix['link'][$fastestMassPerson1Id]) && !in_array($fastestMassPerson1Id, $matrix['link']) &&
+                !isset($matrix['link'][$fastestMassPerson2Id]) && !in_array($fastestMassPerson2Id, $matrix['link'])
+            ) {
+                $matrix['link'][$fastestMassPerson1Id] = $fastestMassPerson2Id;
+                $matrix['data'][$fastestMassPerson1Id]['distance'] = $fastestDistance;
+                $matrix['data'][$fastestMassPerson1Id]['duration'] = $fastestDuration;
+                $matrix['data'][$fastestMassPerson1Id]['co2'] = $fastestCO2;
+            }
+        }
+
+        return $matrix;
+    }
+
 }

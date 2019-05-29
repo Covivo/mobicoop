@@ -106,7 +106,14 @@ class MassMatching implements Resource
 
     public function getMassPerson1Id(): int
     {
-        return $this->massPerson1;
+        return $this->massPerson1Id;
+    }
+
+    public function setMassPerson1Id($massPerson1Id): self
+    {
+        $this->massPerson1Id = $massPerson1Id;
+
+        return $this;
     }
 
     public function getMassPerson2(): MassPerson
@@ -123,7 +130,14 @@ class MassMatching implements Resource
 
     public function getMassPerson2Id(): int
     {
-        return $this->massPerson2;
+        return $this->massPerson2Id;
+    }
+
+    public function setMassPerson2Id($massPerson2Id): self
+    {
+        $this->massPerson2Id = $massPerson2Id;
+
+        return $this;
     }
 
     public function getDirection(): ?Direction
