@@ -107,13 +107,24 @@ class MassManager
     {
         $computedData = [
             "totalTravelDistance" => 0,
+            "totalTravelDistanceCO2" => 0,
+            "totalTravelDistancePerYear" => 0,
+            "totalTravelDistancePerYearCO2" => 0,
             "averageTravelDistance" => 0,
+            "averageTravelDistanceCO2" => 0,
+            "averageTravelDistancePerYear" => 0,
+            "averageTravelDistancePerYearCO2" => 0,
             "totalTravelDuration" => 0,
+            "totalTravelDurationPerYear" => 0,
             "averageTravelDuration" => 0,
+            "averageTravelDurationPerYear" => 0,
             "nbCarpoolersAsDrivers" => 0,
             "nbCarpoolersAsPassengers" => 0,
             "nbCarpoolersAsBoth" => 0,
-            "nbCarpoolersTotal" => 0
+            "nbCarpoolersTotal" => 0,
+            "humanTotalTravelDuration" => "",
+            "humanAverageTravelDuration" => "",
+            "humanAverageTravelDurationPerYear" => ""
         ];
 
         $persons = $mass->getPersons();
@@ -156,11 +167,26 @@ class MassManager
 
         // Averages
         $computedData["averageTravelDistance"] = $computedData["totalTravelDistance"] / count($persons);
+        $computedData["averageTravelDistancePerYear"] = $computedData["averageTravelDistance"] * Mass::NB_WORKING_DAY;
+        $computedData["totalTravelDistancePerYear"] = $computedData["totalTravelDistance"] * Mass::NB_WORKING_DAY;
         $computedData["averageTravelDuration"] = $computedData["totalTravelDuration"] / count($persons);
+        $computedData["averageTravelDurationPerYear"] = $computedData["averageTravelDuration"] * Mass::NB_WORKING_DAY;
+        $computedData["totalTravelDurationPerYear"] = $computedData["totalTravelDuration"] * Mass::NB_WORKING_DAY;
 
         // Conversion of some data to human readable versions (like durations in hours, minutes, seconds)
         $computedData["humanTotalTravelDuration"] = UtilsService::convertSecondsToHumain($computedData["totalTravelDuration"]);
+        $computedData["humanTotalTravelDurationPerYear"] = UtilsService::convertSecondsToHumain($computedData["totalTravelDurationPerYear"]);
         $computedData["humanAverageTravelDuration"] = UtilsService::convertSecondsToHumain($computedData["averageTravelDuration"]);
+        $computedData["humanAverageTravelDurationPerYear"] = UtilsService::convertSecondsToHumain($computedData["averageTravelDurationPerYear"]);
+
+        // CO2 consumption
+        $computedData["averageTravelDistanceCO2"] = UtilsService::computeCO2($computedData["averageTravelDistance"]);
+        $computedData["averageTravelDistancePerYearCO2"] = UtilsService::computeCO2($computedData["averageTravelDistancePerYear"]);
+        $computedData["totalTravelDistanceCO2"] = UtilsService::computeCO2($computedData["totalTravelDistance"]);
+        $computedData["totalTravelDistancePerYearCO2"] = UtilsService::computeCO2($computedData["totalTravelDistancePerYear"]);
+
+        // Exemples
+
 
         $mass->setComputedData($computedData);
 

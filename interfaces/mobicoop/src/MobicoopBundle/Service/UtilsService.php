@@ -35,4 +35,13 @@ class UtilsService extends AbstractController
 
         return $humanReturn;
     }
+
+    /**
+     * Compute de CO2 consumption in gram from a distance given in meters
+     * @param int $distance (in meters)
+     * @return float
+     */
+    public static function computeCO2($distance){
+        return round(((($distance)/1000) * 7 * 0.0232),2);
+    }
 }

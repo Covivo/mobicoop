@@ -36,6 +36,14 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 class Mass implements Resource
 {
+
+    const NB_WORKING_DAY = 228;
+    const EARTH_CIRCUMFERENCE_IN_KILOMETERS = 40070;
+    const FLAT_EARTH_CIRCUMFERENCE_IN_MILES = 78186;
+    const AVERAGE_EARTH_MOON_DISTANCE_IN_KILOMETERS = 384400;
+    const PARIS_NEW_YORK_CO2_IN_GRAM = 1700000;
+
+
     /**
      * @var int The id of this event.
      */
