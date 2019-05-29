@@ -36,7 +36,6 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 class Mass implements Resource
 {
-
     const NB_WORKING_DAY = 228;
     const EARTH_CIRCUMFERENCE_IN_KILOMETERS = 40070;
     const FLAT_EARTH_CIRCUMFERENCE_IN_MILES = 78186;

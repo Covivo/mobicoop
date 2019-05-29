@@ -41,7 +41,8 @@ class UtilsService extends AbstractController
      * @param int $distance (in meters)
      * @return float
      */
-    public static function computeCO2($distance){
-        return round(((($distance)/1000) * 7 * 0.0232),2);
+    public static function computeCO2($distance)
+    {
+        return round(((($distance)/1000) * 7 * 0.0232), 2);
     }
 }
