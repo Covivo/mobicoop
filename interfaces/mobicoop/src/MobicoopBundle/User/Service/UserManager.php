@@ -73,10 +73,10 @@ class UserManager
             if ($user->getBirthDate()) {
                 $user->setBirthYear($user->getBirthDate()->format('Y'));
             }
-            $this->logger->info('User | Is found' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $this->logger->info('User | Is found');
             return $user;
         }
-        $this->logger->error('User | is Not found' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $this->logger->error('User | is Not found');
         return null;
     }
     
@@ -95,10 +95,10 @@ class UserManager
             if ($user->getBirthDate()) {
                 $user->setBirthYear($user->getBirthDate()->format('Y'));
             }
-            $this->logger->info('User | Is logged' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $this->logger->info('User | Is logged');
             return $user;
         }
-        $this->logger->error('User | Not logged' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $this->logger->error('User | Not logged');
         return null;
     }
     
@@ -111,10 +111,10 @@ class UserManager
     {
         $response = $this->dataProvider->getCollection();
         if ($response->getCode() == 200) {
-            $this->logger->info('User | Found' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $this->logger->info('User | Found');
             return $response->getValue();
         }
-        $this->logger->error('User | Not found' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $this->logger->error('User | Not found');
         return null;
     }
     
@@ -134,10 +134,10 @@ class UserManager
         $user->setBirthDate($birthdate);
         $response = $this->dataProvider->post($user);
         if ($response->getCode() == 201) {
-            $this->logger->info('User Creation | Start' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $this->logger->info('User Creation | Start');
             return $response->getValue();
         }
-        $this->logger->error('User Creation | Fail' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $this->logger->error('User Creation | Fail');
         return null;
     }
     
@@ -152,7 +152,7 @@ class UserManager
     {
         $response = $this->dataProvider->put($user);
         if ($response->getCode() == 200) {
-            $this->logger->info('User Update | Start' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $this->logger->info('User Update | Start');
             return $response->getValue();
         }
         return null;
@@ -171,10 +171,10 @@ class UserManager
         $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
         $response = $this->dataProvider->put($user);
         if ($response->getCode() == 200) {
-            $this->logger->info('User Password Update | Start' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $this->logger->info('User Password Update | Start');
             return $response->getValue();
         }
-        $this->logger->info('User Password Update | Fail' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $this->logger->info('User Password Update | Fail');
         return null;
     }
     
@@ -190,9 +190,9 @@ class UserManager
         $response = $this->dataProvider->delete($id);
         if ($response->getCode() == 204) {
             return true;
-            $this->logger->info('User Deleta | Start' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            $this->logger->info('User Deleta | Start');
         }
-        $this->logger->info('User Delete | FaiL' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $this->logger->info('User Delete | FaiL');
         return false;
     }
 }
