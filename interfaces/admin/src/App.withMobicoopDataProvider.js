@@ -1,15 +1,12 @@
 import React, { Component } from 'react';
 
-import { Admin, Resource } from 'react-admin';
-import { Route, Redirect } from 'react-router-dom';
-import { hydraClient, fetchHydra as baseFetchHydra  } from '@api-platform/admin';
-import parseHydraDocumentation from '@api-platform/api-doc-parser/lib/hydra/parseHydraDocumentation';
+import { fetchUtils,Admin, Resource } from 'react-admin';
 
+import mobicoopDataProvider from './mobicoopDataProvider';
 import authProvider from './authProvider';
 
 import { createMuiTheme } from '@material-ui/core/styles';
 import { cyan, lightBlue, teal } from '@material-ui/core/colors';
-
 import PersonIcon from '@material-ui/icons/Person';
 import PeopleIcon from '@material-ui/icons/People';
 import LocalParkingIcon from '@material-ui/icons/LocalParking';
@@ -55,55 +52,24 @@ require('dotenv').config();
 
 const entrypoint = process.env.REACT_APP_API;
 
-const fetchHeaders = function () {
-  return {'Authorization': `Bearer ${localStorage.getItem('token')}`};
-};
-const fetchHydra = (url, options = {}) => baseFetchHydra(url, {
-    ...options,
-    headers: new Headers(fetchHeaders()),
-});
-const dataProvider = api => hydraClient(api, fetchHydra);
-const apiDocumentationParser = entrypoint =>
-  parseHydraDocumentation(entrypoint, {
-    headers: new Headers(fetchHeaders()),
-  }).then(
-    ({ api }) => ({ api }),
-    result => {
-      const { api, status } = result;
-      
-      if (status === 401) {      
-        return Promise.resolve({
-          api,
-          status,
-          customRoutes: [
-            <Route path="/" render={() => <Redirect to="/login" />} />,
-          ],
-        });
-      }
+const httpClient = (url, options = {}) => {
+  if (!options.headers) {
+       options.headers = new Headers({ Accept: 'application/ld+json' });
+  }
+  const token = localStorage.getItem('token');
+  options.headers.set('Authorization', `Bearer ${token}`);
+  return fetchUtils.fetchJson(url, options);
+}
 
-      return Promise.reject(result);
-    }
-  );
+const dataProvider = mobicoopDataProvider(entrypoint, httpClient);
 
 export default class extends Component {
-  state = { api: null };
-
-  componentDidMount() {
-    apiDocumentationParser(entrypoint).then(({ api }) => {
-      this.setState({ api });
-    }).catch((e) => {
-      console.log(e);
-    });
-  }
 
   render() {
-      if (null === this.state.api) return <div>Loading...</div>;
       return (
           <Admin 
-                  api={ this.state.api }
                   locale="fr" i18nProvider={i18nProvider}
-                  apiDocumentationParser={ apiDocumentationParser }
-                  dataProvider= { dataProvider(this.state.api) }
+                  dataProvider= { dataProvider }
                   theme={ theme }
                   authProvider={ authProvider }  
           >                

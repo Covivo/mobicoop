@@ -56,6 +56,21 @@ final class JourneyCollectionDataProvider implements CollectionDataProviderInter
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
+        if (
+            is_null($this->request->get("provider")) &&
+            is_null($this->request->get("apikey")) &&
+            is_null($this->request->get("origin_latitude")) &&
+            is_null($this->request->get("origin_longitude")) &&
+            is_null($this->request->get("destination_latitude")) &&
+            is_null($this->request->get("destination_longitude")) &&
+            is_null($this->request->get("date")) &&
+            is_null($this->request->get("dateType")) &&
+            is_null($this->request->get("algorithm")) &&
+            is_null($this->request->get("modes"))
+        ) {
+            return null;
+        }
+        
         return $this->dataProvider->getJourneys(
             $this->request->get("provider"),
             $this->request->get("apikey"),

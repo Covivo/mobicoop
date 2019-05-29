@@ -32,9 +32,10 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 /**
  * An article.
  *
- * @ORM\Entity
+ * @ORM\Entity()
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },

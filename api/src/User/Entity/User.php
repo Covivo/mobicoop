@@ -62,8 +62,19 @@ use App\Match\Entity\Mass;
  *          "normalization_context"={"groups"={"read","mass"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={
+ *          "get"={
+ *              "normalization_context"={"groups"={"read"}},
+ *          },
+ *          "post"
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "normalization_context"={"groups"={"read"}},
+ *          },
+ *          "put",
+ *          "delete"
+ *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"id"})
  * @ApiFilter(SearchFilter::class, properties={"email":"exact"})
