@@ -54,41 +54,20 @@ class TerritoryRepository
         return $this->repository->find($id);
     }
 
+    public function findAll(): ?array
+    {
+        return $this->repository->findAll();
+    }
+
     /**
-     * Search if a direction intersects a given territory.
+     * Search a territory by its geoJson.
      *
-     * @param Direction $direction
-     * @param Territory $territory
+     * @param array $geoJson
      * @return void
      */
-    public function directionIsInTerritory(Direction $direction, Territory $territory)
+    public function findByGeoJson(array $geoJson)
     {
-        $result = false;
-        // we use a batch of 100 points to avoid sql failure
-        $batch = 100;
-        $stop = false;
-        $points = $direction->getPoints();
-        $nbLoops = 0;
-        while (!$stop) {
-            $sql = "SELECT ST_INTERSECTS(t.detail,ST_GeomFromText('Multipoint(";
-            $start = $nbLoops*$batch;
-            $end = min($start+$batch, count($points)); // count + 1 ???
-            for ($i=$start;$i<$end;$i++) {
-                $address = $points[$i];
-                $sql .= $address->getLongitude() . " " . $address->getLatitude() . ",";
-            }
-            $sql = rtrim($sql, ',');
-            $sql .= ")')) as inTerritory from App\Geography\Entity\Territory t where t.id = " . $territory->getId();
-            $query = $this->entityManager->createQuery($sql);
-            if ($query->getResult()[0]['inTerritory'] == 1) {
-                $result = true;
-                $stop = true;
-            }
-            if ($end == count($points)) {
-                $stop = true;
-            }
-            $nbLoops++;
-        }
-        return $result;
+        
     }
+
 }

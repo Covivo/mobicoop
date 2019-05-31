@@ -43,6 +43,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
 
+    # Direction Load Listener
+    mobicoop.direction.direction_load_listener:
+        class: App\Geography\EventListener\DirectionLoadListener
+        arguments: ['@App\Geography\Service\GeoTools'] # GeoTools injected to compute CO2
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
     App\Carpool\Controller\:

@@ -59,7 +59,7 @@ class AddressRepository
         $query = $this->entityManager->createQuery("
             SELECT a from App\Geography\Entity\Address a, App\Geography\Entity\Territory t
             where t.id = " . $territory->getId() . "
-            and ST_CONTAINS(t.detail,ST_GeomFromText(CONCAT('POINT(',a.longitude,' ',a.latitude,')')))=1
+            and ST_CONTAINS(t.geoJsonDetail,a.geoJson)=1
         ");
         
         return $query->getResult()

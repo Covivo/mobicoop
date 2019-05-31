@@ -66,8 +66,9 @@ class DirectionRepository
     }
 
     /**
-     * Return all directions that have thier bounding box in the given territory.
+     * Return all directions that have their bounding box in the given territory.
      *
+     * @param Territory $territory
      * @return mixed|NULL|\Doctrine\DBAL\Driver\Statement|array     The directions found
      */
     public function findAllWithBoundingBoxInTerritory(Territory $territory)
@@ -75,16 +76,26 @@ class DirectionRepository
         $query = $this->entityManager->createQuery("
             SELECT d from App\Geography\Entity\Direction d, App\Geography\Entity\Territory t
             where t.id = " . $territory->getId() . "
-            and ST_INTERSECTS(t.detail,ST_GeomFromText(CONCAT('POLYGON((',
-            d.bboxMinLon,' ',d.bboxMinLat,',',
-            d.bboxMinLon,' ',d.bboxMaxLat,',',
-            d.bboxMaxLon,' ',d.bboxMinLat,',',
-            d.bboxMaxLon,' ',d.bboxMaxLat,',',
-            d.bboxMinLon,' ',d.bboxMinLat,
-            '))')))=1
+            and ST_INTERSECTS(t.geoJsonDetail,d.geoJsonBbox)=1
         ");
         
         return $query->getResult()
         ;
+    }
+
+    /**
+     * Search if a direction intersects a given territory.
+     *
+     * @param Direction $direction
+     * @param Territory $territory
+     * @return void
+     */
+    public function directionIsInTerritory(Direction $direction, Territory $territory)
+    {
+        $sql = "SELECT ST_INTERSECTS(t.geoJsonDetail,d.geoJsonDetail) as inTerritory 
+            from App\Geography\Entity\Territory t, App\Geography\Entity\Direction d 
+            where t.id = " . $territory->getId() . " and d.id = " . $direction->getId();
+        $query = $this->entityManager->createQuery($sql);
+        return ($query->getResult()[0]['inTerritory'] == 1);
     }
 }

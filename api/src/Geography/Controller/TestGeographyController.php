@@ -28,6 +28,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use App\Geography\Service\TerritoryManager;
 use App\Geography\Repository\TerritoryRepository;
+use App\Geography\Entity\Address;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Geography\Entity\Direction;
+use App\DataProvider\Entity\GeoRouterProvider;
 
 /**
  * Controller class for API testing purpose.
@@ -49,4 +53,63 @@ class TestGeographyController extends AbstractController
         $territoryManager->associateDirectionsForTerritory($territory);
         return new Response();
     }
+
+    /**
+     * Test addresses geojson
+     *
+     * @Route("/rd/geography/addresses/geojson", name="test_addresses_geojson")
+     *
+     */
+    public function testAddressesGeojson(EntityManagerInterface $entityManager)
+    {
+        if ($addresses = $entityManager->getRepository(Address::class)->findAll()) {
+            foreach ($addresses as $address) {
+                $address->setAutoGeoJson();
+                $entityManager->persist($address);
+            }
+            $entityManager->flush();
+        }
+        return new Response();
+    }
+
+    /**
+     * Test direction bbox geojson
+     *
+     * @Route("/rd/geography/directions/bbox/geojson", name="test_directions_bbox_geojson")
+     *
+     */
+    public function testDirectionsBboxGeojson(EntityManagerInterface $entityManager)
+    {
+        if ($directions = $entityManager->getRepository(Direction::class)->findAll()) {
+            foreach ($directions as $direction) {
+                $direction->setAutoGeoJsonBbox();
+                $entityManager->persist($direction);
+            }
+            $entityManager->flush();
+        }
+        return new Response();
+    }
+
+    /**
+     * Test direction detail geojson
+     *
+     * @Route("/rd/geography/directions/detail/geojson", name="test_directions_detail_geojson")
+     *
+     */
+    public function testDirectionsDetailGeojson(EntityManagerInterface $entityManager)
+    {
+        set_time_limit(600);
+        if ($directions = $entityManager->getRepository(Direction::class)->findAll()) {
+            foreach ($directions as $direction) {
+                if (is_null($direction->getPoints())) {
+                    $direction->setPoints(GeoRouterProvider::deserializePoints($direction->getDetail(), true, false));
+                }
+                $direction->setAutoGeoJsonDetail();
+                $entityManager->persist($direction);
+            }
+            $entityManager->flush();
+        }
+        return new Response();
+    }
+
 }

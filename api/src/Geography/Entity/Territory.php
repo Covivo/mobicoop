@@ -26,9 +26,8 @@ namespace App\Geography\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\Collection;
 use App\Geography\Controller\TerritoryPost;
-use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * A territory.
@@ -72,25 +71,12 @@ class Territory
     private $name;
 
     /**
-     * @var string The details of the territory.
+     * @var string The geoJson details of the territory.
      *
      * @ORM\Column(type="multipolygon")
      * @Groups({"read","write"})
      */
-    private $detail;
-
-    /**
-     * @var ArrayCollection|null The parents of the territory.
-     *
-     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
-     * @Groups({"read","write"})
-     */
-    private $parents;
-
-    public function __construct()
-    {
-        $this->parents = new ArrayCollection();
-    }
+    private $geoJsonDetail;
     
     public function getId(): ?int
     {
@@ -109,37 +95,14 @@ class Territory
         return $this;
     }
 
-    public function getDetail()
+    public function getGeoJsonDetail()
     {
-        return $this->detail;
+        return $this->geoJsonDetail;
     }
     
-    public function setDetail($detail): self
+    public function setGeoJsonDetail($geoJsonDetail): self
     {
-        $this->detail = $detail;
-        
-        return $this;
-    }
-
-    public function getParents()
-    {
-        return $this->parents->getValues();
-    }
-    
-    public function addParent(Territory $parent): self
-    {
-        if (!$this->parents->contains($parent)) {
-            $this->parents[] = $parent;
-        }
-        
-        return $this;
-    }
-    
-    public function removeParent(Territory $parent): self
-    {
-        if ($this->parents->contains($parent)) {
-            $this->parents->removeElement($parent);
-        }
+        $this->geoJsonDetail = $geoJsonDetail;
         
         return $this;
     }

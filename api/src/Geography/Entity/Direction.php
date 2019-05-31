@@ -24,10 +24,12 @@
 namespace App\Geography\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use CrEOF\Spatial\PHP\Types\Geometry\Polygon;
+use CrEOF\Spatial\PHP\Types\Geometry\Point;
+use CrEOF\Spatial\PHP\Types\Geography\LineString;
 
 /**
  * Direction entity
@@ -36,6 +38,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  *
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
@@ -113,6 +116,13 @@ class Direction
      * @Groups({"read","write","mass"})
      */
     private $bboxMaxLat;
+
+    /**
+     * @var string The geoJson bounding box of the direction.
+     * @ORM\Column(type="polygon", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $geoJsonBbox;
     
     /**
      * @var int|null The initial bearing of the direction in degrees.
@@ -127,6 +137,15 @@ class Direction
      * @Groups({"read","write"})
      */
     private $detail;
+
+    /**
+     * @var string The geoJson linestring detail of the direction.
+     * @ORM\Column(type="linestring", nullable=true)
+     * Note : the detail should be a MULTIPOINT, but we can't use it as it's not supported by the version of doctrine2 spatial package for mysql 5.7 (?)
+     * Todo : try to create a multipoint custom type for doctrine 2 spatial ?
+     * @Groups({"read","write"})
+     */
+    private $geoJsonDetail;     
 
     /**
      * @var string The textual encoded snapped waypoints of the direction.
@@ -150,17 +169,8 @@ class Direction
     private $zones;
 
     /**
-     * @var ArrayCollection|null The territories of the direction.
-     *
-     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
-     * @Groups({"read","write","mass"})
-     */
-    private $territories;
-
-    /**
      * @var int|null The CO2 emission for this direction.
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write","mass"})
+     * @Groups({"read","mass"})
      */
     private $co2;
 
@@ -292,6 +302,18 @@ class Direction
         return $this;
     }
 
+    public function getGeoJsonBbox()
+    {
+        return $this->geoJsonBbox;
+    }
+    
+    public function setGeoJsonBbox($geoJsonBbox): self
+    {
+        $this->geoJsonBbox = $geoJsonBbox;
+        
+        return $this;
+    }
+
     public function getBearing(): ?int
     {
         return $this->bearing;
@@ -312,6 +334,18 @@ class Direction
     public function setDetail(string $detail): self
     {
         $this->detail = $detail;
+        
+        return $this;
+    }
+
+    public function getGeoJsonDetail()
+    {
+        return $this->geoJsonDetail;
+    }
+    
+    public function setGeoJsonDetail($geoJsonDetail): self
+    {
+        $this->geoJsonDetail = $geoJsonDetail;
         
         return $this;
     }
@@ -368,29 +402,6 @@ class Direction
         return $this;
     }
 
-    public function getTerritories()
-    {
-        return $this->territories->getValues();
-    }
-    
-    public function addTerritory(Territory $territory): self
-    {
-        if (!$this->territories->contains($territory)) {
-            $this->territories[] = $territory;
-        }
-        
-        return $this;
-    }
-    
-    public function removeTerritory(Territory $territory): self
-    {
-        if ($this->territories->contains($territory)) {
-            $this->territories->removeElement($territory);
-        }
-        
-        return $this;
-    }
-
     public function getCo2(): ?int
     {
         return $this->co2;
@@ -437,5 +448,45 @@ class Direction
         $this->durations = $durations;
         
         return $this;
+    }
+
+    // DOCTRINE EVENTS
+    
+    /**
+     * GeoJson representation of the bounding box.
+     *
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function setAutoGeoJsonBbox()
+    {
+        if (!is_null($this->getGeoJsonBbox())) return;
+        if (!is_null($this->getBboxMinLon()) && !is_null($this->getBboxMinLat()) && !is_null($this->getBboxMaxLon()) && !is_null($this->getBboxMaxLat())) {
+            $this->setGeoJsonBbox(new Polygon([[
+                [$this->getBboxMinLon(),$this->getBboxMinLat()],
+                [$this->getBboxMinLon(),$this->getBboxMaxLat()],
+                [$this->getBboxMaxLon(),$this->getBboxMinLat()],
+                [$this->getBboxMaxLon(),$this->getBboxMaxLat()],
+                [$this->getBboxMinLon(),$this->getBboxMinLat()]
+            ]]));
+        }
+    }
+
+    /**
+     * GeoJson representation of the detail.
+     *
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function setAutoGeoJsonDetail()
+    {
+        if (!is_null($this->getGeoJsonDetail())) return;
+        if (!is_null($this->getPoints())) {
+            $arrayPoints = [];
+            foreach ($this->getPoints() as $address) {
+                $arrayPoints[] = new Point($address->getLongitude(),$address->getLatitude());
+            }
+            $this->setGeoJsonDetail(new LineString($arrayPoints));
+        }
     }
 }

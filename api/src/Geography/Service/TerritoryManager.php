@@ -23,14 +23,9 @@
 
 namespace App\Geography\Service;
 
-use App\Geography\Entity\Address;
-use App\Geography\Entity\Direction;
 use App\Geography\Entity\Territory;
 use Doctrine\ORM\EntityManagerInterface;
 use CrEOF\Spatial\PHP\Types\Geometry\MultiPolygon;
-use App\Geography\Repository\DirectionRepository;
-use App\DataProvider\Entity\GeoRouterProvider;
-use App\Geography\Repository\TerritoryRepository;
 
 /**
  * Territory management service.
@@ -42,19 +37,15 @@ use App\Geography\Repository\TerritoryRepository;
 class TerritoryManager
 {
     private $entityManager;
-    private $directionRepository;
-    private $territoryRepository;
-
+   
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, DirectionRepository $directionRepository, TerritoryRepository $territoryRepository)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->directionRepository = $directionRepository;
-        $this->territoryRepository = $territoryRepository;
     }
 
     /**
@@ -67,75 +58,16 @@ class TerritoryManager
     {
         // we create the Multipolygon object based on the data sent in the detail property
         // the data is a json string, we first decode it to make an array, then we pass the resulted array to the object constructor
-        $polygon = new MultiPolygon(json_decode($territory->getDetail(), true));
-        $territory->setDetail($polygon);
+        $polygon = new MultiPolygon(json_decode($territory->getGeoJsonDetail(), true));
+        $territory->setGeoJsonDetail($polygon);
 
-        // todo : check if the territory already exists !
+        // todo : check if the territory already exists
+        // note : we can't use a unique contraint to do so as the field is a blob...
 
         $this->entityManager->persist($territory);
         $this->entityManager->flush();
-        // we can now launch the actions needed when a new territory is created
-        $this->handleNewTerritory($territory);
+
         return $territory;
     }
 
-    /**
-     * Handle all the territory-related actions when creating a new territory.
-     *
-     * @param Territory $territory
-     * @return void
-     */
-    private function handleNewTerritory(Territory $territory)
-    {
-        $this->associateDirectionsForTerritory($territory);
-    }
-
-    /**
-     * Automatically associate a territory for all directions.
-     * Useful when creating a new territory.
-     *
-     * @param Territory $territory
-     * @return void
-     */
-    public function associateDirectionsForTerritory(Territory $territory)
-    {
-        // we have to search all the directions that are concerned by the territory
-        // the points for directions are not stored individually in the database, they are stored in an encoded format
-        // so we can't use geographical functions directly for points in the database
-        // we can however limit the number of directions to test by looking at their bounding box
-        $directions = $this->directionRepository->findAllWithBoundingBoxInTerritory($territory);
-
-        // now for each direction we check if a point in the path is in the territory
-        foreach ($directions as $direction) {
-            // we decode the points
-            $direction->setPoints(GeoRouterProvider::deserializePoints($direction->getDetail(), true, false));
-            if ($this->territoryRepository->directionIsInTerritory($direction, $territory)) {
-                $direction->addTerritory($territory);
-                $this->entityManager->persist($direction);
-            }
-        }
-        $this->entityManager->flush();
-    }
-
-    /**
-     * Handle all the territory-related actions when creating a new direction.
-     *
-     * @param Direction $direction
-     * @return void
-     */
-    private function handleNewDirection(Direction $direction)
-    {
-        $this->associateTerritoriesForDirection($direction);
-    }
-    
-    /**
-     * Automatically associate territories for a given direction.
-     * Useful when creating a new direction.
-     *
-     * @param Direction $direction
-     * @return void
-     */
-    private function associateTerritoriesForDirection(Direction $direction)
-    {
-    }
 }
