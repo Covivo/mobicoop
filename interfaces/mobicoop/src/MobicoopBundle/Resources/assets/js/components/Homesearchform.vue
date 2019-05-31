@@ -1,12 +1,9 @@
 <template>
-  <section class="section">
-    <div class="tile is-ancestor">
-      <div class="tile is-vertical is-12">
-        <div class="tile is-child center-all">
+        <div class="tile center-all">
           <div
             class="columns is-centered is-vcentered SearchBar"
           >
-            <div class="column has-text-centered">
+            <div class="column has-text-centered is-one-third">
               <!-- inputs outward destination -->
               <label
                 class="label"
@@ -23,7 +20,9 @@
                 />
               </label>
             </div>
-            <div class="column has-text-centered test">
+            <div class="column is-one-ninth">
+            </div>
+            <div class="column has-text-centered is-one-third">
               <label
                 class="label"
                 for="destination"
@@ -85,14 +84,13 @@
                 </b-timepicker>
               </label> -->
             <!-- search button -->
-            <div class="column is-3 has-text-centered">
+            <div class="column has-text-centered">
               <label
                 for="rechercher"
                 class="label"
               >
                 <a
                   id="rechercher"
-                  style="width: 100%"
                   class="button"
                   :href="checkUrlValid ? urlToCall : null"
                   alt="Rechercher un covoiturage"
@@ -103,9 +101,6 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
 </template>
 
 <script>
