@@ -19,90 +19,34 @@
  *    LICENSE
  **************************/
 
-describe('Visitor & User ', () => {
+describe('User account', () => {
 
     const baseUrl = Cypress.env("baseUrl");
-    const email = "johndoe@fakemail.com"
-    let password = "OldPassord!*$"
-    const newPassword = "NewPassord$**"
 
-
-    it('A visitor comes back to home when he clicks to logo on the website', () => {
+    beforeEach(() => {
         cy.visit(baseUrl)
-        cy.get('.logo')
-            .click()
-        cy.url().should('include', baseUrl)
     })
 
-    it('A visitor signs up', () => {
-
-        cy.contains('Inscription').click()
-        cy.url().should('include', baseUrl + 'utilisateur/inscription')
-        cy.wait(1500)
-        cy.percySnapshot('Home')
-
-        /* Email */
-        cy.get('input[id=user_form_email]')
-            .should('have.attr', 'placeholder', 'Saisissez votre adresse email')
-            .type(email)
-
-        /* Lastname */
-        cy.get('input[id=user_form_givenName]')
-            .should('have.attr', 'placeholder', 'Saisissez votre prénom')
-            .type('John')
-
-        /* Name */
-        cy.get('input[id=user_form_familyName]')
-            .should('have.attr', 'placeholder', 'Saisissez votre nom')
-            .type('Doe')
-
-        /* Gender */
-        cy.get('select[id=user_form_gender]')
-            .select('1')
-            .should('have.value', '1')
-
-        /* Birthyear */
-        cy.get('select[id=user_form_birthYear]')
-            .select('2000')
-            .should('have.value', '2000')
-
-        /* Phone */
-        cy.get('input[id=user_form_telephone]')
-            .should('have.attr', 'placeholder', 'Saisissez votre numéro de téléphone')
-            .type('0610111213')
-
-        /* Password */
-        cy.get('input[id=user_form_password_first]')
-            .should('have.attr', 'placeholder', 'Saisissez votre mot de passe')
-            .type(password)
-
-        /* Password (confirmation) */
-        cy.get('input[id=user_form_password_second]')
-            .should('have.attr', 'placeholder', 'Confirmez votre mot de passe')
-            .type(password)
-
-        /* Validation condition (confirmation) */
-        cy.get('input[id=user_form_conditions]').check()
-
-
-        cy.contains('Je m\'inscris').click()
-        cy.url().should('include', baseUrl) // should be redirected to home    
+    afterEach(()=> {
+        cy.logout()
     })
 
     it('A user logged updates his password', () => {
+        cy.loginWith(email, password)
+        cy.wait(1500)
+        cy.percySnapshot('login')
 
         /* Account */
         cy.contains('Mon profil')
             .click()
-        cy.loginWith(email, password)
         cy.url().should('include', baseUrl + 'utilisateur/profil')
 
-        /* Update */
+        /* Password */
         cy.contains('Mot de passe')
             .click()
         cy.url().should('include', baseUrl + 'utilisateur/mot-de-passe/modifier')
 
-        /* Password */
+        /* Change password */
         cy.get('#user_form_password_first')
             .should('have.attr', 'placeholder', 'Saisissez votre mot de passe')
             .type(newPassword)
@@ -115,14 +59,26 @@ describe('Visitor & User ', () => {
         /* Submit */
         cy.get('#user_form_submit')
             .click()
+
+        cy.logout()
+        cy.wait(1500)
+        cy.percySnapshot('logout')
     })
 
     it('A user logged updates his account', () => {
+
+    
+        const newPassword = "NewPassword$**"
+
         let password = newPassword
-            /* Account */
-        cy.contains('Mon profil').click()
+
         cy.loginWith(email, password)
+
+        /* Account */
+        cy.contains('Mon profil').click()
         cy.url().should('include', baseUrl + 'utilisateur/profil')
+        cy.wait(1500)
+        cy.percySnapshot('Account')
 
         /* Update */
         cy.contains('Mettre à jour').click()
@@ -139,6 +95,70 @@ describe('Visitor & User ', () => {
             .type('0610111214')
 
         cy.get('button[id=user_form_submit]').click()
-        cy.url().should('include', baseUrl) // should be redirected to home   
+        cy.url().should('include', baseUrl) // should be redirected to home
+
+        cy.logout()
+    })
+
+    it('A user logged deletes his account', () => {
+        let password = newPassword
+
+        cy.loginWith(email, password)
+
+        /* Profil */
+        cy.contains('Mon profil').click()
+        cy.url().should('include', baseUrl + 'utilisateur/profil')
+
+        /* Delete */
+        cy.contains('Supprimer mon compte').click()
+        cy.url().should('include', baseUrl + 'utilisateur/profil/supprimer')
+
+        cy.get('button[id=user_delete_form_submit]').click()
+        cy.url().should('include', baseUrl) // should be redirected to home    
+    })
+
+    
+    it('User have add proposal', () => {
+        let email = "lindafabula@fakemail.com"
+        let password = "Password!*$"
+        let lastname = 'Linda'
+        let name = 'FABULA'
+        let gender = '1'
+        let birthyear = '1995'
+        let phone = '0722387799'
+
+        cy.signUp(email, password, lastname, name, gender, birthyear, phone)
+        cy.addProposal()        
+    })
+
+    it('User goes to his account', ()=>{
+        let email = "lindafabula@fakemail.com"
+        let password = "Password!*$"
+
+        cy.loginWith(email, password)
+
+         /* Profil */
+         cy.contains('Mon profil').click()
+         cy.url().should('include', baseUrl + 'utilisateur/profil')
+ 
+         /* My proposals */
+         cy.contains('Mes annonces').click()
+         cy.url().should('include', baseUrl + 'utilisateur/annonces')
+    })
+
+    it('User have not add proposal', () => {
+        let email = "johndoe@fakemail.com"
+        let password = "NewPassword$**"
+
+        cy.loginWith(email, password)
+
+    
+        /* Profil */
+        cy.contains('Mon profil').click()
+        cy.url().should('include', baseUrl + 'utilisateur/profil')
+
+        /* My proposals */
+        cy.contains('Mes annonces').click()
+        cy.url().should('include', baseUrl + 'utilisateur/annonces')
     })
 })
