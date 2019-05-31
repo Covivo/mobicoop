@@ -145,7 +145,7 @@ class Direction
      * Todo : try to create a multipoint custom type for doctrine 2 spatial ?
      * @Groups({"read","write"})
      */
-    private $geoJsonDetail;     
+    private $geoJsonDetail;
 
     /**
      * @var string The textual encoded snapped waypoints of the direction.
@@ -460,7 +460,9 @@ class Direction
      */
     public function setAutoGeoJsonBbox()
     {
-        if (!is_null($this->getGeoJsonBbox())) return;
+        if (!is_null($this->getGeoJsonBbox())) {
+            return;
+        }
         if (!is_null($this->getBboxMinLon()) && !is_null($this->getBboxMinLat()) && !is_null($this->getBboxMaxLon()) && !is_null($this->getBboxMaxLat())) {
             $this->setGeoJsonBbox(new Polygon([[
                 [$this->getBboxMinLon(),$this->getBboxMinLat()],
@@ -480,11 +482,13 @@ class Direction
      */
     public function setAutoGeoJsonDetail()
     {
-        if (!is_null($this->getGeoJsonDetail())) return;
+        if (!is_null($this->getGeoJsonDetail())) {
+            return;
+        }
         if (!is_null($this->getPoints())) {
             $arrayPoints = [];
             foreach ($this->getPoints() as $address) {
-                $arrayPoints[] = new Point($address->getLongitude(),$address->getLatitude());
+                $arrayPoints[] = new Point($address->getLongitude(), $address->getLatitude());
             }
             $this->setGeoJsonDetail(new LineString($arrayPoints));
         }

@@ -31,7 +31,6 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
  */
 class DirectionLoadListener
 {
-
     private $geoTools;
 
     public function __construct(GeoTools $geoTools)
@@ -42,7 +41,7 @@ class DirectionLoadListener
     public function postLoad(LifecycleEventArgs $args)
     {
         $direction = $args->getEntity();
-        if(method_exists($direction, 'setCo2')) {
+        if (method_exists($direction, 'setCo2')) {
             $direction->setCo2($this->geoTools->getCO2($direction->getDistance()));
         }
     }

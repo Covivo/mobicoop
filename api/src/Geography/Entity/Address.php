@@ -459,7 +459,7 @@ class Address
     public function setAutoGeoJson()
     {
         if (!is_null($this->getLatitude()) && !is_null($this->getLongitude())) {
-            $this->setGeoJson(new Point($this->getLongitude(),$this->getLatitude()));
+            $this->setGeoJson(new Point($this->getLongitude(), $this->getLatitude()));
         }
     }
 }

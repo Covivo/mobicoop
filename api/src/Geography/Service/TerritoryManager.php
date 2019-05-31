@@ -69,5 +69,4 @@ class TerritoryManager
 
         return $territory;
     }
-
 }

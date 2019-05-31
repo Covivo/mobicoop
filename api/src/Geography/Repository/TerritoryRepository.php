@@ -67,7 +67,5 @@ class TerritoryRepository
      */
     public function findByGeoJson(array $geoJson)
     {
-        
     }
-
 }
