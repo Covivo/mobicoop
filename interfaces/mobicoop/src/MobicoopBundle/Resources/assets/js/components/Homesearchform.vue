@@ -11,7 +11,6 @@
         >
           <geocomplete
             id="origin"
-            :data="tata"
             name="origin"
             placeholder="Lieu de départ"
             title="Depuis"
@@ -39,7 +38,6 @@
             name="destination"
             placeholder="Lieu d'arrivée"
             title="Vers"
-            value="tata"
             :url="geoSearchUrl"
             @geoSelected="selectedGeo"
           />
@@ -170,6 +168,7 @@ export default {
       outwardDate: new Date(), 
       outwardTime: new Date(),
       baseUrl: window.location.origin,
+      message: null
     };
   },
   computed: {
@@ -217,7 +216,7 @@ export default {
       this[name + "AddressCountry"] = val.addressCountry;
       this[name + "AddressLocality"] = val.addressLocality;
     },
-    swap: function () {
+    swap() {
       if (this.originAddressLocality != null && this.destinationAddressLocality != null) {
         let originLatitudeTemp = this.originLatitude
         let originLongitudeTemp = this.originLongitude
@@ -236,18 +235,9 @@ export default {
         this.destinationStreetAddress = originStreetAddressTemp
         this.destinationPostalCode = originPostalCodeTemp
         this.destinationAddressLocality = originAddressLocalityTemp
-
+        
       }
     }
   }
 };
 </script>
-
-<style lang="scss" scoped>
-
-.fieldsContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-</style>
