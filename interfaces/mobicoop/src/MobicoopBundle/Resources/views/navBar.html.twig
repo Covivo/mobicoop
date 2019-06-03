@@ -26,11 +26,9 @@
                     <div class="buttons">
                         {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                         <a href="{{ path('user_sign_up') }}" class="button is-primary">
-                            <i class="fas fa-pencil-alt"></i>
                             {% trans from 'ui' %}menu.signup{% endtrans %}  
                         </a>
                         <a href="{{ path('user_login') }}" class="button is-primary">
-                            <i class="fas fa-user"></i>
                             {% trans from 'ui' %}menu.login{% endtrans %}
                         </a>
                             {% else %}
@@ -45,7 +43,6 @@
                         </a>
                             {% endif %}
                         <a href="{{ path('carpool_ad') }}" class="button is-dark">
-                            <i class="fas fa-car"></i>
                             {% trans from 'ui' %}menu.ad_create{% endtrans %}
                         </a>
                     </div>    

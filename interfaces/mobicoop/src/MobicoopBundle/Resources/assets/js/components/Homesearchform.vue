@@ -20,7 +20,7 @@
           />
         </label>
       </div>
-      <div class="column is-one-ninth has-text-centered">
+      <div class="column is-one-tenth has-text-centered">
         <img
           class="interchanged"
           src="images/PictoInterchanger.svg"
