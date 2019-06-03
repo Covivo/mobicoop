@@ -11,6 +11,7 @@
         >
           <geocomplete
             id="origin"
+            :data="tata"
             name="origin"
             placeholder="Lieu de départ"
             title="Depuis"
@@ -236,7 +237,6 @@ export default {
         this.destinationPostalCode = originPostalCodeTemp
         this.destinationAddressLocality = originAddressLocalityTemp
 
-         
       }
     }
   }
