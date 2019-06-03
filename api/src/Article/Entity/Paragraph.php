@@ -27,6 +27,8 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
+use App\Article\Controller\ParagraphDown;
+use App\Article\Controller\ParagraphUp;
 
 /**
  * A paragraph of a section.
@@ -38,7 +40,21 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete",
+ *          "up"={
+ *              "method"="POST",
+ *              "controller"=ParagraphUp::class,
+ *              "path"="/paragraphes/{id}/up"
+ *          },
+ *          "down"={
+ *              "method"="POST",
+ *              "controller"=ParagraphDown::class,
+ *              "path"="/paragraphes/{id}/down"
+ *          }
+ *      }
  * )
  */
 class Paragraph

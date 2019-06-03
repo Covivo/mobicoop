@@ -28,6 +28,8 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
+use App\Article\Controller\SectionUp;
+use App\Article\Controller\SectionDown;
 
 /**
  * A section of an article.
@@ -39,7 +41,21 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete",
+ *          "up"={
+ *              "method"="POST",
+ *              "controller"=SectionUp::class,
+ *              "path"="/sections/{id}/up"
+ *          },
+ *          "down"={
+ *              "method"="POST",
+ *              "controller"=SectionDown::class,
+ *              "path"="/sections/{id}/down"
+ *          }
+ *      }
  * )
  */
 class Section
