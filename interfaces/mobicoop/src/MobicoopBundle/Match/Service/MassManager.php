@@ -214,7 +214,7 @@ class MassManager
         $totalDurationCarpools = 0;
         $totalDistanceCarpools = 0;
         $totalCO2Carpools = 0;
-        foreach ($matrix["data"] as $currentData){
+        foreach ($matrix["data"] as $currentData) {
             $totalDistanceCarpools += $currentData["distance"];
             $totalDurationCarpools += $currentData["duration"];
             $totalCO2Carpools += $currentData["co2"];
