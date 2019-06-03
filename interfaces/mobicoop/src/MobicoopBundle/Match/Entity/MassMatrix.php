@@ -151,7 +151,7 @@ class MassMatrix
     public function getCarpoolBetweenTwoPersons(int $idPerson1, int $idPerson2) : MassCarpool
     {
         foreach ($this->carpools as $carpool) {
-            if ($carpool->getidPerson1()==$idPerson1 && $carpool->getidPerson2()==$idPerson2) {
+            if ($carpool->getPerson1()->getId()==$idPerson1 && $carpool->getPerson2()->getId()==$idPerson2) {
                 return $carpool;
             }
         }
@@ -168,7 +168,7 @@ class MassMatrix
         $carpools = new ArrayCollection();
 
         foreach ($this->carpools as $carpool) {
-            if (($carpool->getidPerson1()==$idPerson || $carpool->getidPerson2()==$idPerson) && !$carpools->contains($carpool)) {
+            if (($carpool->getPerson1()->getId()==$idPerson || $carpool->getPerson2()->getId()==$idPerson) && !$carpools->contains($carpool)) {
                 $carpools->add($carpool);
             }
         }

@@ -30,6 +30,7 @@ use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassCarpool;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassJourney;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassMatching;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassMatrix;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassPerson;
 use Mobicoop\Bundle\MobicoopBundle\Service\UtilsService;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 
@@ -285,8 +286,8 @@ class MassManager
             // As soon as they are linked, we ignore them both. We do not know if it's the best match of all the MassMatchings but it's good enough
             if (count($matrix->getCarpoolsOfAPerson($fastestMassPerson1Id))==0 && count($matrix->getCarpoolsofAPerson($fastestMassPerson2Id))==0) {
                 $matrix->addCarpools(new MassCarpool(
-                    $fastestMassPerson1Id,
-                    $fastestMassPerson2Id,
+                    new MassPerson($fastestMassPerson1Id),
+                    new MassPerson($fastestMassPerson2Id),
                     new MassJourney($fastestDistance, $fastestDuration, $fastestCO2)
                     ));
             }

@@ -32,14 +32,14 @@ class MassCarpool
 {
 
     /**
-     * @var int $idPerson1
+     * @var MassPerson $person1
      */
-    private $idPerson1;
+    private $person1;
 
     /**
-     * @var int $idPerson2
+     * @var MassPerson $person2
      */
-    private $idPerson2;
+    private $person2;
 
     /**
      * @var MassJourney $journey
@@ -48,64 +48,43 @@ class MassCarpool
 
     /**
      * MassCarpool constructor.
-     * @param int $idPerson1
-     * @param int $idPerson2
+     * @param MassPerson $person1
+     * @param MassPerson $person2
      * @param MassJourney $journey
      */
-    public function __construct(int $idPerson1, int $idPerson2, MassJourney $journey)
+    public function __construct(MassPerson $person1, MassPerson $person2, MassJourney $journey)
     {
-        $this->idPerson1 = $idPerson1;
-        $this->idPerson2 = $idPerson2;
+        $this->person1 = $person1;
+        $this->person2 = $person2;
         $this->journey = $journey;
     }
 
-    /**
-     * @return int
-     */
-    public function getIdPerson1(): int
+    public function getPerson1(): MassPerson
     {
-        return $this->idPerson1;
+        return $this->person1;
     }
 
-    /**
-     * @param int $idPerson1
-     * @return int
-     */
-    public function setIdPerson1(int $idPerson1): self
+    public function setPerson1(MassPerson $person1)
     {
-        $this->idPerson1 = $idPerson1;
+        $this->person1 = $person1;
     }
 
-    /**
-     * @return int
-     */
-    public function getIdPerson2(): int
+    public function getPerson2(): MassPerson
     {
-        return $this->idPerson2;
+        return $this->person2;
     }
 
-    /**
-     * @param int $idPerson2
-     * @return int
-     */
-    public function setIdPerson2(int $idPerson2): self
+    public function setPerson2(MassPerson $person2)
     {
-        $this->idPerson2 = $idPerson2;
+        $this->person2 = $person2;
     }
 
-    /**
-     * @return MassJourney
-     */
     public function getJourney(): MassJourney
     {
         return $this->journey;
     }
 
-    /**
-     * @param MassJourney $idPerson2
-     * @return MassJourney
-     */
-    public function setJourney(MassJourney $journey): self
+    public function setJourney(MassJourney $journey)
     {
         $this->journey = $journey;
     }
