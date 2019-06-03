@@ -134,8 +134,8 @@ class MassMatrix
      */
     public function getJourneyOfAPerson(int $idPerson): MassJourney
     {
-        foreach($this->originalsJourneys as $journey){
-            if($journey->getidPerson()==$idPerson){
+        foreach ($this->originalsJourneys as $journey) {
+            if ($journey->getidPerson()==$idPerson) {
                 return $journey;
             }
         }
@@ -150,8 +150,8 @@ class MassMatrix
      */
     public function getCarpoolBetweenTwoPersons(int $idPerson1, int $idPerson2) : MassCarpool
     {
-        foreach($this->carpools as $carpool){
-            if($carpool->getidPerson1()==$idPerson1 && $carpool->getidPerson2()==$idPerson2){
+        foreach ($this->carpools as $carpool) {
+            if ($carpool->getidPerson1()==$idPerson1 && $carpool->getidPerson2()==$idPerson2) {
                 return $carpool;
             }
         }
@@ -167,12 +167,11 @@ class MassMatrix
     {
         $carpools = new ArrayCollection();
 
-        foreach($this->carpools as $carpool){
-            if( ($carpool->getidPerson1()==$idPerson || $carpool->getidPerson2()==$idPerson) && !$carpools->contains($carpool) ){
+        foreach ($this->carpools as $carpool) {
+            if (($carpool->getidPerson1()==$idPerson || $carpool->getidPerson2()==$idPerson) && !$carpools->contains($carpool)) {
                 $carpools->add($carpool);
             }
         }
         return $carpools;
     }
-
 }

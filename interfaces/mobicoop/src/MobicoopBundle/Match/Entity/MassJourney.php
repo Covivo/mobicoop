@@ -134,7 +134,4 @@ class MassJourney
     {
         $this->co2 = $co2;
     }
-
-
-
 }

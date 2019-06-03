@@ -109,5 +109,4 @@ class MassCarpool
     {
         $this->journey = $journey;
     }
-
 }

@@ -175,7 +175,6 @@ class MassManager
             );
 
             $matrix->addOriginalsJourneys($journey);
-
         }
 
         $mass->setPersonsCoords($tabCoords);
@@ -262,7 +261,6 @@ class MassManager
             $fastestCO2 = 0;
             $biggestGain = -1;
             foreach ($matchings as $matching) {
-
                 $journeyPerson1 = $matrix->getJourneyOfAPerson($matching->getMassPerson1Id());
                 $journeyPerson2 = $matrix->getJourneyOfAPerson($matching->getMassPerson2Id());
 
@@ -285,10 +283,11 @@ class MassManager
             }
 
             // As soon as they are linked, we ignore them both. We do not know if it's the best match of all the MassMatchings but it's good enough
-            if(count($matrix->getCarpoolsOfAPerson($fastestMassPerson1Id))==0 && count($matrix->getCarpoolsofAPerson($fastestMassPerson2Id))==0){
-                $matrix->addCarpools(new MassCarpool($fastestMassPerson1Id,
+            if (count($matrix->getCarpoolsOfAPerson($fastestMassPerson1Id))==0 && count($matrix->getCarpoolsofAPerson($fastestMassPerson2Id))==0) {
+                $matrix->addCarpools(new MassCarpool(
+                    $fastestMassPerson1Id,
                     $fastestMassPerson2Id,
-                        new MassJourney($fastestDistance,$fastestDuration,$fastestCO2)
+                    new MassJourney($fastestDistance, $fastestDuration, $fastestCO2)
                     ));
             }
         }
