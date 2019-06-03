@@ -1,46 +1,52 @@
 <template>
-        <div class="tile center-all">
-          <div
-            class="columns is-centered is-vcentered SearchBar"
-          >
-            <div class="column has-text-centered is-one-third">
-              <!-- inputs outward destination -->
-              <label
-                class="label"
-                for="origin"
-              >
-                <geocomplete
-                  id="origin"
-                  name="origin"
-                  placeholder="Lieu de départ"
-                  title="Depuis"
-                  aria-label="Départ"
-                  :url="geoSearchUrl"
-                  @geoSelected="selectedGeo"
-                />
-              </label>
-            </div>
-            <div class="column is-one-ninth has-text-centered">
-              <img class="interchanged" src="images/PictoInterchanger.svg" alt="changer"/>
-            </div>
-            <div class="column has-text-centered is-one-third">
-              <label
-                class="label"
-                for="destination"
-              >
-                <geocomplete
-                  id="destination"
-                  name="destination"
-                  placeholder="Lieu d'arrivée"
-                  title="Vers"
-                  :url="geoSearchUrl"
-                  @geoSelected="selectedGeo"
-                />
-              </label>
-            </div>
-            <!-- Commented and not removed because it can be usefull later if we'll implement the possibility to choose a date and an hour for the simple search -->
-            <!-- datepicker -->
-            <!-- <label
+  <div class="tile center-all">
+    <div
+      class="columns is-centered is-vcentered SearchBar"
+    >
+      <div class="column has-text-centered is-one-third">
+        <!-- inputs outward destination -->
+        <label
+          class="label"
+          for="origin"
+        >
+          <geocomplete
+            id="origin"
+            name="origin"
+            placeholder="Lieu de départ"
+            title="Depuis"
+            aria-label="Départ"
+            :url="geoSearchUrl"
+            @geoSelected="selectedGeo"
+          />
+        </label>
+      </div>
+      <div class="column is-one-ninth has-text-centered">
+        <img
+          class="interchanged"
+          src="images/PictoInterchanger.svg"
+          alt="changer"
+          @click="swap()"
+        >
+      </div>
+      <div class="column has-text-centered is-one-third">
+        <label
+          class="label"
+          for="destination"
+        >
+          <geocomplete
+            id="destination"
+            name="destination"
+            placeholder="Lieu d'arrivée"
+            title="Vers"
+            value="tata"
+            :url="geoSearchUrl"
+            @geoSelected="selectedGeo"
+          />
+        </label>
+      </div>
+      <!-- Commented and not removed because it can be usefull later if we'll implement the possibility to choose a date and an hour for the simple search -->
+      <!-- datepicker -->
+      <!-- <label
                 class="label"
                 for="dateDepart"
               >Date de départ
@@ -57,8 +63,8 @@
                   editable
                 />
               </label> -->
-            <!-- timepicker -->
-            <!-- <label
+      <!-- timepicker -->
+      <!-- <label
                 class="label"
                 for="heureDepart"
               >Heure de départ
@@ -84,24 +90,24 @@
                   </button>
                 </b-timepicker>
               </label> -->
-            <!-- search button -->
-            <div class="column has-text-centered">
-              <label
-                for="rechercher"
-                class="label"
-              >
-                <a
-                  id="rechercher"
-                  class="button"
-                  :href="checkUrlValid ? urlToCall : null"
-                  alt="Rechercher un covoiturage"
-                  title="Rechercher"
-                ><span>Rechercher</span>
-                </a>
-              </label>
-            </div>
-          </div>
-        </div>
+      <!-- search button -->
+      <div class="column has-text-centered">
+        <label
+          for="rechercher"
+          class="label"
+        >
+          <a
+            id="rechercher"
+            class="button"
+            :href="checkUrlValid ? urlToCall : null"
+            alt="Rechercher un covoiturage"
+            title="Rechercher"
+          ><span>Rechercher</span>
+          </a>
+        </label>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -210,6 +216,29 @@ export default {
       this[name + "AddressCountry"] = val.addressCountry;
       this[name + "AddressLocality"] = val.addressLocality;
     },
+    swap: function () {
+      if (this.originAddressLocality != null && this.destinationAddressLocality != null) {
+        let originLatitudeTemp = this.originLatitude
+        let originLongitudeTemp = this.originLongitude
+        let originStreetAddressTemp = this.originStreetAddress 
+        let originPostalCodeTemp = this.originPostalCode
+        let originAddressLocalityTemp = this.originAddressLocality
+        
+        this.originLatitude = this.destinationLatitude
+        this.originLongitude = this.destinationLongitude
+        this.originStreetAddress = this.destinationStreetAddress
+        this.originPostalCode = this.destinationPostalCode
+        this.originAddressLocality = this.destinationAddressLocality
+
+        this.destinationLatitude = originLatitudeTemp
+        this.destinationLongitude = originLongitudeTemp
+        this.destinationStreetAddress = originStreetAddressTemp
+        this.destinationPostalCode = originPostalCodeTemp
+        this.destinationAddressLocality = originAddressLocalityTemp
+
+         
+      }
+    }
   }
 };
 </script>
