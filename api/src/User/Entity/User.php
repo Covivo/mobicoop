@@ -46,6 +46,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use App\Right\Entity\UserRole;
 use App\Match\Entity\Mass;
+use App\Right\Entity\UserRight;
+use App\User\Controller\UserRightCheck;
 
 /**
  * A user.
@@ -73,7 +75,31 @@ use App\Match\Entity\Mass;
  *              "normalization_context"={"groups"={"read"}},
  *          },
  *          "put",
- *          "delete"
+ *          "delete",
+ *          "permission"={
+ *              "method"="GET",
+ *              "controller"=UserRightCheck::class,
+ *              "path"="/users/{id}/permission",
+ *              "swagger_context"={
+ *                  "parameters"={
+ *                      {
+ *                          "name" = "action",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "string",
+ *                          "description" = "The name of the action to check"
+ *                      },
+ *                      {
+ *                          "name" = "territory_id",
+ *                          "in" = "query",
+ *                          "required" = "false",
+ *                          "type" = "number",
+ *                          "format" = "integer",
+ *                          "description" = "The territory id"
+ *                      },
+ *                   }
+ *              }
+ *          }
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"id"})
@@ -263,6 +289,13 @@ class User implements UserInterface, EquatableInterface
     private $userRoles;
 
     /**
+     * @var ArrayCollection|null A user may have many specific rights.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Right\Entity\UserRight", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     */
+    private $userRights;
+
+    /**
      * @var ArrayCollection|null The mass import files of the user.
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\Mass", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
@@ -286,6 +319,7 @@ class User implements UserInterface, EquatableInterface
         $this->proposals = new ArrayCollection();
         $this->asks = new ArrayCollection();
         $this->userRoles = new ArrayCollection();
+        $this->userRights = new ArrayCollection();
         $this->masses = new ArrayCollection();
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
@@ -594,6 +628,34 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getUserRights()
+    {
+        return $this->userRights->getValues();
+    }
+    
+    public function addUserRight(UserRight $userRight): self
+    {
+        if (!$this->userRights->contains($userRight)) {
+            $this->userRights->add($userRight);
+            $userRight->setUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeUserRight(UserRight $userRight): self
+    {
+        if ($this->userRights->contains($userRight)) {
+            $this->userRights->removeElement($userRight);
+            // set the owning side to null (unless already changed)
+            if ($userRight->getUser() === $this) {
+                $userRight->setUser(null);
+            }
+        }
+        
+        return $this;
+    }
+
     public function getMasses()
     {
         return $this->masses->getValues();
@@ -637,9 +699,12 @@ class User implements UserInterface, EquatableInterface
     public function getRoles()
     {
         // we return an array of ROLE_***
+        // we only return the global roles, not the territory-specific roles
         $roles = [];
         foreach ($this->userRoles as $userRole) {
-            $roles[] = $userRole->getRole()->getName();
+            if (is_null($userRole->getTerritory())) {
+                $roles[] = $userRole->getRole()->getName();
+            }
         }
         return $roles;
     }

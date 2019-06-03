@@ -80,7 +80,7 @@ class Role
     /**
      * @var Role|null Parent role.
      *
-     * @ORM\OneToOne(targetEntity="\App\Right\Entity\Role", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\ManyToOne(targetEntity="\App\Right\Entity\Role")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","write"})
      */
