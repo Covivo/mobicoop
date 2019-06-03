@@ -59,8 +59,8 @@ class SectionRepository
         $query = $this->repository->createQueryBuilder('s')
         ->andWhere('s.position = :position')
         ->andWhere('s.article = :article')
-        ->setParameter('position',$section->getPosition()+1)
-        ->setParameter('article',$section->getArticle())
+        ->setParameter('position', $section->getPosition()+1)
+        ->setParameter('article', $section->getArticle())
         ->getQuery();
         
         return $query->getOneOrNullResult()
@@ -78,12 +78,11 @@ class SectionRepository
         $query = $this->repository->createQueryBuilder('s')
         ->andWhere('s.position = :position')
         ->andWhere('s.article = :article')
-        ->setParameter('position',$section->getPosition()-1)
-        ->setParameter('article',$section->getArticle())
+        ->setParameter('position', $section->getPosition()-1)
+        ->setParameter('article', $section->getArticle())
         ->getQuery();
         
         return $query->getOneOrNullResult()
         ;
     }
-    
 }

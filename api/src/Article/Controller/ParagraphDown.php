@@ -49,6 +49,6 @@ class ParagraphDown
      */
     public function __invoke(Paragraph $data): Paragraph
     {
-        return $this->articleManager->changeParagraphPosition($data,$this->articleManager::DIRECTION_DOWN);
+        return $this->articleManager->changeParagraphPosition($data, $this->articleManager::DIRECTION_DOWN);
     }
 }

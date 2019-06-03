@@ -49,6 +49,6 @@ class SectionUp
      */
     public function __invoke(Section $data): Section
     {
-        return $this->articleManager->changeSectionPosition($data,$this->articleManager::DIRECTION_UP);
+        return $this->articleManager->changeSectionPosition($data, $this->articleManager::DIRECTION_UP);
     }
 }

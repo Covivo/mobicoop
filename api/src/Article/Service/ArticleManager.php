@@ -123,5 +123,4 @@ class ArticleManager
         }
         return $paragraph;
     }
-
 }

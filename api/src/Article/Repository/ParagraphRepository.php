@@ -59,8 +59,8 @@ class ParagraphRepository
         $query = $this->repository->createQueryBuilder('p')
         ->andWhere('p.position = :position')
         ->andWhere('p.section = :section')
-        ->setParameter('position',$paragraph->getPosition()+1)
-        ->setParameter('section',$paragraph->getSection())
+        ->setParameter('position', $paragraph->getPosition()+1)
+        ->setParameter('section', $paragraph->getSection())
         ->getQuery();
         
         return $query->getOneOrNullResult()
@@ -78,12 +78,11 @@ class ParagraphRepository
         $query = $this->repository->createQueryBuilder('p')
         ->andWhere('p.position = :position')
         ->andWhere('p.section = :section')
-        ->setParameter('position',$paragraph->getPosition()-1)
-        ->setParameter('section',$paragraph->getSection())
+        ->setParameter('position', $paragraph->getPosition()-1)
+        ->setParameter('section', $paragraph->getSection())
         ->getQuery();
         
         return $query->getOneOrNullResult()
         ;
     }
-    
 }
