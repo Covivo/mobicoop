@@ -135,7 +135,12 @@ class MassManager
         $matrix = [
             "originalsJourneys" => [],
             "link" => [],
-            "data" => []
+            "data" => [],
+            "saved" => [
+                "distance" => 0,
+                "duration" => 0,
+                "co2" => 0
+            ]
         ];
 
         foreach ($persons as $person) {
@@ -205,16 +210,19 @@ class MassManager
         // Build the carpooler matrix
         $matrix = $this->buildCarpoolersMatrix($persons, $matrix);
 
-        // Store the original journey to calculate the gains between original and carpool
-        /*        foreach ($matrix["link"] as $idCarpooler1 => $idCarpooler2){
-                    foreach($persons as $person){
-                        if($person->getId()==$idCarpooler1){
-                            $matrix["originalsJourneys"][$idCarpooler1]["distance"] = $person->getDirection()->getDistance();
-                            $matrix["originalsJourneys"][$idCarpooler1]["duration"] = $person->getDirection()->getDuration();
-                            $matrix["originalsJourneys"][$idCarpooler1]["co2"] = UtilsService::computeCO2($person->getDirection()->getDistance());
-                        }
-                    }
-                }*/
+        // Compute the gains between original total and carpool total
+        $totalDurationCarpools = 0;
+        $totalDistanceCarpools = 0;
+        $totalCO2Carpools = 0;
+        foreach ($matrix["data"] as $currentData){
+            $totalDistanceCarpools += $currentData["distance"];
+            $totalDurationCarpools += $currentData["duration"];
+            $totalCO2Carpools += $currentData["co2"];
+        }
+        dump($totalDistanceCarpools);
+        $matrix["saved"]['distance'] = $computedData["totalTravelDistance"] - $totalDistanceCarpools;
+        $matrix["saved"]['duration'] = $computedData["totalTravelDuration"] - $totalDurationCarpools;
+        $matrix["saved"]['co2'] = $computedData["totalTravelDistanceCO2"] - $totalCO2Carpools;
 
         dump($matrix);
 
@@ -232,7 +240,7 @@ class MassManager
         foreach ($persons as $person) {
             $matchingsAsDriver = $person->getMatchingsAsDriver();
             $matchingsAsPassenger = $person->getMatchingsAsPassenger();
-            $matrix = $this->linkCarpoolersV2(array_merge($matchingsAsDriver, $matchingsAsPassenger), $matrix);
+            $matrix = $this->linkCarpoolers(array_merge($matchingsAsDriver, $matchingsAsPassenger), $matrix);
         }
 
         return $matrix;
@@ -245,45 +253,6 @@ class MassManager
      * @return array
      */
     private function linkCarpoolers(array $matchings, array $matrix)
-    {
-        $fastestMassPerson1Id = null;
-        $fastestMassPerson2Id = null;
-        $fastestDistance = 0;
-        $fastestDuration = 0;
-        $fastestCO2 = 0;
-        $fastest = 9999999999999999;
-        if (count($matchings)>0) {
-            foreach ($matchings as $matching) {
-                if ($matching->getDirection()->getDuration() < $fastest) {
-                    $fastest = $matching->getDirection()->getDuration();
-                    $fastestMassPerson1Id = $matching->getMassPerson1Id();
-                    $fastestMassPerson2Id = $matching->getMassPerson2Id();
-                    $fastestDuration = $matching->getDirection()->getDuration();
-                    $fastestDistance = $matching->getDirection()->getDistance();
-                    $fastestCO2 = UtilsService::computeCO2($matching->getDirection()->getDistance());
-                }
-            }
-            // As soon as they are linked, we ignore them both. We do not know if it's the best match of all the MassMatchings but it's good enough
-            if (!isset($matrix['link'][$fastestMassPerson1Id]) && !in_array($fastestMassPerson1Id, $matrix['link']) &&
-                !isset($matrix['link'][$fastestMassPerson2Id]) && !in_array($fastestMassPerson2Id, $matrix['link'])
-            ) {
-                $matrix['link'][$fastestMassPerson1Id] = $fastestMassPerson2Id;
-                $matrix['data'][$fastestMassPerson1Id]['distance'] = $fastestDistance;
-                $matrix['data'][$fastestMassPerson1Id]['duration'] = $fastestDuration;
-                $matrix['data'][$fastestMassPerson1Id]['co2'] = $fastestCO2;
-            }
-        }
-
-        return $matrix;
-    }
-
-    /**
-     * Link carpoolers by keeping the fastest match for the current MassMatching
-     * @param array $matchings
-     * @param array $matrix
-     * @return array
-     */
-    private function linkCarpoolersV2(array $matchings, array $matrix)
     {
         if (count($matchings)>0) {
             $fastestMassPerson1Id = null;
