@@ -217,7 +217,7 @@ export default {
       this[name + "AddressLocality"] = val.addressLocality;
     },
     swap() {
-      if (this.originAddressLocality != null && this.destinationAddressLocality != null) {
+      if (this.originAddressLocality && this.destinationAddressLocality) {
         let originLatitudeTemp = this.originLatitude
         let originLongitudeTemp = this.originLongitude
         let originStreetAddressTemp = this.originStreetAddress 
