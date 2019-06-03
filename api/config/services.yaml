@@ -52,18 +52,23 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Article\Controller\:
+        resource: '../src/Article/Controller'
+        tags: ['controller.service_arguments']
+
     App\Carpool\Controller\:
         resource: '../src/Carpool/Controller'
         tags: ['controller.service_arguments']
-        
-    App\Rdex\Controller\:
-        resource: '../src/Rdex/Controller'
-        tags: ['controller.service_arguments']
-        
+
     'App\Carpool\Filter\LocalityFilter':
         # Uncomment only if autoconfiguration isn't enabled
         #tags: [ 'api_platform.filter' ]
 
+    App\Rdex\Controller\:
+        resource: '../src/Rdex/Controller'
+        tags: ['controller.service_arguments']
+        
     App\Geography\Controller\:
         resource: '../src/Geography/Controller'
         tags: ['controller.service_arguments']
