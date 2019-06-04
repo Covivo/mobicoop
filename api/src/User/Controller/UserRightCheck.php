@@ -67,7 +67,7 @@ class UserRightCheck
                 $territory = $this->territoryRepository->find($this->request->get("territory"));
             }
             // we search if the user has the permission
-            $permission = $this->permissionManager->userHasPermission($data,$right,$territory);
+            $permission = $this->permissionManager->userHasPermission($data, $right, $territory);
         }
         return new Response(json_encode(['permission'=>$permission]));
     }

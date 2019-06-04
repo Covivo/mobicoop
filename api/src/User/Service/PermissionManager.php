@@ -78,7 +78,7 @@ class PermissionManager
         // we check if the user has a role that has the right to do the action
         foreach ($user->getUserRoles() as $userRole) {
             if (is_null($userRole->getTerritory()) || $userRole->getTerritory() == $territory) {
-                if ($this->roleHasRight($userRole->getRole(),$right)) {
+                if ($this->roleHasRight($userRole->getRole(), $right)) {
                     return true;
                 }
             }
@@ -105,7 +105,7 @@ class PermissionManager
     // check if a role has a right
     // recursive if the role has children
     private function roleHasRight(Role $role, Right $right)
-    {   
+    {
         foreach ($role->getRights() as $uright) {
             if ($uright->getName() == $right->getName()) {
                 return true;
@@ -120,7 +120,7 @@ class PermissionManager
         $permission = false;
         // we check if the children of the role have the right
         foreach ($this->roleRepository->findChildren($role) as $child) {
-            $permission = $this->roleHasRight($child,$right);
+            $permission = $this->roleHasRight($child, $right);
         }
         return $permission;
     }
