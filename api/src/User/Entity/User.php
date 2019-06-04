@@ -90,7 +90,7 @@ use App\User\Controller\UserRightCheck;
  *                          "description" = "The name of the action to check"
  *                      },
  *                      {
- *                          "name" = "territory_id",
+ *                          "name" = "territory",
  *                          "in" = "query",
  *                          "required" = "false",
  *                          "type" = "number",

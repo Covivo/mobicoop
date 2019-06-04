@@ -23,19 +23,17 @@
 
 namespace App\Right\Repository;
 
-use App\Right\Entity\Right;
-use App\User\Entity\User;
+use App\Right\Entity\Role;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use App\Geography\Entity\Territory;
 
 /**
- * @method Right|null find($id, $lockMode = null, $lockVersion = null)
- * @method Right|null findOneBy(array $criteria, array $orderBy = null)
- * @method Right[]    findAll()
- * @method Right[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Role|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Role|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Role[]    findAll()
+ * @method Role[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class RightRepository
+class RoleRepository
 {
     /**
      * @var EntityRepository
@@ -47,34 +45,23 @@ class RightRepository
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->repository = $entityManager->getRepository(Right::class);
+        $this->repository = $entityManager->getRepository(Role::class);
     }
 
     /**
-     * Find the children of a given right.
+     * Find the children of a given Role.
      *
-     * @param Right $right
+     * @param Role $role
      * @return void
      */
-    public function findChildren(Right $right)
+    public function findChildren(Role $role)
     {
         $query = $this->repository->createQueryBuilder('r')
         ->andWhere('r.parent = :parent')
-        ->setParameter('parent', $right)
+        ->setParameter('parent', $role)
         ->getQuery();
         
         return $query->getResult()
         ;
-    }
-
-    /**
-     * Find right by name.
-     *
-     * @param string $name
-     * @return Right
-     */
-    public function findByName(string $name)
-    {
-        return $this->repository->findOneBy(['name'=>$name]);
     }
 }

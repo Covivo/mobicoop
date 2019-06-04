@@ -28,6 +28,9 @@ use Psr\Log\LoggerInterface;
 use App\User\Entity\User;
 use App\Geography\Entity\Territory;
 use App\Right\Repository\RightRepository;
+use App\Right\Entity\Right;
+use App\Right\Entity\Role;
+use App\Right\Repository\RoleRepository;
 
 /**
  * Permission manager service.
@@ -39,48 +42,44 @@ class PermissionManager
     private $entityManager;
     private $logger;
     private $rightRepository;
+    private $roleRepository;
 
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, RightRepository $rightRepository)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, RightRepository $rightRepository, RoleRepository $roleRepository)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->rightRepository = $rightRepository;
+        $this->roleRepository = $roleRepository;
     }
 
     /**
-     * Check if a user has a permission on an action, eventually on a given territory
+     * Check if a user has a permission on an right, eventually on a given territory
      *
      * @param User $user
-     * @param string $action
+     * @param Right $right
      * @param Territory|null $territory
      * @return void
      */
-    public function userHasPermission(User $user, string $action, ?Territory $territory=null): bool
+    public function userHasPermission(User $user, Right $right, Territory $territory=null): bool
     {
         // we first check if the user is seated on the iron throne
-        if (in_array('ROLE_SUPER_ADMIN',$user->getRoles())) {
+        if (in_array('ROLE_SUPER_ADMIN', $user->getRoles())) {
             // King of the Andals and the First Men, Lord of the Seven Kingdoms, and Protector of the Realm
             return true;
         }
 
-        // we check if a role of the user has the right to do the action
+        // todo : maybe replace the following code by a DQL request...
+
+        // we check if the user has a role that has the right to do the action
         foreach ($user->getUserRoles() as $userRole) {
             if (is_null($userRole->getTerritory()) || $userRole->getTerritory() == $territory) {
-                foreach ($userRole->getRights() as $right) {
-                    if ($right->getName() == $action) {
-                        return true;
-                    } else {
-                        foreach ($this->rightRepository->findChildren($right) as $child) {
-                            if ($child->getName() == $action) {
-                                return true;
-                            }
-                        }
-                    }
+                if ($this->roleHasRight($userRole->getRole(),$right)) {
+                    return true;
                 }
             }
         }
@@ -88,14 +87,12 @@ class PermissionManager
         // we check if a the user has the specific right to do the action
         foreach ($user->getUserRights() as $userRight) {
             if (is_null($userRight->getTerritory()) || $userRight->getTerritory() == $territory) {
-                foreach ($userRight->getRights() as $right) {
-                    if ($right->getName() == $action) {
-                        return true;
-                    } else {
-                        foreach ($this->rightRepository->findChildren($right) as $child) {
-                            if ($child->getName() == $action) {
-                                return true;
-                            }
+                if ($userRight->getRight()->getName() == $right->getName()) {
+                    return true;
+                } else {
+                    foreach ($this->rightRepository->findChildren($userRight->getRight()) as $child) {
+                        if ($child->getName() == $right->getName()) {
+                            return true;
                         }
                     }
                 }
@@ -103,5 +100,28 @@ class PermissionManager
         }
 
         return false;
+    }
+
+    // check if a role has a right
+    // recursive if the role has children
+    private function roleHasRight(Role $role, Right $right)
+    {   
+        foreach ($role->getRights() as $uright) {
+            if ($uright->getName() == $right->getName()) {
+                return true;
+            } else {
+                foreach ($this->rightRepository->findChildren($uright) as $child) {
+                    if ($child->getName() == $right->getName()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        $permission = false;
+        // we check if the children of the role have the right
+        foreach ($this->roleRepository->findChildren($role) as $child) {
+            $permission = $this->roleHasRight($child,$right);
+        }
+        return $permission;
     }
 }

@@ -23,9 +23,12 @@
 
 namespace App\User\Controller;
 
+use Symfony\Component\HttpFoundation\RequestStack;
 use App\User\Service\PermissionManager;
 use App\User\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
+use App\Geography\Repository\TerritoryRepository;
+use App\Right\Repository\RightRepository;
 
 /**
  * Controller class for user right check.
@@ -34,11 +37,17 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class UserRightCheck
 {
+    private $request;
     private $permissionManager;
+    private $territoryRepository;
+    private $rightRepository;
 
-    public function __construct(PermissionManager $permissionManager)
+    public function __construct(RequestStack $requestStack, PermissionManager $permissionManager, TerritoryRepository $territoryRepository, RightRepository $rightRepository)
     {
+        $this->request = $requestStack->getCurrentRequest();
         $this->permissionManager = $permissionManager;
+        $this->territoryRepository = $territoryRepository;
+        $this->rightRepository = $rightRepository;
     }
 
     /**
@@ -50,8 +59,15 @@ class UserRightCheck
     public function __invoke(User $data): Response
     {
         $permission = false;
-        if ($this->request->get("action")) {
-            $permission = $this->permissionManager->userHasPermission($data,$this->request->get("action"));
+        // we check if the action exists
+        if ($this->request->get("action") && $right = $this->rightRepository->findByName($this->request->get("action"))) {
+            // the action exists, we check if we limit to a territory
+            $territory = null;
+            if ($this->request->get("territory")) {
+                $territory = $this->territoryRepository->find($this->request->get("territory"));
+            }
+            // we search if the user has the permission
+            $permission = $this->permissionManager->userHasPermission($data,$right,$territory);
         }
         return new Response(json_encode(['permission'=>$permission]));
     }
