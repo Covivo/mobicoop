@@ -43,53 +43,6 @@
           />
         </label>
       </div>
-      <!-- Commented and not removed because it can be usefull later if we'll implement the possibility to choose a date and an hour for the simple search -->
-      <!-- datepicker -->
-      <!-- <label
-                class="label"
-                for="dateDepart"
-              >Date de départ
-                <b-datepicker
-                  id="dateDepart"
-                  v-model="outwardDate"
-                  :placeholder="'Date de départ...'"
-                  title="Date de départ"
-                  :day-names="daysShort"
-                  :month-names="months"
-                  :first-day-of-week="1"
-                  position="is-top-right"
-                  icon-pack="fas"
-                  editable
-                />
-              </label> -->
-      <!-- timepicker -->
-      <!-- <label
-                class="label"
-                for="heureDepart"
-              >Heure de départ
-                <b-timepicker
-                  id="heureDepart"
-                  v-model="outwardTime"
-                  placeholder="Heure de départ..."
-                  title="Heure de départ"
-                >
-                  <button
-                    class="button is-mobicoopgreen"
-                    @click="outwardTime = new Date()"
-                  >
-                    <b-icon icon="clock" />
-                    <span>Maintenant</span>
-                  </button>
-                  <button
-                    class="button is-mobicooppink"
-                    @click="outwardTime = null"
-                  >
-                    <b-icon icon="close" />
-                    <span>Effacer</span>
-                  </button>
-                </b-timepicker>
-              </label> -->
-      <!-- search button -->
       <div class="column has-text-centered">
         <label
           for="rechercher"
@@ -155,16 +108,8 @@ export default {
         "Novembre",
         "Décembre"
       ],
-      originLatitude: null,
-      originLongitude: null,
-      originStreetAddress : null,
-      originPostalCode: null,
-      originAddressLocality: null,
-      destinationLatitude: null,
-      destinationLongitude: null,
-      destinationStreetAddress: null,
-      destinationPostalCode: null,
-      destinationAddressLocality: null,
+      origin: {},
+      destination: {},
       outwardDate: new Date(), 
       outwardTime: new Date(),
       baseUrl: window.location.origin,
@@ -174,7 +119,7 @@ export default {
   computed: {
     // check if the minimal infos are available to have a valid url to launch the search 
     checkUrlValid(){
-      return this.originAddressLocality && this.destinationAddressLocality && this.originLatitude && this.originLongitude && this.destinationLatitude && this.destinationLongitude && this.outwardDate && this.outwardTime 
+      return this.origin.addressLocality && this.destination.addressLocality && this.origin.latitude && this.origin.longitude && this.destination.latitude && this.destination.longitude && this.outwardDate && this.outwardTime 
     },
     // formate the date
     dateFormated() {
@@ -186,57 +131,40 @@ export default {
     },
     // formate the addresses and return nothing if not defined
     originStreetAddressFormated() {
-      let originStreetAddress = this.originStreetAddress.trim().toLowerCase().replace(/ /g, '+')
+      let originStreetAddress = this.origin.streetAddress.trim().toLowerCase().replace(/ /g, '+')
       return originStreetAddress !="" ? `${originStreetAddress}+` : "";
     },
     destinationStreetAddressFormated() {
-      let destinationStreetAddress = this.destinationStreetAddress.trim().toLowerCase().replace(/ /g, '+')
+      let destinationStreetAddress = this.destination.streetAddress.trim().toLowerCase().replace(/ /g, '+')
       return destinationStreetAddress !="" ? `${destinationStreetAddress}+` : "";
     },
     // formate the postalCodes and return nothing if not defined
     originPostalCodeFormated() {
-      return this.originPostalCode ? `${this.originPostalCode}+` : "";
+      return this.originPostalCode ? `${this.origin.postalCode}+` : "";
     },
     destinationPostalCodeFormated() {
-      return this.destinationPostalCode ? `${this.destinationPostalCode}+` : "";
+      return this.destinationPostalCode ? `${this.destination.postalCode}+` : "";
     },
     // creation of the url to call
     urlToCall() {
-      return `${this.baseUrl}/${this.route}/${this.originStreetAddressFormated}${this.originPostalCodeFormated}${this.originAddressLocality}/${this.destinationStreetAddressFormated}${this.destinationPostalCodeFormated}${this.destinationAddressLocality}/${this.originLatitude}/${this.originLongitude}/${this.destinationLatitude}/${this.destinationLongitude}/${this.dateFormated}${this.timeFormated}/resultats`;  
+      return `${this.baseUrl}/${this.route}/${this.originStreetAddressFormated}${this.originPostalCodeFormated}${this.origin.addressLocality}/${this.destinationStreetAddressFormated}${this.destinationPostalCodeFormated}${this.destination.addressLocality}/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.dateFormated}${this.timeFormated}/resultats`;  
     } 
   },
 
   methods: {
     selectedGeo(val) {
       let name = val.name;
-      this[name + "Latitude"] = val.latitude;
-      this[name + "Longitude"] = val.longitude;
-      this[name + "StreetAddress"] = val.streetAddress;
-      this[name + "PostalCode"] = val.postalCode;
-      this[name + "AddressCountry"] = val.addressCountry;
-      this[name + "AddressLocality"] = val.addressLocality;
+      this[name] = val;
+
+      
     },
     swap() {
-      if (this.originAddressLocality && this.destinationAddressLocality) {
-        let originLatitudeTemp = this.originLatitude
-        let originLongitudeTemp = this.originLongitude
-        let originStreetAddressTemp = this.originStreetAddress 
-        let originPostalCodeTemp = this.originPostalCode
-        let originAddressLocalityTemp = this.originAddressLocality
-        
-        this.originLatitude = this.destinationLatitude
-        this.originLongitude = this.destinationLongitude
-        this.originStreetAddress = this.destinationStreetAddress
-        this.originPostalCode = this.destinationPostalCode
-        this.originAddressLocality = this.destinationAddressLocality
 
-        this.destinationLatitude = originLatitudeTemp
-        this.destinationLongitude = originLongitudeTemp
-        this.destinationStreetAddress = originStreetAddressTemp
-        this.destinationPostalCode = originPostalCodeTemp
-        this.destinationAddressLocality = originAddressLocalityTemp
-        
-      }
+      let tempOrigin = { ...this.origin }
+      this.origin = { ...this.destination }
+      this.destination = {...tempOrigin}
+      this.origin.name = "origin"
+      this.destination.name = "destination"
     }
   }
 };
