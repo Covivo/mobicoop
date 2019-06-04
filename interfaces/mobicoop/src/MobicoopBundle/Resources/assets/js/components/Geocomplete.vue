@@ -4,7 +4,7 @@
       <b-autocomplete
         :id="name"
         :data="data"
-        field="concatenedAddr"
+        :custom-formatter="test" 
         :placeholder="placeholder"
         :open-on-focus="true"
         icon-pack="fa"
@@ -57,13 +57,10 @@ export default {
     name: defaultString,
     required: defaultString,
     placeholder: defaultString,
-    iclass: defaultString,
-    streetaddress: defaultString,
-    postalcode: defaultString,
-    addresslocality: defaultString,
-    addresscountry: defaultString,
-    longitude: defaultString,
-    latitude: defaultString
+    selected: {
+      type: Object,
+      default: () => {}
+    }
   },
   data() {
     return this.initialData();
@@ -72,15 +69,7 @@ export default {
     initialData() {
       return {
         focus: false,
-        valstreetAddress: "",
-        valpostalCode: "",
-        valaddressLocality: "",
-        valaddressCountry: "",
-        vallongitude: 0,
-        vallatitude: 0,
-        address: "",
         data: [],
-        selected: null,
         isFetching: false,
         nbOfRequest: 0
       };
@@ -117,9 +106,13 @@ export default {
         })
     }, 700),
     onSelected(value) {
-      this.selected = value;
+      // this.selected = value;
       this.$emit("geoSelected", { ...value, name: this.name });
       // this.focus = false;
+    },
+    test() {
+      console.error(this.selected.concatenedAddr)
+      return this.selected.concatenedAddr + "test"
     }
   }
 };

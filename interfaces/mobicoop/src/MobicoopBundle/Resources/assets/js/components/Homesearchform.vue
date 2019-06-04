@@ -16,6 +16,7 @@
             title="Depuis"
             aria-label="Départ"
             :url="geoSearchUrl"
+            :selected="origin"
             @geoSelected="selectedGeo"
           />
         </label>
@@ -39,6 +40,7 @@
             placeholder="Lieu d'arrivée"
             title="Vers"
             :url="geoSearchUrl"
+            :selected="destination"
             @geoSelected="selectedGeo"
           />
         </label>
@@ -155,7 +157,6 @@ export default {
     selectedGeo(val) {
       let name = val.name;
       this[name] = val;
-
       
     },
     swap() {
