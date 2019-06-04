@@ -106,6 +106,7 @@ export default {
         })
     }, 700),
     onSelected(value) {
+      console.error(value)
       // this.selected = value;
       this.$emit("geoSelected", { ...value, name: this.name });
       // this.focus = false;
