@@ -28,7 +28,7 @@ use Mobicoop\Bundle\MobicoopBundle\Article\Service\ArticleManager;
 
 /**
  * Controller class for articles actions.
- * 
+ *
  */
 class ArticleController extends AbstractController
 {
@@ -41,7 +41,7 @@ class ArticleController extends AbstractController
      *
      */
     public function showProject(ArticleManager $articleManager)
-    {   
+    {
         return $this->render('@Mobicoop/article/article.html.twig', [
             'article' => $articleManager->getArticle(self::PROJECT),
         ]);
@@ -52,7 +52,7 @@ class ArticleController extends AbstractController
      *
      */
     public function showCgu(ArticleManager $articleManager)
-    {   
+    {
         return $this->render('@Mobicoop/article/article.html.twig', [
             'article' => $articleManager->getArticle(self::CGU),
         ]);
@@ -60,10 +60,10 @@ class ArticleController extends AbstractController
 
     /**
      * Display of the news page
-     * 
+     *
      */
     public function showNews(ArticleManager $articleManager)
-    {   
+    {
         return $this->render('@Mobicoop/article/article.html.twig', [
             'article' => $articleManager->getArticle(self::NEWS),
         ]);
