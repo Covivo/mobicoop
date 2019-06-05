@@ -7,16 +7,20 @@
 {% endblock %}
 {% block body %}
     <div class="container">
+    {% if article %}
         <h1 class="title is-size-1">{{ article.title }}</h1>
         {% for section in article.sections %}
                 <h2 class="title">{{ section.title }}</h2>
                 <h3 class="subtitle">{{ section.subTitle }}</h3>
-                {% for paragraph in  section.paragraphs %}
+                {% for paragraph in section.paragraphs %}
                     <div class="paragraph has-text-justified">
                         <p>{{ paragraph.text }}</p>
                     </div>
                 {% endfor %}
         {% endfor %}
+    {% else %}
+         <h1 class="title is-size-1">Oups... Cet article n'existe pas encore.</h1>     
+    {% endif %}    
     </div>
 {% endblock %}
 {% block javascripts %}
