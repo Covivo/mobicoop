@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Service;
+namespace App\Right\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -31,6 +31,8 @@ use App\Right\Repository\RightRepository;
 use App\Right\Entity\Right;
 use App\Right\Entity\Role;
 use App\Right\Repository\RoleRepository;
+use App\Right\Entity\Permission;
+use App\Right\Entity\UserRole;
 
 /**
  * Permission manager service.
@@ -60,17 +62,29 @@ class PermissionManager
     /**
      * Check if a user has a permission on an right, eventually on a given territory
      *
-     * @param User $user
      * @param Right $right
+     * @param User|null $user
      * @param Territory|null $territory
      * @return void
      */
-    public function userHasPermission(User $user, Right $right, Territory $territory=null): bool
+    public function userHasPermission(Right $right, ?User $user, Territory $territory=null): Permission
     {
+        $permission = new Permission(1);
+        $permission->setPermission(false);
+        // if no user is passed we consider the basic user
+        if (!$user instanceof User) {
+            $user = new User();
+            $userRole = new UserRole();
+            $userRole->setUser($user);
+            $userRole->setRole($this->roleRepository->find(Role::DEFAULT_ROLE));
+            $user->addUserRole($userRole);
+        }
+
         // we first check if the user is seated on the iron throne
         if (in_array('ROLE_SUPER_ADMIN', $user->getRoles())) {
             // King of the Andals and the First Men, Lord of the Seven Kingdoms, and Protector of the Realm
-            return true;
+            $permission->setPermission(true);
+            return $permission;
         }
 
         // todo : maybe replace the following code by a DQL request...
@@ -79,7 +93,8 @@ class PermissionManager
         foreach ($user->getUserRoles() as $userRole) {
             if (is_null($userRole->getTerritory()) || $userRole->getTerritory() == $territory) {
                 if ($this->roleHasRight($userRole->getRole(), $right)) {
-                    return true;
+                    $permission->setPermission(true);
+                    return $permission;
                 }
             }
         }
@@ -88,18 +103,20 @@ class PermissionManager
         foreach ($user->getUserRights() as $userRight) {
             if (is_null($userRight->getTerritory()) || $userRight->getTerritory() == $territory) {
                 if ($userRight->getRight()->getName() == $right->getName()) {
-                    return true;
+                    $permission->setPermission(true);
+                    return $permission;
                 } else {
                     foreach ($this->rightRepository->findChildren($userRight->getRight()) as $child) {
                         if ($child->getName() == $right->getName()) {
-                            return true;
+                            $permission->setPermission(true);
+                            return $permission;
                         }
                     }
                 }
             }
         }
 
-        return false;
+        return $permission;
     }
 
     // check if a role has a right

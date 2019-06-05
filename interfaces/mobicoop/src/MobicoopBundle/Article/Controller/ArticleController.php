@@ -15,7 +15,7 @@
  *    GNU Affero General Public License for more details.
  *
  *    You should have received a copy of the GNU Affero General Public License
- *    along with this program.  If not, see <gnu.oruse Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;g/licenses>.
+ *    along with this program.  If not, see <gnu.org/licenses>.
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
@@ -38,8 +38,10 @@ class ArticleController extends AbstractController
      */
     public function showProject($id, ArticleManager $articleManager)
     {
+        $article = $articleManager->getArticle($id);
+        $this->denyAccessUnlessGranted('show', $article);
         return $this->render('@Mobicoop/article/project.html.twig', [
-            'article' => $articleManager->getArticle($id),
+            'article' => $article,
         ]);
     }
 
@@ -49,8 +51,10 @@ class ArticleController extends AbstractController
      */
     public function showCgu($id, ArticleManager $articleManager)
     {
+        $article = $articleManager->getArticle($id);
+        $this->denyAccessUnlessGranted('show', $article);
         return $this->render('@Mobicoop/article/cgu.html.twig', [
-            'article' => $articleManager->getArticle($id),
+            'article' => $article,
         ]);
     }
 
@@ -60,8 +64,10 @@ class ArticleController extends AbstractController
      */
     public function showNews($id, ArticleManager $articleManager)
     {
+        $article = $articleManager->getArticle($id);
+        $this->denyAccessUnlessGranted('show', $article);
         return $this->render('@Mobicoop/article/news.html.twig', [
-            'article' => $articleManager->getArticle($id),
+            'article' => $article,
         ]);
     }
 }

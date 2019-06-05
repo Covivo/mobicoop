@@ -81,8 +81,8 @@ services:
         resource: '../src/Match/Controller'
         tags: ['controller.service_arguments']
 
-    App\User\Controller\:
-        resource: '../src/User/Controller'
+    App\Right\Controller\:
+        resource: '../src/Right/Controller'
         tags: ['controller.service_arguments']
 
     # alias to allow this type to be autowired

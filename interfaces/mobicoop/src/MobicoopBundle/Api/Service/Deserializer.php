@@ -57,6 +57,7 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Article;
 use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Section;
 use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Paragraph;
+use Mobicoop\Bundle\MobicoopBundle\Permission\Entity\Permission;
 
 /**
  * Custom deserializer service.
@@ -119,6 +120,9 @@ class Deserializer
                 break;
             case Article::class:
                 return self::deserializeArticle($data);
+                break;
+            case Permission::class:
+                return self::deserializePermission($data);
                 break;
             default:
                 break;
@@ -561,6 +565,16 @@ class Deserializer
             $paragraph->setIri($data["@id"]);
         }
         return $paragraph;
+    }
+
+    private function deserializePermission(array $data): ?Permission
+    {
+        $permission = new Permission();
+        $permission = self::autoSet($permission, $data);
+        if (isset($data["@id"])) {
+            $permission->setIri($data["@id"]);
+        }
+        return $permission;
     }
     
     private function autoSet($object, $data)

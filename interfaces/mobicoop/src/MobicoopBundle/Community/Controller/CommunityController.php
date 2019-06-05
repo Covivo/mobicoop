@@ -14,7 +14,7 @@
  *    GNU Affero General Public License for more details.
  *
  *    You should have received a copy of the GNU Affero General Public License
- *    along with this program.  If not, see <gnu.oruse Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;g/licenses>.
+ *    along with this program.  If not, see <gnu.org/licenses>.
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
@@ -23,7 +23,6 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Community\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
@@ -37,23 +36,23 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Form\CommunityForm;
 class CommunityController extends AbstractController
 {
     /**
-     *
      * Get all communities.
      */
     public function list(CommunityManager $communityManager)
     {
+        $this->denyAccessUnlessGranted('list', new Community());
         return $this->render('@Mobicoop/community/communities.html.twig', [
             'hydra' => $communityManager->getCommunities(),
         ]);
     }
 
     /**
-     * @IsGranted("ROLE_USER")
      * Create a community
      */
     public function create(CommunityManager $communityManager, UserManager $userManager, Request $request)
     {
         $community = new Community();
+        $this->denyAccessUnlessGranted('create', $community);
         $community->setUser($userManager->getLoggedUser());
 
         $form = $this->createForm(CommunityForm::class, $community);
@@ -76,13 +75,14 @@ class CommunityController extends AbstractController
     }
 
     /**
-     * @IsGranted("ROLE_USER")
      * Show a community
      */
     public function show($id, CommunityManager $communityManager)
     {
+        $community = $communityManager->getCommunity($id);
+        $this->denyAccessUnlessGranted('show', $community);
         return $this->render('@Mobicoop/community/showCommunity.html.twig', [
-            'community' => $communityManager->getCommunity($id),
+            'community' => $community,
         ]);
     }
 }

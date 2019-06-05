@@ -211,21 +211,4 @@ class UserManager
         $this->logger->info('User Delete | FaiL');
         return false;
     }
-
-    /**
-     * Check if the user has a given permission
-     *
-     * @param User $user
-     * @param string $action
-     * @return bool
-     */
-    public function checkPermission(User $user, string $action)
-    {
-        $this->dataProvider->setFormat($this->dataProvider::RETURN_ARRAY);
-        $response = $this->dataProvider->getSubCollection($user->getId(), "permission", "permission", ['action'=>$action]);
-        if ($response->getCode() == 200) {
-            return $response->getValue()['permission'];
-        }
-        return false;
-    }
 }
