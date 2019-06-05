@@ -137,7 +137,7 @@ class MassManager
 
         // J'indexe le tableau des personnes pour y accéder ensuite en direct
         $personsIndexed = [];
-        foreach ($persons as $person){
+        foreach ($persons as $person) {
             $personsIndexed[$person->getId()] = $person;
         }
 
@@ -293,7 +293,6 @@ class MassManager
 
             // As soon as they are linked, we ignore them both. We do not know if it's the best match of all the MassMatchings but it's good enough
             if (count($matrix->getCarpoolsOfAPerson($fastestMassPerson1Id))==0 && count($matrix->getCarpoolsofAPerson($fastestMassPerson2Id))==0) {
-
                 $person1 = $personsIndexed[$fastestMassPerson1Id];
                 $person2 = $personsIndexed[$fastestMassPerson2Id];
 
