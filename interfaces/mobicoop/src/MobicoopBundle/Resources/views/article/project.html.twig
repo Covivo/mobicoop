@@ -7,6 +7,7 @@
 {% endblock %}
 {% block body %}
     <div class="container">
+    {% if article %}
         <h1 class="title is-size-1">{{ article.title }}</h1>
         {% for section in article.sections %}
                 <h2 class="title">{{ section.title }}</h2>
@@ -17,6 +18,9 @@
                     </div>
                 {% endfor %}
         {% endfor %}
+    {% else %}
+         <h1 class="title is-size-1">Oups... Cet article n'est pas terminé.</h1>   
+    {% endif %}
     </div>
 {% endblock %}
 {% block javascripts %}
