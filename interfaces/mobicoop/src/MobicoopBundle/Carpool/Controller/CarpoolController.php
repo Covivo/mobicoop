@@ -15,7 +15,7 @@
  *    GNU Affero General Public License for more details.
  *
  *    You should have received a copy of the GNU Affero General Public License
- *    along with this program.  If not, see <gnu.oruse Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;g/licenses>.
+ *    along with this program.  If not, see <gnu.org/licenses>.
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
@@ -45,11 +45,11 @@ class CarpoolController extends AbstractController
 {
     /**
      * Create a carpooling ad.
-     * @IsGranted("ROLE_USER")
      */
     public function ad(AdManager $adManager, UserManager $userManager, Request $request)
     {
         $ad = new Ad();
+        $this->denyAccessUnlessGranted('post',$ad);
         $ad->setRole(Ad::ROLE_BOTH);
         $ad->setType(Ad::TYPE_ONE_WAY);
         $ad->setFrequency(Ad::FREQUENCY_PUNCTUAL);
@@ -149,6 +149,8 @@ class CarpoolController extends AbstractController
     public function adPostResults($id, ProposalManager $proposalManager)
     {
         $proposal = $proposalManager->getProposal($id);
+
+        $this->denyAccessUnlessGranted('results',$proposal);
 
         // foreach ($proposal->getMatchingOffers() as $matching) {
         //     if ($matching->getProposalOffer() instanceof Proposal) {

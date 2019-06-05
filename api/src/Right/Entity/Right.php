@@ -82,6 +82,14 @@ class Right
     private $name;
 
     /**
+     * @var string The description of the right.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $description;
+
+    /**
      * @var Right|null Parent right.
      *
      * @ORM\ManyToOne(targetEntity="\App\Right\Entity\Right")
@@ -115,6 +123,18 @@ class Right
     public function setName(?string $name): self
     {
         $this->name = $name;
+        
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+    
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
         
         return $this;
     }

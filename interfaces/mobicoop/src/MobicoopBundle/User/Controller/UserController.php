@@ -15,7 +15,7 @@
  *    GNU Affero General Public License for more details.
  *
  *    You should have received a copy of the GNU Affero General Public License
- *    along with this program.  If not, see <gnu.oruse Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;g/licenses>.
+ *    along with this program.  If not, see <gnu.org/licenses>.
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
@@ -26,7 +26,6 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
@@ -53,6 +52,8 @@ class UserController extends AbstractController
      */
     public function login(AuthenticationUtils $authenticationUtils)
     {
+        $this->denyAccessUnlessGranted('login');
+
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
         
@@ -71,6 +72,8 @@ class UserController extends AbstractController
      */
     public function userSignUp(UserManager $userManager, Request $request)
     {
+        $this->denyAccessUnlessGranted('register');
+
         $user = new User();
 
         $form = $this->createForm(
@@ -102,23 +105,25 @@ class UserController extends AbstractController
 
     /**
      * User profile (get the current user).
-     * @IsGranted("ROLE_USER")
      */
     public function userProfile(UserManager $userManager)
     {
+        $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('profile',$user);
+
         return $this->render('@Mobicoop/user/detail.html.twig', [
-            'user' => $userManager->getLoggedUser()
+            'user' => $user
         ]);
     }
 
     /**
      * User profile update.
-     * @IsGranted("ROLE_USER")
      */
     public function userProfileUpdate(UserManager $userManager, Request $request)
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('update',$user);
 
         $form = $this->createForm(
             UserForm::class,
@@ -149,12 +154,12 @@ class UserController extends AbstractController
 
     /**
      * User password update.
-     * @IsGranted("ROLE_USER")
      */
     public function userPasswordUpdate(UserManager $userManager, Request $request)
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('password',$user);
 
         $form = $this->createForm(
             UserForm::class,
@@ -185,11 +190,11 @@ class UserController extends AbstractController
 
     /**
      * Delete the current user.
-     * @IsGranted("ROLE_USER")
      */
     public function userProfileDelete(UserManager $userManager, Request $request)
     {
         $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('delete',$user);
 
         $form = $this->createForm(
             UserDeleteForm::class,
@@ -216,12 +221,14 @@ class UserController extends AbstractController
 
     /**
      * Retrieve all proposals for the current user.
-     * @IsGranted("ROLE_USER")
      */
     public function userProposals(UserManager $userManager, ProposalManager $proposalManager)
     {
+        $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('proposals_self',$user);
+
         return $this->render('@Mobicoop/proposal/index.html.twig', [
-            'hydra' => $proposalManager->getProposals($userManager->getLoggedUser())
+            'hydra' => $proposalManager->getProposals($user)
         ]);
     }
 
