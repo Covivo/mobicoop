@@ -41,7 +41,7 @@ class MassManager
 {
     private $dataProvider;
     private $userManager;
-    
+
     /**
      * Constructor.
      * @param DataProvider $dataProvider The data provider that provides the Mass
@@ -135,6 +135,12 @@ class MassManager
 
         $persons = $mass->getPersons();
 
+        // J'indexe le tableau des personnes pour y accéder ensuite en direct
+        $personsIndexed = [];
+        foreach ($persons as $person){
+            $personsIndexed[$person->getId()] = $person;
+        }
+
         $tabCoords = [];
 
         $matrix = new MassMatrix();
@@ -209,7 +215,7 @@ class MassManager
 
 
         // Build the carpooler matrix
-        $matrix = $this->buildCarpoolersMatrix($persons, $matrix);
+        $matrix = $this->buildCarpoolersMatrix($persons, $matrix, $personsIndexed);
 
         // Compute the gains between original total and carpool total
         $totalDurationCarpools = 0;
@@ -233,14 +239,15 @@ class MassManager
      * Build the carpoolers matrix
      * @param ArrayCollection $persons
      * @param MassMatrix $matrix
+     * @param array $personsIndexed
      * @return MassMatrix
      */
-    private function buildCarpoolersMatrix(ArrayCollection $persons, MassMatrix $matrix)
+    private function buildCarpoolersMatrix(ArrayCollection $persons, MassMatrix $matrix, array $personsIndexed)
     {
         foreach ($persons as $person) {
             $matchingsAsDriver = $person->getMatchingsAsDriver();
             $matchingsAsPassenger = $person->getMatchingsAsPassenger();
-            $matrix = $this->linkCarpoolers(array_merge($matchingsAsDriver, $matchingsAsPassenger), $matrix);
+            $matrix = $this->linkCarpoolers(array_merge($matchingsAsDriver, $matchingsAsPassenger), $matrix, $personsIndexed);
         }
 
         return $matrix;
@@ -250,9 +257,10 @@ class MassManager
      * Link carpoolers by keeping the fastest match for the current MassMatching
      * @param array $matchings
      * @param MassMatrix $matrix
+     * @param array $personsIndexed
      * @return MassMatrix
      */
-    private function linkCarpoolers(array $matchings, MassMatrix $matrix)
+    private function linkCarpoolers(array $matchings, MassMatrix $matrix, array $personsIndexed)
     {
         if (count($matchings)>0) {
             $fastestMassPerson1Id = null;
@@ -285,9 +293,13 @@ class MassManager
 
             // As soon as they are linked, we ignore them both. We do not know if it's the best match of all the MassMatchings but it's good enough
             if (count($matrix->getCarpoolsOfAPerson($fastestMassPerson1Id))==0 && count($matrix->getCarpoolsofAPerson($fastestMassPerson2Id))==0) {
+
+                $person1 = $personsIndexed[$fastestMassPerson1Id];
+                $person2 = $personsIndexed[$fastestMassPerson2Id];
+
                 $matrix->addCarpools(new MassCarpool(
-                    new MassPerson($fastestMassPerson1Id),
-                    new MassPerson($fastestMassPerson2Id),
+                    $person1,
+                    $person2,
                     new MassJourney($fastestDistance, $fastestDuration, $fastestCO2)
                     ));
             }

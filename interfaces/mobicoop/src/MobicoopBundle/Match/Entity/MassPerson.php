@@ -31,7 +31,7 @@ use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Direction;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * An Mass.
+ * A Mass Person
  */
 class MassPerson implements Resource
 {

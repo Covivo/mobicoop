@@ -112,6 +112,9 @@ class Deserializer
             case Mass::class:
                 return self::deserializeMass($data);
                 break;
+            case MassPerson::class:
+                return self::deserializeMassPerson($data);
+                break;
             case Community::class:
                 return self::deserializeCommunity($data);
                 break;
