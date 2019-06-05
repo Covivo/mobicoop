@@ -68,7 +68,7 @@ class ArticleVoter extends Voter
 
         switch ($attribute) {
             case self::SHOW:
-                return $this->canShow($user);            
+                return $this->canShow($user);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -78,5 +78,4 @@ class ArticleVoter extends Voter
     {
         return $this->permissionManager->checkPermission('article_read', $user);
     }
-
 }

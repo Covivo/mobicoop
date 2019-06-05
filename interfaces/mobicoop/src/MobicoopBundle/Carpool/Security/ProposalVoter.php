@@ -64,7 +64,7 @@ class ProposalVoter extends Voter
 
         switch ($attribute) {
             case self::RESULTS:
-                return $this->canViewProposalResults($proposal,$user);            
+                return $this->canViewProposalResults($proposal, $user);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -78,5 +78,4 @@ class ProposalVoter extends Voter
         }
         return $this->permissionManager->checkPermission('proposal_results', $user);
     }
-
 }

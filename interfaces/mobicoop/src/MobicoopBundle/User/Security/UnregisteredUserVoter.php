@@ -54,5 +54,4 @@ class UnregisteredUserVoter extends Voter
 
         throw new \LogicException('This code should not be reached!');
     }
-
 }

@@ -62,10 +62,9 @@ class AdVoter extends Voter
 
         switch ($attribute) {
             case self::POST:
-                return true;            
+                return true;
         }
 
         throw new \LogicException('This code should not be reached!');
     }
-
 }

@@ -47,8 +47,8 @@ class RegisteredUserVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::PROFILE, 
-            self::UPDATE, 
+            self::PROFILE,
+            self::UPDATE,
             self::PASSWORD,
             self::DELETE,
             self::PROPOSALS_SELF
@@ -102,7 +102,6 @@ class RegisteredUserVoter extends Voter
 
     private function canDeleteSelf(User $user)
     {
-        return $this->permissionManager->checkPermission('user_delete_self',$user);
+        return $this->permissionManager->checkPermission('user_delete_self', $user);
     }
-
 }

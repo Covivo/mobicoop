@@ -72,11 +72,11 @@ class CommunityVoter extends Voter
 
         switch ($attribute) {
             case self::LIST:
-                return $this->canList($user);            
+                return $this->canList($user);
             case self::CREATE:
-                return $this->canCreate($user);            
+                return $this->canCreate($user);
             case self::SHOW:
-                return $this->canShow($user);            
+                return $this->canShow($user);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -96,5 +96,4 @@ class CommunityVoter extends Voter
     {
         return $this->permissionManager->checkPermission('community_read', $user);
     }
-
 }

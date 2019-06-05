@@ -49,7 +49,7 @@ class CarpoolController extends AbstractController
     public function ad(AdManager $adManager, UserManager $userManager, Request $request)
     {
         $ad = new Ad();
-        $this->denyAccessUnlessGranted('post',$ad);
+        $this->denyAccessUnlessGranted('post', $ad);
         $ad->setRole(Ad::ROLE_BOTH);
         $ad->setType(Ad::TYPE_ONE_WAY);
         $ad->setFrequency(Ad::FREQUENCY_PUNCTUAL);
@@ -150,7 +150,7 @@ class CarpoolController extends AbstractController
     {
         $proposal = $proposalManager->getProposal($id);
 
-        $this->denyAccessUnlessGranted('results',$proposal);
+        $this->denyAccessUnlessGranted('results', $proposal);
 
         // foreach ($proposal->getMatchingOffers() as $matching) {
         //     if ($matching->getProposalOffer() instanceof Proposal) {

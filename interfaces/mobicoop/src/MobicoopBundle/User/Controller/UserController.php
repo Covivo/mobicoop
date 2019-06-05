@@ -109,7 +109,7 @@ class UserController extends AbstractController
     public function userProfile(UserManager $userManager)
     {
         $user = $userManager->getLoggedUser();
-        $this->denyAccessUnlessGranted('profile',$user);
+        $this->denyAccessUnlessGranted('profile', $user);
 
         return $this->render('@Mobicoop/user/detail.html.twig', [
             'user' => $user
@@ -123,7 +123,7 @@ class UserController extends AbstractController
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = $userManager->getLoggedUser();
-        $this->denyAccessUnlessGranted('update',$user);
+        $this->denyAccessUnlessGranted('update', $user);
 
         $form = $this->createForm(
             UserForm::class,
@@ -159,7 +159,7 @@ class UserController extends AbstractController
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
-        $this->denyAccessUnlessGranted('password',$user);
+        $this->denyAccessUnlessGranted('password', $user);
 
         $form = $this->createForm(
             UserForm::class,
@@ -194,7 +194,7 @@ class UserController extends AbstractController
     public function userProfileDelete(UserManager $userManager, Request $request)
     {
         $user = $userManager->getLoggedUser();
-        $this->denyAccessUnlessGranted('delete',$user);
+        $this->denyAccessUnlessGranted('delete', $user);
 
         $form = $this->createForm(
             UserDeleteForm::class,
@@ -225,7 +225,7 @@ class UserController extends AbstractController
     public function userProposals(UserManager $userManager, ProposalManager $proposalManager)
     {
         $user = $userManager->getLoggedUser();
-        $this->denyAccessUnlessGranted('proposals_self',$user);
+        $this->denyAccessUnlessGranted('proposals_self', $user);
 
         return $this->render('@Mobicoop/proposal/index.html.twig', [
             'hydra' => $proposalManager->getProposals($user)

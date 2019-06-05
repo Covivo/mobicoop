@@ -211,5 +211,4 @@ class UserManager
         $this->logger->info('User Delete | FaiL');
         return false;
     }
-
 }
