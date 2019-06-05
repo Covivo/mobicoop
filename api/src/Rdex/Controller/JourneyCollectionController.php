@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -54,6 +55,10 @@ class JourneyCollectionController
     public function __invoke(array $data): Response
     {
         $response = new Response();
+        // if there are no parameters we stop without errors, in could be an api check, it shouldn't throw an error
+        if ($this->rdexManager->isEmptyRequest($this->request)) {
+            return $response;
+        }
         $validation = $this->rdexManager->validate($this->request);
         // if validation is an RdexError, we send an error array
         if (is_a($validation, RdexError::class)) {

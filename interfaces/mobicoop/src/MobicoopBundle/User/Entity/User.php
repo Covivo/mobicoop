@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
@@ -194,7 +195,12 @@ class User implements Resource, UserInterface, EquatableInterface
      * @Assert\NotBlank(groups={"signUp"})
      */
     private $conditions;
-        
+
+    /**
+     * @var Mass[]|null The mass import files of the user.
+     */
+    private $masses;
+
     public function __construct($id=null, $status=null)
     {
         if ($id) {
@@ -205,6 +211,7 @@ class User implements Resource, UserInterface, EquatableInterface
         $this->cars = new ArrayCollection();
         $this->proposals = new ArrayCollection();
         $this->asks = new ArrayCollection();
+        $this->masses = new ArrayCollection();
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -561,5 +568,20 @@ class User implements Resource, UserInterface, EquatableInterface
         }
 
         return true;
+    }
+
+    public function getMasses(): Collection
+    {
+        return $this->masses;
+    }
+
+    public function addMass(Mass $mass): self
+    {
+        if (!$this->masses->contains($mass)) {
+            $this->masses->add($mass);
+            $mass->setUser($this);
+        }
+
+        return $this;
     }
 }

@@ -23,9 +23,7 @@
 
 namespace App\Geography\Entity;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -35,15 +33,17 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use App\Carpool\Entity\WayPoint;
 use App\User\Entity\User;
+use CrEOF\Spatial\PHP\Types\Geometry\Point;
 
 /**
  * A postal address.
  *
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read","pt"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"read","pt","mass"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={},
@@ -70,7 +70,7 @@ class Address
      * @var string The house number.
      *
      * @ORM\Column(type="string", length=45, nullable=true)
-     * @Groups({"read","write","pt"})
+     * @Groups({"read","write","pt","mass"})
      */
     private $houseNumber;
 
@@ -78,7 +78,7 @@ class Address
      * @var string The street.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write","pt"})
+     * @Groups({"read","write","pt","mass"})
      * @Assert\NotBlank(groups={"mass"})
      */
     private $street;
@@ -87,7 +87,7 @@ class Address
      * @var string The full street address.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write","pt"})
+     * @Groups({"read","write","pt","mass"})
      */
     private $streetAddress;
 
@@ -95,7 +95,7 @@ class Address
      * @var string|null The postal code of the address.
      *
      * @ORM\Column(type="string", length=15, nullable=true)
-     * @Groups({"read","write","pt"})
+     * @Groups({"read","write","pt","mass"})
      * @Assert\NotBlank(groups={"mass"})
      */
     private $postalCode;
@@ -104,7 +104,7 @@ class Address
      * @var string|null The sublocality of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt"})
+     * @Groups({"read","write","pt","mass"})
      */
     private $subLocality;
 
@@ -112,7 +112,7 @@ class Address
      * @var string|null The locality of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt"})
+     * @Groups({"read","write","pt","mass"})
      * @Assert\NotBlank(groups={"mass"})
      */
     private $addressLocality;
@@ -121,7 +121,7 @@ class Address
      * @var string|null The locality admin of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt"})
+     * @Groups({"read","write","pt","mass"})
      */
     private $localAdmin;
 
@@ -129,7 +129,7 @@ class Address
      * @var string|null The county of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt"})
+     * @Groups({"read","write","pt","mass"})
      */
     private $county;
 
@@ -137,7 +137,7 @@ class Address
      * @var string|null The macro county of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt"})
+     * @Groups({"read","write","pt","mass"})
      */
     private $macroCounty;
 
@@ -145,7 +145,7 @@ class Address
      * @var string|null The region of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt"})
+     * @Groups({"read","write","pt","mass"})
      */
     private $region;
 
@@ -153,7 +153,7 @@ class Address
      * @var string|null The macro region of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt"})
+     * @Groups({"read","write","pt","mass"})
      */
     private $macroRegion;
 
@@ -161,7 +161,7 @@ class Address
      * @var string|null The country of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt"})
+     * @Groups({"read","write","pt","mass"})
      */
     private $addressCountry;
 
@@ -169,7 +169,7 @@ class Address
      * @var string|null The country code of the address.
      *
      * @ORM\Column(type="string", length=10, nullable=true)
-     * @Groups({"read","write","pt"})
+     * @Groups({"read","write","pt","mass"})
      */
     private $countryCode;
 
@@ -177,7 +177,7 @@ class Address
      * @var float|null The latitude of the address.
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write","pt"})
+     * @Groups({"read","write","pt","mass"})
      */
     private $latitude;
 
@@ -185,7 +185,7 @@ class Address
      * @var float|null The longitude of the address.
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write","pt"})
+     * @Groups({"read","write","pt","mass"})
      */
     private $longitude;
 
@@ -193,9 +193,16 @@ class Address
      * @var int|null The elevation of the address in metres.
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write","pt"})
+     * @Groups({"read","write","pt","mass"})
      */
     private $elevation;
+
+    /**
+     * @var string The geoJson point of the address.
+     * @ORM\Column(type="point", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $geoJson;
 
     /**
      * @var string|null The name of this address.
@@ -211,7 +218,6 @@ class Address
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="addresses")
      */
     private $user;
-
 
     /**
      * @var string|null Label for display
@@ -369,22 +375,22 @@ class Address
         $this->countryCode = $countryCode;
     }
 
-    public function getLatitude(): ?string
+    public function getLatitude()
     {
         return $this->latitude;
     }
 
-    public function setLatitude(?string $latitude)
+    public function setLatitude($latitude)
     {
         $this->latitude = $latitude;
     }
 
-    public function getLongitude(): ?string
+    public function getLongitude()
     {
         return $this->longitude;
     }
 
-    public function setLongitude(?string $longitude)
+    public function setLongitude($longitude)
     {
         $this->longitude = $longitude;
     }
@@ -397,6 +403,18 @@ class Address
     public function setElevation(?int $elevation)
     {
         $this->elevation = $elevation;
+    }
+
+    public function getGeoJson()
+    {
+        return $this->geoJson;
+    }
+    
+    public function setGeoJson($geoJson): self
+    {
+        $this->geoJson = $geoJson;
+        
+        return $this;
     }
 
     public function getName(): ?string
@@ -428,5 +446,20 @@ class Address
     public function setDisplayLabel(?string $displayLabel)
     {
         $this->displayLabel = $displayLabel;
+    }
+
+    // DOCTRINE EVENTS
+    
+    /**
+     * GeoJson representation.
+     *
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function setAutoGeoJson()
+    {
+        if (!is_null($this->getLatitude()) && !is_null($this->getLongitude())) {
+            $this->setGeoJson(new Point($this->getLongitude(), $this->getLatitude()));
+        }
     }
 }

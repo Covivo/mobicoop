@@ -59,8 +59,12 @@ class GeoSearcher
         $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input))->all();
         foreach ($geoResults as $geoResult) {
             $address = new Address();
-            $address->setLatitude((string)$geoResult->getCoordinates()->getLatitude());
-            $address->setLongitude((string)$geoResult->getCoordinates()->getLongitude());
+            if ($geoResult->getCoordinates() && $geoResult->getCoordinates()->getLatitude()) {
+                $address->setLatitude((string)$geoResult->getCoordinates()->getLatitude());
+            }
+            if ($geoResult->getCoordinates() && $geoResult->getCoordinates()->getLongitude()) {
+                $address->setLongitude((string)$geoResult->getCoordinates()->getLongitude());
+            }
             $address->setHouseNumber($geoResult->getStreetNumber());
             $address->setStreet($geoResult->getStreetName());
             $address->setStreetAddress($geoResult->getStreetName() ? trim(($geoResult->getStreetNumber() ? $geoResult->getStreetNumber() : '') . ' ' . $geoResult->getStreetName()) : null);
@@ -86,9 +90,12 @@ class GeoSearcher
                 }
             }
             $address->setPostalCode($geoResult->getPostalCode());
-            $address->setAddressCountry($geoResult->getCountry()->getName());
-            $address->setCountryCode($geoResult->getCountry()->getCode());
-
+            if ($geoResult->getCountry() && $geoResult->getCountry()->getName()) {
+                $address->setAddressCountry($geoResult->getCountry()->getName());
+            }
+            if ($geoResult->getCountry() && $geoResult->getCountry()->getCode()) {
+                $address->setCountryCode($geoResult->getCountry()->getCode());
+            }
 
             // Determine the more logical display label considering the params
             $displayLabelTab = [];

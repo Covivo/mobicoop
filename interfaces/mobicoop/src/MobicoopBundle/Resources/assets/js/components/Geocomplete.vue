@@ -32,7 +32,7 @@
                 <b v-if="props.option.postalCode">({{ props.option.postalCode }})</b>
               </small>
               <br>
-              <strong>{{ props.option.addressCountry.toUpperCase() }}</strong>
+              <strong v-if="props.option.addressCountry">{{ props.option.addressCountry.toUpperCase() }}</strong>
             </div>
           </div>
         </template>

@@ -59,7 +59,7 @@ class CarpoolController extends AbstractController
         $form = $this->createForm(AdForm::class, $ad, ['csrf_protection' => false]);
         $error = false;
         $success = false;
-        
+
         if ($request->isMethod('POST')) {
             $createToken = $request->request->get('createToken');
             if (!$this->isCsrfTokenValid('ad-create', $createToken)) {
@@ -76,7 +76,7 @@ class CarpoolController extends AbstractController
                 'error' => $error
             ]);
         }
-        
+
         // Not Valid populate error
         if (!$form->isValid()) {
             $error = [];
@@ -88,10 +88,10 @@ class CarpoolController extends AbstractController
                     }
                 }
             }
-            return $this->json(['error' => $error, 'success'=> $success]);
+            return $this->json(['error' => $error, 'success' => $success]);
         }
 
-        // Error happen durring proposol creation
+        // Error happen durring proposal creation
         try {
             $proposal = $adManager->createProposalFromAd($ad);
             $success = true;
@@ -99,7 +99,7 @@ class CarpoolController extends AbstractController
             $error = $err;
         }
 
-        return $this->json(['error' => $error, 'success'=> $success, 'proposal' => $proposal->getId()]);
+        return $this->json(['error' => $error, 'success' => $success, 'proposal' => $proposal->getId()]);
     }
 
     /**
@@ -134,16 +134,15 @@ class CarpoolController extends AbstractController
     {
         $params = [
             'provider' => $request->query->get('provider'),
-            'driver'=> $request->query->get('driver'),
-            'passenger'=> $request->query->get('pssenger'),
-            'from_latitude'=> $request->query->get('from_latitude'),
-            'from_longitude'=> $request->query->get('from_longitude'),
-            'to_latitude'=> $request->query->get('to_latitude'),
-            'to_longitude'=> $request->query->get('to_longitude')
+            'driver' => $request->query->get('driver'),
+            'passenger' => $request->query->get('passenger'),
+            'from_latitude' => $request->query->get('from_latitude'),
+            'from_longitude' => $request->query->get('from_longitude'),
+            'to_latitude' => $request->query->get('to_latitude'),
+            'to_longitude' => $request->query->get('to_longitude')
         ];
         return $this->json($externalJourneyManager->getExternalJourney($params, DataProvider::RETURN_JSON));
     }
-
     /**
      * Ad post results.
      */

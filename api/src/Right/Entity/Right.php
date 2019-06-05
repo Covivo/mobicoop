@@ -84,7 +84,7 @@ class Right
     /**
      * @var Right|null Parent right.
      *
-     * @ORM\OneToOne(targetEntity="\App\Right\Entity\Right", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\ManyToOne(targetEntity="\App\Right\Entity\Right")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","write"})
      */

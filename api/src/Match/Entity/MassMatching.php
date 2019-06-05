@@ -24,12 +24,23 @@
 namespace App\Match\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Geography\Entity\Direction;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * A potential matching between 2 persons from a mass file import.
  *
  * @ORM\Entity
+ * @ApiResource(
+ *      attributes={
+ *          "force_eager"=false,
+ *          "normalization_context"={"groups"={"mass"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"write"}}
+ *      },
+ *      collectionOperations={"get"},
+ *      itemOperations={"get"}
+ * )
  */
 class MassMatching
 {
@@ -43,14 +54,14 @@ class MassMatching
 
     /**
      * @var MassPerson The first person.
-     * @ORM\OneToOne(targetEntity="\App\Match\Entity\MassPerson", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\ManyToOne(targetEntity="\App\Match\Entity\MassPerson", cascade={"persist","remove"}, inversedBy="matchingsAsDriver")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $massPerson1;
 
     /**
      * @var MassPerson The second person.
-     * @ORM\OneToOne(targetEntity="\App\Match\Entity\MassPerson", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\ManyToOne(targetEntity="\App\Match\Entity\MassPerson", cascade={"persist","remove"}, inversedBy="matchingsAsPassenger")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $massPerson2;
@@ -59,14 +70,9 @@ class MassMatching
      * @var Direction|null The direction for the 2 persons to their final destination.
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
+     * @Groups("mass")
      */
     private $direction;
-
-    /**
-     * @var int|null The saved CO2 thanks to this matching.
-     * @ORM\Column(type="integer")
-     */
-    private $co2;
 
     public function getId(): ?int
     {
@@ -105,18 +111,6 @@ class MassMatching
     public function setDirection(?Direction $direction): self
     {
         $this->direction = $direction;
-
-        return $this;
-    }
-
-    public function getCo2(): int
-    {
-        return $this->co2;
-    }
-
-    public function setCo2(int $co2): self
-    {
-        $this->co2 = $co2;
 
         return $this;
     }

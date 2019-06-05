@@ -35,9 +35,12 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Event\Entity\Event;
 use App\Community\Entity\Community;
+use App\RelayPoint\Entity\RelayPoint;
+use App\RelayPoint\Entity\RelayPointType;
 use App\Image\Controller\CreateImageAction;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use App\User\Entity\User;
 
 /**
  * An image.
@@ -49,6 +52,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"write"}},
  *      },
  *      collectionOperations={
  *          "get",
@@ -203,7 +207,7 @@ class Image
     /**
      * @var Event|null The event associated with the image.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Event\Entity\Event", inversedBy="images")
+     * @ORM\ManyToOne(targetEntity="\App\Event\Entity\Event", inversedBy="images", cascade="persist")
      */
     private $event;
 
@@ -222,7 +226,7 @@ class Image
     /**
      * @var Community|null The community associated with the image.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="images")
+     * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="images", cascade="persist")
      */
     private $community;
 
@@ -245,11 +249,57 @@ class Image
     private $userFile;
     
     /**
+     * @var User|null The user associated with the image.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="images", cascade="persist")
+     */
+    private $user;
+
+    
+    /**
      * @var int|null The user id associated with the image.
      * @Groups({"write"})
      */
     private $userId;
+
+    /**
+     * @var RelayPoint|null The relay point associated with the image.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\RelayPoint\Entity\RelayPoint", inversedBy="images", cascade="persist")
+     */
+    private $relayPoint;
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="relaypoint", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     */
+    private $relayPointFile;
     
+    /**
+     * @var int|null The relay point id associated with the image.
+     * @Groups({"read","write"})
+     */
+    private $relayPointId;
+
+    /**
+     * @var RelayPointType|null The relay point type associated with the image.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\RelayPoint\Entity\RelayPointType", inversedBy="images", cascade="persist")
+     */
+    private $relayPointType;
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="relaypointtype", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     */
+    private $relayPointTypeFile;
+    
+    /**
+     * @var int|null The relay point type id associated with the image.
+     * @Groups({"read","write"})
+     */
+    private $relayPointTypeId;
+
     /**
      * @var array|null The versions of with the image.
      * @Groups({"read"})
@@ -529,10 +579,87 @@ class Image
     {
         return $this->userId;
     }
+
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+    
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+        
+        return $this;
+    }
     
     public function setUserId($userId)
     {
         $this->userId = $userId;
+    }
+
+    public function getRelayPoint(): ?RelayPoint
+    {
+        return $this->relayPoint;
+    }
+    
+    public function setRelayPoint(?RelayPoint $relayPoint): self
+    {
+        $this->relayPoint = $relayPoint;
+        
+        return $this;
+    }
+    
+    public function getRelayPointFile(): ?File
+    {
+        return $this->relayPointFile;
+    }
+    
+    public function setRelayPointFile(?File $relayPointFile)
+    {
+        $this->relayPointFile = $relayPointFile;
+    }
+    
+    public function getRelayPointId(): ?int
+    {
+        return $this->relayPointId;
+    }
+    
+    public function setRelayPointId($relayPointId)
+    {
+        $this->relayPointId = $relayPointId;
+    }
+
+    public function getRelayPointType(): ?RelayPointType
+    {
+        return $this->relayPointType;
+    }
+    
+    public function setRelayPointType(?RelayPointType $relayPointType): self
+    {
+        $this->relayPointType = $relayPointType;
+        
+        return $this;
+    }
+    
+    public function getRelayPointTypeFile(): ?File
+    {
+        return $this->relayPointTypeFile;
+    }
+    
+    public function setRelayPointTypeFile(?File $relayPointTypeFile)
+    {
+        $this->relayPointTypeFile = $relayPointTypeFile;
+    }
+    
+    public function getRelayPointTypeId(): ?int
+    {
+        return $this->relayPointTypeId;
+    }
+    
+    public function setRelayPointTypeId($relayPointTypeId)
+    {
+        $this->relayPointTypeId = $relayPointTypeId;
     }
     
     public function getVersions(): ?array
@@ -549,6 +676,8 @@ class Image
     {
         $this->setEventFile(null);
         $this->setUserFile(null);
+        $this->setRelayPointFile(null);
+        $this->setRelayPointTypeFile(null);
     }
     
     // DOCTRINE EVENTS

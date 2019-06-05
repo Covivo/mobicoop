@@ -67,7 +67,7 @@ class CommunityUser
     /**
      * @var Community The community.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community")
+     * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="communityUsers")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      */

@@ -24,10 +24,12 @@
 namespace App\Geography\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use CrEOF\Spatial\PHP\Types\Geometry\Polygon;
+use CrEOF\Spatial\PHP\Types\Geometry\Point;
+use CrEOF\Spatial\PHP\Types\Geography\LineString;
 
 /**
  * Direction entity
@@ -36,6 +38,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  *
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
@@ -61,63 +64,70 @@ class Direction
     /**
      * @var int The total distance of the direction in meter.
      * @ORM\Column(type="integer")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $distance;
     
     /**
      * @var int The total duration of the direction in milliseconds.
      * @ORM\Column(type="integer")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $duration;
     
     /**
      * @var int The total ascend of the direction in meter.
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $ascend;
     
     /**
      * @var int The total descend of the direction in meter.
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $descend;
 
     /**
      * @var float The minimum longitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $bboxMinLon;
 
     /**
      * @var float The minimum latitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $bboxMinLat;
     
     /**
      * @var float The maximum longitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $bboxMaxLon;
     
     /**
      * @var float The maximum latitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $bboxMaxLat;
+
+    /**
+     * @var string The geoJson bounding box of the direction.
+     * @ORM\Column(type="polygon", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $geoJsonBbox;
     
     /**
      * @var int|null The initial bearing of the direction in degrees.
      * @ORM\Column(type="integer",nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $bearing;
 
@@ -129,16 +139,25 @@ class Direction
     private $detail;
 
     /**
+     * @var string The geoJson linestring detail of the direction.
+     * @ORM\Column(type="linestring", nullable=true)
+     * Note : the detail should be a MULTIPOINT, but we can't use it as it's not supported by the version of doctrine2 spatial package for mysql 5.7 (?)
+     * Todo : try to create a multipoint custom type for doctrine 2 spatial ?
+     * @Groups({"read","write"})
+     */
+    private $geoJsonDetail;
+
+    /**
      * @var string The textual encoded snapped waypoints of the direction.
      * @ORM\Column(type="text")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $snapped;
     
     /**
      * @var string The encoding format of the detail.
      * @ORM\Column(type="string", length=45)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","mass"})
      */
     private $format;
 
@@ -148,6 +167,12 @@ class Direction
      * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Zone", mappedBy="direction", cascade={"persist","remove"}, orphanRemoval=true)
      */
     private $zones;
+
+    /**
+     * @var int|null The CO2 emission for this direction.
+     * @Groups({"read","mass"})
+     */
+    private $co2;
 
     /**
      * @var Address[]|null The decoded points (from detail) of the direction.
@@ -173,6 +198,7 @@ class Direction
     {
         $this->id = self::DEFAULT_ID;
         $this->zones = new ArrayCollection();
+        $this->territories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -276,6 +302,18 @@ class Direction
         return $this;
     }
 
+    public function getGeoJsonBbox()
+    {
+        return $this->geoJsonBbox;
+    }
+    
+    public function setGeoJsonBbox($geoJsonBbox): self
+    {
+        $this->geoJsonBbox = $geoJsonBbox;
+        
+        return $this;
+    }
+
     public function getBearing(): ?int
     {
         return $this->bearing;
@@ -296,6 +334,18 @@ class Direction
     public function setDetail(string $detail): self
     {
         $this->detail = $detail;
+        
+        return $this;
+    }
+
+    public function getGeoJsonDetail()
+    {
+        return $this->geoJsonDetail;
+    }
+    
+    public function setGeoJsonDetail($geoJsonDetail): self
+    {
+        $this->geoJsonDetail = $geoJsonDetail;
         
         return $this;
     }
@@ -352,6 +402,18 @@ class Direction
         return $this;
     }
 
+    public function getCo2(): ?int
+    {
+        return $this->co2;
+    }
+
+    public function setCo2(?int $co2): self
+    {
+        $this->co2 = $co2;
+
+        return $this;
+    }
+
     public function getPoints(): ?array
     {
         return $this->points;
@@ -386,5 +448,49 @@ class Direction
         $this->durations = $durations;
         
         return $this;
+    }
+
+    // DOCTRINE EVENTS
+    
+    /**
+     * GeoJson representation of the bounding box.
+     *
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function setAutoGeoJsonBbox()
+    {
+        if (!is_null($this->getGeoJsonBbox())) {
+            return;
+        }
+        if (!is_null($this->getBboxMinLon()) && !is_null($this->getBboxMinLat()) && !is_null($this->getBboxMaxLon()) && !is_null($this->getBboxMaxLat())) {
+            $this->setGeoJsonBbox(new Polygon([[
+                [$this->getBboxMinLon(),$this->getBboxMinLat()],
+                [$this->getBboxMinLon(),$this->getBboxMaxLat()],
+                [$this->getBboxMaxLon(),$this->getBboxMinLat()],
+                [$this->getBboxMaxLon(),$this->getBboxMaxLat()],
+                [$this->getBboxMinLon(),$this->getBboxMinLat()]
+            ]]));
+        }
+    }
+
+    /**
+     * GeoJson representation of the detail.
+     *
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function setAutoGeoJsonDetail()
+    {
+        if (!is_null($this->getGeoJsonDetail())) {
+            return;
+        }
+        if (!is_null($this->getPoints())) {
+            $arrayPoints = [];
+            foreach ($this->getPoints() as $address) {
+                $arrayPoints[] = new Point($address->getLongitude(), $address->getLatitude());
+            }
+            $this->setGeoJsonDetail(new LineString($arrayPoints));
+        }
     }
 }

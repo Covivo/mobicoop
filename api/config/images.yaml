@@ -17,13 +17,45 @@ parameters:
                 - {filterSet: 'square_800', prefix: '800-'}
                 - {filterSet: 'square_250', prefix: '250-'}
                 - {filterSet: 'square_100', prefix: '100-'}
-         # configuration for communities
+        # configuration for communities
         community:
             # upload folders
             folder:
                 base: 'upload/'
                 plain: 'communities/images/'
                 versions: 'communities/images/versions/'
+            # versions to generate
+            versions:
+                # versions sizes to be generated
+                # - filterSet : the LiipImagine filter set to apply
+                # - prefix : the prefix of the version
+                - {filterSet: 'max', prefix: ''}
+                - {filterSet: 'square_800', prefix: '800-'}
+                - {filterSet: 'square_250', prefix: '250-'}
+                - {filterSet: 'square_100', prefix: '100-'}
+        # configuration for relay points
+        relaypoint:
+            # upload folders
+            folder:
+                base: 'upload/'
+                plain: 'relaypoints/images/'
+                versions: 'relaypoints/images/versions/'
+            # versions to generate
+            versions:
+                # versions sizes to be generated
+                # - filterSet : the LiipImagine filter set to apply
+                # - prefix : the prefix of the version
+                - {filterSet: 'max', prefix: ''}
+                - {filterSet: 'square_800', prefix: '800-'}
+                - {filterSet: 'square_250', prefix: '250-'}
+                - {filterSet: 'square_100', prefix: '100-'}
+        # configuration for relay point types
+        relaypointtype:
+            # upload folders
+            folder:
+                base: 'upload/'
+                plain: 'relaypointtypes/images/'
+                versions: 'relaypointtypes/images/versions/'
             # versions to generate
             versions:
                 # versions sizes to be generated

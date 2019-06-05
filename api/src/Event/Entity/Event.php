@@ -106,7 +106,7 @@ class Event
      * @var \DateTimeInterface The starting date of the event.
      *
      * @Assert\NotBlank
-     * @Assert\DateTime()
+     * @Assert\DateTime
      * @ORM\Column(type="datetime")
      * @Groups({"read","write"})
      */
@@ -116,7 +116,7 @@ class Event
      * @var \DateTimeInterface The ending date of the event.
      *
      * @Assert\NotBlank
-     * @Assert\DateTime()
+     * @Assert\DateTime
      * @ORM\Column(type="datetime")
      * @Groups({"read","write"})
      */
@@ -170,9 +170,9 @@ class Event
     /**
      * @var ArrayCollection The images of the event.
      *
-     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="event", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="event", cascade="remove", orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"read","write"})
+     * @Groups("read")
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */

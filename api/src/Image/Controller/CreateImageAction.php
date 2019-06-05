@@ -32,6 +32,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use App\Image\Service\ImageManager;
 use App\Image\Entity\Image;
+use Psr\Log\LoggerInterface;
 
 final class CreateImageAction
 {
@@ -39,13 +40,15 @@ final class CreateImageAction
     private $doctrine;
     private $factory;
     private $imageManager;
+    private $logger;
     
-    public function __construct(RegistryInterface $doctrine, FormFactoryInterface $factory, ValidatorInterface $validator, ImageManager $imageManager)
+    public function __construct(RegistryInterface $doctrine, FormFactoryInterface $factory, ValidatorInterface $validator, ImageManager $imageManager, LoggerInterface $logger)
     {
         $this->validator = $validator;
         $this->doctrine = $doctrine;
         $this->factory = $factory;
         $this->imageManager = $imageManager;
+        $this->logger = $logger;
     }
     
     /**
@@ -76,10 +79,12 @@ final class CreateImageAction
                 $originalName = $image->getOriginalName();
             }
         }
+        
         if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->doctrine->getManager();
+
             // the form is valid and the image has a valid owner
             // we persist the image to fill the fields automatically (size, dimensions, mimetype...)
-            $em = $this->doctrine->getManager();
             $em->persist($image);
             
             // we eventually write the originalName

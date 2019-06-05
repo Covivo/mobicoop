@@ -43,6 +43,7 @@ services:
             $username: '%env(resolve:API_USERNAME)%'
             $password: '%env(resolve:API_PASSWORD)%'
             $authPath: '%env(resolve:API_AUTH_PATH)%'
+            $tokenId: '%env(resolve:API_TOKEN_ID)%'
         shared: false
     
     # Carpool
@@ -81,4 +82,19 @@ services:
     # Image
     Mobicoop\Bundle\MobicoopBundle\Image\Service\:
         resource: '@MobicoopBundle/Image/Service/*'
-    
+
+    # Mass
+    Mobicoop\Bundle\MobicoopBundle\Match\Service\:
+        resource: '@MobicoopBundle/Match/Service/*'
+
+    # Community
+    Mobicoop\Bundle\MobicoopBundle\Community\Controller\:
+        resource: '@MobicoopBundle/Community/Controller/*' 
+    Mobicoop\Bundle\MobicoopBundle\Community\Service\:
+        resource: '@MobicoopBundle/Community/Service/*'    
+
+    # Article
+    Mobicoop\Bundle\MobicoopBundle\Article\Controller\:
+        resource: '@MobicoopBundle/Article/Controller/*'
+    Mobicoop\Bundle\MobicoopBundle\Article\Service\:
+        resource: '@MobicoopBundle/Article/Service/*'

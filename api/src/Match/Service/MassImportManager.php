@@ -39,6 +39,7 @@ use App\Geography\Service\GeoSearcher;
 use App\Geography\Service\GeoRouter;
 use App\Geography\Service\ZoneManager;
 use App\Geography\Service\GeoTools;
+use App\Match\Entity\MassMatching;
 
 /**
  * Mass import manager.
@@ -131,6 +132,9 @@ class MassImportManager
     public function generateFilename(Mass $mass)
     {
         $date = new \Datetime();
+        if ($mass->getOriginalName()) {
+            return $this->fileManager->sanitize($date->format('YmdHis') . "-" . substr($mass->getOriginalName(), 0, strrpos($mass->getOriginalName(), ".")));
+        }
         return $this->fileManager->sanitize($date->format('YmdHis') . "-" . substr($mass->getFile()->getClientOriginalName(), 0, strrpos($mass->getFile()->getClientOriginalName(), ".")));
     }
 
@@ -142,6 +146,8 @@ class MassImportManager
      */
     public function treatMass(Mass $mass)
     {
+        $this->logger->info('Mass match | Treating import file ' . $mass->getFileName() . ' start' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
         // we get the validated data from the file
         $data = $this->getData($mass);
 
@@ -152,6 +158,9 @@ class MassImportManager
             // we import the persons
             $this->importPersons($data, $mass);
         }
+
+        $this->logger->info('Mass match | Treating import file ' . $mass->getFileName() . ' end' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
         // we return the mass object
         return $mass;
     }
@@ -404,19 +413,36 @@ class MassImportManager
                         $matchers[$person->getId()][] = $match['id'];
                         $matchers_detail[$person->getId()][] = [
                             'id' => $match['id'],
+                            'person' => $person,
                             'originalDistance' => $match["originalDistance"],
                             'newDistance' => $match['newDistance'],
                             'originalDuration' => $match["originalDuration"],
                             'newDuration' => $match['newDuration'],
                             'acceptedDetourDuration' => $match['acceptedDetourDuration'],
                             'detourDurationPercent' => $match['detourDurationPercent'],
-                            'overlap' => $overlaps[$person->getId()][$match['id']]
+                            'overlap' => $overlaps[$person->getId()][$match['id']],
+                            'direction' => $match['direction']
                         ];
                     }
                 }
             }
             $this->logger->info('Mass match | Calculate route matches for person n°' . $person->getId() . ' end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
+        $this->logger->info('Mass match | Creating matches records start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        foreach ($matchers_detail as $matches) {
+            foreach ($matches as $match) {
+                $massMatching = new MassMatching();
+                $massMatching->setMassPerson1($match['person']);
+                $massMatching->setMassPerson2($this->massPersonRepository->find($match['id']));
+                $massMatching->setDirection($match['direction']);
+                $this->entityManager->persist($massMatching);
+            }
+        }
+        $mass->setStatus(Mass::STATUS_TREATED);
+        $mass->setCalculationDate(new \Datetime());
+        $this->entityManager->persist($mass);
+        $this->entityManager->flush();
+        $this->logger->info('Mass match | Creating matches records end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         return $matchers_detail;
     }
 
@@ -428,6 +454,9 @@ class MassImportManager
      */
     private function getData(Mass $mass)
     {
+        $this->logger->info('Mass match | Treating import file ' . $mass->getFileName() . ', getting data start' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $this->logger->info('Mass match | Treating import file ' . $mass->getFileName() . ', ' . $mass->getMimeType());
+
         // if it's a plain text we try to guess the real mimetype
         if ($mass->getMimeType() == self::MIMETYPE_PLAIN) {
             $mass->setMimeType($this->guessMimeType('.' . $this->params['folder'] . $mass->getFileName()));
@@ -461,6 +490,7 @@ class MassImportManager
     private function guessMimeType(string $filename)
     {
         switch (strtolower($this->fileManager->getExtension($filename))) {
+            case 'txt':
             case 'csv':
                 return self::MIMETYPE_CSV;
                 break;

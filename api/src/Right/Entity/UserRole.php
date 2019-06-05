@@ -58,7 +58,7 @@ class UserRole
     /**
      * @var User The user.
      *
-     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="userRoles")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      */

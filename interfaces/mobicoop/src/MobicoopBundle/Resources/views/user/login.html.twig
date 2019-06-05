@@ -17,6 +17,13 @@
 </section>
 
 <section class="section loginForm">
+{% if error %}
+		<div class="columns">
+			<div class="column has-text-centered">
+				<p class="error">La connexion a échoué</p>
+			</div>	
+		</div>
+{% endif %}
 {{ form_start(form) }}
 		<div class="columns is-centered email">
 			{{ form_row(form.username)}}
@@ -45,6 +52,7 @@
 		</div>	
 			{{ form_errors(form) }}
 			{{ form_end(form) }}
+		
 </section>
 
 {% endblock %}

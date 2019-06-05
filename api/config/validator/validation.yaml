@@ -19,6 +19,33 @@ App\Image\Entity\Image:
                 maxWidth: 4000
                 minHeight: 200
                 maxHeight: 4000
+        communityFile:
+            - File:
+                maxSize: 4M
+                mimeTypes: [image/png, image/jpeg]
+            - Image:
+                minWidth: 200
+                maxWidth: 4000
+                minHeight: 200
+                maxHeight: 4000
+        relayPointFile:
+            - File:
+                maxSize: 4M
+                mimeTypes: [image/png, image/jpeg]
+            - Image:
+                minWidth: 200
+                maxWidth: 4000
+                minHeight: 200
+                maxHeight: 4000
+        relayPointTypeFile:
+            - File:
+                maxSize: 4M
+                mimeTypes: [image/png, image/jpeg]
+            - Image:
+                minWidth: 200
+                maxWidth: 4000
+                minHeight: 200
+                maxHeight: 4000
 # mass matching
 App\Match\Entity\Mass:
     properties:

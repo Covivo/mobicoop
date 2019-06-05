@@ -26,10 +26,11 @@ namespace App\Geography\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\Collection;
+use App\Geography\Controller\TerritoryPost;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * A teritory.
+ * A territory.
  *
  * @ORM\Entity
  * @ApiResource(
@@ -37,7 +38,14 @@ use Doctrine\Common\Collections\Collection;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
+ *      collectionOperations={
+ *          "get",
+ *          "post"={
+ *              "method"="POST",
+ *              "path"="/territories",
+ *              "controller"=TerritoryPost::class,
+ *          }
+ *      },
  *      itemOperations={"get","put","delete"}
  * )
  */
@@ -63,17 +71,12 @@ class Territory
     private $name;
 
     /**
-     * @var ArrayCollection|null The parents of the territory.
+     * @var string The geoJson details of the territory.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
+     * @ORM\Column(type="multipolygon")
      * @Groups({"read","write"})
      */
-    private $parents;
-
-    public function __construct()
-    {
-        $this->parents = new ArrayCollection();
-    }
+    private $geoJsonDetail;
     
     public function getId(): ?int
     {
@@ -92,25 +95,14 @@ class Territory
         return $this;
     }
 
-    public function getParents()
+    public function getGeoJsonDetail()
     {
-        return $this->parents->getValues();
+        return $this->geoJsonDetail;
     }
     
-    public function addParent(Territory $parent): self
+    public function setGeoJsonDetail($geoJsonDetail): self
     {
-        if (!$this->parents->contains($parent)) {
-            $this->parents[] = $parent;
-        }
-        
-        return $this;
-    }
-    
-    public function removeParent(Territory $parent): self
-    {
-        if ($this->parents->contains($parent)) {
-            $this->parents->removeElement($parent);
-        }
+        $this->geoJsonDetail = $geoJsonDetail;
         
         return $this;
     }

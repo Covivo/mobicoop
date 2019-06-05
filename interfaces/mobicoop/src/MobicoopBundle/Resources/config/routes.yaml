@@ -116,3 +116,61 @@ ad_results:
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::adPostResults
     requirements:
         id: '\d+'
+
+####################
+# community routes #
+####################
+
+# create community
+community_create:
+    path:
+        fr: /creer/communaute
+        en: /create/community
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::create
+         
+# display communities
+community_list:
+    path:
+        fr: /communautes
+        en: /communities
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::list  
+
+# display one community
+community_show:
+    path:
+        fr: /communaute/{id}
+        en: /community/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::show  
+    requirements:
+        id: '\d+'  
+
+##########################
+# Editorial pages routes #
+##########################
+
+# display project page
+project:
+    path:
+        fr: /projet/{id}
+        en: /project/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showProject
+    requirements:
+        id: '\d+'
+
+# display CGU page
+cgu:
+    path:
+        fr: /cgu/{id}
+        en: /cgu/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCgu
+    requirements:
+        id: '\d+'
+        
+# display news page
+news:
+    path:
+        fr: /nouveautes/{id}
+        en: /news/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showNews
+    requirements:
+        id: '\d+'

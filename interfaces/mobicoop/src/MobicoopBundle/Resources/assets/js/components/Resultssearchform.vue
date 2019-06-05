@@ -3,40 +3,53 @@
     <div class="tile is-ancestor">
       <div class="tile is-vertical is-12">
         <div class="tile is-child search">
-          <div class="columns is-vcentered">
-            <div class="column">
-              <p><span class="dot is-pulled-left" /></p>
-            </div>
-            <div class="column is-3 save">
-              <div
-                id="save"
-                class="button save is-tertiary is-pulled-right"
-                style="width: 100%"
-              >
-                Enregistrer
-              </div>
-            </div>
-          </div>
           <div class="columns dateTime">
-            <div class="column">
-              <div class="departureDate">
-                <p class="underlined">
-                  {{ date }}
-                </p>
-              </div>
-            </div>
-            <div class="column">
-              <div class="departureTime">
-                <p class="underlined">
-                  {{ time }}
-                </p>
-              </div>
-            </div>
+            <!-- datepicker -->
+            <label
+              class="label column is-size-7 date"
+              for="dateDepart"
+            >Date de départ
+              <b-datepicker
+                id="dateDepart"
+                v-model="outwardDate"
+                :placeholder="'Date de départ...'"
+                title="Date de départ"
+                :day-names="daysShort"
+                :month-names="months"
+                :first-day-of-week="1"
+                position="is-bottom-left"
+                icon-pack="fas"
+                editable
+              /></label> 
+            <label
+              class="label column is-size-7 heure"
+              for="heureDepart"
+            >Heure de départ
+              <b-timepicker
+                id="heureDepart"
+                v-model="outwardTime"
+                placeholder="Heure de départ..."
+                title="Heure de départ"
+              >
+                <button
+                  class="button is-mobicoopgreen"
+                  @click="outwardTime = new Date()"
+                >
+                  <b-icon icon="clock" />
+                  <span>Maintenant</span>
+                </button>
+                <button
+                  class="button is-mobicooppink"
+                  @click="outwardTime = null"
+                >
+                  <b-icon icon="close" />
+                  <span>Effacer</span>
+                </button>
+              </b-timepicker>
+            </label>
+            <div class="column is-3" />
           </div>
           <div class="columns SearchBar">
-            <div class="column ">
-              <div />
-            </div>
             <div class="column">
               <!-- inputs outward destination -->
               <p class="is-size-7 labelOrigin">
@@ -49,7 +62,6 @@
                 <geocomplete
                   id="origin"
                   name="origin"
-                  :placeholder="origin"
                   title="Depuis"
                   aria-label="Départ"
                   :url="geoSearchUrl"
@@ -59,7 +71,7 @@
             </div>
             <div class="column">
               <p class="is-size-7 labelDestination">
-                Lieu de d'arrivée
+                Lieu d'arrivée
               </p>
               <label
                 class="label"
@@ -75,9 +87,6 @@
                 />
               </label>
             </div>
-          </div>
-          <div class="columns">
-            <div class="column" />
             <div class="column is-3 is-pulled-right">
               <label
                 for="rechercher"
@@ -213,7 +222,6 @@ export default {
       return `${this.baseUrl}/${this.route}/${this.originStreetAddressFormated}${this.originPostalCodeFormated}${this.originAddressLocality}/${this.destinationStreetAddressFormated}${this.destinationPostalCodeFormated}${this.destinationAddressLocality}/${this.originLatitude}/${this.originLongitude}/${this.destinationLatitude}/${this.destinationLongitude}/${this.dateFormated}${this.timeFormated}/resultats`;  
     } 
   },
-
   methods: {
     selectedGeo(val) {
       let name = val.name;
@@ -225,14 +233,6 @@ export default {
       this[name + "AddressLocality"] = val.addressLocality;
     },
   }
+  
 };
 </script>
-
-<style lang="scss" scoped>
-
-.fieldsContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-</style>

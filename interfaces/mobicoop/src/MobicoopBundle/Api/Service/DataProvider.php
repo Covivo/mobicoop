@@ -61,7 +61,11 @@ class DataProvider
     // possible file properties and associated getter, used for multipart/form-data
     const FILE_PROPERTIES = [
         'eventFile' => 'getEventFile',
-        'userFile'  => 'getUserFile'
+        'userFile'  => 'getUserFile',
+        'communityFile' => 'getCommunityFile',
+        'relayPointFile' => 'getRelayPointFile',
+        'relayPointTypeFile' => 'getRelayPointTypeFile',
+        'file' => 'getFile'
     ];
     
     // original name property for file-based entities
@@ -86,9 +90,10 @@ class DataProvider
      * @param string $username
      * @param string $password
      * @param string $authPath
+     * @param string $tokenId
      * @param Deserializer $deserializer
      */
-    public function __construct(string $uri, string $username, string $password, string $authPath, Deserializer $deserializer)
+    public function __construct(string $uri, string $username, string $password, string $authPath, string $tokenId, Deserializer $deserializer)
     {
         //Create your auth strategy
         $authStrategy = new JsonAuthStrategy(
@@ -107,6 +112,7 @@ class DataProvider
         $jwtManager = new JwtManager(
             $authClient,
             $authStrategy,
+            $tokenId,
             [
                 'token_url' => $authPath,
             ]
@@ -439,16 +445,16 @@ class DataProvider
                 $hydraView->setId($data['hydra:view']['@id']);
             }
             if (isset($data['hydra:view']['@type'])) {
-                $hydraView->setId($data['hydra:view']['@type']);
+                $hydraView->setType($data['hydra:view']['@type']);
             }
             if (isset($data['hydra:view']['hydra:first'])) {
-                $hydraView->setId($data['hydra:view']['hydra:first']);
+                $hydraView->setFirst($data['hydra:view']['hydra:first']);
             }
             if (isset($data['hydra:view']['hydra:last'])) {
-                $hydraView->setId($data['hydra:view']['hydra:last']);
+                $hydraView->setLast($data['hydra:view']['hydra:last']);
             }
             if (isset($data['hydra:view']['hydra:next'])) {
-                $hydraView->setId($data['hydra:view']['hydra:next']);
+                $hydraView->setNext($data['hydra:view']['hydra:next']);
             }
             $hydra->setView($hydraView);
         }

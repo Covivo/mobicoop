@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -56,6 +57,9 @@ class GeoSearchController
      */
     public function __invoke(array $data): array
     {
-        return $this->geoSearcher->geoCode($this->request->get("input"));
+        if ($this->request->get("input")) {
+            return $this->geoSearcher->geoCode($this->request->get("input"));
+        }
+        return $data;
     }
 }

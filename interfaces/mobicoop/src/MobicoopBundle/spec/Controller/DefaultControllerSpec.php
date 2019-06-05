@@ -26,18 +26,17 @@ namespace Mobicoop\Bundle\MobicoopBundle\Spec\Controller;
 use Symfony\Component\DomCrawler\Crawler;
 
 /* This is a sample functionnal Test */
+
 describe('DefaultController', function () {
-    describe('/', function () {
-        it('Index page should return status code 200 & contains an image with src = /images/logo.jpg', function () {
-            $request = $this->request->create('/', 'GET');
-            $response = $this->kernel->handle($request);
+    it('Index page should return status code 200 & contains an image with src = /images/logo.jpg', function () {
+        $request = $this->request->create('/', 'GET');
+        $response = $this->kernel->handle($request);
 
-            $status = $response->getStatusCode();
-            $crawler = new Crawler($response->getContent());
-            $logo = trim($crawler->filter('body img')->attr('src'));
+        $status = $response->getStatusCode();
+        $crawler = new Crawler($response->getContent());
+        $logo = trim($crawler->filter('body img')->attr('src'));
 
-            expect($status)->toEqual(200);
-            expect($logo)->toContain('/images/logo.png');
-        });
+        expect($status)->toEqual(200);
+        expect($logo)->toContain('/images/logo.png');
     });
 });

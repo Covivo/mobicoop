@@ -37,6 +37,18 @@ body {
   //h1 {
   // font-size: 75px;
   //}
+  .hero-body {
+    .container {
+      .title {
+        color: $white;
+      }
+    }
+  }
+  .error {
+    border-radius: 10px;
+    background-color: $danger;
+    color: $danger-invert;
+  }
   .fas {
     padding-right: 5px;
   }

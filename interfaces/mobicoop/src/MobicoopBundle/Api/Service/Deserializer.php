@@ -26,6 +26,8 @@ namespace Mobicoop\Bundle\MobicoopBundle\Api\Service;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourney;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassPerson;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
@@ -50,6 +52,11 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\IndividualStop;
 use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Direction;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourneyProvider;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
+use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Article;
+use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Section;
+use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Paragraph;
 
 /**
  * Custom deserializer service.
@@ -104,6 +111,15 @@ class Deserializer
             case ExternalJourney::class:
                 return $data;
                 break;
+            case Mass::class:
+                return self::deserializeMass($data);
+                break;
+            case Community::class:
+                return self::deserializeCommunity($data);
+                break;
+            case Article::class:
+                return self::deserializeArticle($data);
+                break;
             default:
                 break;
         }
@@ -120,6 +136,11 @@ class Deserializer
         if (isset($data["addresses"])) {
             foreach ($data["addresses"] as $address) {
                 $user->addAddress(self::deserializeAddress($address));
+            }
+        }
+        if (isset($data["masses"])) {
+            foreach ($data["masses"] as $mass) {
+                $user->addMass(self::deserializeMass($mass));
             }
         }
         return $user;
@@ -414,11 +435,132 @@ class Deserializer
         return $PTStep;
     }
 
+    private function deserializeMass(array $data): ?Mass
+    {
+        $mass = new Mass();
+        $mass = self::autoSet($mass, $data);
+        if (isset($data["@id"])) {
+            $mass->setIri($data["@id"]);
+        }
+        if (isset($data["persons"])) {
+            foreach ($data["persons"] as $person) {
+                $mass->addPerson(self::deserializeMassPerson($person));
+            }
+        }
+        return $mass;
+    }
+
+    private function deserializeMassPerson(array $data): ?MassPerson
+    {
+        $massPerson = new MassPerson();
+        $massPerson = self::autoSet($massPerson, $data);
+        if (isset($data["@id"])) {
+            $massPerson->setIri($data["@id"]);
+        }
+        if (isset($data["personalAddress"])) {
+            $massPerson->setPersonalAddress(self::deserializeAddress($data["personalAddress"]));
+        }
+        if (isset($data["workAddress"])) {
+            $massPerson->setWorkAddress(self::deserializeAddress($data["workAddress"]));
+        }
+        if (isset($data["direction"])) {
+            $massPerson->setDirection(self::deserializeDirection($data["direction"]));
+        }
+        return $massPerson;
+    }
+
     private function deserializeExternalJourneyProvider(array $data): ?ExternalJourneyProvider
     {
         $provider = new ExternalJourneyProvider();
         $provider = self::autoSet($provider, $data);
         return $provider;
+    }
+
+    private function deserializeCommunityUser(array $data): ?CommunityUser
+    {
+        $communityUser = new communityUser();
+        $communityUser = self::autoSet($communityUser, $data);
+        if (isset($data["@id"])) {
+            $communityUser->setIri($data["@id"]);
+        }
+        if (isset($data["community"])) {
+            $communityUser->set>Community(self::deserializeCommunity($data["community"]));
+        }
+        if (isset($data["user"])) {
+            $communityUser->setUser(self::deserializeUser($data["user"]));
+        }
+        if (isset($data["admin"])) {
+            $communityUser->setAdmin(self::deserializeUser($data["admin"]));
+        }
+        return $communityUser;
+    }
+
+    private function deserializeCommunity(array $data): ?Community
+    {
+        $community = new Community();
+        $community = self::autoSet($community, $data);
+        if (isset($data["@id"])) {
+            $community->setIri($data["@id"]);
+        }
+        if (isset($data["user"])) {
+            $community->setUser(self::deserializeUser($data["user"]));
+        }
+        if (isset($data["images"])) {
+            foreach ($data["images"] as $image) {
+                $community->addImage(self::deserializeImage($image));
+            }
+        }
+        if (isset($data["proposals"])) {
+            foreach ($data["proposals"] as $proposal) {
+                $community->addProposal(self::deserializeProposal($proposal));
+            }
+        }
+        if (isset($data["communityUsers"])) {
+            foreach ($data["communityUsers"] as $communityUser) {
+                $community->addCommunityUser(self::deserializeCommunityUser($communityUser));
+            }
+        }
+        return $community;
+    }
+
+    private function deserializeArticle(array $data): ?Article
+    {
+        $article = new Article();
+        $article = self::autoSet($article, $data);
+        if (isset($data["@id"])) {
+            $article->setIri($data["@id"]);
+        }
+        if (isset($data["sections"])) {
+            foreach ($data["sections"] as $section) {
+                $article->addSection(self::deserializeSection($section));
+            }
+        }
+        return $article;
+    }
+
+    private function deserializeSection(array $data): ?Section
+    {
+        $section = new Section();
+        $section = self::autoSet($section, $data);
+        if (isset($data["@id"])) {
+            $section->setIri($data["@id"]);
+        }
+        if (isset($data["paragraphs"])) {
+            foreach ($data["paragraphs"] as $paragraph) {
+                $section->addParagraph(self::deserializeParagraph($paragraph));
+            }
+        }
+        return $section;
+    }
+
+    private function deserializeParagraph(array $data): ?Paragraph
+    {
+        $paragraph = new Paragraph();
+        $paragraph = self::autoSet($paragraph, $data);
+        if (isset($data["@id"])) {
+            $paragraph->setIri($data["@id"]);
+        }
+        return $paragraph;
     }
     
     private function autoSet($object, $data)

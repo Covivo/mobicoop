@@ -37,6 +37,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Form\ProposalForm;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Form\Login;
 use Mobicoop\Bundle\MobicoopBundle\User\Form\UserLoginForm;
 use Mobicoop\Bundle\MobicoopBundle\User\Form\UserDeleteForm;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 /**
  * Controller class for user related actions.
@@ -46,16 +47,23 @@ use Mobicoop\Bundle\MobicoopBundle\User\Form\UserDeleteForm;
  */
 class UserController extends AbstractController
 {
+
     /**
      * User login.
      */
-    public function login()
+    public function login(AuthenticationUtils $authenticationUtils)
     {
+        // get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+        
         $login = new Login();
 
         $form = $this->createForm(UserLoginForm::class, $login);
 
-        return $this->render('@Mobicoop/user/login.html.twig', ["form"=>$form->createView()]);
+        return $this->render('@Mobicoop/user/login.html.twig', [
+            "form"=>$form->createView(),
+            "error"=>$error
+            ]);
     }
 
     /**

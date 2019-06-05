@@ -24,9 +24,11 @@
 namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Psr\Log\LoggerInterface;
 use DateTime;
 
 /**
@@ -37,6 +39,8 @@ class UserManager
     private $dataProvider;
     private $encoder;
     private $tokenStorage;
+    private $logger;
+
     
     /**
      * Constructor.
@@ -44,13 +48,15 @@ class UserManager
      * @param DataProvider $dataProvider
      * @param UserPasswordEncoderInterface $encoder
      * @param TokenStorageInterface $tokenStorage
+     * @param LoggerInterface $logger
      */
-    public function __construct(DataProvider $dataProvider, UserPasswordEncoderInterface $encoder, TokenStorageInterface $tokenStorage)
+    public function __construct(DataProvider $dataProvider, UserPasswordEncoderInterface $encoder, TokenStorageInterface $tokenStorage, LoggerInterface $logger)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(User::class);
         $this->encoder = $encoder;
         $this->tokenStorage = $tokenStorage;
+        $this->logger = $logger;
     }
     
     /**
@@ -68,11 +74,28 @@ class UserManager
             if ($user->getBirthDate()) {
                 $user->setBirthYear($user->getBirthDate()->format('Y'));
             }
+            $this->logger->info('User | Is found');
             return $user;
+        }
+        $this->logger->error('User | is Not found');
+        return null;
+    }
+
+    /**
+     * Get masses of a user
+     *
+     * @param String $id The user id
+     *
+     * @return Mass[]|null The user found or null if not found.
+     */
+    public function getMasses($id)
+    {
+        $response = $this->dataProvider->getSubCollection($id, Mass::class);
+        if ($response->getCode() == 200) {
+            return $response->getValue();
         }
         return null;
     }
-    
     /**
      * Get the logged user.
      *
@@ -88,8 +111,10 @@ class UserManager
             if ($user->getBirthDate()) {
                 $user->setBirthYear($user->getBirthDate()->format('Y'));
             }
+            $this->logger->info('User | Is logged');
             return $user;
         }
+        $this->logger->error('User | Not logged');
         return null;
     }
     
@@ -102,8 +127,10 @@ class UserManager
     {
         $response = $this->dataProvider->getCollection();
         if ($response->getCode() == 200) {
+            $this->logger->info('User | Found');
             return $response->getValue();
         }
+        $this->logger->error('User | Not found');
         return null;
     }
     
@@ -123,8 +150,10 @@ class UserManager
         $user->setBirthDate($birthdate);
         $response = $this->dataProvider->post($user);
         if ($response->getCode() == 201) {
+            $this->logger->info('User Creation | Start');
             return $response->getValue();
         }
+        $this->logger->error('User Creation | Fail');
         return null;
     }
     
@@ -139,6 +168,7 @@ class UserManager
     {
         $response = $this->dataProvider->put($user);
         if ($response->getCode() == 200) {
+            $this->logger->info('User Update | Start');
             return $response->getValue();
         }
         return null;
@@ -157,8 +187,10 @@ class UserManager
         $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
         $response = $this->dataProvider->put($user);
         if ($response->getCode() == 200) {
+            $this->logger->info('User Password Update | Start');
             return $response->getValue();
         }
+        $this->logger->info('User Password Update | Fail');
         return null;
     }
     
@@ -174,6 +206,25 @@ class UserManager
         $response = $this->dataProvider->delete($id);
         if ($response->getCode() == 204) {
             return true;
+            $this->logger->info('User Deleta | Start');
+        }
+        $this->logger->info('User Delete | FaiL');
+        return false;
+    }
+
+    /**
+     * Check if the user has a given permission
+     *
+     * @param User $user
+     * @param string $action
+     * @return bool
+     */
+    public function checkPermission(User $user, string $action)
+    {
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_ARRAY);
+        $response = $this->dataProvider->getSubCollection($user->getId(), "permission", "permission", ['action'=>$action]);
+        if ($response->getCode() == 200) {
+            return $response->getValue()['permission'];
         }
         return false;
     }

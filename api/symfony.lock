@@ -20,6 +20,18 @@
     "clue/stream-filter": {
         "version": "v1.4.0"
     },
+    "creof/doctrine2-spatial": {
+        "version": "1.2.0"
+    },
+    "creof/geo-parser": {
+        "version": "2.1.0"
+    },
+    "creof/wkb-parser": {
+        "version": "v2.3.0"
+    },
+    "creof/wkt-parser": {
+        "version": "2.2.0"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
@@ -85,6 +97,9 @@
     },
     "doctrine/reflection": {
         "version": "v1.0.0"
+    },
+    "egulias/email-validator": {
+        "version": "2.1.8"
     },
     "fig/link-util": {
         "version": "1.0.0"
@@ -230,6 +245,9 @@
             "ref": "fb7e19da7f013d0d422fa9bce16f5c510e27609b"
         }
     },
+    "swiftmailer/swiftmailer": {
+        "version": "v6.2.1"
+    },
     "symfony/asset": {
         "version": "v4.2.3"
     },
@@ -335,8 +353,14 @@
     "symfony/polyfill-intl-icu": {
         "version": "v1.10.0"
     },
+    "symfony/polyfill-intl-idn": {
+        "version": "v1.11.0"
+    },
     "symfony/polyfill-mbstring": {
         "version": "v1.10.0"
+    },
+    "symfony/polyfill-php72": {
+        "version": "v1.11.0"
     },
     "symfony/process": {
         "version": "v4.2.3"
@@ -379,6 +403,20 @@
     },
     "symfony/serializer": {
         "version": "v4.2.3"
+    },
+    "symfony/swiftmailer-bundle": {
+        "version": "2.5",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "2.5",
+            "ref": "3db029c03e452b4a23f7fc45cec7c922c2247eb8"
+        },
+        "files": [
+            "config/packages/dev/swiftmailer.yaml",
+            "config/packages/swiftmailer.yaml",
+            "config/packages/test/swiftmailer.yaml"
+        ]
     },
     "symfony/templating": {
         "version": "v4.2.3"

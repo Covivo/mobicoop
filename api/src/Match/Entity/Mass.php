@@ -46,7 +46,7 @@ use Doctrine\Common\Collections\Collection;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"read","mass"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}},
  *      },
  *      collectionOperations={
@@ -59,16 +59,21 @@ use Doctrine\Common\Collections\Collection;
  *          }
  *      },
  *      itemOperations={
- *          "get",
+ *          "get"={
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"mass"}},
+ *          },
  *          "delete",
  *          "analyze"={
  *              "method"="GET",
  *              "path"="/masses/{id}/analyze",
+ *              "normalization_context"={"groups"={"mass"}},
  *              "controller"=MassAnalyzeAction::class
  *          },
  *          "match"={
  *              "method"="GET",
  *              "path"="/masses/{id}/match",
+ *              "normalization_context"={"groups"={"mass"}},
  *              "controller"=MassMatchAction::class,
  *              "swagger_context"={
  *                  "parameters"={
@@ -147,7 +152,7 @@ class Mass
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups("mass")
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -156,7 +161,7 @@ class Mass
      * @var int The status of this import.
      *
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups("mass")
      */
     private $status;
 
@@ -164,7 +169,7 @@ class Mass
      * @var string The final file name of the import.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"mass","write"})
      */
     private $fileName;
 
@@ -172,7 +177,7 @@ class Mass
      * @var string The original file name of the import.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"mass","write"})
      */
     private $originalName;
 
@@ -180,7 +185,7 @@ class Mass
      * @var int The size in bytes of the import.
      *
      * @ORM\Column(type="integer")
-     * @Groups({"read","write"})
+     * @Groups({"mass","write"})
      */
     private $size;
 
@@ -188,7 +193,7 @@ class Mass
      * @var string The mime type of the import.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups("read")
+     * @Groups("mass")
      */
     private $mimeType;
 
@@ -196,13 +201,14 @@ class Mass
      * @var \DateTimeInterface Creation date of the import.
      *
      * @ORM\Column(type="datetime")
+     * @Groups("mass")
      */
     private $createdDate;
 
     /**
      * @var User The user that imports the file.
      *
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="masses")
      * @ORM\JoinColumn(nullable=false)
      * @Groups("write")
      */
@@ -212,7 +218,7 @@ class Mass
      * @var \DateTimeInterface Analyze date of the import.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("read")
+     * @Groups("mass")
      */
     private $analyzeDate;
 
@@ -220,7 +226,7 @@ class Mass
      * @var \DateTimeInterface Calculation date of the import.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("read")
+     * @Groups("mass")
      */
     private $calculationDate;
 
@@ -228,6 +234,7 @@ class Mass
      * @var ArrayCollection|null The persons concerned by the file.
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassPerson", mappedBy="mass", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups("mass")
      */
     private $persons;
 
@@ -245,7 +252,7 @@ class Mass
 
     /**
      * @var array The errors.
-     * @Groups("read")
+     * @Groups("mass")
      */
     private $errors;
 
