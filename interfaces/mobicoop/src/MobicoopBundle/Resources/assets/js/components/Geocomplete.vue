@@ -3,10 +3,11 @@
     <b-field>
       <b-autocomplete
         :id="name"
+        ref="autocomplete"
         :data="data"
-        :custom-formatter="test" 
         :placeholder="placeholder"
         :open-on-focus="true"
+        field="concatenedAddr"
         icon-pack="fa"
         :loading="isFetching"
         @input="getAsyncData"
@@ -59,7 +60,11 @@ export default {
     placeholder: defaultString,
     selected: {
       type: Object,
-      default: () => {}
+      default: () => {
+        return {
+          concatenedAddr: ""
+        }
+      }
     }
   },
   data() {
@@ -93,7 +98,10 @@ export default {
             let streetAddress = addresses[adressKey].streetAddress ? `${addresses[adressKey].streetAddress} ` : '';
             let postalCode = addresses[adressKey].postalCode ? `${addresses[adressKey].postalCode} ` : '';
             let addressLocality = addresses[adressKey].addressLocality ? addresses[adressKey].addressLocality : '';
-            addresses[adressKey].concatenedAddr = `${streetAddress}${postalCode}${addressLocality}`
+            addresses[adressKey].concatenedAddr = `${streetAddress}${postalCode}${addressLocality}`;
+            if(!addressLocality){ // No locality return, do not show them (region, department ..)
+              addresses.splice(adressKey,1);
+            } 
           })
           // Set Data & show them
           if(this.isFetching) return; // Another request is fetching, we do not show the previous one
@@ -105,15 +113,13 @@ export default {
           this.isFetching = false;
         })
     }, 700),
-    onSelected(value) {
-      console.error(value)
-      // this.selected = value;
-      this.$emit("geoSelected", { ...value, name: this.name });
-      // this.focus = false;
+    // switch data , from another autocmplete component.
+    swap(data,selected){ 
+      this.data = data; // switch the list
+      this.$refs.autocomplete.setSelected(selected) // set the selection to the sent
     },
-    test() {
-      console.error(this.selected.concatenedAddr)
-      return this.selected.concatenedAddr + "test"
+    onSelected(value) {
+      this.$emit("geoSelected", { ...value, name: this.name });
     }
   }
 };

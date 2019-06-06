@@ -11,6 +11,7 @@
         >
           <geocomplete
             id="origin"
+            ref="origin"
             name="origin"
             placeholder="Lieu de départ"
             title="Depuis"
@@ -25,8 +26,9 @@
         <img
           class="interchanged"
           src="images/PictoInterchanger.svg"
-          alt="changer"
-          @click="swap()"
+          alt="Intervertir origin et destination"
+          title="Intervertir origin et destination"
+          @click="swap"
         >
       </div>
       <div class="column has-text-centered is-one-third">
@@ -36,6 +38,7 @@
         >
           <geocomplete
             id="destination"
+            ref="destination"
             name="destination"
             placeholder="Lieu d'arrivée"
             title="Vers"
@@ -87,6 +90,7 @@ export default {
   },
   data() {
     return {
+      swapped: false,
       daysShort: [
         "Dim",
         "Lun",
@@ -142,10 +146,10 @@ export default {
     },
     // formate the postalCodes and return nothing if not defined
     originPostalCodeFormated() {
-      return this.originPostalCode ? `${this.origin.postalCode}+` : "";
+      return this.origin.postalCode ? `${this.origin.postalCode}+` : "";
     },
     destinationPostalCodeFormated() {
-      return this.destinationPostalCode ? `${this.destination.postalCode}+` : "";
+      return this.destination.postalCode ? `${this.destination.postalCode}+` : "";
     },
     // creation of the url to call
     urlToCall() {
@@ -160,13 +164,21 @@ export default {
       
     },
     swap() {
-
-      let tempOrigin = { ...this.origin }
-      this.origin = { ...this.destination }
-      this.destination = {...tempOrigin}
-      this.origin.name = "origin"
-      this.destination.name = "destination"
+      this.swapped = !this.swapped;
+      let oldOrigin = {...this.$refs.origin.selected};
+      let oldOriginList = [...this.$refs.origin.data];
+      let oldDestination = {...this.$refs.destination.selected};
+      let oldDestinationList = [...this.$refs.destination.data];
+      this.$refs.origin.swap(oldDestinationList,oldDestination)
+      this.$refs.destination.swap(oldOriginList,oldOrigin)
     }
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.interchanged{
+  cursor: pointer;
+}
+</style>
+
