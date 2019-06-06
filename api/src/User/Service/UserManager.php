@@ -71,5 +71,4 @@ class UserManager
         $this->entityManager->flush();
         return $user;
     }
-
 }
