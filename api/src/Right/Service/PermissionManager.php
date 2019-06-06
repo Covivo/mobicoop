@@ -76,7 +76,7 @@ class PermissionManager
             $user = new User();
             $userRole = new UserRole();
             $userRole->setUser($user);
-            $userRole->setRole($this->roleRepository->find(Role::DEFAULT_ROLE));
+            $userRole->setRole($this->roleRepository->find(Role::ROLE_USER));
             $user->addUserRole($userRole);
         }
 
