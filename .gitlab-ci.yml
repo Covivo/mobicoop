@@ -74,69 +74,69 @@ branch_tests:   # name of the job
 #
 # Dependency Scanning
 # (gitlab preconfigured job) 
-#
-dependency_scanning:    
-  stage: reports
-  image: docker:stable
-  variables:
-    DOCKER_DRIVER: overlay2
-  allow_failure: true
-  services:
-    - docker:stable-dind
-  script:
-    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
-    - docker run
-      --env DEP_SCAN_DISABLE_REMOTE_CHECKS="${DEP_SCAN_DISABLE_REMOTE_CHECKS:-false}"
-      --volume "$PWD:/code"
-      --volume /var/run/docker.sock:/var/run/docker.sock
-      "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:$SP_VERSION" /code
-  artifacts:
-    paths: [gl-dependency-scanning-report.json]
-  only:     # job executed only on dev & master branches
-    - master
+# #
+# dependency_scanning:    
+#   stage: reports
+#   image: docker:stable
+#   variables:
+#     DOCKER_DRIVER: overlay2
+#   allow_failure: true
+#   services:
+#     - docker:stable-dind
+#   script:
+#     - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+#     - docker run
+#       --env DEP_SCAN_DISABLE_REMOTE_CHECKS="${DEP_SCAN_DISABLE_REMOTE_CHECKS:-false}"
+#       --volume "$PWD:/code"
+#       --volume /var/run/docker.sock:/var/run/docker.sock
+#       "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:$SP_VERSION" /code
+#   artifacts:
+#     paths: [gl-dependency-scanning-report.json]
+#   only:     # job executed only on dev & master branches
+#     - master
     
-#
-# Static Application Security Testing (SAST)
-# (gitlab preconfigured job) 
-#
-sast:
-  stage : reports
-  image: docker:stable
-  cache: {}
-  variables:
-    DOCKER_DRIVER: overlay2
-  allow_failure: true
-  services:
-    - docker:stable-dind
-  script:
-    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
-    - docker run
-      --env SAST_CONFIDENCE_LEVEL="${SAST_CONFIDENCE_LEVEL:-3}"
-      --volume "$PWD:/code"
-      --volume /var/run/docker.sock:/var/run/docker.sock
-      "registry.gitlab.com/gitlab-org/security-products/sast:$SP_VERSION" /app/bin/run /code
-  artifacts:
-    reports:
-      sast: gl-sast-report.json
-  only:     # job executed only on dev & master branches
-    - master
+# #
+# # Static Application Security Testing (SAST)
+# # (gitlab preconfigured job) 
+# #
+# sast:
+#   stage : reports
+#   image: docker:stable
+#   cache: {}
+#   variables:
+#     DOCKER_DRIVER: overlay2
+#   allow_failure: true
+#   services:
+#     - docker:stable-dind
+#   script:
+#     - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+#     - docker run
+#       --env SAST_CONFIDENCE_LEVEL="${SAST_CONFIDENCE_LEVEL:-3}"
+#       --volume "$PWD:/code"
+#       --volume /var/run/docker.sock:/var/run/docker.sock
+#       "registry.gitlab.com/gitlab-org/security-products/sast:$SP_VERSION" /app/bin/run /code
+#   artifacts:
+#     reports:
+#       sast: gl-sast-report.json
+#   only:     # job executed only on dev & master branches
+#     - master
 
-#
-# License Management
-#
-license_management:
-  image:
-    name: "registry.gitlab.com/gitlab-org/security-products/license-management:$CI_SERVER_VERSION_MAJOR-$CI_SERVER_VERSION_MINOR-stable"
-    entrypoint: [""]
-  stage: reports
-  allow_failure: true
-  script:
-    - sudo /run.sh analyze .
-  artifacts:
-    reports:
-      license_management: gl-license-management-report.json
-  only:     # job executed only on dev & master branches
-    - master
+# #
+# # License Management
+# #
+# license_management:
+#   image:
+#     name: "registry.gitlab.com/gitlab-org/security-products/license-management:$CI_SERVER_VERSION_MAJOR-$CI_SERVER_VERSION_MINOR-stable"
+#     entrypoint: [""]
+#   stage: reports
+#   allow_failure: true
+#   script:
+#     - sudo /run.sh analyze .
+#   artifacts:
+#     reports:
+#       license_management: gl-license-management-report.json
+#   only:     # job executed only on dev & master branches
+#     - master
 
 ###############################################################################################
 ############# Everything under this is execute only for Tests (dev) ############################

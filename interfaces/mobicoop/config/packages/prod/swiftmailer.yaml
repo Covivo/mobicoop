@@ -1,4 +1,4 @@
 swiftmailer:
-    delivery_addresses: ['%env(MAIL)%']
+    delivery_addresses: ['%env(MAIL_ERROR)%']
 
    
