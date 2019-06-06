@@ -145,8 +145,6 @@ class ProposalManager
             $direction = $routes[0];
             // creation of the crossed zones
             $direction = $this->zoneManager->createZonesForDirection($direction);
-            // search for territories
-            $direction = $this->territoryManager->handleNewDirection($direction);
             if ($proposal->getCriteria()->isDriver()) {
                 $proposal->getCriteria()->setDirectionDriver($direction);
             }
