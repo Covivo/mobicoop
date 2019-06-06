@@ -48,9 +48,14 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Role
 {
-    // default role
-    const DEFAULT_ROLE = 5;
-    
+    // roles
+    const ROLE_SUPER_ADMIN = 1;
+    const ROLE_ADMIN = 2;
+    const ROLE_USER_REGISTERED_FULL = 3;
+    const ROLE_USER_REGISTERED = 4;
+    const ROLE_USER = 5;
+    const ROLE_MATCH = 6;
+
     /**
      * @var int The id of this role.
      *

@@ -40,14 +40,13 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use App\Geography\Entity\Address;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Ask;
-use App\Right\Entity\Role;
-use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use App\Right\Entity\UserRole;
 use App\Match\Entity\Mass;
 use App\Right\Entity\UserRight;
 use App\Image\Entity\Image;
+use App\User\Controller\UserPost;
 
 /**
  * A user.
@@ -68,7 +67,11 @@ use App\Image\Entity\Image;
  *          "get"={
  *              "normalization_context"={"groups"={"read"}},
  *          },
- *          "post"
+ *          "post"={
+ *              "method"="POST",
+ *              "path"="/users",
+ *              "controller"=UserPost::class,
+ *          }
  *      },
  *      itemOperations={
  *          "get"={
