@@ -47,7 +47,6 @@ use Symfony\Component\Security\Core\User\EquatableInterface;
 use App\Right\Entity\UserRole;
 use App\Match\Entity\Mass;
 use App\Right\Entity\UserRight;
-use App\User\Controller\UserRightCheck;
 use App\Image\Entity\Image;
 
 /**
@@ -76,31 +75,7 @@ use App\Image\Entity\Image;
  *              "normalization_context"={"groups"={"read"}},
  *          },
  *          "put",
- *          "delete",
- *          "permission"={
- *              "method"="GET",
- *              "controller"=UserRightCheck::class,
- *              "path"="/users/{id}/permission",
- *              "swagger_context"={
- *                  "parameters"={
- *                      {
- *                          "name" = "action",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "string",
- *                          "description" = "The name of the action to check"
- *                      },
- *                      {
- *                          "name" = "territory",
- *                          "in" = "query",
- *                          "required" = "false",
- *                          "type" = "number",
- *                          "format" = "integer",
- *                          "description" = "The territory id"
- *                      },
- *                   }
- *              }
- *          }
+ *          "delete"
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"id"})

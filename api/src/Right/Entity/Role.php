@@ -49,7 +49,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Role
 {
     // default role
-    const DEFAULT_ROLE = 1;
+    const DEFAULT_ROLE = 5;
     
     /**
      * @var int The id of this role.

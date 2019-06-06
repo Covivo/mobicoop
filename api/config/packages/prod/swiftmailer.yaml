@@ -1,4 +1,4 @@
-swiftmailer:
-    delivery_addresses: ['%env(MAIL)%']
+#swiftmailer:
+#    delivery_addresses: ['%env(MAIL)%']
 
    

@@ -21,44 +21,52 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Controller;
+namespace App\Right\Controller;
 
 use Symfony\Component\HttpFoundation\RequestStack;
-use App\User\Service\PermissionManager;
-use App\User\Entity\User;
+use App\Right\Service\PermissionManager;
 use Symfony\Component\HttpFoundation\Response;
 use App\Geography\Repository\TerritoryRepository;
 use App\Right\Repository\RightRepository;
+use App\User\Repository\UserRepository;
+use App\Right\Entity\Permission;
 
 /**
- * Controller class for user right check.
+ * Controller class for permission check.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class UserRightCheck
+class PermissionCheck
 {
     private $request;
     private $permissionManager;
+    private $userRepository;
     private $territoryRepository;
     private $rightRepository;
 
-    public function __construct(RequestStack $requestStack, PermissionManager $permissionManager, TerritoryRepository $territoryRepository, RightRepository $rightRepository)
+    public function __construct(RequestStack $requestStack, PermissionManager $permissionManager, UserRepository $userRepository, TerritoryRepository $territoryRepository, RightRepository $rightRepository)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->permissionManager = $permissionManager;
+        $this->userRepository = $userRepository;
         $this->territoryRepository = $territoryRepository;
         $this->rightRepository = $rightRepository;
     }
 
     /**
-     * This method is invoked when a user right check is asked.
+     * This method is invoked when a permission check is asked.
      *
-     * @param User $data
-     * @return User
+     * @param array $data
+     * @return Response
      */
-    public function __invoke(User $data): Response
+    public function __invoke(array $data): ?Permission
     {
-        $permission = false;
+        $permission = null;
+        // we check if the user exists
+        $user = null;
+        if ($this->request->get("user")) {
+            $user = $this->userRepository->find($this->request->get("user"));
+        }
         // we check if the action exists
         if ($this->request->get("action") && $right = $this->rightRepository->findByName($this->request->get("action"))) {
             // the action exists, we check if we limit to a territory
@@ -67,8 +75,8 @@ class UserRightCheck
                 $territory = $this->territoryRepository->find($this->request->get("territory"));
             }
             // we search if the user has the permission
-            $permission = $this->permissionManager->userHasPermission($data, $right, $territory);
+            $permission = $this->permissionManager->userHasPermission($right, $user, $territory);
         }
-        return new Response(json_encode(['permission'=>$permission]));
+        return $permission;
     }
 }

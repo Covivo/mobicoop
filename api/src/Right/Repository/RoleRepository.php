@@ -48,6 +48,11 @@ class RoleRepository
         $this->repository = $entityManager->getRepository(Role::class);
     }
 
+    public function find(int $id): ?Role
+    {
+        return $this->repository->find($id);
+    }
+
     /**
      * Find the children of a given Role.
      *
