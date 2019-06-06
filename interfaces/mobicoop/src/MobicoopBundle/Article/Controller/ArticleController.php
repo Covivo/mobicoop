@@ -15,7 +15,7 @@
  *    GNU Affero General Public License for more details.
  *
  *    You should have received a copy of the GNU Affero General Public License
- *    along with this program.  If not, see <gnu.oruse Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;g/licenses>.
+ *    along with this program.  If not, see <gnu.org/licenses>.
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
@@ -32,14 +32,20 @@ use Mobicoop\Bundle\MobicoopBundle\Article\Service\ArticleManager;
  */
 class ArticleController extends AbstractController
 {
+    const CGU = 1;
+    const NEWS = 2;
+    const PROJECT = 3;
+
     /**
      * Display of the project page
      *
      */
-    public function showProject($id, ArticleManager $articleManager)
+    public function showProject(ArticleManager $articleManager)
     {
-        return $this->render('@Mobicoop/article/project.html.twig', [
-            'article' => $articleManager->getArticle($id),
+        $article = $articleManager->getArticle(self::PROJECT);
+        $this->denyAccessUnlessGranted('show', $article);
+        return $this->render('@Mobicoop/article/article.html.twig', [
+            'article' => $article,
         ]);
     }
 
@@ -47,10 +53,12 @@ class ArticleController extends AbstractController
      * Display of the CGU page
      *
      */
-    public function showCgu($id, ArticleManager $articleManager)
+    public function showCgu(ArticleManager $articleManager)
     {
-        return $this->render('@Mobicoop/article/cgu.html.twig', [
-            'article' => $articleManager->getArticle($id),
+        $article = $articleManager->getArticle(self::CGU);
+        $this->denyAccessUnlessGranted('show', $article);
+        return $this->render('@Mobicoop/article/article.html.twig', [
+            'article' => $article,
         ]);
     }
 
@@ -58,10 +66,12 @@ class ArticleController extends AbstractController
      * Display of the news page
      *
      */
-    public function showNews($id, ArticleManager $articleManager)
+    public function showNews(ArticleManager $articleManager)
     {
-        return $this->render('@Mobicoop/article/news.html.twig', [
-            'article' => $articleManager->getArticle($id),
+        $article = $articleManager->getArticle(self::NEWS);
+        $this->denyAccessUnlessGranted('show', $article);
+        return $this->render('@Mobicoop/article/article.html.twig', [
+            'article' => $article,
         ]);
     }
 }
