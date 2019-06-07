@@ -38,7 +38,7 @@ export const CommunityCreate = (props) => (
 export const CommunityEdit = (props) => (
     <Edit {...props } title="Communautés > éditer">
         <SimpleForm>
-            <DisabledInput source="id" label="ID"/>
+            <DisabledInput source="originId" label="ID"/>
             <ReferenceInput label="Créateur" source="user" reference="users">
                 <SelectInput optionText={userOptionRenderer} />
             </ReferenceInput>
@@ -55,7 +55,7 @@ export const CommunityEdit = (props) => (
 export const CommunityList = (props) => (
     <List {...props} title="Communautés > liste" perPage={ 30 }>
         <Datagrid>
-            <TextField source="id" label="ID"/>
+            <TextField source="originId" label="ID"/>
             <TextField source="name" label="Nom"/>
             <BooleanField source="private" label="Privée" />
             <TextField source="description" label="Description"/>
@@ -83,7 +83,7 @@ export const CommunityShow = (props) => (
     <Show { ...props } title="Communautés > afficher">
         <TabbedShowLayout>
             <Tab label="Détails">
-                <TextField source="id" label="ID"/>
+                <TextField source="originId" label="ID"/>
                 <TextField source="name" label="Nom"/>
                 <TextField source="description" label="Description"/>
                 <RichTextField source="fullDescription" label="Description complète"/>
