@@ -26,16 +26,17 @@ namespace App\Right\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use App\Right\Controller\PermissionCheck;
+use App\Right\Controller\PermissionsUser;
 
 /**
  * A permission.
  *
  * @ApiResource(
  *      collectionOperations={
- *          "permission"={
+ *          "granted"={
  *              "method"="GET",
  *              "controller"=PermissionCheck::class,
- *              "path"="/permissions",
+ *              "path"="/permissions/granted",
  *              "swagger_context"={
  *                  "parameters"={
  *                      {
@@ -49,6 +50,31 @@ use App\Right\Controller\PermissionCheck;
  *                          "name" = "user",
  *                          "in" = "query",
  *                          "required" = "false",
+ *                          "type" = "number",
+ *                          "format" = "integer",
+ *                          "description" = "The user id"
+ *                      },
+ *                      {
+ *                          "name" = "territory",
+ *                          "in" = "query",
+ *                          "required" = "false",
+ *                          "type" = "number",
+ *                          "format" = "integer",
+ *                          "description" = "The territory id"
+ *                      },
+ *                   }
+ *              }
+ *          },
+ *          "user"={
+ *              "method"="GET",
+ *              "controller"=PermissionsUser::class,
+ *              "path"="/permissions/user",
+ *              "swagger_context"={
+ *                  "parameters"={
+ *                      {
+ *                          "name" = "user",
+ *                          "in" = "query",
+ *                          "required" = "true",
  *                          "type" = "number",
  *                          "format" = "integer",
  *                          "description" = "The user id"
@@ -77,9 +103,14 @@ class Permission
     private $id;
 
     /**
-     * @var boolean The permission
+     * @var boolean The action is granted
      */
-    private $permission;
+    private $granted;
+
+    /**
+     * @var array|null The permissions granted
+     */
+    private $permissions;
 
     public function __construct($id)
     {
@@ -91,15 +122,28 @@ class Permission
         return $this->id;
     }
 
-    public function getPermission(): bool
+    public function isGranted(): ?bool
     {
-        return $this->permission;
+        return $this->granted;
     }
 
-    public function setPermission(bool $permission): self
+    public function setGranted(bool $granted): self
     {
-        $this->permission = $permission;
+        $this->granted = $granted;
 
         return $this;
     }
+
+    public function getPermissions(): ?array
+    {
+        return $this->permissions;
+    }
+
+    public function setPermissions(array $permissions): self
+    {
+        $this->permissions = $permissions;
+
+        return $this;
+    }
+
 }

@@ -55,13 +55,13 @@ class PermissionManager
     public function checkPermission(string $action, ?User $user = null)
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_ARRAY);
-        $response = $this->dataProvider->getCollection([
+        $response = $this->dataProvider->getSpecialCollection("granted",[
             'action'=>$action,
             'user'=> $user ? $user->getId() : null
         ]);
         if ($response->getCode() == 200) {
             $permission = $response->getValue();
-            return $permission['permission'];
+            return $permission['granted'];
         }
         return false;
     }
