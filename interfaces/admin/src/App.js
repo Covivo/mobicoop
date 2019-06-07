@@ -16,6 +16,7 @@ import LocalParkingIcon from '@material-ui/icons/LocalParking';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import LockIcon from '@material-ui/icons/Lock';
 import NoteIcon from '@material-ui/icons/Note';
+import MapIcon from '@material-ui/icons/Map';
 
 import frenchMessages from 'ra-language-french';
 
@@ -29,6 +30,7 @@ import { RelayPointTypeShow , RelayPointTypeList, RelayPointTypeEdit, RelayPoint
 import { ArticleShow, ArticleEdit, ArticleCreate, ArticleList } from './Component/Article/articles';
 import { SectionCreate, SectionEdit } from './Component/Article/sections';
 // import { ParagraphCreate, ParagraphEdit } from './Component/Article/paragraphs';
+import {  TerritoryShow , TerritoryList, TerritoryEdit, TerritoryCreate } from './Component/Territory/territories';
 
 const theme = createMuiTheme({
     palette: {
@@ -117,6 +119,7 @@ export default class extends Component {
               <Resource name="articles" list={ ArticleList } create={ ArticleCreate} show={ ArticleShow} edit={ ArticleEdit} title="Articles" options={{ label: 'Articles' }} icon={NoteIcon} />
               <Resource name="sections" create={ SectionCreate} edit={ SectionEdit} />
               {/* <Resource name="paragraphs" create={ ParagraphCreate} edit={ ParagraphEdit} /> */}
+              <Resource name="territories" list={ TerritoryList} create={ TerritoryCreate} show={ TerritoryShow} edit={ TerritoryEdit} title="Territoires" options={{ label: 'Territoires' }} icon={MapIcon} />
               <Resource name="geo_search" />
               <Resource name="addresses" />
           </Admin>

@@ -29,7 +29,7 @@ export const ArticleCreate = (props) => (
 export const ArticleEdit = (props) => (
     <Edit {...props } title="Articles > éditer">
         <SimpleForm>
-            <DisabledInput source="id" label="ID"/>
+            <DisabledInput source="originId" label="ID"/>
             <TextInput source="title" label="Titre" />
             <SelectInput label="Status" source="status" choices={statusChoices} validate={required()}/>
         </SimpleForm>
@@ -40,7 +40,7 @@ export const ArticleEdit = (props) => (
 export const ArticleList = (props) => (
     <List {...props} title="Articles > liste" perPage={ 30 }>
         <Datagrid>
-            <TextField source="id" label="ID"/>
+            <TextField source="originId" label="ID"/>
             <TextField source="title" label="Titre"/>
             <ShowButton />
             <EditButton />
@@ -64,7 +64,7 @@ export const ArticleShow = (props) => (
     <Show { ...props } title="Articles > afficher">
         <TabbedShowLayout>
             <Tab label="Détails">
-                <TextField source="id" label="ID"/>
+                <TextField source="originId" label="ID"/>
                 <TextField source="title" label="Titre"/>
                 <EditButton />
             </Tab>
