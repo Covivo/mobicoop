@@ -55,6 +55,13 @@ const i18nProvider = locale => messages[locale];
 
 require('dotenv').config();
 
+// function to search for a given permission
+// todo : refactor with authProvider function
+function isAuthorized(action) {
+  let permissions = JSON.parse(localStorage.getItem('permissions'));
+  return permissions.hasOwnProperty(action);
+}
+
 const entrypoint = process.env.REACT_APP_API;
 
 const fetchHeaders = function () {
@@ -108,20 +115,25 @@ export default class extends Component {
                   dataProvider= { dataProvider(this.state.api) }
                   theme={ theme }
                   authProvider={ authProvider }  
-          >                
-              <Resource name="users" list={ UserList } create={ UserCreate } show={ UserShow } edit={ UserEdit } title="Utilisateurs" options={{ label: 'Utilisateurs' }} icon={PersonIcon} />
-              <Resource name="communities" list={ CommunityList } create={ CommunityCreate } show={ CommunityShow } edit={ CommunityEdit } title="Communautés" options={{ label: 'Communautés' }} icon={PeopleIcon} />
-              <Resource name="roles" list={ RoleList } create={ RoleCreate} show={ RoleShow} edit={ RoleEdit} title="Rôles" options={{ label: 'Rôles' }} icon={SupervisorAccountIcon} />
-              <Resource name="rights" list={ RightList } create={ RightCreate} show={ RightShow} edit={ RightEdit} title="Droits" options={{ label: 'Droits' }} icon={LockIcon} />
-              <Resource name="relay_points" list={ RelayPointList } create={ RelayPointCreate} show={ RelayPointShow} edit={ RelayPointEdit} title="Points relais" options={{ label: 'Points relais' }} icon={LocalParkingIcon} />
-              <Resource name="relay_point_types" list={ RelayPointTypeList } create={ RelayPointTypeCreate} show={ RelayPointTypeShow} edit={ RelayPointTypeEdit} title="Types de points relais" options={{ label: 'Types de points relais' }} icon={LocalParkingIcon} />
-              <Resource name="community_users" create={ CommunityUserCreate} edit={ CommunityUserEdit} />
-              <Resource name="articles" list={ ArticleList } create={ ArticleCreate} show={ ArticleShow} edit={ ArticleEdit} title="Articles" options={{ label: 'Articles' }} icon={NoteIcon} />
-              <Resource name="sections" create={ SectionCreate} edit={ SectionEdit} />
-              {/* <Resource name="paragraphs" create={ ParagraphCreate} edit={ ParagraphEdit} /> */}
-              <Resource name="territories" list={ TerritoryList} create={ TerritoryCreate} show={ TerritoryShow} edit={ TerritoryEdit} title="Territoires" options={{ label: 'Territoires' }} icon={MapIcon} />
-              <Resource name="geo_search" />
-              <Resource name="addresses" />
+          >      
+            {permissions => {
+                return  [          
+                  isAuthorized("users_manage") ? <Resource name="users" list={ UserList } create={ UserCreate } show={ UserShow } edit={ UserEdit } title="Utilisateurs" options={{ label: 'Utilisateurs' }} icon={PersonIcon} /> : null,
+                  isAuthorized("community_manage") ? <Resource name="communities" list={ CommunityList } create={ CommunityCreate } show={ CommunityShow } edit={ CommunityEdit } title="Communautés" options={{ label: 'Communautés' }} icon={PeopleIcon} /> : null,
+                  isAuthorized("permission_manage") ? <Resource name="roles" list={ RoleList } create={ RoleCreate} show={ RoleShow} edit={ RoleEdit} title="Rôles" options={{ label: 'Rôles' }} icon={SupervisorAccountIcon} /> : null,
+                  isAuthorized("permission_manage") ? <Resource name="rights" list={ RightList } create={ RightCreate} show={ RightShow} edit={ RightEdit} title="Droits" options={{ label: 'Droits' }} icon={LockIcon} /> : null,
+                  isAuthorized("relay_point_manage") ? <Resource name="relay_points" list={ RelayPointList } create={ RelayPointCreate} show={ RelayPointShow} edit={ RelayPointEdit} title="Points relais" options={{ label: 'Points relais' }} icon={LocalParkingIcon} /> : null,
+                  isAuthorized("relay_point_manage") ? <Resource name="relay_point_types" list={ RelayPointTypeList } create={ RelayPointTypeCreate} show={ RelayPointTypeShow} edit={ RelayPointTypeEdit} title="Types de points relais" options={{ label: 'Types de points relais' }} icon={LocalParkingIcon} /> : null,
+                  isAuthorized("community_manage") ? <Resource name="community_users" create={ CommunityUserCreate} edit={ CommunityUserEdit} /> : null,
+                  isAuthorized("article_manage") ? <Resource name="articles" list={ ArticleList } create={ ArticleCreate} show={ ArticleShow} edit={ ArticleEdit} title="Articles" options={{ label: 'Articles' }} icon={NoteIcon} /> : null,
+                  isAuthorized("article_manage") ? <Resource name="sections" create={ SectionCreate} edit={ SectionEdit} /> : null,
+                  //{/* <Resource name="paragraphs" create={ ParagraphCreate} edit={ ParagraphEdit} /> */}
+                  isAuthorized("territory_manage") ? <Resource name="territories" list={ TerritoryList} create={ TerritoryCreate} show={ TerritoryShow} edit={ TerritoryEdit} title="Territoires" options={{ label: 'Territoires' }} icon={MapIcon} /> : null,
+                  <Resource name="geo_search" />,
+                  <Resource name="addresses" />
+                ];
+            }
+          }
           </Admin>
       )
   }

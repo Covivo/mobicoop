@@ -61,7 +61,7 @@ class PermissionManager
         ]);
         if ($response->getCode() == 200) {
             $permission = $response->getValue();
-            return $permission['permission'];
+            return $permission['granted'];
         }
         return false;
     }
