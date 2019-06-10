@@ -36,6 +36,13 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 class Mass implements Resource
 {
+    const NB_WORKING_DAY = 228;
+    const EARTH_CIRCUMFERENCE_IN_KILOMETERS = 40070;
+    const FLAT_EARTH_CIRCUMFERENCE_IN_MILES = 78186;
+    const AVERAGE_EARTH_MOON_DISTANCE_IN_KILOMETERS = 384400;
+    const PARIS_NEW_YORK_CO2_IN_GRAM = 875700; // For 1 passenger
+
+
     /**
      * @var int The id of this event.
      */
@@ -109,6 +116,35 @@ class Mass implements Resource
      */
     private $persons;
 
+    /**
+     * @var array people's coordinates of this mass.
+     */
+    private $personsCoords;
+
+    /**
+     * @var float Working place latitude of the people of this mass.
+     */
+    private $latWorkingPlace;
+
+    /**
+     * @var float Working place longitude of the people of this mass.
+     */
+    private $lonWorkingPlace;
+
+    /**
+     * @var array Computed data of this mass.
+     */
+    private $computedData;
+
+    /**
+     * @var int Number of potentials carpoolers
+     */
+    private $nbPotentialCarpoolers;
+
+    /**
+     * @var MassMatrix Matrix of carpools
+     */
+    private $massMatrix;
 
     public function __construct($id = null)
     {
@@ -283,5 +319,65 @@ class Mass implements Resource
         }
 
         return $this;
+    }
+
+    public function getPersonsCoords(): ?array
+    {
+        return $this->personsCoords;
+    }
+
+    public function setPersonsCoords(?array $personsCoords)
+    {
+        $this->personsCoords = $personsCoords;
+    }
+
+    public function getLatWorkingPlace(): ?float
+    {
+        return $this->latWorkingPlace;
+    }
+
+    public function setLatWorkingPlace(?float $latWorkingPlace)
+    {
+        $this->latWorkingPlace = $latWorkingPlace;
+    }
+
+    public function getLonWorkingPlace(): ?float
+    {
+        return $this->lonWorkingPlace;
+    }
+
+    public function setLonWorkingPlace(?float $lonWorkingPlace)
+    {
+        $this->lonWorkingPlace = $lonWorkingPlace;
+    }
+
+    public function getComputedData(): ?array
+    {
+        return $this->computedData;
+    }
+
+    public function setComputedData(?array $computedData)
+    {
+        $this->computedData = $computedData;
+    }
+
+    public function getNbPotentialCarpoolers(): ?int
+    {
+        return $this->nbPotentialCarpoolers;
+    }
+
+    public function setNbPotentialCarpoolers(?int $nbPotentialCarpoolers)
+    {
+        $this->nbPotentialCarpoolers = $nbPotentialCarpoolers;
+    }
+
+    public function getMassMatrix(): ?MassMatrix
+    {
+        return $this->massMatrix;
+    }
+
+    public function setMassMatrix(?MassMatrix $massMatrix)
+    {
+        $this->massMatrix = $massMatrix;
     }
 }

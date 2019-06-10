@@ -31,17 +31,17 @@ use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Direction;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * An Mass.
+ * A Mass Person
  */
 class MassPerson implements Resource
 {
     /**
-     * @var int The id of this event.
+     * @var int The id of this person.
      */
     private $id;
 
     /**
-     * @var string|null The iri of this event.
+     * @var string|null The iri of this person.
      */
     private $iri;
 
@@ -90,10 +90,22 @@ class MassPerson implements Resource
      */
     private $returnTime;
 
+    /**
+     * @var ArrayCollection|null The potential matchings if the person is driver.
+     */
+    private $matchingsAsDriver;
+
+    /**
+     * @var ArrayCollection|null The potential matchings if the person is passenger.
+     */
+    private $matchingsAsPassenger;
+
+
     public function __construct($id = null)
     {
         $this->id = $id;
-        $this->errors = [];
+        $this->matchingsAsDriver = new ArrayCollection();
+        $this->matchingsAsPassenger = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -227,6 +239,34 @@ class MassPerson implements Resource
     {
         if ($returnTime) {
             $this->returnTime = \Datetime::createFromFormat('H:i:s', $returnTime);
+        }
+
+        return $this;
+    }
+
+    public function getMatchingsAsDriver()
+    {
+        return $this->matchingsAsDriver->getValues();
+    }
+
+    public function addMatchingsAsDriver(MassMatching $matchingsAsDriver): self
+    {
+        if (!$this->matchingsAsDriver->contains($matchingsAsDriver)) {
+            $this->matchingsAsDriver->add($matchingsAsDriver);
+        }
+
+        return $this;
+    }
+
+    public function getMatchingsAsPassenger()
+    {
+        return $this->matchingsAsPassenger->getValues();
+    }
+
+    public function addMatchingsAsPassenger(MassMatching $matchingsAsPassenger): self
+    {
+        if (!$this->matchingsAsPassenger->contains($matchingsAsPassenger)) {
+            $this->matchingsAsPassenger->add($matchingsAsPassenger);
         }
 
         return $this;

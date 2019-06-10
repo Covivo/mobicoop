@@ -27,6 +27,7 @@ use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourney;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassMatching;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassPerson;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
@@ -114,6 +115,9 @@ class Deserializer
                 break;
             case Mass::class:
                 return self::deserializeMass($data);
+                break;
+            case MassPerson::class:
+                return self::deserializeMassPerson($data);
                 break;
             case Community::class:
                 return self::deserializeCommunity($data);
@@ -470,7 +474,36 @@ class Deserializer
         if (isset($data["direction"])) {
             $massPerson->setDirection(self::deserializeDirection($data["direction"]));
         }
+        if (isset($data["matchingsAsDriver"])) {
+            foreach ($data["matchingsAsDriver"] as $matchingsAsDriver) {
+                $massPerson->addMatchingsAsDriver(self::deserializeMassMatching($matchingsAsDriver));
+            }
+        }
+        if (isset($data["matchingsAsPassenger"])) {
+            foreach ($data["matchingsAsPassenger"] as $matchingsAsPassenger) {
+                $massPerson->addMatchingsAsPassenger(self::deserializeMassMatching($matchingsAsPassenger));
+            }
+        }
         return $massPerson;
+    }
+
+    private function deserializeMassMatching(array $data): ?MassMatching
+    {
+        $massMatching = new MassMatching();
+        $massMatching = self::autoSet($massMatching, $data);
+        if (isset($data["@id"])) {
+            $massMatching->setIri($data["@id"]);
+        }
+        if (isset($data["direction"])) {
+            $massMatching->setDirection(self::deserializeDirection($data["direction"]));
+        }
+        if (isset($data["massPerson1"])) {
+            $massMatching->setMassPerson1(self::deserializeMassPerson($data["massPerson1"]));
+        }
+        if (isset($data["massPerson2"])) {
+            $massMatching->setMassPerson2(self::deserializeMassPerson($data["massPerson2"]));
+        }
+        return $massMatching;
     }
 
     private function deserializeExternalJourneyProvider(array $data): ?ExternalJourneyProvider
