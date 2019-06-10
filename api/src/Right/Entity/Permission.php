@@ -26,7 +26,6 @@ namespace App\Right\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use App\Right\Controller\PermissionCheck;
-use App\Right\Controller\PermissionsUser;
 
 /**
  * A permission.
@@ -36,7 +35,7 @@ use App\Right\Controller\PermissionsUser;
  *          "granted"={
  *              "method"="GET",
  *              "controller"=PermissionCheck::class,
- *              "path"="/permissions/granted",
+ *              "path"="/permissions",
  *              "swagger_context"={
  *                  "parameters"={
  *                      {
@@ -64,33 +63,8 @@ use App\Right\Controller\PermissionsUser;
  *                      },
  *                   }
  *              }
- *          },
- *          "user"={
- *              "method"="GET",
- *              "controller"=PermissionsUser::class,
- *              "path"="/permissions/user",
- *              "swagger_context"={
- *                  "parameters"={
- *                      {
- *                          "name" = "user",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "number",
- *                          "format" = "integer",
- *                          "description" = "The user id"
- *                      },
- *                      {
- *                          "name" = "territory",
- *                          "in" = "query",
- *                          "required" = "false",
- *                          "type" = "number",
- *                          "format" = "integer",
- *                          "description" = "The territory id"
- *                      },
- *                   }
- *              }
  *          }
- *      }
+ *      }   
  * )
  */
 class Permission
@@ -106,11 +80,6 @@ class Permission
      * @var boolean The action is granted
      */
     private $granted;
-
-    /**
-     * @var array|null The permissions granted
-     */
-    private $permissions;
 
     public function __construct($id)
     {
@@ -130,18 +99,6 @@ class Permission
     public function setGranted(bool $granted): self
     {
         $this->granted = $granted;
-
-        return $this;
-    }
-
-    public function getPermissions(): ?array
-    {
-        return $this->permissions;
-    }
-
-    public function setPermissions(array $permissions): self
-    {
-        $this->permissions = $permissions;
 
         return $this;
     }

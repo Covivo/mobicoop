@@ -146,15 +146,14 @@ class PermissionManager
      * Get the users's permissions.
      *
      * @param User $user
-     * @return Permission
+     * @return Array
      */
-    public function getUserPermissions(User $user): Permission
+    public function getUserPermissions(User $user): array
     {
         $permissions = [];
-        $permission = new Permission(1);
         // we search the rights of each role of the user (and its subsequent roles)
         foreach ($user->getUserRoles() as $userRole) {
-            $this->getRoleRights($userRole->getRole(),$userRole->getTerritory(),$permissions);
+            $this->getRoleRights($userRole->getRole(), $userRole->getTerritory(), $permissions);
         }
         // we search the rights directly granted to the user
         foreach ($user->getUserRights() as $userRight) {
@@ -171,8 +170,7 @@ class PermissionManager
                 }
             }
         }
-        $permission->setPermissions($permissions);
-        return $permission;
+        return $permissions;
     }
 
     // get the right of a given role (and the rights of its children)
@@ -193,7 +191,7 @@ class PermissionManager
             }
         }
         foreach ($this->roleRepository->findChildren($role) as $child) {
-            $this->getRoleRights($child,$territory,$permissions);
+            $this->getRoleRights($child, $territory, $permissions);
         }
     }
 }

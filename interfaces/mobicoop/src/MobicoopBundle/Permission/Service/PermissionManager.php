@@ -55,7 +55,7 @@ class PermissionManager
     public function checkPermission(string $action, ?User $user = null)
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_ARRAY);
-        $response = $this->dataProvider->getSpecialCollection("granted",[
+        $response = $this->dataProvider->getCollection([
             'action'=>$action,
             'user'=> $user ? $user->getId() : null
         ]);

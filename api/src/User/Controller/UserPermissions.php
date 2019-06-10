@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Right\Controller;
+namespace App\User\Controller;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use App\Right\Service\PermissionManager;
@@ -30,13 +30,14 @@ use App\Geography\Repository\TerritoryRepository;
 use App\Right\Repository\RightRepository;
 use App\User\Repository\UserRepository;
 use App\Right\Entity\Permission;
+use App\User\Entity\User;
 
 /**
  * Controller class for permission check.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class PermissionsUser
+class UserPermissions
 {
     private $request;
     private $permissionManager;
@@ -59,21 +60,15 @@ class PermissionsUser
      * @param array $data
      * @return Response
      */
-    public function __invoke(array $data): ?Permission
+    public function __invoke(User $data): ?User
     {
-        // we check if the user exists
-        $user = null;
-        if ($this->request->get("user")) {
-            if (!$user = $this->userRepository->find($this->request->get("user"))) {
-                return null;
-            }
-        }
         // we check if we limit to a territory
         $territory = null;
         if ($this->request->get("territory")) {
             $territory = $this->territoryRepository->find($this->request->get("territory"));
         }
         // we search the permissions
-        return $this->permissionManager->getUserPermissions($user, $territory);
+        $data->setPermissions($this->permissionManager->getUserPermissions($data, $territory));
+        return $data;
     }
 }
