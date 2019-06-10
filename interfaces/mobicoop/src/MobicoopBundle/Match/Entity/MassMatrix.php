@@ -54,6 +54,11 @@ class MassMatrix
     private $savedDuration;
 
     /**
+     * @var string Saved duration readabled by humain
+     */
+    private $humanReadableSavedDuration;
+
+    /**
      * @var float Saved CO2
      */
     private $savedCO2;
@@ -116,6 +121,15 @@ class MassMatrix
         $this->savedDuration = $savedDuration;
     }
 
+    public function getHumanReadableSavedDuration(): string
+    {
+        return $this->humanReadableSavedDuration;
+    }
+
+    public function setHumanReadableSavedDuration(string $humanReadableSavedDuration)
+    {
+        $this->humanReadableSavedDuration = $humanReadableSavedDuration;
+    }
     public function getSavedCO2(): float
     {
         return $this->savedCO2;

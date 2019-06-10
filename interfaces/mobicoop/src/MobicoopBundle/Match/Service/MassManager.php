@@ -228,6 +228,7 @@ class MassManager
         }
         $matrix->setSavedDistance($computedData["totalTravelDistance"] - $totalDistanceCarpools);
         $matrix->setSavedDuration($computedData["totalTravelDuration"] - $totalDurationCarpools);
+        $matrix->setHumanReadableSavedDuration(UtilsService::convertSecondsToHumain($computedData["totalTravelDuration"] - $totalDurationCarpools));
         $matrix->setSavedCO2($computedData["totalTravelDistanceCO2"] - $totalCO2Carpools);
 
         $mass->setMassMatrix($matrix);
