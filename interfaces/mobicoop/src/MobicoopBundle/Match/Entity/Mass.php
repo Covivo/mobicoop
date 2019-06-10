@@ -141,6 +141,11 @@ class Mass implements Resource
      */
     private $nbPotentialCarpoolers;
 
+    /**
+     * @var MassMatrix Matrix of carpools
+     */
+    private $massMatrix;
+
     public function __construct($id = null)
     {
         $this->id = $id;
@@ -364,5 +369,15 @@ class Mass implements Resource
     public function setNbPotentialCarpoolers(?int $nbPotentialCarpoolers)
     {
         $this->nbPotentialCarpoolers = $nbPotentialCarpoolers;
+    }
+
+    public function getMassMatrix(): ?MassMatrix
+    {
+        return $this->massMatrix;
+    }
+
+    public function setMassMatrix(?MassMatrix $massMatrix)
+    {
+        $this->massMatrix = $massMatrix;
     }
 }

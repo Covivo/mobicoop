@@ -230,7 +230,7 @@ class MassManager
         $matrix->setSavedDuration($computedData["totalTravelDuration"] - $totalDurationCarpools);
         $matrix->setSavedCO2($computedData["totalTravelDistanceCO2"] - $totalCO2Carpools);
 
-        dump($matrix);
+        $mass->setMassMatrix($matrix);
 
         return null;
     }
