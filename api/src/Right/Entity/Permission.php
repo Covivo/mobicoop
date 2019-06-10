@@ -64,7 +64,7 @@ use App\Right\Controller\PermissionCheck;
  *                   }
  *              }
  *          }
- *      }   
+ *      }
  * )
  */
 class Permission
@@ -102,5 +102,4 @@ class Permission
 
         return $this;
     }
-
 }
