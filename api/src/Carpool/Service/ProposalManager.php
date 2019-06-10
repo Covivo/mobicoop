@@ -35,6 +35,7 @@ use App\Geography\Service\ZoneManager;
 use App\Geography\Entity\Zone;
 use App\DataProvider\Entity\GeoRouterProvider;
 use Psr\Log\LoggerInterface;
+use App\Geography\Service\TerritoryManager;
 
 /**
  * Proposal manager service.
@@ -49,6 +50,7 @@ class ProposalManager
     private $geoRouter;
     private $zoneManager;
     private $directionRepository;
+    private $territoryManager;
     private $logger;
 
     /**
@@ -61,7 +63,7 @@ class ProposalManager
      * @param GeoRouter $geoRouter
      * @param ZoneManager $zoneManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, LoggerInterface $logger)
+    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, LoggerInterface $logger)
     {
         $this->entityManager = $entityManager;
         $this->proposalMatcher = $proposalMatcher;
@@ -69,6 +71,7 @@ class ProposalManager
         $this->directionRepository = $directionRepository;
         $this->geoRouter = $geoRouter;
         $this->zoneManager = $zoneManager;
+        $this->territoryManager = $territoryManager;
         $this->logger = $logger;
     }
     
@@ -142,7 +145,6 @@ class ProposalManager
             $direction = $routes[0];
             // creation of the crossed zones
             $direction = $this->zoneManager->createZonesForDirection($direction);
-            
             if ($proposal->getCriteria()->isDriver()) {
                 $proposal->getCriteria()->setDirectionDriver($direction);
             }
@@ -246,7 +248,7 @@ class ProposalManager
                 if (is_null($direction->getPoints())) {
                     // we use the GeoRouterProvider as a service
                     $georouter = new GeoRouterProvider();
-                    $direction->setPoints($georouter->deserializePoints($direction->getDetail(), true, $georouter::GR_ELEVATION));
+                    $direction->setPoints($georouter->deserializePoints($direction->getDetail(), true, filter_var($georouter::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
                 }
                 // creation of the crossed zones
                 $zones = [];

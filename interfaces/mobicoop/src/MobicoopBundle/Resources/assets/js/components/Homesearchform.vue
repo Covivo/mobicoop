@@ -1,111 +1,70 @@
 <template>
-  <section class="section">
-    <div class="tile is-ancestor">
-      <div class="tile is-vertical is-12">
-        <div class="tile is-child center-all">
-          <div
-            class="columns is-centered is-vcentered SearchBar"
-          >
-            <div class="column has-text-centered">
-              <!-- inputs outward destination -->
-              <label
-                class="label"
-                for="origin"
-              >
-                <geocomplete
-                  id="origin"
-                  name="origin"
-                  placeholder="Lieu de départ"
-                  title="Depuis"
-                  aria-label="Départ"
-                  :url="geoSearchUrl"
-                  @geoSelected="selectedGeo"
-                />
-              </label>
-            </div>
-            <div class="column has-text-centered test">
-              <label
-                class="label"
-                for="destination"
-              >
-                <geocomplete
-                  id="destination"
-                  name="destination"
-                  placeholder="Lieu d'arrivée"
-                  title="Vers"
-                  :url="geoSearchUrl"
-                  @geoSelected="selectedGeo"
-                />
-              </label>
-            </div>
-            <!-- Commented and not removed because it can be usefull later if we'll implement the possibility to choose a date and an hour for the simple search -->
-            <!-- datepicker -->
-            <!-- <label
-                class="label"
-                for="dateDepart"
-              >Date de départ
-                <b-datepicker
-                  id="dateDepart"
-                  v-model="outwardDate"
-                  :placeholder="'Date de départ...'"
-                  title="Date de départ"
-                  :day-names="daysShort"
-                  :month-names="months"
-                  :first-day-of-week="1"
-                  position="is-top-right"
-                  icon-pack="fas"
-                  editable
-                />
-              </label> -->
-            <!-- timepicker -->
-            <!-- <label
-                class="label"
-                for="heureDepart"
-              >Heure de départ
-                <b-timepicker
-                  id="heureDepart"
-                  v-model="outwardTime"
-                  placeholder="Heure de départ..."
-                  title="Heure de départ"
-                >
-                  <button
-                    class="button is-mobicoopgreen"
-                    @click="outwardTime = new Date()"
-                  >
-                    <b-icon icon="clock" />
-                    <span>Maintenant</span>
-                  </button>
-                  <button
-                    class="button is-mobicooppink"
-                    @click="outwardTime = null"
-                  >
-                    <b-icon icon="close" />
-                    <span>Effacer</span>
-                  </button>
-                </b-timepicker>
-              </label> -->
-            <!-- search button -->
-            <div class="column is-3 has-text-centered">
-              <label
-                for="rechercher"
-                class="label"
-              >
-                <a
-                  id="rechercher"
-                  style="width: 100%"
-                  class="button"
-                  :href="checkUrlValid ? urlToCall : null"
-                  alt="Rechercher un covoiturage"
-                  title="Rechercher"
-                ><span>Rechercher</span>
-                </a>
-              </label>
-            </div>
-          </div>
-        </div>
+  <div class="tile center-all">
+    <div
+      class="columns is-centered is-vcentered SearchBar"
+    >
+      <div class="column has-text-centered is-one-third">
+        <!-- inputs outward destination -->
+        <label
+          class="label"
+          for="origin"
+        >
+          <geocomplete
+            id="origin"
+            ref="origin"
+            name="origin"
+            placeholder="Lieu de départ"
+            title="Depuis"
+            aria-label="Départ"
+            :url="geoSearchUrl"
+            :selected="origin"
+            @geoSelected="selectedGeo"
+          />
+        </label>
+      </div>
+      <div class="column is-one-tenth has-text-centered">
+        <img
+          class="interchanged"
+          src="images/PictoInterchanger.svg"
+          alt="Intervertir origin et destination"
+          title="Intervertir origin et destination"
+          @click="swap"
+        >
+      </div>
+      <div class="column has-text-centered is-one-third">
+        <label
+          class="label"
+          for="destination"
+        >
+          <geocomplete
+            id="destination"
+            ref="destination"
+            name="destination"
+            placeholder="Lieu d'arrivée"
+            title="Vers"
+            :url="geoSearchUrl"
+            :selected="destination"
+            @geoSelected="selectedGeo"
+          />
+        </label>
+      </div>
+      <div class="column has-text-centered">
+        <label
+          for="rechercher"
+          class="label"
+        >
+          <a
+            id="rechercher"
+            class="button"
+            :href="checkUrlValid ? urlToCall : null"
+            alt="Rechercher un covoiturage"
+            title="Rechercher"
+          ><span>Rechercher</span>
+          </a>
+        </label>
       </div>
     </div>
-  </section>
+  </div>
 </template>
 
 <script>
@@ -131,6 +90,7 @@ export default {
   },
   data() {
     return {
+      swapped: false,
       daysShort: [
         "Dim",
         "Lun",
@@ -154,25 +114,18 @@ export default {
         "Novembre",
         "Décembre"
       ],
-      originLatitude: null,
-      originLongitude: null,
-      originStreetAddress : null,
-      originPostalCode: null,
-      originAddressLocality: null,
-      destinationLatitude: null,
-      destinationLongitude: null,
-      destinationStreetAddress: null,
-      destinationPostalCode: null,
-      destinationAddressLocality: null,
+      origin: {},
+      destination: {},
       outwardDate: new Date(), 
       outwardTime: new Date(),
       baseUrl: window.location.origin,
+      message: null
     };
   },
   computed: {
     // check if the minimal infos are available to have a valid url to launch the search 
     checkUrlValid(){
-      return this.originAddressLocality && this.destinationAddressLocality && this.originLatitude && this.originLongitude && this.destinationLatitude && this.destinationLongitude && this.outwardDate && this.outwardTime 
+      return this.origin.addressLocality && this.destination.addressLocality && this.origin.latitude && this.origin.longitude && this.destination.latitude && this.destination.longitude && this.outwardDate && this.outwardTime 
     },
     // formate the date
     dateFormated() {
@@ -184,45 +137,48 @@ export default {
     },
     // formate the addresses and return nothing if not defined
     originStreetAddressFormated() {
-      let originStreetAddress = this.originStreetAddress.trim().toLowerCase().replace(/ /g, '+')
+      let originStreetAddress = this.origin.streetAddress.trim().toLowerCase().replace(/ /g, '+')
       return originStreetAddress !="" ? `${originStreetAddress}+` : "";
     },
     destinationStreetAddressFormated() {
-      let destinationStreetAddress = this.destinationStreetAddress.trim().toLowerCase().replace(/ /g, '+')
+      let destinationStreetAddress = this.destination.streetAddress.trim().toLowerCase().replace(/ /g, '+')
       return destinationStreetAddress !="" ? `${destinationStreetAddress}+` : "";
     },
     // formate the postalCodes and return nothing if not defined
     originPostalCodeFormated() {
-      return this.originPostalCode ? `${this.originPostalCode}+` : "";
+      return this.origin.postalCode ? `${this.origin.postalCode}+` : "";
     },
     destinationPostalCodeFormated() {
-      return this.destinationPostalCode ? `${this.destinationPostalCode}+` : "";
+      return this.destination.postalCode ? `${this.destination.postalCode}+` : "";
     },
     // creation of the url to call
     urlToCall() {
-      return `${this.baseUrl}/${this.route}/${this.originStreetAddressFormated}${this.originPostalCodeFormated}${this.originAddressLocality}/${this.destinationStreetAddressFormated}${this.destinationPostalCodeFormated}${this.destinationAddressLocality}/${this.originLatitude}/${this.originLongitude}/${this.destinationLatitude}/${this.destinationLongitude}/${this.dateFormated}${this.timeFormated}/resultats`;  
+      return `${this.baseUrl}/${this.route}/${this.originStreetAddressFormated}${this.originPostalCodeFormated}${this.origin.addressLocality}/${this.destinationStreetAddressFormated}${this.destinationPostalCodeFormated}${this.destination.addressLocality}/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.dateFormated}${this.timeFormated}/resultats`;  
     } 
   },
 
   methods: {
     selectedGeo(val) {
       let name = val.name;
-      this[name + "Latitude"] = val.latitude;
-      this[name + "Longitude"] = val.longitude;
-      this[name + "StreetAddress"] = val.streetAddress;
-      this[name + "PostalCode"] = val.postalCode;
-      this[name + "AddressCountry"] = val.addressCountry;
-      this[name + "AddressLocality"] = val.addressLocality;
+      this[name] = val;
+      
     },
+    swap() {
+      this.swapped = !this.swapped;
+      let oldOrigin = {...this.$refs.origin.selected};
+      let oldOriginList = [...this.$refs.origin.data];
+      let oldDestination = {...this.$refs.destination.selected};
+      let oldDestinationList = [...this.$refs.destination.data];
+      this.$refs.origin.swap(oldDestinationList,oldDestination)
+      this.$refs.destination.swap(oldOriginList,oldOrigin)
+    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-
-.fieldsContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.interchanged{
+  cursor: pointer;
 }
 </style>
+

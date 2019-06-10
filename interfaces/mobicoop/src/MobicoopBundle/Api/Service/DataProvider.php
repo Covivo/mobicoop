@@ -90,9 +90,10 @@ class DataProvider
      * @param string $username
      * @param string $password
      * @param string $authPath
+     * @param string $tokenId
      * @param Deserializer $deserializer
      */
-    public function __construct(string $uri, string $username, string $password, string $authPath, Deserializer $deserializer)
+    public function __construct(string $uri, string $username, string $password, string $authPath, string $tokenId, Deserializer $deserializer)
     {
         //Create your auth strategy
         $authStrategy = new JsonAuthStrategy(
@@ -111,6 +112,7 @@ class DataProvider
         $jwtManager = new JwtManager(
             $authClient,
             $authStrategy,
+            $tokenId,
             [
                 'token_url' => $authPath,
             ]

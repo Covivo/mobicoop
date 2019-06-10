@@ -48,9 +48,14 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Role
 {
-    // default role
-    const DEFAULT_ROLE = 1;
-    
+    // roles
+    const ROLE_SUPER_ADMIN = 1;
+    const ROLE_ADMIN = 2;
+    const ROLE_USER_REGISTERED_FULL = 3;
+    const ROLE_USER_REGISTERED = 4;
+    const ROLE_USER = 5;
+    const ROLE_MATCH = 6;
+
     /**
      * @var int The id of this role.
      *
@@ -80,7 +85,7 @@ class Role
     /**
      * @var Role|null Parent role.
      *
-     * @ORM\OneToOne(targetEntity="\App\Right\Entity\Role", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\ManyToOne(targetEntity="\App\Right\Entity\Role")
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","write"})
      */

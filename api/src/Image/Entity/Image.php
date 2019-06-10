@@ -40,6 +40,7 @@ use App\RelayPoint\Entity\RelayPointType;
 use App\Image\Controller\CreateImageAction;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use App\User\Entity\User;
 
 /**
  * An image.
@@ -246,6 +247,14 @@ class Image
      * @Vich\UploadableField(mapping="user", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
      */
     private $userFile;
+    
+    /**
+     * @var User|null The user associated with the image.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="images", cascade="persist")
+     */
+    private $user;
+
     
     /**
      * @var int|null The user id associated with the image.
@@ -569,6 +578,19 @@ class Image
     public function getUserId(): ?int
     {
         return $this->userId;
+    }
+
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+    
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+        
+        return $this;
     }
     
     public function setUserId($userId)

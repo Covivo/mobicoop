@@ -80,6 +80,7 @@ class JwtManager
     public function __construct(
         ClientInterface $client,
         AuthStrategyInterface $auth,
+        string $tokenId="token",
         array $options = []
     ) {
         $this->client = $client;
@@ -96,7 +97,7 @@ class JwtManager
 
         // search for a token in the cache
         $this->cache = new FilesystemAdapter();
-        $token = $this->cache->getItem('mobicoop.jwt.token');
+        $token = $this->cache->getItem($tokenId.'.jwt.token');
         if ($token->isHit()) {
             $this->token = $token->get();
         }

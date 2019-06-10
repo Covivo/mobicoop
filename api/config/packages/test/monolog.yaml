@@ -10,8 +10,12 @@ monolog:
             level: debug
             path: "%kernel.logs_dir%/mass.log"
             channels: [mass]
+        geomatcher:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/geomatcher.log"    
         main:
             type: stream
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
-            channels: ["!event", "!carpool", "!mass"]
+            channels: ["!event", "!carpool", "!mass", "!geomatcher"]

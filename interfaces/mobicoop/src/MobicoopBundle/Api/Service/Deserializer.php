@@ -55,6 +55,10 @@ use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Direction;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourneyProvider;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
+use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Article;
+use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Section;
+use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Paragraph;
+use Mobicoop\Bundle\MobicoopBundle\Permission\Entity\Permission;
 
 /**
  * Custom deserializer service.
@@ -117,6 +121,12 @@ class Deserializer
                 break;
             case Community::class:
                 return self::deserializeCommunity($data);
+                break;
+            case Article::class:
+                return self::deserializeArticle($data);
+                break;
+            case Permission::class:
+                return self::deserializePermission($data);
                 break;
             default:
                 break;
@@ -548,6 +558,56 @@ class Deserializer
             }
         }
         return $community;
+    }
+
+    private function deserializeArticle(array $data): ?Article
+    {
+        $article = new Article();
+        $article = self::autoSet($article, $data);
+        if (isset($data["@id"])) {
+            $article->setIri($data["@id"]);
+        }
+        if (isset($data["sections"])) {
+            foreach ($data["sections"] as $section) {
+                $article->addSection(self::deserializeSection($section));
+            }
+        }
+        return $article;
+    }
+
+    private function deserializeSection(array $data): ?Section
+    {
+        $section = new Section();
+        $section = self::autoSet($section, $data);
+        if (isset($data["@id"])) {
+            $section->setIri($data["@id"]);
+        }
+        if (isset($data["paragraphs"])) {
+            foreach ($data["paragraphs"] as $paragraph) {
+                $section->addParagraph(self::deserializeParagraph($paragraph));
+            }
+        }
+        return $section;
+    }
+
+    private function deserializeParagraph(array $data): ?Paragraph
+    {
+        $paragraph = new Paragraph();
+        $paragraph = self::autoSet($paragraph, $data);
+        if (isset($data["@id"])) {
+            $paragraph->setIri($data["@id"]);
+        }
+        return $paragraph;
+    }
+
+    private function deserializePermission(array $data): ?Permission
+    {
+        $permission = new Permission();
+        $permission = self::autoSet($permission, $data);
+        if (isset($data["@id"])) {
+            $permission->setIri($data["@id"]);
+        }
+        return $permission;
     }
     
     private function autoSet($object, $data)

@@ -23,9 +23,7 @@
 
 namespace App\Geography\Entity;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -35,11 +33,13 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use App\Carpool\Entity\WayPoint;
 use App\User\Entity\User;
+use CrEOF\Spatial\PHP\Types\Geometry\Point;
 
 /**
  * A postal address.
  *
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -198,6 +198,13 @@ class Address
     private $elevation;
 
     /**
+     * @var string The geoJson point of the address.
+     * @ORM\Column(type="point", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $geoJson;
+
+    /**
      * @var string|null The name of this address.
      *
      * @ORM\Column(type="string", length=45, nullable=true)
@@ -213,14 +220,6 @@ class Address
     private $user;
 
     /**
-     * @var ArrayCollection|null The territories of the adress.
-     *
-     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
-     * @Groups({"read","write"})
-     */
-    private $territories;
-
-    /**
      * @var string|null Label for display
      *
      * @Groups({"read","pt"})
@@ -234,7 +233,6 @@ class Address
         if ($id) {
             $this->id = $id;
         }
-        $this->territories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -407,6 +405,18 @@ class Address
         $this->elevation = $elevation;
     }
 
+    public function getGeoJson()
+    {
+        return $this->geoJson;
+    }
+    
+    public function setGeoJson($geoJson): self
+    {
+        $this->geoJson = $geoJson;
+        
+        return $this;
+    }
+
     public function getName(): ?string
     {
         return $this->name;
@@ -428,29 +438,6 @@ class Address
         $this->user = $user;
     }
 
-    public function getTerritories()
-    {
-        return $this->territories->getValues();
-    }
-    
-    public function addTerritory(Territory $territory): self
-    {
-        if (!$this->territories->contains($territory)) {
-            $this->territories[] = $territory;
-        }
-        
-        return $this;
-    }
-    
-    public function removeTerritory(Territory $territory): self
-    {
-        if ($this->territories->contains($territory)) {
-            $this->territories->removeElement($territory);
-        }
-        
-        return $this;
-    }
-
     public function getDisplayLabel(): ?string
     {
         return $this->displayLabel;
@@ -459,5 +446,20 @@ class Address
     public function setDisplayLabel(?string $displayLabel)
     {
         $this->displayLabel = $displayLabel;
+    }
+
+    // DOCTRINE EVENTS
+    
+    /**
+     * GeoJson representation.
+     *
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function setAutoGeoJson()
+    {
+        if (!is_null($this->getLatitude()) && !is_null($this->getLongitude())) {
+            $this->setGeoJson(new Point($this->getLongitude(), $this->getLatitude()));
+        }
     }
 }

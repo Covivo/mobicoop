@@ -20,7 +20,7 @@ services:
     Mobicoop\Bundle\MobicoopBundle\Service\:
         resource: '@MobicoopBundle/Service/*'
         exclude: '../{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
-#
+
     ### controllers are imported separately to make sure services can be injected
     ### as action arguments even if you don't extend any base controller class
     Mobicoop\Bundle\MobicoopBundle\Controller\:
@@ -35,15 +35,14 @@ services:
     # Api
     Mobicoop\Bundle\MobicoopBundle\Api\Service\:
         resource: '@MobicoopBundle/Api/Service/*' 
-    
-    # Send API uri and identifiers to DataProvider service
-    Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider :
-        arguments:
-            $uri: '%env(resolve:API_URI)%'
-            $username: '%env(resolve:API_USERNAME)%'
-            $password: '%env(resolve:API_PASSWORD)%'
-            $authPath: '%env(resolve:API_AUTH_PATH)%'
-        shared: false
+
+    # Article
+    Mobicoop\Bundle\MobicoopBundle\Article\Controller\:
+        resource: '@MobicoopBundle/Article/Controller/*'
+    Mobicoop\Bundle\MobicoopBundle\Article\Service\:
+        resource: '@MobicoopBundle/Article/Service/*'
+    Mobicoop\Bundle\MobicoopBundle\Article\Security\:
+        resource: '@MobicoopBundle/Article/Security/*'
     
     # Carpool
     Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\:
@@ -51,7 +50,31 @@ services:
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
         resource: '@MobicoopBundle/Carpool/Service/*'    
-        
+    Mobicoop\Bundle\MobicoopBundle\Carpool\Security\:
+        resource: '@MobicoopBundle/Carpool/Security/*'
+
+    # Community
+    Mobicoop\Bundle\MobicoopBundle\Community\Controller\:
+        resource: '@MobicoopBundle/Community/Controller/*' 
+    Mobicoop\Bundle\MobicoopBundle\Community\Service\:
+        resource: '@MobicoopBundle/Community/Service/*'  
+    Mobicoop\Bundle\MobicoopBundle\Community\Security\:
+        resource: '@MobicoopBundle/Community/Security/*'   
+
+    # DataProvider
+    Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider :
+        arguments:
+            $uri: '%env(resolve:API_URI)%'
+            $username: '%env(resolve:API_USERNAME)%'
+            $password: '%env(resolve:API_PASSWORD)%'
+            $authPath: '%env(resolve:API_AUTH_PATH)%'
+            $tokenId: '%env(resolve:API_TOKEN_ID)%'
+        shared: false
+    
+    # Event
+    Mobicoop\Bundle\MobicoopBundle\Event\Service\:
+        resource: '@MobicoopBundle/Event/Service/*'
+
     # External journey
     Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\:
         resource: '@MobicoopBundle/ExternalJourney/Service/*'
@@ -63,6 +86,18 @@ services:
     Mobicoop\Bundle\MobicoopBundle\Geography\Service\:
         resource: '@MobicoopBundle/Geography/Service/*'
         
+    # Image
+    Mobicoop\Bundle\MobicoopBundle\Image\Service\:
+        resource: '@MobicoopBundle/Image/Service/*'
+
+    # Mass
+    Mobicoop\Bundle\MobicoopBundle\Match\Service\:
+        resource: '@MobicoopBundle/Match/Service/*'
+
+    # Permission
+    Mobicoop\Bundle\MobicoopBundle\Permission\Service\:
+        resource: '@MobicoopBundle/Permission/Service/*'
+
     # Public transport
     Mobicoop\Bundle\MobicoopBundle\PublicTransport\Service\:
         resource: '@MobicoopBundle/PublicTransport/Service/*'
@@ -73,21 +108,5 @@ services:
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\User\Service\:
         resource: '@MobicoopBundle/User/Service/*'
-    
-    # Event
-    Mobicoop\Bundle\MobicoopBundle\Event\Service\:
-        resource: '@MobicoopBundle/Event/Service/*'
-        
-    # Image
-    Mobicoop\Bundle\MobicoopBundle\Image\Service\:
-        resource: '@MobicoopBundle/Image/Service/*'
-
-    # Mass
-    Mobicoop\Bundle\MobicoopBundle\Match\Service\:
-        resource: '@MobicoopBundle/Match/Service/*'
-
-    #Community
-    Mobicoop\Bundle\MobicoopBundle\Community\Controller\:
-        resource: '@MobicoopBundle/Community/Controller/*' 
-    Mobicoop\Bundle\MobicoopBundle\Community\Service\:
-        resource: '@MobicoopBundle/Community/Service/*'       
+    Mobicoop\Bundle\MobicoopBundle\User\Security\:
+        resource: '@MobicoopBundle/User/Security/*'

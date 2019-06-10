@@ -43,20 +43,32 @@ services:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
 
+    # Direction Load Listener
+    mobicoop.direction.direction_load_listener:
+        class: App\Geography\EventListener\DirectionLoadListener
+        arguments: ['@App\Geography\Service\GeoTools'] # GeoTools injected to compute CO2
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Article\Controller\:
+        resource: '../src/Article/Controller'
+        tags: ['controller.service_arguments']
+
     App\Carpool\Controller\:
         resource: '../src/Carpool/Controller'
         tags: ['controller.service_arguments']
-        
-    App\Rdex\Controller\:
-        resource: '../src/Rdex/Controller'
-        tags: ['controller.service_arguments']
-        
+
     'App\Carpool\Filter\LocalityFilter':
         # Uncomment only if autoconfiguration isn't enabled
         #tags: [ 'api_platform.filter' ]
 
+    App\Rdex\Controller\:
+        resource: '../src/Rdex/Controller'
+        tags: ['controller.service_arguments']
+        
     App\Geography\Controller\:
         resource: '../src/Geography/Controller'
         tags: ['controller.service_arguments']
@@ -67,6 +79,14 @@ services:
 
     App\Match\Controller\:
         resource: '../src/Match/Controller'
+        tags: ['controller.service_arguments']
+
+    App\Right\Controller\:
+        resource: '../src/Right/Controller'
+        tags: ['controller.service_arguments']
+    
+    App\User\Controller\:
+        resource: '../src/User/Controller'
         tags: ['controller.service_arguments']
 
     # alias to allow this type to be autowired
@@ -112,3 +132,8 @@ services:
         arguments:
             $params:
                 - { displayCountry: '%env(resolve:DISPLAY_COUNTRY)%', displayRegion: '%env(resolve:DISPLAY_REGION)%', displaySeparator: '%env(resolve:DISPLAY_SEPARATOR)%' }
+
+    # set the monolog channel to use for UserManager
+    App\Match\Service\GeoMatcher:
+        tags: 
+            - { name: monolog.logger, channel: geomatcher }    

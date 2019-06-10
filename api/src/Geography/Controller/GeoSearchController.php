@@ -57,6 +57,9 @@ class GeoSearchController
      */
     public function __invoke(array $data): array
     {
-        return $this->geoSearcher->geoCode($this->request->get("input"));
+        if ($this->request->get("input")) {
+            return $this->geoSearcher->geoCode($this->request->get("input"));
+        }
+        return $data;
     }
 }

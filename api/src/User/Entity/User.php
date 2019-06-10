@@ -40,12 +40,14 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use App\Geography\Entity\Address;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Ask;
-use App\Right\Entity\Role;
-use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use App\Right\Entity\UserRole;
 use App\Match\Entity\Mass;
+use App\Right\Entity\UserRight;
+use App\Image\Entity\Image;
+use App\User\Controller\UserPost;
+use App\User\Controller\UserPermissions;
 
 /**
  * A user.
@@ -62,8 +64,41 @@ use App\Match\Entity\Mass;
  *          "normalization_context"={"groups"={"read","mass"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={
+ *          "get"={
+ *              "normalization_context"={"groups"={"read"}},
+ *          },
+ *          "post"={
+ *              "method"="POST",
+ *              "path"="/users",
+ *              "controller"=UserPost::class,
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "normalization_context"={"groups"={"read"}},
+ *          },
+ *          "permissions"={
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"permissions"}},
+ *              "controller"=UserPermissions::class,
+ *              "path"="/users/{id}/permissions",
+ *              "swagger_context"={
+ *                  "parameters"={
+ *                      {
+ *                          "name" = "territory",
+ *                          "in" = "query",
+ *                          "required" = "false",
+ *                          "type" = "number",
+ *                          "format" = "integer",
+ *                          "description" = "The territory id"
+ *                      },
+ *                   }
+ *              }
+ *          },
+ *          "put",
+ *          "delete"
+ *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"id"})
  * @ApiFilter(SearchFilter::class, properties={"email":"exact"})
@@ -73,7 +108,7 @@ class User implements UserInterface, EquatableInterface
 {
     const MAX_DETOUR_DURATION = 600;
     const MAX_DETOUR_DISTANCE = 10000;
-    
+
     const STATUS_ACTIVE = 1;
     const STATUS_DISABLED = 2;
     const STATUS_ANONYMIZED = 3;
@@ -87,7 +122,7 @@ class User implements UserInterface, EquatableInterface
         self::GENDER_MALE,
         self::GENDER_OTHER
     ];
-    
+
     /**
      * @var int The id of this user.
      *
@@ -97,7 +132,7 @@ class User implements UserInterface, EquatableInterface
      * @Groups("read")
      */
     private $id;
-    
+
     /**
      * @var int User status (1 = active; 2 = disabled; 3 = anonymized).
      *
@@ -106,7 +141,7 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"read","write"})
      */
     private $status;
-    
+
     /**
      * @var string|null The first name of the user.
      *
@@ -114,7 +149,7 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"read","write"})
      */
     private $givenName;
-    
+
     /**
      * @var string|null The family name of the user.
      *
@@ -122,7 +157,7 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"read","write"})
      */
     private $familyName;
-    
+
     /**
      * @var string The email of the user.
      *
@@ -132,7 +167,7 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"read","write"})
      */
     private $email;
-    
+
     /**
      * @var string The encoded password of the user.
      *
@@ -140,7 +175,7 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"read","write"})
      */
     private $password;
-    
+
     /**
      * @var int|null The gender of the user (1=female, 2=male, 3=nc)
      *
@@ -148,7 +183,7 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"read","write"})
      */
     private $gender;
-    
+
     /**
      * @var string|null The nationality of the user.
      *
@@ -156,7 +191,7 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"read","write"})
      */
     private $nationality;
-    
+
     /**
      * @var \DateTimeInterface|null The birth date of the user.
      *
@@ -171,7 +206,7 @@ class User implements UserInterface, EquatableInterface
      * )
      */
     private $birthDate;
-    
+
     /**
      * @var string|null The telephone number of the user.
      *
@@ -179,7 +214,7 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"read","write"})
      */
     private $telephone;
-    
+
     /**
      * @var int|null The maximum detour duration (in seconds) as a driver to accept a request proposal.
      *
@@ -187,7 +222,7 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"read","write"})
      */
     private $maxDetourDuration;
-    
+
     /**
      * @var int|null The maximum detour distance (in metres) as a driver to accept a request proposal.
      *
@@ -195,7 +230,7 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"read","write"})
      */
     private $maxDetourDistance;
-    
+
     /**
      * @var boolean|null The user accepts any route as a passenger from its origin to the destination.
      *
@@ -203,7 +238,7 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"read","write"})
      */
     private $anyRouteAsPassenger;
-    
+
     /**
      * @var boolean|null The user accepts any transportation mode.
      *
@@ -211,7 +246,7 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"read","write"})
      */
     private $multiTransportMode;
-    
+
     /**
      * @var ArrayCollection|null A user may have many addresses.
      *
@@ -219,7 +254,7 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"read","write"})
      */
     private $addresses;
-    
+
     /**
      * @var ArrayCollection|null A user may have many cars.
      *
@@ -245,11 +280,29 @@ class User implements UserInterface, EquatableInterface
     private $asks;
 
     /**
+     * @var ArrayCollection|null The images of the user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OrderBy({"position" = "ASC"})
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
+     */
+    private $images;
+    
+    /**
      * @var ArrayCollection|null A user may have many roles.
      *
      * @ORM\OneToMany(targetEntity="\App\Right\Entity\UserRole", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      */
     private $userRoles;
+
+    /**
+     * @var ArrayCollection|null A user may have many specific rights.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Right\Entity\UserRight", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     */
+    private $userRights;
 
     /**
      * @var ArrayCollection|null The mass import files of the user.
@@ -262,43 +315,51 @@ class User implements UserInterface, EquatableInterface
     private $masses;
 
     /**
-    * @var \DateTimeInterface Creation date of the event.
-    *
-    * @ORM\Column(type="datetime")
-    */
+     * @var \DateTimeInterface Creation date of the event.
+     *
+     * @ORM\Column(type="datetime")
+     */
     private $createdDate;
-    
-    public function __construct($status=null)
+
+    /**
+     * @var array|null The permissions granted
+     * @Groups("permissions")
+     */
+    private $permissions;
+
+    public function __construct($status = null)
     {
         $this->addresses = new ArrayCollection();
         $this->cars = new ArrayCollection();
         $this->proposals = new ArrayCollection();
         $this->asks = new ArrayCollection();
         $this->userRoles = new ArrayCollection();
+        $this->userRights = new ArrayCollection();
         $this->masses = new ArrayCollection();
+        $this->images = new ArrayCollection();
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
         $this->setStatus($status);
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function getStatus(): int
     {
         return $this->status;
     }
-    
+
     public function setStatus(int $status): self
     {
         $this->status = $status;
-        
+
         return $this;
     }
-    
+
     public function getGivenName(): ?string
     {
         return $this->givenName;
@@ -307,31 +368,31 @@ class User implements UserInterface, EquatableInterface
     public function setGivenName(?string $givenName): self
     {
         $this->givenName = $givenName;
-        
+
         return $this;
     }
-    
+
     public function getFamilyName(): ?string
     {
         return $this->familyName;
     }
-    
+
     public function setFamilyName(?string $familyName): self
     {
         $this->familyName = $familyName;
-        
+
         return $this;
     }
-    
+
     public function getEmail(): string
     {
         return $this->email;
     }
-    
+
     public function setEmail(string $email): self
     {
         $this->email = $email;
-        
+
         return $this;
     }
 
@@ -343,19 +404,19 @@ class User implements UserInterface, EquatableInterface
     public function setPassword(?string $password): self
     {
         $this->password = $password;
-        
+
         return $this;
     }
-    
+
     public function getGender()
     {
         return $this->gender;
     }
-    
+
     public function setGender($gender): self
     {
         $this->gender = $gender;
-        
+
         return $this;
     }
 
@@ -363,11 +424,11 @@ class User implements UserInterface, EquatableInterface
     {
         return $this->nationality;
     }
-    
+
     public function setNationality(?string $nationality): self
     {
         $this->nationality = $nationality;
-        
+
         return $this;
     }
 
@@ -375,11 +436,11 @@ class User implements UserInterface, EquatableInterface
     {
         return $this->birthDate;
     }
-    
+
     public function setBirthDate(?\DateTimeInterface $birthDate): self
     {
         $this->birthDate = $birthDate;
-        
+
         return $this;
     }
 
@@ -387,11 +448,11 @@ class User implements UserInterface, EquatableInterface
     {
         return $this->telephone;
     }
-    
+
     public function setTelephone(?string $telephone): self
     {
         $this->telephone = $telephone;
-        
+
         return $this;
     }
 
@@ -399,11 +460,11 @@ class User implements UserInterface, EquatableInterface
     {
         return (!is_null($this->maxDetourDuration) ? $this->maxDetourDuration : self::MAX_DETOUR_DURATION);
     }
-    
+
     public function setMaxDetourDuration(?int $maxDetourDuration): self
     {
         $this->maxDetourDuration = $maxDetourDuration;
-        
+
         return $this;
     }
 
@@ -411,50 +472,50 @@ class User implements UserInterface, EquatableInterface
     {
         return (!is_null($this->maxDetourDistance) ? $this->maxDetourDistance : self::MAX_DETOUR_DISTANCE);
     }
-    
+
     public function setMaxDetourDistance(?int $maxDetourDistance): self
     {
         $this->maxDetourDistance = $maxDetourDistance;
-        
+
         return $this;
     }
-    
+
     public function getAnyRouteAsPassenger(): bool
     {
         return $this->anyRouteAsPassenger;
     }
-    
+
     public function setAnyRouteAsPassenger(bool $anyRouteAsPassenger): self
     {
         $this->anyRouteAsPassenger = $anyRouteAsPassenger;
-        
+
         return $this;
     }
-    
+
     public function getMultiTransportMode(): bool
     {
         return $this->multiTransportMode;
     }
-    
+
     public function setMultiTransportMode(bool $multiTransportMode): self
     {
         $this->multiTransportMode = $multiTransportMode;
-        
+
         return $this;
     }
-    
+
     public function getAddresses()
     {
         return $this->addresses->getValues();
     }
-    
+
     public function addAddress(Address $address): self
     {
         if (!$this->addresses->contains($address)) {
             $this->addresses->add($address);
             $address->setUser($this);
         }
-        
+
         return $this;
     }
 
@@ -467,25 +528,53 @@ class User implements UserInterface, EquatableInterface
                 $address->setUser(null);
             }
         }
-        
+
         return $this;
     }
-    
+
+    public function getImages()
+    {
+        return $this->images->getValues();
+    }
+
+    public function addImage(Image $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images[] = $image;
+            $image->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(Image $image): self
+    {
+        if ($this->images->contains($image)) {
+            $this->images->removeElement($image);
+            // set the owning side to null (unless already changed)
+            if ($image->getUser() === $this) {
+                $image->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
     public function getCars()
     {
         return $this->cars->getValues();
     }
-    
+
     public function addCar(Car $car): self
     {
         if (!$this->cars->contains($car)) {
             $this->cars->add($car);
             $car->setUser($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeCar(Car $car): self
     {
         if ($this->cars->contains($car)) {
@@ -495,10 +584,10 @@ class User implements UserInterface, EquatableInterface
                 $car->setUser(null);
             }
         }
-        
+
         return $this;
     }
-    
+
     public function getProposals()
     {
         return $this->proposals->getValues();
@@ -559,17 +648,17 @@ class User implements UserInterface, EquatableInterface
     {
         return $this->userRoles->getValues();
     }
-    
+
     public function addUserRole(UserRole $userRole): self
     {
         if (!$this->userRoles->contains($userRole)) {
             $this->userRoles->add($userRole);
             $userRole->setUser($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeUserRole(UserRole $userRole): self
     {
         if ($this->userRoles->contains($userRole)) {
@@ -577,6 +666,34 @@ class User implements UserInterface, EquatableInterface
             // set the owning side to null (unless already changed)
             if ($userRole->getUser() === $this) {
                 $userRole->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getUserRights()
+    {
+        return $this->userRights->getValues();
+    }
+    
+    public function addUserRight(UserRight $userRight): self
+    {
+        if (!$this->userRights->contains($userRight)) {
+            $this->userRights->add($userRight);
+            $userRight->setUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeUserRight(UserRight $userRight): self
+    {
+        if ($this->userRights->contains($userRight)) {
+            $this->userRights->removeElement($userRight);
+            // set the owning side to null (unless already changed)
+            if ($userRight->getUser() === $this) {
+                $userRight->setUser(null);
             }
         }
         
@@ -587,17 +704,17 @@ class User implements UserInterface, EquatableInterface
     {
         return $this->masses->getValues();
     }
-    
+
     public function addMass(Mass $mass): self
     {
         if (!$this->masses->contains($mass)) {
             $this->masses->add($mass);
             $mass->setUser($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeMass(Mass $mass): self
     {
         if ($this->masses->contains($mass)) {
@@ -607,7 +724,7 @@ class User implements UserInterface, EquatableInterface
                 $mass->setUser(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -615,20 +732,23 @@ class User implements UserInterface, EquatableInterface
     {
         return $this->createdDate;
     }
-    
+
     public function setCreatedDate(\DateTimeInterface $createdDate): self
     {
         $this->createdDate = $createdDate;
-        
+
         return $this;
     }
 
     public function getRoles()
     {
         // we return an array of ROLE_***
+        // we only return the global roles, not the territory-specific roles
         $roles = [];
         foreach ($this->userRoles as $userRole) {
-            $roles[] = $userRole->getRole()->getName();
+            if (is_null($userRole->getTerritory())) {
+                $roles[] = $userRole->getRole()->getName();
+            }
         }
         return $roles;
     }
@@ -665,8 +785,20 @@ class User implements UserInterface, EquatableInterface
         return true;
     }
 
+    public function getPermissions(): ?array
+    {
+        return $this->permissions;
+    }
+
+    public function setPermissions(array $permissions): self
+    {
+        $this->permissions = $permissions;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

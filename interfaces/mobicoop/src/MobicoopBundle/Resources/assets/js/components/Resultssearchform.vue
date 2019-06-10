@@ -62,6 +62,7 @@
                 <geocomplete
                   id="origin"
                   name="origin"
+                  :placeholder="origin"
                   title="Depuis"
                   aria-label="Départ"
                   :url="geoSearchUrl"

@@ -130,7 +130,7 @@ class Event implements Resource
     private $user;
     
     /**
-     * var Image[]|null The images of the event.
+     * @var Image[]|null The images of the event.
      *
      * Groups({"post","put"})
      * @Assert\Valid

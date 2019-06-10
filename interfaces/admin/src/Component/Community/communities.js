@@ -12,13 +12,13 @@ import {
 import RichTextInput from 'ra-input-rich-text';
 
 const userOptionRenderer = choice => `${choice.givenName} ${choice.familyName}`;
-const userId = `/users/${localStorage.getItem('id')}`;
+const userId = parseInt(`${localStorage.getItem('id')}`);
 const statusChoices = [
     { id: 0, name: 'En attente' },
     { id: 1, name: 'Accepté' },
     { id: 2, name: 'Refusé' },
 ];
-console.log(userId);
+
 // Create
 export const CommunityCreate = (props) => (
     <Create { ...props } title="Communautés > ajouter">

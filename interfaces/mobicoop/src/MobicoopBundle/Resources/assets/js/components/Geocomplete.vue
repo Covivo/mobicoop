@@ -3,10 +3,11 @@
     <b-field>
       <b-autocomplete
         :id="name"
+        ref="autocomplete"
         :data="data"
-        field="concatenedAddr"
         :placeholder="placeholder"
         :open-on-focus="true"
+        field="concatenedAddr"
         icon-pack="fa"
         :loading="isFetching"
         @input="getAsyncData"
@@ -57,13 +58,14 @@ export default {
     name: defaultString,
     required: defaultString,
     placeholder: defaultString,
-    iclass: defaultString,
-    streetaddress: defaultString,
-    postalcode: defaultString,
-    addresslocality: defaultString,
-    addresscountry: defaultString,
-    longitude: defaultString,
-    latitude: defaultString
+    selected: {
+      type: Object,
+      default: () => {
+        return {
+          concatenedAddr: ""
+        }
+      }
+    }
   },
   data() {
     return this.initialData();
@@ -72,15 +74,7 @@ export default {
     initialData() {
       return {
         focus: false,
-        valstreetAddress: "",
-        valpostalCode: "",
-        valaddressLocality: "",
-        valaddressCountry: "",
-        vallongitude: 0,
-        vallatitude: 0,
-        address: "",
         data: [],
-        selected: null,
         isFetching: false,
         nbOfRequest: 0
       };
@@ -104,7 +98,10 @@ export default {
             let streetAddress = addresses[adressKey].streetAddress ? `${addresses[adressKey].streetAddress} ` : '';
             let postalCode = addresses[adressKey].postalCode ? `${addresses[adressKey].postalCode} ` : '';
             let addressLocality = addresses[adressKey].addressLocality ? addresses[adressKey].addressLocality : '';
-            addresses[adressKey].concatenedAddr = `${streetAddress}${postalCode}${addressLocality}`
+            addresses[adressKey].concatenedAddr = `${streetAddress}${postalCode}${addressLocality}`;
+            if(!addressLocality){ // No locality return, do not show them (region, department ..)
+              addresses.splice(adressKey,1);
+            } 
           })
           // Set Data & show them
           if(this.isFetching) return; // Another request is fetching, we do not show the previous one
@@ -116,10 +113,13 @@ export default {
           this.isFetching = false;
         })
     }, 700),
+    // switch data , from another autocmplete component.
+    swap(data,selected){ 
+      this.data = data; // switch the list
+      this.$refs.autocomplete.setSelected(selected) // set the selection to the sent
+    },
     onSelected(value) {
-      this.selected = value;
       this.$emit("geoSelected", { ...value, name: this.name });
-      // this.focus = false;
     }
   }
 };

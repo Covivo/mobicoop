@@ -1,27 +1,40 @@
 monolog:
     handlers:
         main:
-            type: fingers_crossed
-            action_level: error
-            handler: nested
-            excluded_404s:
-                # regex: exclude all 404 errors from the logs
-                - ^/
-        nested:
-            type: stream
-            path: "%kernel.logs_dir%/%kernel.environment%.log"
-            level: debug
-            channels: ["!carpool","!mass"]
-        carpool:
+            type:               fingers_crossed
+            action_level:       info
+            handler:            grouped
+            channels:           ["!carpool", "!mass", "!geomatcher"]
+        grouped:
+            type:               group
+            members:            [streamed, swift]
+        streamed:
+            type:               stream
+            path:               "%kernel.logs_dir%/%kernel.environment%.log"
+            level:              info
+        swift:
+            type:               swift_mailer
+            from_email:         "%env(MAIL_ERROR)%"
+            to_email:           "%env(MAIL_ERROR)%"
+            subject:    'An Error Occurred! %%message%%'
+            level:     error
+            formatter:  monolog.formatter.html
+            content_type: text/html
+        carpool:        
             type: stream
             level: debug
             path: "%kernel.logs_dir%/carpool.log"
             channels: [carpool]
         mass:
             type: stream
-            level: debug
+            level: info
             path: "%kernel.logs_dir%/mass.log"
             channels: [mass]
+        geomatcher:
+            type: stream
+            level: info
+            path: "%kernel.logs_dir%/geomatcher.log"
+            channels: [geomatcher]       
         console:
             type: console
             process_psr_3_messages: false

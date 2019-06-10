@@ -117,9 +117,9 @@ ad_results:
     requirements:
         id: '\d+'
 
-###################
+####################
 # community routes #
-###################
+####################
 
 # create community
 community_create:
@@ -142,4 +142,29 @@ community_show:
         en: /community/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::show  
     requirements:
-        id: '\d+'            
+        id: '\d+'  
+
+##########################
+# Editorial pages routes #
+##########################
+
+# display project page
+project:
+    path:
+        fr: /projet
+        en: /project
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showProject
+
+# display CGU page
+cgu:
+    path:
+        fr: /cgu
+        en: /cgu
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCgu
+        
+# display news page
+news:
+    path:
+        fr: /nouveautes
+        en: /news
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showNews
