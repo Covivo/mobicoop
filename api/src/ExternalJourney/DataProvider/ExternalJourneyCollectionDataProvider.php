@@ -107,7 +107,13 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
                 // request url
                 $data = $client->request('GET', $signedUrl);
                 $data = $data->getBody()->getContents();
-                return json_decode($data, true);
+
+                if($data!=="") {
+                    return json_decode($data, true);
+                }
+                else{
+                    return [];
+                }
             }
         }
         return [];
