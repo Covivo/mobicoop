@@ -88,10 +88,8 @@ class CitywayProvider implements ProviderInterface
     private const CW_COUNTRY = "France";
     private const CW_NC = "NC";
 
-    private const URI = "http://preprod.tsvc.grandest.cityway.fr/api/";
-//    private const URI = "https://api.grandest2.cityway.fr/";
-    private const COLLECTION_RESOURCE = "journeyplanner/opt/PlanTrips/json";
-    //  private const COLLECTION_RESOURCE = "journeyplanner/api/opt/PlanTrips/json";
+    private const URI = "https://api.grandest2.cityway.fr/";
+    private const COLLECTION_RESOURCE = "journeyplanner/api/opt/PlanTrips/json";
 
     private const DATETIME_OUTPUT_FORMAT = "d/m/Y H:i:s";
     private const DATETIME_INPUT_FORMAT = "Y-m-d_H-i";
