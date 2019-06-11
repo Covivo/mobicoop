@@ -32,17 +32,15 @@
                 title="Heure de départ"
               >
                 <button
-                  class="button is-mobicoopgreen"
+                  class="button now"
                   @click="outwardTime = new Date()"
                 >
-                  <b-icon icon="clock" />
                   <span>Maintenant</span>
                 </button>
                 <button
-                  class="button is-mobicooppink"
+                  class="button clear"
                   @click="outwardTime = null"
                 >
-                  <b-icon icon="close" />
                   <span>Effacer</span>
                 </button>
               </b-timepicker>
@@ -52,7 +50,7 @@
           <div class="columns SearchBar">
             <div class="column">
               <!-- inputs outward destination -->
-              <p class="is-size-7 labelOrigin">
+              <p class="is-size-7 label">
                 Lieu de départ
               </p>
               <label
@@ -71,7 +69,7 @@
               </label>
             </div>
             <div class="column">
-              <p class="is-size-7 labelDestination">
+              <p class="is-size-7 label">
                 Lieu d'arrivée
               </p>
               <label
