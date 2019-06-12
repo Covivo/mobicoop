@@ -97,20 +97,20 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
             ]
         ];
 
-        if($outwardMinDate!==""){
+        if ($outwardMinDate!=="") {
             $searchParameters['outward']['mindate'] = $outwardMinDate;
         }
-        if($outwardMaxDate!==""){
+        if ($outwardMaxDate!=="") {
             $searchParameters['outward']['maxdate'] = $outwardMaxDate;
         }
 
-        foreach($days as $day){
+        foreach ($days as $day) {
             $mintime = $this->request->get("wednesday");
-            if($mintime!==""){
+            if ($mintime!=="") {
                 $searchParameters[$day]["mintime"] = $mintime;
             }
             $maxtime = $this->request->get("wednesday[maxtime]");
-            if($maxtime!==""){
+            if ($maxtime!=="") {
                 $searchParameters[$day]["maxtime"] = $maxtime;
             }
         }
