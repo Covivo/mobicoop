@@ -19,6 +19,6 @@
 /api/public/upload/mass/files/*.xml
 /api/public/upload/mass/files/*.zip
 /api/public/upload/mass/files/*.json
-/interfaces/mobicoop/.env.local
-/interfaces/mobicoop/var/log/
-/interfaces/admin/.env
+/client/.env.local
+/client/var/log/
+/admin/.env

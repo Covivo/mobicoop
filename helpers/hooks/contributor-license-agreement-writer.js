@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-agreementSample = function(country, date, name, surname, gitEmail, gitUserName){
+agreementSample = function (country, date, name, surname, gitEmail, gitUserName) {
 
     return `Mobicoop Contributor License Agreement v1.0
 
@@ -55,12 +55,12 @@ ${gitEmail} | ${gitUserName}
 *************************************************************************************`;
 };
 
-exports.addContributor = function(fileName, country, date, name, surname, gitEmail, gitUserName){
+exports.addContributor = function (fileName, country, date, name, surname, gitEmail, gitUserName) {
 
-    try{
-        fs.writeFileSync('ContributorLicenseAgreement/' + fileName, agreementSample(country,date,name,surname,gitEmail,gitUserName));
+    try {
+        fs.writeFileSync('docs/ContributorLicenseAgreement/' + fileName, agreementSample(country, date, name, surname, gitEmail, gitUserName));
         return true;
-    }catch(err){
+    } catch (err) {
         console.error(err);
         return false;
     }
