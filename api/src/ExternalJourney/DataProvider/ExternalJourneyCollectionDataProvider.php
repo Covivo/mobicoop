@@ -74,6 +74,11 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
         $fromLongitude = $this->request->get("from_longitude");
         $toLatitude = $this->request->get("to_latitude");
         $toLongitude = $this->request->get("to_longitude");
+        $outwardMinDate = $this->request->get("outward_mindate");
+        $outwardMaxDate = $this->request->get("outward_maxdate");
+
+        $days = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
+
         // then we set these parameters
         $searchParameters  = [
             'driver'  => [
@@ -91,6 +96,24 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
                 'longitude' => $toLongitude
             ]
         ];
+
+        if($outwardMinDate!==""){
+            $searchParameters['outward']['mindate'] = $outwardMinDate;
+        }
+        if($outwardMaxDate!==""){
+            $searchParameters['outward']['maxdate'] = $outwardMaxDate;
+        }
+
+        foreach($days as $day){
+            $mintime = $this->request->get("wednesday");
+            if($mintime!==""){
+                $searchParameters[$day]["mintime"] = $mintime;
+            }
+            $maxtime = $this->request->get("wednesday[maxtime]");
+            if($maxtime!==""){
+                $searchParameters[$day]["maxtime"] = $maxtime;
+            }
+        }
 
         // @todo error management (api not responding, bad parameters...)
         foreach ($this->externalJourneyManager->getProviders() as $provider) {
