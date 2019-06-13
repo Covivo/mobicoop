@@ -76,6 +76,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
         $toLongitude = $this->request->get("to_longitude");
         $outwardMinDate = $this->request->get("outward_mindate");
         $outwardMaxDate = $this->request->get("outward_maxdate");
+        $frequency = $this->request->get("frequency");
 
         $days = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
 
@@ -97,6 +98,11 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
             ]
         ];
 
+
+        if($frequency!=="" && ($frequency=="regular" || $frequency=="punctual")){
+            $searchParameters['frequency'] = $frequency;
+        }
+
         if ($outwardMinDate!=="") {
             $searchParameters['outward']['mindate'] = $outwardMinDate;
         }
@@ -104,14 +110,28 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
             $searchParameters['outward']['maxdate'] = $outwardMaxDate;
         }
 
+
+        // Days treatment for regular journeys
+        // which days
         foreach ($days as $day) {
-            $mintime = $this->request->get("wednesday");
-            if ($mintime!=="") {
-                $searchParameters[$day]["mintime"] = $mintime;
+            $currentday = $this->request->get("days_".$day);
+            if($currentday !== ""){
+                $searchParameters['days'][$day] = $currentday;
             }
-            $maxtime = $this->request->get("wednesday[maxtime]");
+            else{
+                $searchParameters['days'][$day] = 0;
+            }
+        }
+
+        // mintime and maxtime for days
+        foreach ($days as $day) {
+            $mintime = $this->request->get($day."_mintime");
+            if ($mintime!=="") {
+                $searchParameters['outward'][$day]["mintime"] = $mintime;
+            }
+            $maxtime = $this->request->get($day."_maxtime");
             if ($maxtime!=="") {
-                $searchParameters[$day]["maxtime"] = $maxtime;
+                $searchParameters['outward'][$day]["maxtime"] = $maxtime;
             }
         }
 
