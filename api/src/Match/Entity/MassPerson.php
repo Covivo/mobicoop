@@ -68,13 +68,13 @@ class MassPerson
 
     /**
      * @var string|null The first name of the person.
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $givenName;
 
     /**
      * @var string|null The family name of the person.
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $familyName;
 
@@ -97,6 +97,55 @@ class MassPerson
      * @Groups("mass")
      */
     private $workAddress;
+
+    /**
+     * @var int The total distance of the direction in meter.
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups("mass")
+     */
+    private $distance;
+    
+    /**
+     * @var int The total duration of the direction in milliseconds.
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups("mass")
+     */
+    private $duration;
+
+    /**
+     * @var float The minimum longitude of the bounding box of the direction.
+     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     * @Groups("mass")
+     */
+    private $bboxMinLon;
+
+    /**
+     * @var float The minimum latitude of the bounding box of the direction.
+     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     * @Groups("mass")
+     */
+    private $bboxMinLat;
+    
+    /**
+     * @var float The maximum longitude of the bounding box of the direction.
+     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     * @Groups("mass")
+     */
+    private $bboxMaxLon;
+    
+    /**
+     * @var float The maximum latitude of the bounding box of the direction.
+     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     * @Groups("mass")
+     */
+    private $bboxMaxLat;
+
+    /**
+     * @var int|null The initial bearing of the direction in degrees.
+     * @ORM\Column(type="integer",nullable=true)
+     * @Groups("mass")
+     */
+    private $bearing;
 
     /**
      * @var Mass The original mass file of the person.
@@ -163,15 +212,6 @@ class MassPerson
      * @Groups("mass")
      */
     private $passenger;
-
-    /**
-     * @var Direction|null The direction between the personal address and the work address.
-     *
-     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
-     * @MaxDepth(1)
-     * @Groups("mass")
-     */
-    private $direction;
 
     public function __construct()
     {
@@ -260,15 +300,87 @@ class MassPerson
         return $this;
     }
 
-    public function getDirection(): ?Direction
+    public function getDistance(): ?int
     {
-        return $this->direction;
+        return $this->distance;
+    }
+    
+    public function setDistance(int $distance): self
+    {
+        $this->distance = $distance;
+        
+        return $this;
     }
 
-    public function setDirection(?Direction $direction): self
+    public function getDuration(): ?int
     {
-        $this->direction = $direction;
+        return $this->duration;
+    }
+    
+    public function setDuration(int $duration): self
+    {
+        $this->duration = $duration;
+        
+        return $this;
+    }
 
+    public function getBboxMinLon(): ?float
+    {
+        return $this->bboxMinLon;
+    }
+    
+    public function setBboxMinLon(?float $bboxMinLon): self
+    {
+        $this->bboxMinLon = $bboxMinLon;
+        
+        return $this;
+    }
+    
+    public function getBboxMinLat(): ?float
+    {
+        return $this->bboxMinLat;
+    }
+    
+    public function setBboxMinLat(?float $bboxMinLat)
+    {
+        $this->bboxMinLat = $bboxMinLat;
+        
+        return $this;
+    }
+    
+    public function getBboxMaxLon(): ?float
+    {
+        return $this->bboxMaxLon;
+    }
+    
+    public function setBboxMaxLon(?float $bboxMaxLon): self
+    {
+        $this->bboxMaxLon = $bboxMaxLon;
+        
+        return $this;
+    }
+    
+    public function getBboxMaxLat(): ?float
+    {
+        return $this->bboxMaxLat;
+    }
+    
+    public function setBboxMaxLat(?float $bboxMaxLat): self
+    {
+        $this->bboxMaxLat = $bboxMaxLat;
+        
+        return $this;
+    }
+
+    public function getBearing(): ?int
+    {
+        return $this->bearing;
+    }
+    
+    public function setBearing(?int $bearing): self
+    {
+        $this->bearing = $bearing;
+        
         return $this;
     }
 

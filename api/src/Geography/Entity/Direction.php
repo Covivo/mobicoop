@@ -92,28 +92,28 @@ class Direction
     /**
      * @var float The minimum longitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write","mass"})
+     * @Groups({"read","write"})
      */
     private $bboxMinLon;
 
     /**
      * @var float The minimum latitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write","mass"})
+     * @Groups({"read","write"})
      */
     private $bboxMinLat;
     
     /**
      * @var float The maximum longitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write","mass"})
+     * @Groups({"read","write"})
      */
     private $bboxMaxLon;
     
     /**
      * @var float The maximum latitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write","mass"})
+     * @Groups({"read","write"})
      */
     private $bboxMaxLat;
 
@@ -127,7 +127,7 @@ class Direction
     /**
      * @var int|null The initial bearing of the direction in degrees.
      * @ORM\Column(type="integer",nullable=true)
-     * @Groups({"read","write","mass"})
+     * @Groups({"read","write"})
      */
     private $bearing;
 
@@ -150,14 +150,14 @@ class Direction
     /**
      * @var string The textual encoded snapped waypoints of the direction.
      * @ORM\Column(type="text")
-     * @Groups({"read","write","mass"})
+     * @Groups({"read","write"})
      */
     private $snapped;
     
     /**
      * @var string The encoding format of the detail.
      * @ORM\Column(type="string", length=45)
-     * @Groups({"read","write","mass"})
+     * @Groups({"read","write"})
      */
     private $format;
 

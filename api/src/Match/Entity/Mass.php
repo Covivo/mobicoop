@@ -54,6 +54,7 @@ use Doctrine\Common\Collections\Collection;
  *          "post"={
  *              "method"="POST",
  *              "path"="/masses",
+ *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=CreateMassImportAction::class,
  *              "defaults"={"_api_receive"=false},
  *          }
@@ -67,13 +68,13 @@ use Doctrine\Common\Collections\Collection;
  *          "analyze"={
  *              "method"="GET",
  *              "path"="/masses/{id}/analyze",
- *              "normalization_context"={"groups"={"mass"}},
+ *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=MassAnalyzeAction::class
  *          },
  *          "match"={
  *              "method"="GET",
  *              "path"="/masses/{id}/match",
- *              "normalization_context"={"groups"={"mass"}},
+ *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=MassMatchAction::class,
  *              "swagger_context"={
  *                  "parameters"={
@@ -123,13 +124,6 @@ use Doctrine\Common\Collections\Collection;
  *                         "type" = "number",
  *                         "format" = "integer",
  *                         "description" = "The bearing range in degrees if check bearings (default:10)"
- *                     },
- *                     {
- *                         "name" = "doubleCheck",
- *                         "in" = "query",
- *                         "required" = "false",
- *                         "type" = "boolean",
- *                         "description" = "Check if B as a driver matches for A as a passenger if A as a driver already matches with B as a passenger (default:false)"
  *                     }
  *                   }
  *              }
@@ -152,7 +146,7 @@ class Mass
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("mass")
+     * @Groups({"mass","massAnalyze","massMatch"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -161,7 +155,7 @@ class Mass
      * @var int The status of this import.
      *
      * @ORM\Column(type="integer")
-     * @Groups("mass")
+     * @Groups({"mass","massPost"})
      */
     private $status;
 
@@ -169,7 +163,7 @@ class Mass
      * @var string The final file name of the import.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"mass","write"})
+     * @Groups({"mass","massPost","write"})
      */
     private $fileName;
 
@@ -177,7 +171,7 @@ class Mass
      * @var string The original file name of the import.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"mass","write"})
+     * @Groups({"mass","massPost","write"})
      */
     private $originalName;
 
@@ -185,7 +179,7 @@ class Mass
      * @var int The size in bytes of the import.
      *
      * @ORM\Column(type="integer")
-     * @Groups({"mass","write"})
+     * @Groups({"mass","massPost","write"})
      */
     private $size;
 
@@ -193,7 +187,7 @@ class Mass
      * @var string The mime type of the import.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups("mass")
+     * @Groups({"mass","massPost"})
      */
     private $mimeType;
 
@@ -201,7 +195,7 @@ class Mass
      * @var \DateTimeInterface Creation date of the import.
      *
      * @ORM\Column(type="datetime")
-     * @Groups("mass")
+     * @Groups({"mass","massPost"})
      */
     private $createdDate;
 
@@ -218,7 +212,7 @@ class Mass
      * @var \DateTimeInterface Analyze date of the import.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("mass")
+     * @Groups({"mass","massPost"})
      */
     private $analyzeDate;
 
@@ -226,7 +220,7 @@ class Mass
      * @var \DateTimeInterface Calculation date of the import.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("mass")
+     * @Groups({"mass","massPost"})
      */
     private $calculationDate;
 
@@ -234,7 +228,7 @@ class Mass
      * @var ArrayCollection|null The persons concerned by the file.
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassPerson", mappedBy="mass", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups("mass")
+     * @Groups({"mass"})
      */
     private $persons;
 
@@ -252,7 +246,7 @@ class Mass
 
     /**
      * @var array The errors.
-     * @Groups("mass")
+     * @Groups({"mass","massPost"})
      */
     private $errors;
 

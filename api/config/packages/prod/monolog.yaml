@@ -35,6 +35,11 @@ monolog:
             level: info
             path: "%kernel.logs_dir%/geomatcher.log"
             channels: [geomatcher]       
+        georouter:
+            type: stream
+            level: info
+            path: "%kernel.logs_dir%/georouter.log"
+            channels: [georouter]
         console:
             type: console
             process_psr_3_messages: false
