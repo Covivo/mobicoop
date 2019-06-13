@@ -109,14 +109,14 @@ class GeoMatcher
             }
         }
         $this->logger->debug('Single Match | End');
-        return $matchesReturned; 
+        return $matchesReturned;
     }
 
     /**
      * Search for matchings between candidates
      *
-     * @param array $candidates  The array of candidates to match in the form : 
-     * [   
+     * @param array $candidates  The array of candidates to match in the form :
+     * [
      *      0 => [
      *          'driver'      => [$driver],
      *          'passengers'  => [$passenger1,$passenger2...]
@@ -164,13 +164,15 @@ class GeoMatcher
         foreach ($ownerRoutes as $ownerId=>$routes) {
             $this->logger->debug('Multi Match | Check matches for id #'.$ownerId);
             if ($matches = $this->checkMultiMatch(
-                $candidates[$routesOwner[$ownerId]['actors']]['driver'], 
-                $candidates[$routesOwner[$ownerId]['actors']]['passengers'][$routesOwner[$ownerId]['passenger']], 
-                $routes, $addressesForRoutes[$ownerId])) {
-                    $matchesReturned[] = [
+                $candidates[$routesOwner[$ownerId]['actors']]['driver'],
+                $candidates[$routesOwner[$ownerId]['actors']]['passengers'][$routesOwner[$ownerId]['passenger']],
+                $routes,
+                $addressesForRoutes[$ownerId]
+            )) {
+                $matchesReturned[] = [
                         'driver' => $candidates[$routesOwner[$ownerId]['actors']]['driver'],
                         'passenger' => $candidates[$routesOwner[$ownerId]['actors']]['passengers'][$routesOwner[$ownerId]['passenger']],
-                        'matches' => $matches 
+                        'matches' => $matches
                     ];
             }
         }

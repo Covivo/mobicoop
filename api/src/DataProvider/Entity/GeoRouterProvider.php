@@ -84,7 +84,7 @@ class GeoRouterProvider implements ProviderInterface
             case Direction::class:
                 $dataProvider = new DataProvider($this->uri, self::COLLECTION_RESOURCE);
                 if (isset($params['async']) && $params['async'] && isset($params['arrayPoints'])) {
-                    // ASYNC 
+                    // ASYNC
                     $getParams = [];
                     // we have to send multiple requests to the georouter, we need to know the 'owner' of each request to give him the result
                     // but the owner is not sent with the request, so we need to keep it in a dedicated array => each key of the request will be associated to its owner
@@ -118,9 +118,9 @@ class GeoRouterProvider implements ProviderInterface
                     }
                     return $this->collection;
                 } elseif (
-                    isset($params['multipleAsync']) && $params['multipleAsync'] && 
-                    isset($params['batchScriptPath']) && 
-                    isset($params['batchTemp']) && 
+                    isset($params['multipleAsync']) && $params['multipleAsync'] &&
+                    isset($params['batchScriptPath']) &&
+                    isset($params['batchTemp']) &&
                     isset($params['arrayPoints'])) {
                     // MULTIPLE ASYNC : we will use an external script instead of the usual dataProvider
                     $this->logger->debug('Multiple Async');
@@ -153,7 +153,7 @@ class GeoRouterProvider implements ProviderInterface
                     $this->logger->debug('Multiple Async | Creation of the exchange file start');
                     $filename = $params['batchTemp'] . self::EXT_FILENAME . (new \DateTime("UTC"))->format("YmdHisu") . ".json";
                     $fp = fopen($filename, 'w');
-                    fwrite($fp, json_encode($urls,JSON_FORCE_OBJECT));
+                    fwrite($fp, json_encode($urls, JSON_FORCE_OBJECT));
                     fclose($fp);
                     $this->logger->debug('Multiple Async | Creation of the exchange file end');
 
@@ -177,17 +177,17 @@ class GeoRouterProvider implements ProviderInterface
                                 'duration' => isset($path["time"]) ? $path["time"]/1000 : null,
                                 'bbox' => isset($path["bbox"]) ? [$path["bbox"][0],$path["bbox"][1],$path["bbox"][2],$path["bbox"][3]] : null,
                                 'bearing' => $this->geoTools->getRhumbLineBearing(
-                                    $params['arrayPoints'][$key][0][$first_key]->getLatitude(), 
-                                    $params['arrayPoints'][$key][0][$first_key]->getLongitude(), 
-                                    $params['arrayPoints'][$key][0][$last_key]->getLatitude(), 
-                                    $params['arrayPoints'][$key][0][$last_key]->getLongitude())
+                                    $params['arrayPoints'][$key][0][$first_key]->getLatitude(),
+                                    $params['arrayPoints'][$key][0][$first_key]->getLongitude(),
+                                    $params['arrayPoints'][$key][0][$last_key]->getLatitude(),
+                                    $params['arrayPoints'][$key][0][$last_key]->getLongitude()
+                                )
                             ];
                         }
                     }
                     $this->logger->debug('Multiple Async | Exchange file deletion');
                     unlink($filename);
                     return $this->collection;
-                    
                 } else {
                     // SYNC
                     $getParams = "";

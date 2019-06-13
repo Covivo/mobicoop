@@ -347,13 +347,13 @@ class MassImportManager
             }
             // if the person has no geography information we skip this person (meaning that its information is incorrect or has not been found by the SIG)
             if (
-                is_null($driverPerson->getDistance()) || ($driverPerson->getDistance() == 0) || 
-                is_null($driverPerson->getDuration()) || ($driverPerson->getDuration() == 0) || 
-                is_null($driverPerson->getBboxMinLon()) || 
-                is_null($driverPerson->getBboxMinLat()) || 
-                is_null($driverPerson->getBboxMaxLon()) || 
+                is_null($driverPerson->getDistance()) || ($driverPerson->getDistance() == 0) ||
+                is_null($driverPerson->getDuration()) || ($driverPerson->getDuration() == 0) ||
+                is_null($driverPerson->getBboxMinLon()) ||
+                is_null($driverPerson->getBboxMinLat()) ||
+                is_null($driverPerson->getBboxMaxLon()) ||
                 is_null($driverPerson->getBboxMaxLat())) {
-                    continue;
+                continue;
             }
             $candidateDriver = new Candidate();
             $candidateDriver->setAddresses([$driverPerson->getPersonalAddress(),$driverPerson->getWorkAddress()]);
@@ -384,13 +384,13 @@ class MassImportManager
                 }
                 // if the person has no geography information we skip this person (meaning that its information is incorrect or has not been found by the SIG)
                 if (
-                    is_null($passengerPerson->getDistance()) || ($passengerPerson->getDistance() == 0) || 
-                    is_null($passengerPerson->getDuration()) || ($passengerPerson->getDuration() == 0) || 
-                    is_null($passengerPerson->getBboxMinLon()) || 
-                    is_null($passengerPerson->getBboxMinLat()) || 
-                    is_null($passengerPerson->getBboxMaxLon()) || 
+                    is_null($passengerPerson->getDistance()) || ($passengerPerson->getDistance() == 0) ||
+                    is_null($passengerPerson->getDuration()) || ($passengerPerson->getDuration() == 0) ||
+                    is_null($passengerPerson->getBboxMinLon()) ||
+                    is_null($passengerPerson->getBboxMinLat()) ||
+                    is_null($passengerPerson->getBboxMaxLon()) ||
                     is_null($passengerPerson->getBboxMaxLat())) {
-                        continue;
+                    continue;
                 }
                 // we check if bearings are to be checked
                 if ($bearingCheck && $range['min']<=$range['max']) {

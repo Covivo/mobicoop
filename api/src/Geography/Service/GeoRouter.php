@@ -92,7 +92,7 @@ class GeoRouter
 
     /**
      * Get multiple routes alternative between two or more addresses (async).
-     * Different than getAsyncRoutes which represent the routes alternatives for a single direction, 
+     * Different than getAsyncRoutes which represent the routes alternatives for a single direction,
      * here we search for multiple directions at once.
      *
      * @param array $addresses[]        The array of addresses, indexed by owner id (representing all the routes to send by the async request)

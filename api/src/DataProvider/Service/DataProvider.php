@@ -101,5 +101,4 @@ class DataProvider
         }
         return new Response();
     }
-
 }
