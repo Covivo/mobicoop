@@ -74,6 +74,12 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
         $fromLongitude = $this->request->get("from_longitude");
         $toLatitude = $this->request->get("to_latitude");
         $toLongitude = $this->request->get("to_longitude");
+        $outwardMinDate = $this->request->get("outward_mindate");
+        $outwardMaxDate = $this->request->get("outward_maxdate");
+        $frequency = $this->request->get("frequency");
+
+        $days = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
+
         // then we set these parameters
         $searchParameters  = [
             'driver'  => [
@@ -92,6 +98,42 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
             ]
         ];
 
+
+        if ($frequency!=="" && ($frequency=="regular" || $frequency=="punctual")) {
+            $searchParameters['frequency'] = $frequency;
+        }
+
+        if ($outwardMinDate!=="") {
+            $searchParameters['outward']['mindate'] = $outwardMinDate;
+        }
+        if ($outwardMaxDate!=="") {
+            $searchParameters['outward']['maxdate'] = $outwardMaxDate;
+        }
+
+
+        // Days treatment for regular journeys
+        // which days
+        foreach ($days as $day) {
+            $currentday = $this->request->get("days_".$day);
+            if ($currentday !== "") {
+                $searchParameters['days'][$day] = $currentday;
+            } else {
+                $searchParameters['days'][$day] = 0;
+            }
+        }
+
+        // mintime and maxtime for days
+        foreach ($days as $day) {
+            $mintime = $this->request->get($day."_mintime");
+            if ($mintime!=="") {
+                $searchParameters['outward'][$day]["mintime"] = $mintime;
+            }
+            $maxtime = $this->request->get($day."_maxtime");
+            if ($maxtime!=="") {
+                $searchParameters['outward'][$day]["maxtime"] = $maxtime;
+            }
+        }
+
         // @todo error management (api not responding, bad parameters...)
         foreach ($this->externalJourneyManager->getProviders() as $provider) {
             if ($provider->getName() == $providerName) {
@@ -107,7 +149,12 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
                 // request url
                 $data = $client->request('GET', $signedUrl);
                 $data = $data->getBody()->getContents();
-                return json_decode($data, true);
+
+                if ($data!=="") {
+                    return json_decode($data, true);
+                } else {
+                    return [];
+                }
             }
         }
         return [];
