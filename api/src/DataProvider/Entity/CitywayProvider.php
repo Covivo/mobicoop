@@ -28,6 +28,7 @@ use App\DataProvider\Service\DataProvider;
 use App\PublicTransport\Entity\PTJourney;
 use App\PublicTransport\Entity\PTArrival;
 use App\PublicTransport\Entity\PTDeparture;
+use App\PublicTransport\Entity\PTTripPoint;
 use App\Travel\Entity\TravelMode;
 use App\PublicTransport\Entity\PTStep;
 use App\PublicTransport\Entity\PTLine;
@@ -89,7 +90,8 @@ class CitywayProvider implements ProviderInterface
     private const CW_NC = "NC";
 
     private const URI = "https://api.grandest2.cityway.fr/";
-    private const COLLECTION_RESOURCE = "journeyplanner/api/opt/PlanTrips/json";
+    private const COLLECTION_RESSOURCE_JOURNEYS = "journeyplanner/api/opt/PlanTrips/json";
+    private const COLLECTION_RESSOURCE_TRIPPOINTS = "api/transport/v3/trippoint/GetTripPoints/json";
 
     private const DATETIME_OUTPUT_FORMAT = "d/m/Y H:i:s";
     private const DATETIME_INPUT_FORMAT = "Y-m-d_H-i";
@@ -119,42 +121,12 @@ class CitywayProvider implements ProviderInterface
     {
         switch ($class) {
             case PTJourney::class:
-                $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESOURCE);
-                $getParams = [
-                    "DepartureType" => "COORDINATES",
-                    "ArrivalType" => "COORDINATES",
-                    "TripModes" => $this->getTripModes($params["modes"]),
-                    "Algorithm" => self::ALGORITHMS[$params["algorithm"]],
-                    "Date" => $params["date"]->format(self::DATETIME_INPUT_FORMAT),
-                    "DateType" => self::DATETYPES[$params["dateType"]],
-                    "DepartureLatitude" => $params["origin_latitude"],
-                    "DepartureLongitude" => $params["origin_longitude"],
-                    "ArrivalLatitude" => $params["destination_latitude"],
-                    "ArrivalLongitude" => $params["destination_longitude"]
-                ];
-                $response = $dataProvider->getCollection($getParams);
-                if ($response->getCode() == 200) {
-                    $data = json_decode($response->getValue(), true);
-                    if (!isset($data["StatusCode"])) {
-                        return $this->collection;
-                    }
-                    if ($data["StatusCode"] <> 200) {
-                        return $this->collection;
-                    }
-                    if (!isset($data["Data"])) {
-                        return $this->collection;
-                    }
-                    if (!isset($data["Data"][0]["response"])) {
-                        break;
-                    }
-                    if (!isset($data["Data"][0]["response"]["trips"]["Trip"])) {
-                        break;
-                    }
-                    foreach ($data["Data"][0]["response"]["trips"]["Trip"] as $trip) {
-                        $this->collection[] = self::deserialize($class, $trip);
-                    }
-                    return $this->collection;
-                }
+                $this->getCollectionJourneys($class, $params);
+                return $this->collection;
+               break;
+            case PTTripPoint::class:
+                $this->getCollectionTripPoints($class, $params);
+                return $this->collection;
                 break;
             default:
                 break;
@@ -190,6 +162,52 @@ class CitywayProvider implements ProviderInterface
      */
     public function getItem(string $class, string $apikey, array $params)
     {
+    }
+
+
+    private function getCollectionJourneys($class, array $params)
+    {
+        $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESSOURCE_JOURNEYS);
+        $getParams = [
+            "DepartureType" => "COORDINATES",
+            "ArrivalType" => "COORDINATES",
+            "TripModes" => $this->getTripModes($params["modes"]),
+            "Algorithm" => self::ALGORITHMS[$params["algorithm"]],
+            "Date" => $params["date"]->format(self::DATETIME_INPUT_FORMAT),
+            "DateType" => self::DATETYPES[$params["dateType"]],
+            "DepartureLatitude" => $params["origin_latitude"],
+            "DepartureLongitude" => $params["origin_longitude"],
+            "ArrivalLatitude" => $params["destination_latitude"],
+            "ArrivalLongitude" => $params["destination_longitude"]
+        ];
+        $response = $dataProvider->getCollection($getParams);
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+            if (!isset($data["StatusCode"])) {
+                return $this->collection;
+            }
+            if ($data["StatusCode"] <> 200) {
+                return $this->collection;
+            }
+            if (!isset($data["Data"])) {
+                return $this->collection;
+            }
+            if (!isset($data["Data"][0]["response"])) {
+                return $this->collection;
+            }
+            if (!isset($data["Data"][0]["response"]["trips"]["Trip"])) {
+                return $this->collection;
+            }
+            foreach ($data["Data"][0]["response"]["trips"]["Trip"] as $trip) {
+                $this->collection[] = self::deserialize($class, $trip);
+            }
+        }
+    }
+
+    private function getCollectionTripPoints($class, array $params)
+    {
+        print_r($params);
+        return "whouaaaaaaaaaaa";
     }
 
     /**

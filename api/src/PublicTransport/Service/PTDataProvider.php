@@ -25,6 +25,7 @@ namespace App\PublicTransport\Service;
 
 use App\PublicTransport\Entity\PTJourney;
 use App\DataProvider\Entity\CitywayProvider;
+use App\PublicTransport\Entity\PTTripPoint;
 
 /**
  * Public transport DataProvider.
@@ -93,4 +94,35 @@ class PTDataProvider
                 "modes" => $modes
         ]]);
     }
+
+    /**
+     * Get trip points from an external Public Transport data provider.
+     *
+     * @param string $provider                  The name of the provider
+     * @param float $latitude           The latitude of the origin point
+     * @param float $longitude          The longitude of the origin point
+     * @param int $perimeter                     Radius of the perimeter (in meters)
+     * @param string $transportModes                     The trip modes accepted (PT, BIKE, CAR, PT+BIKE, PT+CAR)
+     * @return NULL|array                       The journeys found or null if no journey is found
+     */
+    public function getTripPoints(
+        string $provider,
+        float $latitude,
+        float $longitude,
+        int $perimeter,
+        string $transportModes
+    ): ?array {
+        if (!array_key_exists($provider, self::PROVIDERS)) {
+            return null;
+        }
+        $providerClass = self::PROVIDERS[$provider];
+        $providerInstance = new $providerClass();
+        return call_user_func_array([$providerInstance,"getCollection"], [PTTripPoint::class,"",[
+            "latitude" => $latitude,
+            "longitude" => $longitude,
+            "perimeter" => $perimeter,
+            "transportModes" => $transportModes
+        ]]);
+    }
+
 }
