@@ -8,7 +8,7 @@ const reader = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
-const claFolderPath = path.resolve(__dirname, '../../docs/ContributorLicenseAgreement');
+const claFolderPath = path.resolve(__dirname, '../../../docs/ContributorLicenseAgreement');
 const copyright = fs.readFileSync(path.resolve(__dirname, '../copyright.txt'))
 
 //CHECK IF AM ON MOBICOOP's REPO

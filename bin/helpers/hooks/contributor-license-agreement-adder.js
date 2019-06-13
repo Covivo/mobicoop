@@ -9,8 +9,8 @@ const reader = readline.createInterface({
     output: process.stdout
 });
 const claWriter = require('./contributor-license-agreement-writer.js');
-const claFolderPath = path.resolve(__dirname, '../../docs/ContributorLicenseAgreement');
-const claPath = path.resolve(__dirname, '../../docs/ContributorLicenseAgreement/ContributorLicenseAgreement.txt');
+const claFolderPath = path.resolve(__dirname, '../../../docs/ContributorLicenseAgreement');
+const claPath = path.resolve(__dirname, '../../../docs/ContributorLicenseAgreement/ContributorLicenseAgreement.txt');
 const copyright = fs.readFileSync(path.resolve(__dirname, '../copyright.txt'));
 
 //CHECK IF AM ON MOBICOOP's REPO

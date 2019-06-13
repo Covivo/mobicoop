@@ -5,8 +5,8 @@ const fs = require('fs');
 const path = require('path');
 const kuler = require('kuler');
 const getRepoInfo = require('git-repo-info');
-const bundleSrc = path.resolve(__dirname, '../../client/src');
-const bundlePath = path.resolve(__dirname, '../../client/src/MobicoopBundle');
+const bundleSrc = path.resolve(__dirname, '../../../client/src');
+const bundlePath = path.resolve(__dirname, '../../../client/src/MobicoopBundle');
 const git = require('simple-git')(bundleSrc);
 
 let branchRoot = getRepoInfo().branch;
