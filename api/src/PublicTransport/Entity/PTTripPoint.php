@@ -222,5 +222,4 @@ class PTTripPoint
     {
         $this->transportMode = $transportMode;
     }
-
 }

@@ -124,5 +124,4 @@ class PTDataProvider
             "transportModes" => $transportModes
         ]]);
     }
-
 }
