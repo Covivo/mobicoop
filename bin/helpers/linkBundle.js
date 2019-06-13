@@ -45,7 +45,7 @@ async function linkBundle() {
   }
   // Copy mobicoop files to sent path
 
-  let pathToMobicoop = path.resolve(__dirname, '../client');
+  let pathToMobicoop = path.resolve(__dirname, '../../client');
   let pathToMobicoopBundle = path.resolve(pathToMobicoop, 'src/MobicoopBundle');
   let pathToCopiedBundle = path.resolve(destination, 'src/MobicoopBundle');
 
