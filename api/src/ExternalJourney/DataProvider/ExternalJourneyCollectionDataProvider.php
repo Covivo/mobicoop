@@ -99,7 +99,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
         ];
 
 
-        if($frequency!=="" && ($frequency=="regular" || $frequency=="punctual")){
+        if ($frequency!=="" && ($frequency=="regular" || $frequency=="punctual")) {
             $searchParameters['frequency'] = $frequency;
         }
 
@@ -115,10 +115,9 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
         // which days
         foreach ($days as $day) {
             $currentday = $this->request->get("days_".$day);
-            if($currentday !== ""){
+            if ($currentday !== "") {
                 $searchParameters['days'][$day] = $currentday;
-            }
-            else{
+            } else {
                 $searchParameters['days'][$day] = 0;
             }
         }
