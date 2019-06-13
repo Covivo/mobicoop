@@ -102,10 +102,14 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, lazy: true }    # lazy set to true to avoid doctrine UnitOfWork error on insert
 
-    # inject SIG uri to GeoRouter service
+    # inject SIG uri and batch script to GeoRouter service
     App\Geography\Service\GeoRouter:
         arguments:
             $uri: '%env(resolve:SIG_GEOROUTER_URI)%'
+            $batchScriptPath: '%env(resolve:MOBIMATCH_BATCH_SCRIPT_PATH)%'
+            $batchTemp: '%env(resolve:MOBIMATCH_BATCH_TEMP)%'
+        tags: 
+            - { name: monolog.logger, channel: georouter }
 
     # set the monolog channel to use for ProposalManager
     App\Carpool\Service\ProposalManager:
@@ -137,3 +141,8 @@ services:
     App\Match\Service\GeoMatcher:
         tags: 
             - { name: monolog.logger, channel: geomatcher }    
+    
+    # set the monolog channel to use for GeoRouterProvider
+    App\DataProvider\Entity\GeoRouterProvider:
+        tags: 
+            - { name: monolog.logger, channel: georouter }    

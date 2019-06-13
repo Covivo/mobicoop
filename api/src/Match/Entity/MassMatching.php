@@ -82,12 +82,18 @@ class MassMatching
     private $massPerson2Id;
 
     /**
-     * @var Direction|null The direction for the 2 persons to their final destination.
-     *
-     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
+     * @var int The total distance of the direction in meter.
+     * @ORM\Column(type="integer")
      * @Groups("mass")
      */
-    private $direction;
+    private $distance;
+    
+    /**
+     * @var int The total duration of the direction in milliseconds.
+     * @ORM\Column(type="integer")
+     * @Groups("mass")
+     */
+    private $duration;
 
     public function getId(): ?int
     {
@@ -128,15 +134,27 @@ class MassMatching
         return $this->massPerson2->getId();
     }
 
-    public function getDirection(): ?Direction
+    public function getDistance(): int
     {
-        return $this->direction;
+        return $this->distance;
+    }
+    
+    public function setDistance(int $distance): self
+    {
+        $this->distance = $distance;
+        
+        return $this;
     }
 
-    public function setDirection(?Direction $direction): self
+    public function getDuration(): int
     {
-        $this->direction = $direction;
-
+        return $this->duration;
+    }
+    
+    public function setDuration(int $duration): self
+    {
+        $this->duration = $duration;
+        
         return $this;
     }
 }

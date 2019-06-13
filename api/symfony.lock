@@ -134,6 +134,9 @@
     "guzzlehttp/psr7": {
         "version": "1.5.2"
     },
+    "halaxa/json-machine": {
+        "version": "0.3.2"
+    },
     "imagine/imagine": {
         "version": "v0.7.1"
     },

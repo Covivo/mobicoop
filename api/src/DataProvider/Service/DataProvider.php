@@ -41,7 +41,6 @@ class DataProvider
 {
     private $client;
     private $resource;
-    private $resources;
     
     /**
      * Constructor.
@@ -102,4 +101,5 @@ class DataProvider
         }
         return new Response();
     }
+
 }

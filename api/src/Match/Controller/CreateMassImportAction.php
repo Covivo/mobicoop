@@ -24,7 +24,6 @@
 namespace App\Match\Controller;
 
 use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,10 +50,7 @@ final class CreateMassImportAction
         $this->logger = $logger;
     }
 
-    /**
-     * @IsGranted("ROLE_USER")
-     */
-    public function __invoke(Request $request): Mass
+    public function __invoke(Request $request): ?Mass
     {
         $mass = new Mass();
         $mass->setStatus(Mass::STATUS_INCOMING);

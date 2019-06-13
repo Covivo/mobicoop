@@ -28,6 +28,7 @@ use App\DataProvider\Service\DataProvider;
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
 use App\Geography\Service\GeoTools;
+use Psr\Log\LoggerInterface;
 
 /**
  * GeoRouter data provider : provides route calculation between 2 or more addresses.
@@ -48,12 +49,15 @@ class GeoRouterProvider implements ProviderInterface
     private const GR_INSTRUCTIONS = "false";
     private const GR_POINTS_ENCODED = "true";
     public const GR_ELEVATION = "false";           // NOT SUPPORTED YET
+
+    private const EXT_FILENAME = "multigeo";
     
     private $collection;
     private $uri;
     private $detailDuration;
     private $geoTools;
     private $bearing;           // bearing will be common to all routes, we will calculate it once for all and share the value
+    private $logger;
     
     /**
      * Constructor.
@@ -61,13 +65,14 @@ class GeoRouterProvider implements ProviderInterface
      * @param string $uri               The uri of the provider
      * @param boolean $detailDuration   Set to true to get the duration between 2 points
      */
-    public function __construct(string $uri=null, bool $detailDuration=false, GeoTools $geoTools)
+    public function __construct(string $uri=null, bool $detailDuration=false, GeoTools $geoTools, LoggerInterface $logger)
     {
         $this->uri = $uri;
         $this->bearing = 0;
         $this->detailDuration = $detailDuration;
         $this->collection = [];
         $this->geoTools = $geoTools;
+        $this->logger = $logger;
     }
     
     /**
@@ -79,8 +84,9 @@ class GeoRouterProvider implements ProviderInterface
             case Direction::class:
                 $dataProvider = new DataProvider($this->uri, self::COLLECTION_RESOURCE);
                 if (isset($params['async']) && $params['async'] && isset($params['arrayPoints'])) {
+                    // ASYNC 
                     $getParams = [];
-                    // we have to send multiple requests to the georouter, we need to know the 'owner' of each request
+                    // we have to send multiple requests to the georouter, we need to know the 'owner' of each request to give him the result
                     // but the owner is not sent with the request, so we need to keep it in a dedicated array => each key of the request will be associated to its owner
                     // so after the requests we will be able to know who is the owner
                     $requestsOwner = [];
@@ -111,7 +117,79 @@ class GeoRouterProvider implements ProviderInterface
                         }
                     }
                     return $this->collection;
+                } elseif (
+                    isset($params['multipleAsync']) && $params['multipleAsync'] && 
+                    isset($params['batchScriptPath']) && 
+                    isset($params['batchTemp']) && 
+                    isset($params['arrayPoints'])) {
+                    // MULTIPLE ASYNC : we will use an external script instead of the usual dataProvider
+                    $this->logger->debug('Multiple Async');
+                    $urls = [];
+                    // we have to send multiple requests to the georouter, we need to know the 'owner' of each request to give him the result
+                    // but the owner is not sent with the request, so we need to keep it in a dedicated array => each key of the request will be associated to its owner
+                    // so after the requests we will be able to know who is the owner
+                    $requestsOwner = [];
+                    $i = 0;
+                    foreach ($params['arrayPoints'] as $ownerId => $addresses) {
+                        foreach ($addresses as $points) {
+                            $rparams = $this->uri ."/" . self::COLLECTION_RESOURCE . "/?";
+                            foreach ($points as $address) {
+                                $rparams .= "point=" . $address->getLatitude() . "," . $address->getLongitude() . "&";
+                            }
+                            $rparams .= "locale=" . self::GR_LOCALE .
+                                "&vehicle=" . self::GR_MODE_CAR .
+                                "&weighting=" . self::GR_WEIGHTING .
+                                "&instructions=" . self::GR_INSTRUCTIONS .
+                                "&points_encoded=".self::GR_POINTS_ENCODED .
+                                ($this->detailDuration?'&details=time':'').
+                                "&elevation=" . self::GR_ELEVATION;
+                            $urls[$i] = $rparams;
+                            $requestsOwner[$i] = $ownerId;
+                            $i++;
+                        }
+                    }
+
+                    // creation of the file that represent all the routes to get
+                    $this->logger->debug('Multiple Async | Creation of the exchange file start');
+                    $filename = $params['batchTemp'] . self::EXT_FILENAME . (new \DateTime("UTC"))->format("YmdHisu") . ".json";
+                    $fp = fopen($filename, 'w');
+                    fwrite($fp, json_encode($urls,JSON_FORCE_OBJECT));
+                    fclose($fp);
+                    $this->logger->debug('Multiple Async | Creation of the exchange file end');
+
+                    // call external script
+                    $this->logger->debug('Multiple Async | Call external script start');
+                    $return = exec($params['batchScriptPath'].' -f ' . $filename . ' --nb 20 2>&1', $out, $err);
+                    $this->logger->debug('Multiple Async | Call external script end');
+                    // treat the response
+                    $response = \JsonMachine\JsonMachine::fromFile($filename);
+                    foreach ($response as $key=>$paths) {
+                        $this->logger->debug('Multiple Async | Treating path #'.$key);
+                        // we search the first and last elements for the bearing
+                        reset($params['arrayPoints'][$key][0]);
+                        $first_key = key($params['arrayPoints'][$key][0]);
+                        end($params['arrayPoints'][$key][0]);
+                        $last_key = key($params['arrayPoints'][$key][0]);
+                        foreach ($paths as $path) {
+                            // we return an array instead of an object
+                            $this->collection[$requestsOwner[$key]][] = [
+                                'distance' => isset($path["distance"]) ? $path["distance"] : null,
+                                'duration' => isset($path["time"]) ? $path["time"]/1000 : null,
+                                'bbox' => isset($path["bbox"]) ? [$path["bbox"][0],$path["bbox"][1],$path["bbox"][2],$path["bbox"][3]] : null,
+                                'bearing' => $this->geoTools->getRhumbLineBearing(
+                                    $params['arrayPoints'][$key][0][$first_key]->getLatitude(), 
+                                    $params['arrayPoints'][$key][0][$first_key]->getLongitude(), 
+                                    $params['arrayPoints'][$key][0][$last_key]->getLatitude(), 
+                                    $params['arrayPoints'][$key][0][$last_key]->getLongitude())
+                            ];
+                        }
+                    }
+                    $this->logger->debug('Multiple Async | Exchange file deletion');
+                    unlink($filename);
+                    return $this->collection;
+                    
                 } else {
+                    // SYNC
                     $getParams = "";
                     foreach ($params['points'] as $address) {
                         $getParams .= "point=" . $address->getLatitude() . "," . $address->getLongitude() . "&";
@@ -159,7 +237,7 @@ class GeoRouterProvider implements ProviderInterface
                 break;
         }
     }
-    
+
     private function deserializePath($data)
     {
         $direction = new Direction();

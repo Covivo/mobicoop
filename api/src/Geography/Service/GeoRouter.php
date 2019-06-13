@@ -25,6 +25,7 @@ namespace App\Geography\Service;
 
 use App\DataProvider\Entity\GeoRouterProvider;
 use App\Geography\Entity\Direction;
+use Psr\Log\LoggerInterface;
 
 /**
  * The routing service.
@@ -36,18 +37,24 @@ use App\Geography\Entity\Direction;
 class GeoRouter
 {
     private $uri;
+    private $batchScriptPath;
+    private $batchTemp;
     private $geoTools;
+    private $logger;
 
     /**
      * Constructor.
      *
      * @param string $uri
      */
-    public function __construct(string $uri, GeoTools $geoTools)
+    public function __construct(string $uri, string $batchScriptPath, string $batchTemp, GeoTools $geoTools, LoggerInterface $logger)
     {
         $this->uri = $uri;
         $this->collection = [];
+        $this->batchScriptPath = $batchScriptPath;
+        $this->batchTemp = $batchTemp;
         $this->geoTools = $geoTools;
+        $this->logger = $logger;
     }
 
     /**
@@ -59,7 +66,7 @@ class GeoRouter
      */
     public function getRoutes(array $addresses, bool $detailDuration=false): ?array
     {
-        $georouter = new GeoRouterProvider($this->uri, $detailDuration, $this->geoTools);
+        $georouter = new GeoRouterProvider($this->uri, $detailDuration, $this->geoTools, $this->logger);
         $params = [];
         $params['points'] = $addresses;
         $routes = $georouter->getCollection(Direction::class, '', $params);
@@ -67,7 +74,7 @@ class GeoRouter
     }
     
     /**
-     * Get the all the routes alternative between two or more addresses, async.
+     * Get all the routes alternative between two or more addresses, async.
      *
      * @param array $addresses[]        The array of addresses, indexed by owner id (representing all the routes to send by the async request)
      * @param boolean $detailDuration   Set to true to get the duration between 2 points
@@ -75,10 +82,31 @@ class GeoRouter
      */
     public function getAsyncRoutes(array $addresses, bool $detailDuration=false): ?array
     {
-        $georouter = new GeoRouterProvider($this->uri, $detailDuration, $this->geoTools);
+        $georouter = new GeoRouterProvider($this->uri, $detailDuration, $this->geoTools, $this->logger);
         $params = [];
         $params['arrayPoints'] = $addresses;
         $params['async'] = true;
+        $routes = $georouter->getCollection(Direction::class, '', $params);
+        return $routes;
+    }
+
+    /**
+     * Get multiple routes alternative between two or more addresses (async).
+     * Different than getAsyncRoutes which represent the routes alternatives for a single direction, 
+     * here we search for multiple directions at once.
+     *
+     * @param array $addresses[]        The array of addresses, indexed by owner id (representing all the routes to send by the async request)
+     * @param boolean $detailDuration   Set to true to get the duration between 2 points
+     * @return array                    The routes found
+     */
+    public function getMultipleAsyncRoutes(array $addresses, bool $detailDuration=false): ?array
+    {
+        $georouter = new GeoRouterProvider($this->uri, $detailDuration, $this->geoTools, $this->logger);
+        $params = [];
+        $params['arrayPoints'] = $addresses;
+        $params['multipleAsync'] = true;
+        $params['batchScriptPath'] = $this->batchScriptPath;
+        $params['batchTemp'] = $this->batchTemp;
         $routes = $georouter->getCollection(Direction::class, '', $params);
         return $routes;
     }
