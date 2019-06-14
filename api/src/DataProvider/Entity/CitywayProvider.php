@@ -231,7 +231,6 @@ class CitywayProvider implements ProviderInterface
                 $this->collection[] = self::deserialize($class, $tripPoint);
             }
         }
-
     }
 
     /**
@@ -252,7 +251,8 @@ class CitywayProvider implements ProviderInterface
     }
 
 
-    private function deserializeTripPoint($data){
+    private function deserializeTripPoint($data)
+    {
         $tripPoint = new PTTripPoint();
 
         $tripPoint->setId($data["Id"]);
