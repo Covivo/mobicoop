@@ -27,6 +27,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Geography\Entity\Direction;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * A potential matching between 2 persons from a mass file import.
@@ -56,23 +57,43 @@ class MassMatching
      * @var MassPerson The first person.
      * @ORM\ManyToOne(targetEntity="\App\Match\Entity\MassPerson", cascade={"persist","remove"}, inversedBy="matchingsAsDriver")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     * @MaxDepth(1)
      */
     private $massPerson1;
+
+    /**
+     * @var int id of the first person
+     * @Groups("mass")
+     */
+    private $massPerson1Id;
 
     /**
      * @var MassPerson The second person.
      * @ORM\ManyToOne(targetEntity="\App\Match\Entity\MassPerson", cascade={"persist","remove"}, inversedBy="matchingsAsPassenger")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     * @MaxDepth(1)
      */
     private $massPerson2;
 
     /**
-     * @var Direction|null The direction for the 2 persons to their final destination.
-     *
-     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
+     * @var int id of the second person
      * @Groups("mass")
      */
-    private $direction;
+    private $massPerson2Id;
+
+    /**
+     * @var int The total distance of the direction in meter.
+     * @ORM\Column(type="integer")
+     * @Groups("mass")
+     */
+    private $distance;
+    
+    /**
+     * @var int The total duration of the direction in milliseconds.
+     * @ORM\Column(type="integer")
+     * @Groups("mass")
+     */
+    private $duration;
 
     public function getId(): ?int
     {
@@ -91,6 +112,11 @@ class MassMatching
         return $this;
     }
 
+    public function getMassPerson1Id(): int
+    {
+        return $this->massPerson1->getId();
+    }
+
     public function getMassPerson2(): MassPerson
     {
         return $this->massPerson2;
@@ -103,15 +129,32 @@ class MassMatching
         return $this;
     }
 
-    public function getDirection(): ?Direction
+    public function getMassPerson2Id(): int
     {
-        return $this->direction;
+        return $this->massPerson2->getId();
     }
 
-    public function setDirection(?Direction $direction): self
+    public function getDistance(): int
     {
-        $this->direction = $direction;
+        return $this->distance;
+    }
+    
+    public function setDistance(int $distance): self
+    {
+        $this->distance = $distance;
+        
+        return $this;
+    }
 
+    public function getDuration(): int
+    {
+        return $this->duration;
+    }
+    
+    public function setDuration(int $duration): self
+    {
+        $this->duration = $duration;
+        
         return $this;
     }
 }

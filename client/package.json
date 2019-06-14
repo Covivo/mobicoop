@@ -1,0 +1,78 @@
+{
+  "name": "mobicoop",
+  "version": "0.0.0",
+  "description": "Mobicoop front-end app",
+  "main": "public/index.php",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "start": "node runstart.js",
+    "test": "node src/MobicoopBundle/spec/runtests.js",
+    "test-and-coverage": "node src/MobicoopBundle/spec/runtests.js -c",
+    "test-functional": "PERCY_TOKEN=aaabbbcccdddeeefff PERCY_BRANCH=local percy exec -- cypress run",
+    "test-functional-CI": "percy exec -- cypress run",
+    "test-fix-and-coverage": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src &&  php vendor/bin/php-cs-fixer.phar fix --using-cache=false src/MobicoopBundle/spec && node src/MobicoopBundle/spec/runtests.js -c",
+    "compile": "encore dev",
+    "compile-and-watch": "encore dev-server --port 8079",
+    "compile-and-watch-vue": "encore dev-server --hot --port 8079",
+    "postinstall": "composer install & npm run compile",
+    "cypress": "cypress open",
+    "cy": "cypress run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/mobicoop/mobicoop.git"
+  },
+  "author": "MatthD",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://gitlab.com/mobicoop/mobicoop/issues"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "ios >= 8"
+  ],
+  "homepage": "https://gitlab.com/mobicoop/mobicoop#README",
+  "devDependencies": {
+    "@percy/cypress": "^1.0.9",
+    "babel-eslint": "^8.2.6",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-stage-3": "^6.24.1",
+    "cypress": "^3.3.1",
+    "eslint": "^4.19.1",
+    "eslint-loader": "2.1.0",
+    "eslint-plugin-vue": "^5.0.0-beta.3",
+    "postcss-loader": "^3.0.0",
+    "sass-lint": "^1.13.1",
+    "sass-lint-webpack": "^1.0.1",
+    "sass-loader": "^7.1.0",
+    "stylelint-webpack-plugin": "^0.10.5",
+    "vue-eslint-parser": "^3.2.2",
+    "webpack-notifier": "^1.6.0"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.4.4",
+    "fs-readdir-recursive": "^1.1.0",
+    "@symfony/webpack-encore": "^0.21.0",
+    "axios": "^0.18.1",
+    "babel-polyfill": "^6.26.0",
+    "buefy": "^0.7.7",
+    "commander": "^2.18.0",
+    "eslint-config-prettier": "^3.0.1",
+    "kuler": "^1.0.0",
+    "lodash": "^4.17.11",
+    "moment": "^2.24.0",
+    "remove": "^0.1.5",
+    "request": "^2.88.0",
+    "stylelint": "^9.10.1",
+    "stylelint-config-standard": "^18.3.0",
+    "stylelint-scss": "^3.8.0",
+    "transform-runtime": "0.0.0",
+    "underscore": "^1.9.1",
+    "vue": "^2.5.17",
+    "vue-form-wizard": "^0.8.4",
+    "vue-loader": "^15.4.2",
+    "vue-template-compiler": "^2.5.17"
+  }
+}

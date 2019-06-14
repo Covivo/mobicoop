@@ -41,7 +41,6 @@ class DataProvider
 {
     private $client;
     private $resource;
-    private $resources;
     
     /**
      * Constructor.

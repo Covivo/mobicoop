@@ -56,7 +56,7 @@ install & enable in your .ini all its php extensions : [Docker file](https://git
 
 - *Duplicate, rename with .env.local & edit some env.local:*  
     - [.env api](api/.env)   
-    - [.env mobicoop](interfaces/mobicoop/.env) 
+    - [.env mobicoop](client/.env) 
 
 - *Duplicate, rename without .dist & edit the rdex json config files:*
   *Files .json are needed but you can let them with examples if you do not use RDEX*
@@ -131,7 +131,7 @@ To start the application simply run :
 # Functional tests
 
 - *Duplicate, rename cypress.json.dist
-    - [.cypress.json ](interfaces/mobicoop)
+    - [.cypress.json ](client)
 - Start mobicoop in prod mode (important) `npm run start-production`
 - On another terminal start functional/design tests `npm run test-functional-ci`   
 
@@ -284,3 +284,14 @@ Please use powershell with our project, in requirement you will need:
     In case you have one of the following situation while merging, please get in touch with Mobicoop project licensing issues expert before merging:
     - one of the license pops up as non part of the approved license for the project
     - a component is license under AGPLv3 and is not Mobicoop itself
+
+## ℹ️How to contribute to Mobicoop 
+
+*Don't forget to install all dependencies before (check README.md)*
+
+- Go into project's root folder
+- Run your console
+- execute `npm run contribute`
+- Follow all steps and fill in asked information.
+
+### 🎉Welcome to Mobicoop's contributing program !🎉

@@ -23,7 +23,6 @@
 
 namespace App\Match\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Match\Service\MassImportManager;
 use App\Match\Entity\Mass;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -39,9 +38,6 @@ final class MassMatchAction
         $this->request = $requestStack->getCurrentRequest();
     }
 
-    /**
-     * @IsGranted("ROLE_USER")
-     */
     public function __invoke(Mass $data): Mass
     {
         if ($data->getStatus() == Mass::STATUS_ANALYZED) {
@@ -51,7 +47,6 @@ final class MassMatchAction
             $maxSuperiorDistanceRatio = 1000;
             $bearingCheck = true;
             $bearingRange = 10;
-            $doubleCheck = false;
             if ($this->request->get("maxDetourDurationPercent")) {
                 $maxDetourDurationPercent = $this->request->get("maxDetourDurationPercent");
             }
@@ -70,10 +65,7 @@ final class MassMatchAction
             if ($this->request->get("bearingRange")) {
                 $bearingRange = $this->request->get("bearingRange");
             }
-            if ($this->request->get("doubleCheck")) {
-                $doubleCheck = $this->request->get("doubleCheck");
-            }
-            $this->massImportManager->matchMass($data, $maxDetourDurationPercent, $maxDetourDistancePercent, $minOverlapRatio, $maxSuperiorDistanceRatio, $bearingCheck, $bearingRange, $doubleCheck);
+            $this->massImportManager->matchMass($data, $maxDetourDurationPercent, $maxDetourDistancePercent, $minOverlapRatio, $maxSuperiorDistanceRatio, $bearingCheck, $bearingRange);
         }
         return $data;
     }

@@ -84,6 +84,10 @@ services:
     App\Right\Controller\:
         resource: '../src/Right/Controller'
         tags: ['controller.service_arguments']
+    
+    App\User\Controller\:
+        resource: '../src/User/Controller'
+        tags: ['controller.service_arguments']
 
     # alias to allow this type to be autowired
     Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'
@@ -98,10 +102,14 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, lazy: true }    # lazy set to true to avoid doctrine UnitOfWork error on insert
 
-    # inject SIG uri to GeoRouter service
+    # inject SIG uri and batch script to GeoRouter service
     App\Geography\Service\GeoRouter:
         arguments:
             $uri: '%env(resolve:SIG_GEOROUTER_URI)%'
+            $batchScriptPath: '%env(resolve:MOBIMATCH_BATCH_SCRIPT_PATH)%'
+            $batchTemp: '%env(resolve:MOBIMATCH_BATCH_TEMP)%'
+        tags: 
+            - { name: monolog.logger, channel: georouter }
 
     # set the monolog channel to use for ProposalManager
     App\Carpool\Service\ProposalManager:
@@ -133,3 +141,8 @@ services:
     App\Match\Service\GeoMatcher:
         tags: 
             - { name: monolog.logger, channel: geomatcher }    
+    
+    # set the monolog channel to use for GeoRouterProvider
+    App\DataProvider\Entity\GeoRouterProvider:
+        tags: 
+            - { name: monolog.logger, channel: georouter }    

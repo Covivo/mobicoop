@@ -70,20 +70,20 @@ class PermissionManager
     public function userHasPermission(Right $right, ?User $user, Territory $territory=null): Permission
     {
         $permission = new Permission(1);
-        $permission->setPermission(false);
+        $permission->setGranted(false);
         // if no user is passed we consider the basic user
         if (!$user instanceof User) {
             $user = new User();
             $userRole = new UserRole();
             $userRole->setUser($user);
-            $userRole->setRole($this->roleRepository->find(Role::DEFAULT_ROLE));
+            $userRole->setRole($this->roleRepository->find(Role::ROLE_USER));
             $user->addUserRole($userRole);
         }
 
         // we first check if the user is seated on the iron throne
         if (in_array('ROLE_SUPER_ADMIN', $user->getRoles())) {
             // King of the Andals and the First Men, Lord of the Seven Kingdoms, and Protector of the Realm
-            $permission->setPermission(true);
+            $permission->setGranted(true);
             return $permission;
         }
 
@@ -93,7 +93,7 @@ class PermissionManager
         foreach ($user->getUserRoles() as $userRole) {
             if (is_null($userRole->getTerritory()) || $userRole->getTerritory() == $territory) {
                 if ($this->roleHasRight($userRole->getRole(), $right)) {
-                    $permission->setPermission(true);
+                    $permission->setGranted(true);
                     return $permission;
                 }
             }
@@ -103,12 +103,12 @@ class PermissionManager
         foreach ($user->getUserRights() as $userRight) {
             if (is_null($userRight->getTerritory()) || $userRight->getTerritory() == $territory) {
                 if ($userRight->getRight()->getName() == $right->getName()) {
-                    $permission->setPermission(true);
+                    $permission->setGranted(true);
                     return $permission;
                 } else {
                     foreach ($this->rightRepository->findChildren($userRight->getRight()) as $child) {
                         if ($child->getName() == $right->getName()) {
-                            $permission->setPermission(true);
+                            $permission->setGranted(true);
                             return $permission;
                         }
                     }
@@ -140,5 +140,58 @@ class PermissionManager
             $permission = $this->roleHasRight($child, $right);
         }
         return $permission;
+    }
+
+    /**
+     * Get the users's permissions.
+     *
+     * @param User $user
+     * @return Array
+     */
+    public function getUserPermissions(User $user): array
+    {
+        $permissions = [];
+        // we search the rights of each role of the user (and its subsequent roles)
+        foreach ($user->getUserRoles() as $userRole) {
+            $this->getRoleRights($userRole->getRole(), $userRole->getTerritory(), $permissions);
+        }
+        // we search the rights directly granted to the user
+        foreach ($user->getUserRights() as $userRight) {
+            if ($userRight->getTerritory()) {
+                $permissions[$userRight->getRight()->getName()][] = $userRight->getTerritory()->getId();
+            } else {
+                $permissions[$userRight->getRight()->getName()] = [];
+            }
+            foreach ($this->rightRepository->findChildren($userRight->getRight()) as $child) {
+                if ($userRight->getTerritory()) {
+                    $permissions[$child->getName()][] = $userRight->getTerritory()->getId();
+                } else {
+                    $permissions[$child->getName()] = [];
+                }
+            }
+        }
+        return $permissions;
+    }
+
+    // get the right of a given role (and the rights of its children)
+    private function getRoleRights(Role $role, Territory $territory=null, array &$permissions)
+    {
+        foreach ($role->getRights() as $right) {
+            if ($territory) {
+                $permissions[$right->getName()][] = $territory->getId();
+            } else {
+                $permissions[$right->getName()] = [];
+            }
+            foreach ($this->rightRepository->findChildren($right) as $child) {
+                if ($territory) {
+                    $permissions[$child->getName()][] = $territory->getId();
+                } else {
+                    $permissions[$child->getName()] = [];
+                }
+            }
+        }
+        foreach ($this->roleRepository->findChildren($role) as $child) {
+            $this->getRoleRights($child, $territory, $permissions);
+        }
     }
 }
