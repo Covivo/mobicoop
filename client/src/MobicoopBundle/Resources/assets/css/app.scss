@@ -26,7 +26,7 @@ $link-focus-border: $primary;
 @import '~buefy/src/scss/buefy';
 @import '_header';
 .center-all {
-  display: flex;
+  display: block;
   flex-direction: column;
   justify-content: center;
   align-items: center;

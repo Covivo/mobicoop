@@ -1,7 +1,9 @@
 const Encore = require('@symfony/webpack-encore');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const fs = require('fs');
+const _ = require('lodash');
 const read = require('fs-readdir-recursive');
+
 
 let files = read('./assets/js/page');
 let filesBundle = read('./src/MobicoopBundle/Resources/assets/js/page');
@@ -11,42 +13,18 @@ Encore
   .setOutputPath('public/build/')
   // public path used by the web server to access the output path
   .setPublicPath('/build')
-  // only needed for CDN's or sub-directory deploy
-  // .setManifestKeyPrefix('build/')
-
-  /*
-   * ENTRY CONFIG
-   *
-   * Add 1 entry for each "page" of your app
-   * (including one that's included on every page - e.g. "app")
-   *
-   * Each entry will result in one JavaScript file (e.g. app.js)
-   * and one CSS file (e.g. app.css) if you JavaScript imports CSS.
-  */
-
-  //.addEntry('app', './src/MobicoopBundle/Resources/assets/js/app.js')
-
   .addEntry('app', './src/MobicoopBundle/Resources/assets/js/app.js')
-  //    .addEntry('autocomplete', './src/MobicoopBundle/Resources/assets/js/page/autocomplete.js')
-  //    .addEntry('ad_create', './src/MobicoopBundle/Resources/assets/js/page/ad/create.js')
-  //    .addEntry('home', './src/MobicoopBundle/Resources/assets/js/page/home.js')
-  //    .addEntry('users', './src/MobicoopBundle/Resources/assets/js/page/users.js')
-
   .splitEntryChunks()
-
-  /*
-   * FEATURE CONFIG
-   *
-   * Enable & configure other features below. For a full
-   * list of features, see:
-   * https://symfony.com/doc/current/frontend.html#adding-more-features
-   */
-  .cleanupOutputBeforeBuild()
-  // .enableBuildNotifications()
-  .enableSourceMaps(!Encore.isProduction())
-  // enables hashed filenames (e.g. app.abc123.css)
+  // .cleanupOutputBeforeBuild()
   .enableVersioning(Encore.isProduction())
-  .addLoader({
+  // enables Sass/SCSS support
+  .enableSassLoader()
+  .enableVueLoader()
+  .setManifestKeyPrefix('/build');
+
+// for production we do not add some plugin & loader
+if(!Encore.isProduction()){
+  Encore.addLoader({
     test: /\.(js|vue)$/,
     enforce: 'pre',
     loader: 'eslint-loader',
@@ -63,8 +41,8 @@ Encore
     emitErrors: false,
     syntax: 'scss'
   }))
-  // enables Sass/SCSS support
-  .enableSassLoader()
+  .enableSourceMaps(!Encore.isProduction())
+  .enableBuildNotifications()
   .configureBabel(function (babelConfig) {
     // add additional presets
     babelConfig.plugins.push('transform-class-properties');
@@ -72,15 +50,7 @@ Encore
   })
   // This will add compatibility for old nav
   .enablePostCssLoader()
-  .enableVueLoader()
-  //fixed dev-server
-  .setManifestKeyPrefix('/build')
-  // uncomment if you use TypeScript
-  //.enableTypeScriptLoader()
-
-  // uncomment if you're having problems with a jQuery plugin
-  //.autoProvidejQuery()
-  ;
+}
 
 // Add base assets
 for (let file of files) {
@@ -97,4 +67,5 @@ encoreConfig.watchOptions = {
  aggregateTimeout: 600
 }
 
-module.exports = encoreConfig;
+
+module.exports = [encoreConfig];

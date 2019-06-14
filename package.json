@@ -1,10 +1,10 @@
 {
-  "name": "Mobicoop",
+  "name": "mobicoop-plateform",
   "version": "0.1.1",
   "description": "API, Front & admin mobicoop carpool app",
   "main": "package.json",
   "scripts": {
-    "install": "npm run install-api && npm run install-mobicoop && npm run download-tools && npm run install-admin",
+    "postinstall": "npm-run-all --parallel install-api install-mobicoop download-tools install-admin",
     "install-api": "cd api && npm i --no-save",
     "install-admin": "cd admin && npm i --no-save",
     "install-mobicoop": "cd client && npm i --no-save",
@@ -33,7 +33,7 @@
   },
   "config": {
     "ghooks": {
-      "pre-commit": "php bin/php-cs-fixer.phar fix --using-cache=false api/src &&  php bin/php-cs-fixer.phar fix --using-cache=false client/src && php bin/php-cs-fixer.phar fix --using-cache=false client/src/MobicoopBundle/spec",
+      "pre-commit": "php bin/php-cs-fixer.phar fix --using-cache=false api/src &&  php bin/php-cs-fixer.phar fix --using-cache=false client/src",
       "pre-push": "npm run contributor-checker",
       "post-merge": "npm install && cd api && npm run update-db"
     }
@@ -52,7 +52,6 @@
     "await-to-js": "^2.0.1",
     "commander": "^2.19.0",
     "fs-extra": "^7.0.0",
-    "fs-readdir-recursive": "^1.1.0",
     "git-repo-info": "^2.0.0",
     "git-repo-name": "^0.6.0",
     "git-user-name": "^2.0.0",
@@ -61,6 +60,7 @@
     "simple-git": "^1.105.0"
   },
   "devDependencies": {
-    "ghooks": "^2.0.4"
+    "ghooks": "^2.0.4",
+    "speed-measure-webpack-plugin": "^1.3.1"
   }
 }

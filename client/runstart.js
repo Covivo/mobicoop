@@ -29,6 +29,11 @@ if (!production && port) {
   encorePort = parseInt(program.args[0]) + 100; // We are in dev mod + a setted port
 }
 
+if(production){
+  console.log('prod')
+  process.env.NODE_ENV = "production";
+}
+
 let options = [pathStart, 'server:run', host];
 let optionsEncore = production ? ['production'] : ['dev-server', '--port', encorePort];
 console.log('We are in dev mod the port is', port, production, encorePort, command, options)

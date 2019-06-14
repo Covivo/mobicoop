@@ -22,3 +22,4 @@
 /client/.env.local
 /client/var/log/
 /admin/.env
+/admin/.env.local
