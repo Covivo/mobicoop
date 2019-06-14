@@ -95,5 +95,4 @@ class CommunitySecurity
     {
         $this->filename = $filename;
     }
-
 }

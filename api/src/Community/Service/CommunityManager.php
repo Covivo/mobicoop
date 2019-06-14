@@ -75,13 +75,13 @@ class CommunityManager
             // we check the presence of the credentials
             if (is_null($credentials) || count($credentials) == 0) {
                 throw new CommunityException('Credentials not found');
-            } elseif(count($credentials) <> 2) {
+            } elseif (count($credentials) <> 2) {
                 throw new CommunityException('Wrong credentials');
             }
             // we check the values of the credentials for each possible security file
             $authorized = false;
             foreach ($community->getCommunitySecurities() as $communitySecurity) {
-                if ($this->checkSecurity($communitySecurity,$credentials)) {
+                if ($this->checkSecurity($communitySecurity, $credentials)) {
                     $authorized = true;
                     break;
                 }
@@ -116,5 +116,4 @@ class CommunityManager
         }
         return false;
     }
-
 }
