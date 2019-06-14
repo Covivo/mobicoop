@@ -1,5 +1,7 @@
 # Mobicoop Contributor License Agreements
 
+## **This folder is listing the individual contributors who agreed the entire text below or who have granted to contribute by organizations agreeing the entire text below**
+
 ## Mobicoop Contributor License Agreement template
 
 Mobicoop Contributor License Agreement v1.0
@@ -26,8 +28,9 @@ I hereby agree to the terms of the Mobicoop Contributor License Agreement.
 
 I declare that I am authorized and able to make this agreement and sign this declaration.
 
-_Additional information for Organizational contributor case_
-{: .text-center}
+
+**>>>**_Additional information for Organizational contributor case [not required for individual contributor]_
+
 
 I am making Submissions in the course of work for my employer (or my employer has intellectual property rights in my Submissions by contract of applicable law). I have permission from my employer to make Submissions and enter this CLA on behalf of my employer. By signing below, the defined term "You" includes me and my employer.
 
@@ -39,10 +42,15 @@ Title: `title of employer point of contact`
 
 Email: `email of employer point of contact`
 
+Address: `address of the employer`
+
+Country: `country of the employer`
+
 Git email or login of the employee granted to contribute: `git_email | login of granted employee`
 
-_End of additional information for Organizational contributor case_
-{: .text-center}
+
+**<<<**_End of additional information for Organizational contributor case [not required for individual contributor]_
+
 
 Signed,
 
@@ -53,4 +61,3 @@ Signed,
 
 
 
-## **This folder is listing the individual contributors who agreed the entire text above or who have granted to contribute by organizations agreeing the entire text above**
