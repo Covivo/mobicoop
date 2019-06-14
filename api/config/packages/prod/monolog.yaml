@@ -4,7 +4,7 @@ monolog:
             type:               fingers_crossed
             action_level:       info
             handler:            grouped
-            channels:           ["!carpool", "!mass", "!geomatcher"]
+            channels:           ["!carpool", "!community", "!geomatcher", "!georouter", "!mass"]
         grouped:
             type:               group
             members:            [streamed, swift]
@@ -25,11 +25,11 @@ monolog:
             level: debug
             path: "%kernel.logs_dir%/carpool.log"
             channels: [carpool]
-        mass:
+        community:
             type: stream
-            level: info
-            path: "%kernel.logs_dir%/mass.log"
-            channels: [mass]
+            level: debug
+            path: "%kernel.logs_dir%/communtiy.log"
+            channels: [community]
         geomatcher:
             type: stream
             level: info
@@ -40,6 +40,11 @@ monolog:
             level: info
             path: "%kernel.logs_dir%/georouter.log"
             channels: [georouter]
+        mass:
+            type: stream
+            level: info
+            path: "%kernel.logs_dir%/mass.log"
+            channels: [mass]
         console:
             type: console
             process_psr_3_messages: false
