@@ -31,6 +31,7 @@ use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassMatching;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassPerson;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTTripPoint;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 
@@ -106,6 +107,9 @@ class Deserializer
                 break;
             case PTJourney::class:
                 return self::deserializePTJourney($data);
+                break;
+            case PTTripPoint::class:
+                return self::deserializePTTripPoint($data);
                 break;
             case ExternalJourneyProvider::class:
                 return self::deserializeExternalJourneyProvider($data);
@@ -366,7 +370,14 @@ class Deserializer
         }
         return $PTJourney;
     }
-    
+
+    private function deserializePTTripPoint(array $data): ?PTTripPoint
+    {
+        $PTTripPoint = new PTTripPoint();
+        $PTTripPoint = self::autoSet($PTTripPoint, $data);
+        return $PTTripPoint;
+    }
+
     private function deserializePTDeparture(array $data): ?PTDeparture
     {
         $PTDeparture = new PTDeparture();
