@@ -208,7 +208,7 @@ test_deploy:
 # Tests for master branch
 #
 master_tests:
-  stage: test
+  stage: tests
 #  variables:
 #    APP_ENV: prod   # /!\ important : symfony env variable /!\
   before_script:
