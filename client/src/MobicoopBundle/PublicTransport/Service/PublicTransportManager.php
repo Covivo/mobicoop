@@ -113,7 +113,6 @@ class PublicTransportManager
         int $perimeter,
         string $transportModes
     ) {
-
         $this->dataProvider->setClass(PTTripPoint::class, "public_transport/trippoints");
 
         $response = $this->dataProvider->getCollection([
