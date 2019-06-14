@@ -93,6 +93,7 @@ use Doctrine\ORM\Mapping as ORM;
 class PTTripPoint
 {
     /**
+     * @ApiProperty(identifier=true)
      * @var int The id of this Trip Point.
      * @Groups("pt")
      */
@@ -161,6 +162,8 @@ class PTTripPoint
     public function setLatitude(float $latitude): self
     {
         $this->latitude = $latitude;
+
+        return $this;
     }
 
     public function getLongitude(): float
@@ -171,6 +174,8 @@ class PTTripPoint
     public function setLongitude(float $longitude): self
     {
         $this->longitude = $longitude;
+
+        return $this;
     }
 
     public function getLocalityId(): int
@@ -181,6 +186,8 @@ class PTTripPoint
     public function setLocalityId(int $localityId): self
     {
         $this->localityId = $localityId;
+
+        return $this;
     }
 
     public function getName(): string
@@ -191,6 +198,8 @@ class PTTripPoint
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
     }
 
     public function getPointType(): int
@@ -201,6 +210,8 @@ class PTTripPoint
     public function setPointType(int $pointType): self
     {
         $this->pointType = $pointType;
+
+        return $this;
     }
 
     public function getPostalCode(): string
@@ -211,6 +222,8 @@ class PTTripPoint
     public function setPostalCode(string $postalCode): self
     {
         $this->postalCode = $postalCode;
+
+        return $this;
     }
 
     public function getTransportMode(): string
@@ -221,5 +234,7 @@ class PTTripPoint
     public function setTransportMode(string $transportMode): self
     {
         $this->transportMode = $transportMode;
+
+        return $this;
     }
 }

@@ -72,7 +72,8 @@ use App\PublicTransport\Entity\PTCompany;
  * - a second PTRide,
  * - and finally a second Leg
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  *
  */
 class CitywayProvider implements ProviderInterface
@@ -206,8 +207,31 @@ class CitywayProvider implements ProviderInterface
 
     private function getCollectionTripPoints($class, array $params)
     {
-        print_r($params);
-        return "whouaaaaaaaaaaa";
+        $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESSOURCE_TRIPPOINTS);
+        $getParams = [
+            "Latitude" => $params["latitude"],
+            "Longitude" => $params["longitude"],
+            "TransportModes" => $params["transportModes"],
+            "Perimeter" => $params["perimeter"]
+        ];
+        $response = $dataProvider->getCollection($getParams);
+
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+            if (!isset($data["StatusCode"])) {
+                return $this->collection;
+            }
+            if ($data["StatusCode"] <> 200) {
+                return $this->collection;
+            }
+            if (!isset($data["Data"])) {
+                return $this->collection;
+            }
+            foreach ($data["Data"] as $tripPoint) {
+                $this->collection[] = self::deserialize($class, $tripPoint);
+            }
+        }
+
     }
 
     /**
@@ -219,9 +243,28 @@ class CitywayProvider implements ProviderInterface
             case PTJourney::class:
                 return self::deserializeJourney($data);
                 break;
+            case PTTripPoint::class:
+                return self::deserializeTripPoint($data);
+                break;
             default:
                 break;
         }
+    }
+
+
+    private function deserializeTripPoint($data){
+        $tripPoint = new PTTripPoint();
+
+        $tripPoint->setId($data["Id"]);
+        $tripPoint->setLatitude($data["Latitude"]);
+        $tripPoint->setLongitude($data["Longitude"]);
+        $tripPoint->setLocalityId($data["LocalityId"]);
+        $tripPoint->setName($data["Name"]);
+        $tripPoint->setPointType($data["PointType"]);
+        $tripPoint->setPostalCode($data["PostalCode"]);
+        $tripPoint->setTransportMode($data["TransportMode"]);
+
+        return $tripPoint;
     }
 
     private function deserializeJourney($data)
