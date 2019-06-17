@@ -1,6 +1,22 @@
 <template>
   <section>
-    <form>
+    <form
+      id="app"
+      action="/utilisateur/inscription"
+      method="post"
+      @submit="checkForm"
+    >
+      <p v-if="errors.length">
+        <b>Please correct the following error(s):</b>
+        <ul>
+          <li
+            v-for="error in errors"
+            :key="error.id"
+          >
+            {{ error }}
+          </li>
+        </ul>
+      </p>
       <b-field
         label="Email"
       >
@@ -16,7 +32,6 @@
         <b-input
           v-model="password"
           type="password"
-          value="iwantmytreasure"
           password-reveal
         />
       </b-field> 
@@ -69,7 +84,11 @@
       />
 
       <div class="field">
-        <b-checkbox>Je valide la charte</b-checkbox>
+        <b-checkbox
+          v-model="validation"
+        >
+          Je valide la charte
+        </b-checkbox>
       </div>
       <input
         type="submit"
@@ -99,6 +118,7 @@ export default {
   },
   data() {
     return {
+      errors: [],
       homeAddress: {},
       email: null,
       givenName: null,
@@ -108,7 +128,7 @@ export default {
       telephone: null,
       password: null,
       token: null,
-      
+      validation: false
     };
   },
   computed : {
@@ -116,39 +136,62 @@ export default {
       const year = new Date().getFullYear()
       return Array.from({length: year - 1910}, (value, index) => 1910 + index)
     }
+    
   },
   methods: {
     selectedGeo(val) {
       let name = val.name;
       this[name] = val;
     },
-    onComplete() { 
-      let signupForm = new FormData();
-      for (let prop in this.form) {
-        let value = this.form[prop];
-        if(!value) continue; // Value is empty, just skip it!
-        // Convert date to required format
-       
-        // rename prop to be usable in the controller
-        let renamedProp = prop === "createToken" ? prop : `signup_Form[${prop}]`;
-        signupForm.append(renamedProp, value);
-      }
-      //  We post the form 🚀
-      axios
-        .post("/utilisateur/inscription", signupForm, {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        })
-        
+    checkForm: function (e) {
+      if (this.email && this.telephone && this.password && this.givenName && this.familyName && this.gender && this.birthYear && this.homeAddress && this.validation == true) {
+        let signupForm = {};
+        this.signupForm = [...this.data]
+        axios
+          .post("/covoiturage/annonce/poster", signupForm, {
+            headers: {
+              "Content-Type": "multipart/form-data"
+            }
+          })
         // .then(function(response) {
-        //   window.location.href = '/';
+        //   window.location.href = '/covoiturage/annonce/'+response.data.proposal+'/resultats';
         //   //console.log(response.data.proposal);
         // })
-        .catch(function(error) {
-          console.error(error);
-        });
-    }
+        // .catch(function(error) {
+        //   console.error(error);
+        // });
+        
+      }
+      this.errors = [];
+
+      if (!this.email) {
+        this.errors.push('Email required.');
+      } 
+      if (!this.telephone) {
+        this.errors.push('Telephone required.');
+      }
+      if (!this.password) {
+        this.errors.push('Password required.');
+      }
+      if (!this.givenName) {
+        this.errors.push('GivenName required.');
+      }
+      if (!this.familyName) {
+        this.errors.push('FamilyName required.');
+      }
+      if (!this. gender) {
+        this.errors.push('Gender required.');
+      }
+      if (!this.birthYear) {
+        this.errors.push('BirthYear required.');
+      }
+      if (this.validation == false) {
+        this.errors.push('Validation required.');
+      }
+      e.preventDefault();
+      
+    },
+    
   }
   
 };
