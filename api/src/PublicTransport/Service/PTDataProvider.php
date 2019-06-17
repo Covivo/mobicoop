@@ -147,5 +147,4 @@ class PTDataProvider
             "logicalId" => $logicalId
         ]]);
     }
-
 }

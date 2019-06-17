@@ -287,14 +287,13 @@ class CitywayProvider implements ProviderInterface
 
     private function deserializeLineStop($data)
     {
-
         $lineStop = new PTLineStop();
 
-        if(isset($data["Direction"])){
+        if (isset($data["Direction"])) {
             $lineStop->setDirection($data["Direction"]);
         }
 
-        if(isset($data["Line"]) && isset($data["Line"]["Id"])){
+        if (isset($data["Line"]) && isset($data["Line"]["Id"])) {
             $line = new PTLine($data["Line"]["Id"]);
 
 
@@ -318,11 +317,12 @@ class CitywayProvider implements ProviderInterface
             $lineStop->setLine($line);
         }
 
-        if(isset($data["LineId"])){
+        if (isset($data["LineId"])) {
             $lineStop->setLineid($data["LineId"]);
         }
 
-        print_r($lineStop);die;
+        print_r($lineStop);
+        die;
         return $lineStop;
     }
     private function deserializeTripPoint($data)

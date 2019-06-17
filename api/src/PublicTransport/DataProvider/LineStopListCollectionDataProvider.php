@@ -66,6 +66,7 @@ final class LineStopListCollectionDataProvider implements CollectionDataProvider
         
         return $this->dataProvider->getLineStop(
             $this->request->get("provider"),
-            $this->request->get('logicalId'));
+            $this->request->get('logicalId')
+        );
     }
 }
