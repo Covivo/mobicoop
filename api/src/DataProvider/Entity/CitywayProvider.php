@@ -28,6 +28,8 @@ use App\DataProvider\Service\DataProvider;
 use App\PublicTransport\Entity\PTJourney;
 use App\PublicTransport\Entity\PTArrival;
 use App\PublicTransport\Entity\PTDeparture;
+use App\PublicTransport\Entity\PTLineStop;
+use App\PublicTransport\Entity\PTLineStopList;
 use App\PublicTransport\Entity\PTTripPoint;
 use App\Travel\Entity\TravelMode;
 use App\PublicTransport\Entity\PTStep;
@@ -93,6 +95,7 @@ class CitywayProvider implements ProviderInterface
     private const URI = "https://api.grandest2.cityway.fr/";
     private const COLLECTION_RESSOURCE_JOURNEYS = "journeyplanner/api/opt/PlanTrips/json";
     private const COLLECTION_RESSOURCE_TRIPPOINTS = "api/transport/v3/trippoint/GetTripPoints/json";
+    private const COLLECTION_RESSOURCE_LINESTOPS = "api/transport/v3/stop/GetLineStops/json";
 
     private const DATETIME_OUTPUT_FORMAT = "d/m/Y H:i:s";
     private const DATETIME_INPUT_FORMAT = "Y-m-d_H-i";
@@ -101,7 +104,7 @@ class CitywayProvider implements ProviderInterface
         PTDataProvider::DATETYPE_DEPARTURE => "DEPARTURE",
         PTDataProvider::DATETYPE_ARRIVAL => "ARRIVAL"
     ];
-    
+
     private const ALGORITHMS = [
         PTDataProvider::ALGORITHM_FASTEST => "FASTEST",
         PTDataProvider::ALGORITHM_SHORTEST => "SHORTEST",
@@ -129,11 +132,15 @@ class CitywayProvider implements ProviderInterface
                 $this->getCollectionTripPoints($class, $params);
                 return $this->collection;
                 break;
+            case PTLineStop::class:
+                $this->getCollectionLineStops($class, $params);
+                return $this->collection;
+                break;
             default:
                 break;
         }
     }
-    
+
     private function getTripModes($modes)
     {
         switch ($modes) {
@@ -233,6 +240,30 @@ class CitywayProvider implements ProviderInterface
         }
     }
 
+    private function getCollectionLineStops($class, array $params)
+    {
+        $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESSOURCE_LINESTOPS);
+        $getParams = [
+            "LogicalIds" => $params["logicalId"]
+        ];
+        $response = $dataProvider->getCollection($getParams);
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+            if (!isset($data["StatusCode"])) {
+                return $this->collection;
+            }
+            if ($data["StatusCode"] <> 200) {
+                return $this->collection;
+            }
+            if (!isset($data["Data"])) {
+                return $this->collection;
+            }
+            foreach ($data["Data"] as $lineStop) {
+                $this->collection[] = self::deserialize($class, $lineStop);
+            }
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -245,12 +276,55 @@ class CitywayProvider implements ProviderInterface
             case PTTripPoint::class:
                 return self::deserializeTripPoint($data);
                 break;
+            case PTLineStop::class:
+                return self::deserializeLineStop($data);
+                break;
             default:
                 break;
         }
     }
 
 
+    private function deserializeLineStop($data)
+    {
+
+        $lineStop = new PTLineStop();
+
+        if(isset($data["Direction"])){
+            $lineStop->setDirection($data["Direction"]);
+        }
+
+        if(isset($data["Line"]) && isset($data["Line"]["Id"])){
+            $line = new PTLine($data["Line"]["Id"]);
+
+
+            if (isset($data["Line"]["Name"])) {
+                $line->setName($data["Line"]["Name"]);
+            }
+            if (isset($data["Line"]["Number"])) {
+                $line->setNumber($data["Line"]["Number"]);
+            }
+            if (isset($data["Line"]["LineDirection"][0]["Name"])) {
+                $line->setDirection($data["Line"]["LineDirection"][0]["Name"]);
+            }
+            if (isset($data["Line"]["Network"])) {
+                if (isset($data["Line"]["Network"]["Id"])) {
+                    $ptcompany = new PTCompany($data["Line"]["Network"]["Id"]);
+                    $ptcompany->setName($data["Line"]["Network"]["Name"]);
+                }
+                $line->setPTCompany($ptcompany);
+            }
+
+            $lineStop->setLine($line);
+        }
+
+        if(isset($data["LineId"])){
+            $lineStop->setLineid($data["LineId"]);
+        }
+
+        print_r($lineStop);die;
+        return $lineStop;
+    }
     private function deserializeTripPoint($data)
     {
         $tripPoint = new PTTripPoint();

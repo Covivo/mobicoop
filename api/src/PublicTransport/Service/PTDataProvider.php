@@ -25,6 +25,7 @@ namespace App\PublicTransport\Service;
 
 use App\PublicTransport\Entity\PTJourney;
 use App\DataProvider\Entity\CitywayProvider;
+use App\PublicTransport\Entity\PTLineStop;
 use App\PublicTransport\Entity\PTTripPoint;
 
 /**
@@ -103,7 +104,7 @@ class PTDataProvider
      * @param float $longitude          The longitude of the origin point
      * @param int $perimeter                     Radius of the perimeter (in meters)
      * @param string $transportModes                     The trip modes accepted (PT, BIKE, CAR, PT+BIKE, PT+CAR)
-     * @return NULL|array                       The journeys found or null if no journey is found
+     * @return NULL|array                       The trip points or null if no trip points is found
      */
     public function getTripPoints(
         string $provider,
@@ -124,4 +125,27 @@ class PTDataProvider
             "transportModes" => $transportModes
         ]]);
     }
+
+    /**
+     * Get line stop from an external Public Transport data provider.
+     *
+     * @param string $provider                  The name of the provider
+     * @param int $logicalId                 The logicalId of the line stop
+     * @return NULL|array                       The line stop found or null if no line stop is found
+     */
+    public function getLineStop(
+        string $provider,
+        int $logicalId
+    ): ?array {
+        if (!array_key_exists($provider, self::PROVIDERS)) {
+            return null;
+        }
+        $providerClass = self::PROVIDERS[$provider];
+        $providerInstance = new $providerClass();
+        return call_user_func_array([$providerInstance,"getCollection"], [PTLineStop::class,"",[
+            "provider" => $provider,
+            "logicalId" => $logicalId
+        ]]);
+    }
+
 }
