@@ -6,8 +6,8 @@
   "scripts": {
     "postinstall": "npm-run-all --parallel install-api install-mobicoop download-tools install-admin",
     "install-api": "cd api && npm install --no-save",
-    "install-admin": "cd admin && yarn install --silent --no-save",
-    "install-mobicoop": "cd client && yarn install --silent --no-save",
+    "install-admin": "cd admin && yarn install --silent --network-concurrency 8",
+    "install-mobicoop": "cd client && yarn install --silent --network-concurrency 8",
     "download-tools": "wget http://www.phpdoc.org/phpDocumentor.phar -O bin/phpDocumentor.phar && wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O bin/php-cs-fixer.phar",
     "test": "npm run test-api && npm run test-mobicoop",
     "test-and-coverage": "npm run test-api && npm run test-and-coverage-mobicoop",
