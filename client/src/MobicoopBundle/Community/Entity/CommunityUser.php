@@ -96,14 +96,14 @@ class CommunityUser implements Resource
 
     /**
      * @var string The login to join the community if the community is secured.
-     * 
+     *
      * @Groups("put")
      */
     private $login;
 
     /**
      * @var string The password to join the community if the community is secured.
-     * 
+     *
      * @Groups("put")
      */
     private $password;
