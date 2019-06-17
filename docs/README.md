@@ -48,6 +48,13 @@ install & enable in your .ini all its php extensions : [Docker file](https://git
     - with ssh : `git clone git@gitlab.com:mobicoop/mobicoop-platform.git`
     - with https : `git clone https://gitlab.com/mobicoop/mobicoop-platform.git`
 
+
+## Optionnal
+
+Still this is purely optional it will drastically increase the speed to download deps
+
+`composer global require hirak/prestissimo`
+
 ## Install deps
 
 `npm install --no-save` will perfom:

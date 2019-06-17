@@ -16,7 +16,7 @@
     "compile": "encore dev",
     "compile-and-watch": "encore dev-server --port 8079",
     "compile-and-watch-vue": "encore dev-server --hot --port 8079",
-    "postinstall": "composer install & npm run compile",
+    "postinstall": "composer install --quiet & npm run compile",
     "cypress": "cypress open",
     "cy": "cypress run"
   },
