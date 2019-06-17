@@ -21,31 +21,31 @@
         label="Email"
       >
         <b-input
-          v-model="email"
+          v-model="form.email"
           type="email"
         />
       </b-field>
       <b-field label="PhoneNumber">
-        <b-input v-model="telephone" />
+        <b-input v-model="form.telephone" />
       </b-field>
       <b-field label="Password">
         <b-input
-          v-model="password"
+          v-model="form.password"
           type="password"
           password-reveal
         />
       </b-field> 
       
       <b-field label="GivenName">
-        <b-input v-model="givenName" />
+        <b-input v-model="form.givenName" />
       </b-field>
       <b-field label="FamilyName">
-        <b-input v-model="familyName" />
+        <b-input v-model="form.familyName" />
       </b-field>
      
       <b-field label="Civilité">
         <b-select
-          v-model="gender"
+          v-model="form.gender"
           placeholder="Civilité"
         >
           <option value="madame">
@@ -62,7 +62,7 @@
      
       <b-field label="Année de naissance">
         <b-select
-          v-model="birthYear"
+          v-model="form.birthYear"
           placeholder="Année de naissance"
         >
           <option
@@ -85,7 +85,7 @@
 
       <div class="field">
         <b-checkbox
-          v-model="validation"
+          v-model="form.validation"
         >
           Je valide la charte
         </b-checkbox>
@@ -114,29 +114,31 @@ export default {
       type: String,
       default: ""
     },
-    
   },
   data() {
     return {
       errors: [],
-      homeAddress: {},
-      email: null,
-      givenName: null,
-      familyName: null,
-      gender: null,
-      birthYear: null,
-      telephone: null,
-      password: null,
-      token: null,
-      validation: false
+      homeAddress:{
+        required: true,
+        value: {}
+      },
+      form:{
+        email: null,
+        givenName: null,
+        familyName: null,
+        gender: null,
+        birthYear: null,
+        telephone: null,
+        password: null,
+        validation: false
+      }
     };
   },
   computed : {
     years () {
       const year = new Date().getFullYear()
       return Array.from({length: year - 1910}, (value, index) => 1910 + index)
-    }
-    
+    },
   },
   methods: {
     selectedGeo(val) {
@@ -145,22 +147,17 @@ export default {
     },
     checkForm: function (e) {
       if (this.email && this.telephone && this.password && this.givenName && this.familyName && this.gender && this.birthYear && this.homeAddress && this.validation == true) {
-        let signupForm = {};
-        this.signupForm = [...this.data]
-        axios
-          .post("/covoiturage/annonce/poster", signupForm, {
+        let signupForm = new FormData;
+        for (let prop in this.form) {
+          let value = this.form[prop];
+          if(!value) continue;}
+        console.error(signupForm)
+        axios 
+          .post("/utilisateur/inscription", signupForm, {
             headers: {
               "Content-Type": "multipart/form-data"
             }
           })
-        // .then(function(response) {
-        //   window.location.href = '/covoiturage/annonce/'+response.data.proposal+'/resultats';
-        //   //console.log(response.data.proposal);
-        // })
-        // .catch(function(error) {
-        //   console.error(error);
-        // });
-        
       }
       this.errors = [];
 
@@ -189,10 +186,7 @@ export default {
         this.errors.push('Validation required.');
       }
       e.preventDefault();
-      
     },
-    
   }
-  
 };
 </script>
