@@ -167,7 +167,7 @@ dev_deploy:
     - mv id_rsa ${HOME}/.ssh                                    #
     - echo "${SSH_DEV_HOST_KEY}" > "${HOME}/.ssh/known_hosts"  #
     - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_DEV_USER}@${SSH_DEV_IP}:/var/www/mobicoop/dev    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no ${SSH_DEV_USER}@${SSH_DEV_IP} "cd /var/www/mobicoop/dev/api; php bin/console doctrine:migrations:migrate -n; cd /var/www/dev/admin; npm run build"    # database migration and admin build
+    - ssh -o StrictHostKeyChecking=no ${SSH_DEV_USER}@${SSH_DEV_IP} "cd /var/www/mobicoop/dev/api; php bin/console doctrine:migrations:migrate -n; cd /var/www/dev/mobicoop/admin; npm run build"    # database migration and admin build
   except:
     refs:
       - tags    # job not executed on tags
