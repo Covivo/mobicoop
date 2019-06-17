@@ -36,6 +36,9 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
+
+    # EVENT LISTENERS
+
     # JWT Event Listener
     mobicoop.event.jwt_created_listener:
         class: App\Security\EventListener\JWTCreatedListener
@@ -50,13 +53,15 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postLoad }
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
 
+    # CONTROLLERS AND SERVICES
+
+    # Article
     App\Article\Controller\:
         resource: '../src/Article/Controller'
         tags: ['controller.service_arguments']
 
+    # Carpool
     App\Carpool\Controller\:
         resource: '../src/Carpool/Controller'
         tags: ['controller.service_arguments']
@@ -65,44 +70,38 @@ services:
         # Uncomment only if autoconfiguration isn't enabled
         #tags: [ 'api_platform.filter' ]
 
-    App\Rdex\Controller\:
-        resource: '../src/Rdex/Controller'
+    App\Carpool\Service\ProposalManager:
+        tags:   
+            - { name: monolog.logger, channel: carpool }
+    
+    # Community
+    App\Community\Controller\:
+        resource: '../src/Community/Controller'
         tags: ['controller.service_arguments']
-        
+
+    App\Community\Service\CommunityManager:
+        arguments:
+            $securityPath: '%env(resolve:COMMUNITY_SECURITY_PATH)%'
+        tags: 
+            - { name: monolog.logger, channel: community }
+    
+    # Data Provider
+    App\DataProvider\Entity\GeoRouterProvider:
+        tags: 
+            - { name: monolog.logger, channel: georouter }    
+
+    # External Journey
+    App\ExternalJourney\Service\ExternalJourneyManager:
+        arguments:
+            $operator: '%env(json:file:resolve:RDEX_OPERATOR)%'
+            $clients: '%env(json:file:resolve:RDEX_CLIENTS)%'
+            $providers: '%env(json:file:resolve:RDEX_PROVIDERS)%'
+
+    # Geography
     App\Geography\Controller\:
         resource: '../src/Geography/Controller'
         tags: ['controller.service_arguments']
-        
-    App\Image\Controller\:
-        resource: '../src/Image/Controller'
-        tags: ['controller.service_arguments']
 
-    App\Match\Controller\:
-        resource: '../src/Match/Controller'
-        tags: ['controller.service_arguments']
-
-    App\Right\Controller\:
-        resource: '../src/Right/Controller'
-        tags: ['controller.service_arguments']
-    
-    App\User\Controller\:
-        resource: '../src/User/Controller'
-        tags: ['controller.service_arguments']
-
-    # alias to allow this type to be autowired
-    Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'
-    
-    # inject image parameters to ImageManager 
-    App\Image\Service\ImageManager:
-        arguments:
-            $types: '%images%'
-            
-    App\Image\EntityListener\ImageListener:
-        arguments: ['@App\Image\Service\ImageManager']
-        tags:
-            - { name: doctrine.orm.entity_listener, lazy: true }    # lazy set to true to avoid doctrine UnitOfWork error on insert
-
-    # inject SIG uri and batch script to GeoRouter service
     App\Geography\Service\GeoRouter:
         arguments:
             $uri: '%env(resolve:SIG_GEOROUTER_URI)%'
@@ -111,38 +110,54 @@ services:
         tags: 
             - { name: monolog.logger, channel: georouter }
 
-    # set the monolog channel to use for ProposalManager
-    App\Carpool\Service\ProposalManager:
-        tags:   
-            - { name: monolog.logger, channel: carpool }
-
-    # inject rdex parameters to ExternalJourneyManager 
-    App\ExternalJourney\Service\ExternalJourneyManager:
+    App\Geography\Service\GeoSearcher:
         arguments:
-            $operator: '%env(json:file:resolve:RDEX_OPERATOR)%'
-            $clients: '%env(json:file:resolve:RDEX_CLIENTS)%'
-            $providers: '%env(json:file:resolve:RDEX_PROVIDERS)%'
+            $params:
+                - { displayCountry: '%env(resolve:DISPLAY_COUNTRY)%', displayRegion: '%env(resolve:DISPLAY_REGION)%', displaySeparator: '%env(resolve:DISPLAY_SEPARATOR)%' }
     
-    # inject mass parameters to MassImportManager 
-    # set the monolog channel to use for MassImportManager
+    # Image
+    App\Image\Controller\:
+        resource: '../src/Image/Controller'
+        tags: ['controller.service_arguments']
+            
+    App\Image\EntityListener\ImageListener:
+        arguments: ['@App\Image\Service\ImageManager']
+        tags:
+            - { name: doctrine.orm.entity_listener, lazy: true }    # lazy set to true to avoid doctrine UnitOfWork error on insert
+
+    App\Image\Service\ImageManager:
+        arguments:
+            $types: '%images%'
+
+    # Match
+    App\Match\Controller\:
+        resource: '../src/Match/Controller'
+        tags: ['controller.service_arguments']
+
+    App\Match\Service\GeoMatcher:
+        tags: 
+            - { name: monolog.logger, channel: geomatcher }    
+
     App\Match\Service\MassImportManager:
         arguments:
             $params: '%mass%'
         tags:   
             - { name: monolog.logger, channel: mass }
 
-    # inject parameters to GeoSearcher
-    App\Geography\Service\GeoSearcher:
-        arguments:
-            $params:
-                - { displayCountry: '%env(resolve:DISPLAY_COUNTRY)%', displayRegion: '%env(resolve:DISPLAY_REGION)%', displaySeparator: '%env(resolve:DISPLAY_SEPARATOR)%' }
-
-    # set the monolog channel to use for UserManager
-    App\Match\Service\GeoMatcher:
-        tags: 
-            - { name: monolog.logger, channel: geomatcher }    
+    # Rdex
+    App\Rdex\Controller\:
+        resource: '../src/Rdex/Controller'
+        tags: ['controller.service_arguments']
     
-    # set the monolog channel to use for GeoRouterProvider
-    App\DataProvider\Entity\GeoRouterProvider:
-        tags: 
-            - { name: monolog.logger, channel: georouter }    
+    # Right
+    App\Right\Controller\:
+        resource: '../src/Right/Controller'
+        tags: ['controller.service_arguments']
+    
+    # User
+    App\User\Controller\:
+        resource: '../src/User/Controller'
+        tags: ['controller.service_arguments']
+
+    # alias to allow this type to be autowired
+    Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'    
