@@ -25,9 +25,6 @@ namespace App\Community\Service;
 
 use Psr\Log\LoggerInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use App\User\Entity\User;
-use App\Community\Entity\Community;
-use App\Community\Exception\CommunityException;
 use App\Community\Entity\CommunitySecurity;
 use App\Community\Entity\CommunityUser;
 
@@ -61,55 +58,46 @@ class CommunityManager
     }
 
     /**
-     * Join a community
+     * Check if a user can join a community
+     * To join an opened community, no credentials is needed, the user just need to be registered.
+     * To join a closed community, a user needs to give credentials, we will call them login and password
+     * even if they represent other kind of information (id, date of birth...).
      *
-     * @param Community $community
-     * @param User $user
-     * @param array $credentials
-     * @return void
+     * @param CommunityUser $communityUser
+     * @return bool
      */
-    public function join(Community $community, User $user, array $credentials=null)
+    public function canJoin(CommunityUser $communityUser)
     {
+        $authorized = true;
         // we check if the community is secured
-        if (count($community->getCommunitySecurities())>0) {
-            // we check the presence of the credentials
-            if (is_null($credentials) || count($credentials) == 0) {
-                throw new CommunityException('Credentials not found');
-            } elseif (count($credentials) <> 2) {
-                throw new CommunityException('Wrong credentials');
-            }
-            // we check the values of the credentials for each possible security file
+        if (count($communityUser->getCommunity()->getCommunitySecurities())>0) {
             $authorized = false;
-            foreach ($community->getCommunitySecurities() as $communitySecurity) {
-                if ($this->checkSecurity($communitySecurity, $credentials)) {
-                    $authorized = true;
-                    break;
+            // we check the values of the credentials for each possible security file
+            if (!is_null($communityUser->getLogin()) && !is_null($communityUser->getPassword())) {
+                foreach ($communityUser->getCommunity()->getCommunitySecurities() as $communitySecurity) {
+                    if ($this->checkSecurity($communitySecurity, $communityUser->getLogin(), $communityUser->getPassword())) {
+                        $authorized = true;
+                        break;
+                    }
                 }
             }
-            if (!$authorized) {
-                throw new CommunityException('Unauthorized');
-            }
         }
-        // here the user is authorized, or the community is not secured
-        $communityUser = new CommunityUser();
-        $communityUser->setUser($user);
-        $community->addCommunityUser($communityUser);
-        $this->entityManager->persist($community);
-        $this->entityManager->flush();
+        return $authorized;
     }
 
     /**
      * Check the credentials against a security file
      *
      * @param CommunitySecurity $security
-     * @param array $credentials
+     * @param string $login
+     * @param string $password
      * @return bool
      */
-    private function checkSecurity(CommunitySecurity $security, array $credentials)
+    private function checkSecurity(CommunitySecurity $security, string $login, string $password)
     {
         if ($file = fopen($this->securityPath . $security->getFilename(), "r")) {
             while ($tab = fgetcsv($file, 4096, ';')) {
-                if ($tab[0] === $credentials[0] && $tab[1] === $credentials[1]) {
+                if ($tab[0] === $login && $tab[1] === $password) {
                     return true;
                 }
             }

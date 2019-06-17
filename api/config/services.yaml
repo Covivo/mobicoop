@@ -75,6 +75,10 @@ services:
             - { name: monolog.logger, channel: carpool }
     
     # Community
+    App\Community\Controller\:
+        resource: '../src/Community/Controller'
+        tags: ['controller.service_arguments']
+
     App\Community\Service\CommunityManager:
         arguments:
             $securityPath: '%env(resolve:COMMUNITY_SECURITY_PATH)%'
