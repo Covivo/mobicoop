@@ -156,6 +156,7 @@ dev_deploy:
 #  variables:
 #    APP_ENV: test   # /!\ important : symfony env variable /!\
   before_script:
+    - composer global require hirak/prestissimo
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
   script:
     - npm run test-and-coverage                                                   # run the tests and code coverage
