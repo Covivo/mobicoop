@@ -31,7 +31,7 @@ use App\Geography\Entity\Address;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * A public transport Line Stops list.
+ * A public transport Stop.
  *
  * @ApiResource(
  *      routePrefix="/public_transport",
@@ -40,7 +40,7 @@ use Doctrine\ORM\Mapping as ORM;
  *      },
  *      collectionOperations={
  *          "get"={
- *              "path"="/linestops",
+ *              "path"="/stops",
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -51,63 +51,67 @@ use Doctrine\ORM\Mapping as ORM;
  *                          "description" = "The public transport data provider"
  *                      },
  *                      {
- *                          "name" = "logicalId",
+ *                          "name" = "id",
  *                          "in" = "query",
  *                          "required" = "true",
  *                          "type" = "number",
  *                          "format" = "int",
- *                          "description" = "The id of the line stop"
+ *                          "description" = "The id of the stop"
  *                      },
  *                  },
  *              }
  *          }
  *     },
- *      itemOperations={"get"={"path"="/linestop/{id}"}}
+ *      itemOperations={"get"={"path"="/stop/{id}"}}
  * )
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class PTLineStop
+class PTStop
 {
     /**
      * @ApiProperty(identifier=true)
-     * @var int id of this Line Stop.
+     * @var int id of this stop
      * @Groups("pt")
      */
     private $id;
 
     /**
-     * @var int a direction of this Line Stop.
+     * @var string name of this stop
      * @Groups("pt")
      */
-    private $direction;
+    private $name;
 
     /**
-     * @var PTLine the Line of this Line Stop
+     * @var float|null The latitude of the stop.
      * @Groups("pt")
      */
-    private $line;
+    private $latitude;
+
+    /**
+     * @var float|null The longitude of the stop.
+     * @Groups("pt")
+     */
+    private $longitude;
+
+    /**
+     * @var PTAccessibilityStatus|null The accessibility status of the stop.
+     * @Groups("pt")
+     */
+    private $accessibilityStatus;
+
+    /**
+     * @var string|null is this stop disrupted ?
+     * @Groups("pt")
+     */
+    private $isDisrupted;
 
 
     /**
-     * @var int id of the line of this line stop
+     * @var int|null The type of the stop.
      * @Groups("pt")
      */
-    private $lineId;
-
-
-    /**
-     * @var PTStop the stop of this line stop
-     * @Groups("pt")
-     */
-    private $stop;
-
-
-    /**
-     * @var int id of the stop of this line stop
-     * @Groups("pt")
-     */
-    private $stopId;
+    private $pointType;
 
     public function __construct($id)
     {
@@ -126,64 +130,77 @@ class PTLineStop
         return $this;
     }
 
-    public function getDirection(): int
+    public function getName(): string
     {
-        return $this->direction;
+        return $this->name;
     }
 
-    public function setDirection(int $direction): self
+    public function setName(string $name): self
     {
-        $this->direction = $direction;
+        $this->name = $name;
 
         return $this;
     }
 
-    public function getLine(): PTLine
+    public function getLatitude(): ?float
     {
-        return $this->line;
+        return $this->latitude;
     }
 
-    public function setLine(PTLine $line): self
+    public function setLatitude(?float $latitude): self
     {
-        $this->line = $line;
+        $this->latitude = $latitude;
 
         return $this;
     }
 
-    public function getLineId(): int
+    public function getLongitude(): ?float
     {
-        return $this->lineId;
+        return $this->longitude;
     }
 
-    public function setLineId(int $lineId): self
+    public function setLongitude(?float $longitude): self
     {
-        $this->lineId = $lineId;
+        $this->longitude = $longitude;
 
         return $this;
     }
 
-    public function getStop(): PTStop
+    public function getAccessibilityStatus(): ?PTAccessibilityStatus
     {
-        return $this->stop;
+        return $this->accessibilityStatus;
     }
 
-    public function setStop(PTStop $stop): self
+    public function setAccessibilityStatus(?PTAccessibilityStatus $accessibilityStatus): self
     {
-        $this->stop = $stop;
+        $this->accessibilityStatus = $accessibilityStatus;
 
         return $this;
     }
 
-    public function getStopId(): int
+    public function getIsDisrupted(): ?string
     {
-        return $this->stopId;
+        return $this->isDisrupted;
     }
 
-    public function setStopId(int $stopId): self
+    public function setIsDisrupted(?string $isDisrupted): self
     {
-        $this->stopId = $stopId;
+        $this->isDisrupted = $isDisrupted;
 
         return $this;
     }
+
+    public function getPointType(): ?int
+    {
+        return $this->pointType;
+    }
+
+    public function setPointType(?int $pointType): self
+    {
+        $this->pointType = $pointType;
+
+        return $this;
+    }
+
 
 }

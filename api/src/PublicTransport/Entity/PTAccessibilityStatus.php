@@ -31,7 +31,7 @@ use App\Geography\Entity\Address;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * A public transport Line Stops list.
+ * An accessiblity status.
  *
  * @ApiResource(
  *      routePrefix="/public_transport",
@@ -39,75 +39,47 @@ use Doctrine\ORM\Mapping as ORM;
  *          "normalization_context"={"groups"={"pt"}, "enable_max_depth"="true"},
  *      },
  *      collectionOperations={
- *          "get"={
- *              "path"="/linestops",
- *              "swagger_context" = {
- *                  "parameters" = {
- *                      {
- *                          "name" = "provider",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "string",
- *                          "description" = "The public transport data provider"
- *                      },
- *                      {
- *                          "name" = "logicalId",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "number",
- *                          "format" = "int",
- *                          "description" = "The id of the line stop"
- *                      },
- *                  },
- *              }
- *          }
+ *          "get"={}
  *     },
- *      itemOperations={"get"={"path"="/linestop/{id}"}}
+ *      itemOperations={"get"={}}
  * )
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class PTLineStop
+class PTAccessibilityStatus
 {
+
     /**
      * @ApiProperty(identifier=true)
-     * @var int id of this Line Stop.
+     * @var int id of this accessibility status
      * @Groups("pt")
      */
     private $id;
 
     /**
-     * @var int a direction of this Line Stop.
+     * @var int blind Accessibility
      * @Groups("pt")
      */
-    private $direction;
+    private $blindAccess;
 
     /**
-     * @var PTLine the Line of this Line Stop
+     * @var int deaf Accessibility
      * @Groups("pt")
      */
-    private $line;
-
+    private $deafAccess;
 
     /**
-     * @var int id of the line of this line stop
+     * @var int mental illness Accessibility
      * @Groups("pt")
      */
-    private $lineId;
-
-
-    /**
-     * @var PTStop the stop of this line stop
-     * @Groups("pt")
-     */
-    private $stop;
+    private $mentalIllnessAccess;
 
 
     /**
-     * @var int id of the stop of this line stop
+     * @var int wheelchair Accessibility
      * @Groups("pt")
      */
-    private $stopId;
+    private $wheelChairAccess;
 
     public function __construct($id)
     {
@@ -126,64 +98,54 @@ class PTLineStop
         return $this;
     }
 
-    public function getDirection(): int
+    public function getBlindAccess(): int
     {
-        return $this->direction;
+        return $this->blindAccess;
     }
 
-    public function setDirection(int $direction): self
+    public function setBlindAccess(int $blindAccess): self
     {
-        $this->direction = $direction;
+        $this->blindAccess = $blindAccess;
 
         return $this;
     }
 
-    public function getLine(): PTLine
+    public function getDeafAccess(): int
     {
-        return $this->line;
+        return $this->deafAccess;
     }
 
-    public function setLine(PTLine $line): self
+    public function setDeafAccess(int $deafAccess): self
     {
-        $this->line = $line;
+        $this->deafAccess = $deafAccess;
 
         return $this;
     }
 
-    public function getLineId(): int
+    public function getMentalIllnessAccess(): int
     {
-        return $this->lineId;
+        return $this->mentalIllnessAccess;
     }
 
-    public function setLineId(int $lineId): self
+    public function setMentalIllnessAccess(int $mentalIllnessAccess): self
     {
-        $this->lineId = $lineId;
+        $this->mentalIllnessAccess = $mentalIllnessAccess;
 
         return $this;
     }
 
-    public function getStop(): PTStop
+    public function getWheelChairAccess(): int
     {
-        return $this->stop;
+        return $this->wheelChairAccess;
     }
 
-    public function setStop(PTStop $stop): self
+    public function setWheelChairAccess(int $wheelChairAccess): self
     {
-        $this->stop = $stop;
+        $this->wheelChairAccess = $wheelChairAccess;
 
         return $this;
     }
 
-    public function getStopId(): int
-    {
-        return $this->stopId;
-    }
 
-    public function setStopId(int $stopId): self
-    {
-        $this->stopId = $stopId;
-
-        return $this;
-    }
 
 }

@@ -38,7 +38,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  *
  */
-final class LineStopListCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class LineStopCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $dataProvider;
     protected $request;

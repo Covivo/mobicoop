@@ -25,11 +25,13 @@ namespace App\DataProvider\Entity;
 
 use App\DataProvider\Interfaces\ProviderInterface;
 use App\DataProvider\Service\DataProvider;
+use App\PublicTransport\Entity\PTAccessibilityStatus;
 use App\PublicTransport\Entity\PTJourney;
 use App\PublicTransport\Entity\PTArrival;
 use App\PublicTransport\Entity\PTDeparture;
 use App\PublicTransport\Entity\PTLineStop;
 use App\PublicTransport\Entity\PTLineStopList;
+use App\PublicTransport\Entity\PTStop;
 use App\PublicTransport\Entity\PTTripPoint;
 use App\Travel\Entity\TravelMode;
 use App\PublicTransport\Entity\PTStep;
@@ -287,44 +289,113 @@ class CitywayProvider implements ProviderInterface
 
     private function deserializeLineStop($data)
     {
-        $lineStop = new PTLineStop();
+        $lineStop = new PTLineStop(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
 
         if (isset($data["Direction"])) {
             $lineStop->setDirection($data["Direction"]);
         }
 
         if (isset($data["Line"]) && isset($data["Line"]["Id"])) {
-            $line = new PTLine($data["Line"]["Id"]);
-
-
-            if (isset($data["Line"]["Name"])) {
-                $line->setName($data["Line"]["Name"]);
-            }
-            if (isset($data["Line"]["Number"])) {
-                $line->setNumber($data["Line"]["Number"]);
-            }
-            if (isset($data["Line"]["LineDirection"][0]["Name"])) {
-                $line->setDirection($data["Line"]["LineDirection"][0]["Name"]);
-            }
-            if (isset($data["Line"]["Network"])) {
-                if (isset($data["Line"]["Network"]["Id"])) {
-                    $ptcompany = new PTCompany($data["Line"]["Network"]["Id"]);
-                    $ptcompany->setName($data["Line"]["Network"]["Name"]);
-                }
-                $line->setPTCompany($ptcompany);
-            }
+            $line = $this->deserializeLine($data["Line"]);
 
             $lineStop->setLine($line);
         }
 
         if (isset($data["LineId"])) {
-            $lineStop->setLineid($data["LineId"]);
+            $lineStop->setLineId($data["LineId"]);
         }
 
-        print_r($lineStop);
-        die;
+
+        if (isset($data["Stop"]) && isset($data["Stop"]["Id"])) {
+
+            $stop = new PTStop($data["Stop"]["Id"]);
+
+            if (isset($data["Stop"]["Name"])) {
+                $stop->setName($data["Stop"]["Name"]);
+            }
+            if (isset($data["Stop"]["Latitude"])) {
+                $stop->setLatitude($data["Stop"]["Latitude"]);
+            }
+            if (isset($data["Stop"]["Longitude"])) {
+                $stop->setLongitude($data["Stop"]["Longitude"]);
+            }
+            if (isset($data["Stop"]["PointType"])) {
+                $stop->setPointType($data["Stop"]["PointType"]);
+            }
+            if (isset($data["Stop"]["AccessibilityStatus"])) {
+                $access = $this->deserializeAccessibilityStatus($data["Stop"]["AccessibilityStatus"]);
+
+                $stop->setAccessibilityStatus($access);
+            }
+            if (isset($data["Stop"]["IsDisrupted"])) {
+                $stop->setIsDisrupted($data["Stop"]["IsDisrupted"]);
+            }
+
+            $lineStop->setStop($stop);
+        }
+
+        if (isset($data["StopId"])) {
+            $lineStop->setStopId($data["StopId"]);
+        }
+
+
+
+
         return $lineStop;
     }
+
+
+    private function deserializeLine($data)
+    {
+        $line = new PTLine($data["Id"]);
+
+
+        if (isset($data["Name"])) {
+            $line->setName($data["Name"]);
+        }
+        if (isset($data["Number"])) {
+            $line->setNumber($data["Number"]);
+        }
+        if (isset($data["LineDirections"][0]["Name"])) {
+            $line->setDirection($data["LineDirections"][0]["Name"]);
+        }
+        if (isset($data["Network"])) {
+            if (isset($data["Network"]["Id"])) {
+                $ptcompany = new PTCompany($data["Network"]["Id"]);
+                $ptcompany->setName($data["Network"]["Name"]);
+            }
+            $line->setPTCompany($ptcompany);
+        }
+        if (isset($data["Color"])) {
+            $line->setColor($data["Color"]);
+        }
+        if (isset($data["TransportMode"])) {
+            $line->setTransportMode($data["TransportMode"]);
+        }
+
+        return $line;
+    }
+
+    private function deserializeAccessibilityStatus($data)
+    {
+        $access = new PTAccessibilityStatus(1);// we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
+
+        if (isset($data["BlindAccess"])) {
+            $access->setBlindAccess($data["BlindAccess"]);
+        }
+        if (isset($data["DeafAccess"])) {
+            $access->setDeafAccess($data["DeafAccess"]);
+        }
+        if (isset($data["MentalIllnessAccess"])) {
+            $access->setMentalIllnessAccess($data["MentalIllnessAccess"]);
+        }
+        if (isset($data["WheelChairAccess"])) {
+            $access->setWheelChairAccess($data["WheelChairAccess"]);
+        }
+
+        return $access;
+    }
+
     private function deserializeTripPoint($data)
     {
         $tripPoint = new PTTripPoint();
