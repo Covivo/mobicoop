@@ -145,7 +145,4 @@ class PTAccessibilityStatus
 
         return $this;
     }
-
-
-
 }

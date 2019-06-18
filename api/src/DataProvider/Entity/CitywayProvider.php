@@ -307,7 +307,6 @@ class CitywayProvider implements ProviderInterface
 
 
         if (isset($data["Stop"]) && isset($data["Stop"]["Id"])) {
-
             $stop = new PTStop($data["Stop"]["Id"]);
 
             if (isset($data["Stop"]["Name"])) {

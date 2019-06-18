@@ -185,5 +185,4 @@ class PTLineStop
 
         return $this;
     }
-
 }

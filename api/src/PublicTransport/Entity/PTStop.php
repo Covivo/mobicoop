@@ -201,6 +201,4 @@ class PTStop
 
         return $this;
     }
-
-
 }
