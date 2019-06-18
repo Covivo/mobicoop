@@ -21,56 +21,35 @@
  *    LICENSE
  **************************/
 
-namespace App\PublicTransport\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use App\Geography\Entity\Address;
-use Doctrine\ORM\Mapping as ORM;
 
 /**
- * An accessiblity status.
- *
- * @ApiResource(
- *      routePrefix="/public_transport",
- *      attributes={
- *          "normalization_context"={"groups"={"pt"}, "enable_max_depth"="true"},
- *      },
- *      collectionOperations={
- *          "get"={}
- *     },
- *      itemOperations={"get"={}}
- * )
+ * A public accessiblity status.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class PTAccessibilityStatus
 {
-
     /**
-     * @ApiProperty(identifier=true)
      * @var int id of this accessibility status
-     * @Groups("pt")
      */
     private $id;
 
     /**
      * @var int blind Accessibility
-     * @Groups("pt")
      */
     private $blindAccess;
 
     /**
      * @var int deaf Accessibility
-     * @Groups("pt")
      */
     private $deafAccess;
 
     /**
      * @var int mental illness Accessibility
-     * @Groups("pt")
      */
     private $mentalIllnessAccess;
 
