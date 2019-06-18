@@ -26,6 +26,7 @@ namespace App\Community\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * The securization of a community.
@@ -33,6 +34,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -58,6 +60,7 @@ class CommunitySecurity
      * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="communitySecurities")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
     private $community;
 
