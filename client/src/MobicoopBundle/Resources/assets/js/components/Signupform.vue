@@ -48,13 +48,13 @@
           v-model="form.gender"
           placeholder="Civilité"
         >
-          <option value="madame">
+          <option value="1">
             Madame
           </option>
-          <option value="monsieur">
+          <option value="2">
             Monsieur
           </option>
-          <option value="autre">
+          <option value="3">
             Autre
           </option>
         </b-select>
@@ -100,7 +100,6 @@
 
 <script>
 import axios from "axios";
-import moment from 'moment'
 import Geocomplete from "./Geocomplete";
 // import BDatepicker from "buefy/src/components/datepicker/Datepicker";
 export default {
@@ -130,7 +129,22 @@ export default {
         birthYear: null,
         telephone: null,
         password: null,
-        validation: false
+        validation: false,
+        addressCountry: null,
+        addressLocality: null,
+        countryCode: null,
+        county: null,
+        latitude: null,
+        localAdmin: null,
+        longitude: null,
+        macroCounty: null,
+        macroRegion: null,
+        name: null,
+        postalCode: null,
+        region: null,
+        street: null,
+        streetAddress: null,
+        subLocality: null
       }
     };
   },
@@ -144,45 +158,69 @@ export default {
     selectedGeo(val) {
       let name = val.name;
       this[name] = val;
+      this.form.addressCountry = val.addressCountry
+      this.form.addressLocality = val.addressLocality
+      this.form.countryCode = val.countryCode
+      this.form.county = val.county
+      this.form.latitude = val.latitude
+      this.form.localAdmin = val.localAdmin
+      this.form.longitude = val.longitude
+      this.form.macroCounty = val.macroCounty
+      this.form.macroRegion = val.macroRegion
+      this.form.name = val.name
+      this.form.region = val.region
+      this.form.street = val.street
+      this.form.streetAddress = val.streetAddress
+      this.form.subLocality = val.subLocality
+      this.form.postalCode = val.postalCode
     },
     checkForm: function (e) {
-      if (this.email && this.telephone && this.password && this.givenName && this.familyName && this.gender && this.birthYear && this.homeAddress && this.validation == true) {
-        let signupForm = new FormData;
-        for (let prop in this.form) {
-          let value = this.form[prop];
-          if(!value) continue;}
-        console.error(signupForm)
-        axios 
-          .post("/utilisateur/inscription", signupForm, {
-            headers: {
-              "Content-Type": "multipart/form-data"
-            }
-          })
+      // if (this.email && this.telephone && this.password && this.givenName && this.familyName && this.gender && this.birthYear && this.homeAddress && this.validation == true) {
+      let userForm = new FormData;
+      for (let prop in this.form) {
+        let value = this.form[prop];
+        if(!value) continue;
+        let renamedProp = `user_form[${prop}]`;
+        userForm.append(renamedProp, value);
       }
+      axios 
+        .post("/utilisateur/inscription", userForm, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        } )
+        // .then(function(response) {
+        //   window.location.href = '/';
+        //   console.error(response);
+        // })
+        // .catch(function(error) {
+        //   console.error(error);
+        // });  
+      // } 
       this.errors = [];
 
-      if (!this.email) {
+      if (!this.form.email) {
         this.errors.push('Email required.');
       } 
-      if (!this.telephone) {
+      if (!this.form.telephone) {
         this.errors.push('Telephone required.');
       }
-      if (!this.password) {
+      if (!this.form.password) {
         this.errors.push('Password required.');
       }
-      if (!this.givenName) {
+      if (!this.form.givenName) {
         this.errors.push('GivenName required.');
       }
-      if (!this.familyName) {
+      if (!this.form.familyName) {
         this.errors.push('FamilyName required.');
       }
-      if (!this. gender) {
+      if (!this.form.gender) {
         this.errors.push('Gender required.');
       }
-      if (!this.birthYear) {
+      if (!this.form.birthYear) {
         this.errors.push('BirthYear required.');
       }
-      if (this.validation == false) {
+      if (this.form.validation == false) {
         this.errors.push('Validation required.');
       }
       e.preventDefault();

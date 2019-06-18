@@ -37,6 +37,7 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\Form\Login;
 use Mobicoop\Bundle\MobicoopBundle\User\Form\UserLoginForm;
 use Mobicoop\Bundle\MobicoopBundle\User\Form\UserDeleteForm;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
  * Controller class for user related actions.
@@ -70,37 +71,85 @@ class UserController extends AbstractController
     /**
      * User registration.
      */
-    public function userSignUp(UserManager $userManager, Request $request)
+    public function userSignUp(UserManager $userManager,  Request $request)
     {
         $this->denyAccessUnlessGranted('register');
 
         $user = new User();
-
-        $form = $this->createForm(
-            UserForm::class,
-            $user,
-            ['validation_groups'=>['signUp']]
-        );
-
-        $form->handleRequest($request);
+        $address = new Address();
+        $form = $this->createForm(UserForm::class, $user, ['validation_groups'=>['signUp']]);
         $error = false;
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($user = $userManager->createUser($user)) {
-                // after successful registering, we log the user
-                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-                $this->get('security.token_storage')->setToken($token);
-                $this->get('session')->set('_security_main', serialize($token));
-                // redirection to the user profile page
-                return $this->redirectToRoute('home');
+        $success = false;
+        
+        if ($request->isMethod('POST')) {
+            $data = $request->request->get($form->getName());
+            
+            // [addressCountry,subLocality,...]
+            foreach ($arr as $key) {
+                $camelCaseValue = 'set' . ucfirst($key);
+                // get key from data sent $sentKey = $data[$key]
+                if($sentKey){
+                    $address->$camelCaseValue($sentKey['value']);
+                }
             }
-            $error = true;
+            // $address->setAddressCountry($data["addressCountry"]);
+            // $address->setAddressLocality($data["addressLocality"]);
+            // $address->setCountryCode($data["countryCode"]);
+            // $address->setCounty($data["county"]);
+            // $address->setLatitude($data["latitude"]);
+            // $address->setLocalAdmin($data["localAdmin"]);
+            // $address->setLongitude($data["longitude"]);
+            // $address->setMacroCounty($data["macroCounty"]);
+            // $address->setMacroRegion($data["macroRegion"]);
+            // $address->setName($data["name"]);
+            // $address->setPostalcode($data["postalCode"]);
+            // $address->setRegion($data["region"]);
+            // $address->setStreet($data["street"]);
+            // $address->setStreetAddress($data["streetAddress"]);
+            // $address->setSubLocality($data["subLocality"]); 
+
+            var_dump($address);
+            exit;   
+
+
+            $user->addAddress($address);
+            $user->setEmail($data["email"]);
+            $user->setBirthYear($data["birthYear"]);
+            $user->setFamilyName($data["familyName"]);
+            $user->setGivenName($data["givenName"]);
+            $user->setTelephone($data["telephone"]);
+            $user->setGender($data["gender"]);
+            $user->setPassword($data["password"]);
+            
+            // $userManager->createUser($user);
+            
+            
+            // $form->submit($request->request->get($form->getName()));
+            // $form->submit($request->request->all());
         }
 
-        return $this->render('@Mobicoop/user/signup.html.twig', [
-            'form' => $form->createView(),
-            'error' => $error
-        ]);
+        if (!$form->isSubmitted()) {
+            return $this->render('@Mobicoop/user/signup.html.twig', [
+                'form' => $form->createView(),
+                'error' => $error
+            ]);
+        }
+
+        // Not Valid populate error
+        if (!$form->isValid()) {
+            $error = [];
+            // Fields
+            foreach ($form as $child) {
+                if (!$child->isValid()) {
+                    foreach ($child->getErrors(true) as $err) {
+                        $error[$child->getName()][] = $err->getMessage();
+                    }
+                }
+            }
+            return $this->json(['error' => $error, 'success' => $success]);
+        }
+
+        return $this->json(['error' => $error, 'success' => $success]);        
     }
 
     /**
