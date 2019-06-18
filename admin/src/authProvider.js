@@ -83,7 +83,7 @@ export default (type, params) => {
                     // create a use case for each resource route
                     // can be divided if permission must be more granular (eg. permissions on field level)
                     case "/users":
-                        permission = isAuthorized("users_manage");
+                        permission = isAuthorized("user_manage");
                         break;
                     case "/communities":
                         permission = isAuthorized("community_manage");

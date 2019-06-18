@@ -196,24 +196,24 @@ class Community
 
     public function isMembersHidden(): ?bool
     {
-        return $this->membersHidden;
+        return $this->membersHidden ? true : false;
     }
     
-    public function setMembersHidden(bool $isMembersHidden): self
+    public function setMembersHidden(?bool $isMembersHidden): self
     {
-        $this->membersHidden = $isMembersHidden;
+        $this->membersHidden = $isMembersHidden ? true : false;
         
         return $this;
     }
 
     public function isProposalsHidden(): ?bool
     {
-        return $this->proposalsHidden;
+        return $this->proposalsHidden ? true : false;
     }
     
-    public function setProposalsHidden(bool $isProposalsHidden): self
+    public function setProposalsHidden(?bool $isProposalsHidden): self
     {
-        $this->proposalsHidden = $isProposalsHidden;
+        $this->proposalsHidden = $isProposalsHidden ? true : false;
         
         return $this;
     }

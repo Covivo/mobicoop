@@ -33,6 +33,7 @@ use App\User\Entity\User;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Community\Controller\JoinAction;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * A user related to a community.
@@ -47,6 +48,7 @@ use App\Community\Controller\JoinAction;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -82,6 +84,7 @@ class CommunityUser
      * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="communityUsers")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      * @Assert\NotBlank
      */
     private $community;
@@ -92,6 +95,7 @@ class CommunityUser
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      * @Assert\NotBlank
      */
     private $user;
@@ -109,6 +113,7 @@ class CommunityUser
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
     private $admin;
 
@@ -232,22 +237,22 @@ class CommunityUser
         return $this;
     }
 
-    public function getLogin(): string
+    public function getLogin(): ?string
     {
         return $this->login;
     }
     
-    public function setLogin(string $login)
+    public function setLogin(?string $login)
     {
         $this->login = $login;
     }
 
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }
     
-    public function setPassword(string $password)
+    public function setPassword(?string $password)
     {
         $this->password = $password;
     }

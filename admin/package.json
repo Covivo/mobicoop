@@ -1,9 +1,9 @@
 {
-  "name": "mobicoop-bo",
+  "name": "mobicoop-admin",
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "@api-platform/admin": "^0.6.2",
+    "@api-platform/admin": "^0.6.3",
     "ajv": "^6.0.0",
     "babel-eslint": "^9.0.0",
     "dotenv": "^6.1.0",
@@ -13,7 +13,8 @@
     "caniuse-lite": "1.0.30000974",
     "react": "^16.3.0",
     "react-dom": "^16.3.0",
-    "react-scripts": "^2.1.1"
+    "react-scripts": "^2.1.1",
+    "caniuse-lite": "1.0.30000974"
   },
   "scripts": {
     "start": "cross-env PORT=8082 FORCE_COLOR=true BROWSER=none NODE_ENV=dev node runstart.js",

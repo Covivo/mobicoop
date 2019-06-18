@@ -27,7 +27,8 @@ export const CommunityCreate = (props) => (
                 <SelectInput optionText={userOptionRenderer}/>
             </ReferenceInput>
             <TextInput source="name" label="Nom" validate={required()}/>
-            <BooleanInput source="private" label="Privée" />
+            <BooleanInput source="membersHidden" label="Membres masqués" />
+            <BooleanInput source="proposalsHidden" label="Annonces masquées" />
             <TextInput source="description" label="Description" validate={required()}/>
             <RichTextInput source="fullDescription" label="Description complète" validate={required()}/>
         </SimpleForm>
@@ -43,7 +44,8 @@ export const CommunityEdit = (props) => (
                 <SelectInput optionText={userOptionRenderer} />
             </ReferenceInput>
             <TextInput source="name" label="Nom" validate={required()}/>
-            <BooleanInput source="private" label="Privée" />
+            <BooleanInput source="membersHidden" label="Membres masqués" />
+            <BooleanInput source="proposalsHidden" label="Annonces masquées" />
             <TextInput source="description" label="Description" validate={required()}/>
             <RichTextInput source="fullDescription" label="Description complète" validate={required()} />
             <DateInput disabled source="createdDate" label="Date de création"/>
@@ -57,7 +59,8 @@ export const CommunityList = (props) => (
         <Datagrid>
             <TextField source="originId" label="ID"/>
             <TextField source="name" label="Nom"/>
-            <BooleanField source="private" label="Privée" />
+            <BooleanField source="membersHidden" label="Membres masqués" />
+            <BooleanField source="proposalsHidden" label="Annonces masquées" />
             <TextField source="description" label="Description"/>
             <DateField source="createdDate" label="Date de création"/>
             <ShowButton />
@@ -85,6 +88,8 @@ export const CommunityShow = (props) => (
             <Tab label="Détails">
                 <TextField source="originId" label="ID"/>
                 <TextField source="name" label="Nom"/>
+                <BooleanField source="membersHidden" label="Membres masqués" />
+                <BooleanField source="proposalsHidden" label="Annonces masquées" />
                 <TextField source="description" label="Description"/>
                 <RichTextField source="fullDescription" label="Description complète"/>
                 <DateField source="createdDate" label="Date de création"/>
