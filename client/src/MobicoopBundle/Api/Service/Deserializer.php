@@ -82,7 +82,7 @@ class Deserializer
      *
      * @param string $class The expected class of the object
      * @param array $data   The array to deserialize
-     * @return User|Address|Proposal|Matching|GeoSearch|PTJourney|ExternalJourney|null
+     * @return array|User|Address|Proposal|Matching|GeoSearch|PTJourney|ExternalJourney|Event|Image|PTTripPoint|PTLineStop|ExternalJourneyProvider|Mass|MassPerson|Community|Article|Permission|null
      */
     public function deserialize(string $class, array $data)
     {
@@ -386,7 +386,7 @@ class Deserializer
 
     private function deserializePTLineStop(array $data): ?PTLineStop
     {
-        $PTLineStop = new PTLineStop();
+        $PTLineStop = new PTLineStop(1);
         $PTLineStop = self::autoSet($PTLineStop, $data);
         if (isset($data["line"])) {
             $PTLineStop->setLine(self::deserializePTLine($data["line"]));
@@ -455,7 +455,7 @@ class Deserializer
 
     private function deserializePTStop(array $data): ?PTStop
     {
-        $PTStop = new PTStop();
+        $PTStop = new PTStop(1);
         $PTStop = self::autoSet($PTStop, $data);
         if (isset($data["accessibilityStatus"])) {
             $PTStop->setAccessibilityStatus(self::deserializePTAccessibilityStatus($data["accessibilityStatus"]));
@@ -465,7 +465,7 @@ class Deserializer
 
     private function deserializePTAccessibilityStatus(array $data): ?PTAccessibilityStatus
     {
-        $PTAccessibilityStatus = new PTAccessibilityStatus();
+        $PTAccessibilityStatus = new PTAccessibilityStatus(1);
         $PTAccessibilityStatus = self::autoSet($PTAccessibilityStatus, $data);
         return $PTAccessibilityStatus;
     }

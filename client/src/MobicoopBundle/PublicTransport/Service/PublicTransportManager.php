@@ -23,10 +23,10 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\PublicTransport\Service;
 
-use App\PublicTransport\Entity\PTLineStop;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
 use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLineStop;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTTripPoint;
 
 /**
@@ -132,7 +132,7 @@ class PublicTransportManager
 
 
     /**
-     * Get Trip Points near a given couple of Latitude and Longitude
+     * Get line Stops for a logicalid
      *
      * @param string $provider          The name of the provider
      * @param int $logicalId            The logicalId to retreive linestops
