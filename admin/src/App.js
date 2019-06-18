@@ -8,7 +8,7 @@ import parseHydraDocumentation from '@api-platform/api-doc-parser/lib/hydra/pars
 import authProvider from './authProvider';
 
 import { createMuiTheme } from '@material-ui/core/styles';
-import { cyan, lightBlue, teal } from '@material-ui/core/colors';
+import { indigo, grey, red } from '@material-ui/core/colors';
 
 import PersonIcon from '@material-ui/icons/Person';
 import PeopleIcon from '@material-ui/icons/People';
@@ -34,9 +34,9 @@ import {  TerritoryShow , TerritoryList, TerritoryEdit, TerritoryCreate } from '
 
 const theme = createMuiTheme({
     palette: {
-      primary: cyan,
-      secondary: lightBlue,
-      error: teal,
+      primary: indigo,
+      secondary: grey,
+      error: red,
       // Used by `getContrastText()` to maximize the contrast between the background and
       // the text.
       contrastThreshold: 3,
