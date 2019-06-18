@@ -14,7 +14,6 @@
     "react": "^16.3.0",
     "react-dom": "^16.3.0",
     "react-scripts": "^2.1.1",
-    "caniuse-lite": "1.0.30000974"
   },
   "scripts": {
     "start": "cross-env PORT=8082 FORCE_COLOR=true BROWSER=none NODE_ENV=dev node runstart.js",
@@ -27,9 +26,6 @@
   },
   "browserslist": {
     "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
     ],
     "development": [  
     ]
