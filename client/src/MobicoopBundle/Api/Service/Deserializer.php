@@ -29,8 +29,12 @@ use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourney;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassMatching;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassPerson;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTAccessibilityStatus;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLineStop;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTStop;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTTripPoint;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 
@@ -78,7 +82,7 @@ class Deserializer
      *
      * @param string $class The expected class of the object
      * @param array $data   The array to deserialize
-     * @return User|Address|Proposal|Matching|GeoSearch|PTJourney|ExternalJourney|null
+     * @return array|User|Address|Proposal|Matching|GeoSearch|PTJourney|ExternalJourney|Event|Image|PTTripPoint|PTLineStop|ExternalJourneyProvider|Mass|MassPerson|Community|Article|Permission|null
      */
     public function deserialize(string $class, array $data)
     {
@@ -106,6 +110,12 @@ class Deserializer
                 break;
             case PTJourney::class:
                 return self::deserializePTJourney($data);
+                break;
+            case PTTripPoint::class:
+                return self::deserializePTTripPoint($data);
+                break;
+            case PTLineStop::class:
+                return self::deserializePTLineStop($data);
                 break;
             case ExternalJourneyProvider::class:
                 return self::deserializeExternalJourneyProvider($data);
@@ -366,7 +376,27 @@ class Deserializer
         }
         return $PTJourney;
     }
-    
+
+    private function deserializePTTripPoint(array $data): ?PTTripPoint
+    {
+        $PTTripPoint = new PTTripPoint();
+        $PTTripPoint = self::autoSet($PTTripPoint, $data);
+        return $PTTripPoint;
+    }
+
+    private function deserializePTLineStop(array $data): ?PTLineStop
+    {
+        $PTLineStop = new PTLineStop(1);
+        $PTLineStop = self::autoSet($PTLineStop, $data);
+        if (isset($data["line"])) {
+            $PTLineStop->setLine(self::deserializePTLine($data["line"]));
+        }
+        if (isset($data["stop"])) {
+            $PTLineStop->setStop(self::deserializePTStop($data["stop"]));
+        }
+        return $PTLineStop;
+    }
+
     private function deserializePTDeparture(array $data): ?PTDeparture
     {
         $PTDeparture = new PTDeparture();
@@ -422,7 +452,24 @@ class Deserializer
         }
         return $PTLine;
     }
-    
+
+    private function deserializePTStop(array $data): ?PTStop
+    {
+        $PTStop = new PTStop(1);
+        $PTStop = self::autoSet($PTStop, $data);
+        if (isset($data["accessibilityStatus"])) {
+            $PTStop->setAccessibilityStatus(self::deserializePTAccessibilityStatus($data["accessibilityStatus"]));
+        }
+        return $PTStop;
+    }
+
+    private function deserializePTAccessibilityStatus(array $data): ?PTAccessibilityStatus
+    {
+        $PTAccessibilityStatus = new PTAccessibilityStatus(1);
+        $PTAccessibilityStatus = self::autoSet($PTAccessibilityStatus, $data);
+        return $PTAccessibilityStatus;
+    }
+
     private function deserializePTCompany(array $data): ?PTCompany
     {
         $PTCompany = new PTCompany();

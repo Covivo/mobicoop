@@ -26,6 +26,8 @@ namespace Mobicoop\Bundle\MobicoopBundle\PublicTransport\Service;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
 use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLineStop;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTTripPoint;
 
 /**
  * Public transport management service.
@@ -88,6 +90,64 @@ class PublicTransportManager
             'dateType'              => $dateType,
             'algorithm'             => $algorithm,
             'modes'                 => $modes
+        ]);
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Get Trip Points near a given couple of Latitude and Longitude
+     *
+     * @param string $provider          The name of the provider
+     * @param float $latitude           The latitude near de trip points
+     * @param float $longitude          The longitude near de trip points
+     * @param int $perimeter            The perimeter you want to search fortrip points
+     * @param string $transportModes    The transport modes you want to search fortrip points
+     * @return array|object|null
+     */
+    public function getTripPoints(
+        string $provider,
+        float $latitude,
+        float $longitude,
+        int $perimeter,
+        string $transportModes
+    ) {
+        $this->dataProvider->setClass(PTTripPoint::class, "public_transport/trippoints");
+
+        $response = $this->dataProvider->getCollection([
+            'provider'       => $provider,
+            'latitude'       => $latitude,
+            'longitude'      => $longitude,
+            'perimeter'      => $perimeter,
+            'transportModes'      => $transportModes
+
+        ]);
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
+
+
+    /**
+     * Get line Stops for a logicalid
+     *
+     * @param string $provider          The name of the provider
+     * @param int $logicalId            The logicalId to retreive linestops
+     * @return array|object|null
+     */
+    public function getLineStops(
+        string $provider,
+        int $logicalId
+    ) {
+        $this->dataProvider->setClass(PTLineStop::class, "public_transport/linestops");
+
+        $response = $this->dataProvider->getCollection([
+            'provider'       => $provider,
+            'logicalId'       => $logicalId,
+
         ]);
         if ($response->getCode() == 200) {
             return $response->getValue();

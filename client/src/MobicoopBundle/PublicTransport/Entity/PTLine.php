@@ -71,7 +71,17 @@ class PTLine
      * @var TravelMode The transport mode of this leg.
      */
     private $travelMode;
-        
+
+    /**
+     * @var int The transport mode of this line.
+     */
+    private $transportMode;
+
+    /**
+     * @var string The color of this line.
+     */
+    private $color;
+
     public function getId(): int
     {
         return $this->id;
@@ -165,6 +175,30 @@ class PTLine
     {
         $this->travelMode = $travelMode;
         
+        return $this;
+    }
+
+    public function getTransportMode(): int
+    {
+        return $this->transportMode;
+    }
+
+    public function setTransportMode(int $transportMode): self
+    {
+        $this->transportMode = $transportMode;
+
+        return $this;
+    }
+
+    public function getColor(): string
+    {
+        return $this->color;
+    }
+
+    public function setColor(string $color): self
+    {
+        $this->color = $color;
+
         return $this;
     }
 }
