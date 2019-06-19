@@ -333,7 +333,7 @@ class MassImportManager
         bool $bearingCheck=true,
         int $bearingRange=10
     ) {
-        set_time_limit(600);
+        set_time_limit(1200);
         $candidates = [];
         
         $this->logger->info('Mass match | Start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));

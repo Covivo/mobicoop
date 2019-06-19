@@ -1,13 +1,13 @@
 {
-  "name": "mobicoop-plateform",
+  "name": "mobicoop-platform",
   "version": "0.1.1",
   "description": "API, Front & admin mobicoop carpool app",
   "main": "package.json",
   "scripts": {
-    "postinstall": "npm-run-all --parallel install-api install-mobicoop download-tools install-admin",
-    "install-api": "cd api && npm i --no-save",
-    "install-admin": "cd admin && npm i --no-save",
-    "install-mobicoop": "cd client && npm i --no-save",
+    "postinstall": "npm-run-all --parallel install-api install-client download-tools install-admin",
+    "install-api": "cd api && npm install --no-save",
+    "install-admin": "cd admin && yarn install --silent --network-concurrency 2",
+    "install-client": "cd client && yarn install --silent --network-concurrency 2",
     "download-tools": "wget http://www.phpdoc.org/phpDocumentor.phar -O bin/phpDocumentor.phar && wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O bin/php-cs-fixer.phar",
     "test": "npm run test-api && npm run test-mobicoop",
     "test-and-coverage": "npm run test-api && npm run test-and-coverage-mobicoop",
@@ -24,6 +24,7 @@
     "start-mobicoop": "cd client && npm start",
     "start-mobicoop-production": "cd client && npm start production",
     "start-noadmin": "npm-run-all --parallel start-api start-mobicoop",
+    "build-admin": "cd admin && npm run build",
     "transfer-copyright": "node bin/helpers/transferCopyright.js",
     "generateDocs": "php bin/phpDocumentor.phar -d 'client/src','api/src' --ignore '*/Migrations/*'  -t docs/php --title Mobicoop",
     "create-front-canvas": "node bin/helpers/createFrontCanvas.js -d",
@@ -57,7 +58,8 @@
     "git-user-name": "^2.0.0",
     "kuler": "^1.0.1",
     "npm-run-all": "^4.1.5",
-    "simple-git": "^1.105.0"
+    "simple-git": "^1.105.0",
+    "yarn": "^1.16.0"
   },
   "devDependencies": {
     "ghooks": "^2.0.4",

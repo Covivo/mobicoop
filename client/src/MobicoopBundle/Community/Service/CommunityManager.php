@@ -25,6 +25,8 @@ namespace Mobicoop\Bundle\MobicoopBundle\Community\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 
 /**
  * Community management service.
@@ -43,6 +45,7 @@ class CommunityManager
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Community::class);
     }
+
     /**
      * Create a community
      *
@@ -72,6 +75,7 @@ class CommunityManager
         }
         return null;
     }
+
     /**
      * Get one community
      *
@@ -81,6 +85,23 @@ class CommunityManager
     {
         $response = $this->dataProvider->getItem($id);
         if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Join a community
+     *
+     * @param CommunityUser $communityUser
+     *
+     * @return CommunityUser|null
+     */
+    public function joinCommunity(CommunityUser $communityUser)
+    {
+        $this->dataProvider->setClass(CommunityUser::class);
+        $response = $this->dataProvider->post($communityUser);
+        if ($response->getCode() == 201) {
             return $response->getValue();
         }
         return null;

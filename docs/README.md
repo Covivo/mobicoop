@@ -1,5 +1,6 @@
 ﻿![Logo mobicoop](https://www.mobicoop.fr/images/Mobicoop/general/logo-mobicoop.png)
 
+# Mobicoop Platform
 
 <p>
   <a href="https://codeclimate.com/github/Covivo/mobicoop/maintainability"><img src="https://api.codeclimate.com/v1/badges/a9393c639d5627da3883/maintainability" /></a>  <a href="https://www.gnu.org/licenses/agpl-3.0" ><img alt="License: AGPL v3" src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg"/></a>
@@ -9,9 +10,11 @@
 </p>
 
 
-# About mobicoop
+# About
+Open source api-based carpooling platform
 
-Carpool apps available on a territory, allows connection between carpoolers making the same trip daily or punctually.
+
+
 
 # Requirements 💻
 
@@ -42,8 +45,15 @@ install & enable in your .ini all its php extensions : [Docker file](https://git
 ## Clone
 
 - Clone the repo
-    - with ssh : `git clone git@gitlab.com:mobicoop/mobicoop.git`
-    - with https : `git clone https://gitlab.com/mobicoop/mobicoop.git`
+    - with ssh : `git clone git@gitlab.com:mobicoop/mobicoop-platform.git`
+    - with https : `git clone https://gitlab.com/mobicoop/mobicoop-platform.git`
+
+
+## Optionnal
+
+Still this is purely optional it will drastically increase the speed to download deps
+
+`composer global require hirak/prestissimo`
 
 ## Install deps
 
@@ -109,7 +119,7 @@ To start the application simply run :
 `npm start`
 
 & just go to [http://localhost:8080](http://localhost:8080) for API 
-& just go to [http://localhost:8081](http://localhost:8081) for mobicoop app
+& just go to [http://localhost:8081](http://localhost:8081) for mobicoop platform app
 
 ## Api
 
@@ -154,7 +164,7 @@ A developer doc is available [here](https://mobicoop.gitlab.io/mobicoop/build/do
 
 ## ℹ️ How to create my own front application from yours ？
 
-    Because Mobicoop is a monorepo, you can ask yourself how to create & dev on your own front-end application.
+    Because Mobicoop Platform is a monorepo, you can ask yourself how to create & dev on your own front-end application.
     Mobicoop comes with a simple script to run, it will create a canvas skeleton based on mobicoop front-end & link the main bundle to it.
     Just go to the root of Mobicoop repo and do the flollowing:
 
@@ -176,12 +186,13 @@ A developer doc is available [here](https://mobicoop.gitlab.io/mobicoop/build/do
 
 ## ℹ️ How can I contribute to the mobicoop developpement ？
 
-    To contribute to the mobicoop application, please do the following:
+    To contribute to Mobicoop Platform, please do the following:
 
-    1. Create a branch by feature or fork the repo
-    2. [Start](#start) the 3 apps  (mandatory to watch js/css/sass):
-    3. Add some Unit Tests and/or functional tests and check if build passes
-    4. Create a pull request & set reviewer before merge
+    1. Complete and sign the Contributor License Agreement ([see examples here](https://gitlab.com/mobicoop/mobicoop-platform/tree/master/docs/ContributorLicenseAgreement)) : must be part of your first commit
+    2. Create a branch by feature or fork the repo
+    3. [Start](#start) the 3 apps  (mandatory to watch js/css/sass):
+    4. Add some Unit Tests and/or functional tests and check if build passes
+    5. Create a pull request & set reviewer before merge
 
   We have some guidelines 📖📚
   - [JS GuideLine](https://github.com/airbnb/javascript#whitespace) 

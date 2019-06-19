@@ -25,11 +25,12 @@ namespace Mobicoop\Bundle\MobicoopBundle\Community\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
 
 /**
  * A user related to a community.
  */
-class CommunityUser
+class CommunityUser implements Resource
 {
     const STATUS_PENDING = 0;
     const STATUS_ACCEPTED = 1;
@@ -62,7 +63,7 @@ class CommunityUser
     private $user;
 
     /**
-     * @var int The status of the event (active/inactive).
+     * @var int The status of the user (pending/accepted/refused).
      *
      * @Groups({"post","put"})
      */
@@ -92,6 +93,20 @@ class CommunityUser
     *
     */
     private $refusedDate;
+
+    /**
+     * @var string The login to join the community if the community is secured.
+     *
+     * @Groups("put")
+     */
+    private $login;
+
+    /**
+     * @var string The password to join the community if the community is secured.
+     *
+     * @Groups("put")
+     */
+    private $password;
     
     public function getId(): ?int
     {
@@ -188,5 +203,25 @@ class CommunityUser
         $this->refusedDate = $refusedDate;
         
         return $this;
+    }
+
+    public function getLogin(): string
+    {
+        return $this->login;
+    }
+    
+    public function setLogin(string $login)
+    {
+        $this->login = $login;
+    }
+
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+    
+    public function setPassword(string $password)
+    {
+        $this->password = $password;
     }
 }

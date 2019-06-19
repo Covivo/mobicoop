@@ -8,7 +8,7 @@
     "start": "php bin/console server:run 127.0.0.1:8080",
     "update-db": "php bin/console doctrine:migrations:migrate -n",
     "test-fix-and-coverage": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src && ./vendor/bin/kahlan --cc=true --coverage=4 --no-colors=true --reporter=verbose",
-    "install": "composer install"
+    "install": "composer install --quiet"
   },
   "repository": {
     "type": "git",
