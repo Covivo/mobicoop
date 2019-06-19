@@ -1,6 +1,6 @@
 {
-  "short_name": "Mobicoop BO",
-  "name": "Mobicoop BackOffice",
+  "short_name": "Mobicoop-platform Admin",
+  "name": "Mobicoop-platform Administration",
   "icons": [
     {
       "src": "favicon.ico",
