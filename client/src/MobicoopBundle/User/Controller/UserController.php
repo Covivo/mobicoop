@@ -38,6 +38,7 @@ use Mobicoop\Bundle\MobicoopBundle\User\Form\UserLoginForm;
 use Mobicoop\Bundle\MobicoopBundle\User\Form\UserDeleteForm;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller class for user related actions.
@@ -71,7 +72,7 @@ class UserController extends AbstractController
     /**
      * User registration.
      */
-    public function userSignUp(UserManager $userManager,  Request $request)
+    public function userSignUp(UserManager $userManager, Request $request)
     {
         $this->denyAccessUnlessGranted('register');
 
@@ -82,74 +83,61 @@ class UserController extends AbstractController
         $success = false;
         
         if ($request->isMethod('POST')) {
+            $createToken = $request->request->get('createToken');
+            if (!$this->isCsrfTokenValid('user-signup', $createToken)) {
+                return  new Response('Broken Token CSRF ', 403);
+            }
+
+            //get all data from form (user + homeAddress)
             $data = $request->request->get($form->getName());
             
-            // [addressCountry,subLocality,...]
-            foreach ($arr as $key) {
-                $camelCaseValue = 'set' . ucfirst($key);
-                // get key from data sent $sentKey = $data[$key]
-                if($sentKey){
-                    $address->$camelCaseValue($sentKey['value']);
-                }
-            }
-            // $address->setAddressCountry($data["addressCountry"]);
-            // $address->setAddressLocality($data["addressLocality"]);
-            // $address->setCountryCode($data["countryCode"]);
-            // $address->setCounty($data["county"]);
-            // $address->setLatitude($data["latitude"]);
-            // $address->setLocalAdmin($data["localAdmin"]);
-            // $address->setLongitude($data["longitude"]);
-            // $address->setMacroCounty($data["macroCounty"]);
-            // $address->setMacroRegion($data["macroRegion"]);
-            // $address->setName($data["name"]);
-            // $address->setPostalcode($data["postalCode"]);
-            // $address->setRegion($data["region"]);
-            // $address->setStreet($data["street"]);
-            // $address->setStreetAddress($data["streetAddress"]);
-            // $address->setSubLocality($data["subLocality"]); 
+            // pass homeAddress info into address entity
+            $address->setAddressCountry($data['addressCountry']);
+            $address->setAddressLocality($data['addressLocality']);
+            $address->setCountryCode($data['countryCode']);
+            $address->setCounty($data['county']);
+            $address->setLatitude($data['latitude']);
+            $address->setLocalAdmin($data['localAdmin']);
+            $address->setLongitude($data['longitude']);
+            $address->setMacroCounty($data['macroCounty']);
+            $address->setMacroRegion($data['macroRegion']);
+            $address->setName($data['name']);
+            $address->setPostalCode($data['postalCode']);
+            $address->setRegion($data['region']);
+            $address->setStreet($data['street']);
+            $address->setStreetAddress($data['streetAddress']);
+            $address->setSubLocality($data['subLocality']);
 
-            var_dump($address);
-            exit;   
-
-
+            // add the home address to the user
             $user->addAddress($address);
-            $user->setEmail($data["email"]);
-            $user->setBirthYear($data["birthYear"]);
-            $user->setFamilyName($data["familyName"]);
-            $user->setGivenName($data["givenName"]);
-            $user->setTelephone($data["telephone"]);
-            $user->setGender($data["gender"]);
-            $user->setPassword($data["password"]);
+
+            // pass front info into user form
+            $form->submit($request->request->get($form->getName()));
             
-            // $userManager->createUser($user);
-            
-            
-            // $form->submit($request->request->get($form->getName()));
-            // $form->submit($request->request->all());
+            // Not Valid populate error
+            // if (!$form->isValid()) {
+            //     $error = [];
+            //     // Fields
+            //     foreach ($form as $child) {
+            //         if (!$child->isValid()) {
+            //             foreach ($child->getErrors(true) as $err) {
+            //                 $error[$child->getName()][] = $err->getMessage();
+            //             }
+            //         }
+            //     }
+            //     return $this->json(['error' => $error, 'success' => $success]);
+            // }
+
+            // create user in database
+            $userManager->createUser($user);
         }
 
         if (!$form->isSubmitted()) {
             return $this->render('@Mobicoop/user/signup.html.twig', [
-                'form' => $form->createView(),
                 'error' => $error
             ]);
         }
-
-        // Not Valid populate error
-        if (!$form->isValid()) {
-            $error = [];
-            // Fields
-            foreach ($form as $child) {
-                if (!$child->isValid()) {
-                    foreach ($child->getErrors(true) as $err) {
-                        $error[$child->getName()][] = $err->getMessage();
-                    }
-                }
-            }
-            return $this->json(['error' => $error, 'success' => $success]);
-        }
-
-        return $this->json(['error' => $error, 'success' => $success]);        
+        return $this->json(['error' => $error, 'success' => $success]);
     }
 
     /**

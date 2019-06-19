@@ -1,100 +1,136 @@
 <template>
   <section>
-    <form
-      id="app"
-      action="/utilisateur/inscription"
-      method="post"
-      @submit="checkForm"
-    >
-      <p v-if="errors.length">
-        <b>Please correct the following error(s):</b>
-        <ul>
-          <li
-            v-for="error in errors"
-            :key="error.id"
+    <div class="tile is-ancestor">
+      <div class="tile is-vertical is-12">
+        <div class="tile is-child center-all">
+          <form-wizard
+            back-button-text="Précédent"
+            next-button-text="Suivant"
+            finish-button-text="Je partage mon annonce"
+            title="Partager une annonce"
+            subtitle="Suivez les étapes.."
+            color="#023D7F"
+            class="tile is-vertical is-8"
+            @on-complete="checkForm"
           >
-            {{ error }}
-          </li>
-        </ul>
-      </p>
-      <b-field
-        label="Email"
-      >
-        <b-input
-          v-model="form.email"
-          type="email"
-        />
-      </b-field>
-      <b-field label="PhoneNumber">
-        <b-input v-model="form.telephone" />
-      </b-field>
-      <b-field label="Password">
-        <b-input
-          v-model="form.password"
-          type="password"
-          password-reveal
-        />
-      </b-field> 
-      
-      <b-field label="GivenName">
-        <b-input v-model="form.givenName" />
-      </b-field>
-      <b-field label="FamilyName">
-        <b-input v-model="form.familyName" />
-      </b-field>
-     
-      <b-field label="Civilité">
-        <b-select
-          v-model="form.gender"
-          placeholder="Civilité"
-        >
-          <option value="1">
-            Madame
-          </option>
-          <option value="2">
-            Monsieur
-          </option>
-          <option value="3">
-            Autre
-          </option>
-        </b-select>
-      </b-field>
-     
-      <b-field label="Année de naissance">
-        <b-select
-          v-model="form.birthYear"
-          placeholder="Année de naissance"
-        >
-          <option
-            v-for="year in years"
-            :key="year.id"
-            :value="year"
-          >
-            {{ year }}
-          </option>
-        </b-select>
-      </b-field>
-     
-      <geocomplete
-        id="homeAddress"
-        name="homeAddress"
-        placeholder="Commune de résidence"
-        :url="geoSearchUrl"
-        @geoSelected="selectedGeo"
-      />
+            <p v-if="errors.length">
+              <b>Please correct the following error(s):</b>
+              <ul>
+                <li
+                  v-for="error in errors"
+                  :key="error.id"
+                >
+                  {{ error }}
+                </li>
+              </ul>
+            </p>
+            <tab-content
+              title=""
+              icon=""
+              class="tabContent"
+            >
+              <b-field
+                label="Email"
+              >
+                <b-input
+                  v-model="form.email"
+                  type="email"
+                />
+              </b-field>
+              <b-field label="PhoneNumber">
+                <b-input v-model="form.telephone" />
+              </b-field>
+              <b-field label="Password">
+                <b-input
+                  v-model="form.password"
+                  type="password"
+                  password-reveal
+                />
+              </b-field> 
+            </tab-content>
 
-      <div class="field">
-        <b-checkbox
-          v-model="form.validation"
-        >
-          Je valide la charte
-        </b-checkbox>
+            <tab-content
+              title=""
+              icon=""
+              class="tabContent"
+            >
+              <b-field label="GivenName">
+                <b-input v-model="form.givenName" />
+              </b-field>
+              <b-field label="FamilyName">
+                <b-input v-model="form.familyName" />
+              </b-field>
+            </tab-content>
+
+            <tab-content
+              title=""
+              icon=""
+              class="tabContent"
+            >     
+              <b-field label="Civilité">
+                <b-select
+                  v-model="form.gender"
+                  placeholder="Civilité"
+                >
+                  <option value="1">
+                    Madame
+                  </option>
+                  <option value="2">
+                    Monsieur
+                  </option>
+                  <option value="3">
+                    Autre
+                  </option>
+                </b-select>
+              </b-field>
+            </tab-content>
+
+            <tab-content
+              title=""
+              icon=""
+              class="tabContent"
+            >
+              <b-field label="Année de naissance">
+                <b-select
+                  v-model="form.birthYear"
+                  placeholder="Année de naissance"
+                >
+                  <option
+                    v-for="year in years"
+                    :key="year.id"
+                    :value="year"
+                  >
+                    {{ year }}
+                  </option>
+                </b-select>
+              </b-field>
+            </tab-content>
+
+            <tab-content
+              title=""
+              icon=""
+              class="tabContent"
+            >
+              <geocomplete
+                id="homeAddress"
+                name="homeAddress"
+                placeholder="Commune de résidence"
+                :url="geoSearchUrl"
+                @geoSelected="selectedGeo"
+              />
+
+              <div class="field">
+                <b-checkbox
+                  v-model="form.validation"
+                >
+                  Je valide la charte
+                </b-checkbox>
+              </div>
+            </tab-content>
+          </form-wizard>
+        </div>
       </div>
-      <input
-        type="submit"
-        value="Je m'inscris"
-      >
-    </form>
+    </div>
   </section>                
 </template>
 
@@ -113,6 +149,10 @@ export default {
       type: String,
       default: ""
     },
+    sentToken: {
+      type: String,
+      default: ""
+    }
   },
   data() {
     return {
@@ -122,6 +162,7 @@ export default {
         value: {}
       },
       form:{
+        createToken: this.sentToken,
         email: null,
         givenName: null,
         familyName: null,
@@ -175,28 +216,30 @@ export default {
       this.form.postalCode = val.postalCode
     },
     checkForm: function (e) {
-      // if (this.email && this.telephone && this.password && this.givenName && this.familyName && this.gender && this.birthYear && this.homeAddress && this.validation == true) {
-      let userForm = new FormData;
-      for (let prop in this.form) {
-        let value = this.form[prop];
-        if(!value) continue;
-        let renamedProp = `user_form[${prop}]`;
-        userForm.append(renamedProp, value);
-      }
-      axios 
-        .post("/utilisateur/inscription", userForm, {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        } )
-        // .then(function(response) {
-        //   window.location.href = '/';
-        //   console.error(response);
-        // })
-        // .catch(function(error) {
-        //   console.error(error);
-        // });  
-      // } 
+      if (this.form.email && this.form.telephone && this.form.password && this.form.givenName && this.form.familyName && this.form.gender && this.form.birthYear && this.form.validation == true) {
+        let userForm = new FormData;
+        for (let prop in this.form) {
+          let value = this.form[prop];
+          // if(!value) continue;
+          // let renamedProp = `user_form[${prop}]`;
+          // userForm.append(renamedProp, value);
+          let renamedProp = prop === "createToken" ? prop : `user_form[${prop}]`;
+          userForm.append(renamedProp, value);
+        }
+        axios 
+          .post("/utilisateur/inscription", userForm, {
+            headers: {
+              "Content-Type": "multipart/form-data"
+            }
+          } )
+          .then(function(response) {
+            window.location.href = '/';
+            console.error(response);
+          })
+          .catch(function(error) {
+            console.error(error);
+          });  
+      } 
       this.errors = [];
 
       if (!this.form.email) {

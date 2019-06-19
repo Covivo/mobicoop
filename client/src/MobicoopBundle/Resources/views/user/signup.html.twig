@@ -17,11 +17,12 @@
 </section>
 
 <section class="section">
-	<div class="container" id='signup'>
-		{% if error %}
+{% if error %}
 		<span class="tag is-danger">An error occured.</span>
 		{% endif %}
-		<Signupform geo-search-url="/geosearch?search="> </Signupform>
+	<div class="container" id='signup'>
+		
+		<Signupform geo-search-url="/geosearch?search=" sent-token="{{ csrf_token('user-signup') }}"> </Signupform>
     </div>
 </section>
 
