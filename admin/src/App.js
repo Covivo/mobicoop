@@ -8,7 +8,6 @@ import parseHydraDocumentation from '@api-platform/api-doc-parser/lib/hydra/pars
 import authProvider from './authProvider';
 
 import { createMuiTheme } from '@material-ui/core/styles';
-import { indigo, grey, red } from '@material-ui/core/colors';
 
 import PersonIcon from '@material-ui/icons/Person';
 import PeopleIcon from '@material-ui/icons/People';
@@ -32,19 +31,22 @@ import { SectionCreate, SectionEdit } from './Component/Article/sections';
 // import { ParagraphCreate, ParagraphEdit } from './Component/Article/paragraphs';
 import {  TerritoryShow , TerritoryList, TerritoryEdit, TerritoryCreate } from './Component/Territory/territories';
 
+require('dotenv').config();
+
 const theme = createMuiTheme({
     palette: {
-      primary: indigo,
-      secondary: grey,
-      error: red,
-      // Used by `getContrastText()` to maximize the contrast between the background and
-      // the text.
-      contrastThreshold: 3,
-      // Used to shift a color's luminance by approximately
-      // two indexes within its tonal palette.
-      // E.g., shift from Red 500 to Red 300 or Red 700.
-      tonalOffset: 0.2,
-      type: 'light'
+      primary: {
+        main: `#${process.env.REACT_APP_THEME_PRIMARY_COLOR}`,
+      },
+      secondary: {
+        main: `#${process.env.REACT_APP_THEME_SECONDARY_COLOR}`,
+      },
+      error: {
+        main: `#${process.env.REACT_APP_THEME_ERROR_COLOR}`,
+      },
+      contrastThreshold: process.env.REACT_APP_THEME_CONTRAST_THRESHOLD,
+      tonalOffset: process.env.REACT_APP_THEME_TONAL_OFFSET,
+      type: `${process.env.REACT_APP_THEME_TYPE}`
     },
 });
 
@@ -52,8 +54,6 @@ const messages = {
   fr: frenchMessages,
 }
 const i18nProvider = locale => messages[locale];
-
-require('dotenv').config();
 
 // function to search for a given permission
 // todo : refactor with authProvider function
