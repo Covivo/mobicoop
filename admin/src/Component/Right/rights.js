@@ -52,10 +52,10 @@ const RightFilter = (props) => (
 export const RightList = (props) => (
     <List {...props} title="Droits > liste" perPage={ 30 } filters={<RightFilter />}>
         <Datagrid>
-            <TextField source="originId" label="ID"/>
+            <TextField source="originId" label="ID" sortBy="id" />
             <SelectField label="Type" source="type" choices={typeChoices} sortable={false} />
             <TextField source="name" label="Nom"/>
-            <ReferenceField label="Groupe" source="parent" reference="rights" allowEmpty>
+            <ReferenceField label="Groupe" source="parent" reference="rights" allowEmpty sortable={false}>
                 <TextField source="name" />
             </ReferenceField>
             <ShowButton />

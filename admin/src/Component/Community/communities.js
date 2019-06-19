@@ -7,12 +7,13 @@ import {
     SimpleForm, required,
     DisabledInput, TextInput, DateInput, BooleanInput, ReferenceInput, SelectInput,
     Button, ShowButton, EditButton, DeleteButton,
-    BooleanField, TextField, DateField, RichTextField, SelectField, ReferenceArrayField, ReferenceField
+    BooleanField, TextField, DateField, RichTextField, SelectField, ReferenceArrayField, ReferenceField,
+    Filter
 } from 'react-admin';
 import RichTextInput from 'ra-input-rich-text';
 
 const userOptionRenderer = choice => `${choice.givenName} ${choice.familyName}`;
-const userId = parseInt(`${localStorage.getItem('id')}`);
+const userId = `/users/${localStorage.getItem('id')}`;
 const statusChoices = [
     { id: 0, name: 'En attente' },
     { id: 1, name: 'Accepté' },
@@ -44,7 +45,7 @@ export const CommunityEdit = (props) => (
                 <SelectInput optionText={userOptionRenderer} />
             </ReferenceInput>
             <TextInput source="name" label="Nom" validate={required()}/>
-            <BooleanInput source="membersHidden" label="Membres masqués" />
+            <BooleanInput source="membersHidden" label="Membres masqués"  />
             <BooleanInput source="proposalsHidden" label="Annonces masquées" />
             <TextInput source="description" label="Description" validate={required()}/>
             <RichTextInput source="fullDescription" label="Description complète" validate={required()} />
@@ -54,13 +55,22 @@ export const CommunityEdit = (props) => (
 );
 
 // List
+const CommunityFilter = (props) => (
+    <Filter {...props}>
+        <TextInput source="name" label="Nom" alwaysOn />
+    </Filter>
+);
+const CommunityPanel = ({ id, record, resource }) => (
+    <div dangerouslySetInnerHTML={{ __html: record.fullDescription }} />
+);
+
 export const CommunityList = (props) => (
-    <List {...props} title="Communautés > liste" perPage={ 30 }>
-        <Datagrid>
-            <TextField source="originId" label="ID"/>
+    <List {...props} title="Communautés > liste" perPage={ 30 } filters={<CommunityFilter />}>
+        <Datagrid expand={<CommunityPanel />}>
+            <TextField source="originId" label="ID" sortBy="id"/>
             <TextField source="name" label="Nom"/>
-            <BooleanField source="membersHidden" label="Membres masqués" />
-            <BooleanField source="proposalsHidden" label="Annonces masquées" />
+            <BooleanField source="membersHidden" label="Membres masqués" sortable={false} />
+            <BooleanField source="proposalsHidden" label="Annonces masquées" sortable={false} />
             <TextField source="description" label="Description"/>
             <DateField source="createdDate" label="Date de création"/>
             <ShowButton />

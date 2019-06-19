@@ -62,6 +62,7 @@ export default (type, params) => {
             localStorage.removeItem('token');
             localStorage.removeItem('roles');
             localStorage.removeItem('id');
+            localStorage.removeItem('permissions');
             return Promise.resolve();
 
         case AUTH_ERROR:
@@ -69,6 +70,7 @@ export default (type, params) => {
                 localStorage.removeItem('token');
                 localStorage.removeItem('roles');
                 localStorage.removeItem('id');
+                localStorage.removeItem('permissions');
                 return Promise.reject();
             }
             return Promise.resolve();
@@ -107,6 +109,9 @@ export default (type, params) => {
                         permission = isAuthorized("article_manage");
                         break;
                     case "/sections": 
+                        permission = isAuthorized("article_manage");
+                        break;
+                    case "/paragraphs": 
                         permission = isAuthorized("article_manage");
                         break;
                     case "/territories": 

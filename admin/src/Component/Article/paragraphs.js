@@ -3,9 +3,10 @@ import {
     Create, Edit,
     SimpleForm, 
     required,
-    ReferenceInput, SelectInput,
+    ReferenceInput, SelectInput, NumberInput,
     ReferenceField, TextField
 } from 'react-admin';
+import RichTextInput from 'ra-input-rich-text';
 import { parse } from "query-string";
 
 const statusChoices = [
@@ -15,23 +16,23 @@ const statusChoices = [
 
 // Create
 export const ParagraphCreate = (props) => {
-    const { section: article_string } = parse(props.location.search);
-    const article = article_string ? parseInt(article_string, 10) : '';
-    const article_uri = encodeURIComponent(article_string);
-    const redirect = article_uri ? `/articles/${article_uri}/show/sections` : 'show';
+    const { section: section_string } = parse(props.location.search);
+    const section = section_string ? parseInt(section_string, 10) : '';
+    const section_uri = encodeURIComponent(section_string);
+    const redirect = section_uri ? `/sections/${section_uri}/show` : 'show';
 
     return (
-    <Create { ...props } title="Articles > ajouter une section">
+    <Create { ...props } title="Articles > ajouter un paragraphe">
         <SimpleForm
-            defaultValue={{ article }}
+            defaultValue={{ section }}
             redirect={redirect}
         >
-            <ReferenceInput label="Article" source="article" reference="articles" validate={required()}>
+            <ReferenceInput label="Section" source="section" reference="sections" validate={required()}>
                 <SelectInput optionText="title"/>
             </ReferenceInput>
             <SelectInput label="Status" source="status" choices={statusChoices} defaultValue={1} validate={required()}/>
-            <TextInput source="title" label="Titre" />
-            <TextInput source="subTitle" label="Sous-titre" />
+            <RichTextInput source="text" label="Texte" validate={required()} />
+            <NumberInput source="position" label="Position" />
         </SimpleForm>
     </Create>
     );
@@ -43,16 +44,16 @@ export const ParagraphEdit = (props) => {
     const redirect = `/sections/`;
 
     return (
-    <Edit { ...props } title="Articles > éditer une section">
+    <Edit { ...props } title="Articles > éditer un paragraphe">
         <SimpleForm
             redirect={redirect}
         >
-            <ReferenceField label="Article" source="article" reference="articles" linkType="" >
+            <ReferenceField label="Section" source="section" reference="sections" linkType="" >
                 <TextField source="title"/>
             </ReferenceField>
             <SelectInput label="Status" source="status" choices={statusChoices} />
-            <TextInput source="title" label="Titre" />
-            <TextInput source="subTitle" label="Sous-titre" />
+            <RichTextInput source="text" label="Texte" validate={required()} />
+            <NumberInput source="position" label="Position" />
         </SimpleForm>
     </Edit>
     );

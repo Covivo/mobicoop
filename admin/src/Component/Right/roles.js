@@ -49,10 +49,10 @@ export const RoleEdit = (props) => (
 export const RoleList = (props) => (
     <List {...props} title="Rôles > liste" perPage={ 30 }>
         <Datagrid>
-            <TextField source="originId" label="ID"/>
+            <TextField source="originId" label="ID" sortBy="id"/>
             <TextField source="title" label="Titre"/>
             <TextField source="name" label="Nom"/>
-            <ReferenceField label="Rôle parent" source="parent" reference="roles" allowEmpty>
+            <ReferenceField label="Rôle parent" source="parent" reference="roles" allowEmpty sortable={false}>
                 <TextField source="title" />
             </ReferenceField>
             <ShowButton />

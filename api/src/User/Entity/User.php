@@ -101,8 +101,8 @@ use App\User\Controller\UserPermissions;
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"id"})
- * @ApiFilter(SearchFilter::class, properties={"email":"exact"})
- * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate", "createdDate"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
 {
@@ -318,6 +318,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface Creation date of the event.
      *
      * @ORM\Column(type="datetime")
+     * @Groups("read")
      */
     private $createdDate;
 
