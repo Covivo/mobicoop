@@ -158,7 +158,6 @@ dev_deploy:
   before_script:
     - composer global require hirak/prestissimo
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
-    - npm run build-admin
   script:
     - npm run test-and-coverage                                                   # run the tests and code coverage
     - php client/bin/console cache:clear --env=dev --no-debug     # clear the cache for the interfaces
@@ -168,7 +167,7 @@ dev_deploy:
     - mv id_rsa ${HOME}/.ssh                                    #
     - echo "${SSH_DEV_HOST_KEY}" > "${HOME}/.ssh/known_hosts"  #
     - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_DEV_USER}@${SSH_DEV_IP}:/var/www/mobicoop/dev    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no ${SSH_DEV_USER}@${SSH_DEV_IP} "cd /var/www/mobicoop/dev/api; php bin/console doctrine:migrations:migrate -n"    # database migration and admin build
+    - ssh -o StrictHostKeyChecking=no ${SSH_DEV_USER}@${SSH_DEV_IP} "cd /var/www/mobicoop/dev/api; php bin/console doctrine:migrations:migrate -n;cd /var/www/mobicoop/dev/admin; npm run build"    # database migration and admin build
   except:
     refs:
       - tags    # job not executed on tags
