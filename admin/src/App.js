@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Admin, Resource } from 'react-admin';
+import { Admin, Login, Resource } from 'react-admin';
 import { Route, Redirect } from 'react-router-dom';
 import { hydraClient, fetchHydra as baseFetchHydra  } from '@api-platform/admin';
 import parseHydraDocumentation from '@api-platform/api-doc-parser/lib/hydra/parseHydraDocumentation';
@@ -32,6 +32,8 @@ import { SectionCreate, SectionEdit } from './Component/Article/sections';
 import {  TerritoryShow , TerritoryList, TerritoryEdit, TerritoryCreate } from './Component/Territory/territories';
 
 require('dotenv').config();
+
+const MyLoginPage = () => <Login backgroundImage={process.env.REACT_APP_THEME_BACKGROUND} />;
 
 const theme = createMuiTheme({
     palette: {
@@ -109,6 +111,7 @@ export default class extends Component {
       if (null === this.state.api) return <div>Loading...</div>;
       return (
           <Admin 
+                  loginPage={MyLoginPage}
                   api={ this.state.api }
                   locale="fr" i18nProvider={i18nProvider}
                   apiDocumentationParser={ apiDocumentationParser }
