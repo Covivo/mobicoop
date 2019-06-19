@@ -1,10 +1,15 @@
 import React from 'react';
 import { 
-    Create, Edit,
+    Create, Edit, Show,
     SimpleForm, 
     required,
     ReferenceInput, SelectInput, TextInput, NumberInput,
-    ReferenceField, TextField
+    ReferenceField, TextField,
+    Tab, TabbedShowLayout, 
+    Link, 
+    Datagrid,
+    Button, EditButton, DeleteButton,
+    ReferenceArrayField
 } from 'react-admin';
 import { parse } from "query-string";
 
@@ -21,7 +26,7 @@ export const SectionCreate = (props) => {
     const redirect = article_uri ? `/articles/${article_uri}/show/sections` : 'show';
 
     return (
-    <Create { ...props } title="Articles > sections > ajouter une section">
+    <Create { ...props } title="Articles > ajouter une section">
         <SimpleForm
             defaultValue={{ article }}
             redirect={redirect}
@@ -44,7 +49,7 @@ export const SectionEdit = (props) => {
     const redirect = `/articles/`;
 
     return (
-    <Edit { ...props } title="Articles > sections > éditer une section">
+    <Edit { ...props } title="Articles > éditer une section">
         <SimpleForm
             redirect={redirect}
         >
@@ -59,3 +64,39 @@ export const SectionEdit = (props) => {
     </Edit>
     );
 }
+
+// Show
+const AddParagraphButton = ({ record }) => (
+    <Button
+        component={Link}
+        to={{
+            pathname: `/paragraphs/create`,
+            search: `?section=${record.id}`
+        }}
+        label="Ajouter un paragraphe"
+    >
+    </Button>
+);
+export const SectionShow = (props) => (
+    <Show { ...props } title="Articles > afficher une section">
+        <TabbedShowLayout>
+            <Tab label="Détails">
+                <TextField source="title" label="Titre" />
+                <TextField source="subtitle" label="Sous-titre" />
+                <TextField source="position" label="Position" />
+                <EditButton />
+            </Tab>
+            <Tab label="Paragraphes" path="paragraphs">
+                <ReferenceArrayField reference="paragraphs" source="paragraphs" addLabel={false}>
+                    <Datagrid>
+                        <TextField source="text" label="Texte" />
+                        <TextField source="position" label="Position" />
+                        <EditButton />
+                        <DeleteButton />
+                    </Datagrid>
+                </ReferenceArrayField>
+                <AddParagraphButton />
+            </Tab>
+        </TabbedShowLayout>
+    </Show>
+);

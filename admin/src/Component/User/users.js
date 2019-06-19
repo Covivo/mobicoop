@@ -8,6 +8,7 @@ import {
     email,
     TextField, EmailField, DateField, 
     ShowButton, EditButton,
+    Filter
 } from 'react-admin';
 
 const genderChoices = [
@@ -42,10 +43,18 @@ export const UserEdit = (props) => (
 );
 
 // List
+const UserFilter = (props) => (
+    <Filter {...props}>
+        <TextInput source="givenName" label="Prénom" />
+        <TextInput source="familyName" label="Nom" alwaysOn />
+        <TextInput source="email" label="Email" alwaysOn />
+    </Filter>
+);
+
 export const UserList = (props) => (
-    <List {...props} title="Utilisateurs > liste" perPage={ 30 }>
+    <List {...props} title="Utilisateurs > liste" perPage={ 30 } filters={<UserFilter />}>
         <Datagrid>
-            <TextField source="originId" label="ID"/>
+            <TextField source="originId" label="ID" sortBy="id"/>
             <TextField source="givenName" label="Prénom"/>
             <TextField source="familyName" label="Nom"/>
             <EmailField source="email" label="Email" />
