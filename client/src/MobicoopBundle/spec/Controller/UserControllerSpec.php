@@ -48,9 +48,7 @@ describe('UserController', function () {
         $request = $this->request->create('/user/signup', 'GET');
         $response = $this->kernel->handle($request);
         $status = $response->getStatusCode();
-        $crawler = new Crawler($response->getContent(), LOCAL_URL . '/user/signup');
-        $form = $crawler->filter('form')->form();
-
+        
         expect($status)->toEqual(200);
     });
 });
