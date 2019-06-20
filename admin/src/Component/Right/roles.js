@@ -47,7 +47,7 @@ export const RoleEdit = (props) => (
 
 // List
 export const RoleList = (props) => (
-    <List {...props} title="Rôles > liste" perPage={ 30 }>
+    <List {...props} title="Rôles > liste" perPage={ 25 }>
         <Datagrid>
             <TextField source="originId" label="ID" sortBy="id"/>
             <TextField source="title" label="Titre"/>

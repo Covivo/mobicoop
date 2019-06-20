@@ -65,7 +65,7 @@ const CommunityPanel = ({ id, record, resource }) => (
 );
 
 export const CommunityList = (props) => (
-    <List {...props} title="Communautés > liste" perPage={ 30 } filters={<CommunityFilter />}>
+    <List {...props} title="Communautés > liste" perPage={ 25 } filters={<CommunityFilter />}>
         <Datagrid expand={<CommunityPanel />}>
             <TextField source="originId" label="ID" sortBy="id"/>
             <TextField source="name" label="Nom"/>

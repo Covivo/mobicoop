@@ -1,10 +1,10 @@
 import React from 'react';
 import { 
     Create, Edit, List, Show,
-    SimpleForm, 
+    SimpleForm, TabbedForm, FormTab,
     SimpleShowLayout,
     Datagrid,
-    TextInput, DisabledInput, SelectInput,
+    TextInput, DisabledInput, SelectInput, DateInput,
     email,
     TextField, EmailField, DateField, 
     ShowButton, EditButton,
@@ -20,25 +20,48 @@ const genderChoices = [
 // Create
 export const UserCreate = (props) => (
     <Create { ...props } title="Utilisateurs > ajouter">
-        <SimpleForm>
-            <TextInput source="givenName" label="Prénom"/>
-            <TextInput source="familyName" label="Nom"/>
-            <SelectInput label="Sexe" source="gender" choices={genderChoices} />
-            <TextInput source="email" label="Email" validate={ email() } />
-        </SimpleForm>
-    </Create>
+        <TabbedForm>
+            <FormTab label="Identité">
+                <TextInput source="givenName" label="Prénom"/>
+                <TextInput source="familyName" label="Nom"/>
+                <SelectInput label="Sexe" source="gender" choices={genderChoices} />
+                <TextInput source="email" label="Email" validate={ email() } />
+                <DateInput source="birthDate" label="Date de naissance" />
+                <TextInput source="telephone" label="Téléphone"/>
+            </FormTab>
+            <FormTab label="Sécurité">
+                <TextInput source="password" label="Mot de passe"  type="password" />
+            </FormTab>
+            <FormTab label="Préférences">
+
+            </FormTab>
+            <FormTab label="Adresses">
+
+            </FormTab>
+        </TabbedForm>
+</Create>
 );
 
 // Edit
 export const UserEdit = (props) => (
     <Edit {...props} title="Utilisateurs > éditer">
-        <SimpleForm>
-            <DisabledInput source="originId" label="ID"/>
-            <TextInput source="givenName" label="Prénom"/>
-            <TextInput source="familyName" label="Nom"/>
-            <SelectInput label="Sexe" source="gender" choices={genderChoices} />
-            <TextInput source="email" label="Email" validate={ email() } />
-        </SimpleForm>
+        <TabbedForm>
+            <FormTab label="Identité">
+                <DisabledInput source="originId" label="ID"/>
+                <TextInput source="givenName" label="Prénom"/>
+                <TextInput source="familyName" label="Nom"/>
+                <SelectInput label="Sexe" source="gender" choices={genderChoices} />
+                <TextInput source="email" label="Email" validate={ email() } />
+                <DateInput source="birthDate" label="Date de naissance" />
+                <TextInput source="telephone" label="Téléphone"/>
+            </FormTab>
+            <FormTab label="Préférences">
+
+            </FormTab>
+            <FormTab label="Adresses">
+
+            </FormTab>
+        </TabbedForm>
     </Edit>
 );
 
@@ -52,7 +75,7 @@ const UserFilter = (props) => (
 );
 
 export const UserList = (props) => (
-    <List {...props} title="Utilisateurs > liste" perPage={ 30 } filters={<UserFilter />}>
+    <List {...props} title="Utilisateurs > liste" perPage={ 25 } filters={<UserFilter />}>
         <Datagrid>
             <TextField source="originId" label="ID" sortBy="id"/>
             <TextField source="givenName" label="Prénom"/>
