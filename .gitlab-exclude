@@ -1,5 +1,9 @@
-.env.local
-/api/.env.local
+.env.dev.local
+.env.test.local
+.env.prod.local
+/api/.env.dev.local
+/api/.env.test.local
+/api/.env.prod.local
 /api/config/rdex/*.json
 /api/config/jwt/
 /api/var/log/
@@ -19,7 +23,8 @@
 /api/public/upload/mass/files/*.xml
 /api/public/upload/mass/files/*.zip
 /api/public/upload/mass/files/*.json
-/client/.env.local
+/client/.env.dev.local
+/client/.env.test.local
+/client/.env.prod.local
 /client/var/log/
 /admin/.env
-/admin/.env.local
