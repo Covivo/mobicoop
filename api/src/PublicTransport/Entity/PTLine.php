@@ -229,7 +229,7 @@ class PTLine
         return $this;
     }
 
-    public function getTransportMode(): int
+    public function getTransportMode(): ?int
     {
         return $this->transportMode;
     }
@@ -241,7 +241,7 @@ class PTLine
         return $this;
     }
 
-    public function getColor(): string
+    public function getColor(): ?string
     {
         return $this->color;
     }
