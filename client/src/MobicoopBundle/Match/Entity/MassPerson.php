@@ -71,6 +71,41 @@ class MassPerson implements Resource
     private $workAddress;
 
     /**
+     * @var int The total distance of the direction in meter.
+     */
+    private $distance;
+
+    /**
+     * @var int The total duration of the direction in milliseconds.
+     */
+    private $duration;
+
+    /**
+     * @var float The minimum longitude of the bounding box of the direction.
+     */
+    private $bboxMinLon;
+
+    /**
+     * @var float The minimum latitude of the bounding box of the direction.
+     */
+    private $bboxMinLat;
+
+    /**
+     * @var float The maximum longitude of the bounding box of the direction.
+     */
+    private $bboxMaxLon;
+
+    /**
+     * @var float The maximum latitude of the bounding box of the direction.
+     */
+    private $bboxMaxLat;
+
+    /**
+     * @var int|null The initial bearing of the direction in degrees.
+     */
+    private $bearing;
+
+    /**
      * @var Mass The original mass file of the person.
      */
     private $mass;
@@ -188,6 +223,90 @@ class MassPerson implements Resource
     public function setWorkAddress(Address $address): self
     {
         $this->workAddress = $address;
+
+        return $this;
+    }
+
+    public function getDistance(): ?int
+    {
+        return $this->distance;
+    }
+
+    public function setDistance(int $distance): self
+    {
+        $this->distance = $distance;
+
+        return $this;
+    }
+
+    public function getDuration(): ?int
+    {
+        return $this->duration;
+    }
+
+    public function setDuration(int $duration): self
+    {
+        $this->duration = $duration;
+
+        return $this;
+    }
+
+    public function getBboxMinLon(): ?float
+    {
+        return $this->bboxMinLon;
+    }
+
+    public function setBboxMinLon(?float $bboxMinLon): self
+    {
+        $this->bboxMinLon = $bboxMinLon;
+
+        return $this;
+    }
+
+    public function getBboxMinLat(): ?float
+    {
+        return $this->bboxMinLat;
+    }
+
+    public function setBboxMinLat(?float $bboxMinLat)
+    {
+        $this->bboxMinLat = $bboxMinLat;
+
+        return $this;
+    }
+
+    public function getBboxMaxLon(): ?float
+    {
+        return $this->bboxMaxLon;
+    }
+
+    public function setBboxMaxLon(?float $bboxMaxLon): self
+    {
+        $this->bboxMaxLon = $bboxMaxLon;
+
+        return $this;
+    }
+
+    public function getBboxMaxLat(): ?float
+    {
+        return $this->bboxMaxLat;
+    }
+
+    public function setBboxMaxLat(?float $bboxMaxLat): self
+    {
+        $this->bboxMaxLat = $bboxMaxLat;
+
+        return $this;
+    }
+
+    public function getBearing(): ?int
+    {
+        return $this->bearing;
+    }
+
+    public function setBearing(?int $bearing): self
+    {
+        $this->bearing = $bearing;
 
         return $this;
     }

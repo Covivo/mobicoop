@@ -146,14 +146,15 @@ class MassManager
         $matrix = new MassMatrix();
 
         foreach ($persons as $person) {
+            dump($person);
             $tabCoords[] = array(
                 "latitude"=>$person->getPersonalAddress()->getLatitude(),
                 "longitude"=>$person->getPersonalAddress()->getLongitude(),
-                "distance"=>$person->getDirection()->getDistance(),
-                "duration"=>$person->getDirection()->getDuration()
+                "distance"=>$person->getDistance(),
+                "duration"=>$person->getDuration()
             );
-            $computedData["totalTravelDistance"] += $person->getDirection()->getDistance();
-            $computedData["totalTravelDuration"] += $person->getDirection()->getDuration();
+            $computedData["totalTravelDistance"] += $person->getDistance();
+            $computedData["totalTravelDuration"] += $person->getDuration();
 
             // Can this person carpool ? AsDriver or AsPassenger ? Both ?
             $carpoolAsDriver = false;
@@ -175,9 +176,9 @@ class MassManager
 
             // Store the original journey to calculate the gains between original and carpool
             $journey =  new MassJourney(
-                $person->getDirection()->getDistance(),
-                $person->getDirection()->getDuration(),
-                UtilsService::computeCO2($person->getDirection()->getDistance()),
+                $person->getDistance(),
+                $person->getDuration(),
+                UtilsService::computeCO2($person->getDistance()),
                 $person->getId()
             );
 
@@ -278,15 +279,15 @@ class MassManager
                 $durationJourneySeparately = $journeyPerson1->getDuration() + $journeyPerson2->getDuration();
 
                 // This is the gain between the two peoples driving separately and their carpool
-                $gainDurationJourneyCarpool = $durationJourneySeparately-$matching->getDirection()->getDuration();
+                $gainDurationJourneyCarpool = $durationJourneySeparately-$matching->getDuration();
 
                 // We keep the biggest gain
 
                 if ($gainDurationJourneyCarpool > $biggestGain) {
                     $biggestGain = $gainDurationJourneyCarpool;
-                    $fastestDuration = $matching->getDirection()->getDuration();
-                    $fastestDistance = $matching->getDirection()->getDistance();
-                    $fastestCO2 = UtilsService::computeCO2($matching->getDirection()->getDistance());
+                    $fastestDuration = $matching->getDuration();
+                    $fastestDistance = $matching->getDistance();
+                    $fastestCO2 = UtilsService::computeCO2($matching->getDistance());
                     $fastestMassPerson1Id = $matching->getMassPerson1Id();
                     $fastestMassPerson2Id = $matching->getMassPerson2Id();
                 }
