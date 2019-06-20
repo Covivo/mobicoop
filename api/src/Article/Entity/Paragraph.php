@@ -47,12 +47,12 @@ use App\Article\Controller\ParagraphUp;
  *          "up"={
  *              "method"="POST",
  *              "controller"=ParagraphUp::class,
- *              "path"="/paragraphes/{id}/up"
+ *              "path"="/paragraphs/{id}/up"
  *          },
  *          "down"={
  *              "method"="POST",
  *              "controller"=ParagraphDown::class,
- *              "path"="/paragraphes/{id}/down"
+ *              "path"="/paragraphs/{id}/down"
  *          }
  *      }
  * )

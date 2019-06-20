@@ -7,7 +7,7 @@ import {
     SimpleForm, required, 
     DisabledInput, TextInput, SelectInput,
     Button, ShowButton, EditButton, DeleteButton,
-    TextField, ReferenceArrayField, ReferenceField
+    TextField, ReferenceArrayField
 } from 'react-admin';
 
 const statusChoices = [
@@ -71,9 +71,10 @@ export const ArticleShow = (props) => (
             <Tab label="Sections" path="sections">
                 <ReferenceArrayField reference="sections" source="sections" addLabel={false}>
                     <Datagrid>
-                        <ReferenceField label="Title" source="section" reference="sections" linkType="">
-                            <TextField source="title" />
-                        </ReferenceField>
+                        <TextField source="title" label="Titre" />
+                        <TextField source="subtitle" label="Sous-titre" />
+                        <TextField source="position" label="Position" />
+                        <ShowButton />
                         <EditButton />
                         <DeleteButton />
                     </Datagrid>

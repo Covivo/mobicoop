@@ -24,6 +24,8 @@ export const CommunityUserCreate = (props) => {
     const community_uri = encodeURIComponent(community_string);
     const redirect = community_uri ? `/communities/${community_uri}/show/members` : 'show';
 
+    console.log(userId);
+    
     return (
     <Create { ...props } title="Communautés > ajouter un membre">
         <SimpleForm
