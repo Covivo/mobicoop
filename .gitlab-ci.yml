@@ -167,7 +167,7 @@ dev_deploy:
     - mv id_rsa ${HOME}/.ssh                                    #
     - echo "${SSH_DEV_HOST_KEY}" > "${HOME}/.ssh/known_hosts"  #
     - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_DEV_USER}@${SSH_DEV_IP}:/var/www/mobicoop/dev    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no ${SSH_DEV_USER}@${SSH_DEV_IP} "cd /var/www/mobicoop/dev/api; php bin/console doctrine:migrations:migrate -n"    # database migration and admin build
+    - ssh -o StrictHostKeyChecking=no ${SSH_DEV_USER}@${SSH_DEV_IP} "cd /var/www/mobicoop/dev/api; php bin/console doctrine:migrations:migrate -n;cd /var/www/mobicoop/dev/admin;npm run build"    # database migration and admin build
   except:
     refs:
       - tags    # job not executed on tags
@@ -187,7 +187,6 @@ test_deploy:
   before_script:
     - composer global require hirak/prestissimo
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
-    - npm run build-admin
   script:
     - npm run test-and-coverage                                                   # run the tests and code coverage
     - php client/bin/console cache:clear --env=test --no-debug     # clear the cache for the interfaces
@@ -197,7 +196,7 @@ test_deploy:
     - mv id_rsa ${HOME}/.ssh                                    #
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"  #
     - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/mobicoop/test    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/mobicoop/test/api; php bin/console doctrine:migrations:migrate -n"    # database migration and admin build
+    - ssh -o StrictHostKeyChecking=no ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/mobicoop/test/api; php bin/console doctrine:migrations:migrate --env=test -n;cd /var/www/mobicoop/test/admin;npm run build"    # database migration and admin build
   except:
     refs:
       - tags    # job not executed on tags
@@ -246,7 +245,6 @@ master_deploy:
   before_script: # This is required to send the prod type no dev, since it creates errors
     - composer global require hirak/prestissimo
     - npm install --unsafe-perm
-    - npm run build-admin
  # variables:
  #   APP_ENV: prod   # /!\ important : symfony env variable /!\
   script:
@@ -258,7 +256,7 @@ master_deploy:
     - mv id_rsa ${HOME}/.ssh                                        # ssh identification on docker side
     - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"      #
     - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/mobicoop/prod    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/prod/api; php bin/console doctrine:migrations:migrate -n"    # database migration and admin build
+    - ssh -o StrictHostKeyChecking=no ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/prod/api; php bin/console doctrine:migrations:migrate --env=prod -n;cd /var/www/mobicoop/prod/admin;npm run build"    # database migration and admin build
   environment:
     name: prod
     url: https://mobicoop.io
