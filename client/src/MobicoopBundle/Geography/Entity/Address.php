@@ -163,6 +163,7 @@ class Address implements Resource
     
     /**
      * @var string|null The name of this address.
+     * @Groups({"post","put"})
      */
     private $name;
     

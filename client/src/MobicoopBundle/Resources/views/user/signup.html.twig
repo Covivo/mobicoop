@@ -1,7 +1,9 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
 {% block title %}{% trans from 'ui' %}user.signup.title{% endtrans %}{% endblock %}
-
+{% block stylesheets %}
+    {{ encore_entry_link_tags('bundle_user/signup') }}
+{% endblock %}
 {% block body %}
 
 <section class="hero is-passur">
@@ -15,32 +17,17 @@
 </section>
 
 <section class="section">
-	<div class="container">
-		{% if error %}
+{% if error %}
 		<span class="tag is-danger">An error occured.</span>
 		{% endif %}
-		<p>Les champs suivis d'une étoile (*) sont obligatoires</p>
-        {{ form_start(form) }}
-		{{ form_row(form.email) }}
-{#		{{ form_help(form.email) }}#}
-
-		{{ form_row(form.givenName) }}
-{#		{{ form_help(form.givenName) }}#}
-
-		{{ form_row(form.familyName) }}
-{#		{{ form_help(form.familyName) }}#}
-
-		{{ form_row(form.gender) }}
-{#		{{ form_help(form.gender) }}#}
-
-		{{ form_row(form.birthYear) }}
-		{{ form_row(form.telephone) }}
-		{{ form_row(form.password) }}
-		{{ form_row(form.conditions) }}
-        {{ form_row(form._token) }}
-        {{ form_row(form.submit) }}
-        {{ form_end(form, {'render_rest': false}) }}
+	<div class="container" id='signup'>
+		
+		<Signupform geo-search-url="/geosearch?search=" sent-token="{{ csrf_token('user-signup') }}"> </Signupform>
     </div>
 </section>
 
 {% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('bundle_user/signup') }}
+{% endblock %}
+ 

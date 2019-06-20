@@ -167,6 +167,8 @@ class User implements Resource, UserInterface, EquatableInterface
     
     /**
      * @var Address[]|null A user may have many addresses.
+     *
+     * @Groups({"post","put"})
      */
     private $addresses;
     

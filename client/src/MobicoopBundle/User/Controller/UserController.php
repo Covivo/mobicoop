@@ -37,6 +37,8 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\Form\Login;
 use Mobicoop\Bundle\MobicoopBundle\User\Form\UserLoginForm;
 use Mobicoop\Bundle\MobicoopBundle\User\Form\UserDeleteForm;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller class for user related actions.
@@ -75,32 +77,67 @@ class UserController extends AbstractController
         $this->denyAccessUnlessGranted('register');
 
         $user = new User();
-
-        $form = $this->createForm(
-            UserForm::class,
-            $user,
-            ['validation_groups'=>['signUp']]
-        );
-
-        $form->handleRequest($request);
+        $address = new Address();
+        $form = $this->createForm(UserForm::class, $user, ['validation_groups'=>['signUp']]);
         $error = false;
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($user = $userManager->createUser($user)) {
-                // after successful registering, we log the user
-                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-                $this->get('security.token_storage')->setToken($token);
-                $this->get('session')->set('_security_main', serialize($token));
-                // redirection to the user profile page
-                return $this->redirectToRoute('home');
+        $success = false;
+        
+        if ($request->isMethod('POST')) {
+            $createToken = $request->request->get('createToken');
+            if (!$this->isCsrfTokenValid('user-signup', $createToken)) {
+                return  new Response('Broken Token CSRF ', 403);
             }
-            $error = true;
+
+            //get all data from form (user + homeAddress)
+            $data = $request->request->get($form->getName());
+            
+            // pass homeAddress info into address entity
+            $address->setAddressCountry($data['addressCountry']);
+            $address->setAddressLocality($data['addressLocality']);
+            $address->setCountryCode($data['countryCode']);
+            $address->setCounty($data['county']);
+            $address->setLatitude($data['latitude']);
+            $address->setLocalAdmin($data['localAdmin']);
+            $address->setLongitude($data['longitude']);
+            $address->setMacroCounty($data['macroCounty']);
+            $address->setMacroRegion($data['macroRegion']);
+            $address->setName($data['name']);
+            $address->setPostalCode($data['postalCode']);
+            $address->setRegion($data['region']);
+            $address->setStreet($data['street']);
+            $address->setStreetAddress($data['streetAddress']);
+            $address->setSubLocality($data['subLocality']);
+
+            // add the home address to the user
+            $user->addAddress($address);
+
+            // pass front info into user form
+            $form->submit($request->request->get($form->getName()));
+            
+            // Not Valid populate error
+            // if (!$form->isValid()) {
+            //     $error = [];
+            //     // Fields
+            //     foreach ($form as $child) {
+            //         if (!$child->isValid()) {
+            //             foreach ($child->getErrors(true) as $err) {
+            //                 $error[$child->getName()][] = $err->getMessage();
+            //             }
+            //         }
+            //     }
+            //     return $this->json(['error' => $error, 'success' => $success]);
+            // }
+
+            // create user in database
+            $userManager->createUser($user);
         }
 
-        return $this->render('@Mobicoop/user/signup.html.twig', [
-            'form' => $form->createView(),
-            'error' => $error
-        ]);
+        if (!$form->isSubmitted()) {
+            return $this->render('@Mobicoop/user/signup.html.twig', [
+                'error' => $error
+            ]);
+        }
+        return $this->json(['error' => $error, 'success' => $success]);
     }
 
     /**
