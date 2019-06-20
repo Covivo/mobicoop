@@ -146,7 +146,6 @@ class MassManager
         $matrix = new MassMatrix();
 
         foreach ($persons as $person) {
-            dump($person);
             $tabCoords[] = array(
                 "latitude"=>$person->getPersonalAddress()->getLatitude(),
                 "longitude"=>$person->getPersonalAddress()->getLongitude(),
