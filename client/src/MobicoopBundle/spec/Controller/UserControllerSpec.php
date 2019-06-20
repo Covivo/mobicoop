@@ -43,26 +43,14 @@ describe('UserController', function () {
 
         expect($status)->toEqual(404);
     });
-
-    it('User sign up page should return status code 200 and contains a givenName form input', function () {
+    // the form is now in vueJs so it's no more possible to test inputs
+    it('User sign up page should return status code 200', function () {
         $request = $this->request->create('/user/signup', 'GET');
         $response = $this->kernel->handle($request);
         $status = $response->getStatusCode();
         $crawler = new Crawler($response->getContent(), LOCAL_URL . '/user/signup');
         $form = $crawler->filter('form')->form();
 
-        expect($form->has('user_form[givenName]'))->toBe(true);
-    });
-
-
-    it('User login should return status code 200 and contains a username form input', function () {
-        $request = $this->request->create('/user/login', 'GET');
-        $response = $this->kernel->handle($request);
-        $status = $response->getStatusCode();
-        $crawler = new Crawler($response->getContent(), LOCAL_URL . '/user/login');
-        $form = $crawler->filter('form')->form();
-
-        expect($form->has('user_login_form[username]'))->toBe(true);
-        expect($form->has('user_login_form[password]'))->toBe(true);
+        expect($status)->toEqual(200);
     });
 });
