@@ -5,7 +5,7 @@ import {
     SimpleShowLayout,
     Datagrid, required,
     TextInput, DisabledInput, 
-    TextField, 
+    TextField, Filter,
     ShowButton, EditButton,
 } from 'react-admin';
 
@@ -29,10 +29,15 @@ export const RelayPointTypeEdit = (props) => (
 );
 
 // List
+const RelayPointTypeFilter = (props) => (
+    <Filter {...props}>
+        <TextInput source="name" label="Nom" alwaysOn />
+    </Filter>
+);
 export const RelayPointTypeList = (props) => (
-    <List {...props} title="Types de points relais > liste" perPage={ 30 }>
+    <List {...props} title="Types de points relais > liste" perPage={ 25 } filters={<RelayPointTypeFilter />}>
         <Datagrid>
-            <TextField source="originId" label="ID"/>
+            <TextField source="originId" label="ID" sortBy="id"/>
             <TextField source="name" label="Nom"/>
             <ShowButton />
             <EditButton />

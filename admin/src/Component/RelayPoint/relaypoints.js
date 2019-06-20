@@ -7,8 +7,8 @@ import {
     TextInput, BooleanInput, ReferenceInput, SelectInput, ReferenceArrayInput, SelectArrayInput, NumberInput, 
     TextField, BooleanField, ReferenceField, SelectField, ReferenceArrayField, SingleFieldList, ChipField, NumberField, RichTextField, FunctionField,
     //ImageInput, ImageField,
+    Filter,
     FormDataConsumer,
-    DateField, 
     ShowButton, EditButton,
 } from 'react-admin';
 import RichTextInput from 'ra-input-rich-text';
@@ -124,12 +124,22 @@ export const RelayPointEdit = (props) => (
 );
 
 // List
+const RelayPointFilter = (props) => (
+    <Filter {...props}>
+        <TextInput source="name" label="Nom" alwaysOn />
+        <SelectInput label="Status" source="status" choices={statusChoices} />
+    </Filter>
+);
+const RelayPointPanel = ({ id, record, resource }) => (
+    <div dangerouslySetInnerHTML={{ __html: record.fullDescription }} />
+);
 export const RelayPointList = (props) => (
-    <List {...props} title="Points relais > liste" perPage={ 30 }>
-        <Datagrid>
-            <TextField source="originId" label="ID"/>
+    <List {...props} title="Points relais > liste" perPage={ 25 } filters={<RelayPointFilter />}>
+        <Datagrid expand={<RelayPointPanel />}>
+            <TextField source="originId" label="ID" sortBy="id"/>
             <TextField source="name" label="Nom"/>
-            <DateField source="createdDate" label="Date de création"/>
+            <SelectField source="status" label="Status" choices={statusChoices} sortable={false} />
+            <TextField source="description" label="Description"/>
             <ShowButton />
             <EditButton />
         </Datagrid>

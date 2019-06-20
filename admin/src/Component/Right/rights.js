@@ -46,11 +46,12 @@ export const RightEdit = (props) => (
 const RightFilter = (props) => (
     <Filter {...props}>
         <SelectInput label="Type" source="type" choices={typeChoices} allowEmpty={false} alwaysOn resettable />
+        <TextInput source="name" label="Nom" alwaysOn />
     </Filter>
 );
 
 export const RightList = (props) => (
-    <List {...props} title="Droits > liste" perPage={ 30 } filters={<RightFilter />}>
+    <List {...props} title="Droits > liste" perPage={ 25 } filters={<RightFilter />}>
         <Datagrid>
             <TextField source="originId" label="ID" sortBy="id" />
             <SelectField label="Type" source="type" choices={typeChoices} sortable={false} />

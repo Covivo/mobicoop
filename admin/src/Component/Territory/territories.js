@@ -30,9 +30,9 @@ export const TerritoryEdit = (props) => (
 
 // List
 export const TerritoryList = (props) => (
-    <List {...props} title="Territoires > liste" perPage={ 30 }>
+    <List {...props} title="Territoires > liste" perPage={ 25 }>
         <Datagrid>
-            <TextField source="originId" label="ID"/>
+            <TextField source="originId" label="ID" sortBy="id"/>
             <TextField source="name" label="Nom"/>
             <ShowButton />
             <EditButton />

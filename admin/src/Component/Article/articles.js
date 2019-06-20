@@ -38,9 +38,9 @@ export const ArticleEdit = (props) => (
 
 // List
 export const ArticleList = (props) => (
-    <List {...props} title="Articles > liste" perPage={ 30 }>
+    <List {...props} title="Articles > liste" perPage={ 25 }>
         <Datagrid>
-            <TextField source="originId" label="ID"/>
+            <TextField source="originId" label="ID" sortBy="id"/>
             <TextField source="title" label="Titre"/>
             <ShowButton />
             <EditButton />
