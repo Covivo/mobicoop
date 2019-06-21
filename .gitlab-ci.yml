@@ -41,6 +41,7 @@ branch_features:   # name of the job
 #    APP_ENV: dev    # /!\ important : symfony env variable /!\
   before_script:
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
+    - npm run install-all-ci # Install the dependencies in the local node_modules folder
     - npm install -g wait-on 
 
   script:

@@ -57,7 +57,7 @@ Still this is purely optional it will drastically increase the speed to download
 
 ## Install deps
 
-`npm install --no-save` will perfom:
+`npm install --no-save && npm run install-all` will perfom:
  - Api php vendor
  - Mobicoop vendor + node_modules + build css&js assets (webpack + babel) 
  - Download tools binaries (php-cs-fixer & phpdocumentor)

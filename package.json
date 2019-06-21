@@ -4,7 +4,8 @@
   "description": "API, Front & admin mobicoop carpool app",
   "main": "package.json",
   "scripts": {
-    "postinstall": "npm-run-all --parallel install-api install-client download-tools install-admin",
+    "install-all": "npm-run-all --parallel install-api install-client download-tools install-admin",
+    "install-all-ci": "npm-run-all --parallel install-api install-client install-admin",
     "install-api": "cd api && npm install --no-save",
     "install-admin": "cd admin && yarn install --silent --network-concurrency 2",
     "install-client": "cd client && yarn install --silent --network-concurrency 2",
