@@ -40,8 +40,9 @@
                 />
               </b-field>
               <b-field label="PhoneNumber">
-                <b-input v-model="form.telephone"
-                placeholder="Numéro de téléphone"
+                <b-input 
+                  v-model="form.telephone"
+                  placeholder="Numéro de téléphone"
                 />
               </b-field>
               <b-field label="Password">
@@ -60,12 +61,16 @@
               class="tabContent"
             >
               <b-field label="GivenName">
-                <b-input v-model="form.givenName" 
-                 placeholder="Prénom"/>
+                <b-input
+                  v-model="form.givenName" 
+                  placeholder="Prénom"
+                />
               </b-field>
               <b-field label="FamilyName">
-                <b-input v-model="form.familyName" 
-                placeholder="Nom"/>
+                <b-input
+                  v-model="form.familyName" 
+                  placeholder="Nom"
+                />
               </b-field>
             </tab-content>
 
