@@ -42,7 +42,6 @@ branch_features:   # name of the job
   before_script:
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
     - npm install -g wait-on 
-    - npm install --unsafe-perm
 
   script:
     - npm test  # run the tests
