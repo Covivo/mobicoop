@@ -40,14 +40,14 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use App\Geography\Entity\Address;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Ask;
-use App\Right\Entity\Role;
-use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use App\Right\Entity\UserRole;
 use App\Match\Entity\Mass;
 use App\Right\Entity\UserRight;
 use App\Image\Entity\Image;
+use App\User\Controller\UserPost;
+use App\User\Controller\UserPermissions;
 
 /**
  * A user.
@@ -68,19 +68,41 @@ use App\Image\Entity\Image;
  *          "get"={
  *              "normalization_context"={"groups"={"read"}},
  *          },
- *          "post"
+ *          "post"={
+ *              "method"="POST",
+ *              "path"="/users",
+ *              "controller"=UserPost::class,
+ *          }
  *      },
  *      itemOperations={
  *          "get"={
  *              "normalization_context"={"groups"={"read"}},
+ *          },
+ *          "permissions"={
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"permissions"}},
+ *              "controller"=UserPermissions::class,
+ *              "path"="/users/{id}/permissions",
+ *              "swagger_context"={
+ *                  "parameters"={
+ *                      {
+ *                          "name" = "territory",
+ *                          "in" = "query",
+ *                          "required" = "false",
+ *                          "type" = "number",
+ *                          "format" = "integer",
+ *                          "description" = "The territory id"
+ *                      },
+ *                   }
+ *              }
  *          },
  *          "put",
  *          "delete"
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"id"})
- * @ApiFilter(SearchFilter::class, properties={"email":"exact"})
- * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate", "createdDate"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
 {
@@ -296,8 +318,15 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface Creation date of the event.
      *
      * @ORM\Column(type="datetime")
+     * @Groups("read")
      */
     private $createdDate;
+
+    /**
+     * @var array|null The permissions granted
+     * @Groups("permissions")
+     */
+    private $permissions;
 
     public function __construct($status = null)
     {
@@ -755,6 +784,18 @@ class User implements UserInterface, EquatableInterface
         }
 
         return true;
+    }
+
+    public function getPermissions(): ?array
+    {
+        return $this->permissions;
+    }
+
+    public function setPermissions(array $permissions): self
+    {
+        $this->permissions = $permissions;
+
+        return $this;
     }
 
     // DOCTRINE EVENTS

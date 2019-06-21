@@ -23,7 +23,6 @@
 
 namespace App\Match\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Match\Service\MassImportManager;
 use App\Match\Entity\Mass;
 
@@ -36,9 +35,6 @@ final class MassAnalyzeAction
         $this->massImportManager = $massImportManager;
     }
 
-    /**
-     * @IsGranted("ROLE_USER")
-     */
     public function __invoke(Mass $data): Mass
     {
         if ($data->getStatus() == Mass::STATUS_VALID) {

@@ -32,7 +32,7 @@ use App\Right\Controller\PermissionCheck;
  *
  * @ApiResource(
  *      collectionOperations={
- *          "permission"={
+ *          "granted"={
  *              "method"="GET",
  *              "controller"=PermissionCheck::class,
  *              "path"="/permissions",
@@ -77,9 +77,9 @@ class Permission
     private $id;
 
     /**
-     * @var boolean The permission
+     * @var boolean The action is granted
      */
-    private $permission;
+    private $granted;
 
     public function __construct($id)
     {
@@ -91,14 +91,14 @@ class Permission
         return $this->id;
     }
 
-    public function getPermission(): bool
+    public function isGranted(): ?bool
     {
-        return $this->permission;
+        return $this->granted;
     }
 
-    public function setPermission(bool $permission): self
+    public function setGranted(bool $granted): self
     {
-        $this->permission = $permission;
+        $this->granted = $granted;
 
         return $this;
     }

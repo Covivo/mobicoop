@@ -1,39 +1,40 @@
 {
-  "name": "Mobicoop",
+  "name": "mobicoop-platform",
   "version": "0.1.1",
   "description": "API, Front & admin mobicoop carpool app",
   "main": "package.json",
   "scripts": {
-    "install": "npm run install-api && npm run install-mobicoop && npm run download-tools && npm run install-admin",
-    "install-api": "cd api && npm i --no-save",
-    "install-admin": "cd interfaces/admin && npm i --no-save",
-    "install-mobicoop": "cd interfaces/mobicoop && npm i --no-save",
+    "postinstall": "npm-run-all --parallel install-api install-client download-tools install-admin",
+    "install-api": "cd api && npm install --no-save",
+    "install-admin": "cd admin && yarn install --silent --network-concurrency 2",
+    "install-client": "cd client && yarn install --silent --network-concurrency 2",
     "download-tools": "wget http://www.phpdoc.org/phpDocumentor.phar -O bin/phpDocumentor.phar && wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O bin/php-cs-fixer.phar",
     "test": "npm run test-api && npm run test-mobicoop",
     "test-and-coverage": "npm run test-api && npm run test-and-coverage-mobicoop",
     "test-api": "cd api && npm run test",
-    "test-admin": "cd interfaces/admin && npm run test",
-    "test-mobicoop": "cd interfaces/mobicoop && npm run test",
-    "test-functional": "cd interfaces/mobicoop && npm run testFunctional",
-    "test-functional-ci": "cd interfaces/mobicoop && npm run testFunctionalCI",
-    "test-and-coverage-mobicoop": "cd interfaces/mobicoop && npm run test-and-coverage",
+    "test-admin": "cd admin && npm run test",
+    "test-mobicoop": "cd client && npm run test",
+    "test-functional": "cd client && npm run testFunctional",
+    "test-functional-ci": "cd client && npm run testFunctionalCI",
+    "test-and-coverage-mobicoop": "cd client && npm run test-and-coverage",
     "start": "npm-run-all --parallel start-api start-mobicoop",
     "start-production": "npm-run-all --parallel start-api start-mobicoop-production",
     "start-api": "cd api && npm start",
-    "start-admin": "cd interfaces/admin && npm start",
-    "start-mobicoop": "cd interfaces/mobicoop && npm start",
-    "start-mobicoop-production": "cd interfaces/mobicoop && npm start production",
+    "start-admin": "cd admin && npm start",
+    "start-mobicoop": "cd client && npm start",
+    "start-mobicoop-production": "cd client && npm start production",
     "start-noadmin": "npm-run-all --parallel start-api start-mobicoop",
-    "transfer-copyright": "node helpers/transferCopyright.js",
-    "generateDocs": "php bin/phpDocumentor.phar -d 'interfaces/mobicoop/src','api/src' --ignore '*/Migrations/*'  -t docs/php --title Mobicoop",
-    "create-front-canvas": "node helpers/createFrontCanvas.js -d",
-    "link-bundle": "node helpers/linkBundle.js -d",
-    "contributor-checker": "node helpers/hooks/contributor-license-agreement-checker.js",
-    "contribute": "node helpers/hooks/contributor-license-agreement-adder.js"
+    "build-admin": "cd admin && npm run build",
+    "transfer-copyright": "node bin/helpers/transferCopyright.js",
+    "generateDocs": "php bin/phpDocumentor.phar -d 'client/src','api/src' --ignore '*/Migrations/*'  -t docs/php --title Mobicoop",
+    "create-front-canvas": "node bin/helpers/createFrontCanvas.js -d",
+    "link-bundle": "node bin/helpers/linkBundle.js -d",
+    "contributor-checker": "node bin/helpers/hooks/contributor-license-agreement-checker.js",
+    "contribute": "node bin/helpers/hooks/contributor-license-agreement-adder.js"
   },
   "config": {
     "ghooks": {
-      "pre-commit": "php bin/php-cs-fixer.phar fix --using-cache=false api/src &&  php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src && php bin/php-cs-fixer.phar fix --using-cache=false interfaces/mobicoop/src/MobicoopBundle/spec",
+      "pre-commit": "php bin/php-cs-fixer.phar fix --using-cache=false api/src &&  php bin/php-cs-fixer.phar fix --using-cache=false client/src",
       "pre-push": "npm run contributor-checker",
       "post-merge": "npm install && cd api && npm run update-db"
     }
@@ -50,21 +51,18 @@
   "homepage": "https://gitlab.com/mobicoop/mobicoop#README",
   "dependencies": {
     "await-to-js": "^2.0.1",
-    "axios": "^0.18.0",
     "commander": "^2.19.0",
     "fs-extra": "^7.0.0",
-    "fs-readdir-recursive": "^1.1.0",
-    "git-command-line": "^0.1.5",
     "git-repo-info": "^2.0.0",
     "git-repo-name": "^0.6.0",
     "git-user-name": "^2.0.0",
     "kuler": "^1.0.1",
-    "lodash": "^4.17.11",
     "npm-run-all": "^4.1.5",
-    "readline-sync": "^1.4.9",
-    "simple-git": "^1.105.0"
+    "simple-git": "^1.105.0",
+    "yarn": "^1.16.0"
   },
   "devDependencies": {
-    "ghooks": "^2.0.4"
+    "ghooks": "^2.0.4",
+    "speed-measure-webpack-plugin": "^1.3.1"
   }
 }

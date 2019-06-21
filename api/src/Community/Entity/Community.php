@@ -23,12 +23,14 @@
 
 namespace App\Community\Entity;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Image\Entity\Image;
 use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -36,6 +38,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use App\Carpool\Entity\Proposal;
+use App\Community\Controller\JoinAction;
 
 /**
  * A community.
@@ -53,6 +56,8 @@ use App\Carpool\Entity\Proposal;
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
  * )
+ * @ApiFilter(OrderFilter::class, properties={"id", "name", "description", "createdDate"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
  */
 class Community
 {
@@ -76,12 +81,20 @@ class Community
     private $name;
 
     /**
-     * @var boolean|null The community is private.
+     * @var boolean|null Members are only visible by the members of the community.
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
-    private $private;
+    private $membersHidden;
+
+    /**
+     * @var boolean|null Proposals are only visible by the members of the community.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $proposalsHidden;
     
     /**
      * @var string The short description of the community.
@@ -146,6 +159,16 @@ class Community
      * @ApiSubresource(maxDepth=1)
      */
     private $communityUsers;
+
+    /**
+     * @var ArrayCollection|null The security files of the community.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunitySecurity", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
+     */
+    private $communitySecurities;
     
     public function __construct($id=null)
     {
@@ -153,6 +176,7 @@ class Community
         $this->images = new ArrayCollection();
         $this->proposals = new ArrayCollection();
         $this->communityUsers = new ArrayCollection();
+        $this->communitySecurities = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -175,14 +199,26 @@ class Community
         $this->name = $name;
     }
 
-    public function isPrivate(): ?bool
+    public function isMembersHidden(): ?bool
     {
-        return $this->private;
+        return $this->membersHidden ? true : false;
     }
     
-    public function setPrivate(bool $isPrivate): self
+    public function setMembersHidden(?bool $isMembersHidden): self
     {
-        $this->private = $isPrivate;
+        $this->membersHidden = $isMembersHidden ? true : false;
+        
+        return $this;
+    }
+
+    public function isProposalsHidden(): ?bool
+    {
+        return $this->proposalsHidden ? true : false;
+    }
+    
+    public function setProposalsHidden(?bool $isProposalsHidden): self
+    {
+        $this->proposalsHidden = $isProposalsHidden ? true : false;
         
         return $this;
     }
@@ -304,6 +340,34 @@ class Community
             // set the owning side to null (unless already changed)
             if ($communityUser->getCommunity() === $this) {
                 $communityUser->setCommunity(null);
+            }
+        }
+        
+        return $this;
+    }
+
+    public function getCommunitySecurities()
+    {
+        return $this->communitySecurities->getValues();
+    }
+    
+    public function addCommunitySecurity(CommunitySecurity $communitySecurity): self
+    {
+        if (!$this->communitySecurities->contains($communitySecurity)) {
+            $this->communitySecurities[] = $communitySecurity;
+            $communitySecurity->setCommunity($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeCommunitySecurity(CommunityUser $communitySecurity): self
+    {
+        if ($this->communitySecurities->contains($communitySecurity)) {
+            $this->communitySecurities->removeElement($communitySecurity);
+            // set the owning side to null (unless already changed)
+            if ($communitySecurity->getCommunity() === $this) {
+                $communitySecurity->setCommunity(null);
             }
         }
         

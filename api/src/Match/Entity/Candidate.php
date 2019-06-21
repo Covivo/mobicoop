@@ -70,6 +70,11 @@ class Candidate
      */
     private $minCommonDistancePercent;
 
+    /**
+     * @var MassPerson The mass person associated with the candidate in case of mass matching
+     */
+    private $massPerson;
+
     
     public function getId(): ?int
     {
@@ -161,6 +166,18 @@ class Candidate
     public function setMinCommonDistancePercent(int $minCommonDistancePercent): self
     {
         $this->minCommonDistancePercent = $minCommonDistancePercent;
+        
+        return $this;
+    }
+
+    public function getMassPerson(): ?MassPerson
+    {
+        return $this->massPerson;
+    }
+    
+    public function setMassPerson(?MassPerson $massPerson): self
+    {
+        $this->massPerson = $massPerson;
         
         return $this;
     }

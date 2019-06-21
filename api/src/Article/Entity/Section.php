@@ -37,6 +37,7 @@ use App\Article\Controller\SectionDown;
  * @ORM\Entity()
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },

@@ -120,6 +120,7 @@ class GeoTools
      */
     public function getCO2(int $distance, int $round=2)
     {
-        return round(((($distance)/1000) * 7 * 0.0232), $round);
+        //return round(((($distance)/1000) * 7 * 0.0232), $round);
+        return round($distance/1000 * 213, $round);
     }
 }

@@ -29,21 +29,35 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\Collection;
 use App\User\Entity\User;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
+use App\Community\Controller\JoinAction;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * A user related to a community.
  * Additionnal properties could be added so we need this entity (could be useless without extra properties => if so it would be a 'classic' manytomany relation)
  *
  * @ORM\Entity
+ * @UniqueEntity(
+ *     fields={"community", "user"},
+ *     errorPath="user",
+ *     message="This user already asked to join this community."
+ * )
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
+ *      collectionOperations={
+ *          "get",
+ *          "post"={
+ *              "controller"=JoinAction::class,
+ *          }
+ *      },
  *      itemOperations={"get","put","delete"}
  * )
  * @ApiFilter(NumericFilter::class, properties={"community"})
@@ -70,6 +84,8 @@ class CommunityUser
      * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="communityUsers")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
+     * @MaxDepth(1)
+     * @Assert\NotBlank
      */
     private $community;
 
@@ -79,6 +95,8 @@ class CommunityUser
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
+     * @MaxDepth(1)
+     * @Assert\NotBlank
      */
     private $user;
 
@@ -95,6 +113,7 @@ class CommunityUser
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
     private $admin;
 
@@ -118,6 +137,18 @@ class CommunityUser
     * @ORM\Column(type="datetime", nullable=true)
     */
     private $refusedDate;
+
+    /**
+     * @var string The login to join the community if the community is secured.
+     * @Groups("write")
+     */
+    private $login;
+
+    /**
+     * @var string The password to join the community if the community is secured.
+     * @Groups("write")
+     */
+    private $password;
     
     public function getId(): ?int
     {
@@ -148,7 +179,7 @@ class CommunityUser
         return $this;
     }
     
-    public function getStatus()
+    public function getStatus(): ?int
     {
         return $this->status;
     }
@@ -206,6 +237,26 @@ class CommunityUser
         return $this;
     }
 
+    public function getLogin(): ?string
+    {
+        return $this->login;
+    }
+    
+    public function setLogin(?string $login)
+    {
+        $this->login = $login;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+    
+    public function setPassword(?string $password)
+    {
+        $this->password = $password;
+    }
+
     // DOCTRINE EVENTS
     
     /**
@@ -217,6 +268,18 @@ class CommunityUser
     {
         $this->setCreatedDate(new \Datetime());
         $this->setAutoAcceptedOrRefusedDate();
+    }
+
+    /**
+     * Default status.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoStatus()
+    {
+        if (is_null($this->getStatus())) {
+            $this->setStatus(self::STATUS_PENDING);
+        }
     }
 
     /**

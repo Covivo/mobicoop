@@ -103,15 +103,31 @@ class PTLine
      * @Groups("pt")
      */
     private $ptcompany;
-    
+
     /**
-     * @var TravelMode The transport mode of this line.
+     * @var TravelMode|null The transport mode of this line.
      *
      * @ORM\ManyToOne(targetEntity="App\Travel\Entity\TravelMode")
      * @Groups("pt")
      */
     private $travelMode;
-    
+
+    /**
+     * @var int The transport mode of this line.
+     *
+     * @ORM\Column(type="int", nullable=true)
+     * @Groups("pt")
+     */
+    private $transportMode;
+
+    /**
+     * @var string The color of this line.
+     *
+     * @ORM\Column(type="string", length=10, nullable=true)
+     * @Groups("pt")
+     */
+    private $color;
+
     public function __construct($id)
     {
         $this->id = $id;
@@ -201,7 +217,7 @@ class PTLine
         return $this;
     }
     
-    public function getTravelMode(): TravelMode
+    public function getTravelMode(): ?TravelMode
     {
         return $this->travelMode;
     }
@@ -210,6 +226,30 @@ class PTLine
     {
         $this->travelMode = $travelMode;
         
+        return $this;
+    }
+
+    public function getTransportMode(): ?int
+    {
+        return $this->transportMode;
+    }
+
+    public function setTransportMode(int $transportMode): self
+    {
+        $this->transportMode = $transportMode;
+
+        return $this;
+    }
+
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+
+    public function setColor(string $color): self
+    {
+        $this->color = $color;
+
         return $this;
     }
 }

@@ -25,9 +25,14 @@ namespace App\DataProvider\Entity;
 
 use App\DataProvider\Interfaces\ProviderInterface;
 use App\DataProvider\Service\DataProvider;
+use App\PublicTransport\Entity\PTAccessibilityStatus;
 use App\PublicTransport\Entity\PTJourney;
 use App\PublicTransport\Entity\PTArrival;
 use App\PublicTransport\Entity\PTDeparture;
+use App\PublicTransport\Entity\PTLineStop;
+use App\PublicTransport\Entity\PTLineStopList;
+use App\PublicTransport\Entity\PTStop;
+use App\PublicTransport\Entity\PTTripPoint;
 use App\Travel\Entity\TravelMode;
 use App\PublicTransport\Entity\PTStep;
 use App\PublicTransport\Entity\PTLine;
@@ -71,7 +76,8 @@ use App\PublicTransport\Entity\PTCompany;
  * - a second PTRide,
  * - and finally a second Leg
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  *
  */
 class CitywayProvider implements ProviderInterface
@@ -88,8 +94,10 @@ class CitywayProvider implements ProviderInterface
     private const CW_COUNTRY = "France";
     private const CW_NC = "NC";
 
-    private const URI = "http://preprod.tsvc.grandest.cityway.fr/api/";
-    private const COLLECTION_RESOURCE = "journeyplanner/opt/PlanTrips/json";
+    private const URI = "https://api.grandest2.cityway.fr/";
+    private const COLLECTION_RESSOURCE_JOURNEYS = "journeyplanner/api/opt/PlanTrips/json";
+    private const COLLECTION_RESSOURCE_TRIPPOINTS = "api/transport/v3/trippoint/GetTripPoints/json";
+    private const COLLECTION_RESSOURCE_LINESTOPS = "api/transport/v3/stop/GetLineStops/json";
 
     private const DATETIME_OUTPUT_FORMAT = "d/m/Y H:i:s";
     private const DATETIME_INPUT_FORMAT = "Y-m-d_H-i";
@@ -98,7 +106,7 @@ class CitywayProvider implements ProviderInterface
         PTDataProvider::DATETYPE_DEPARTURE => "DEPARTURE",
         PTDataProvider::DATETYPE_ARRIVAL => "ARRIVAL"
     ];
-    
+
     private const ALGORITHMS = [
         PTDataProvider::ALGORITHM_FASTEST => "FASTEST",
         PTDataProvider::ALGORITHM_SHORTEST => "SHORTEST",
@@ -119,48 +127,22 @@ class CitywayProvider implements ProviderInterface
     {
         switch ($class) {
             case PTJourney::class:
-                $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESOURCE);
-                $getParams = [
-                    "DepartureType" => "COORDINATES",
-                    "ArrivalType" => "COORDINATES",
-                    "TripModes" => $this->getTripModes($params["modes"]),
-                    "Algorithm" => self::ALGORITHMS[$params["algorithm"]],
-                    "Date" => $params["date"]->format(self::DATETIME_INPUT_FORMAT),
-                    "DateType" => self::DATETYPES[$params["dateType"]],
-                    "DepartureLatitude" => $params["origin_latitude"],
-                    "DepartureLongitude" => $params["origin_longitude"],
-                    "ArrivalLatitude" => $params["destination_latitude"],
-                    "ArrivalLongitude" => $params["destination_longitude"]
-                ];
-                $response = $dataProvider->getCollection($getParams);
-                if ($response->getCode() == 200) {
-                    $data = json_decode($response->getValue(), true);
-                    if (!isset($data["StatusCode"])) {
-                        return $this->collection;
-                    }
-                    if ($data["StatusCode"] <> 200) {
-                        return $this->collection;
-                    }
-                    if (!isset($data["Data"])) {
-                        return $this->collection;
-                    }
-                    if (!isset($data["Data"][0]["response"])) {
-                        break;
-                    }
-                    if (!isset($data["Data"][0]["response"]["trips"]["Trip"])) {
-                        break;
-                    }
-                    foreach ($data["Data"][0]["response"]["trips"]["Trip"] as $trip) {
-                        $this->collection[] = self::deserialize($class, $trip);
-                    }
-                    return $this->collection;
-                }
+                $this->getCollectionJourneys($class, $params);
+                return $this->collection;
+               break;
+            case PTTripPoint::class:
+                $this->getCollectionTripPoints($class, $params);
+                return $this->collection;
+                break;
+            case PTLineStop::class:
+                $this->getCollectionLineStops($class, $params);
+                return $this->collection;
                 break;
             default:
                 break;
         }
     }
-    
+
     private function getTripModes($modes)
     {
         switch ($modes) {
@@ -192,6 +174,98 @@ class CitywayProvider implements ProviderInterface
     {
     }
 
+
+    private function getCollectionJourneys($class, array $params)
+    {
+        $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESSOURCE_JOURNEYS);
+        $getParams = [
+            "DepartureType" => "COORDINATES",
+            "ArrivalType" => "COORDINATES",
+            "TripModes" => $this->getTripModes($params["modes"]),
+            "Algorithm" => self::ALGORITHMS[$params["algorithm"]],
+            "Date" => $params["date"]->format(self::DATETIME_INPUT_FORMAT),
+            "DateType" => self::DATETYPES[$params["dateType"]],
+            "DepartureLatitude" => $params["origin_latitude"],
+            "DepartureLongitude" => $params["origin_longitude"],
+            "ArrivalLatitude" => $params["destination_latitude"],
+            "ArrivalLongitude" => $params["destination_longitude"]
+        ];
+        $response = $dataProvider->getCollection($getParams);
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+            if (!isset($data["StatusCode"])) {
+                return $this->collection;
+            }
+            if ($data["StatusCode"] <> 200) {
+                return $this->collection;
+            }
+            if (!isset($data["Data"])) {
+                return $this->collection;
+            }
+            if (!isset($data["Data"][0]["response"])) {
+                return $this->collection;
+            }
+            if (!isset($data["Data"][0]["response"]["trips"]["Trip"])) {
+                return $this->collection;
+            }
+            foreach ($data["Data"][0]["response"]["trips"]["Trip"] as $trip) {
+                $this->collection[] = self::deserialize($class, $trip);
+            }
+        }
+    }
+
+    private function getCollectionTripPoints($class, array $params)
+    {
+        $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESSOURCE_TRIPPOINTS);
+        $getParams = [
+            "Latitude" => $params["latitude"],
+            "Longitude" => $params["longitude"],
+            "TransportModes" => $params["transportModes"],
+            "Perimeter" => $params["perimeter"]
+        ];
+        $response = $dataProvider->getCollection($getParams);
+
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+            if (!isset($data["StatusCode"])) {
+                return $this->collection;
+            }
+            if ($data["StatusCode"] <> 200) {
+                return $this->collection;
+            }
+            if (!isset($data["Data"])) {
+                return $this->collection;
+            }
+            foreach ($data["Data"] as $tripPoint) {
+                $this->collection[] = self::deserialize($class, $tripPoint);
+            }
+        }
+    }
+
+    private function getCollectionLineStops($class, array $params)
+    {
+        $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESSOURCE_LINESTOPS);
+        $getParams = [
+            "LogicalIds" => $params["logicalId"]
+        ];
+        $response = $dataProvider->getCollection($getParams);
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+            if (!isset($data["StatusCode"])) {
+                return $this->collection;
+            }
+            if ($data["StatusCode"] <> 200) {
+                return $this->collection;
+            }
+            if (!isset($data["Data"])) {
+                return $this->collection;
+            }
+            foreach ($data["Data"] as $lineStop) {
+                $this->collection[] = self::deserialize($class, $lineStop);
+            }
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -201,9 +275,140 @@ class CitywayProvider implements ProviderInterface
             case PTJourney::class:
                 return self::deserializeJourney($data);
                 break;
+            case PTTripPoint::class:
+                return self::deserializeTripPoint($data);
+                break;
+            case PTLineStop::class:
+                return self::deserializeLineStop($data);
+                break;
             default:
                 break;
         }
+    }
+
+
+    private function deserializeLineStop($data)
+    {
+        $lineStop = new PTLineStop(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
+
+        if (isset($data["Direction"])) {
+            $lineStop->setDirection($data["Direction"]);
+        }
+
+        if (isset($data["Line"]) && isset($data["Line"]["Id"])) {
+            $line = $this->deserializeLine($data["Line"]);
+
+            $lineStop->setLine($line);
+        }
+
+        if (isset($data["LineId"])) {
+            $lineStop->setLineId($data["LineId"]);
+        }
+
+
+        if (isset($data["Stop"]) && isset($data["Stop"]["Id"])) {
+            $stop = new PTStop($data["Stop"]["Id"]);
+
+            if (isset($data["Stop"]["Name"])) {
+                $stop->setName($data["Stop"]["Name"]);
+            }
+            if (isset($data["Stop"]["Latitude"])) {
+                $stop->setLatitude($data["Stop"]["Latitude"]);
+            }
+            if (isset($data["Stop"]["Longitude"])) {
+                $stop->setLongitude($data["Stop"]["Longitude"]);
+            }
+            if (isset($data["Stop"]["PointType"])) {
+                $stop->setPointType($data["Stop"]["PointType"]);
+            }
+            if (isset($data["Stop"]["AccessibilityStatus"])) {
+                $access = $this->deserializeAccessibilityStatus($data["Stop"]["AccessibilityStatus"]);
+
+                $stop->setAccessibilityStatus($access);
+            }
+            if (isset($data["Stop"]["IsDisrupted"])) {
+                $stop->setIsDisrupted($data["Stop"]["IsDisrupted"]);
+            }
+
+            $lineStop->setStop($stop);
+        }
+
+        if (isset($data["StopId"])) {
+            $lineStop->setStopId($data["StopId"]);
+        }
+
+
+
+
+        return $lineStop;
+    }
+
+
+    private function deserializeLine($data)
+    {
+        $line = new PTLine($data["Id"]);
+
+
+        if (isset($data["Name"])) {
+            $line->setName($data["Name"]);
+        }
+        if (isset($data["Number"])) {
+            $line->setNumber($data["Number"]);
+        }
+        if (isset($data["LineDirections"][0]["Name"])) {
+            $line->setDirection($data["LineDirections"][0]["Name"]);
+        }
+        if (isset($data["Network"])) {
+            if (isset($data["Network"]["Id"])) {
+                $ptcompany = new PTCompany($data["Network"]["Id"]);
+                $ptcompany->setName($data["Network"]["Name"]);
+            }
+            $line->setPTCompany($ptcompany);
+        }
+        if (isset($data["Color"])) {
+            $line->setColor($data["Color"]);
+        }
+        if (isset($data["TransportMode"])) {
+            $line->setTransportMode($data["TransportMode"]);
+        }
+
+        return $line;
+    }
+
+    private function deserializeAccessibilityStatus($data)
+    {
+        $access = new PTAccessibilityStatus(1);// we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
+
+        if (isset($data["BlindAccess"])) {
+            $access->setBlindAccess($data["BlindAccess"]);
+        }
+        if (isset($data["DeafAccess"])) {
+            $access->setDeafAccess($data["DeafAccess"]);
+        }
+        if (isset($data["MentalIllnessAccess"])) {
+            $access->setMentalIllnessAccess($data["MentalIllnessAccess"]);
+        }
+        if (isset($data["WheelChairAccess"])) {
+            $access->setWheelChairAccess($data["WheelChairAccess"]);
+        }
+
+        return $access;
+    }
+
+    private function deserializeTripPoint($data)
+    {
+        $tripPoint = new PTTripPoint();
+
+        $tripPoint->setId($data["Id"]);
+        $tripPoint->setLatitude($data["Latitude"]);
+        $tripPoint->setLongitude($data["Longitude"]);
+        $tripPoint->setLocalityId($data["LocalityId"]);
+        $tripPoint->setName($data["Name"]);
+        $tripPoint->setPointType($data["PointType"]);
+        $tripPoint->setPostalCode($data["PostalCode"]);
+        $tripPoint->setTransportMode($data["TransportMode"]);
+
+        return $tripPoint;
     }
 
     private function deserializeJourney($data)
