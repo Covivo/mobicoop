@@ -1,22 +1,53 @@
 import React from 'react';
 import { 
-    Create, Edit, Show,
+    Create, Edit, Show, 
     SimpleForm, 
     required,
     ReferenceInput, SelectInput, TextInput, NumberInput,
-    ReferenceField, TextField,
+    ReferenceField, TextField, SelectField,
     Tab, TabbedShowLayout, 
     Link, 
     Datagrid,
     Button, EditButton, DeleteButton,
-    ReferenceArrayField
+    ReferenceArrayField, ReferenceManyField
 } from 'react-admin';
 import { parse } from "query-string";
+import { RichTextField } from 'react-admin';
 
 const statusChoices = [
     { id: 0, name: 'En cours d\'édition' },
     { id: 1, name: 'En ligne' },
 ];
+
+// Show
+export const SectionShow = (props) => (
+    <Show { ...props } title="Articles > afficher une section">
+        <TabbedShowLayout>
+            <Tab label="Détails">
+                <TextField source="originId" label="ID"/>
+                <ReferenceField source="article" label="Article" reference="articles" linkType="show" >
+                    <TextField source="title"/>
+                </ReferenceField>
+                <SelectField source="status" label="Status" choices={statusChoices} />
+                <TextField source="title" label="Titre" />
+                <TextField source="subtitle" label="Sous-titre" />
+                <TextField source="position" label="Position" />
+                <EditButton />
+            </Tab>
+            <Tab label="Paragraphes" path="paragraphs">
+                <ReferenceArrayField source="paragraphs" reference="paragraphs" addLabel={false}>
+                    <Datagrid>
+                        <RichTextField source="text" label="Texte" />
+                        <TextField source="position" label="Position" />
+                        <EditButton />
+                        <DeleteButton />
+                    </Datagrid>
+                </ReferenceArrayField>
+                <AddParagraphButton />
+            </Tab>
+        </TabbedShowLayout>
+    </Show>
+);
 
 // Create
 export const SectionCreate = (props) => {
@@ -31,10 +62,10 @@ export const SectionCreate = (props) => {
             defaultValue={{ article }}
             redirect={redirect}
         >
-            <ReferenceInput label="Article" source="article" reference="articles" validate={required()}>
+            <ReferenceInput source="article" label="Article" reference="articles" validate={required()}>
                 <SelectInput optionText="title" />
             </ReferenceInput>
-            <SelectInput label="Status" source="status" choices={statusChoices} defaultValue={0} validate={required()}/>
+            <SelectInput source="status" label="Status" choices={statusChoices} defaultValue={0} validate={required()}/>
             <TextInput source="title" label="Titre" />
             <TextInput source="subTitle" label="Sous-titre" />
             <NumberInput source="position" label="Position" />
@@ -44,28 +75,6 @@ export const SectionCreate = (props) => {
 }
 
 // Edit
-export const SectionEdit = (props) => {
-    
-    const redirect = `/articles/`;
-
-    return (
-    <Edit { ...props } title="Articles > éditer une section">
-        <SimpleForm
-            redirect={redirect}
-        >
-            <ReferenceField label="Article" source="article" reference="articles" linkType="" >
-                <TextField source="title"/>
-            </ReferenceField>
-            <SelectInput label="Status" source="status" choices={statusChoices} />
-            <TextInput source="title" label="Titre" />
-            <TextInput source="subTitle" label="Sous-titre" />
-            <NumberInput source="position" label="Position" />
-        </SimpleForm>
-    </Edit>
-    );
-}
-
-// Show
 const AddParagraphButton = ({ record }) => (
     <Button
         component={Link}
@@ -77,26 +86,31 @@ const AddParagraphButton = ({ record }) => (
     >
     </Button>
 );
-export const SectionShow = (props) => (
-    <Show { ...props } title="Articles > afficher une section">
-        <TabbedShowLayout>
-            <Tab label="Détails">
-                <TextField source="title" label="Titre" />
-                <TextField source="subtitle" label="Sous-titre" />
-                <TextField source="position" label="Position" />
-                <EditButton />
-            </Tab>
-            <Tab label="Paragraphes" path="paragraphs">
-                <ReferenceArrayField reference="paragraphs" source="paragraphs" addLabel={false}>
-                    <Datagrid>
-                        <TextField source="text" label="Texte" />
-                        <TextField source="position" label="Position" />
-                        <EditButton />
-                        <DeleteButton />
-                    </Datagrid>
-                </ReferenceArrayField>
-                <AddParagraphButton />
-            </Tab>
-        </TabbedShowLayout>
-    </Show>
-);
+export const SectionEdit = (props) => {
+    
+    const redirect = `/articles/`;
+
+    return (
+    <Edit { ...props } title="Articles > éditer une section">
+        <SimpleForm
+            redirect={redirect}
+        >
+            <ReferenceField source="article" label="Article" reference="articles" linkType="show" >
+                <TextField source="title"/>
+            </ReferenceField>
+            <SelectInput source="status" label="Status" choices={statusChoices} />
+            <TextInput source="title" label="Titre" />
+            <TextInput source="subTitle" label="Sous-titre" />
+            <NumberInput source="position" label="Position" />
+            <ReferenceManyField label="Paragraphes" reference="paragraphs" target="section">
+                <Datagrid>
+                    <RichTextField source="text" label="Texte" />
+                    <SelectField source="status" label="Status" choices={statusChoices} />
+                    <EditButton />
+                </Datagrid>
+            </ReferenceManyField>
+            <AddParagraphButton />
+        </SimpleForm>
+    </Edit>
+    );
+}

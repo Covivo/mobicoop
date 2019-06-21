@@ -19,17 +19,17 @@ import MapIcon from '@material-ui/icons/Map';
 
 import frenchMessages from 'ra-language-french';
 
-import { UserShow, UserEdit, UserCreate, UserList } from './Component/User/users';
-import { CommunityShow, CommunityEdit, CommunityCreate, CommunityList } from './Component/Community/communities';
+import { UserList, UserShow, UserCreate, UserEdit } from './Component/User/users';
+import { CommunityList, CommunityShow, CommunityCreate, CommunityEdit } from './Component/Community/communities';
 import { CommunityUserCreate, CommunityUserEdit } from './Component/Community/community_users';
-import { RoleShow, RoleEdit, RoleCreate, RoleList } from './Component/Right/roles';
-import { RightShow , RightList, RightEdit, RightCreate } from './Component/Right/rights';
-import { RelayPointShow , RelayPointList, RelayPointEdit, RelayPointCreate } from './Component/RelayPoint/relaypoints';
-import { RelayPointTypeShow , RelayPointTypeList, RelayPointTypeEdit, RelayPointTypeCreate } from './Component/RelayPoint/relaypointtypes';
-import { ArticleShow, ArticleEdit, ArticleCreate, ArticleList } from './Component/Article/articles';
-import { SectionCreate, SectionEdit, SectionShow } from './Component/Article/sections';
+import { RelayPointList, RelayPointShow, RelayPointCreate, RelayPointEdit } from './Component/RelayPoint/relaypoints';
+import { RelayPointTypeList, RelayPointTypeShow, RelayPointTypeCreate, RelayPointTypeEdit } from './Component/RelayPoint/relaypointtypes';
+import { ArticleList, ArticleShow, ArticleCreate, ArticleEdit } from './Component/Article/articles';
+import { SectionShow, SectionCreate, SectionEdit } from './Component/Article/sections';
 import { ParagraphCreate, ParagraphEdit } from './Component/Article/paragraphs';
-import {  TerritoryShow , TerritoryList, TerritoryEdit, TerritoryCreate } from './Component/Territory/territories';
+import { TerritoryList, TerritoryShow, TerritoryCreate, TerritoryEdit } from './Component/Territory/territories';
+import { RoleList, RoleShow, RoleCreate, RoleEdit } from './Component/Right/roles';
+import { RightList, RightShow, RightCreate, RightEdit } from './Component/Right/rights';
 
 require('dotenv').config();
 
@@ -121,19 +121,19 @@ export default class extends Component {
           >      
             {permissions => {
                 return  [          
-                  isAuthorized("user_manage") ? <Resource name="users" list={ UserList } create={ UserCreate } show={ UserShow } edit={ UserEdit } title="Utilisateurs" options={{ label: 'Utilisateurs' }} icon={PersonIcon} /> : null,
-                  isAuthorized("community_manage") ? <Resource name="communities" list={ CommunityList } create={ CommunityCreate } show={ CommunityShow } edit={ CommunityEdit } title="Communautés" options={{ label: 'Communautés' }} icon={PeopleIcon} /> : null,
-                  isAuthorized("relay_point_manage") ? <Resource name="relay_points" list={ RelayPointList } create={ RelayPointCreate} show={ RelayPointShow} edit={ RelayPointEdit} title="Points relais" options={{ label: 'Points relais' }} icon={LocalParkingIcon} /> : null,
-                  isAuthorized("relay_point_manage") ? <Resource name="relay_point_types" list={ RelayPointTypeList } create={ RelayPointTypeCreate} show={ RelayPointTypeShow} edit={ RelayPointTypeEdit} title="Types de points relais" options={{ label: 'Types de points relais' }} icon={LocalParkingIcon} /> : null,
-                  isAuthorized("community_manage") ? <Resource name="community_users" create={ CommunityUserCreate} edit={ CommunityUserEdit} /> : null,
-                  isAuthorized("article_manage") ? <Resource name="articles" list={ ArticleList } create={ ArticleCreate} show={ ArticleShow} edit={ ArticleEdit} title="Articles" options={{ label: 'Articles' }} icon={NoteIcon} /> : null,
-                  isAuthorized("article_manage") ? <Resource name="sections" create={ SectionCreate} show={ SectionShow}  edit={ SectionEdit} /> : null,
-                  isAuthorized("article_manage") ? <Resource name="paragraphs" create={ ParagraphCreate} edit={ ParagraphEdit} /> : null,
-                  isAuthorized("territory_manage") ? <Resource name="territories" list={ TerritoryList} create={ TerritoryCreate} show={ TerritoryShow} edit={ TerritoryEdit} title="Territoires" options={{ label: 'Territoires' }} icon={MapIcon} /> : null,
+                  isAuthorized("user_manage")         ? <Resource name="users" list={ UserList } show={ UserShow } create={ UserCreate } edit={ UserEdit } title="Utilisateurs" options={{ label: 'Utilisateurs' }} icon={PersonIcon} /> : null,
+                  isAuthorized("community_manage")    ? <Resource name="communities" list={ CommunityList } show={ CommunityShow } create={ CommunityCreate } edit={ CommunityEdit } title="Communautés" options={{ label: 'Communautés' }} icon={PeopleIcon} /> : null,
+                  isAuthorized("relay_point_manage")  ? <Resource name="relay_points" list={ RelayPointList } show={ RelayPointShow} create={ RelayPointCreate} edit={ RelayPointEdit} title="Points relais" options={{ label: 'Points relais' }} icon={LocalParkingIcon} /> : null,
+                  isAuthorized("relay_point_manage")  ? <Resource name="relay_point_types" list={ RelayPointTypeList } show={ RelayPointTypeShow} create={ RelayPointTypeCreate} edit={ RelayPointTypeEdit} title="Types de points relais" options={{ label: 'Types de points relais' }} icon={LocalParkingIcon} /> : null,
+                  isAuthorized("community_manage")    ? <Resource name="community_users" create={ CommunityUserCreate} edit={ CommunityUserEdit} /> : null,
+                  isAuthorized("article_manage")      ? <Resource name="articles" list={ ArticleList } show={ ArticleShow} create={ ArticleCreate} edit={ ArticleEdit} title="Articles" options={{ label: 'Articles' }} icon={NoteIcon} /> : null,
+                  isAuthorized("article_manage")      ? <Resource name="sections" show={ SectionShow} create={ SectionCreate} edit={ SectionEdit} /> : null,
+                  isAuthorized("article_manage")      ? <Resource name="paragraphs" create={ ParagraphCreate} edit={ ParagraphEdit} /> : null,
+                  isAuthorized("territory_manage")    ? <Resource name="territories" list={ TerritoryList} show={ TerritoryShow} create={ TerritoryCreate} edit={ TerritoryEdit} title="Territoires" options={{ label: 'Territoires' }} icon={MapIcon} /> : null,
                   <Resource name="geo_search" />,
                   <Resource name="addresses" />,
-                  isAuthorized("permission_manage") ? <Resource name="roles" list={ RoleList } create={ RoleCreate} show={ RoleShow} edit={ RoleEdit} title="Rôles" options={{ label: 'Rôles' }} icon={SupervisorAccountIcon} /> : null,
-                  isAuthorized("permission_manage") ? <Resource name="rights" list={ RightList } create={ RightCreate} show={ RightShow} edit={ RightEdit} title="Droits" options={{ label: 'Droits' }} icon={LockIcon} /> : null
+                  isAuthorized("permission_manage")   ? <Resource name="roles" list={ RoleList } show={ RoleShow} create={ RoleCreate} edit={ RoleEdit} title="Rôles" options={{ label: 'Rôles' }} icon={SupervisorAccountIcon} /> : null,
+                  isAuthorized("permission_manage")   ? <Resource name="rights" list={ RightList } show={ RightShow} create={ RightCreate} edit={ RightEdit} title="Droits" options={{ label: 'Droits' }} icon={LockIcon} /> : null
                 ];
             }
           }

@@ -21,17 +21,96 @@ const statusChoices = [
     { id: 2, name: 'Inactif' },
 ];  
 
+// List
+const RelayPointFilter = (props) => (
+    <Filter {...props}>
+        <TextInput source="name" label="Nom" alwaysOn />
+        <SelectInput source="status" label="Status" choices={statusChoices} />
+    </Filter>
+);
+const RelayPointPanel = ({ id, record, resource }) => (
+    <div dangerouslySetInnerHTML={{ __html: record.fullDescription }} />
+);
+export const RelayPointList = (props) => (
+    <List {...props} title="Points relais > liste" perPage={ 25 } filters={<RelayPointFilter />} sort={{ field: 'originId', order: 'ASC' }}>
+        <Datagrid expand={<RelayPointPanel />}>
+            <TextField source="originId" label="ID" sortBy="id"/>
+            <TextField source="name" label="Nom"/>
+            <SelectField source="status" label="Status" choices={statusChoices} sortable={false} />
+            <TextField source="description" label="Description"/>
+            <ShowButton />
+            <EditButton />
+        </Datagrid>
+    </List>
+);
+
+// Show
+export const RelayPointShow = (props) => (
+    <Show { ...props } title="Points relais > afficher">
+        <TabbedShowLayout>
+            <FormTab label="Identité">
+                <ReferenceField source="user" label="Créateur" reference="users" >
+                    <FunctionField render={userOptionRenderer}/>
+                </ReferenceField>
+                <TextField source="name" label="Nom" />
+                <SelectField source="status" label="Status" choices={statusChoices} />
+                <ReferenceArrayField source="relayPointTypes" label="Types" reference="relay_point_types">
+                    <SingleFieldList>
+                        <ChipField source="name" />
+                    </SingleFieldList>
+                </ReferenceArrayField>
+                <TextField source="description" label="Description" />
+                <RichTextField source="fullDescription" label="Description complète" />
+            </FormTab>
+            <FormTab label="Adresse">
+                <ReferenceField source="address" label="Rue" reference="addresses" linkType="">
+                    <TextField source="streetAddress" />
+                </ReferenceField>
+                <ReferenceField source="address" label="Code postal" reference="addresses" linkType="">
+                    <TextField source="postalCode" />
+                </ReferenceField>
+                <ReferenceField source="address" label="Ville" reference="addresses" linkType="">
+                    <TextField source="addressLocality" />
+                </ReferenceField>
+                <ReferenceField source="address" label="Pays" reference="addresses" linkType="">
+                    <TextField source="addressCountry" />
+                </ReferenceField>
+                <ReferenceField source="address" label="Latitude" reference="addresses" linkType="">
+                    <TextField source="latitude" />
+                </ReferenceField>
+                <ReferenceField source="address" label="Longitude" reference="addresses" linkType="">
+                    <TextField source="longitude" />
+                </ReferenceField>
+            </FormTab>
+            <FormTab label="Communauté">
+                <ReferenceField source="community" label="Communauté" reference="communities" allowEmpty>
+                    <TextField source="name" />
+                </ReferenceField>
+                <BooleanField source="private" label="Privé à cette communauté" />
+            </FormTab>
+            <FormTab label="Propriétés">
+                <NumberField source="places" label="Nombre de places" />
+                <NumberField source="placesDisabled" label="Nombre de places handicapés" />
+                <BooleanField source="free" label="Gratuit" />
+                <BooleanField source="secured" label="Sécurisé" />
+                <BooleanField source="official" label="Officiel" />
+                <BooleanField source="suggested" label="Suggestion autocomplétion" />
+            </FormTab>
+        </TabbedShowLayout>
+    </Show>
+);
+
 // Create
 export const RelayPointCreate = (props) => (
     <Create { ...props } title="Points relais > ajouter">
         <TabbedForm>
             <FormTab label="Identité">
-                <ReferenceInput label="Créateur" source="user" reference="users" defaultValue={userId}>
+                <ReferenceInput source="user" label="Créateur" reference="users" defaultValue={userId}>
                     <SelectInput optionText={userOptionRenderer}/>
                 </ReferenceInput>
                 <TextInput source="name" label="Nom" validate={required()}/>
-                <SelectInput label="Status" source="status" choices={statusChoices} defaultValue={1} />
-                <ReferenceArrayInput label="Types" source="relayPointTypes" reference="relay_point_types">
+                <SelectInput source="status" label="Status" choices={statusChoices} defaultValue={1} />
+                <ReferenceArrayInput source="relayPointTypes" label="Types" reference="relay_point_types">
                     <SelectArrayInput optionText="name" />
                 </ReferenceArrayInput>
                 <TextInput source="description" label="Description" validate={required()}/>
@@ -46,7 +125,7 @@ export const RelayPointCreate = (props) => (
                 <NumberInput source="address.longitude" label="Longitude" parse={ v => v.toString() } />
             </FormTab>
             <FormTab label="Communauté">
-                <ReferenceInput label="Communauté" source="community" reference="communities" resettable>
+                <ReferenceInput source="community" label="Communauté" reference="communities" resettable>
                     <SelectInput optionText="name" />
                 </ReferenceInput>
                 <FormDataConsumer>
@@ -77,12 +156,12 @@ export const RelayPointEdit = (props) => (
     <Edit {...props} title="Points relais > éditer">
         <TabbedForm>
             <FormTab label="Identité">
-                <ReferenceInput label="Créateur" source="user" reference="users" defaultValue={userId}>
+                <ReferenceInput source="user" label="Créateur" reference="users" defaultValue={userId}>
                     <SelectInput optionText={userOptionRenderer}/>
                 </ReferenceInput>
                 <TextInput source="name" label="Nom" validate={required()}/>
-                <SelectInput label="Status" source="status" choices={statusChoices} defaultValue={1} />
-                <ReferenceArrayInput label="Types" source="relayPointTypes" reference="relay_point_types">
+                <SelectInput source="status" label="Status" choices={statusChoices} defaultValue={1} />
+                <ReferenceArrayInput source="relayPointTypes" label="Types" reference="relay_point_types">
                     <SelectArrayInput optionText="name" />
                 </ReferenceArrayInput>
                 <TextInput source="description" label="Description" validate={required()}/>
@@ -97,7 +176,7 @@ export const RelayPointEdit = (props) => (
                 <NumberInput source="address.longitude" label="Longitude" parse={ v => v.toString() } />
             </FormTab>
             <FormTab label="Communauté">
-                <ReferenceInput label="Communauté" source="community" reference="communities" resettable>
+                <ReferenceInput source="community" label="Communauté" reference="communities" resettable>
                     <SelectInput optionText="name" />
                 </ReferenceInput>
                 <FormDataConsumer>
@@ -121,83 +200,4 @@ export const RelayPointEdit = (props) => (
             </FormTab> */}
         </TabbedForm>
     </Edit>
-);
-
-// List
-const RelayPointFilter = (props) => (
-    <Filter {...props}>
-        <TextInput source="name" label="Nom" alwaysOn />
-        <SelectInput label="Status" source="status" choices={statusChoices} />
-    </Filter>
-);
-const RelayPointPanel = ({ id, record, resource }) => (
-    <div dangerouslySetInnerHTML={{ __html: record.fullDescription }} />
-);
-export const RelayPointList = (props) => (
-    <List {...props} title="Points relais > liste" perPage={ 25 } filters={<RelayPointFilter />}>
-        <Datagrid expand={<RelayPointPanel />}>
-            <TextField source="originId" label="ID" sortBy="id"/>
-            <TextField source="name" label="Nom"/>
-            <SelectField source="status" label="Status" choices={statusChoices} sortable={false} />
-            <TextField source="description" label="Description"/>
-            <ShowButton />
-            <EditButton />
-        </Datagrid>
-    </List>
-);
-
-// Show
-export const RelayPointShow = (props) => (
-    <Show { ...props } title="Points relais > afficher">
-        <TabbedShowLayout>
-            <FormTab label="Identité">
-                <ReferenceField label="Créateur" source="user" reference="users" >
-                    <FunctionField render={userOptionRenderer}/>
-                </ReferenceField>
-                <TextField source="name" label="Nom" />
-                <SelectField label="Status" source="status" choices={statusChoices} />
-                <ReferenceArrayField label="Types" source="relayPointTypes" reference="relay_point_types">
-                    <SingleFieldList>
-                        <ChipField source="name" />
-                    </SingleFieldList>
-                </ReferenceArrayField>
-                <TextField source="description" label="Description" />
-                <RichTextField source="fullDescription" label="Description complète" />
-            </FormTab>
-            <FormTab label="Adresse">
-                <ReferenceField label="Rue" source="address" reference="addresses" linkType="">
-                    <TextField source="streetAddress" />
-                </ReferenceField>
-                <ReferenceField label="Code postal" source="address" reference="addresses" linkType="">
-                    <TextField source="postalCode" />
-                </ReferenceField>
-                <ReferenceField label="Ville" source="address" reference="addresses" linkType="">
-                    <TextField source="addressLocality" />
-                </ReferenceField>
-                <ReferenceField label="Pays" source="address" reference="addresses" linkType="">
-                    <TextField source="addressCountry" />
-                </ReferenceField>
-                <ReferenceField label="Latitude" source="address" reference="addresses" linkType="">
-                    <TextField source="latitude" />
-                </ReferenceField>
-                <ReferenceField label="Longitude" source="address" reference="addresses" linkType="">
-                    <TextField source="longitude" />
-                </ReferenceField>
-            </FormTab>
-            <FormTab label="Communauté">
-                <ReferenceField label="Communauté" source="community" reference="communities" allowEmpty>
-                    <TextField source="name" />
-                </ReferenceField>
-                <BooleanField source="private" label="Privé à cette communauté" />
-            </FormTab>
-            <FormTab label="Propriétés">
-                <NumberField source="places" label="Nombre de places" />
-                <NumberField source="placesDisabled" label="Nombre de places handicapés" />
-                <BooleanField source="free" label="Gratuit" />
-                <BooleanField source="secured" label="Sécurisé" />
-                <BooleanField source="official" label="Officiel" />
-                <BooleanField source="suggested" label="Suggestion autocomplétion" />
-            </FormTab>
-        </TabbedShowLayout>
-    </Show>
 );

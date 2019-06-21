@@ -19,7 +19,7 @@ export const ParagraphCreate = (props) => {
     const { section: section_string } = parse(props.location.search);
     const section = section_string ? parseInt(section_string, 10) : '';
     const section_uri = encodeURIComponent(section_string);
-    const redirect = section_uri ? `/sections/${section_uri}/show` : 'show';
+    const redirect = section_uri ? `/sections/${section_uri}/show/paragraphs` : 'show';
 
     return (
     <Create { ...props } title="Articles > ajouter un paragraphe">
@@ -27,10 +27,10 @@ export const ParagraphCreate = (props) => {
             defaultValue={{ section }}
             redirect={redirect}
         >
-            <ReferenceInput label="Section" source="section" reference="sections" validate={required()}>
+            <ReferenceInput source="section" label="Section" reference="sections" validate={required()}>
                 <SelectInput optionText="title"/>
             </ReferenceInput>
-            <SelectInput label="Status" source="status" choices={statusChoices} defaultValue={1} validate={required()}/>
+            <SelectInput source="status" label="Status" choices={statusChoices} defaultValue={0} validate={required()}/>
             <RichTextInput source="text" label="Texte" validate={required()} />
             <NumberInput source="position" label="Position" />
         </SimpleForm>
@@ -48,10 +48,10 @@ export const ParagraphEdit = (props) => {
         <SimpleForm
             redirect={redirect}
         >
-            <ReferenceField label="Section" source="section" reference="sections" linkType="" >
+            <ReferenceField source="section" label="Section" reference="sections" linkType="" >
                 <TextField source="title"/>
             </ReferenceField>
-            <SelectInput label="Status" source="status" choices={statusChoices} />
+            <SelectInput source="status" label="Status" choices={statusChoices} />
             <RichTextInput source="text" label="Texte" validate={required()} />
             <NumberInput source="position" label="Position" />
         </SimpleForm>

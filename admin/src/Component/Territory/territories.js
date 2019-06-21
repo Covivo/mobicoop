@@ -9,25 +9,6 @@ import {
     ShowButton, EditButton,
 } from 'react-admin';
 
-// Create
-export const TerritoryCreate = (props) => (
-    <Create { ...props } title="Territoires > ajouter">
-        <SimpleForm>
-            <TextInput source="name" label="Nom" validate={required()}/>
-        </SimpleForm>
-    </Create>
-);
-
-// Edit
-export const TerritoryEdit = (props) => (
-    <Edit {...props} title="Territoires > éditer">
-        <SimpleForm>
-            <DisabledInput source="originId" label="ID"/>
-            <TextInput source="name" label="Nom" validate={required()}/>
-        </SimpleForm>
-    </Edit>
-);
-
 // List
 export const TerritoryList = (props) => (
     <List {...props} title="Territoires > liste" perPage={ 25 }>
@@ -49,4 +30,23 @@ export const TerritoryShow = (props) => (
             <EditButton />
         </SimpleShowLayout>
     </Show>
+);
+
+// Create
+export const TerritoryCreate = (props) => (
+    <Create { ...props } title="Territoires > ajouter">
+        <SimpleForm>
+            <TextInput source="name" label="Nom" validate={required()}/>
+        </SimpleForm>
+    </Create>
+);
+
+// Edit
+export const TerritoryEdit = (props) => (
+    <Edit {...props} title="Territoires > éditer">
+        <SimpleForm>
+            <DisabledInput source="originId" label="ID"/>
+            <TextInput source="name" label="Nom" validate={required()}/>
+        </SimpleForm>
+    </Edit>
 );
