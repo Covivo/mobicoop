@@ -49,7 +49,7 @@ branch_features:   # name of the job
     - npm run test-functional-ci
 
   only:
-    - functional-testing # job executed only on test
+    - functional-testing-ci # job executed only on test
   except:       
     refs:   # job not executed for these branches & tags
       - tags    
