@@ -40,10 +40,16 @@
                 />
               </b-field>
               <b-field label="PhoneNumber">
+                <<<<<<< Updated upstream
                 <b-input 
+                  =="====="
+                  <b-input
+                >
+                  >>>>>> Stashed changes
                   v-model="form.telephone"
                   placeholder="Numéro de téléphone"
-                />
+                  />
+                </b-input>
               </b-field>
               <b-field label="Password">
                 <b-input

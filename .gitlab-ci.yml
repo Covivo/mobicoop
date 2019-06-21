@@ -1,6 +1,15 @@
 # Docker image needed for CI
 image: mobicoop/php-node-chromium
 
+services:
+- mysql:latest
+
+variables:
+  # Configure mysql service (https://hub.docker.com/_/mysql/)
+  MYSQL_DATABASE: mobicoop_platform
+  MYSQL_ROOT_PASSWORD: root
+
+
 # Cache modules in between jobs
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -32,10 +41,16 @@ branch_features:   # name of the job
 #    APP_ENV: dev    # /!\ important : symfony env variable /!\
   before_script:
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
+    - npm install -g wait-on 
+    - npm install --unsafe-perm
+
   script:
     - npm test  # run the tests
+    - npm run start & wait-on interfaces/mobicoop/public/build/entrypoints.json
+    - npm run test-functional-ci
+
   only:
-    - pushes
+    - functional-testing # job executed only on test
   except:       
     refs:   # job not executed for these branches & tags
       - tags    
