@@ -29,6 +29,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use App\Article\Controller\ParagraphDown;
 use App\Article\Controller\ParagraphUp;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * A paragraph of a section.
@@ -56,6 +59,7 @@ use App\Article\Controller\ParagraphUp;
  *          }
  *      }
  * )
+ * @ApiFilter(SearchFilter::class, properties={"section":"exact"})
  */
 class Paragraph
 {

@@ -7,7 +7,7 @@ import {
     SimpleForm, required, 
     DisabledInput, TextInput, SelectInput,
     Button, ShowButton, EditButton, DeleteButton,
-    TextField, ReferenceArrayField
+    TextField, ReferenceArrayField, ReferenceManyField, ChipField, SingleFieldList, SelectField
 } from 'react-admin';
 
 const statusChoices = [
@@ -15,33 +15,18 @@ const statusChoices = [
     { id: 1, name: 'En ligne' },
 ];
 
-// Create
-export const ArticleCreate = (props) => (
-    <Create { ...props } title="Articles > ajouter">
-        <SimpleForm>
-            <TextInput source="title" label="Titre" />
-            <SelectInput label="Status" source="status" choices={statusChoices} defaultValue={0} validate={required()}/>
-        </SimpleForm>
-    </Create>
-);
-
-// Edit
-export const ArticleEdit = (props) => (
-    <Edit {...props } title="Articles > éditer">
-        <SimpleForm>
-            <DisabledInput source="originId" label="ID"/>
-            <TextInput source="title" label="Titre" />
-            <SelectInput label="Status" source="status" choices={statusChoices} validate={required()}/>
-        </SimpleForm>
-    </Edit>
-);
-
 // List
 export const ArticleList = (props) => (
-    <List {...props} title="Articles > liste" perPage={ 25 }>
+    <List {...props} title="Articles > liste" perPage={ 25 } sort={{ field: 'originId', order: 'ASC' }}>
         <Datagrid>
             <TextField source="originId" label="ID" sortBy="id"/>
             <TextField source="title" label="Titre"/>
+            <SelectField source="status" label="Status" choices={statusChoices} />
+            <ReferenceManyField label="Sections" reference="sections" target="article" sortable={false}>
+                <SingleFieldList linkType="show">
+                    <ChipField source="title" />
+                </SingleFieldList>
+            </ReferenceManyField>
             <ShowButton />
             <EditButton />
         </Datagrid>
@@ -66,14 +51,16 @@ export const ArticleShow = (props) => (
             <Tab label="Détails">
                 <TextField source="originId" label="ID"/>
                 <TextField source="title" label="Titre"/>
+                <SelectField source="status" label="Status" choices={statusChoices} />
                 <EditButton />
             </Tab>
             <Tab label="Sections" path="sections">
-                <ReferenceArrayField reference="sections" source="sections" addLabel={false}>
+                <ReferenceArrayField source="sections" reference="sections" addLabel={false}>
                     <Datagrid>
                         <TextField source="title" label="Titre" />
                         <TextField source="subtitle" label="Sous-titre" />
                         <TextField source="position" label="Position" />
+                        <SelectField source="status" label="Status" choices={statusChoices} />
                         <ShowButton />
                         <EditButton />
                         <DeleteButton />
@@ -83,4 +70,25 @@ export const ArticleShow = (props) => (
             </Tab>
         </TabbedShowLayout>
     </Show>
+);
+
+// Create
+export const ArticleCreate = (props) => (
+    <Create { ...props } title="Articles > ajouter">
+        <SimpleForm>
+            <TextInput source="title" label="Titre" />
+            <SelectInput source="status" label="Status" choices={statusChoices} defaultValue={0} validate={required()}/>
+        </SimpleForm>
+    </Create>
+);
+
+// Edit
+export const ArticleEdit = (props) => (
+    <Edit {...props } title="Articles > éditer">
+        <SimpleForm>
+            <DisabledInput source="originId" label="ID"/>
+            <TextInput source="title" label="Titre" />
+            <SelectInput source="status" label="Status" choices={statusChoices} validate={required()}/>
+        </SimpleForm>
+    </Edit>
 );

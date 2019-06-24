@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
     Create, Edit, List, Show,
-    SimpleForm, TabbedForm, FormTab,
+    TabbedForm, FormTab,
     SimpleShowLayout,
     Datagrid,
     TextInput, DisabledInput, SelectInput, DateInput,
@@ -17,6 +17,42 @@ const genderChoices = [
     { id: 3, name: 'Autre' },
 ];
 
+// List
+const UserFilter = (props) => (
+    <Filter {...props}>
+        <TextInput source="givenName" label="Prénom" />
+        <TextInput source="familyName" label="Nom" alwaysOn />
+        <TextInput source="email" label="Email" alwaysOn />
+    </Filter>
+);
+export const UserList = (props) => (
+    <List {...props} title="Utilisateurs > liste" perPage={ 25 } filters={<UserFilter />} sort={{ field: 'originId', order: 'ASC' }}>
+        <Datagrid>
+            <TextField source="originId" label="ID" sortBy="id"/>
+            <TextField source="givenName" label="Prénom"/>
+            <TextField source="familyName" label="Nom"/>
+            <EmailField source="email" label="Email" />
+            <DateField source="createdDate" label="Date de création"/>
+            <ShowButton />
+            <EditButton />
+        </Datagrid>
+    </List>
+);
+
+// Show
+export const UserShow = (props) => (
+    <Show { ...props } title="Utilisateurs > afficher">
+        <SimpleShowLayout>
+            <TextField source="originId" label="ID"/>
+            <TextField source="givenName" label="Prénom"/>
+            <TextField source="familyName" label="Nom"/>
+            <EmailField source="email" label="Email" />
+            <DateField source="createdDate" label="Date de création"/>
+            <EditButton />
+        </SimpleShowLayout>
+    </Show>
+);
+
 // Create
 export const UserCreate = (props) => (
     <Create { ...props } title="Utilisateurs > ajouter">
@@ -24,7 +60,7 @@ export const UserCreate = (props) => (
             <FormTab label="Identité">
                 <TextInput source="givenName" label="Prénom"/>
                 <TextInput source="familyName" label="Nom"/>
-                <SelectInput label="Sexe" source="gender" choices={genderChoices} />
+                <SelectInput source="gender" label="Sexe" choices={genderChoices} />
                 <TextInput source="email" label="Email" validate={ email() } />
                 <DateInput source="birthDate" label="Date de naissance" />
                 <TextInput source="telephone" label="Téléphone"/>
@@ -50,7 +86,7 @@ export const UserEdit = (props) => (
                 <DisabledInput source="originId" label="ID"/>
                 <TextInput source="givenName" label="Prénom"/>
                 <TextInput source="familyName" label="Nom"/>
-                <SelectInput label="Sexe" source="gender" choices={genderChoices} />
+                <SelectInput source="gender" label="Sexe" choices={genderChoices} />
                 <TextInput source="email" label="Email" validate={ email() } />
                 <DateInput source="birthDate" label="Date de naissance" />
                 <TextInput source="telephone" label="Téléphone"/>
@@ -63,41 +99,4 @@ export const UserEdit = (props) => (
             </FormTab>
         </TabbedForm>
     </Edit>
-);
-
-// List
-const UserFilter = (props) => (
-    <Filter {...props}>
-        <TextInput source="givenName" label="Prénom" />
-        <TextInput source="familyName" label="Nom" alwaysOn />
-        <TextInput source="email" label="Email" alwaysOn />
-    </Filter>
-);
-
-export const UserList = (props) => (
-    <List {...props} title="Utilisateurs > liste" perPage={ 25 } filters={<UserFilter />}>
-        <Datagrid>
-            <TextField source="originId" label="ID" sortBy="id"/>
-            <TextField source="givenName" label="Prénom"/>
-            <TextField source="familyName" label="Nom"/>
-            <EmailField source="email" label="Email" />
-            <DateField source="createdDate" label="Date de création"/>
-            <ShowButton />
-            <EditButton />
-        </Datagrid>
-    </List>
-);
-
-// Show
-export const UserShow = (props) => (
-    <Show { ...props } title="Utilisateurs > afficher">
-        <SimpleShowLayout>
-            <TextField source="originId" label="ID"/>
-            <TextField source="givenName" label="Prénom"/>
-            <TextField source="familyName" label="Nom"/>
-            <EmailField source="email" label="Email" />
-            <DateField source="createdDate" label="Date de création"/>
-            <EditButton />
-        </SimpleShowLayout>
-    </Show>
 );

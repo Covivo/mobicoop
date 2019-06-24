@@ -9,25 +9,6 @@ import {
     ShowButton, EditButton,
 } from 'react-admin';
 
-// Create
-export const RelayPointTypeCreate = (props) => (
-    <Create { ...props } title="Types de points relais > ajouter">
-        <SimpleForm>
-            <TextInput source="name" label="Nom" validate={required()}/>
-        </SimpleForm>
-    </Create>
-);
-
-// Edit
-export const RelayPointTypeEdit = (props) => (
-    <Edit {...props} title="Types de points relais > éditer">
-        <SimpleForm>
-            <DisabledInput source="originId" label="ID"/>
-            <TextInput source="name" label="Nom" validate={required()}/>
-        </SimpleForm>
-    </Edit>
-);
-
 // List
 const RelayPointTypeFilter = (props) => (
     <Filter {...props}>
@@ -35,7 +16,7 @@ const RelayPointTypeFilter = (props) => (
     </Filter>
 );
 export const RelayPointTypeList = (props) => (
-    <List {...props} title="Types de points relais > liste" perPage={ 25 } filters={<RelayPointTypeFilter />}>
+    <List {...props} title="Types de points relais > liste" perPage={ 25 } filters={<RelayPointTypeFilter />} sort={{ field: 'originId', order: 'ASC' }}>
         <Datagrid>
             <TextField source="originId" label="ID" sortBy="id"/>
             <TextField source="name" label="Nom"/>
@@ -54,4 +35,23 @@ export const RelayPointTypeShow = (props) => (
             <EditButton />
         </SimpleShowLayout>
     </Show>
+);
+
+// Create
+export const RelayPointTypeCreate = (props) => (
+    <Create { ...props } title="Types de points relais > ajouter">
+        <SimpleForm>
+            <TextInput source="name" label="Nom" validate={required()}/>
+        </SimpleForm>
+    </Create>
+);
+
+// Edit
+export const RelayPointTypeEdit = (props) => (
+    <Edit {...props} title="Types de points relais > éditer">
+        <SimpleForm>
+            <DisabledInput source="originId" label="ID"/>
+            <TextInput source="name" label="Nom" validate={required()}/>
+        </SimpleForm>
+    </Edit>
 );
