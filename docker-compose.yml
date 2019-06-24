@@ -9,16 +9,13 @@ services:
       - '8081:8081'
       - '8082:8082'
     # entrypoint: ["bash", "/var/www/docker/api_bdd_import.sh"]
-    entrypoint: bash /var/www/docker/api_entrypoint.sh
-    # command: php-fpm7.2 -F
+    entrypoint: bash /docker/api_entrypoint.sh
     depends_on:
       - db
     tty: true
     volumes:
       # - .:/application
-      - ./api/:/var/www/api:cached
-      - ./client/:/var/www/client:cached
-      - ./admin/:/var/www/admin:cached
+      - ./:/var/www/:cached
 
   db:
     image: mariadb:10.4

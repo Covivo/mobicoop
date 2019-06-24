@@ -4,10 +4,10 @@
   "description": "API, Front & admin mobicoop carpool app",
   "main": "package.json",
   "scripts": {
-    "postinstall": "npm-run-all --parallel install-api install-client download-tools install-admin",
+    "install-all": "npm-run-all --parallel install-api install-client download-tools install-admin",
     "install-api": "cd api && npm install --no-save",
-    "install-admin": "cd admin && yarn install --silent --network-concurrency 2",
-    "install-client": "cd client && yarn install --silent --network-concurrency 2",
+    "install-admin": "cd admin && yarn install",
+    "install-client": "cd client && yarn install",
     "download-tools": "wget http://www.phpdoc.org/phpDocumentor.phar -O bin/phpDocumentor.phar && wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O bin/php-cs-fixer.phar",
     "test": "npm run test-api && npm run test-mobicoop",
     "test-and-coverage": "npm run test-api && npm run test-and-coverage-mobicoop",
