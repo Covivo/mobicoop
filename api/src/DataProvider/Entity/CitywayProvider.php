@@ -250,7 +250,7 @@ class CitywayProvider implements ProviderInterface
             "LogicalIds" => $params["logicalId"]
         ];
 
-        if(isset($params["transportModes"]) && $params["transportModes"] !== ""){
+        if (isset($params["transportModes"]) && $params["transportModes"] !== "") {
             $getParams["TransportModes"] = $params["transportModes"];
         }
 
