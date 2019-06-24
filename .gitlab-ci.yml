@@ -53,7 +53,7 @@ branch_features:   # name of the job
   script:
     - npm test && cd api # run the tests
     - composer install && cd ..
-    - npm run start & wait-on interfaces/mobicoop/public/build/entrypoints.json
+    - npm run start & wait-on client/public/build/entrypoints.json
     - npm run test-functional-ci
 
   only:
