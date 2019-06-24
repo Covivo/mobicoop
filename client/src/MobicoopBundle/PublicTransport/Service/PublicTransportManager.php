@@ -136,18 +136,20 @@ class PublicTransportManager
      *
      * @param string $provider          The name of the provider
      * @param int $logicalId            The logicalId to retreive linestops
+     * @param string $transportModes    The transport modes to search
      * @return array|object|null
      */
     public function getLineStops(
         string $provider,
-        int $logicalId
+        int $logicalId,
+        string $transportModes=""
     ) {
         $this->dataProvider->setClass(PTLineStop::class, "public_transport/linestops");
 
         $response = $this->dataProvider->getCollection([
             'provider'       => $provider,
             'logicalId'       => $logicalId,
-
+            'transportModes'       => $transportModes
         ]);
         if ($response->getCode() == 200) {
             return $response->getValue();
