@@ -12,47 +12,14 @@ import {
 
 const validateName = regex(/^ROLE_[A-Z_]+$/, 'Nom invalide');
 
-// Create
-export const RoleCreate = (props) => (
-    <Create { ...props } title="Rôles > ajouter">
-        <SimpleForm>
-            <TextInput source="title" label="Titre" validate={required()}/>
-            <TextInput source="name" label="Nom" validate={[validateName,required()]} />
-            <ReferenceInput label="Rôle parent" source="parent_id" reference="roles">
-                <SelectInput optionText="title" />
-            </ReferenceInput>
-            <ReferenceArrayInput label="Droits" source="rights" reference="rights">
-                <SelectArrayInput optionText="name" />
-            </ReferenceArrayInput>
-        </SimpleForm>
-    </Create>
-);
-
-// Edit
-export const RoleEdit = (props) => (
-    <Edit {...props} title="Rôles > éditer">
-        <SimpleForm>
-            <DisabledInput source="originId" label="ID"/>
-            <TextInput source="title" label="Titre" validate={required()}/>
-            <TextInput source="name" label="Nom" validate={[validateName,required()]} />
-            <ReferenceInput label="Rôle parent" source="parent" reference="roles">
-                <SelectInput optionText="title" />
-            </ReferenceInput>
-            <ReferenceArrayInput label="Droits" source="rights" reference="rights">
-                <SelectArrayInput optionText="name" />
-            </ReferenceArrayInput>
-        </SimpleForm>
-    </Edit>
-);
-
 // List
 export const RoleList = (props) => (
-    <List {...props} title="Rôles > liste" perPage={ 30 }>
+    <List {...props} title="Rôles > liste" perPage={ 25 }>
         <Datagrid>
             <TextField source="originId" label="ID" sortBy="id"/>
             <TextField source="title" label="Titre"/>
             <TextField source="name" label="Nom"/>
-            <ReferenceField label="Rôle parent" source="parent" reference="roles" allowEmpty sortable={false}>
+            <ReferenceField source="parent" label="Rôle parent" reference="roles" allowEmpty sortable={false}>
                 <TextField source="title" />
             </ReferenceField>
             <ShowButton />
@@ -68,10 +35,10 @@ export const RoleShow = (props) => (
             <TextField source="originId" label="ID"/>
             <TextField source="title" label="Titre"/>
             <TextField source="name" label="Nom"/>
-            <ReferenceField label="Rôle parent" source="parent" reference="rights" allowEmpty>
+            <ReferenceField source="parent" label="Rôle parent" reference="rights" allowEmpty>
                 <TextField source="name" />
             </ReferenceField>
-            <ReferenceArrayField label="Droits" reference="rights" source="rights">
+            <ReferenceArrayField source="rights"label="Droits" reference="rights" >
                 <SingleFieldList>
                     <ChipField source="name" />
                 </SingleFieldList>
@@ -79,4 +46,37 @@ export const RoleShow = (props) => (
             <EditButton />
         </SimpleShowLayout>
     </Show>
+);
+
+// Create
+export const RoleCreate = (props) => (
+    <Create { ...props } title="Rôles > ajouter">
+        <SimpleForm>
+            <TextInput source="title" label="Titre" validate={required()}/>
+            <TextInput source="name" label="Nom" validate={[validateName,required()]} />
+            <ReferenceInput source="parent_id" label="Rôle parent" reference="roles">
+                <SelectInput optionText="title" />
+            </ReferenceInput>
+            <ReferenceArrayInput source="rights" label="Droits" reference="rights">
+                <SelectArrayInput optionText="name" />
+            </ReferenceArrayInput>
+        </SimpleForm>
+    </Create>
+);
+
+// Edit
+export const RoleEdit = (props) => (
+    <Edit {...props} title="Rôles > éditer">
+        <SimpleForm>
+            <DisabledInput source="originId" label="ID"/>
+            <TextInput source="title" label="Titre" validate={required()}/>
+            <TextInput source="name" label="Nom" validate={[validateName,required()]} />
+            <ReferenceInput source="parent" label="Rôle parent" reference="roles">
+                <SelectInput optionText="title" />
+            </ReferenceInput>
+            <ReferenceArrayInput source="rights" label="Droits" reference="rights">
+                <SelectArrayInput optionText="name" />
+            </ReferenceArrayInput>
+        </SimpleForm>
+    </Edit>
 );

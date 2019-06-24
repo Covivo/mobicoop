@@ -108,12 +108,20 @@ class UserController extends AbstractController
             $address->setStreetAddress($data['streetAddress']);
             $address->setSubLocality($data['subLocality']);
 
+          
+
+            // pass front info into user form
+            $user->setEmail($data['email']);
+            $user->setTelephone($data['telephone']);
+            $user->setPassword($data['password']);
+            $user->setGivenName($data['givenName']);
+            $user->setFamilyName($data['familyName']);
+            $user->setGender($data['gender']);
+            $user->setBirthYear($data['birthYear']);
+
             // add the home address to the user
             $user->addAddress($address);
 
-            // pass front info into user form
-            $form->submit($request->request->get($form->getName()));
-            
             // Not Valid populate error
             // if (!$form->isValid()) {
             //     $error = [];

@@ -9,6 +9,29 @@ import {
     ShowButton, EditButton,
 } from 'react-admin';
 
+// List
+export const TerritoryList = (props) => (
+    <List {...props} title="Territoires > liste" perPage={ 25 }>
+        <Datagrid>
+            <TextField source="originId" label="ID" sortBy="id"/>
+            <TextField source="name" label="Nom"/>
+            <ShowButton />
+            <EditButton />
+        </Datagrid>
+    </List>
+);
+
+// Show
+export const TerritoryShow = (props) => (
+    <Show { ...props } title="Territoires > afficher">
+        <SimpleShowLayout>
+            <TextField source="originId" label="ID"/>
+            <TextField source="name" label="Nom"/>
+            <EditButton />
+        </SimpleShowLayout>
+    </Show>
+);
+
 // Create
 export const TerritoryCreate = (props) => (
     <Create { ...props } title="Territoires > ajouter">
@@ -26,27 +49,4 @@ export const TerritoryEdit = (props) => (
             <TextInput source="name" label="Nom" validate={required()}/>
         </SimpleForm>
     </Edit>
-);
-
-// List
-export const TerritoryList = (props) => (
-    <List {...props} title="Territoires > liste" perPage={ 30 }>
-        <Datagrid>
-            <TextField source="originId" label="ID"/>
-            <TextField source="name" label="Nom"/>
-            <ShowButton />
-            <EditButton />
-        </Datagrid>
-    </List>
-);
-
-// Show
-export const TerritoryShow = (props) => (
-    <Show { ...props } title="Territoires > afficher">
-        <SimpleShowLayout>
-            <TextField source="originId" label="ID"/>
-            <TextField source="name" label="Nom"/>
-            <EditButton />
-        </SimpleShowLayout>
-    </Show>
 );

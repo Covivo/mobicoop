@@ -63,9 +63,14 @@ class MassMatching implements Resource
     private $massPerson2Id;
 
     /**
-     * @var Direction|null The direction for the 2 persons to their final destination.
+     * @var int The total distance of the direction in meter.
      */
-    private $direction;
+    private $distance;
+
+    /**
+     * @var int The total duration of the direction in milliseconds.
+     */
+    private $duration;
 
     public function __construct($id = null)
     {
@@ -140,14 +145,26 @@ class MassMatching implements Resource
         return $this;
     }
 
-    public function getDirection(): ?Direction
+    public function getDistance(): int
     {
-        return $this->direction;
+        return $this->distance;
     }
 
-    public function setDirection(?Direction $direction): self
+    public function setDistance(int $distance): self
     {
-        $this->direction = $direction;
+        $this->distance = $distance;
+
+        return $this;
+    }
+
+    public function getDuration(): int
+    {
+        return $this->duration;
+    }
+
+    public function setDuration(int $duration): self
+    {
+        $this->duration = $duration;
 
         return $this;
     }
