@@ -51,8 +51,8 @@ branch_features:   # name of the job
     - npm run install-all-ci # Install the dependencies in the local node_modules folder
 
   script:
-    - npm test  # run the tests
-    - composer install
+    - npm test && cd api # run the tests
+    - composer install && cd ..
     - npm run start & wait-on interfaces/mobicoop/public/build/entrypoints.json
     - npm run test-functional-ci
 
