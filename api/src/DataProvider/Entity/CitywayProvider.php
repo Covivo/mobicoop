@@ -244,10 +244,16 @@ class CitywayProvider implements ProviderInterface
 
     private function getCollectionLineStops($class, array $params)
     {
+        //print_r($params);die;
         $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESSOURCE_LINESTOPS);
         $getParams = [
             "LogicalIds" => $params["logicalId"]
         ];
+
+        if(isset($params["transportModes"]) && $params["transportModes"] !== ""){
+            $getParams["TransportModes"] = $params["transportModes"];
+        }
+
         $response = $dataProvider->getCollection($getParams);
         if ($response->getCode() == 200) {
             $data = json_decode($response->getValue(), true);
