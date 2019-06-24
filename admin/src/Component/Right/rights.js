@@ -15,47 +15,21 @@ const typeChoices = [
     { id: 2, name: 'Groupe' },
 ];
 
-// Create
-export const RightCreate = (props) => (
-    <Create { ...props } title="Droits > ajouter">
-        <SimpleForm>
-            <SelectInput source="type" label="Type" choices={typeChoices} validate={required()} />
-            <TextInput source="name" label="Nom" validate={required()} />
-            <ReferenceInput label="Groupe" source="parent" reference="rights" filter={{ type: 2 }}>
-                <SelectInput optionText="name" />
-            </ReferenceInput>
-        </SimpleForm>
-    </Create>
-);
-
-// Edit
-export const RightEdit = (props) => (
-    <Edit {...props} title="Droits > éditer">
-        <SimpleForm>
-            <DisabledInput source="originId" label="ID"/>
-            <SelectInput label="Type" source="type" choices={typeChoices} validate={required()} />
-            <TextInput source="name" label="Nom" validate={required()} />
-            <ReferenceInput label="Groupe" source="parent" reference="rights" filter={{ type: 2 }}>
-                <SelectInput optionText="name" />
-            </ReferenceInput>
-        </SimpleForm>
-    </Edit>
-);
-
 // List
 const RightFilter = (props) => (
     <Filter {...props}>
-        <SelectInput label="Type" source="type" choices={typeChoices} allowEmpty={false} alwaysOn resettable />
+        <SelectInput source="type" label="Type" choices={typeChoices} allowEmpty={false} alwaysOn resettable />
+        <TextInput source="name" label="Nom" alwaysOn />
     </Filter>
 );
 
 export const RightList = (props) => (
-    <List {...props} title="Droits > liste" perPage={ 30 } filters={<RightFilter />}>
+    <List {...props} title="Droits > liste" perPage={ 25 } filters={<RightFilter />}>
         <Datagrid>
             <TextField source="originId" label="ID" sortBy="id" />
-            <SelectField label="Type" source="type" choices={typeChoices} sortable={false} />
+            <SelectField source="type" label="Type" choices={typeChoices} sortable={false} />
             <TextField source="name" label="Nom"/>
-            <ReferenceField label="Groupe" source="parent" reference="rights" allowEmpty sortable={false}>
+            <ReferenceField source="parent" label="Groupe" reference="rights" allowEmpty sortable={false}>
                 <TextField source="name" />
             </ReferenceField>
             <ShowButton />
@@ -69,12 +43,39 @@ export const RightShow = (props) => (
     <Show { ...props } title="Droits > afficher">
         <SimpleShowLayout>
             <TextField source="originId" label="ID"/>
-            <SelectField label="Type" source="type" choices={typeChoices} sortable={false} />
+            <SelectField source="type" label="Type" choices={typeChoices} sortable={false} />
             <TextField source="name" label="Nom"/>
-            <ReferenceField label="Groupe" source="parent" reference="rights" allowEmpty>
+            <ReferenceField source="parent" label="Groupe" reference="rights" allowEmpty>
                 <TextField source="name" />
             </ReferenceField>
             <EditButton />
         </SimpleShowLayout>
     </Show>
+);
+
+// Create
+export const RightCreate = (props) => (
+    <Create { ...props } title="Droits > ajouter">
+        <SimpleForm>
+            <SelectInput source="type" label="Type" choices={typeChoices} validate={required()} />
+            <TextInput source="name" label="Nom" validate={required()} />
+            <ReferenceInput source="parent" label="Groupe" reference="rights" filter={{ type: 2 }}>
+                <SelectInput optionText="name" />
+            </ReferenceInput>
+        </SimpleForm>
+    </Create>
+);
+
+// Edit
+export const RightEdit = (props) => (
+    <Edit {...props} title="Droits > éditer">
+        <SimpleForm>
+            <DisabledInput source="originId" label="ID"/>
+            <SelectInput source="type" label="Type" choices={typeChoices} validate={required()} />
+            <TextInput source="name" label="Nom" validate={required()} />
+            <ReferenceInput source="parent" label="Groupe" reference="rights" filter={{ type: 2 }}>
+                <SelectInput optionText="name" />
+            </ReferenceInput>
+        </SimpleForm>
+    </Edit>
 );

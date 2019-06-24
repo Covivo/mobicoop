@@ -9,6 +9,11 @@ api_platform:
     # The version of the API.
     version: '0.1.0'
 
+    collection:
+        pagination:
+            client_items_per_page: true
+            items_per_page_parameter_name: perPage
+
     # we disable the original swagger to change the path of the documentation
     enable_swagger_ui: true
     

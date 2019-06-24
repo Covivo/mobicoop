@@ -20,40 +20,6 @@ const statusChoices = [
     { id: 2, name: 'Refusé' },
 ];
 
-// Create
-export const CommunityCreate = (props) => (
-    <Create { ...props } title="Communautés > ajouter">
-        <SimpleForm>
-            <ReferenceInput label="Créateur" source="user" reference="users" defaultValue={userId}>
-                <SelectInput optionText={userOptionRenderer}/>
-            </ReferenceInput>
-            <TextInput source="name" label="Nom" validate={required()}/>
-            <BooleanInput source="membersHidden" label="Membres masqués" />
-            <BooleanInput source="proposalsHidden" label="Annonces masquées" />
-            <TextInput source="description" label="Description" validate={required()}/>
-            <RichTextInput source="fullDescription" label="Description complète" validate={required()}/>
-        </SimpleForm>
-    </Create>
-);
-
-// Edit
-export const CommunityEdit = (props) => (
-    <Edit {...props } title="Communautés > éditer">
-        <SimpleForm>
-            <DisabledInput source="originId" label="ID"/>
-            <ReferenceInput label="Créateur" source="user" reference="users">
-                <SelectInput optionText={userOptionRenderer} />
-            </ReferenceInput>
-            <TextInput source="name" label="Nom" validate={required()}/>
-            <BooleanInput source="membersHidden" label="Membres masqués"  />
-            <BooleanInput source="proposalsHidden" label="Annonces masquées" />
-            <TextInput source="description" label="Description" validate={required()}/>
-            <RichTextInput source="fullDescription" label="Description complète" validate={required()} />
-            <DateInput disabled source="createdDate" label="Date de création"/>
-        </SimpleForm>
-    </Edit>
-);
-
 // List
 const CommunityFilter = (props) => (
     <Filter {...props}>
@@ -63,9 +29,8 @@ const CommunityFilter = (props) => (
 const CommunityPanel = ({ id, record, resource }) => (
     <div dangerouslySetInnerHTML={{ __html: record.fullDescription }} />
 );
-
 export const CommunityList = (props) => (
-    <List {...props} title="Communautés > liste" perPage={ 30 } filters={<CommunityFilter />}>
+    <List {...props} title="Communautés > liste" perPage={ 25 } filters={<CommunityFilter />} sort={{ field: 'originId', order: 'ASC' }}>
         <Datagrid expand={<CommunityPanel />}>
             <TextField source="originId" label="ID" sortBy="id"/>
             <TextField source="name" label="Nom"/>
@@ -106,15 +71,15 @@ export const CommunityShow = (props) => (
                 <EditButton />
             </Tab>
             <Tab label="Membres" path="members">
-                <ReferenceArrayField reference="community_users" source="communityUsers" addLabel={false}>
+                <ReferenceArrayField source="communityUsers" reference="community_users" addLabel={false}>
                     <Datagrid>
-                        <ReferenceField label="Prénom" source="user" reference="users" linkType="">
+                        <ReferenceField source="user" label="Prénom" reference="users" linkType="">
                             <TextField source="givenName" />
                         </ReferenceField>
-                        <ReferenceField label="Nom" source="user" reference="users" linkType="">
+                        <ReferenceField source="user" label="Nom" reference="users" linkType="">
                             <TextField source="familyName" />
                         </ReferenceField>
-                        <SelectField label="Status" source="status" choices={statusChoices} />
+                        <SelectField source="status" label="Status" choices={statusChoices} />
                         <EditButton />
                         <DeleteButton />
                     </Datagrid>
@@ -123,4 +88,38 @@ export const CommunityShow = (props) => (
             </Tab>
         </TabbedShowLayout>
     </Show>
+);
+
+// Create
+export const CommunityCreate = (props) => (
+    <Create { ...props } title="Communautés > ajouter">
+        <SimpleForm>
+            <ReferenceInput source="user" label="Créateur" reference="users" defaultValue={userId}>
+                <SelectInput optionText={userOptionRenderer}/>
+            </ReferenceInput>
+            <TextInput source="name" label="Nom" validate={required()}/>
+            <BooleanInput source="membersHidden" label="Membres masqués" />
+            <BooleanInput source="proposalsHidden" label="Annonces masquées" />
+            <TextInput source="description" label="Description" validate={required()}/>
+            <RichTextInput source="fullDescription" label="Description complète" validate={required()}/>
+        </SimpleForm>
+    </Create>
+);
+
+// Edit
+export const CommunityEdit = (props) => (
+    <Edit {...props } title="Communautés > éditer">
+        <SimpleForm>
+            <DisabledInput source="originId" label="ID"/>
+            <ReferenceInput source="user" label="Créateur" reference="users">
+                <SelectInput optionText={userOptionRenderer} />
+            </ReferenceInput>
+            <TextInput source="name" label="Nom" validate={required()}/>
+            <BooleanInput source="membersHidden" label="Membres masqués"  />
+            <BooleanInput source="proposalsHidden" label="Annonces masquées" />
+            <TextInput source="description" label="Description" validate={required()}/>
+            <RichTextInput source="fullDescription" label="Description complète" validate={required()} />
+            <DateInput disabled source="createdDate" label="Date de création"/>
+        </SimpleForm>
+    </Edit>
 );

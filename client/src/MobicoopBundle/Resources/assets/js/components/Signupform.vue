@@ -6,9 +6,9 @@
           <form-wizard
             back-button-text="Précédent"
             next-button-text="Suivant"
-            finish-button-text="Je partage mon annonce"
-            title="Partager une annonce"
-            subtitle="Suivez les étapes.."
+            finish-button-text="Je m'inscris"
+            title=""
+            subtitle=""
             color="#023D7F"
             class="tile is-vertical is-8"
             @on-complete="checkForm"
@@ -19,6 +19,7 @@
                 <li
                   v-for="error in errors"
                   :key="error.id"
+                  class="is-danger"
                 >
                   {{ error }}
                 </li>
@@ -35,16 +36,21 @@
                 <b-input
                   v-model="form.email"
                   type="email"
+                  placeholder="Email"
                 />
               </b-field>
               <b-field label="PhoneNumber">
-                <b-input v-model="form.telephone" />
+                <b-input 
+                  v-model="form.telephone"
+                  placeholder="Numéro de téléphone"
+                />
               </b-field>
               <b-field label="Password">
                 <b-input
                   v-model="form.password"
                   type="password"
                   password-reveal
+                  placeholder="Mot de passe"
                 />
               </b-field> 
             </tab-content>
@@ -55,10 +61,16 @@
               class="tabContent"
             >
               <b-field label="GivenName">
-                <b-input v-model="form.givenName" />
+                <b-input
+                  v-model="form.givenName" 
+                  placeholder="Prénom"
+                />
               </b-field>
               <b-field label="FamilyName">
-                <b-input v-model="form.familyName" />
+                <b-input
+                  v-model="form.familyName" 
+                  placeholder="Nom"
+                />
               </b-field>
             </tab-content>
 

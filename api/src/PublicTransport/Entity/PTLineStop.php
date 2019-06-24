@@ -58,6 +58,13 @@ use Doctrine\ORM\Mapping as ORM;
  *                          "format" = "int",
  *                          "description" = "The id of the line stop"
  *                      },
+ *                      {
+ *                          "name" = "transportModes",
+ *                          "in" = "query",
+ *                          "required" = "false",
+ *                          "type" = "string",
+ *                          "description" = "The transport modes ti search"
+ *                      },
  *                  },
  *              }
  *          }

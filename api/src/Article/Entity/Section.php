@@ -30,6 +30,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use App\Article\Controller\SectionUp;
 use App\Article\Controller\SectionDown;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * A section of an article.
@@ -58,6 +61,7 @@ use App\Article\Controller\SectionDown;
  *          }
  *      }
  * )
+ * @ApiFilter(SearchFilter::class, properties={"article":"exact"})
  */
 class Section
 {
