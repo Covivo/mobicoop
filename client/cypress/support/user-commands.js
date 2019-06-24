@@ -65,49 +65,67 @@ Cypress.Commands.add('signUp', (email, password, lastname, name, gender, birthye
   // cy.percySnapshot('signUp')
 
   /* Email */
-  cy.get('input[id=user_form_email]')
-    .should('have.attr', 'placeholder', 'Saisissez votre adresse email')
+  cy.get('.email > input')
+    .should('have.attr', 'placeholder', 'Email')
     .type(email)
 
-  /* Lastname */
-  cy.get('input[id=user_form_givenName]')
-    .should('have.attr', 'placeholder', 'Saisissez votre prénom')
+  /* PhoneNumber*/
+  cy.get('.telephone>input')
+    .should('have.attr', 'placeholder', 'Numéro de téléphone')
+    .type(phone)
+
+  /* Password*/
+  cy.get('.password > input')
+    .should('have.attr', 'placeholder', 'Mot de passe')
+    .type(phone)
+
+  /* Next */
+  cy.get('.wizard-btn').contains('Suivant')
+    .click()
+
+  /* GivenName */
+  cy.get('.givenName > input')
+    .should('have.attr', 'placeholder', 'Prénom')
     .type(lastname)
 
-  /* Name */
-  cy.get('input[id=user_form_familyName]')
-    .should('have.attr', 'placeholder', 'Saisissez votre nom')
+  /* FamilyName */
+  cy.get('.familyName > input')
+    .should('have.attr', 'placeholder', 'Nom')
     .type(name)
 
+
+  /* Next */
+  cy.get('.wizard-btn').contains('Suivant')
+    .click()
+
   /* Gender */
-  cy.get('select[id=user_form_gender]')
+  cy.get('.gender select')
     .select(gender)
     .should('have.value', gender)
 
+
+
+  /* Next */
+  cy.get('.wizard-btn').contains('Suivant')
+    .click()
+
   /* Birthyear */
-  cy.get('select[id=user_form_birthYear]')
+  cy.get('.birthYear select')
     .select(birthyear)
     .should('have.value', birthyear)
 
-  /* Phone */
-  cy.get('input[id=user_form_telephone]')
-    .should('have.attr', 'placeholder', 'Saisissez votre numéro de téléphone')
-    .type(phone)
 
-  /* Password */
-  cy.get('input[id=user_form_password_first]')
-    .should('have.attr', 'placeholder', 'Saisissez votre mot de passe')
-    .type(password)
-
-  /* Password (confirmation) */
-  cy.get('input[id=user_form_password_second]')
-    .should('have.attr', 'placeholder', 'Confirmez votre mot de passe')
-    .type(password)
+  /* Next */
+  cy.get('.wizard-btn').contains('Suivant')
+    .click()
 
   /* Validation condition (confirmation) */
-  cy.get('input[id=user_form_conditions]').check()
+  cy.get('.b-checkbox > .check')
+    .click()
 
-  cy.contains('Je m\'inscris').click()
+  /* Next */
+  cy.get('.wizard-footer-right > span > .wizard-btn')
+    .click()
   cy.url().should('include', baseUrl) // should be redirected to home   
 });
 

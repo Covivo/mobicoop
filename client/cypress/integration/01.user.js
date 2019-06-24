@@ -86,7 +86,7 @@ describe('Visitor / home', () => {
 
     cy.signUp(email, password, lastname, name, gender, birthyear, phone)
 
-    cy.logout()
+    // cy.logout()
   })
 
   it('An user adds a proposal', () => {

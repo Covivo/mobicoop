@@ -36,18 +36,21 @@
                 <b-input
                   v-model="form.email"
                   type="email"
+                  class="email"
                   placeholder="Email"
                 />
               </b-field>
               <b-field label="PhoneNumber">
                 <b-input 
                   v-model="form.telephone"
+                  class="telephone"
                   placeholder="Numéro de téléphone"
                 />
               </b-field>
               <b-field label="Password">
                 <b-input
                   v-model="form.password"
+                  class="password"
                   type="password"
                   password-reveal
                   placeholder="Mot de passe"
@@ -62,13 +65,15 @@
             >
               <b-field label="GivenName">
                 <b-input
-                  v-model="form.givenName" 
+                  v-model="form.givenName"
+                  class="givenName"
                   placeholder="Prénom"
                 />
               </b-field>
               <b-field label="FamilyName">
                 <b-input
                   v-model="form.familyName" 
+                  class="familyName"
                   placeholder="Nom"
                 />
               </b-field>
@@ -82,6 +87,7 @@
               <b-field label="Civilité">
                 <b-select
                   v-model="form.gender"
+                  class="gender"
                   placeholder="Civilité"
                 >
                   <option value="1">
@@ -105,6 +111,7 @@
               <b-field label="Année de naissance">
                 <b-select
                   v-model="form.birthYear"
+                  class="birthYear"
                   placeholder="Année de naissance"
                 >
                   <option
@@ -134,6 +141,7 @@
               <div class="field">
                 <b-checkbox
                   v-model="form.validation"
+                  class="check"
                 >
                   Je valide la charte
                 </b-checkbox>
