@@ -9,10 +9,6 @@ variables:
   MYSQL_DATABASE: mobicoop_platform
   MYSQL_ROOT_PASSWORD: root
 
-connect: 
-  image: mysql
-  script:  
-  - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
 
 # Cache modules in between jobs
 # cache:

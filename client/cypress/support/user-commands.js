@@ -123,7 +123,7 @@ Cypress.Commands.add('signUp', (email, password, lastname, name, gender, birthye
   cy.get('.b-checkbox > .check')
     .click()
 
-  /* Next */
+  /* Subscribe */
   cy.get('.wizard-footer-right > span > .wizard-btn')
     .click()
   cy.url().should('include', baseUrl) // should be redirected to home   
