@@ -40,6 +40,10 @@ branch_features:   # name of the job
 #  variables:
 #    APP_ENV: dev    # /!\ important : symfony env variable /!\
   before_script:
+    # Install the packagees xvfb, libgtk2.0-0 and libgconf2-4, it must be moved to Dockerfile
+    - sudo apt-get -y install xvfb 
+    - sudo apt-get -y install libgtk2.0-0
+    - sudo apt -y install libgconf2-4
     - npm install -g wait-on 
     - npm install -g yarn
     - yarn cache clean
@@ -48,6 +52,7 @@ branch_features:   # name of the job
 
   script:
     - npm test  # run the tests
+    - composer install
     - npm run start & wait-on interfaces/mobicoop/public/build/entrypoints.json
     - npm run test-functional-ci
 
