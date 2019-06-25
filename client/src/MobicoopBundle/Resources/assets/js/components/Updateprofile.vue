@@ -15,9 +15,7 @@
               </li>
             </ul>
           </p>
-          <form
-            @submit="checkForm"
-          >
+          <form>
             <b-field
               label="Email"
             >
@@ -85,12 +83,10 @@
               :url="geoSearchUrl"
               @geoSelected="selectedGeo"
             />
-         
-            <input
-              type="submit"
-              value="Submit"
-            >
-          </form> 
+            <button @click="checkForm">
+              Enregistrer
+            </button>
+          </form>
         </div>
       </div>
     </div>
@@ -276,13 +272,13 @@ export default {
               "Content-Type": "multipart/form-data"
             }
           } )
-          .then(function(response) {
-            window.location.href = '/';
-            console.error(response);
-          })
-          .catch(function(error) {
-            console.error(error);
-          });  
+          // .then(function(response) {
+          //   window.location.href = '/';
+          //   console.error(response);
+          // })
+          // .catch(function(error) {
+          //   console.error(error);
+          // });  
       } 
     },
   }

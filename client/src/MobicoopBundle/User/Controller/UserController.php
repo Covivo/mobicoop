@@ -108,12 +108,18 @@ class UserController extends AbstractController
             $address->setStreetAddress($data['streetAddress']);
             $address->setSubLocality($data['subLocality']);
 
+            // pass front info into user form
+            $user->setEmail($data['email']);
+            $user->setTelephone($data['telephone']);
+            $user->setPassword($data['password']);
+            $user->setGivenName($data['givenName']);
+            $user->setFamilyName($data['familyName']);
+            $user->setGender($data['gender']);
+            $user->setBirthYear($data['birthYear']);
+
             // add the home address to the user
             $user->addAddress($address);
 
-            // pass front info into user form
-            $form->submit($request->request->get($form->getName()));
-            
             // Not Valid populate error
             // if (!$form->isValid()) {
             //     $error = [];
@@ -161,33 +167,74 @@ class UserController extends AbstractController
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('update', $user);
-        
-        $form = $this->createForm(
-            UserForm::class,
-            $user,
-            ['validation_groups'=>['update']]
-        );
-
-        $form->handleRequest($request);
+        $address = new Address();
+        $form = $this->createForm(UserForm::class, $user, ['validation_groups'=>['update']]);
         $error = false;
+        $success = false;
+        
+        if ($request->isMethod('POST')) {
+            
+               
+            //get all data from form (user + homeAddress)
+            $data = $request->request->get($form->getName());
+          
+            // pass homeAddress info into address entity
+            $address->setAddressCountry($data['addressCountry']);
+            $address->setAddressLocality($data['addressLocality']);
+            $address->setCountryCode($data['countryCode']);
+            $address->setCounty($data['county']);
+            $address->setLatitude($data['latitude']);
+            $address->setLocalAdmin($data['localAdmin']);
+            $address->setLongitude($data['longitude']);
+            $address->setMacroCounty($data['macroCounty']);
+            $address->setMacroRegion($data['macroRegion']);
+            $address->setName($data['name']);
+            $address->setPostalCode($data['postalCode']);
+            $address->setRegion($data['region']);
+            $address->setStreet($data['street']);
+            $address->setStreetAddress($data['streetAddress']);
+            $address->setSubLocality($data['subLocality']);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($user = $userManager->updateUser($user)) {
-                // after successful update, we re-log the user
-                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-                $this->get('security.token_storage')->setToken($token);
-                $this->get('session')->set('_security_main', serialize($token));
-                return $this->redirectToRoute('user_profile');
-            }
-            $error = true;
+            // pass front info into user form
+            $user->setEmail($data['email']);
+            $user->setTelephone($data['telephone']);
+            $user->setPassword($data['password']);
+            $user->setGivenName($data['givenName']);
+            $user->setFamilyName($data['familyName']);
+            $user->setGender($data['gender']);
+            $user->setBirthYear($data['birthYear']);
+
+            // add the home address to the user
+            $user->addAddress($address);
+            var_dump($user);
+            exit;
+            // Not Valid populate error
+            // if (!$form->isValid()) {
+            //     $error = [];
+            //     // Fields
+            //     foreach ($form as $child) {
+            //         if (!$child->isValid()) {
+            //             foreach ($child->getErrors(true) as $err) {
+            //                 $error[$child->getName()][] = $err->getMessage();
+            //             }
+            //         }
+            //     }
+            //     return $this->json(['error' => $error, 'success' => $success]);
+            // }
+
+            // create user in database
+            $userManager->updateUser($user);
         }
-
-        return $this->render('@Mobicoop/user/updateProfile.html.twig', [
-            'form' => $form->createView(),
-            'user' => $user,
-            'error' => $error
-        ]);
+       
+        if (!$form->isSubmitted()) {
+            return $this->render('@Mobicoop/user/updateProfile.html.twig', [
+                'error' => $error,
+                'user' => $user
+            ]);
+        }
+        return $this->json(['error' => $error, 'success' => $success]);
     }
+  
 
     /**
      * User password update.
@@ -197,7 +244,6 @@ class UserController extends AbstractController
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('password', $user);
-
         $form = $this->createForm(
             UserForm::class,
             $user,
