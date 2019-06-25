@@ -15,74 +15,82 @@
               </li>
             </ul>
           </p>
-           
-          <b-field
-            label="Email"
+          <form
+            @submit="checkForm"
           >
-            <b-input
-              v-model="form.email"
-              type="email"
-              placeholder="Email"
-            />
-          </b-field>
-          <b-field label="PhoneNumber">
-            <b-input 
-              v-model="form.telephone"
-              placeholder="Numéro de téléphone"
-            />
-          </b-field>
-          <b-field label="GivenName">
-            <b-input
-              v-model="form.givenName" 
-              placeholder="Prénom"
-            />
-          </b-field>
-          <b-field label="FamilyName">
-            <b-input
-              v-model="form.familyName" 
-              placeholder="Nom"
-            />
-          </b-field>
+            <b-field
+              label="Email"
+            >
+              <b-input
+                v-model="form.email"
+                type="email"
+                placeholder="Email"
+              />
+            </b-field>
+            <b-field label="PhoneNumber">
+              <b-input 
+                v-model="form.telephone"
+                placeholder="Numéro de téléphone"
+              />
+            </b-field>
+            <b-field label="GivenName">
+              <b-input
+                v-model="form.givenName" 
+                placeholder="Prénom"
+              />
+            </b-field>
+            <b-field label="FamilyName">
+              <b-input
+                v-model="form.familyName" 
+                placeholder="Nom"
+              />
+            </b-field>
            
-          <b-field label="Civilité">
-            <b-select
-              v-model="form.gender"
-              placeholder="Civilité"
-            >
-              <option value="1">
-                Madame
-              </option>
-              <option value="2">
-                Monsieur
-              </option>
-              <option value="3">
-                Autre
-              </option>
-            </b-select>
-          </b-field>
-          
-          <b-field label="Année de naissance">
-            <b-select
-              v-model="form.birthYear"
-              placeholder="Année de naissance"
-            >
-              <option
-                v-for="year in years"
-                :key="year.id"
-                :value="year"
+            <b-field label="Civilité">
+              <b-select
+                v-model="form.gender"
+                placeholder="Civilité"
               >
-                {{ year }}
-              </option>
-            </b-select>
-          </b-field>
+                <option value="1">
+                  Madame
+                </option>
+                <option value="2">
+                  Monsieur
+                </option>
+                <option value="3">
+                  Autre
+                </option>
+              </b-select>
+            </b-field>
+          
+            <b-field label="Année de naissance">
+              <b-select
+                v-model="form.birthYear"
+                placeholder="Année de naissance"
+              >
+                <option
+                  v-for="year in years"
+                  :key="year.id"
+                  :value="year"
+                >
+                  {{ year }}
+                </option>
+              </b-select>
+            </b-field>
            
-          <geocomplete
-            id="homeAddress"
-            name="homeAddress"
-            :placeholder="addressLocality"
-            :url="geoSearchUrl"
-            @geoSelected="selectedGeo"
-          />
+            <geocomplete
+              id="homeAddress"
+              name="homeAddress"
+              :placeholder="addressLocality"
+              :url="geoSearchUrl"
+              @geoSelected="selectedGeo"
+            />
+         
+            <input
+              type="submit"
+              value="Submit"
+            >
+          </form> 
         </div>
       </div>
     </div>
@@ -276,33 +284,6 @@ export default {
             console.error(error);
           });  
       } 
-      this.errors = [];
-
-      if (!this.form.email) {
-        this.errors.push('Email required.');
-      } 
-      if (!this.form.telephone) {
-        this.errors.push('Telephone required.');
-      }
-      if (!this.form.password) {
-        this.errors.push('Password required.');
-      }
-      if (!this.form.givenName) {
-        this.errors.push('GivenName required.');
-      }
-      if (!this.form.familyName) {
-        this.errors.push('FamilyName required.');
-      }
-      if (!this.form.gender) {
-        this.errors.push('Gender required.');
-      }
-      if (!this.form.birthYear) {
-        this.errors.push('BirthYear required.');
-      }
-      if (this.form.validation == false) {
-        this.errors.push('Validation required.');
-      }
-      e.preventDefault();
     },
   }
 };
