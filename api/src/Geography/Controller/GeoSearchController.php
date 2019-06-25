@@ -55,10 +55,10 @@ class GeoSearchController
      * @param array $data
      * @return array
      */
-    public function __invoke(array $data): array
+    public function __invoke(array $data): ?object
     {
-        if ($this->request->get("input")) {
-            return $this->geoSearcher->geoCode($this->request->get("input"));
+        if ($this->request->get("q")) {
+            return $this->geoSearcher->geoCode($this->request->get("q"));
         }
         return $data;
     }

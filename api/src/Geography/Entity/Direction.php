@@ -32,8 +32,7 @@ use CrEOF\Spatial\PHP\Types\Geometry\Point;
 use CrEOF\Spatial\PHP\Types\Geography\LineString;
 
 /**
- * Direction entity
- * This entity describes the route to follow between 2 or more addresses using an individual transport mode.
+ * A direction : the route to follow between 2 or more addresses using an individual transport mode.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  *

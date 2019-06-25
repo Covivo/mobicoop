@@ -34,7 +34,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
- * A paragraph of a section.
+ * A paragraph of a section (a section can be divided in on or many paragraphs).
  *
  * @ORM\Entity()
  * @ApiResource(

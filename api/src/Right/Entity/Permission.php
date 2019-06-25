@@ -28,7 +28,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use App\Right\Controller\PermissionCheck;
 
 /**
- * A permission.
+ * A permission to execute an action.
  *
  * @ApiResource(
  *      collectionOperations={

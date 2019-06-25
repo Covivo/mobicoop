@@ -39,7 +39,7 @@ use App\Geography\Controller\GeoSearchController;
  */
 
 /**
- * A completed address from string
+ * An completed address from a search string.
  *
  * @ApiResource(
  *      collectionOperations={

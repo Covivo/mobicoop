@@ -43,7 +43,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use App\User\Entity\User;
 
 /**
- * An image.
+ * An uploaded image (for a user, an event, a community and so on).
  *
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks

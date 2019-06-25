@@ -32,7 +32,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 
 /**
- * An app which can access to the api (front, mobile app...).
+ * An app which can have access to the api : front (web), mobile or any other app.
  *
  * @ORM\Entity
  * @ApiResource(
