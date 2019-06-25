@@ -21,45 +21,40 @@
  *    LICENSE
  **************************/
 
-namespace App\Geography\Controller;
+namespace App\Geography\DataProvider;
 
+use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
+use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use App\Geography\Service\GeoSearcher;
+use App\Geography\Entity\Address;
 
 /**
- * GeoSearchController.php
- * Controller that requests a provider list
- * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 16/11/2018
- * Time: 9:25
+ * Collection data provider for address search.
+ *
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
  *
  */
-class GeoSearchController
+final class AddressSearchCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    private $geoSearcher;
     protected $request;
-
-    /**
-     * GeoSearchController constructor.
-     * @param RequestStack $requestStack
-     * @param GeoSearcher $geoSearcher
-     */
+    
     public function __construct(RequestStack $requestStack, GeoSearcher $geoSearcher)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->geoSearcher = $geoSearcher;
     }
-
-    /**
-     * This method is invoked when autocomplete function is called.
-     * @param array $data
-     * @return array
-     */
-    public function __invoke(array $data): ?object
+    
+    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        if ($this->request->get("q")) {
+        return Address::class === $resourceClass && $operationName === "search";
+    }
+    
+    public function getCollection(string $resourceClass, string $operationName = null): ?array
+    {
+        if ($this->request->get("q") !== null) {
             return $this->geoSearcher->geoCode($this->request->get("q"));
         }
-        return $data;
+        return [];
     }
 }

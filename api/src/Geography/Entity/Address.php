@@ -34,7 +34,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use App\Carpool\Entity\WayPoint;
 use App\User\Entity\User;
 use CrEOF\Spatial\PHP\Types\Geometry\Point;
-use App\Geography\Controller\GeoSearchController;
+use App\Geography\Controller\AddressSearch;
 
 /**
  * A postal address (including textual informations and / or geometric coordinates).
@@ -44,20 +44,19 @@ use App\Geography\Controller\GeoSearchController;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read","pt","mass"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"read","pt","mass","search"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "get"={
- *              "path"="search",
- *              "controller"=GeoSearchController::class,
- *              "denormalization_context"={"groups"={"write"}},
+ *          "search"={
+ *              "method"="GET",
+ *              "path"="/addresses/search",
  *              "swagger_context"={
  *                  "parameters"={
  *                     {
  *                         "name" = "q",
  *                         "in" = "query",
- *                         "required" = "true",
+ *                         "required" = "false",
  *                         "type" = "string",
  *                         "description" = "The query"
  *                     }

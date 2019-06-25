@@ -22,7 +22,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Geography\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 
 /**
@@ -46,18 +46,18 @@ class GeoSearchManager
     public function __construct(DataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
-        $this->dataProvider->setClass(GeoSearch::class, 'geo_search');
+        $this->dataProvider->setClass(Address::class);
     }
 
     /**
      * Get all Geosearch results
      *
      * @param array $params The params to send for geosearching
-     * @return array|GeoSearch|null
+     * @return array|null
      */
     public function getGeoSearch(array $params)
     {
-        $response = $this->dataProvider->getCollection($params);
+        $response = $this->dataProvider->getSpecialCollection("search",$params);
         if ($response->getCode() == 200) {
             return $response->getValue();
         }

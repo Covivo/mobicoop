@@ -23,7 +23,6 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Api\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourney;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
@@ -82,7 +81,7 @@ class Deserializer
      *
      * @param string $class The expected class of the object
      * @param array $data   The array to deserialize
-     * @return array|User|Address|Proposal|Matching|GeoSearch|PTJourney|ExternalJourney|Event|Image|PTTripPoint|PTLineStop|ExternalJourneyProvider|Mass|MassPerson|Community|Article|Permission|null
+     * @return array|User|Address|Proposal|Matching|PTJourney|ExternalJourney|Event|Image|PTTripPoint|PTLineStop|ExternalJourneyProvider|Mass|MassPerson|Community|Article|Permission|null
      */
     public function deserialize(string $class, array $data)
     {
@@ -104,9 +103,6 @@ class Deserializer
                 break;
             case Matching::class:
                 return self::deserializeMatching($data);
-                break;
-            case GeoSearch::class:
-                return self::deserializeGeoSearch($data);
                 break;
             case PTJourney::class:
                 return self::deserializePTJourney($data);
@@ -345,16 +341,6 @@ class Deserializer
             $matching->setFilters($data["filters"]);
         }
         return $matching;
-    }
-    
-    private function deserializeGeoSearch(array $data): ?Address
-    {
-        $address = new Address();
-        $address = self::autoSet($address, $data);
-        if (isset($data["@id"])) {
-            $address->setIri($data["@id"]);
-        }
-        return $address;
     }
     
     private function deserializePTJourney(array $data): ?PTJourney
