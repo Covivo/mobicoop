@@ -62,14 +62,14 @@ final class UserSearchCollectionDataProvider implements CollectionDataProviderIn
         foreach ($this->collectionExtensions as $extension) {
             $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName);
             var_dump($extension->getDGL());
-            if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult($resourceClass,$operationName)) {
+            if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult($resourceClass, $operationName)) {
                 $result = $extension->getResult($queryBuilder, $resourceClass, $operationName);
-                var_dump($result);exit;
+                var_dump($result);
+                exit;
                 return $result;
             }
         }
 
-        return $queryBuilder->getQuery()->getResult(); 
-
+        return $queryBuilder->getQuery()->getResult();
     }
 }
