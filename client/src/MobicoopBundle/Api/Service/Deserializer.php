@@ -125,6 +125,9 @@ class Deserializer
             case MassPerson::class:
                 return self::deserializeMassPerson($data);
                 break;
+            case MassMatching::class:
+                return self::deserializeMassMatching($data);
+                break;
             case Community::class:
                 return self::deserializeCommunity($data);
                 break;
@@ -526,15 +529,6 @@ class Deserializer
         $massMatching = self::autoSet($massMatching, $data);
         if (isset($data["@id"])) {
             $massMatching->setIri($data["@id"]);
-        }
-        if (isset($data["direction"])) {
-            $massMatching->setDirection(self::deserializeDirection($data["direction"]));
-        }
-        if (isset($data["massPerson1"])) {
-            $massMatching->setMassPerson1(self::deserializeMassPerson($data["massPerson1"]));
-        }
-        if (isset($data["massPerson2"])) {
-            $massMatching->setMassPerson2(self::deserializeMassPerson($data["massPerson2"]));
         }
         return $massMatching;
     }

@@ -50,7 +50,6 @@ Filters::apply($this, 'coverage', function($next) {
             /* Controllers */
             'src/Controller/*',
             'src/MobicoopBundle/Controller/*',
-            'src/MobicoopBundle/Geography/Controller/*',
             'src/MobicoopBundle/User/Controller/*',
             /* Services */
             'src/MobicoopBundle/Api/Service/*',

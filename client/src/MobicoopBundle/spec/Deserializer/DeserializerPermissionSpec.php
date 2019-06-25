@@ -21,29 +21,31 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
 
-use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\DomCrawler\Form;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
+use Mobicoop\Bundle\MobicoopBundle\Permission\Entity\Permission;
 
 /**
- * AutoCompleteControllerSpec.php
- * Test Class for autocomplete Controller
- * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 19/12/2018
- * Time: 11:25
+ * DeserializerPermissionSpec.php
+ * Tests for Deserializer - Permission
+ * @author Sylvain briat <sylvain.briat@mobicoop.org>
+ * Date: 24/06/2019
+ * Time: 14:00
  *
  */
 
-/* Functional tests */
-// describe('AutoComplete', function () {
-//     describe('/aut', function () {
-//         it('AutoComplete page should return status code 200', function () {
-//             $request = $this->request->create('/aut', 'GET');
-//             $response = $this->kernel->handle($request);
-//             $status = $response->getStatusCode();
-            
-//             expect($status)->toEqual(200);
-//         });
-//     });
-// });
+describe('deserializePermission', function () {
+    it('deserialize Permission should return a Permission object', function () {
+        $jsonPermission = <<<JSON
+{
+  "id": 0,
+  "granted": true
+}
+JSON;
+
+        $deserializer = new Deserializer();
+        $permission = $deserializer->deserialize(Permission::class, json_decode($jsonPermission, true));
+        expect($permission)->toBeAnInstanceOf(Permission::class);
+    });
+});

@@ -24,29 +24,30 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassMatching;
 
 /**
- * DeserializerGeoSearchSpec.php
- * Tests for Deserializer - GeoSearch
- * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 24/12/2018
- * Time: 13:46
+ * DeserializerMassMatchingSpec.php
+ * Tests for Deserializer - MassMatching
+ * @author Sylvain briat <sylvain.briat@mobicoop.org>
+ * Date: 24/06/2019
+ * Time: 14:00
  *
  */
 
-describe('deserializeGeoSearch', function () {
-    it('deserialize GeoSearch should return an Address object', function () {
-        $jsonGeoSearch = <<<JSON
-  {
-    "@id": "\/addresses\/1",
-    "id": 0
-  }
+describe('deserializeMassMatching', function () {
+    it('deserialize MassMatching should return a MassMatching object', function () {
+        $jsonMassMatching = <<<JSON
+{
+  "massPerson1Id": 1,
+  "massPerson2Id": 1,
+  "distance": 10,
+  "duration": 20
+}
 JSON;
 
         $deserializer = new Deserializer();
-        $GeoSearch = $deserializer->deserialize(GeoSearch::class, json_decode($jsonGeoSearch, true));
-        expect($GeoSearch)->toBeAnInstanceOf(Address::class);
+        $massMatching = $deserializer->deserialize(MassMatching::class, json_decode($jsonMassMatching, true));
+        expect($massMatching)->toBeAnInstanceOf(MassMatching::class);
     });
 });
