@@ -182,7 +182,7 @@ class UserController extends AbstractController
             $error = true;
         }
 
-        return $this->render('@Mobicoop/user/update.html.twig', [
+        return $this->render('@Mobicoop/user/updateProfile.html.twig', [
             'form' => $form->createView(),
             'user' => $user,
             'error' => $error

@@ -1,7 +1,9 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
 {% block title %}{% trans from 'ui' %}user.profile_update.title{% endtrans %}{% endblock %}
-
+{% block stylesheets %}
+    {{ encore_entry_link_tags('bundle_user/update_profile') }}
+{% endblock %}
 {% block body %}
 
 <section class="hero is-primary">
@@ -32,12 +34,7 @@
     </div>
 </section>
 
-
-
-
-
 {% endblock %}
 {% block javascripts %}
     {{ encore_entry_script_tags('bundle_user/update_profile') }}
-
 {% endblock %}
