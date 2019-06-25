@@ -29,6 +29,7 @@ use Psr\Log\LoggerInterface;
 use App\Right\Repository\RoleRepository;
 use App\Right\Entity\Role;
 use App\Right\Entity\UserRole;
+use App\User\Repository\UserRepository;
 
 /**
  * User manager service.
@@ -39,6 +40,7 @@ class UserManager
 {
     private $entityManager;
     private $roleRepository;
+    private $userRepository;
     private $logger;
 
     /**
@@ -47,11 +49,12 @@ class UserManager
      * @param EntityManagerInterface $entityManager
      * @param LoggerInterface $logger
      */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, RoleRepository $roleRepository)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, RoleRepository $roleRepository, UserRepository $userRepository)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->roleRepository = $roleRepository;
+        $this->userRepository = $userRepository;
     }
     
     /**
@@ -70,5 +73,11 @@ class UserManager
         $this->entityManager->persist($user);
         $this->entityManager->flush();
         return $user;
+    }
+
+
+    public function findUsers(array $params)
+    {
+        return [$this->userRepository->find(1),$this->userRepository->find(2)];
     }
 }

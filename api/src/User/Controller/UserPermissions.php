@@ -57,7 +57,7 @@ class UserPermissions
     /**
      * This method is invoked when a list of permissions for a user is asked.
      *
-     * @param array $data
+     * @param User $data
      * @return Response
      */
     public function __invoke(User $data): ?User

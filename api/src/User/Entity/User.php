@@ -130,6 +130,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Groups("read")
+     * @ApiProperty(identifier=true)
      */
     private $id;
 
