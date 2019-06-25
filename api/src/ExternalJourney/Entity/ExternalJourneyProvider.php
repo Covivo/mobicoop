@@ -28,7 +28,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * An external journey provider.
+ * An external carpool journey provider.
  * For now providers are configured in a json config file, but maybe it should be in the database.
  *
  * @ApiResource(

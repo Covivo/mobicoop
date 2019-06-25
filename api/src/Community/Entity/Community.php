@@ -41,7 +41,7 @@ use App\Carpool\Entity\Proposal;
 use App\Community\Controller\JoinAction;
 
 /**
- * A community.
+ * A community : a group of users sharing common interests.
  *
  * @ORM\Entity()
  * @UniqueEntity("name")

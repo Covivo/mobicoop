@@ -27,7 +27,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Geography\Entity\Direction;
 
 /**
- * A zone crossed by a direction at a certain precision.
+ * A zone crossed by a direction at a certain precision (useful only for matching calculations).
  *
  * @ORM\Entity
  */

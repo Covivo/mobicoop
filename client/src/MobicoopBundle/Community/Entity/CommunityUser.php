@@ -107,10 +107,22 @@ class CommunityUser implements Resource
      * @Groups("put")
      */
     private $password;
+
+    public function __construct($id=null)
+    {
+        if ($id) {
+            $this->setId($id);
+        }
+    }
     
     public function getId(): ?int
     {
         return $this->id;
+    }
+    
+    public function setId($id)
+    {
+        $this->id = $id;
     }
 
     public function getIri()
@@ -122,7 +134,7 @@ class CommunityUser implements Resource
     {
         $this->iri = $iri;
     }
-
+    
     public function getCommunity(): ?Community
     {
         return $this->community;

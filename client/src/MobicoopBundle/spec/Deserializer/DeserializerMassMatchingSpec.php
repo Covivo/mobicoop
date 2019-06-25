@@ -21,29 +21,33 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
 
-use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\DomCrawler\Form;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassMatching;
 
 /**
- * AutoCompleteControllerSpec.php
- * Test Class for autocomplete Controller
- * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 19/12/2018
- * Time: 11:25
+ * DeserializerMassMatchingSpec.php
+ * Tests for Deserializer - MassMatching
+ * @author Sylvain briat <sylvain.briat@mobicoop.org>
+ * Date: 24/06/2019
+ * Time: 14:00
  *
  */
 
-/* Functional tests */
-// describe('AutoComplete', function () {
-//     describe('/aut', function () {
-//         it('AutoComplete page should return status code 200', function () {
-//             $request = $this->request->create('/aut', 'GET');
-//             $response = $this->kernel->handle($request);
-//             $status = $response->getStatusCode();
-            
-//             expect($status)->toEqual(200);
-//         });
-//     });
-// });
+describe('deserializeMassMatching', function () {
+    it('deserialize MassMatching should return a MassMatching object', function () {
+        $jsonMassMatching = <<<JSON
+{
+  "massPerson1Id": 1,
+  "massPerson2Id": 1,
+  "distance": 10,
+  "duration": 20
+}
+JSON;
+
+        $deserializer = new Deserializer();
+        $massMatching = $deserializer->deserialize(MassMatching::class, json_decode($jsonMassMatching, true));
+        expect($massMatching)->toBeAnInstanceOf(MassMatching::class);
+    });
+});

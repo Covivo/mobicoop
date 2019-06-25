@@ -34,19 +34,36 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use App\Carpool\Entity\WayPoint;
 use App\User\Entity\User;
 use CrEOF\Spatial\PHP\Types\Geometry\Point;
+use App\Geography\Controller\AddressSearch;
 
 /**
- * A postal address.
+ * A postal address (including textual informations and / or geometric coordinates).
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read","pt","mass"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"read","pt","mass","search"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={},
+ *      collectionOperations={
+ *          "search"={
+ *              "method"="GET",
+ *              "path"="/addresses/search",
+ *              "swagger_context"={
+ *                  "parameters"={
+ *                     {
+ *                         "name" = "q",
+ *                         "in" = "query",
+ *                         "required" = "false",
+ *                         "type" = "string",
+ *                         "description" = "The query"
+ *                     }
+ *                   }
+ *              }
+ *          }
+ *      },
  *      itemOperations={"get"}
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "streetAddress", "postalCode", "addressLocality", "addressCountry"}, arguments={"orderParameterName"="order"})

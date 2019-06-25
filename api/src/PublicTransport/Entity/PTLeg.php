@@ -32,7 +32,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Travel\Entity\TravelMode;
 
 /**
- * A leg of a journey.
+ * A leg of a public transport journey.
  *
  * @ORM\Entity
  * @ApiResource(

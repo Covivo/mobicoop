@@ -24,29 +24,34 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTTripPoint;
 
 /**
- * DeserializerGeoSearchSpec.php
- * Tests for Deserializer - GeoSearch
- * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 24/12/2018
- * Time: 13:46
+ * DeserializerPTTripPointSpec.php
+ * Tests for Deserializer - PTTripPoint
+ * @author Sylvain briat <sylvain.briat@mobicoop.org>
+ * Date: 24/06/2019
+ * Time: 14:00
  *
  */
 
-describe('deserializeGeoSearch', function () {
-    it('deserialize GeoSearch should return an Address object', function () {
-        $jsonGeoSearch = <<<JSON
-  {
-    "@id": "\/addresses\/1",
-    "id": 0
-  }
+describe('deserializePTTripPoint', function () {
+    it('deserialize PTTripPoint should return an PTTripPoint object', function () {
+        $jsonPTTripPoint = <<<JSON
+{
+  "id": 0,
+  "latitude": 0,
+  "longitude": 0,
+  "localityId": 0,
+  "name": "string",
+  "pointType": 0,
+  "postalCode": "string",
+  "transportMode": "string"
+}
 JSON;
 
         $deserializer = new Deserializer();
-        $GeoSearch = $deserializer->deserialize(GeoSearch::class, json_decode($jsonGeoSearch, true));
-        expect($GeoSearch)->toBeAnInstanceOf(Address::class);
+        $PTTripPoint = $deserializer->deserialize(PTTripPoint::class, json_decode($jsonPTTripPoint, true));
+        expect($PTTripPoint)->toBeAnInstanceOf(PTTripPoint::class);
     });
 });
