@@ -44,12 +44,12 @@ class Mass implements Resource
 
 
     /**
-     * @var int The id of this event.
+     * @var int The id of this mass.
      */
     private $id;
 
     /**
-     * @var string|null The iri of this event.
+     * @var string|null The iri of this mass.
      */
     private $iri;
 
@@ -86,7 +86,6 @@ class Mass implements Resource
 
     /**
      * @var User User that imports the file.
-     * @Groups({"post","put"})
      */
     private $user;
 
@@ -102,9 +101,19 @@ class Mass implements Resource
 
     /**
      * @var File|null
+     * @Assert\File(
+     *     mimeTypes = {"text/csv", "text/plain", "application/zip", "application/xml", "text/xml", "application/json"},
+     *     mimeTypesMessage = "Format de fichier invalide"
+     *     )
      * @Groups({"post","put"})
      */
     private $file;
+
+    /**
+     * @var int|null The user id associated with the file.
+     * @Groups({"post","put"})
+     */
+    private $userId;
 
     /**
      * @var array The errors.
@@ -281,6 +290,16 @@ class Mass implements Resource
     public function setFile(?File $file)
     {
         $this->file = $file;
+    }
+
+    public function getUserId(): ?int
+    {
+        return $this->userId;
+    }
+
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
     }
 
     public function getErrors(): ?array

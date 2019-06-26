@@ -489,6 +489,8 @@ class MassImportManager
                 //     return $this->getDataFromJson('.' . $this->params['folder'] . $mass->getFileName());
                 //     break;
             default:
+                $this->entityManager->remove($mass);
+                $this->entityManager->flush();
                 throw new MassException('This file type is not accepted');
                 break;
         }
@@ -682,7 +684,7 @@ class MassImportManager
                         'code' => '',
                         'file' => basename($csv),
                         'line' => $line,
-                        'message' => 'Wrong number of fields'
+                        'message' => 'Nombre de champs incorrect'
                     ];
                 }
                 $massPerson = new MassPerson();

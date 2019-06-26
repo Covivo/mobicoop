@@ -140,7 +140,7 @@ class Mass
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"mass","massAnalyze","massMatch"})
+     * @Groups({"mass","massPost", "massAnalyze","massMatch"})
      * @ApiProperty(identifier=true)
      */
     private $id;
