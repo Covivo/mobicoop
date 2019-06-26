@@ -29,6 +29,8 @@ use Psr\Log\LoggerInterface;
 use App\Right\Repository\RoleRepository;
 use App\Right\Entity\Role;
 use App\Right\Entity\UserRole;
+use App\Community\Repository\CommunityRepository;
+use App\Community\Entity\CommunityUser;
 
 /**
  * User manager service.
@@ -39,6 +41,7 @@ class UserManager
 {
     private $entityManager;
     private $roleRepository;
+    private $communityRepository;
     private $logger;
 
     /**
@@ -47,11 +50,12 @@ class UserManager
      * @param EntityManagerInterface $entityManager
      * @param LoggerInterface $logger
      */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, RoleRepository $roleRepository)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, RoleRepository $roleRepository, CommunityRepository $communityRepository)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->roleRepository = $roleRepository;
+        $this->communityRepository = $communityRepository;
     }
     
     /**
@@ -70,5 +74,20 @@ class UserManager
         $this->entityManager->persist($user);
         $this->entityManager->flush();
         return $user;
+    }
+
+    /**
+     * Get the private communities of the given user.
+     *
+     * @param User $user
+     * @return array
+     */
+    public function getPrivateCommunities(?User $user): array
+    {
+        if (is_null($user)) return [];
+        if ($communities = $this->communityRepository->findByUser($user,true,null,CommunityUser::STATUS_ACCEPTED)) {
+            return $communities;
+        }
+        return [];
     }
 }
