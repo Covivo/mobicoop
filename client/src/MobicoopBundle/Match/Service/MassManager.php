@@ -65,7 +65,9 @@ class MassManager
         $response = $this->dataProvider->getItem($id);
         if ($response->getCode() == 200) {
             $mass = $response->getValue();
-            if($mass->getStatus()>=4) $this->computeResults($mass);
+            if ($mass->getStatus()>=4) {
+                $this->computeResults($mass);
+            }
             return $mass;
         }
         return null;
