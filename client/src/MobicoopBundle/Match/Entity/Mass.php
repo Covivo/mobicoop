@@ -44,12 +44,12 @@ class Mass implements Resource
 
 
     /**
-     * @var int The id of this event.
+     * @var int The id of this mass.
      */
     private $id;
 
     /**
-     * @var string|null The iri of this event.
+     * @var string|null The iri of this mass.
      */
     private $iri;
 
