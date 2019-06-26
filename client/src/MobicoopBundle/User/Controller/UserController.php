@@ -171,6 +171,7 @@ class UserController extends AbstractController
 
         // get addresses of the logged user
         $addresses = $user->getAddresses();
+        // get teh homeAddress
         foreach ($addresses as $address) {
             $homeAddress = null;
             $name = $address->getName();
@@ -178,42 +179,39 @@ class UserController extends AbstractController
                 $homeAddress = $address;
             }
         }
-
-        var_dump($homeAddress);
-        exit;
-        
+         
         $form = $this->createForm(UserForm::class, $user, ['validation_groups'=>['update']]);
         $error = false;
         $success = false;
             
-        //if ($request->isMethod('POST')) {
+        if ($request->isMethod('POST')) {
             
         //get all data from form (user + homeAddress)
         $data = $request->request->get($form->getName());
           
-        // pass homeAddress info into address entity
-        //$address->setAddressCountry($data['addressCountry']);
-        $address->setAddressLocality('La Baffe');
-        //$address->setCountryCode($data['countryCode']);
-        // $address->setCounty($data['county']);
-        // $address->setLatitude($data['latitude']);
-        // $address->setLocalAdmin($data['localAdmin']);
-        // $address->setLongitude($data['longitude']);
-        // $address->setMacroCounty($data['macroCounty']);
-        // $address->setMacroRegion($data['macroRegion']);
-        $address->setPostalCode('88460');
-        // $address->setRegion($data['region']);
-        // $address->setStreet($data['street']);
-        // $address->setStreetAddress($data['streetAddress']);
-        // $address->setSubLocality($data['subLocality']);
+        //pass homeAddress info into address entity
+        $address->setAddressCountry($data['addressCountry']);
+        $homeAddress->setAddressLocality($data['addressLocality']);
+        $address->setCountryCode($data['countryCode']);
+        $address->setCounty($data['county']);
+        $address->setLatitude($data['latitude']);
+        $address->setLocalAdmin($data['localAdmin']);
+        $address->setLongitude($data['longitude']);
+        $address->setMacroCounty($data['macroCounty']);
+        $address->setMacroRegion($data['macroRegion']);
+        $homeAddress->setPostalCode($data['postalCode']);
+        $address->setRegion($data['region']);
+        $address->setStreet($data['street']);
+        $address->setStreetAddress($data['streetAddress']);
+        $address->setSubLocality($data['subLocality']);
 
         // pass front info into user form
-        // $user->setEmail($data['email']);
-        // $user->setTelephone($data['telephone']);
-        // $user->setGivenName($data['givenName']);
-        // $user->setFamilyName($data['familyName']);
-        // $user->setGender($data['gender']);
-        // $user->setBirthYear($data['birthYear']);
+        $user->setEmail($data['email']);
+        $user->setTelephone($data['telephone']);
+        $user->setGivenName($data['givenName']);
+        $user->setFamilyName($data['familyName']);
+        $user->setGender($data['gender']);
+        $user->setBirthYear($data['birthYear']);
             
         // Not Valid populate error
         // if (!$form->isValid()) {
@@ -232,8 +230,8 @@ class UserController extends AbstractController
         // create user in database
         // $userManager->updateUser($user);
          
-        $addressManager->updateAddress($address);
-                
+        $addressManager->updateAddress($homeAddress);
+        $userManager->updateUser($user);        
         exit;
         if (!$form->isSubmitted()) {
             return $this->render('@Mobicoop/user/updateProfile.html.twig', [
