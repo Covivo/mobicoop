@@ -85,7 +85,7 @@ class AddressManager
      * @return Address|null The address updated or null if error.
      */
     public function updateAddress(Address $address)
-    {   
+    {
         $response = $this->dataProvider->put($address);
         if ($response->getCode() == 200) {
             $this->logger->info('Address Update | Start');

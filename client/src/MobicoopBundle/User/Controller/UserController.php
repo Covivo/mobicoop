@@ -188,13 +188,13 @@ class UserController extends AbstractController
             
         //if ($request->isMethod('POST')) {
             
-            //get all data from form (user + homeAddress)
+        //get all data from form (user + homeAddress)
         $data = $request->request->get($form->getName());
           
-            // pass homeAddress info into address entity
+        // pass homeAddress info into address entity
         //$address->setAddressCountry($data['addressCountry']);
         $address->setAddressLocality('La Baffe');
-       //$address->setCountryCode($data['countryCode']);
+        //$address->setCountryCode($data['countryCode']);
         // $address->setCounty($data['county']);
         // $address->setLatitude($data['latitude']);
         // $address->setLocalAdmin($data['localAdmin']);
@@ -207,34 +207,34 @@ class UserController extends AbstractController
         // $address->setStreetAddress($data['streetAddress']);
         // $address->setSubLocality($data['subLocality']);
 
-            // pass front info into user form
-            // $user->setEmail($data['email']);
-            // $user->setTelephone($data['telephone']);
-            // $user->setGivenName($data['givenName']);
-            // $user->setFamilyName($data['familyName']);
-            // $user->setGender($data['gender']);
-            // $user->setBirthYear($data['birthYear']);
+        // pass front info into user form
+        // $user->setEmail($data['email']);
+        // $user->setTelephone($data['telephone']);
+        // $user->setGivenName($data['givenName']);
+        // $user->setFamilyName($data['familyName']);
+        // $user->setGender($data['gender']);
+        // $user->setBirthYear($data['birthYear']);
             
-            // Not Valid populate error
-            // if (!$form->isValid()) {
-            //     $error = [];
-            //     // Fields
-            //     foreach ($form as $child) {
-            //         if (!$child->isValid()) {
-            //             foreach ($child->getErrors(true) as $err) {
-            //                 $error[$child->getName()][] = $err->getMessage();
-            //             }
-            //         }
-            //     }
-            //     return $this->json(['error' => $error, 'success' => $success]);
-            // }
+        // Not Valid populate error
+        // if (!$form->isValid()) {
+        //     $error = [];
+        //     // Fields
+        //     foreach ($form as $child) {
+        //         if (!$child->isValid()) {
+        //             foreach ($child->getErrors(true) as $err) {
+        //                 $error[$child->getName()][] = $err->getMessage();
+        //             }
+        //         }
+        //     }
+        //     return $this->json(['error' => $error, 'success' => $success]);
+        // }
 
-            // create user in database
-            // $userManager->updateUser($user);
+        // create user in database
+        // $userManager->updateUser($user);
          
         $addressManager->updateAddress($address);
                 
-            exit;    
+        exit;
         if (!$form->isSubmitted()) {
             return $this->render('@Mobicoop/user/updateProfile.html.twig', [
                 'error' => $error,
