@@ -85,8 +85,6 @@ class MassManager
         $response = $this->dataProvider->postMultiPart($mass);
         if ($response->getCode() == 201) {
             return $response->getValue();
-        } elseif ($response->getCode() == 500) {
-            dump($response);
         }
         return null;
     }
