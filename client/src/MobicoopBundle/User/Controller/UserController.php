@@ -167,6 +167,17 @@ class UserController extends AbstractController
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('update', $user);
+
+        // get addresses of the logged user
+        // $addresses = $user->getAddresses();
+        // $addressToRemove = "rien à signaler";
+        // foreach ($addresses as $address) {
+        //     if ($address->getName() == 'homeAddress') {
+        //         $addressToRemove = $address;
+        //     }
+        // }
+
+        // $user->removeAddress($addressToRemove);
         $address = new Address();
         $form = $this->createForm(UserForm::class, $user, ['validation_groups'=>['update']]);
         $error = false;
@@ -174,7 +185,6 @@ class UserController extends AbstractController
         
         if ($request->isMethod('POST')) {
             
-               
             //get all data from form (user + homeAddress)
             $data = $request->request->get($form->getName());
           
@@ -188,7 +198,6 @@ class UserController extends AbstractController
             $address->setLongitude($data['longitude']);
             $address->setMacroCounty($data['macroCounty']);
             $address->setMacroRegion($data['macroRegion']);
-            $address->setName($data['name']);
             $address->setPostalCode($data['postalCode']);
             $address->setRegion($data['region']);
             $address->setStreet($data['street']);
@@ -205,6 +214,7 @@ class UserController extends AbstractController
             $user->setBirthYear($data['birthYear']);
 
             // add the home address to the user
+            
             $user->addAddress($address);
             var_dump($user);
             exit;

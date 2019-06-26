@@ -198,7 +198,22 @@ export default {
       errors: [],
       homeAddress:{
         required: true,
-        value: {}
+        value: {
+          addressCountry: this.addressCountry,
+          addressLocality: this.addressLocality,
+          countryCode: this.countryCode,
+          county: this.county,
+          latitude: this.latitude,
+          localAdmin: this.localAdmin,
+          longitude: this.longitude,
+          macroCounty: this.macroCounty,
+          macroRegion: this.macroRegion,
+          postalCode: this.postalCode,
+          region: this.region,
+          street: this.street,
+          streetAddress: this.streetAddress,
+          subLocality: this.subLocality
+        }
       },
       form:{
         createToken: this.sentToken,
@@ -210,21 +225,20 @@ export default {
         telephone: this.telephone,
         password: null,
         validation: false,
-        addressCountry: this.addressCountry,
-        addressLocality: this.addressLocality,
-        countryCode: this.countryCode,
-        county: this.county,
-        latitude: this.latitude,
-        localAdmin: this.localAdmin,
-        longitude: this.longitude,
-        macroCounty: this.macroCounty,
-        macroRegion: this.macroRegion,
-        name: null,
-        postalCode: this.postalCode,
-        region: this.region,
-        street: this.street,
-        streetAddress: this.streetAddress,
-        subLocality: this.subLocality
+        // addressCountry: this.addressCountry,
+        // addressLocality: this.addressLocality,
+        // countryCode: this.countryCode,
+        // county: this.county,
+        // latitude: this.latitude,
+        // localAdmin: this.localAdmin,
+        // longitude: this.longitude,
+        // macroCounty: this.macroCounty,
+        // macroRegion: this.macroRegion,
+        // postalCode: this.postalCode,
+        // region: this.region,
+        // street: this.street,
+        // streetAddress: this.streetAddress,
+        // subLocality: this.subLocality
       }
     };
   },
