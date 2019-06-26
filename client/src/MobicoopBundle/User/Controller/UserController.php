@@ -38,6 +38,7 @@ use Mobicoop\Bundle\MobicoopBundle\User\Form\UserLoginForm;
 use Mobicoop\Bundle\MobicoopBundle\User\Form\UserDeleteForm;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Service\AddressManager;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -162,62 +163,58 @@ class UserController extends AbstractController
     /**
      * User profile update.
      */
-    public function userProfileUpdate(UserManager $userManager, Request $request)
+    public function userProfileUpdate(UserManager $userManager, Request $request, AddressManager $addressManager)
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('update', $user);
 
         // get addresses of the logged user
-        // $addresses = $user->getAddresses();
-        // $addressToRemove = "rien à signaler";
-        // foreach ($addresses as $address) {
-        //     if ($address->getName() == 'homeAddress') {
-        //         $addressToRemove = $address;
-        //     }
-        // }
+        $addresses = $user->getAddresses();
+        foreach ($addresses as $address) {
+            $homeAddress = null;
+            $name = $address->getName();
+            if ($name == "homeAddress") {
+                $homeAddress = $address;
+            }
+        }
 
-        // $user->removeAddress($addressToRemove);
-        $address = new Address();
+        var_dump($homeAddress);
+        exit;
+        
         $form = $this->createForm(UserForm::class, $user, ['validation_groups'=>['update']]);
         $error = false;
         $success = false;
-        
-        if ($request->isMethod('POST')) {
+            
+        //if ($request->isMethod('POST')) {
             
             //get all data from form (user + homeAddress)
-            $data = $request->request->get($form->getName());
+        $data = $request->request->get($form->getName());
           
             // pass homeAddress info into address entity
-            $address->setAddressCountry($data['addressCountry']);
-            $address->setAddressLocality($data['addressLocality']);
-            $address->setCountryCode($data['countryCode']);
-            $address->setCounty($data['county']);
-            $address->setLatitude($data['latitude']);
-            $address->setLocalAdmin($data['localAdmin']);
-            $address->setLongitude($data['longitude']);
-            $address->setMacroCounty($data['macroCounty']);
-            $address->setMacroRegion($data['macroRegion']);
-            $address->setPostalCode($data['postalCode']);
-            $address->setRegion($data['region']);
-            $address->setStreet($data['street']);
-            $address->setStreetAddress($data['streetAddress']);
-            $address->setSubLocality($data['subLocality']);
+        //$address->setAddressCountry($data['addressCountry']);
+        $address->setAddressLocality('La Baffe');
+       //$address->setCountryCode($data['countryCode']);
+        // $address->setCounty($data['county']);
+        // $address->setLatitude($data['latitude']);
+        // $address->setLocalAdmin($data['localAdmin']);
+        // $address->setLongitude($data['longitude']);
+        // $address->setMacroCounty($data['macroCounty']);
+        // $address->setMacroRegion($data['macroRegion']);
+        $address->setPostalCode('88460');
+        // $address->setRegion($data['region']);
+        // $address->setStreet($data['street']);
+        // $address->setStreetAddress($data['streetAddress']);
+        // $address->setSubLocality($data['subLocality']);
 
             // pass front info into user form
-            $user->setEmail($data['email']);
-            $user->setTelephone($data['telephone']);
-            $user->setPassword($data['password']);
-            $user->setGivenName($data['givenName']);
-            $user->setFamilyName($data['familyName']);
-            $user->setGender($data['gender']);
-            $user->setBirthYear($data['birthYear']);
-
-            // add the home address to the user
+            // $user->setEmail($data['email']);
+            // $user->setTelephone($data['telephone']);
+            // $user->setGivenName($data['givenName']);
+            // $user->setFamilyName($data['familyName']);
+            // $user->setGender($data['gender']);
+            // $user->setBirthYear($data['birthYear']);
             
-            $user->addAddress($address);
-            var_dump($user);
-            exit;
             // Not Valid populate error
             // if (!$form->isValid()) {
             //     $error = [];
@@ -233,15 +230,18 @@ class UserController extends AbstractController
             // }
 
             // create user in database
-            $userManager->updateUser($user);
-        }
-       
+            // $userManager->updateUser($user);
+         
+        $addressManager->updateAddress($address);
+                
+            exit;    
         if (!$form->isSubmitted()) {
             return $this->render('@Mobicoop/user/updateProfile.html.twig', [
                 'error' => $error,
                 'user' => $user
             ]);
         }
+        
         return $this->json(['error' => $error, 'success' => $success]);
     }
   

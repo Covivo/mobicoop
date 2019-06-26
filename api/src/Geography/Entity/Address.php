@@ -46,8 +46,8 @@ use CrEOF\Spatial\PHP\Types\Geometry\Point;
  *          "normalization_context"={"groups"={"read","pt","mass"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={},
- *      itemOperations={"get"}
+ *      collectionOperations={"get"},
+ *      itemOperations={"get", "put"}
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "streetAddress", "postalCode", "addressLocality", "addressCountry"}, arguments={"orderParameterName"="order"})
  */
