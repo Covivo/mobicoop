@@ -56,7 +56,7 @@ use App\Geography\Controller\AddressSearch;
  *                     {
  *                         "name" = "q",
  *                         "in" = "query",
- *                         "required" = "false",
+ *                         "required" = "true",
  *                         "type" = "string",
  *                         "description" = "The query"
  *                     }

@@ -81,7 +81,6 @@ use Doctrine\Common\Collections\Collection;
  *                     {
  *                         "name" = "maxDetourDurationPercent",
  *                         "in" = "query",
- *                         "required" = "false",
  *                         "type" = "number",
  *                         "format" = "integer",
  *                         "description" = "The maximum detour duration percent (default:40)"
@@ -89,7 +88,6 @@ use Doctrine\Common\Collections\Collection;
  *                     {
  *                         "name" = "maxDetourDistancePercent",
  *                         "in" = "query",
- *                         "required" = "false",
  *                         "type" = "number",
  *                         "format" = "integer",
  *                         "description" = "The maximum detour distance percent (default:40)"
@@ -97,7 +95,6 @@ use Doctrine\Common\Collections\Collection;
  *                     {
  *                         "name" = "minOverlapRatio",
  *                         "in" = "query",
- *                         "required" = "false",
  *                         "type" = "number",
  *                         "format" = "float",
  *                         "description" = "The minimum overlap ratio between bouding boxes to try a match (default:0)"
@@ -105,7 +102,6 @@ use Doctrine\Common\Collections\Collection;
  *                     {
  *                         "name" = "maxSuperiorDistanceRatio",
  *                         "in" = "query",
- *                         "required" = "false",
  *                         "type" = "number",
  *                         "format" = "integer",
  *                         "description" = "The maximum superior distance ratio between A and B to try a match (default:1000)"
@@ -113,14 +109,12 @@ use Doctrine\Common\Collections\Collection;
  *                     {
  *                         "name" = "bearingCheck",
  *                         "in" = "query",
- *                         "required" = "false",
  *                         "type" = "boolean",
  *                         "description" = "Check the bearings (default:true)"
  *                     },
  *                     {
  *                         "name" = "bearingRange",
  *                         "in" = "query",
- *                         "required" = "false",
  *                         "type" = "number",
  *                         "format" = "integer",
  *                         "description" = "The bearing range in degrees if check bearings (default:10)"
