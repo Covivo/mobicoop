@@ -85,7 +85,7 @@ class ProposalRepository
         ->leftJoin('c.directionDriver', 'dd')->leftJoin('dd.zones', 'zd')
         ->leftJoin('c.directionPassenger', 'dp')->leftJoin('dp.zones', 'zp')
         // we need the communities
-        ->leftJoin('p.communities','co');
+        ->leftJoin('p.communities', 'co');
 
         // do we exclude the user itself ?
         if ($excludeProposalUser) {
@@ -96,11 +96,11 @@ class ProposalRepository
         // COMMUNITIES
         $filterCommunities = "((co.proposalsHidden = 0 OR co.proposalsHidden is null)";
         // this function returns the id of a Community object
-        $fCommunities = function(Community $community) {
+        $fCommunities = function (Community $community) {
             return $community->getId();
         };
         // we use the fCommunities function to create an array of ids of the user's private communities
-        $privateCommunities = array_map($fCommunities,$this->userManager->getPrivateCommunities($proposal->getUser()));
+        $privateCommunities = array_map($fCommunities, $this->userManager->getPrivateCommunities($proposal->getUser()));
         if (is_array($privateCommunities) && count($privateCommunities)>0) {
             // we finally implode this array for filtering
             $filterCommunities .= " OR (co.id IN (" . implode(',', $privateCommunities) . "))";

@@ -84,8 +84,10 @@ class UserManager
      */
     public function getPrivateCommunities(?User $user): array
     {
-        if (is_null($user)) return [];
-        if ($communities = $this->communityRepository->findByUser($user,true,null,CommunityUser::STATUS_ACCEPTED)) {
+        if (is_null($user)) {
+            return [];
+        }
+        if ($communities = $this->communityRepository->findByUser($user, true, null, CommunityUser::STATUS_ACCEPTED)) {
             return $communities;
         }
         return [];

@@ -63,20 +63,20 @@ class CommunityRepository
     public function findByUser(User $user, ?bool $proposalsHidden=null, ?bool $membersHidden=null, ?int $memberStatus=null)
     {
         $query = $this->repository->createQueryBuilder('c')
-        ->join('c.communityUsers','cu')
+        ->join('c.communityUsers', 'cu')
         ->where('cu.user = :user')
-        ->setParameter('user',$user);
+        ->setParameter('user', $user);
         if (!is_null($proposalsHidden)) {
             $query->andWhere('c.proposalsHidden = :proposalsHidden')
-            ->setParameter('proposalsHidden',$proposalsHidden);
+            ->setParameter('proposalsHidden', $proposalsHidden);
         }
         if (!is_null($membersHidden)) {
             $query->andWhere('c.membersHidden = :membersHidden')
-            ->setParameter('membersHidden',$membersHidden);
+            ->setParameter('membersHidden', $membersHidden);
         }
         if (!is_null($memberStatus)) {
             $query->andWhere('cu.status = :memberStatus')
-            ->setParameter('memberStatus',$memberStatus);
+            ->setParameter('memberStatus', $memberStatus);
         }
         return $query->getQuery()->getResult();
     }
