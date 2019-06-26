@@ -109,7 +109,6 @@ use App\User\Entity\User;
  *                      {
  *                          "name" = "userId",
  *                          "in" = "query",
- *                          "required" = "false",
  *                          "type" = "number",
  *                          "format" = "integer",
  *                          "description" = "The id of the user that makes the query"

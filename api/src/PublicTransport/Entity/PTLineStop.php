@@ -61,7 +61,6 @@ use Doctrine\ORM\Mapping as ORM;
  *                      {
  *                          "name" = "transportModes",
  *                          "in" = "query",
- *                          "required" = "false",
  *                          "type" = "string",
  *                          "description" = "The transport modes ti search"
  *                      },
