@@ -101,6 +101,10 @@ class Mass implements Resource
 
     /**
      * @var File|null
+     * @Assert\File(
+     *     mimeTypes = {"text/csv", "text/plain", "application/zip", "application/xml", "text/xml", "application/json"},
+     *     mimeTypesMessage = "Format de fichier invalide"
+     *     )
      * @Groups({"post","put"})
      */
     private $file;

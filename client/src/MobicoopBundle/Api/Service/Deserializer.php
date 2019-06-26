@@ -492,6 +492,7 @@ class Deserializer
 
     private function deserializeMass(array $data): ?Mass
     {
+        dump($data);
         $mass = new Mass();
         $mass = self::autoSet($mass, $data);
         if (isset($data["@id"])) {
