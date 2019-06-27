@@ -214,11 +214,10 @@ class UserController extends AbstractController
             $user->setBirthYear($data['birthYear']);
             
             $addressManager->updateAddress($homeAddress);
-            $userManager->updateUser($user);        
+            $userManager->updateUser($user);
         }
 
         if (!$form->isSubmitted()) {
-           
             return $this->render('@Mobicoop/user/updateProfile.html.twig', [
                 'error' => $error,
                 'user' => $user
