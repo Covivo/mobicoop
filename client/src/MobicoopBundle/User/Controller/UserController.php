@@ -215,7 +215,11 @@ class UserController extends AbstractController
             
             $addressManager->updateAddress($homeAddress);
             $userManager->updateUser($user);
+
+            // return $this->redirectToRoute('user_profile_update', ['user'=> $user = $userManager->getLoggedUser(),'error' => $error]);
         }
+
+
 
         if (!$form->isSubmitted()) {
             return $this->render('@Mobicoop/user/updateProfile.html.twig', [

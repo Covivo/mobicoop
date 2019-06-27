@@ -292,13 +292,13 @@ export default {
             "Content-Type": "multipart/form-data"
           }
         } )
-      // .then(function(response) {
-      //   window.location.href = '/';
-      //   console.error(response);
-      // })
-      // .catch(function(error) {
-      //   console.error(error);
-      // });  
+        // .then(function(response) {
+        //   window.location.href = '/';
+        //   console.error(response);
+        // })
+        // .catch(function(error) {
+        //   console.error(error);
+        // });  
        
     },
   }
