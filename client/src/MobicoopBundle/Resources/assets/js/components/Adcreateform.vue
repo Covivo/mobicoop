@@ -160,7 +160,7 @@
                         <a class="button is-secondary is-2">{{ days[index] }}</a>
                       </div>
                       <b-timepicker
-                        v-model="form.outwardTime"
+                        v-model="form['outward'+daysShort[index]+'Time']"
                         class="column"
                         placeholder="Heure de départ..."
                       >
@@ -181,7 +181,7 @@
                       </b-timepicker>
                       <!-- MARGIN -->
                       <b-select
-                        v-model="form.outwardMargin"
+                        v-model="form['outward'+daysShort[index]+'Margin']"
                         class="column is-4"
                         placeholder="Marge"
                       >
@@ -371,8 +371,8 @@ export default {
         //   outwardMargin: null,
         //   outwardTime: null,
         // }
-        outwardMonTime: null,
-        outwardMonMargin: null,
+        // outwardMonTime: null,
+        // outwardMonMargin: null,
         returnMonTime: null,
         returnMonMargin: null,
       }
@@ -380,7 +380,7 @@ export default {
   },
   computed: {
     daysShort() {
-      return this.days.map(day => day.substring(0, 2));
+      return this.daysEn.map(day => day.substring(0, 3));
     },
     nbOfDaysToPlan(){
       if(this.form.frequency === 2) return this.days.length;
