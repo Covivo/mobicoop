@@ -9,7 +9,7 @@ use App\Email\Entity\Email;
  *
  * @author Maxime Bardot <maxime.bardot@covivo.eu>
  */
-class SendMailManager
+class SendEmailManager
 {
     private $mailer;
     private $templating;
