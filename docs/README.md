@@ -49,7 +49,7 @@ install & enable in your .ini all its php extensions : [Docker file](https://git
     - with https : `git clone https://gitlab.com/mobicoop/mobicoop-platform.git`
 
 
-## Optionnal
+## Optional
 
 Still this is purely optional it will drastically increase the speed to download deps
 
@@ -61,6 +61,8 @@ Still this is purely optional it will drastically increase the speed to download
  - Api php vendor
  - Mobicoop vendor + node_modules + build css&js assets (webpack + babel) 
  - Download tools binaries (php-cs-fixer & phpdocumentor)
+
+*Optional `npm install -g request-dispatcher` if you need Mass Matching.*
 
 ## Config
 
