@@ -15,7 +15,10 @@
               </li>
             </ul>
           </p>
-          <form>
+          <form
+            id="app"
+            method="post"
+          >
             <b-field
               label="Email"
             >
@@ -83,9 +86,13 @@
               :url="geoSearchUrl"
               @geoSelected="selectedGeo"
             />
-            <button @click="checkForm">
-              Enregistrer
-            </button>
+            <p>
+              <input
+                type="submit"
+                value="Enregistrer"
+                @click="checkForm"
+              >
+            </p>
           </form>
         </div>
       </div>
@@ -225,20 +232,20 @@ export default {
         telephone: this.telephone,
         password: null,
         validation: false,
-        // addressCountry: this.addressCountry,
-        // addressLocality: this.addressLocality,
-        // countryCode: this.countryCode,
-        // county: this.county,
-        // latitude: this.latitude,
-        // localAdmin: this.localAdmin,
-        // longitude: this.longitude,
-        // macroCounty: this.macroCounty,
-        // macroRegion: this.macroRegion,
-        // postalCode: this.postalCode,
-        // region: this.region,
-        // street: this.street,
-        // streetAddress: this.streetAddress,
-        // subLocality: this.subLocality
+        addressCountry: this.addressCountry,
+        addressLocality: this.addressLocality,
+        countryCode: this.countryCode,
+        county: this.county,
+        latitude: this.latitude,
+        localAdmin: this.localAdmin,
+        longitude: this.longitude,
+        macroCounty: this.macroCounty,
+        macroRegion: this.macroRegion,
+        postalCode: this.postalCode,
+        region: this.region,
+        street: this.street,
+        streetAddress: this.streetAddress,
+        subLocality: this.subLocality
       }
     };
   },
@@ -270,30 +277,29 @@ export default {
       this.form.postalCode = val.postalCode
     },
     checkForm: function (e) {
-      if (this.form.email && this.form.telephone && this.form.password && this.form.givenName && this.form.familyName && this.form.gender && this.form.birthYear && this.form.validation == true) {
-        let userForm = new FormData;
-        for (let prop in this.form) {
-          let value = this.form[prop];
-          // if(!value) continue;
-          // let renamedProp = `user_form[${prop}]`;
-          // userForm.append(renamedProp, value);
-          let renamedProp = prop === "createToken" ? prop : `user_form[${prop}]`;
-          userForm.append(renamedProp, value);
-        }
-        axios 
-          .post("/utilisateur/profil/modifier", userForm, {
-            headers: {
-              "Content-Type": "multipart/form-data"
-            }
-          } )
-          // .then(function(response) {
-          //   window.location.href = '/';
-          //   console.error(response);
-          // })
-          // .catch(function(error) {
-          //   console.error(error);
-          // });  
-      } 
+      let userForm = new FormData;
+      for (let prop in this.form) {
+        let value = this.form[prop];
+        // if(!value) continue;
+        let renamedProp = `user_form[${prop}]`;
+        userForm.append(renamedProp, value);
+        //let renamedProp = prop === "createToken" ? prop : `user_form[${prop}]`;
+        //userForm.append(renamedProp, value);
+      }
+      axios 
+        .post("/utilisateur/profil/modifier", userForm, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        } )
+      // .then(function(response) {
+      //   window.location.href = '/';
+      //   console.error(response);
+      // })
+      // .catch(function(error) {
+      //   console.error(error);
+      // });  
+       
     },
   }
 };

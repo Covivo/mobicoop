@@ -186,62 +186,47 @@ class UserController extends AbstractController
             
         if ($request->isMethod('POST')) {
             
-        //get all data from form (user + homeAddress)
-        $data = $request->request->get($form->getName());
-          
-        //pass homeAddress info into address entity
-        $address->setAddressCountry($data['addressCountry']);
-        $homeAddress->setAddressLocality($data['addressLocality']);
-        $address->setCountryCode($data['countryCode']);
-        $address->setCounty($data['county']);
-        $address->setLatitude($data['latitude']);
-        $address->setLocalAdmin($data['localAdmin']);
-        $address->setLongitude($data['longitude']);
-        $address->setMacroCounty($data['macroCounty']);
-        $address->setMacroRegion($data['macroRegion']);
-        $homeAddress->setPostalCode($data['postalCode']);
-        $address->setRegion($data['region']);
-        $address->setStreet($data['street']);
-        $address->setStreetAddress($data['streetAddress']);
-        $address->setSubLocality($data['subLocality']);
-
-        // pass front info into user form
-        $user->setEmail($data['email']);
-        $user->setTelephone($data['telephone']);
-        $user->setGivenName($data['givenName']);
-        $user->setFamilyName($data['familyName']);
-        $user->setGender($data['gender']);
-        $user->setBirthYear($data['birthYear']);
+            //get all data from form (user + homeAddress)
+            $data = $request->request->get($form->getName());
             
-        // Not Valid populate error
-        // if (!$form->isValid()) {
-        //     $error = [];
-        //     // Fields
-        //     foreach ($form as $child) {
-        //         if (!$child->isValid()) {
-        //             foreach ($child->getErrors(true) as $err) {
-        //                 $error[$child->getName()][] = $err->getMessage();
-        //             }
-        //         }
-        //     }
-        //     return $this->json(['error' => $error, 'success' => $success]);
-        // }
+            //pass homeAddress info into address entity
+            $homeAddress->setAddressCountry($data['addressCountry']);
+            $homeAddress->setAddressLocality($data['addressLocality']);
+            $homeAddress->setCountryCode($data['countryCode']);
+            $homeAddress->setCounty($data['county']);
+            $homeAddress->setLatitude($data['latitude']);
+            $homeAddress->setLocalAdmin($data['localAdmin']);
+            $homeAddress->setLongitude($data['longitude']);
+            $homeAddress->setMacroCounty($data['macroCounty']);
+            $homeAddress->setMacroRegion($data['macroRegion']);
+            $homeAddress->setPostalCode($data['postalCode']);
+            $homeAddress->setRegion($data['region']);
+            $homeAddress->setStreet($data['street']);
+            $homeAddress->setStreetAddress($data['streetAddress']);
+            $homeAddress->setSubLocality($data['subLocality']);
 
-        // create user in database
-        // $userManager->updateUser($user);
-         
-        $addressManager->updateAddress($homeAddress);
-        $userManager->updateUser($user);        
-        exit;
+            // pass front info into user form
+            $user->setEmail($data['email']);
+            $user->setTelephone($data['telephone']);
+            $user->setGivenName($data['givenName']);
+            $user->setFamilyName($data['familyName']);
+            $user->setGender($data['gender']);
+            $user->setBirthYear($data['birthYear']);
+            
+            $addressManager->updateAddress($homeAddress);
+            $userManager->updateUser($user);        
+        }
+
         if (!$form->isSubmitted()) {
+           
             return $this->render('@Mobicoop/user/updateProfile.html.twig', [
                 'error' => $error,
                 'user' => $user
             ]);
         }
-        
         return $this->json(['error' => $error, 'success' => $success]);
     }
+
   
 
     /**
