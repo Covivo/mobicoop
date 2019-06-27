@@ -27,6 +27,8 @@ use App\Match\Entity\Mass;
 use App\Service\FileManager;
 use App\User\Repository\UserRepository;
 use App\Match\Repository\MassPersonRepository;
+use App\Email\Entity\Email;
+use App\Email\Service\SendMailManager;
 use Psr\Log\LoggerInterface;
 use App\Match\Exception\MassException;
 use App\Match\Entity\MassData;
@@ -859,12 +861,20 @@ class MassImportManager
      *
      * @param Mass $mass
      * @param integer $status
+     * @param SendMailManager $sendMailManager
      * @return void
      */
-    private function sendMail(Mass $mass, int $status)
+    private function sendMail(Mass $mass, int $status, SendMailManager $sendMailManager)
     {
+        $email = new Email();
+        $email->setSenderEmail("it@mobicoop.org");
+        $email->setRecipientEmail("maxime.bardot@mobicoop.org");
+        $email->setObject("Un chouette test de mail");
+        $email->setMessage("C'est chouette ce mail");
+
         switch ($status) {
             case Mass::STATUS_ANALYZED:
+                $sendMailManager->sendEmail($email, "mailMass.html.twig");
             break;
             case Mass::STATUS_MATCHED:
             break;
