@@ -81,7 +81,6 @@ use Doctrine\Common\Collections\Collection;
  *                     {
  *                         "name" = "maxDetourDurationPercent",
  *                         "in" = "query",
- *                         "required" = "false",
  *                         "type" = "number",
  *                         "format" = "integer",
  *                         "description" = "The maximum detour duration percent (default:40)"
@@ -89,7 +88,6 @@ use Doctrine\Common\Collections\Collection;
  *                     {
  *                         "name" = "maxDetourDistancePercent",
  *                         "in" = "query",
- *                         "required" = "false",
  *                         "type" = "number",
  *                         "format" = "integer",
  *                         "description" = "The maximum detour distance percent (default:40)"
@@ -97,7 +95,6 @@ use Doctrine\Common\Collections\Collection;
  *                     {
  *                         "name" = "minOverlapRatio",
  *                         "in" = "query",
- *                         "required" = "false",
  *                         "type" = "number",
  *                         "format" = "float",
  *                         "description" = "The minimum overlap ratio between bouding boxes to try a match (default:0)"
@@ -105,7 +102,6 @@ use Doctrine\Common\Collections\Collection;
  *                     {
  *                         "name" = "maxSuperiorDistanceRatio",
  *                         "in" = "query",
- *                         "required" = "false",
  *                         "type" = "number",
  *                         "format" = "integer",
  *                         "description" = "The maximum superior distance ratio between A and B to try a match (default:1000)"
@@ -113,14 +109,12 @@ use Doctrine\Common\Collections\Collection;
  *                     {
  *                         "name" = "bearingCheck",
  *                         "in" = "query",
- *                         "required" = "false",
  *                         "type" = "boolean",
  *                         "description" = "Check the bearings (default:true)"
  *                     },
  *                     {
  *                         "name" = "bearingRange",
  *                         "in" = "query",
- *                         "required" = "false",
  *                         "type" = "number",
  *                         "format" = "integer",
  *                         "description" = "The bearing range in degrees if check bearings (default:10)"
@@ -137,8 +131,11 @@ class Mass
     const STATUS_INCOMING = 0;
     const STATUS_VALID = 1;
     const STATUS_INVALID = 2;
-    const STATUS_ANALYZED = 3;
-    const STATUS_TREATED = 4;
+    const STATUS_ANALYZING = 3;
+    const STATUS_ANALYZED = 4;
+    const STATUS_MATCHING = 5;
+    const STATUS_MATCHED = 6;
+    const STATUS_ERROR = 7;
 
     /**
      * @var int The id of this import.
@@ -146,7 +143,7 @@ class Mass
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"mass","massAnalyze","massMatch"})
+     * @Groups({"mass","massPost", "massAnalyze","massMatch"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -209,20 +206,36 @@ class Mass
     private $user;
 
     /**
-     * @var \DateTimeInterface Analyze date of the import.
+     * @var \DateTimeInterface Analyzed date of the import.
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"mass","massPost"})
      */
-    private $analyzeDate;
+    private $analyzingDate;
 
     /**
-     * @var \DateTimeInterface Calculation date of the import.
+     * @var \DateTimeInterface Analyzing start date of the import.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"mass","massPost"})
+     */
+    private $analyzedDate;
+
+    /**
+     * @var \DateTimeInterface Calculation start date of the import.
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"mass","massPost"})
      */
     private $calculationDate;
+
+    /**
+     * @var \DateTimeInterface Calculated date of the import.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"mass","massPost"})
+     */
+    private $calculatedDate;
 
     /**
      * @var ArrayCollection|null The persons concerned by the file.
@@ -343,14 +356,26 @@ class Mass
         return $this;
     }
 
-    public function getAnalyzeDate(): ?\DateTimeInterface
+    public function getAnalyzingDate(): ?\DateTimeInterface
     {
-        return $this->analyzeDate;
+        return $this->analyzingDate;
     }
 
-    public function setAnalyzeDate(?\DateTimeInterface $analyzeDate): self
+    public function setAnalyzingDate(?\DateTimeInterface $analyzingDate): self
     {
-        $this->analyzeDate = $analyzeDate;
+        $this->analyzingDate = $analyzingDate;
+
+        return $this;
+    }
+
+    public function getAnalyzedDate(): ?\DateTimeInterface
+    {
+        return $this->analyzedDate;
+    }
+
+    public function setAnalyzedDate(?\DateTimeInterface $analyzedDate): self
+    {
+        $this->analyzedDate = $analyzedDate;
 
         return $this;
     }
@@ -363,6 +388,18 @@ class Mass
     public function setCalculationDate(?\DateTimeInterface $calculationDate): self
     {
         $this->calculationDate = $calculationDate;
+
+        return $this;
+    }
+
+    public function getCalculatedDate(): ?\DateTimeInterface
+    {
+        return $this->calculatedDate;
+    }
+
+    public function setCalculatedDate(?\DateTimeInterface $calculatedDate): self
+    {
+        $this->calculatedDate = $calculatedDate;
 
         return $this;
     }

@@ -24,10 +24,9 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Match\Entity;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Direction;
 
 /**
- * An Mass Matching.
+ * A Mass Matching.
  */
 class MassMatching implements Resource
 {
@@ -40,7 +39,6 @@ class MassMatching implements Resource
      * @var string|null The iri of this matching.
      */
     private $iri;
-
 
     /**
      * @var MassPerson The first person.

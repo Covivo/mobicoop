@@ -40,7 +40,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * An event.
+ * An event : a social occasion or activity.
  *
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks

@@ -36,8 +36,8 @@ use App\Community\Controller\JoinAction;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
- * A user related to a community.
- * Additionnal properties could be added so we need this entity (could be useless without extra properties => if so it would be a 'classic' manytomany relation)
+ * A member of a community.
+ * Additional properties could be added so we need this entity (could be useless without extra properties => if so it would be a 'classic' manytomany relation)
  *
  * @ORM\Entity
  * @UniqueEntity(
@@ -60,7 +60,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *      },
  *      itemOperations={"get","put","delete"}
  * )
- * @ApiFilter(NumericFilter::class, properties={"community"})
+ * @ApiFilter(NumericFilter::class, properties={"community.id","user.id","status"})
  */
 class CommunityUser
 {

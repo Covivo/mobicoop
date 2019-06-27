@@ -33,7 +33,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * A mass matching person.
+ * A mass matching person, imported from a mass matching file.
  *
  * @ORM\Entity
  * @ApiResource(

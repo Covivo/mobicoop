@@ -37,7 +37,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use App\Image\Entity\Image;
 
 /**
- * Relay point type.
+ * A relay point type.
  *
  * @ORM\Entity
  * @ApiResource(
