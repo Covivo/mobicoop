@@ -117,7 +117,7 @@ class MassManager
      */
     public function analyzeMass(int $id)
     {
-        $response = $this->dataProvider->getSpecialItem($id,"analyze");
+        $response = $this->dataProvider->getSpecialItem($id, "analyze");
         if ($response->getCode() == 200) {
             return $response->getValue();
         }
@@ -137,7 +137,7 @@ class MassManager
             'minOverlapRatio'=>self::MIN_OVERLAP_RATIO,
             'maxSuperiorDistanceRatio'=>self::MAX_SUPERIOR_DISTANCE_RATIO
         ];
-        $response = $this->dataProvider->getSpecialItem($id,"match",$params);
+        $response = $this->dataProvider->getSpecialItem($id, "match", $params);
         if ($response->getCode() == 200) {
             return $response->getValue();
         }

@@ -314,7 +314,7 @@ class MassImportManager
         $mass->setAnalyzedDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
-        $this->sendMail($mass,Mass::STATUS_ANALYZED);
+        $this->sendMail($mass, Mass::STATUS_ANALYZED);
         $this->logger->info('Mass analyze | End ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
 
@@ -467,7 +467,7 @@ class MassImportManager
         $mass->setCalculatedDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
-        $this->sendMail($mass,Mass::STATUS_MATCHED);
+        $this->sendMail($mass, Mass::STATUS_MATCHED);
         $this->logger->info('Mass match | Creating matches records end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
 
@@ -864,7 +864,7 @@ class MassImportManager
     private function sendMail(Mass $mass, int $status)
     {
         switch ($status) {
-            case Mass::STATUS_ANALYZED: 
+            case Mass::STATUS_ANALYZED:
             break;
             case Mass::STATUS_MATCHED:
             break;
