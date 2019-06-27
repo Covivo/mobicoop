@@ -39,6 +39,9 @@ use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
  */
 class MassManager
 {
+    private const MIN_OVERLAP_RATIO = 0.005;
+    private const MAX_SUPERIOR_DISTANCE_RATIO = 1.5;
+
     private $dataProvider;
     private $userManager;
 
@@ -54,7 +57,7 @@ class MassManager
     }
     
     /**
-     * Get an Mass
+     * Get a Mass
      *
      * @param int $id The mass id
      *
@@ -74,7 +77,7 @@ class MassManager
     }
     
     /**
-     * Create an mass
+     * Create a mass
      *
      * @param Mass $mass The mass to create
      *
@@ -90,7 +93,7 @@ class MassManager
     }
     
     /**
-     * Delete an mass
+     * Delete a mass
      *
      * @param int $id The id of the mass to delete
      *
@@ -103,6 +106,42 @@ class MassManager
             return true;
         }
         return false;
+    }
+
+    /**
+     * Analyze a Mass
+     *
+     * @param int $id The mass id
+     *
+     * @return Mass|null The mass read or null if error.
+     */
+    public function analyzeMass(int $id)
+    {
+        $response = $this->dataProvider->getSpecialItem($id, "analyze");
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Calculate a Mass (calculation of matchings)
+     *
+     * @param int $id The mass id
+     *
+     * @return Mass|null The mass read or null if error.
+     */
+    public function matchMass(int $id)
+    {
+        $params = [
+            'minOverlapRatio'=>self::MIN_OVERLAP_RATIO,
+            'maxSuperiorDistanceRatio'=>self::MAX_SUPERIOR_DISTANCE_RATIO
+        ];
+        $response = $this->dataProvider->getSpecialItem($id, "match", $params);
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
     }
 
     /**

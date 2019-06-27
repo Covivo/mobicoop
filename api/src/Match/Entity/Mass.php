@@ -131,8 +131,11 @@ class Mass
     const STATUS_INCOMING = 0;
     const STATUS_VALID = 1;
     const STATUS_INVALID = 2;
-    const STATUS_ANALYZED = 3;
-    const STATUS_TREATED = 4;
+    const STATUS_ANALYZING = 3;
+    const STATUS_ANALYZED = 4;
+    const STATUS_MATCHING = 5;
+    const STATUS_MATCHED = 6;
+    const STATUS_ERROR = 7;
 
     /**
      * @var int The id of this import.
@@ -203,20 +206,36 @@ class Mass
     private $user;
 
     /**
-     * @var \DateTimeInterface Analyze date of the import.
+     * @var \DateTimeInterface Analyzed date of the import.
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"mass","massPost"})
      */
-    private $analyzeDate;
+    private $analyzingDate;
 
     /**
-     * @var \DateTimeInterface Calculation date of the import.
+     * @var \DateTimeInterface Analyzing start date of the import.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"mass","massPost"})
+     */
+    private $analyzedDate;
+
+    /**
+     * @var \DateTimeInterface Calculation start date of the import.
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"mass","massPost"})
      */
     private $calculationDate;
+
+    /**
+     * @var \DateTimeInterface Calculated date of the import.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"mass","massPost"})
+     */
+    private $calculatedDate;
 
     /**
      * @var ArrayCollection|null The persons concerned by the file.
@@ -337,14 +356,26 @@ class Mass
         return $this;
     }
 
-    public function getAnalyzeDate(): ?\DateTimeInterface
+    public function getAnalyzingDate(): ?\DateTimeInterface
     {
-        return $this->analyzeDate;
+        return $this->analyzingDate;
     }
 
-    public function setAnalyzeDate(?\DateTimeInterface $analyzeDate): self
+    public function setAnalyzingDate(?\DateTimeInterface $analyzingDate): self
     {
-        $this->analyzeDate = $analyzeDate;
+        $this->analyzingDate = $analyzingDate;
+
+        return $this;
+    }
+
+    public function getAnalyzedDate(): ?\DateTimeInterface
+    {
+        return $this->analyzedDate;
+    }
+
+    public function setAnalyzedDate(?\DateTimeInterface $analyzedDate): self
+    {
+        $this->analyzedDate = $analyzedDate;
 
         return $this;
     }
@@ -357,6 +388,18 @@ class Mass
     public function setCalculationDate(?\DateTimeInterface $calculationDate): self
     {
         $this->calculationDate = $calculationDate;
+
+        return $this;
+    }
+
+    public function getCalculatedDate(): ?\DateTimeInterface
+    {
+        return $this->calculatedDate;
+    }
+
+    public function setCalculatedDate(?\DateTimeInterface $calculatedDate): self
+    {
+        $this->calculatedDate = $calculatedDate;
 
         return $this;
     }

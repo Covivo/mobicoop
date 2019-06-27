@@ -175,6 +175,11 @@ class MassImportManager
         
         $this->logger->info('Mass analyze | Start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
+        $mass->setStatus(Mass::STATUS_ANALYZING);
+        $mass->setAnalyzingDate(new \Datetime());
+        $this->entityManager->persist($mass);
+        $this->entityManager->flush();
+
         // we create an array to keep all the analysing errors
         $analyseErrors = [];
 
@@ -306,9 +311,10 @@ class MassImportManager
         $this->logger->info('Mass analyze | Direction personal address end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $mass->setErrors($analyseErrors);
         $mass->setStatus(Mass::STATUS_ANALYZED);
-        $mass->setAnalyzeDate(new \Datetime());
+        $mass->setAnalyzedDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
+        $this->sendMail($mass, Mass::STATUS_ANALYZED);
         $this->logger->info('Mass analyze | End ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
 
@@ -337,6 +343,11 @@ class MassImportManager
         $candidates = [];
         
         $this->logger->info('Mass match | Start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        $mass->setStatus(Mass::STATUS_MATCHING);
+        $mass->setCalculationDate(new \Datetime());
+        $this->entityManager->persist($mass);
+        $this->entityManager->flush();
 
         // we search the matches for all the persons
         foreach ($mass->getPersons() as $driverPerson) {
@@ -452,10 +463,11 @@ class MassImportManager
                 }
             }
         }
-        $mass->setStatus(Mass::STATUS_TREATED);
-        $mass->setCalculationDate(new \Datetime());
+        $mass->setStatus(Mass::STATUS_MATCHED);
+        $mass->setCalculatedDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
+        $this->sendMail($mass, Mass::STATUS_MATCHED);
         $this->logger->info('Mass match | Creating matches records end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
 
@@ -840,6 +852,23 @@ class MassImportManager
         $surface_union = $surface1+$surface2-$surface_intersect;
         $ratio = $surface_intersect/$surface_union;
         return $ratio;
+    }
+
+    /**
+     * Send an email for a given import status
+     *
+     * @param Mass $mass
+     * @param integer $status
+     * @return void
+     */
+    private function sendMail(Mass $mass, int $status)
+    {
+        switch ($status) {
+            case Mass::STATUS_ANALYZED:
+            break;
+            case Mass::STATUS_MATCHED:
+            break;
+        }
     }
 }
 

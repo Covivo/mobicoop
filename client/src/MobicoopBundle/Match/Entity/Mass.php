@@ -90,14 +90,24 @@ class Mass implements Resource
     private $user;
 
     /**
+     * @var \DateTimeInterface Analyzed date of the import.
+     */
+    private $analyzingDate;
+
+    /**
      * @var \DateTimeInterface Analyze date of the import.
      */
-    private $analyzeDate;
+    private $analyzedDate;
 
     /**
      * @var \DateTimeInterface Calculation date of the import.
      */
     private $calculationDate;
+
+    /**
+     * @var \DateTimeInterface Calculation date of the import.
+     */
+    private $calculatedDate;
 
     /**
      * @var File|null
@@ -258,14 +268,26 @@ class Mass implements Resource
         return $this;
     }
 
-    public function getAnalyzeDate(): ?\DateTimeInterface
+    public function getAnalyzedDate(): ?\DateTimeInterface
     {
-        return $this->analyzeDate;
+        return $this->analyzedDate;
     }
 
-    public function setAnalyzeDate(?\DateTimeInterface $analyzeDate): self
+    public function setAnalyzedDate(?\DateTimeInterface $analyzedDate): self
     {
-        $this->analyzeDate = $analyzeDate;
+        $this->analyzedDate = $analyzedDate;
+
+        return $this;
+    }
+
+    public function getAnalyzingDate(): ?\DateTimeInterface
+    {
+        return $this->analyzingDate;
+    }
+
+    public function setAnalyzingDate(?\DateTimeInterface $analyzingDate): self
+    {
+        $this->analyzingDate = $analyzingDate;
 
         return $this;
     }
@@ -278,6 +300,18 @@ class Mass implements Resource
     public function setCalculationDate(?\DateTimeInterface $calculationDate): self
     {
         $this->calculationDate = $calculationDate;
+
+        return $this;
+    }
+
+    public function getCalculatedDate(): ?\DateTimeInterface
+    {
+        return $this->calculatedDate;
+    }
+
+    public function setCalculatedDate(?\DateTimeInterface $calculatedDate): self
+    {
+        $this->calculatedDate = $calculatedDate;
 
         return $this;
     }
