@@ -48,6 +48,7 @@ use App\Geography\Controller\AddressSearch;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
+ *          "get",
  *          "search"={
  *              "method"="GET",
  *              "path"="/addresses/search",
@@ -64,7 +65,7 @@ use App\Geography\Controller\AddressSearch;
  *              }
  *          }
  *      },
- *      itemOperations={"get"}
+ *      itemOperations={"get","put"}
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "streetAddress", "postalCode", "addressLocality", "addressCountry"}, arguments={"orderParameterName"="order"})
  */
