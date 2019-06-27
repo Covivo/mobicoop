@@ -34,7 +34,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
 
 /**
- *
+ *  A community.
  */
 class Community implements Resource
 {
@@ -56,11 +56,18 @@ class Community implements Resource
     private $name;
 
     /**
-     * @var boolean|null The community is private.
+     * @var boolean|null Members are only visible by the members of the community.
      *
      * @Groups({"post","put"})
      */
-    private $private;
+    private $membersHidden;
+
+    /**
+     * @var boolean|null Proposals are only visible by the members of the community.
+     *
+     * @Groups({"post","put"})
+     */
+    private $proposalsHidden;
     
     /**
      * @var string The short description of the community.
@@ -153,14 +160,26 @@ class Community implements Resource
         $this->name = $name;
     }
 
-    public function isPrivate(): ?bool
+    public function isMembersHidden(): ?bool
     {
-        return $this->private;
+        return $this->membersHidden ? true : false;
     }
     
-    public function setPrivate(bool $isPrivate): self
+    public function setMembersHidden(?bool $isMembersHidden): self
     {
-        $this->private = $isPrivate;
+        $this->membersHidden = $isMembersHidden ? true : false;
+        
+        return $this;
+    }
+
+    public function isProposalsHidden(): ?bool
+    {
+        return $this->proposalsHidden ? true : false;
+    }
+    
+    public function setProposalsHidden(?bool $isProposalsHidden): self
+    {
+        $this->proposalsHidden = $isProposalsHidden ? true : false;
         
         return $this;
     }

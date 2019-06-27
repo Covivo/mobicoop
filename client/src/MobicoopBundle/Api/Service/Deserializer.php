@@ -131,6 +131,9 @@ class Deserializer
             case Community::class:
                 return self::deserializeCommunity($data);
                 break;
+            case CommunityUser::class:
+                return self::deserializeCommunityUser($data);
+                break;
             case Article::class:
                 return self::deserializeArticle($data);
                 break;
@@ -548,7 +551,7 @@ class Deserializer
             $communityUser->setIri($data["@id"]);
         }
         if (isset($data["community"])) {
-            $communityUser->set>Community(self::deserializeCommunity($data["community"]));
+            $communityUser->setCommunity(self::deserializeCommunity($data["community"]));
         }
         if (isset($data["user"])) {
             $communityUser->setUser(self::deserializeUser($data["user"]));
@@ -579,9 +582,11 @@ class Deserializer
                 $community->addProposal(self::deserializeProposal($proposal));
             }
         }
-        if (isset($data["communityUsers"])) {
+        if (isset($data["communityUsers"]) && is_array($data["communityUsers"])) {
             foreach ($data["communityUsers"] as $communityUser) {
-                $community->addCommunityUser(self::deserializeCommunityUser($communityUser));
+                if (!is_null($communityUser) && is_array($communityUser)) {
+                    $community->addCommunityUser(self::deserializeCommunityUser($communityUser));
+                }
             }
         }
         return $community;
