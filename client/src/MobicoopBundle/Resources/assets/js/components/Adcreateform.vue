@@ -413,10 +413,12 @@ export default {
         // Convert date to required format
         if(prop.toLowerCase().includes('date')){
           value = moment(value).format('YYYY/MM/DD');
+          console.error('date : ' + value);
         }
         // Convert time to required format
         if(prop.toLowerCase().includes('time')){
           value = moment(value).format('HH:mm');
+          console.error('time : ' + value);
         }
         // Convert margin from min to sec
         if(prop.toLowerCase().includes('margin')){
@@ -425,6 +427,7 @@ export default {
         // rename prop to be usable in the controller
         let renamedProp = prop === "createToken" ? prop : `ad_form[${prop}]`;
         adForm.append(renamedProp, value);
+        // console.error(adForm);
       }
       //  We post the form 🚀
       axios
@@ -435,7 +438,6 @@ export default {
         })
         .then(function(response) {
           window.location.href = '/covoiturage/annonce/'+response.data.proposal+'/resultats';
-          //console.log(response.data.proposal);
         })
         .catch(function(error) {
           console.error(error);

@@ -52,7 +52,8 @@ class CarpoolController extends AbstractController
         $this->denyAccessUnlessGranted('post', $ad);
         $ad->setRole(Ad::ROLE_BOTH);
         $ad->setType(Ad::TYPE_ONE_WAY);
-        $ad->setFrequency(Ad::FREQUENCY_PUNCTUAL);
+//        $ad->setFrequency(Ad::FREQUENCY_PUNCTUAL);
+        $ad->setFrequency(Ad::FREQUENCY_REGULAR);
         $ad->setPrice(Ad::PRICE);
         $ad->setUser($userManager->getLoggedUser());
 
