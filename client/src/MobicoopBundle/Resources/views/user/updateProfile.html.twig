@@ -27,7 +27,13 @@
 </div>
 </section>		
 				{% endif %}
-			{% endfor %}	
+			{% endfor %}
+<section id='update'>
+<div class="container">
+<Updateprofile geo-search-url="/geosearch?search=" given-name="{{user.givenName}}" family-name="{{user.familyName}}" telephone="{{user.telephone}}" email="{{user.email}}" gender="{{user.gender}}" birth-year="{{user.birthYear}}" street="null" street-address="null" postal-code="null" sub-locality="null" address-locality="null" local-admin="null" county="null" macro-county="null" region="null" macro-region="null" address-country="null" country-code="null" latitude="null" longitude="null" sent-token="{{ csrf_token('profile-update') }}"></Updateprofile>
+</div>
+</section>						
+				
     	{% else %}
       		<span class="tag is-danger">User not found.</span>
       	{% endif %}

@@ -20,54 +20,54 @@
             method="post"
           >
             <b-field
-              label="Email"
+              :label="$t('models.user.email.label')"
             >
               <b-input
                 v-model="form.email"
                 type="email"
-                placeholder="Email"
+                :placeholder="$t('models.user.email.placeholder')"
               />
             </b-field>
-            <b-field label="PhoneNumber">
+            <b-field :label="$t('models.user.phone.label')">
               <b-input 
                 v-model="form.telephone"
-                placeholder="Numéro de téléphone"
+                :placeholder="$t('models.user.phone.placeholder')"
               />
             </b-field>
-            <b-field label="GivenName">
+            <b-field :label="$t('models.user.givenName.label')">
               <b-input
                 v-model="form.givenName" 
-                placeholder="Prénom"
+                :placeholder="$t('models.user.givenName.placeholder')"
               />
             </b-field>
-            <b-field label="FamilyName">
+            <b-field :label="$t('models.user.familyName.label')">
               <b-input
                 v-model="form.familyName" 
-                placeholder="Nom"
+                :placeholder="$t('models.user.familyName.placeholder')"
               />
             </b-field>
            
-            <b-field label="Civilité">
+            <b-field :label="$t('models.user.gender.label')">
               <b-select
                 v-model="form.gender"
-                placeholder="Civilité"
+                :placeholder="$t('models.user.gender.placeholder')"
               >
                 <option value="1">
-                  Madame
+                  {{ $t('models.user.gender.values.female') }}
                 </option>
                 <option value="2">
-                  Monsieur
+                  {{ $t('models.user.gender.values.male') }}
                 </option>
                 <option value="3">
-                  Autre
+                  {{ $t('models.user.gender.values.other') }}
                 </option>
               </b-select>
             </b-field>
           
-            <b-field label="Année de naissance">
+            <b-field :label="$t('models.user.birthYear.label')">
               <b-select
                 v-model="form.birthYear"
-                placeholder="Année de naissance"
+                :placeholder="$t('models.user.birthYear.placeholder')"
               >
                 <option
                   v-for="year in years"
@@ -82,14 +82,14 @@
             <geocomplete
               id="homeAddress"
               name="homeAddress"
-              :placeholder="addressLocality"
+              :placeholder="addressLocality != 'null' ? addressLocality : home"
               :url="geoSearchUrl"
               @geoSelected="selectedGeo"
             />
             <p>
               <input
                 type="submit"
-                value="Enregistrer"
+                :value="$t('ui.button.save')"
                 @click="checkForm"
               >
             </p>
@@ -203,6 +203,7 @@ export default {
   data() {
     return {
       errors: [],
+      home: this.$t('models.user.homeTown.placeholder'),
       homeAddress:{
         required: true,
         value: {
@@ -219,7 +220,7 @@ export default {
           region: this.region,
           street: this.street,
           streetAddress: this.streetAddress,
-          subLocality: this.subLocality
+          subLocality: this.subLocality,
         }
       },
       form:{

@@ -4,7 +4,8 @@
             "button": {
                 "previous": "Précédent",
                 "next": "Suivant",
-                "register": "Je m'inscris"
+                "register": "Je m'inscris",
+                "save": "Enregistrer"
             }, 
             "form": {
                 "errors": "Merci de corriger les erreurs suivantes "
