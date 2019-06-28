@@ -32,6 +32,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Match\Controller\CreateMassImportAction;
 use App\Match\Controller\MassAnalyzeAction;
 use App\Match\Controller\MassMatchAction;
+use App\Match\Controller\MassComputeAction;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use App\User\Entity\User;
@@ -70,6 +71,12 @@ use Doctrine\Common\Collections\Collection;
  *              "path"="/masses/{id}/analyze",
  *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=MassAnalyzeAction::class
+ *          },
+ *          "compute"={
+ *              "method"="GET",
+ *              "path"="/masses/{id}/compute",
+ *              "normalization_context"={"groups"={"mass"}},
+ *              "controller"=MassComputeAction::class
  *          },
  *          "match"={
  *              "method"="GET",
@@ -136,6 +143,12 @@ class Mass
     const STATUS_MATCHING = 5;
     const STATUS_MATCHED = 6;
     const STATUS_ERROR = 7;
+
+    const NB_WORKING_DAY = 228;
+    const EARTH_CIRCUMFERENCE_IN_KILOMETERS = 40070;
+    const FLAT_EARTH_CIRCUMFERENCE_IN_MILES = 78186;
+    const AVERAGE_EARTH_MOON_DISTANCE_IN_KILOMETERS = 384400;
+    const PARIS_NEW_YORK_CO2_IN_GRAM = 875700; // For 1 passenger
 
     /**
      * @var int The id of this import.
@@ -238,7 +251,7 @@ class Mass
     private $calculatedDate;
 
     /**
-     * @var ArrayCollection|null The persons concerned by the file.
+     * @var array|null The persons concerned by the file.
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassPerson", mappedBy="mass", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"mass"})
@@ -259,9 +272,39 @@ class Mass
 
     /**
      * @var array The errors.
-     * @Groups({"mass","massPost"})
+     * @Groups({"mass"})
      */
     private $errors;
+
+    /**
+     * @var array people's coordinates of this mass.
+     * @Groups({"mass"})
+     */
+    private $personsCoords;
+
+    /**
+     * @var float Working place latitude of the people of this mass.
+     * @Groups({"mass"})
+     */
+    private $latWorkingPlace;
+
+    /**
+     * @var float Working place longitude of the people of this mass.
+     * @Groups({"mass"})
+     */
+    private $lonWorkingPlace;
+
+    /**
+     * @var array Computed data of this mass.
+     * @Groups({"mass"})
+     */
+    private $computedData;
+
+    /**
+     * @var MassMatrix Matrix of carpools
+     * @Groups({"mass"})
+     */
+    private $massMatrix;
 
     public function __construct($id = null)
     {
@@ -478,4 +521,55 @@ class Mass
     {
         $this->setCreatedDate(new \Datetime());
     }
+
+    public function getPersonsCoords(): ?array
+    {
+        return $this->personsCoords;
+    }
+
+    public function setPersonsCoords(?array $personsCoords)
+    {
+        $this->personsCoords = $personsCoords;
+    }
+
+    public function getLatWorkingPlace(): ?float
+    {
+        return $this->latWorkingPlace;
+    }
+
+    public function setLatWorkingPlace(?float $latWorkingPlace)
+    {
+        $this->latWorkingPlace = $latWorkingPlace;
+    }
+
+    public function getLonWorkingPlace(): ?float
+    {
+        return $this->lonWorkingPlace;
+    }
+
+    public function setLonWorkingPlace(?float $lonWorkingPlace)
+    {
+        $this->lonWorkingPlace = $lonWorkingPlace;
+    }
+
+    public function getComputedData(): ?array
+    {
+        return $this->computedData;
+    }
+
+    public function setComputedData(?array $computedData)
+    {
+        $this->computedData = $computedData;
+    }
+
+    public function getMassMatrix(): ?MassMatrix
+    {
+        return $this->massMatrix;
+    }
+
+    public function setMassMatrix(?MassMatrix $massMatrix)
+    {
+        $this->massMatrix = $massMatrix;
+    }
+
 }
