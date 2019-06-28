@@ -141,6 +141,8 @@ services:
     App\Match\Service\MassImportManager:
         arguments:
             $params: '%mass%'
+            $emailSender: '%env(resolve:MAILER_SENDER)%'
+            $emailReplyTo: '%env(resolve:MAILER_REPLYTO)%'
         tags:   
             - { name: monolog.logger, channel: mass }
 
@@ -160,4 +162,10 @@ services:
         tags: ['controller.service_arguments']
 
     # alias to allow this type to be autowired
-    Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'    
+    Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'
+
+    # Communication
+    App\Communication\Service\SendEmailManager:
+        arguments:
+            $emailSender: '%env(resolve:MAILER_SENDER)%'
+            $emailReplyTo: '%env(resolve:MAILER_REPLYTO)%'

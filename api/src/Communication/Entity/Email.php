@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Email\Entity;
+namespace App\Communication\Entity;
 
 use Symfony\Component\Validator\Constraints as Assert;
 

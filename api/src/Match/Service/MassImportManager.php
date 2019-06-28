@@ -27,8 +27,8 @@ use App\Match\Entity\Mass;
 use App\Service\FileManager;
 use App\User\Repository\UserRepository;
 use App\Match\Repository\MassPersonRepository;
-use App\Email\Entity\Email;
-use App\Email\Service\SendMailManager;
+use App\Communication\Entity\Email;
+use App\Communication\Service\SendEmailManager;
 use Psr\Log\LoggerInterface;
 use App\Match\Exception\MassException;
 use App\Match\Entity\MassData;
@@ -71,6 +71,9 @@ class MassImportManager
     private $geoRouter;
     private $geoMatcher;
     private $zoneManager;
+    private $sendEmailManager;
+    private $emailSenderDefault;
+    private $emailReplyToDefault;
 
     /**
      * Constructor
@@ -94,6 +97,9 @@ class MassImportManager
         GeoRouter $geoRouter,
         GeoMatcher $geoMatcher,
         ZoneManager $zoneManager,
+        SendEmailManager $sendEmailManager,
+        string $emailSender,
+        string $emailReplyTo,
         array $params
     ) {
         $this->entityManager = $entityManager;
@@ -108,6 +114,9 @@ class MassImportManager
         $this->geoRouter = $geoRouter;
         $this->geoMatcher = $geoMatcher;
         $this->zoneManager = $zoneManager;
+        $this->sendEmailManager = $sendEmailManager;
+        $this->emailSenderDefault = $emailSender;
+        $this->emailReplyToDefault = $emailReplyTo;
     }
 
     /**
@@ -861,22 +870,27 @@ class MassImportManager
      *
      * @param Mass $mass
      * @param integer $status
-     * @param SendMailManager $sendMailManager
-     * @return void
+<     * @return void
      */
-    private function sendMail(Mass $mass, int $status, SendMailManager $sendMailManager)
+    private function sendMail(Mass $mass, int $status)
     {
         $email = new Email();
-        $email->setSenderEmail("it@mobicoop.org");
-        $email->setRecipientEmail("maxime.bardot@mobicoop.org");
-        $email->setObject("Un chouette test de mail");
-        $email->setMessage("C'est chouette ce mail");
+        $email->setSenderEmail($this->emailSenderDefault);
+        $email->setReturnEmail($this->emailReplyToDefault);
+
+        // Je récupère le mail du destinataire
+        $email->setRecipientEmail($mass->getUser()->getEmail());
 
         switch ($status) {
             case Mass::STATUS_ANALYZED:
-                $sendMailManager->sendEmail($email, "mailMass.html.twig");
+                $email->setObject("[MobiMatch] Analyze du fichier n°".$mass->getId()." terminée");
+                $email->setMessage("L'analyse du fichier n°".$mass->getId()." a été effectuée");
+                $retour = $this->sendEmailManager->sendEmail($email, "mailMass.html.twig");
             break;
             case Mass::STATUS_MATCHED:
+                $email->setObject("[MobiMatch] Potentiel du fichier n°".$mass->getId()." terminée");
+                $email->setMessage("Le calcul du potentiel de covoiturage du fichier n°".$mass->getId()." a été effectué");
+                $retour = $this->sendEmailManager->sendEmail($email, "mailMass.html.twig");
             break;
         }
     }
