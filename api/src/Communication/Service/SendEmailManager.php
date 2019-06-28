@@ -38,18 +38,16 @@ class SendEmailManager
         $failures = "";
 
         // Traitement de l'expéditeur
-        if(is_null($mail->getSenderEmail()) || trim($mail->getSenderEmail()) === ""){
+        if (is_null($mail->getSenderEmail()) || trim($mail->getSenderEmail()) === "") {
             $senderEmail = $this->emailSenderDefault;
-        }
-        else{
+        } else {
             $senderEmail = $mail->getSenderEmail();
         }
 
         // Traitement du reply
-        if(is_null($mail->getReturnEmail()) || trim($mail->getReturnEmail()) === ""){
+        if (is_null($mail->getReturnEmail()) || trim($mail->getReturnEmail()) === "") {
             $replyToEmail = $this->emailReplyToDefault;
-        }
-        else{
+        } else {
             $replyToEmail = $mail->getReturnEmail();
         }
 
