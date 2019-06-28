@@ -48,6 +48,23 @@ install & enable in your .ini all its php extensions : [Docker file](https://git
     - with ssh : `git clone git@gitlab.com:mobicoop/mobicoop-platform.git`
     - with https : `git clone https://gitlab.com/mobicoop/mobicoop-platform.git`
 
+## Docker
+
+If you want to use docker we can provide you a simple way to install everything :
+
+On a unix system just run 
+
+- `make install`
+- `make start`
+- `make fixtures`
+
+On a windows :
+
+- docker-compose -f docker-compose.builder.yml run --rm install
+- docker-compose -f docker-compose.builder.yml run --rm install-all
+- docker-compose -f docker-compose.builder.yml run --rm build-admin
+- docker-compose up -d
+- docker-compose -f docker-compose.builder.yml run --rm fixtures
 
 ## Optional
 
