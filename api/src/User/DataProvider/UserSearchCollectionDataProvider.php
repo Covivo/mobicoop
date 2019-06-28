@@ -29,6 +29,7 @@ use App\User\Entity\User;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
+use ApiPlatform\Core\DataProvider\PaginatorInterface;
 
 /**
  * Collection data provider for User search.
@@ -52,20 +53,17 @@ final class UserSearchCollectionDataProvider implements CollectionDataProviderIn
         return User::class === $resourceClass && $operationName === "get";
     }
     
-    public function getCollection(string $resourceClass, string $operationName = null): \Traversable
+    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): PaginatorInterface
     {
         $manager = $this->managerRegistry->getManagerForClass($resourceClass);
         $repository = $manager->getRepository($resourceClass);
-        $queryBuilder = $repository->createQueryBuilder('o');
+        $queryBuilder = $repository->createQueryBuilder('u');
         $queryNameGenerator = new QueryNameGenerator();
         
         foreach ($this->collectionExtensions as $extension) {
-            $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName);
-            var_dump($extension->getDGL());
+            $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName, $context);
             if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult($resourceClass, $operationName)) {
                 $result = $extension->getResult($queryBuilder, $resourceClass, $operationName);
-                var_dump($result);
-                exit;
                 return $result;
             }
         }

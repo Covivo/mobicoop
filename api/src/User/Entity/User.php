@@ -48,6 +48,7 @@ use App\Right\Entity\UserRight;
 use App\Image\Entity\Image;
 use App\User\Controller\UserPost;
 use App\User\Controller\UserPermissions;
+use App\User\Filter\HomeAddressTerritoryFilter;
 
 /**
  * A user.
@@ -102,6 +103,7 @@ use App\User\Controller\UserPermissions;
  * )
  * @ApiFilter(NumericFilter::class, properties={"id"})
  * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial"})
+ * @ApiFilter(HomeAddressTerritoryFilter::class, properties={"homeAddressTerritory"})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate", "createdDate"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface

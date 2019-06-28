@@ -163,5 +163,9 @@ services:
         arguments:
             $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
 
+    'App\User\Filter\TerritoryFilter':
+        # Uncomment only if autoconfiguration isn't enabled
+        #tags: [ 'api_platform.filter' ]
+
     # alias to allow this type to be autowired
     Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'    
