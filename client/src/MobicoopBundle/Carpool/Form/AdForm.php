@@ -122,7 +122,7 @@ class AdForm extends AbstractType
                     }
                 } else {
                     if (Ad::TYPE_RETURN_TRIP == $data->getType()) {
-                        $groups[] = 'regular';
+                        $groups[] = 'regularReturnTrip';
                     } else {
                         $groups[] = 'regular';
                     }

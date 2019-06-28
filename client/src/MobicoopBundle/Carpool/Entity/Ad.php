@@ -94,7 +94,7 @@ class Ad
 
     /**
      * @var \DateTimeInterface Date of the outward travel if punctual (in string format as we use a datepicker).
-     * @Assert\NotBlank(groups={"punctual","regular"})
+     * @Assert\NotBlank(groups={"punctual"})
      *
      */
     private $outwardDate;
@@ -112,7 +112,7 @@ class Ad
 
     /**
      * @var \DateTimeInterface Date of the return travel if punctual (in string format as we use a datepicker).
-     * @Assert\NotBlank(groups={"punctualReturnTrip","regular"})
+     * @Assert\NotBlank(groups={"punctualReturnTrip","regularReturnTrip"})
      */
     private $returnDate;
 

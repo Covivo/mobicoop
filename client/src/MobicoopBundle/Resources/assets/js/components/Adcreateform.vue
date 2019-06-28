@@ -137,8 +137,9 @@
                   <h5 class="title column is-full">
                     Aller
                   </h5>
+                  <!--                          doit etre conditionné punctual / regular pour que v-model remplisse soit outwardDA-->
                   <b-datepicker
-                    v-model="form.outwardDate"
+                    :value="form.fromDate"
                     :placeholder="form.frequency ===2 ? 'Date de début' : 'Date de départ...'"
                     :day-names="daysShort"
                     :month-names="months"
@@ -147,6 +148,20 @@
                     position="is-top-right"
                     icon-pack="fas"
                   />
+                  <!-- end date for regular trip-->
+                  <b-datepicker
+                    v-if="form.frequency ===2"
+                    v-model="form.toDate"
+                    z
+                    :placeholder="'Date de fin'"
+                    :day-names="daysShort"
+                    :month-names="months"
+                    :first-day-of-week="1"
+                    class="column is-full"
+                    position="is-top-right"
+                    icon-pack="fas"
+                  />
+
                   <div class="column is-full">
                     <div
                       v-for="(day,index) in nbOfDaysToPlan"
@@ -365,6 +380,8 @@ export default {
         returnDate: null,
         returnMargin: null,
         returnTime: null,
+        fromDate: null,
+        toDate: null,
         // //Monday
         // monday:{
         //   outwardDate: null,
