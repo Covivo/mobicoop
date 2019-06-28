@@ -131,11 +131,13 @@ class PTDataProvider
      *
      * @param string $provider                  The name of the provider
      * @param int $logicalId                 The logicalId of the line stop
+     * @param string $transportModes|null         The transport modes to search
      * @return NULL|array                       The line stop found or null if no line stop is found
      */
     public function getLineStop(
         string $provider,
-        int $logicalId
+        int $logicalId,
+        string $transportModes = ""
     ): ?array {
         if (!array_key_exists($provider, self::PROVIDERS)) {
             return null;
@@ -144,7 +146,8 @@ class PTDataProvider
         $providerInstance = new $providerClass();
         return call_user_func_array([$providerInstance,"getCollection"], [PTLineStop::class,"",[
             "provider" => $provider,
-            "logicalId" => $logicalId
+            "logicalId" => $logicalId,
+            "transportModes" => $transportModes
         ]]);
     }
 }

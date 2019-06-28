@@ -44,12 +44,12 @@ class Mass implements Resource
 
 
     /**
-     * @var int The id of this event.
+     * @var int The id of this mass.
      */
     private $id;
 
     /**
-     * @var string|null The iri of this event.
+     * @var string|null The iri of this mass.
      */
     private $iri;
 
@@ -86,14 +86,18 @@ class Mass implements Resource
 
     /**
      * @var User User that imports the file.
-     * @Groups({"post","put"})
      */
     private $user;
 
     /**
+     * @var \DateTimeInterface Analyzed date of the import.
+     */
+    private $analyzingDate;
+
+    /**
      * @var \DateTimeInterface Analyze date of the import.
      */
-    private $analyzeDate;
+    private $analyzedDate;
 
     /**
      * @var \DateTimeInterface Calculation date of the import.
@@ -101,10 +105,25 @@ class Mass implements Resource
     private $calculationDate;
 
     /**
+     * @var \DateTimeInterface Calculation date of the import.
+     */
+    private $calculatedDate;
+
+    /**
      * @var File|null
+     * @Assert\File(
+     *     mimeTypes = {"text/csv", "text/plain", "application/zip", "application/xml", "text/xml", "application/json"},
+     *     mimeTypesMessage = "Format de fichier invalide"
+     *     )
      * @Groups({"post","put"})
      */
     private $file;
+
+    /**
+     * @var int|null The user id associated with the file.
+     * @Groups({"post","put"})
+     */
+    private $userId;
 
     /**
      * @var array The errors.
@@ -249,14 +268,26 @@ class Mass implements Resource
         return $this;
     }
 
-    public function getAnalyzeDate(): ?\DateTimeInterface
+    public function getAnalyzedDate(): ?\DateTimeInterface
     {
-        return $this->analyzeDate;
+        return $this->analyzedDate;
     }
 
-    public function setAnalyzeDate(?\DateTimeInterface $analyzeDate): self
+    public function setAnalyzedDate(?\DateTimeInterface $analyzedDate): self
     {
-        $this->analyzeDate = $analyzeDate;
+        $this->analyzedDate = $analyzedDate;
+
+        return $this;
+    }
+
+    public function getAnalyzingDate(): ?\DateTimeInterface
+    {
+        return $this->analyzingDate;
+    }
+
+    public function setAnalyzingDate(?\DateTimeInterface $analyzingDate): self
+    {
+        $this->analyzingDate = $analyzingDate;
 
         return $this;
     }
@@ -273,6 +304,18 @@ class Mass implements Resource
         return $this;
     }
 
+    public function getCalculatedDate(): ?\DateTimeInterface
+    {
+        return $this->calculatedDate;
+    }
+
+    public function setCalculatedDate(?\DateTimeInterface $calculatedDate): self
+    {
+        $this->calculatedDate = $calculatedDate;
+
+        return $this;
+    }
+
     public function getFile(): ?File
     {
         return $this->file;
@@ -281,6 +324,16 @@ class Mass implements Resource
     public function setFile(?File $file)
     {
         $this->file = $file;
+    }
+
+    public function getUserId(): ?int
+    {
+        return $this->userId;
+    }
+
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
     }
 
     public function getErrors(): ?array

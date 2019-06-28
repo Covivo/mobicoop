@@ -59,14 +59,16 @@ final class LineStopCollectionDataProvider implements CollectionDataProviderInte
     {
         if (
             is_null($this->request->get("provider")) &&
-            is_null($this->request->get("logicalId"))
+            is_null($this->request->get("logicalId")) &&
+            is_null($this->request->get("transportModes"))
         ) {
             return null;
         }
-        
+
         return $this->dataProvider->getLineStop(
             $this->request->get("provider"),
-            $this->request->get('logicalId')
+            $this->request->get('logicalId'),
+            $this->request->get("transportModes")
         );
     }
 }

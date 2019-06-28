@@ -23,7 +23,6 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Api\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourney;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
@@ -82,7 +81,7 @@ class Deserializer
      *
      * @param string $class The expected class of the object
      * @param array $data   The array to deserialize
-     * @return array|User|Address|Proposal|Matching|GeoSearch|PTJourney|ExternalJourney|Event|Image|PTTripPoint|PTLineStop|ExternalJourneyProvider|Mass|MassPerson|Community|Article|Permission|null
+     * @return array|User|Address|Proposal|Matching|PTJourney|ExternalJourney|Event|Image|PTTripPoint|PTLineStop|ExternalJourneyProvider|Mass|MassPerson|Community|Article|Permission|null
      */
     public function deserialize(string $class, array $data)
     {
@@ -105,9 +104,6 @@ class Deserializer
             case Matching::class:
                 return self::deserializeMatching($data);
                 break;
-            case GeoSearch::class:
-                return self::deserializeGeoSearch($data);
-                break;
             case PTJourney::class:
                 return self::deserializePTJourney($data);
                 break;
@@ -129,8 +125,14 @@ class Deserializer
             case MassPerson::class:
                 return self::deserializeMassPerson($data);
                 break;
+            case MassMatching::class:
+                return self::deserializeMassMatching($data);
+                break;
             case Community::class:
                 return self::deserializeCommunity($data);
+                break;
+            case CommunityUser::class:
+                return self::deserializeCommunityUser($data);
                 break;
             case Article::class:
                 return self::deserializeArticle($data);
@@ -347,16 +349,6 @@ class Deserializer
         return $matching;
     }
     
-    private function deserializeGeoSearch(array $data): ?Address
-    {
-        $address = new Address();
-        $address = self::autoSet($address, $data);
-        if (isset($data["@id"])) {
-            $address->setIri($data["@id"]);
-        }
-        return $address;
-    }
-    
     private function deserializePTJourney(array $data): ?PTJourney
     {
         $PTJourney = new PTJourney();
@@ -541,15 +533,6 @@ class Deserializer
         if (isset($data["@id"])) {
             $massMatching->setIri($data["@id"]);
         }
-        if (isset($data["direction"])) {
-            $massMatching->setDirection(self::deserializeDirection($data["direction"]));
-        }
-        if (isset($data["massPerson1"])) {
-            $massMatching->setMassPerson1(self::deserializeMassPerson($data["massPerson1"]));
-        }
-        if (isset($data["massPerson2"])) {
-            $massMatching->setMassPerson2(self::deserializeMassPerson($data["massPerson2"]));
-        }
         return $massMatching;
     }
 
@@ -568,7 +551,7 @@ class Deserializer
             $communityUser->setIri($data["@id"]);
         }
         if (isset($data["community"])) {
-            $communityUser->set>Community(self::deserializeCommunity($data["community"]));
+            $communityUser->setCommunity(self::deserializeCommunity($data["community"]));
         }
         if (isset($data["user"])) {
             $communityUser->setUser(self::deserializeUser($data["user"]));
@@ -599,9 +582,11 @@ class Deserializer
                 $community->addProposal(self::deserializeProposal($proposal));
             }
         }
-        if (isset($data["communityUsers"])) {
+        if (isset($data["communityUsers"]) && is_array($data["communityUsers"])) {
             foreach ($data["communityUsers"] as $communityUser) {
-                $community->addCommunityUser(self::deserializeCommunityUser($communityUser));
+                if (!is_null($communityUser) && is_array($communityUser)) {
+                    $community->addCommunityUser(self::deserializeCommunityUser($communityUser));
+                }
             }
         }
         return $community;

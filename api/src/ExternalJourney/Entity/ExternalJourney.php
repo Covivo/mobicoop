@@ -27,7 +27,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 
 /**
- * An external journey.
+ * An external carpool journey provided by a partner provider.
  *
  * @ApiResource(
  *     collectionOperations={"get"={
@@ -38,7 +38,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *                  "in" = "query",
  *                  "required" = "true",
  *                  "type" = "string",
- *                  "description" = "name of the provider"
+ *                  "description" = "The name of the provider"
  *              },
  *              {
  *                  "name" = "driver",

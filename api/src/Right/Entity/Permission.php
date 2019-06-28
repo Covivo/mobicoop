@@ -28,7 +28,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use App\Right\Controller\PermissionCheck;
 
 /**
- * A permission.
+ * A permission to execute an action.
  *
  * @ApiResource(
  *      collectionOperations={
@@ -48,7 +48,6 @@ use App\Right\Controller\PermissionCheck;
  *                      {
  *                          "name" = "user",
  *                          "in" = "query",
- *                          "required" = "false",
  *                          "type" = "number",
  *                          "format" = "integer",
  *                          "description" = "The user id"
@@ -56,7 +55,6 @@ use App\Right\Controller\PermissionCheck;
  *                      {
  *                          "name" = "territory",
  *                          "in" = "query",
- *                          "required" = "false",
  *                          "type" = "number",
  *                          "format" = "integer",
  *                          "description" = "The territory id"

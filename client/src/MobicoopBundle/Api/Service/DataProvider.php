@@ -200,6 +200,37 @@ class DataProvider
         }
         return new Response();
     }
+
+    /**
+     * Get special item operation
+     *
+     * @param int           $id             The id of the item
+     * @param string        $operation      The name of the special operation
+     * @param array|null    $params         An array of parameters
+     *
+     * @return Response The response of the operation.
+     */
+    public function getSpecialItem(int $id, string $operation, array $params=null): Response
+    {
+        try {
+            if ($this->format == self::RETURN_ARRAY) {
+                $clientResponse = $this->client->get($this->resource."/".$id.'/'.$operation, ['query'=>$params]);
+                $value = json_decode((string) $clientResponse->getBody(), true);
+            } elseif ($this->format == self::RETURN_JSON) {
+                $clientResponse = $this->client->get($this->resource."/".$id.'/'.$operation, ['query'=>$params, 'headers' => ['accept' => 'application/json']]);
+                $value = (string) $clientResponse->getBody();
+            } else {
+                $clientResponse = $this->client->get($this->resource."/".$id.'/'.$operation, ['query'=>$params]);
+                $value = $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true));
+            }
+            if ($clientResponse->getStatusCode() == 200) {
+                return new Response($clientResponse->getStatusCode(), $value);
+            }
+        } catch (TransferException $e) {
+            return new Response($e->getCode());
+        }
+        return new Response();
+    }
     
     /**
      * Get collection operation

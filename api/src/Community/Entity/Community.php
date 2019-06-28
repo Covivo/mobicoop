@@ -41,7 +41,7 @@ use App\Carpool\Entity\Proposal;
 use App\Community\Controller\JoinAction;
 
 /**
- * A community.
+ * A community : a group of users sharing common interests.
  *
  * @ORM\Entity()
  * @UniqueEntity("name")
@@ -144,7 +144,7 @@ class Community
     /**
      * @var ArrayCollection|null The proposals in this community.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Carpool\Entity\Proposal")
+     * @ORM\ManyToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="communities")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */

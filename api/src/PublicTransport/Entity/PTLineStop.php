@@ -31,7 +31,7 @@ use App\Geography\Entity\Address;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * A public transport Line Stops list.
+ * A public transport Line Stop list.
  *
  * @ApiResource(
  *      routePrefix="/public_transport",
@@ -57,6 +57,12 @@ use Doctrine\ORM\Mapping as ORM;
  *                          "type" = "number",
  *                          "format" = "int",
  *                          "description" = "The id of the line stop"
+ *                      },
+ *                      {
+ *                          "name" = "transportModes",
+ *                          "in" = "query",
+ *                          "type" = "string",
+ *                          "description" = "The transport modes ti search"
  *                      },
  *                  },
  *              }

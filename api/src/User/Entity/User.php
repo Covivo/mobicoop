@@ -89,7 +89,6 @@ use App\User\Filter\HomeAddressTerritoryFilter;
  *                      {
  *                          "name" = "territory",
  *                          "in" = "query",
- *                          "required" = "false",
  *                          "type" = "number",
  *                          "format" = "integer",
  *                          "description" = "The territory id"

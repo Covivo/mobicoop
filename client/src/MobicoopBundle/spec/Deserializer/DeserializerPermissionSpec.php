@@ -21,29 +21,31 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Geography\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\Spec\Service;
+
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
+use Mobicoop\Bundle\MobicoopBundle\Permission\Entity\Permission;
 
 /**
- * GeoSearch.php
- * Entity for GeoSearchController.php
- *
- * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 16/11/2018
- * Time: 9:25
+ * DeserializerPermissionSpec.php
+ * Tests for Deserializer - Permission
+ * @author Sylvain briat <sylvain.briat@mobicoop.org>
+ * Date: 24/06/2019
+ * Time: 14:00
  *
  */
 
-class GeoSearch
+describe('deserializePermission', function () {
+    it('deserialize Permission should return a Permission object', function () {
+        $jsonPermission = <<<JSON
 {
-    private $id;
-
-    public function __construct($id)
-    {
-        $this->id = $id;
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+  "id": 0,
+  "granted": true
 }
+JSON;
+
+        $deserializer = new Deserializer();
+        $permission = $deserializer->deserialize(Permission::class, json_decode($jsonPermission, true));
+        expect($permission)->toBeAnInstanceOf(Permission::class);
+    });
+});

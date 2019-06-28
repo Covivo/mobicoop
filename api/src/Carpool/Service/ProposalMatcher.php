@@ -83,6 +83,10 @@ class ProposalMatcher
             return [];
         }
 
+        // we check the communities
+        
+
+
         $matchings = [];
 
         // we filter with geomatcher

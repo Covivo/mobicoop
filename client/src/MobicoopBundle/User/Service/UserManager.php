@@ -26,10 +26,14 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Service\AddressManager;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Psr\Log\LoggerInterface;
 use DateTime;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 
 /**
  * User management service.
@@ -62,11 +66,11 @@ class UserManager
     /**
      * Get a user by its identifier
      *
-     * @param String $id The user id
+     * @param int $id The user id
      *
      * @return User|null The user found or null if not found.
      */
-    public function getUser($id)
+    public function getUser(int $id)
     {
         $response = $this->dataProvider->getItem($id);
         if ($response->getCode() == 200) {
@@ -84,11 +88,11 @@ class UserManager
     /**
      * Get masses of a user
      *
-     * @param String $id The user id
+     * @param int $id The user id
      *
      * @return Mass[]|null The user found or null if not found.
      */
-    public function getMasses($id)
+    public function getMasses(int $id)
     {
         $response = $this->dataProvider->getSubCollection($id, Mass::class);
         if ($response->getCode() == 200) {
@@ -210,5 +214,34 @@ class UserManager
         }
         $this->logger->info('User Delete | FaiL');
         return false;
+    }
+
+    /**
+     * Get the communities where the user is member
+     *
+     * @param User $user            The user
+     * @param integer|null $status  The status of the membership
+     * @return void
+     */
+    public function getCommunities(User $user, ?int $status = null)
+    {
+        $params = [
+            'user.id' => $user->getId()
+        ];
+        if (!is_null($status)) {
+            $params['status'] = $status;
+        }
+        $this->dataProvider->setClass(CommunityUser::class);
+        $response = $this->dataProvider->getCollection($params);
+        if ($response->getCode() == 200 && $response->getValue()->getMember() !== null && is_array($response->getValue()->getMember())) {
+            $communities = [];
+            foreach ($response->getValue()->getMember() as $communityUser) {
+                if ($communityUser->getCommunity() instanceof Community) {
+                    $communities[] = $communityUser->getCommunity();
+                }
+            }
+            return $communities;
+        }
+        return null;
     }
 }

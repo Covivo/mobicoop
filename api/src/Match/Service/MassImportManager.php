@@ -27,6 +27,8 @@ use App\Match\Entity\Mass;
 use App\Service\FileManager;
 use App\User\Repository\UserRepository;
 use App\Match\Repository\MassPersonRepository;
+use App\Communication\Entity\Email;
+use App\Communication\Service\SendEmailManager;
 use Psr\Log\LoggerInterface;
 use App\Match\Exception\MassException;
 use App\Match\Entity\MassData;
@@ -69,6 +71,7 @@ class MassImportManager
     private $geoRouter;
     private $geoMatcher;
     private $zoneManager;
+    private $sendEmailManager;
 
     /**
      * Constructor
@@ -92,6 +95,7 @@ class MassImportManager
         GeoRouter $geoRouter,
         GeoMatcher $geoMatcher,
         ZoneManager $zoneManager,
+        SendEmailManager $sendEmailManager,
         array $params
     ) {
         $this->entityManager = $entityManager;
@@ -106,6 +110,7 @@ class MassImportManager
         $this->geoRouter = $geoRouter;
         $this->geoMatcher = $geoMatcher;
         $this->zoneManager = $zoneManager;
+        $this->sendEmailManager = $sendEmailManager;
     }
 
     /**
@@ -174,6 +179,11 @@ class MassImportManager
         set_time_limit(300);
         
         $this->logger->info('Mass analyze | Start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        $mass->setStatus(Mass::STATUS_ANALYZING);
+        $mass->setAnalyzingDate(new \Datetime());
+        $this->entityManager->persist($mass);
+        $this->entityManager->flush();
 
         // we create an array to keep all the analysing errors
         $analyseErrors = [];
@@ -306,9 +316,10 @@ class MassImportManager
         $this->logger->info('Mass analyze | Direction personal address end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $mass->setErrors($analyseErrors);
         $mass->setStatus(Mass::STATUS_ANALYZED);
-        $mass->setAnalyzeDate(new \Datetime());
+        $mass->setAnalyzedDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
+        $this->sendMail($mass, Mass::STATUS_ANALYZED);
         $this->logger->info('Mass analyze | End ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
 
@@ -337,6 +348,11 @@ class MassImportManager
         $candidates = [];
         
         $this->logger->info('Mass match | Start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        $mass->setStatus(Mass::STATUS_MATCHING);
+        $mass->setCalculationDate(new \Datetime());
+        $this->entityManager->persist($mass);
+        $this->entityManager->flush();
 
         // we search the matches for all the persons
         foreach ($mass->getPersons() as $driverPerson) {
@@ -452,10 +468,11 @@ class MassImportManager
                 }
             }
         }
-        $mass->setStatus(Mass::STATUS_TREATED);
-        $mass->setCalculationDate(new \Datetime());
+        $mass->setStatus(Mass::STATUS_MATCHED);
+        $mass->setCalculatedDate(new \Datetime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
+        $this->sendMail($mass, Mass::STATUS_MATCHED);
         $this->logger->info('Mass match | Creating matches records end ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
 
@@ -489,6 +506,8 @@ class MassImportManager
                 //     return $this->getDataFromJson('.' . $this->params['folder'] . $mass->getFileName());
                 //     break;
             default:
+                $this->entityManager->remove($mass);
+                $this->entityManager->flush();
                 throw new MassException('This file type is not accepted');
                 break;
         }
@@ -682,7 +701,7 @@ class MassImportManager
                         'code' => '',
                         'file' => basename($csv),
                         'line' => $line,
-                        'message' => 'Wrong number of fields'
+                        'message' => 'Nombre de champs incorrect'
                     ];
                 }
                 $massPerson = new MassPerson();
@@ -838,6 +857,34 @@ class MassImportManager
         $surface_union = $surface1+$surface2-$surface_intersect;
         $ratio = $surface_intersect/$surface_union;
         return $ratio;
+    }
+
+    /**
+     * Send an email for a given import status
+     *
+     * @param Mass $mass
+     * @param integer $status
+<     * @return void
+     */
+    private function sendMail(Mass $mass, int $status)
+    {
+        $email = new Email();
+
+        // Je récupère le mail du destinataire
+        $email->setRecipientEmail($mass->getUser()->getEmail());
+
+        switch ($status) {
+            case Mass::STATUS_ANALYZED:
+                $email->setObject("[MobiMatch] Analyze du fichier n°".$mass->getId()." terminée");
+                $email->setMessage("L'analyse du fichier n°".$mass->getId()." a été effectuée");
+                $retour = $this->sendEmailManager->sendEmail($email, "mailMass.html.twig");
+            break;
+            case Mass::STATUS_MATCHED:
+                $email->setObject("[MobiMatch] Potentiel du fichier n°".$mass->getId()." terminée");
+                $email->setMessage("Le calcul du potentiel de covoiturage du fichier n°".$mass->getId()." a été effectué");
+                $retour = $this->sendEmailManager->sendEmail($email, "mailMass.html.twig");
+            break;
+        }
     }
 }
 

@@ -106,6 +106,13 @@ use App\User\Entity\User;
  *                          "format" = "date-time",
  *                          "description" = "The date of the trip (on RFC3339 format)"
  *                      },
+ *                      {
+ *                          "name" = "userId",
+ *                          "in" = "query",
+ *                          "type" = "number",
+ *                          "format" = "integer",
+ *                          "description" = "The id of the user that makes the query"
+ *                      }
  *                  }
  *              }
  *          }
@@ -195,7 +202,7 @@ class Proposal
     /**
      * @var ArrayCollection|null The communities related to the proposal.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Community\Entity\Community")
+     * @ORM\ManyToMany(targetEntity="\App\Community\Entity\Community", inversedBy="proposals")
      * @Groups({"read","write"})
      */
     private $communities;

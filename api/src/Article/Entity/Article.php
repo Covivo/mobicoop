@@ -33,7 +33,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
- * An article.
+ * An article : informations that should be displayed in a page of a site or in a screen of a mobile app.
  *
  * @ORM\Entity()
  * @ApiResource(

@@ -31,7 +31,7 @@ use App\Geography\Entity\Address;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * An accessiblity status.
+ * An accessibility status for public transport lines.
  *
  * @ApiResource(
  *      routePrefix="/public_transport",
