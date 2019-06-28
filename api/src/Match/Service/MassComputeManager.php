@@ -23,7 +23,6 @@
 
 namespace App\Match\Service;
 
-
 use App\Geography\Service\GeoTools;
 use App\Match\Entity\Mass;
 use App\Match\Entity\MassMatrix;
@@ -42,7 +41,6 @@ use App\Service\FormatDataManager;
  */
 class MassComputeManager
 {
-
     private $formatDataManager;
     private $geoTools;
 
@@ -96,7 +94,6 @@ class MassComputeManager
         $matrix = new MassMatrix();
 
         foreach ($persons as $person) {
-
             $tabCoords[] = array(
                 "latitude"=>$person->getPersonalAddress()->getLatitude(),
                 "longitude"=>$person->getPersonalAddress()->getLongitude(),
@@ -258,6 +255,4 @@ class MassComputeManager
 
         return $matrix;
     }
-
-
 }

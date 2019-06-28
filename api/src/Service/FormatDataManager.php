@@ -58,5 +58,4 @@ class FormatDataManager
 
         return $humanReturn;
     }
-
 }

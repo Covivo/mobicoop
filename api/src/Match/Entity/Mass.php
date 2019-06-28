@@ -571,5 +571,4 @@ class Mass
     {
         $this->massMatrix = $massMatrix;
     }
-
 }

@@ -26,7 +26,6 @@ namespace App\Match\Entity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-
 /**
  * An Carpool between two peoples after a Matching diagnostic
  */
