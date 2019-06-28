@@ -72,8 +72,6 @@ class MassImportManager
     private $geoMatcher;
     private $zoneManager;
     private $sendEmailManager;
-    private $emailSenderDefault;
-    private $emailReplyToDefault;
 
     /**
      * Constructor
@@ -98,8 +96,6 @@ class MassImportManager
         GeoMatcher $geoMatcher,
         ZoneManager $zoneManager,
         SendEmailManager $sendEmailManager,
-        string $emailSender,
-        string $emailReplyTo,
         array $params
     ) {
         $this->entityManager = $entityManager;
@@ -115,8 +111,6 @@ class MassImportManager
         $this->geoMatcher = $geoMatcher;
         $this->zoneManager = $zoneManager;
         $this->sendEmailManager = $sendEmailManager;
-        $this->emailSenderDefault = $emailSender;
-        $this->emailReplyToDefault = $emailReplyTo;
     }
 
     /**
@@ -875,8 +869,6 @@ class MassImportManager
     private function sendMail(Mass $mass, int $status)
     {
         $email = new Email();
-        $email->setSenderEmail($this->emailSenderDefault);
-        $email->setReturnEmail($this->emailReplyToDefault);
 
         // Je récupère le mail du destinataire
         $email->setRecipientEmail($mass->getUser()->getEmail());

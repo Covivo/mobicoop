@@ -40,6 +40,7 @@ class Email
 
     /**
      * @var string sender's name of the email
+     * @Assert\NotBlank
      */
     private $senderName;
 
@@ -86,7 +87,7 @@ class Email
      */
     private $message;
 
-    public function getSenderEmail(): string
+    public function getSenderEmail(): ?string
     {
         return $this->senderEmail;
     }
