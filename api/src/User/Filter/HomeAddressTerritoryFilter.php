@@ -28,7 +28,6 @@ use Doctrine\ORM\QueryBuilder;
 
 final class HomeAddressTerritoryFilter extends AbstractContextAwareFilter
 {
-
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
         if ($property != "homeAddressTerritory") {
@@ -41,8 +40,8 @@ final class HomeAddressTerritoryFilter extends AbstractContextAwareFilter
         }
         
         $queryBuilder
-            ->leftJoin('u.addresses','homeAddress')
-            ->join('\App\Geography\entity\Territory','homeAddressTerritory')
+            ->leftJoin('u.addresses', 'homeAddress')
+            ->join('\App\Geography\entity\Territory', 'homeAddressTerritory')
             ->andWhere(sprintf('homeAddressTerritory.id = %s AND homeAddress.name=\'homeAddress\' AND ST_INTERSECTS(homeAddressTerritory.geoJsonDetail,homeAddress.geoJson)=1', $value));
     }
 
