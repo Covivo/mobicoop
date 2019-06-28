@@ -82,7 +82,7 @@
             <geocomplete
               id="homeAddress"
               name="homeAddress"
-              :placeholder="addressLocality"
+              :placeholder="addressLocality != 'null' ? addressLocality : home"
               :url="geoSearchUrl"
               @geoSelected="selectedGeo"
             />
@@ -203,6 +203,7 @@ export default {
   data() {
     return {
       errors: [],
+      home: 'Ville de résidence',
       homeAddress:{
         required: true,
         value: {
@@ -219,7 +220,7 @@ export default {
           region: this.region,
           street: this.street,
           streetAddress: this.streetAddress,
-          subLocality: this.subLocality
+          subLocality: this.subLocality,
         }
       },
       form:{
