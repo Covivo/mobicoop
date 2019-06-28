@@ -5,7 +5,7 @@ namespace App\Communication\Service;
 use App\Communication\Entity\Email;
 
 /**
- * Sending email service via Swift_Mailer
+ * Email sending service via Swift_Mailer
  *
  * @author Maxime Bardot <maxime.bardot@covivo.eu>
  */
