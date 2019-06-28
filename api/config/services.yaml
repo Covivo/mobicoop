@@ -163,7 +163,7 @@ services:
         arguments:
             $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
 
-    'App\User\Filter\TerritoryFilter':
+    'App\User\Filter\HomeAddressTerritoryFilter':
         # Uncomment only if autoconfiguration isn't enabled
         #tags: [ 'api_platform.filter' ]
 
