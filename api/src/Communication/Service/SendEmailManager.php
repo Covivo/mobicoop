@@ -5,7 +5,7 @@ namespace App\Communication\Service;
 use App\Communication\Entity\Email;
 
 /**
- * Service d'envoi d'email via Swift_Mailer
+ * Sending email service via Swift_Mailer
  *
  * @author Maxime Bardot <maxime.bardot@covivo.eu>
  */
@@ -27,10 +27,10 @@ class SendEmailManager
 
 
     /**
-     * Envoi un mail
-     * @param Email $mail le mail à envoyer
-     * @param string $template le template du mail
-     * @param array $varOpt pour des infos en plus
+     * Send an email
+     * @param Email $mail the email to send
+     * @param string $template the email's template
+     * @param array $varOpt optionnal informations that can be included in the template
      * @return string
      */
     public function sendEmail(Email $mail, $template, $varOpt=[])
