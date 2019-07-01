@@ -132,8 +132,8 @@
                 </b-radio-button>
               </b-field>
               <!-- DATE, TIME , MARGIN -->
-              <!--                          doit etre conditionné punctual / regular pour que v-model remplisse soit outwardDA-->
               <div class="columns">
+                <!-- Punctual one way Trip -->
                 <div
                   v-if="form.frequency ===1"
                   class="column"
@@ -200,9 +200,7 @@
                     </div>
                   </div>
                 </div>
-                <!-- end for regular trip-->
-                <!-- end for regular trip-->
-                <!-- end for regular trip-->
+                <!-- Regular one way trip-->
                 <div
                   v-if="form.frequency ===2"
                   class="column"
@@ -251,14 +249,14 @@
                       >
                         <button
                           class="button is-primary"
-                          @click="form.outwardTime = new Date()"
+                          @click="form['outward'+daysShort[index]+'Time']= new Date()"
                         >
                           <b-icon icon="clock" />
                           <span>Maintenant</span>
                         </button>
                         <button
                           class="button is-tertiary"
-                          @click="form.outwardTime = null"
+                          @click="form['outward'+daysShort[index]+'Time'] = null"
                         >
                           <b-icon icon="close" />
                           <span>Effacer</span>
@@ -375,14 +373,14 @@
                     >
                       <button
                         class="button is-primary"
-                        @click="form.returnTime = new Date()"
+                        @click="form['return'+daysShort[index]+'Time'] = new Date()"
                       >
                         <b-icon icon="clock" />
                         <span>Maintenant</span>
                       </button>
                       <button
                         class="button is-tertiary"
-                        @click="form.returnTime = null"
+                        @click="form['return'+daysShort[index]+'Time'] = null"
                       >
                         <b-icon icon="close" />
                         <span>Effacer</span>
@@ -512,18 +510,37 @@ export default {
         returnDate: null,
         returnMargin: null,
         returnTime: null,
+        // Regular
         fromDate: null,
         toDate: null,
-        // //Monday
-        // monday:{
-        //   outwardDate: null,
-        //   outwardMargin: null,
-        //   outwardTime: null,
-        // }
-        // outwardMonTime: null,
-        // outwardMonMargin: null,
         returnMonTime: null,
         returnMonMargin: null,
+        returnTueTime: null,
+        returnTueMargin: null,
+        returnThuTime: null,
+        returnThuMargin: null,
+        returnWedTime: null,
+        returnWedMargin: null,
+        returnFriTime: null,
+        returnFriMargin: null,
+        returnSatTime: null,
+        returnSatMargin: null,
+        returnSunTime: null,
+        returnSunMargin: null,
+        outwardMonTime: null,
+        outwardMonMargin: null,
+        outwardTueTime: null,
+        outwardTueMargin: null,
+        outwardThuTime: null,
+        outwardThuMargin: null,
+        outwardWedTime: null,
+        outwardWedMargin: null,
+        outwardFriTime: null,
+        outwardFriMargin: null,
+        outwardSatTime: null,
+        outwardSatMargin: null,
+        outwardSunTime: null,
+        outwardSunMargin: null
       }
     };
   },
