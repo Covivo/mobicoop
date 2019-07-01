@@ -46,6 +46,8 @@ use App\Right\Entity\UserRole;
 use App\Match\Entity\Mass;
 use App\Right\Entity\UserRight;
 use App\Image\Entity\Image;
+use App\Communication\Entity\Message;
+use App\Communication\Entity\Recipient;
 use App\User\Controller\UserPost;
 use App\User\Controller\UserPermissions;
 use App\User\Filter\HomeAddressTerritoryFilter;
@@ -317,7 +319,21 @@ class User implements UserInterface, EquatableInterface
     private $masses;
 
     /**
-     * @var \DateTimeInterface Creation date of the event.
+     * @var ArrayCollection|null The messages sent by the user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Message", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     */
+    private $messages;
+
+    /**
+     * @var ArrayCollection|null The messages received by the user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Recipient", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     */
+    private $recipients;
+
+    /**
+     * @var \DateTimeInterface Creation date of the user.
      *
      * @ORM\Column(type="datetime")
      * @Groups("read")
@@ -340,6 +356,8 @@ class User implements UserInterface, EquatableInterface
         $this->userRights = new ArrayCollection();
         $this->masses = new ArrayCollection();
         $this->images = new ArrayCollection();
+        $this->messages = new ArrayCollection();
+        $this->recipients = new ArrayCollection();
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -728,6 +746,62 @@ class User implements UserInterface, EquatableInterface
             }
         }
 
+        return $this;
+    }
+
+    public function getMessages()
+    {
+        return $this->messages->getValues();
+    }
+
+    public function addMessage(Message $message): self
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages->add($message);
+            $message->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): self
+    {
+        if ($this->messages->contains($message)) {
+            $this->messages->removeElement($message);
+            // set the owning side to null (unless already changed)
+            if ($message->getUser() === $this) {
+                $message->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getRecipients()
+    {
+        return $this->recipients->getValues();
+    }
+    
+    public function addRecipient(Recipient $recipient): self
+    {
+        if (!$this->recipients->contains($recipient)) {
+            $this->recipients[] = $recipient;
+            $recipient->SetUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeRecipient(Recipient $recipient): self
+    {
+        if ($this->recipients->contains($recipient)) {
+            $this->recipients->removeElement($recipient);
+            // set the owning side to null (unless already changed)
+            if ($recipient->getUser() === $this) {
+                $recipient->setUser(null);
+            }
+        }
+        
         return $this;
     }
 
