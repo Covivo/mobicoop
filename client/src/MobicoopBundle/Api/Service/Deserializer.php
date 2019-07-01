@@ -498,7 +498,7 @@ class Deserializer
             }
         }
         if (isset($data["massMatrix"])) {
-                $mass->setMassMatrix(self::deserializeMassMatrix($data["massMatrix"]));
+            $mass->setMassMatrix(self::deserializeMassMatrix($data["massMatrix"]));
         }
         return $mass;
     }
@@ -510,12 +510,12 @@ class Deserializer
         if (isset($data["@id"])) {
             $massMatrix->setIri($data["@id"]);
         }
-        if(isset($data["originalsJourneys"])){
+        if (isset($data["originalsJourneys"])) {
             foreach ($data["originalsJourneys"] as $massJourney) {
                 $massMatrix->addOriginalsJourneys(self::deserializeMassJourney($massJourney));
             }
         }
-        if(isset($data["carpools"])) {
+        if (isset($data["carpools"])) {
             foreach ($data["carpools"] as $carpool) {
                 $massMatrix->addCarpools(self::deserializeMassCarpool($carpool));
             }

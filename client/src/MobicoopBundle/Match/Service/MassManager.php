@@ -159,5 +159,4 @@ class MassManager
         }
         return null;
     }
-
 }
