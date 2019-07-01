@@ -134,7 +134,7 @@ pages:
   - cp -r docs/* .public
   - mv .public public
  dependencies:
-   - master_tests
+   - master_deploy
  artifacts:
    paths:
    - public
