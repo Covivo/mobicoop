@@ -236,8 +236,6 @@ class UserController extends AbstractController
                 'error' => $error,
                 'user' => $user
             ]);
-       
-       
     }
 
   
