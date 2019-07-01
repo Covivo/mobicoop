@@ -69,21 +69,21 @@ class AdManager
         }
         $criteria->setPriceKm($ad->getPrice());
         
-        // temp as long as regular post doesnt work
-        $ad->setOutwardMonTime($ad->getOutwardTime());
-        $ad->setOutwardTueTime($ad->getOutwardTime());
-        $ad->setOutwardWedTime($ad->getOutwardTime());
-        $ad->setOutwardThuTime($ad->getOutwardTime());
-        $ad->setOutwardFriTime($ad->getOutwardTime());
-        $ad->setOutwardSatTime($ad->getOutwardTime());
-        $ad->setOutwardSunTime($ad->getOutwardTime());
-        $ad->setOutwardMonMargin($ad->getOutwardMargin());
-        $ad->setOutwardTueMargin($ad->getOutwardMargin());
-        $ad->setOutwardWedMargin($ad->getOutwardMargin());
-        $ad->setOutwardThuMargin($ad->getOutwardMargin());
-        $ad->setOutwardFriMargin($ad->getOutwardMargin());
-        $ad->setOutwardSatMargin($ad->getOutwardMargin());
-        $ad->setOutwardSunMargin($ad->getOutwardMargin());
+        // For regular Trip : get time and margin for each day
+        $ad->setOutwardMonTime($ad->getOutwardMonTime());
+        $ad->setOutwardTueTime($ad->getOutwardTueTime());
+        $ad->setOutwardWedTime($ad->getOutwardWedTime());
+        $ad->setOutwardThuTime($ad->getOutwardThuTime());
+        $ad->setOutwardFriTime($ad->getOutwardFriTime());
+        $ad->setOutwardSatTime($ad->getOutwardSatTime());
+        $ad->setOutwardSunTime($ad->getOutwardSunTime());
+        $ad->setOutwardMonMargin($ad->getOutwardMonMargin());
+        $ad->setOutwardTueMargin($ad->getOutwardTueMargin());
+        $ad->setOutwardWedMargin($ad->getOutwardWedMargin());
+        $ad->setOutwardThuMargin($ad->getOutwardThuMargin());
+        $ad->setOutwardFriMargin($ad->getOutwardFriMargin());
+        $ad->setOutwardSatMargin($ad->getOutwardSatMargin());
+        $ad->setOutwardSunMargin($ad->getOutwardSunMargin());
         
         $criteria->setFrequency($ad->getFrequency());
         if ($ad->getFrequency() == Ad::FREQUENCY_PUNCTUAL) {
@@ -91,8 +91,8 @@ class AdManager
             $criteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
             $criteria->setMarginDuration($ad->getOutwardMargin());
         } else {
-            $criteria->setFromDate($ad->getOutwardDate());
-            $criteria->setToDate($ad->getReturnDate());
+            $criteria->setFromDate($ad->getFromDate());
+            $criteria->setToDate($ad->getToDate());
             $criteria->setMonCheck($ad->getOutwardMonTime()<>null);
             if ($ad->getOutwardMonTime()) {
                 $criteria->setMonTime(\DateTime::createFromFormat('H:i', $ad->getOutwardMonTime()));
@@ -165,21 +165,21 @@ class AdManager
         
         if ($ad->getType() == Ad::TYPE_RETURN_TRIP) {
 
-            // temp as long as regular post doesnt work
-            $ad->setReturnMonTime($ad->getReturnTime());
-            $ad->setReturnTueTime($ad->getReturnTime());
-            $ad->setReturnWedTime($ad->getReturnTime());
-            $ad->setReturnThuTime($ad->getReturnTime());
-            $ad->setReturnFriTime($ad->getReturnTime());
-            $ad->setReturnSatTime($ad->getReturnTime());
-            $ad->setReturnSunTime($ad->getReturnTime());
-            $ad->setReturnMonMargin($ad->getReturnMargin());
-            $ad->setReturnTueMargin($ad->getReturnMargin());
-            $ad->setReturnWedMargin($ad->getReturnMargin());
-            $ad->setReturnThuMargin($ad->getReturnMargin());
-            $ad->setReturnFriMargin($ad->getReturnMargin());
-            $ad->setReturnSatMargin($ad->getReturnMargin());
-            $ad->setReturnSunMargin($ad->getReturnMargin());
+            // Fro Regular Trips on return : get time and margin for each day
+            $ad->setReturnMonTime($ad->getReturnMonTime());
+            $ad->setReturnTueTime($ad->getReturnTueTime());
+            $ad->setReturnWedTime($ad->getReturnWedTime());
+            $ad->setReturnThuTime($ad->getReturnThuTime());
+            $ad->setReturnFriTime($ad->getReturnFriTime());
+            $ad->setReturnSatTime($ad->getReturnSatTime());
+            $ad->setReturnSunTime($ad->getReturnSunTime());
+            $ad->setReturnMonMargin($ad->getReturnMonMargin());
+            $ad->setReturnTueMargin($ad->getReturnTueMargin());
+            $ad->setReturnWedMargin($ad->getReturnWedMargin());
+            $ad->setReturnThuMargin($ad->getReturnThuMargin());
+            $ad->setReturnFriMargin($ad->getReturnFriMargin());
+            $ad->setReturnSatMargin($ad->getReturnSatMargin());
+            $ad->setReturnSunMargin($ad->getReturnSunMargin());
             
             // creation of the return trip
             $proposalReturn = clone $proposal;
@@ -189,8 +189,8 @@ class AdManager
                 $criteriaReturn->setFromTime(\DateTime::createFromFormat('H:i', $ad->getReturnTime()));
                 $criteriaReturn->setMarginDuration($ad->getReturnMargin());
             } else {
-                $criteriaReturn->setFromDate($ad->getOutwardDate());
-                $criteriaReturn->setToDate($ad->getReturnDate());
+                $criteriaReturn->setFromDate($ad->getFromDate());
+                $criteriaReturn->setToDate($ad->getToDate());
                 $criteriaReturn->setMonCheck($ad->getReturnMonTime()<>null);
                 if ($ad->getReturnMonTime()) {
                     $criteriaReturn->setMonTime(\DateTime::createFromFormat('H:i', $ad->getReturnMonTime()));

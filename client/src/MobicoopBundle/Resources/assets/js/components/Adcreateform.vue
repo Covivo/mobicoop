@@ -132,15 +132,18 @@
                 </b-radio-button>
               </b-field>
               <!-- DATE, TIME , MARGIN -->
+              <!--                          doit etre conditionné punctual / regular pour que v-model remplisse soit outwardDA-->
               <div class="columns">
-                <div class="column">
+                <div
+                  v-if="form.frequency ===1"
+                  class="column"
+                >
                   <h5 class="title column is-full">
                     Aller
                   </h5>
-                  <!--                          doit etre conditionné punctual / regular pour que v-model remplisse soit outwardDA-->
                   <b-datepicker
-                    :value="form.fromDate"
-                    :placeholder="form.frequency ===2 ? 'Date de début' : 'Date de départ...'"
+                    v-model="form.outwardDate"
+                    :placeholder="'Date de départ...'"
                     :day-names="daysShort"
                     :month-names="months"
                     :first-day-of-week="1"
@@ -148,11 +151,78 @@
                     position="is-top-right"
                     icon-pack="fas"
                   />
-                  <!-- end date for regular trip-->
+                  <div class="column is-full">
+                    <div
+                      v-for="(day,index) in nbOfDaysToPlan"
+                      :key="index"
+                      class="columns"
+                    >
+                      <div
+                        v-if="nbOfDaysToPlan>1"
+                        class="column is-2 dayNameColumn"
+                      >
+                        <a class="button is-secondary is-2">{{ days[index] }}</a>
+                      </div>
+                      <b-timepicker
+                        v-model="form.outwardTime"
+                        class="column"
+                        placeholder="Heure de départ..."
+                      >
+                        <button
+                          class="button is-primary"
+                          @click="form.outwardTime = new Date()"
+                        >
+                          <b-icon icon="clock" />
+                          <span>Maintenant</span>
+                        </button>
+                        <button
+                          class="button is-tertiary"
+                          @click="form.outwardTime = null"
+                        >
+                          <b-icon icon="close" />
+                          <span>Effacer</span>
+                        </button>
+                      </b-timepicker>
+                      <!-- MARGIN -->
+                      <b-select
+                        v-model="form.outwardMargin"
+                        class="column is-4"
+                        placeholder="Marge"
+                      >
+                        <option
+                          v-for="(margin,key) in marginsMn"
+                          :key="key"
+                          :value="margin"
+                        >
+                          {{ (1 > margin/60 > 0) ? margin : `${Math.trunc(margin/60)}H${margin%60}` }}
+                        </option>
+                      </b-select>
+                    </div>
+                  </div>
+                </div>
+                <!-- end for regular trip-->
+                <!-- end for regular trip-->
+                <!-- end for regular trip-->
+                <div
+                  v-if="form.frequency ===2"
+                  class="column"
+                >
+                  <h5 class="title column is-full">
+                    Aller
+                  </h5>
                   <b-datepicker
-                    v-if="form.frequency ===2"
+                    v-model="form.fromDate"
+                    :placeholder="'Date de début'"
+                    :day-names="daysShort"
+                    :month-names="months"
+                    :first-day-of-week="1"
+                    class="column is-full"
+                    position="is-top-right"
+                    icon-pack="fas"
+                  />
+                  <b-datepicker
+                    v-if="form.type ===1"
                     v-model="form.toDate"
-                    z
                     :placeholder="'Date de fin'"
                     :day-names="daysShort"
                     :month-names="months"
@@ -211,9 +281,10 @@
                     </div>
                   </div>
                 </div>
-                <!-- RETURN -->
+
+                <!-- RETURN Punctual trip-->
                 <div
-                  v-if="form.type === 2"
+                  v-if="form.type === 2 && form.frequency === 1"
                   class="column"
                 >
                   <h2 class="title column is-full">
@@ -221,7 +292,7 @@
                   </h2>
                   <b-datepicker
                     v-model="form.returnDate"
-                    :placeholder="form.frequency ===2 ? 'Date de fin' : 'Date de retour...'"
+                    :placeholder="'Date de retour...'"
                     icon="calendar-today"
                     class="column is-full"
                   />
@@ -259,6 +330,67 @@
                     <!-- MARGIN -->
                     <b-select
                       v-model="form.returnMargin"
+                      class="column is-4"
+                      placeholder="Marge"
+                    >
+                      <option
+                        v-for="(margin,key) in marginsMn"
+                        :key="key"
+                        :value="margin"
+                      >
+                        {{ (1 > margin/60 > 0) ? margin : `${Math.trunc(margin/60)}H${margin%60}` }}
+                      </option>
+                    </b-select>
+                  </div>
+                </div>
+                <!-- RETURN Regular trip-->
+                <div
+                  v-if="form.type === 2 && form.frequency === 2"
+                  class="column"
+                >
+                  <h2 class="title column is-full">
+                    Retour
+                  </h2>
+                  <b-datepicker
+                    v-model="form.toDate"
+                    :placeholder="'Date de fin'"
+                    icon="calendar-today"
+                    class="column is-full"
+                  />
+                  <div
+                    v-for="(day,index) in nbOfDaysToPlan"
+                    :key="index"
+                    class="columns"
+                  >
+                    <div
+                      v-if="nbOfDaysToPlan>1"
+                      class="column is-2 dayNameColumn"
+                    >
+                      <a class="button is-secondary is-2">{{ days[index] }}</a>
+                    </div>
+                    <b-timepicker
+                      v-model="form['return'+daysShort[index]+'Time']"
+                      placeholder="heure de retour..."
+                      class="column"
+                    >
+                      <button
+                        class="button is-primary"
+                        @click="form.returnTime = new Date()"
+                      >
+                        <b-icon icon="clock" />
+                        <span>Maintenant</span>
+                      </button>
+                      <button
+                        class="button is-tertiary"
+                        @click="form.returnTime = null"
+                      >
+                        <b-icon icon="close" />
+                        <span>Effacer</span>
+                      </button>
+                    </b-timepicker>
+                    <!-- MARGIN -->
+                    <b-select
+                      v-model="form['return'+daysShort[index]+'Margin']"
                       class="column is-4"
                       placeholder="Marge"
                     >
@@ -444,7 +576,7 @@ export default {
         // rename prop to be usable in the controller
         let renamedProp = prop === "createToken" ? prop : `ad_form[${prop}]`;
         adForm.append(renamedProp, value);
-        // console.error(adForm);
+        console.error(renamedProp + value);
       }
       //  We post the form 🚀
       axios
