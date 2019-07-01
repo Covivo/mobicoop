@@ -122,7 +122,7 @@ class MassComputeManager
             }
 
             // Store the original journey to calculate the gains between original and carpool
-            if($mass->getStatus()==6) {
+            if ($mass->getStatus()==6) {
                 // Only if the matching has been done.
                 $journey = new MassJourney(
                     $person->getDistance(),
@@ -165,7 +165,7 @@ class MassComputeManager
 
 
         // Build the carpooler matrix
-        if($mass->getStatus()==6) {
+        if ($mass->getStatus()==6) {
             // Only if the matching has been done.
             $matrix = $this->buildCarpoolersMatrix($persons, $matrix, $personsIndexed);
 
