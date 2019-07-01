@@ -103,7 +103,7 @@ body {
   .navbar {
     width: 100vw;
     height: 80px;
-    background-color: $nav-background-color;
+    background-color: $primary;
 
     @include outlinedFocus($focusColor);
     .navbar-brand {

@@ -1,1 +1,12 @@
 @import '../../app.scss';
+body {
+  .sub-title {
+    color: $white;
+  }
+  .breadcrumbBottom {
+    background-color: #F8D613;
+  }
+  .breadcrumbTop {
+    background-color: #C93B8F;
+  }
+}
