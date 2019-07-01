@@ -103,6 +103,7 @@ test_deploy:
   before_script:
     - composer global require hirak/prestissimo
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
+    - npm run install-all
   script:
     - npm run test-and-coverage                                                   # run the tests and code coverage
     - php client/bin/console cache:clear --env=test --no-debug     # clear the cache for the interfaces
@@ -122,21 +123,6 @@ test_deploy:
 ###############################################################################################
 ############# Everything under this is execute only for Production (MASTER) ###################
 ###############################################################################################
-
-
-#
-# Tests for master branch
-#
-master_tests:
-  stage: tests
-#  variables:
-#    APP_ENV: prod   # /!\ important : symfony env variable /!\
-  before_script:
-    - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
-  script:
-    - npm run test-and-coverage   # run the tests and code coverage
-  only:     # job executed only on master branch
-    - master
 
 pages:
  stage: deploy
@@ -162,7 +148,8 @@ master_deploy:
   stage: deploy
   before_script: # This is required to send the prod type no dev, since it creates errors
     - composer global require hirak/prestissimo
-    - npm install --unsafe-perm
+    - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
+    - npm run install-all
  # variables:
  #   APP_ENV: prod   # /!\ important : symfony env variable /!\
   script:
