@@ -142,4 +142,22 @@ class MassManager
         }
         return null;
     }
+
+
+    /**
+     * Compute all data of a Mass
+     *
+     * @param int $id The mass id
+     *
+     * @return Mass|null The mass read or null if error.
+     */
+    public function computeMass(int $id)
+    {
+        $response = $this->dataProvider->getSpecialItem($id, "compute");
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
+
 }

@@ -156,11 +156,6 @@ class Mass implements Resource
     private $computedData;
 
     /**
-     * @var int Number of potentials carpoolers
-     */
-    private $nbPotentialCarpoolers;
-
-    /**
      * @var MassMatrix Matrix of carpools
      */
     private $massMatrix;
@@ -412,16 +407,6 @@ class Mass implements Resource
     public function setComputedData(?array $computedData)
     {
         $this->computedData = $computedData;
-    }
-
-    public function getNbPotentialCarpoolers(): ?int
-    {
-        return $this->nbPotentialCarpoolers;
-    }
-
-    public function setNbPotentialCarpoolers(?int $nbPotentialCarpoolers)
-    {
-        $this->nbPotentialCarpoolers = $nbPotentialCarpoolers;
     }
 
     public function getMassMatrix(): ?MassMatrix

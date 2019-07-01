@@ -52,7 +52,7 @@ class MassCarpool
      * @param MassPerson $person2
      * @param MassJourney $journey
      */
-    public function __construct(MassPerson $person1, MassPerson $person2, MassJourney $journey)
+    public function __construct(MassPerson $person1=null, MassPerson $person2=null, MassJourney $journey=null)
     {
         $this->person1 = $person1;
         $this->person2 = $person2;
