@@ -16,6 +16,7 @@ cache:
 stages:
   - tests
   - deploy
+  - doc
   - reports
 
 
@@ -125,6 +126,27 @@ test_deploy:
 ###############################################################################################
 
 
+    
+#
+# This deploy the doc in prod after production deploiement
+#
+pages:
+ stage: doc
+ script:
+  - echo 'Deploying all the doc...'
+  - npm run download-tools
+  - npm run generateDocs
+  - mkdir .public
+  - cp -r docs/* .public
+  - mv .public public
+ dependencies:
+   - master_deploy
+ artifacts:
+   paths:
+   - public
+ only:
+   - master
+
 
 #
 # Deployment for master branch
@@ -153,26 +175,7 @@ master_deploy:
   when: manual      # /!\ important : job executed manually /!\
   only:     # job executed only on master branch
     - master
-    
-#
-# This deploy the doc in prod after production deploiement
-#
-pages:
- stage: deploy
- script:
-  - echo 'Deploying all the doc...'
-  - npm run download-tools
-  - npm run generateDocs
-  - mkdir .public
-  - cp -r docs/* .public
-  - mv .public public
- dependencies:
-   - master_deploy
- artifacts:
-   paths:
-   - public
- only:
-   - master
+
 
 ###############################################################################################
 ########## Everything under this is execute only for Reports (master) ###################
