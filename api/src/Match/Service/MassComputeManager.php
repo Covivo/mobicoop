@@ -122,14 +122,16 @@ class MassComputeManager
             }
 
             // Store the original journey to calculate the gains between original and carpool
-            $journey =  new MassJourney(
-                $person->getDistance(),
-                $person->getDuration(),
-                $this->geoTools->getCO2($person->getDistance()),
-                $person->getId()
-            );
-
-            $matrix->addOriginalsJourneys($journey);
+            if($mass->getStatus()==6) {
+                // Only if the matching has been done.
+                $journey = new MassJourney(
+                    $person->getDistance(),
+                    $person->getDuration(),
+                    $this->geoTools->getCO2($person->getDistance()),
+                    $person->getId()
+                );
+                $matrix->addOriginalsJourneys($journey);
+            }
         }
 
         $mass->setPersonsCoords($tabCoords);
@@ -163,23 +165,26 @@ class MassComputeManager
 
 
         // Build the carpooler matrix
-        $matrix = $this->buildCarpoolersMatrix($persons, $matrix, $personsIndexed);
+        if($mass->getStatus()==6) {
+            // Only if the matching has been done.
+            $matrix = $this->buildCarpoolersMatrix($persons, $matrix, $personsIndexed);
 
-        // Compute the gains between original total and carpool total
-        $totalDurationCarpools = 0;
-        $totalDistanceCarpools = 0;
-        $totalCO2Carpools = 0;
-        foreach ($matrix->getCarpools() as $currentCarpool) {
-            $totalDistanceCarpools += $currentCarpool->getJourney()->getDistance();
-            $totalDurationCarpools += $currentCarpool->getJourney()->getDuration();
-            $totalCO2Carpools += $currentCarpool->getJourney()->getCO2();
+            // Compute the gains between original total and carpool total
+            $totalDurationCarpools = 0;
+            $totalDistanceCarpools = 0;
+            $totalCO2Carpools = 0;
+            foreach ($matrix->getCarpools() as $currentCarpool) {
+                $totalDistanceCarpools += $currentCarpool->getJourney()->getDistance();
+                $totalDurationCarpools += $currentCarpool->getJourney()->getDuration();
+                $totalCO2Carpools += $currentCarpool->getJourney()->getCO2();
+            }
+            $matrix->setSavedDistance($computedData["totalTravelDistance"] - $totalDistanceCarpools);
+            $matrix->setSavedDuration($computedData["totalTravelDuration"] - $totalDurationCarpools);
+            $matrix->setHumanReadableSavedDuration($this->formatDataManager->convertSecondsToHuman($computedData["totalTravelDuration"] - $totalDurationCarpools));
+            $matrix->setSavedCO2($computedData["totalTravelDistanceCO2"] - $totalCO2Carpools);
+
+            $mass->setMassMatrix($matrix);
         }
-        $matrix->setSavedDistance($computedData["totalTravelDistance"] - $totalDistanceCarpools);
-        $matrix->setSavedDuration($computedData["totalTravelDuration"] - $totalDurationCarpools);
-        $matrix->setHumanReadableSavedDuration($this->formatDataManager->convertSecondsToHuman($computedData["totalTravelDuration"] - $totalDurationCarpools));
-        $matrix->setSavedCO2($computedData["totalTravelDistanceCO2"] - $totalCO2Carpools);
-
-        $mass->setMassMatrix($matrix);
 
         return $mass;
     }
