@@ -31,6 +31,7 @@ branch_features:   # name of the job
 #  variables:
 #    APP_ENV: dev    # /!\ important : symfony env variable /!\
   before_script:
+    - composer global require hirak/prestissi
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
     - npm run install-all
   script:
@@ -66,6 +67,7 @@ dev_deploy:
   before_script:
     - composer global require hirak/prestissimo
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
+    - npm run install-all
   script:
     - npm run test-and-coverage                                                   # run the tests and code coverage
     - php client/bin/console cache:clear --env=dev --no-debug     # clear the cache for the interfaces
