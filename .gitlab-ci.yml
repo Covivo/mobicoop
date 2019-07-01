@@ -124,22 +124,7 @@ test_deploy:
 ############# Everything under this is execute only for Production (MASTER) ###################
 ###############################################################################################
 
-pages:
- stage: deploy
- script:
-  - echo 'Deploying all the doc...'
-  - npm run download-tools
-  - npm run generateDocs
-  - mkdir .public
-  - cp -r docs/* .public
-  - mv .public public
- dependencies:
-   - master_deploy
- artifacts:
-   paths:
-   - public
- only:
-   - master
+
 
 #
 # Deployment for master branch
@@ -169,7 +154,25 @@ master_deploy:
   only:     # job executed only on master branch
     - master
     
-    
+#
+# This deploy the doc in prod after production deploiement
+#
+pages:
+ stage: deploy
+ script:
+  - echo 'Deploying all the doc...'
+  - npm run download-tools
+  - npm run generateDocs
+  - mkdir .public
+  - cp -r docs/* .public
+  - mv .public public
+ dependencies:
+   - master_deploy
+ artifacts:
+   paths:
+   - public
+ only:
+   - master
 
 ###############################################################################################
 ########## Everything under this is execute only for Reports (master) ###################
