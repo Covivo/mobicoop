@@ -167,5 +167,4 @@ class Recipient
 
         return $this;
     }
-
 }

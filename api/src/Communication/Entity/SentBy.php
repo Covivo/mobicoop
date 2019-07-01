@@ -122,5 +122,4 @@ class SentBy
 
         return $this;
     }
-
 }
