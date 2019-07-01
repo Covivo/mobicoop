@@ -21,9 +21,10 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Match\Entity;
+namespace App\Match\Entity;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * An Journey after a Matching diagnostic
@@ -33,21 +34,25 @@ class MassJourney
 
     /**
      * @var int $idPerson
+     * @Groups({"mass"})
      */
     private $idPerson;
 
     /**
      * @var int $distance
+     * @Groups({"mass"})
      */
     private $distance;
 
     /**
      * @var int $duration
+     * @Groups({"mass"})
      */
     private $duration;
 
     /**
      * @var float co2
+     * @Groups({"mass"})
      */
     private $co2;
 
@@ -58,7 +63,7 @@ class MassJourney
      * @param int $duration
      * @param float $co2
      */
-    public function __construct(int $distance=null, int $duration=null, float $co2=null, int $idPerson=null)
+    public function __construct(int $distance, int $duration, float $co2, int $idPerson=null)
     {
         $this->idPerson = $idPerson;
         $this->distance = $distance;
@@ -70,7 +75,7 @@ class MassJourney
     /**
      * @return int
      */
-    public function getIdPerson(): int
+    public function getIdPerson(): ?int
     {
         return $this->idPerson;
     }

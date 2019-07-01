@@ -26,7 +26,10 @@ namespace Mobicoop\Bundle\MobicoopBundle\Api\Service;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourney;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassCarpool;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassJourney;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassMatching;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassMatrix;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassPerson;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTAccessibilityStatus;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
@@ -494,9 +497,51 @@ class Deserializer
                 $mass->addPerson(self::deserializeMassPerson($person));
             }
         }
+        if (isset($data["massMatrix"])) {
+            $mass->setMassMatrix(self::deserializeMassMatrix($data["massMatrix"]));
+        }
         return $mass;
     }
 
+    private function deserializeMassMatrix(array $data): ?MassMatrix
+    {
+        $massMatrix = new MassMatrix();
+        $massMatrix = self::autoSet($massMatrix, $data);
+        if (isset($data["@id"])) {
+            $massMatrix->setIri($data["@id"]);
+        }
+        if (isset($data["originalsJourneys"])) {
+            foreach ($data["originalsJourneys"] as $massJourney) {
+                $massMatrix->addOriginalsJourneys(self::deserializeMassJourney($massJourney));
+            }
+        }
+        if (isset($data["carpools"])) {
+            foreach ($data["carpools"] as $carpool) {
+                $massMatrix->addCarpools(self::deserializeMassCarpool($carpool));
+            }
+        }
+        return $massMatrix;
+    }
+
+    private function deserializeMassJourney(array $data): ?MassJourney
+    {
+        $originalJourney = new MassJourney();
+        $originalJourney = self::autoSet($originalJourney, $data);
+        if (isset($data["@id"])) {
+            $originalJourney->setIri($data["@id"]);
+        }
+        return $originalJourney;
+    }
+
+    private function deserializeMassCarpool(array $data): ?MassCarpool
+    {
+        $massCarpool = new MassCarpool();
+        $massCarpool = self::autoSet($massCarpool, $data);
+        if (isset($data["@id"])) {
+            $massCarpool->setIri($data["@id"]);
+        }
+        return $massCarpool;
+    }
     private function deserializeMassPerson(array $data): ?MassPerson
     {
         $massPerson = new MassPerson();

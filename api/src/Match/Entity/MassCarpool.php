@@ -21,9 +21,10 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Match\Entity;
+namespace App\Match\Entity;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * An Carpool between two peoples after a Matching diagnostic
@@ -33,16 +34,19 @@ class MassCarpool
 
     /**
      * @var MassPerson $person1
+     * @Groups({"mass"})
      */
     private $person1;
 
     /**
      * @var MassPerson $person2
+     * @Groups({"mass"})
      */
     private $person2;
 
     /**
      * @var MassJourney $journey
+     * @Groups({"mass"})
      */
     private $journey;
 
@@ -52,7 +56,7 @@ class MassCarpool
      * @param MassPerson $person2
      * @param MassJourney $journey
      */
-    public function __construct(MassPerson $person1=null, MassPerson $person2=null, MassJourney $journey=null)
+    public function __construct(MassPerson $person1, MassPerson $person2, MassJourney $journey)
     {
         $this->person1 = $person1;
         $this->person2 = $person2;
