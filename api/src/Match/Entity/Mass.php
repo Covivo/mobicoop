@@ -272,7 +272,7 @@ class Mass
 
     /**
      * @var array The errors.
-     * @Groups({"mass"})
+     * @Groups({"mass","massPost"})
      */
     private $errors;
 
