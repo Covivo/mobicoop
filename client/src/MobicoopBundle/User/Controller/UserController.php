@@ -40,6 +40,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Service\AddressManager;
 use Symfony\Component\HttpFoundation\Response;
+use DateTime;
 
 /**
  * Controller class for user related actions.
@@ -116,7 +117,9 @@ class UserController extends AbstractController
             $user->setGivenName($data['givenName']);
             $user->setFamilyName($data['familyName']);
             $user->setGender($data['gender']);
+
             $user->setBirthYear($data['birthYear']);
+
 
             // add the home address to the user
             $user->addAddress($address);
@@ -171,6 +174,7 @@ class UserController extends AbstractController
 
         // get addresses of the logged user
         $addresses = $user->getAddresses();
+        $homeAddress = [];
         // get teh homeAddress
         foreach ($addresses as $address) {
             $homeAddress = null;
@@ -182,12 +186,17 @@ class UserController extends AbstractController
          
         $form = $this->createForm(UserForm::class, $user, ['validation_groups'=>['update']]);
         $error = false;
-        $success = false;
-            
+           
+        
         if ($request->isMethod('POST')) {
             
+
+            
+
             //get all data from form (user + homeAddress)
             $data = $request->request->get($form->getName());
+
+            
             
             //pass homeAddress info into address entity
             $homeAddress->setAddressCountry($data['addressCountry']);
@@ -212,22 +221,23 @@ class UserController extends AbstractController
             $user->setFamilyName($data['familyName']);
             $user->setGender($data['gender']);
             $user->setBirthYear($data['birthYear']);
-            
+                      
             $addressManager->updateAddress($homeAddress);
             $userManager->updateUser($user);
 
-            // return $this->redirectToRoute('user_profile_update', ['user'=> $user = $userManager->getLoggedUser(),'error' => $error]);
+            $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+            $this->get('security.token_storage')->setToken($token);
+            $this->get('session')->set('_security_main', serialize($token));
+            
+            return $this->redirectToRoute('user_profile');
         }
-
-
-
-        if (!$form->isSubmitted()) {
-            return $this->render('@Mobicoop/user/updateProfile.html.twig', [
+      
+        return $this->render('@Mobicoop/user/updateProfile.html.twig', [
                 'error' => $error,
                 'user' => $user
             ]);
-        }
-        return $this->json(['error' => $error, 'success' => $success]);
+       
+       
     }
 
   

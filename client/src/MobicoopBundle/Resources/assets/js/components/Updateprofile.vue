@@ -251,7 +251,7 @@ export default {
         givenName: this.givenName,
         familyName: this.familyName,
         gender: this.gender,
-        birthYear: this.birthYear,
+        birthYear: parseInt(this.birthYear, 10),
         telephone: this.telephone,
         password: null,
         validation: false,
@@ -309,20 +309,13 @@ export default {
         //let renamedProp = prop === "createToken" ? prop : `user_form[${prop}]`;
         //userForm.append(renamedProp, value);
       }
+      console.error(userForm);
       axios 
         .post("/utilisateur/profil/modifier", userForm, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
         } )
-        // .then(function(response) {
-        //   window.location.href = '/';
-        //   console.error(response);
-        // })
-        // .catch(function(error) {
-        //   console.error(error);
-        // });  
-       
     },
   }
 };
