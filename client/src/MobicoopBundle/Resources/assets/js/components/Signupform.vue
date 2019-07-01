@@ -37,17 +37,20 @@
                   v-model="form.email"
                   type="email"
                   :placeholder="$t('models.user.email.placeholder')"
+                  class="email"
                 />
               </b-field>
               <b-field :label="$t('models.user.phone.label')">
                 <b-input 
                   v-model="form.telephone"
                   :placeholder="$t('models.user.phone.placeholder')"
+                  class="telephone"
                 />
               </b-field>
               <b-field :label="$t('models.user.password.label')">
                 <b-input
                   v-model="form.password"
+                  class="password"
                   type="password"
                   password-reveal
                   :placeholder="$t('models.user.password.placeholder')"
@@ -64,12 +67,14 @@
                 <b-input
                   v-model="form.givenName" 
                   :placeholder="$t('models.user.givenName.placeholder')"
+                  class="givenName"
                 />
               </b-field>
               <b-field :label="$t('models.user.familyName.label')">
                 <b-input
                   v-model="form.familyName" 
                   :placeholder="$t('models.user.familyName.placeholder')"
+                  class="familyName"
                 />
               </b-field>
             </tab-content>
@@ -83,6 +88,7 @@
                 <b-select
                   v-model="form.gender"
                   :placeholder="$t('models.user.gender.placeholder')"
+                  class="gender"
                 >
                   <option value="1">
                     {{ $t('models.user.gender.values.female') }}
@@ -106,6 +112,7 @@
                 <b-select
                   v-model="form.birthYear"
                   :placeholder="$t('models.user.birthYear.placeholder')"
+                  class="birthYear"
                 >
                   <option
                     v-for="year in years"
@@ -134,6 +141,7 @@
               <div class="field">
                 <b-checkbox
                   v-model="form.validation"
+                  class="check"
                 >
                   {{ $t('ui.pages.signup.chart.chartValid') }}
                 </b-checkbox>

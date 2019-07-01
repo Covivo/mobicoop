@@ -1,16 +1,25 @@
 # Docker image needed for CI
 image: mobicoop/php-node-chromium
 
+services:
+- mysql:latest
+
+variables:
+  # Configure mysql service (https://hub.docker.com/_/mysql/)
+  MYSQL_DATABASE: mobicoop_platform
+  MYSQL_ROOT_PASSWORD: root
+
+
 # Cache modules in between jobs
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:    # excluded : not cached
-  - node_modules/
-  - api/node_modules/
-  - api/vendor/
-  - client/node_modules/
-  - client/vendor/
-  - admin/node_modules/
+# cache:
+#   key: ${CI_COMMIT_REF_SLUG}
+#   paths:    # excluded : not cached
+#   - node_modules/
+#   - api/node_modules/
+#   - api/vendor/
+#   - client/node_modules/
+#   - client/vendor/
+#   - admin/node_modules/
 
 # Name of the stages that can be executed on a pipeline by the runner
 stages:
@@ -33,12 +42,24 @@ branch_features:   # name of the job
 #    APP_ENV: dev    # /!\ important : symfony env variable /!\
   before_script:
     - composer global require hirak/prestissi
+    # Install the packagees xvfb, libgtk2.0-0 and libgconf2-4, it must be moved to Dockerfile
+    - sudo apt-get -y install xvfb 
+    - sudo apt-get -y install libgtk2.0-0
+    - sudo apt -y install libgconf2-4
+    - npm install -g wait-on 
+    - npm install -g yarn
+    - yarn cache clean
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
-    - npm run install-all
+    - npm run install-all-ci # Install the dependencies in the local node_modules folder
+
   script:
-    - npm test  # run the tests
+    - npm test && cd api # run the tests
+    - composer install && cd ..
+    - npm run start & wait-on client/public/build/entrypoints.json
+    - npm run test-functional-ci
+
   only:
-    - pushes
+    - pushes # job executed only on test
   except:       
     refs:   # job not executed for these branches & tags
       - tags    
