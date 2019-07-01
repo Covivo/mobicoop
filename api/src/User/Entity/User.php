@@ -244,7 +244,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var boolean|null The user accepts any transportation mode.
      *
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
     private $multiTransportMode;
@@ -459,7 +459,7 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getMaxDetourDuration(): int
+    public function getMaxDetourDuration(): ?int
     {
         return (!is_null($this->maxDetourDuration) ? $this->maxDetourDuration : self::MAX_DETOUR_DURATION);
     }
@@ -471,7 +471,7 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getMaxDetourDistance(): int
+    public function getMaxDetourDistance(): ?int
     {
         return (!is_null($this->maxDetourDistance) ? $this->maxDetourDistance : self::MAX_DETOUR_DISTANCE);
     }
@@ -483,24 +483,24 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getAnyRouteAsPassenger(): bool
+    public function getAnyRouteAsPassenger(): ?bool
     {
         return $this->anyRouteAsPassenger;
     }
 
-    public function setAnyRouteAsPassenger(bool $anyRouteAsPassenger): self
+    public function setAnyRouteAsPassenger(?bool $anyRouteAsPassenger): self
     {
         $this->anyRouteAsPassenger = $anyRouteAsPassenger;
 
         return $this;
     }
 
-    public function getMultiTransportMode(): bool
+    public function getMultiTransportMode(): ?bool
     {
         return $this->multiTransportMode;
     }
 
-    public function setMultiTransportMode(bool $multiTransportMode): self
+    public function setMultiTransportMode(?bool $multiTransportMode): self
     {
         $this->multiTransportMode = $multiTransportMode;
 
