@@ -32,6 +32,7 @@ branch_features:   # name of the job
 #    APP_ENV: dev    # /!\ important : symfony env variable /!\
   before_script:
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
+    - npm run install-all
   script:
     - npm test  # run the tests
   only:
@@ -47,7 +48,142 @@ branch_features:   # name of the job
 
 
 ###############################################################################################
-########## Everything under this is execute only for Reports (dev & master) ###################
+############# Everything under this is execute only for Dev env (dev) ############################
+###############################################################################################
+
+#
+# Deployment for dev branch
+#
+dev_deploy:
+  stage: deploy
+  environment:
+    name: dev
+    url: https://dev.mobicoop.io
+  only:
+    - dev
+#  variables:
+#    APP_ENV: test   # /!\ important : symfony env variable /!\
+  before_script:
+    - composer global require hirak/prestissimo
+    - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
+  script:
+    - npm run test-and-coverage                                                   # run the tests and code coverage
+    - php client/bin/console cache:clear --env=dev --no-debug     # clear the cache for the interfaces
+    - php api/bin/console cache:clear --env=dev --no-debug                     # clear the cache for the api
+    - echo "${SSH_DEV_PRIVATE_KEY}" > id_rsa                   # 
+    - chmod 700 id_rsa                                          # ssh identification on docker side 
+    - mv id_rsa ${HOME}/.ssh                                    #
+    - echo "${SSH_DEV_HOST_KEY}" > "${HOME}/.ssh/known_hosts"  #
+    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_DEV_USER}@${SSH_DEV_IP}:/var/www/mobicoop/dev    # rsync the files on the server
+    - ssh -o StrictHostKeyChecking=no ${SSH_DEV_USER}@${SSH_DEV_IP} "cd /var/www/mobicoop/dev/api; php bin/console doctrine:migrations:migrate -n;cd /var/www/mobicoop/dev/admin;npm run build"    # database migration and admin build
+  except:
+    refs:
+      - tags    # job not executed on tags
+
+
+
+###############################################################################################
+############# Everything under this is execute only for Test env (test) ###################
+###############################################################################################
+
+#
+# Deployment for test branch
+#
+test_deploy:
+  stage: deploy
+  environment:
+    name: test
+    url: https://test.mobicoop.io
+  only:
+    - test
+#  variables:
+#    APP_ENV: test   # /!\ important : symfony env variable /!\
+  before_script:
+    - composer global require hirak/prestissimo
+    - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
+  script:
+    - npm run test-and-coverage                                                   # run the tests and code coverage
+    - php client/bin/console cache:clear --env=test --no-debug     # clear the cache for the interfaces
+    - php api/bin/console cache:clear --env=test --no-debug                     # clear the cache for the api
+    - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa                   # 
+    - chmod 700 id_rsa                                          # ssh identification on docker side 
+    - mv id_rsa ${HOME}/.ssh                                    #
+    - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"  #
+    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/mobicoop/test    # rsync the files on the server
+    - ssh -o StrictHostKeyChecking=no ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/mobicoop/test/api; php bin/console doctrine:migrations:migrate --env=test -n;cd /var/www/mobicoop/test/admin;npm run build"    # database migration and admin build
+  when: manual      # /!\ important : job executed manually /!\  
+  except:
+    refs:
+      - tags    # job not executed on tags
+
+
+###############################################################################################
+############# Everything under this is execute only for Production (MASTER) ###################
+###############################################################################################
+
+
+#
+# Tests for master branch
+#
+master_tests:
+  stage: tests
+#  variables:
+#    APP_ENV: prod   # /!\ important : symfony env variable /!\
+  before_script:
+    - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
+  script:
+    - npm run test-and-coverage   # run the tests and code coverage
+  only:     # job executed only on master branch
+    - master
+
+pages:
+ stage: deploy
+ script:
+  - echo 'Deploying all the doc...'
+  - npm run download-tools
+  - npm run generateDocs
+  - mkdir .public
+  - cp -r docs/* .public
+  - mv .public public
+ dependencies:
+   - master_tests
+ artifacts:
+   paths:
+   - public
+ only:
+   - master
+
+#
+# Deployment for master branch
+#
+master_deploy:
+  stage: deploy
+  before_script: # This is required to send the prod type no dev, since it creates errors
+    - composer global require hirak/prestissimo
+    - npm install --unsafe-perm
+ # variables:
+ #   APP_ENV: prod   # /!\ important : symfony env variable /!\
+  script:
+    - npm run test-and-coverage                                                  # run the tests and code coverage
+    - php client/bin/console cache:clear --env=prod --no-debug     # clear the cache for the interfaces
+    - php api/bin/console cache:clear --env=prod --no-debug                     # clear the cache for the api
+    - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa                       #
+    - chmod 700 id_rsa                                              #
+    - mv id_rsa ${HOME}/.ssh                                        # ssh identification on docker side
+    - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"      #
+    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/mobicoop/prod    # rsync the files on the server
+    - ssh -o StrictHostKeyChecking=no ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/prod/api; php bin/console doctrine:migrations:migrate --env=prod -n;cd /var/www/mobicoop/prod/admin;npm run build"    # database migration and admin build
+  environment:
+    name: prod
+    url: https://mobicoop.io
+  when: manual      # /!\ important : job executed manually /!\
+  only:     # job executed only on master branch
+    - master
+    
+    
+
+###############################################################################################
+########## Everything under this is execute only for Reports (master) ###################
 ###############################################################################################
 
 # Dependency Scanning
@@ -114,130 +250,4 @@ license_management:
     reports:
       license_management: gl-license-management-report.json
   only:     # job executed only on dev & master branches
-    - master
-
-###############################################################################################
-############# Everything under this is execute only for Tests (dev) ############################
-###############################################################################################
-
-#
-# Deployment for dev branch
-#
-dev_deploy:
-  stage: deploy
-  environment:
-    name: dev
-    url: https://dev.mobicoop.io
-  only:
-    - dev
-#  variables:
-#    APP_ENV: test   # /!\ important : symfony env variable /!\
-  before_script:
-    - composer global require hirak/prestissimo
-    - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
-  script:
-    - npm run test-and-coverage                                                   # run the tests and code coverage
-    - php client/bin/console cache:clear --env=dev --no-debug     # clear the cache for the interfaces
-    - php api/bin/console cache:clear --env=dev --no-debug                     # clear the cache for the api
-    - echo "${SSH_DEV_PRIVATE_KEY}" > id_rsa                   # 
-    - chmod 700 id_rsa                                          # ssh identification on docker side 
-    - mv id_rsa ${HOME}/.ssh                                    #
-    - echo "${SSH_DEV_HOST_KEY}" > "${HOME}/.ssh/known_hosts"  #
-    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_DEV_USER}@${SSH_DEV_IP}:/var/www/mobicoop/dev    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no ${SSH_DEV_USER}@${SSH_DEV_IP} "cd /var/www/mobicoop/dev/api; php bin/console doctrine:migrations:migrate -n;cd /var/www/mobicoop/dev/admin;npm run build"    # database migration and admin build
-  except:
-    refs:
-      - tags    # job not executed on tags
-
-#
-# Deployment for dev branch
-#
-test_deploy:
-  stage: deploy
-  environment:
-    name: test
-    url: https://test.mobicoop.io
-  only:
-    - test
-#  variables:
-#    APP_ENV: test   # /!\ important : symfony env variable /!\
-  before_script:
-    - composer global require hirak/prestissimo
-    - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
-  script:
-    - npm run test-and-coverage                                                   # run the tests and code coverage
-    - php client/bin/console cache:clear --env=test --no-debug     # clear the cache for the interfaces
-    - php api/bin/console cache:clear --env=test --no-debug                     # clear the cache for the api
-    - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa                   # 
-    - chmod 700 id_rsa                                          # ssh identification on docker side 
-    - mv id_rsa ${HOME}/.ssh                                    #
-    - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"  #
-    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/mobicoop/test    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/mobicoop/test/api; php bin/console doctrine:migrations:migrate --env=test -n;cd /var/www/mobicoop/test/admin;npm run build"    # database migration and admin build
-  when: manual      # /!\ important : job executed manually /!\  
-  except:
-    refs:
-      - tags    # job not executed on tags
-
-
-###############################################################################################
-############# Everything under this is execute only for Production (MASTER) ###################
-###############################################################################################
-
-#
-# Tests for master branch
-#
-master_tests:
-  stage: tests
-#  variables:
-#    APP_ENV: prod   # /!\ important : symfony env variable /!\
-  before_script:
-    - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
-  script:
-    - npm run test-and-coverage   # run the tests and code coverage
-  only:     # job executed only on master branch
-    - master
-
-pages:
- stage: deploy
- script:
-  - echo 'Deploying all the doc...'
-  - npm run download-tools
-  - npm run generateDocs
-  - mkdir .public
-  - cp -r docs/* .public
-  - mv .public public
- dependencies:
-   - master_tests
- artifacts:
-   paths:
-   - public
- only:
-   - master
-
-#
-# Deployment for master branch
-#
-master_deploy:
-  stage: deploy
-  before_script: # This is required to send the prod type no dev, since it creates errors
-    - composer global require hirak/prestissimo
-    - npm install --unsafe-perm
- # variables:
- #   APP_ENV: prod   # /!\ important : symfony env variable /!\
-  script:
-    - npm run test-and-coverage                                                  # run the tests and code coverage
-    - php client/bin/console cache:clear --env=prod --no-debug     # clear the cache for the interfaces
-    - php api/bin/console cache:clear --env=prod --no-debug                     # clear the cache for the api
-    - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa                       #
-    - chmod 700 id_rsa                                              #
-    - mv id_rsa ${HOME}/.ssh                                        # ssh identification on docker side
-    - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"      #
-    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/mobicoop/prod    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/prod/api; php bin/console doctrine:migrations:migrate --env=prod -n;cd /var/www/mobicoop/prod/admin;npm run build"    # database migration and admin build
-  environment:
-    name: prod
-    url: https://mobicoop.io
-  when: manual      # /!\ important : job executed manually /!\
-  only:     # job executed only on master branch
     - master
