@@ -295,16 +295,8 @@
                     class="column is-full"
                   />
                   <div
-                    v-for="(day,index) in nbOfDaysToPlan"
-                    :key="index"
                     class="columns"
                   >
-                    <div
-                      v-if="nbOfDaysToPlan>1"
-                      class="column is-2 dayNameColumn"
-                    >
-                      <a class="button is-secondary is-2">{{ days[index] }}</a>
-                    </div>
                     <b-timepicker
                       v-model="form.returnTime"
                       placeholder="heure de retour..."
@@ -579,12 +571,10 @@ export default {
         // Convert date to required format
         if(prop.toLowerCase().includes('date')){
           value = moment(value).format('YYYY/MM/DD');
-          console.error('date : ' + value);
         }
         // Convert time to required format
         if(prop.toLowerCase().includes('time')){
           value = moment(value).format('HH:mm');
-          console.error('time : ' + value);
         }
         // Convert margin from min to sec
         if(prop.toLowerCase().includes('margin')){
@@ -593,7 +583,6 @@ export default {
         // rename prop to be usable in the controller
         let renamedProp = prop === "createToken" ? prop : `ad_form[${prop}]`;
         adForm.append(renamedProp, value);
-        console.error(renamedProp + value);
       }
       //  We post the form 🚀
       axios
