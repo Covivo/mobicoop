@@ -11,20 +11,23 @@ security:
     # providers for authentication
     providers:
         # chain provider will try the other providers in sequence
-        # useful as many authentications systems exist : by app (frontend), by users (with mobile app)...
+        # useful as many authentications systems exist : by app (frontend), by users (with mobile app), with a token...
         chain_provider:
             chain:
-                providers: [servers, users]
-        # provider for apps (eg. frontend)
+                providers: [jwt, servers, users]
+        # provider for apps authentication (eg. frontend)
         servers: 
             entity:
                 class: 'App\App\Entity\App'
                 property: 'username'
-        # provider for users (eg. mobile apps, admin)
+        # provider for users authentication (eg. mobile apps, admin)
         users: 
             entity:
                 class: 'App\User\Entity\User'
                 property: 'email'
+        # provider for logged users or app (eg. with a valid token)
+        jwt:
+            lexik_jwt: ~
 
     # firewalls
     firewalls:
