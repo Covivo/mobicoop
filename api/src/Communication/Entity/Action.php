@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
- * A communication medium.
+ * An action that can trigger a notification.
  *
  * @ORM\Entity
  * @ApiResource(
@@ -44,18 +44,14 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *      collectionOperations={"get"},
  *      itemOperations={"get"}
  * )
- * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
- * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "name", "uname", "domain"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(SearchFilter::class, properties={"name":"partial", "uname":"partial", "domain":"partial"})
  */
-class Medium
+class Action
 {
-    const MEDIUM_MESSAGE = 1;   // internal message
-    const MEDIUM_EMAIL = 2;     // email
-    const MEDIUM_SMS = 3;       // sms
-    const MEDIUM_PUSH = 4;      // push notification
     
     /**
-     * @var int The id of this medium.
+     * @var int The id of this action.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -66,13 +62,31 @@ class Medium
     private $id;
 
     /**
-     * @var string Name of the medium.
+     * @var string Name of the action.
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
      * @Groups({"read","write"})
      */
     private $name;
+
+    /**
+     * @var string User readable name of the action.
+     *
+     * @Assert\NotBlank
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"read","write"})
+     */
+    private $uname;
+
+    /**
+     * @var string Domain of the action.
+     *
+     * @Assert\NotBlank
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"read","write"})
+     */
+    private $domain;
     
     public function getId(): ?int
     {
@@ -94,6 +108,30 @@ class Medium
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getUname(): ?string
+    {
+        return $this->uname;
+    }
+
+    public function setUname(string $uname): self
+    {
+        $this->uname = $uname;
+
+        return $this;
+    }
+
+    public function getDomain(): ?string
+    {
+        return $this->domain;
+    }
+
+    public function setDomain(string $domain): self
+    {
+        $this->domain = $domain;
 
         return $this;
     }

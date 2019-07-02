@@ -24,6 +24,7 @@
 namespace App\Communication\Service;
 
 use App\Communication\Entity\Email;
+use Psr\Log\LoggerInterface;
 
 /**
  * Email sending service via Swift_Mailer
@@ -36,13 +37,15 @@ class SendEmailManager
     private $templating;
     private $emailSenderDefault;
     private $emailReplyToDefault;
+    private $logger;
 
-    public function __construct(\Swift_Mailer $mailer, \Twig_Environment $templating, string $emailSender, string $emailReplyTo)
+    public function __construct(\Swift_Mailer $mailer, \Twig_Environment $templating, LoggerInterface $logger, string $emailSender, string $emailReplyTo)
     {
         $this->mailer = $mailer;
         $this->templating = $templating;
         $this->emailSenderDefault = $emailSender;
         $this->emailReplyToDefault = $emailReplyTo;
+        $this->logger = $logger;
     }
 
 

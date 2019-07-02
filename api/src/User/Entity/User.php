@@ -48,9 +48,10 @@ use App\Right\Entity\UserRight;
 use App\Image\Entity\Image;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
-use App\User\Controller\UserPost;
+use App\User\Controller\UserRegistration;
 use App\User\Controller\UserPermissions;
 use App\User\Filter\HomeAddressTerritoryFilter;
+use App\Communication\Entity\Notified;
 
 /**
  * A user.
@@ -74,7 +75,7 @@ use App\User\Filter\HomeAddressTerritoryFilter;
  *          "post"={
  *              "method"="POST",
  *              "path"="/users",
- *              "controller"=UserPost::class,
+ *              "controller"=UserRegistration::class,
  *          }
  *      },
  *      itemOperations={
@@ -331,6 +332,13 @@ class User implements UserInterface, EquatableInterface
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Recipient", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      */
     private $recipients;
+
+    /**
+     * @var ArrayCollection|null The notifications sent to the user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     */
+    private $notifieds;
 
     /**
      * @var \DateTimeInterface Creation date of the user.
@@ -786,7 +794,7 @@ class User implements UserInterface, EquatableInterface
     {
         if (!$this->recipients->contains($recipient)) {
             $this->recipients[] = $recipient;
-            $recipient->SetUser($this);
+            $recipient->setUser($this);
         }
         
         return $this;
@@ -799,6 +807,34 @@ class User implements UserInterface, EquatableInterface
             // set the owning side to null (unless already changed)
             if ($recipient->getUser() === $this) {
                 $recipient->setUser(null);
+            }
+        }
+        
+        return $this;
+    }
+
+    public function getNotifieds()
+    {
+        return $this->notifieds->getValues();
+    }
+    
+    public function addNotified(Notified $notified): self
+    {
+        if (!$this->notifieds->contains($notified)) {
+            $this->notifieds[] = $notified;
+            $notified->setUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeNotified(Notified $notified): self
+    {
+        if ($this->notifieds->contains($notified)) {
+            $this->notifieds->removeElement($notified);
+            // set the owning side to null (unless already changed)
+            if ($notified->getUser() === $this) {
+                $notified->setUser(null);
             }
         }
         

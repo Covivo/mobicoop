@@ -75,10 +75,16 @@ services:
             - { name: monolog.logger, channel: carpool }
     
     # Communication
+    App\Communication\Service\NotificationManager:
+        tags: 
+            - { name: monolog.logger, channel: notification }
+    
     App\Communication\Service\SendEmailManager:
         arguments:
             $emailSender: '%env(resolve:MAILER_SENDER)%'
             $emailReplyTo: '%env(resolve:MAILER_REPLYTO)%'
+        tags: 
+            - { name: monolog.logger, channel: communication }
 
     # Community
     App\Community\Controller\:

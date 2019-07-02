@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,35 +21,27 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Controller;
+namespace App\User\Event;
 
-use App\User\Service\UserManager;
 use App\User\Entity\User;
+use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Controller class for user post.
- *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * Event sent when a user updates its account.
  */
-class UserPost
+class UserPasswordChangeAskedEvent extends Event
 {
-    private $userManager;
+    public const NAME = 'user.password_change_asked';
 
-    public function __construct(UserManager $userManager)
+    protected $user;
+
+    public function __construct(User $user)
     {
-        $this->userManager = $userManager;
+        $this->user = $user;
     }
 
-    /**
-     * This method is invoked when a new user is posted.
-     * It returns the new user created.
-     *
-     * @param User $data
-     * @return User
-     */
-    public function __invoke(User $data): User
+    public function getUser()
     {
-        $data = $this->userManager->createUser($data);
-        return $data;
+        return $this->user;
     }
 }
