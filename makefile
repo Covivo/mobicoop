@@ -4,7 +4,7 @@
 pink:=$(shell tput setaf 200)
 blue:=$(shell tput setaf 27)
 green:=$(shell tput setaf 118)
-reset:=$(shell tput sgr0)
+reset:=$(shell tput sgr0) 
 
 install:
 	$(info $(pink)------------------------------------------------------)
@@ -34,21 +34,27 @@ fixtures:
 
 start:
 	$(info Make: Starting Mobicoop-plateform environment containers.)
-	@TAG=$(TAG) docker-compose $(COMPOSE_FILE_PATH) up -d
+	docker-compose up -d --always-recreate-deps --force-recreate  
  
 stop:
 	$(info Make: Stopping Mobicoop-plateform environment containers.)
 	@docker-compose stop
-
-remove:
-	$(info Make: Stopping Mobicoop-plateform environment containers.)
-	@docker-compose down -v
  
 restart:
 	$(info Make: Restarting Mobicoop-plateform environment containers.)
 	@make -s stop
 	@make -s start
+
+remove:
+	$(info Make: Stopping Mobicoop-plateform environment containers.)
+	@docker-compose down -v
  
 clean:
+	@make -s stop
+	@make -s remove
 	rm -rf node_modules api/vendor client/vendor client/node_modules admin/node_modules
 	@docker system prune --volumes --force
+
+logs: 
+	docker logs -f --tail=30 mobicoop_platform | sed -e 's/^/[-- containerA1 --]/' &
+	docker logs -f --tail=30 db | sed -e 's/^/[-- containerM2 --]/' & 

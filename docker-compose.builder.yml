@@ -1,7 +1,7 @@
 version: '2'
 services:
   base:
-    image: mobicoop/php-node-chromium
+    image: mobicoop/php-node-chromium:2.0.0
     volumes:
       - .:/var/www
     working_dir: /var/www
