@@ -219,7 +219,6 @@ class UserController extends AbstractController
             
             $addressManager->updateAddress($homeAddress);
             $userManager->updateUser($user);
-            
         }
       
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
