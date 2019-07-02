@@ -39,10 +39,8 @@ final class MassWorkingPlacesAction
     {
         $workingPlaces = $this->massComputeManager->getAllWorkingPlaces($data);
 
-        print_r("workingPlaces");
-        print_r($workingPlaces);
-        die;
+        $data->setWorkingPlaces($workingPlaces);
 
-        return $workingPlaces;
+        return $data;
     }
 }

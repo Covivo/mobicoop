@@ -164,7 +164,7 @@ class MassManager
      *
      * @param int $id The mass id
      *
-     * @return Mass|null The mass read or null if error.
+     * @return array|null The mass read or null if error.
      */
     public function workingPlacesMass(int $id)
     {
