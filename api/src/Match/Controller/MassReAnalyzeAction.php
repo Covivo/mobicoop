@@ -42,10 +42,10 @@ final class MassReAnalyzeAction
             Mass::STATUS_MATCHED
         ];
 
-        if (in_array($data->getStatus(),$statusAuthorized)) {
+        if (in_array($data->getStatus(), $statusAuthorized)) {
 
             // Rollback the Mass status to only valid
-            $this->massImportManager->updateStatusMass($data,Mass::STATUS_VALID);
+            $this->massImportManager->updateStatusMass($data, Mass::STATUS_VALID);
 
             // Reexecute the analyze
             $this->massImportManager->analyzeMass($data);

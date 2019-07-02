@@ -40,17 +40,16 @@ final class MassReMatchAction
 
     public function __invoke(Mass $data): Mass
     {
-
         $statusAuthorized = [
             Mass::STATUS_ANALYZED,
             Mass::STATUS_MATCHED
         ];
 
 
-        if (in_array($data->getStatus(),$statusAuthorized)) {
+        if (in_array($data->getStatus(), $statusAuthorized)) {
 
             // Rollback the Mass status to only valid
-            $this->massImportManager->updateStatusMass($data,Mass::STATUS_ANALYZED);
+            $this->massImportManager->updateStatusMass($data, Mass::STATUS_ANALYZED);
 
 
             $maxDetourDurationPercent = 40;
