@@ -40,6 +40,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Service\AddressManager;
 use Symfony\Component\HttpFoundation\Response;
+use DateTime;
 
 /**
  * Controller class for user related actions.
@@ -116,7 +117,9 @@ class UserController extends AbstractController
             $user->setGivenName($data['givenName']);
             $user->setFamilyName($data['familyName']);
             $user->setGender($data['gender']);
+
             $user->setBirthYear($data['birthYear']);
+
 
             // add the home address to the user
             $user->addAddress($address);
@@ -166,12 +169,13 @@ class UserController extends AbstractController
     public function userProfileUpdate(UserManager $userManager, Request $request, AddressManager $addressManager)
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
-        $user = $userManager->getLoggedUser();
+        $user = clone $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('update', $user);
 
         // get addresses of the logged user
         $addresses = $user->getAddresses();
-        // get teh homeAddress
+        $homeAddress = [];
+        // get the homeAddress
         foreach ($addresses as $address) {
             $homeAddress = null;
             $name = $address->getName();
@@ -182,13 +186,13 @@ class UserController extends AbstractController
          
         $form = $this->createForm(UserForm::class, $user, ['validation_groups'=>['update']]);
         $error = false;
-        $success = false;
-            
+           
+        
         if ($request->isMethod('POST')) {
-            
+
             //get all data from form (user + homeAddress)
             $data = $request->request->get($form->getName());
-            
+
             //pass homeAddress info into address entity
             $homeAddress->setAddressCountry($data['addressCountry']);
             $homeAddress->setAddressLocality($data['addressLocality']);
@@ -215,22 +219,13 @@ class UserController extends AbstractController
             
             $addressManager->updateAddress($homeAddress);
             $userManager->updateUser($user);
-
-            // return $this->redirectToRoute('user_profile_update', ['user'=> $user = $userManager->getLoggedUser(),'error' => $error]);
         }
-
-
-
-        if (!$form->isSubmitted()) {
-            return $this->render('@Mobicoop/user/updateProfile.html.twig', [
+      
+        return $this->render('@Mobicoop/user/updateProfile.html.twig', [
                 'error' => $error,
                 'user' => $user
             ]);
-        }
-        return $this->json(['error' => $error, 'success' => $success]);
     }
-
-  
 
     /**
      * User password update.

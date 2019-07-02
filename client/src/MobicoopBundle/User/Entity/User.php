@@ -34,6 +34,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
+use DateTime;
 
 /**
  * A user.
@@ -510,12 +511,13 @@ class User implements Resource, UserInterface, EquatableInterface
 
     public function getBirthYear(): ?int
     {
-        return $this->birthYear;
+        return (int)$this->birthDate->format('Y');
     }
 
     public function setBirthYear(?int $birthYear)
     {
         $this->birthYear = $birthYear;
+        $this->birthDate = DateTime::createFromFormat('Y-m-d', $birthYear . '-1-1');
     }
 
     public function getConditions(): ?int
