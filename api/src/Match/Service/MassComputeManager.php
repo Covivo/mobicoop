@@ -122,7 +122,7 @@ class MassComputeManager
             }
 
             // Store the original journey to calculate the gains between original and carpool
-            if ($mass->getStatus()==6) {
+            if ($mass->getStatus()==6 && $person->getDistance()!==null) {
                 // Only if the matching has been done.
                 $journey = new MassJourney(
                     $person->getDistance(),
