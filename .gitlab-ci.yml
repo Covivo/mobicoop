@@ -189,9 +189,16 @@ pages:
 master_deploy:
   stage: deploy
   before_script: # This is required to send the prod type no dev, since it creates errors
-    - composer global require hirak/prestissimo
+    - composer global require hirak/prestissi
+    # Install the packagees xvfb, libgtk2.0-0 and libgconf2-4, it must be moved to Dockerfile
+    - sudo apt-get -y install xvfb 
+    - sudo apt-get -y install libgtk2.0-0
+    - sudo apt -y install libgconf2-4
+    - npm install -g wait-on 
+    - npm install -g yarn
+    - yarn cache clean
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
-    - npm run install-all
+    - npm run install-all-ci # Install the dependencies in the local node_modules folderl
  # variables:
  #   APP_ENV: prod   # /!\ important : symfony env variable /!\
   script:
