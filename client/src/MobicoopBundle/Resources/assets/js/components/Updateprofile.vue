@@ -316,6 +316,11 @@ export default {
             "Content-Type": "multipart/form-data"
           }
         } )
+      this.$toast.open({
+        message: 'Votre profil a bien été mis à jour!',
+        type: 'is-success',
+        position: 'is-bottom'
+      })  
     },
   }
 };

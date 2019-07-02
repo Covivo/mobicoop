@@ -220,11 +220,6 @@ class UserController extends AbstractController
             $addressManager->updateAddress($homeAddress);
             $userManager->updateUser($user);
             
-            $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-            $this->get('security.token_storage')->setToken($token);
-            $this->get('session')->set('_security_main', serialize($token));
-            
-            return $this->redirectToRoute('user_profile');
         }
       
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
@@ -232,8 +227,6 @@ class UserController extends AbstractController
                 'user' => $user
             ]);
     }
-
-  
 
     /**
      * User password update.
