@@ -381,7 +381,7 @@ class Mass implements Resource
 
     public function setWorkingPlaces(array $workingplaces): self
     {
-        foreach($workingplaces as $key => $workingplace) {
+        foreach ($workingplaces as $key => $workingplace) {
             $workingplaces[$key]["address"] = $workingplace["houseNumber"] . " " . $workingplace["street"] . " " . $workingplace["postalCode"] . " " . $workingplace["addressLocality"];
         }
 
