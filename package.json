@@ -5,7 +5,7 @@
   "main": "package.json",
   "scripts": {
     "install-all": "npm-run-all --parallel install-api install-client download-tools install-admin",
-    "install-all-ci": "npm-run-all --parallel install-api install-client-ci install-admin-ci",
+    "install-all-ci": "npm-run-all --parallel install-api-ci install-client-ci install-admin-ci",
     "install-api": "cd api && composer install",
     "install-api-ci": "cd api && composer install --quiet",
     "install-admin": "cd admin && npm install",

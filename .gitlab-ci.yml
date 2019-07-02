@@ -1,5 +1,5 @@
 # Docker image needed for CI
-image: mobicoop/php-node-chromium
+image: mobicoop/php-node-chromium:2.0.0
 
 services:
 - mysql:latest
@@ -11,15 +11,15 @@ variables:
 
 
 # Cache modules in between jobs
-# cache:
-#   key: ${CI_COMMIT_REF_SLUG}
-#   paths:    # excluded : not cached
-#   - node_modules/
-#   - api/node_modules/
-#   - api/vendor/
-#   - client/node_modules/
-#   - client/vendor/
-#   - admin/node_modules/
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:    # excluded : not cached
+  - node_modules/
+  - api/node_modules/
+  - api/vendor/
+  - client/node_modules/
+  - client/vendor/
+  - admin/node_modules/
 
 # Name of the stages that can be executed on a pipeline by the runner
 stages:
