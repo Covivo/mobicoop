@@ -87,9 +87,16 @@ dev_deploy:
 #  variables:
 #    APP_ENV: test   # /!\ important : symfony env variable /!\
   before_script:
-    - composer global require hirak/prestissimo
+    - composer global require hirak/prestissi
+    # Install the packagees xvfb, libgtk2.0-0 and libgconf2-4, it must be moved to Dockerfile
+    - sudo apt-get -y install xvfb 
+    - sudo apt-get -y install libgtk2.0-0
+    - sudo apt -y install libgconf2-4
+    - npm install -g wait-on 
+    - npm install -g yarn
+    - yarn cache clean
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
-    - npm run install-all
+    - npm run install-all-ci # Install the dependencies in the local node_modules folder
   script:
     - npm run test-and-coverage                                                   # run the tests and code coverage
     - php client/bin/console cache:clear --env=dev --no-debug     # clear the cache for the interfaces
@@ -123,9 +130,16 @@ test_deploy:
 #  variables:
 #    APP_ENV: test   # /!\ important : symfony env variable /!\
   before_script:
-    - composer global require hirak/prestissimo
+    - composer global require hirak/prestissi
+    # Install the packagees xvfb, libgtk2.0-0 and libgconf2-4, it must be moved to Dockerfile
+    - sudo apt-get -y install xvfb 
+    - sudo apt-get -y install libgtk2.0-0
+    - sudo apt -y install libgconf2-4
+    - npm install -g wait-on 
+    - npm install -g yarn
+    - yarn cache clean
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
-    - npm run install-all
+    - npm run install-all-ci # Install the dependencies in the local node_modules folder
   script:
     - npm run test-and-coverage                                                   # run the tests and code coverage
     - php client/bin/console cache:clear --env=test --no-debug     # clear the cache for the interfaces
