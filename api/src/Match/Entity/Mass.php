@@ -34,6 +34,8 @@ use App\Match\Controller\MassAnalyzeAction;
 use App\Match\Controller\MassMatchAction;
 use App\Match\Controller\MassComputeAction;
 use App\Match\Controller\MassWorkingPlacesAction;
+use App\Match\Controller\MassReAnalyzeAction;
+use App\Match\Controller\MassReMatchAction;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use App\User\Entity\User;
@@ -73,6 +75,12 @@ use Doctrine\Common\Collections\Collection;
  *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=MassAnalyzeAction::class
  *          },
+ *          "reanalyze"={
+ *              "method"="GET",
+ *              "path"="/masses/{id}/reanalyze",
+ *              "normalization_context"={"groups"={"massPost"}},
+ *              "controller"=MassReAnalyzeAction::class
+ *          },
  *          "compute"={
  *              "method"="GET",
  *              "path"="/masses/{id}/compute",
@@ -84,6 +92,57 @@ use Doctrine\Common\Collections\Collection;
  *              "path"="/masses/{id}/match",
  *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=MassMatchAction::class,
+ *              "swagger_context"={
+ *                  "parameters"={
+ *                     {
+ *                         "name" = "maxDetourDurationPercent",
+ *                         "in" = "query",
+ *                         "type" = "number",
+ *                         "format" = "integer",
+ *                         "description" = "The maximum detour duration percent (default:40)"
+ *                     },
+ *                     {
+ *                         "name" = "maxDetourDistancePercent",
+ *                         "in" = "query",
+ *                         "type" = "number",
+ *                         "format" = "integer",
+ *                         "description" = "The maximum detour distance percent (default:40)"
+ *                     },
+ *                     {
+ *                         "name" = "minOverlapRatio",
+ *                         "in" = "query",
+ *                         "type" = "number",
+ *                         "format" = "float",
+ *                         "description" = "The minimum overlap ratio between bouding boxes to try a match (default:0)"
+ *                     },
+ *                     {
+ *                         "name" = "maxSuperiorDistanceRatio",
+ *                         "in" = "query",
+ *                         "type" = "number",
+ *                         "format" = "integer",
+ *                         "description" = "The maximum superior distance ratio between A and B to try a match (default:1000)"
+ *                     },
+ *                     {
+ *                         "name" = "bearingCheck",
+ *                         "in" = "query",
+ *                         "type" = "boolean",
+ *                         "description" = "Check the bearings (default:true)"
+ *                     },
+ *                     {
+ *                         "name" = "bearingRange",
+ *                         "in" = "query",
+ *                         "type" = "number",
+ *                         "format" = "integer",
+ *                         "description" = "The bearing range in degrees if check bearings (default:10)"
+ *                     }
+ *                   }
+ *              }
+ *          },
+ *          "rematch"={
+ *              "method"="GET",
+ *              "path"="/masses/{id}/rematch",
+ *              "normalization_context"={"groups"={"massPost"}},
+ *              "controller"=MassReMatchAction::class,
  *              "swagger_context"={
  *                  "parameters"={
  *                     {
