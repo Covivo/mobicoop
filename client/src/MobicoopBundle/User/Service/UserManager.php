@@ -149,9 +149,7 @@ class UserManager
     {
         // encoding of the password
         $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
-        // set the birthdate
-        $birthdate = DateTime::createFromFormat('Y-m-d', $user->getBirthYear() . '-1-1');
-        $user->setBirthDate($birthdate);
+       
         $response = $this->dataProvider->post($user);
         if ($response->getCode() == 201) {
             $this->logger->info('User Creation | Start');
@@ -169,7 +167,7 @@ class UserManager
      * @return User|null The user updated or null if error.
      */
     public function updateUser(User $user)
-    {
+    {   
         $response = $this->dataProvider->put($user);
         if ($response->getCode() == 200) {
             $this->logger->info('User Update | Start');

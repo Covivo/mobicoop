@@ -169,13 +169,13 @@ class UserController extends AbstractController
     public function userProfileUpdate(UserManager $userManager, Request $request, AddressManager $addressManager)
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
-        $user = $userManager->getLoggedUser();
+        $user = clone $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('update', $user);
 
         // get addresses of the logged user
         $addresses = $user->getAddresses();
         $homeAddress = [];
-        // get teh homeAddress
+        // get the homeAddress
         foreach ($addresses as $address) {
             $homeAddress = null;
             $name = $address->getName();
@@ -189,15 +189,10 @@ class UserController extends AbstractController
            
         
         if ($request->isMethod('POST')) {
-            
-
-            
 
             //get all data from form (user + homeAddress)
             $data = $request->request->get($form->getName());
 
-            
-            
             //pass homeAddress info into address entity
             $homeAddress->setAddressCountry($data['addressCountry']);
             $homeAddress->setAddressLocality($data['addressLocality']);
@@ -221,10 +216,10 @@ class UserController extends AbstractController
             $user->setFamilyName($data['familyName']);
             $user->setGender($data['gender']);
             $user->setBirthYear($data['birthYear']);
-                      
+            
             $addressManager->updateAddress($homeAddress);
             $userManager->updateUser($user);
-
+            
             $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
             $this->get('security.token_storage')->setToken($token);
             $this->get('session')->set('_security_main', serialize($token));

@@ -109,7 +109,7 @@
             <div class="columns">
               <div class="column">  
                 <input
-                  type="submit"
+                  type="button"
                   :value="$t('ui.button.save')"
                   @click="checkForm"
                 >
@@ -251,7 +251,7 @@ export default {
         givenName: this.givenName,
         familyName: this.familyName,
         gender: this.gender,
-        birthYear: parseInt(this.birthYear, 10),
+        birthYear: this.birthYear,
         telephone: this.telephone,
         password: null,
         validation: false,
