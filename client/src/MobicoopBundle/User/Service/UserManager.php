@@ -167,7 +167,7 @@ class UserManager
      * @return User|null The user updated or null if error.
      */
     public function updateUser(User $user)
-    {   
+    {
         $response = $this->dataProvider->put($user);
         if ($response->getCode() == 200) {
             $this->logger->info('User Update | Start');
