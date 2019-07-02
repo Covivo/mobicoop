@@ -22,6 +22,7 @@
 <nav class="breadcrumb is-centered has-bullet-separator breadcrumbTop" aria-label="breadcrumbs">
   <ul>
     <li><a  href="#">{% trans from 'ui' %}user.profile.title{% endtrans %}</a></li>
+	<li><a class="updatePassword" href="{{ path('user_password_update') }}">{% trans from 'ui' %}user.profile.buttons.password{% endtrans %}</a></li>
     <li><a  href="{{ path('user_proposals') }}">{% trans from 'ui' %}user.profile.buttons.ads{% endtrans %}</a></li>
   </ul>
 </nav>
@@ -49,14 +50,7 @@
    		{% endif %}
     </div>
 </section>
-<section>
-<nav class="breadcrumb is-centered has-bullet-separator breadcrumbBottom" aria-label="breadcrumbs">
-  <ul>
-    <li><a class="updatePassword" href="{{ path('user_password_update') }}">{% trans from 'ui' %}user.profile.buttons.password{% endtrans %}</a></li>
-    <li><a class="deleteUser" href="{{ path('user_profile_delete') }}">{% trans from 'ui' %}user.profile.buttons.delete{% endtrans %}</a></li>
-  </ul>
-</nav>
-</section>
+
 
 {% endblock %}
 {% block javascripts %}
