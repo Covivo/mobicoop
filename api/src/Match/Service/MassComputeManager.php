@@ -269,11 +269,10 @@ class MassComputeManager
      * @param Mass $mass
      * @return array
      */
-    public function getAllWorkingPlaces(Mass $mass){
-
+    public function getAllWorkingPlaces(Mass $mass)
+    {
         $workingPlaces = $this->massPersonRepository->findAllDestinationsForMass($mass);
 
         return $workingPlaces;
-
     }
 }

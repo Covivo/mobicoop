@@ -37,11 +37,11 @@ final class MassWorkingPlacesAction
 
     public function __invoke(Mass $data): Mass
     {
-
         $workingPlaces = $this->massComputeManager->getAllWorkingPlaces($data);
 
         print_r("workingPlaces");
-        print_r($workingPlaces);die;
+        print_r($workingPlaces);
+        die;
 
         return $workingPlaces;
     }
