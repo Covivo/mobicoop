@@ -212,5 +212,4 @@ class Notified
 
         return $this;
     }
-   
 }

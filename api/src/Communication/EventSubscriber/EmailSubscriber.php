@@ -27,7 +27,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Communication\Service\NotificationManager;
 use App\Communication\Event\EmailNotificationSentEvent;
 
-class EmailSubscriber implements EventSubscriberInterface 
+class EmailSubscriber implements EventSubscriberInterface
 {
     private $notificationManager;
 
@@ -43,8 +43,8 @@ class EmailSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onEmailNotificationSent(EmailNotificationSentEvent $event) 
+    public function onEmailNotificationSent(EmailNotificationSentEvent $event)
     {
-        $this->notificationManager->createNotified($event->getNotification(),$event->getUser(),$event->getMedium());
+        $this->notificationManager->createNotified($event->getNotification(), $event->getUser(), $event->getMedium());
     }
 }

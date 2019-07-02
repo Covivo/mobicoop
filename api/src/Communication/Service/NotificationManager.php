@@ -59,7 +59,7 @@ class NotificationManager
      */
     public function notifies(string $domain, string $action, User $user)
     {
-        $notifications = $this->notificationRepository->findActiveByDomainAction($domain,$action);
+        $notifications = $this->notificationRepository->findActiveByDomainAction($domain, $action);
         if ($notifications && is_array($notifications)) {
             foreach ($notifications as $notification) {
                 switch ($notification->getMedium()->getId()) {
