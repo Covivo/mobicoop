@@ -381,6 +381,10 @@ class Mass implements Resource
 
     public function setWorkingPlaces(array $workingplaces): self
     {
+        foreach($workingplaces as $key => $workingplace) {
+            $workingplaces[$key]["address"] = $workingplace["houseNumber"] . " " . $workingplace["street"] . " " . $workingplace["postalCode"] . " " . $workingplace["addressLocality"];
+        }
+
         $this->workingPlaces = $workingplaces;
 
         return $this;
@@ -388,6 +392,8 @@ class Mass implements Resource
 
     public function addWorkingPlaces(array $workingplace): self
     {
+        $workingplace["address"] = $workingplace["houseNumber"] . " " . $workingplace["street"] . " " . $workingplace["postalCode"] . " " . $workingplace["addressLocality"];
+
         if (!$this->workingPlaces->contains($workingplace)) {
             $this->workingPlaces->add($workingplace);
         }
