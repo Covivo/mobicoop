@@ -319,7 +319,6 @@ export default {
       this.$toast.open({
         message: 'Votre profil a bien été mis à jour!',
         type: 'is-success',
-        position: 'is-bottom'
       })  
     },
   }
