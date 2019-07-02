@@ -98,6 +98,7 @@ class MassComputeManager
 
         foreach ($persons as $person) {
             $tabCoords[] = array(
+                "id"=>$person->getPersonalAddress()->getId(),
                 "latitude"=>$person->getPersonalAddress()->getLatitude(),
                 "longitude"=>$person->getPersonalAddress()->getLongitude(),
                 "distance"=>$person->getDistance(),

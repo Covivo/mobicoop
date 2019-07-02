@@ -62,7 +62,7 @@ class AddressManager
      *
      * @param String $id The address id
      *
-     * @return Addresss|null The address found or null if not found.
+     * @return Address|null The address found or null if not found.
      */
     public function getAddress($id)
     {
