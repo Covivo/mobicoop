@@ -53,6 +53,7 @@ class CarpoolController extends AbstractController
         $ad->setRole(Ad::ROLE_BOTH);
         $ad->setType(Ad::TYPE_ONE_WAY);
         $ad->setFrequency(Ad::FREQUENCY_PUNCTUAL);
+//        $ad->setFrequency(Ad::FREQUENCY_REGULAR);
         $ad->setPrice(Ad::PRICE);
         $ad->setUser($userManager->getLoggedUser());
 
@@ -98,8 +99,9 @@ class CarpoolController extends AbstractController
         } catch (Error $err) {
             $error = $err;
         }
+        $proposalSuccess = $success ? $proposal->getId() : false;
 
-        return $this->json(['error' => $error, 'success' => $success, 'proposal' => $proposal->getId()]);
+        return $this->json(['error' => $error, 'success' => $success, 'proposal' => $proposalSuccess]);
     }
 
     /**

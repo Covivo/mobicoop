@@ -133,13 +133,17 @@
               </b-field>
               <!-- DATE, TIME , MARGIN -->
               <div class="columns">
-                <div class="column">
+                <!-- Punctual one way Trip -->
+                <div
+                  v-if="form.frequency ===1"
+                  class="column"
+                >
                   <h5 class="title column is-full">
                     Aller
                   </h5>
                   <b-datepicker
                     v-model="form.outwardDate"
-                    :placeholder="form.frequency ===2 ? 'Date de début' : 'Date de départ...'"
+                    :placeholder="'Date de départ...'"
                     :day-names="daysShort"
                     :month-names="months"
                     :first-day-of-week="1"
@@ -196,9 +200,89 @@
                     </div>
                   </div>
                 </div>
-                <!-- RETURN -->
+                <!-- Regular one way trip-->
                 <div
-                  v-if="form.type === 2"
+                  v-if="form.frequency ===2"
+                  class="column"
+                >
+                  <h5 class="title column is-full">
+                    Aller
+                  </h5>
+                  <b-datepicker
+                    v-model="form.fromDate"
+                    :placeholder="'Date de début'"
+                    :day-names="daysShort"
+                    :month-names="months"
+                    :first-day-of-week="1"
+                    class="column is-full"
+                    position="is-top-right"
+                    icon-pack="fas"
+                  />
+                  <b-datepicker
+                    v-if="form.type ===1"
+                    v-model="form.toDate"
+                    :placeholder="'Date de fin'"
+                    :day-names="daysShort"
+                    :month-names="months"
+                    :first-day-of-week="1"
+                    class="column is-full"
+                    position="is-top-right"
+                    icon-pack="fas"
+                  />
+
+                  <div class="column is-full">
+                    <div
+                      v-for="(day,index) in nbOfDaysToPlan"
+                      :key="index"
+                      class="columns"
+                    >
+                      <div
+                        v-if="nbOfDaysToPlan>1"
+                        class="column is-2 dayNameColumn"
+                      >
+                        <a class="button is-secondary is-2">{{ days[index] }}</a>
+                      </div>
+                      <b-timepicker
+                        v-model="form['outward'+daysShort[index]+'Time']"
+                        class="column"
+                        placeholder="Heure de départ..."
+                      >
+                        <button
+                          class="button is-primary"
+                          @click="form['outward'+daysShort[index]+'Time']= new Date()"
+                        >
+                          <b-icon icon="clock" />
+                          <span>Maintenant</span>
+                        </button>
+                        <button
+                          class="button is-tertiary"
+                          @click="form['outward'+daysShort[index]+'Time'] = null"
+                        >
+                          <b-icon icon="close" />
+                          <span>Effacer</span>
+                        </button>
+                      </b-timepicker>
+                      <!-- MARGIN -->
+                      <b-select
+                        v-model="form['outward'+daysShort[index]+'Margin']"
+                        class="column is-4"
+                        placeholder="Marge"
+                      >
+                        <option
+                          v-for="(margin,key) in marginsMn"
+                          :key="key"
+                          :value="margin"
+                        >
+                          {{ (1 > margin/60 > 0) ? margin : `${Math.trunc(margin/60)}H${margin%60}` }}
+                        </option>
+                      </b-select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- RETURN Punctual trip-->
+                <div
+                  v-if="form.type === 2 && form.frequency === 1"
                   class="column"
                 >
                   <h2 class="title column is-full">
@@ -206,21 +290,13 @@
                   </h2>
                   <b-datepicker
                     v-model="form.returnDate"
-                    :placeholder="form.frequency ===2 ? 'Date de fin' : 'Date de retour...'"
+                    :placeholder="'Date de retour...'"
                     icon="calendar-today"
                     class="column is-full"
                   />
                   <div
-                    v-for="(day,index) in nbOfDaysToPlan"
-                    :key="index"
                     class="columns"
                   >
-                    <div
-                      v-if="nbOfDaysToPlan>1"
-                      class="column is-2 dayNameColumn"
-                    >
-                      <a class="button is-secondary is-2">{{ days[index] }}</a>
-                    </div>
                     <b-timepicker
                       v-model="form.returnTime"
                       placeholder="heure de retour..."
@@ -244,6 +320,67 @@
                     <!-- MARGIN -->
                     <b-select
                       v-model="form.returnMargin"
+                      class="column is-4"
+                      placeholder="Marge"
+                    >
+                      <option
+                        v-for="(margin,key) in marginsMn"
+                        :key="key"
+                        :value="margin"
+                      >
+                        {{ (1 > margin/60 > 0) ? margin : `${Math.trunc(margin/60)}H${margin%60}` }}
+                      </option>
+                    </b-select>
+                  </div>
+                </div>
+                <!-- RETURN Regular trip-->
+                <div
+                  v-if="form.type === 2 && form.frequency === 2"
+                  class="column"
+                >
+                  <h2 class="title column is-full">
+                    Retour
+                  </h2>
+                  <b-datepicker
+                    v-model="form.toDate"
+                    :placeholder="'Date de fin'"
+                    icon="calendar-today"
+                    class="column is-full"
+                  />
+                  <div
+                    v-for="(day,index) in nbOfDaysToPlan"
+                    :key="index"
+                    class="columns"
+                  >
+                    <div
+                      v-if="nbOfDaysToPlan>1"
+                      class="column is-2 dayNameColumn"
+                    >
+                      <a class="button is-secondary is-2">{{ days[index] }}</a>
+                    </div>
+                    <b-timepicker
+                      v-model="form['return'+daysShort[index]+'Time']"
+                      placeholder="heure de retour..."
+                      class="column"
+                    >
+                      <button
+                        class="button is-primary"
+                        @click="form['return'+daysShort[index]+'Time'] = new Date()"
+                      >
+                        <b-icon icon="clock" />
+                        <span>Maintenant</span>
+                      </button>
+                      <button
+                        class="button is-tertiary"
+                        @click="form['return'+daysShort[index]+'Time'] = null"
+                      >
+                        <b-icon icon="close" />
+                        <span>Effacer</span>
+                      </button>
+                    </b-timepicker>
+                    <!-- MARGIN -->
+                    <b-select
+                      v-model="form['return'+daysShort[index]+'Margin']"
                       class="column is-4"
                       placeholder="Marge"
                     >
@@ -365,22 +502,43 @@ export default {
         returnDate: null,
         returnMargin: null,
         returnTime: null,
-        // //Monday
-        // monday:{
-        //   outwardDate: null,
-        //   outwardMargin: null,
-        //   outwardTime: null,
-        // }
-        outwardMonTime: null,
-        outwardMonMargin: null,
+        // Regular
+        fromDate: null,
+        toDate: null,
         returnMonTime: null,
         returnMonMargin: null,
+        returnTueTime: null,
+        returnTueMargin: null,
+        returnThuTime: null,
+        returnThuMargin: null,
+        returnWedTime: null,
+        returnWedMargin: null,
+        returnFriTime: null,
+        returnFriMargin: null,
+        returnSatTime: null,
+        returnSatMargin: null,
+        returnSunTime: null,
+        returnSunMargin: null,
+        outwardMonTime: null,
+        outwardMonMargin: null,
+        outwardTueTime: null,
+        outwardTueMargin: null,
+        outwardThuTime: null,
+        outwardThuMargin: null,
+        outwardWedTime: null,
+        outwardWedMargin: null,
+        outwardFriTime: null,
+        outwardFriMargin: null,
+        outwardSatTime: null,
+        outwardSatMargin: null,
+        outwardSunTime: null,
+        outwardSunMargin: null
       }
     };
   },
   computed: {
     daysShort() {
-      return this.days.map(day => day.substring(0, 2));
+      return this.daysEn.map(day => day.substring(0, 3));
     },
     nbOfDaysToPlan(){
       if(this.form.frequency === 2) return this.days.length;
@@ -435,7 +593,6 @@ export default {
         })
         .then(function(response) {
           window.location.href = '/covoiturage/annonce/'+response.data.proposal+'/resultats';
-          //console.log(response.data.proposal);
         })
         .catch(function(error) {
           console.error(error);
