@@ -29,6 +29,7 @@ use App\Match\Entity\MassMatrix;
 use App\Match\Entity\MassJourney;
 use App\Match\Entity\MassCarpool;
 use App\Match\Entity\MassPerson;
+use App\Match\Repository\MassPersonRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Service\FormatDataManager;
 
@@ -43,11 +44,13 @@ class MassComputeManager
 {
     private $formatDataManager;
     private $geoTools;
+    private $massPersonRepository;
 
-    public function __construct(FormatDataManager $formatDataManager, GeoTools $geoTools)
+    public function __construct(FormatDataManager $formatDataManager, GeoTools $geoTools, MassPersonRepository $massPersonRepository)
     {
         $this->formatDataManager = $formatDataManager;
         $this->geoTools = $geoTools;
+        $this->massPersonRepository = $massPersonRepository;
     }
 
     /**
@@ -259,5 +262,18 @@ class MassComputeManager
         }
 
         return $matrix;
+    }
+
+    /**
+     * Return all different working places of a Mass
+     * @param Mass $mass
+     * @return array
+     */
+    public function getAllWorkingPlaces(Mass $mass){
+
+        $workingPlaces = $this->massPersonRepository->findAllDestinationsForMass($mass);
+
+        return $workingPlaces;
+
     }
 }

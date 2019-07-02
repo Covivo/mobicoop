@@ -33,6 +33,7 @@ use App\Match\Controller\CreateMassImportAction;
 use App\Match\Controller\MassAnalyzeAction;
 use App\Match\Controller\MassMatchAction;
 use App\Match\Controller\MassComputeAction;
+use App\Match\Controller\MassWorkingPlacesAction;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use App\User\Entity\User;
@@ -128,6 +129,12 @@ use Doctrine\Common\Collections\Collection;
  *                     }
  *                   }
  *              }
+ *          },
+ *          "workingplaces"={
+ *              "method"="GET",
+ *              "path"="/masses/{id}/workingplaces",
+ *              "normalization_context"={"groups"={"mass"}},
+ *              "controller"=MassWorkingPlacesAction::class
  *          },
  *      }
  * )
