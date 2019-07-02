@@ -124,6 +124,22 @@ class MassManager
     }
 
     /**
+     * reAnalyze a Mass
+     *
+     * @param int $id The mass id
+     *
+     * @return Mass|null The mass read or null if error.
+     */
+    public function reAnalyzeMass(int $id)
+    {
+        $response = $this->dataProvider->getSpecialItem($id, "reanalyze");
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
+
+    /**
      * Calculate a Mass (calculation of matchings)
      *
      * @param int $id The mass id
@@ -143,6 +159,25 @@ class MassManager
         return null;
     }
 
+    /**
+     * reCalculate a Mass (calculation of matchings)
+     *
+     * @param int $id The mass id
+     *
+     * @return Mass|null The mass read or null if error.
+     */
+    public function reMatchMass(int $id)
+    {
+        $params = [
+            'minOverlapRatio'=>self::MIN_OVERLAP_RATIO,
+            'maxSuperiorDistanceRatio'=>self::MAX_SUPERIOR_DISTANCE_RATIO
+        ];
+        $response = $this->dataProvider->getSpecialItem($id, "rematch", $params);
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
 
     /**
      * Compute all data of a Mass
@@ -154,6 +189,22 @@ class MassManager
     public function computeMass(int $id)
     {
         $response = $this->dataProvider->getSpecialItem($id, "compute");
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Get all different working places of a Mass
+     *
+     * @param int $id The mass id
+     *
+     * @return array|null The mass read or null if error.
+     */
+    public function workingPlacesMass(int $id)
+    {
+        $response = $this->dataProvider->getSpecialItem($id, "workingplaces");
         if ($response->getCode() == 200) {
             return $response->getValue();
         }

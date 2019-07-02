@@ -29,6 +29,7 @@ use App\Match\Entity\MassMatrix;
 use App\Match\Entity\MassJourney;
 use App\Match\Entity\MassCarpool;
 use App\Match\Entity\MassPerson;
+use App\Match\Repository\MassPersonRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Service\FormatDataManager;
 
@@ -43,11 +44,13 @@ class MassComputeManager
 {
     private $formatDataManager;
     private $geoTools;
+    private $massPersonRepository;
 
-    public function __construct(FormatDataManager $formatDataManager, GeoTools $geoTools)
+    public function __construct(FormatDataManager $formatDataManager, GeoTools $geoTools, MassPersonRepository $massPersonRepository)
     {
         $this->formatDataManager = $formatDataManager;
         $this->geoTools = $geoTools;
+        $this->massPersonRepository = $massPersonRepository;
     }
 
     /**
@@ -95,10 +98,12 @@ class MassComputeManager
 
         foreach ($persons as $person) {
             $tabCoords[] = array(
+                "id"=>$person->getPersonalAddress()->getId(),
                 "latitude"=>$person->getPersonalAddress()->getLatitude(),
                 "longitude"=>$person->getPersonalAddress()->getLongitude(),
                 "distance"=>$person->getDistance(),
-                "duration"=>$person->getDuration()
+                "duration"=>$person->getDuration(),
+                "address"=>$person->getPersonalAddress()->getHouseNumber()." ".$person->getPersonalAddress()->getStreet()." ".$person->getPersonalAddress()->getPostalCode()." ".$person->getPersonalAddress()->getAddressLocality()
             );
             $computedData["totalTravelDistance"] += $person->getDistance();
             $computedData["totalTravelDuration"] += $person->getDuration();
@@ -122,21 +127,25 @@ class MassComputeManager
             }
 
             // Store the original journey to calculate the gains between original and carpool
-            $journey =  new MassJourney(
-                $person->getDistance(),
-                $person->getDuration(),
-                $this->geoTools->getCO2($person->getDistance()),
-                $person->getId()
-            );
-
-            $matrix->addOriginalsJourneys($journey);
+            if ($mass->getStatus()==Mass::STATUS_MATCHED && $person->getDistance()!==null) {
+                // Only if the matching has been done.
+                $journey = new MassJourney(
+                    $person->getDistance(),
+                    $person->getDuration(),
+                    $this->geoTools->getCO2($person->getDistance()),
+                    $person->getId()
+                );
+                $matrix->addOriginalsJourneys($journey);
+            }
         }
 
         $mass->setPersonsCoords($tabCoords);
 
         // Workingplace storage
-        $mass->setLatWorkingPlace($persons[0]->getWorkAddress()->getLatitude());
-        $mass->setLonWorkingPlace($persons[0]->getWorkAddress()->getLongitude());
+//        $mass->setLatWorkingPlace($persons[0]->getWorkAddress()->getLatitude());
+//        $mass->setLonWorkingPlace($persons[0]->getWorkAddress()->getLongitude());
+
+        $mass->setWorkingPlaces($this->massPersonRepository->findAllDestinationsForMass($mass));
 
         // Averages
         $computedData["averageTravelDistance"] = $computedData["totalTravelDistance"] / count($persons);
@@ -163,23 +172,26 @@ class MassComputeManager
 
 
         // Build the carpooler matrix
-        $matrix = $this->buildCarpoolersMatrix($persons, $matrix, $personsIndexed);
+        if ($mass->getStatus()==Mass::STATUS_MATCHED) {
+            // Only if the matching has been done.
+            $matrix = $this->buildCarpoolersMatrix($persons, $matrix, $personsIndexed);
 
-        // Compute the gains between original total and carpool total
-        $totalDurationCarpools = 0;
-        $totalDistanceCarpools = 0;
-        $totalCO2Carpools = 0;
-        foreach ($matrix->getCarpools() as $currentCarpool) {
-            $totalDistanceCarpools += $currentCarpool->getJourney()->getDistance();
-            $totalDurationCarpools += $currentCarpool->getJourney()->getDuration();
-            $totalCO2Carpools += $currentCarpool->getJourney()->getCO2();
+            // Compute the gains between original total and carpool total
+            $totalDurationCarpools = 0;
+            $totalDistanceCarpools = 0;
+            $totalCO2Carpools = 0;
+            foreach ($matrix->getCarpools() as $currentCarpool) {
+                $totalDistanceCarpools += $currentCarpool->getJourney()->getDistance();
+                $totalDurationCarpools += $currentCarpool->getJourney()->getDuration();
+                $totalCO2Carpools += $currentCarpool->getJourney()->getCO2();
+            }
+            $matrix->setSavedDistance($computedData["totalTravelDistance"] - $totalDistanceCarpools);
+            $matrix->setSavedDuration($computedData["totalTravelDuration"] - $totalDurationCarpools);
+            $matrix->setHumanReadableSavedDuration($this->formatDataManager->convertSecondsToHuman($computedData["totalTravelDuration"] - $totalDurationCarpools));
+            $matrix->setSavedCO2($computedData["totalTravelDistanceCO2"] - $totalCO2Carpools);
+
+            $mass->setMassMatrix($matrix);
         }
-        $matrix->setSavedDistance($computedData["totalTravelDistance"] - $totalDistanceCarpools);
-        $matrix->setSavedDuration($computedData["totalTravelDuration"] - $totalDurationCarpools);
-        $matrix->setHumanReadableSavedDuration($this->formatDataManager->convertSecondsToHuman($computedData["totalTravelDuration"] - $totalDurationCarpools));
-        $matrix->setSavedCO2($computedData["totalTravelDistanceCO2"] - $totalCO2Carpools);
-
-        $mass->setMassMatrix($matrix);
 
         return $mass;
     }
@@ -254,5 +266,17 @@ class MassComputeManager
         }
 
         return $matrix;
+    }
+
+    /**
+     * Return all different working places of a Mass
+     * @param Mass $mass
+     * @return array
+     */
+    public function getAllWorkingPlaces(Mass $mass)
+    {
+        $workingPlaces = $this->massPersonRepository->findAllDestinationsForMass($mass);
+
+        return $workingPlaces;
     }
 }

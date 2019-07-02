@@ -141,14 +141,9 @@ class Mass implements Resource
     private $personsCoords;
 
     /**
-     * @var float Working place latitude of the people of this mass.
+     * @var array Working Places of this Mass
      */
-    private $latWorkingPlace;
-
-    /**
-     * @var float Working place longitude of the people of this mass.
-     */
-    private $lonWorkingPlace;
+    private $workingPlaces;
 
     /**
      * @var array Computed data of this mass.
@@ -379,24 +374,31 @@ class Mass implements Resource
         $this->personsCoords = $personsCoords;
     }
 
-    public function getLatWorkingPlace(): ?float
+    public function getWorkingPlaces(): ?array
     {
-        return $this->latWorkingPlace;
+        return $this->workingPlaces;
     }
 
-    public function setLatWorkingPlace(?float $latWorkingPlace)
+    public function setWorkingPlaces(array $workingplaces): self
     {
-        $this->latWorkingPlace = $latWorkingPlace;
+        foreach ($workingplaces as $key => $workingplace) {
+            $workingplaces[$key]["address"] = $workingplace["houseNumber"] . " " . $workingplace["street"] . " " . $workingplace["postalCode"] . " " . $workingplace["addressLocality"];
+        }
+
+        $this->workingPlaces = $workingplaces;
+
+        return $this;
     }
 
-    public function getLonWorkingPlace(): ?float
+    public function addWorkingPlaces(array $workingplace): self
     {
-        return $this->lonWorkingPlace;
-    }
+        $workingplace["address"] = $workingplace["houseNumber"] . " " . $workingplace["street"] . " " . $workingplace["postalCode"] . " " . $workingplace["addressLocality"];
 
-    public function setLonWorkingPlace(?float $lonWorkingPlace)
-    {
-        $this->lonWorkingPlace = $lonWorkingPlace;
+        if (!$this->workingPlaces->contains($workingplace)) {
+            $this->workingPlaces->add($workingplace);
+        }
+
+        return $this;
     }
 
     public function getComputedData(): ?array

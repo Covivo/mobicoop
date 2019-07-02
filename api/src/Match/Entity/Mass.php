@@ -33,6 +33,9 @@ use App\Match\Controller\CreateMassImportAction;
 use App\Match\Controller\MassAnalyzeAction;
 use App\Match\Controller\MassMatchAction;
 use App\Match\Controller\MassComputeAction;
+use App\Match\Controller\MassWorkingPlacesAction;
+use App\Match\Controller\MassReAnalyzeAction;
+use App\Match\Controller\MassReMatchAction;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use App\User\Entity\User;
@@ -71,6 +74,12 @@ use Doctrine\Common\Collections\Collection;
  *              "path"="/masses/{id}/analyze",
  *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=MassAnalyzeAction::class
+ *          },
+ *          "reanalyze"={
+ *              "method"="GET",
+ *              "path"="/masses/{id}/reanalyze",
+ *              "normalization_context"={"groups"={"massPost"}},
+ *              "controller"=MassReAnalyzeAction::class
  *          },
  *          "compute"={
  *              "method"="GET",
@@ -128,6 +137,63 @@ use Doctrine\Common\Collections\Collection;
  *                     }
  *                   }
  *              }
+ *          },
+ *          "rematch"={
+ *              "method"="GET",
+ *              "path"="/masses/{id}/rematch",
+ *              "normalization_context"={"groups"={"massPost"}},
+ *              "controller"=MassReMatchAction::class,
+ *              "swagger_context"={
+ *                  "parameters"={
+ *                     {
+ *                         "name" = "maxDetourDurationPercent",
+ *                         "in" = "query",
+ *                         "type" = "number",
+ *                         "format" = "integer",
+ *                         "description" = "The maximum detour duration percent (default:40)"
+ *                     },
+ *                     {
+ *                         "name" = "maxDetourDistancePercent",
+ *                         "in" = "query",
+ *                         "type" = "number",
+ *                         "format" = "integer",
+ *                         "description" = "The maximum detour distance percent (default:40)"
+ *                     },
+ *                     {
+ *                         "name" = "minOverlapRatio",
+ *                         "in" = "query",
+ *                         "type" = "number",
+ *                         "format" = "float",
+ *                         "description" = "The minimum overlap ratio between bouding boxes to try a match (default:0)"
+ *                     },
+ *                     {
+ *                         "name" = "maxSuperiorDistanceRatio",
+ *                         "in" = "query",
+ *                         "type" = "number",
+ *                         "format" = "integer",
+ *                         "description" = "The maximum superior distance ratio between A and B to try a match (default:1000)"
+ *                     },
+ *                     {
+ *                         "name" = "bearingCheck",
+ *                         "in" = "query",
+ *                         "type" = "boolean",
+ *                         "description" = "Check the bearings (default:true)"
+ *                     },
+ *                     {
+ *                         "name" = "bearingRange",
+ *                         "in" = "query",
+ *                         "type" = "number",
+ *                         "format" = "integer",
+ *                         "description" = "The bearing range in degrees if check bearings (default:10)"
+ *                     }
+ *                   }
+ *              }
+ *          },
+ *          "workingplaces"={
+ *              "method"="GET",
+ *              "path"="/masses/{id}/workingplaces",
+ *              "normalization_context"={"groups"={"mass"}},
+ *              "controller"=MassWorkingPlacesAction::class
  *          },
  *      }
  * )
@@ -272,7 +338,7 @@ class Mass
 
     /**
      * @var array The errors.
-     * @Groups({"mass"})
+     * @Groups({"mass","massPost"})
      */
     private $errors;
 
@@ -283,16 +349,10 @@ class Mass
     private $personsCoords;
 
     /**
-     * @var float Working place latitude of the people of this mass.
+     * @var array Working Places of this Mass
      * @Groups({"mass"})
      */
-    private $latWorkingPlace;
-
-    /**
-     * @var float Working place longitude of the people of this mass.
-     * @Groups({"mass"})
-     */
-    private $lonWorkingPlace;
+    private $workingPlaces;
 
     /**
      * @var array Computed data of this mass.
@@ -532,19 +592,25 @@ class Mass
         $this->personsCoords = $personsCoords;
     }
 
-    public function getLatWorkingPlace(): ?float
+    public function getWorkingPlaces(): ?array
     {
-        return $this->latWorkingPlace;
+        return $this->workingPlaces;
     }
 
-    public function setLatWorkingPlace(?float $latWorkingPlace)
+    public function setWorkingPlaces(array $workingplaces): self
     {
-        $this->latWorkingPlace = $latWorkingPlace;
+        $this->workingPlaces = $workingplaces;
+
+        return $this;
     }
 
-    public function getLonWorkingPlace(): ?float
+    public function addWorkingPlaces(array $workingplace): self
     {
-        return $this->lonWorkingPlace;
+        if (!$this->workingPlaces->contains($workingplace)) {
+            $this->workingPlaces->add($workingplace);
+        }
+
+        return $this;
     }
 
     public function setLonWorkingPlace(?float $lonWorkingPlace)

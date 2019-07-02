@@ -168,6 +168,22 @@ class MassImportManager
         return $mass;
     }
 
+
+    /**
+     * Analyze mass file data.
+     *
+     * @param Mass $mass The mass to update
+     * @param int $status The final status
+     * @return void
+     */
+    public function updateStatusMass(Mass $mass, int $status)
+    {
+        $mass->setStatus($status);
+        $this->entityManager->persist($mass);
+        $this->entityManager->flush();
+    }
+
+
     /**
      * Analyze mass file data.
      *
