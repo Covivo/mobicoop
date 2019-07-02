@@ -14,9 +14,8 @@
     "test-functional-ci": "percy exec -- cypress run",
     "test-fix-and-coverage": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src &&  php vendor/bin/php-cs-fixer.phar fix --using-cache=false src/MobicoopBundle/spec && node src/MobicoopBundle/spec/runtests.js -c",
     "compile": "encore dev",
-    "compile-and-watch": "encore dev-server --port 8079",
-    "compile-and-watch-vue": "encore dev-server --hot --port 8079",
-    "postinstall": "composer install --quiet",
+    "compile-and-watch": "encore dev-server --port 8079 --host=0.0.0.0",
+    "compile-and-watch-vue": "encore dev-server --hot --port 8079 --host=0.0.0.0",
     "cypress": "cypress open",
     "cy": "cypress run"
   },

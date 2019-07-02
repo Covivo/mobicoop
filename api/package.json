@@ -1,6 +1,6 @@
 {
-  "name": "coviride-api",
-  "version": "0.0.0",
+  "name": "mobicoop-api",
+  "version": "1.0.0",
   "description": "Mobicoop API ",
   "main": "public/index.php",
   "scripts": {
@@ -8,8 +8,7 @@
     "start": "php bin/console server:run 0.0.0.0:8080",
     "update-db": "php bin/console doctrine:migrations:migrate -n",
     "create-database-ci" : "php bin/console doctrine:database:create --if-not-exists -n", 
-    "test-fix-and-coverage": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src && ./vendor/bin/kahlan --cc=true --coverage=4 --no-colors=true --reporter=verbose",
-    "install": "composer install --quiet"
+    "test-fix-and-coverage": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src && ./vendor/bin/kahlan --cc=true --coverage=4 --no-colors=true --reporter=verbose"
   },
   "repository": {
     "type": "git",
