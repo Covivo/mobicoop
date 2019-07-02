@@ -101,7 +101,8 @@ class MassComputeManager
                 "latitude"=>$person->getPersonalAddress()->getLatitude(),
                 "longitude"=>$person->getPersonalAddress()->getLongitude(),
                 "distance"=>$person->getDistance(),
-                "duration"=>$person->getDuration()
+                "duration"=>$person->getDuration(),
+                "address"=>$person->getPersonalAddress()->getHouseNumber()." ".$person->getPersonalAddress()->getStreet()." ".$person->getPersonalAddress()->getPostalCode()." ".$person->getPersonalAddress()->getAddressLocality()
             );
             $computedData["totalTravelDistance"] += $person->getDistance();
             $computedData["totalTravelDuration"] += $person->getDuration();
@@ -140,8 +141,10 @@ class MassComputeManager
         $mass->setPersonsCoords($tabCoords);
 
         // Workingplace storage
-        $mass->setLatWorkingPlace($persons[0]->getWorkAddress()->getLatitude());
-        $mass->setLonWorkingPlace($persons[0]->getWorkAddress()->getLongitude());
+//        $mass->setLatWorkingPlace($persons[0]->getWorkAddress()->getLatitude());
+//        $mass->setLonWorkingPlace($persons[0]->getWorkAddress()->getLongitude());
+
+        $mass->setWorkingPlaces($this->massPersonRepository->findAllDestinationsForMass($mass));
 
         // Averages
         $computedData["averageTravelDistance"] = $computedData["totalTravelDistance"] / count($persons);
