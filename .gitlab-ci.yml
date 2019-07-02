@@ -41,7 +41,7 @@ branch_features:   # name of the job
 #  variables:
 #    APP_ENV: dev    # /!\ important : symfony env variable /!\
   before_script:
-    - composer global require hirak/prestissi
+    - composer global require hirak/prestissimo
     # Install the packagees xvfb, libgtk2.0-0 and libgconf2-4, it must be moved to Dockerfile
     - sudo apt-get -y install xvfb 
     - sudo apt-get -y install libgtk2.0-0
@@ -87,7 +87,7 @@ dev_deploy:
 #  variables:
 #    APP_ENV: test   # /!\ important : symfony env variable /!\
   before_script:
-    - composer global require hirak/prestissi
+    - composer global require hirak/prestissimo
     # Install the packagees xvfb, libgtk2.0-0 and libgconf2-4, it must be moved to Dockerfile
     - sudo apt-get -y install xvfb 
     - sudo apt-get -y install libgtk2.0-0
@@ -130,7 +130,7 @@ test_deploy:
 #  variables:
 #    APP_ENV: test   # /!\ important : symfony env variable /!\
   before_script:
-    - composer global require hirak/prestissi
+    - composer global require hirak/prestissimo
     # Install the packagees xvfb, libgtk2.0-0 and libgconf2-4, it must be moved to Dockerfile
     - sudo apt-get -y install xvfb 
     - sudo apt-get -y install libgtk2.0-0
@@ -189,7 +189,7 @@ pages:
 master_deploy:
   stage: deploy
   before_script: # This is required to send the prod type no dev, since it creates errors
-    - composer global require hirak/prestissi
+    - composer global require hirak/prestissimo
     # Install the packagees xvfb, libgtk2.0-0 and libgconf2-4, it must be moved to Dockerfile
     - sudo apt-get -y install xvfb 
     - sudo apt-get -y install libgtk2.0-0
