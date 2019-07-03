@@ -25,9 +25,7 @@
     "cross-env": "^5.2.0"
   },
   "browserslist": {
-    "production": [
-    ],
-    "development": [  
-    ]
+    "production": [],
+    "development": []
   }
 }

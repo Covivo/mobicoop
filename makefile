@@ -34,7 +34,7 @@ fixtures:
 
 start:
 	$(info Make: Starting Mobicoop-plateform environment containers.)
-	docker-compose up -d --always-recreate-deps --force-recreate  
+	docker-compose up -d --always-recreate-deps --force-recreate --renew-anon-volumes
  
 stop:
 	$(info Make: Stopping Mobicoop-plateform environment containers.)
@@ -52,9 +52,15 @@ remove:
 clean:
 	@make -s stop
 	@make -s remove
+	docker system prune --volumes --force
 	rm -rf node_modules api/vendor client/vendor client/node_modules admin/node_modules
-	@docker system prune --volumes --force
 
 logs: 
-	docker logs -f --tail=30 mobicoop_platform | sed -e 's/^/[-- containerA1 --]/' &
-	docker logs -f --tail=30 db | sed -e 's/^/[-- containerM2 --]/' & 
+	docker logs -f --tail=100 mobicoop_platform | sed -e 's/^/[-- containerA1 --]/' &
+	docker logs -f --tail=100 mobicoop_db | sed -e 's/^/[-- containerM2 --]/' &
+
+go-app:
+	docker exec -it mobicoop_platform zsh
+
+go-db:
+	docker exec -it mobicoop_db bash

@@ -1,5 +1,5 @@
 # Docker image needed for CI
-image: mobicoop/php-node-chromium:2.0.0
+image: mobicoop/php-node-chromium:2.0.1
 
 services:
 - mysql:latest
@@ -41,20 +41,11 @@ branch_features:   # name of the job
 #  variables:
 #    APP_ENV: dev    # /!\ important : symfony env variable /!\
   before_script:
-    - composer global require hirak/prestissimo
-    # Install the packagees xvfb, libgtk2.0-0 and libgconf2-4, it must be moved to Dockerfile
-    - sudo apt-get -y install xvfb 
-    - sudo apt-get -y install libgtk2.0-0
-    - sudo apt -y install libgconf2-4
-    - npm install -g wait-on 
-    - npm install -g yarn
-    - yarn cache clean
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
     - npm run install-all-ci # Install the dependencies in the local node_modules folder
 
   script:
-    - npm test && cd api # run the tests
-    - composer install && cd ..
+    - npm test
     - npm run start & wait-on client/public/build/entrypoints.json
     - npm run test-functional-ci
 
@@ -87,18 +78,12 @@ dev_deploy:
 #  variables:
 #    APP_ENV: test   # /!\ important : symfony env variable /!\
   before_script:
-    - composer global require hirak/prestissimo
-    # Install the packagees xvfb, libgtk2.0-0 and libgconf2-4, it must be moved to Dockerfile
-    - sudo apt-get -y install xvfb 
-    - sudo apt-get -y install libgtk2.0-0
-    - sudo apt -y install libgconf2-4
-    - npm install -g wait-on 
-    - npm install -g yarn
-    - yarn cache clean
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
     - npm run install-all-ci # Install the dependencies in the local node_modules folder
   script:
-    - npm run test-and-coverage                                                   # run the tests and code coverage
+    - npm run test-and-coverage    
+    - npm run start & wait-on client/public/build/entrypoints.json
+    - npm run test-functional-ci                                               # run the tests and code coverage
     - php client/bin/console cache:clear --env=dev --no-debug     # clear the cache for the interfaces
     - php api/bin/console cache:clear --env=dev --no-debug                     # clear the cache for the api
     - echo "${SSH_DEV_PRIVATE_KEY}" > id_rsa                   # 

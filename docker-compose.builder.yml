@@ -3,7 +3,8 @@ services:
   base:
     image: mobicoop/php-node-chromium:2.0.0
     volumes:
-      - .:/var/www
+      - mobicoop-sync:/var/www:nocopy
+      - cache-sync:/root/.cache:nocopy
     working_dir: /var/www
   install:
     extends:
@@ -23,3 +24,9 @@ services:
       service: base
     working_dir: /var/www/api
     entrypoint: bash entrypoint.sh 
+
+volumes:
+  mobicoop-sync:
+    external: true
+  cache-sync:
+    external: true
