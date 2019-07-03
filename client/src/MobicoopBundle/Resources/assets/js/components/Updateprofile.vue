@@ -107,7 +107,7 @@
               </div>
             </div>  
             <div class="columns save">
-              <div class="column"/>
+              <div class="column" />
               <div class="column">  
                 <input
                   class="button saveButton"
@@ -116,7 +116,7 @@
                   @click="checkForm"
                 >
               </div>
-              <div class="column"/>
+              <div class="column" />
             </div>
           </form>
         </div>
