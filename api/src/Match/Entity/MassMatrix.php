@@ -36,37 +36,37 @@ class MassMatrix
 
     /**
      * @var array of MassJourneys
-     * @Groups({"mass"})
+     * @Groups({"mass","massCompute"})
      */
     private $originalsJourneys;
 
     /**
      * @var array of MassCarpools
-     * @Groups({"mass"})
+     * @Groups({"mass","massCompute"})
      */
     private $carpools;
 
     /**
      * @var int Saved distance
-     * @Groups({"mass"})
+     * @Groups({"mass","massCompute"})
      */
     private $savedDistance;
 
     /**
      * @var int Saved duration
-     * @Groups({"mass"})
+     * @Groups({"mass","massCompute"})
      */
     private $savedDuration;
 
     /**
      * @var string Saved duration readabled by humain
-     * @Groups({"mass"})
+     * @Groups({"mass","massCompute"})
      */
     private $humanReadableSavedDuration;
 
     /**
      * @var float Saved CO2
-     * @Groups({"mass"})
+     * @Groups({"mass","massCompute"})
      */
     private $savedCO2;
 

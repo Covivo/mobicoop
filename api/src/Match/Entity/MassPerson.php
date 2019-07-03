@@ -54,7 +54,7 @@ class MassPerson
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("mass")
+     * @Groups({"mass","massCompute"})
      */
     private $id;
 
@@ -62,7 +62,7 @@ class MassPerson
      * @var string|null The given id of the person.
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"mass"})
-     * @Groups("mass")
+     * @Groups({"mass","massCompute"})
      */
     private $givenId;
 
@@ -84,7 +84,7 @@ class MassPerson
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Assert\NotBlank(groups={"mass"})
      * @Assert\Valid
-     * @Groups("mass")
+     * @Groups({"mass","massCompute"})
      */
     private $personalAddress;
 
@@ -94,56 +94,56 @@ class MassPerson
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Assert\NotBlank(groups={"mass"})
      * @Assert\Valid
-     * @Groups("mass")
+     * @Groups({"mass","massCompute"})
      */
     private $workAddress;
 
     /**
      * @var int The total distance of the direction in meter.
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups("mass")
+     * @Groups({"mass","massCompute"})
      */
     private $distance;
     
     /**
      * @var int The total duration of the direction in milliseconds.
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups("mass")
+     * @Groups({"mass","massCompute"})
      */
     private $duration;
 
     /**
      * @var float The minimum longitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups("mass")
+     * @Groups({"mass","massCompute"})
      */
     private $bboxMinLon;
 
     /**
      * @var float The minimum latitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups("mass")
+     * @Groups({"mass","massCompute"})
      */
     private $bboxMinLat;
     
     /**
      * @var float The maximum longitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups("mass")
+     * @Groups({"mass","massCompute"})
      */
     private $bboxMaxLon;
     
     /**
      * @var float The maximum latitude of the bounding box of the direction.
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups("mass")
+     * @Groups({"mass","massCompute"})
      */
     private $bboxMaxLat;
 
     /**
      * @var int|null The initial bearing of the direction in degrees.
      * @ORM\Column(type="integer",nullable=true)
-     * @Groups("mass")
+     * @Groups({"mass","massCompute"})
      */
     private $bearing;
 
@@ -162,7 +162,7 @@ class MassPerson
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassMatching", mappedBy="massPerson1", cascade={"persist","remove"}, orphanRemoval=true)
      * @MaxDepth(1)
-     * @Groups("mass")
+     * @Groups({"mass","massCompute"})
      */
     private $matchingsAsDriver;
 
@@ -171,7 +171,7 @@ class MassPerson
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassMatching", mappedBy="massPerson2", cascade={"persist","remove"}, orphanRemoval=true)
      * @MaxDepth(1)
-     * @Groups("mass")
+     * @Groups({"mass","massCompute"})
      */
     private $matchingsAsPassenger;
 
@@ -180,7 +180,7 @@ class MassPerson
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups("mass")
+     * @Groups({"mass","massCompute"})
      */
     private $outwardTime;
 
@@ -189,7 +189,7 @@ class MassPerson
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups("mass")
+     * @Groups({"mass","massCompute"})
      */
     private $returnTime;
 
@@ -199,7 +199,7 @@ class MassPerson
      * @Assert\Type("bool")
      * @Assert\NotBlank(groups={"mass"})
      * @ORM\Column(type="boolean")
-     * @Groups("mass")
+     * @Groups({"mass","massCompute"})
      */
     private $driver;
 
@@ -209,7 +209,7 @@ class MassPerson
      * @Assert\Type("bool")
      * @Assert\NotBlank(groups={"mass"})
      * @ORM\Column(type="boolean")
-     * @Groups("mass")
+     * @Groups({"mass","massCompute"})
      */
     private $passenger;
 

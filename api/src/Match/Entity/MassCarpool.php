@@ -34,19 +34,19 @@ class MassCarpool
 
     /**
      * @var MassPerson $person1
-     * @Groups({"mass"})
+     * @Groups({"mass","massCompute"})
      */
     private $person1;
 
     /**
      * @var MassPerson $person2
-     * @Groups({"mass"})
+     * @Groups({"mass","massCompute"})
      */
     private $person2;
 
     /**
      * @var MassJourney $journey
-     * @Groups({"mass"})
+     * @Groups({"mass","massCompute"})
      */
     private $journey;
 

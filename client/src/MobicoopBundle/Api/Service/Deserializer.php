@@ -493,6 +493,7 @@ class Deserializer
             $mass->setIri($data["@id"]);
         }
         if (isset($data["persons"])) {
+            dump($data["persons"]);
             foreach ($data["persons"] as $person) {
                 $mass->addPerson(self::deserializeMassPerson($person));
             }
