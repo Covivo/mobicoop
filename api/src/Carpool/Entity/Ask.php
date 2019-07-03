@@ -33,7 +33,6 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Communication\Entity\Message;
 
 /**
  * Carpooling : ask from/to a driver and/or a passenger (after a matching between an offer and a request).
@@ -51,6 +50,11 @@ use App\Communication\Entity\Message;
  */
 class Ask
 {
+    const STATUS_INITIATED = 0;
+    const STATUS_PENDING = 1;
+    const STATUS_ACCEPTED = 2;
+    const STATUS_DECLINED = 3;
+    
     /**
      * @var int The id of this ask.
      *
@@ -62,7 +66,7 @@ class Ask
     private $id;
 
     /**
-     * @var int Ask status (0 = waiting; 1 = accepted; 2 = declined).
+     * @var int Ask status (0 = initiated; 1 = pending, 2 = accepted; 3 = declined).
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
@@ -141,20 +145,20 @@ class Ask
     private $waypoints;
 
     /**
-     * @var ArrayCollection The messages linked with the ask.
+     * @var ArrayCollection The ask history items linked with the ask.
      *
-     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Message", mappedBy="ask", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\AskHistory", mappedBy="ask", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"id" = "ASC"})
      * @Groups({"read","write"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
-    private $messages;
+    private $askHistories;
     
     public function __construct()
     {
         $this->waypoints = new ArrayCollection();
-        $this->messages = new ArrayCollection();
+        $this->askHistories = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -280,28 +284,28 @@ class Ask
         return $this;
     }
 
-    public function getMessages()
+    public function getAskHistories()
     {
-        return $this->messages->getValues();
+        return $this->askHistories->getValues();
     }
     
-    public function addMessage(Message $message): self
+    public function addAskHistory(AskHistory $askHistory): self
     {
-        if (!$this->messages->contains($message)) {
-            $this->messages[] = $message;
-            $message->setAsk($this);
+        if (!$this->askHistories->contains($askHistory)) {
+            $this->askHistories[] = $askHistory;
+            $askHistory->setAsk($this);
         }
         
         return $this;
     }
     
-    public function removeMessage(Message $message): self
+    public function removeAskHistory(AskHistory $askHistory): self
     {
-        if ($this->messages->contains($message)) {
-            $this->messages->removeElement($message);
+        if ($this->askHistories->contains($askHistory)) {
+            $this->askHistories->removeElement($askHistory);
             // set the owning side to null (unless already changed)
-            if ($message->getAsk() === $this) {
-                $message->setAsk(null);
+            if ($askHistory->getAsk() === $this) {
+                $askHistory->setAsk(null);
             }
         }
         

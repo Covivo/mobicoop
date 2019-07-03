@@ -32,7 +32,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\User\Entity\User;
-use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\AskHistory;
 
 /**
  * A message sent from a user to other users.
@@ -90,13 +90,13 @@ class Message
     private $user;
 
     /**
-     * @var Ask|null The ask if the message is related to an ask.
+     * @var AskHistory|null The ask history item if the message is related to an ask.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="messages")
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\AskHistory", mappedBy="message")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
-    private $ask;
+    private $askHistory;
 
     /**
      * @var Message|null The original message if the message is a reply to another message.
@@ -182,14 +182,14 @@ class Message
         return $this;
     }
 
-    public function getAsk(): ?Ask
+    public function getAskHistory(): ?AskHistory
     {
-        return $this->ask;
+        return $this->askHistory;
     }
 
-    public function setAsk(?Ask $ask): self
+    public function setAskHistory(?AskHistory $askHistory): self
     {
-        $this->ask = $ask;
+        $this->askHistory = $askHistory;
 
         return $this;
     }
