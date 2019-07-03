@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,31 +21,35 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Repository;
+namespace App\User\Controller;
 
+use App\User\Service\UserManager;
 use App\User\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 
-class UserRepository
+/**
+ * Controller class for user registration.
+ *
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ */
+class UserRegistration
 {
-    /**
-     * @var EntityRepository
-     */
-    private $repository;
-    
-    public function __construct(EntityManagerInterface $entityManager)
+    private $userManager;
+
+    public function __construct(UserManager $userManager)
     {
-        $this->repository = $entityManager->getRepository(User::class);
-    }
-    
-    public function find(int $id): ?User
-    {
-        return $this->repository->find($id);
+        $this->userManager = $userManager;
     }
 
-    public function findOneBy(array $criteria): ?User
+    /**
+     * This method is invoked when a new user registers.
+     * It returns the new user created.
+     *
+     * @param User $data
+     * @return User
+     */
+    public function __invoke(User $data): User
     {
-        return $this->repository->findOneBy($criteria);
+        $data = $this->userManager->registerUser($data);
+        return $data;
     }
 }

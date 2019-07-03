@@ -1,8 +1,30 @@
 <?php
 
+/**
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * This project is dual licensed under AGPL and proprietary licence.
+ ***************************
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Affero General Public License as
+ *    published by the Free Software Foundation, either version 3 of the
+ *    License, or (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Affero General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Affero General Public License
+ *    along with this program.  If not, see <gnu.org/licenses>.
+ ***************************
+ *    Licence MOBICOOP described in the file
+ *    LICENSE
+ **************************/
+
 namespace App\Communication\Service;
 
 use App\Communication\Entity\Email;
+use Psr\Log\LoggerInterface;
 
 /**
  * Email sending service via Swift_Mailer
@@ -15,13 +37,15 @@ class SendEmailManager
     private $templating;
     private $emailSenderDefault;
     private $emailReplyToDefault;
+    private $logger;
 
-    public function __construct(\Swift_Mailer $mailer, \Twig_Environment $templating, string $emailSender, string $emailReplyTo)
+    public function __construct(\Swift_Mailer $mailer, \Twig_Environment $templating, LoggerInterface $logger, string $emailSender, string $emailReplyTo)
     {
         $this->mailer = $mailer;
         $this->templating = $templating;
         $this->emailSenderDefault = $emailSender;
         $this->emailReplyToDefault = $emailReplyTo;
+        $this->logger = $logger;
     }
 
 

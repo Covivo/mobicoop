@@ -30,6 +30,7 @@ api_platform:
             '%kernel.project_dir%/src/App/Entity',
             '%kernel.project_dir%/src/Article/Entity',
             '%kernel.project_dir%/src/Carpool/Entity',
+            '%kernel.project_dir%/src/Communication/Entity',
             '%kernel.project_dir%/src/Community/Entity',
             '%kernel.project_dir%/src/Event/Entity',
             '%kernel.project_dir%/src/ExternalJourney/Entity',
@@ -48,6 +49,7 @@ api_platform:
         - '%kernel.project_dir%/src/App/Entity'
         - '%kernel.project_dir%/src/Article/Entity'
         - '%kernel.project_dir%/src/Carpool/Entity'
+        - '%kernel.project_dir%/src/Communication/Entity'
         - '%kernel.project_dir%/src/Community/Entity'
         - '%kernel.project_dir%/src/ExternalJourney/Entity'
         - '%kernel.project_dir%/src/Event/Entity'

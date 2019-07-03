@@ -31,6 +31,8 @@ use App\Right\Entity\Role;
 use App\Right\Entity\UserRole;
 use App\Community\Repository\CommunityRepository;
 use App\Community\Entity\CommunityUser;
+use App\User\Event\UserRegisteredEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * User manager service.
@@ -43,6 +45,7 @@ class UserManager
     private $roleRepository;
     private $communityRepository;
     private $logger;
+    private $eventDispatcher;
 
     /**
      * Constructor.
@@ -50,29 +53,35 @@ class UserManager
      * @param EntityManagerInterface $entityManager
      * @param LoggerInterface $logger
      */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, RoleRepository $roleRepository, CommunityRepository $communityRepository)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->roleRepository = $roleRepository;
         $this->communityRepository = $communityRepository;
+        $this->eventDispatcher = $dispatcher;
     }
     
     /**
-     * Create a user.
+     * Registers a user.
      *
-     * @param User $user    The user to create
+     * @param User $user    The user to register
      * @return User         The user created
      */
-    public function createUser(User $user)
+    public function registerUser(User $user)
     {
         // default role : user registered full
         $role = $this->roleRepository->find(Role::ROLE_USER_REGISTERED_FULL);
         $userRole = new UserRole();
         $userRole->setRole($role);
         $user->addUserRole($userRole);
+        // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+        // dispatch en event
+        $event = new UserRegisteredEvent($user);
+        $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
+        // return the user
         return $user;
     }
 

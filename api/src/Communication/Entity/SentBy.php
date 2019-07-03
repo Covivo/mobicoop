@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,22 +21,21 @@
  *    LICENSE
  **************************/
 
-namespace App\Right\Entity;
+namespace App\Communication\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\Collection;
-use App\Geography\Entity\Territory;
-use App\User\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
- * A right granted to a user.
- * Additionnal properties could be added so we need this entity (could be useless without extra properties => if so it would be a 'classic' manytomany relation)
+ * The list of media used to send a message.
  *
- * @ORM\Entity
+ * @ORM\Entity()
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -44,10 +43,11 @@ use App\User\Entity\User;
  *      itemOperations={"get","put","delete"}
  * )
  */
-class UserRight
+class SentBy
 {
+
     /**
-     * @var int The id of this user right.
+     * @var int The id of the item.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -55,71 +55,71 @@ class UserRight
      * @Groups("read")
      */
     private $id;
-        
-    /**
-     * @var User The user.
-     *
-     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="userRights")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
-     */
-    private $user;
-    
-    /**
-     * @var Right The right.
-     *
-     * @ORM\ManyToOne(targetEntity="\App\Right\Entity\Right")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
-     */
-    private $right;
 
     /**
-     * @var Territory|null The territory associated with the user role.
+     * @var Message|null The message.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Territory")
+     * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="sentBys")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $message;
+
+    /**
+     * @var Medium|null The medium.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Medium")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $medium;
+
+    /**
+     * @var \DateTimeInterface Send date of the message for the medium.
+     *
+     * @ORM\Column(type="datetime")
      * @Groups({"read","write"})
      */
-    private $territory;
-    
+    private $sentDate;
+
     public function getId(): ?int
     {
         return $this->id;
     }
-        
-    public function getUser(): ?User
+
+    public function getMessage(): Message
     {
-        return $this->user;
+        return $this->message;
     }
 
-    public function setUser(?User $user): self
+    public function setMessage(?Message $message): self
     {
-        $this->user = $user;
-        
-        return $this;
-    }
-    
-    public function getRight(): ?Right
-    {
-        return $this->right;
-    }
+        $this->message = $message;
 
-    public function setRight(?Right $right): self
-    {
-        $this->right = $right;
-        
         return $this;
     }
 
-    public function getTerritory(): ?Territory
+    public function getMedium(): Medium
     {
-        return $this->territory;
+        return $this->medium;
     }
 
-    public function setTerritory(?Territory $territory): self
+    public function setMedium(Medium $medium): self
     {
-        $this->territory = $territory;
-        
+        $this->medium = $medium;
+
+        return $this;
+    }
+
+    public function getSentDate(): ?\DateTimeInterface
+    {
+        return $this->sentDate;
+    }
+
+    public function setSentDate(\DateTimeInterface $sentDate): self
+    {
+        $this->sentDate = $sentDate;
+
         return $this;
     }
 }

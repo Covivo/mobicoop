@@ -21,31 +21,43 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Repository;
+namespace App\Communication\Event;
 
-use App\User\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use Symfony\Component\EventDispatcher\Event;
+use App\Communication\Entity\Email;
+use App\Communication\Entity\Medium;
+use App\Communication\Entity\Notification;
 
-class UserRepository
+/**
+ * Event sent when an email notification is sent.
+ */
+class EmailNotificationSentEvent extends Event
 {
-    /**
-     * @var EntityRepository
-     */
-    private $repository;
-    
-    public function __construct(EntityManagerInterface $entityManager)
+    public const NAME = 'communication.email_notification_sent';
+
+    protected $email;
+    protected $notification;
+    protected $medium;
+
+    public function __construct(Email $email, Notification $notification, Medium $medium)
     {
-        $this->repository = $entityManager->getRepository(User::class);
-    }
-    
-    public function find(int $id): ?User
-    {
-        return $this->repository->find($id);
+        $this->email = $email;
+        $this->notification = $notification;
+        $this->medium = $medium;
     }
 
-    public function findOneBy(array $criteria): ?User
+    public function getEmail()
     {
-        return $this->repository->findOneBy($criteria);
+        return $this->email;
+    }
+
+    public function getNotification()
+    {
+        return $this->notification;
+    }
+
+    public function getMedium()
+    {
+        return $this->medium;
     }
 }

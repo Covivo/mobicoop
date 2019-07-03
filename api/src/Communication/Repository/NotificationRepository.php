@@ -21,13 +21,14 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Repository;
+namespace App\Communication\Repository;
 
-use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use App\Communication\Entity\Notification;
+use App\Communication\Entity\Action;
 
-class UserRepository
+class NotificationRepository
 {
     /**
      * @var EntityRepository
@@ -36,16 +37,29 @@ class UserRepository
     
     public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->repository = $entityManager->getRepository(User::class);
+        $this->repository = $entityManager->getRepository(Notification::class);
     }
     
-    public function find(int $id): ?User
+    public function find(int $id): ?Notification
     {
         return $this->repository->find($id);
     }
 
-    public function findOneBy(array $criteria): ?User
+    /**
+     * Find active notifications for a given domain and action
+     *
+     * @param string $domain
+     * @param string $action
+     * @return void
+     */
+    public function findActiveByDomainAction(string $domain, string $action)
     {
-        return $this->repository->findOneBy($criteria);
+        $query = $this->repository->createQueryBuilder('n')
+        ->join('n.action', 'a')
+        ->where('a.domain = :domain and a.name = :action and active=1')
+        ->setParameter('domain', $domain)
+        ->setParameter('action', $action)
+        ;
+        return $query->getQuery()->getResult();
     }
 }

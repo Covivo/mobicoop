@@ -33,6 +33,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Communication\Entity\Message;
 
 /**
  * Carpooling : ask from/to a driver and/or a passenger (after a matching between an offer and a request).
@@ -138,10 +139,22 @@ class Ask
      * @ApiSubresource(maxDepth=1)
      */
     private $waypoints;
+
+    /**
+     * @var ArrayCollection The messages linked with the ask.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Message", mappedBy="ask", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OrderBy({"id" = "ASC"})
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
+     */
+    private $messages;
     
     public function __construct()
     {
         $this->waypoints = new ArrayCollection();
+        $this->messages = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -261,6 +274,34 @@ class Ask
             // set the owning side to null (unless already changed)
             if ($waypoint->getAsk() === $this) {
                 $waypoint->setAsk(null);
+            }
+        }
+        
+        return $this;
+    }
+
+    public function getMessages()
+    {
+        return $this->messages->getValues();
+    }
+    
+    public function addMessage(Message $message): self
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages[] = $message;
+            $message->setAsk($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeMessage(Message $message): self
+    {
+        if ($this->messages->contains($message)) {
+            $this->messages->removeElement($message);
+            // set the owning side to null (unless already changed)
+            if ($message->getAsk() === $this) {
+                $message->setAsk(null);
             }
         }
         

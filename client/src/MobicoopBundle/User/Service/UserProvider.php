@@ -81,7 +81,7 @@ class UserProvider implements UserProviderInterface
      */
     private function fetchUser($username)
     {
-        $response = $this->dataProvider->getCollection(array("email"=>$username));
+        $response = $this->dataProvider->getCollection(["login"=>$username]);
         if ($response->getCode() == 200) {
             $userData = $response->getValue();
 

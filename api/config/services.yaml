@@ -74,6 +74,18 @@ services:
         tags:   
             - { name: monolog.logger, channel: carpool }
     
+    # Communication
+    App\Communication\Service\NotificationManager:
+        tags: 
+            - { name: monolog.logger, channel: notification }
+    
+    App\Communication\Service\SendEmailManager:
+        arguments:
+            $emailSender: '%env(resolve:MAILER_SENDER)%'
+            $emailReplyTo: '%env(resolve:MAILER_REPLYTO)%'
+        tags: 
+            - { name: monolog.logger, channel: communication }
+
     # Community
     App\Community\Controller\:
         resource: '../src/Community/Controller'
@@ -96,6 +108,9 @@ services:
             $operator: '%env(json:file:resolve:RDEX_OPERATOR)%'
             $clients: '%env(json:file:resolve:RDEX_CLIENTS)%'
             $providers: '%env(json:file:resolve:RDEX_PROVIDERS)%'
+
+    # Geocoder; alias to allow this type to be autowired
+    Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'
 
     # Geography
     App\Geography\Controller\:
@@ -165,13 +180,4 @@ services:
 
     'App\User\Filter\HomeAddressTerritoryFilter':
         # Uncomment only if autoconfiguration isn't enabled
-        #tags: [ 'api_platform.filter' ]
-
-    # alias to allow this type to be autowired
-    Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'
-
-    # Communication
-    App\Communication\Service\SendEmailManager:
-        arguments:
-            $emailSender: '%env(resolve:MAILER_SENDER)%'
-            $emailReplyTo: '%env(resolve:MAILER_REPLYTO)%'
+        #tags: [ 'api_platform.filter' ]    

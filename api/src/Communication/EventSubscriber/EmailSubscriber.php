@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,35 +21,30 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Controller;
+namespace App\Communication\EventSubscriber;
 
-use App\User\Service\UserManager;
-use App\User\Entity\User;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use App\Communication\Service\NotificationManager;
+use App\Communication\Event\EmailNotificationSentEvent;
 
-/**
- * Controller class for user post.
- *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
- */
-class UserPost
+class EmailSubscriber implements EventSubscriberInterface
 {
-    private $userManager;
+    private $notificationManager;
 
-    public function __construct(UserManager $userManager)
+    public function __construct(NotificationManager $notificationManager)
     {
-        $this->userManager = $userManager;
+        $this->notificationManager = $notificationManager;
     }
 
-    /**
-     * This method is invoked when a new user is posted.
-     * It returns the new user created.
-     *
-     * @param User $data
-     * @return User
-     */
-    public function __invoke(User $data): User
+    public static function getSubscribedEvents()
     {
-        $data = $this->userManager->createUser($data);
-        return $data;
+        return [
+            EmailNotificationSentEvent::NAME => 'onEmailNotificationSent'
+        ];
+    }
+
+    public function onEmailNotificationSent(EmailNotificationSentEvent $event)
+    {
+        $this->notificationManager->createNotified($event->getNotification(), $event->getUser(), $event->getMedium());
     }
 }

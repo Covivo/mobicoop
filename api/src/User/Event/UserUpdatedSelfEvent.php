@@ -21,31 +21,27 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Repository;
+namespace App\User\Event;
 
 use App\User\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use Symfony\Component\EventDispatcher\Event;
 
-class UserRepository
+/**
+ * Event sent when a user updates its account.
+ */
+class UserUpdatedSelfEvent extends Event
 {
-    /**
-     * @var EntityRepository
-     */
-    private $repository;
-    
-    public function __construct(EntityManagerInterface $entityManager)
+    public const NAME = 'user.updated_self';
+
+    protected $user;
+
+    public function __construct(User $user)
     {
-        $this->repository = $entityManager->getRepository(User::class);
-    }
-    
-    public function find(int $id): ?User
-    {
-        return $this->repository->find($id);
+        $this->user = $user;
     }
 
-    public function findOneBy(array $criteria): ?User
+    public function getUser()
     {
-        return $this->repository->findOneBy($criteria);
+        return $this->user;
     }
 }
