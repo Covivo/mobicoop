@@ -57,6 +57,8 @@ class User implements Resource, UserInterface, EquatableInterface
         'gender.choice.male'    => self::GENDER_MALE,
         'gender.choice.nc'      => self::GENDER_OTHER
     ];
+
+    const HOME_ADDRESS_NAME = 'homeAddress';
     
     /**
      * @var int The id of this user.
@@ -203,6 +205,13 @@ class User implements Resource, UserInterface, EquatableInterface
      * @var Mass[]|null The mass import files of the user.
      */
     private $masses;
+
+    /**
+     * @var Address[]|null A user have only one homeAddress.
+     */
+    private $homeAddress;
+
+
 
     public function __construct($id=null, $status=null)
     {
@@ -511,7 +520,7 @@ class User implements Resource, UserInterface, EquatableInterface
 
     public function getBirthYear(): ?int
     {
-        return (int)$this->birthDate->format('Y');
+        return $this->birthDate ? (int)$this->birthDate->format('Y') : null;
     }
 
     public function setBirthYear(?int $birthYear)
@@ -588,4 +597,15 @@ class User implements Resource, UserInterface, EquatableInterface
 
         return $this;
     }
+
+    public function getHomeAddress(): ?Address
+    {
+        foreach($this->addresses as $address) {
+            if ($address->getName() == self::HOME_ADDRESS_NAME) {
+                return $address;
+            }
+        }
+        return null;
+    } 
+    
 }

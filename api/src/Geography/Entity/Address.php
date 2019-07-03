@@ -452,7 +452,6 @@ class Address
 
     public function setUser(?User $user)
     {
-        $user->addAddress($this);
         $this->user = $user;
     }
 

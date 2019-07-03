@@ -122,6 +122,7 @@ class UserController extends AbstractController
 
 
             // add the home address to the user
+            
             $user->addAddress($address);
 
             // Not Valid populate error
@@ -172,17 +173,8 @@ class UserController extends AbstractController
         $user = clone $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('update', $user);
 
-        // get addresses of the logged user
-        $addresses = $user->getAddresses();
-        $homeAddress = [];
         // get the homeAddress
-        foreach ($addresses as $address) {
-            $homeAddress = null;
-            $name = $address->getName();
-            if ($name == "homeAddress") {
-                $homeAddress = $address;
-            }
-        }
+        $homeAddress = $user->getHomeAddress();
          
         $form = $this->createForm(UserForm::class, $user, ['validation_groups'=>['update']]);
         $error = false;
@@ -194,6 +186,9 @@ class UserController extends AbstractController
             $data = $request->request->get($form->getName());
 
             //pass homeAddress info into address entity
+            if (!$homeAddress) {
+                $homeAddress = new Address();
+            }
             $homeAddress->setAddressCountry($data['addressCountry']);
             $homeAddress->setAddressLocality($data['addressLocality']);
             $homeAddress->setCountryCode($data['countryCode']);
@@ -208,7 +203,7 @@ class UserController extends AbstractController
             $homeAddress->setStreet($data['street']);
             $homeAddress->setStreetAddress($data['streetAddress']);
             $homeAddress->setSubLocality($data['subLocality']);
-
+            
             // pass front info into user form
             $user->setEmail($data['email']);
             $user->setTelephone($data['telephone']);
@@ -217,8 +212,14 @@ class UserController extends AbstractController
             $user->setGender($data['gender']);
             $user->setBirthYear($data['birthYear']);
             
-            $addressManager->updateAddress($homeAddress);
+            if (is_null($homeAddress->getId()) && !empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) {
+                $homeAddress->setName(User::HOME_ADDRESS_NAME);
+                $user->addAddress($homeAddress);
+            } elseif (!empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) { 
+                $addressManager->updateAddress($homeAddress);
+            }
             $userManager->updateUser($user);
+            exit;
         }
       
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [

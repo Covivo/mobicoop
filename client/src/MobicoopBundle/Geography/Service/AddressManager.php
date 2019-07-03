@@ -86,7 +86,11 @@ class AddressManager
      */
     public function updateAddress(Address $address)
     {
-        $response = $this->dataProvider->put($address);
+        if(is_null($address->getId())) {
+            $response = $this->dataProvider->post($address);  
+        } else {
+            $response = $this->dataProvider->put($address);
+        }
         if ($response->getCode() == 200) {
             $this->logger->info('Address Update | Start');
             return $response->getValue();
