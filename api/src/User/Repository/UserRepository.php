@@ -43,4 +43,9 @@ class UserRepository
     {
         return $this->repository->find($id);
     }
+
+    public function findOneBy(array $criteria): ?User
+    {
+        return $this->repository->findOneBy($criteria);
+    }
 }

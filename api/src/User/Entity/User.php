@@ -50,7 +50,9 @@ use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
 use App\User\Controller\UserRegistration;
 use App\User\Controller\UserPermissions;
+use App\User\Controller\UserLogin;
 use App\User\Filter\HomeAddressTerritoryFilter;
+use App\User\Filter\LoginFilter;
 use App\Communication\Entity\Notified;
 
 /**
@@ -76,7 +78,7 @@ use App\Communication\Entity\Notified;
  *              "method"="POST",
  *              "path"="/users",
  *              "controller"=UserRegistration::class,
- *          }
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -106,6 +108,7 @@ use App\Communication\Entity\Notified;
  * @ApiFilter(NumericFilter::class, properties={"id"})
  * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial"})
  * @ApiFilter(HomeAddressTerritoryFilter::class, properties={"homeAddressTerritory"})
+ * @ApiFilter(LoginFilter::class, properties={"login"})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate", "createdDate"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
