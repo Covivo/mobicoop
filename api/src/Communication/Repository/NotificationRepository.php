@@ -56,7 +56,7 @@ class NotificationRepository
     {
         $query = $this->repository->createQueryBuilder('n')
         ->join('n.action', 'a')
-        ->where('a.domain = :domain and a.name = :action and active=1')
+        ->where('a.domain = :domain and a.name = :action and n.active=1')
         ->setParameter('domain', $domain)
         ->setParameter('action', $action)
         ;

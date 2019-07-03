@@ -86,7 +86,6 @@ class Community implements Resource
     /**
     * @var \DateTimeInterface Creation date of the event.
     *
-    * @Assert\Date()
     * @Groups("post")
     */
     private $createdDate;

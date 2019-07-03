@@ -106,7 +106,6 @@ class Event
      * @var \DateTimeInterface The starting date of the event.
      *
      * @Assert\NotBlank
-     * @Assert\DateTime
      * @ORM\Column(type="datetime")
      * @Groups({"read","write"})
      */
@@ -116,7 +115,6 @@ class Event
      * @var \DateTimeInterface The ending date of the event.
      *
      * @Assert\NotBlank
-     * @Assert\DateTime
      * @ORM\Column(type="datetime")
      * @Groups({"read","write"})
      */
