@@ -50,6 +50,20 @@
                 >
                   Passager ou Conducteur
                 </b-radio-button>
+                <b-select
+                  v-model="form.community"
+                  name="selectCommunity"
+                  :native-value="4"
+                  type="is-primary"
+                >
+                  <option
+                    v-for="(community,index) in communities"
+                    :key="index"
+                    :value="index"
+                  >
+                    {{ community }}
+                  </option>
+                </b-select>
               </b-field>
             </tab-content>
             <!-- TYPE TRAJET -->
@@ -407,8 +421,10 @@
 import axios from "axios";
 import moment from 'moment'
 import Geocomplete from "./Geocomplete";
+import BSelect from "buefy/src/components/select/Select";
 export default {
   components: {
+    BSelect,
     Geocomplete
   },
   props: {
@@ -435,12 +451,17 @@ export default {
     sentToken: {
       type: String,
       default: ""
+    },
+    sentHydra: {
+      type: String,
+      default: ""
     }
   },
   data() {
     return {
       origin: null,
       outward: this.sentOutward,
+      communities: JSON.parse(this.sentHydra),
       timeStart: new Date(),
       timeReturn: new Date(),
       days: [
@@ -532,7 +553,8 @@ export default {
         outwardSatTime: null,
         outwardSatMargin: null,
         outwardSunTime: null,
-        outwardSunMargin: null
+        outwardSunMargin: null,
+        community: null
       }
     };
   },
@@ -591,6 +613,7 @@ export default {
             "Content-Type": "multipart/form-data"
           }
         })
+      // ajouter ici un .then pour enregistrer une annonce avec une communauté
         .then(function(response) {
           window.location.href = '/covoiturage/annonce/'+response.data.proposal+'/resultats';
         })
@@ -606,16 +629,14 @@ export default {
 .tabContent {
   text-align: center;
 }
-
 .fieldsContainer {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-
-.dayNameColumn{
+.dayNameColumn {
   text-align: left;
-  a{
+  a {
     width: 100%;
   }
 }

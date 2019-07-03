@@ -35,6 +35,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 
 /**
  * Controller class for carpooling related actions.
@@ -46,7 +47,7 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
-    public function ad(AdManager $adManager, UserManager $userManager, Request $request)
+    public function ad(AdManager $adManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
     {
         $ad = new Ad();
         $this->denyAccessUnlessGranted('post', $ad);
@@ -60,6 +61,16 @@ class CarpoolController extends AbstractController
         $form = $this->createForm(AdForm::class, $ad, ['csrf_protection' => false]);
         $error = false;
         $success = false;
+//        ajout de la gestion des communautés
+        $hydraCommunities = $communityManager->getCommunities();
+        $communities =[];
+
+        if ($hydraCommunities && count($hydraCommunities->getMember())>0) {
+            foreach ($hydraCommunities->getMember() as $value){
+                foreach(array($value) as $community)
+                 $communities[$community->getId()] = $community->getName();
+            }
+        }
 
         if ($request->isMethod('POST')) {
             $createToken = $request->request->get('createToken');
@@ -74,7 +85,9 @@ class CarpoolController extends AbstractController
         if (!$form->isSubmitted()) {
             return $this->render('@Mobicoop/ad/create.html.twig', [
                 'form' => $form->createView(),
-                'error' => $error
+                'error' => $error,
+                'hydra' => $hydraCommunities,
+                'communities' => $communities
             ]);
         }
 
