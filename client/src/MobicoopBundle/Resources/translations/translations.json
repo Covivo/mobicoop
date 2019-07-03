@@ -79,7 +79,10 @@
                 },
                 "homeTown": {
                     "label": "Commune de résidence",
-                    "placeholder": "Commune de résidence"
+                    "placeholder": "Commune de résidence",
+                    "errors": {
+                        "required": "La ville de résidence est requise"
+                    }
                 }
             }
         }
