@@ -19,7 +19,7 @@
             id="app"
             method="post"
           >
-            <div class="columns">
+            <div class="columns contact">
               <div class="column">
                 <b-field
                   :label="$t('models.user.email.label')"
@@ -40,7 +40,7 @@
                 </b-field>
               </div>
             </div> 
-            <div class="columns">
+            <div class="columns identity">
               <div class="column">  
                 <b-field :label="$t('models.user.givenName.label')">
                   <b-input
@@ -77,7 +77,7 @@
               </div>
             </div>  
 
-            <div class="columns">
+            <div class="columns extra">
               <div class="column">  
                 <b-field :label="$t('models.user.birthYear.label')">
                   <b-select
@@ -106,14 +106,17 @@
                 </b-field>
               </div>
             </div>  
-            <div class="columns">
+            <div class="columns save">
+              <div class="column"/>
               <div class="column">  
                 <input
+                  class="button saveButton"
                   type="button"
                   :value="$t('ui.button.save')"
                   @click="checkForm"
                 >
               </div>
+              <div class="column"/>
             </div>
           </form>
         </div>
