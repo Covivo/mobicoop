@@ -215,7 +215,7 @@ class UserController extends AbstractController
             if (is_null($homeAddress->getId()) && !empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) {
                 $homeAddress->setName(User::HOME_ADDRESS_NAME);
                 $user->addAddress($homeAddress);
-            } elseif (!empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) { 
+            } elseif (!empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) {
                 $addressManager->updateAddress($homeAddress);
             }
             $userManager->updateUser($user);

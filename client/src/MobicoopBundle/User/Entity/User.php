@@ -600,12 +600,11 @@ class User implements Resource, UserInterface, EquatableInterface
 
     public function getHomeAddress(): ?Address
     {
-        foreach($this->addresses as $address) {
+        foreach ($this->addresses as $address) {
             if ($address->getName() == self::HOME_ADDRESS_NAME) {
                 return $address;
             }
         }
         return null;
-    } 
-    
+    }
 }
