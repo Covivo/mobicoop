@@ -84,7 +84,6 @@ class Event implements Resource
      * @var \DateTimeInterface The starting date of the event.
      *
      * @Assert\NotBlank(groups={"create","update"})
-     * @Assert\DateTime(groups={"create","update"})
      * @Groups({"post","put"})
      */
     private $fromDate;
@@ -93,7 +92,6 @@ class Event implements Resource
      * @var \DateTimeInterface The ending date of the event.
      *
      * @Assert\NotBlank
-     * @Assert\DateTime()
      * @Groups({"post","put"})
      */
     private $toDate;

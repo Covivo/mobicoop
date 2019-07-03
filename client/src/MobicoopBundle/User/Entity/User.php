@@ -127,7 +127,6 @@ class User implements Resource, UserInterface, EquatableInterface
      *
      * @Groups({"post","put"})
      *
-     * @Assert\Date()
      */
     private $birthDate;
     
@@ -511,7 +510,7 @@ class User implements Resource, UserInterface, EquatableInterface
 
     public function getBirthYear(): ?int
     {
-        return (int)$this->birthDate->format('Y');
+        return $this->birthDate ? (int)$this->birthDate->format('Y') : null;
     }
 
     public function setBirthYear(?int $birthYear)

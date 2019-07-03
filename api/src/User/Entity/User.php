@@ -203,7 +203,6 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var \DateTimeInterface|null The birth date of the user.
      *
-     * @Assert\Date()
      * @ORM\Column(type="date", nullable=true)
      * @Groups({"read","write"})
      *
