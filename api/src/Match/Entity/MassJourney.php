@@ -34,25 +34,25 @@ class MassJourney
 
     /**
      * @var int $idPerson
-     * @Groups({"mass"})
+     * @Groups({"mass","massCompute"})
      */
     private $idPerson;
 
     /**
      * @var int $distance
-     * @Groups({"mass"})
+     * @Groups({"mass","massCompute"})
      */
     private $distance;
 
     /**
      * @var int $duration
-     * @Groups({"mass"})
+     * @Groups({"mass","massCompute"})
      */
     private $duration;
 
     /**
      * @var float co2
-     * @Groups({"mass"})
+     * @Groups({"mass","massCompute"})
      */
     private $co2;
 

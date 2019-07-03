@@ -84,7 +84,7 @@ use Doctrine\Common\Collections\Collection;
  *          "compute"={
  *              "method"="GET",
  *              "path"="/masses/{id}/compute",
- *              "normalization_context"={"groups"={"mass"}},
+ *              "normalization_context"={"groups"={"massCompute"}},
  *              "controller"=MassComputeAction::class
  *          },
  *          "match"={
@@ -192,7 +192,7 @@ use Doctrine\Common\Collections\Collection;
  *          "workingplaces"={
  *              "method"="GET",
  *              "path"="/masses/{id}/workingplaces",
- *              "normalization_context"={"groups"={"mass"}},
+ *              "normalization_context"={"groups"={"mass","massWorkingPlaces"}},
  *              "controller"=MassWorkingPlacesAction::class
  *          },
  *      }
@@ -222,7 +222,7 @@ class Mass
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"mass","massPost", "massAnalyze","massMatch"})
+     * @Groups({"mass","massPost", "massAnalyze","massMatch", "massCompute"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -231,7 +231,7 @@ class Mass
      * @var int The status of this import.
      *
      * @ORM\Column(type="integer")
-     * @Groups({"mass","massPost"})
+     * @Groups({"mass","massPost", "massCompute"})
      */
     private $status;
 
@@ -239,7 +239,7 @@ class Mass
      * @var string The final file name of the import.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"mass","massPost","write"})
+     * @Groups({"mass","massPost","write", "massCompute"})
      */
     private $fileName;
 
@@ -247,7 +247,7 @@ class Mass
      * @var string The original file name of the import.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"mass","massPost","write"})
+     * @Groups({"mass","massPost","write", "massCompute"})
      */
     private $originalName;
 
@@ -255,7 +255,7 @@ class Mass
      * @var int The size in bytes of the import.
      *
      * @ORM\Column(type="integer")
-     * @Groups({"mass","massPost","write"})
+     * @Groups({"mass","massPost","write", "massCompute"})
      */
     private $size;
 
@@ -263,7 +263,7 @@ class Mass
      * @var string The mime type of the import.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"mass","massPost"})
+     * @Groups({"mass","massPost", "massCompute"})
      */
     private $mimeType;
 
@@ -271,7 +271,7 @@ class Mass
      * @var \DateTimeInterface Creation date of the import.
      *
      * @ORM\Column(type="datetime")
-     * @Groups({"mass","massPost"})
+     * @Groups({"mass","massPost", "massCompute"})
      */
     private $createdDate;
 
@@ -288,7 +288,7 @@ class Mass
      * @var \DateTimeInterface Analyzed date of the import.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"mass","massPost"})
+     * @Groups({"mass","massPost", "massCompute"})
      */
     private $analyzingDate;
 
@@ -296,7 +296,7 @@ class Mass
      * @var \DateTimeInterface Analyzing start date of the import.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"mass","massPost"})
+     * @Groups({"mass","massPost", "massCompute"})
      */
     private $analyzedDate;
 
@@ -304,7 +304,7 @@ class Mass
      * @var \DateTimeInterface Calculation start date of the import.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"mass","massPost"})
+     * @Groups({"mass","massPost", "massCompute"})
      */
     private $calculationDate;
 
@@ -312,7 +312,7 @@ class Mass
      * @var \DateTimeInterface Calculated date of the import.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"mass","massPost"})
+     * @Groups({"mass","massPost", "massCompute"})
      */
     private $calculatedDate;
 
@@ -320,7 +320,7 @@ class Mass
      * @var array|null The persons concerned by the file.
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassPerson", mappedBy="mass", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"mass"})
+     * @Groups({"massCompute"})
      */
     private $persons;
 
@@ -344,25 +344,25 @@ class Mass
 
     /**
      * @var array people's coordinates of this mass.
-     * @Groups({"mass"})
+     * @Groups({"massCompute"})
      */
     private $personsCoords;
 
     /**
      * @var array Working Places of this Mass
-     * @Groups({"mass"})
+     * @Groups({"massCompute", "massWorkingPlaces"})
      */
     private $workingPlaces;
 
     /**
      * @var array Computed data of this mass.
-     * @Groups({"mass"})
+     * @Groups({"massCompute"})
      */
     private $computedData;
 
     /**
      * @var MassMatrix Matrix of carpools
-     * @Groups({"mass"})
+     * @Groups({"massCompute"})
      */
     private $massMatrix;
 

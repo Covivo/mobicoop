@@ -62,12 +62,6 @@ class MassMatching
     private $massPerson1;
 
     /**
-     * @var int id of the first person
-     * @Groups("mass")
-     */
-    private $massPerson1Id;
-
-    /**
      * @var MassPerson The second person.
      * @ORM\ManyToOne(targetEntity="\App\Match\Entity\MassPerson", cascade={"persist","remove"}, inversedBy="matchingsAsPassenger")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -76,22 +70,16 @@ class MassMatching
     private $massPerson2;
 
     /**
-     * @var int id of the second person
-     * @Groups("mass")
-     */
-    private $massPerson2Id;
-
-    /**
      * @var int The total distance of the direction in meter.
      * @ORM\Column(type="integer")
-     * @Groups("mass")
+     * @Groups({"mass","massCompute"})
      */
     private $distance;
     
     /**
      * @var int The total duration of the direction in milliseconds.
      * @ORM\Column(type="integer")
-     * @Groups("mass")
+     * @Groups({"mass","massCompute"})
      */
     private $duration;
 
