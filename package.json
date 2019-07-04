@@ -29,6 +29,7 @@
     "start-mobicoop-production": "cd client && npm start production",
     "start-noadmin": "npm-run-all --parallel start-api start-mobicoop",
     "build-admin": "cd admin && npm run build",
+    "update-db": "cd api && npm run update-db",
     "transfer-copyright": "node bin/helpers/transferCopyright.js",
     "generateDocs": "php bin/phpDocumentor.phar -d 'client/src','api/src' --ignore '*/Migrations/*'  -t docs/php --title Mobicoop",
     "create-front-canvas": "node bin/helpers/createFrontCanvas.js -d",
