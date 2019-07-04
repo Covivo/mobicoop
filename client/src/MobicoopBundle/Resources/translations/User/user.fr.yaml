@@ -51,4 +51,4 @@ multiTransportMode:
 conditions:
     label: 'Je valide la charte et les conditions générales d''utilisation'
 signup:
-    label: 'Je m''inscris'
+    label: 'Enregistrer'
