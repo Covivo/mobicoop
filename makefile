@@ -87,7 +87,7 @@ clean:
 
 	@make -s stop
 	@make -s remove
-	# docker system prune --volumes --force
+	docker system prune --volumes --force
 	rm -rf node_modules api/vendor client/vendor client/node_modules admin/node_modules
 
 logs: 

@@ -1,5 +1,5 @@
 # Docker image needed for CI
-image: mobicoop/php-node-chromium:2.0.1
+image: mobicoop/php-node-chromium:2.0.0
 
 services:
 - mysql:latest
