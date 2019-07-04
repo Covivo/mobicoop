@@ -89,7 +89,7 @@ describe('User account', () => {
     cy.url().should('include', baseUrl + 'utilisateur/profil/modifier')
 
     /* Gender */
-    cy.get('select[id=user_form_gender]')
+    cy.get(':nth-child(3) > .field > .control > .select > select')
       .select('2')
       .should('have.value', '2')
 
