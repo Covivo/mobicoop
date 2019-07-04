@@ -1,6 +1,7 @@
-version: "3.4"
+version: "2"
 services:
   mobicoop_platform:
+    container_name: mobicoop_platform
     image: mobicoop/php-node-chromium:2.0.0
     # build: ./
     ports:
@@ -20,6 +21,7 @@ services:
       - COMPOSER_PROCESS_TIMEOUT=1200
     volumes:
       - ./:/var/www/:cached
+      - ./build/cache:/root/.cache/:nocopy
 
   db:
     image: mariadb:10.4

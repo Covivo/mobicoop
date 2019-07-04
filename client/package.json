@@ -7,13 +7,14 @@
     "doc": "docs"
   },
   "scripts": {
-    "start": "node runstart.js",
+    "start": "php bin/console server:run 0.0.0.0:8081 & npm run compile-and-watch",
     "test": "node src/MobicoopBundle/spec/runtests.js",
     "test-and-coverage": "node src/MobicoopBundle/spec/runtests.js -c",
     "test-functional": "PERCY_TOKEN=aaabbbcccdddeeefff PERCY_BRANCH=local percy exec -- cypress run",
+    "test-functional-2": "PERCY_TOKEN=aaabbbcccdddeeefff percy exec -- cypress run",
     "test-functional-ci": "percy exec -- cypress run",
     "test-fix-and-coverage": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src &&  php vendor/bin/php-cs-fixer.phar fix --using-cache=false src/MobicoopBundle/spec && node src/MobicoopBundle/spec/runtests.js -c",
-    "compile": "encore dev",
+    "compile": "encore production",
     "compile-and-watch": "encore dev-server --port 8079 --host=0.0.0.0",
     "compile-and-watch-vue": "encore dev-server --hot --port 8079 --host=0.0.0.0",
     "cypress": "cypress open",
@@ -35,10 +36,10 @@
   "homepage": "https://gitlab.com/mobicoop/mobicoop#README",
   "devDependencies": {
     "@percy/cypress": "^1.0.9",
+    "cypress": "^3.3.1",
     "babel-eslint": "^8.2.6",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-stage-3": "^6.24.1",
-    "cypress": "^3.3.1",
     "eslint": "^4.19.1",
     "eslint-loader": "2.1.0",
     "eslint-plugin-vue": "^5.0.0-beta.3",

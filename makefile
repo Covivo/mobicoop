@@ -6,55 +6,94 @@ blue:=$(shell tput setaf 27)
 green:=$(shell tput setaf 118)
 reset:=$(shell tput sgr0) 
 
+ifeq ($(shell uname),Darwin)
+  os=darwin
+else
+  os=linux
+endif
+
 install:
 	$(info $(pink)------------------------------------------------------)
-	$(info $(pink)Make: Installing monorepo root deps...)
+	$(info $(pink)Creating build/cache folders)
+	$(info $(pink)Make ($(os)): Installing monorepo root deps...)
 	$(info $(pink)------------------------------------------------------$(reset))
-	docker-compose -f docker-compose.builder.yml run --rm install
+
+	mkdir -p build/cache;\
+
+	# Using docker-sync for macos only
+	@if [ $(os) = "darwin" ]; then\
+		docker-sync start; \
+    fi
+
+	docker-compose -f docker-compose-builder-$(os).yml run --rm install
 	@make -s install-deps
 	@make -s build-admin
 
 install-deps:
 	$(info $(green)------------------------------------------------------)
-	$(info $(green)Installing api-client-admin deps...)
+	$(info $(green)Make ($(os)): Installing api-client-admin deps...)
 	$(info $(green)------------------------------------------------------$(reset))
-	docker-compose -f docker-compose.builder.yml run --rm install-all
+	docker-compose -f docker-compose-builder-$(os).yml run --rm install-all
 
 build-admin:
 	$(info $(blue)------------------------------------------------------)
-	$(info $(blue)Building admin...)
+	$(info $(blue)Make ($(os)): Building admin...)
 	$(info $(blue)------------------------------------------------------$(reset))
-	docker-compose -f docker-compose.builder.yml run --rm build-admin
+	docker-compose -f docker-compose-builder-$(os).yml run --rm build-admin
 
 fixtures:
 	$(info $(pink)------------------------------------------------------)
-	$(info $(pink)Generating fixtures...)
+	$(info $(pink)Make ($(os)): Generating fixtures...)
 	$(info $(pink)------------------------------------------------------$(reset))
-	docker-compose -f docker-compose.builder.yml run --rm fixtures
+	docker-compose -f docker-compose-builder-$(os).yml run --rm fixtures
 
 start:
-	$(info Make: Starting Mobicoop-plateform environment containers.)
-	docker-compose up -d --always-recreate-deps --force-recreate  
+	$(info Make ($(os)): Starting Mobicoop-platform environment containers.)
+	docker-compose -f docker-compose-$(os).yml up  --always-recreate-deps --force-recreate
  
 stop:
-	$(info Make: Stopping Mobicoop-plateform environment containers.)
-	@docker-compose stop
+
+	#  Using docker-sync for darwin macos only
+	@if [ $(os) = "darwin" ]; then\
+		docker-sync stop; \
+    fi
+
+	$(info Make ($(os)): Stopping Mobicoop-platform environment containers.)
+	docker-compose -f docker-compose-$(os).yml stop 
+
+status:
+	docker ps -a | grep mobicoop_platform
+	docker ps -a | grep mobicoop_db
  
 restart:
-	$(info Make: Restarting Mobicoop-plateform environment containers.)
+	$(info Make ($(os)): Restarting Mobicoop-platform environment containers.)
 	@make -s stop
 	@make -s start
 
 remove:
-	$(info Make: Stopping Mobicoop-plateform environment containers.)
-	@docker-compose down -v
+	$(info Make ($(os)): Stopping Mobicoop-platform environment containers.)
+	docker-compose -f docker-compose-$(os).yml down -v 
  
 clean:
+	#  Using docker-sync for darwin macos only
+	$(info $(pink)------------------------------------------------------)
+	$(info $(pink)Drop all deps + containers + volumes)
+	$(info $(pink)------------------------------------------------------$(reset))
+	@if [ $(os) = "darwin" ]; then\
+		docker-sync clean; \
+    fi
+
 	@make -s stop
 	@make -s remove
+	docker system prune --volumes --force
 	rm -rf node_modules api/vendor client/vendor client/node_modules admin/node_modules
-	@docker system prune --volumes --force
 
 logs: 
-	docker logs -f --tail=30 mobicoop_platform | sed -e 's/^/[-- containerA1 --]/' &
-	docker logs -f --tail=30 db | sed -e 's/^/[-- containerM2 --]/' & 
+	docker logs -f --tail=100 mobicoop_platform | sed -e 's/^/[-- containerA1 --]/' &
+	docker logs -f --tail=100 mobicoop_db | sed -e 's/^/[-- containerM2 --]/' &
+
+go-platform:
+	docker exec -it mobicoop_platform zsh
+
+go-db:
+	docker exec -it mobicoop_db bash

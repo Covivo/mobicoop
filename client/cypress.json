@@ -1,4 +1,5 @@
 {
+    "projectId": "mobicoop-platform",
     "env": {
         "baseUrl": "http://localhost:8081/",
         "PERCY_TOKEN": "2035e127ebea6c8e0911cb673769ed79946e2ecc8b15aaccb852abbf898cb646"
