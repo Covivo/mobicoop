@@ -76,7 +76,7 @@ class Ad
     private $origin;
 
     /**
-     * @var string The origin of the travel.
+     * @var integer The community of the travel.
      *
      */
     private $community;
@@ -368,7 +368,7 @@ class Ad
         return $this->community;
     }
 
-    public function setCommunity(string $community): self
+    public function setCommunity(int $community): self
     {
         $this->community = $community;
 

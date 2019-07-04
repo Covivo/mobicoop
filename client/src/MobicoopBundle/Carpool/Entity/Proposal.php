@@ -97,8 +97,7 @@ class Proposal implements Resource
     /**
      * @var ArrayCollection|null The communities related to the proposal.
      *
-     * @ORM\ManyToMany(targetEntity="\Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community", inversedBy="proposals")
-     * @Groups({"read","write"})
+     * @Groups({"post","put"})
      */
     private $communities;
 

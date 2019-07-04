@@ -40,7 +40,7 @@ class AdManager
     /**
      * Constructor.
      *
-     * @param ProposalManager $proposalManager
+     * @param ProposalManager $proposalManager, CommunityManager $communityManager
      */
     public function __construct(ProposalManager $proposalManager, CommunityManager $communityManager)
     {
@@ -60,11 +60,13 @@ class AdManager
         $proposal->setType($ad->getType() == Ad::TYPE_ONE_WAY ? Proposal::TYPE_ONE_WAY : Proposal::TYPE_OUTWARD);
         $proposal->setComment($ad->getComment());
         $proposal->setUser($ad->getUser());
-//        récupération des communités
-        $community = $this->communityManager->getCommunity($ad->getCommunity());
-        $proposal->addCommunity($community);
 
-        // creation of the criteria
+//        récupération des communautés
+        if($ad->getCommunity() !== null) {
+            $community = $this->communityManager->getCommunity($ad->getCommunity());
+            $proposal->addCommunity($community);
+        }
+                // creation of the criteria
         $criteria = new Criteria();
         if ($ad->getRole() == Ad::ROLE_BOTH || $ad->getRole() == Ad::ROLE_DRIVER) {
             $criteria->setDriver(true);
