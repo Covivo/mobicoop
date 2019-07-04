@@ -77,7 +77,7 @@ Cypress.Commands.add('signUp', (email, password, lastname, name, gender, birthye
   /* Password*/
   cy.get('.password > input')
     .should('have.attr', 'placeholder', 'Mot de passe')
-    .type(phone)
+    .type(password)
 
   /* Next */
   cy.get('.wizard-btn').contains('Suivant')

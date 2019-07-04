@@ -34,7 +34,7 @@ describe('Visitor / home', () => {
   it('Should not be able to connect, because user should not exists', () => {
     cy.contains('Connexion').click()
     cy.get('input[id=user_login_form_username]')
-      .type(email)
+      .type('tada@postMessage.fr')
     cy.get('input[id=user_login_form_password]')
       .type(password)
     cy.get('button[id=user_login_form_login]').click()
@@ -73,7 +73,8 @@ describe('Visitor / home', () => {
   })
 
   it('A visitor comes back to home when he clicks to logo on the website', () => {
-    cy.home()
+    cy.percySnapshot('visitor_home');
+    cy.home();
   })
 
 
@@ -100,7 +101,7 @@ describe('Visitor / home', () => {
     let gender = '1'
     let birthyear = '1987'
     let phone = '0612345678'
-
+    
     cy.signUp(email, password, lastname, name, gender, birthyear, phone)
   })
 
@@ -109,8 +110,9 @@ describe('Visitor / home', () => {
     let password = 'Passpass!*'
     cy.loginWith(email, password)
     cy.wait(600)
-    cy.addProposal()
-    cy.wait(600)
+    cy.percySnapshot('logged_home');
+    // cy.addProposal()
+    // cy.wait(600)
     cy.logout()
   })
 
@@ -134,6 +136,7 @@ describe('Visitor / home', () => {
       .contains('Marseille')
       .click()
 
+
     /* Search */
     cy.get('#rechercher')
       .click()
@@ -145,6 +148,8 @@ describe('Visitor / home', () => {
     cy.get(':nth-child(1) > .datepicker > .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > :nth-child(1) > .pagination > .pagination-list > .field > :nth-child(2) > .select > select').select('2022')
     cy.get('.datepicker-body > :nth-child(5) > :nth-child(4)').contains('30')
       .click()
+
+    cy.percySnapshot('search_result');
 
     cy.get('.control > #origin')
       .type('Metz')
@@ -161,11 +166,11 @@ describe('Visitor / home', () => {
       .click()
   })
 
-  // it('An User goes to his account and deletes it ', () => {
-  //   let email = "toto@fakemail.com"
-  //   let password = "Passpass!*$"
+  it('An User goes to his account and deletes it ', () => {
+    let email = "toto@fakemail.com"
+    let password = "Passpass!*"
 
-  //   cy.loginWith(email, password)
-  //   // cy.delete()
-  // })
+    cy.loginWith(email, password)
+    cy.delete()
+  })
 })

@@ -24,6 +24,9 @@
     <li><a  href="#">{% trans from 'ui' %}user.profile.title{% endtrans %}</a></li>
 	<li><a class="updatePassword" href="{{ path('user_password_update') }}">{% trans from 'ui' %}user.profile.buttons.password{% endtrans %}</a></li>
     <li><a  href="{{ path('user_proposals') }}">{% trans from 'ui' %}user.profile.buttons.ads{% endtrans %}</a></li>
+	{% if delete_profile is same as ('true') %}
+	<li><a href="{{ path('user_profile_delete')}}">delete</a></li>
+	{% endif %}
   </ul>
 </nav>
 </section>

@@ -244,7 +244,7 @@ class UserController extends AbstractController
 
         $form->handleRequest($request);
         $error = false;
-
+        
         if ($form->isSubmitted() && $form->isValid()) {
             if ($user = $userManager->updateUserPassword($user)) {
                 // after successful update, we re-log the user
