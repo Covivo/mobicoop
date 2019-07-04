@@ -55,6 +55,7 @@
   "homepage": "https://gitlab.com/mobicoop/mobicoop#README",
   "dependencies": {
     "await-to-js": "^2.0.1",
+    "chrome-aws-lambda": "^1.13.0",
     "commander": "^2.19.0",
     "fs-extra": "^7.0.0",
     "git-repo-info": "^2.0.0",

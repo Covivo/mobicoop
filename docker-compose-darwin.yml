@@ -1,0 +1,38 @@
+version: "2"
+services:
+  mobicoop_platform:
+    container_name: mobicoop_platform
+    image: mobicoop/php-node-chromium:2.0.0
+    # build: ./
+    ports:
+      - '9000:9000'
+      - '8079:8079'
+      - '8080:8080'
+      - '8081:8081'
+      - '8082:8082'
+    working_dir: /var/www
+    command: npm start
+    # entrypoint: ["bash", "/var/www/docker/api_bdd_import.sh"]
+    # entrypoint: bash /docker/api_entrypoint.sh
+    depends_on:
+      - db
+    tty: true
+    environment:
+      - COMPOSER_PROCESS_TIMEOUT=1200
+    volumes:
+      - mobicoop-sync:/var/www:nocopy
+      - cache-sync:/root/.cache:nocopy
+
+  db:
+    image: mariadb:10.4
+    container_name: mobicoop_db
+    restart: always
+    ports: ['3306:3306']
+    environment:
+      MYSQL_ROOT_PASSWORD: mobicoop
+
+volumes:
+  mobicoop-sync:
+    external: true
+  cache-sync:
+    external: true

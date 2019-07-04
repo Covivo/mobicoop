@@ -2,7 +2,7 @@ version: "2"
 options:
   # default: docker-compose.yml if you like, you can set a custom location (path) of your compose file like ~/app/compose.yml
   # HINT: you can also use this as an array to define several compose files to include. Order is important!
-  compose-file-path: ['docker-compose.builder.yml','docker-compose.yml']
+  compose-file-path: ['docker-compose-builder-darwin.yml','docker-compose-darwin.yml']
 
 syncs:
   mobicoop-sync:
