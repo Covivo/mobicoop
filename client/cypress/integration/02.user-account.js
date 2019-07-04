@@ -94,7 +94,7 @@ describe('User account', () => {
       .should('have.value', '2')
 
     // Change phone number
-    cy.get('input[id=user_form_telephone]').clear()
+    cy.get(':nth-child(1) > :nth-child(2) > .field > .control > .input').clear()
       .should('have.attr', 'placeholder', 'Saisissez votre numéro de téléphone')
       .type('0610111214')
 
