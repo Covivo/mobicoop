@@ -120,11 +120,11 @@ describe('User account', () => {
     cy.url().should('include', baseUrl + 'utilisateur/annonces')
   });
 
-  it('An user goes to his account and deletes it', () => {
-    let email = "johndoe@fakemail.com"
-    let password = "NewPassword$**"
+  // it('An user goes to his account and deletes it', () => {
+  //   let email = "johndoe@fakemail.com"
+  //   let password = "NewPassword$**"
 
-    cy.loginWith(email, password)
-    cy.delete()
-  });
+  //   cy.loginWith(email, password)
+     // cy.delete()
+//   });
 });

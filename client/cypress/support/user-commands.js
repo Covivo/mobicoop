@@ -123,6 +123,13 @@ Cypress.Commands.add('signUp', (email, password, lastname, name, gender, birthye
   cy.get('.b-checkbox > .check')
     .click()
 
+  /* HomeTown */
+  cy.get('.control > #homeAddress')
+    .type('metz') 
+    cy.wait(600)
+    cy.get('.media')
+      .click() 
+
   /* Subscribe */
   cy.get('.wizard-footer-right > span > .wizard-btn')
     .click()
