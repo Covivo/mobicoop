@@ -62,11 +62,11 @@ class AdManager
         $proposal->setUser($ad->getUser());
 
 //        récupération des communautés
-        if($ad->getCommunity() !== null) {
+        if ($ad->getCommunity() !== null) {
             $community = $this->communityManager->getCommunity($ad->getCommunity());
             $proposal->addCommunity($community);
         }
-                // creation of the criteria
+        // creation of the criteria
         $criteria = new Criteria();
         if ($ad->getRole() == Ad::ROLE_BOTH || $ad->getRole() == Ad::ROLE_DRIVER) {
             $criteria->setDriver(true);
