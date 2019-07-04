@@ -2,14 +2,14 @@
 image: mobicoop/php-node-chromium:2.0.0
 
 services:
-- name: mysql:latest
+- name: mariadb:10.4
   alias: db
 
 
 variables:
   # Configure mysql service (https://hub.docker.com/_/mysql/)
   MYSQL_DATABASE: mobicoop_db
-  MYSQL_ROOT_PASSWORD: root
+  MYSQL_ROOT_PASSWORD: mobicoop
   npm_config_cache: "$CI_PROJECT_DIR/.npm"
   CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
 
