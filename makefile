@@ -19,8 +19,6 @@ install:
 	$(info $(pink)------------------------------------------------------$(reset))
 
 	mkdir -p build/cache;\
-	mkdir -p build/cache2;\
-
 
 	# Using docker-sync for macos only
 	@if [ $(os) = "darwin" ]; then\
@@ -51,7 +49,7 @@ fixtures:
 
 start:
 	$(info Make ($(os)): Starting Mobicoop-platform environment containers.)
-	docker-compose -f docker-compose-$(os).yml up  -d --always-recreate-deps --force-recreate
+	docker-compose -f docker-compose-$(os).yml up  --always-recreate-deps --force-recreate
  
 stop:
 

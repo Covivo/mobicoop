@@ -21,7 +21,7 @@ let production = port === false && String(program.args[0]) === 'production';
 let command = os.platform() === 'win32' ? 'cmd.exe' : 'php';
 let encoreCommand = os.platform() === 'win32' ? 'cmd.exe' : pathEncore;
 // Start test only, or with coverage if asked
-let host = port ? `0.0.0.0:${port}` : '0.0.0.0:8081';
+let host = port ? `127.0.0.1:${port}` : '127.0.0.1:8081';
 let encorePort = 8079;
 
 
@@ -35,7 +35,7 @@ if(production){
 }
 
 let options = [pathStart, 'server:run', host];
-let optionsEncore = production ? ['production'] : ['dev-server', '--port', encorePort];
+let optionsEncore = production ? ['production'] : ['dev-server', `--port=${8079}`];
 console.log('We are in dev mod the port is', port, production, encorePort, command, options)
 
 if (os.platform() === 'win32') {
