@@ -84,13 +84,9 @@ dev_deploy:
 #  variables:
 #    APP_ENV: test   # /!\ important : symfony env variable /!\
   before_script:
-    - pwd
     - cd api && openssl genrsa -aes256 -passout pass:ca4ffed31ee358cc7c7083af6e5773cd -out config/jwt/private.pem 4096
-    - pwd
     - openssl rsa -in config/jwt/private.pem -passin pass:ca4ffed31ee358cc7c7083af6e5773cd -pubout -out config/jwt/public.pem
-    - pwd
-    - chmod 777 config/jwt/* && cd../
-    - pwd
+    - chmod 777 config/jwt/* && cd ../
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
     - npm run install-all-ci # Install the dependencies in the local node_modules folder
     - npm run update-db
