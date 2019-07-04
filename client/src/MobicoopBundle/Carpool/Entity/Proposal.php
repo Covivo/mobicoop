@@ -29,6 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Travel\Entity\TravelMode;
 
 /**
@@ -94,6 +95,14 @@ class Proposal implements Resource
     private $travelModes;
 
     /**
+     * @var ArrayCollection|null The communities related to the proposal.
+     *
+     * @ORM\ManyToMany(targetEntity="\Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community", inversedBy="proposals")
+     * @Groups({"read","write"})
+     */
+    private $communities;
+
+    /**
      * @var Matching[]|null The matching of the proposal (if proposal is an offer).
      */
     private $matchingOffers;
@@ -124,6 +133,7 @@ class Proposal implements Resource
         }
         $this->waypoints = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
+        $this->communities = new ArrayCollection();
         $this->matchingOffers = new ArrayCollection();
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
@@ -134,6 +144,7 @@ class Proposal implements Resource
         // when we clone a Proposal we keep only the basic properties, we re-initialize all the collections
         $this->waypoints = new ArrayCollection();
         $this->travelModes = new ArrayCollection();
+        $this->communities = new ArrayCollection();
         $this->matchingOffers = new ArrayCollection();
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
@@ -269,6 +280,29 @@ class Proposal implements Resource
         
         return $this;
     }
+
+    public function getCommunities()
+    {
+        return $this->communities->getValues();
+    }
+
+    public function addCommunity(Community $community): self
+    {
+        if (!$this->communities->contains($community)) {
+            $this->communities[] = $community;
+        }
+        return $this;
+    }
+
+    public function removeCommunity(Community $community): self
+    {
+        if ($this->communities->contains($community)) {
+            $this->communities->removeElement($community);
+        }
+
+        return $this;
+    }
+
     
     /**
      * @return Collection|Matching[]
