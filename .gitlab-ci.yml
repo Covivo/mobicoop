@@ -87,13 +87,12 @@ dev_deploy:
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
     - npm run install-all-ci # Install the dependencies in the local node_modules folder
     - npm run update-db
-  script:
-    - npm run test-and-coverage    
-    - npm run start &
-    - wait-on client/public/build/entrypoints.json
     - cd api && openssl genrsa -aes256 -passout pass:ca4ffed31ee358cc7c7083af6e5773cd -out config/jwt/private.pem 4096
     - openssl rsa -in config/jwt/private.pem -passin pass:ca4ffed31ee358cc7c7083af6e5773cd -pubout -out config/jwt/public.pem
     - chmod 777 config/jwt/* && cd../
+  script:
+    - npm run test-and-coverage    
+    - npm run start & wait-on client/public/build/entrypoints.json
     - npm run test-functional-ci || true                                              # run the tests and code coverage
     # - php client/bin/console cache:clear --env=dev --no-debug     # clear the cache for the interfaces
     # - php api/bin/console cache:clear --env=dev --no-debug                     # clear the cache for the api
