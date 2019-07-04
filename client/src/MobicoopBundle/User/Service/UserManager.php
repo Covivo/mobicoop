@@ -187,7 +187,7 @@ class UserManager
     {
         // encoding of the password
         $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
-        $response = $this->dataProvider->put($user);
+        $response = $this->dataProvider->put($user,['password']);
         if ($response->getCode() == 200) {
             $this->logger->info('User Password Update | Start');
             return $response->getValue();

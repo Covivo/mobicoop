@@ -244,14 +244,14 @@ class UserController extends AbstractController
 
         $form->handleRequest($request);
         $error = false;
-        
+
         if ($form->isSubmitted() && $form->isValid()) {
             if ($user = $userManager->updateUserPassword($user)) {
                 // after successful update, we re-log the user
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                 $this->get('security.token_storage')->setToken($token);
                 $this->get('session')->set('_security_main', serialize($token));
-                return $this->redirectToRoute('user_profile');
+                return $this->redirectToRoute('user_profile_update');
             }
             $error = true;
         }

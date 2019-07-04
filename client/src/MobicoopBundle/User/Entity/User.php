@@ -68,7 +68,7 @@ class User implements Resource, UserInterface, EquatableInterface
     /**
      * @var string|null The iri of this user.
      *
-     * @Groups({"post","put"})
+     * @Groups({"post","put","password"})
      */
     private $iri;
     
@@ -104,7 +104,7 @@ class User implements Resource, UserInterface, EquatableInterface
     /**
      * @var string|null The encoded password of the user.
      *
-     * @Groups({"post","put"})
+     * @Groups({"post","put","password"})
      *
      * @Assert\NotBlank(groups={"signUp","password"})
      */
