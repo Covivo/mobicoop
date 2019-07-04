@@ -1,10 +1,12 @@
 version: '2'
 services:
   base:
+    environment:
+      - COMPOSER_PROCESS_TIMEOUT=1200
     image: mobicoop/php-node-chromium:2.0.0
     volumes:
       - ./:/var/www:delegated
-      - ./build/cache:/root/.cache:delegated
+      - ./build/cache:/root/.cache/:nocopy
     working_dir: /var/www
   install:
     extends:

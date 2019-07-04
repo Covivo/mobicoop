@@ -2,9 +2,6 @@ FROM ubuntu:18.04
 
 ENV TZ=UTC
 ENV PANTHER_NO_SANDBOX 1
-ENV CYPRESS_INSTALL_BINARY=/tools/cypress.zip
-# ENV CYPRESS_RUN_BINARY=/tools/cypress/Cypress
-# ENV CYPRESS_CACHE_FOLDER=/tools/cypress
 
 ENV TERM xterm
 ENV ZSH_THEME agnoster
@@ -16,7 +13,6 @@ RUN touch ~/.ssh_config
 RUN mkdir /var/www
 RUN mkdir /tools
 
-COPY cypress.zip /tools
 
 RUN export LC_ALL=C.UTF-8
 RUN DEBIAN_FRONTEND=noninteractive

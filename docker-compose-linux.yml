@@ -21,7 +21,7 @@ services:
       - COMPOSER_PROCESS_TIMEOUT=1200
     volumes:
       - ./:/var/www/:cached
-      - ./build/cache:/root/.cache:cached
+      - ./build/cache:/root/.cache/:nocopy
 
   db:
     image: mariadb:10.4

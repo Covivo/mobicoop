@@ -35,7 +35,8 @@
   ],
   "homepage": "https://gitlab.com/mobicoop/mobicoop#README",
   "devDependencies": {
-    "@percy/cypress": "1.0.9",
+    "@percy/cypress": "^1.0.9",
+    "cypress": "^3.3.1",
     "babel-eslint": "^8.2.6",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-stage-3": "^6.24.1",

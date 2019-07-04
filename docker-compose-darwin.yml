@@ -21,7 +21,7 @@ services:
       - COMPOSER_PROCESS_TIMEOUT=1200
     volumes:
       - mobicoop-sync:/var/www:nocopy
-      - cache-sync:/root/.cache:nocopy
+      - cache-sync:/root/.cache/:nocopy
 
   db:
     image: mariadb:10.4

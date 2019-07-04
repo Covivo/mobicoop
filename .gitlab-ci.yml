@@ -8,18 +8,16 @@ variables:
   # Configure mysql service (https://hub.docker.com/_/mysql/)
   MYSQL_DATABASE: mobicoop_platform
   MYSQL_ROOT_PASSWORD: root
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+  CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
 
 
 # Cache modules in between jobs
 cache:
-  key: ${CI_COMMIT_REF_SLUG}
+  key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
   paths:    # excluded : not cached
-  - node_modules/
-  - api/node_modules/
-  - api/vendor/
-  - client/node_modules/
-  - client/vendor/
-  - admin/node_modules/
+  - .npm
+  - cache/Cypress
 
 # Name of the stages that can be executed on a pipeline by the runner
 stages:
@@ -46,8 +44,6 @@ branch_features:   # name of the job
 
   script:
     - npm test
-    - npm run start & wait-on client/public/build/entrypoints.json
-    - npm run test-functional-ci
 
   only:
     - pushes # job executed only on test
@@ -59,6 +55,14 @@ branch_features:   # name of the job
       - master
     variables:
       - $CI_COMMIT_MESSAGE =~ /skip/    # job not executed when commit message contains this expression
+  cache:
+    key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
+    paths:    # excluded : not cached
+    - node_modules/
+    - api/vendor/
+    - client/vendor/
+    - client/node_modules/
+    - admin/node_modules/
 
 
 ###############################################################################################
@@ -83,9 +87,13 @@ dev_deploy:
   script:
     - npm run test-and-coverage    
     - npm run start & wait-on client/public/build/entrypoints.json
-    - npm run test-functional-ci                                               # run the tests and code coverage
-    - php client/bin/console cache:clear --env=dev --no-debug     # clear the cache for the interfaces
-    - php api/bin/console cache:clear --env=dev --no-debug                     # clear the cache for the api
+    - npm run update-db
+    - cd api && openssl genrsa -aes256 -passout pass:ca4ffed31ee358cc7c7083af6e5773cd -out config/jwt/private.pem 4096
+    - openssl rsa -in config/jwt/private.pem -passin pass:ca4ffed31ee358cc7c7083af6e5773cd -pubout -out config/jwt/public.pem
+    - chmod 777 config/jwt/* && cd../
+    - npm run test-functional-ci || true                                              # run the tests and code coverage
+    # - php client/bin/console cache:clear --env=dev --no-debug     # clear the cache for the interfaces
+    # - php api/bin/console cache:clear --env=dev --no-debug                     # clear the cache for the api
     - echo "${SSH_DEV_PRIVATE_KEY}" > id_rsa                   # 
     - chmod 700 id_rsa                                          # ssh identification on docker side 
     - mv id_rsa ${HOME}/.ssh                                    #
@@ -95,6 +103,14 @@ dev_deploy:
   except:
     refs:
       - tags    # job not executed on tags
+  cache:
+    key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
+    paths:    # excluded : not cached
+    - node_modules/
+    - api/vendor/
+    - client/vendor/
+    - client/node_modules/
+    - admin/node_modules/
 
 
 
@@ -118,9 +134,15 @@ test_deploy:
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
     - npm run install-all-ci # Install the dependencies in the local node_modules folder
   script:
-    - npm run test-and-coverage                                                   # run the tests and code coverage
-    - php client/bin/console cache:clear --env=test --no-debug     # clear the cache for the interfaces
-    - php api/bin/console cache:clear --env=test --no-debug                     # clear the cache for the api
+    - npm run test-and-coverage    
+    - npm run start & wait-on client/public/build/entrypoints.json
+    - npm run update-db
+    - cd api && openssl genrsa -aes256 -passout pass:ca4ffed31ee358cc7c7083af6e5773cd -out config/jwt/private.pem 4096
+    - openssl rsa -in config/jwt/private.pem -passin pass:ca4ffed31ee358cc7c7083af6e5773cd -pubout -out config/jwt/public.pem
+    - chmod 777 config/jwt/* && cd../
+    - npm run test-functional-ci || true                     # clear the cache for the api
+    # - php client/bin/console cache:clear --env=dev --no-debug     # clear the cache for the interfaces
+    # - php api/bin/console cache:clear --env=dev --no-debug                     # clear the cache for the api
     - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa                   # 
     - chmod 700 id_rsa                                          # ssh identification on docker side 
     - mv id_rsa ${HOME}/.ssh                                    #
@@ -131,6 +153,14 @@ test_deploy:
   except:
     refs:
       - tags    # job not executed on tags
+  cache:
+    key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
+    paths:    # excluded : not cached
+    - node_modules/
+    - api/vendor/
+    - client/vendor/
+    - client/node_modules/
+    - admin/node_modules/
 
 
 ###############################################################################################
@@ -171,9 +201,15 @@ master_deploy:
  # variables:
  #   APP_ENV: prod   # /!\ important : symfony env variable /!\
   script:
-    - npm run test-and-coverage                                                  # run the tests and code coverage
-    - php client/bin/console cache:clear --env=prod --no-debug     # clear the cache for the interfaces
-    - php api/bin/console cache:clear --env=prod --no-debug                     # clear the cache for the api
+    - npm run test-and-coverage    
+    - npm run start & wait-on client/public/build/entrypoints.json
+    - npm run update-db
+    - cd api && openssl genrsa -aes256 -passout pass:ca4ffed31ee358cc7c7083af6e5773cd -out config/jwt/private.pem 4096
+    - openssl rsa -in config/jwt/private.pem -passin pass:ca4ffed31ee358cc7c7083af6e5773cd -pubout -out config/jwt/public.pem
+    - chmod 777 config/jwt/* && cd../
+    - npm run test-functional-ci || true                     # clear the cache for the api
+    # - php client/bin/console cache:clear --env=dev --no-debug     # clear the cache for the interfaces
+    # - php api/bin/console cache:clear --env=dev --no-debug                     # clear the cache for the api
     - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa                       #
     - chmod 700 id_rsa                                              #
     - mv id_rsa ${HOME}/.ssh                                        # ssh identification on docker side
@@ -186,6 +222,14 @@ master_deploy:
   when: manual      # /!\ important : job executed manually /!\
   only:     # job executed only on master branch
     - master
+  cache:
+    key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
+    paths:    # excluded : not cached
+    - node_modules/
+    - api/vendor/
+    - client/vendor/
+    - client/node_modules/
+    - admin/node_modules/
 
 
 ###############################################################################################
