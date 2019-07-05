@@ -29,16 +29,12 @@ Cypress.Commands.add('loginWith', (email, password) => {
     .should('have.attr', 'placeholder', 'adresse email')
     .type(email)
 
-  // cy.wait(1500)
-  // cy.percySnapshot('Login')
-
   /* Password */
   cy.get('input[id=user_login_form_password]')
     .should('have.attr', 'placeholder', 'mot de passe')
     .type(password)
 
   cy.get('button[id=user_login_form_login]').click()
-  // cy.percySnapshot('Logged')
 });
 
 //Logout
@@ -53,7 +49,6 @@ Cypress.Commands.add('home', () => {
     .click()
   cy.url().should('include', baseUrl)
   cy.wait(1500)
-  // cy.percySnapshot('home')
 });
 
 //SignUp
@@ -62,7 +57,6 @@ Cypress.Commands.add('signUp', (email, password, lastname, name, gender, birthye
   cy.contains('Inscription').click()
   cy.url().should('include', baseUrl + 'utilisateur/inscription')
   cy.wait(1500)
-  // cy.percySnapshot('signUp')
 
   /* Email */
   cy.get('.email > input')
@@ -125,10 +119,10 @@ Cypress.Commands.add('signUp', (email, password, lastname, name, gender, birthye
 
   /* HomeTown */
   cy.get('.control > #homeAddress')
-    .type('metz') 
-    cy.wait(600)
-    cy.get('.media')
-      .click() 
+    .type('metz')
+  cy.wait(600)
+  cy.get('.media')
+    .click()
 
   /* Subscribe */
   cy.get('.wizard-footer-right > span > .wizard-btn')

@@ -38,6 +38,8 @@ describe('User account', () => {
 
     cy.loginWith(email, password)
 
+    cy.percySnapshot('user_logged');
+
     cy.wait(1500)
     cy.percySnapshot('login')
 
@@ -45,6 +47,9 @@ describe('User account', () => {
     cy.contains('Mon profil')
       .click()
     cy.url().should('include', baseUrl + 'utilisateur/profil')
+
+    cy.percySnapshot('user_profile');
+
 
     /* Password */
     cy.contains('Mot de passe')
@@ -67,7 +72,6 @@ describe('User account', () => {
 
     cy.logout()
     cy.wait(1500)
-    cy.percySnapshot('logout')
   });
 
   it('An user logged updates his account', () => {
@@ -82,7 +86,6 @@ describe('User account', () => {
     cy.contains('Mon profil').click()
     cy.url().should('include', baseUrl + 'utilisateur/profil')
     cy.wait(1500)
-    cy.percySnapshot('Account')
 
     /* Update */
     cy.get('.column > input').click()
@@ -98,7 +101,7 @@ describe('User account', () => {
       .should('have.attr', 'placeholder', 'Numéro de téléphone')
       .type('0610111214')
 
-      cy.get('.save > .column > .button').click()
+    cy.get('.save > .column > .button').click()
     cy.url().should('include', baseUrl) // should be redirected to home
 
     cy.logout()
@@ -118,6 +121,8 @@ describe('User account', () => {
     /* My proposals */
     cy.contains('Mes annonces').click()
     cy.url().should('include', baseUrl + 'utilisateur/annonces')
+    cy.percySnapshot('user_my_ad');
+
   });
 
   it('An user goes to his account and deletes it', () => {
@@ -125,6 +130,6 @@ describe('User account', () => {
     let password = "NewPassword$**"
 
     cy.loginWith(email, password)
-     cy.delete()
+    cy.delete()
   });
 });
