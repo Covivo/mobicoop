@@ -114,7 +114,7 @@ class PublicTransportManager
         float $longitude,
         int $perimeter,
         string $transportModes,
-        string $keywords
+        string $keywords=""
     ) {
         $this->dataProvider->setClass(PTTripPoint::class, "public_transport/trippoints");
 
