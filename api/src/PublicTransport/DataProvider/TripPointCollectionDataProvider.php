@@ -58,7 +58,7 @@ final class TripPointCollectionDataProvider implements CollectionDataProviderInt
     {
 
         // First, I check the Lat/Lon. If they are given, we ignore keywords
-        if(!is_null($this->request->get("latitude")) && !is_null($this->request->get("longitude"))){
+        if (!is_null($this->request->get("latitude")) && !is_null($this->request->get("longitude"))) {
             if (
                 is_null($this->request->get("provider")) &&
                 is_null($this->request->get("perimeter")) &&
@@ -75,8 +75,7 @@ final class TripPointCollectionDataProvider implements CollectionDataProviderInt
                 $this->request->get('transportModes'),
                 ""
             );
-        }
-        else{
+        } else {
             // We assume that we have to use keywords for the search
             if (
                 is_null($this->request->get("provider")) &&
@@ -96,6 +95,5 @@ final class TripPointCollectionDataProvider implements CollectionDataProviderInt
                 $this->request->get("keywords")
             );
         }
-
     }
 }

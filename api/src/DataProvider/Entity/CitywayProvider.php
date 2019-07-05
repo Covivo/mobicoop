@@ -216,7 +216,6 @@ class CitywayProvider implements ProviderInterface
 
     private function getCollectionTripPoints($class, array $params)
     {
-
         $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESSOURCE_TRIPPOINTS);
         $getParams = [
             "TransportModes" => $params["transportModes"],
@@ -225,11 +224,10 @@ class CitywayProvider implements ProviderInterface
 
 
         // First, I check the Lat/Lon. If they are given, we ignore keywords
-        if($params["latitude"]!=0 && $params["longitude"]!=0) {
+        if ($params["latitude"]!=0 && $params["longitude"]!=0) {
             $getParams["Latitude"] = $params["latitude"];
             $getParams["Longitude"] = $params["longitude"];
-        }
-        else{
+        } else {
             // We assume that we have to use keywords for the search
             $getParams["Keywords"] = $params["keywords"];
         }

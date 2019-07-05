@@ -115,7 +115,6 @@ class PTDataProvider
         string $transportModes,
         string $keywords
     ): ?array {
-
         if (!array_key_exists($provider, self::PROVIDERS)) {
             return null;
         }
