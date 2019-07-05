@@ -289,7 +289,7 @@ class Proposal implements Resource
     {
 
 //        if (!$this->communities->contains($community)) {
-            $this->communities[] = $community;
+        $this->communities[] = $community;
 //        }
         return $this;
     }
