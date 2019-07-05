@@ -11,7 +11,7 @@
     "install-admin": "cd admin && npm install",
     "install-admin-ci": "cd admin && npm install",
     "install-client": "cd client && npm install && composer install",
-    "install-client-ci": "cd client && npm install && composer install --quiet && npm run compile",
+    "install-client-ci": "cd client && npm install && composer install --quiet",
     "download-tools": "wget http://www.phpdoc.org/phpDocumentor.phar -O bin/phpDocumentor.phar && wget https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -O bin/php-cs-fixer.phar",
     "test": "npm run test-api && npm run test-mobicoop",
     "test-and-coverage": "npm run test-api && npm run test-and-coverage-mobicoop",
