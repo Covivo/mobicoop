@@ -13,13 +13,13 @@
     "test-and-coverage": "node src/MobicoopBundle/spec/runtests.js -c",
     "test-functional": "PERCY_TOKEN=aaabbbcccdddeeefff PERCY_BRANCH=local percy exec -- cypress run",
     "test-functional-2": "PERCY_TOKEN=aaabbbcccdddeeefff percy exec -- cypress run",
-    "test-functional-ci": "percy exec -- cypress run",
+    "test-functional-ci": "percy exec -- cypress run --browser chrome",
     "test-fix-and-coverage": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src &&  php vendor/bin/php-cs-fixer.phar fix --using-cache=false src/MobicoopBundle/spec && node src/MobicoopBundle/spec/runtests.js -c",
     "compile": "encore production",
     "compile-and-watch": "encore dev-server --port 8079 --host=0.0.0.0",
     "compile-and-watch-vue": "encore dev-server --hot --port 8079 --host=0.0.0.0",
     "cypress": "cypress open",
-    "cy": "cypress run"
+    "cy": "cypress run --browser chrome"
   },
   "repository": {
     "type": "git",
