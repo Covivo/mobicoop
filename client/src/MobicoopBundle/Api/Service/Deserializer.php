@@ -35,6 +35,7 @@ use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTAccessibilityStatus;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLineStop;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLocality;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTStop;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTTripPoint;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
@@ -376,7 +377,17 @@ class Deserializer
     {
         $PTTripPoint = new PTTripPoint();
         $PTTripPoint = self::autoSet($PTTripPoint, $data);
+        if (isset($data["locality"])) {
+            $PTTripPoint->setLocality(self::deserializeLocality($data["locality"]));
+        }
         return $PTTripPoint;
+    }
+
+    private function deserializeLocality(array $data): ?PTLocality
+    {
+        $PTLocality = new PTLocality();
+        $PTLocality = self::autoSet($PTLocality, $data);
+        return $PTLocality;
     }
 
     private function deserializePTLineStop(array $data): ?PTLineStop
