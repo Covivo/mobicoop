@@ -95,7 +95,7 @@ dev_deploy:
     - npm run update-db
   script:
     - npm run test-and-coverage    
-    - npm run start & wait-on client/public/build/entrypoints.json
+    - npm run start-production & wait-on client/public/build/entrypoints.json
     - npm run test-functional-ci || true                                              # run the tests and code coverage
     # - php client/bin/console cache:clear --env=dev --no-debug     # clear the cache for the interfaces
     # - php api/bin/console cache:clear --env=dev --no-debug                     # clear the cache for the api
