@@ -53,18 +53,23 @@ use Doctrine\ORM\Mapping as ORM;
  *                      {
  *                          "name" = "latitude",
  *                          "in" = "query",
- *                          "required" = "true",
  *                          "type" = "number",
  *                          "format" = "float",
- *                          "description" = "The latitude of the point"
+ *                          "description" = "The latitude of the point (can't combine with keywords)"
  *                      },
  *                      {
  *                          "name" = "longitude",
  *                          "in" = "query",
- *                          "required" = "true",
  *                          "type" = "number",
  *                          "format" = "float",
- *                          "description" = "The longitude of the point"
+ *                          "description" = "The longitude of the point (can't combine with keywords)"
+ *                      },
+ *                      {
+ *                          "name" = "keywords",
+ *                          "in" = "query",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "Trip points whose name contains these keywords (can't combine with lat/lon)"
  *                      },
  *                      {
  *                          "name" = "perimeter",
@@ -79,7 +84,7 @@ use Doctrine\ORM\Mapping as ORM;
  *                          "in" = "query",
  *                          "required" = "true",
  *                          "type" = "string",
- *                          "description" = "List of integer like: 1|2|3..."
+ *                          "description" = "List of integer like: 0|1|2|3..."
  *                      },
  *                  },
  *              }
