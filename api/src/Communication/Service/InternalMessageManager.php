@@ -61,7 +61,7 @@ class InternalMessageManager
             if ($object->getMessage() instanceof Message) {
                 $this->sendExisting($recipients, $object->getMessage());
             }
-        }        
+        }
     }
 
     /**
@@ -95,7 +95,5 @@ class InternalMessageManager
      */
     private function send(User $sender, array $recipients, string $text, ?string $title=null)
     {
-
     }
-
 }

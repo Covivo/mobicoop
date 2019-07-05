@@ -114,5 +114,4 @@ class Action
 
         return $this;
     }
-
 }

@@ -69,7 +69,7 @@ class NotificationManager
                     case Medium::MEDIUM_MESSAGE:
                         $this->logger->info("Internal message notification for $action / " . get_class($object) . " / " . $recipient->getEmail());
                         if (!is_null($object)) {
-                            $this->internalMessageManager->sendForObject([$recipient],$object);
+                            $this->internalMessageManager->sendForObject([$recipient], $object);
                         }
                         break;
                     case Medium::MEDIUM_EMAIL:

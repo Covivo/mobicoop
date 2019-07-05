@@ -43,5 +43,4 @@ class MediumRepository
     {
         return $this->repository->find($id);
     }
-
 }
