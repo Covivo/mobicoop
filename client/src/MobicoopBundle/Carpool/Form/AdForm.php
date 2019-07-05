@@ -102,7 +102,8 @@ class AdForm extends AbstractType
         ->add('returnSatMargin')
         ->add('returnSunTime')
         ->add('returnSunMargin')
-        ->add('comment');
+        ->add('comment')
+        ->add('community');
     }
     
     public function configureOptions(OptionsResolver $resolver)

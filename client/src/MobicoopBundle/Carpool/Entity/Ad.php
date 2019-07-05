@@ -76,6 +76,13 @@ class Ad
     private $origin;
 
     /**
+     * @var integer The community of the travel.
+     *
+     */
+    private $community;
+
+
+    /**
      * @var string The destination of the travel.
      *
      * @Assert\NotBlank
@@ -352,6 +359,18 @@ class Ad
     public function setOrigin(?string $origin): self
     {
         $this->origin = $origin;
+
+        return $this;
+    }
+
+    public function getCommunity(): ?int
+    {
+        return $this->community;
+    }
+
+    public function setCommunity(int $community): self
+    {
+        $this->community = $community;
 
         return $this;
     }

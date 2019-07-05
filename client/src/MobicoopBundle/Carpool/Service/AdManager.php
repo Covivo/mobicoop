@@ -27,6 +27,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Waypoint;
+use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
@@ -39,11 +40,12 @@ class AdManager
     /**
      * Constructor.
      *
-     * @param ProposalManager $proposalManager
+     * @param ProposalManager $proposalManager, CommunityManager $communityManager
      */
-    public function __construct(ProposalManager $proposalManager)
+    public function __construct(ProposalManager $proposalManager, CommunityManager $communityManager)
     {
         $this->proposalManager = $proposalManager;
+        $this->communityManager = $communityManager;
     }
 
     /**
@@ -59,6 +61,11 @@ class AdManager
         $proposal->setComment($ad->getComment());
         $proposal->setUser($ad->getUser());
 
+//        récupération des communautés
+        if ($ad->getCommunity() !== null) {
+            $community = $this->communityManager->getCommunity($ad->getCommunity());
+            $proposal->addCommunity($community);
+        }
         // creation of the criteria
         $criteria = new Criteria();
         if ($ad->getRole() == Ad::ROLE_BOTH || $ad->getRole() == Ad::ROLE_DRIVER) {
