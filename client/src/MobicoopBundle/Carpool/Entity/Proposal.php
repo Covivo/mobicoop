@@ -287,9 +287,10 @@ class Proposal implements Resource
 
     public function addCommunity(Community $community): self
     {
-        if (!$this->communities->contains($community)) {
+
+//        if (!$this->communities->contains($community)) {
             $this->communities[] = $community;
-        }
+//        }
         return $this;
     }
 

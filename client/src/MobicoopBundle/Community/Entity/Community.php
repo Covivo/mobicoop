@@ -45,6 +45,8 @@ class Community implements Resource
 
     /**
      * @var string|null The iri of this community.
+     *
+     * @Groups({"post","put"})
      */
     private $iri;
     
