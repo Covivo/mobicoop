@@ -100,10 +100,11 @@ class PTDataProvider
      * Get trip points from an external Public Transport data provider.
      *
      * @param string $provider                  The name of the provider
-     * @param float $latitude           The latitude of the origin point
-     * @param float $longitude          The longitude of the origin point
-     * @param int $perimeter                     Radius of the perimeter (in meters)
-     * @param string $transportModes                     The trip modes accepted (PT, BIKE, CAR, PT+BIKE, PT+CAR)
+     * @param float $latitude                   The latitude of the origin point
+     * @param float $longitude                  The longitude of the origin point
+     * @param int $perimeter                    Radius of the perimeter (in meters)
+     * @param string $transportModes            The trip modes accepted (PT, BIKE, CAR, PT+BIKE, PT+CAR)
+     * @param string $keywords                  Keywords to search in trip point name
      * @return NULL|array                       The trip points or null if no trip points is found
      */
     public function getTripPoints(
@@ -111,7 +112,8 @@ class PTDataProvider
         float $latitude,
         float $longitude,
         int $perimeter,
-        string $transportModes
+        string $transportModes,
+        string $keywords
     ): ?array {
         if (!array_key_exists($provider, self::PROVIDERS)) {
             return null;
@@ -122,7 +124,8 @@ class PTDataProvider
             "latitude" => $latitude,
             "longitude" => $longitude,
             "perimeter" => $perimeter,
-            "transportModes" => $transportModes
+            "transportModes" => $transportModes,
+            "keywords" => $keywords
         ]]);
     }
 

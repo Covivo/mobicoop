@@ -27,16 +27,26 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * A public transport trip point.
+ * A locality trip point.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class PTTripPoint
+class PTLocality
 {
     /**
      * @var int The id of this Trip Point.
      */
     private $id;
+
+    /**
+     * @var string The name of this locality.
+     */
+    private $name;
+
+    /**
+     * @var string Insee Code (usually postal code) of this locality.
+     */
+    private $inseeCode;
 
     /**
      * @var float Latitude of this Trip Point.
@@ -45,40 +55,10 @@ class PTTripPoint
 
     /**
      * @var float Longitude of this Trip Point.
-     * @Groups("pt")
      */
     private $longitude;
 
 
-    /**
-     * @var int LocalityId of this Trip Point.
-     */
-    private $localityId;
-
-    /**
-     * @var string Name of this Trip Point.
-     */
-    private $name;
-
-    /**
-     * @var int Type of this Trip Point.
-     */
-    private $pointType;
-
-    /**
-     * @var string Postal Code of this Trip Point.
-     */
-    private $postalCode;
-
-    /**
-     * @var string Transport mode of this Trip Point.
-     */
-    private $transportMode;
-
-    /**
-     * @var PTLocality Locality of this Trip Point.
-     */
-    private $locality;
 
     public function getId(): int
     {
@@ -116,17 +96,6 @@ class PTTripPoint
         return $this;
     }
 
-    public function getLocalityId(): int
-    {
-        return $this->localityId;
-    }
-
-    public function setLocalityId(int $localityId): self
-    {
-        $this->localityId = $localityId;
-
-        return $this;
-    }
 
     public function getName(): string
     {
@@ -140,49 +109,14 @@ class PTTripPoint
         return $this;
     }
 
-    public function getPointType(): int
+    public function getInseeCode(): string
     {
-        return $this->pointType;
+        return $this->inseeCode;
     }
 
-    public function setPointType(int $pointType): self
+    public function setInseeCode(string $inseeCode): self
     {
-        $this->pointType = $pointType;
-
-        return $this;
-    }
-
-    public function getPostalCode(): string
-    {
-        return $this->postalCode;
-    }
-
-    public function setPostalCode(string $postalCode): self
-    {
-        $this->postalCode = $postalCode;
-
-        return $this;
-    }
-
-    public function getTransportMode(): string
-    {
-        return $this->transportMode;
-    }
-
-    public function setTransportMode(string $transportMode): self
-    {
-        $this->transportMode = $transportMode;
-
-        return $this;
-    }
-    public function getLocality(): PTLocality
-    {
-        return $this->locality;
-    }
-
-    public function setLocality(PTLocality $locality): self
-    {
-        $this->locality = $locality;
+        $this->inseeCode = $inseeCode;
 
         return $this;
     }

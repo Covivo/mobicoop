@@ -46,7 +46,14 @@ describe('deserializePTTripPoint', function () {
   "name": "string",
   "pointType": 0,
   "postalCode": "string",
-  "transportMode": "string"
+  "transportMode": "string",
+  "locality":{
+    "id":0,
+    "name":"string",
+    "inseeCode":"54498",
+    "latitude":0,
+    "longitude":0
+  }
 }
 JSON;
 
