@@ -24,28 +24,21 @@
     <li><a  href="#">{% trans from 'ui' %}user.profile.title{% endtrans %}</a></li>
 	<li><a class="updatePassword" href="{{ path('user_password_update') }}">{% trans from 'ui' %}user.profile.buttons.password{% endtrans %}</a></li>
     <li><a  href="{{ path('user_proposals') }}">{% trans from 'ui' %}user.profile.buttons.ads{% endtrans %}</a></li>
+	{% if delete_profile is same as ('true') %}
+	<li><a href="{{ path('user_profile_delete')}}">delete</a></li>
+	{% endif %}
   </ul>
 </nav>
 </section>
 <section class="section" id='update'>
 	<div class="container updateForm">
 	    {% if user %}
-			{% for address in user.addresses %}
-				{% if address.name == 'homeAddress' %}
     				<section>
 						<div class="container">
-							<Updateprofile geo-search-url="/geosearch?search=" given-name="{{user.givenName}}" family-name="{{user.familyName}}" telephone="{{user.telephone}}" email="{{user.email}}" gender="{{user.gender}}" birth-year="{{user.birthYear}}" street="{{address.street}}" street-address="{{address.streetAddress}}" postal-code="{{address.postalCode}}" sub-locality="{{address.subLocality}}" address-locality="{{address.addressLocality}}" local-admin="{{address.localAdmin}}" county="{{address.county}}" macro-county="{{address.macroCounty}}" region="{{address.region}}" macro-region="{{address.macroRegion}}" address-country="{{address.addressCountry}}" country-code="{{address.countryCode}}" latitude="{{address.latitude}}" longitude="{{address.longitude}}" sent-token="{{ csrf_token('profile-update') }}"></Updateprofile>
+							<Updateprofile geo-search-url="/geosearch?search=" given-name="{{user.givenName}}" family-name="{{user.familyName}}" telephone="{{user.telephone}}" email="{{user.email}}" gender="{{user.gender}}" birth-year="{{user.birthYear}}" street="{{(user.homeAddress) ? user.homeAddress.street : ''}}" street-address="{{(user.homeAddress) ? user.homeAddress.streetAddress : ''}}" postal-code="{{(user.homeAddress) ? user.homeAddress.postalCode : ''}}" sub-locality="{{(user.homeAddress) ? user.homeAddress.subLocality : ''}}" address-locality="{{(user.homeAddress) ? user.homeAddress.addressLocality : ''}}" local-admin="{{(user.homeAddress) ? user.homeAddress.localAdmin : ''}}" county="{{(user.homeAddress) ? user.homeAddress.county : ''}}" macro-county="{{(user.homeAddress) ? user.homeAddress.macroCounty : ''}}" region="{{(user.homeAddress) ? user.homeAddress.region : ''}}" macro-region="{{(user.homeAddress) ? user.homeAddress.macroRegion : ''}}" address-country="{{(user.homeAddress) ? user.homeAddress.addressCountry : ''}}" country-code="{{(user.homeAddress) ? user.homeAddress.countryCode : ''}}" latitude="{{(user.homeAddress) ? user.homeAddress.latitude : ''}}" longitude="{{(user.homeAddress) ? user.homeAddress.longitude : ''}}" sent-token="{{ csrf_token('profile-update') }}"></Updateprofile>
 						</div>
 					</section>		
-				{% endif %}
-			{% endfor %}
-		{% else %}	
-<section>
-	<div class="container">
-		<Updateprofile geo-search-url="/geosearch?search=" given-name="{{user.givenName}}" family-name="{{user.familyName}}" telephone="{{user.telephone}}" email="{{user.email}}" gender="{{user.gender}}" birth-year="{{user.birthYear}}" street="null" street-address="null" postal-code="null" sub-locality="null" address-locality="null" local-admin="null" county="null" macro-county="null" region="null" macro-region="null" address-country="null" country-code="null" latitude="null" longitude="null" sent-token="{{ csrf_token('profile-update') }}"></Updateprofile>
-	</div>
-</section>						
-   		
+			{% else %}	
    			<span class="tag is-danger">User not found.</span>
    		{% endif %}
     </div>

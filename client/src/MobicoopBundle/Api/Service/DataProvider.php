@@ -387,11 +387,14 @@ class DataProvider
      *
      * @return Response The response of the operation.
      */
-    public function put(Resource $object): Response
+    public function put(Resource $object, ?array $groups=null): Response
     {
+        if (is_null($groups)) {
+            $groups = ['put'];
+        }
         try {
             $clientResponse = $this->client->put($this->resource."/".$object->getId(), [
-                    RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['put']]), true)
+                    RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]), true)
             ]);
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));

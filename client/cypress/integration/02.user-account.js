@@ -85,16 +85,16 @@ describe('User account', () => {
     cy.percySnapshot('Account')
 
     /* Update */
-    cy.contains('Mettre à jour').click()
+    cy.get('.column > input').click()
     cy.url().should('include', baseUrl + 'utilisateur/profil/modifier')
 
     /* Gender */
-    cy.get('select[id=user_form_gender]')
+    cy.get(':nth-child(3) > .field > .control > .select > select')
       .select('2')
       .should('have.value', '2')
 
     // Change phone number
-    cy.get('input[id=user_form_telephone]').clear()
+    cy.get(':nth-child(1) > :nth-child(2) > .field > .control > .input').clear()
       .should('have.attr', 'placeholder', 'Saisissez votre numéro de téléphone')
       .type('0610111214')
 
@@ -125,6 +125,6 @@ describe('User account', () => {
     let password = "NewPassword$**"
 
     cy.loginWith(email, password)
-    cy.delete()
+     cy.delete()
   });
 });

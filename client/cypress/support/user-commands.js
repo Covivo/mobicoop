@@ -77,7 +77,7 @@ Cypress.Commands.add('signUp', (email, password, lastname, name, gender, birthye
   /* Password*/
   cy.get('.password > input')
     .should('have.attr', 'placeholder', 'Mot de passe')
-    .type(phone)
+    .type(password)
 
   /* Next */
   cy.get('.wizard-btn').contains('Suivant')
@@ -123,6 +123,13 @@ Cypress.Commands.add('signUp', (email, password, lastname, name, gender, birthye
   cy.get('.b-checkbox > .check')
     .click()
 
+  /* HomeTown */
+  cy.get('.control > #homeAddress')
+    .type('metz') 
+    cy.wait(600)
+    cy.get('.media')
+      .click() 
+
   /* Subscribe */
   cy.get('.wizard-footer-right > span > .wizard-btn')
     .click()
@@ -133,7 +140,7 @@ Cypress.Commands.add('signUp', (email, password, lastname, name, gender, birthye
 Cypress.Commands.add('delete', () => {
   cy.contains('Mon profil').click()
   cy.url().should('include', baseUrl + 'utilisateur/profil')
-  cy.get('.is-danger').click()
+  cy.get(':nth-child(4) > a').contains('delete').click()
   cy.url().should('include', baseUrl + 'utilisateur/profil/supprimer')
   cy.get('#user_delete_form_submit')
     .click()

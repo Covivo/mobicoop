@@ -283,6 +283,9 @@ export default {
       if (!this.form.birthYear) {
         this.errors.push(this.$t('models.user.birthYear.errors.required'));
       }
+      if (!this.form.longitude) {
+        this.errors.push(this.$t('models.user.homeTown.errors.required'));
+      }
       if (this.form.validation == false) {
         this.errors.push(this.$t('ui.pages.signup.chart.errors.required'));
       }

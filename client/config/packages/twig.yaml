@@ -6,3 +6,5 @@ twig:
     # themes used in the project (the order is important : each theme overrides the previous ones) 
     form_themes:
     - '@Mobicoop/form/mobicoop.html.twig'
+    globals:
+        delete_profile: '%env(DELETE_PROFILE)%'
