@@ -22,7 +22,7 @@
     "test-functional-ci": "cd client && npm run test-functional-ci",
     "test-and-coverage-mobicoop": "cd client && npm run test-and-coverage",
     "start": "npm-run-all --parallel start-api start-mobicoop",
-    "start-production": "npm-run-all --parallel start-api start-mobicoop-production",
+    "start-production": "npm-run-all   --silent  --parallel start-api start-mobicoop-production",
     "start-api": "cd api && npm start",
     "start-admin": "cd admin && npm start",
     "start-mobicoop": "cd client && npm start",
