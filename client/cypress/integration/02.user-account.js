@@ -94,11 +94,11 @@ describe('User account', () => {
       .should('have.value', '2')
 
     // Change phone number
-    cy.get(':nth-child(1) > :nth-child(2) > .field > .control > .input').clear()
-      .should('have.attr', 'placeholder', 'Saisissez votre numéro de téléphone')
+    cy.get('.contact > .phone > .field > .control > .input').clear()
+      .should('have.attr', 'placeholder', 'Numéro de téléphone')
       .type('0610111214')
 
-    cy.get('button[id=user_form_submit]').click()
+      cy.get('.save > .column > .button').click()
     cy.url().should('include', baseUrl) // should be redirected to home
 
     cy.logout()

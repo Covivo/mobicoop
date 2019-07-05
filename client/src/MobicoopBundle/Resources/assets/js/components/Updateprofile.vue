@@ -31,7 +31,7 @@
                   />
                 </b-field>
               </div>
-              <div class="column">
+              <div class="column phone">
                 <b-field :label="$t('models.user.phone.label')">
                   <b-input 
                     v-model="form.telephone"
