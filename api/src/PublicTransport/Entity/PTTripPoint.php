@@ -147,6 +147,12 @@ class PTTripPoint
      */
     private $transportMode;
 
+    /**
+     * @var PTLocality Locality this Trip Point.
+     * @Groups("pt")
+     */
+    private $locality;
+
     public function getId(): int
     {
         return $this->id;
@@ -239,6 +245,18 @@ class PTTripPoint
     public function setTransportMode(string $transportMode): self
     {
         $this->transportMode = $transportMode;
+
+        return $this;
+    }
+
+    public function getLocality(): PTLocality
+    {
+        return $this->locality;
+    }
+
+    public function setLocality(PTLocality $locality): self
+    {
+        $this->locality = $locality;
 
         return $this;
     }

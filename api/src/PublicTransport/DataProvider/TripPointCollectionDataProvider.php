@@ -58,7 +58,11 @@ final class TripPointCollectionDataProvider implements CollectionDataProviderInt
     {
 
         // First, I check the Lat/Lon. If they are given, we ignore keywords
-        if (!is_null($this->request->get("latitude")) && !is_null($this->request->get("longitude"))) {
+        if (!is_null($this->request->get("latitude")) &&
+            !is_null($this->request->get("longitude")) &&
+            $this->request->get("latitude") != 0 &&
+            $this->request->get("longitude") != 0
+        ) {
             if (
                 is_null($this->request->get("provider")) &&
                 is_null($this->request->get("perimeter")) &&

@@ -31,6 +31,7 @@ use App\PublicTransport\Entity\PTArrival;
 use App\PublicTransport\Entity\PTDeparture;
 use App\PublicTransport\Entity\PTLineStop;
 use App\PublicTransport\Entity\PTLineStopList;
+use App\PublicTransport\Entity\PTLocality;
 use App\PublicTransport\Entity\PTStop;
 use App\PublicTransport\Entity\PTTripPoint;
 use App\Travel\Entity\TravelMode;
@@ -422,8 +423,25 @@ class CitywayProvider implements ProviderInterface
         $tripPoint->setPointType($data["PointType"]);
         $tripPoint->setPostalCode($data["PostalCode"]);
         $tripPoint->setTransportMode($data["TransportMode"]);
+        if (isset($data["Locality"])) {
+            $locality = $this->deserializeLocality($data["Locality"]);
+            $tripPoint->setLocality($locality);
+        }
 
         return $tripPoint;
+    }
+
+    private function deserializeLocality($data)
+    {
+        $locality = new PTLocality();
+
+        $locality->setId($data["Id"]);
+        $locality->setInseeCode($data["InseeCode"]);
+        $locality->setLatitude($data["Latitude"]);
+        $locality->setLongitude($data["Longitude"]);
+        $locality->setName($data["Name"]);
+
+        return $locality;
     }
 
     private function deserializeJourney($data)
