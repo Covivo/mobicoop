@@ -13,12 +13,16 @@ else
 endif
 
 install:
+	$(info $(pink)Creating build/cache folders$(reset))
+	mkdir -p build/cache ;\
+
+	$(info $(pink)Creating build/cache folders$(reset))
+	mkdir -p build/cache;\
+
 	$(info $(pink)------------------------------------------------------)
-	$(info $(pink)Creating build/cache folders)
 	$(info $(pink)Make ($(os)): Installing monorepo root deps...)
 	$(info $(pink)------------------------------------------------------$(reset))
 
-	mkdir -p build/cache;\
 
 	# Using docker-sync for macos only
 	@if [ $(os) = "darwin" ]; then\
@@ -49,7 +53,7 @@ fixtures:
 
 start:
 	$(info Make ($(os)): Starting Mobicoop-platform environment containers.)
-	docker-compose -f docker-compose-$(os).yml up  --always-recreate-deps --force-recreate
+	docker-compose -f docker-compose-$(os).yml up -d  --always-recreate-deps --force-recreate
  
 stop:
 

@@ -13,12 +13,67 @@
 # About
 Open source api-based carpooling platform
 
+# Install 🤖
+
+For every method you will need to clone the repo
+
+- Clone the repo
+    - with ssh : `git clone git@gitlab.com:mobicoop/mobicoop-platform.git`
+    - with https : `git clone https://gitlab.com/mobicoop/mobicoop-platform.git`
+
+## 🐳 Docker 🐳
+
+If you want to use docker we  provide you a simple way to install/start everything *No need to do the rest of the readme* !
+
+### 🐳 Requirements 💻
+
+- Docker
+- Docker-compose
+- Docker-sync (mac/windows)
+- make (base on unix, install cygwin or other bash on windows)
+
+*Facing problems using docker with our project ? We may have answer at or [FAQ](#ℹ️Docker)*
 
 
+### 🐳 Install
 
-# Requirements 💻
+- `make install` 
 
-## Main interface
+
+### 🐳 Start
+
+- `make start` 
+
+### 🐳 Post Install
+
+After starting the app you can use `make fixtures` this will import de database, create private/public keys .. *DO IT 1 MN AFTER THE START, not before*
+
+
+### 🐳 Access apps
+
+
+After docker install, start & fixtures you will have access to the app @ :
+
+
+- Api just go to [http://localhost:8080](http://localhost:8080) for API 
+
+- Client just go to [http://localhost:8081](http://localhost:8081) for Main interface
+
+- Admin just go to [http://localhost:8082](http://localhost:8082) for Main interface
+
+
+### 🐳 Commands
+
+There is a list of available command you can use with make to easily use the app inside docker
+
+
+## 🐒 Without Docker 🐒
+
+
+### Requirements 💻
+
+
+#### Main interface
 
 - PHP: =>7.1
 - Composer =>1.7
@@ -29,50 +84,25 @@ Open source api-based carpooling platform
 - If you have missing requirements during the installation check this docker file
 install & enable in your .ini all its php extensions : [Docker file](https://github.com/vyuldashev/docker-ci-php-node/blob/master/Dockerfile)
 
-## API
+### API
 
 - MariaDB Database with a dedicated user on an [already existing bu empty](https://dev.mysql.com/doc/refman/8.0/en/creating-database.html) database
 - A Geographic Information System (GIS), needed for direction calculation; we use the [Grapphopper routine engine](https://github.com/graphhopper/graphhopper) on a separate server; for now it's the only router supported but it could be replaced by any routing engine with little developments
 - A Geocoder for reverse geocoding, we use [BazingaGeocoderBundle](https://github.com/geocoder-php/BazingaGeocoderBundle) that can use any geocoder (locationiq, google maps, bing...)
 
-## Admin (Back office)
+### Admin (Back office)
 
 *for the moment there is no admin yet 🧐*
 
 
-# Install 🤖
 
-## Clone
-
-- Clone the repo
-    - with ssh : `git clone git@gitlab.com:mobicoop/mobicoop-platform.git`
-    - with https : `git clone https://gitlab.com/mobicoop/mobicoop-platform.git`
-
-## Docker
-
-If you want to use docker we can provide you a simple way to install everything :
-
-On a unix system just run 
-
-- `make install`
-- `make start`
-- `make fixtures`
-
-On a windows :
-
-- docker-compose -f docker-compose.builder.yml run --rm install
-- docker-compose -f docker-compose.builder.yml run --rm install-all
-- docker-compose -f docker-compose.builder.yml run --rm build-admin
-- docker-compose up -d
-- docker-compose -f docker-compose.builder.yml run --rm fixtures
-
-## Optional
+### Optional
 
 Still this is purely optional it will drastically increase the speed to download deps
 
 `composer global require hirak/prestissimo`
 
-## Install deps
+### Install deps
 
 `npm install --no-save && npm run install-all` will perfom:
  - Api php vendor
@@ -81,7 +111,7 @@ Still this is purely optional it will drastically increase the speed to download
 
 *Optional `npm install -g request-dispatcher` if you need Mass Matching.*
 
-## Config
+### Config
 
 - *Duplicate, rename with .env.local & edit some env.local:*  
     - [.env api](api/.env)   
@@ -94,7 +124,7 @@ Still this is purely optional it will drastically increase the speed to download
     - [rdex providers api](api/config/rdex/providers.dist)
 
 
-## Databases
+### Databases
 
 ⚠️ Don't forget to setup your SQL before !
 
@@ -103,7 +133,7 @@ Still this is purely optional it will drastically increase the speed to download
 - Migrate all tables using : `cd api && npm run update-db`
 - You're finally ready to simply run it !
 
-## Security
+### Security
 
 The api is secured using JWT (Json Web Token), so you need to generate ssl keys in config/jwt : 
 - private.pem
@@ -120,7 +150,7 @@ $ openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem
 ```
 
 
-## install problems    
+### install problems    
 
 - *Sometimes if tools binaries do not work you will need on unix systems: `chmod 775 bin/*`*
 
@@ -129,35 +159,39 @@ $ openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem
  For all deps needed please check this [Docker file](https://github.com/vyuldashev/docker-ci-php-node/blob/master/Dockerfile)*
 
 
-# Start 🚀
+#### Start 🚀
 
 To start the application simply run :
 
-## All
+##### All
 
 `npm start`
 
 & just go to [http://localhost:8080](http://localhost:8080) for API 
 & just go to [http://localhost:8081](http://localhost:8081) for mobicoop platform app
 
-## Api
+#### Api
 
 & just go to [http://localhost:8080](http://localhost:8080) for API 
 
-## Interface
+#### Client
 
 & just go to [http://localhost:8081](http://localhost:8081) for Main interface
 
+#### Admin
+
+& just go to [http://localhost:8082](http://localhost:8082) for Main interface
 
 
-# Tests 🎰
+
+### Tests 🎰
 
 `npm test` will test the three apps
 
 - We use [Kahlan](https://kahlan.github.io/docs/) to create unit/functional tests, you can launch them easily with:
 - For functional tests you can do it 3 ways, with [kernels](https://api.symfony.com/4.1/Symfony/Component/HttpKernel/Kernel.html) (limited--), with [client](https://api.symfony.com/4.1/Symfony/Component/HttpKernel/Client.html) (limited), with [panther](https://github.com/symfony/panther) for a real browser testing (click,form ..)
 
-# Functional tests
+## Functional tests
 
 - *Duplicate, rename cypress.json.dist
     - [.cypress.json ](client)
@@ -174,14 +208,14 @@ A developer doc is available [here](https://mobicoop.gitlab.io/mobicoop/build/do
 # FAQ
 
 
-## ℹ️ Why your app is doing something strange before any commit ？
+### ℹ️ Why your app is doing something strange before any commit ？
 
     There are some git hooks implemented in this app:
 
     Run php-cs-fixer to clean your code following standard rules before any commit
 
 
-## ℹ️ How to create my own front application from yours ？
+### ℹ️ How to create my own front application from yours ？
 
     Because Mobicoop Platform is a monorepo, you can ask yourself how to create & dev on your own front-end application.
     Mobicoop comes with a simple script to run, it will create a canvas skeleton based on mobicoop front-end & link the main bundle to it.
@@ -196,14 +230,14 @@ A developer doc is available [here](https://mobicoop.gitlab.io/mobicoop/build/do
     ☢️ *This does just duplicate the front app, you can overwrite template, controller ..., the API is still the same, bundle too* ☣️ 
 
 
-## ℹ️ How to link the bundle to an already existing app ？
+### ℹ️ How to link the bundle to an already existing app ？
 
 `cd ./path/to/mobicoop-mono-repo`
 
 `npm run link-bundle ../path/to/my/already-existing-app`
 
 
-## ℹ️ How can I contribute to the mobicoop developpement ？
+### ℹ️ How can I contribute to the mobicoop developpement ？
 
     To contribute to Mobicoop Platform, please do the following:
 
@@ -223,7 +257,7 @@ A developer doc is available [here](https://mobicoop.gitlab.io/mobicoop/build/do
 When you push on this repo, pipeline are automatically trigerred, if you do not want that, please add the message `skip` into your commit; for eg: `git commit -m"update readme, skip"`
 
 
-## ℹ️ I do not understand which .env to edit  ？
+### ℹ️ I do not understand which .env to edit  ？
 
 If you are in developpement mod, after `composer install` you could see a new `.env`. This file is the default configuration file and *is versioned* (this is a new behavior in Symfony 4.2). *DO NOT* modify this file for your own needs, create instead a [.env.local](.env.file), which *won't be versioned*.
 
@@ -234,7 +268,7 @@ If you are in developpement mod, after `composer install` you could see a new `.
 
 
 
-## ℹ️ How to send data to the api ？
+### ℹ️ How to send data to the api ？
 
 The api is secured using JWT (Json Web Token), so you need to get a token before you can send queries to the api.
 To do so you have to send your credentials to [http://localhost:8080/auth](http://localhost:8080/auth)
@@ -251,12 +285,12 @@ You can do it using an app like Postman with the following settings :
 
 The swagger documentation can be found after install to see all route @ [http://localhost:8080/doc](http://localhost:8080/doc)
 
-## ℹ️ What kind of technos do you use ？
+### ℹ️ What kind of technos do you use ？
 
 ![Technos used](tech.png)
 
 
-## ℹ️ VueJS help
+### ℹ️ VueJS help
 
 
 The main library for javascript used is [vue-js](https://fr.vuejs.org/index.html), everything about them are in [components](assets/js/components)
@@ -268,7 +302,7 @@ We use webpack-encore with babel, if you need to use some new fun stuf in js you
 *For some mistakes as bad indent, spaces .. a fix is automaticaly applied !*
 
 
-## ℹ️ Bulma/Buefy help
+### ℹ️ Bulma/Buefy help
 
 We use buefy which is a vue adaptation of bulma as a front-end scss framework, you can:
 
@@ -276,12 +310,12 @@ We use buefy which is a vue adaptation of bulma as a front-end scss framework, y
 - Change any default [bulma variables](https://bulma.io/documentation/customize/variables/) in [variable.scss](assets/css/_variables.scss) such as [mobile variables](https://bulma.io/documentation/overview/responsiveness/#variables)
 - Use bulma variables inside vue-js components as in the [parrot sample](assets/js/components/Parrot.vue)
 
-##  ℹ️ PHP tech doc
+###  ℹ️ PHP tech doc
 
 You can find our php technical doc for api & interface [here](https://mobicoop.gitlab.io/mobicoop/php/)
 
 
-## ℹ️ Is Windows supported ？
+### ℹ️ Is Windows supported ？
 
 Currently not but you are welcome to increase this guide to help windows community, for the moment we know those needs:
 
@@ -301,7 +335,7 @@ Please use powershell with our project, in requirement you will need:
 - Install [xdebug](https://burhandodhy.me/2017/08/29/how-to-install-xdebug-on-windows/) & link it to you php.ini 
 
 
-## ℹ️ Could you give me some informations about your licence ？
+### ℹ️ Could you give me some informations about your licence ？
 
     Mobicoop software is owned by Mobicoop cooperative. Mobicoop cooperative is opened to any individual, company or public authority who wish to become a shareholder.
     In order to increase the impact of our platform to any sort of clients whatever type of contractual relationship they require, Mobicoop software is dual-licensed:
@@ -315,7 +349,7 @@ Please use powershell with our project, in requirement you will need:
     - one of the license pops up as non part of the approved license for the project
     - a component is license under AGPLv3 and is not Mobicoop itself
 
-## ℹ️How to contribute to Mobicoop 
+### ℹ️How to contribute to Mobicoop 
 
 *Don't forget to install all dependencies before (check README.md)*
 
@@ -324,4 +358,36 @@ Please use powershell with our project, in requirement you will need:
 - execute `npm run contribute`
 - Follow all steps and fill in asked information.
 
-### 🎉Welcome to Mobicoop's contributing program !🎉
+
+### ℹ️Docker
+
+#### Commands:
+
+- install `make install`, install all dependencies & stuffs
+- Start `make start`, start the api, client, admin
+- stop `make stop` , will stop all the containers
+- restart `make restart` , will restats all the containers
+- logs `make logs` , will show you the last 100 lines logs for all containers
+- status `make status` , will get info about the current container status
+- remove `make remove` , will remove the sopped containers
+- clean `make clean` , will remove container, volumes, docker-sync volumes, drops downloaded deps (vendor , node_modules)
+- go-platform `make go-platform`, will send you inside the running platform container
+- go-db `make go-db`, will send you inside the running mariadb container
+
+#### Docker commun errors
+
+- If your docker require sudo after install just [add it to your group + restart your computer](https://docs.docker.com/install/linux/linux-postinstall/)
+
+#### Docker-composer commun errors
+
+- If you do not have docker-compose command just [install it](https://docs.docker.com/compose/install/#install-compose) 
+
+#### Docker-sync (mac/windows) commun errors
+
+- Docker sync does not come with docker , install it [for mac](https://docker-sync.readthedocs.io/en/latest/getting-started/installation.html#osx), or [windows](https://docker-sync.readthedocs.io/en/latest/getting-started/installation.html#windows)
+
+#### Make on windows
+
+- Windows does not have a prebuild make , install one of this [two possibilities](http://stat545.com/automation02_windows.html)
+
+# 🎉Welcome to Mobicoop's contributing program !🎉
