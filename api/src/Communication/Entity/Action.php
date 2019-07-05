@@ -29,7 +29,6 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
@@ -37,11 +36,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  * An action that can trigger a notification.
  *
  * @ORM\Entity
- * @UniqueEntity(
- *     fields={"domain", "name"},
- *     errorPath="name",
- *     message="This action already exists for that domain."
- * )
  * @ApiResource(
  *      attributes={
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
@@ -50,8 +44,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *      collectionOperations={"get"},
  *      itemOperations={"get"}
  * )
- * @ApiFilter(OrderFilter::class, properties={"id", "name", "uname", "domain"}, arguments={"orderParameterName"="order"})
- * @ApiFilter(SearchFilter::class, properties={"name":"partial", "uname":"partial", "domain":"partial"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "name", "uname"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(SearchFilter::class, properties={"name":"partial", "uname":"partial"})
  */
 class Action
 {
@@ -84,15 +78,6 @@ class Action
      * @Groups({"read","write"})
      */
     private $uname;
-
-    /**
-     * @var string Domain of the action.
-     *
-     * @Assert\NotBlank
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
-     */
-    private $domain;
     
     public function getId(): ?int
     {
@@ -130,15 +115,4 @@ class Action
         return $this;
     }
 
-    public function getDomain(): ?string
-    {
-        return $this->domain;
-    }
-
-    public function setDomain(string $domain): self
-    {
-        $this->domain = $domain;
-
-        return $this;
-    }
 }

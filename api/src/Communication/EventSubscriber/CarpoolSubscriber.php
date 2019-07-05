@@ -23,13 +23,12 @@
 
 namespace App\Communication\EventSubscriber;
 
-use App\User\Event\UserRegisteredEvent;
-use App\User\Event\UserUpdatedSelfEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Communication\Service\NotificationManager;
-use App\User\Event\UserPasswordChangeAskedEvent;
+use App\Carpool\Event\AskPostedEvent;
+use App\Communication\Entity\Recipient;
 
-class UserSubscriber implements EventSubscriberInterface
+class CarpoolSubscriber implements EventSubscriberInterface
 {
     private $notificationManager;
 
@@ -41,24 +40,19 @@ class UserSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            UserRegisteredEvent::NAME => 'onUserRegistered',
-            UserUpdatedSelfEvent::NAME => 'onUserUpdatedSelf',
-            UserPasswordChangeAskedEvent::NAME => 'onUserPasswordChangeAsked'
+            AskPostedEvent::NAME => 'onAskPosted'
         ];
     }
 
-    public function onUserRegistered(UserRegisteredEvent $event)
+    public function onAskPosted(AskPostedEvent $event)
     {
-        $this->notificationManager->notifies('user_registered', $event->getUser());
-    }
-
-    public function onUserUpdatedSelf(UserUpdatedSelfEvent $event)
-    {
-        $this->notificationManager->notifies('user_updated_self', $event->getUser());
-    }
-
-    public function onUserPasswordChangeAsked(UserPasswordChangeAskedEvent $event)
-    {
-        $this->notificationManager->notifies('user_password_change_asked', $event->getUser());
+        // we must notify the recipient of the ask
+        if ($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $event->getAsk()->getId()) {
+            // the recipient is the driver, the message lies in the first ask history
+            $this->notificationManager->notifies('ask_posted', $event->getAsk()->getMatching()->getProposalOffer()->getUser(), $event->getAsk()->getAskHistories()[0]);
+        } else {
+            // the recipient is the passenger, the message lies in the first ask history
+            $this->notificationManager->notifies('ask_posted', $event->getAsk()->getMatching()->getProposalRequest()->getUser(), $event->getAsk()->getAskHistories()[0]);
+        }
     }
 }

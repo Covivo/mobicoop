@@ -25,10 +25,9 @@ namespace App\Communication\Repository;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use App\Communication\Entity\Notification;
-use App\Communication\Entity\Action;
+use App\Communication\Entity\Medium;
 
-class NotificationRepository
+class MediumRepository
 {
     /**
      * @var EntityRepository
@@ -37,27 +36,12 @@ class NotificationRepository
     
     public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->repository = $entityManager->getRepository(Notification::class);
+        $this->repository = $entityManager->getRepository(Medium::class);
     }
     
-    public function find(int $id): ?Notification
+    public function find(int $id): ?Medium
     {
         return $this->repository->find($id);
     }
 
-    /**
-     * Find active notifications for a given action
-     *
-     * @param string $action
-     * @return void
-     */
-    public function findActiveByAction(string $action)
-    {
-        $query = $this->repository->createQueryBuilder('n')
-        ->join('n.action', 'a')
-        ->where('a.name = :action and n.active=1')
-        ->setParameter('action', $action)
-        ;
-        return $query->getQuery()->getResult();
-    }
 }

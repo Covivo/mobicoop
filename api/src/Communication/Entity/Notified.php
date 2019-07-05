@@ -105,7 +105,7 @@ class Notified
     /**
      * @var \DateTimeInterface Sent date of the message.
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
      */
     private $sentDate;
@@ -113,7 +113,7 @@ class Notified
     /**
      * @var \DateTimeInterface Received date of the message.
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
      */
     private $receivedDate;
@@ -121,7 +121,7 @@ class Notified
     /**
      * @var \DateTimeInterface Read date of the message.
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
      */
     private $readDate;

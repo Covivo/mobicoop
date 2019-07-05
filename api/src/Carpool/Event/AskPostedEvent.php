@@ -21,43 +21,27 @@
  *    LICENSE
  **************************/
 
-namespace App\Communication\Repository;
+namespace App\Carpool\Event;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
-use App\Communication\Entity\Notification;
-use App\Communication\Entity\Action;
+use App\Carpool\Entity\Ask;
+use Symfony\Component\EventDispatcher\Event;
 
-class NotificationRepository
+/**
+ * Event sent when a new ask is posted.
+ */
+class AskPostedEvent extends Event
 {
-    /**
-     * @var EntityRepository
-     */
-    private $repository;
-    
-    public function __construct(EntityManagerInterface $entityManager)
+    public const NAME = 'carpool.ask_posted';
+
+    protected $ask;
+
+    public function __construct(Ask $ask)
     {
-        $this->repository = $entityManager->getRepository(Notification::class);
-    }
-    
-    public function find(int $id): ?Notification
-    {
-        return $this->repository->find($id);
+        $this->ask = $ask;
     }
 
-    /**
-     * Find active notifications for a given action
-     *
-     * @param string $action
-     * @return void
-     */
-    public function findActiveByAction(string $action)
+    public function getAsk()
     {
-        $query = $this->repository->createQueryBuilder('n')
-        ->join('n.action', 'a')
-        ->where('a.name = :action and n.active=1')
-        ->setParameter('action', $action)
-        ;
-        return $query->getQuery()->getResult();
+        return $this->ask;
     }
 }

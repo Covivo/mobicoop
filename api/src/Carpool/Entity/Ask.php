@@ -33,6 +33,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Carpool\Controller\AskPost;
 
 /**
  * Carpooling : ask from/to a driver and/or a passenger (after a matching between an offer and a request).
@@ -44,16 +45,23 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
+ *      collectionOperations={
+ *          "get",
+ *          "post"={
+ *              "method"="POST",
+ *              "path"="/asks",
+ *              "controller"=AskPost::class,
+ *          },
+ *      },
  *      itemOperations={"get","put","delete"}
  * )
  */
 class Ask
 {
-    const STATUS_INITIATED = 0;
-    const STATUS_PENDING = 1;
-    const STATUS_ACCEPTED = 2;
-    const STATUS_DECLINED = 3;
+    const STATUS_INITIATED = 1;
+    const STATUS_PENDING = 2;
+    const STATUS_ACCEPTED = 3;
+    const STATUS_DECLINED = 4;
     
     /**
      * @var int The id of this ask.
@@ -66,7 +74,7 @@ class Ask
     private $id;
 
     /**
-     * @var int Ask status (0 = initiated; 1 = pending, 2 = accepted; 3 = declined).
+     * @var int Ask status (1 = initiated; 2 = pending, 3 = accepted; 4 = declined).
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")

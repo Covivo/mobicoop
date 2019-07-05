@@ -51,10 +51,10 @@ use App\Communication\Entity\Message;
  */
 class AskHistory
 {
-    const STATUS_INITIATED = 0;
-    const STATUS_PENDING = 1;
-    const STATUS_ACCEPTED = 2;
-    const STATUS_DECLINED = 3;
+    const STATUS_INITIATED = 1;
+    const STATUS_PENDING = 2;
+    const STATUS_ACCEPTED = 3;
+    const STATUS_DECLINED = 4;
     
     /**
      * @var int The id of this ask history item.
@@ -67,7 +67,7 @@ class AskHistory
     private $id;
 
     /**
-     * @var int Ask status at the date of creation of the item (0 = initiated; 1 = pending, 2 = accepted; 3 = declined).
+     * @var int Ask status at the date of creation of the item (1 = initiated; 2 = pending, 3 = accepted; 4 = declined).
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")

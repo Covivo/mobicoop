@@ -41,7 +41,6 @@ use App\Carpool\Entity\AskHistory;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
- *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -118,16 +117,6 @@ class Message
     private $recipients;
 
     /**
-     * @var ArrayCollection The medium used to send the message.
-     *
-     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\SentBy", mappedBy="message", cascade={"persist","remove"}, orphanRemoval=true)
-     * @ORM\OrderBy({"id" = "ASC"})
-     * @Groups({"read","write"})
-     * @MaxDepth(1)
-     */
-    private $sentBys;
-
-    /**
      * @var \DateTimeInterface Creation date of the message.
      *
      * @ORM\Column(type="datetime")
@@ -138,7 +127,6 @@ class Message
     public function __construct()
     {
         $this->recipients = new ArrayCollection();
-        $this->sentBys = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -265,6 +253,18 @@ class Message
             }
         }
         
+        return $this;
+    }
+
+    public function getCreatedDate(): ?\DateTimeInterface
+    {
+        return $this->createdDate;
+    }
+
+    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    {
+        $this->createdDate = $createdDate;
+
         return $this;
     }
 

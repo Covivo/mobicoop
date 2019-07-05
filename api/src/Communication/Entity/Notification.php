@@ -66,7 +66,7 @@ class Notification
     /**
      * @var string The template file of the notification.
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"read","write"})
      */
     private $template;

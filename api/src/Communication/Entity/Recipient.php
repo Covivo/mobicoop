@@ -38,7 +38,6 @@ use App\User\Entity\User;
  * @ORM\Entity()
  * @ApiResource(
  *      attributes={
- *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -49,8 +48,8 @@ use App\User\Entity\User;
  */
 class Recipient
 {
-    const STATUS_PENDING = 0;
-    const STATUS_READ = 1;
+    const STATUS_PENDING = 1;
+    const STATUS_READ = 2;
 
     /**
      * @var int The id of this recipient.
@@ -98,9 +97,17 @@ class Recipient
     private $medium;
 
     /**
+     * @var \DateTimeInterface Sent date of the message.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $sentDate;
+
+    /**
      * @var \DateTimeInterface Read date of the message.
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
      */
     private $readDate;
@@ -164,6 +171,18 @@ class Recipient
     public function setReadDate(\DateTimeInterface $readDate): self
     {
         $this->readDate = $readDate;
+
+        return $this;
+    }
+
+    public function getSentDate(): ?\DateTimeInterface
+    {
+        return $this->sentDate;
+    }
+
+    public function setSentDate(\DateTimeInterface $sentDate): self
+    {
+        $this->sentDate = $sentDate;
 
         return $this;
     }
