@@ -24,7 +24,7 @@
     "start": "npm-run-all --parallel start-api start-mobicoop",
     "start-ci": "npm-run-all   --silent  --parallel start-api-ci start-mobicoop-ci",
     "start-api": "cd api && npm start",
-    "start-api-ci": "cd api && npm start",
+    "start-api-ci": "cd api && npm start-ci",
     "start-admin": "cd admin && npm start",
     "start-mobicoop": "cd client && npm start",
     "start-mobicoop-ci": "cd client && npm run start-ci",
