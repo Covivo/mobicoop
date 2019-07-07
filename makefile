@@ -93,8 +93,11 @@ clean:
 	rm -rf node_modules api/vendor client/vendor client/node_modules admin/node_modules
 
 logs: 
-	docker logs -f --tail=100 mobicoop_platform | sed -e 's/^/[-- containerA1 --]/' &
-	docker logs -f --tail=100 mobicoop_db | sed -e 's/^/[-- containerM2 --]/' &
+	$(info $(green)------------------------------------------------------)
+	$(info $(green)Mobicoop+DB Logs)
+	$(info $(green)------------------------------------------------------$(reset))
+	docker logs --tail=200 mobicoop_platform;\
+	docker logs --tail=60 mobicoop_db;
 
 go-platform:
 	docker exec -it mobicoop_platform zsh
