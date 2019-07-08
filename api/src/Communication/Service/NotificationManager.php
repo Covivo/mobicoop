@@ -39,12 +39,14 @@ use Doctrine\ORM\EntityManagerInterface;
 class NotificationManager
 {
     private $entityManager;
+    private $internalMessageManager;
     private $logger;
     private $notificationRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, NotificationRepository $notificationRepository)
+    public function __construct(EntityManagerInterface $entityManager, InternalMessageManager $internalMessageManager, LoggerInterface $logger, NotificationRepository $notificationRepository)
     {
         $this->entityManager = $entityManager;
+        $this->internalMessageManager = $internalMessageManager;
         $this->logger = $logger;
         $this->notificationRepository = $notificationRepository;
     }
@@ -52,28 +54,35 @@ class NotificationManager
     /**
      * Send a notification for the domain/action/user.
      *
-     * @param string $domain    The domain of the action
      * @param string $action    The action
-     * @param User $user        The user
+     * @param User $recipient   The user to be notified
+     * @param User $sender      The user that sends the notification (optional)
+     * @param object $object    The object linked to the notification (if more information is needed to be joined in the notification)
      * @return void
      */
-    public function notifies(string $domain, string $action, User $user)
+    public function notifies(string $action, User $recipient, ?object $object = null)
     {
-        $notifications = $this->notificationRepository->findActiveByDomainAction($domain, $action);
+        $notifications = $this->notificationRepository->findActiveByAction($action);
         if ($notifications && is_array($notifications)) {
             foreach ($notifications as $notification) {
                 switch ($notification->getMedium()->getId()) {
+                    case Medium::MEDIUM_MESSAGE:
+                        $this->logger->info("Internal message notification for $action / " . get_class($object) . " / " . $recipient->getEmail());
+                        if (!is_null($object)) {
+                            $this->internalMessageManager->sendForObject([$recipient], $object);
+                        }
+                        break;
                     case Medium::MEDIUM_EMAIL:
                         // todo : call the dedicated service to send the email with the notification template
-                        $this->logger->info("Email notification for $domain / $action / " . $user->getEmail());
+                        $this->logger->info("Email notification for $action / " . $recipient->getEmail());
                         break;
                     case Medium::MEDIUM_SMS:
                         // todo : call the dedicated service to send the sms with the notification template
-                        $this->logger->info("Sms notification for  $domain / $action / " . $user->getEmail());
+                        $this->logger->info("Sms notification for  $action / " . $recipient->getEmail());
                         break;
                     case Medium::MEDIUM_PUSH:
                         // todo : call the dedicated service to send the push with the notification template
-                        $this->logger->info("Push notification for  $domain / $action / " . $user->getEmail());
+                        $this->logger->info("Push notification for  $action / " . $recipient->getEmail());
                         break;
                 }
             }

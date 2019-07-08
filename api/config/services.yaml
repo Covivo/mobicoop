@@ -70,6 +70,10 @@ services:
         # Uncomment only if autoconfiguration isn't enabled
         #tags: [ 'api_platform.filter' ]
 
+    App\Carpool\Service\AskManager:
+        tags:   
+            - { name: monolog.logger, channel: carpool }
+
     App\Carpool\Service\ProposalManager:
         tags:   
             - { name: monolog.logger, channel: carpool }
@@ -83,6 +87,10 @@ services:
         arguments:
             $emailSender: '%env(resolve:MAILER_SENDER)%'
             $emailReplyTo: '%env(resolve:MAILER_REPLYTO)%'
+        tags: 
+            - { name: monolog.logger, channel: communication }
+
+    App\Communication\Service\InternalMessageManager:
         tags: 
             - { name: monolog.logger, channel: communication }
 

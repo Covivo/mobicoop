@@ -21,43 +21,34 @@
  *    LICENSE
  **************************/
 
-namespace App\Communication\Repository;
+namespace App\Carpool\Controller;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
-use App\Communication\Entity\Notification;
-use App\Communication\Entity\Action;
+use App\Carpool\Service\AskManager;
+use App\Carpool\Entity\Ask;
 
-class NotificationRepository
+/**
+ * Controller class for ask post.
+ *
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ */
+class AskPost
 {
-    /**
-     * @var EntityRepository
-     */
-    private $repository;
-    
-    public function __construct(EntityManagerInterface $entityManager)
+    private $askManager;
+
+    public function __construct(AskManager $askManager)
     {
-        $this->repository = $entityManager->getRepository(Notification::class);
-    }
-    
-    public function find(int $id): ?Notification
-    {
-        return $this->repository->find($id);
+        $this->askManager = $askManager;
     }
 
     /**
-     * Find active notifications for a given action
+     * This method is invoked when a new ask is posted.
      *
-     * @param string $action
-     * @return void
+     * @param Ask $data
+     * @return Ask
      */
-    public function findActiveByAction(string $action)
+    public function __invoke(Ask $data): Ask
     {
-        $query = $this->repository->createQueryBuilder('n')
-        ->join('n.action', 'a')
-        ->where('a.name = :action and n.active=1')
-        ->setParameter('action', $action)
-        ;
-        return $query->getQuery()->getResult();
+        $data = $this->askManager->createAsk($data);
+        return $data;
     }
 }
