@@ -30,6 +30,7 @@ use App\User\Entity\User;
 use App\Communication\Entity\Notified;
 use App\Communication\Entity\Notification;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Communication\Entity\Email;
 
 /**
  * Notification manager
@@ -40,23 +41,28 @@ class NotificationManager
 {
     private $entityManager;
     private $internalMessageManager;
+    private $emailManager;
+    private $emailTemplatePath;
+    private $smsTemplatePath;
     private $logger;
     private $notificationRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, InternalMessageManager $internalMessageManager, LoggerInterface $logger, NotificationRepository $notificationRepository)
+    public function __construct(EntityManagerInterface $entityManager, InternalMessageManager $internalMessageManager, EmailManager $emailManager, LoggerInterface $logger, NotificationRepository $notificationRepository, string $emailTemplatePath, string $smsTemplatePath)
     {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
+        $this->emailManager = $emailManager;
         $this->logger = $logger;
         $this->notificationRepository = $notificationRepository;
+        $this->emailTemplatePath = $emailTemplatePath;
+        $this->smsTemplatePath = $smsTemplatePath;
     }
 
     /**
-     * Send a notification for the domain/action/user.
+     * Send a notification for the action/user.
      *
      * @param string $action    The action
      * @param User $recipient   The user to be notified
-     * @param User $sender      The user that sends the notification (optional)
      * @param object $object    The object linked to the notification (if more information is needed to be joined in the notification)
      * @return void
      */
@@ -73,7 +79,13 @@ class NotificationManager
                         }
                         break;
                     case Medium::MEDIUM_EMAIL:
-                        // todo : call the dedicated service to send the email with the notification template
+                        $email = new Email();
+                        $email->setRecipientEmail($recipient->getEmail());
+                        // todo : render the notification title
+                        // todo : render the notification body
+                        // todo : see how to pass varopt !
+                        // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
+                        $this->emailManager->send($email,$notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $action);
                         $this->logger->info("Email notification for $action / " . $recipient->getEmail());
                         break;
                     case Medium::MEDIUM_SMS:

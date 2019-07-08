@@ -64,12 +64,20 @@ class Notification
     private $id;
 
     /**
-     * @var string The template file of the notification.
+     * @var string The template file for the title of the notification.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"read","write"})
      */
-    private $template;
+    private $templateTitle;
+
+    /**
+     * @var string The template file for the body of the notification.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $templateBody;
 
     /**
      * @var bool The status of the notification (active/inactive).
@@ -110,14 +118,26 @@ class Notification
         return $this->id;
     }
 
-    public function getTemplate(): ?string
+    public function getTemplateTitle(): ?string
     {
         return $this->template;
     }
     
-    public function setTemplate(?string $template): self
+    public function setTemplateTitle(?string $templateTitle): self
     {
-        $this->template = $template;
+        $this->templateTitle = $templateTitle;
+        
+        return $this;
+    }
+
+    public function getTemplateBody(): ?string
+    {
+        return $this->templateBody;
+    }
+    
+    public function setTemplateBody(?string $templateBody): self
+    {
+        $this->templateBody = $templateBody;
         
         return $this;
     }
