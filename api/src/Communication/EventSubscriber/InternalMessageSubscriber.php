@@ -45,6 +45,6 @@ class InternalMessageSubscriber implements EventSubscriberInterface
 
     public function onInternalMessageReceived(InternalMessageReceivedEvent $event)
     {
-        $this->notificationManager->notifies(InternalMessageReceivedEvent::NAME,$event->getRecipient()->getUser());
+        $this->notificationManager->notifies(InternalMessageReceivedEvent::NAME, $event->getRecipient()->getUser());
     }
 }

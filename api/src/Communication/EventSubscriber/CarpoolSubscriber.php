@@ -82,7 +82,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
     public function onAskAccepted(AskAcceptedEvent $event)
     {
         // we must notify the recipient of the ask, the message is related to the last accepted status of the ask history
-        $lastAskHistory = $this->AskHistoryRepository->findLastByAskAndstatus($event->getAsk(),Ask::STATUS_ACCEPTED);
+        $lastAskHistory = $this->AskHistoryRepository->findLastByAskAndstatus($event->getAsk(), Ask::STATUS_ACCEPTED);
         if ($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $event->getAsk()->getId()) {
             // the recipient is the driver
             $this->notificationManager->notifies(AskAcceptedEvent::NAME, $event->getAsk()->getMatching()->getProposalOffer()->getUser(), $lastAskHistory);
@@ -101,7 +101,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
     public function onAskRefused(AskRefusedEvent $event)
     {
         // we must notify the recipient of the ask, the message is related to the last refused status of the ask history
-        $lastAskHistory = $this->AskHistoryRepository->findLastByAskAndstatus($event->getAsk(),Ask::STATUS_DECLINED);
+        $lastAskHistory = $this->AskHistoryRepository->findLastByAskAndstatus($event->getAsk(), Ask::STATUS_DECLINED);
         if ($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $event->getAsk()->getId()) {
             // the recipient is the driver
             $this->notificationManager->notifies(AskRefusedEvent::NAME, $event->getAsk()->getMatching()->getProposalOffer()->getUser(), $lastAskHistory);
@@ -126,7 +126,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
         } else {
             // the recipient is the passenger
             $this->notificationManager->notifies(MatchingNewEvent::NAME, $event->getMatching()->getProposalRequest()->getUser());
-        }        
+        }
     }
 
     /**
