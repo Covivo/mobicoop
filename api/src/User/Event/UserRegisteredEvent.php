@@ -31,7 +31,7 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class UserRegisteredEvent extends Event
 {
-    public const NAME = 'user.registered';
+    public const NAME = 'user_registered';
 
     protected $user;
 

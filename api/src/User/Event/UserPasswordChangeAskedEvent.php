@@ -31,7 +31,7 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class UserPasswordChangeAskedEvent extends Event
 {
-    public const NAME = 'user.password_change_asked';
+    public const NAME = 'user_password_change_asked';
 
     protected $user;
 

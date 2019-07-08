@@ -49,10 +49,10 @@ class CarpoolSubscriber implements EventSubscriberInterface
         // we must notify the recipient of the ask
         if ($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $event->getAsk()->getId()) {
             // the recipient is the driver, the message lies in the first ask history
-            $this->notificationManager->notifies('ask_posted', $event->getAsk()->getMatching()->getProposalOffer()->getUser(), $event->getAsk()->getAskHistories()[0]);
+            $this->notificationManager->notifies('carpool_ask_posted', $event->getAsk()->getMatching()->getProposalOffer()->getUser(), $event->getAsk()->getAskHistories()[0]);
         } else {
             // the recipient is the passenger, the message lies in the first ask history
-            $this->notificationManager->notifies('ask_posted', $event->getAsk()->getMatching()->getProposalRequest()->getUser(), $event->getAsk()->getAskHistories()[0]);
+            $this->notificationManager->notifies('carpool_ask_posted', $event->getAsk()->getMatching()->getProposalRequest()->getUser(), $event->getAsk()->getAskHistories()[0]);
         }
     }
 }
