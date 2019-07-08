@@ -85,7 +85,7 @@ class NotificationManager
                         // todo : render the notification body
                         // todo : see how to pass varopt !
                         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
-                        $this->emailManager->send($email,$notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $action);
+                        $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $action);
                         $this->logger->info("Email notification for $action / " . $recipient->getEmail());
                         break;
                     case Medium::MEDIUM_SMS:
