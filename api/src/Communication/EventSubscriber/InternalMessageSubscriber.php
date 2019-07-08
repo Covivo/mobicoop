@@ -21,27 +21,30 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Event;
+namespace App\Communication\EventSubscriber;
 
-use App\User\Entity\User;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use App\Communication\Service\NotificationManager;
+use App\Communication\Event\InternalMessageReceivedEvent;
 
-/**
- * Event sent when a user asks to change its password.
- */
-class UserPasswordChangeAskedEvent extends Event
+class InternalMessageSubscriber implements EventSubscriberInterface
 {
-    public const NAME = 'user_password_change_asked';
+    private $notificationManager;
 
-    protected $user;
-
-    public function __construct(User $user)
+    public function __construct(NotificationManager $notificationManager)
     {
-        $this->user = $user;
+        $this->notificationManager = $notificationManager;
     }
 
-    public function getUser()
+    public static function getSubscribedEvents()
     {
-        return $this->user;
+        return [
+            InternalMessageReceivedEvent::NAME => 'onInternalMessageReceived'
+        ];
+    }
+
+    public function onInternalMessageReceived(InternalMessageReceivedEvent $event)
+    {
+        $this->notificationManager->notifies(InternalMessageReceivedEvent::NAME,$event->getRecipient()->getUser());
     }
 }

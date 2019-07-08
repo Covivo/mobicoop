@@ -21,27 +21,27 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Event;
+namespace App\Carpool\Event;
 
-use App\User\Entity\User;
+use App\Carpool\Entity\Ask;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Event sent when a user asks to change its password.
+ * Event sent when an ask is accepted.
  */
-class UserPasswordChangeAskedEvent extends Event
+class AskAcceptedEvent extends Event
 {
-    public const NAME = 'user_password_change_asked';
+    public const NAME = 'carpool_ask_accepted';
 
-    protected $user;
+    protected $ask;
 
-    public function __construct(User $user)
+    public function __construct(Ask $ask)
     {
-        $this->user = $user;
+        $this->ask = $ask;
     }
 
-    public function getUser()
+    public function getAsk()
     {
-        return $this->user;
+        return $this->ask;
     }
 }

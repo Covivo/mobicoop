@@ -21,27 +21,27 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Event;
+namespace App\Communication\Event;
 
-use App\User\Entity\User;
 use Symfony\Component\EventDispatcher\Event;
+use App\Communication\Entity\Recipient;
 
 /**
- * Event sent when a user asks to change its password.
+ * Event sent when an internal message is received.
  */
-class UserPasswordChangeAskedEvent extends Event
+class InternalMessageReceivedEvent extends Event
 {
-    public const NAME = 'user_password_change_asked';
+    public const NAME = 'communication_internal_message_received';
 
-    protected $user;
+    protected $recipient;
 
-    public function __construct(User $user)
+    public function __construct(Recipient $recipient)
     {
-        $this->user = $user;
+        $this->recipient = $recipient;
     }
 
-    public function getUser()
+    public function getRecipient()
     {
-        return $this->user;
+        return $this->recipient;
     }
 }

@@ -21,27 +21,27 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Event;
+namespace App\Carpool\Event;
 
-use App\User\Entity\User;
 use Symfony\Component\EventDispatcher\Event;
+use App\Carpool\Entity\Matching;
 
 /**
- * Event sent when a user asks to change its password.
+ * Event sent when a new matching is created.
  */
-class UserPasswordChangeAskedEvent extends Event
+class MatchingNewEvent extends Event
 {
-    public const NAME = 'user_password_change_asked';
+    public const NAME = 'carpool_matching_new';
 
-    protected $user;
+    protected $matching;
 
-    public function __construct(User $user)
+    public function __construct(Matching $matching)
     {
-        $this->user = $user;
+        $this->matching = $matching;
     }
 
-    public function getUser()
+    public function getMatching()
     {
-        return $this->user;
+        return $this->matching;
     }
 }

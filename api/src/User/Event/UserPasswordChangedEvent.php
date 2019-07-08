@@ -27,11 +27,11 @@ use App\User\Entity\User;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Event sent when a user asks to change its password.
+ * Event sent when a user has changed its password.
  */
-class UserPasswordChangeAskedEvent extends Event
+class UserPasswordChangedEvent extends Event
 {
-    public const NAME = 'user_password_change_asked';
+    public const NAME = 'user_password_changed';
 
     protected $user;
 

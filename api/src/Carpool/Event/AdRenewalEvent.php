@@ -21,27 +21,27 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Event;
+namespace App\Carpool\Event;
 
-use App\User\Entity\User;
 use Symfony\Component\EventDispatcher\Event;
+use App\Carpool\Entity\Proposal;
 
 /**
- * Event sent when a user asks to change its password.
+ * Event sent when an ad must be renewed.
  */
-class UserPasswordChangeAskedEvent extends Event
+class AdRenewalEvent extends Event
 {
-    public const NAME = 'user_password_change_asked';
+    public const NAME = 'carpool_ad_renewal';
 
-    protected $user;
+    protected $proposal;
 
-    public function __construct(User $user)
+    public function __construct(Proposal $proposal)
     {
-        $this->user = $user;
+        $this->proposal = $proposal;
     }
 
-    public function getUser()
+    public function getProposal()
     {
-        return $this->user;
+        return $this->proposal;
     }
 }
