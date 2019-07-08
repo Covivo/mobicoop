@@ -7,18 +7,13 @@
   {{ encore_entry_link_tags('bundle_ad/create') }}
 {% endblock %}
 {% block body %}
-  <Adcreateform geo-search-url="/geosearch?search=" :sent-frequency="{{ form.frequency.vars.value }}" :sent-type="{{ form.type.vars.value }}" :sent-role="{{ form.role.vars.value }}" sent-token="{{ csrf_token('ad-create') }}" sent-hydra="{{ communities|json_encode() }}" >
 
-
+  <Adcreateform geo-search-url="/geosearch?search=" :sent-frequency="{{ form.frequency.vars.value }}" :sent-type="{{ form.type.vars.value }}" :sent-role="{{ form.role.vars.value }}" sent-token="{{ csrf_token('ad-create') }}" {{ idCommunity ? sent-community="{{ idCommunity" : '' }}
+          {{ communities ? sent-hydra="{{ communities|json_encode()" : '' }}
+          >
+{#                sent-hydra="{{ communities|json_encode() }}" sent-community="{{ idCommunity }}">#}
   </Adcreateform>
-{#test rendering communities#}
-{#  <select>#}
-{#    {% if hydra and hydra.member|length>0 %}#}
-{#      {% for community in hydra.member %}#}
-{#                <option>{{community.name}}</option>#}
-{#      {% endfor %}#}
-{#    {% endif %}#}
-{#  </select>#}
+
 {% endblock %}
 {% block javascripts %}
   {{ encore_entry_script_tags('bundle_ad/create') }}

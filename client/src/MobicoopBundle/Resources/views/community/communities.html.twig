@@ -87,7 +87,7 @@ L’ensemble des fonctionnalités d’une communauté est accessible gratuitemen
                             {% if community.isMembersHidden or community.isProposalsHidden %}
                             <a class="button" href="{{path('community_show', { 'id': community.id })}}">Rejoindre la communauté</a>
                             {% else %}
-                            <a class="button" href="{{path('carpool_ad')}}">Déposer un trajet dans la communauté</a>
+                            <a class="button" href="{{path('carpool_ad', { 'id': community.id })}}">Déposer un trajet dans la communauté</a>
                             {% endif %}
                         </div>
                     </div>

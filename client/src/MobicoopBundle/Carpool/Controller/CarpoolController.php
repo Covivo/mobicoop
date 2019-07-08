@@ -61,17 +61,25 @@ class CarpoolController extends AbstractController
         $form = $this->createForm(AdForm::class, $ad, ['csrf_protection' => false]);
         $error = false;
         $success = false;
-//        ajout de la gestion des communautés
-        $hydraCommunities = $communityManager->getCommunities();
-        $communities =[];
+        $idCommunity ='';
 
-        if ($hydraCommunities && count($hydraCommunities->getMember())>0) {
-            foreach ($hydraCommunities->getMember() as $value) {
-                foreach (array($value) as $community) {
-                    $communities[$community->getId()] = $community->getName();
+        if (!is_null($_GET['id']) && $_GET['id'] !='') {
+            $idCommunity = $_GET['id'];
+        }
+//        else {
+            //        ajout de la gestion des communautés
+            $hydraCommunities = $communityManager->getCommunities();
+            $communities =[];
+
+            if ($hydraCommunities && count($hydraCommunities->getMember())>0) {
+                foreach ($hydraCommunities->getMember() as $value) {
+                    foreach (array($value) as $community) {
+                        $communities[$community->getId()] = $community->getName();
+                    }
                 }
             }
-        }
+//        }
+
 
         if ($request->isMethod('POST')) {
             $createToken = $request->request->get('createToken');
@@ -87,8 +95,8 @@ class CarpoolController extends AbstractController
             return $this->render('@Mobicoop/ad/create.html.twig', [
                 'form' => $form->createView(),
                 'error' => $error,
-                'hydra' => $hydraCommunities,
-                'communities' => $communities
+                'communities' => '',
+                'idCommunity' => $idCommunity
             ]);
         }
 
