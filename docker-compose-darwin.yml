@@ -11,7 +11,7 @@ services:
       - '8081:8081'
       - '8082:8082'
     working_dir: /var/www
-    command: npm start
+    command: npm start-docker
     # entrypoint: ["bash", "/var/www/docker/api_bdd_import.sh"]
     # entrypoint: bash /docker/api_entrypoint.sh
     depends_on:
