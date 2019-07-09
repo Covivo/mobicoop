@@ -54,10 +54,10 @@ class EmailManager
      * Send an email
      * @param Email $mail the email to send
      * @param string $template the email's template
-     * @param array $varOpt optional informations that can be included in the template
+     * @param array $context optional array of parameters that can be included in the template
      * @return string
      */
-    public function send(Email $mail, $template, $varOpt=[])
+    public function send(Email $mail, $template, $context=[])
     {
         $failures = "";
 
@@ -83,7 +83,7 @@ class EmailManager
                 $this->templating->render(
                     $this->templatePath.$template,
                     array(
-                        'varOpt' => $varOpt,
+                        'context' => $context,
                         'message' => str_replace(array("\r\n", "\r", "\n"), "<br />", $mail->getMessage()),
                     )
                 ),
@@ -91,7 +91,6 @@ class EmailManager
             );
 
         $failures = $this->mailer->send($message, $failures);
-
 
         return $failures;
     }

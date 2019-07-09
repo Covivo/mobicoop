@@ -96,18 +96,20 @@ class Notification
     private $activeDefault;
 
     /**
-     * @var Action|null The action.
+     * @var Action The action.
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Action")
+     * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
     private $action;
 
     /**
-     * @var Medium|null The medium.
+     * @var Medium The medium.
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Medium")
+     * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */

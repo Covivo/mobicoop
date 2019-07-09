@@ -228,34 +228,6 @@ class Message
         return $this;
     }
 
-    public function getSentBys()
-    {
-        return $this->sentBys->getValues();
-    }
-    
-    public function addSentbBy(SentBy $sentBy): self
-    {
-        if (!$this->sentBys->contains($sentBy)) {
-            $this->sentBys[] = $sentBy;
-            $sentBy->setMessage($this);
-        }
-        
-        return $this;
-    }
-    
-    public function removeSentby(SentBy $sentBy): self
-    {
-        if ($this->sentBys->contains($sentBy)) {
-            $this->sentBys->removeElement($sentBy);
-            // set the owning side to null (unless already changed)
-            if ($sentBy->getMessage() === $this) {
-                $sentBy->setMessage(null);
-            }
-        }
-        
-        return $this;
-    }
-
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;

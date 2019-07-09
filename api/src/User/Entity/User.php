@@ -368,6 +368,7 @@ class User implements UserInterface, EquatableInterface
         $this->images = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->recipients = new ArrayCollection();
+        $this->notifieds = new ArrayCollection();
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }

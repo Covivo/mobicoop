@@ -29,6 +29,7 @@ use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
 use App\Communication\Entity\Medium;
 use App\Communication\Repository\MediumRepository;
+use App\User\Entity\User;
 
 /**
  * Internal message manager
@@ -87,13 +88,28 @@ class InternalMessageManager
     /**
      * Sends an new internal message from a sender to recipients
      *
-     * @param User $sender
-     * @param array $recipients
-     * @param string $text
-     * @param string|null $title
+     * @param User          $sender         The sender
+     * @param array         $recipients     The recipients
+     * @param string        $text           The text of the message
+     * @param string|null   $title          The title of the message
+     * @param Message|null  $reply          The original message if the current message is a reply
      * @return void
      */
-    private function send(User $sender, array $recipients, string $text, ?string $title=null)
+    private function send(User $sender, array $recipients, string $text, ?string $title=null, ?Message $reply)
     {
+        $message = new Message();
+        $message->setUser($sender);
+        $message->setText($text);
+        if ($title) {
+            $message->setTitle($title);
+        }
+        if ($reply) {
+            $message->setMessage($reply);
+        }
+        foreach ($recipients as $recipient) {
+            $orecipient = new Recipient();
+            $orecipient->setUser($recipient);
+            
+        }
     }
 }

@@ -32,13 +32,15 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Communication\Entity\Notification;
-use App\Communication\Entity\Medium;
 use App\User\Entity\User;
+use App\Carpool\Entity\Matching;
+use App\Carpool\Entity\AskHistory;
 
 /**
  * A notification to send for a user.
  *
  * @ORM\Entity()
+ * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -76,34 +78,35 @@ class Notified
     private $status;
 
     /**
-     * @var Notification|null The notification.
+     * @var Notification The notification.
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Notification")
+     * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
     private $notification;
 
     /**
-     * @var Medium|null The medium.
-     *
-     * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Medium")
-     * @Groups({"read","write"})
-     * @MaxDepth(1)
-     */
-    private $medium;
-
-    /**
-     * @var User|null The user.
+     * @var User The user.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="notifieds")
+     * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
     private $user;
 
     /**
-     * @var \DateTimeInterface Sent date of the message.
+     * @var \DateTimeInterface Creation date of the notification.
+     *
+     * @ORM\Column(type="datetime")
+     * @Groups("read")
+     */
+    private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Sent date of the notification.
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
@@ -111,7 +114,7 @@ class Notified
     private $sentDate;
 
     /**
-     * @var \DateTimeInterface Received date of the message.
+     * @var \DateTimeInterface Received date of the notification.
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
@@ -119,12 +122,48 @@ class Notified
     private $receivedDate;
 
     /**
-     * @var \DateTimeInterface Read date of the message.
+     * @var \DateTimeInterface Read date of the notification.
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
      */
     private $readDate;
+
+    /**
+     * @var Proposal The proposal if the notified is linked to a proposal.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="notifieds")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $proposal;
+
+    /**
+     * @var Matching The matching if the notified is linked to a matching.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="notifieds")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $matching;
+
+    /**
+     * @var AskHistory The askHistory if the notified is linked to an askHistory.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\AskHistory", inversedBy="notifieds")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $askHistory;
+
+    /**
+     * @var Recipient The recipient if the notified is linked to a recipient.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Recipient", inversedBy="notifieds")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $recipient;
 
     public function getId(): ?int
     {
@@ -165,18 +204,6 @@ class Notified
         return $this;
     }
 
-    public function getMedium(): Medium
-    {
-        return $this->medium;
-    }
-    
-    public function setMedium(?Medium $medium): self
-    {
-        $this->medium = $medium;
-        
-        return $this;
-    }
-
     public function getSentDate(): ?\DateTimeInterface
     {
         return $this->sentDate;
@@ -211,5 +238,77 @@ class Notified
         $this->readDate = $readDate;
 
         return $this;
+    }
+
+    public function getProposal(): ?Proposal
+    {
+        return $this->proposal;
+    }
+
+    public function setProposal(?Proposal $proposal): self
+    {
+        $this->proposal = $proposal;
+
+        return $this;
+    }
+
+    public function getMatching(): ?Matching
+    {
+        return $this->matching;
+    }
+
+    public function setMatching(?Matching $matching): self
+    {
+        $this->matching = $matching;
+
+        return $this;
+    }
+
+    public function getAskHistory(): ?AskHistory
+    {
+        return $this->askHistory;
+    }
+
+    public function setAskHistory(?AskHistory $askHistory): self
+    {
+        $this->askHistory = $askHistory;
+
+        return $this;
+    }
+
+    public function getRecipient(): ?Recipient
+    {
+        return $this->recipient;
+    }
+
+    public function setRecipient(?Recipient $recipient): self
+    {
+        $this->recipient = $recipient;
+
+        return $this;
+    }
+
+    public function getCreatedDate(): ?\DateTimeInterface
+    {
+        return $this->createdDate;
+    }
+
+    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    {
+        $this->createdDate = $createdDate;
+
+        return $this;
+    }
+
+    // DOCTRINE EVENTS
+
+    /**
+     * Creation date.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoCreatedDate()
+    {
+        $this->setCreatedDate(new \Datetime());
     }
 }

@@ -31,6 +31,10 @@ use App\Communication\Entity\Notified;
 use App\Communication\Entity\Notification;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Communication\Entity\Email;
+use App\Carpool\Entity\Proposal;
+use App\Carpool\Entity\Matching;
+use App\Communication\Entity\Recipient;
+use App\Carpool\Entity\AskHistory;
 
 /**
  * Notification manager
@@ -42,12 +46,14 @@ class NotificationManager
     private $entityManager;
     private $internalMessageManager;
     private $emailManager;
+    private $templating;
     private $emailTemplatePath;
+    private $emailTitleTemplatePath;
     private $smsTemplatePath;
     private $logger;
     private $notificationRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, InternalMessageManager $internalMessageManager, EmailManager $emailManager, LoggerInterface $logger, NotificationRepository $notificationRepository, string $emailTemplatePath, string $smsTemplatePath)
+    public function __construct(EntityManagerInterface $entityManager, \Twig_Environment $templating, InternalMessageManager $internalMessageManager, EmailManager $emailManager, LoggerInterface $logger, NotificationRepository $notificationRepository, string $emailTemplatePath, string $emailTitleTemplatePath, string $smsTemplatePath)
     {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
@@ -55,7 +61,9 @@ class NotificationManager
         $this->logger = $logger;
         $this->notificationRepository = $notificationRepository;
         $this->emailTemplatePath = $emailTemplatePath;
+        $this->emailTitleTemplatePath = $emailTitleTemplatePath;
         $this->smsTemplatePath = $smsTemplatePath;
+        $this->templating = $templating;
     }
 
     /**
@@ -77,23 +85,21 @@ class NotificationManager
                         if (!is_null($object)) {
                             $this->internalMessageManager->sendForObject([$recipient], $object);
                         }
+                        $this->createNotified($notification,$recipient,$object);
                         break;
                     case Medium::MEDIUM_EMAIL:
-                        $email = new Email();
-                        $email->setRecipientEmail($recipient->getEmail());
-                        // todo : render the notification title
-                        // todo : render the notification body
-                        // todo : see how to pass varopt !
-                        // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
-                        $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $action);
+                        $this->notifyByEmail($action,$notification,$recipient,$object);
+                        $this->createNotified($notification,$recipient,$object);
                         $this->logger->info("Email notification for $action / " . $recipient->getEmail());
                         break;
                     case Medium::MEDIUM_SMS:
                         // todo : call the dedicated service to send the sms with the notification template
+                        $this->createNotified($notification,$recipient,$object);
                         $this->logger->info("Sms notification for  $action / " . $recipient->getEmail());
                         break;
                     case Medium::MEDIUM_PUSH:
                         // todo : call the dedicated service to send the push with the notification template
+                        $this->createNotified($notification,$recipient,$object);
                         $this->logger->info("Push notification for  $action / " . $recipient->getEmail());
                         break;
                 }
@@ -102,21 +108,81 @@ class NotificationManager
     }
 
     /**
-     * Create a notified object. Should be called from the service which sends the notification (or by an event ?)
+     * Notify a user by email.
+     * Different variables can be passed to the notification body and title depending on the object linked to the notification.
      *
-     * @param Notification $notification
-     * @param User $user
-     * @param Medium $medium
+     * @param Notification  $notification
+     * @param User          $recipient
+     * @param object|null   $object
      * @return void
      */
-    public function createNotified(Notification $notification, User $user, Medium $medium)
+    private function notifyByEmail(Notification $notification, User $recipient, ?object $object = null) 
+    {
+        $email = new Email();
+        $email->setRecipientEmail($recipient->getEmail());
+        $titleContext = [];
+        $bodyContext = [];
+        if ($object) {
+            switch (get_class($object)) {
+                case Proposal::class:
+                    $titleContext = [];
+                    $bodyContext = [];
+                    break;
+                case Matching::class:
+                    $titleContext = [];
+                    $bodyContext = [];
+                    break;
+                case AskHistory::class:
+                    $titleContext = [];
+                    $bodyContext = [];
+                    break;
+                case Recipient::class:
+                    $titleContext = [];
+                    $bodyContext = [];
+                    break;
+            }
+        }
+        $email->setObject($this->templating->render(
+            $notification->getTemplateTitle() ? $this->emailTitleTemplatePath . $notification->getTemplateTitle() : $this->emailTitleTemplatePath . $notification->getAction()->getName(),
+            [
+                'context' => $titleContext
+            ]
+        )); 
+        // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
+        $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(),$bodyContext);
+    }
+
+    /**
+     * Create a notified object.
+     *
+     * @param Notification  $notification   The notification at the origin of the notified
+     * @param User          $user           The recipient of the notification
+     * @param object|null   $object         The object linked with the notification
+     * @return void
+     */
+    public function createNotified(Notification $notification, User $user, ?object $object)
     {
         $notified = new Notified();
         $notified->setStatus(Notified::STATUS_SENT);
         $notified->setSentDate(new \Datetime());
         $notified->setNotification($notification);
         $notified->setUser($user);
-        $notified->setMedium($medium);
+        if ($object) {
+            switch (get_class($object)) {
+                case Proposal::class:
+                    $notified->setProposal($object);
+                    break;
+                case Matching::class:
+                    $notified->setMatching($object);
+                    break;
+                case AskHistory::class:
+                    $notified->setAskHistory($object);
+                    break;
+                case Recipient::class:
+                    $notified->setRecipient($object);
+                    break;
+            }
+        }
         $this->entityManager->persist($notified);
         $this->entityManager->flush();
     }
