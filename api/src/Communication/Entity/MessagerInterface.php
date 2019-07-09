@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,50 +21,17 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity;
-
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
+namespace App\Communication\Entity;
 
 /**
- * An external journey provider
+ * Messager interface.
+ * Used for entities that can have related messages.
+ *
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ *
  */
-class ExternalJourneyProvider implements ResourceInterface
+interface MessagerInterface
 {
-
-    /**
-     * @var int The id of this provider.
-     */
-    private $id;
-
-    /**
-     * @var string The name of this provider
-     */
-    private $name;
-
-    public function __construct($id=null)
-    {
-        if ($id) {
-            $this->setId($id);
-        }
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function setId(int $id)
-    {
-        $this->id = $id;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name)
-    {
-        $this->name =$name;
-    }
+    public function getMessage(): ?Message;
+    public function setMessage(Message $message);
 }

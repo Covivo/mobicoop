@@ -25,7 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Match\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Direction;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -33,7 +33,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * A Mass Person
  */
-class MassPerson implements Resource
+class MassPerson implements ResourceInterface
 {
     /**
      * @var int The id of this person.

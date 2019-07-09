@@ -23,12 +23,12 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Match\Entity;
 
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 
 /**
  * A Mass Matching.
  */
-class MassMatching implements Resource
+class MassMatching implements ResourceInterface
 {
     /**
      * @var int The id of this matching.

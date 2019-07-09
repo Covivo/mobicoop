@@ -29,7 +29,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Api\Entity;
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  *
  */
-interface Resource
+interface ResourceInterface
 {
     public function getId(): ?int;
     public function setId(int $id);

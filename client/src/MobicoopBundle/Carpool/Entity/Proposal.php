@@ -27,7 +27,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Travel\Entity\TravelMode;
@@ -35,7 +35,7 @@ use Mobicoop\Bundle\MobicoopBundle\Travel\Entity\TravelMode;
 /**
  * Carpooling : proposal (offer from a driver / request from a passenger).
  */
-class Proposal implements Resource
+class Proposal implements ResourceInterface
 {
     const TYPE_ONE_WAY = 1;
     const TYPE_OUTWARD = 2;

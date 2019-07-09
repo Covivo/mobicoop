@@ -24,7 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Geography\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
@@ -32,7 +32,7 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 /**
  * A postal address.
  */
-class Address implements Resource
+class Address implements ResourceInterface
 {
     /**
      * @var int The id of this address.

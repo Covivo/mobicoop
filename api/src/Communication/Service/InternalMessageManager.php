@@ -30,6 +30,9 @@ use App\Communication\Entity\Recipient;
 use App\Communication\Entity\Medium;
 use App\Communication\Repository\MediumRepository;
 use App\User\Entity\User;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use App\Communication\Event\InternalMessageReceivedEvent;
+use App\Communication\Entity\MessagerInterface;
 
 /**
  * Internal message manager
@@ -40,39 +43,25 @@ class InternalMessageManager
 {
     private $entityManager;
     private $mediumRepository;
+    private $eventDispatcher;
     private $logger;
 
-    public function __construct(EntityManagerInterface $entityManager, MediumRepository $mediumRepository, LoggerInterface $logger)
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, MediumRepository $mediumRepository, LoggerInterface $logger)
     {
         $this->entityManager = $entityManager;
         $this->mediumRepository = $mediumRepository;
         $this->logger = $logger;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
      * Sends an internal message to recipients, related to an object (the message itself already exists and is linked to the object)
      *
-     * @param array $recipients     The recipients
-     * @param object $object        The object linked
+     * @param array $recipients             The recipients
+     * @param MessagerInterface $object     The object linked
      * @return void
      */
-    public function sendForObject(array $recipients, object $object)
-    {
-        if (method_exists($object, "getMessage")) {
-            if ($object->getMessage() instanceof Message) {
-                $this->sendExisting($recipients, $object->getMessage());
-            }
-        }
-    }
-
-    /**
-     * Sends an already created internal message from a sender to recipients
-     *
-     * @param array $recipients     The recipients
-     * @param Message $message      The message
-     * @return void
-     */
-    private function sendExisting(array $recipients, Message $message)
+    public function sendForObject(array $recipients, MessagerInterface $object)
     {
         $medium = $this->mediumRepository->find(Medium::MEDIUM_MESSAGE);
         foreach ($recipients as $userRecipient) {
@@ -80,8 +69,11 @@ class InternalMessageManager
             $recipient->setMedium($medium);
             $recipient->setUser($userRecipient);
             $recipient->setStatus(Recipient::STATUS_PENDING);
-            $message->addRecipient($recipient);
+            $object->getMessage()->addRecipient($recipient);
             $this->entityManager->persist($recipient);
+            // dispatch en event
+            $event = new InternalMessageReceivedEvent($recipient);
+            $this->eventDispatcher->dispatch(InternalMessageReceivedEvent::NAME, $event);
         }
     }
 
@@ -95,7 +87,7 @@ class InternalMessageManager
      * @param Message|null  $reply          The original message if the current message is a reply
      * @return void
      */
-    private function send(User $sender, array $recipients, string $text, ?string $title=null, ?Message $reply)
+    public function send(User $sender, array $recipients, string $text, ?string $title=null, ?Message $reply)
     {
         $message = new Message();
         $message->setUser($sender);
@@ -109,7 +101,18 @@ class InternalMessageManager
         foreach ($recipients as $recipient) {
             $orecipient = new Recipient();
             $orecipient->setUser($recipient);
-            
+            $orecipient->setStatus(Recipient::STATUS_PENDING);
+            $orecipient->setSentDate(new \DateTime());
+            $message->addRecipient($orecipient);
+        }
+        $this->entityManager->persist($message);
+        $this->entityManager->flush();
+
+        // the message has been sent, we browse the recipients again to send the event
+        foreach ($message->getRecipients() as $recipient) {
+            // dispatch en event
+            $event = new InternalMessageReceivedEvent($recipient);
+            $this->eventDispatcher->dispatch(InternalMessageReceivedEvent::NAME, $event);
         }
     }
 }

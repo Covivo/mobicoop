@@ -31,12 +31,12 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 
 /**
  *  A community.
  */
-class Community implements Resource
+class Community implements ResourceInterface
 {
     /**
      * @var int The id of this community.

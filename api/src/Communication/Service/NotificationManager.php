@@ -85,21 +85,21 @@ class NotificationManager
                         if (!is_null($object)) {
                             $this->internalMessageManager->sendForObject([$recipient], $object);
                         }
-                        $this->createNotified($notification,$recipient,$object);
+                        $this->createNotified($notification, $recipient, $object);
                         break;
                     case Medium::MEDIUM_EMAIL:
-                        $this->notifyByEmail($action,$notification,$recipient,$object);
-                        $this->createNotified($notification,$recipient,$object);
+                        $this->notifyByEmail($notification, $recipient, $object);
+                        $this->createNotified($notification, $recipient, $object);
                         $this->logger->info("Email notification for $action / " . $recipient->getEmail());
                         break;
                     case Medium::MEDIUM_SMS:
                         // todo : call the dedicated service to send the sms with the notification template
-                        $this->createNotified($notification,$recipient,$object);
+                        $this->createNotified($notification, $recipient, $object);
                         $this->logger->info("Sms notification for  $action / " . $recipient->getEmail());
                         break;
                     case Medium::MEDIUM_PUSH:
                         // todo : call the dedicated service to send the push with the notification template
-                        $this->createNotified($notification,$recipient,$object);
+                        $this->createNotified($notification, $recipient, $object);
                         $this->logger->info("Push notification for  $action / " . $recipient->getEmail());
                         break;
                 }
@@ -116,7 +116,7 @@ class NotificationManager
      * @param object|null   $object
      * @return void
      */
-    private function notifyByEmail(Notification $notification, User $recipient, ?object $object = null) 
+    private function notifyByEmail(Notification $notification, User $recipient, ?object $object = null)
     {
         $email = new Email();
         $email->setRecipientEmail($recipient->getEmail());
@@ -147,9 +147,9 @@ class NotificationManager
             [
                 'context' => $titleContext
             ]
-        )); 
+        ));
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
-        $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(),$bodyContext);
+        $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext);
     }
 
     /**

@@ -34,6 +34,7 @@ use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Communication\Entity\Message;
+use App\Communication\Entity\MessagerInterface;
 
 /**
  * Carpooling : a history item for an ask (all the items represent a thread for the ask).
@@ -49,7 +50,7 @@ use App\Communication\Entity\Message;
  *      itemOperations={"get","put","delete"}
  * )
  */
-class AskHistory
+class AskHistory implements MessagerInterface
 {
     const STATUS_INITIATED = 1;
     const STATUS_PENDING = 2;
