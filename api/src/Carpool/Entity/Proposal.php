@@ -40,6 +40,7 @@ use App\Carpool\Controller\ProposalPost;
 use App\Travel\Entity\TravelMode;
 use App\Community\Entity\Community;
 use App\User\Entity\User;
+use App\Communication\Entity\Notified;
 
 /**
  * Carpooling : proposal (offer from a driver / request from a passenger).

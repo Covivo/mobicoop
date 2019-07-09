@@ -35,6 +35,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\MessagerInterface;
+use App\Communication\Entity\Notified;
 
 /**
  * Carpooling : a history item for an ask (all the items represent a thread for the ask).
@@ -72,7 +73,7 @@ class AskHistory implements MessagerInterface
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads"})
      */
     private $status;
 
@@ -81,7 +82,7 @@ class AskHistory implements MessagerInterface
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads"})
      */
     private $type;
 
@@ -96,7 +97,7 @@ class AskHistory implements MessagerInterface
      * @var Ask|null The linked ask.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="askHistories")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads"})
      * @MaxDepth(1)
      */
     private $ask;

@@ -33,6 +33,7 @@ use App\Community\Repository\CommunityRepository;
 use App\Community\Entity\CommunityUser;
 use App\User\Event\UserRegisteredEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use App\Communication\Repository\MessageRepository;
 
 /**
  * User manager service.
@@ -44,6 +45,7 @@ class UserManager
     private $entityManager;
     private $roleRepository;
     private $communityRepository;
+    private $messageRepository;
     private $logger;
     private $eventDispatcher;
 
@@ -53,12 +55,13 @@ class UserManager
      * @param EntityManagerInterface $entityManager
      * @param LoggerInterface $logger
      */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->roleRepository = $roleRepository;
         $this->communityRepository = $communityRepository;
+        $this->messageRepository = $messageRepository;
         $this->eventDispatcher = $dispatcher;
     }
     
@@ -98,6 +101,14 @@ class UserManager
         }
         if ($communities = $this->communityRepository->findByUser($user, true, null, CommunityUser::STATUS_ACCEPTED)) {
             return $communities;
+        }
+        return [];
+    }
+
+    public function getThreads(User $user): array
+    {
+        if ($threads = $this->messageRepository->findThreads($user)) {
+            return $threads;
         }
         return [];
     }
