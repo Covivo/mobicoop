@@ -390,4 +390,12 @@ Please use powershell with our project, in requirement you will need:
 
 - Windows does not have a prebuild make , install one of this [two possibilities](http://stat545.com/automation02_windows.html)
 
+### ℹ️ What are the hardware requirements needed to run an instance of Mobicoop-platform ?
+
+The instance of Mobicoop-platform itself doesn't need a tremendous server configuration : our test instance runs on a (very) small virtual machine with 2 vCores @3Ghz, 7Go of RAM and 50Go SSD !
+
+Of course you will need more hardware requirements if you think your instance will be very used; in this case 250Go SSD, 8 cores and 16Go RAM would be a good configuration, especially if you need to make mass matching.
+
+On the other hand, the platform needs information coming from a geographic information system (GIS), which can be VERY needy ! For example, the GIS we use for our platform is a dedicated server with 8 Xeon CPU @2.40Ghz, 64go RAM and 2To HD.
+
 # 🎉Welcome to Mobicoop's contributing program !🎉
