@@ -58,8 +58,8 @@
                 >
                   <option
                     v-for="(community,index) in communities"
-                    :key="index"
-                    :value="index"
+                    :key="idCommunity !==0 ? idCommunity : index"
+                    :value="idCommunity !==0 ? idCommunity : index"
                   >
                     {{ community }}
                   </option>
@@ -455,6 +455,10 @@ export default {
     sentHydra: {
       type: String,
       default: ""
+    },
+    sentCommunity: {
+      type: String,
+      default: ""
     }
   },
   data() {
@@ -462,6 +466,7 @@ export default {
       origin: null,
       outward: this.sentOutward,
       communities: JSON.parse(this.sentHydra),
+      idCommunity: this.sentCommunity,
       timeStart: new Date(),
       timeReturn: new Date(),
       days: [
