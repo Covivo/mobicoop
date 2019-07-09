@@ -25,12 +25,12 @@ namespace Mobicoop\Bundle\MobicoopBundle\Community\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 
 /**
  * A user related to a community.
  */
-class CommunityUser implements Resource
+class CommunityUser implements ResourceInterface
 {
     const STATUS_PENDING = 0;
     const STATUS_ACCEPTED = 1;

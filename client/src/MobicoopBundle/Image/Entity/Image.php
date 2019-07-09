@@ -26,14 +26,14 @@ namespace Mobicoop\Bundle\MobicoopBundle\Image\Entity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\File\File;
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 
 /**
  * An image.
  */
-class Image implements Resource
+class Image implements ResourceInterface
 {
     /**
      * @var int The id of this image.

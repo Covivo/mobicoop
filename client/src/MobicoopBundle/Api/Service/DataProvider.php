@@ -23,7 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Api\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Response;
 use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
 use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\HydraView;
@@ -316,11 +316,11 @@ class DataProvider
     /**
      * Post collection operation
      *
-     * @param Resource $object An object representing the resource to post
+     * @param ResourceInterface $object An object representing the resource to post
      *
      * @return Response The response of the operation.
      */
-    public function post(Resource $object): Response
+    public function post(ResourceInterface $object): Response
     {
         try {
             $clientResponse = $this->client->post($this->resource, [
@@ -338,11 +338,11 @@ class DataProvider
     /**
      * Post collection operation with multipart/form-data
      *
-     * @param Resource $object An object representing the resource to post
+     * @param ResourceInterface $object An object representing the resource to post
      *
      * @return Response The response of the operation.
      */
-    public function postMultiPart(Resource $object): Response
+    public function postMultiPart(ResourceInterface $object): Response
     {
         $multipart = [];
         // we serialize the serializable properties
@@ -383,11 +383,11 @@ class DataProvider
     /**
      * Put item operation
      *
-     * @param Resource $object An object representing the resource to put
+     * @param ResourceInterface $object An object representing the resource to put
      *
      * @return Response The response of the operation.
      */
-    public function put(Resource $object, ?array $groups=null): Response
+    public function put(ResourceInterface $object, ?array $groups=null): Response
     {
         if (is_null($groups)) {
             $groups = ['put'];

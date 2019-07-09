@@ -31,7 +31,7 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class AskPostedEvent extends Event
 {
-    public const NAME = 'carpool.ask_posted';
+    public const NAME = 'carpool_ask_posted';
 
     protected $ask;
 

@@ -79,22 +79,14 @@ class Recipient
     private $user;
 
     /**
-     * @var Message|null The message.
+     * @var Message The message.
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="recipients")
+     * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
     private $message;
-
-    /**
-     * @var Medium|null The medium.
-     *
-     * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Medium")
-     * @Groups({"read","write"})
-     * @MaxDepth(1)
-     */
-    private $medium;
 
     /**
      * @var \DateTimeInterface Sent date of the message.
@@ -111,6 +103,20 @@ class Recipient
      * @Groups({"read","write"})
      */
     private $readDate;
+
+    /**
+     * @var ArrayCollection|null The notifications sent for the recipient.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="recipient", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $notifieds;
+
+    public function __construct()
+    {
+        $this->notifieds = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -151,18 +157,6 @@ class Recipient
         return $this;
     }
 
-    public function getMedium(): Medium
-    {
-        return $this->medium;
-    }
-
-    public function setMedium(Medium $medium): self
-    {
-        $this->medium = $medium;
-
-        return $this;
-    }
-
     public function getReadDate(): ?\DateTimeInterface
     {
         return $this->readDate;
@@ -184,6 +178,34 @@ class Recipient
     {
         $this->sentDate = $sentDate;
 
+        return $this;
+    }
+
+    public function getNotifieds()
+    {
+        return $this->notifieds->getValues();
+    }
+    
+    public function addNotified(Notified $notified): self
+    {
+        if (!$this->notifieds->contains($notified)) {
+            $this->notifieds[] = $notified;
+            $notified->setRecipient($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeNotified(Notified $notified): self
+    {
+        if ($this->notifieds->contains($notified)) {
+            $this->notifieds->removeElement($notified);
+            // set the owning side to null (unless already changed)
+            if ($notified->getRecipient() === $this) {
+                $notified->setRecipient(null);
+            }
+        }
+        
         return $this;
     }
 }

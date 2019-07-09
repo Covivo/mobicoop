@@ -80,13 +80,18 @@ services:
     
     # Communication
     App\Communication\Service\NotificationManager:
+        arguments:
+            $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
+            $emailTitleTemplatePath: '%env(resolve:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%'
+            $smsTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_SMS_PATH)%'
         tags: 
             - { name: monolog.logger, channel: notification }
     
-    App\Communication\Service\SendEmailManager:
+    App\Communication\Service\EmailManager:
         arguments:
             $emailSender: '%env(resolve:MAILER_SENDER)%'
             $emailReplyTo: '%env(resolve:MAILER_REPLYTO)%'
+            $templatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%'
         tags: 
             - { name: monolog.logger, channel: communication }
 
@@ -164,6 +169,7 @@ services:
     App\Match\Service\MassImportManager:
         arguments:
             $params: '%mass%'
+            $emailTemplatePath: '%env(resolve:MOBIMATCH_EMAIL_TEMPLATE_PATH)%'
         tags:
             - { name: monolog.logger, channel: mass }
 

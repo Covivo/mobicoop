@@ -246,6 +246,15 @@ class Proposal
      * @Groups({"read"})
      */
     private $individualStops;
+
+    /**
+     * @var ArrayCollection|null The notifications sent for the proposal.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $notifieds;
         
     public function __construct($id=null)
     {
@@ -259,6 +268,7 @@ class Proposal
         $this->matchingOffers = new ArrayCollection();
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
+        $this->notifieds = new ArrayCollection();
     }
     
     public function __clone()
@@ -270,6 +280,7 @@ class Proposal
         $this->matchingOffers = new ArrayCollection();
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
+        $this->notifieds = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -510,6 +521,34 @@ class Proposal
             // set the owning side to null (unless already changed)
             if ($individualStop->getProposal() === $this) {
                 $individualStop->setProposal(null);
+            }
+        }
+        
+        return $this;
+    }
+
+    public function getNotifieds()
+    {
+        return $this->notifieds->getValues();
+    }
+    
+    public function addNotified(Notified $notified): self
+    {
+        if (!$this->notifieds->contains($notified)) {
+            $this->notifieds[] = $notified;
+            $notified->setProposal($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeNotified(Notified $notified): self
+    {
+        if ($this->notifieds->contains($notified)) {
+            $this->notifieds->removeElement($notified);
+            // set the owning side to null (unless already changed)
+            if ($notified->getProposal() === $this) {
+                $notified->setProposal(null);
             }
         }
         

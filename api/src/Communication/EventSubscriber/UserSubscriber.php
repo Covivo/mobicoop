@@ -28,6 +28,7 @@ use App\User\Event\UserUpdatedSelfEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Communication\Service\NotificationManager;
 use App\User\Event\UserPasswordChangeAskedEvent;
+use App\User\Event\UserPasswordChangedEvent;
 
 class UserSubscriber implements EventSubscriberInterface
 {
@@ -43,22 +44,28 @@ class UserSubscriber implements EventSubscriberInterface
         return [
             UserRegisteredEvent::NAME => 'onUserRegistered',
             UserUpdatedSelfEvent::NAME => 'onUserUpdatedSelf',
-            UserPasswordChangeAskedEvent::NAME => 'onUserPasswordChangeAsked'
+            UserPasswordChangeAskedEvent::NAME => 'onUserPasswordChangeAsked',
+            UserPasswordChangedEvent::NAME => 'onUserPasswordChanged'
         ];
     }
 
     public function onUserRegistered(UserRegisteredEvent $event)
     {
-        $this->notificationManager->notifies('user_registered', $event->getUser());
+        $this->notificationManager->notifies(UserRegisteredEvent::NAME, $event->getUser());
     }
 
     public function onUserUpdatedSelf(UserUpdatedSelfEvent $event)
     {
-        $this->notificationManager->notifies('user_updated_self', $event->getUser());
+        $this->notificationManager->notifies(UserUpdatedSelfEvent::NAME, $event->getUser());
     }
 
     public function onUserPasswordChangeAsked(UserPasswordChangeAskedEvent $event)
     {
-        $this->notificationManager->notifies('user_password_change_asked', $event->getUser());
+        $this->notificationManager->notifies(UserPasswordChangeAskedEvent::NAME, $event->getUser());
+    }
+
+    public function onUserPasswordChanged(UserPasswordChangedEvent $event)
+    {
+        $this->notificationManager->notifies(UserPasswordChangedEvent::NAME, $event->getUser());
     }
 }

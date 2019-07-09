@@ -23,12 +23,12 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity;
 
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 
 /**
  * An external journey provider
  */
-class ExternalJourneyProvider implements Resource
+class ExternalJourneyProvider implements ResourceInterface
 {
 
     /**

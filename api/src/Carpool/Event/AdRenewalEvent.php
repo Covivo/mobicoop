@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,16 +21,27 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Api\Entity;
+namespace App\Carpool\Event;
+
+use Symfony\Component\EventDispatcher\Event;
+use App\Carpool\Entity\Proposal;
 
 /**
- * Resource interface.
- *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
- *
+ * Event sent when an ad must be renewed.
  */
-interface Resource
+class AdRenewalEvent extends Event
 {
-    public function getId(): ?int;
-    public function setId(int $id);
+    public const NAME = 'carpool_ad_renewal';
+
+    protected $proposal;
+
+    public function __construct(Proposal $proposal)
+    {
+        $this->proposal = $proposal;
+    }
+
+    public function getProposal()
+    {
+        return $this->proposal;
+    }
 }

@@ -31,44 +31,44 @@ use Psr\Log\LoggerInterface;
  *
  * @author Maxime Bardot <maxime.bardot@covivo.eu>
  */
-class SendEmailManager
+class EmailManager
 {
     private $mailer;
     private $templating;
     private $emailSenderDefault;
     private $emailReplyToDefault;
+    private $templatePath;
     private $logger;
 
-    public function __construct(\Swift_Mailer $mailer, \Twig_Environment $templating, LoggerInterface $logger, string $emailSender, string $emailReplyTo)
+    public function __construct(\Swift_Mailer $mailer, \Twig_Environment $templating, LoggerInterface $logger, string $emailSender, string $emailReplyTo, string $templatePath)
     {
         $this->mailer = $mailer;
         $this->templating = $templating;
         $this->emailSenderDefault = $emailSender;
         $this->emailReplyToDefault = $emailReplyTo;
+        $this->templatePath = $templatePath;
         $this->logger = $logger;
     }
-
-
 
     /**
      * Send an email
      * @param Email $mail the email to send
      * @param string $template the email's template
-     * @param array $varOpt optionnal informations that can be included in the template
+     * @param array $context optional array of parameters that can be included in the template
      * @return string
      */
-    public function sendEmail(Email $mail, $template, $varOpt=[])
+    public function send(Email $mail, $template, $context=[])
     {
         $failures = "";
 
-        // Traitement de l'expéditeur
+        // sender
         if (is_null($mail->getSenderEmail()) || trim($mail->getSenderEmail()) === "") {
             $senderEmail = $this->emailSenderDefault;
         } else {
             $senderEmail = $mail->getSenderEmail();
         }
 
-        // Traitement du reply
+        // reply
         if (is_null($mail->getReturnEmail()) || trim($mail->getReturnEmail()) === "") {
             $replyToEmail = $this->emailReplyToDefault;
         } else {
@@ -81,9 +81,9 @@ class SendEmailManager
             ->setReplyTo($replyToEmail)
             ->setBody(
                 $this->templating->render(
-                    'Emails/'.$template,
+                    $this->templatePath.$template,
                     array(
-                        'varOpt' => $varOpt,
+                        'context' => $context,
                         'message' => str_replace(array("\r\n", "\r", "\n"), "<br />", $mail->getMessage()),
                     )
                 ),
@@ -91,7 +91,6 @@ class SendEmailManager
             );
 
         $failures = $this->mailer->send($message, $failures);
-
 
         return $failures;
     }

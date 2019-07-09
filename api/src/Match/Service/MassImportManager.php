@@ -28,7 +28,7 @@ use App\Service\FileManager;
 use App\User\Repository\UserRepository;
 use App\Match\Repository\MassPersonRepository;
 use App\Communication\Entity\Email;
-use App\Communication\Service\SendEmailManager;
+use App\Communication\Service\EmailManager;
 use Psr\Log\LoggerInterface;
 use App\Match\Exception\MassException;
 use App\Match\Entity\MassData;
@@ -71,7 +71,8 @@ class MassImportManager
     private $geoRouter;
     private $geoMatcher;
     private $zoneManager;
-    private $sendEmailManager;
+    private $emailManager;
+    private $emailTemplatePath;
 
     /**
      * Constructor
@@ -95,8 +96,9 @@ class MassImportManager
         GeoRouter $geoRouter,
         GeoMatcher $geoMatcher,
         ZoneManager $zoneManager,
-        SendEmailManager $sendEmailManager,
-        array $params
+        EmailManager $emailManager,
+        array $params,
+        string $emailTemplatePath
     ) {
         $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
@@ -110,7 +112,8 @@ class MassImportManager
         $this->geoRouter = $geoRouter;
         $this->geoMatcher = $geoMatcher;
         $this->zoneManager = $zoneManager;
-        $this->sendEmailManager = $sendEmailManager;
+        $this->emailManager = $emailManager;
+        $this->emailTemplatePath = $emailTemplatePath;
     }
 
     /**
@@ -880,7 +883,7 @@ class MassImportManager
      *
      * @param Mass $mass
      * @param integer $status
-<     * @return void
+     * @return void
      */
     private function sendMail(Mass $mass, int $status)
     {
@@ -893,12 +896,12 @@ class MassImportManager
             case Mass::STATUS_ANALYZED:
                 $email->setObject("[MobiMatch] Analyze du fichier n°".$mass->getId()." terminée");
                 $email->setMessage("L'analyse du fichier n°".$mass->getId()." a été effectuée");
-                $retour = $this->sendEmailManager->sendEmail($email, "mailMass.html.twig");
+                $retour = $this->emailManager->send($email, $this->emailTemplatePath."mass.html.twig");
             break;
             case Mass::STATUS_MATCHED:
                 $email->setObject("[MobiMatch] Potentiel du fichier n°".$mass->getId()." terminée");
                 $email->setMessage("Le calcul du potentiel de covoiturage du fichier n°".$mass->getId()." a été effectué");
-                $retour = $this->sendEmailManager->sendEmail($email, "mailMass.html.twig");
+                $retour = $this->emailManager->send($email, $this->emailTemplatePath."mass.html.twig");
             break;
         }
     }

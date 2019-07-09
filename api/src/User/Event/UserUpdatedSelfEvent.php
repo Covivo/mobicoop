@@ -31,7 +31,7 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class UserUpdatedSelfEvent extends Event
 {
-    public const NAME = 'user.updated_self';
+    public const NAME = 'user_updated_self';
 
     protected $user;
 

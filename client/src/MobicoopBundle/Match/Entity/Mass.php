@@ -25,7 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Match\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -34,7 +34,7 @@ use Symfony\Component\HttpFoundation\File\File;
 /**
  * An Mass.
  */
-class Mass implements Resource
+class Mass implements ResourceInterface
 {
     const NB_WORKING_DAY = 228;
     const EARTH_CIRCUMFERENCE_IN_KILOMETERS = 40070;

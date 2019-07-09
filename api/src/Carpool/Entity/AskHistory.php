@@ -34,6 +34,7 @@ use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Communication\Entity\Message;
+use App\Communication\Entity\MessagerInterface;
 
 /**
  * Carpooling : a history item for an ask (all the items represent a thread for the ask).
@@ -49,7 +50,7 @@ use App\Communication\Entity\Message;
  *      itemOperations={"get","put","delete"}
  * )
  */
-class AskHistory
+class AskHistory implements MessagerInterface
 {
     const STATUS_INITIATED = 1;
     const STATUS_PENDING = 2;
@@ -108,6 +109,20 @@ class AskHistory
      * @MaxDepth(1)
      */
     private $message;
+
+    /**
+     * @var ArrayCollection|null The notifications sent for the ask history.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="askHistory", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $notifieds;
+
+    public function __construct()
+    {
+        $this->notifieds = new ArrayCollection();
+    }
     
     public function getId(): ?int
     {
@@ -171,6 +186,34 @@ class AskHistory
     {
         $this->createdDate = $createdDate;
 
+        return $this;
+    }
+
+    public function getNotifieds()
+    {
+        return $this->notifieds->getValues();
+    }
+    
+    public function addNotified(Notified $notified): self
+    {
+        if (!$this->notifieds->contains($notified)) {
+            $this->notifieds[] = $notified;
+            $notified->setAskHistory($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeNotified(Notified $notified): self
+    {
+        if ($this->notifieds->contains($notified)) {
+            $this->notifieds->removeElement($notified);
+            // set the owning side to null (unless already changed)
+            if ($notified->getAskHistory() === $this) {
+                $notified->setAskHistory(null);
+            }
+        }
+        
         return $this;
     }
     

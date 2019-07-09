@@ -33,7 +33,7 @@ use App\Communication\Entity\Notification;
  */
 class EmailNotificationSentEvent extends Event
 {
-    public const NAME = 'communication.email_notification_sent';
+    public const NAME = 'communication_email_notification_sent';
 
     protected $email;
     protected $notification;
