@@ -607,7 +607,7 @@ class Deserializer
         if (isset($data["@id"])) {
             $communityUser->setIri($data["@id"]);
         }
-        if (isset($data["community"])) {
+        if (isset($data["community"]) && is_array($data["community"])) {
             $communityUser->setCommunity(self::deserializeCommunity($data["community"]));
         }
         if (isset($data["user"])) {
