@@ -66,7 +66,6 @@ class CarpoolController extends AbstractController
         if (!is_null($_GET['id']) && $_GET['id'] !='') {
             $idCommunity = $_GET['id'];
         }
-//        else {
             //        ajout de la gestion des communautés
             $hydraCommunities = $communityManager->getCommunities();
             $communities =[];
@@ -78,7 +77,6 @@ class CarpoolController extends AbstractController
                     }
                 }
             }
-//        }
 
 
         if ($request->isMethod('POST')) {
