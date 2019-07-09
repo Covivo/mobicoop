@@ -11,7 +11,7 @@ services:
       - '8081:8081'
       - '8082:8082'
     working_dir: /var/www
-    command: npm start
+    command: npm start-docker
     # entrypoint: ["bash", "/var/www/docker/api_bdd_import.sh"]
     # entrypoint: bash /docker/api_entrypoint.sh
     depends_on:
@@ -30,3 +30,15 @@ services:
     ports: ['3306:3306']
     environment:
       MYSQL_ROOT_PASSWORD: mobicoop
+
+phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: mobicoop_phpmyadmin
+    depends_on:
+      - db
+    environment:
+        MYSQL_USERNAME: root
+        MYSQL_ROOT_PASSWORD: mobicoop
+    restart: always
+    ports:
+        - "8083:80"

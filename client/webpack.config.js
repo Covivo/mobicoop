@@ -64,7 +64,8 @@ for (let file of filesBundle) {
 
 let encoreConfig = Encore.getWebpackConfig();
 encoreConfig.watchOptions = {
- aggregateTimeout: 600
+  aggregateTimeout: 500,
+  poll: 1000
 }
 
 
