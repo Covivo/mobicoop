@@ -21,13 +21,14 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Repository;
+namespace App\Communication\Repository;
 
-use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use App\Communication\Entity\Message;
+use App\User\Entity\User;
 
-class UserRepository
+class MessageRepository
 {
     /**
      * @var EntityRepository
@@ -36,16 +37,21 @@ class UserRepository
     
     public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->repository = $entityManager->getRepository(User::class);
+        $this->repository = $entityManager->getRepository(Message::class);
     }
     
-    public function find(int $id): ?User
+    public function find(int $id): ?Message
     {
         return $this->repository->find($id);
     }
 
-    public function findOneBy(array $criteria): ?User
+    public function findThreads(User $user)
     {
-        return $this->repository->findOneBy($criteria);
+        $query = $this->repository->createQueryBuilder('m')
+        ->join('m.recipients', 'r')
+        ->where('m.message is null and (m.user = :user or r.user = :user)')
+        ->setParameter('user', $user)
+        ;
+        return $query->getQuery()->getResult();
     }
 }

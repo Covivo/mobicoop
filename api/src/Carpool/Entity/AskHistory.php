@@ -73,7 +73,7 @@ class AskHistory implements MessagerInterface
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads"})
      */
     private $status;
 
@@ -82,7 +82,7 @@ class AskHistory implements MessagerInterface
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads"})
      */
     private $type;
 
@@ -97,7 +97,7 @@ class AskHistory implements MessagerInterface
      * @var Ask|null The linked ask.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="askHistories")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads"})
      * @MaxDepth(1)
      */
     private $ask;

@@ -67,7 +67,7 @@ class Message
      * @var string The title of the message.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads"})
      */
     private $title;
 
@@ -75,7 +75,7 @@ class Message
      * @var string The text of the message.
      *
      * @ORM\Column(type="text")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads"})
      */
     private $text;
 
@@ -84,7 +84,7 @@ class Message
      *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="messages")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads"})
      */
     private $user;
 
@@ -92,7 +92,7 @@ class Message
      * @var AskHistory|null The ask history item if the message is related to an ask.
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\AskHistory", mappedBy="message")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads"})
      * @MaxDepth(1)
      */
     private $askHistory;
@@ -111,7 +111,7 @@ class Message
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Recipient", mappedBy="message", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"id" = "ASC"})
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads"})
      * @MaxDepth(1)
      */
     private $recipients;
@@ -120,7 +120,7 @@ class Message
      * @var \DateTimeInterface Creation date of the message.
      *
      * @ORM\Column(type="datetime")
-     * @Groups("read")
+     * @Groups({"read","threads"})
      */
     private $createdDate;
 

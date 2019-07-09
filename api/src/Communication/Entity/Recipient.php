@@ -65,7 +65,7 @@ class Recipient
      * @var int The status of the recipient.
      *
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads"})
      */
     private $status;
 
@@ -74,7 +74,7 @@ class Recipient
      *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="recipients")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads"})
      */
     private $user;
 
@@ -92,7 +92,7 @@ class Recipient
      * @var \DateTimeInterface Sent date of the message.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads"})
      */
     private $sentDate;
 
@@ -100,7 +100,7 @@ class Recipient
      * @var \DateTimeInterface Read date of the message.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads"})
      */
     private $readDate;
 

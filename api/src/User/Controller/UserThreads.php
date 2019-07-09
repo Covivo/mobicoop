@@ -21,31 +21,42 @@
  *    LICENSE
  **************************/
 
-namespace App\User\Repository;
+namespace App\User\Controller;
 
+use Symfony\Component\HttpFoundation\RequestStack;
+use App\Right\Service\PermissionManager;
+use Symfony\Component\HttpFoundation\Response;
+use App\Geography\Repository\TerritoryRepository;
+use App\Right\Repository\RightRepository;
+use App\User\Repository\UserRepository;
+use App\Right\Entity\Permission;
 use App\User\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use App\User\Service\UserManager;
 
-class UserRepository
+/**
+ * Controller class for user threads (list of messages as sender or recipient).
+ *
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ */
+class UserThreads
 {
-    /**
-     * @var EntityRepository
-     */
-    private $repository;
-    
-    public function __construct(EntityManagerInterface $entityManager)
+    private $userManager;
+
+    public function __construct(UserManager $userManager)
     {
-        $this->repository = $entityManager->getRepository(User::class);
-    }
-    
-    public function find(int $id): ?User
-    {
-        return $this->repository->find($id);
+        $this->userManager = $userManager;
     }
 
-    public function findOneBy(array $criteria): ?User
+    /**
+     * This method is invoked when the list of messages is asked.
+     *
+     * @param User $data
+     * @return Response
+     */
+    public function __invoke(User $data): ?User
     {
-        return $this->repository->findOneBy($criteria);
+        // we search the messages
+        $data->setThreads($this->userManager->getThreads($data));
+        return $data;
     }
 }
