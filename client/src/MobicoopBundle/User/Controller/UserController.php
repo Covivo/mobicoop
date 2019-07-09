@@ -152,19 +152,6 @@ class UserController extends AbstractController
     }
 
     /**
-     * User profile (get the current user).
-     */
-    public function userProfile(UserManager $userManager)
-    {
-        $user = $userManager->getLoggedUser();
-        $this->denyAccessUnlessGranted('profile', $user);
-
-        return $this->render('@Mobicoop/user/detail.html.twig', [
-            'user' => $user
-        ]);
-    }
-
-    /**
      * User profile update.
      */
     public function userProfileUpdate(UserManager $userManager, Request $request, AddressManager $addressManager)
@@ -307,6 +294,20 @@ class UserController extends AbstractController
         ]);
     }
 
+    /**
+     * User messages.
+     */
+    public function userMessages(UserManager $userManager)
+    {
+        $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('messages',$user);
+
+        return $this->render('@Mobicoop/user/messages.html.twig', [
+            'threads' => $userManager->getThreads($user)
+        ]);
+    }
+
+
     // ADMIN
 
     /**
@@ -315,12 +316,12 @@ class UserController extends AbstractController
      * @Route("/user/{id}", name="user", requirements={"id"="\d+"})
      *
      */
-    public function user($id, UserManager $userManager)
-    {
-        return $this->render('@Mobicoop/user/detail.html.twig', [
-            'user' => $userManager->getUser($id)
-        ]);
-    }
+    // public function user($id, UserManager $userManager)
+    // {
+    //     return $this->render('@Mobicoop/user/detail.html.twig', [
+    //         'user' => $userManager->getUser($id)
+    //     ]);
+    // }
 
     /**
      * Retrieve all users.
@@ -328,12 +329,12 @@ class UserController extends AbstractController
      * @Route("/users", name="users")
      *
      */
-    public function users(UserManager $userManager)
-    {
-        return $this->render('@Mobicoop/user/index.html.twig', [
-            'hydra' => $userManager->getUsers()
-        ]);
-    }
+    // public function users(UserManager $userManager)
+    // {
+    //     return $this->render('@Mobicoop/user/index.html.twig', [
+    //         'hydra' => $userManager->getUsers()
+    //     ]);
+    // }
 
     /**
      * Delete a user.
@@ -341,17 +342,17 @@ class UserController extends AbstractController
      * @Route("/user/{id}/delete", name="user_delete", requirements={"id"="\d+"})
      *
      */
-    public function userDelete($id, UserManager $userManager)
-    {
-        if ($userManager->deleteUser($id)) {
-            return $this->redirectToRoute('users');
-        } else {
-            return $this->render('@Mobicoop/user/index.html.twig', [
-                    'hydra' => $userManager->getUsers(),
-                    'error' => 'An error occured'
-            ]);
-        }
-    }
+    // public function userDelete($id, UserManager $userManager)
+    // {
+    //     if ($userManager->deleteUser($id)) {
+    //         return $this->redirectToRoute('users');
+    //     } else {
+    //         return $this->render('@Mobicoop/user/index.html.twig', [
+    //                 'hydra' => $userManager->getUsers(),
+    //                 'error' => 'An error occured'
+    //         ]);
+    //     }
+    // }
     
     /**
      * Retrieve all matchings for a proposal.
@@ -359,16 +360,16 @@ class UserController extends AbstractController
      * @Route("/user/{id}/proposal/{idProposal}/matchings", name="user_proposal_matchings", requirements={"id"="\d+","idProposal"="\d+"})
      *
      */
-    public function userProposalMatchings($id, $idProposal, ProposalManager $proposalManager)
-    {
-        $user = new User($id);
-        $proposal = $proposalManager->getProposal($idProposal);
-        return $this->render('@Mobicoop/proposal/matchings.html.twig', [
-            'user' => $user,
-            'proposal' => $proposal,
-            'hydra' => $proposalManager->getMatchings($proposal)
-        ]);
-    }
+    // public function userProposalMatchings($id, $idProposal, ProposalManager $proposalManager)
+    // {
+    //     $user = new User($id);
+    //     $proposal = $proposalManager->getProposal($idProposal);
+    //     return $this->render('@Mobicoop/proposal/matchings.html.twig', [
+    //         'user' => $user,
+    //         'proposal' => $proposal,
+    //         'hydra' => $proposalManager->getMatchings($proposal)
+    //     ]);
+    // }
 
     /**
      * Delete a proposal of a user.
@@ -376,19 +377,19 @@ class UserController extends AbstractController
      * @Route("/user/{id}/proposal/{idProposal}/delete", name="user_proposal_delete", requirements={"id"="\d+","idProposal"="\d+"})
      *
      */
-    public function userProposalDelete($id, $idProposal, ProposalManager $proposalManager)
-    {
-        if ($proposalManager->deleteProposal($idProposal)) {
-            return $this->redirectToRoute('user_proposals', ['id'=>$id]);
-        } else {
-            $user = new User($id);
-            return $this->render('@Mobicoop/proposal/index.html.twig', [
-                'user' => $user,
-                'hydra' => $proposalManager->getProposals($user),
-                'error' => 'An error occured'
-            ]);
-        }
-    }
+    // public function userProposalDelete($id, $idProposal, ProposalManager $proposalManager)
+    // {
+    //     if ($proposalManager->deleteProposal($idProposal)) {
+    //         return $this->redirectToRoute('user_proposals', ['id'=>$id]);
+    //     } else {
+    //         $user = new User($id);
+    //         return $this->render('@Mobicoop/proposal/index.html.twig', [
+    //             'user' => $user,
+    //             'hydra' => $proposalManager->getProposals($user),
+    //             'error' => 'An error occured'
+    //         ]);
+    //     }
+    // }
 
 
 
@@ -397,33 +398,33 @@ class UserController extends AbstractController
     /**
      * Create a proposal for a user.
      */
-    public function userProposalCreate($id=null, ProposalManager $proposalManager, Request $request)
-    {
-        $proposal = new Proposal();
-        if ($id) {
-            $proposal->setUser(new User($id));
-        } else {
-            $proposal->setUser(new User());
-        }
+    // public function userProposalCreate($id=null, ProposalManager $proposalManager, Request $request)
+    // {
+    //     $proposal = new Proposal();
+    //     if ($id) {
+    //         $proposal->setUser(new User($id));
+    //     } else {
+    //         $proposal->setUser(new User());
+    //     }
 
-        $form = $this->createForm(ProposalForm::class, $proposal);
-        $form->handleRequest($request);
-        $error = false;
+    //     $form = $this->createForm(ProposalForm::class, $proposal);
+    //     $form->handleRequest($request);
+    //     $error = false;
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // for now we add the starting end ending points,
-            // in the future we will need to have dynamic fields
-            $proposal->addPoint($proposal->getStart());
-            $proposal->addPoint($proposal->getDestination());
-            if ($proposal = $proposalManager->createProposal($proposal)) {
-                return $this->redirectToRoute('user_proposal_matchings', ['id'=>$id,'idProposal'=>$proposal->getId()]);
-            }
-            $error = true;
-        }
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         // for now we add the starting end ending points,
+    //         // in the future we will need to have dynamic fields
+    //         $proposal->addPoint($proposal->getStart());
+    //         $proposal->addPoint($proposal->getDestination());
+    //         if ($proposal = $proposalManager->createProposal($proposal)) {
+    //             return $this->redirectToRoute('user_proposal_matchings', ['id'=>$id,'idProposal'=>$proposal->getId()]);
+    //         }
+    //         $error = true;
+    //     }
 
-        return $this->render('@Mobicoop/proposal/create.html.twig', [
-            'form' => $form->createView(),
-            'error' => $error
-        ]);
-    }
+    //     return $this->render('@Mobicoop/proposal/create.html.twig', [
+    //         'form' => $form->createView(),
+    //         'error' => $error
+    //     ]);
+    // }
 }

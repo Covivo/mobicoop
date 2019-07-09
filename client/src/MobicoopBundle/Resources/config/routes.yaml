@@ -30,19 +30,12 @@ user_proposals:
         en: /user/ads
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProposals
 
-# profile
-user_profile:
-    path:
-        fr: /utilisateur/profil
-        en: /user/profile
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfile
-
 # messages
 user_messages:
     path:
         fr: /utilisateur/messages
         en: /user/messages
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfile
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessages
 
 # profile update
 user_profile_update:
@@ -145,7 +138,7 @@ community_show:
         id: '\d+'  
 
 ##########################
-# Editorial pages routes #
+# editorial pages routes #
 ##########################
 
 # display project page

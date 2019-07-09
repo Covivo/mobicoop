@@ -1,0 +1,27 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}{% trans from 'ui' %}user.messages.title{% endtrans %}{% endblock %}
+
+{% block body %}
+
+<section class="hero is-primary">
+	<div class="hero-body">
+    	<div class="container">
+      		<h1 class="title">
+				{% trans from 'ui' %}user.messages.h1{% endtrans %}
+      		</h1>
+    	</div>
+  	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+	    {% if threads %}
+    		{{ dump(threads) }}
+    	{% else %}
+      		<span class="tag is-danger">User not found.</span>
+      	{% endif %}
+    </div>
+</section>
+
+{% endblock %}

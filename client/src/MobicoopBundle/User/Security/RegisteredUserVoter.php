@@ -35,6 +35,7 @@ class RegisteredUserVoter extends Voter
     const PASSWORD = 'password';
     const DELETE = 'delete';
     const PROPOSALS_SELF = 'proposals_self';
+    const MESSAGES = 'messages';
 
     private $permissionManager;
 
@@ -51,7 +52,8 @@ class RegisteredUserVoter extends Voter
             self::UPDATE,
             self::PASSWORD,
             self::DELETE,
-            self::PROPOSALS_SELF
+            self::PROPOSALS_SELF,
+            self::MESSAGES
             ])) {
             return false;
         }
@@ -83,6 +85,8 @@ class RegisteredUserVoter extends Voter
             case self::DELETE:
                 return $this->canDeleteSelf($user);
             case self::PROPOSALS_SELF:
+                return true;
+            case self::MESSAGES:
                 return true;
             
         }
