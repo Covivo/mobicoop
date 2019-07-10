@@ -11,7 +11,7 @@ services:
       - '8081:8081'
       - '8082:8082'
     working_dir: /var/www
-    command: npm start-docker
+    command: npm start
     # entrypoint: ["bash", "/var/www/docker/api_bdd_import.sh"]
     # entrypoint: bash /docker/api_entrypoint.sh
     depends_on:
@@ -21,7 +21,7 @@ services:
       - COMPOSER_PROCESS_TIMEOUT=1200
     volumes:
       - ./:/var/www/:cached
-      - ./build/cache:/root/.cache/:nocopy
+      - ./build/cache:/root/.cache/:cached
 
   db:
     image: mariadb:10.4
@@ -31,7 +31,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: mobicoop
 
-phpmyadmin:
+  phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: mobicoop_phpmyadmin
     depends_on:
