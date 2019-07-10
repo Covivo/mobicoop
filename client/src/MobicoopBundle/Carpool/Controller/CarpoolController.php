@@ -63,7 +63,7 @@ class CarpoolController extends AbstractController
         $success = false;
         $idCommunity ='';
 
-        if (!is_null($_GET['id']) && $_GET['id'] !='') {
+        if (count($_GET) > 0 && array_key_exists('id', $_GET ) && !is_null($_GET['id']) && $_GET['id'] !='') {
             $idCommunity = $_GET['id'];
         }
             //        ajout de la gestion des communautés
@@ -93,7 +93,7 @@ class CarpoolController extends AbstractController
             return $this->render('@Mobicoop/ad/create.html.twig', [
                 'form' => $form->createView(),
                 'error' => $error,
-                'communities' => '',
+                'communities' => $communities,
                 'idCommunity' => $idCommunity
             ]);
         }
