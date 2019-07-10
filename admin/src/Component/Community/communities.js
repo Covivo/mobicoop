@@ -79,7 +79,7 @@ export const CommunityShow = (props) => (
                         <ReferenceField source="user" label="Nom" reference="users" linkType="">
                             <TextField source="familyName" />
                         </ReferenceField>
-                        <SelectField source="status" label="Status" choices={statusChoices} />
+                        <SelectField source="status" label="Statut" choices={statusChoices} />
                         <EditButton />
                         <DeleteButton />
                     </Datagrid>
