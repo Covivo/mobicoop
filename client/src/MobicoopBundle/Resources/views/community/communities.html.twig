@@ -62,7 +62,7 @@ L’ensemble des fonctionnalités d’une communauté est accessible gratuitemen
         <div class="columns">
             {% if hydra and hydra.member|length>0 %}
                 {% for community in hydra.member %}
-                {% if not community.isMembersHidden and not community.isProposalsHidden %}
+{#                {% if not community.getCommunitySecurities %}#}
                 <div class="card column">
                     <div class="card-image">
                         <figure class="image is-3by1">
@@ -85,15 +85,15 @@ L’ensemble des fonctionnalités d’une communauté est accessible gratuitemen
                             proposal hidden {{ community.isProposalsHidden }}
                             <br>
                             <a class="button" href="{{path('community_show', { 'id': community.id })}}">Voir plus</a>
-{#                            {% if community.isMembersHidden or community.isProposalsHidden %}#}
-{#                            <a class="button" href="{{path('community_show', { 'id': community.id })}}">Rejoindre la communauté</a>#}
-{#                            {% else %}#}
+                            {% if community.isMembersHidden or community.isProposalsHidden %}
+                            <a class="button" href="{{path('community_show', { 'id': community.id })}}">Rejoindre la communauté</a>
+                            {% else %}
                             <a class="button" href="{{path('carpool_ad', { 'id': community.id })}}">Déposer un trajet dans la communauté</a>
-{#                            {% endif %}#}
+                            {% endif %}
                         </div>
                     </div>
                 </div>
-                {% endif %}
+{#                {% endif %}#}
                 {% endfor %}
             {% endif %}
         </div>

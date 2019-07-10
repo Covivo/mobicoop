@@ -51,6 +51,7 @@
                   Passager ou Conducteur
                 </b-radio-button>
                 <b-select
+                  v-if="idCommunity ===''"
                   v-model="form.community"
                   name="selectCommunity"
                   :native-value="4"
@@ -58,12 +59,21 @@
                 >
                   <option
                     v-for="(community,index) in communities"
-                    :key="idCommunity !==0 ? idCommunity : index"
-                    :value="idCommunity !==0 ? idCommunity : index"
+                    :key="index"
+                    :value="index"
                   >
                     {{ community }}
                   </option>
                 </b-select>
+                <b-radio-button
+                  v-else-if="(idCommunity !=='') ? form.community = idCommunity : ''"
+                  v-model="form.idCommunity"
+                  name="role"
+                  :native-value="5"
+                  type="is-primary"
+                >
+                  {{ communities[idCommunity] }}
+                </b-radio-button>
               </b-field>
             </tab-content>
             <!-- TYPE TRAJET -->

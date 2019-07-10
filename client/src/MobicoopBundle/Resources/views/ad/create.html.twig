@@ -9,7 +9,7 @@
 {% block body %}
 
   <Adcreateform geo-search-url="/geosearch?search=" :sent-frequency="{{ form.frequency.vars.value }}" :sent-type="{{ form.type.vars.value }}" :sent-role="{{ form.role.vars.value }}" sent-token="{{ csrf_token('ad-create') }}" sent-hydra="{{ communities|json_encode() }}"
-  {% if idCommunity %}     sent-community="{{ idCommunity }} {% endif %}"
+  {% if idCommunity %}     sent-community="{{ idCommunity }}" {% endif %}
   >
   </Adcreateform>
 
