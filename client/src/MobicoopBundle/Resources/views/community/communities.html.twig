@@ -62,7 +62,7 @@ L’ensemble des fonctionnalités d’une communauté est accessible gratuitemen
         <div class="columns">
             {% if hydra and hydra.member|length>0 %}
                 {% for community in hydra.member %}
-{#                {% if not community.getCommunitySecurities %}#}
+                {% if not community.secured %}
                 <div class="card column">
                     <div class="card-image">
                         <figure class="image is-3by1">
@@ -93,7 +93,7 @@ L’ensemble des fonctionnalités d’une communauté est accessible gratuitemen
                         </div>
                     </div>
                 </div>
-{#                {% endif %}#}
+                {% endif %}
                 {% endfor %}
             {% endif %}
         </div>
