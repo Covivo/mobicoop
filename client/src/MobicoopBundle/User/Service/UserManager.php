@@ -253,8 +253,8 @@ class UserManager
      */
     public function getThreads(User $user)
     {
-        $this->dataProvider->setFormat($this->dataProvider::RETURN_ARRAY);
-        $response = $this->dataProvider->getSubCollection($user->getId(),'thread','threads');
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSubCollection($user->getId(), 'thread', 'threads');
         if ($response->getCode() == 200) {
             return $response->getValue();
         }

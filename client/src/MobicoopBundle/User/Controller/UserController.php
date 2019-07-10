@@ -300,7 +300,7 @@ class UserController extends AbstractController
     public function userMessages(UserManager $userManager)
     {
         $user = $userManager->getLoggedUser();
-        $this->denyAccessUnlessGranted('messages',$user);
+        $this->denyAccessUnlessGranted('messages', $user);
 
         return $this->render('@Mobicoop/user/messages.html.twig', [
             'threads' => $userManager->getThreads($user)
