@@ -646,6 +646,9 @@ class Deserializer
                 }
             }
         }
+        if (isset($data["communitySecurities"]) && is_array($data["communitySecurities"]) && count($data["communitySecurities"]) > 0) {
+            $community->setSecured(true);
+        }
         return $community;
     }
 

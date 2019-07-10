@@ -63,20 +63,20 @@ class CarpoolController extends AbstractController
         $success = false;
         $idCommunity ='';
 
-        if (count($_GET) > 0 && array_key_exists('id', $_GET ) && !is_null($_GET['id']) && $_GET['id'] !='') {
+        if (count($_GET) > 0 && array_key_exists('id', $_GET) && !is_null($_GET['id']) && $_GET['id'] !='') {
             $idCommunity = $_GET['id'];
         }
-            //        ajout de la gestion des communautés
-            $hydraCommunities = $communityManager->getCommunities();
-            $communities =[];
+        //        ajout de la gestion des communautés
+        $hydraCommunities = $communityManager->getCommunities();
+        $communities =[];
 
-            if ($hydraCommunities && count($hydraCommunities->getMember())>0) {
-                foreach ($hydraCommunities->getMember() as $value) {
-                    foreach (array($value) as $community) {
-                        $communities[$community->getId()] = $community->getName();
-                    }
+        if ($hydraCommunities && count($hydraCommunities->getMember())>0) {
+            foreach ($hydraCommunities->getMember() as $value) {
+                foreach (array($value) as $community) {
+                    $communities[$community->getId()] = $community->getName();
                 }
             }
+        }
 
 
         if ($request->isMethod('POST')) {

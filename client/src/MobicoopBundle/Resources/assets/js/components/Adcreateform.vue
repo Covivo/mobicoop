@@ -51,11 +51,12 @@
                   Passager ou Conducteur
                 </b-radio-button>
                 <b-select
-                  v-if="idCommunity ===''"
+                  v-if="!idCommunity"
                   v-model="form.community"
                   name="selectCommunity"
                   :native-value="4"
                   type="is-primary"
+                  disabled
                 >
                   <option
                     v-for="(community,index) in communities"
@@ -66,7 +67,7 @@
                   </option>
                 </b-select>
                 <b-radio-button
-                  v-else-if="(idCommunity !=='') ? form.community = idCommunity : ''"
+                  v-else
                   v-model="form.idCommunity"
                   name="role"
                   :native-value="5"
@@ -569,7 +570,7 @@ export default {
         outwardSatMargin: null,
         outwardSunTime: null,
         outwardSunMargin: null,
-        community: null
+        community: this.sentCommunity || null
       }
     };
   },
