@@ -30,7 +30,7 @@ export const ParagraphCreate = (props) => {
             <ReferenceInput source="section" label="Section" reference="sections" validate={required()}>
                 <SelectInput optionText="title"/>
             </ReferenceInput>
-            <SelectInput source="status" label="Status" choices={statusChoices} defaultValue={0} validate={required()}/>
+            <SelectInput source="status" label="Statut" choices={statusChoices} defaultValue={0} validate={required()}/>
             <RichTextInput source="text" label="Texte" validate={required()} />
             <NumberInput source="position" label="Position" />
         </SimpleForm>
@@ -51,7 +51,7 @@ export const ParagraphEdit = (props) => {
             <ReferenceField source="section" label="Section" reference="sections" linkType="" >
                 <TextField source="title"/>
             </ReferenceField>
-            <SelectInput source="status" label="Status" choices={statusChoices} />
+            <SelectInput source="status" label="Statut" choices={statusChoices} />
             <RichTextInput source="text" label="Texte" validate={required()} />
             <NumberInput source="position" label="Position" />
         </SimpleForm>

@@ -41,7 +41,7 @@ export const CommunityUserCreate = (props) => {
             <ReferenceInput label="Communauté" source="community" reference="communities" validate={required()}>
                 <SelectInput optionText="name"/>
             </ReferenceInput>
-            <SelectInput label="Status" source="status" choices={choices} defaultValue={1} validate={required()}/>
+            <SelectInput label="Statut" source="status" choices={choices} defaultValue={1} validate={required()}/>
         </SimpleForm>
     </Create>
     );
@@ -66,7 +66,7 @@ export const CommunityUserEdit = (props) => {
             <ReferenceField label="Communauté" source="community" reference="communities" linkType="" >
                 <TextField source="name"/>
             </ReferenceField>
-            <SelectInput label="Status" source="status" choices={choices} />
+            <SelectInput label="Statut" source="status" choices={choices} />
         </SimpleForm>
     </Edit>
     );
