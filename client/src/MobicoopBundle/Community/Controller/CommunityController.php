@@ -22,11 +22,13 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Community\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\Community\Form\CommunityUserForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Community\Form\CommunityForm;
 
 /**
@@ -77,12 +79,29 @@ class CommunityController extends AbstractController
     /**
      * Show a community
      */
-    public function show($id, CommunityManager $communityManager)
+    public function show($id, CommunityManager $communityManager, Request $request)
     {
+        $communityUser = new CommunityUser();
         $community = $communityManager->getCommunity($id);
         $this->denyAccessUnlessGranted('show', $community);
+
+        $form = $this->createForm(CommunityUserForm::class, $communityUser);
+        $error = false;
+
+        $form->handleRequest($request);
+        $error = false;
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($communityUser = $communityManager->joinCommunity($communityUser)) {
+                return $this->redirectToRoute('community_show', ['id' => $id]);
+            }
+            $error = true;
+        }
+
         return $this->render('@Mobicoop/community/showCommunity.html.twig', [
             'community' => $community,
+            'formIdentification' => $form->createView(),
+            'communityUser' =>$communityUser
         ]);
     }
 }

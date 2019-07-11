@@ -40,6 +40,11 @@
         {{community.fullDescription}}
     </div>
   </div>
+        {{ dump(communityUser) }}
+        {% if community.secured %}
+            {{ form(formIdentification) }}
+{#        <p> formulaire tout ça tout ça </p>#}
+        {% endif %}
 </div>
     </section>
     <section class="hero communautes has-text-centered">
