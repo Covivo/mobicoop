@@ -15,8 +15,8 @@
     "test-functional-ci": "percy exec -- cypress run --browser chrome",
     "test-fix-and-coverage": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src &&  php vendor/bin/php-cs-fixer.phar fix --using-cache=false src/MobicoopBundle/spec && node src/MobicoopBundle/spec/runtests.js -c",
     "compile": "encore production",
-    "compile-and-watch": "encore dev-server --host 0.0.0.0 --port 8079 --disable-host-check",
-    "compile-and-watch-vue": "encore dev-server  --host 0.0.0.0 --port 8079 --disable-host-check --hot",
+    "compile-and-watch": "encore dev-server --public --host 0.0.0.0 --port 8079 --disable-host-check",
+    "compile-and-watch-vue": "encore dev-server  --public --host 0.0.0.0 --port 8079 --disable-host-check --hot",
     "cypress": "cypress open",
     "cy": "cypress run --browser chrome"
   },
