@@ -79,6 +79,9 @@ remove:
 	docker-compose -f docker-compose-$(os).yml down -v 
  
 clean:
+	@make -s stop
+	@make -s remove
+	docker system prune --volumes --force
 	#  Using docker-sync for darwin macos only
 	$(info $(pink)------------------------------------------------------)
 	$(info $(pink)Drop all deps + containers + volumes)
@@ -86,10 +89,6 @@ clean:
 	@if [ $(os) = "darwin" ]; then\
 		docker-sync clean; \
     fi
-
-	@make -s stop
-	@make -s remove
-	docker system prune --volumes --force
 	rm -rf node_modules api/vendor client/vendor client/node_modules admin/node_modules
 
 logs: 
