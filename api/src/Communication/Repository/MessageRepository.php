@@ -62,5 +62,4 @@ class MessageRepository
     //     ;
     //     return $query->getQuery()->getResult();
     // }
-
 }

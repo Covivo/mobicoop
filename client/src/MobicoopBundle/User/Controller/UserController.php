@@ -301,20 +301,18 @@ class UserController extends AbstractController
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
-dump($user);
+        dump($user);
 
         $threadsForView = [];
 
         // Building threads array
         $threads = $userManager->getThreads($user);
-        foreach($threads["threads"] as $thread){
-
+        foreach ($threads["threads"] as $thread) {
             $arrayThread["contactFirstName"] = $thread["recipients"][0]["user"]["givenName"];
             $arrayThread["contactLastName"] = $thread["recipients"][0]["user"]["familyName"];
             $arrayThread["text"] = $thread["text"];
 
             $threadsForView[] = $arrayThread;
-
         }
 
         return $this->render('@Mobicoop/user/messages.html.twig', [
