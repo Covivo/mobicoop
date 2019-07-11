@@ -339,4 +339,5 @@ class Community implements ResourceInterface
 
         return $this;
     }
+
 }
