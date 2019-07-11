@@ -1,6 +1,9 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
 {% block title %}{% trans from 'ui' %}user.messages.title{% endtrans %}{% endblock %}
+{% block stylesheets %}
+    {{ encore_entry_link_tags('bundle_user/messages') }}
+{% endblock %}
 
 {% block body %}
 
@@ -24,4 +27,7 @@
     </div>
 </section>
 
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('bundle_user/messages') }}
 {% endblock %}
