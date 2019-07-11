@@ -1,4 +1,21 @@
 @import '../../app.scss';
 body {
-
+  .section {
+    padding: 0;
+    .container {
+      max-width: 100%;
+    }
+  }
+  #messages {
+    height: 1000px;
+    #threadColumn {
+      background-color: #F00;
+    }
+    #messagesColumn {
+      background-color: #0F0;
+    }
+    #contextColumn {
+      background-color: #00F;
+    }
+  }
 }
