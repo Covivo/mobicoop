@@ -35,6 +35,7 @@ use App\Communication\Entity\Notification;
 use App\User\Entity\User;
 use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\AskHistory;
+use App\Carpool\Entity\Proposal;
 
 /**
  * A notification to send for a user.
