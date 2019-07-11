@@ -56,7 +56,6 @@
                   name="selectCommunity"
                   :native-value="4"
                   type="is-primary"
-                  disabled
                 >
                   <option
                     v-for="(community,index) in communities"
