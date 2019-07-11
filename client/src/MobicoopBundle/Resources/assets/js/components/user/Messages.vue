@@ -15,6 +15,8 @@
 
 
         <v-card
+          v-for="(thread, index) in threads"
+          :key="index"
           class="mx-auto"
           color="#26c6da"
           max-width="400"
@@ -22,16 +24,16 @@
         >
           <v-card-title>
             <i class="material-icons">
-              directions_car
+              account_circle
             </i>
-            <span class="title font-weight-light white--text">Jean-José C.</span>
+            <span class="title font-weight-light white--text">{{ thread.contactFirstName }} {{ thread.contactLastName }}</span>
           </v-card-title>
-
-          <v-card-text class="headline font-weight-bold">
-            Lyon <i class="fas fa-arrow-circle-right" /> Marseille
-          </v-card-text>
         </v-card>
       </v-flex>
+
+
+
+
       <v-flex
         id="messagesColumn"
         xs6
@@ -40,21 +42,22 @@
           <v-timeline-item
             v-for="(item, i) in items"
             :key="i"
-            :color="item.color"
-            :icon="item.icon"
-            fill-dot
+            fil-dot
+            :left="item.origin==='own'"
+            :right="item.origin!=='own'"
           >
-            <v-card
-              :color="item.color"
-            >
-              <v-card-title
-                class="title white--text"
-              >
-                Jean-José C.
-              </v-card-title>
-              <v-card-text class="white text--primary">
-                <p>{{ item.text }}</p>
-              </v-card-text>
+            <template v-slot:icon>
+              <v-avatar>
+                <i class="material-icons">
+                  {{ item.icon }}
+                </i>
+              </v-avatar>
+            </template>
+            <template v-slot:opposite>
+              <span>Tus eu perfecto</span>
+            </template>
+            <v-card class="elevation-2">
+              <v-card-text>{{ item.text }}</v-card-text>
             </v-card>
           </v-timeline-item>
         </v-timeline>        
@@ -71,33 +74,34 @@
 <script>
 export default {
   props: {
-    threads: {
-      type: Object,
-      default: function(){return {}}
+    threadsforview: {
+      type: Array,
+      default: function(){return []}
     }
   },
-  data: () => ({
-    items: [
-      {
-        color: 'red lighten-2',
-        icon: 'directions_car',
-        text:'Lorem ipsum dolor sit amet, no nam oblique veritus. Commune scaevola imperdiet nec ut, sed euismod convenire principes at. Est et nobis iisque percipit, an vim zril disputando voluptatibus, vix an salutandi sententiae.'
-      },
-      {
-        color: 'purple',
-        icon: 'directions_car',
-        text:'Lorem ipsum dolor sit amet, no nam oblique veritus. Commune scaevola imperdiet nec ut, sed euismod convenire principes at. Est et nobis iisque percipit, an vim zril disputando voluptatibus, vix an salutandi sententiae.'
-      },
-      {
-        color: 'red lighten-2',
-        icon: 'directions_car',
-        text:'Lorem ipsum dolor sit amet, no nam oblique veritus. Commune scaevola imperdiet nec ut, sed euismod convenire principes at. Est et nobis iisque percipit, an vim zril disputando voluptatibus, vix an salutandi sententiae.'
-      },
-    ]
-  }),
+  data() {
+    return {
+      items: [
+        {
+          icon: 'account_circle',
+          text:'Lorem ipsum dolor sit amet, no nam oblique veritus. Commune scaevola imperdiet nec ut, sed euismod convenire principes at. Est et nobis iisque percipit, an vim zril disputando voluptatibus, vix an salutandi sententiae.',
+          origin:'own'
+        },
+        {
+          icon: 'account_circle',
+          text:'Lorem ipsum dolor sit amet, no nam oblique veritus. Commune scaevola imperdiet nec ut, sed euismod convenire principes at. Est et nobis iisque percipit, an vim zril disputando voluptatibus, vix an salutandi sententiae.',
+          origin:'own'
+        },
+        {
+          icon: 'account_circle',
+          text:'Lorem ipsum dolor sit amet, no nam oblique veritus. Commune scaevola imperdiet nec ut, sed euismod convenire principes at. Est et nobis iisque percipit, an vim zril disputando voluptatibus, vix an salutandi sententiae.',
+          origin:'contact'
+        },
+      ],
+      threads: this.threadsforview
+    }
+  },
   mounted () {
-    console.error("Toto");
-    console.error(this.threads);
   }
 }
 </script>

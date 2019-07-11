@@ -83,7 +83,7 @@ class Recipient
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="recipients")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads"})
      * @MaxDepth(1)
      */
     private $message;
