@@ -57,6 +57,9 @@
               <span>Tus eu perfecto</span>
             </template>
             <v-card class="elevation-2">
+              <v-card-title class="headline">
+                Lorem ipsum
+              </v-card-title>
               <v-card-text>{{ item.text }}</v-card-text>
             </v-card>
           </v-timeline-item>

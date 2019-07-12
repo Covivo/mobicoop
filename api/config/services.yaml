@@ -79,6 +79,10 @@ services:
             - { name: monolog.logger, channel: carpool }
     
     # Communication
+    App\Communication\Controller\:
+        resource: '../src/Communication/Controller'
+        tags: ['controller.service_arguments']
+
     App\Communication\Service\NotificationManager:
         arguments:
             $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'

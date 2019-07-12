@@ -33,6 +33,7 @@ use App\User\Entity\User;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Event\InternalMessageReceivedEvent;
 use App\Communication\Entity\MessagerInterface;
+use App\Communication\Repository\MessageRepository;
 
 /**
  * Internal message manager
@@ -43,15 +44,17 @@ class InternalMessageManager
 {
     private $entityManager;
     private $mediumRepository;
+    private $messageRepository;
     private $eventDispatcher;
     private $logger;
 
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, MediumRepository $mediumRepository, LoggerInterface $logger)
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, MediumRepository $mediumRepository, LoggerInterface $logger, MessageRepository $messageRepository)
     {
         $this->entityManager = $entityManager;
         $this->mediumRepository = $mediumRepository;
         $this->logger = $logger;
         $this->eventDispatcher = $eventDispatcher;
+        $this->messageRepository = $messageRepository;
     }
 
     /**
@@ -115,4 +118,37 @@ class InternalMessageManager
             $this->eventDispatcher->dispatch(InternalMessageReceivedEvent::NAME, $event);
         }
     }
+
+    /**
+     * Sends an internal message to recipients, related to an object (the message itself already exists and is linked to the object)
+     *
+     * @param Message $message             The first message
+     * @return Message|array|null
+     */
+    public function getNextMessage(Message $message)
+    {
+        if ($nextMessage = $this->messageRepository->findNextMessage($message)) {
+            return $nextMessage;
+        }
+        return [];
+    }
+
+
+    /**
+     * Sends an internal message to recipients, related to an object (the message itself already exists and is linked to the object)
+     *
+     * @param Message $message             The first message
+     * @return array
+     */
+    public function getThreadMessages(Message $message): ?array
+    {
+        $return = [0=>$message];
+        $nextMessage = $this->getNextMessage($message);
+        while(count($nextMessage)>0){
+            $return[] = $nextMessage[0];
+            $nextMessage = $this->getNextMessage($nextMessage[0]);
+        }
+        return $return;
+    }
+
 }

@@ -301,7 +301,6 @@ class UserController extends AbstractController
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
-        dump($user);
 
         $threadsForView = [];
 
