@@ -38,6 +38,8 @@
         id="messagesColumn"
         xs6
       >
+        <!-- Messages -->
+
         <v-timeline align-top>
           <v-timeline-item
             v-for="(item, i) in items"
@@ -63,7 +65,43 @@
               <v-card-text>{{ item.text }}</v-card-text>
             </v-card>
           </v-timeline-item>
-        </v-timeline>        
+        </v-timeline>   
+
+        <v-container
+          fluid
+          grid-list-md
+        >
+          <v-layout
+            row
+            wrap
+          >
+            <v-flex xs10>
+              <v-textarea
+                name="typedMessage"
+                box
+                label="Saisissez un message"
+                auto-grow
+                rows="2"
+                background-color="#FFFFFF"
+                value="The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through."
+              />
+            </v-flex>
+            <v-flex
+              xs2
+              align-self-center
+            >
+              <div class="text-xs-center">
+                <v-btn
+                  round
+                  color="primary"
+                  dark
+                >
+                  Envoyer
+                </v-btn>
+              </div>            
+            </v-flex>
+          </v-layout>
+        </v-container>
       </v-flex>
       <v-flex
         id="contextColumn"
@@ -105,6 +143,9 @@ export default {
     }
   },
   mounted () {
+  },
+  methods: {
+
   }
 }
 </script>
