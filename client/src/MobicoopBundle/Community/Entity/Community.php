@@ -128,6 +128,13 @@ class Community implements ResourceInterface
      */
     private $secured;
 
+    /**
+     * @var bool|null The community is private.
+     *
+     * @Groups({"post","put"})
+     */
+    private $private;
+
 
     public function __construct($id=null)
     {
@@ -336,6 +343,24 @@ class Community implements ResourceInterface
     public function setSecured(bool $secured): self
     {
         $this->secured = $secured;
+
+        return $this;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function isPrivate(): ?bool
+    {
+        return $this->private;
+    }
+
+    /**
+     * @param bool|null $private
+     */
+    public function setPrivate(?bool $private): self
+    {
+        $this->private = $private;
 
         return $this;
     }

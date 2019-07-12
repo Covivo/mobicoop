@@ -40,12 +40,19 @@
         {{community.fullDescription}}
     </div>
   </div>
-        {{ dump(communityUser) }}
         {% if community.secured %}
-            {{ form(formIdentification) }}
-{#        <p> formulaire tout ça tout ça </p>#}
+        <div style="padding:10px">
+                {{ form_start(formIdentification) }}
+                {{ form_label(formIdentification.login, 'Identifiant') }}
+                {{ form_widget(formIdentification.login, {'attr': {'placeholder' : "Votre identifiant"}}) }}
+                {{  form_label(formIdentification.password, 'Date de Naissance') }}
+                {{ form_widget(formIdentification.password, {'attr': {'placeholder' : "Date de Naissance"}}) }}
+                {{ form_rest(formIdentification) }}
+            {{ form_row(formIdentification.submit) }}
+        </div>
         {% endif %}
-</div>
+
+    </div>
     </section>
     <section class="hero communautes has-text-centered">
     <a class="lien" href="{{ path('community_list') }}">Liste des communautés</a>

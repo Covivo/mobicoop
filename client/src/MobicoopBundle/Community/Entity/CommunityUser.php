@@ -97,14 +97,14 @@ class CommunityUser implements ResourceInterface
     /**
      * @var string The login to join the community if the community is secured.
      *
-     * @Groups("put")
+     * @Groups({"put", "post"})
      */
     private $login;
 
     /**
      * @var string The password to join the community if the community is secured.
      *
-     * @Groups("put")
+     * @Groups({"put", "post"})
      */
     private $password;
 

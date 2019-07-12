@@ -79,17 +79,19 @@ class CommunityController extends AbstractController
     /**
      * Show a community
      */
-    public function show($id, CommunityManager $communityManager, Request $request)
+    public function show($id, CommunityManager $communityManager, Request $request, UserManager $userManager)
     {
         $communityUser = new CommunityUser();
         $community = $communityManager->getCommunity($id);
         $this->denyAccessUnlessGranted('show', $community);
-
+        $user = $userManager->getLoggedUser();
         $form = $this->createForm(CommunityUserForm::class, $communityUser);
         $error = false;
-
+        $communityUser->setCommunity($community);
+        $communityUser->setUser($user);
+        $communityUser->setCreatedDate(new \DateTime());
+        $communityUser->setStatus(0);
         $form->handleRequest($request);
-        $error = false;
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($communityUser = $communityManager->joinCommunity($communityUser)) {
@@ -97,11 +99,12 @@ class CommunityController extends AbstractController
             }
             $error = true;
         }
-
         return $this->render('@Mobicoop/community/showCommunity.html.twig', [
             'community' => $community,
             'formIdentification' => $form->createView(),
-            'communityUser' =>$communityUser
+            'communityUser' => $communityUser,
+            'user' => $user,
+            'error' => $error
         ]);
     }
 }

@@ -72,7 +72,7 @@ class CarpoolController extends AbstractController
         if ($hydraCommunities && count($hydraCommunities->getMember())>0) {
             foreach ($hydraCommunities->getMember() as $value) {
                 foreach (array($value) as $community) {
-                    if ($community->isSecured(true)){
+                    if ($community->isSecured(true)) {
                         continue;
                     }
                     $communities[$community->getId()] = $community->getName();
