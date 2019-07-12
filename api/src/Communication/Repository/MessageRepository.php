@@ -57,7 +57,6 @@ class MessageRepository
 
     public function findNextMessage(Message $message)
     {
-        
         $query = $this->repository->createQueryBuilder('m')
         ->where('m.message = :message')
         ->setParameter('message', $message);

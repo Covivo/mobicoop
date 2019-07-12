@@ -144,11 +144,10 @@ class InternalMessageManager
     {
         $return = [0=>$message];
         $nextMessage = $this->getNextMessage($message);
-        while(count($nextMessage)>0){
+        while (count($nextMessage)>0) {
             $return[] = $nextMessage[0];
             $nextMessage = $this->getNextMessage($nextMessage[0]);
         }
         return $return;
     }
-
 }
