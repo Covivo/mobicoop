@@ -42,3 +42,7 @@ services:
     restart: always
     ports:
         - "8083:80"
+
+networks:
+  mobicoop_platform:
+    name: mobicoop_platform

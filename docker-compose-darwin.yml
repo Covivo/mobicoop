@@ -1,4 +1,4 @@
-version: "2"
+version: "3.5"
 services:
   mobicoop_platform:
     container_name: mobicoop_platform
@@ -11,7 +11,7 @@ services:
       - '8081:8081'
       - '8082:8082'
     working_dir: /var/www
-    command: npm start-docker
+    command: npm start
     # entrypoint: ["bash", "/var/www/docker/api_bdd_import.sh"]
     # entrypoint: bash /docker/api_entrypoint.sh
     depends_on:
@@ -22,6 +22,8 @@ services:
     volumes:
       - mobicoop-sync:/var/www:nocopy
       - cache-sync:/root/.cache/:nocopy
+    networks:
+      - mobicoop_platform
 
   db:
     image: mariadb:10.4
@@ -30,6 +32,8 @@ services:
     ports: ['3306:3306']
     environment:
       MYSQL_ROOT_PASSWORD: mobicoop
+    networks:
+      - mobicoop_platform
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -42,9 +46,15 @@ services:
     restart: always
     ports:
         - "8083:80"
+    networks:
+      - mobicoop_platform
 
 volumes:
   mobicoop-sync:
     external: true
   cache-sync:
     external: true
+
+networks:
+  mobicoop_platform:
+    name: mobicoop_platform
