@@ -23,6 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
@@ -84,10 +85,15 @@ class CarpoolController extends AbstractController
         if ($request->isMethod('POST')) {
             $createToken = $request->request->get('createToken');
             if (!$this->isCsrfTokenValid('ad-create', $createToken)) {
-                return  new Response('Broken Token CSRF ', 403);
+                return new Response('Broken Token CSRF ', 403);
             }
             $form->submit($request->request->get($form->getName()));
             // $form->submit($request->request->all());
+
+//            test if a community is filled
+//            if ($ad->getCommunity() !== '' && !is_null($ad->getCommunity()) ) {
+//                CommunityController::joinCommunity($ad->getCommunity(), $communityManager, $userManager);
+//            }
         }
 
         // If it's a get, just render the form !

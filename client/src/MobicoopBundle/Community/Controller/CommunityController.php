@@ -95,13 +95,14 @@ class CommunityController extends AbstractController
         $isMember = false;
         $usersCommunity = array();
         //test if the community has members
-        if (count($community->getCommunityUsers()) > 0){
-            foreach ($community->getCommunityUsers() as $userInCommunity)
+        if (count($community->getCommunityUsers()) > 0) {
+            foreach ($community->getCommunityUsers() as $userInCommunity) {
                 $usersCommunity = [$userInCommunity->getUser()->getId()];
+            }
         }
 
         //test if the user logged is member of the community
-        if(!is_null($user) && $user !=='' && in_array($user->getId(), $usersCommunity)) {
+        if (!is_null($user) && $user !=='' && in_array($user->getId(), $usersCommunity)) {
             $isMember = true;
 
             if ($form->isSubmitted() && $form->isValid()) {
@@ -132,12 +133,13 @@ class CommunityController extends AbstractController
         $usersCommunity = array();
 
         //test if the community has members
-        if (count($community->getCommunityUsers()) > 0){
-            foreach ($community->getCommunityUsers() as $userInCommunity)
+        if (count($community->getCommunityUsers()) > 0) {
+            foreach ($community->getCommunityUsers() as $userInCommunity) {
                 $usersCommunity = [$userInCommunity->getUser()->getId()];
+            }
         }
         //test if the user logged is member of the community
-        if(!is_null($user) && $user !=='' && !in_array($user->getId(), $usersCommunity)) {
+        if (!is_null($user) && $user !=='' && !in_array($user->getId(), $usersCommunity)) {
             $communityUser = new CommunityUser();
 //        $this->denyAccessUnlessGranted('show', $community);
             $communityUser->setCommunity($community);
@@ -150,5 +152,4 @@ class CommunityController extends AbstractController
 
         return $this->redirectToRoute('community_show', ['id' => $id]);
     }
-
 }
