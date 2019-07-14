@@ -40,6 +40,9 @@
         {{community.fullDescription}}
     </div>
   </div>
+        {% if isMember %}
+            <p> Vous êtes membre  de cette communauté !</p>
+        {% else %}
         {% if community.secured %}
         <div style="padding:10px">
                 {{ form_start(formIdentification) }}
@@ -47,15 +50,22 @@
                 {{ form_widget(formIdentification.login, {'attr': {'placeholder' : "Votre identifiant"}}) }}
                 {{  form_label(formIdentification.password, 'Date de Naissance') }}
                 {{ form_widget(formIdentification.password, {'attr': {'placeholder' : "Date de Naissance"}}) }}
+                {% if user is not null %}
+                    {{ form_widget(formIdentification.submit) }}
+                {% else %}
+                    {{ form_widget(formIdentification.submit, {'attr': {disabled: 'disabled'}}) }}
+                    <p style="font-style: italic"> Vous devez être connecté en tant qu'utilisateur pour rejoindre cette communauté</p>
+                {% endif %}
                 {{ form_rest(formIdentification) }}
             {{ form_row(formIdentification.submit) }}
         </div>
         {% endif %}
-
+            <a class="button" href="{{path('community_join', { 'id': community.id })}}">Rejoindre la communauté</a>
+        {% endif %}
     </div>
     </section>
     <section class="hero communautes has-text-centered">
-    <a class="lien" href="{{ path('community_list') }}">Liste des communautés</a>
+            <a class="lien" href="{{ path('community_list') }}">Liste des communautés</a>
     </section>
    
 {% endblock %}

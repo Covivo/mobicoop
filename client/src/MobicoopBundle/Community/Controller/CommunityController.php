@@ -92,19 +92,63 @@ class CommunityController extends AbstractController
         $communityUser->setCreatedDate(new \DateTime());
         $communityUser->setStatus(0);
         $form->handleRequest($request);
+        $isMember = false;
+        $usersCommunity = array();
+        //test if the community has members
+        if (count($community->getCommunityUsers()) > 0){
+            foreach ($community->getCommunityUsers() as $userInCommunity)
+                $usersCommunity = [$userInCommunity->getUser()->getId()];
+        }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($communityUser = $communityManager->joinCommunity($communityUser)) {
-                return $this->redirectToRoute('community_show', ['id' => $id]);
+        //test if the user logged is member of the community
+        if(!is_null($user) && $user !=='' && in_array($user->getId(), $usersCommunity)) {
+            $isMember = true;
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                if ($communityUser = $communityManager->joinCommunity($communityUser)) {
+                    return $this->redirectToRoute('community_show', ['id' => $id]);
+                }
+                $error = true;
             }
-            $error = true;
         }
         return $this->render('@Mobicoop/community/showCommunity.html.twig', [
             'community' => $community,
             'formIdentification' => $form->createView(),
             'communityUser' => $communityUser,
             'user' => $user,
-            'error' => $error
+            'error' => $error,
+            'isMember' => $isMember
         ]);
     }
+
+
+    /**
+     * Join a community
+     */
+    public function joinCommunity($id, CommunityManager $communityManager, UserManager $userManager)
+    {
+        $community = $communityManager->getCommunity($id);
+        $user = $userManager->getLoggedUser();
+        $usersCommunity = array();
+
+        //test if the community has members
+        if (count($community->getCommunityUsers()) > 0){
+            foreach ($community->getCommunityUsers() as $userInCommunity)
+                $usersCommunity = [$userInCommunity->getUser()->getId()];
+        }
+        //test if the user logged is member of the community
+        if(!is_null($user) && $user !=='' && !in_array($user->getId(), $usersCommunity)) {
+            $communityUser = new CommunityUser();
+//        $this->denyAccessUnlessGranted('show', $community);
+            $communityUser->setCommunity($community);
+            $communityUser->setUser($user);
+            $communityUser->setCreatedDate(new \DateTime());
+            $communityUser->setStatus(0);
+
+            $communityManager->joinCommunity($communityUser);
+        }
+
+        return $this->redirectToRoute('community_show', ['id' => $id]);
+    }
+
 }
