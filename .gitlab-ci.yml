@@ -81,8 +81,8 @@ dev_deploy:
     url: https://dev.mobicoop.io
   only:
     - dev
-  variables:
-    APP_ENV: dev   # /!\ important : symfony env variable /!\
+  # variables:
+  #   APP_ENV: dev   # /!\ important : symfony env variable /!\
   before_script:
     - cd api && openssl genrsa -aes256 -passout pass:ca4ffed31ee358cc7c7083af6e5773cd -out config/jwt/private.pem 4096
     - openssl rsa -in config/jwt/private.pem -passin pass:ca4ffed31ee358cc7c7083af6e5773cd -pubout -out config/jwt/public.pem
@@ -136,8 +136,8 @@ test_deploy:
     url: https://test.mobicoop.io
   only:
     - master
-  variables:
-    APP_ENV: test   # /!\ important : symfony env variable /!\
+  # variables:
+  #   APP_ENV: test   # /!\ important : symfony env variable /!\
   before_script:
     - cd api && openssl genrsa -aes256 -passout pass:ca4ffed31ee358cc7c7083af6e5773cd -out config/jwt/private.pem 4096
     - openssl rsa -in config/jwt/private.pem -passin pass:ca4ffed31ee358cc7c7083af6e5773cd -pubout -out config/jwt/public.pem
@@ -189,8 +189,8 @@ master_deploy:
   stage: deploy
   only:     # job executed only on master branch
     - master
-  variables:
-    APP_ENV: prod   # /!\ important : symfony env variable /!\
+  # variables:
+  #   APP_ENV: prod   # /!\ important : symfony env variable /!\
   environment:
     name: prod
     url: https://mobicoop.io
