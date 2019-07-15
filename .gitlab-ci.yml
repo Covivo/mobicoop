@@ -169,6 +169,8 @@ test_deploy:
   except:
     refs:
       - tags    # job not executed on tags
+  artifacts:
+    - client/cypress/screenshots
   cache:
     key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
     paths:    # excluded : not cached
