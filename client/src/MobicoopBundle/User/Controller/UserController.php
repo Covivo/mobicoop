@@ -42,6 +42,7 @@ use Mobicoop\Bundle\MobicoopBundle\Geography\Service\AddressManager;
 use Symfony\Component\HttpFoundation\Response;
 use DateTime;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 
 /**
  * Controller class for user related actions.
@@ -300,8 +301,6 @@ class UserController extends AbstractController
      */
     public function userMessages(UserManager $userManager, InternalMessageManager $internalMessageManager)
     {
-        dump($internalMessageManager->getCompleteThread(1));
-
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
 
@@ -309,21 +308,43 @@ class UserController extends AbstractController
 
         // Building threads array
         $threads = $userManager->getThreads($user);
+        $selected = true;
+        $idMessageDefaultSelected = false;
         foreach ($threads["threads"] as $thread) {
+            $arrayThread["idFirstMessage"] = $thread["id"];
             $arrayThread["contactFirstName"] = $thread["recipients"][0]["user"]["givenName"];
             $arrayThread["contactLastName"] = $thread["recipients"][0]["user"]["familyName"];
             $arrayThread["text"] = $thread["text"];
 
+            if(!$idMessageDefaultSelected){
+                $idMessageDefault = $thread["id"];
+                $arrayThread["selected"] = $selected;
+                $idMessageDefaultSelected = true;
+            }
+
+            $selected &= false;
             $threadsForView[] = $arrayThread;
         }
 
 
-
         return $this->render('@Mobicoop/user/messages.html.twig', [
-            'threadsForView' => $threadsForView
+            'threadsForView' => $threadsForView,
+            'userId' => $user->getId(),
+            'idMessageDefault' => $idMessageDefault
         ]);
     }
 
+    /**
+     * Get a complete thread from a first message
+     */
+    public function getCompleteThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager){
+
+        $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('messages', $user);
+
+        return new Response(json_encode($internalMessageManager->getCompleteThread($idFirstMessage, DataProvider::RETURN_JSON)));
+
+    }
 
     // ADMIN
 

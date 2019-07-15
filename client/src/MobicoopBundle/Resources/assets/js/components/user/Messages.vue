@@ -2,6 +2,7 @@
   <v-container
     text-xs-center
     fill-height
+    grid-list-md
   >
     <v-layout
       fill-height
@@ -17,16 +18,17 @@
         <v-card
           v-for="(thread, index) in threads"
           :key="index"
-          class="mx-auto"
-          color="#26c6da"
+          class="threads mx-auto"
+          :class="thread.selected ? 'selected' : ''"
           max-width="400"
           dark
+          @click="updateMessages(thread.idFirstMessage,index)"
         >
           <v-card-title>
             <i class="material-icons">
               account_circle
             </i>
-            <span class="title font-weight-light white--text">{{ thread.contactFirstName }} {{ thread.contactLastName }}</span>
+            &nbsp;<span class="title font-weight-light white--text">{{ thread.contactFirstName }} {{ thread.contactLastName }}</span>
           </v-card-title>
         </v-card>
       </v-flex>
@@ -45,8 +47,8 @@
             v-for="(item, i) in items"
             :key="i"
             fil-dot
-            :left="item.origin==='own'"
-            :right="item.origin!=='own'"
+            :right="item.origin==='own'"
+            :left="item.origin!=='own'"
           >
             <template v-slot:icon>
               <v-avatar>
@@ -56,12 +58,9 @@
               </v-avatar>
             </template>
             <template v-slot:opposite>
-              <span>Tus eu perfecto</span>
+              <span>{{ item.userFirstName }} {{ item.userLastName }}</span>
             </template>
             <v-card class="elevation-2">
-              <v-card-title class="headline">
-                Lorem ipsum
-              </v-card-title>
               <v-card-text>{{ item.text }}</v-card-text>
             </v-card>
           </v-timeline-item>
@@ -83,7 +82,7 @@
                 auto-grow
                 rows="2"
                 background-color="#FFFFFF"
-                value="The Woodman set to work at once, and so sharp was his axe that the tree was soon chopped nearly through."
+                value=""
               />
             </v-flex>
             <v-flex
@@ -110,42 +109,80 @@
         droite
       </v-flex>
     </v-layout>
+
+    <div class="text-xs-center">
+      <v-dialog
+        id="spinnerMessages"
+        v-model="spinner"
+        hide-overlay
+        persistent
+        width="300"
+      >
+        <v-card>
+          <v-card-text>
+            Chargement des messages
+            <v-progress-linear
+              indeterminate
+              color="white"
+              class="mb-0"
+            />
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+    </div>
   </v-container>
 </template>
 <script>
+import axios from 'axios';
+
 export default {
   props: {
     threadsforview: {
       type: Array,
       default: function(){return []}
+    },
+    userid:{
+      type: String,
+      default: ""
+    },
+    idmessagedefault:{
+      type: String,
+      default: ""
     }
   },
   data() {
     return {
-      items: [
-        {
-          icon: 'account_circle',
-          text:'Lorem ipsum dolor sit amet, no nam oblique veritus. Commune scaevola imperdiet nec ut, sed euismod convenire principes at. Est et nobis iisque percipit, an vim zril disputando voluptatibus, vix an salutandi sententiae.',
-          origin:'own'
-        },
-        {
-          icon: 'account_circle',
-          text:'Lorem ipsum dolor sit amet, no nam oblique veritus. Commune scaevola imperdiet nec ut, sed euismod convenire principes at. Est et nobis iisque percipit, an vim zril disputando voluptatibus, vix an salutandi sententiae.',
-          origin:'own'
-        },
-        {
-          icon: 'account_circle',
-          text:'Lorem ipsum dolor sit amet, no nam oblique veritus. Commune scaevola imperdiet nec ut, sed euismod convenire principes at. Est et nobis iisque percipit, an vim zril disputando voluptatibus, vix an salutandi sententiae.',
-          origin:'contact'
-        },
-      ],
-      threads: this.threadsforview
+      items: [],
+      threads: this.threadsforview,
+      spinner:false
     }
   },
   mounted () {
+    this.updateMessages()
   },
   methods: {
-
+    updateMessages(idMessage=this.idmessagedefault,idThreadSelected=0){
+      this.threads.forEach((thread, index) =>{
+        this.threads[index].selected = (index === idThreadSelected) ? true : false;
+      });
+      this.spinner = true;
+      axios
+        .get("/utilisateur/messages/"+idMessage)
+        .then(res => {
+          let messagesThread = (res.data);
+          this.items.length = 0;
+          for (let message of messagesThread) {
+            let tabItem = new Array();
+            tabItem["userFirstName"] = message.user.givenName;
+            tabItem["userLastName"] = message.user.familyName.substr(0,1).toUpperCase()+".";
+            tabItem["icon"] = "account_circle";
+            tabItem["text"] = message.text;
+            (message.user.id==this.userid) ? tabItem["origin"] = "own" : tabItem["origin"] = "contact";
+            this.items.push(tabItem);
+            this.spinner = false;
+          }
+        })
+    }
   }
 }
 </script>

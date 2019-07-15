@@ -713,7 +713,6 @@ class Deserializer
 
     private function deserializeMessage(array $data): ?Message
     {
-        dump($data);
         $message = new Message();
         $message = self::autoSet($message, $data);
         if (isset($data["@id"])) {

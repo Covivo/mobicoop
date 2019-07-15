@@ -37,6 +37,15 @@ user_messages:
         en: /user/messages
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessages
 
+# messages : complete thread
+user_message_complete_thread:
+    path:
+        fr: /utilisateur/messages/{idFirstMessage}
+        en: /user/messages/{idFirstMessage}
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getCompleteThread
+    requirements:
+        idFirstMessage: '\d+'
+
 # profile update
 user_profile_update:
     path:

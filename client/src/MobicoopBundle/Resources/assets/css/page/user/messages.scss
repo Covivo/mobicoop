@@ -7,15 +7,31 @@ body {
     }
   }
   #messages {
+    #spinnerMessages {
+      .v-card__text {
+        background-color: #26C6DA;
+        color: #FFF;
+      }
+    }
     //height: 1000px;
     #threadColumn {
-      background-color: #F00;
+      //background-color: #F00;
+      .threads {
+        margin-bottom: 10px;
+        background-color: #26C6DA;
+        &.selected {
+          background-color: #00383F;
+        }
+        &:hover {
+          cursor: pointer;
+        }
+      }
     }
     #messagesColumn {
-      background-color: #80F19A;
+      //background-color: #80F19A;
     }
     #contextColumn {
-      background-color: #00F;
+      //background-color: #00F;
     }
   }
 }

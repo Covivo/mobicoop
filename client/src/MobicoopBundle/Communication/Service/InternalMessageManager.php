@@ -24,6 +24,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Communication\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider as MobicoopDataProvider;
 
 /**
  * Mass management service.
@@ -49,8 +50,11 @@ class InternalMessageManager
      *
      * @return array|null The complete thread
      */
-    public function getCompleteThread(int $id)
+    public function getCompleteThread(int $id, $format=null)
     {
+        if($format!==null){
+            $this->dataProvider->setFormat($format);
+        }
         $response = $this->dataProvider->getSubCollection($id, Message::class, "completeThread");
         if ($response->getCode() == 200) {
             return $response->getValue();

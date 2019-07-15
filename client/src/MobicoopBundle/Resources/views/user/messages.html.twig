@@ -21,7 +21,7 @@
 	<div class="container">
 	    {% if threadsForView %}
 		<div id="messages">
-    		<Messages :threadsforview="{{ threadsForView|json_encode }}"></Messages>
+    		<Messages :threadsforview="{{ threadsForView|json_encode }}" userid="{{ userId }}" idmessagedefault="{{ idMessageDefault }}"></Messages>
 		</div>
     	{% else %}
       		<span class="tag is-danger">User not found.</span>
