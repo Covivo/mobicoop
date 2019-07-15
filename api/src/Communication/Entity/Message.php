@@ -33,7 +33,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\User\Entity\User;
 use App\Carpool\Entity\AskHistory;
-use App\Communication\Controller\MessageCompleteThreadsAction;
+use App\Communication\Controller\MessageCompleteThreadAction;
 
 /**
  * A message sent from a user to other users.
@@ -51,9 +51,9 @@ use App\Communication\Controller\MessageCompleteThreadsAction;
  *      itemOperations={"get","put","delete",
  *          "completeThread"={
  *              "method"="GET",
- *              "path"="/message/{id}/completeThread",
+ *              "path"="/messages/{id}/completeThread",
  *              "normalization_context"={"groups"={"completeThread"}},
- *              "controller"=MessageCompleteThreadsAction::class
+ *              "controller"=MessageCompleteThreadAction::class
  *           }
  *      }
  * )

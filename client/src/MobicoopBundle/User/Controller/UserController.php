@@ -41,6 +41,7 @@ use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Service\AddressManager;
 use Symfony\Component\HttpFoundation\Response;
 use DateTime;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
 
 /**
  * Controller class for user related actions.
@@ -297,8 +298,10 @@ class UserController extends AbstractController
     /**
      * User messages.
      */
-    public function userMessages(UserManager $userManager)
+    public function userMessages(UserManager $userManager, InternalMessageManager $internalMessageManager)
     {
+        dump($internalMessageManager->getCompleteThread(1));
+
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
 
@@ -313,6 +316,8 @@ class UserController extends AbstractController
 
             $threadsForView[] = $arrayThread;
         }
+
+
 
         return $this->render('@Mobicoop/user/messages.html.twig', [
             'threadsForView' => $threadsForView

@@ -66,6 +66,9 @@ use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Article;
 use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Section;
 use Mobicoop\Bundle\MobicoopBundle\Article\Entity\Paragraph;
 use Mobicoop\Bundle\MobicoopBundle\Permission\Entity\Permission;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Recipient;
 
 /**
  * Custom deserializer service.
@@ -143,6 +146,15 @@ class Deserializer
                 break;
             case Permission::class:
                 return self::deserializePermission($data);
+                break;
+            case Message::class:
+                return self::deserializeMessage($data);
+                break;
+            case AskHistory::class:
+                return self::deserializeAskHistory($data);
+                break;
+            case Recipient::class:
+                return self::deserializeRecipient($data);
                 break;
             default:
                 break;
@@ -698,7 +710,57 @@ class Deserializer
         }
         return $permission;
     }
+
+    private function deserializeMessage(array $data): ?Message
+    {
+        dump($data);
+        $message = new Message();
+        $message = self::autoSet($message, $data);
+        if (isset($data["@id"])) {
+            $message->setIri($data["@id"]);
+        }
+        if (isset($data["user"])) {
+            $message->setUser(self::deserializeUser($data["user"]));
+        }
+        if (isset($data["recipients"])) {
+            foreach ($data["recipients"] as $recipient) {
+                $message->addRecipient(self::deserializeRecipient($recipient));
+            }
+        }
+        if (isset($data["askHistory"])) {
+            foreach ($data["askHistory"] as $askHistory) {
+                $message->addAskHistory(self::deserializeAskHistory($askHistory));
+            }
+        }
+        return $message;
+    }
     
+    private function deserializeAskHistory(array $data): ?AskHistory
+    {
+        $askHistory = new AskHistory();
+        $askHistory = self::autoSet($askHistory, $data);
+        if (isset($data["@id"])) {
+            $askHistory->setIri($data["@id"]);
+        }
+        return $askHistory;
+    }
+
+    private function deserializeRecipient(array $data): ?Recipient
+    {
+        $recipient = new Recipient();
+        $recipient = self::autoSet($recipient, $data);
+        if (isset($data["@id"])) {
+            $recipient->setIri($data["@id"]);
+        }
+        if (isset($data["user"])) {
+            $recipient->setUser(self::deserializeUser($data["user"]));
+        }
+        if (isset($data["message"])) {
+            $recipient->setUser(self::deserializeMessage($data["message"]));
+        }
+        return $recipient;
+    }
+
     private function autoSet($object, $data)
     {
         $phpDocExtractor = new PhpDocExtractor();
