@@ -19,6 +19,8 @@ services:
     tty: true
     environment:
       - COMPOSER_PROCESS_TIMEOUT=1200
+      - SIG_GEOCODER_URI=${SIG_GEOCODER_URI:?You forgot to indicate the env SIG_GEOCODER_URI inside bashrc or zshrc}
+      - SIG_GEOROUTER_URI=${SIG_GEOROUTER_URI:?You forgot to indicate the env SIG_GEOROUTER_URI inside bashrc or zshrc}
     volumes:
       - ./:/var/www/:cached
       - ./build/cache:/root/.cache/:cached
