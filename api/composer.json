@@ -34,7 +34,7 @@
         "symfony/web-server-bundle": "*"
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.7",
+        "symfony/maker-bundle": "^1.7"
     },
     "config": {
         "preferred-install": {
