@@ -142,7 +142,16 @@ community_show:
         en: /community/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::show  
     requirements:
-        id: '\d+'  
+        id: '\d+'
+
+# display one community
+community_join:
+    path:
+        fr: /rejoindre-communaute/{id}
+        en: /join-community/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::joinCommunity
+    requirements:
+        id: '\d+'
 
 ##########################
 # Editorial pages routes #

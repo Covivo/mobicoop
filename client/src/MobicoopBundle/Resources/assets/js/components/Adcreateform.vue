@@ -51,6 +51,7 @@
                   Passager ou Conducteur
                 </b-radio-button>
                 <b-select
+                  v-if="!idCommunity"
                   v-model="form.community"
                   name="selectCommunity"
                   :native-value="4"
@@ -64,6 +65,15 @@
                     {{ community }}
                   </option>
                 </b-select>
+                <b-radio-button
+                  v-else
+                  v-model="form.idCommunity"
+                  name="role"
+                  :native-value="5"
+                  type="is-primary"
+                >
+                  {{ communities[idCommunity] }}
+                </b-radio-button>
               </b-field>
             </tab-content>
             <!-- TYPE TRAJET -->
@@ -455,6 +465,10 @@ export default {
     sentHydra: {
       type: String,
       default: ""
+    },
+    sentCommunity: {
+      type: String,
+      default: ""
     }
   },
   data() {
@@ -462,6 +476,7 @@ export default {
       origin: null,
       outward: this.sentOutward,
       communities: JSON.parse(this.sentHydra),
+      idCommunity: this.sentCommunity,
       timeStart: new Date(),
       timeReturn: new Date(),
       days: [
@@ -554,7 +569,7 @@ export default {
         outwardSatMargin: null,
         outwardSunTime: null,
         outwardSunMargin: null,
-        community: null
+        community: this.sentCommunity || null
       }
     };
   },
