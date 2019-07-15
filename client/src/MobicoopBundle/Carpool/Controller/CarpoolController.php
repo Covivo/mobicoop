@@ -69,12 +69,23 @@ class CarpoolController extends AbstractController
         }
         //        ajout de la gestion des communautés
         $hydraCommunities = $communityManager->getCommunities();
+//        dump($hydraCommunities);
         $communities =[];
         if ($hydraCommunities && count($hydraCommunities->getMember())>0) {
             foreach ($hydraCommunities->getMember() as $value) {
                 foreach (array($value) as $community) {
                     if ($community->isSecured(true)) {
-                        continue;
+//                        dump($community->getCommunityUsers());
+                        $membersOfCommunity = array();
+                        foreach ($community->getCommunityUsers() as $user) {
+                            $membersOfCommunity = [$user->getUser()->getId()];
+                        }
+                        $logged = $userManager->getLoggedUser();
+                        $isLogged = boolval($logged); // cast to boolean
+                        // don't display the secured community if the user is not logged or if the user doesn't belong to the secured community
+                        if (!$isLogged || !in_array($logged->getId(), $membersOfCommunity)) {
+                            continue;
+                        }
                     }
                     $communities[$community->getId()] = $community->getName();
                 }
