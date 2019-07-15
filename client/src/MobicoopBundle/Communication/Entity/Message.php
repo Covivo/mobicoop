@@ -38,7 +38,7 @@ class Message
 {
     /**
      * @var int The id of this message.
-     * 
+     *
      * @Groups({"put","post","completeThread"})
      */
     private $id;
@@ -184,7 +184,6 @@ class Message
         if ($newMessage !== $message->getMessage()) {
             $message->setMessage($newMessage);
         }
-
     }
 
     public function getRecipients()
@@ -209,7 +208,6 @@ class Message
                 $recipient->setMessage(null);
             }
         }
-        
     }
 
     public function getCreatedDate()
@@ -221,5 +219,4 @@ class Message
     {
         $this->createdDate = $createdDate;
     }
-
 }

@@ -33,7 +33,6 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
  */
 class AskHistory
 {
-
     const STATUS_INITIATED = 1;
     const STATUS_PENDING = 2;
     const STATUS_ACCEPTED = 3;
@@ -181,6 +180,4 @@ class AskHistory
         
         return $this;
     }
-
-
 }

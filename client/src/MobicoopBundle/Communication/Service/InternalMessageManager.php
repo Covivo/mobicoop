@@ -36,11 +36,11 @@ class InternalMessageManager
     * Constructor.
     * @param DataProvider $dataProvider The data provider that provides the Mass
     */
-   public function __construct(DataProvider $dataProvider)
-   {
-       $this->dataProvider = $dataProvider;
-       $this->dataProvider->setClass(Message::class);
-   }
+    public function __construct(DataProvider $dataProvider)
+    {
+        $this->dataProvider = $dataProvider;
+        $this->dataProvider->setClass(Message::class);
+    }
 
     /**
      * Get complete thread from a message
@@ -56,9 +56,5 @@ class InternalMessageManager
             return $response->getValue();
         }
         return null;
-    }   
-
+    }
 }
-
-
-?>

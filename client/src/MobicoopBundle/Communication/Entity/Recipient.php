@@ -30,7 +30,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 
-
 /**
  *  A recipient.
  */
@@ -213,5 +212,4 @@ class Recipient
         
         return $this;
     }
-
 }
