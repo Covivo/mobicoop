@@ -52,7 +52,7 @@ class InternalMessageManager
      */
     public function getCompleteThread(int $id, $format=null)
     {
-        if($format!==null){
+        if ($format!==null) {
             $this->dataProvider->setFormat($format);
         }
         $response = $this->dataProvider->getSubCollection($id, Message::class, "completeThread");

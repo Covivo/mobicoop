@@ -316,7 +316,7 @@ class UserController extends AbstractController
             $arrayThread["contactLastName"] = $thread["recipients"][0]["user"]["familyName"];
             $arrayThread["text"] = $thread["text"];
 
-            if(!$idMessageDefaultSelected){
+            if (!$idMessageDefaultSelected) {
                 $idMessageDefault = $thread["id"];
                 $arrayThread["selected"] = $selected;
                 $idMessageDefaultSelected = true;
@@ -337,13 +337,12 @@ class UserController extends AbstractController
     /**
      * Get a complete thread from a first message
      */
-    public function getCompleteThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager){
-
+    public function getCompleteThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager)
+    {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
 
         return new Response(json_encode($internalMessageManager->getCompleteThread($idFirstMessage, DataProvider::RETURN_JSON)));
-
     }
 
     // ADMIN
