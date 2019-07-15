@@ -38,7 +38,9 @@ use Mobicoop\Bundle\MobicoopBundle\User\Form\UserLoginForm;
 use Mobicoop\Bundle\MobicoopBundle\User\Form\UserDeleteForm;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Service\AddressManager;
 use Symfony\Component\HttpFoundation\Response;
+use DateTime;
 
 /**
  * Controller class for user related actions.
@@ -108,8 +110,6 @@ class UserController extends AbstractController
             $address->setStreetAddress($data['streetAddress']);
             $address->setSubLocality($data['subLocality']);
 
-          
-
             // pass front info into user form
             $user->setEmail($data['email']);
             $user->setTelephone($data['telephone']);
@@ -117,9 +117,12 @@ class UserController extends AbstractController
             $user->setGivenName($data['givenName']);
             $user->setFamilyName($data['familyName']);
             $user->setGender($data['gender']);
+
             $user->setBirthYear($data['birthYear']);
 
+
             // add the home address to the user
+            
             $user->addAddress($address);
 
             // Not Valid populate error
@@ -164,37 +167,65 @@ class UserController extends AbstractController
     /**
      * User profile update.
      */
-    public function userProfileUpdate(UserManager $userManager, Request $request)
+    public function userProfileUpdate(UserManager $userManager, Request $request, AddressManager $addressManager)
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
-        $user = $userManager->getLoggedUser();
+        $user = clone $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('update', $user);
 
-        $form = $this->createForm(
-            UserForm::class,
-            $user,
-            ['validation_groups'=>['update']]
-        );
-
-        $form->handleRequest($request);
+        // get the homeAddress
+        $homeAddress = $user->getHomeAddress();
+         
+        $form = $this->createForm(UserForm::class, $user, ['validation_groups'=>['update']]);
         $error = false;
+           
+        
+        if ($request->isMethod('POST')) {
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($user = $userManager->updateUser($user)) {
-                // after successful update, we re-log the user
-                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-                $this->get('security.token_storage')->setToken($token);
-                $this->get('session')->set('_security_main', serialize($token));
-                return $this->redirectToRoute('user_profile');
+            //get all data from form (user + homeAddress)
+            $data = $request->request->get($form->getName());
+
+            //pass homeAddress info into address entity
+            if (!$homeAddress) {
+                $homeAddress = new Address();
             }
-            $error = true;
+            $homeAddress->setAddressCountry($data['addressCountry']);
+            $homeAddress->setAddressLocality($data['addressLocality']);
+            $homeAddress->setCountryCode($data['countryCode']);
+            $homeAddress->setCounty($data['county']);
+            $homeAddress->setLatitude($data['latitude']);
+            $homeAddress->setLocalAdmin($data['localAdmin']);
+            $homeAddress->setLongitude($data['longitude']);
+            $homeAddress->setMacroCounty($data['macroCounty']);
+            $homeAddress->setMacroRegion($data['macroRegion']);
+            $homeAddress->setPostalCode($data['postalCode']);
+            $homeAddress->setRegion($data['region']);
+            $homeAddress->setStreet($data['street']);
+            $homeAddress->setStreetAddress($data['streetAddress']);
+            $homeAddress->setSubLocality($data['subLocality']);
+            
+            // pass front info into user form
+            $user->setEmail($data['email']);
+            $user->setTelephone($data['telephone']);
+            $user->setGivenName($data['givenName']);
+            $user->setFamilyName($data['familyName']);
+            $user->setGender($data['gender']);
+            $user->setBirthYear($data['birthYear']);
+            
+            if (is_null($homeAddress->getId()) && !empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) {
+                $homeAddress->setName(User::HOME_ADDRESS_NAME);
+                $user->addAddress($homeAddress);
+            } elseif (!empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) {
+                $addressManager->updateAddress($homeAddress);
+            }
+            $userManager->updateUser($user);
+            exit;
         }
-
-        return $this->render('@Mobicoop/user/update.html.twig', [
-            'form' => $form->createView(),
-            'user' => $user,
-            'error' => $error
-        ]);
+      
+        return $this->render('@Mobicoop/user/updateProfile.html.twig', [
+                'error' => $error,
+                'user' => $user
+            ]);
     }
 
     /**
@@ -205,7 +236,6 @@ class UserController extends AbstractController
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('password', $user);
-
         $form = $this->createForm(
             UserForm::class,
             $user,
@@ -221,7 +251,7 @@ class UserController extends AbstractController
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                 $this->get('security.token_storage')->setToken($token);
                 $this->get('session')->set('_security_main', serialize($token));
-                return $this->redirectToRoute('user_profile');
+                return $this->redirectToRoute('user_profile_update');
             }
             $error = true;
         }

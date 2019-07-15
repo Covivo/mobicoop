@@ -32,6 +32,7 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Communication\Entity\Notified;
 
 /**
  * Carpooling : matching between an offer and a request.
@@ -119,6 +120,15 @@ class Matching
     private $waypoints;
 
     /**
+     * @var ArrayCollection|null The notifications sent for the matching.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="matching", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $notifieds;
+
+    /**
      * @var array The filters returned to the user. The user can then filter and sort the results.
      * @Groups({"read","write"})
      */
@@ -129,6 +139,7 @@ class Matching
         $this->id = self::DEFAULT_ID;
         $this->asks = new ArrayCollection();
         $this->waypoints = new ArrayCollection();
+        $this->notifieds = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -237,6 +248,34 @@ class Matching
             }
         }
 
+        return $this;
+    }
+
+    public function getNotifieds()
+    {
+        return $this->notifieds->getValues();
+    }
+    
+    public function addNotified(Notified $notified): self
+    {
+        if (!$this->notifieds->contains($notified)) {
+            $this->notifieds[] = $notified;
+            $notified->setMatching($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeNotified(Notified $notified): self
+    {
+        if ($this->notifieds->contains($notified)) {
+            $this->notifieds->removeElement($notified);
+            // set the owning side to null (unless already changed)
+            if ($notified->getMatching() === $this) {
+                $notified->setMatching(null);
+            }
+        }
+        
         return $this;
     }
 

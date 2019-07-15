@@ -34,20 +34,38 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use App\Carpool\Entity\WayPoint;
 use App\User\Entity\User;
 use CrEOF\Spatial\PHP\Types\Geometry\Point;
+use App\Geography\Controller\AddressSearch;
 
 /**
- * A postal address.
+ * A postal address (including textual informations and / or geometric coordinates).
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read","pt","mass"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"read","pt","mass","search"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={},
- *      itemOperations={"get"}
+ *      collectionOperations={
+ *          "get",
+ *          "search"={
+ *              "method"="GET",
+ *              "path"="/addresses/search",
+ *              "swagger_context"={
+ *                  "parameters"={
+ *                     {
+ *                         "name" = "q",
+ *                         "in" = "query",
+ *                         "required" = "true",
+ *                         "type" = "string",
+ *                         "description" = "The query"
+ *                     }
+ *                   }
+ *              }
+ *          }
+ *      },
+ *      itemOperations={"get","put"}
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "streetAddress", "postalCode", "addressLocality", "addressCountry"}, arguments={"orderParameterName"="order"})
  */
@@ -70,7 +88,7 @@ class Address
      * @var string The house number.
      *
      * @ORM\Column(type="string", length=45, nullable=true)
-     * @Groups({"read","write","pt","mass"})
+     * @Groups({"read","write","pt","mass","massCompute"})
      */
     private $houseNumber;
 
@@ -78,8 +96,8 @@ class Address
      * @var string The street.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write","pt","mass"})
-     * @Assert\NotBlank(groups={"mass"})
+     * @Groups({"read","write","pt","mass","massCompute"})
+     * @Assert\NotBlank(groups={"mass","massCompute"})
      */
     private $street;
 
@@ -87,7 +105,7 @@ class Address
      * @var string The full street address.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write","pt","mass"})
+     * @Groups({"read","write","pt","mass","massCompute"})
      */
     private $streetAddress;
 
@@ -95,8 +113,8 @@ class Address
      * @var string|null The postal code of the address.
      *
      * @ORM\Column(type="string", length=15, nullable=true)
-     * @Groups({"read","write","pt","mass"})
-     * @Assert\NotBlank(groups={"mass"})
+     * @Groups({"read","write","pt","mass","massCompute"})
+     * @Assert\NotBlank(groups={"mass","massCompute"})
      */
     private $postalCode;
 
@@ -104,7 +122,7 @@ class Address
      * @var string|null The sublocality of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt","mass"})
+     * @Groups({"read","write","pt","mass","massCompute"})
      */
     private $subLocality;
 
@@ -112,8 +130,8 @@ class Address
      * @var string|null The locality of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt","mass"})
-     * @Assert\NotBlank(groups={"mass"})
+     * @Groups({"read","write","pt","mass","massCompute"})
+     * @Assert\NotBlank(groups={"mass","massCompute"})
      */
     private $addressLocality;
 
@@ -121,7 +139,7 @@ class Address
      * @var string|null The locality admin of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt","mass"})
+     * @Groups({"read","write","pt","mass","massCompute"})
      */
     private $localAdmin;
 
@@ -129,7 +147,7 @@ class Address
      * @var string|null The county of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt","mass"})
+     * @Groups({"read","write","pt","mass","massCompute"})
      */
     private $county;
 
@@ -137,7 +155,7 @@ class Address
      * @var string|null The macro county of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt","mass"})
+     * @Groups({"read","write","pt","mass","massCompute"})
      */
     private $macroCounty;
 
@@ -145,7 +163,7 @@ class Address
      * @var string|null The region of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt","mass"})
+     * @Groups({"read","write","pt","mass","massCompute"})
      */
     private $region;
 
@@ -153,7 +171,7 @@ class Address
      * @var string|null The macro region of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt","mass"})
+     * @Groups({"read","write","pt","mass","massCompute"})
      */
     private $macroRegion;
 
@@ -161,7 +179,7 @@ class Address
      * @var string|null The country of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt","mass"})
+     * @Groups({"read","write","pt","mass","massCompute"})
      */
     private $addressCountry;
 
@@ -169,7 +187,7 @@ class Address
      * @var string|null The country code of the address.
      *
      * @ORM\Column(type="string", length=10, nullable=true)
-     * @Groups({"read","write","pt","mass"})
+     * @Groups({"read","write","pt","mass","massCompute"})
      */
     private $countryCode;
 
@@ -177,7 +195,7 @@ class Address
      * @var float|null The latitude of the address.
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write","pt","mass"})
+     * @Groups({"read","write","pt","mass","massCompute"})
      */
     private $latitude;
 
@@ -185,7 +203,7 @@ class Address
      * @var float|null The longitude of the address.
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write","pt","mass"})
+     * @Groups({"read","write","pt","mass","massCompute"})
      */
     private $longitude;
 
@@ -193,7 +211,7 @@ class Address
      * @var int|null The elevation of the address in metres.
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write","pt","mass"})
+     * @Groups({"read","write","pt","mass","massCompute"})
      */
     private $elevation;
 
@@ -434,7 +452,6 @@ class Address
 
     public function setUser(?User $user)
     {
-        $user->addAddress($this);
         $this->user = $user;
     }
 

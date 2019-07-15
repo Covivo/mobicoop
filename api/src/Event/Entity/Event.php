@@ -40,7 +40,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * An event.
+ * An event : a social occasion or activity.
  *
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
@@ -106,7 +106,6 @@ class Event
      * @var \DateTimeInterface The starting date of the event.
      *
      * @Assert\NotBlank
-     * @Assert\DateTime
      * @ORM\Column(type="datetime")
      * @Groups({"read","write"})
      */
@@ -116,7 +115,6 @@ class Event
      * @var \DateTimeInterface The ending date of the event.
      *
      * @Assert\NotBlank
-     * @Assert\DateTime
      * @ORM\Column(type="datetime")
      * @Groups({"read","write"})
      */

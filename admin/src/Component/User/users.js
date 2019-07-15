@@ -4,7 +4,7 @@ import {
     TabbedForm, FormTab,
     SimpleShowLayout,
     Datagrid,
-    TextInput, DisabledInput, SelectInput, DateInput,
+    TextInput, DisabledInput, SelectInput, DateInput, ReferenceInput,
     email,
     TextField, EmailField, DateField, 
     ShowButton, EditButton,
@@ -23,10 +23,18 @@ const UserFilter = (props) => (
         <TextInput source="givenName" label="Prénom" />
         <TextInput source="familyName" label="Nom" alwaysOn />
         <TextInput source="email" label="Email" alwaysOn />
+        <ReferenceInput 
+            source="homeAddressTerritory" 
+            label="Territoire" 
+            reference="territories" 
+            allowEmpty={false} 
+            resettable>
+            <SelectInput optionText="name" optionValue="id"/>
+        </ReferenceInput>
     </Filter>
 );
 export const UserList = (props) => (
-    <List {...props} title="Utilisateurs > liste" perPage={ 25 } filters={<UserFilter />} sort={{ field: 'originId', order: 'ASC' }}>
+    <List {...props} title="Utilisateurs > liste" perPage={ 25 } filters={<UserFilter />} sort={{ field: 'id', order: 'ASC' }}>
         <Datagrid>
             <TextField source="originId" label="ID" sortBy="id"/>
             <TextField source="givenName" label="Prénom"/>

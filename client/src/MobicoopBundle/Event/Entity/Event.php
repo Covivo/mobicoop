@@ -25,7 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Event\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
@@ -35,7 +35,7 @@ use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 /**
  * An event.
  */
-class Event implements Resource
+class Event implements ResourceInterface
 {
     /**
      * @var int The id of this event.
@@ -84,7 +84,6 @@ class Event implements Resource
      * @var \DateTimeInterface The starting date of the event.
      *
      * @Assert\NotBlank(groups={"create","update"})
-     * @Assert\DateTime(groups={"create","update"})
      * @Groups({"post","put"})
      */
     private $fromDate;
@@ -93,7 +92,6 @@ class Event implements Resource
      * @var \DateTimeInterface The ending date of the event.
      *
      * @Assert\NotBlank
-     * @Assert\DateTime()
      * @Groups({"post","put"})
      */
     private $toDate;

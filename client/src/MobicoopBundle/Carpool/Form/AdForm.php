@@ -102,7 +102,8 @@ class AdForm extends AbstractType
         ->add('returnSatMargin')
         ->add('returnSunTime')
         ->add('returnSunMargin')
-        ->add('comment');
+        ->add('comment')
+        ->add('community');
     }
     
     public function configureOptions(OptionsResolver $resolver)
@@ -122,7 +123,7 @@ class AdForm extends AbstractType
                     }
                 } else {
                     if (Ad::TYPE_RETURN_TRIP == $data->getType()) {
-                        $groups[] = 'regular';
+                        $groups[] = 'regularReturnTrip';
                     } else {
                         $groups[] = 'regular';
                     }

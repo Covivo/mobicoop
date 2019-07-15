@@ -25,7 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Match\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -34,7 +34,7 @@ use Symfony\Component\HttpFoundation\File\File;
 /**
  * An Mass.
  */
-class Mass implements Resource
+class Mass implements ResourceInterface
 {
     const NB_WORKING_DAY = 228;
     const EARTH_CIRCUMFERENCE_IN_KILOMETERS = 40070;
@@ -44,12 +44,12 @@ class Mass implements Resource
 
 
     /**
-     * @var int The id of this event.
+     * @var int The id of this mass.
      */
     private $id;
 
     /**
-     * @var string|null The iri of this event.
+     * @var string|null The iri of this mass.
      */
     private $iri;
 
@@ -86,14 +86,18 @@ class Mass implements Resource
 
     /**
      * @var User User that imports the file.
-     * @Groups({"post","put"})
      */
     private $user;
 
     /**
+     * @var \DateTimeInterface Analyzed date of the import.
+     */
+    private $analyzingDate;
+
+    /**
      * @var \DateTimeInterface Analyze date of the import.
      */
-    private $analyzeDate;
+    private $analyzedDate;
 
     /**
      * @var \DateTimeInterface Calculation date of the import.
@@ -101,10 +105,25 @@ class Mass implements Resource
     private $calculationDate;
 
     /**
+     * @var \DateTimeInterface Calculation date of the import.
+     */
+    private $calculatedDate;
+
+    /**
      * @var File|null
+     * @Assert\File(
+     *     mimeTypes = {"text/csv", "text/plain", "application/zip", "application/xml", "text/xml", "application/json"},
+     *     mimeTypesMessage = "Format de fichier invalide"
+     *     )
      * @Groups({"post","put"})
      */
     private $file;
+
+    /**
+     * @var int|null The user id associated with the file.
+     * @Groups({"post","put"})
+     */
+    private $userId;
 
     /**
      * @var array The errors.
@@ -122,24 +141,14 @@ class Mass implements Resource
     private $personsCoords;
 
     /**
-     * @var float Working place latitude of the people of this mass.
+     * @var array Working Places of this Mass
      */
-    private $latWorkingPlace;
-
-    /**
-     * @var float Working place longitude of the people of this mass.
-     */
-    private $lonWorkingPlace;
+    private $workingPlaces;
 
     /**
      * @var array Computed data of this mass.
      */
     private $computedData;
-
-    /**
-     * @var int Number of potentials carpoolers
-     */
-    private $nbPotentialCarpoolers;
 
     /**
      * @var MassMatrix Matrix of carpools
@@ -249,14 +258,26 @@ class Mass implements Resource
         return $this;
     }
 
-    public function getAnalyzeDate(): ?\DateTimeInterface
+    public function getAnalyzedDate(): ?\DateTimeInterface
     {
-        return $this->analyzeDate;
+        return $this->analyzedDate;
     }
 
-    public function setAnalyzeDate(?\DateTimeInterface $analyzeDate): self
+    public function setAnalyzedDate(?\DateTimeInterface $analyzedDate): self
     {
-        $this->analyzeDate = $analyzeDate;
+        $this->analyzedDate = $analyzedDate;
+
+        return $this;
+    }
+
+    public function getAnalyzingDate(): ?\DateTimeInterface
+    {
+        return $this->analyzingDate;
+    }
+
+    public function setAnalyzingDate(?\DateTimeInterface $analyzingDate): self
+    {
+        $this->analyzingDate = $analyzingDate;
 
         return $this;
     }
@@ -273,6 +294,18 @@ class Mass implements Resource
         return $this;
     }
 
+    public function getCalculatedDate(): ?\DateTimeInterface
+    {
+        return $this->calculatedDate;
+    }
+
+    public function setCalculatedDate(?\DateTimeInterface $calculatedDate): self
+    {
+        $this->calculatedDate = $calculatedDate;
+
+        return $this;
+    }
+
     public function getFile(): ?File
     {
         return $this->file;
@@ -281,6 +314,16 @@ class Mass implements Resource
     public function setFile(?File $file)
     {
         $this->file = $file;
+    }
+
+    public function getUserId(): ?int
+    {
+        return $this->userId;
+    }
+
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
     }
 
     public function getErrors(): ?array
@@ -331,24 +374,31 @@ class Mass implements Resource
         $this->personsCoords = $personsCoords;
     }
 
-    public function getLatWorkingPlace(): ?float
+    public function getWorkingPlaces(): ?array
     {
-        return $this->latWorkingPlace;
+        return $this->workingPlaces;
     }
 
-    public function setLatWorkingPlace(?float $latWorkingPlace)
+    public function setWorkingPlaces(array $workingplaces): self
     {
-        $this->latWorkingPlace = $latWorkingPlace;
+        foreach ($workingplaces as $key => $workingplace) {
+            $workingplaces[$key]["address"] = $workingplace["houseNumber"] . " " . $workingplace["street"] . " " . $workingplace["postalCode"] . " " . $workingplace["addressLocality"];
+        }
+
+        $this->workingPlaces = $workingplaces;
+
+        return $this;
     }
 
-    public function getLonWorkingPlace(): ?float
+    public function addWorkingPlaces(array $workingplace): self
     {
-        return $this->lonWorkingPlace;
-    }
+        $workingplace["address"] = $workingplace["houseNumber"] . " " . $workingplace["street"] . " " . $workingplace["postalCode"] . " " . $workingplace["addressLocality"];
 
-    public function setLonWorkingPlace(?float $lonWorkingPlace)
-    {
-        $this->lonWorkingPlace = $lonWorkingPlace;
+        if (!$this->workingPlaces->contains($workingplace)) {
+            $this->workingPlaces->add($workingplace);
+        }
+
+        return $this;
     }
 
     public function getComputedData(): ?array
@@ -359,16 +409,6 @@ class Mass implements Resource
     public function setComputedData(?array $computedData)
     {
         $this->computedData = $computedData;
-    }
-
-    public function getNbPotentialCarpoolers(): ?int
-    {
-        return $this->nbPotentialCarpoolers;
-    }
-
-    public function setNbPotentialCarpoolers(?int $nbPotentialCarpoolers)
-    {
-        $this->nbPotentialCarpoolers = $nbPotentialCarpoolers;
     }
 
     public function getMassMatrix(): ?MassMatrix

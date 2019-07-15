@@ -38,6 +38,7 @@ use App\PublicTransport\Entity\PTJourney;
  * @ORM\Entity
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -100,7 +101,6 @@ class Criteria
      * @var \DateTimeInterface The starting date (= proposal date if punctual).
      *
      * @Assert\NotBlank
-     * @Assert\Date()
      * @ORM\Column(type="date")
      * @Groups({"read","write"})
      */
@@ -152,7 +152,6 @@ class Criteria
     /**
      * @var \DateTimeInterface|null The end date if regular proposal, the last accepted date if punctual.
      *
-     * @Assert\Date()
      * @ORM\Column(type="date", nullable=true)
      * @Groups({"read","write"})
      */

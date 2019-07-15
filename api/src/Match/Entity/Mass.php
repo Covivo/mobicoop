@@ -32,6 +32,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Match\Controller\CreateMassImportAction;
 use App\Match\Controller\MassAnalyzeAction;
 use App\Match\Controller\MassMatchAction;
+use App\Match\Controller\MassComputeAction;
+use App\Match\Controller\MassWorkingPlacesAction;
+use App\Match\Controller\MassReAnalyzeAction;
+use App\Match\Controller\MassReMatchAction;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use App\User\Entity\User;
@@ -71,6 +75,18 @@ use Doctrine\Common\Collections\Collection;
  *              "normalization_context"={"groups"={"massPost"}},
  *              "controller"=MassAnalyzeAction::class
  *          },
+ *          "reanalyze"={
+ *              "method"="GET",
+ *              "path"="/masses/{id}/reanalyze",
+ *              "normalization_context"={"groups"={"massPost"}},
+ *              "controller"=MassReAnalyzeAction::class
+ *          },
+ *          "compute"={
+ *              "method"="GET",
+ *              "path"="/masses/{id}/compute",
+ *              "normalization_context"={"groups"={"massCompute"}},
+ *              "controller"=MassComputeAction::class
+ *          },
  *          "match"={
  *              "method"="GET",
  *              "path"="/masses/{id}/match",
@@ -81,7 +97,6 @@ use Doctrine\Common\Collections\Collection;
  *                     {
  *                         "name" = "maxDetourDurationPercent",
  *                         "in" = "query",
- *                         "required" = "false",
  *                         "type" = "number",
  *                         "format" = "integer",
  *                         "description" = "The maximum detour duration percent (default:40)"
@@ -89,7 +104,6 @@ use Doctrine\Common\Collections\Collection;
  *                     {
  *                         "name" = "maxDetourDistancePercent",
  *                         "in" = "query",
- *                         "required" = "false",
  *                         "type" = "number",
  *                         "format" = "integer",
  *                         "description" = "The maximum detour distance percent (default:40)"
@@ -97,7 +111,6 @@ use Doctrine\Common\Collections\Collection;
  *                     {
  *                         "name" = "minOverlapRatio",
  *                         "in" = "query",
- *                         "required" = "false",
  *                         "type" = "number",
  *                         "format" = "float",
  *                         "description" = "The minimum overlap ratio between bouding boxes to try a match (default:0)"
@@ -105,7 +118,6 @@ use Doctrine\Common\Collections\Collection;
  *                     {
  *                         "name" = "maxSuperiorDistanceRatio",
  *                         "in" = "query",
- *                         "required" = "false",
  *                         "type" = "number",
  *                         "format" = "integer",
  *                         "description" = "The maximum superior distance ratio between A and B to try a match (default:1000)"
@@ -113,20 +125,75 @@ use Doctrine\Common\Collections\Collection;
  *                     {
  *                         "name" = "bearingCheck",
  *                         "in" = "query",
- *                         "required" = "false",
  *                         "type" = "boolean",
  *                         "description" = "Check the bearings (default:true)"
  *                     },
  *                     {
  *                         "name" = "bearingRange",
  *                         "in" = "query",
- *                         "required" = "false",
  *                         "type" = "number",
  *                         "format" = "integer",
  *                         "description" = "The bearing range in degrees if check bearings (default:10)"
  *                     }
  *                   }
  *              }
+ *          },
+ *          "rematch"={
+ *              "method"="GET",
+ *              "path"="/masses/{id}/rematch",
+ *              "normalization_context"={"groups"={"massPost"}},
+ *              "controller"=MassReMatchAction::class,
+ *              "swagger_context"={
+ *                  "parameters"={
+ *                     {
+ *                         "name" = "maxDetourDurationPercent",
+ *                         "in" = "query",
+ *                         "type" = "number",
+ *                         "format" = "integer",
+ *                         "description" = "The maximum detour duration percent (default:40)"
+ *                     },
+ *                     {
+ *                         "name" = "maxDetourDistancePercent",
+ *                         "in" = "query",
+ *                         "type" = "number",
+ *                         "format" = "integer",
+ *                         "description" = "The maximum detour distance percent (default:40)"
+ *                     },
+ *                     {
+ *                         "name" = "minOverlapRatio",
+ *                         "in" = "query",
+ *                         "type" = "number",
+ *                         "format" = "float",
+ *                         "description" = "The minimum overlap ratio between bouding boxes to try a match (default:0)"
+ *                     },
+ *                     {
+ *                         "name" = "maxSuperiorDistanceRatio",
+ *                         "in" = "query",
+ *                         "type" = "number",
+ *                         "format" = "integer",
+ *                         "description" = "The maximum superior distance ratio between A and B to try a match (default:1000)"
+ *                     },
+ *                     {
+ *                         "name" = "bearingCheck",
+ *                         "in" = "query",
+ *                         "type" = "boolean",
+ *                         "description" = "Check the bearings (default:true)"
+ *                     },
+ *                     {
+ *                         "name" = "bearingRange",
+ *                         "in" = "query",
+ *                         "type" = "number",
+ *                         "format" = "integer",
+ *                         "description" = "The bearing range in degrees if check bearings (default:10)"
+ *                     }
+ *                   }
+ *              }
+ *          },
+ *          "workingplaces"={
+ *              "method"="GET",
+ *              "path"="/masses/{id}/workingplaces",
+ *              "normalization_context"={"groups"={"mass","massWorkingPlaces"}},
+ *              "controller"=MassWorkingPlacesAction::class
  *          },
  *      }
  * )
@@ -137,8 +204,17 @@ class Mass
     const STATUS_INCOMING = 0;
     const STATUS_VALID = 1;
     const STATUS_INVALID = 2;
-    const STATUS_ANALYZED = 3;
-    const STATUS_TREATED = 4;
+    const STATUS_ANALYZING = 3;
+    const STATUS_ANALYZED = 4;
+    const STATUS_MATCHING = 5;
+    const STATUS_MATCHED = 6;
+    const STATUS_ERROR = 7;
+
+    const NB_WORKING_DAY = 228;
+    const EARTH_CIRCUMFERENCE_IN_KILOMETERS = 40070;
+    const FLAT_EARTH_CIRCUMFERENCE_IN_MILES = 78186;
+    const AVERAGE_EARTH_MOON_DISTANCE_IN_KILOMETERS = 384400;
+    const PARIS_NEW_YORK_CO2_IN_GRAM = 875700; // For 1 passenger
 
     /**
      * @var int The id of this import.
@@ -146,7 +222,7 @@ class Mass
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"mass","massAnalyze","massMatch"})
+     * @Groups({"mass","massPost", "massAnalyze","massMatch", "massCompute"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -155,7 +231,7 @@ class Mass
      * @var int The status of this import.
      *
      * @ORM\Column(type="integer")
-     * @Groups({"mass","massPost"})
+     * @Groups({"mass","massPost", "massCompute"})
      */
     private $status;
 
@@ -163,7 +239,7 @@ class Mass
      * @var string The final file name of the import.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"mass","massPost","write"})
+     * @Groups({"mass","massPost","write", "massCompute"})
      */
     private $fileName;
 
@@ -171,7 +247,7 @@ class Mass
      * @var string The original file name of the import.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"mass","massPost","write"})
+     * @Groups({"mass","massPost","write", "massCompute"})
      */
     private $originalName;
 
@@ -179,7 +255,7 @@ class Mass
      * @var int The size in bytes of the import.
      *
      * @ORM\Column(type="integer")
-     * @Groups({"mass","massPost","write"})
+     * @Groups({"mass","massPost","write", "massCompute"})
      */
     private $size;
 
@@ -187,7 +263,7 @@ class Mass
      * @var string The mime type of the import.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"mass","massPost"})
+     * @Groups({"mass","massPost", "massCompute"})
      */
     private $mimeType;
 
@@ -195,7 +271,7 @@ class Mass
      * @var \DateTimeInterface Creation date of the import.
      *
      * @ORM\Column(type="datetime")
-     * @Groups({"mass","massPost"})
+     * @Groups({"mass","massPost", "massCompute"})
      */
     private $createdDate;
 
@@ -209,26 +285,42 @@ class Mass
     private $user;
 
     /**
-     * @var \DateTimeInterface Analyze date of the import.
+     * @var \DateTimeInterface Analyzed date of the import.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"mass","massPost"})
+     * @Groups({"mass","massPost", "massCompute"})
      */
-    private $analyzeDate;
+    private $analyzingDate;
 
     /**
-     * @var \DateTimeInterface Calculation date of the import.
+     * @var \DateTimeInterface Analyzing start date of the import.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"mass","massPost"})
+     * @Groups({"mass","massPost", "massCompute"})
+     */
+    private $analyzedDate;
+
+    /**
+     * @var \DateTimeInterface Calculation start date of the import.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"mass","massPost", "massCompute"})
      */
     private $calculationDate;
 
     /**
-     * @var ArrayCollection|null The persons concerned by the file.
+     * @var \DateTimeInterface Calculated date of the import.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"mass","massPost", "massCompute"})
+     */
+    private $calculatedDate;
+
+    /**
+     * @var array|null The persons concerned by the file.
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassPerson", mappedBy="mass", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"mass"})
+     * @Groups({"massCompute"})
      */
     private $persons;
 
@@ -249,6 +341,30 @@ class Mass
      * @Groups({"mass","massPost"})
      */
     private $errors;
+
+    /**
+     * @var array people's coordinates of this mass.
+     * @Groups({"massCompute"})
+     */
+    private $personsCoords;
+
+    /**
+     * @var array Working Places of this Mass
+     * @Groups({"massCompute", "massWorkingPlaces"})
+     */
+    private $workingPlaces;
+
+    /**
+     * @var array Computed data of this mass.
+     * @Groups({"massCompute"})
+     */
+    private $computedData;
+
+    /**
+     * @var MassMatrix Matrix of carpools
+     * @Groups({"massCompute"})
+     */
+    private $massMatrix;
 
     public function __construct($id = null)
     {
@@ -343,14 +459,26 @@ class Mass
         return $this;
     }
 
-    public function getAnalyzeDate(): ?\DateTimeInterface
+    public function getAnalyzingDate(): ?\DateTimeInterface
     {
-        return $this->analyzeDate;
+        return $this->analyzingDate;
     }
 
-    public function setAnalyzeDate(?\DateTimeInterface $analyzeDate): self
+    public function setAnalyzingDate(?\DateTimeInterface $analyzingDate): self
     {
-        $this->analyzeDate = $analyzeDate;
+        $this->analyzingDate = $analyzingDate;
+
+        return $this;
+    }
+
+    public function getAnalyzedDate(): ?\DateTimeInterface
+    {
+        return $this->analyzedDate;
+    }
+
+    public function setAnalyzedDate(?\DateTimeInterface $analyzedDate): self
+    {
+        $this->analyzedDate = $analyzedDate;
 
         return $this;
     }
@@ -363,6 +491,18 @@ class Mass
     public function setCalculationDate(?\DateTimeInterface $calculationDate): self
     {
         $this->calculationDate = $calculationDate;
+
+        return $this;
+    }
+
+    public function getCalculatedDate(): ?\DateTimeInterface
+    {
+        return $this->calculatedDate;
+    }
+
+    public function setCalculatedDate(?\DateTimeInterface $calculatedDate): self
+    {
+        $this->calculatedDate = $calculatedDate;
 
         return $this;
     }
@@ -440,5 +580,61 @@ class Mass
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+    }
+
+    public function getPersonsCoords(): ?array
+    {
+        return $this->personsCoords;
+    }
+
+    public function setPersonsCoords(?array $personsCoords)
+    {
+        $this->personsCoords = $personsCoords;
+    }
+
+    public function getWorkingPlaces(): ?array
+    {
+        return $this->workingPlaces;
+    }
+
+    public function setWorkingPlaces(array $workingplaces): self
+    {
+        $this->workingPlaces = $workingplaces;
+
+        return $this;
+    }
+
+    public function addWorkingPlaces(array $workingplace): self
+    {
+        if (!$this->workingPlaces->contains($workingplace)) {
+            $this->workingPlaces->add($workingplace);
+        }
+
+        return $this;
+    }
+
+    public function setLonWorkingPlace(?float $lonWorkingPlace)
+    {
+        $this->lonWorkingPlace = $lonWorkingPlace;
+    }
+
+    public function getComputedData(): ?array
+    {
+        return $this->computedData;
+    }
+
+    public function setComputedData(?array $computedData)
+    {
+        $this->computedData = $computedData;
+    }
+
+    public function getMassMatrix(): ?MassMatrix
+    {
+        return $this->massMatrix;
+    }
+
+    public function setMassMatrix(?MassMatrix $massMatrix)
+    {
+        $this->massMatrix = $massMatrix;
     }
 }

@@ -76,6 +76,13 @@ class Ad
     private $origin;
 
     /**
+     * @var integer The community of the travel.
+     *
+     */
+    private $community;
+
+
+    /**
      * @var string The destination of the travel.
      *
      * @Assert\NotBlank
@@ -94,7 +101,7 @@ class Ad
 
     /**
      * @var \DateTimeInterface Date of the outward travel if punctual (in string format as we use a datepicker).
-     * @Assert\NotBlank(groups={"punctual","regular"})
+     * @Assert\NotBlank(groups={"punctual"})
      *
      */
     private $outwardDate;
@@ -112,7 +119,7 @@ class Ad
 
     /**
      * @var \DateTimeInterface Date of the return travel if punctual (in string format as we use a datepicker).
-     * @Assert\NotBlank(groups={"punctualReturnTrip","regular"})
+     * @Assert\NotBlank(groups={"punctualReturnTrip"})
      */
     private $returnDate;
 
@@ -352,6 +359,18 @@ class Ad
     public function setOrigin(?string $origin): self
     {
         $this->origin = $origin;
+
+        return $this;
+    }
+
+    public function getCommunity(): ?int
+    {
+        return $this->community;
+    }
+
+    public function setCommunity(int $community): self
+    {
+        $this->community = $community;
 
         return $this;
     }

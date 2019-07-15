@@ -22,6 +22,10 @@ $main-background-color: $white;
 $nav-background-color: $primary;
 $footer-background-color: $primary;
 
+// breadcrumb config
+$breadcrumb-item-padding-horizontal: 2vw;
+$breadcrumb-item-color: $secondary;
+
 $focusColor:  #F8D613;
 
 @mixin is-mobicoop($color) {

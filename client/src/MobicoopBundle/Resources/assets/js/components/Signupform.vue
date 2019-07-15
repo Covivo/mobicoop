@@ -4,9 +4,9 @@
       <div class="tile is-vertical is-12">
         <div class="tile is-child center-all">
           <form-wizard
-            back-button-text="Précédent"
-            next-button-text="Suivant"
-            finish-button-text="Je m'inscris"
+            :back-button-text="$t('ui.button.previous')"
+            :next-button-text="$t('ui.button.next')"
+            :finish-button-text="$t('ui.button.register')"
             title=""
             subtitle=""
             color="#023D7F"
@@ -14,7 +14,7 @@
             @on-complete="checkForm"
           >
             <p v-if="errors.length">
-              <b>Please correct the following error(s):</b>
+              <b>{{ $t('ui.form.errors') }}:</b>
               <ul>
                 <li
                   v-for="error in errors"
@@ -31,26 +31,29 @@
               class="tabContent"
             >
               <b-field
-                label="Email"
+                :label="$t('models.user.email.label')"
               >
                 <b-input
                   v-model="form.email"
                   type="email"
-                  placeholder="Email"
+                  :placeholder="$t('models.user.email.placeholder')"
+                  class="email"
                 />
               </b-field>
-              <b-field label="PhoneNumber">
+              <b-field :label="$t('models.user.phone.label')">
                 <b-input 
                   v-model="form.telephone"
-                  placeholder="Numéro de téléphone"
+                  :placeholder="$t('models.user.phone.placeholder')"
+                  class="telephone"
                 />
               </b-field>
-              <b-field label="Password">
+              <b-field :label="$t('models.user.password.label')">
                 <b-input
                   v-model="form.password"
+                  class="password"
                   type="password"
                   password-reveal
-                  placeholder="Mot de passe"
+                  :placeholder="$t('models.user.password.placeholder')"
                 />
               </b-field> 
             </tab-content>
@@ -60,16 +63,18 @@
               icon=""
               class="tabContent"
             >
-              <b-field label="GivenName">
+              <b-field :label="$t('models.user.givenName.label')">
                 <b-input
                   v-model="form.givenName" 
-                  placeholder="Prénom"
+                  :placeholder="$t('models.user.givenName.placeholder')"
+                  class="givenName"
                 />
               </b-field>
-              <b-field label="FamilyName">
+              <b-field :label="$t('models.user.familyName.label')">
                 <b-input
                   v-model="form.familyName" 
-                  placeholder="Nom"
+                  :placeholder="$t('models.user.familyName.placeholder')"
+                  class="familyName"
                 />
               </b-field>
             </tab-content>
@@ -79,19 +84,20 @@
               icon=""
               class="tabContent"
             >     
-              <b-field label="Civilité">
+              <b-field :label="$t('models.user.gender.label')">
                 <b-select
                   v-model="form.gender"
-                  placeholder="Civilité"
+                  :placeholder="$t('models.user.gender.placeholder')"
+                  class="gender"
                 >
                   <option value="1">
-                    Madame
+                    {{ $t('models.user.gender.values.female') }}
                   </option>
                   <option value="2">
-                    Monsieur
+                    {{ $t('models.user.gender.values.male') }}
                   </option>
                   <option value="3">
-                    Autre
+                    {{ $t('models.user.gender.values.other') }}
                   </option>
                 </b-select>
               </b-field>
@@ -102,10 +108,11 @@
               icon=""
               class="tabContent"
             >
-              <b-field label="Année de naissance">
+              <b-field :label="$t('models.user.birthYear.label')">
                 <b-select
                   v-model="form.birthYear"
-                  placeholder="Année de naissance"
+                  :placeholder="$t('models.user.birthYear.placeholder')"
+                  class="birthYear"
                 >
                   <option
                     v-for="year in years"
@@ -126,7 +133,7 @@
               <geocomplete
                 id="homeAddress"
                 name="homeAddress"
-                placeholder="Commune de résidence"
+                :placeholder="$t('models.user.homeTown.placeholder')"
                 :url="geoSearchUrl"
                 @geoSelected="selectedGeo"
               />
@@ -134,8 +141,9 @@
               <div class="field">
                 <b-checkbox
                   v-model="form.validation"
+                  class="check"
                 >
-                  Je valide la charte
+                  {{ $t('ui.pages.signup.chart.chartValid') }}
                 </b-checkbox>
               </div>
             </tab-content>
@@ -255,28 +263,31 @@ export default {
       this.errors = [];
 
       if (!this.form.email) {
-        this.errors.push('Email required.');
+        this.errors.push(this.$t('models.user.email.errors.required'));
       } 
       if (!this.form.telephone) {
-        this.errors.push('Telephone required.');
+        this.errors.push(this.$t('models.user.phone.errors.required'));
       }
       if (!this.form.password) {
-        this.errors.push('Password required.');
+        this.errors.push(this.$t('models.user.password.errors.required'));
       }
       if (!this.form.givenName) {
-        this.errors.push('GivenName required.');
+        this.errors.push(this.$t('models.user.givenName.errors.required'));
       }
       if (!this.form.familyName) {
-        this.errors.push('FamilyName required.');
+        this.errors.push(this.$t('models.user.familyName.errors.required'));
       }
       if (!this.form.gender) {
-        this.errors.push('Gender required.');
+        this.errors.push(this.$t('models.user.gender.errors.required'));
       }
       if (!this.form.birthYear) {
-        this.errors.push('BirthYear required.');
+        this.errors.push(this.$t('models.user.birthYear.errors.required'));
+      }
+      if (!this.form.longitude) {
+        this.errors.push(this.$t('models.user.homeTown.errors.required'));
       }
       if (this.form.validation == false) {
-        this.errors.push('Validation required.');
+        this.errors.push(this.$t('ui.pages.signup.chart.errors.required'));
       }
       e.preventDefault();
     },

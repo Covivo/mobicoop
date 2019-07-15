@@ -46,8 +46,14 @@ use App\Right\Entity\UserRole;
 use App\Match\Entity\Mass;
 use App\Right\Entity\UserRight;
 use App\Image\Entity\Image;
-use App\User\Controller\UserPost;
+use App\Communication\Entity\Message;
+use App\Communication\Entity\Recipient;
+use App\User\Controller\UserRegistration;
 use App\User\Controller\UserPermissions;
+use App\User\Controller\UserLogin;
+use App\User\Filter\HomeAddressTerritoryFilter;
+use App\User\Filter\LoginFilter;
+use App\Communication\Entity\Notified;
 
 /**
  * A user.
@@ -71,8 +77,8 @@ use App\User\Controller\UserPermissions;
  *          "post"={
  *              "method"="POST",
  *              "path"="/users",
- *              "controller"=UserPost::class,
- *          }
+ *              "controller"=UserRegistration::class,
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -88,7 +94,6 @@ use App\User\Controller\UserPermissions;
  *                      {
  *                          "name" = "territory",
  *                          "in" = "query",
- *                          "required" = "false",
  *                          "type" = "number",
  *                          "format" = "integer",
  *                          "description" = "The territory id"
@@ -102,6 +107,8 @@ use App\User\Controller\UserPermissions;
  * )
  * @ApiFilter(NumericFilter::class, properties={"id"})
  * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial"})
+ * @ApiFilter(HomeAddressTerritoryFilter::class, properties={"homeAddressTerritory"})
+ * @ApiFilter(LoginFilter::class, properties={"login"})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate", "createdDate"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
@@ -130,6 +137,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Groups("read")
+     * @ApiProperty(identifier=true)
      */
     private $id;
 
@@ -195,7 +203,6 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var \DateTimeInterface|null The birth date of the user.
      *
-     * @Assert\Date()
      * @ORM\Column(type="date", nullable=true)
      * @Groups({"read","write"})
      *
@@ -242,7 +249,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var boolean|null The user accepts any transportation mode.
      *
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
     private $multiTransportMode;
@@ -315,7 +322,28 @@ class User implements UserInterface, EquatableInterface
     private $masses;
 
     /**
-     * @var \DateTimeInterface Creation date of the event.
+     * @var ArrayCollection|null The messages sent by the user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Message", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     */
+    private $messages;
+
+    /**
+     * @var ArrayCollection|null The messages received by the user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Recipient", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     */
+    private $recipients;
+
+    /**
+     * @var ArrayCollection|null The notifications sent to the user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     */
+    private $notifieds;
+
+    /**
+     * @var \DateTimeInterface Creation date of the user.
      *
      * @ORM\Column(type="datetime")
      * @Groups("read")
@@ -338,6 +366,9 @@ class User implements UserInterface, EquatableInterface
         $this->userRights = new ArrayCollection();
         $this->masses = new ArrayCollection();
         $this->images = new ArrayCollection();
+        $this->messages = new ArrayCollection();
+        $this->recipients = new ArrayCollection();
+        $this->notifieds = new ArrayCollection();
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -457,7 +488,7 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getMaxDetourDuration(): int
+    public function getMaxDetourDuration(): ?int
     {
         return (!is_null($this->maxDetourDuration) ? $this->maxDetourDuration : self::MAX_DETOUR_DURATION);
     }
@@ -469,7 +500,7 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getMaxDetourDistance(): int
+    public function getMaxDetourDistance(): ?int
     {
         return (!is_null($this->maxDetourDistance) ? $this->maxDetourDistance : self::MAX_DETOUR_DISTANCE);
     }
@@ -481,24 +512,24 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getAnyRouteAsPassenger(): bool
+    public function getAnyRouteAsPassenger(): ?bool
     {
         return $this->anyRouteAsPassenger;
     }
 
-    public function setAnyRouteAsPassenger(bool $anyRouteAsPassenger): self
+    public function setAnyRouteAsPassenger(?bool $anyRouteAsPassenger): self
     {
         $this->anyRouteAsPassenger = $anyRouteAsPassenger;
 
         return $this;
     }
 
-    public function getMultiTransportMode(): bool
+    public function getMultiTransportMode(): ?bool
     {
         return $this->multiTransportMode;
     }
 
-    public function setMultiTransportMode(bool $multiTransportMode): self
+    public function setMultiTransportMode(?bool $multiTransportMode): self
     {
         $this->multiTransportMode = $multiTransportMode;
 
@@ -726,6 +757,90 @@ class User implements UserInterface, EquatableInterface
             }
         }
 
+        return $this;
+    }
+
+    public function getMessages()
+    {
+        return $this->messages->getValues();
+    }
+
+    public function addMessage(Message $message): self
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages->add($message);
+            $message->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): self
+    {
+        if ($this->messages->contains($message)) {
+            $this->messages->removeElement($message);
+            // set the owning side to null (unless already changed)
+            if ($message->getUser() === $this) {
+                $message->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getRecipients()
+    {
+        return $this->recipients->getValues();
+    }
+    
+    public function addRecipient(Recipient $recipient): self
+    {
+        if (!$this->recipients->contains($recipient)) {
+            $this->recipients[] = $recipient;
+            $recipient->setUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeRecipient(Recipient $recipient): self
+    {
+        if ($this->recipients->contains($recipient)) {
+            $this->recipients->removeElement($recipient);
+            // set the owning side to null (unless already changed)
+            if ($recipient->getUser() === $this) {
+                $recipient->setUser(null);
+            }
+        }
+        
+        return $this;
+    }
+
+    public function getNotifieds()
+    {
+        return $this->notifieds->getValues();
+    }
+    
+    public function addNotified(Notified $notified): self
+    {
+        if (!$this->notifieds->contains($notified)) {
+            $this->notifieds[] = $notified;
+            $notified->setUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeNotified(Notified $notified): self
+    {
+        if ($this->notifieds->contains($notified)) {
+            $this->notifieds->removeElement($notified);
+            // set the owning side to null (unless already changed)
+            if ($notified->getUser() === $this) {
+                $notified->setUser(null);
+            }
+        }
+        
         return $this;
     }
 

@@ -5,6 +5,11 @@ monolog:
             level: debug
             path: "%kernel.logs_dir%/carpool.log"
             channels: [carpool]
+        communication:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/communication.log"
+            channels: [communication]
         community:
             type: stream
             level: debug
@@ -23,8 +28,13 @@ monolog:
             level: debug
             path: "%kernel.logs_dir%/mass.log"
             channels: [mass]
+        notification:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/notification.log"
+            channels: [notification]     
         main:
             type: stream
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
-            channels: ["!event", "!carpool", "!community", "!geomatcher", "!georouter", "!mass"]
+            channels: ["!event", "!carpool", "!communication", "!community", "!geomatcher", "!georouter", "!mass", "!notification"]

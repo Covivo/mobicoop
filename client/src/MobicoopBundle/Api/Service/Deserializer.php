@@ -23,16 +23,19 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Api\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\GeoSearch;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourney;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassCarpool;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassJourney;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassMatching;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassMatrix;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassPerson;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTAccessibilityStatus;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLineStop;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLocality;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTStop;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTTripPoint;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
@@ -82,7 +85,7 @@ class Deserializer
      *
      * @param string $class The expected class of the object
      * @param array $data   The array to deserialize
-     * @return array|User|Address|Proposal|Matching|GeoSearch|PTJourney|ExternalJourney|Event|Image|PTTripPoint|PTLineStop|ExternalJourneyProvider|Mass|MassPerson|Community|Article|Permission|null
+     * @return array|User|Address|Proposal|Matching|PTJourney|ExternalJourney|Event|Image|PTTripPoint|PTLineStop|ExternalJourneyProvider|Mass|MassPerson|Community|Article|Permission|null
      */
     public function deserialize(string $class, array $data)
     {
@@ -105,9 +108,6 @@ class Deserializer
             case Matching::class:
                 return self::deserializeMatching($data);
                 break;
-            case GeoSearch::class:
-                return self::deserializeGeoSearch($data);
-                break;
             case PTJourney::class:
                 return self::deserializePTJourney($data);
                 break;
@@ -129,8 +129,14 @@ class Deserializer
             case MassPerson::class:
                 return self::deserializeMassPerson($data);
                 break;
+            case MassMatching::class:
+                return self::deserializeMassMatching($data);
+                break;
             case Community::class:
                 return self::deserializeCommunity($data);
+                break;
+            case CommunityUser::class:
+                return self::deserializeCommunityUser($data);
                 break;
             case Article::class:
                 return self::deserializeArticle($data);
@@ -347,16 +353,6 @@ class Deserializer
         return $matching;
     }
     
-    private function deserializeGeoSearch(array $data): ?Address
-    {
-        $address = new Address();
-        $address = self::autoSet($address, $data);
-        if (isset($data["@id"])) {
-            $address->setIri($data["@id"]);
-        }
-        return $address;
-    }
-    
     private function deserializePTJourney(array $data): ?PTJourney
     {
         $PTJourney = new PTJourney();
@@ -381,7 +377,17 @@ class Deserializer
     {
         $PTTripPoint = new PTTripPoint();
         $PTTripPoint = self::autoSet($PTTripPoint, $data);
+        if (isset($data["locality"])) {
+            $PTTripPoint->setLocality(self::deserializeLocality($data["locality"]));
+        }
         return $PTTripPoint;
+    }
+
+    private function deserializeLocality(array $data): ?PTLocality
+    {
+        $PTLocality = new PTLocality();
+        $PTLocality = self::autoSet($PTLocality, $data);
+        return $PTLocality;
     }
 
     private function deserializePTLineStop(array $data): ?PTLineStop
@@ -498,13 +504,56 @@ class Deserializer
             $mass->setIri($data["@id"]);
         }
         if (isset($data["persons"])) {
+            dump($data["persons"]);
             foreach ($data["persons"] as $person) {
                 $mass->addPerson(self::deserializeMassPerson($person));
             }
         }
+        if (isset($data["massMatrix"])) {
+            $mass->setMassMatrix(self::deserializeMassMatrix($data["massMatrix"]));
+        }
         return $mass;
     }
 
+    private function deserializeMassMatrix(array $data): ?MassMatrix
+    {
+        $massMatrix = new MassMatrix();
+        $massMatrix = self::autoSet($massMatrix, $data);
+        if (isset($data["@id"])) {
+            $massMatrix->setIri($data["@id"]);
+        }
+        if (isset($data["originalsJourneys"])) {
+            foreach ($data["originalsJourneys"] as $massJourney) {
+                $massMatrix->addOriginalsJourneys(self::deserializeMassJourney($massJourney));
+            }
+        }
+        if (isset($data["carpools"])) {
+            foreach ($data["carpools"] as $carpool) {
+                $massMatrix->addCarpools(self::deserializeMassCarpool($carpool));
+            }
+        }
+        return $massMatrix;
+    }
+
+    private function deserializeMassJourney(array $data): ?MassJourney
+    {
+        $originalJourney = new MassJourney();
+        $originalJourney = self::autoSet($originalJourney, $data);
+        if (isset($data["@id"])) {
+            $originalJourney->setIri($data["@id"]);
+        }
+        return $originalJourney;
+    }
+
+    private function deserializeMassCarpool(array $data): ?MassCarpool
+    {
+        $massCarpool = new MassCarpool();
+        $massCarpool = self::autoSet($massCarpool, $data);
+        if (isset($data["@id"])) {
+            $massCarpool->setIri($data["@id"]);
+        }
+        return $massCarpool;
+    }
     private function deserializeMassPerson(array $data): ?MassPerson
     {
         $massPerson = new MassPerson();
@@ -541,15 +590,6 @@ class Deserializer
         if (isset($data["@id"])) {
             $massMatching->setIri($data["@id"]);
         }
-        if (isset($data["direction"])) {
-            $massMatching->setDirection(self::deserializeDirection($data["direction"]));
-        }
-        if (isset($data["massPerson1"])) {
-            $massMatching->setMassPerson1(self::deserializeMassPerson($data["massPerson1"]));
-        }
-        if (isset($data["massPerson2"])) {
-            $massMatching->setMassPerson2(self::deserializeMassPerson($data["massPerson2"]));
-        }
         return $massMatching;
     }
 
@@ -567,8 +607,8 @@ class Deserializer
         if (isset($data["@id"])) {
             $communityUser->setIri($data["@id"]);
         }
-        if (isset($data["community"])) {
-            $communityUser->set>Community(self::deserializeCommunity($data["community"]));
+        if (isset($data["community"]) && is_array($data["community"])) {
+            $communityUser->setCommunity(self::deserializeCommunity($data["community"]));
         }
         if (isset($data["user"])) {
             $communityUser->setUser(self::deserializeUser($data["user"]));
@@ -599,10 +639,15 @@ class Deserializer
                 $community->addProposal(self::deserializeProposal($proposal));
             }
         }
-        if (isset($data["communityUsers"])) {
+        if (isset($data["communityUsers"]) && is_array($data["communityUsers"])) {
             foreach ($data["communityUsers"] as $communityUser) {
-                $community->addCommunityUser(self::deserializeCommunityUser($communityUser));
+                if (!is_null($communityUser) && is_array($communityUser)) {
+                    $community->addCommunityUser(self::deserializeCommunityUser($communityUser));
+                }
             }
+        }
+        if (isset($data["communitySecurities"]) && is_array($data["communitySecurities"]) && count($data["communitySecurities"]) > 0) {
+            $community->setSecured(true);
         }
         return $community;
     }

@@ -59,7 +59,7 @@ class UserRight
     /**
      * @var User The user.
      *
-     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="userRights")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      */

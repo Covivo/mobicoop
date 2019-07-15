@@ -23,7 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Api\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Response;
 use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
 use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\HydraView;
@@ -200,6 +200,37 @@ class DataProvider
         }
         return new Response();
     }
+
+    /**
+     * Get special item operation
+     *
+     * @param int           $id             The id of the item
+     * @param string        $operation      The name of the special operation
+     * @param array|null    $params         An array of parameters
+     *
+     * @return Response The response of the operation.
+     */
+    public function getSpecialItem(int $id, string $operation, array $params=null): Response
+    {
+        try {
+            if ($this->format == self::RETURN_ARRAY) {
+                $clientResponse = $this->client->get($this->resource."/".$id.'/'.$operation, ['query'=>$params]);
+                $value = json_decode((string) $clientResponse->getBody(), true);
+            } elseif ($this->format == self::RETURN_JSON) {
+                $clientResponse = $this->client->get($this->resource."/".$id.'/'.$operation, ['query'=>$params, 'headers' => ['accept' => 'application/json']]);
+                $value = (string) $clientResponse->getBody();
+            } else {
+                $clientResponse = $this->client->get($this->resource."/".$id.'/'.$operation, ['query'=>$params]);
+                $value = $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true));
+            }
+            if ($clientResponse->getStatusCode() == 200) {
+                return new Response($clientResponse->getStatusCode(), $value);
+            }
+        } catch (TransferException $e) {
+            return new Response($e->getCode());
+        }
+        return new Response();
+    }
     
     /**
      * Get collection operation
@@ -285,11 +316,11 @@ class DataProvider
     /**
      * Post collection operation
      *
-     * @param Resource $object An object representing the resource to post
+     * @param ResourceInterface $object An object representing the resource to post
      *
      * @return Response The response of the operation.
      */
-    public function post(Resource $object): Response
+    public function post(ResourceInterface $object): Response
     {
         try {
             $clientResponse = $this->client->post($this->resource, [
@@ -307,11 +338,11 @@ class DataProvider
     /**
      * Post collection operation with multipart/form-data
      *
-     * @param Resource $object An object representing the resource to post
+     * @param ResourceInterface $object An object representing the resource to post
      *
      * @return Response The response of the operation.
      */
-    public function postMultiPart(Resource $object): Response
+    public function postMultiPart(ResourceInterface $object): Response
     {
         $multipart = [];
         // we serialize the serializable properties
@@ -352,15 +383,18 @@ class DataProvider
     /**
      * Put item operation
      *
-     * @param Resource $object An object representing the resource to put
+     * @param ResourceInterface $object An object representing the resource to put
      *
      * @return Response The response of the operation.
      */
-    public function put(Resource $object): Response
+    public function put(ResourceInterface $object, ?array $groups=null): Response
     {
+        if (is_null($groups)) {
+            $groups = ['put'];
+        }
         try {
             $clientResponse = $this->client->put($this->resource."/".$object->getId(), [
-                    RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['put']]), true)
+                    RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]), true)
             ]);
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));

@@ -85,7 +85,6 @@ class Criteria
     /**
      * @var \DateTimeInterface The starting date (= proposal date if punctual).
      * @Assert\NotBlank
-     * @Assert\Date()
      *
      * @Groups({"post","put"})
      */
@@ -115,7 +114,6 @@ class Criteria
 
     /**
      * @var \DateTimeInterface|null The end date if regular proposal.
-     * @Assert\Date()
      *
      * @Groups({"post","put"})
      */

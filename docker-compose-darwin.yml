@@ -1,0 +1,62 @@
+version: "3.5"
+services:
+  mobicoop_platform:
+    container_name: mobicoop_platform
+    image: mobicoop/php-node-chromium:2.0.0
+    # build: ./
+    ports:
+      - '9000:9000'
+      - '8079:8079'
+      - '8080:8080'
+      - '8081:8081'
+      - '8082:8082'
+    working_dir: /var/www
+    command: npm start
+    # entrypoint: ["bash", "/var/www/docker/api_bdd_import.sh"]
+    # entrypoint: bash /docker/api_entrypoint.sh
+    depends_on:
+      - db
+    tty: true
+    environment:
+      - COMPOSER_PROCESS_TIMEOUT=1200
+      - SIG_GEOCODER_URI=${SIG_GEOCODER_URI:?You forgot to indicate the env SIG_GEOCODER_URI inside bashrc or zshrc}
+      - SIG_GEOROUTER_URI=${SIG_GEOROUTER_URI:?You forgot to indicate the env SIG_GEOROUTER_URI inside bashrc or zshrc}
+    volumes:
+      - mobicoop-sync:/var/www:nocopy
+      - cache-sync:/root/.cache/:nocopy
+    networks:
+      - mobicoop_platform
+
+  db:
+    image: mariadb:10.4
+    container_name: mobicoop_db
+    restart: always
+    ports: ['3306:3306']
+    environment:
+      MYSQL_ROOT_PASSWORD: mobicoop
+    networks:
+      - mobicoop_platform
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: mobicoop_phpmyadmin
+    depends_on:
+      - db
+    environment:
+        MYSQL_USERNAME: root
+        MYSQL_ROOT_PASSWORD: mobicoop
+    restart: always
+    ports:
+        - "8083:80"
+    networks:
+      - mobicoop_platform
+
+volumes:
+  mobicoop-sync:
+    external: true
+  cache-sync:
+    external: true
+
+networks:
+  mobicoop_platform:
+    name: mobicoop_platform

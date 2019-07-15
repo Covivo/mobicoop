@@ -39,6 +39,9 @@ use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
  */
 class MassManager
 {
+    private const MIN_OVERLAP_RATIO = 0.005;
+    private const MAX_SUPERIOR_DISTANCE_RATIO = 1.5;
+
     private $dataProvider;
     private $userManager;
 
@@ -54,7 +57,7 @@ class MassManager
     }
     
     /**
-     * Get an Mass
+     * Get a Mass
      *
      * @param int $id The mass id
      *
@@ -65,14 +68,15 @@ class MassManager
         $response = $this->dataProvider->getItem($id);
         if ($response->getCode() == 200) {
             $mass = $response->getValue();
-            $this->computeResults($mass);
+            if ($mass->getStatus()>=4) {
+            }
             return $mass;
         }
         return null;
     }
     
     /**
-     * Create an mass
+     * Create a mass
      *
      * @param Mass $mass The mass to create
      *
@@ -88,7 +92,7 @@ class MassManager
     }
     
     /**
-     * Delete an mass
+     * Delete a mass
      *
      * @param int $id The id of the mass to delete
      *
@@ -104,207 +108,106 @@ class MassManager
     }
 
     /**
-     * Compute all necessary calculations for a mass
+     * Analyze a Mass
      *
-     * @param Mass $mass
-     * @return null
+     * @param int $id The mass id
+     *
+     * @return Mass|null The mass read or null if error.
      */
-    private function computeResults(Mass $mass)
+    public function analyzeMass(int $id)
     {
-        $computedData = [
-            "totalTravelDistance" => 0,
-            "totalTravelDistanceCO2" => 0,
-            "totalTravelDistancePerYear" => 0,
-            "totalTravelDistancePerYearCO2" => 0,
-            "averageTravelDistance" => 0,
-            "averageTravelDistanceCO2" => 0,
-            "averageTravelDistancePerYear" => 0,
-            "averageTravelDistancePerYearCO2" => 0,
-            "totalTravelDuration" => 0,
-            "totalTravelDurationPerYear" => 0,
-            "averageTravelDuration" => 0,
-            "averageTravelDurationPerYear" => 0,
-            "nbCarpoolersAsDrivers" => 0,
-            "nbCarpoolersAsPassengers" => 0,
-            "nbCarpoolersAsBoth" => 0,
-            "nbCarpoolersTotal" => 0,
-            "humanTotalTravelDuration" => "",
-            "humanAverageTravelDuration" => "",
-            "humanAverageTravelDurationPerYear" => ""
-        ];
-
-        $persons = $mass->getPersons();
-
-        // J'indexe le tableau des personnes pour y accéder ensuite en direct
-        $personsIndexed = [];
-        foreach ($persons as $person) {
-            $personsIndexed[$person->getId()] = $person;
+        $response = $this->dataProvider->getSpecialItem($id, "analyze");
+        if ($response->getCode() == 200) {
+            return $response->getValue();
         }
-
-        $tabCoords = [];
-
-        $matrix = new MassMatrix();
-
-        foreach ($persons as $person) {
-            $tabCoords[] = array(
-                "latitude"=>$person->getPersonalAddress()->getLatitude(),
-                "longitude"=>$person->getPersonalAddress()->getLongitude(),
-                "distance"=>$person->getDistance(),
-                "duration"=>$person->getDuration()
-            );
-            $computedData["totalTravelDistance"] += $person->getDistance();
-            $computedData["totalTravelDuration"] += $person->getDuration();
-
-            // Can this person carpool ? AsDriver or AsPassenger ? Both ?
-            $carpoolAsDriver = false;
-            $carpoolAsPassenger = false;
-            if (count($person->getMatchingsAsDriver())>0) {
-                $computedData["nbCarpoolersAsDrivers"]++;
-                $carpoolAsDriver = true;
-            }
-            if (count($person->getMatchingsAsPassenger())>0) {
-                $computedData["nbCarpoolersAsPassengers"]++;
-                $carpoolAsPassenger = true;
-            }
-            if ($carpoolAsDriver && $carpoolAsPassenger) {
-                $computedData["nbCarpoolersAsBoth"]++;
-            }
-            if ($carpoolAsDriver || $carpoolAsPassenger) {
-                $computedData["nbCarpoolersTotal"]++;
-            }
-
-            // Store the original journey to calculate the gains between original and carpool
-            $journey =  new MassJourney(
-                $person->getDistance(),
-                $person->getDuration(),
-                UtilsService::computeCO2($person->getDistance()),
-                $person->getId()
-            );
-
-            $matrix->addOriginalsJourneys($journey);
-        }
-
-        $mass->setPersonsCoords($tabCoords);
-
-        // Workingplace storage
-        $mass->setLatWorkingPlace($persons[0]->getWorkAddress()->getLatitude());
-        $mass->setLonWorkingPlace($persons[0]->getWorkAddress()->getLongitude());
-
-        // Averages
-        $computedData["averageTravelDistance"] = $computedData["totalTravelDistance"] / count($persons);
-        $computedData["averageTravelDistancePerYear"] = $computedData["averageTravelDistance"] * Mass::NB_WORKING_DAY;
-        $computedData["totalTravelDistancePerYear"] = $computedData["totalTravelDistance"] * Mass::NB_WORKING_DAY;
-        $computedData["averageTravelDuration"] = $computedData["totalTravelDuration"] / count($persons);
-        $computedData["averageTravelDurationPerYear"] = $computedData["averageTravelDuration"] * Mass::NB_WORKING_DAY;
-        $computedData["totalTravelDurationPerYear"] = $computedData["totalTravelDuration"] * Mass::NB_WORKING_DAY;
-
-        // Conversion of some data to human readable versions (like durations in hours, minutes, seconds)
-        $computedData["humanTotalTravelDuration"] = UtilsService::convertSecondsToHumain($computedData["totalTravelDuration"]);
-        $computedData["humanTotalTravelDurationPerYear"] = UtilsService::convertSecondsToHumain($computedData["totalTravelDurationPerYear"]);
-        $computedData["humanAverageTravelDuration"] = UtilsService::convertSecondsToHumain($computedData["averageTravelDuration"]);
-        $computedData["humanAverageTravelDurationPerYear"] = UtilsService::convertSecondsToHumain($computedData["averageTravelDurationPerYear"]);
-
-        // CO2 consumption
-        $computedData["averageTravelDistanceCO2"] = UtilsService::computeCO2($computedData["averageTravelDistance"]);
-        $computedData["averageTravelDistancePerYearCO2"] = UtilsService::computeCO2($computedData["averageTravelDistancePerYear"]);
-        $computedData["totalTravelDistanceCO2"] = UtilsService::computeCO2($computedData["totalTravelDistance"]);
-        $computedData["totalTravelDistancePerYearCO2"] = UtilsService::computeCO2($computedData["totalTravelDistancePerYear"]);
-
-        $mass->setComputedData($computedData);
-
-
-
-        // Build the carpooler matrix
-        $matrix = $this->buildCarpoolersMatrix($persons, $matrix, $personsIndexed);
-
-        // Compute the gains between original total and carpool total
-        $totalDurationCarpools = 0;
-        $totalDistanceCarpools = 0;
-        $totalCO2Carpools = 0;
-        foreach ($matrix->getCarpools() as $currentCarpool) {
-            $totalDistanceCarpools += $currentCarpool->getJourney()->getDistance();
-            $totalDurationCarpools += $currentCarpool->getJourney()->getDuration();
-            $totalCO2Carpools += $currentCarpool->getJourney()->getCO2();
-        }
-        $matrix->setSavedDistance($computedData["totalTravelDistance"] - $totalDistanceCarpools);
-        $matrix->setSavedDuration($computedData["totalTravelDuration"] - $totalDurationCarpools);
-        $matrix->setHumanReadableSavedDuration(UtilsService::convertSecondsToHumain($computedData["totalTravelDuration"] - $totalDurationCarpools));
-        $matrix->setSavedCO2($computedData["totalTravelDistanceCO2"] - $totalCO2Carpools);
-
-        $mass->setMassMatrix($matrix);
-
         return null;
     }
 
     /**
-     * Build the carpoolers matrix
-     * @param ArrayCollection $persons
-     * @param MassMatrix $matrix
-     * @param array $personsIndexed
-     * @return MassMatrix
+     * reAnalyze a Mass
+     *
+     * @param int $id The mass id
+     *
+     * @return Mass|null The mass read or null if error.
      */
-    private function buildCarpoolersMatrix(ArrayCollection $persons, MassMatrix $matrix, array $personsIndexed)
+    public function reAnalyzeMass(int $id)
     {
-        foreach ($persons as $person) {
-            $matchingsAsDriver = $person->getMatchingsAsDriver();
-            $matchingsAsPassenger = $person->getMatchingsAsPassenger();
-            $matrix = $this->linkCarpoolers(array_merge($matchingsAsDriver, $matchingsAsPassenger), $matrix, $personsIndexed);
+        $response = $this->dataProvider->getSpecialItem($id, "reanalyze");
+        if ($response->getCode() == 200) {
+            return $response->getValue();
         }
-
-        return $matrix;
+        return null;
     }
 
     /**
-     * Link carpoolers by keeping the fastest match for the current MassMatching
-     * @param array $matchings
-     * @param MassMatrix $matrix
-     * @param array $personsIndexed
-     * @return MassMatrix
+     * Calculate a Mass (calculation of matchings)
+     *
+     * @param int $id The mass id
+     *
+     * @return Mass|null The mass read or null if error.
      */
-    private function linkCarpoolers(array $matchings, MassMatrix $matrix, array $personsIndexed)
+    public function matchMass(int $id)
     {
-        if (count($matchings)>0) {
-            $fastestMassPerson1Id = null;
-            $fastestMassPerson2Id = null;
-            $fastestDistance = 0;
-            $fastestDuration = 0;
-            $fastestCO2 = 0;
-            $biggestGain = -1;
-            foreach ($matchings as $matching) {
-                $journeyPerson1 = $matrix->getJourneyOfAPerson($matching->getMassPerson1Id());
-                $journeyPerson2 = $matrix->getJourneyOfAPerson($matching->getMassPerson2Id());
-
-                // This is the duration if the two peoples drive separately
-                $durationJourneySeparately = $journeyPerson1->getDuration() + $journeyPerson2->getDuration();
-
-                // This is the gain between the two peoples driving separately and their carpool
-                $gainDurationJourneyCarpool = $durationJourneySeparately-$matching->getDuration();
-
-                // We keep the biggest gain
-
-                if ($gainDurationJourneyCarpool > $biggestGain) {
-                    $biggestGain = $gainDurationJourneyCarpool;
-                    $fastestDuration = $matching->getDuration();
-                    $fastestDistance = $matching->getDistance();
-                    $fastestCO2 = UtilsService::computeCO2($matching->getDistance());
-                    $fastestMassPerson1Id = $matching->getMassPerson1Id();
-                    $fastestMassPerson2Id = $matching->getMassPerson2Id();
-                }
-            }
-
-            // As soon as they are linked, we ignore them both. We do not know if it's the best match of all the MassMatchings but it's good enough
-            if (count($matrix->getCarpoolsOfAPerson($fastestMassPerson1Id))==0 && count($matrix->getCarpoolsofAPerson($fastestMassPerson2Id))==0) {
-                $person1 = $personsIndexed[$fastestMassPerson1Id];
-                $person2 = $personsIndexed[$fastestMassPerson2Id];
-
-                $matrix->addCarpools(new MassCarpool(
-                    $person1,
-                    $person2,
-                    new MassJourney($fastestDistance, $fastestDuration, $fastestCO2)
-                    ));
-            }
+        $params = [
+            'minOverlapRatio'=>self::MIN_OVERLAP_RATIO,
+            'maxSuperiorDistanceRatio'=>self::MAX_SUPERIOR_DISTANCE_RATIO
+        ];
+        $response = $this->dataProvider->getSpecialItem($id, "match", $params);
+        if ($response->getCode() == 200) {
+            return $response->getValue();
         }
+        return null;
+    }
 
-        return $matrix;
+    /**
+     * reCalculate a Mass (calculation of matchings)
+     *
+     * @param int $id The mass id
+     *
+     * @return Mass|null The mass read or null if error.
+     */
+    public function reMatchMass(int $id)
+    {
+        $params = [
+            'minOverlapRatio'=>self::MIN_OVERLAP_RATIO,
+            'maxSuperiorDistanceRatio'=>self::MAX_SUPERIOR_DISTANCE_RATIO
+        ];
+        $response = $this->dataProvider->getSpecialItem($id, "rematch", $params);
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Compute all data of a Mass
+     *
+     * @param int $id The mass id
+     *
+     * @return Mass|null The mass read or null if error.
+     */
+    public function computeMass(int $id)
+    {
+        $response = $this->dataProvider->getSpecialItem($id, "compute");
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Get all different working places of a Mass
+     *
+     * @param int $id The mass id
+     *
+     * @return array|null The mass read or null if error.
+     */
+    public function workingPlacesMass(int $id)
+    {
+        $response = $this->dataProvider->getSpecialItem($id, "workingplaces");
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
     }
 }

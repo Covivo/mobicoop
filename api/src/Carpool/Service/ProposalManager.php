@@ -36,6 +36,7 @@ use App\Geography\Entity\Zone;
 use App\DataProvider\Entity\GeoRouterProvider;
 use Psr\Log\LoggerInterface;
 use App\Geography\Service\TerritoryManager;
+use App\User\Repository\UserRepository;
 
 /**
  * Proposal manager service.
@@ -51,6 +52,7 @@ class ProposalManager
     private $zoneManager;
     private $directionRepository;
     private $territoryManager;
+    private $userRepository;
     private $logger;
 
     /**
@@ -63,7 +65,7 @@ class ProposalManager
      * @param GeoRouter $geoRouter
      * @param ZoneManager $zoneManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, LoggerInterface $logger)
+    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, LoggerInterface $logger, UserRepository $userRepository)
     {
         $this->entityManager = $entityManager;
         $this->proposalMatcher = $proposalMatcher;
@@ -73,6 +75,7 @@ class ProposalManager
         $this->zoneManager = $zoneManager;
         $this->territoryManager = $territoryManager;
         $this->logger = $logger;
+        $this->userRepository = $userRepository;
     }
     
     /**
@@ -190,6 +193,7 @@ class ProposalManager
      * @param float $destinationLatitude
      * @param float $destinationLongitude
      * @param \Datetime $date
+     * @param int $userId
      * @return void
      */
     public function searchMatchings(
@@ -197,7 +201,8 @@ class ProposalManager
         float $originLongitude,
         float $destinationLatitude,
         float $destinationLongitude,
-        \Datetime $date
+        \Datetime $date,
+        ?int $userId=null
         ) {
 
         // we create a new Proposal object with its Criteria and Waypoints
@@ -211,6 +216,12 @@ class ProposalManager
         $criteria->setMarginDuration(900);
         $criteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
         $proposal->setCriteria($criteria);
+
+        if (!is_null($userId)) {
+            if ($user = $this->userRepository->find($userId)) {
+                $proposal->setUser($user);
+            }
+        }
 
         $waypointOrigin = new Waypoint();
         $originAddress = new Address();

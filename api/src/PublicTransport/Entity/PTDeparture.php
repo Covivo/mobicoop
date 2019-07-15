@@ -32,7 +32,7 @@ use App\Carpool\Entity\IndividualStop;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * A departure.
+ * A public transport departure.
  *
  * @ORM\Entity
  * @ApiResource(

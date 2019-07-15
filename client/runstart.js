@@ -35,7 +35,7 @@ if(production){
 }
 
 let options = [pathStart, 'server:run', host];
-let optionsEncore = production ? ['production'] : ['dev-server', '--port', encorePort];
+let optionsEncore = production ? ['production'] : ['dev-server', `--port=${8079}`];
 console.log('We are in dev mod the port is', port, production, encorePort, command, options)
 
 if (os.platform() === 'win32') {

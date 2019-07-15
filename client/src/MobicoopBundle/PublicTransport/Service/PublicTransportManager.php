@@ -105,6 +105,7 @@ class PublicTransportManager
      * @param float $longitude          The longitude near de trip points
      * @param int $perimeter            The perimeter you want to search fortrip points
      * @param string $transportModes    The transport modes you want to search fortrip points
+     * @param string $keywords          Trip points whose name contains these keywords (can't combine with lat/lon)
      * @return array|object|null
      */
     public function getTripPoints(
@@ -112,7 +113,8 @@ class PublicTransportManager
         float $latitude,
         float $longitude,
         int $perimeter,
-        string $transportModes
+        string $transportModes,
+        string $keywords=""
     ) {
         $this->dataProvider->setClass(PTTripPoint::class, "public_transport/trippoints");
 
@@ -121,8 +123,8 @@ class PublicTransportManager
             'latitude'       => $latitude,
             'longitude'      => $longitude,
             'perimeter'      => $perimeter,
-            'transportModes'      => $transportModes
-
+            'transportModes'      => $transportModes,
+            'keywords'      => $keywords
         ]);
         if ($response->getCode() == 200) {
             return $response->getValue();

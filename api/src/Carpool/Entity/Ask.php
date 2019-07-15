@@ -33,6 +33,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Carpool\Controller\AskPost;
 
 /**
  * Carpooling : ask from/to a driver and/or a passenger (after a matching between an offer and a request).
@@ -44,12 +45,24 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
+ *      collectionOperations={
+ *          "get",
+ *          "post"={
+ *              "method"="POST",
+ *              "path"="/asks",
+ *              "controller"=AskPost::class,
+ *          },
+ *      },
  *      itemOperations={"get","put","delete"}
  * )
  */
 class Ask
 {
+    const STATUS_INITIATED = 1;
+    const STATUS_PENDING = 2;
+    const STATUS_ACCEPTED = 3;
+    const STATUS_DECLINED = 4;
+    
     /**
      * @var int The id of this ask.
      *
@@ -61,7 +74,7 @@ class Ask
     private $id;
 
     /**
-     * @var int Ask status (0 = waiting; 1 = accepted; 2 = declined).
+     * @var int Ask status (1 = initiated; 2 = pending, 3 = accepted; 4 = declined).
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
@@ -138,10 +151,22 @@ class Ask
      * @ApiSubresource(maxDepth=1)
      */
     private $waypoints;
+
+    /**
+     * @var ArrayCollection The ask history items linked with the ask.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\AskHistory", mappedBy="ask", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OrderBy({"id" = "ASC"})
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
+     */
+    private $askHistories;
     
     public function __construct()
     {
         $this->waypoints = new ArrayCollection();
+        $this->askHistories = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -261,6 +286,34 @@ class Ask
             // set the owning side to null (unless already changed)
             if ($waypoint->getAsk() === $this) {
                 $waypoint->setAsk(null);
+            }
+        }
+        
+        return $this;
+    }
+
+    public function getAskHistories()
+    {
+        return $this->askHistories->getValues();
+    }
+    
+    public function addAskHistory(AskHistory $askHistory): self
+    {
+        if (!$this->askHistories->contains($askHistory)) {
+            $this->askHistories[] = $askHistory;
+            $askHistory->setAsk($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeAskHistory(AskHistory $askHistory): self
+    {
+        if ($this->askHistories->contains($askHistory)) {
+            $this->askHistories->removeElement($askHistory);
+            // set the owning side to null (unless already changed)
+            if ($askHistory->getAsk() === $this) {
+                $askHistory->setAsk(null);
             }
         }
         

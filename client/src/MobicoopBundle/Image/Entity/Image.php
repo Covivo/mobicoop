@@ -26,13 +26,14 @@ namespace Mobicoop\Bundle\MobicoopBundle\Image\Entity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\File\File;
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 
 /**
  * An image.
  */
-class Image implements Resource
+class Image implements ResourceInterface
 {
     /**
      * @var int The id of this image.
@@ -140,6 +141,11 @@ class Image implements Resource
      * @var Event|null The event associated with the image.
      */
     private $event;
+
+    /**
+     * @var Community|null The community associated with the image.
+     */
+    private $community;
     
     /**
      * @var array|null The versions of with the image.
@@ -157,12 +163,30 @@ class Image implements Resource
      * @Groups({"post","put"})
      */
     private $eventFile;
+
+    /**
+     * @var File|null
+     * @Assert\Image(
+     *     minWidth = 200,
+     *     maxWidth = 4000,
+     *     minHeight = 200,
+     *     maxHeight = 4000
+     * )
+     * @Groups({"post","put"})
+     */
+    private $communityFile;
     
     /**
      * @var int|null The event id associated with the image.
      * @Groups({"post","put"})
      */
     private $eventId;
+
+    /**
+     * @var int|null The community id associated with the image.
+     * @Groups({"post","put"})
+     */
+    private $communityId;
         
     public function __construct($id=null)
     {
@@ -359,6 +383,18 @@ class Image implements Resource
         
         return $this;
     }
+
+    public function getCommunity(): ?Community
+    {
+        return $this->community;
+    }
+    
+    public function setCommunity(?Community $community): self
+    {
+        $this->community = $community;
+        
+        return $this;
+    }
     
     public function getVersions(): ?array
     {
@@ -379,6 +415,16 @@ class Image implements Resource
     {
         $this->eventFile = $eventFile;
     }
+
+    public function getCommunityFile(): ?File
+    {
+        return $this->communityFile;
+    }
+    
+    public function setCommunityFile(?File $communityFile)
+    {
+        $this->communityFile = $communityFile;
+    }
     
     public function getEventId(): ?int
     {
@@ -388,5 +434,15 @@ class Image implements Resource
     public function setEventId($eventId)
     {
         $this->eventId = $eventId;
+    }
+
+    public function getCommunityId(): ?int
+    {
+        return $this->communityId;
+    }
+    
+    public function setCommunityId($communityId)
+    {
+        $this->communityId = $communityId;
     }
 }

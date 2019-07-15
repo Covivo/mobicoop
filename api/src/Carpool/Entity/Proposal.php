@@ -40,6 +40,7 @@ use App\Carpool\Controller\ProposalPost;
 use App\Travel\Entity\TravelMode;
 use App\Community\Entity\Community;
 use App\User\Entity\User;
+use App\Communication\Entity\Notified;
 
 /**
  * Carpooling : proposal (offer from a driver / request from a passenger).
@@ -106,6 +107,13 @@ use App\User\Entity\User;
  *                          "format" = "date-time",
  *                          "description" = "The date of the trip (on RFC3339 format)"
  *                      },
+ *                      {
+ *                          "name" = "userId",
+ *                          "in" = "query",
+ *                          "type" = "number",
+ *                          "format" = "integer",
+ *                          "description" = "The id of the user that makes the query"
+ *                      }
  *                  }
  *              }
  *          }
@@ -195,7 +203,7 @@ class Proposal
     /**
      * @var ArrayCollection|null The communities related to the proposal.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Community\Entity\Community")
+     * @ORM\ManyToMany(targetEntity="\App\Community\Entity\Community", inversedBy="proposals")
      * @Groups({"read","write"})
      */
     private $communities;
@@ -239,6 +247,15 @@ class Proposal
      * @Groups({"read"})
      */
     private $individualStops;
+
+    /**
+     * @var ArrayCollection|null The notifications sent for the proposal.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $notifieds;
         
     public function __construct($id=null)
     {
@@ -252,6 +269,7 @@ class Proposal
         $this->matchingOffers = new ArrayCollection();
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
+        $this->notifieds = new ArrayCollection();
     }
     
     public function __clone()
@@ -263,6 +281,7 @@ class Proposal
         $this->matchingOffers = new ArrayCollection();
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
+        $this->notifieds = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -503,6 +522,34 @@ class Proposal
             // set the owning side to null (unless already changed)
             if ($individualStop->getProposal() === $this) {
                 $individualStop->setProposal(null);
+            }
+        }
+        
+        return $this;
+    }
+
+    public function getNotifieds()
+    {
+        return $this->notifieds->getValues();
+    }
+    
+    public function addNotified(Notified $notified): self
+    {
+        if (!$this->notifieds->contains($notified)) {
+            $this->notifieds[] = $notified;
+            $notified->setProposal($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeNotified(Notified $notified): self
+    {
+        if ($this->notifieds->contains($notified)) {
+            $this->notifieds->removeElement($notified);
+            // set the owning side to null (unless already changed)
+            if ($notified->getProposal() === $this) {
+                $notified->setProposal(null);
             }
         }
         

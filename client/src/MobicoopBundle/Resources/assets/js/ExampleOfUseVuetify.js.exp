@@ -1,0 +1,23 @@
+'use strict';
+
+import Vue from 'vue';
+import Vuetify from 'vuetify';
+import 'vuetify/dist/vuetify.min.css' 
+
+//Vue components
+
+import Componentname from '../../components/Componentname';
+
+Vue.use(Vuetify);
+
+new Vue({
+  el: '#app',
+  components: {
+    Componentname
+  }
+})
+
+
+// Some components of vuetify use Material icons so d'ont forget to add a link to the base.html file
+
+  <link href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons' rel="stylesheet">

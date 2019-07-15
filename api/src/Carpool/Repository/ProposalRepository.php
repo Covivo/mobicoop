@@ -28,6 +28,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Criteria;
 use App\Geography\Service\ZoneManager;
 use App\Geography\Entity\Direction;
+use App\User\Service\UserManager;
+use App\Community\Entity\Community;
 
 /**
  * @method Proposal|null find($id, $lockMode = null, $lockVersion = null)
@@ -41,11 +43,13 @@ class ProposalRepository
     
     private $repository;
     private $zoneManager;
+    private $userManager;
     
-    public function __construct(EntityManagerInterface $entityManager, ZoneManager $zoneManager)
+    public function __construct(EntityManagerInterface $entityManager, ZoneManager $zoneManager, UserManager $userManager)
     {
         $this->repository = $entityManager->getRepository(Proposal::class);
         $this->zoneManager = $zoneManager;
+        $this->userManager = $userManager;
     }
     
     /**
@@ -79,13 +83,30 @@ class ProposalRepository
         ->join('p.user', 'u')
         // we need the directions and the geographical zones
         ->leftJoin('c.directionDriver', 'dd')->leftJoin('dd.zones', 'zd')
-        ->leftJoin('c.directionPassenger', 'dp')->leftJoin('dp.zones', 'zp');
+        ->leftJoin('c.directionPassenger', 'dp')->leftJoin('dp.zones', 'zp')
+        // we need the communities
+        ->leftJoin('p.communities', 'co');
 
         // do we exclude the user itself ?
         if ($excludeProposalUser) {
             $query->andWhere('p.user != :userProposal')
             ->setParameter('userProposal', $proposal->getUser());
         }
+
+        // COMMUNITIES
+        $filterCommunities = "((co.proposalsHidden = 0 OR co.proposalsHidden is null)";
+        // this function returns the id of a Community object
+        $fCommunities = function (Community $community) {
+            return $community->getId();
+        };
+        // we use the fCommunities function to create an array of ids of the user's private communities
+        $privateCommunities = array_map($fCommunities, $this->userManager->getPrivateCommunities($proposal->getUser()));
+        if (is_array($privateCommunities) && count($privateCommunities)>0) {
+            // we finally implode this array for filtering
+            $filterCommunities .= " OR (co.id IN (" . implode(',', $privateCommunities) . "))";
+        }
+        $filterCommunities .= ")";
+        $query->andWhere($filterCommunities);
 
         // GEOGRAPHICAL ZONES
         // we search the zones where the user is passenger and/or driver
@@ -119,6 +140,7 @@ class ProposalRepository
             $query->andWhere('(c.driver = 1 and ' . $zoneDriverWhere . ')');
         }
         
+        // FREQUENCIES
         switch ($proposal->getCriteria()->getFrequency()) {
             
             case Criteria::FREQUENCY_PUNCTUAL:

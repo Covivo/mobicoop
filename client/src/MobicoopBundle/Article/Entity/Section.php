@@ -23,14 +23,14 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Article\Entity;
 
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * A section of an article.
  */
-class Section implements Resource
+class Section implements ResourceInterface
 {
     const STATUS_PENDING = 0;
     const STATUS_PUBLISHED = 1;

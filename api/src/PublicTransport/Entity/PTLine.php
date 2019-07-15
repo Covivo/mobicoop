@@ -115,7 +115,7 @@ class PTLine
     /**
      * @var int The transport mode of this line.
      *
-     * @ORM\Column(type="int", nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
      */
     private $transportMode;

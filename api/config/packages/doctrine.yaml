@@ -55,6 +55,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Carpool/Entity'
                 prefix: 'App\Carpool\Entity'
                 alias: Carpool
+            Communication:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Communication/Entity'
+                prefix: 'App\Communication\Entity'
+                alias: Communication
             Community:
                 is_bundle: false
                 type: annotation

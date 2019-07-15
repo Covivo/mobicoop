@@ -40,7 +40,6 @@
         "symfony/css-selector": "*",
         "symfony/debug-pack": "*",
         "symfony/maker-bundle": "^1.0",
-        "symfony/panther": "^0.2.0",
         "symfony/profiler-pack": "*",
         "symfony/test-pack": "*",
         "symfony/web-server-bundle": "*"
@@ -49,7 +48,8 @@
         "preferred-install": {
             "*": "dist"
         },
-        "sort-packages": true
+        "sort-packages": true,
+        "process-timeout": 0
     },
     "autoload": {
         "psr-4": {
@@ -93,7 +93,7 @@
         },
         "merge-plugin": {
             "include": [
-                "src/mobicoop/composer.json"
+                "src/MobicoopBundle/composer.json"
             ],
             "recurse": true,
             "replace": false,

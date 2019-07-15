@@ -30,7 +30,7 @@ use App\Geography\Controller\TerritoryPost;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * A territory.
+ * A geographical territory, represented by a geojson multipolygon.
  *
  * @ORM\Entity
  * @ApiResource(

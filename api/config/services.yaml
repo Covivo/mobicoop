@@ -70,10 +70,35 @@ services:
         # Uncomment only if autoconfiguration isn't enabled
         #tags: [ 'api_platform.filter' ]
 
+    App\Carpool\Service\AskManager:
+        tags:   
+            - { name: monolog.logger, channel: carpool }
+
     App\Carpool\Service\ProposalManager:
         tags:   
             - { name: monolog.logger, channel: carpool }
     
+    # Communication
+    App\Communication\Service\NotificationManager:
+        arguments:
+            $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
+            $emailTitleTemplatePath: '%env(resolve:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%'
+            $smsTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_SMS_PATH)%'
+        tags: 
+            - { name: monolog.logger, channel: notification }
+    
+    App\Communication\Service\EmailManager:
+        arguments:
+            $emailSender: '%env(resolve:MAILER_SENDER)%'
+            $emailReplyTo: '%env(resolve:MAILER_REPLYTO)%'
+            $templatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%'
+        tags: 
+            - { name: monolog.logger, channel: communication }
+
+    App\Communication\Service\InternalMessageManager:
+        tags: 
+            - { name: monolog.logger, channel: communication }
+
     # Community
     App\Community\Controller\:
         resource: '../src/Community/Controller'
@@ -96,6 +121,9 @@ services:
             $operator: '%env(json:file:resolve:RDEX_OPERATOR)%'
             $clients: '%env(json:file:resolve:RDEX_CLIENTS)%'
             $providers: '%env(json:file:resolve:RDEX_PROVIDERS)%'
+
+    # Geocoder; alias to allow this type to be autowired
+    Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'
 
     # Geography
     App\Geography\Controller\:
@@ -141,7 +169,8 @@ services:
     App\Match\Service\MassImportManager:
         arguments:
             $params: '%mass%'
-        tags:   
+            $emailTemplatePath: '%env(resolve:MOBIMATCH_EMAIL_TEMPLATE_PATH)%'
+        tags:
             - { name: monolog.logger, channel: mass }
 
     # Rdex
@@ -159,5 +188,10 @@ services:
         resource: '../src/User/Controller'
         tags: ['controller.service_arguments']
 
-    # alias to allow this type to be autowired
-    Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'    
+    'App\User\DataProvider\UserSearchCollectionDataProvider':
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
+    'App\User\Filter\HomeAddressTerritoryFilter':
+        # Uncomment only if autoconfiguration isn't enabled
+        #tags: [ 'api_platform.filter' ]    

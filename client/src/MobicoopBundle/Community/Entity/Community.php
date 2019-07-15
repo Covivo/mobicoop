@@ -31,12 +31,12 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 
 /**
- *
+ *  A community.
  */
-class Community implements Resource
+class Community implements ResourceInterface
 {
     /**
      * @var int The id of this community.
@@ -45,6 +45,8 @@ class Community implements Resource
 
     /**
      * @var string|null The iri of this community.
+     *
+     * @Groups({"post","put"})
      */
     private $iri;
     
@@ -56,11 +58,18 @@ class Community implements Resource
     private $name;
 
     /**
-     * @var boolean|null The community is private.
+     * @var boolean|null Members are only visible by the members of the community.
      *
      * @Groups({"post","put"})
      */
-    private $private;
+    private $membersHidden;
+
+    /**
+     * @var boolean|null Proposals are only visible by the members of the community.
+     *
+     * @Groups({"post","put"})
+     */
+    private $proposalsHidden;
     
     /**
      * @var string The short description of the community.
@@ -79,7 +88,6 @@ class Community implements Resource
     /**
     * @var \DateTimeInterface Creation date of the event.
     *
-    * @Assert\Date()
     * @Groups("post")
     */
     private $createdDate;
@@ -112,7 +120,22 @@ class Community implements Resource
      * @Groups({"post","put"})
      */
     private $communityUsers;
-    
+
+    /**
+     * @var bool|null The community is secured.
+     *
+     * @Groups({"post","put"})
+     */
+    private $secured;
+
+    /**
+     * @var bool|null The community is private.
+     *
+     * @Groups({"post","put"})
+     */
+    private $private;
+
+
     public function __construct($id=null)
     {
         if ($id) {
@@ -121,6 +144,7 @@ class Community implements Resource
         $this->images = new ArrayCollection();
         $this->proposals = new ArrayCollection();
         $this->communityUsers = new ArrayCollection();
+        $this->setSecured(false);
     }
     
     public function getId(): ?int
@@ -153,14 +177,26 @@ class Community implements Resource
         $this->name = $name;
     }
 
-    public function isPrivate(): ?bool
+    public function isMembersHidden(): ?bool
     {
-        return $this->private;
+        return $this->membersHidden ? true : false;
     }
     
-    public function setPrivate(bool $isPrivate): self
+    public function setMembersHidden(?bool $isMembersHidden): self
     {
-        $this->private = $isPrivate;
+        $this->membersHidden = $isMembersHidden ? true : false;
+        
+        return $this;
+    }
+
+    public function isProposalsHidden(): ?bool
+    {
+        return $this->proposalsHidden ? true : false;
+    }
+    
+    public function setProposalsHidden(?bool $isProposalsHidden): self
+    {
+        $this->proposalsHidden = $isProposalsHidden ? true : false;
         
         return $this;
     }
@@ -296,6 +332,36 @@ class Community implements Resource
             }
         }
         
+        return $this;
+    }
+
+    public function isSecured(): ?bool
+    {
+        return $this->secured;
+    }
+
+    public function setSecured(bool $secured): self
+    {
+        $this->secured = $secured;
+
+        return $this;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function isPrivate(): ?bool
+    {
+        return $this->private;
+    }
+
+    /**
+     * @param bool|null $private
+     */
+    public function setPrivate(?bool $private): self
+    {
+        $this->private = $private;
+
         return $this;
     }
 }

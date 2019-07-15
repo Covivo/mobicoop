@@ -28,17 +28,18 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
+use DateTime;
 
 /**
  * A user.
  */
-class User implements Resource, UserInterface, EquatableInterface
+class User implements ResourceInterface, UserInterface, EquatableInterface
 {
     const MAX_DEVIATION_TIME = 600;
     const MAX_DEVIATION_DISTANCE = 10000;
@@ -56,6 +57,8 @@ class User implements Resource, UserInterface, EquatableInterface
         'gender.choice.male'    => self::GENDER_MALE,
         'gender.choice.nc'      => self::GENDER_OTHER
     ];
+
+    const HOME_ADDRESS_NAME = 'homeAddress';
     
     /**
      * @var int The id of this user.
@@ -65,7 +68,7 @@ class User implements Resource, UserInterface, EquatableInterface
     /**
      * @var string|null The iri of this user.
      *
-     * @Groups({"post","put"})
+     * @Groups({"post","put","password"})
      */
     private $iri;
     
@@ -101,7 +104,7 @@ class User implements Resource, UserInterface, EquatableInterface
     /**
      * @var string|null The encoded password of the user.
      *
-     * @Groups({"post","put"})
+     * @Groups({"post","put","password"})
      *
      * @Assert\NotBlank(groups={"signUp","password"})
      */
@@ -126,7 +129,6 @@ class User implements Resource, UserInterface, EquatableInterface
      *
      * @Groups({"post","put"})
      *
-     * @Assert\Date()
      */
     private $birthDate;
     
@@ -202,6 +204,13 @@ class User implements Resource, UserInterface, EquatableInterface
      * @var Mass[]|null The mass import files of the user.
      */
     private $masses;
+
+    /**
+     * @var Address[]|null A user have only one homeAddress.
+     */
+    private $homeAddress;
+
+
 
     public function __construct($id=null, $status=null)
     {
@@ -510,12 +519,13 @@ class User implements Resource, UserInterface, EquatableInterface
 
     public function getBirthYear(): ?int
     {
-        return $this->birthYear;
+        return $this->birthDate ? (int)$this->birthDate->format('Y') : null;
     }
 
     public function setBirthYear(?int $birthYear)
     {
         $this->birthYear = $birthYear;
+        $this->birthDate = DateTime::createFromFormat('Y-m-d', $birthYear . '-1-1');
     }
 
     public function getConditions(): ?int
@@ -585,5 +595,15 @@ class User implements Resource, UserInterface, EquatableInterface
         }
 
         return $this;
+    }
+
+    public function getHomeAddress(): ?Address
+    {
+        foreach ($this->addresses as $address) {
+            if ($address->getName() == self::HOME_ADDRESS_NAME) {
+                return $address;
+            }
+        }
+        return null;
     }
 }

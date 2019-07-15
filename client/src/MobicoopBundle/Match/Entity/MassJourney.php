@@ -58,7 +58,7 @@ class MassJourney
      * @param int $duration
      * @param float $co2
      */
-    public function __construct(int $distance, int $duration, float $co2, int $idPerson=null)
+    public function __construct(int $distance=null, int $duration=null, float $co2=null, int $idPerson=null)
     {
         $this->idPerson = $idPerson;
         $this->distance = $distance;

@@ -31,6 +31,7 @@ use App\PublicTransport\Entity\PTArrival;
 use App\PublicTransport\Entity\PTDeparture;
 use App\PublicTransport\Entity\PTLineStop;
 use App\PublicTransport\Entity\PTLineStopList;
+use App\PublicTransport\Entity\PTLocality;
 use App\PublicTransport\Entity\PTStop;
 use App\PublicTransport\Entity\PTTripPoint;
 use App\Travel\Entity\TravelMode;
@@ -218,11 +219,20 @@ class CitywayProvider implements ProviderInterface
     {
         $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESSOURCE_TRIPPOINTS);
         $getParams = [
-            "Latitude" => $params["latitude"],
-            "Longitude" => $params["longitude"],
             "TransportModes" => $params["transportModes"],
             "Perimeter" => $params["perimeter"]
         ];
+
+
+        // First, I check the Lat/Lon. If they are given, we ignore keywords
+        if ($params["latitude"]!=0 && $params["longitude"]!=0) {
+            $getParams["Latitude"] = $params["latitude"];
+            $getParams["Longitude"] = $params["longitude"];
+        } else {
+            // We assume that we have to use keywords for the search
+            $getParams["Keywords"] = $params["keywords"];
+        }
+
         $response = $dataProvider->getCollection($getParams);
 
         if ($response->getCode() == 200) {
@@ -413,8 +423,25 @@ class CitywayProvider implements ProviderInterface
         $tripPoint->setPointType($data["PointType"]);
         $tripPoint->setPostalCode($data["PostalCode"]);
         $tripPoint->setTransportMode($data["TransportMode"]);
+        if (isset($data["Locality"])) {
+            $locality = $this->deserializeLocality($data["Locality"]);
+            $tripPoint->setLocality($locality);
+        }
 
         return $tripPoint;
+    }
+
+    private function deserializeLocality($data)
+    {
+        $locality = new PTLocality();
+
+        $locality->setId($data["Id"]);
+        $locality->setInseeCode($data["InseeCode"]);
+        $locality->setLatitude($data["Latitude"]);
+        $locality->setLongitude($data["Longitude"]);
+        $locality->setName($data["Name"]);
+
+        return $locality;
     }
 
     private function deserializeJourney($data)

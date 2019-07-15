@@ -1,0 +1,34 @@
+version: '2'
+services:
+  base:
+    environment:
+      - COMPOSER_PROCESS_TIMEOUT=1200
+    image: mobicoop/php-node-chromium:2.0.0
+    volumes:
+      - mobicoop-sync:/var/www:nocopy
+      - cache-sync:/root/.cache/:nocopy
+    working_dir: /var/www
+  install:
+    extends:
+      service: base
+    command: npm i
+  install-all:
+    extends:
+      service: base
+    command: npm run install-all
+  build-admin:
+    extends:
+      service: base
+    working_dir: /var/www/admin
+    command: npm run build
+  fixtures:
+    extends:
+      service: base
+    working_dir: /var/www/api
+    entrypoint: bash entrypoint.sh 
+
+volumes:
+  mobicoop-sync:
+    external: true
+  cache-sync:
+    external: true

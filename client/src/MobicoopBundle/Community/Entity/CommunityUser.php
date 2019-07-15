@@ -25,12 +25,12 @@ namespace Mobicoop\Bundle\MobicoopBundle\Community\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Resource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 
 /**
  * A user related to a community.
  */
-class CommunityUser implements Resource
+class CommunityUser implements ResourceInterface
 {
     const STATUS_PENDING = 0;
     const STATUS_ACCEPTED = 1;
@@ -97,20 +97,32 @@ class CommunityUser implements Resource
     /**
      * @var string The login to join the community if the community is secured.
      *
-     * @Groups("put")
+     * @Groups({"put", "post"})
      */
     private $login;
 
     /**
      * @var string The password to join the community if the community is secured.
      *
-     * @Groups("put")
+     * @Groups({"put", "post"})
      */
     private $password;
+
+    public function __construct($id=null)
+    {
+        if ($id) {
+            $this->setId($id);
+        }
+    }
     
     public function getId(): ?int
     {
         return $this->id;
+    }
+    
+    public function setId($id)
+    {
+        $this->id = $id;
     }
 
     public function getIri()
@@ -122,7 +134,7 @@ class CommunityUser implements Resource
     {
         $this->iri = $iri;
     }
-
+    
     public function getCommunity(): ?Community
     {
         return $this->community;
@@ -205,7 +217,7 @@ class CommunityUser implements Resource
         return $this;
     }
 
-    public function getLogin(): string
+    public function getLogin(): ?string
     {
         return $this->login;
     }
@@ -215,7 +227,7 @@ class CommunityUser implements Resource
         $this->login = $login;
     }
 
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }

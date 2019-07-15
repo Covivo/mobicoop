@@ -20,8 +20,10 @@ const baseUrl = Cypress.env("baseUrl");
 Cypress.Commands.add('addProposal', () => {
 
   /* Share a proposal */
-  cy.contains('Partager une annonce')
+  // cy.contains('Partager une annonce')
+  cy.get('.buttons > .is-dark')
     .click()
+  cy.wait(600)  
   cy.url().should('include', baseUrl + 'covoiturage/annonce/poster')
 
   /* Passenger or Driver */
@@ -39,7 +41,7 @@ Cypress.Commands.add('addProposal', () => {
   cy.get('.control > #origin')
     .should('have.attr', 'placeholder', 'Depuis')
     .type('Metz')
-    cy.wait(600)
+    cy.wait(1500)
   cy.get('[data-v-12259723]')
     .contains('Metz')
     .click()
@@ -48,7 +50,7 @@ Cypress.Commands.add('addProposal', () => {
   cy.get('#destination')
     .should('have.attr', 'placeholder', 'Vers')
     .type('Marseille')
-    cy.wait(600)
+  cy.wait(1500)
   cy.get('[data-v-12259723]')
     .contains('Marseille')
     .click()
@@ -67,7 +69,7 @@ Cypress.Commands.add('addProposal', () => {
     .click()
   cy.get(':nth-child(1) > .datepicker > .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > :nth-child(1) > .pagination > .pagination-list > .field > :nth-child(1) > .select > select').select('Juin')
   cy.get(':nth-child(1) > .datepicker > .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > :nth-child(1) > .pagination > .pagination-list > .field > :nth-child(2) > .select > select').select('2022')
-  cy.get(':nth-child(1) > .datepicker > .dropdown > .dropdown-menu > .dropdown-content > .dropdown-item > .datepicker-table > .datepicker-body > :nth-child(5) > :nth-child(4)').contains('30')
+  cy.get(':nth-child(5) > :nth-child(4)').contains('30')
     .click()
 
   // in order to close the window datepicker

@@ -43,4 +43,4 @@ multiTransportMode:
 conditions:
     label: 'I approve the general conditions'
 signup:
-    label: 'I register'
+    label: 'Save'

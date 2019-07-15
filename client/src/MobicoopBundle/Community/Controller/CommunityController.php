@@ -22,11 +22,13 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Community\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\Community\Form\CommunityUserForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
+use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Community\Form\CommunityForm;
 
 /**
@@ -77,12 +79,76 @@ class CommunityController extends AbstractController
     /**
      * Show a community
      */
-    public function show($id, CommunityManager $communityManager)
+    public function show($id, CommunityManager $communityManager, Request $request, UserManager $userManager)
     {
+        $communityUser = new CommunityUser();
         $community = $communityManager->getCommunity($id);
         $this->denyAccessUnlessGranted('show', $community);
+        $user = $userManager->getLoggedUser();
+        $form = $this->createForm(CommunityUserForm::class, $communityUser);
+        $error = false;
+        $communityUser->setCommunity($community);
+        $communityUser->setUser($user);
+        $communityUser->setCreatedDate(new \DateTime());
+        $communityUser->setStatus(0);
+        $form->handleRequest($request);
+        $isMember = false;
+        $usersCommunity = array();
+        //test if the community has members
+        if (count($community->getCommunityUsers()) > 0) {
+            foreach ($community->getCommunityUsers() as $userInCommunity) {
+                $usersCommunity = [$userInCommunity->getUser()->getId()];
+            }
+        }
+
+        //test if the user logged is member of the community
+        if (!is_null($user) && $user !=='' && in_array($user->getId(), $usersCommunity)) {
+            $isMember = true;
+        }
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($communityUser = $communityManager->joinCommunity($communityUser)) {
+                return $this->redirectToRoute('community_show', ['id' => $id]);
+            }
+            $error = true;
+        }
         return $this->render('@Mobicoop/community/showCommunity.html.twig', [
             'community' => $community,
+            'formIdentification' => $form->createView(),
+            'communityUser' => $communityUser,
+            'user' => $user,
+            'error' => $error,
+            'isMember' => $isMember
         ]);
+    }
+
+
+    /**
+     * Join a community
+     */
+    public function joinCommunity($id, CommunityManager $communityManager, UserManager $userManager)
+    {
+        $community = $communityManager->getCommunity($id);
+        $user = $userManager->getLoggedUser();
+        $usersCommunity = array();
+
+        //test if the community has members
+        if (count($community->getCommunityUsers()) > 0) {
+            foreach ($community->getCommunityUsers() as $userInCommunity) {
+                $usersCommunity = [$userInCommunity->getUser()->getId()];
+            }
+        }
+        //test if the user logged is member of the community
+        if (!is_null($user) && $user !=='' && !in_array($user->getId(), $usersCommunity)) {
+            $communityUser = new CommunityUser();
+//        $this->denyAccessUnlessGranted('show', $community);
+            $communityUser->setCommunity($community);
+            $communityUser->setUser($user);
+            $communityUser->setCreatedDate(new \DateTime());
+            $communityUser->setStatus(0);
+
+            $communityManager->joinCommunity($communityUser);
+        }
+
+        return $this->redirectToRoute('community_show', ['id' => $id]);
     }
 }

@@ -56,22 +56,48 @@ final class TripPointCollectionDataProvider implements CollectionDataProviderInt
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        if (
-            is_null($this->request->get("provider")) &&
-            is_null($this->request->get("latitude")) &&
-            is_null($this->request->get("longitude")) &&
-            is_null($this->request->get("perimeter")) &&
-            is_null($this->request->get("transportModes"))
+
+        // First, I check the Lat/Lon. If they are given, we ignore keywords
+        if (!is_null($this->request->get("latitude")) &&
+            !is_null($this->request->get("longitude")) &&
+            $this->request->get("latitude") != 0 &&
+            $this->request->get("longitude") != 0
         ) {
-            return null;
+            if (
+                is_null($this->request->get("provider")) &&
+                is_null($this->request->get("perimeter")) &&
+                is_null($this->request->get("transportModes"))
+            ) {
+                return null;
+            }
+
+            return $this->dataProvider->getTripPoints(
+                $this->request->get("provider"),
+                $this->request->get("latitude"),
+                $this->request->get("longitude"),
+                $this->request->get("perimeter"),
+                $this->request->get('transportModes'),
+                ""
+            );
+        } else {
+            // We assume that we have to use keywords for the search
+            if (
+                is_null($this->request->get("provider")) &&
+                is_null($this->request->get("perimeter")) &&
+                is_null($this->request->get("keywords")) &&
+                is_null($this->request->get("transportModes"))
+            ) {
+                return null;
+            }
+
+            return $this->dataProvider->getTripPoints(
+                $this->request->get("provider"),
+                0,
+                0,
+                $this->request->get("perimeter"),
+                $this->request->get('transportModes'),
+                $this->request->get("keywords")
+            );
         }
-        
-        return $this->dataProvider->getTripPoints(
-            $this->request->get("provider"),
-            $this->request->get("latitude"),
-            $this->request->get("longitude"),
-            $this->request->get("perimeter"),
-            $this->request->get('transportModes')
-                );
     }
 }

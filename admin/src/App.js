@@ -48,7 +48,11 @@ const theme = createMuiTheme({
       },
       contrastThreshold: process.env.REACT_APP_THEME_CONTRAST_THRESHOLD,
       tonalOffset: process.env.REACT_APP_THEME_TONAL_OFFSET,
-      type: `${process.env.REACT_APP_THEME_TYPE}`
+      type: `${process.env.REACT_APP_THEME_TYPE}`,
+      background: {
+        paper: `#${process.env.REACT_APP_THEME_BACKGROUND_PAPER_COLOR}`,
+        default: `#${process.env.REACT_APP_THEME_BACKGROUND_DEFAULT_COLOR}`
+      }
     },
 });
 
