@@ -105,12 +105,11 @@ class CommunityController extends AbstractController
         if (!is_null($user) && $user !=='' && in_array($user->getId(), $usersCommunity)) {
             $isMember = true;
         }
-            if ($form->isSubmitted() && $form->isValid()) {
-                if ($communityUser = $communityManager->joinCommunity($communityUser)) {
-                    return $this->redirectToRoute('community_show', ['id' => $id]);
-                }
-                $error = true;
-
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($communityUser = $communityManager->joinCommunity($communityUser)) {
+                return $this->redirectToRoute('community_show', ['id' => $id]);
+            }
+            $error = true;
         }
         return $this->render('@Mobicoop/community/showCommunity.html.twig', [
             'community' => $community,

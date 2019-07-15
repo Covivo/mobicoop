@@ -91,7 +91,7 @@ class CarpoolController extends AbstractController
             // $form->submit($request->request->all());
 
 //            test if a community is filled
-            if ($ad->getCommunity() !== '' && !is_null($ad->getCommunity()) ) {
+            if ($ad->getCommunity() !== '' && !is_null($ad->getCommunity())) {
                 $communityController->joinCommunity($ad->getCommunity(), $communityManager, $userManager);
             }
         }
