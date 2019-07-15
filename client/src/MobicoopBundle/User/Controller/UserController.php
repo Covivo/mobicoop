@@ -23,7 +23,12 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Controller;
 
+use App\Communication\Entity\Email;
+use Herrera\Json\Exception\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -261,6 +266,65 @@ class UserController extends AbstractController
             'user' => $user,
             'error' => $error
         ]);
+    }
+
+
+	/**
+	 * User password update.
+	 * @param UserManager $userManager
+	 *     The class managing the user.
+	 * @param Request $request
+	 *     The symfony request object.
+	 * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+	 * @throws Exception
+	 */
+    public function userPasswordForgot(UserManager $userManager, Request $request)
+    {
+    	$userRequest= new User();
+        $form = $this->createFormBuilder($userRequest)
+        ->add('email', EmailType::class)
+	    ->add('telephone', TextType::class)
+	    ->add('submit', SubmitType::class)
+        ->getForm();
+
+        $form->handleRequest($request);
+        $error = false;
+
+        if ($form->isSubmitted() && $form->isValid()) {
+        	$user= $userManager->findByEmail($userRequest->getEmail());
+        	if(empty($user)) $user= $userManager->findByPhone($userRequest->getTelephone());
+            if ($user = $userManager->updateUserPassword($user)) {
+                // after successful update, we re-log the user
+                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                $this->get('security.token_storage')->setToken($token);
+                $this->get('session')->set('_security_main', serialize($token));
+                return $this->redirectToRoute('user_profile_update');
+            }
+            $error = true;
+        }
+
+        return $this->render('@Mobicoop/user/password.html.twig', [
+            'form' => $form->createView(),
+            'user' => $user??$userRequest,
+            'error' => $error,
+	        'waitParametersForMail' => true
+        ]);
+    }
+
+    /**
+     * Reset password
+     */
+    public function userPasswordReset(UserManager $userManager, Request $request, string $token)
+    {
+        if ($request->isMethod('POST')) {
+            $user = $userManager->findByToken($token);
+
+            if (null === $user) {
+                //TODO: erreur
+            } else {
+                return $this->render();
+            }
+        }
     }
 
     /**

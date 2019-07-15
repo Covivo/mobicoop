@@ -86,6 +86,30 @@ class UserManager
     }
 
     /**
+     * Search user by reset token
+     *
+     * @param string $token
+     *
+     * @return User|null The user found or null if not found.
+     */
+    public function findByToken (string $token)
+    {
+
+    }
+
+    /**
+     * Search user by reset email
+     *
+     * @param string $email
+     *
+     * @return User|null The user found or null if not found.
+     */
+    public function findByEmail (string $email)
+    {
+        return null;
+    }
+
+    /**
      * Get masses of a user
      *
      * @param int $id The user id
@@ -242,4 +266,8 @@ class UserManager
         }
         return null;
     }
+
+	public function findByPhone(string $getTelephone)
+	{
+	}
 }

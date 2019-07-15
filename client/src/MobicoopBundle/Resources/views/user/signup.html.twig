@@ -6,25 +6,25 @@
 {% endblock %}
 {% block body %}
 
-<section class="hero is-passur">
-	<div class="hero-body">
-    	<div class="container">
-      		<h1 class="title">
-				{% trans from 'ui' %}user.signup.h1{% endtrans %}
-      		</h1>
-    	</div>
-  	</div>
-</section>
+    <section class="hero is-passur">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">
+                    {% trans from 'ui' %}user.signup.h1{% endtrans %}
+                </h1>
+            </div>
+        </div>
+    </section>
 
-<section class="section">
-{% if error %}
-		<span class="tag is-danger">An error occured.</span>
-		{% endif %}
-	<div class="container" id='signup'>
-		
-		<Signupform geo-search-url="/geosearch?search=" sent-token="{{ csrf_token('user-signup') }}"> </Signupform>
-    </div>
-</section>
+    <section class="section">
+        {% if error %}
+            <span class="tag is-danger">An error occured.</span>
+        {% endif %}
+        <div class="container" id='signup'>
+
+            <Signupform geo-search-url="/geosearch?search=" sent-token="{{ csrf_token('user-signup') }}"></Signupform>
+        </div>
+    </section>
 
 {% endblock %}
 {% block javascripts %}
