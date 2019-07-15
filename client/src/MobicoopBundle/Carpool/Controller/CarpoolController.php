@@ -48,7 +48,7 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
-    public function ad(AdManager $adManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
+    public function ad(AdManager $adManager, UserManager $userManager, Request $request, CommunityManager $communityManager, CommunityController $communityController)
     {
         $ad = new Ad();
         $this->denyAccessUnlessGranted('post', $ad);
@@ -91,9 +91,9 @@ class CarpoolController extends AbstractController
             // $form->submit($request->request->all());
 
 //            test if a community is filled
-//            if ($ad->getCommunity() !== '' && !is_null($ad->getCommunity()) ) {
-//                CommunityController::joinCommunity($ad->getCommunity(), $communityManager, $userManager);
-//            }
+            if ($ad->getCommunity() !== '' && !is_null($ad->getCommunity()) ) {
+                $communityController->joinCommunity($ad->getCommunity(), $communityManager, $userManager);
+            }
         }
 
         // If it's a get, just render the form !
