@@ -31,7 +31,8 @@
         "symfony/web-link": "*",
         "symfony/webpack-encore-bundle": "^1.0",
         "symfony/yaml": "*",
-        "wikimedia/composer-merge-plugin": "^1.4"
+        "wikimedia/composer-merge-plugin": "^1.4",
+        "symfony/web-server-bundle": "*"
     },
     "require-dev": {
         "elephantly/kahlan-bundle": "^0.9.8",
@@ -42,7 +43,6 @@
         "symfony/maker-bundle": "^1.0",
         "symfony/profiler-pack": "*",
         "symfony/test-pack": "*",
-        "symfony/web-server-bundle": "*"
     },
     "config": {
         "preferred-install": {
