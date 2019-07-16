@@ -81,9 +81,9 @@ L’ensemble des fonctionnalités d’une communauté est accessible gratuitemen
                         <br>
                         {{community.fullDescription}}
                         <br>
-                            {{ community.isMembersHidden ? 'true' : 'false' }}
+{#                            {{ community.isMembersHidden ? 'Membres privés' : 'Membres publics' }}#}
                             <br>
-                            proposal hidden {{ community.isProposalsHidden }}
+{#                            {{ community.isProposalsHidden ? 'Annonces privées' : 'Annonces publiques'}}#}
                             <br>
                             <a class="button" href="{{path('community_show', { 'id': community.id })}}">Voir plus</a>
                             {% if community.isMembersHidden or community.isProposalsHidden %}

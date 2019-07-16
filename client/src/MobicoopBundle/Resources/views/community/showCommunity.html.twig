@@ -42,6 +42,7 @@
             </div>
             {% if isMember %}
                 <p style="color: darkgreen; margin-left: 10px"> Vous êtes membre  de cette communauté !</p>
+                <a class="button" href="{{path('carpool_ad', { 'id': community.id })}}">Déposer un trajet dans la communauté</a>
             {% else %}
                 {% if community.secured %}
                     <div style="padding:10px; margin-left: 10px">
