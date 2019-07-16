@@ -16,7 +16,7 @@
 
 
         <v-card
-          v-for="(thread, index) in threads"
+          v-for="(thread, index) in threadsDM"
           :key="index"
           class="threads mx-auto"
           :class="thread.selected ? 'selected' : ''"
@@ -49,6 +49,7 @@
             fil-dot
             :right="item.origin==='own'"
             :left="item.origin!=='own'"
+            :idmessage="item.idMessage"
           >
             <template v-slot:icon>
               <v-avatar>
@@ -76,6 +77,7 @@
           >
             <v-flex xs10>
               <v-textarea
+                v-model="textToSend"
                 name="typedMessage"
                 box
                 label="Saisissez un message"
@@ -91,9 +93,10 @@
             >
               <div class="text-xs-center">
                 <v-btn
+                  id="validSendMessage"
                   round
-                  color="primary"
-                  dark
+                  :idlastmessage="idLastMessage"
+                  @click="sendInternalMessage()"
                 >
                   Envoyer
                 </v-btn>
@@ -137,7 +140,7 @@ import axios from 'axios';
 
 export default {
   props: {
-    threadsforview: {
+    threadsdirectmessagesforview: {
       type: Array,
       default: function(){return []}
     },
@@ -153,8 +156,10 @@ export default {
   data() {
     return {
       items: [],
-      threads: this.threadsforview,
-      spinner:false
+      threadsDM: this.threadsdirectmessagesforview,
+      spinner:false,
+      textToSend:"",
+      idLastMessage:-1
     }
   },
   mounted () {
@@ -162,8 +167,8 @@ export default {
   },
   methods: {
     updateMessages(idMessage=this.idmessagedefault,idThreadSelected=0){
-      this.threads.forEach((thread, index) =>{
-        this.threads[index].selected = (index === idThreadSelected) ? true : false;
+      this.threadsDM.forEach((thread, index) =>{
+        this.threadsDM[index].selected = (index === idThreadSelected) ? true : false;
       });
       this.spinner = true;
       axios
@@ -173,15 +178,33 @@ export default {
           this.items.length = 0;
           for (let message of messagesThread) {
             let tabItem = new Array();
+
+            // All messages of the current thread
+            tabItem["idMessage"] = message.id;
             tabItem["userFirstName"] = message.user.givenName;
             tabItem["userLastName"] = message.user.familyName.substr(0,1).toUpperCase()+".";
             tabItem["icon"] = "account_circle";
             tabItem["text"] = message.text;
             (message.user.id==this.userid) ? tabItem["origin"] = "own" : tabItem["origin"] = "contact";
             this.items.push(tabItem);
+
+            // Id of the last message to be send for a message post
+            (this.idLastMessage<message.id) ? this.idLastMessage=message.id : "";
+
             this.spinner = false;
           }
         })
+    },
+    sendInternalMessage(){
+      let messageToSend = new FormData();
+      messageToSend.append("idLastMessage",this.idLastMessage);
+      messageToSend.append("text",this.textToSend);
+      axios
+        .post("/utilisateur/messages/envoyer",messageToSend
+        )
+        .then(res => {
+          console.error(res.data);
+        });
     }
   }
 }

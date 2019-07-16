@@ -516,7 +516,6 @@ class Deserializer
             $mass->setIri($data["@id"]);
         }
         if (isset($data["persons"])) {
-            dump($data["persons"]);
             foreach ($data["persons"] as $person) {
                 $mass->addPerson(self::deserializeMassPerson($person));
             }
@@ -754,7 +753,7 @@ class Deserializer
         if (isset($data["user"])) {
             $recipient->setUser(self::deserializeUser($data["user"]));
         }
-        if (isset($data["message"])) {
+        if (isset($data["message"]) && is_array($data["message"])) {
             $recipient->setUser(self::deserializeMessage($data["message"]));
         }
         return $recipient;

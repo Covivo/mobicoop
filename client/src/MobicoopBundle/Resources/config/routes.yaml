@@ -37,6 +37,12 @@ user_messages:
         en: /user/messages
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessages
 
+send_user_message:
+    path:
+        fr: /utilisateur/messages/envoyer
+        en: /user/messages/send
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::sendInternalMessage
+
 # messages : complete thread
 user_message_complete_thread:
     path:

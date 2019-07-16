@@ -44,6 +44,21 @@ class InternalMessageManager
     }
 
     /**
+     * Get a message
+     *
+     * @param int $idMessage Id of the message
+     *
+     */
+    public function getMessage(int $idMessage)
+    {
+        $response = $this->dataProvider->getItem($idMessage);
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
+    
+    /**
      * Get complete thread from a message
      *
      * @param int $id The first message id
@@ -61,4 +76,20 @@ class InternalMessageManager
         }
         return null;
     }
+
+    /**
+     * Send an internal message
+     *
+     * @param Message $message The message to send
+     *
+     */
+    public function sendInternalMessage(Message $message)
+    {
+        $response = $this->dataProvider->post($message);
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
+
 }

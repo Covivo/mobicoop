@@ -19,9 +19,9 @@
 
 <section class="section">
 	<div class="container">
-	    {% if threadsForView %}
+	    {% if threadsDirectMessagesForView %}
 		<div id="messages">
-    		<Messages :threadsforview="{{ threadsForView|json_encode }}" userid="{{ userId }}" idmessagedefault="{{ idMessageDefault }}"></Messages>
+    		<Messages :threadsdirectmessagesforview="{{ threadsDirectMessagesForView|json_encode }}" userid="{{ userId }}" idmessagedefault="{{ idMessageDefault }}"></Messages>
 		</div>
     	{% else %}
       		<span class="tag is-danger">User not found.</span>

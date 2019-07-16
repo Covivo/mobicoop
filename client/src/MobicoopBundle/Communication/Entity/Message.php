@@ -179,11 +179,12 @@ class Message
     {
         $this->message = $message;
 
+        // Is it useful in the bundle ????
         // set (or unset) the owning side of the relation if necessary
-        $newMessage = $message === null ? null : $this;
-        if ($newMessage !== $message->getMessage()) {
-            $message->setMessage($newMessage);
-        }
+        // $newMessage = $message === null ? null : $this;
+        // if ($newMessage !== $message->getMessage()) {
+        //     $message->setMessage($newMessage);
+        // }
     }
 
     public function getRecipients()
@@ -203,10 +204,12 @@ class Message
     {
         if ($this->recipients->contains($recipient)) {
             $this->recipients->removeElement($recipient);
-            // set the owning side to null (unless already changed)
-            if ($recipient->getMessage() === $this) {
-                $recipient->setMessage(null);
-            }
+            
+            // Is it useful in the bundle ????
+            // // set the owning side to null (unless already changed)
+            // if ($recipient->getMessage() === $this) {
+            //     $recipient->setMessage(null);
+            // }
         }
     }
 

@@ -43,6 +43,8 @@ use Symfony\Component\HttpFoundation\Response;
 use DateTime;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Recipient;
 
 /**
  * Controller class for user related actions.
@@ -304,7 +306,7 @@ class UserController extends AbstractController
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
 
-        $threadsForView = [];
+        $threadsDirectMessagesForView = [];
 
         // Building threads array
         $threads = $userManager->getThreads($user);
@@ -323,12 +325,11 @@ class UserController extends AbstractController
             }
 
             $selected &= false;
-            $threadsForView[] = $arrayThread;
+            $threadsDirectMessagesForView[] = $arrayThread;
         }
 
-
         return $this->render('@Mobicoop/user/messages.html.twig', [
-            'threadsForView' => $threadsForView,
+            'threadsDirectMessagesForView' => $threadsDirectMessagesForView,
             'userId' => $user->getId(),
             'idMessageDefault' => $idMessageDefault
         ]);
@@ -344,6 +345,39 @@ class UserController extends AbstractController
 
         return new Response(json_encode($internalMessageManager->getCompleteThread($idFirstMessage, DataProvider::RETURN_JSON)));
     }
+
+
+    public function sendInternalMessage(UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request){
+        $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('messages', $user);
+
+        $text = "";
+        if ($request->isMethod('POST')) {
+            $text = $request->request->get('text');
+            $idLastMessage = $request->request->get('idLastMessage');
+
+            $messageToSend = new Message();
+            $messageToSend->setUser($user);
+
+            $recipient = new Recipient();
+            $recipient->setUser($userManager->getUser(4));
+
+            $recipient->setStatus(Recipient::STATUS_PENDING);
+            $recipient->setSentDate(new \DateTime());
+            $messageToSend->addRecipient($recipient);
+
+            $messageToSend->setText($text);
+
+            $messageToSend->setMessage($internalMessageManager->getMessage($idLastMessage));
+
+            return new Response(json_encode($messageToSend));
+
+            $internalMessageManager->sendInternalMessage($messageToSend);
+        }
+
+        return new Response(json_encode($request->request->get('text')));
+    }
+
 
     // ADMIN
 

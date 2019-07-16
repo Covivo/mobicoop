@@ -34,6 +34,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\User\Entity\User;
 use App\Carpool\Entity\AskHistory;
 use App\Communication\Controller\MessageCompleteThreadAction;
+use App\Communication\Controller\PostMessageAction;
 
 /**
  * A message sent from a user to other users.
@@ -46,7 +47,11 @@ use App\Communication\Controller\MessageCompleteThreadAction;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "get","post"
+ *          "get",
+ *          "post" ={
+ *              "path"="/messages",
+ *              "controller"=PostMessageAction::class
+ *          }
  *      },
  *      itemOperations={"get","put","delete",
  *          "completeThread"={

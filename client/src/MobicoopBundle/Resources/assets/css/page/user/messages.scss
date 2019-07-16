@@ -29,6 +29,20 @@ body {
     }
     #messagesColumn {
       //background-color: #80F19A;
+      .v-timeline {
+        .v-timeline-item--right {
+          .v-timeline-item__body {
+            .v-card {
+              background-color: #80F19A;
+            }
+          }
+        }
+      }
+      #validSendMessage {
+        background-color: #184C2C;
+        color: #80F19A;
+        font-weight: bold;
+      }
     }
     #contextColumn {
       //background-color: #00F;
