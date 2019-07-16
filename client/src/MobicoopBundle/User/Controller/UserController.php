@@ -270,94 +270,88 @@ class UserController extends AbstractController
     }
 
 
-	/**
-	 * User password update.
-	 * @param UserManager $userManager
-	 *     The class managing the user.
-	 * @param Request $request
-	 *     The symfony request object.
-	 * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
-	 * @throws Exception
-	 */
+    /**
+     * User password update.
+     * @param UserManager $userManager
+     *     The class managing the user.
+     * @param Request $request
+     *     The symfony request object.
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @throws Exception
+     */
     public function userPasswordForgot(UserManager $userManager, Request $request, \Swift_Mailer $mailer)
     {
-	    /** @var Session $session */
-	    $session= $this->get('session');
-    	$userRequest= new User();
+        /** @var Session $session */
+        $session= $this->get('session');
+        $userRequest= new User();
         $form = $this->createFormBuilder($userRequest)
-        ->add('email', EmailType::class,['required'=> false])
-	    ->add('telephone', TextType::class, ['required' => false])
-	    ->add('submit', SubmitType::class)
+        ->add('email', EmailType::class, ['required'=> false])
+        ->add('telephone', TextType::class, ['required' => false])
+        ->add('submit', SubmitType::class)
         ->getForm();
 
         $form->handleRequest($request);
         $error = false;
 
         if ($form->isSubmitted() && $form->isValid()) {
-	        if (!empty($userRequest->getEmail())) {
-		        /** @var User $user */
-		        $user = $userManager->findByEmail($userRequest->getEmail());
-	        } else {
-		        if (!empty($userRequest->getTelephone())) {
-			        $user = $userManager->findByPhone($userRequest->getTelephone());
-		        } else {
-			        // set flash messages
-			        $session->getFlashBag()->add('error', 'Email et téléphone non renseignés');
+            if (!empty($userRequest->getEmail())) {
+                /** @var User $user */
+                $user = $userManager->findByEmail($userRequest->getEmail());
+            } else {
+                if (!empty($userRequest->getTelephone())) {
+                    $user = $userManager->findByPhone($userRequest->getTelephone());
+                } else {
+                    // set flash messages
+                    $session->getFlashBag()->add('error', 'Email et téléphone non renseignés');
 
-			        return $this->redirectToRoute('user_password_forgot');
-
-		        }
-	        }
-	        if (empty($user)) {
-		        // set flash messages
-		        $session->getFlashBag()->add('error', 'Email et téléphone érronés');
-
-		        return $this->redirectToRoute('user_password_forgot');
-	        }
-	        else{
-		        $message = (new \Swift_Message('Hello Email'))
-			        ->setFrom('mobicoop@admin.com')
-			        ->setTo($user->getEmail())
-			        ->setBody(
-				        $this->renderView(
-				        // templates/emails/registration.html.twig
-					        '@Mobicoop/email/updatepassword.html.twig',
-					        array(
-						        'name' => $user->getFamilyName(),
-					         'token' =>  $user->getHash()
-					        )
-				        ),
-				        'text/html'
-			        );
-
-		        $mailer->send($message);
-		        // set flash messages
-		        $session->getFlashBag()->add('success', 'Un email de confirmation vous a été envoyé!');
-		        return $this->redirectToRoute('user_password_forgot');
-	        }
-
-        }
-        else{
-
-	        return $this->render('@Mobicoop/user/password.html.twig', [
-		        'form' => $form->createView(),
-		        'user' => $user??$userRequest,
-		        'error' => $error,
-		        'waitParametersForMail' => true
-	        ]);
-
-        }
-	        /*
-            if ($user = $userManager->updateUserPassword($user)) {
-                // after successful update, we re-log the user
-                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-                $this->get('security.token_storage')->setToken($token);
-                $this->get('session')->set('_security_main', serialize($token));
-                return $this->redirectToRoute('user_profile_update');
+                    return $this->redirectToRoute('user_password_forgot');
+                }
             }
-            $error = true;
+            if (empty($user)) {
+                // set flash messages
+                $session->getFlashBag()->add('error', 'Email et téléphone érronés');
+
+                return $this->redirectToRoute('user_password_forgot');
+            } else {
+                $message = (new \Swift_Message('Hello Email'))
+                    ->setFrom('mobicoop@admin.com')
+                    ->setTo($user->getEmail())
+                    ->setBody(
+                        $this->renderView(
+                        // templates/emails/registration.html.twig
+                            '@Mobicoop/email/updatepassword.html.twig',
+                            array(
+                                'name' => $user->getFamilyName(),
+                             'token' =>  $user->getHash()
+                            )
+                        ),
+                        'text/html'
+                    );
+
+                $mailer->send($message);
+                // set flash messages
+                $session->getFlashBag()->add('success', 'Un email de confirmation vous a été envoyé!');
+                return $this->redirectToRoute('user_password_forgot');
+            }
+        } else {
+            return $this->render('@Mobicoop/user/password.html.twig', [
+                'form' => $form->createView(),
+                'user' => $user??$userRequest,
+                'error' => $error,
+                'waitParametersForMail' => true
+            ]);
         }
-	        */
+        /*
+        if ($user = $userManager->updateUserPassword($user)) {
+            // after successful update, we re-log the user
+            $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+            $this->get('security.token_storage')->setToken($token);
+            $this->get('session')->set('_security_main', serialize($token));
+            return $this->redirectToRoute('user_profile_update');
+        }
+        $error = true;
+        }
+        */
     }
 
     /**

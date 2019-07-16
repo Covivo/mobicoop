@@ -93,9 +93,8 @@ class UserManager
      *
      * @return User|null The user found or null if not found.
      */
-    public function findByToken (string $token)
+    public function findByToken(string $token)
     {
-
     }
 
     /**
@@ -105,17 +104,20 @@ class UserManager
      *
      * @return User|null The user found or null if not found.
      */
-    public function findByEmail (string $email)
+    public function findByEmail(string $email)
     {
-    	$response= $this->dataProvider->getCollection(['email'=> $email]);
-    	if($response->getCode() == 200){
-		    /** @var Hydra $user */
-		    $user= $response->getValue();
+        $response= $this->dataProvider->getCollection(['email'=> $email]);
+        if ($response->getCode() == 200) {
+            /** @var Hydra $user */
+            $user= $response->getValue();
 
-    		if($user->getTotalItems() == 0) return null;
-    		else return current($user->getMember());
-	    }
-	    return null;
+            if ($user->getTotalItems() == 0) {
+                return null;
+            } else {
+                return current($user->getMember());
+            }
+        }
+        return null;
     }
 
     /**
@@ -276,16 +278,19 @@ class UserManager
         return null;
     }
 
-	public function findByPhone(string $getTelephone)
-	{
-		$response= $this->dataProvider->getCollection(['email'=> $getTelephone]);
-		if($response->getCode() == 200){
-			/** @var Hydra $user */
-			$user= $response->getValue();
+    public function findByPhone(string $getTelephone)
+    {
+        $response= $this->dataProvider->getCollection(['email'=> $getTelephone]);
+        if ($response->getCode() == 200) {
+            /** @var Hydra $user */
+            $user= $response->getValue();
 
-			if($user->getTotalItems() == 0) return null;
-			else return current($user->getMember());
-		}
-		return null;
-	}
+            if ($user->getTotalItems() == 0) {
+                return null;
+            } else {
+                return current($user->getMember());
+            }
+        }
+        return null;
+    }
 }
