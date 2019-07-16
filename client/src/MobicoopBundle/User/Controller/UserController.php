@@ -347,7 +347,8 @@ class UserController extends AbstractController
     }
 
 
-    public function sendInternalMessage(UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request){
+    public function sendInternalMessage(UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request)
+    {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
 
