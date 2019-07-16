@@ -10,5 +10,5 @@
     "videoCompression": 15,
     "videoUploadOnPasses": true,
     "chromeWebSecurity": false,
-    "defaultCommandTimeout": "10000"
+    "defaultCommandTimeout": 10000
 }
