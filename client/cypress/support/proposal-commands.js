@@ -23,7 +23,7 @@ Cypress.Commands.add('addProposal', () => {
   // cy.contains('Partager une annonce')
   cy.get('.buttons > .is-dark')
     .click()
-  cy.wait(600)  
+  cy.wait(600)
   cy.url().should('include', baseUrl + 'covoiturage/annonce/poster')
 
   /* Passenger or Driver */
@@ -41,7 +41,7 @@ Cypress.Commands.add('addProposal', () => {
   cy.get('.control > #origin')
     .should('have.attr', 'placeholder', 'Depuis')
     .type('Metz')
-    cy.wait(1500)
+  cy.wait(3000)
   cy.get('[data-v-12259723]')
     .contains('Metz')
     .click()
@@ -50,7 +50,7 @@ Cypress.Commands.add('addProposal', () => {
   cy.get('#destination')
     .should('have.attr', 'placeholder', 'Vers')
     .type('Marseille')
-  cy.wait(1500)
+  cy.wait(3000)
   cy.get('[data-v-12259723]')
     .contains('Marseille')
     .click()
@@ -80,7 +80,7 @@ Cypress.Commands.add('addProposal', () => {
   cy.get('.timepicker > .dropdown > .dropdown-trigger > .control > .input')
     .should('have.attr', 'placeholder', 'Heure de départ...')
     .click()
-    cy.get('.timepicker-footer > .is-primary')    
+  cy.get('.timepicker-footer > .is-primary')
     .click()
 
   // in order to close the window timepicker
@@ -91,6 +91,6 @@ Cypress.Commands.add('addProposal', () => {
   cy.get(':nth-child(3) > .columns > .is-4 > .select > select').select('5')
 
   /* I share my ad */
-  cy.get('.wizard-footer-right > span > .wizard-btn')  
-  .click()
+  cy.get('.wizard-footer-right > span > .wizard-btn')
+    .click()
 });
