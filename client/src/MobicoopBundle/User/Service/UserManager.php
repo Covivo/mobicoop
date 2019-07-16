@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
@@ -106,7 +107,15 @@ class UserManager
      */
     public function findByEmail (string $email)
     {
-        return null;
+    	$response= $this->dataProvider->getCollection(['email'=> $email]);
+    	if($response->getCode() == 200){
+		    /** @var Hydra $user */
+		    $user= $response->getValue();
+
+    		if($user->getTotalItems() == 0) return null;
+    		else return current($user->getMember());
+	    }
+	    return null;
     }
 
     /**
@@ -269,5 +278,14 @@ class UserManager
 
 	public function findByPhone(string $getTelephone)
 	{
+		$response= $this->dataProvider->getCollection(['email'=> $getTelephone]);
+		if($response->getCode() == 200){
+			/** @var Hydra $user */
+			$user= $response->getValue();
+
+			if($user->getTotalItems() == 0) return null;
+			else return current($user->getMember());
+		}
+		return null;
 	}
 }

@@ -29,6 +29,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -278,12 +279,14 @@ class UserController extends AbstractController
 	 * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
 	 * @throws Exception
 	 */
-    public function userPasswordForgot(UserManager $userManager, Request $request)
+    public function userPasswordForgot(UserManager $userManager, Request $request, \Swift_Mailer $mailer)
     {
+	    /** @var Session $session */
+	    $session= $this->get('session');
     	$userRequest= new User();
         $form = $this->createFormBuilder($userRequest)
-        ->add('email', EmailType::class)
-	    ->add('telephone', TextType::class)
+        ->add('email', EmailType::class,['required'=> false])
+	    ->add('telephone', TextType::class, ['required' => false])
 	    ->add('submit', SubmitType::class)
         ->getForm();
 
@@ -291,8 +294,60 @@ class UserController extends AbstractController
         $error = false;
 
         if ($form->isSubmitted() && $form->isValid()) {
-        	$user= $userManager->findByEmail($userRequest->getEmail());
-        	if(empty($user)) $user= $userManager->findByPhone($userRequest->getTelephone());
+	        if (!empty($userRequest->getEmail())) {
+		        /** @var User $user */
+		        $user = $userManager->findByEmail($userRequest->getEmail());
+	        } else {
+		        if (!empty($userRequest->getTelephone())) {
+			        $user = $userManager->findByPhone($userRequest->getTelephone());
+		        } else {
+			        // set flash messages
+			        $session->getFlashBag()->add('error', 'Email et téléphone non renseignés');
+
+			        return $this->redirectToRoute('user_password_forgot');
+
+		        }
+	        }
+	        if (empty($user)) {
+		        // set flash messages
+		        $session->getFlashBag()->add('error', 'Email et téléphone érronés');
+
+		        return $this->redirectToRoute('user_password_forgot');
+	        }
+	        else{
+		        $message = (new \Swift_Message('Hello Email'))
+			        ->setFrom('mobicoop@admin.com')
+			        ->setTo($user->getEmail())
+			        ->setBody(
+				        $this->renderView(
+				        // templates/emails/registration.html.twig
+					        '@Mobicoop/email/updatepassword.html.twig',
+					        array(
+						        'name' => $user->getFamilyName(),
+					         'token' =>  $user->getHash()
+					        )
+				        ),
+				        'text/html'
+			        );
+
+		        $mailer->send($message);
+		        // set flash messages
+		        $session->getFlashBag()->add('success', 'Un email de confirmation vous a été envoyé!');
+		        return $this->redirectToRoute('user_password_forgot');
+	        }
+
+        }
+        else{
+
+	        return $this->render('@Mobicoop/user/password.html.twig', [
+		        'form' => $form->createView(),
+		        'user' => $user??$userRequest,
+		        'error' => $error,
+		        'waitParametersForMail' => true
+	        ]);
+
+        }
+	        /*
             if ($user = $userManager->updateUserPassword($user)) {
                 // after successful update, we re-log the user
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
@@ -302,13 +357,7 @@ class UserController extends AbstractController
             }
             $error = true;
         }
-
-        return $this->render('@Mobicoop/user/password.html.twig', [
-            'form' => $form->createView(),
-            'user' => $user??$userRequest,
-            'error' => $error,
-	        'waitParametersForMail' => true
-        ]);
+	        */
     }
 
     /**

@@ -210,6 +210,10 @@ class User implements ResourceInterface, UserInterface, EquatableInterface
      */
     private $homeAddress;
 
+	/**
+	 * @var string $hash
+	 */
+    private $hash;
 
 
     public function __construct($id=null, $status=null)
@@ -606,4 +610,20 @@ class User implements ResourceInterface, UserInterface, EquatableInterface
         }
         return null;
     }
+
+	/**
+	 * @return mixed
+	 */
+	public function getHash()
+	{
+		return $this->hash;
+	}
+
+	/**
+	 * @param mixed $hash
+	 */
+	public function setHash(string $hash)
+	{
+		$this->hash = $hash;
+	}
 }
