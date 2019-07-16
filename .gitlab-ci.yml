@@ -254,6 +254,8 @@ pages:
    - public
  only:
    - master
+ when: manual      # /!\ important : job executed manually /!\  
+
 
 
 
