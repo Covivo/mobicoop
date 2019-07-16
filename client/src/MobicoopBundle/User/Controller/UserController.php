@@ -313,13 +313,16 @@ class UserController extends AbstractController
         $selected = true;
         $idMessageDefaultSelected = false;
         foreach ($threads["threads"] as $thread) {
+            dump($thread);
             $arrayThread["idFirstMessage"] = $thread["id"];
+            $arrayThread["contactId"] = $thread["recipients"][0]["user"]["id"];
             $arrayThread["contactFirstName"] = $thread["recipients"][0]["user"]["givenName"];
             $arrayThread["contactLastName"] = $thread["recipients"][0]["user"]["familyName"];
             $arrayThread["text"] = $thread["text"];
 
             if (!$idMessageDefaultSelected) {
                 $idMessageDefault = $thread["id"];
+                $idRecipientDefault = $thread["recipients"][0]["user"]["id"];
                 $arrayThread["selected"] = $selected;
                 $idMessageDefaultSelected = true;
             }
@@ -331,7 +334,8 @@ class UserController extends AbstractController
         return $this->render('@Mobicoop/user/messages.html.twig', [
             'threadsDirectMessagesForView' => $threadsDirectMessagesForView,
             'userId' => $user->getId(),
-            'idMessageDefault' => $idMessageDefault
+            'idMessageDefault' => $idMessageDefault,
+            'idRecipientDefault'=>$idRecipientDefault
         ]);
     }
 
@@ -356,12 +360,13 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $text = $request->request->get('text');
             $idLastMessage = $request->request->get('idLastMessage');
+            $idRecipient = $request->request->get('idRecipient');
 
             $messageToSend = new Message();
             $messageToSend->setUser($user);
 
             $recipient = new Recipient();
-            $recipient->setUser($userManager->getUser(4));
+            $recipient->setUser($userManager->getUser($idRecipient));
 
             $recipient->setStatus(Recipient::STATUS_PENDING);
             $recipient->setSentDate(new \DateTime());
@@ -371,12 +376,12 @@ class UserController extends AbstractController
 
             $messageToSend->setMessage($internalMessageManager->getMessage($idLastMessage));
 
-            return new Response(json_encode($messageToSend));
+//            return new Response(json_encode($idRecipient));
 
             $internalMessageManager->sendInternalMessage($messageToSend);
         }
 
-        return new Response(json_encode($request->request->get('text')));
+        return new Response(json_encode("Not a post"));
     }
 
 

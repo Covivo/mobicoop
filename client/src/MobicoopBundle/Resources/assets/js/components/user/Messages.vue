@@ -22,7 +22,7 @@
           :class="thread.selected ? 'selected' : ''"
           max-width="400"
           dark
-          @click="updateMessages(thread.idFirstMessage,index)"
+          @click="updateMessages(thread.idFirstMessage,index,thread.contactId)"
         >
           <v-card-title>
             <i class="material-icons">
@@ -123,7 +123,7 @@
       >
         <v-card>
           <v-card-text>
-            Chargement des messages
+            {{ textSpinner }}
             <v-progress-linear
               indeterminate
               color="white"
@@ -151,6 +151,10 @@ export default {
     idmessagedefault:{
       type: String,
       default: ""
+    },
+    idrecipientdefault:{
+      type: String,
+      default: ""
     }
   },
   data() {
@@ -159,17 +163,23 @@ export default {
       threadsDM: this.threadsdirectmessagesforview,
       spinner:false,
       textToSend:"",
-      idLastMessage:-1
+      idLastMessage:-1,
+      idRecipient:null,
+      textSpinnerLoading:"Chargement des messages",
+      textSpinnerSendMessage:"Envoi...",
+      textSpinner:""
     }
   },
   mounted () {
-    this.updateMessages()
+    this.textSpinner = this.textSpinnerLoading;
+    this.updateMessages();
   },
   methods: {
-    updateMessages(idMessage=this.idmessagedefault,idThreadSelected=0){
+    updateMessages(idMessage=this.idmessagedefault,idThreadSelected=0,idrecipient=this.idrecipientdefault){
       this.threadsDM.forEach((thread, index) =>{
         this.threadsDM[index].selected = (index === idThreadSelected) ? true : false;
       });
+      this.textSpinner = this.textSpinnerLoading;
       this.spinner = true;
       axios
         .get("/utilisateur/messages/"+idMessage)
@@ -191,6 +201,9 @@ export default {
             // Id of the last message to be send for a message post
             (this.idLastMessage<message.id) ? this.idLastMessage=message.id : "";
 
+            // Id of the current recipient
+            this.idRecipient = idrecipient;
+
             this.spinner = false;
           }
         })
@@ -199,11 +212,15 @@ export default {
       let messageToSend = new FormData();
       messageToSend.append("idLastMessage",this.idLastMessage);
       messageToSend.append("text",this.textToSend);
+      messageToSend.append("idRecipient",this.idRecipient);
+      this.textSpinner = this.textSpinnerSendMessage;
+      this.spinner = true;
       axios
-        .post("/utilisateur/messages/envoyer",messageToSend
-        )
+        .post("/utilisateur/messages/envoyer",messageToSend)
         .then(res => {
           console.error(res.data);
+          this.spinner = false;
+          this.updateMessages();
         });
     }
   }
