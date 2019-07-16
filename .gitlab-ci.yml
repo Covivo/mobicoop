@@ -25,6 +25,7 @@ cache:
 stages:
   - tests
   - deploy
+  - prod_deploy
   - doc
   - reports
 
@@ -92,14 +93,14 @@ dev_deploy:
     - cp config/rdex/providers.json.dist config/rdex/providers.json && cd ../
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
     - npm run install-all-ci # Install the dependencies in the local node_modules folder
-    - npm run update-db
+    # - npm run update-db
   script:
     - npm run test-and-coverage    
-    - npm run start-ci & wait-on client/public/build/entrypoints.json
-    - npm run test-functional-ci || true 
+    # - npm run start-ci & wait-on client/public/build/entrypoints.json
+    # - npm run test-functional-ci || true 
     #  Kill all node & php process if the e2e test are greatfully passed
-    - killall node || true
-    - killall php || true                                            
+    # - killall node || true
+    # - killall php || true                                            
     - echo "${SSH_DEV_PRIVATE_KEY}" > id_rsa                   # 
     - chmod 700 id_rsa                                          # ssh identification on docker side 
     - mv id_rsa ${HOME}/.ssh                                    #
@@ -139,6 +140,7 @@ test_deploy:
   # variables:
   #   APP_ENV: test   # /!\ important : symfony env variable /!\
   before_script:
+    - echo $SIG_GEOCODER_URI && echo $SIG_GEOROUTER_URI
     - cd api && openssl genrsa -aes256 -passout pass:ca4ffed31ee358cc7c7083af6e5773cd -out config/jwt/private.pem 4096
     - openssl rsa -in config/jwt/private.pem -passin pass:ca4ffed31ee358cc7c7083af6e5773cd -pubout -out config/jwt/public.pem
     - chmod 777 config/jwt/*
@@ -173,9 +175,10 @@ test_deploy:
     paths:
     - client/cypress/screenshots
   cache:
-    key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
+    key: "test-and-prod-deploy"
     paths:    # excluded : not cached
     - api/vendor/
+    - client/node_modules/
     - client/vendor/
     - admin/node_modules/
 
@@ -188,8 +191,8 @@ test_deploy:
 #
 # Deployment for master branch
 #
-master_deploy:
-  stage: deploy
+prod_deploy:
+  stage: prod_deploy
   only:     # job executed only on master branch
     - master
   # variables:
@@ -198,22 +201,9 @@ master_deploy:
     name: prod
     url: https://mobicoop.io
   before_script: # This is required to send the prod type no dev, since it creates errors
-    - cd api && openssl genrsa -aes256 -passout pass:ca4ffed31ee358cc7c7083af6e5773cd -out config/jwt/private.pem 4096
-    - openssl rsa -in config/jwt/private.pem -passin pass:ca4ffed31ee358cc7c7083af6e5773cd -pubout -out config/jwt/public.pem
-    - chmod 777 config/jwt/*
-    - cp config/rdex/clients.json.dist config/rdex/clients.json 
-    - cp config/rdex/operator.json.dist config/rdex/operator.json
-    - cp config/rdex/providers.json.dist config/rdex/providers.json && cd ../
-    - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
-    - npm run install-all-ci # Install the dependencies in the local node_modules folder
-    - npm run update-db
-  script:
-    - npm run test-and-coverage    
-    - npm run start-ci & wait-on client/public/build/entrypoints.json
-    - npm run test-functional-ci || true 
-    #  Kill all node & php process if the e2e test are greatfully passed
-    - killall node || true
-    - killall php || true                                            
+  dependencies:
+   - test_deploy
+  script:                                          
     - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa                       #
     - chmod 700 id_rsa                                              #
     - mv id_rsa ${HOME}/.ssh                                        # ssh identification on docker side
@@ -248,7 +238,7 @@ pages:
   - cp -r docs/* .public
   - mv .public public
  dependencies:
-   - master_deploy
+   - prod_deploy
  artifacts:
    paths:
    - public
