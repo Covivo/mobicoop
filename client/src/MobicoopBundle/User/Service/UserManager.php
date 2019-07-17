@@ -95,6 +95,18 @@ class UserManager
      */
     public function findByToken(string $token)
     {
+	    $response= $this->dataProvider->getCollection(['token'=> $token]);
+	    if ($response->getCode() == 200) {
+		    /** @var Hydra $user */
+		    $user= $response->getValue();
+
+		    if ($user->getTotalItems() == 0) {
+			    return null;
+		    } else {
+			    return current($user->getMember());
+		    }
+	    }
+	    return null;
     }
 
     /**
@@ -293,4 +305,26 @@ class UserManager
         }
         return null;
     }
+
+	/**
+	 * Update the user token
+	 *
+	 * @param User $user
+	 * @return array|null|object
+	 */
+	public function updateUserToken($user)
+	{
+		$time= time();
+		$token= $this->encoder->encodePassword($user, $user->getEmail().rand().$time.rand().$user->getSalt());
+		// encoding of the password
+		$user->setToken($token);
+		$user->setPupdtime($time);
+		$response = $this->dataProvider->put($user, ['password_token']);
+		if ($response->getCode() == 200) {
+			$this->logger->info('User Token Update | Start');
+			return $response->getValue();
+		}
+		$this->logger->info('User Token Update | Fail');
+		return null;
+	}
 }
