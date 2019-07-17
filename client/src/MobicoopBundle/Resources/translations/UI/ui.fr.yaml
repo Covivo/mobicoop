@@ -11,7 +11,7 @@ menu:
     account: 'Mon compte'
     profile: 'Mon profil'
     messages: 'Messages'
-    ad_create: 'Partager une annonce'
+    ad_create: 'Publier une annonce'
     logout: 'Déconnexion'
     
 # pages
@@ -42,5 +42,5 @@ user:
         text: 'Etes-vous sûr de vouloir supprimer votre compte ?'
 carpool:
     ad_create:
-        title: 'Partager une annonce'
-        h1: 'Partager une annonce'
+        title: 'Publier une annonce'
+        h1: 'Publier une annonce'
