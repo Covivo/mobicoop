@@ -86,9 +86,10 @@ class InternalMessageManager
     public function sendInternalMessage(Message $message)
     {
         $response = $this->dataProvider->post($message);
-        if ($response->getCode() == 200) {
+        if ($response->getCode() == 201) {
             return $response->getValue();
         }
+        print_r($response);die;
         return null;
     }
 }

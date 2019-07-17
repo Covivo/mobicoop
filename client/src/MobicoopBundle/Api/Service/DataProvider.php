@@ -323,6 +323,7 @@ class DataProvider
     public function post(ResourceInterface $object): Response
     {
         try {
+            //print_r(json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]), true));die;
             $clientResponse = $this->client->post($this->resource, [
                     RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]), true)
             ]);
@@ -330,6 +331,7 @@ class DataProvider
                 return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
             }
         } catch (ServerException $e) {
+            echo $e->getResponse()->getBody()->getContents();die;
             return new Response($e->getCode(), $e->getMessage());
         }
         return new Response();

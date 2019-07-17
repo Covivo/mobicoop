@@ -43,7 +43,8 @@ use App\Communication\Controller\PostMessageAction;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "fetchEager": false,
+ *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="false"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={

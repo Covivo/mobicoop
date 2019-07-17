@@ -38,7 +38,8 @@ use App\User\Entity\User;
  * @ORM\Entity()
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "fetchEager": false,
+ *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="false"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={"get","post"},
@@ -84,7 +85,7 @@ class Recipient
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="recipients")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write","threads"})
-     * @MaxDepth(1)
+     * @MaxDepth(2)
      */
     private $message;
 

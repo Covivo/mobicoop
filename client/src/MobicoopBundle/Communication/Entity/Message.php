@@ -28,13 +28,15 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 
 /**
  *  A community.
  */
-class Message
+class Message implements ResourceInterface
 {
     /**
      * @var int The id of this message.
@@ -75,7 +77,6 @@ class Message
      * @var AskHistory|null The ask history item if the message is related to an ask.
      *
      * @Groups({"put","post","get"})
-     * @MaxDepth(1)
      */
     private $askHistory;
 
@@ -83,7 +84,6 @@ class Message
      * @var Message|null The original message if the message is a reply to another message.
      *
      * @Groups({"put","post","get"})
-     * @MaxDepth(1)
      */
     private $message;
 
@@ -91,7 +91,6 @@ class Message
      * @var ArrayCollection The recipients linked with the message.
      *
      * @Groups({"put","post","get"})
-     * @MaxDepth(1)
      */
     private $recipients;
 

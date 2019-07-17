@@ -378,7 +378,9 @@ class UserController extends AbstractController
 
 //            return new Response(json_encode($idRecipient));
 
-            $internalMessageManager->sendInternalMessage($messageToSend);
+            $response = $internalMessageManager->sendInternalMessage($messageToSend);
+            
+            return new Response(json_encode($response));
         }
 
         return new Response(json_encode("Not a post"));

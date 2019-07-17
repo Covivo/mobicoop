@@ -28,12 +28,14 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 
 /**
  *  A recipient.
  */
-class Recipient
+class Recipient implements ResourceInterface
 {
     const STATUS_PENDING = 1;
     const STATUS_READ = 2;
@@ -70,7 +72,6 @@ class Recipient
      * @var Message The message.
      *
      * @Groups({"post","put","completeThread"})
-     * @MaxDepth(1)
      */
     private $message;
 
@@ -92,7 +93,6 @@ class Recipient
      * @var ArrayCollection|null The notifications sent for the recipient.
      *
      * @Groups({"post","put","completeThread"})
-     * @MaxDepth(1)
      */
     private $notifieds;
     
