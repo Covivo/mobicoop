@@ -24,11 +24,6 @@ install:
 	$(info $(pink)------------------------------------------------------$(reset))
 
 
-	# Using docker-sync for macos only
-	# @if [ $(os) = "darwin" ]; then\
-	# 	docker-sync start; \
-  #   fi
-
 	docker-compose -f docker-compose-builder-$(os).yml run --rm install
 	@make -s install-deps
 	@make -s build-admin
@@ -56,12 +51,6 @@ start:
 	docker-compose -f docker-compose-$(os).yml up -d  --always-recreate-deps --force-recreate
  
 stop:
-
-	#  Using docker-sync for darwin macos only
-	@if [ $(os) = "darwin" ]; then\
-		docker-sync stop; \
-    fi
-
 	$(info Make ($(os)): Stopping Mobicoop-platform environment containers.)
 	docker-compose -f docker-compose-$(os).yml stop 
 
@@ -82,13 +71,9 @@ clean:
 	@make -s stop
 	@make -s remove
 	docker system prune --volumes --force
-	#  Using docker-sync for darwin macos only
 	$(info $(pink)------------------------------------------------------)
 	$(info $(pink)Drop all deps + containers + volumes)
 	$(info $(pink)------------------------------------------------------$(reset))
-	@if [ $(os) = "darwin" ]; then\
-		docker-sync clean; \
-    fi
 	rm -rf node_modules api/vendor client/vendor client/node_modules admin/node_modules
 
 logs: 
