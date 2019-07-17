@@ -1,4 +1,4 @@
-version: "2"
+version: "2.4"
 services:
   mobicoop_platform:
     container_name: mobicoop_platform
@@ -24,6 +24,8 @@ services:
     volumes:
       - ./:/var/www/:cached
       - ./build/cache:/root/.cache/:cached
+    networks:
+      - mobicoop_platform
 
   db:
     image: mariadb:10.4
@@ -32,6 +34,8 @@ services:
     ports: ['3306:3306']
     environment:
       MYSQL_ROOT_PASSWORD: mobicoop
+    networks:
+      - mobicoop_platform
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -44,6 +48,8 @@ services:
     restart: always
     ports:
         - "8083:80"
+    networks:
+      - mobicoop_platform
 
 networks:
   mobicoop_platform:

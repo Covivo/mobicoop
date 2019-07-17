@@ -25,9 +25,9 @@ install:
 
 
 	# Using docker-sync for macos only
-	@if [ $(os) = "darwin" ]; then\
-		docker-sync start; \
-    fi
+	# @if [ $(os) = "darwin" ]; then\
+	# 	docker-sync start; \
+  #   fi
 
 	docker-compose -f docker-compose-builder-$(os).yml run --rm install
 	@make -s install-deps
