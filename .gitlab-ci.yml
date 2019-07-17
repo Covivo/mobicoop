@@ -95,7 +95,8 @@ dev_deploy:
     - npm run install-all-ci # Install the dependencies in the local node_modules folder
     # - npm run update-db
   script:
-    - npm run test-and-coverage    
+    - npm run test-and-coverage
+    - cd client && npm run compile && cd ../   
     # - npm run start-ci & wait-on client/public/build/entrypoints.json
     # - npm run test-functional-ci || true 
     #  Kill all node & php process if the e2e test are greatfully passed
