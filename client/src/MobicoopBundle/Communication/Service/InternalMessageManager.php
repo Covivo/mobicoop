@@ -89,7 +89,8 @@ class InternalMessageManager
         if ($response->getCode() == 201) {
             return $response->getValue();
         }
-        print_r($response);die;
+        print_r($response);
+        die;
         return null;
     }
 }
