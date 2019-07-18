@@ -12,25 +12,62 @@
         xs3
       >
         <!-- Threads -->
-
-
-
-        <v-card
-          v-for="(thread, index) in threadsDM"
-          :key="index"
-          class="threads mx-auto"
-          :class="thread.selected ? 'selected' : ''"
-          max-width="400"
-          dark
-          @click="updateMessages(thread.idFirstMessage,index,thread.contactId)"
+        <v-tabs
+          slider-color="yellow"
         >
-          <v-card-title>
-            <i class="material-icons">
-              account_circle
-            </i>
-            &nbsp;<span class="title font-weight-light white--text">{{ thread.contactFirstName }} {{ thread.contactLastName }}</span>
-          </v-card-title>
-        </v-card>
+          <v-tab
+            ripple
+          >
+            Direct
+          </v-tab>
+          <v-tab-item v-if="this.threadsDM.length==0">
+            Aucun message direct
+          </v-tab-item>
+          <v-tab-item v-else>
+            <v-card
+              v-for="(thread, index) in threadsDM"
+              :key="index"
+              class="threads mx-auto"
+              :class="thread.selected ? 'selected' : ''"
+              max-width="400"
+              dark
+              @click="updateMessages(thread.idFirstMessage,index,thread.contactId)"
+            >
+              <v-card-title>
+                <i class="material-icons">
+                  account_circle
+                </i>
+                &nbsp;<span class="title font-weight-light white--text">{{ thread.contactFirstName }} {{ thread.contactLastName }}</span>
+              </v-card-title>
+            </v-card>
+          </v-tab-item>
+          <v-tab
+            ripple
+          >
+            Covoiturage
+          </v-tab>
+          <v-tab-item v-if="this.threadsCM.length==0">
+            Aucun message de covoiturage
+          </v-tab-item>
+          <v-tab-item v-else>
+            <v-card
+              v-for="(threadCM, index) in threadsCM"
+              :key="index"
+              class="threads mx-auto"
+              :class="threadCM.selected ? 'selected' : ''"
+              max-width="400"
+              dark
+              @click="updateMessages(threadCM.idFirstMessage,index,threadCM.contactId)"
+            >
+              <v-card-title>
+                <i class="material-icons">
+                  account_circle
+                </i>
+                &nbsp;<span class="title font-weight-light white--text">{{ threadCM.contactFirstName }} {{ threadCM.contactLastName }}</span>
+              </v-card-title>
+            </v-card>
+          </v-tab-item>
+        </v-tabs>
       </v-flex>
 
 
@@ -144,6 +181,10 @@ export default {
       type: Array,
       default: function(){return []}
     },
+    threadscarpoolingmessagesforview: {
+      type: Array,
+      default: function(){return []}
+    },
     userid:{
       type: String,
       default: ""
@@ -161,6 +202,7 @@ export default {
     return {
       items: [],
       threadsDM: this.threadsdirectmessagesforview,
+      threadsCM: this.threadscarpoolingmessagesforview,
       spinner:false,
       textToSend:"",
       idLastMessage:-1,
@@ -178,6 +220,9 @@ export default {
     updateMessages(idMessage=this.idmessagedefault,idThreadSelected=0,idrecipient=this.idrecipientdefault){
       this.threadsDM.forEach((thread, index) =>{
         this.threadsDM[index].selected = (index === idThreadSelected) ? true : false;
+      });
+      this.threadsCM.forEach((thread, index) =>{
+        this.threadsCM[index].selected = (index === idThreadSelected) ? true : false;
       });
       this.textSpinner = this.textSpinnerLoading;
       this.spinner = true;

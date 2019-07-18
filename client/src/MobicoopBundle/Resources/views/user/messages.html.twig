@@ -19,10 +19,11 @@
 
 <section class="section">
 	<div class="container">
-	    {% if threadsDirectMessagesForView %}
+	    {% if threadsDirectMessagesForView or threadsCarpoolingMessagesForView %}
 		<div id="messages">
     		<Messages 
 				:threadsdirectmessagesforview="{{ threadsDirectMessagesForView|json_encode }}"
+				:threadscarpoolingmessagesforview="{{ threadsCarpoolingMessagesForView|json_encode }}"
 				userid="{{ userId }}"
 				idmessagedefault="{{ idMessageDefault }}"
 				idrecipientdefault="{{ idRecipientDefault }}"

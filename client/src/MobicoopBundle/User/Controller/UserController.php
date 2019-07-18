@@ -307,18 +307,19 @@ class UserController extends AbstractController
         $this->denyAccessUnlessGranted('messages', $user);
 
         $threadsDirectMessagesForView = [];
+        $threadsCarpoolingMessagesForView = [];
 
         // Building threads array
         $threads = $userManager->getThreads($user);
         $selected = true;
         $idMessageDefaultSelected = false;
         foreach ($threads["threads"] as $thread) {
-            dump($thread);
             $arrayThread["idFirstMessage"] = $thread["id"];
             $arrayThread["contactId"] = $thread["recipients"][0]["user"]["id"];
             $arrayThread["contactFirstName"] = $thread["recipients"][0]["user"]["givenName"];
             $arrayThread["contactLastName"] = $thread["recipients"][0]["user"]["familyName"];
             $arrayThread["text"] = $thread["text"];
+            $arrayThread["askHistory"] = $thread["askHistory"];
 
             if (!$idMessageDefaultSelected) {
                 $idMessageDefault = $thread["id"];
@@ -328,11 +329,14 @@ class UserController extends AbstractController
             }
 
             $selected &= false;
-            $threadsDirectMessagesForView[] = $arrayThread;
-        }
 
+            // Push on the right array
+            (is_null($thread["askHistory"])) ? $threadsDirectMessagesForView[] = $arrayThread : $threadsCarpoolingMessagesForView[] = $arrayThread;
+            
+        }
         return $this->render('@Mobicoop/user/messages.html.twig', [
             'threadsDirectMessagesForView' => $threadsDirectMessagesForView,
+            'threadsCarpoolingMessagesForView' => $threadsCarpoolingMessagesForView,
             'userId' => $user->getId(),
             'idMessageDefault' => $idMessageDefault,
             'idRecipientDefault'=>$idRecipientDefault
@@ -379,7 +383,7 @@ class UserController extends AbstractController
 //            return new Response(json_encode($idRecipient));
 
             $response = $internalMessageManager->sendInternalMessage($messageToSend);
-            
+
             return new Response(json_encode($response));
         }
 

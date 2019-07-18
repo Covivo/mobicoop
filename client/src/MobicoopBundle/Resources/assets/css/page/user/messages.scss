@@ -7,6 +7,11 @@ body {
     }
   }
   #messages {
+    .v-tabs {
+      .v-tabs__bar {
+        margin-bottom: 10px;
+      }
+    }
     #spinnerMessages {
       .v-card__text {
         background-color: #26C6DA;
