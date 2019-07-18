@@ -20,6 +20,7 @@ cache:
   paths:    # excluded : not cached
   - .npm
   - cache/Cypress
+  - /root/.cache/Cypress
 
 # Name of the stages that can be executed on a pipeline by the runner
 stages:
@@ -108,10 +109,6 @@ dev_deploy:
     - echo "${SSH_DEV_HOST_KEY}" > "${HOME}/.ssh/known_hosts"  #
     - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_DEV_USER}@${SSH_DEV_IP}:/var/www/mobicoop/dev    # rsync the files on the server
     - ssh -o StrictHostKeyChecking=no ${SSH_DEV_USER}@${SSH_DEV_IP} "cd /var/www/mobicoop/dev/api; php bin/console doctrine:migrations:migrate -n;cd /var/www/mobicoop/dev/admin;npm run build"    # database migration and admin build
-  after_script:
-    #  Kill all node & php process if the e2e not passed
-    - killall node || true
-    - killall php || true
   except:
     refs:
       - tags    # job not executed on tags
@@ -176,13 +173,12 @@ test_deploy:
     paths:
     - client/cypress/screenshots
     - client/public/build
-  cache:
-    key: "test-and-prod-deploy"
-    paths:    # excluded : not cached
-    - api/vendor/
     - client/node_modules/
     - client/vendor/
+    - api/vendor/
+    - node_modules/
     - admin/node_modules/
+    expire_in: 1 week
 
 
 ###############################################################################################
@@ -212,17 +208,7 @@ prod_deploy:
     - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"      #
     - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/mobicoop/prod    # rsync the files on the server
     - ssh -o StrictHostKeyChecking=no ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/prod/api; php bin/console doctrine:migrations:migrate --env=prod -n;cd /var/www/mobicoop/prod/admin;npm run build"    # database migration and admin build
-  after_script:
-    #  Kill all node & php process if the e2e not passed
-    - killall node || true
-    - killall php || true
   when: manual      # /!\ important : job executed manually /!\
-  cache:
-    key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
-    paths:    # excluded : not cached
-    - api/vendor/
-    - client/vendor/
-    - admin/node_modules/
 
 
 
@@ -252,31 +238,9 @@ pages:
 
 
 ###############################################################################################
-########## Everything under this is execute only for Reports (master) ###################
+########## Everything under this is execute only for Reports secutiry on defauklt branch (Dev) ###################
 ###############################################################################################
 
-# Dependency Scanning
-# (gitlab preconfigured job) 
-#
-dependency_scanning:    
-  stage: reports
-  image: docker:stable
-  variables:
-    DOCKER_DRIVER: overlay2
-  allow_failure: true
-  services:
-    - docker:stable-dind
-  script:
-    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
-    - docker run
-      --env DEP_SCAN_DISABLE_REMOTE_CHECKS="${DEP_SCAN_DISABLE_REMOTE_CHECKS:-false}"
-      --volume "$PWD:/code"
-      --volume /var/run/docker.sock:/var/run/docker.sock
-      "registry.gitlab.com/gitlab-org/security-products/dependency-scanning:$SP_VERSION" /code
-  artifacts:
-    paths: [gl-dependency-scanning-report.json]
-  only:     # job executed only on dev & master branches
-    - master
     
 #
 # Static Application Security Testing (SAST)
@@ -302,21 +266,4 @@ sast:
     reports:
       sast: gl-sast-report.json
   only:     # job executed only on dev & master branches
-    - master
-
-#
-# License Management
-#
-license_management:
-  image:
-    name: "registry.gitlab.com/gitlab-org/security-products/license-management:$CI_SERVER_VERSION_MAJOR-$CI_SERVER_VERSION_MINOR-stable"
-    entrypoint: [""]
-  stage: reports
-  allow_failure: true
-  script:
-    - sudo /run.sh analyze .
-  artifacts:
-    reports:
-      license_management: gl-license-management-report.json
-  only:     # job executed only on dev & master branches
-    - master
+    - dev
