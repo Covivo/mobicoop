@@ -48,7 +48,7 @@ fixtures:
 
 start:
 	$(info Make ($(os)): Starting Mobicoop-platform environment containers.)
-	docker-compose -f docker-compose-$(os).yml up -d  --always-recreate-deps --force-recreate
+	docker-compose -f docker-compose-$(os).yml up -d
  
 stop:
 	$(info Make ($(os)): Stopping Mobicoop-platform environment containers.)
@@ -65,12 +65,11 @@ restart:
 
 remove:
 	$(info Make ($(os)): Stopping Mobicoop-platform environment containers.)
-	docker-compose -f docker-compose-$(os).yml down -v 
+	docker-compose -f docker-compose-$(os).yml rm 
  
 clean:
 	@make -s stop
-	@make -s remove
-	docker system prune --volumes --force
+	docker-compose -f docker-compose-$(os).yml down -v --rmi
 	$(info $(pink)------------------------------------------------------)
 	$(info $(pink)Drop all deps + containers + volumes)
 	$(info $(pink)------------------------------------------------------$(reset))
