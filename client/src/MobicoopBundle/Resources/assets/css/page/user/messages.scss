@@ -1,0 +1,56 @@
+@import '../../app.scss';
+body {
+  .section {
+    padding: 0;
+    .container {
+      max-width: 100%;
+    }
+  }
+  #messages {
+    .v-tabs {
+      .v-tabs__bar {
+        margin-bottom: 10px;
+      }
+    }
+    #spinnerMessages {
+      .v-card__text {
+        background-color: #26C6DA;
+        color: #FFF;
+      }
+    }
+    //height: 1000px;
+    #threadColumn {
+      //background-color: #F00;
+      .threads {
+        margin-bottom: 10px;
+        background-color: #26C6DA;
+        &.selected {
+          background-color: #00383F;
+        }
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+    #messagesColumn {
+      //background-color: #80F19A;
+      .v-timeline {
+        .v-timeline-item--right {
+          .v-timeline-item__body {
+            .v-card {
+              background-color: #80F19A;
+            }
+          }
+        }
+      }
+      #validSendMessage {
+        background-color: #184C2C;
+        color: #80F19A;
+        font-weight: bold;
+      }
+    }
+    #contextColumn {
+      //background-color: #00F;
+    }
+  }
+}

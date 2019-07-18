@@ -51,6 +51,7 @@ use App\Communication\Entity\Recipient;
 use App\User\Controller\UserRegistration;
 use App\User\Controller\UserPermissions;
 use App\User\Controller\UserLogin;
+use App\User\Controller\UserThreads;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\LoginFilter;
 use App\Communication\Entity\Notified;
@@ -101,6 +102,12 @@ use App\Communication\Entity\Notified;
  *                   }
  *              }
  *          },
+ *          "threads"={
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"threads"}},
+ *              "controller"=UserThreads::class,
+ *              "path"="/users/{id}/threads"
+ *          },
  *          "put",
  *          "delete"
  *      }
@@ -136,7 +143,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"read", "threads", "completeThread"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -154,7 +161,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write", "threads", "completeThread"})
      */
     private $givenName;
 
@@ -162,7 +169,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The family name of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write", "threads", "completeThread"})
      */
     private $familyName;
 
@@ -258,7 +265,8 @@ class User implements UserInterface, EquatableInterface
      * @var ArrayCollection|null A user may have many addresses.
      *
      * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Address", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     * @ApiSubresource
      */
     private $addresses;
 
@@ -325,6 +333,8 @@ class User implements UserInterface, EquatableInterface
      * @var ArrayCollection|null The messages sent by the user.
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Message", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @MaxDepth(1)
+     * @ApiSubresource
      */
     private $messages;
 
@@ -332,6 +342,8 @@ class User implements UserInterface, EquatableInterface
      * @var ArrayCollection|null The messages received by the user.
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Recipient", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @MaxDepth(1)
+     * @ApiSubresource
      */
     private $recipients;
 
@@ -355,6 +367,12 @@ class User implements UserInterface, EquatableInterface
      * @Groups("permissions")
      */
     private $permissions;
+
+    /**
+     * @var array|null The threads of the user
+     * @Groups("threads")
+     */
+    private $threads;
 
     public function __construct($status = null)
     {
@@ -909,6 +927,18 @@ class User implements UserInterface, EquatableInterface
     public function setPermissions(array $permissions): self
     {
         $this->permissions = $permissions;
+
+        return $this;
+    }
+
+    public function getThreads(): ?array
+    {
+        return $this->threads;
+    }
+
+    public function setThreads(array $threads): self
+    {
+        $this->threads = $threads;
 
         return $this;
     }

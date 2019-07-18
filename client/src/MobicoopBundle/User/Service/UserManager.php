@@ -100,6 +100,7 @@ class UserManager
         }
         return null;
     }
+
     /**
      * Get the logged user.
      *
@@ -239,6 +240,23 @@ class UserManager
                 }
             }
             return $communities;
+        }
+        return null;
+    }
+
+    /**
+     * Get the threads (messages) of a user
+     *
+     * @param User $user The user
+     *
+     * @return array The messages.
+     */
+    public function getThreads(User $user)
+    {
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSubCollection($user->getId(), 'thread', 'threads');
+        if ($response->getCode() == 200) {
+            return $response->getValue();
         }
         return null;
     }
