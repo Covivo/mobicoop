@@ -8,7 +8,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20190718122357 extends AbstractMigration
+final class Version20190718144858 extends AbstractMigration
 {
     public function up(Schema $schema) : void
     {
@@ -26,6 +26,8 @@ final class Version20190718122357 extends AbstractMigration
         $this->addSql('ALTER TABLE waypoint CHANGE proposal_id proposal_id INT DEFAULT NULL, CHANGE matching_id matching_id INT DEFAULT NULL, CHANGE ask_id ask_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE message CHANGE message_id message_id INT DEFAULT NULL, CHANGE title title VARCHAR(255) DEFAULT NULL');
         $this->addSql('ALTER TABLE notification CHANGE template_title template_title VARCHAR(255) DEFAULT NULL, CHANGE active active TINYINT(1) DEFAULT NULL, CHANGE active_default active_default TINYINT(1) DEFAULT NULL, CHANGE template_body template_body VARCHAR(255) DEFAULT NULL');
+        $this->addSql('ALTER TABLE notified DROP FOREIGN KEY FK_D23269D4B93F8B63');
+        $this->addSql('DROP INDEX IDX_D23269D4B93F8B63 ON notified');
         $this->addSql('ALTER TABLE notified CHANGE proposal_id proposal_id INT DEFAULT NULL, CHANGE matching_id matching_id INT DEFAULT NULL, CHANGE ask_history_id ask_history_id INT DEFAULT NULL, CHANGE recipient_id recipient_id INT DEFAULT NULL, CHANGE sent_date sent_date DATETIME DEFAULT NULL, CHANGE received_date received_date DATETIME DEFAULT NULL, CHANGE read_date read_date DATETIME DEFAULT NULL');
         $this->addSql('ALTER TABLE recipient CHANGE read_date read_date DATETIME DEFAULT NULL, CHANGE sent_date sent_date DATETIME DEFAULT NULL');
         $this->addSql('ALTER TABLE community CHANGE members_hidden members_hidden TINYINT(1) DEFAULT NULL, CHANGE proposals_hidden proposals_hidden TINYINT(1) DEFAULT NULL');
@@ -48,7 +50,7 @@ final class Version20190718122357 extends AbstractMigration
         $this->addSql('ALTER TABLE user_right CHANGE territory_id territory_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE user_role CHANGE territory_id territory_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE car CHANGE color color VARCHAR(45) DEFAULT NULL, CHANGE siv siv VARCHAR(45) DEFAULT NULL, CHANGE price_km price_km NUMERIC(4, 2) DEFAULT NULL');
-        $this->addSql('ALTER TABLE user CHANGE given_name given_name VARCHAR(100) DEFAULT NULL, CHANGE family_name family_name VARCHAR(100) DEFAULT NULL, CHANGE password password VARCHAR(100) DEFAULT NULL, CHANGE nationality nationality VARCHAR(100) DEFAULT NULL, CHANGE birth_date birth_date DATE DEFAULT NULL, CHANGE telephone telephone VARCHAR(100) DEFAULT NULL, CHANGE any_route_as_passenger any_route_as_passenger TINYINT(1) DEFAULT NULL, CHANGE multi_transport_mode multi_transport_mode TINYINT(1) DEFAULT NULL, CHANGE max_detour_duration max_detour_duration INT DEFAULT NULL, CHANGE max_detour_distance max_detour_distance INT DEFAULT NULL, CHANGE pupdtime pupdtime INT DEFAULT NULL, CHANGE token token VARCHAR(100) DEFAULT NULL');
+        $this->addSql('ALTER TABLE user ADD pupdtime INT DEFAULT NULL, ADD token VARCHAR(100) DEFAULT NULL, CHANGE given_name given_name VARCHAR(100) DEFAULT NULL, CHANGE family_name family_name VARCHAR(100) DEFAULT NULL, CHANGE password password VARCHAR(100) DEFAULT NULL, CHANGE nationality nationality VARCHAR(100) DEFAULT NULL, CHANGE birth_date birth_date DATE DEFAULT NULL, CHANGE telephone telephone VARCHAR(100) DEFAULT NULL, CHANGE any_route_as_passenger any_route_as_passenger TINYINT(1) DEFAULT NULL, CHANGE multi_transport_mode multi_transport_mode TINYINT(1) DEFAULT NULL, CHANGE max_detour_duration max_detour_duration INT DEFAULT NULL, CHANGE max_detour_distance max_detour_distance INT DEFAULT NULL');
     }
 
     public function down(Schema $schema) : void
@@ -75,6 +77,8 @@ final class Version20190718122357 extends AbstractMigration
         $this->addSql('ALTER TABLE message CHANGE message_id message_id INT DEFAULT NULL, CHANGE title title VARCHAR(255) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci');
         $this->addSql('ALTER TABLE notification CHANGE template_title template_title VARCHAR(255) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci, CHANGE template_body template_body VARCHAR(255) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci, CHANGE active active TINYINT(1) DEFAULT \'NULL\', CHANGE active_default active_default TINYINT(1) DEFAULT \'NULL\'');
         $this->addSql('ALTER TABLE notified CHANGE proposal_id proposal_id INT DEFAULT NULL, CHANGE matching_id matching_id INT DEFAULT NULL, CHANGE ask_history_id ask_history_id INT DEFAULT NULL, CHANGE recipient_id recipient_id INT DEFAULT NULL, CHANGE sent_date sent_date DATETIME DEFAULT \'NULL\', CHANGE received_date received_date DATETIME DEFAULT \'NULL\', CHANGE read_date read_date DATETIME DEFAULT \'NULL\'');
+        $this->addSql('ALTER TABLE notified ADD CONSTRAINT FK_D23269D4B93F8B63 FOREIGN KEY (ask_history_id) REFERENCES ask (id)');
+        $this->addSql('CREATE INDEX IDX_D23269D4B93F8B63 ON notified (ask_history_id)');
         $this->addSql('ALTER TABLE paragraph CHANGE section_id section_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE proposal CHANGE proposal_linked_id proposal_linked_id INT DEFAULT NULL, CHANGE user_id user_id INT DEFAULT NULL, CHANGE criteria_id criteria_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE ptarrival CHANGE individual_stop_id individual_stop_id INT DEFAULT NULL, CHANGE name name VARCHAR(100) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci');
@@ -88,7 +92,7 @@ final class Version20190718122357 extends AbstractMigration
         $this->addSql('ALTER TABLE role CHANGE parent_id parent_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE section CHANGE article_id article_id INT DEFAULT NULL, CHANGE title title VARCHAR(255) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci, CHANGE sub_title sub_title VARCHAR(255) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci');
         $this->addSql('ALTER TABLE uright CHANGE parent_id parent_id INT DEFAULT NULL, CHANGE description description VARCHAR(255) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci');
-        $this->addSql('ALTER TABLE user CHANGE given_name given_name VARCHAR(100) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci, CHANGE family_name family_name VARCHAR(100) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci, CHANGE password password VARCHAR(100) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci, CHANGE nationality nationality VARCHAR(100) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci, CHANGE birth_date birth_date DATE DEFAULT \'NULL\', CHANGE telephone telephone VARCHAR(100) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci, CHANGE max_detour_duration max_detour_duration INT DEFAULT NULL, CHANGE max_detour_distance max_detour_distance INT DEFAULT NULL, CHANGE any_route_as_passenger any_route_as_passenger TINYINT(1) DEFAULT \'NULL\', CHANGE multi_transport_mode multi_transport_mode TINYINT(1) DEFAULT \'NULL\', CHANGE pupdtime pupdtime INT DEFAULT NULL, CHANGE token token VARCHAR(100) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci');
+        $this->addSql('ALTER TABLE user DROP pupdtime, DROP token, CHANGE given_name given_name VARCHAR(100) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci, CHANGE family_name family_name VARCHAR(100) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci, CHANGE password password VARCHAR(100) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci, CHANGE nationality nationality VARCHAR(100) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci, CHANGE birth_date birth_date DATE DEFAULT \'NULL\', CHANGE telephone telephone VARCHAR(100) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci, CHANGE max_detour_duration max_detour_duration INT DEFAULT NULL, CHANGE max_detour_distance max_detour_distance INT DEFAULT NULL, CHANGE any_route_as_passenger any_route_as_passenger TINYINT(1) DEFAULT \'NULL\', CHANGE multi_transport_mode multi_transport_mode TINYINT(1) DEFAULT \'NULL\'');
         $this->addSql('ALTER TABLE user_right CHANGE territory_id territory_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE user_role CHANGE territory_id territory_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE waypoint CHANGE proposal_id proposal_id INT DEFAULT NULL, CHANGE matching_id matching_id INT DEFAULT NULL, CHANGE ask_id ask_id INT DEFAULT NULL');
