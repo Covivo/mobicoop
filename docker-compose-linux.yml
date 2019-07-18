@@ -1,4 +1,4 @@
-version: "2"
+version: "2.4"
 services:
   mobicoop_platform:
     container_name: mobicoop_platform
@@ -19,9 +19,13 @@ services:
     tty: true
     environment:
       - COMPOSER_PROCESS_TIMEOUT=1200
+      - SIG_GEOCODER_URI=${SIG_GEOCODER_URI:?You forgot to indicate the env SIG_GEOCODER_URI inside bashrc or zshrc}
+      - SIG_GEOROUTER_URI=${SIG_GEOROUTER_URI:?You forgot to indicate the env SIG_GEOROUTER_URI inside bashrc or zshrc}
     volumes:
       - ./:/var/www/:cached
       - ./build/cache:/root/.cache/:cached
+    networks:
+      - mobicoop_platform
 
   db:
     image: mariadb:10.4
@@ -30,6 +34,8 @@ services:
     ports: ['3306:3306']
     environment:
       MYSQL_ROOT_PASSWORD: mobicoop
+    networks:
+      - mobicoop_platform
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -42,6 +48,8 @@ services:
     restart: always
     ports:
         - "8083:80"
+    networks:
+      - mobicoop_platform
 
 networks:
   mobicoop_platform:

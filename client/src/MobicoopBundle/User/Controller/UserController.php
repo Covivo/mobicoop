@@ -49,6 +49,10 @@ use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Service\AddressManager;
 use Symfony\Component\HttpFoundation\Response;
 use DateTime;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Recipient;
 
 /**
  * Controller class for user related actions.
@@ -157,19 +161,6 @@ class UserController extends AbstractController
             ]);
         }
         return $this->json(['error' => $error, 'success' => $success]);
-    }
-
-    /**
-     * User profile (get the current user).
-     */
-    public function userProfile(UserManager $userManager)
-    {
-        $user = $userManager->getLoggedUser();
-        $this->denyAccessUnlessGranted('profile', $user);
-
-        return $this->render('@Mobicoop/user/detail.html.twig', [
-            'user' => $user
-        ]);
     }
 
     /**
@@ -465,6 +456,98 @@ class UserController extends AbstractController
         ]);
     }
 
+    /**
+     * User messages.
+     */
+    public function userMessages(UserManager $userManager, InternalMessageManager $internalMessageManager)
+    {
+        $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('messages', $user);
+
+        $threadsDirectMessagesForView = [];
+        $threadsCarpoolingMessagesForView = [];
+
+        // Building threads array
+        $threads = $userManager->getThreads($user);
+        $selected = true;
+        $idMessageDefaultSelected = false;
+        foreach ($threads["threads"] as $thread) {
+            $arrayThread["idFirstMessage"] = $thread["id"];
+            $arrayThread["contactId"] = $thread["recipients"][0]["user"]["id"];
+            $arrayThread["contactFirstName"] = $thread["recipients"][0]["user"]["givenName"];
+            $arrayThread["contactLastName"] = $thread["recipients"][0]["user"]["familyName"];
+            $arrayThread["text"] = $thread["text"];
+            $arrayThread["askHistory"] = $thread["askHistory"];
+
+            if (!$idMessageDefaultSelected) {
+                $idMessageDefault = $thread["id"];
+                $idRecipientDefault = $thread["recipients"][0]["user"]["id"];
+                $arrayThread["selected"] = $selected;
+                $idMessageDefaultSelected = true;
+            }
+
+            $selected &= false;
+
+            // Push on the right array
+            (is_null($thread["askHistory"])) ? $threadsDirectMessagesForView[] = $arrayThread : $threadsCarpoolingMessagesForView[] = $arrayThread;
+        }
+        return $this->render('@Mobicoop/user/messages.html.twig', [
+            'threadsDirectMessagesForView' => $threadsDirectMessagesForView,
+            'threadsCarpoolingMessagesForView' => $threadsCarpoolingMessagesForView,
+            'userId' => $user->getId(),
+            'idMessageDefault' => $idMessageDefault,
+            'idRecipientDefault'=>$idRecipientDefault
+        ]);
+    }
+
+    /**
+     * Get a complete thread from a first message
+     */
+    public function getCompleteThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager)
+    {
+        $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('messages', $user);
+
+        return new Response(json_encode($internalMessageManager->getCompleteThread($idFirstMessage, DataProvider::RETURN_JSON)));
+    }
+
+
+    public function sendInternalMessage(UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request)
+    {
+        $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('messages', $user);
+
+        $text = "";
+        if ($request->isMethod('POST')) {
+            $text = $request->request->get('text');
+            $idLastMessage = $request->request->get('idLastMessage');
+            $idRecipient = $request->request->get('idRecipient');
+
+            $messageToSend = new Message();
+            $messageToSend->setUser($user);
+
+            $recipient = new Recipient();
+            $recipient->setUser($userManager->getUser($idRecipient));
+
+            $recipient->setStatus(Recipient::STATUS_PENDING);
+            $recipient->setSentDate(new \DateTime());
+            $messageToSend->addRecipient($recipient);
+
+            $messageToSend->setText($text);
+
+            $messageToSend->setMessage($internalMessageManager->getMessage($idLastMessage));
+
+//            return new Response(json_encode($idRecipient));
+
+            $response = $internalMessageManager->sendInternalMessage($messageToSend);
+
+            return new Response(json_encode($response));
+        }
+
+        return new Response(json_encode("Not a post"));
+    }
+
+
     // ADMIN
 
     /**
@@ -473,12 +556,12 @@ class UserController extends AbstractController
      * @Route("/user/{id}", name="user", requirements={"id"="\d+"})
      *
      */
-    public function user($id, UserManager $userManager)
-    {
-        return $this->render('@Mobicoop/user/detail.html.twig', [
-            'user' => $userManager->getUser($id)
-        ]);
-    }
+    // public function user($id, UserManager $userManager)
+    // {
+    //     return $this->render('@Mobicoop/user/detail.html.twig', [
+    //         'user' => $userManager->getUser($id)
+    //     ]);
+    // }
 
     /**
      * Retrieve all users.
@@ -486,12 +569,12 @@ class UserController extends AbstractController
      * @Route("/users", name="users")
      *
      */
-    public function users(UserManager $userManager)
-    {
-        return $this->render('@Mobicoop/user/index.html.twig', [
-            'hydra' => $userManager->getUsers()
-        ]);
-    }
+    // public function users(UserManager $userManager)
+    // {
+    //     return $this->render('@Mobicoop/user/index.html.twig', [
+    //         'hydra' => $userManager->getUsers()
+    //     ]);
+    // }
 
     /**
      * Delete a user.
@@ -499,17 +582,17 @@ class UserController extends AbstractController
      * @Route("/user/{id}/delete", name="user_delete", requirements={"id"="\d+"})
      *
      */
-    public function userDelete($id, UserManager $userManager)
-    {
-        if ($userManager->deleteUser($id)) {
-            return $this->redirectToRoute('users');
-        } else {
-            return $this->render('@Mobicoop/user/index.html.twig', [
-                    'hydra' => $userManager->getUsers(),
-                    'error' => 'An error occured'
-            ]);
-        }
-    }
+    // public function userDelete($id, UserManager $userManager)
+    // {
+    //     if ($userManager->deleteUser($id)) {
+    //         return $this->redirectToRoute('users');
+    //     } else {
+    //         return $this->render('@Mobicoop/user/index.html.twig', [
+    //                 'hydra' => $userManager->getUsers(),
+    //                 'error' => 'An error occured'
+    //         ]);
+    //     }
+    // }
     
     /**
      * Retrieve all matchings for a proposal.
@@ -517,16 +600,16 @@ class UserController extends AbstractController
      * @Route("/user/{id}/proposal/{idProposal}/matchings", name="user_proposal_matchings", requirements={"id"="\d+","idProposal"="\d+"})
      *
      */
-    public function userProposalMatchings($id, $idProposal, ProposalManager $proposalManager)
-    {
-        $user = new User($id);
-        $proposal = $proposalManager->getProposal($idProposal);
-        return $this->render('@Mobicoop/proposal/matchings.html.twig', [
-            'user' => $user,
-            'proposal' => $proposal,
-            'hydra' => $proposalManager->getMatchings($proposal)
-        ]);
-    }
+    // public function userProposalMatchings($id, $idProposal, ProposalManager $proposalManager)
+    // {
+    //     $user = new User($id);
+    //     $proposal = $proposalManager->getProposal($idProposal);
+    //     return $this->render('@Mobicoop/proposal/matchings.html.twig', [
+    //         'user' => $user,
+    //         'proposal' => $proposal,
+    //         'hydra' => $proposalManager->getMatchings($proposal)
+    //     ]);
+    // }
 
     /**
      * Delete a proposal of a user.
@@ -534,19 +617,19 @@ class UserController extends AbstractController
      * @Route("/user/{id}/proposal/{idProposal}/delete", name="user_proposal_delete", requirements={"id"="\d+","idProposal"="\d+"})
      *
      */
-    public function userProposalDelete($id, $idProposal, ProposalManager $proposalManager)
-    {
-        if ($proposalManager->deleteProposal($idProposal)) {
-            return $this->redirectToRoute('user_proposals', ['id'=>$id]);
-        } else {
-            $user = new User($id);
-            return $this->render('@Mobicoop/proposal/index.html.twig', [
-                'user' => $user,
-                'hydra' => $proposalManager->getProposals($user),
-                'error' => 'An error occured'
-            ]);
-        }
-    }
+    // public function userProposalDelete($id, $idProposal, ProposalManager $proposalManager)
+    // {
+    //     if ($proposalManager->deleteProposal($idProposal)) {
+    //         return $this->redirectToRoute('user_proposals', ['id'=>$id]);
+    //     } else {
+    //         $user = new User($id);
+    //         return $this->render('@Mobicoop/proposal/index.html.twig', [
+    //             'user' => $user,
+    //             'hydra' => $proposalManager->getProposals($user),
+    //             'error' => 'An error occured'
+    //         ]);
+    //     }
+    // }
 
 
 
@@ -555,33 +638,33 @@ class UserController extends AbstractController
     /**
      * Create a proposal for a user.
      */
-    public function userProposalCreate($id=null, ProposalManager $proposalManager, Request $request)
-    {
-        $proposal = new Proposal();
-        if ($id) {
-            $proposal->setUser(new User($id));
-        } else {
-            $proposal->setUser(new User());
-        }
+    // public function userProposalCreate($id=null, ProposalManager $proposalManager, Request $request)
+    // {
+    //     $proposal = new Proposal();
+    //     if ($id) {
+    //         $proposal->setUser(new User($id));
+    //     } else {
+    //         $proposal->setUser(new User());
+    //     }
 
-        $form = $this->createForm(ProposalForm::class, $proposal);
-        $form->handleRequest($request);
-        $error = false;
+    //     $form = $this->createForm(ProposalForm::class, $proposal);
+    //     $form->handleRequest($request);
+    //     $error = false;
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // for now we add the starting end ending points,
-            // in the future we will need to have dynamic fields
-            $proposal->addPoint($proposal->getStart());
-            $proposal->addPoint($proposal->getDestination());
-            if ($proposal = $proposalManager->createProposal($proposal)) {
-                return $this->redirectToRoute('user_proposal_matchings', ['id'=>$id,'idProposal'=>$proposal->getId()]);
-            }
-            $error = true;
-        }
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         // for now we add the starting end ending points,
+    //         // in the future we will need to have dynamic fields
+    //         $proposal->addPoint($proposal->getStart());
+    //         $proposal->addPoint($proposal->getDestination());
+    //         if ($proposal = $proposalManager->createProposal($proposal)) {
+    //             return $this->redirectToRoute('user_proposal_matchings', ['id'=>$id,'idProposal'=>$proposal->getId()]);
+    //         }
+    //         $error = true;
+    //     }
 
-        return $this->render('@Mobicoop/proposal/create.html.twig', [
-            'form' => $form->createView(),
-            'error' => $error
-        ]);
-    }
+    //     return $this->render('@Mobicoop/proposal/create.html.twig', [
+    //         'form' => $form->createView(),
+    //         'error' => $error
+    //     ]);
+    // }
 }

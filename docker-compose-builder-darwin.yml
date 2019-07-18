@@ -1,13 +1,16 @@
-version: '2'
+version: '2.4'
 services:
   base:
     environment:
       - COMPOSER_PROCESS_TIMEOUT=1200
     image: mobicoop/php-node-chromium:2.0.0
     volumes:
-      - mobicoop-sync:/var/www:nocopy
-      - cache-sync:/root/.cache/:nocopy
+      - ./:/var/www:delegated
+      - mobicoop-client-var:/var/www/client/var
+      - cache-sync:/root/.cache/
     working_dir: /var/www
+    networks:
+      - mobicoop_platform
   install:
     extends:
       service: base
@@ -25,10 +28,13 @@ services:
     extends:
       service: base
     working_dir: /var/www/api
+    # command: cat /var/www/api/.env
     entrypoint: bash entrypoint.sh 
 
+networks:
+  mobicoop_platform:
+    name: mobicoop_platform
+
 volumes:
-  mobicoop-sync:
-    external: true
+  mobicoop-client-var:
   cache-sync:
-    external: true

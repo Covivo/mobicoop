@@ -1,4 +1,4 @@
-version: "3.5"
+version: "2.4"
 services:
   mobicoop_platform:
     container_name: mobicoop_platform
@@ -19,9 +19,13 @@ services:
     tty: true
     environment:
       - COMPOSER_PROCESS_TIMEOUT=1200
+      - SIG_GEOCODER_URI=${SIG_GEOCODER_URI:?You forgot to indicate the env SIG_GEOCODER_URI inside bashrc or zshrc}
+      - SIG_GEOROUTER_URI=${SIG_GEOROUTER_URI:?You forgot to indicate the env SIG_GEOROUTER_URI inside bashrc or zshrc}
     volumes:
-      - mobicoop-sync:/var/www:nocopy
-      - cache-sync:/root/.cache/:nocopy
+      - ./:/var/www:delegated
+      - ./build/cache:/root/.cache/:cached
+      - mobicoop-client-var:/var/www/client/var
+      - mobicoop-api-var:/var/www/api/var
     networks:
       - mobicoop_platform
 
@@ -50,10 +54,8 @@ services:
       - mobicoop_platform
 
 volumes:
-  mobicoop-sync:
-    external: true
-  cache-sync:
-    external: true
+  mobicoop-client-var:
+  mobicoop-api-var:
 
 networks:
   mobicoop_platform:

@@ -40,7 +40,7 @@ describe('User account', () => {
 
     cy.percySnapshot('user_logged');
 
-    cy.wait(1500)
+    cy.wait(2500)
     cy.percySnapshot('login')
 
     /* Account */
@@ -71,7 +71,7 @@ describe('User account', () => {
       .click()
 
     cy.logout()
-    cy.wait(1500)
+    cy.wait(2500)
   });
 
   it('An user logged updates his account', () => {
@@ -85,7 +85,7 @@ describe('User account', () => {
     /* Account */
     cy.contains('Mon profil').click()
     cy.url().should('include', baseUrl + 'utilisateur/profil')
-    cy.wait(1500)
+    cy.wait(2500)
 
     /* Update */
     cy.get('.column > input').click()

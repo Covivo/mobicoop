@@ -28,3 +28,4 @@
 /client/.env.prod.local
 /client/var/log/
 /admin/.env
+api/public/upload/communities/security/*

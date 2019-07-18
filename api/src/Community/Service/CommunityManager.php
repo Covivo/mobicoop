@@ -70,7 +70,8 @@ class CommunityManager
     {
         $authorized = true;
         // we check if the community is secured
-        if (count($communityUser->getCommunity()->getCommunitySecurities())>0) {
+        $community= $communityUser->getCommunity();
+        if (count($community->getCommunitySecurities()) > 0) {
             $authorized = false;
             // we check the values of the credentials for each possible security file
             if (!is_null($communityUser->getLogin()) && !is_null($communityUser->getPassword())) {
