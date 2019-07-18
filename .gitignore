@@ -1,5 +1,8 @@
 # Created by https://www.gitignore.io/api/vim,osx,node,macos,linux,windows,symfony,eclipse,netbeans,composer,jetbrains,sublimetext,phpstorm+all
 
+#Ignore docker mariadb data
+.mariadb-data
+
 ### Composer ###
 composer.phar
 /vendor/
