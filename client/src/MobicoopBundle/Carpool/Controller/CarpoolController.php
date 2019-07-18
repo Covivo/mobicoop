@@ -64,7 +64,6 @@ class CarpoolController extends AbstractController
         $ad->setFrequency(Ad::FREQUENCY_PUNCTUAL);
 //        $ad->setFrequency(Ad::FREQUENCY_REGULAR);
         $ad->setPrice($priceCarpool);
-        dump($ad);
         $ad->setUser($userManager->getLoggedUser());
 
         $form = $this->createForm(AdForm::class, $ad, ['csrf_protection' => false]);
