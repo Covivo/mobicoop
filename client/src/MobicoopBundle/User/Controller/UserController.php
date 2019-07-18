@@ -354,7 +354,7 @@ class UserController extends AbstractController
     /**
      * Reset password
      */
-    public function userPasswordReset(UserManager $userManager, Request $request, string $token,  \Swift_Mailer $mailer)
+    public function userPasswordReset(UserManager $userManager, Request $request, string $token, \Swift_Mailer $mailer)
     {
         /** @var Session $session */
         $session= $this->get('session');
@@ -386,24 +386,24 @@ class UserController extends AbstractController
                     $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                     $this->get('security.token_storage')->setToken($token);
                     $this->get('session')->set('_security_main', serialize($token));
-	                $message = (new \Swift_Message('Password update confirmation'))
-		                ->setFrom('contact@mobicoop.fr')
-		                ->setTo($user->getEmail())
-		                ->setBody(
-			                $this->renderView(
-				                '@Mobicoop/email/confirmUpdatedPassword.html.twig',
-				                array(
-					                'name' => $user->getFamilyName(),
-				                )
-			                ),
-			                'text/html'
-		                );
-	                $mailer->send($message);
-	                // set flash messages
-	                $session->getFlashBag()->add('success', 'Votre mot de passé a été modifié avec success');
-	                $user->setToken('');
-	                $user->setPupdtime(-1);
-	                $userManager->flushUserToken($user);
+                    $message = (new \Swift_Message('Password update confirmation'))
+                        ->setFrom('contact@mobicoop.fr')
+                        ->setTo($user->getEmail())
+                        ->setBody(
+                            $this->renderView(
+                                '@Mobicoop/email/confirmUpdatedPassword.html.twig',
+                                array(
+                                    'name' => $user->getFamilyName(),
+                                )
+                            ),
+                            'text/html'
+                        );
+                    $mailer->send($message);
+                    // set flash messages
+                    $session->getFlashBag()->add('success', 'Votre mot de passé a été modifié avec success');
+                    $user->setToken('');
+                    $user->setPupdtime(-1);
+                    $userManager->flushUserToken($user);
                     return $this->redirectToRoute('user_profile_update');
                 } else {
                     // set flash messages

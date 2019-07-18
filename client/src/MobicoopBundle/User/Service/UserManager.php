@@ -322,20 +322,20 @@ class UserManager
         return $this->flushUserToken($user);
     }
 
-	/**
-	 * Flush the user token.
-	 *
-	 * @param User $user
-	 * @return array|null|object
-	 */
-	public function flushUserToken(User $user)
-	{
-		$response = $this->dataProvider->put($user, ['password_token']);
-		if ($response->getCode() == 200) {
-			$this->logger->info('User Token Update | Start');
-			return $response->getValue();
-		}
-		$this->logger->info('User Token Update | Fail');
-		return null;
-	}
+    /**
+     * Flush the user token.
+     *
+     * @param User $user
+     * @return array|null|object
+     */
+    public function flushUserToken(User $user)
+    {
+        $response = $this->dataProvider->put($user, ['password_token']);
+        if ($response->getCode() == 200) {
+            $this->logger->info('User Token Update | Start');
+            return $response->getValue();
+        }
+        $this->logger->info('User Token Update | Fail');
+        return null;
+    }
 }
