@@ -86,7 +86,7 @@ class CommunityController extends AbstractController
         $this->denyAccessUnlessGranted('show', $community);
         $user = $userManager->getLoggedUser();
         $form = $this->createForm(CommunityUserForm::class, $communityUser);
-        $error = false;
+        $errorLoginSecured = false;
         $communityUser->setCommunity($community);
         $communityUser->setUser($user);
         $communityUser->setCreatedDate(new \DateTime());
@@ -109,14 +109,14 @@ class CommunityController extends AbstractController
             if ($communityUser = $communityManager->joinCommunity($communityUser)) {
                 return $this->redirectToRoute('community_show', ['id' => $id]);
             }
-            $error = true;
+            $errorLoginSecured = "La connexion a échoué";
         }
         return $this->render('@Mobicoop/community/showCommunity.html.twig', [
             'community' => $community,
             'formIdentification' => $form->createView(),
             'communityUser' => $communityUser,
             'user' => $user,
-            'error' => $error,
+            'errorLoginSecured' => $errorLoginSecured,
             'isMember' => $isMember
         ]);
     }
