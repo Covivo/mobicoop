@@ -379,6 +379,7 @@ class User implements UserInterface, EquatableInterface
     public function setPupdtime(?int $pupdtime)
     {
         $this->pupdtime = $pupdtime;
+        return $this;
     }
 
 
@@ -420,7 +421,6 @@ class User implements UserInterface, EquatableInterface
     public function getToken()
     {
         return $this->token;
-        return $this;
     }
 
     /**
