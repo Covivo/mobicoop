@@ -46,7 +46,7 @@ class UserManager
     private $tokenStorage;
     private $logger;
 
-    
+
     /**
      * Constructor.
      *
@@ -63,7 +63,7 @@ class UserManager
         $this->tokenStorage = $tokenStorage;
         $this->logger = $logger;
     }
-    
+
     /**
      * Get a user by its identifier
      *
@@ -95,10 +95,10 @@ class UserManager
      */
     public function findByToken(string $token)
     {
-        $response= $this->dataProvider->getCollection(['token'=> $token]);
+        $response = $this->dataProvider->getCollection(['token' => $token]);
         if ($response->getCode() == 200) {
             /** @var Hydra $user */
-            $user= $response->getValue();
+            $user = $response->getValue();
 
             if ($user->getTotalItems() == 0) {
                 return null;
@@ -118,10 +118,10 @@ class UserManager
      */
     public function findByEmail(string $email)
     {
-        $response= $this->dataProvider->getCollection(['email'=> $email]);
+        $response = $this->dataProvider->getCollection(['email' => $email]);
         if ($response->getCode() == 200) {
             /** @var Hydra $user */
-            $user= $response->getValue();
+            $user = $response->getValue();
 
             if ($user->getTotalItems() == 0) {
                 return null;
@@ -169,7 +169,7 @@ class UserManager
         $this->logger->error('User | Not logged');
         return null;
     }
-    
+
     /**
      * Get all users
      *
@@ -185,7 +185,7 @@ class UserManager
         $this->logger->error('User | Not found');
         return null;
     }
-    
+
     /**
      * Create a user
      *
@@ -197,7 +197,7 @@ class UserManager
     {
         // encoding of the password
         $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
-       
+
         $response = $this->dataProvider->post($user);
         if ($response->getCode() == 201) {
             $this->logger->info('User Creation | Start');
@@ -206,7 +206,7 @@ class UserManager
         $this->logger->error('User Creation | Fail');
         return null;
     }
-    
+
     /**
      * Update a user
      *
@@ -223,7 +223,7 @@ class UserManager
         }
         return null;
     }
-    
+
     /**
      * Update a user password
      *
@@ -243,7 +243,7 @@ class UserManager
         $this->logger->info('User Password Update | Fail');
         return null;
     }
-    
+
     /**
      * Delete a user
      *
@@ -291,13 +291,28 @@ class UserManager
         return null;
     }
 
-
+    /**
+     * Get the threads (messages) of a user
+     *
+     * @param User $user The user
+     *
+     * @return array The messages.
+     */
+    public function getThreads(User $user)
+    {
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSubCollection($user->getId(), 'thread', 'threads');
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
     public function findByPhone(string $getTelephone)
     {
-        $response= $this->dataProvider->getCollection(['email'=> $getTelephone]);
+        $response = $this->dataProvider->getCollection(['email' => $getTelephone]);
         if ($response->getCode() == 200) {
             /** @var Hydra $user */
-            $user= $response->getValue();
+            $user = $response->getValue();
 
             if ($user->getTotalItems() == 0) {
                 return null;
@@ -316,8 +331,8 @@ class UserManager
      */
     public function updateUserToken($user)
     {
-        $time= time();
-        $token= $this->encoder->encodePassword($user, $user->getEmail().rand().$time.rand().$user->getSalt());
+        $time = time();
+        $token = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
         // encoding of the password
         $user->setToken($token);
         $user->setPupdtime($time);
@@ -338,21 +353,5 @@ class UserManager
             return $response->getValue();
         }
         $this->logger->info('User Token Update | Fail');
-
-    /**
-     * Get the threads (messages) of a user
-     *
-     * @param User $user The user
-     *
-     * @return array The messages.
-     */
-    public function getThreads(User $user)
-    {
-        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
-        $response = $this->dataProvider->getSubCollection($user->getId(), 'thread', 'threads');
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
-        return null;
     }
 }
