@@ -332,7 +332,6 @@ class UserController extends AbstractController
 
             // Push on the right array
             (is_null($thread["askHistory"])) ? $threadsDirectMessagesForView[] = $arrayThread : $threadsCarpoolingMessagesForView[] = $arrayThread;
-            
         }
         return $this->render('@Mobicoop/user/messages.html.twig', [
             'threadsDirectMessagesForView' => $threadsDirectMessagesForView,
