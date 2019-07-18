@@ -21,83 +21,50 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Events;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use App\User\Entity\User;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Communication\Entity\Message;
-use App\Communication\Entity\MessagerInterface;
-use App\Communication\Entity\Notified;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 
 /**
  * Carpooling : a history item for an ask (all the items represent a thread for the ask).
- *
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks
- * @ApiResource(
- *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
- *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
- * )
  */
-class AskHistory implements MessagerInterface
+class AskHistory
 {
     const STATUS_INITIATED = 1;
     const STATUS_PENDING = 2;
     const STATUS_ACCEPTED = 3;
     const STATUS_DECLINED = 4;
-    
+
     /**
-     * @var int The id of this ask history item.
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @var int The id of this ask.
      */
     private $id;
 
     /**
-     * @var int Ask status at the date of creation of the item (1 = initiated; 2 = pending, 3 = accepted; 4 = declined).
+     * @var int Ask status (0 = waiting; 1 = accepted; 2 = declined).
      *
      * @Assert\NotBlank
-     * @ORM\Column(type="smallint")
-     * @Groups({"read","write","threads"})
      */
     private $status;
 
     /**
-     * @var int The ask type at the date of creation of the item (1 = one way trip; 2 = outward of a round trip; 3 = return of a round trip)).
+     * @var int The ask type (1 = one way trip; 2 = outward of a round trip; 3 = return of a round trip)).
      *
      * @Assert\NotBlank
-     * @ORM\Column(type="smallint")
-     * @Groups({"read","write","threads"})
      */
     private $type;
 
     /**
-     * @var \DateTimeInterface Creation date of the history item.
-     *
-     * @ORM\Column(type="datetime")
+     * @var \DateTimeInterface Creation date of the solicitation.
      */
     private $createdDate;
 
     /**
      * @var Ask|null The linked ask.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="askHistories")
-     * @Groups({"read","write","threads"})
      * @MaxDepth(1)
      */
     private $ask;
@@ -105,8 +72,6 @@ class AskHistory implements MessagerInterface
     /**
      * @var Message The message linked the ask history item.
      *
-     * @ORM\OneToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="askHistory", cascade={"persist", "remove"}, orphanRemoval=true)
-     * @Groups({"read","write"})
      * @MaxDepth(1)
      */
     private $message;
@@ -114,15 +79,13 @@ class AskHistory implements MessagerInterface
     /**
      * @var ArrayCollection|null The notifications sent for the ask history.
      *
-     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="askHistory", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","write"})
      * @MaxDepth(1)
      */
     private $notifieds;
-
+    
     public function __construct()
     {
-        $this->notifieds = new ArrayCollection();
+        $this->waypoints = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -216,17 +179,5 @@ class AskHistory implements MessagerInterface
         }
         
         return $this;
-    }
-    
-    // DOCTRINE EVENTS
-    
-    /**
-     * Creation date.
-     *
-     * @ORM\PrePersist
-     */
-    public function setAutoCreatedDate()
-    {
-        $this->setCreatedDate(new \Datetime());
     }
 }

@@ -97,14 +97,14 @@ class CommunityUser implements ResourceInterface
     /**
      * @var string The login to join the community if the community is secured.
      *
-     * @Groups("put")
+     * @Groups({"put", "post"})
      */
     private $login;
 
     /**
      * @var string The password to join the community if the community is secured.
      *
-     * @Groups("put")
+     * @Groups({"put", "post"})
      */
     private $password;
 
@@ -217,7 +217,7 @@ class CommunityUser implements ResourceInterface
         return $this;
     }
 
-    public function getLogin(): string
+    public function getLogin(): ?string
     {
         return $this->login;
     }
@@ -227,7 +227,7 @@ class CommunityUser implements ResourceInterface
         $this->login = $login;
     }
 
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }

@@ -110,3 +110,7 @@ services:
         resource: '@MobicoopBundle/User/Service/*'
     Mobicoop\Bundle\MobicoopBundle\User\Security\:
         resource: '@MobicoopBundle/User/Security/*'
+
+    # Communication
+    Mobicoop\Bundle\MobicoopBundle\Communication\Service\:
+        resource: '@MobicoopBundle/Communication/Service/*'

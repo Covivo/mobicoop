@@ -120,7 +120,22 @@ class Community implements ResourceInterface
      * @Groups({"post","put"})
      */
     private $communityUsers;
-    
+
+    /**
+     * @var bool|null The community is secured.
+     *
+     * @Groups({"post","put"})
+     */
+    private $secured;
+
+    /**
+     * @var bool|null The community is private.
+     *
+     * @Groups({"post","put"})
+     */
+    private $private;
+
+
     public function __construct($id=null)
     {
         if ($id) {
@@ -129,6 +144,7 @@ class Community implements ResourceInterface
         $this->images = new ArrayCollection();
         $this->proposals = new ArrayCollection();
         $this->communityUsers = new ArrayCollection();
+        $this->setSecured(false);
     }
     
     public function getId(): ?int
@@ -316,6 +332,36 @@ class Community implements ResourceInterface
             }
         }
         
+        return $this;
+    }
+
+    public function isSecured(): ?bool
+    {
+        return $this->secured;
+    }
+
+    public function setSecured(bool $secured): self
+    {
+        $this->secured = $secured;
+
+        return $this;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function isPrivate(): ?bool
+    {
+        return $this->private;
+    }
+
+    /**
+     * @param bool|null $private
+     */
+    public function setPrivate(?bool $private): self
+    {
+        $this->private = $private;
+
         return $this;
     }
 }

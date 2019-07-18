@@ -23,6 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,6 +37,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
+use Symfony\Component\Dotenv\Dotenv;
 
 /**
  * Controller class for carpooling related actions.
@@ -47,39 +49,69 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
-    public function ad(AdManager $adManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
+
+
+    public function ad(AdManager $adManager, UserManager $userManager, Request $request, CommunityManager $communityManager, CommunityController $communityController)
     {
+        //get price from the client/.env file
+        $dotenv = new Dotenv();
+        $dotenv->load(__DIR__.'/../../../../.env');
+        $priceCarpool = $_ENV['PRICE_CARPOOL'];
         $ad = new Ad();
         $this->denyAccessUnlessGranted('post', $ad);
         $ad->setRole(Ad::ROLE_BOTH);
         $ad->setType(Ad::TYPE_ONE_WAY);
         $ad->setFrequency(Ad::FREQUENCY_PUNCTUAL);
 //        $ad->setFrequency(Ad::FREQUENCY_REGULAR);
-        $ad->setPrice(Ad::PRICE);
+        $ad->setPrice($priceCarpool);
         $ad->setUser($userManager->getLoggedUser());
 
         $form = $this->createForm(AdForm::class, $ad, ['csrf_protection' => false]);
         $error = false;
         $success = false;
-//        ajout de la gestion des communautés
-        $hydraCommunities = $communityManager->getCommunities();
-        $communities =[];
+        $idCommunity ='';
 
+        if (count($_GET) > 0 && array_key_exists('id', $_GET) && !is_null($_GET['id']) && $_GET['id'] !='') {
+            $idCommunity = $_GET['id'];
+        }
+        //        ajout de la gestion des communautés
+        $hydraCommunities = $communityManager->getCommunities();
+//        dump($hydraCommunities);
+        $communities =[];
         if ($hydraCommunities && count($hydraCommunities->getMember())>0) {
             foreach ($hydraCommunities->getMember() as $value) {
                 foreach (array($value) as $community) {
+                    if ($community->isSecured(true)) {
+//                        dump($community->getCommunityUsers());
+                        $membersOfCommunity = array();
+                        foreach ($community->getCommunityUsers() as $user) {
+                            $membersOfCommunity = [$user->getUser()->getId()];
+                        }
+                        $logged = $userManager->getLoggedUser();
+                        $isLogged = boolval($logged); // cast to boolean
+                        // don't display the secured community if the user is not logged or if the user doesn't belong to the secured community
+                        if (!$isLogged || !in_array($logged->getId(), $membersOfCommunity)) {
+                            continue;
+                        }
+                    }
                     $communities[$community->getId()] = $community->getName();
                 }
             }
         }
 
+
         if ($request->isMethod('POST')) {
             $createToken = $request->request->get('createToken');
             if (!$this->isCsrfTokenValid('ad-create', $createToken)) {
-                return  new Response('Broken Token CSRF ', 403);
+                return new Response('Broken Token CSRF ', 403);
             }
             $form->submit($request->request->get($form->getName()));
             // $form->submit($request->request->all());
+
+//            test if a community is filled
+            if ($ad->getCommunity() !== '' && !is_null($ad->getCommunity())) {
+                $communityController->joinCommunity($ad->getCommunity(), $communityManager, $userManager);
+            }
         }
 
         // If it's a get, just render the form !
@@ -87,8 +119,8 @@ class CarpoolController extends AbstractController
             return $this->render('@Mobicoop/ad/create.html.twig', [
                 'form' => $form->createView(),
                 'error' => $error,
-                'hydra' => $hydraCommunities,
-                'communities' => $communities
+                'communities' => $communities,
+                'idCommunity' => $idCommunity
             ]);
         }
 

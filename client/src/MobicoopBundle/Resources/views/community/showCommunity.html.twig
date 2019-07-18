@@ -5,7 +5,7 @@
     {{ encore_entry_link_tags('bundle_community/communities') }}
 {% endblock %}
 {% block body %}
-   <section class="hero firstSection">
+    <section class="hero firstSection">
         <div class="hero-body">
             <div class="container">
                 <h1 class="title">
@@ -15,37 +15,75 @@
         </div>
     </section>
     <section class="hero cardSection">
-    <div class="card">
-  <div class="card-image">
-    <figure class="image is-3by1">
-      <img src="https://bulma.io/images/placeholders/720x240.png" alt="Placeholder image">
-    </figure>
-  </div>
-  <div class="card-content">
-    <div class="media">
-      <div class="media-left">
-        <figure class="image is-48x48">
-          <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
-        </figure>
-      </div>
-      <div class="media-content">
-        <p class="title is-4">{{community.name}}</p>
-        <p class="subtitle is-6">Créateur de la communauté : {{community.user.givenName ~ " " ~ community.user.familyName}}</p>
-      </div>
-    </div>
+        <div class="card">
+            <div class="card-image">
+                <figure class="image is-3by1">
+                    <img src="https://bulma.io/images/placeholders/720x240.png" alt="Placeholder image">
+                </figure>
+            </div>
+            <div class="card-content">
+                <div class="media">
+                    <div class="media-left">
+                        <figure class="image is-48x48">
+                            <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
+                        </figure>
+                    </div>
+                    <div class="media-content">
+                        <p class="title is-4">{{community.name}}</p>
+                        <p class="subtitle is-6">Créateur de la communauté : {{community.user.givenName ~ " " ~ community.user.familyName}}</p>
+                    </div>
+                </div>
 
-    <div class="content">
-        {{community.description}}
-        <br>
-        {{community.fullDescription}}
-    </div>
-  </div>
-</div>
+                <div class="content">
+                    {{community.description}}
+                    <br>
+                    {{community.fullDescription}}
+                </div>
+            </div>
+            {% if isMember %}
+                <p class="dataValid"> Vous êtes membre  de cette communauté !</p>
+                <a class="button" href="{{path('carpool_ad', { 'id': community.id })}}">Déposer un trajet dans la communauté</a>
+            {% else %}
+                {% if community.secured %}
+                    <p class="dataInvalid">{{ errorLoginSecured }}</p>
+                    <div style="padding:10px; margin-left: 10px">
+                        {{ form_start(formIdentification) }}
+                        {{ form_label(formIdentification.login, 'Identifiant') }}
+                        {{ form_widget(formIdentification.login, {'attr': {'placeholder' : "Votre identifiant"}}) }}
+                        {{  form_label(formIdentification.password, 'Date de Naissance') }}
+                        {{ form_widget(formIdentification.password, {'attr': {'placeholder' : "Date de Naissance"}}) }}
+                        {% if user is not null %}
+                            {{ form_widget(formIdentification.submit) }}
+                        {% else %}
+                            {{ form_widget(formIdentification.submit, {'attr': {disabled: 'disabled'}}) }}
+                            <p class="dataInvalid"> Vous devez être connecté en tant qu'utilisateur pour rejoindre cette communauté sécurisée</p>
+                        {% endif %}
+                        {{ form_rest(formIdentification) }}
+                        {{ form_row(formIdentification.submit) }}
+                    </div>
+                {% else %}
+                <a class="button" href="{{path('community_join', { 'id': community.id })}}" {{ user is null ? 'disabled': '' }}>Rejoindre la communauté</a>
+                {{ user is null ? "<p class='dataInvalid'> vous devez être connecté pour rejoindre une communauté": "" }}
+                {% endif %}
+            {% endif %}
+        </div>
     </section>
     <section class="hero communautes has-text-centered">
-    <a class="lien" href="{{ path('community_list') }}">Liste des communautés</a>
+        <a class="lien" href="{{ path('community_list') }}">Liste des communautés</a>
     </section>
-   
+
+    <style>
+        .dataValid {
+            color: darkgreen;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+        .dataInvalid {
+            color: darkred;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+    </style>
 {% endblock %}
 {% block javascripts %}
     {{ encore_entry_script_tags('bundle_community/communities') }}

@@ -56,7 +56,7 @@ Cypress.Commands.add('signUp', (email, password, lastname, name, gender, birthye
 
   cy.contains('Inscription').click()
   cy.url().should('include', baseUrl + 'utilisateur/inscription')
-  cy.wait(1500)
+  cy.wait(2500)
 
   /* Email */
   cy.get('.email > input')
@@ -120,7 +120,7 @@ Cypress.Commands.add('signUp', (email, password, lastname, name, gender, birthye
   /* HomeTown */
   cy.get('.control > #homeAddress')
     .type('metz')
-  cy.wait(600)
+  cy.wait(2000)
   cy.get('.media')
     .click()
 
