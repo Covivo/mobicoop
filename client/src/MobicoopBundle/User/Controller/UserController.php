@@ -315,33 +315,31 @@ class UserController extends AbstractController
 
                 return $this->redirectToRoute('user_password_forgot');
             } else {
-            	$data= $userManager->updateUserToken($user);
-            	if(!empty($data)) {
-		            $message = (new \Swift_Message('Password update'))
-			            ->setFrom('contact@mobicoop.fr')
-			            ->setTo($user->getEmail())
-			            ->setBody(
-				            $this->renderView(
-				            // templates/emails/registration.html.twig
-					            '@Mobicoop/email/updatepassword.html.twig',
-					            array(
-						            'name' => $user->getFamilyName(),
-						            'token' => $user->getToken()
-					            )
-				            ),
-				            'text/html'
-			            );
-		            $mailer->send($message);
-		            // set flash messages
-		            $session->getFlashBag()->add('success', 'Un email de confirmation vous a été envoyé!');
-		            return $this->redirectToRoute('user_password_forgot');
-	            }
-	            else{
-		            // set flash messages
-		            $session->getFlashBag()->add('error', 'Probleme sur le site, veuillez reessayer ou contacter l\'administrateur!');
+                $data= $userManager->updateUserToken($user);
+                if (!empty($data)) {
+                    $message = (new \Swift_Message('Password update'))
+                        ->setFrom('contact@mobicoop.fr')
+                        ->setTo($user->getEmail())
+                        ->setBody(
+                            $this->renderView(
+                                '@Mobicoop/email/updatepassword.html.twig',
+                                array(
+                                    'name' => $user->getFamilyName(),
+                                    'token' => $user->getToken()
+                                )
+                            ),
+                            'text/html'
+                        );
+                    $mailer->send($message);
+                    // set flash messages
+                    $session->getFlashBag()->add('success', 'Un email de confirmation vous a été envoyé!');
+                    return $this->redirectToRoute('user_password_forgot');
+                } else {
+                    // set flash messages
+                    $session->getFlashBag()->add('error', 'Probleme sur le site, veuillez reessayer ou contacter l\'administrateur!');
 
-		            return $this->redirectToRoute('user_password_forgot');
-	            }
+                    return $this->redirectToRoute('user_password_forgot');
+                }
             }
         } else {
             return $this->render('@Mobicoop/user/password.html.twig', [
@@ -356,54 +354,70 @@ class UserController extends AbstractController
     /**
      * Reset password
      */
-    public function userPasswordReset(UserManager $userManager, Request $request, string $token)
+    public function userPasswordReset(UserManager $userManager, Request $request, string $token,  \Swift_Mailer $mailer)
     {
-	    /** @var Session $session */
-	    $session= $this->get('session');
+        /** @var Session $session */
+        $session= $this->get('session');
         $user = $userManager->findByToken($token);
-	    $error = false;
+        $error = false;
 
-        if (empty($user) || (time() - (int)$user->getPupdtime()) > 86400 ) {
+        if (empty($user) || (time() - (int)$user->getPupdtime()) > 86400) {
             // set flash messages
             $session->getFlashBag()->add('error', 'Votre lien a expiré!!!');
 
             return $this->redirectToRoute('user_password_forgot');
         } else {
-	        $form = $this->createFormBuilder($user)
-		        ->add('password', RepeatedType::class, [
-			        'type' => PasswordType::class,
-			        'invalid_message' => 'The password fields must match.',
-			        'options' => ['attr' => ['class' => 'password-field']],
-			        'required' => true,
-			        'first_options'  => ['label' => 'Password'],
-			        'second_options' => ['label' => 'Repeat Password'],
-		        ])
-		        ->add('submit', SubmitType::class)
-		        ->getForm();
+            $form = $this->createFormBuilder($user)
+                ->add('password', RepeatedType::class, [
+                    'type' => PasswordType::class,
+                    'invalid_message' => 'The password fields must match.',
+                    'options' => ['attr' => ['class' => 'password-field']],
+                    'required' => true,
+                    'first_options'  => ['label' => 'Password'],
+                    'second_options' => ['label' => 'Repeat Password'],
+                ])
+                ->add('submit', SubmitType::class)
+                ->getForm();
 
-	        $form->handleRequest($request);
-	        if ($form->isSubmitted() && $form->isValid()) {
-		        if ($user = $userManager->updateUserPassword($user)) {
-			        // after successful update, we re-log the user
-			        $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-			        $this->get('security.token_storage')->setToken($token);
-			        $this->get('session')->set('_security_main', serialize($token));
-			        return $this->redirectToRoute('user_profile_update');
-		        }
-		        else{
-			        // set flash messages
-			        $session->getFlashBag()->add('error', 'Probleme sur le site, veuillez reessayer ou contacter l\'administrateur!');
-			        return $this->redirectToRoute('user_password_forgot');
-		        }
-	        }
-	        else{
-		        return $this->render('@Mobicoop/user/password.html.twig', [
-			        'form' => $form->createView(),
-			        'user' => $user,
-			        'error' => $error,
-			        'waitParametersForMail' => true
-		        ]);
-	        }
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                if ($user = $userManager->updateUserPassword($user)) {
+                    // after successful update, we re-log the user
+                    $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                    $this->get('security.token_storage')->setToken($token);
+                    $this->get('session')->set('_security_main', serialize($token));
+	                $message = (new \Swift_Message('Password update confirmation'))
+		                ->setFrom('contact@mobicoop.fr')
+		                ->setTo($user->getEmail())
+		                ->setBody(
+			                $this->renderView(
+				                '@Mobicoop/email/confirmUpdatedPassword.html.twig',
+				                array(
+					                'name' => $user->getFamilyName(),
+				                )
+			                ),
+			                'text/html'
+		                );
+	                $mailer->send($message);
+	                // set flash messages
+	                $session->getFlashBag()->add('success', 'Votre mot de passé a été modifié avec success');
+	                $user->setToken('');
+	                $user->setPupdtime(-1);
+	                $userManager->flushUserToken($user);
+                    return $this->redirectToRoute('user_profile_update');
+                } else {
+                    // set flash messages
+                    $session->getFlashBag()->add('error', 'Probleme sur le site, veuillez reessayer ou contacter l\'administrateur!');
+                    return $this->redirectToRoute('user_password_forgot');
+                }
+            } else {
+                return $this->render('@Mobicoop/user/password.html.twig', [
+                    'form' => $form->createView(),
+                    'user' => $user,
+                    'error' => $error,
+                    'waitParametersForMail' => true
+                ]);
+            }
         }
     }
 

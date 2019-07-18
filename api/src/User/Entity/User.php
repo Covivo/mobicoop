@@ -350,68 +350,68 @@ class User implements UserInterface, EquatableInterface
      */
     private $createdDate;
 
-	/**
-	 * Date of password mofification.
-	 *
-	 * @var integer|null $pupdtime
-	 *   Date of password mofification.
-	 *
-	 * @ORM\Column(type="integer", length=100, nullable=true)
-	 * @Groups({"read","write"})
-	 */
-	private $pupdtime;
+    /**
+     * Date of password mofification.
+     *
+     * @var integer|null $pupdtime
+     *   Date of password mofification.
+     *
+     * @ORM\Column(type="integer", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $pupdtime;
 
-	/**
-	 * Return the date of password mofification.
-	 *
-	 * @return integer
-	 */
-	public function getPupdtime()
-	{
-		return $this->pupdtime;
-	}
+    /**
+     * Return the date of password mofification.
+     *
+     * @return integer
+     */
+    public function getPupdtime()
+    {
+        return $this->pupdtime;
+    }
 
-	/**
-	 * Set the date of password mofification.
-	 * 
-	 * @param integer $pupdtime
-	 */
-	public function setPupdtime(string $pupdtime)
-	{
-		$this->pupdtime = $pupdtime;
-	}
+    /**
+     * Set the date of password mofification.
+     *
+     * @param integer|null $pupdtime
+     */
+    public function setPupdtime(?int $pupdtime)
+    {
+        $this->pupdtime = $pupdtime;
+    }
 
 
-	/**
-	 * Token of password modification.
-	 *
-	 * @var string|null $token
-	 *   password token.
-	 *
-	 * @ORM\Column(type="string", length=100, nullable=true)
-	 * @Groups({"read","write"})
-	 */
-	private $token;
+    /**
+     * Token of password modification.
+     *
+     * @var string|null $token
+     *   password token.
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $token;
 
-	/**
-	 * Return the Token of password mofification.
-	 *
-	 * @return string
-	 */
-	public function getToken()
-	{
-		return $this->token;
-	}
+    /**
+     * Return the Token of password mofification.
+     *
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->token;
+    }
 
-	/**
-	 * Set the Token of password mofification.
-	 *
-	 * @param string $token
-	 */
-	public function setToken(string $token)
-	{
-		$this->token = $token;
-	}
+    /**
+     * Set the Token of password mofification.
+     *
+     * @param string|null $token
+     */
+    public function setToken(?string $token)
+    {
+        $this->token = $token;
+    }
 
     /**
      * @var array|null The permissions granted
