@@ -21,33 +21,21 @@
  *    LICENSE
  **************************/
 
-namespace App\Communication\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
+namespace Mobicoop\Bundle\MobicoopBundle\Communication\Entity;
+
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use App\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 
 /**
- * A recipient of a message.
- *
- * @ORM\Entity()
- * @ApiResource(
- *      attributes={
- *          "fetchEager": false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="false"},
- *          "denormalization_context"={"groups"={"write"}}
- *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
- * )
- * @ApiFilter(OrderFilter::class, properties={"id", "status"}, arguments={"orderParameterName"="order"})
+ *  A recipient.
  */
-class Recipient
+class Recipient implements ResourceInterface
 {
     const STATUS_PENDING = 1;
     const STATUS_READ = 2;
@@ -55,74 +43,89 @@ class Recipient
     /**
      * @var int The id of this recipient.
      *
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"post","put","completeThread"})
      */
     private $id;
 
     /**
+     * @var string|null The iri of this recipient.
+     *
+     * @Groups({"post","put","completeThread"})
+     */
+    private $iri;
+
+    /**
      * @var int The status of the recipient.
      *
-     * @ORM\Column(type="smallint")
-     * @Groups({"read","write","threads"})
+     * @Groups({"post","put","completeThread"})
      */
     private $status;
 
     /**
      * @var User The recipient user of the message.
      *
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="recipients")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write","threads","completeThread"})
+     * @Groups({"post","put","completeThread"})
      */
     private $user;
 
     /**
      * @var Message The message.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="recipients")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write","threads"})
-     * @MaxDepth(2)
+     * @Groups({"post","put","completeThread"})
      */
     private $message;
 
     /**
      * @var \DateTimeInterface Sent date of the message.
      *
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read","write","threads","completeThread"})
+     * @Groups({"post","put","completeThread"})
      */
     private $sentDate;
 
     /**
      * @var \DateTimeInterface Read date of the message.
      *
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read","write","threads","completeThread"})
+     * @Groups({"post","put","completeThread"})
      */
     private $readDate;
 
     /**
      * @var ArrayCollection|null The notifications sent for the recipient.
      *
-     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="recipient", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","write","completeThread"})
-     * @MaxDepth(1)
+     * @Groups({"post","put","completeThread"})
      */
     private $notifieds;
-
-    public function __construct()
+    
+    public function __construct($id=null)
     {
+        if ($id) {
+            $this->setId($id);
+        }
         $this->notifieds = new ArrayCollection();
     }
-
+    
     public function getId(): ?int
     {
         return $this->id;
     }
+    
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    public function getIri(): ?string
+    {
+        return $this->iri;
+    }
+    
+    public function setIri(?string $iri): self
+    {
+        $this->iri = $iri;
+
+        return $this;
+    }
+    
 
     public function getStatus()
     {

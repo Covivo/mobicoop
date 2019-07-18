@@ -33,6 +33,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\User\Entity\User;
 use App\Carpool\Entity\AskHistory;
+use App\Communication\Controller\MessageCompleteThreadAction;
+use App\Communication\Controller\PostMessageAction;
 
 /**
  * A message sent from a user to other users.
@@ -41,11 +43,25 @@ use App\Carpool\Entity\AskHistory;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "fetchEager": false,
+ *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="false"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      collectionOperations={
+ *          "get",
+ *          "post" ={
+ *              "path"="/messages",
+ *              "controller"=PostMessageAction::class
+ *          }
+ *      },
+ *      itemOperations={"get","put","delete",
+ *          "completeThread"={
+ *              "method"="GET",
+ *              "path"="/messages/{id}/completeThread",
+ *              "normalization_context"={"groups"={"completeThread"}},
+ *              "controller"=MessageCompleteThreadAction::class
+ *           }
+ *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "title"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"title":"partial"})
@@ -59,7 +75,7 @@ class Message
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"read","threads","completeThread"})
      */
     private $id;
 
@@ -67,7 +83,7 @@ class Message
      * @var string The title of the message.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads","completeThread"})
      */
     private $title;
 
@@ -75,7 +91,7 @@ class Message
      * @var string The text of the message.
      *
      * @ORM\Column(type="text")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads","completeThread"})
      */
     private $text;
 
@@ -84,7 +100,7 @@ class Message
      *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="messages")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads","completeThread"})
      */
     private $user;
 
@@ -92,7 +108,7 @@ class Message
      * @var AskHistory|null The ask history item if the message is related to an ask.
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\AskHistory", mappedBy="message")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads","completeThread"})
      * @MaxDepth(1)
      */
     private $askHistory;
@@ -111,7 +127,7 @@ class Message
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Recipient", mappedBy="message", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"id" = "ASC"})
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads","completeThread"})
      * @MaxDepth(1)
      */
     private $recipients;
@@ -120,7 +136,7 @@ class Message
      * @var \DateTimeInterface Creation date of the message.
      *
      * @ORM\Column(type="datetime")
-     * @Groups("read")
+     * @Groups({"read","threads","completeThread"})
      */
     private $createdDate;
 

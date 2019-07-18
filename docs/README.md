@@ -29,10 +29,12 @@ If you want to use docker we  provide you a simple way to install/start everythi
 
 - Docker
 - Docker-compose
-- Docker-sync (mac/windows)
 - make (base on unix, install cygwin or other bash on windows)
 
 *Facing problems using docker with our project ? We may have answer at or [FAQ](#ℹ️Docker)*
+
+⚡️ Export env variable inside your .zshrc/.bashrc : `export SIG_GEOCODER_URI=0.0.0.0 && export SIG_GEOROUTER_URI=0.0.0.0`
+
 
 
 ### 🐳 Install
@@ -370,7 +372,7 @@ Please use powershell with our project, in requirement you will need:
 - logs `make logs` , will show you the last 100 lines logs for all containers
 - status `make status` , will get info about the current container status
 - remove `make remove` , will remove the sopped containers
-- clean `make clean` , will remove container, volumes, docker-sync volumes, drops downloaded deps (vendor , node_modules)
+- clean `make clean` , will remove container, volumes,  drops downloaded deps (vendor , node_modules)
 - go-platform `make go-platform`, will send you inside the running platform container
 - go-db `make go-db`, will send you inside the running mariadb container
 
@@ -382,9 +384,6 @@ Please use powershell with our project, in requirement you will need:
 
 - If you do not have docker-compose command just [install it](https://docs.docker.com/compose/install/#install-compose) 
 
-#### Docker-sync (mac/windows) commun errors
-
-- Docker sync does not come with docker , install it [for mac](https://docker-sync.readthedocs.io/en/latest/getting-started/installation.html#osx), or [windows](https://docker-sync.readthedocs.io/en/latest/getting-started/installation.html#windows)
 
 #### Make on windows
 

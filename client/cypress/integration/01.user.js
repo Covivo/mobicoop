@@ -48,7 +48,7 @@ describe('Visitor / home', () => {
     cy.get('.control > #origin')
       .should('have.attr', 'placeholder', 'Lieu de départ')
       .type('Metz')
-    cy.wait(1500)
+    cy.wait(2500)
     cy.get('[data-v-12259723]')
       .contains('Metz')
       .click()
@@ -57,7 +57,7 @@ describe('Visitor / home', () => {
     cy.get('.control > #destination')
       .should('have.attr', 'placeholder', 'Lieu d\'arrivée')
       .type('Strasbourg')
-    cy.wait(1500)
+    cy.wait(2500)
     cy.get('[data-v-12259723]')
       .contains('Strasbourg')
       .click()
@@ -101,7 +101,7 @@ describe('Visitor / home', () => {
     let gender = '1'
     let birthyear = '1987'
     let phone = '0612345678'
-    
+
     cy.signUp(email, password, lastname, name, gender, birthyear, phone)
   })
 
@@ -121,7 +121,7 @@ describe('Visitor / home', () => {
     cy.get('.control > #origin')
       .should('have.attr', 'placeholder', 'Lieu de départ')
       .type('Metz')
-    cy.wait(1500)
+    cy.wait(2500)
 
     cy.get('[data-v-12259723]')
       .contains('Metz')
@@ -153,13 +153,13 @@ describe('Visitor / home', () => {
 
     cy.get('.control > #origin')
       .type('Metz')
-    cy.wait(6000)
+    cy.wait(8000)
     cy.get('.media')
       .contains('Metz')
       .click()
     cy.get('.control > #destination')
       .type('Marseille')
-    cy.wait(2000)
+    cy.wait(6000)
     cy.get(':nth-child(2) > .label > section > .field > .autocomplete > .dropdown-menu > .dropdown-content > :nth-child(1) > .media')
       .click()
     cy.get('#rechercher')

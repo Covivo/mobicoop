@@ -242,9 +242,11 @@ class CommunityUser
         return $this->login;
     }
     
-    public function setLogin(?string $login)
+    public function setLogin(?string $login): self
     {
         $this->login = $login;
+
+        return $this;
     }
 
     public function getPassword(): ?string
@@ -252,9 +254,11 @@ class CommunityUser
         return $this->password;
     }
     
-    public function setPassword(?string $password)
+    public function setPassword(?string $password): self
     {
         $this->password = $password;
+
+        return $this;
     }
 
     // DOCTRINE EVENTS

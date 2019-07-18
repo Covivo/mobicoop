@@ -1,6 +1,6 @@
 {
   "name": "mobicoop-platform",
-  "version": "0.1.1",
+  "version": "0.4.1",
   "description": "API, Front & admin mobicoop carpool app",
   "main": "package.json",
   "scripts": {
@@ -64,7 +64,8 @@
     "git-user-name": "^2.0.0",
     "kuler": "^1.0.1",
     "npm-run-all": "^4.1.5",
-    "simple-git": "^1.105.0"
+    "simple-git": "^1.105.0",
+    "vuetify": "^1.5.16"
   },
   "devDependencies": {
     "ghooks": "^2.0.4",

@@ -30,11 +30,11 @@
         "symfony/swiftmailer-bundle": "^3.2",
         "symfony/yaml": "*",
         "vich/uploader-bundle": "^1.8",
-        "willdurand/geocoder-bundle": "^5.3"
+        "willdurand/geocoder-bundle": "^5.3",
+        "symfony/web-server-bundle": "*"
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.7",
-        "symfony/web-server-bundle": "*"
+        "symfony/maker-bundle": "^1.7"
     },
     "config": {
         "preferred-install": {
