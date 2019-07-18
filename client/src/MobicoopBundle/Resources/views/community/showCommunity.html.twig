@@ -41,10 +41,11 @@
                 </div>
             </div>
             {% if isMember %}
-                <p style="color: darkgreen; margin-left: 10px"> Vous êtes membre  de cette communauté !</p>
+                <p class="dataValid"> Vous êtes membre  de cette communauté !</p>
                 <a class="button" href="{{path('carpool_ad', { 'id': community.id })}}">Déposer un trajet dans la communauté</a>
             {% else %}
                 {% if community.secured %}
+                    <p class="dataInvalid">{{ errorLoginSecured }}</p>
                     <div style="padding:10px; margin-left: 10px">
                         {{ form_start(formIdentification) }}
                         {{ form_label(formIdentification.login, 'Identifiant') }}
@@ -55,14 +56,14 @@
                             {{ form_widget(formIdentification.submit) }}
                         {% else %}
                             {{ form_widget(formIdentification.submit, {'attr': {disabled: 'disabled'}}) }}
-                            <p style="color: darkred; margin-left: 10px"> Vous devez être connecté en tant qu'utilisateur pour rejoindre cette communauté sécurisée</p>
+                            <p class="dataInvalid"> Vous devez être connecté en tant qu'utilisateur pour rejoindre cette communauté sécurisée</p>
                         {% endif %}
                         {{ form_rest(formIdentification) }}
                         {{ form_row(formIdentification.submit) }}
                     </div>
                 {% else %}
                 <a class="button" href="{{path('community_join', { 'id': community.id })}}" {{ user is null ? 'disabled': '' }}>Rejoindre la communauté</a>
-                {{ user is null ? "<p style='color: darkred ; margin-left: 10px'> vous devez être connecté pour rejoindre une communauté": "" }}
+                {{ user is null ? "<p class='dataInvalid'> vous devez être connecté pour rejoindre une communauté": "" }}
                 {% endif %}
             {% endif %}
         </div>
@@ -71,6 +72,18 @@
         <a class="lien" href="{{ path('community_list') }}">Liste des communautés</a>
     </section>
 
+    <style>
+        .dataValid {
+            color: darkgreen;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+        .dataInvalid {
+            color: darkred;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+    </style>
 {% endblock %}
 {% block javascripts %}
     {{ encore_entry_script_tags('bundle_community/communities') }}
