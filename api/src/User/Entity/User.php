@@ -393,6 +393,25 @@ class User implements UserInterface, EquatableInterface
      */
     private $token;
 
+	public function __construct($status = null)
+	{
+		$this->addresses = new ArrayCollection();
+		$this->cars = new ArrayCollection();
+		$this->proposals = new ArrayCollection();
+		$this->asks = new ArrayCollection();
+		$this->userRoles = new ArrayCollection();
+		$this->userRights = new ArrayCollection();
+		$this->masses = new ArrayCollection();
+		$this->images = new ArrayCollection();
+		$this->messages = new ArrayCollection();
+		$this->recipients = new ArrayCollection();
+		$this->notifieds = new ArrayCollection();
+		if (is_null($status)) {
+			$status = self::STATUS_ACTIVE;
+		}
+		$this->setStatus($status);
+	}
+
     /**
      * Return the Token of password mofification.
      *
@@ -401,6 +420,7 @@ class User implements UserInterface, EquatableInterface
     public function getToken()
     {
         return $this->token;
+        return $this;
     }
 
     /**
@@ -411,6 +431,7 @@ class User implements UserInterface, EquatableInterface
     public function setToken(?string $token)
     {
         $this->token = $token;
+        return $this;
     }
 
     /**
@@ -418,25 +439,6 @@ class User implements UserInterface, EquatableInterface
      * @Groups("permissions")
      */
     private $permissions;
-
-    public function __construct($status = null)
-    {
-        $this->addresses = new ArrayCollection();
-        $this->cars = new ArrayCollection();
-        $this->proposals = new ArrayCollection();
-        $this->asks = new ArrayCollection();
-        $this->userRoles = new ArrayCollection();
-        $this->userRights = new ArrayCollection();
-        $this->masses = new ArrayCollection();
-        $this->images = new ArrayCollection();
-        $this->messages = new ArrayCollection();
-        $this->recipients = new ArrayCollection();
-        $this->notifieds = new ArrayCollection();
-        if (is_null($status)) {
-            $status = self::STATUS_ACTIVE;
-        }
-        $this->setStatus($status);
-    }
 
     public function getId(): ?int
     {
