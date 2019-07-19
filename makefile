@@ -69,11 +69,12 @@ remove:
  
 clean:
 	@make -s stop
-	docker-compose -f docker-compose-$(os).yml down -v --rmi
+	docker-compose -f docker-compose-$(os).yml down -v --rmi all
 	$(info $(pink)------------------------------------------------------)
 	$(info $(pink)Drop all deps + containers + volumes)
 	$(info $(pink)------------------------------------------------------$(reset))
-	rm -rf node_modules api/vendor client/vendor client/node_modules admin/node_modules
+	sudo rm -rf node_modules api/vendor client/vendor client/node_modules admin/node_modules .mariadb-data
+
 
 logs: 
 	$(info $(green)------------------------------------------------------)
