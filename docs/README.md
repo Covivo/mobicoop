@@ -33,7 +33,7 @@ If you want to use docker we  provide you a simple way to install/start everythi
 
 *Facing problems using docker with our project ? We may have answer at or [FAQ](#ℹ️Docker)*
 
-⚡️ Export env variable inside your .zshrc/.bashrc : `export SIG_GEOCODER_URI="0.0.0.0" && export SIG_GEOROUTER_URI="0.0.0.0"` do not forgot the "" some distribution/shell could have problems without them.
+⚡️ Do not forget to duplicate the .env  into a .env.local & edit the SIG_GEOCODER & SIG_GEOROUTER  
 
 If you want to work on mobicoop we cna provide you a some ip for those elements (they ar used for autococomplete & road calc)
 
@@ -371,6 +371,7 @@ Please use powershell with our project, in requirement you will need:
 - Start `make start`, start the api, client, admin
 - stop `make stop` , will stop all the containers
 - restart `make restart` , will restats all the containers
+- Update `make update`, stop & remove containers, pull the branch, install deps & restart containers
 - logs `make logs` , will show you the last 100 lines logs for all containers
 - status `make status` , will get info about the current container status
 - remove `make remove` , will remove the sopped containers

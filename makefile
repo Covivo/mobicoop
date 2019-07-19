@@ -65,7 +65,7 @@ restart:
 
 remove:
 	$(info Make ($(os)): Stopping Mobicoop-platform environment containers.)
-	docker-compose -f docker-compose-$(os).yml rm 
+	docker-compose -f docker-compose-$(os).yml rm -f
  
 clean:
 	@make -s stop
@@ -75,6 +75,13 @@ clean:
 	$(info $(pink)------------------------------------------------------$(reset))
 	sudo rm -rf node_modules api/vendor client/vendor client/node_modules admin/node_modules .mariadb-data
 
+
+update:
+	@make -s stop
+	@make -s remove
+	git pull
+	@make -s install
+	@make -s start
 
 logs: 
 	$(info $(green)------------------------------------------------------)
