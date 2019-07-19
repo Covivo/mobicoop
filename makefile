@@ -4,6 +4,7 @@
 pink:=$(shell tput setaf 200)
 blue:=$(shell tput setaf 27)
 green:=$(shell tput setaf 118)
+violet:=$(shell tput setaf 057)
 reset:=$(shell tput sgr0) 
 
 ifeq ($(shell uname),Darwin)
@@ -75,6 +76,11 @@ clean:
 	$(info $(pink)------------------------------------------------------$(reset))
 	sudo rm -rf node_modules api/vendor client/vendor client/node_modules admin/node_modules .mariadb-data
 
+migrate:
+	$(info $(builder)------------------------------------------------------)
+	$(info $(builder)Make ($(os)): Generating fixtures...)
+	$(info $(builder)------------------------------------------------------$(reset))
+	docker-compose -f docker-compose-builder-$(os).yml run --rm fixtures
 
 update:
 	@make -s stop
@@ -82,6 +88,8 @@ update:
 	git pull
 	@make -s install
 	@make -s start
+	sleep 20
+	@make -s migrate
 
 logs: 
 	$(info $(green)------------------------------------------------------)
