@@ -33,7 +33,9 @@ If you want to use docker we  provide you a simple way to install/start everythi
 
 *Facing problems using docker with our project ? We may have answer at or [FAQ](#ℹ️Docker)*
 
-⚡️ Export env variable inside your .zshrc/.bashrc : `export SIG_GEOCODER_URI=0.0.0.0 && export SIG_GEOROUTER_URI=0.0.0.0`
+⚡️ Export env variable inside your .zshrc/.bashrc : `export SIG_GEOCODER_URI="0.0.0.0" && export SIG_GEOROUTER_URI="0.0.0.0"` do not forgot the "" some distribution/shell could have problems without them.
+
+If you want to work on mobicoop we cna provide you a some ip for those elements (they ar used for autococomplete & road calc)
 
 
 
