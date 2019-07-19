@@ -267,6 +267,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Address", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @MaxDepth(1)
      * @ApiSubresource
+     * @Groups({"read","write"})
      */
     private $addresses;
 
