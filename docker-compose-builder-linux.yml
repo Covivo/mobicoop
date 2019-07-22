@@ -28,6 +28,16 @@ services:
       service: base
     working_dir: /var/www/api
     entrypoint: bash entrypoint.sh 
+  migrate-diff:
+    extends:
+      service: base
+    working_dir: /var/www/api
+    command: php bin/console doctrine:migrations:diff -n -v
+  migrate-diff:
+    extends:
+      service: base
+    working_dir: /var/www/api
+    command: php bin/console doctrine:migrations:diff -n -v
 
 networks:
   mobicoop_platform:
