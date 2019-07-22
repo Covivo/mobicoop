@@ -24,6 +24,7 @@
 namespace App\User\Service;
 
 use App\User\Entity\User;
+use App\User\Event\UserPasswordChangedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Right\Repository\RoleRepository;
@@ -87,6 +88,24 @@ class UserManager
         // return the user
         return $user;
     }
+ 
+		/**
+		 * Update a user.
+		 *
+		 * @param User $user    The user to register
+		 * @return User         The user created
+		 */
+		public function updateUser(User $user)
+		{
+		 // persist the user
+		 $this->entityManager->persist($user);
+		 $this->entityManager->flush();
+		 // dispatch en event
+		 $event = new UserPasswordChangedEvent($user);
+		 $this->eventDispatcher->dispatch(UserPasswordChangedEvent::NAME, $event);
+		 // return the user
+		 return $user;
+		}
 
     /**
      * Get the private communities of the given user.

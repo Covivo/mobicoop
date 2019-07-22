@@ -85,6 +85,40 @@ use App\Communication\Entity\Notified;
  *          "get"={
  *              "normalization_context"={"groups"={"read"}},
  *          },
+ *          "password_asked_event"={
+ *							"method"="GET",
+ *              "normalization_context"={"groups"={"permissions"}},
+ *              "controller"=UserPermissions::class,
+ *              "path"="/users/{id}/permissions",
+ *              "swagger_context"={
+ *                  "parameters"={
+ *                      {
+ *                          "name" = "territory",
+ *                          "in" = "query",
+ *                          "type" = "number",
+ *                          "format" = "integer",
+ *                          "description" = "The territory id"
+ *                      },
+ *                   }
+ *              }
+ *          },
+ *          "password_changed_event"={
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"permissions"}},
+ *              "controller"=UserUpdate::class,
+ *              "path"="/users/{id}/permissions",
+ *              "swagger_context"={
+ *                  "parameters"={
+ *                      {
+ *                          "name" = "territory",
+ *                          "in" = "query",
+ *                          "type" = "number",
+ *                          "format" = "integer",
+ *                          "description" = "The territory id"
+ *                      },
+ *                   }
+ *              }
+ *	        },
  *          "permissions"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"permissions"}},
