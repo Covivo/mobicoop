@@ -210,6 +210,26 @@ class User implements ResourceInterface, UserInterface, EquatableInterface
      */
     private $homeAddress;
 
+    /**
+     * Date of password mofification.
+     *
+     * @var integer|null $pupdtime
+     *   Date of password mofification.
+     *
+     * @Groups({"post","put", "password_token"})
+     */
+    private $pupdtime;
+
+
+    /**
+     * Token of password mofification.
+     *
+     * @var string|null $token
+     *   Token of password mofification.
+     *
+     *  @Groups({"post","put","password_token"})
+     */
+    private $token;
 
 
     public function __construct($id=null, $status=null)
@@ -605,5 +625,55 @@ class User implements ResourceInterface, UserInterface, EquatableInterface
             }
         }
         return null;
+    }
+
+    /**
+     * @param Address[]|null $homeAddress
+     */
+    public function setHomeAddress(?array $homeAddress)
+    {
+        $this->homeAddress = $homeAddress;
+    }
+
+    /**
+     * Return the date of password mofification.
+     *
+     * @return integer
+     */
+    public function getPupdtime()
+    {
+        return $this->pupdtime;
+    }
+
+    /**
+     * Set the date of password mofification.
+     *
+     * @param integer|null $pupdtime
+     */
+    public function setPupdtime(?int $pupdtime)
+    {
+        $this->pupdtime = $pupdtime;
+        return $this;
+    }
+
+    /**
+     * Return the Token of password mofification.
+     *
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->token;
+    }
+
+    /**
+     * Set the Token of password mofification.
+     *
+     * @param string|null $token
+     */
+    public function setToken(?string $token)
+    {
+        $this->token = $token;
+        return $this;
     }
 }
