@@ -119,35 +119,4 @@ class InternalMessageManager
         }
     }
 
-    /**
-     * Sends an internal message to recipients, related to an object (the message itself already exists and is linked to the object)
-     *
-     * @param Message $message             The first message
-     * @return Message|array|null
-     */
-    public function getNextMessage(Message $message)
-    {
-        if ($nextMessage = $this->messageRepository->findNextMessage($message)) {
-            return $nextMessage;
-        }
-        return [];
-    }
-
-
-    /**
-     * Sends an internal message to recipients, related to an object (the message itself already exists and is linked to the object)
-     *
-     * @param Message $message             The first message
-     * @return array
-     */
-    public function getThreadMessages(Message $message): ?array
-    {
-        $return = [0=>$message];
-        $nextMessage = $this->getNextMessage($message);
-        while (count($nextMessage)>0) {
-            $return[] = $nextMessage[0];
-            $nextMessage = $this->getNextMessage($nextMessage[0]);
-        }
-        return $return;
-    }
 }

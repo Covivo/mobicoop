@@ -83,8 +83,11 @@ class InternalMessageManager
      * @param Message $message The message to send
      *
      */
-    public function sendInternalMessage(Message $message)
+    public function sendInternalMessage(Message $message, $format=null)
     {
+        if ($format!==null) {
+            $this->dataProvider->setFormat($format);
+        }
         $response = $this->dataProvider->post($message);
         if ($response->getCode() == 201) {
             return $response->getValue();

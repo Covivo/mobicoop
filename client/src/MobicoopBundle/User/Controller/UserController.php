@@ -308,27 +308,37 @@ class UserController extends AbstractController
 
         $threadsDirectMessagesForView = [];
         $threadsCarpoolingMessagesForView = [];
+        $idMessageDefault = null;
+        $idRecipientDefault = null;
 
         // Building threads array
         $threads = $userManager->getThreads($user);
         $selected = true;
         $idMessageDefaultSelected = false;
+        
         foreach ($threads["threads"] as $thread) {
-            $arrayThread["idFirstMessage"] = $thread["id"];
-            $arrayThread["contactId"] = $thread["recipients"][0]["user"]["id"];
-            $arrayThread["contactFirstName"] = $thread["recipients"][0]["user"]["givenName"];
-            $arrayThread["contactLastName"] = $thread["recipients"][0]["user"]["familyName"];
+            $arrayThread["idThreadMessage"] = $thread["id"];
+            if (!isset($thread["user"]["id"])) {
+                // the user is the sender
+                $arrayThread["contactId"] =  $thread["recipients"][0]["user"]["id"];
+                $arrayThread["contactFirstName"] = $thread["recipients"][0]["user"]["givenName"];
+                $arrayThread["contactLastName"] = $thread["recipients"][0]["user"]["familyName"];
+            } else {
+                $arrayThread["contactId"] =  $thread["user"]["id"];
+                $arrayThread["contactFirstName"] = $thread["user"]["givenName"];
+                $arrayThread["contactLastName"] = $thread["user"]["familyName"];
+            }
             $arrayThread["text"] = $thread["text"];
             $arrayThread["askHistory"] = $thread["askHistory"];
 
             if (!$idMessageDefaultSelected) {
                 $idMessageDefault = $thread["id"];
-                $idRecipientDefault = $thread["recipients"][0]["user"]["id"];
+                $idRecipientDefault = $arrayThread["contactId"];
                 $arrayThread["selected"] = $selected;
                 $idMessageDefaultSelected = true;
             }
 
-            $selected &= false;
+            $selected = false;
 
             // Push on the right array
             (is_null($thread["askHistory"])) ? $threadsDirectMessagesForView[] = $arrayThread : $threadsCarpoolingMessagesForView[] = $arrayThread;
@@ -362,7 +372,7 @@ class UserController extends AbstractController
         $text = "";
         if ($request->isMethod('POST')) {
             $text = $request->request->get('text');
-            $idLastMessage = $request->request->get('idLastMessage');
+            $idThreadMessage = $request->request->get('idThreadMessage');
             $idRecipient = $request->request->get('idRecipient');
 
             $messageToSend = new Message();
@@ -377,13 +387,13 @@ class UserController extends AbstractController
 
             $messageToSend->setText($text);
 
-            $messageToSend->setMessage($internalMessageManager->getMessage($idLastMessage));
+            $messageToSend->setMessage($internalMessageManager->getMessage($idThreadMessage));
 
 //            return new Response(json_encode($idRecipient));
 
-            $response = $internalMessageManager->sendInternalMessage($messageToSend);
+            $response = $internalMessageManager->sendInternalMessage($messageToSend, DataProvider::RETURN_JSON);
 
-            return new Response(json_encode($response));
+            return new Response($response);
         }
 
         return new Response(json_encode("Not a post"));

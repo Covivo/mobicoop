@@ -33,8 +33,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\User\Entity\User;
 use App\Carpool\Entity\AskHistory;
-use App\Communication\Controller\MessageCompleteThreadAction;
-use App\Communication\Controller\PostMessageAction;
 
 /**
  * A message sent from a user to other users.
@@ -43,23 +41,19 @@ use App\Communication\Controller\PostMessageAction;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
- *          "fetchEager": false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="false"},
+ *          "force_eager"=false,
+ *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
  *          "get",
- *          "post" ={
- *              "path"="/messages",
- *              "controller"=PostMessageAction::class
- *          }
+ *          "post"
  *      },
  *      itemOperations={"get","put","delete",
  *          "completeThread"={
  *              "method"="GET",
  *              "path"="/messages/{id}/completeThread",
  *              "normalization_context"={"groups"={"completeThread"}},
- *              "controller"=MessageCompleteThreadAction::class
  *           }
  *      }
  * )
@@ -133,6 +127,16 @@ class Message
     private $recipients;
 
     /**
+     * @var ArrayCollection The messages linked with the message.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Message", mappedBy="message", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OrderBy({"createdDate" = "ASC"})
+     * @Groups("completeThread")
+     * @MaxDepth(1)
+     */
+    private $messages;
+
+    /**
      * @var \DateTimeInterface Creation date of the message.
      *
      * @ORM\Column(type="datetime")
@@ -143,6 +147,7 @@ class Message
     public function __construct()
     {
         $this->recipients = new ArrayCollection();
+        $this->messages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -207,11 +212,11 @@ class Message
     {
         $this->message = $message;
 
-        // set (or unset) the owning side of the relation if necessary
-        $newMessage = $message === null ? null : $this;
-        if ($newMessage !== $message->getMessage()) {
-            $message->setMessage($newMessage);
-        }
+        // // set (or unset) the owning side of the relation if necessary
+        // $newMessage = $message === null ? null : $this;
+        // if ($newMessage !== $message->getMessage()) {
+        //     $message->setMessage($newMessage);
+        // }
 
         return $this;
     }
@@ -238,6 +243,34 @@ class Message
             // set the owning side to null (unless already changed)
             if ($recipient->getMessage() === $this) {
                 $recipient->setMessage(null);
+            }
+        }
+        
+        return $this;
+    }
+    
+    public function getMessages()
+    {
+        return $this->messages->getValues();
+    }
+    
+    public function addMessage(Message $message): self
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages[] = $message;
+            $message->setMessage($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeMessage(Message $message): self
+    {
+        if ($this->messages->contains($message)) {
+            $this->messages->removeElement($message);
+            // set the owning side to null (unless already changed)
+            if ($message->getMessage() === $this) {
+                $message->setMessage(null);
             }
         }
         
