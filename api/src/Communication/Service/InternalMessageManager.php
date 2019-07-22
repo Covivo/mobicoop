@@ -118,5 +118,4 @@ class InternalMessageManager
             $this->eventDispatcher->dispatch(InternalMessageReceivedEvent::NAME, $event);
         }
     }
-
 }
