@@ -352,7 +352,7 @@ class UserController extends AbstractController
 
     /**
      * Get a complete thread from a first message
-     * 
+     *
      */
     public function getThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager)
     {
