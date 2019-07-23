@@ -40,6 +40,9 @@ user:
         title: 'Supprimer mon compte'
         h1: 'Supprimer mon compte'
         text: 'Etes-vous sûr de vouloir supprimer votre compte ?'
+    messages:
+        title: 'Messages'
+        h1: 'Messages'
 carpool:
     ad_create:
         title: 'Publier une annonce'

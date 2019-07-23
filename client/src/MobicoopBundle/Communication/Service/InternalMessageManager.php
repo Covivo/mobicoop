@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider as MobicoopDataProvider;
 
 /**
- * Mass management service.
+ * Internal message management service.
  */
 class InternalMessageManager
 {
@@ -35,7 +35,7 @@ class InternalMessageManager
 
     /**
     * Constructor.
-    * @param DataProvider $dataProvider The data provider that provides the Mass
+    * @param DataProvider $dataProvider The data provider that provides the Message
     */
     public function __construct(DataProvider $dataProvider)
     {
@@ -61,16 +61,17 @@ class InternalMessageManager
     /**
      * Get complete thread from a message
      *
-     * @param int $id The first message id
+     * @param int $id       The first message id
+     * @param int $format   The format to use
      *
      * @return array|null The complete thread
      */
-    public function getCompleteThread(int $id, $format=null)
+    public function getThread(int $id, int $format=null)
     {
         if ($format!==null) {
             $this->dataProvider->setFormat($format);
         }
-        $response = $this->dataProvider->getSubCollection($id, Message::class, "completeThread");
+        $response = $this->dataProvider->getSubCollection($id, Message::class, "thread");
         if ($response->getCode() == 200) {
             return $response->getValue();
         }
@@ -80,11 +81,15 @@ class InternalMessageManager
     /**
      * Send an internal message
      *
-     * @param Message $message The message to send
+     * @param Message   $message    The message to send
+     * @param int       $format     The format to use
      *
      */
-    public function sendInternalMessage(Message $message)
+    public function sendInternalMessage(Message $message, int $format=null)
     {
+        if ($format!==null) {
+            $this->dataProvider->setFormat($format);
+        }
         $response = $this->dataProvider->post($message);
         if ($response->getCode() == 201) {
             return $response->getValue();

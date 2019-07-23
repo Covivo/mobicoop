@@ -323,11 +323,25 @@ class DataProvider
     public function post(ResourceInterface $object): Response
     {
         try {
-            $clientResponse = $this->client->post($this->resource, [
+            if ($this->format == self::RETURN_ARRAY) {
+                $clientResponse = $this->client->post($this->resource, [
                     RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]), true)
-            ]);
+                ]);
+                $value = json_decode((string) $clientResponse->getBody(), true);
+            } elseif ($this->format == self::RETURN_JSON) {
+                $clientResponse = $this->client->post($this->resource, [
+                        'headers' => ['accept' => 'application/json'],
+                        RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]), true)
+                ]);
+                $value = (string) $clientResponse->getBody();
+            } else {
+                $clientResponse = $this->client->post($this->resource, [
+                    RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]), true)
+                ]);
+                $value = $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true));
+            }
             if ($clientResponse->getStatusCode() == 201) {
-                return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
+                return new Response($clientResponse->getStatusCode(), $value);
             }
         } catch (ServerException $e) {
             return new Response($e->getCode(), $e->getMessage());
