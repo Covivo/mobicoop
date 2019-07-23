@@ -15,17 +15,17 @@ endif
 
 install:
 	$(info $(pink)Creating build/cache folders$(reset))
-	mkdir -p build/cache ;\
+	@mkdir -p build/cache ;\
 
 	$(info $(pink)Creating build/cache folders$(reset))
-	mkdir -p build/cache;\
+	@mkdir -p build/cache;\
 
 	$(info $(pink)------------------------------------------------------)
 	$(info $(pink)Make ($(os)): Installing monorepo root deps...)
 	$(info $(pink)------------------------------------------------------$(reset))
 
 
-	docker-compose -f docker-compose-builder-$(os).yml run --rm install
+	@docker-compose -f docker-compose-builder-$(os).yml run --rm install
 	@make -s install-deps
 	@make -s build-admin
 
@@ -33,31 +33,31 @@ install-deps:
 	$(info $(green)------------------------------------------------------)
 	$(info $(green)Make ($(os)): Installing api-client-admin deps...)
 	$(info $(green)------------------------------------------------------$(reset))
-	docker-compose -f docker-compose-builder-$(os).yml run --rm install-all
+	@docker-compose -f docker-compose-builder-$(os).yml run --rm install-all
 
 build-admin:
 	$(info $(blue)------------------------------------------------------)
 	$(info $(blue)Make ($(os)): Building admin...)
 	$(info $(blue)------------------------------------------------------$(reset))
-	docker-compose -f docker-compose-builder-$(os).yml run --rm build-admin
+	@docker-compose -f docker-compose-builder-$(os).yml run --rm build-admin
 
 fixtures:
 	$(info $(pink)------------------------------------------------------)
 	$(info $(pink)Make ($(os)): Generating fixtures...)
 	$(info $(pink)------------------------------------------------------$(reset))
-	docker-compose -f docker-compose-builder-$(os).yml run --rm fixtures
+	@docker-compose -f docker-compose-builder-$(os).yml run --rm fixtures
 
 start:
 	$(info Make ($(os)): Starting Mobicoop-platform environment containers.)
-	docker-compose -f docker-compose-$(os).yml up -d
+	@docker-compose -f docker-compose-$(os).yml up -d
  
 stop:
 	$(info Make ($(os)): Stopping Mobicoop-platform environment containers.)
-	docker-compose -f docker-compose-$(os).yml stop 
+	@docker-compose -f docker-compose-$(os).yml stop 
 
 status:
-	docker ps -a | grep mobicoop_platform
-	docker ps -a | grep mobicoop_db
+	@docker ps -a | grep mobicoop_platform
+	@docker ps -a | grep mobicoop_db
  
 restart:
 	$(info Make ($(os)): Restarting Mobicoop-platform environment containers.)
@@ -66,21 +66,24 @@ restart:
 
 remove:
 	$(info Make ($(os)): Stopping Mobicoop-platform environment containers.)
-	docker-compose -f docker-compose-$(os).yml rm -f
+	@docker-compose -f docker-compose-$(os).yml rm -f
  
 clean:
 	@make -s stop
-	docker-compose -f docker-compose-$(os).yml down -v --rmi all
+	@docker-compose -f docker-compose-$(os).yml down -v --rmi all
 	$(info $(pink)------------------------------------------------------)
 	$(info $(pink)Drop all deps + containers + volumes)
 	$(info $(pink)------------------------------------------------------$(reset))
 	sudo rm -rf node_modules api/vendor client/vendor client/node_modules admin/node_modules .mariadb-data
 
+clean-db:
+	sudo rm -rf .mariadb-data
+
 migrate:
 	$(info $(builder)------------------------------------------------------)
 	$(info $(builder)Make ($(os)): Generating fixtures...)
 	$(info $(builder)------------------------------------------------------$(reset))
-	docker-compose -f docker-compose-builder-$(os).yml run --rm fixtures
+	@docker-compose -f docker-compose-builder-$(os).yml run --rm fixtures
 
 update:
 	@make -s stop
@@ -93,13 +96,18 @@ update:
 
 logs: 
 	$(info $(green)------------------------------------------------------)
-	$(info $(green)Mobicoop+DB Logs)
+	$(info $(green)Mobicoop Logs)
 	$(info $(green)------------------------------------------------------$(reset))
-	docker logs --tail=200 mobicoop_platform;\
-	docker logs --tail=60 mobicoop_db;
+	@docker logs -f mobicoop_platform;\
+
+logs-db:
+	$(info $(green)------------------------------------------------------)
+	$(info $(green)DB Logs)
+	$(info $(green)------------------------------------------------------$(reset))
+	@docker logs -f mobicoop_db;
 
 go-platform:
-	docker exec -it mobicoop_platform zsh
+	@docker exec -it mobicoop_platform zsh
 
 go-db:
-	docker exec -it mobicoop_db bash
+	@docker exec -it mobicoop_db bash
