@@ -64,6 +64,12 @@ restart:
 	@make -s stop
 	@make -s start
 
+reload:
+	$(info Make ($(os)): Restarting Mobicoop-platform environment containers.)
+	@make -s stop
+	@make -s remove
+	@make -s start
+
 remove:
 	$(info Make ($(os)): Stopping Mobicoop-platform environment containers.)
 	@docker-compose -f docker-compose-$(os).yml rm -f

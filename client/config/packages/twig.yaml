@@ -8,3 +8,4 @@ twig:
     - '@Mobicoop/form/mobicoop.html.twig'
     globals:
         delete_profile: '%env(DELETE_PROFILE)%'
+        app_name: '%env(APP_NAME)%'
