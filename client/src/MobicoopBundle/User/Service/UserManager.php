@@ -203,6 +203,8 @@ class UserManager
             $this->logger->info('User Creation | Start');
             return $response->getValue();
         }
+        dump($response);
+        exit();
         $this->logger->error('User Creation | Fail');
         return null;
     }

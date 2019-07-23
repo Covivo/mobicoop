@@ -52,6 +52,7 @@ use App\User\Controller\UserRegistration;
 use App\User\Controller\UserPermissions;
 use App\User\Controller\UserLogin;
 use App\User\Controller\UserThreads;
+use App\User\Controller\UserUpdatePassword;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\LoginFilter;
 use App\Communication\Entity\Notified;
@@ -85,40 +86,11 @@ use App\Communication\Entity\Notified;
  *          "get"={
  *              "normalization_context"={"groups"={"read"}},
  *          },
- *          "password_asked_event"={
- *							"method"="GET",
- *              "normalization_context"={"groups"={"permissions"}},
- *              "controller"=UserPermissions::class,
- *              "path"="/users/{id}/permissions",
- *              "swagger_context"={
- *                  "parameters"={
- *                      {
- *                          "name" = "territory",
- *                          "in" = "query",
- *                          "type" = "number",
- *                          "format" = "integer",
- *                          "description" = "The territory id"
- *                      },
- *                   }
- *              }
+ *         "put"={
+ *              "method"="PUT",
+ *              "path"="/users/{id}",
+ *              "controller"=UserUpdatePassword::class,
  *          },
- *          "password_changed_event"={
- *              "method"="GET",
- *              "normalization_context"={"groups"={"permissions"}},
- *              "controller"=UserUpdate::class,
- *              "path"="/users/{id}/permissions",
- *              "swagger_context"={
- *                  "parameters"={
- *                      {
- *                          "name" = "territory",
- *                          "in" = "query",
- *                          "type" = "number",
- *                          "format" = "integer",
- *                          "description" = "The territory id"
- *                      },
- *                   }
- *              }
- *	        },
  *          "permissions"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"permissions"}},
@@ -142,7 +114,6 @@ use App\Communication\Entity\Notified;
  *              "controller"=UserThreads::class,
  *              "path"="/users/{id}/threads"
  *          },
- *          "put",
  *          "delete"
  *      }
  * )

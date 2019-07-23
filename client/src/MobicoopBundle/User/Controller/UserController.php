@@ -150,16 +150,26 @@ class UserController extends AbstractController
             //     }
             //     return $this->json(['error' => $error, 'success' => $success]);
             // }
-
-            // create user in database
-            $userManager->createUser($user);
         }
 
-        if (!$form->isSubmitted()) {
-            return $this->render('@Mobicoop/user/signup.html.twig', [
-                'error' => $error
-            ]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() ) {
+            if($form->isValid()) {
+							 // create user in database
+							 $userManager->createUser($user);
+							 return $this->render('@Mobicoop/user/signup.html.twig', [
+								 'error' => $error
+							 ]);
+						}
+						else{
+						   $error = $form->getErrors();
+						}
         }
+        else{
+				 return $this->render('@Mobicoop/user/signup.html.twig', [
+					 'error' => $error
+				 ]);
+				}
         return $this->json(['error' => $error, 'success' => $success]);
     }
 
@@ -308,20 +318,6 @@ class UserController extends AbstractController
             } else {
                 $data= $userManager->updateUserToken($user);
                 if (!empty($data)) {
-                    $message = (new \Swift_Message('Password update'))
-                        ->setFrom('contact@mobicoop.fr')
-                        ->setTo($user->getEmail())
-                        ->setBody(
-                            $this->renderView(
-                                '@Mobicoop/email/updatepassword.html.twig',
-                                array(
-                                    'name' => $user->getFamilyName(),
-                                    'token' => $user->getToken()
-                                )
-                            ),
-                            'text/html'
-                        );
-                    $mailer->send($message);
                     // set flash messages
                     $session->getFlashBag()->add('success', 'Un email de confirmation vous a été envoyé!');
                     return $this->redirectToRoute('user_password_forgot');
@@ -377,19 +373,6 @@ class UserController extends AbstractController
                     $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                     $this->get('security.token_storage')->setToken($token);
                     $this->get('session')->set('_security_main', serialize($token));
-                    $message = (new \Swift_Message('Password update confirmation'))
-                        ->setFrom('contact@mobicoop.fr')
-                        ->setTo($user->getEmail())
-                        ->setBody(
-                            $this->renderView(
-                                '@Mobicoop/email/confirmUpdatedPassword.html.twig',
-                                array(
-                                    'name' => $user->getFamilyName(),
-                                )
-                            ),
-                            'text/html'
-                        );
-                    $mailer->send($message);
                     // set flash messages
                     $session->getFlashBag()->add('success', 'Votre mot de passé a été modifié avec success');
                     $user->setToken('');

@@ -24,7 +24,9 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Zend\Diactoros\Response\EmptyResponse;
 
 class DefaultController extends AbstractController
 {
@@ -44,4 +46,32 @@ class DefaultController extends AbstractController
             ]
         );
     }
+ 
+ /**
+	* HomePage
+	* @Route("/testmail", name="testmail")
+	*
+	*/
+ public function indexMail(\Swift_Mailer $mailer)
+ {
+//	ini_set( 'display_errors', 1 );
+//	error_reporting( E_ALL );
+//	$from = "emailtest@YOURDOMAIN";
+//	$to = "ngouffodoric@gmail.com";
+//	$subject = "PHP Mail Test script";
+//	$message = "This is a test to check the PHP Mail functionality";
+//	$headers = "From:" . $from;
+//	echo mail($to,$subject,$message, $headers);
+	$message = (new \Swift_Message('Hello Email'))
+		->setFrom('send@example.com')
+		->setTo('recipient@example.com')
+		->setBody('test');
+
+	$mailer->send($message);
+	 return  new Response(
+		 'Content',
+		 Response::HTTP_OK,
+		 ['content-type' => 'text/html']
+	 );
+ }
 }

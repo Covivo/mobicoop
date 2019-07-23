@@ -24,6 +24,7 @@
 namespace App\User\Service;
 
 use App\User\Entity\User;
+use App\User\Event\UserPasswordChangeAskedEvent;
 use App\User\Event\UserPasswordChangedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -131,4 +132,28 @@ class UserManager
         }
         return [];
     }
+ 
+ public function updateUserPasswordRequest(User $user)
+ {
+	 // persist the user
+	 $this->entityManager->persist($user);
+	 $this->entityManager->flush();
+	 // dispatch en event
+	 $event = new UserPasswordChangeAskedEvent($user);
+	 $this->eventDispatcher->dispatch(UserPasswordChangeAskedEvent::NAME, $event);
+	 // return the user
+	 return $user;
+ }
+ 
+ public function updateUserPasswordConfirm(User $user)
+ {
+		// persist the user
+		$this->entityManager->persist($user);
+		$this->entityManager->flush();
+		// dispatch en event
+		$event = new UserPasswordChangedEvent($user);
+		$this->eventDispatcher->dispatch(UserPasswordChangedEvent::NAME, $event);
+		// return the user
+		return $user;
+ }
 }

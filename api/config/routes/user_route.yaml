@@ -1,0 +1,12 @@
+# forgot password
+user_password_forgot:
+  path:
+    fr: /utilisateur/mot-de-passe/oubli
+    en: /user/password/forgot
+
+user_password_reset:
+  path:
+    fr: /utiliateur/mot-de-passe/reset/{token}
+    en: /user/password/reset/{token}
+  requirements:
+    token: .*
