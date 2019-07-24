@@ -7,6 +7,14 @@ body {
     }
   }
   #messages {
+    #headGridMessages {
+      color: #FFF;
+      font-weight: bold;
+      font-size: 20px;
+      div {
+        background-color: $secondary;
+      }
+    }
     .v-tabs {
       .v-tabs__bar {
         margin-bottom: 10px;
@@ -14,7 +22,7 @@ body {
     }
     #spinnerMessages {
       .v-card__text {
-        background-color: #26C6DA;
+        background-color: $secondary;
         color: #FFF;
       }
     }
@@ -23,9 +31,9 @@ body {
       //background-color: #F00;
       .threads {
         margin-bottom: 10px;
-        background-color: #26C6DA;
+        background-color: $primary;
         &.selected {
-          background-color: #00383F;
+          background-color: $secondary;
         }
         &:hover {
           cursor: pointer;
@@ -38,14 +46,14 @@ body {
         .v-timeline-item--right {
           .v-timeline-item__body {
             .v-card {
-              background-color: #80F19A;
+              background-color: $primary;
             }
           }
         }
       }
       #validSendMessage {
-        background-color: #184C2C;
-        color: #80F19A;
+        background-color: $primary-dark;
+        color: #FFF;
         font-weight: bold;
       }
     }

@@ -1,15 +1,45 @@
 <template>
   <v-container
     text-xs-center
-    fill-height
     grid-list-md
+    fluid
   >
+    <v-layout id="headGridMessages">
+      <v-flex
+        xs4
+        pt-5
+        pb-4
+        mr-1
+        pl-2
+      >
+        Messages
+      </v-flex>
+      <v-flex
+        xs5
+        text-xs-left
+        pt-5
+        pb-4
+        mr-1
+        pl-2
+      >
+        {{ currentcorrespondant }}
+      </v-flex>
+      <v-flex
+        xs3
+        text-xs-left
+        pt-5
+        pb-4
+        pl-2
+      >
+        Annonces(s)
+      </v-flex>
+    </v-layout>
     <v-layout
       fill-height
     >
       <v-flex
         id="threadColumn"
-        xs3
+        xs4
       >
         <!-- Threads -->
         <v-tabs
@@ -18,33 +48,7 @@
           <v-tab
             ripple
           >
-            Direct
-          </v-tab>
-          <v-tab-item v-if="this.threadsDM.length==0">
-            Aucun message direct
-          </v-tab-item>
-          <v-tab-item v-else>
-            <v-card
-              v-for="(thread, index) in threadsDM"
-              :key="index"
-              class="threads mx-auto"
-              :class="thread.selected ? 'selected' : ''"
-              max-width="400"
-              dark
-              @click="updateMessages(thread.idThreadMessage,thread.contactId)"
-            >
-              <v-card-title>
-                <i class="material-icons">
-                  account_circle
-                </i>
-                &nbsp;<span class="title font-weight-light white--text">{{ thread.contactFirstName }} {{ thread.contactLastName }}</span>
-              </v-card-title>
-            </v-card>
-          </v-tab-item>
-          <v-tab
-            ripple
-          >
-            Covoiturage
+            Demandes en cours
           </v-tab>
           <v-tab-item v-if="this.threadsCM.length==0">
             Aucun message de covoiturage
@@ -63,7 +67,33 @@
                 <i class="material-icons">
                   account_circle
                 </i>
-                &nbsp;<span class="title font-weight-light white--text">{{ threadCM.contactFirstName }} {{ threadCM.contactLastName }}</span>
+                &nbsp;<span class="title font-weight-light white--text">{{ threadCM.contactFirstName }} {{ threadCM.contactLastName.substr(0,1).toUpperCase()+"." }}</span>
+              </v-card-title>
+            </v-card>
+          </v-tab-item>
+          <v-tab
+            ripple
+          >
+            Boîte de dialogue
+          </v-tab>
+          <v-tab-item v-if="this.threadsDM.length==0">
+            Aucun message direct
+          </v-tab-item>
+          <v-tab-item v-else>
+            <v-card
+              v-for="(thread, index) in threadsDM"
+              :key="index"
+              class="threads mx-auto"
+              :class="thread.selected ? 'selected' : ''"
+              max-width="400"
+              dark
+              @click="updateMessages(thread.idThreadMessage,thread.contactId)"
+            >
+              <v-card-title>
+                <i class="material-icons">
+                  account_circle
+                </i>
+                &nbsp;<span class="title font-weight-light white--text">{{ thread.contactFirstName }} {{ thread.contactLastName.substr(0,1).toUpperCase()+"." }}</span>
               </v-card-title>
             </v-card>
           </v-tab-item>
@@ -75,11 +105,13 @@
 
       <v-flex
         id="messagesColumn"
-        xs6
+        xs5
       >
         <!-- Messages -->
 
-        <v-timeline align-top>
+        <v-timeline
+          align-top
+        >
           <v-timeline-item
             v-for="(item, i) in items"
             :key="i"
@@ -88,6 +120,17 @@
             :left="item.origin!=='own'"
             :idmessage="item.idMessage"
           >
+            <v-subheader
+              v-if="item.header"
+              :key="item.header"
+            >
+              {{ item.header }}
+            </v-subheader>
+            <v-divider
+              v-else-if="item.divider"
+              :key="index"
+              :inset="item.inset"
+            />
             <template v-slot:icon>
               <v-avatar>
                 <i class="material-icons">
@@ -96,7 +139,7 @@
               </v-avatar>
             </template>
             <template v-slot:opposite>
-              <span>{{ item.userFirstName }} {{ item.userLastName }}</span>
+              <span>{{ item.createdTimeReadable }}</span>
             </template>
             <v-card class="elevation-2">
               <v-card-text>{{ item.text }}</v-card-text>
@@ -131,11 +174,15 @@
               <div class="text-xs-center">
                 <v-btn
                   id="validSendMessage"
+                  class="mx-2"
+                  fab
                   round
                   :idthreadmessage="idThreadMessage"
                   @click="sendInternalMessage()"
                 >
-                  Envoyer
+                  <v-icon>
+                    send
+                  </v-icon>
                 </v-btn>
               </div>            
             </v-flex>
@@ -206,6 +253,7 @@ export default {
       spinner:false,
       textToSend:"",
       idThreadMessage:this.idmessagedefault,
+      currentcorrespondant:"...",
       idRecipient:null,
       textSpinnerLoading:"Chargement des messages",
       textSpinnerSendMessage:"Envoi...",
@@ -230,21 +278,22 @@ export default {
       axios
         .get("/utilisateur/messages/"+idMessage)
         .then(res => {
-          
           let messagesThread = (res.data.messages);
           this.items.length = 0;
-
           let threadMessage = {
             'id': res.data.id,
             'user': res.data.user,
-            'text': res.data.text
+            'text': res.data.text,
+            'createdDateReadable': res.data.createdDateReadable,
+            'createdTimeReadable': res.data.createdTimeReadable
           };
 
           this.addMessageToItems(threadMessage);
+          this.currentcorrespondant = threadMessage.user.givenName+" "+threadMessage.user.familyName.substr(0,1).toUpperCase()+".";
 
           // Id of the current recipient
           this.idRecipient = idrecipient;
-
+          
           for (let message of messagesThread) {
             this.addMessageToItems(message);
           }
@@ -261,7 +310,6 @@ export default {
       axios
         .post("/utilisateur/messages/envoyer",messageToSend)
         .then(res => {
-          console.error(res.data);
           this.textToSend = "";
           this.spinner = false;
           this.updateMessages(res.data.message.id);
@@ -274,6 +322,8 @@ export default {
       tabItem["userLastName"] = message.user.familyName.substr(0,1).toUpperCase()+".";
       tabItem["icon"] = "account_circle";
       tabItem["text"] = message.text;
+      tabItem["createdDateReadable"] = message.createdDateReadable;
+      tabItem["createdTimeReadable"] = message.createdTimeReadable;
       (message.user.id==this.userid) ? tabItem["origin"] = "own" : tabItem["origin"] = "contact";
       this.items.push(tabItem);
     }
