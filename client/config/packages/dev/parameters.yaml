@@ -1,5 +1,5 @@
 swiftmailer:
-  url: smtp://127.0.0.1:1025
+  url: nulll
   transport: "smtp"
   host:      "mailhog"
   port:      "1025"
