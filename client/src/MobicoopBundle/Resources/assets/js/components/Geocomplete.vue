@@ -84,14 +84,15 @@ export default {
     },
     getAsyncData: debounce(function(address) {
       if(!this.focus) return; // We did not select the value, so we stop here
+      if(address=="") return; // the search is null, we stop
       this.isFetching = true;
       axios
         .get(`${this.url}${address}`)
         .then(res => {
           this.isFetching = false;
-          
+
           // Add a property concatenedAddr to be shown into the autocomplete field after selection
-          let addresses = res.data;
+          let addresses = res.data['hydra:member'];
           // No Adresses return, we stop here
           if(!addresses.length){return;}
           addresses.forEach( (adress,adressKey) => {
@@ -105,7 +106,7 @@ export default {
           })
           // Set Data & show them
           if(this.isFetching) return; // Another request is fetching, we do not show the previous one
-          this.data = [...res.data];
+          this.data = [...res.data['hydra:member']];
         })
         .catch(err => {
           this.data = [];
