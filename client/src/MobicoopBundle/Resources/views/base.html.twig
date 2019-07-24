@@ -4,24 +4,31 @@
     <meta charset="UTF-8">
     <title>{% block title %}Welcome!{% endblock %}</title>
     {{ encore_entry_link_tags('app') }}
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
-          integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% block stylesheets %}{% endblock %}
 </head>
 <body>
-
-{% block navBar %}{% include "@Mobicoop/navBar.html.twig" %}{% endblock %}
-<main role="main" id="main">
     <div id="app">
-        {% block body %}
+        {% block navBar %}
+            <nav id="header">
+                <Vueheader></Vueheader>
+            </nav>
+        {% endblock %}
+        <main role="main" id="main">
+            <div>
+                {% block body %}
+                {% endblock %}
+            </div>
+        </main>
+        {% block footer %}
+            <footer id="footer">
+                <Vuefooter></Vuefooter>
+            </footer>
         {% endblock %}
     </div>
-</main>
-
-{% block footer %}{% include "@Mobicoop/footer.html.twig" %}{% endblock %}
 </body>
 
 {{ encore_entry_script_tags('app') }}
 {% block javascripts %}{% endblock %}
 </html>
+

@@ -1,0 +1,31 @@
+<template>
+  <v-app>
+    <v-footer
+      height="auto"
+    >
+      <v-layout
+        justify-center
+        row
+        wrap
+      >
+        <v-img
+          href="https://www.facebook.com/Mobicoop/"
+          target="_blank"
+          src="/images/footer/facebook.svg"
+          max-width="24px"
+          max-height="24px"
+        />
+        <v-flex
+          py-3
+          text-xs-center
+          xs12 
+        >
+          <strong>Mobicoop</strong> by Mobicoop team. The source code is licensed AGPL3. The website content is licensed AGPL3 too
+        </v-flex>
+      </v-layout>
+    </v-footer>
+  </v-app>
+</template>
+<script>
+
+</script>
