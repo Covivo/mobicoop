@@ -203,8 +203,6 @@ class UserManager
             $this->logger->info('User Creation | Start');
             return $response->getValue();
         }
-        dump($response);
-        exit();
         $this->logger->error('User Creation | Fail');
         return null;
     }
@@ -333,12 +331,7 @@ class UserManager
      */
     public function updateUserToken($user)
     {
-        $time = time();
-        $token = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
-        // encoding of the password
-        $user->setToken($token);
-        $user->setPupdtime($time);
-        return $this->flushUserToken($user);
+        return $this->flushUserToken($user,'password_update_request');
     }
 
     /**
@@ -347,9 +340,11 @@ class UserManager
      * @param User $user
      * @return array|null|object
      */
-    public function flushUserToken(User $user)
+    public function flushUserToken(User $user, string $operation = null)
     {
-        $response = $this->dataProvider->put($user, ['password_token']);
+        dump($user, $operation);
+        if(empty($operation)) $operation='password_update';
+        $response = $this->dataProvider->putSpecial($user, ['password_token'], $operation);
         if ($response->getCode() == 200) {
             $this->logger->info('User Token Update | Start');
             return $response->getValue();

@@ -36,6 +36,7 @@ use App\Community\Entity\CommunityUser;
 use App\User\Event\UserRegisteredEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * User manager service.
@@ -50,14 +51,15 @@ class UserManager
     private $messageRepository;
     private $logger;
     private $eventDispatcher;
-
-    /**
+    private $encoder;
+ 
+ /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      * @param LoggerInterface $logger
      */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -65,6 +67,7 @@ class UserManager
         $this->communityRepository = $communityRepository;
         $this->messageRepository = $messageRepository;
         $this->eventDispatcher = $dispatcher;
+		 		$this->encoder = $encoder;
     }
     
     /**
@@ -135,6 +138,11 @@ class UserManager
  
  public function updateUserPasswordRequest(User $user)
  {
+	$time = time();
+	$token = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+	// encoding of the password
+	$user->setToken($token);
+	$user->setPupdtime($time);
 	 // persist the user
 	 $this->entityManager->persist($user);
 	 $this->entityManager->flush();
@@ -147,6 +155,8 @@ class UserManager
  
  public function updateUserPasswordConfirm(User $user)
  {
+		$user->setToken('');
+		$user->setPupdtime(-1);
 		// persist the user
 		$this->entityManager->persist($user);
 		$this->entityManager->flush();

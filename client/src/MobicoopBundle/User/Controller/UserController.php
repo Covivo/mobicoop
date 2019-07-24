@@ -375,8 +375,6 @@ class UserController extends AbstractController
                     $this->get('session')->set('_security_main', serialize($token));
                     // set flash messages
                     $session->getFlashBag()->add('success', 'Votre mot de passé a été modifié avec success');
-                    $user->setToken('');
-                    $user->setPupdtime(-1);
                     $userManager->flushUserToken($user);
                     return $this->redirectToRoute('user_profile_update');
                 } else {

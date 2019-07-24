@@ -41,15 +41,15 @@
 	 * @param User $data
 	 * @return User
 	 */
-	public function __invoke(User $data): User
+	public function __invoke(User $data, string $name): User
 	{
-	 // we check if we limit to a territory
-	 $token= $data->getToken();
-	 if (!empty($token)) {
-		$data = $this->userManager->updateUserPasswordRequest($data);
-	 }
-	 else{
-		$data = $this->userManager->updateUserPasswordConfirm($data);
+	 switch ($name){
+		case 'request':
+		 $data = $this->userManager->updateUserPasswordRequest($data);
+		 break;
+		case 'reply':
+		 $data = $this->userManager->updateUserPasswordConfirm($data);
+		 break;
 	 }
 	 return $data;
 	}

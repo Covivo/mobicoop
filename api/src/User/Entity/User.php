@@ -86,10 +86,17 @@ use App\Communication\Entity\Notified;
  *          "get"={
  *              "normalization_context"={"groups"={"read"}},
  *          },
- *         "put"={
+ *         "password_update"={
  *              "method"="PUT",
- *              "path"="/users/{id}",
+ *              "path"="/users/{id}/password_update",
  *              "controller"=UserUpdatePassword::class,
+ *              "defaults"={"name"="reply"}
+ *          },
+ *        "password_update_request"={
+ *              "method"="PUT",
+ *              "path"="/users/{id}/password_update_request",
+ *              "controller"=UserUpdatePassword::class,
+ *              "defaults"={"name"="request"}
  *          },
  *          "permissions"={
  *              "method"="GET",
@@ -113,6 +120,10 @@ use App\Communication\Entity\Notified;
  *              "normalization_context"={"groups"={"threads"}},
  *              "controller"=UserThreads::class,
  *              "path"="/users/{id}/threads"
+ *          },
+ *          "put"={
+ *              "method"="PUT",
+ *              "path"="/users/{id}",
  *          },
  *          "delete"
  *      }
