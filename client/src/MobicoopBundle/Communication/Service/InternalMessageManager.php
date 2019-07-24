@@ -122,9 +122,10 @@ class InternalMessageManager
         $messageToSend->setTitle($title);
         $messageToSend->setText($text);
         
-        if($threadMessage!==null) $messageToSend->setMessage($threadMessage);
+        if ($threadMessage!==null) {
+            $messageToSend->setMessage($threadMessage);
+        }
 
         return $messageToSend;
     }
-
 }

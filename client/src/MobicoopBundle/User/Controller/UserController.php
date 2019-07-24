@@ -386,8 +386,8 @@ class UserController extends AbstractController
         $this->denyAccessUnlessGranted('messages', $user);
 
         if ($request->isMethod('POST')) {
-             $idThreadMessage = $request->request->get('idThreadMessage');
-             $idRecipient = $request->request->get('idRecipient');
+            $idThreadMessage = $request->request->get('idThreadMessage');
+            $idRecipient = $request->request->get('idRecipient');
 
             $messageToSend = $internalMessageManager->createInternalMessage(
                 $user,
