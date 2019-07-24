@@ -87,13 +87,13 @@
               :class="thread.selected ? 'selected' : ''"
               max-width="400"
               dark
-              @click="updateMessages(thread.idThreadMessage,thread.contactId)"
+              @click="updateMessages(thread.idThreadMessage,thread.contactId,generateName(thread.contactFirstName,thread.contactLastName))"
             >
               <v-card-title>
                 <i class="material-icons">
                   account_circle
                 </i>
-                &nbsp;<span class="title font-weight-light white--text">{{ thread.contactFirstName }} {{ thread.contactLastName.substr(0,1).toUpperCase()+"." }}</span>
+                &nbsp;<span class="title font-weight-light white--text">{{ generateName(thread.contactFirstName,thread.contactLastName) }}</span>
               </v-card-title>
             </v-card>
           </v-tab-item>
@@ -249,6 +249,14 @@ export default {
     idrecipientdefault:{
       type: String,
       default: ""
+    },
+    firstnamerecipientdefault:{
+      type: String,
+      default: ""
+    },
+    lastnamerecipientdefault:{
+      type: String,
+      default: ""
     }
   },
   data() {
@@ -271,7 +279,7 @@ export default {
     this.updateMessages();
   },
   methods: {
-    updateMessages(idMessage=this.idmessagedefault,idrecipient=this.idrecipientdefault){
+    updateMessages(idMessage=this.idmessagedefault,idrecipient=this.idrecipientdefault,contactName = this.generateName(this.firstnamerecipientdefault,this.lastnamerecipientdefault)){
       this.threadsDM.forEach((thread,index) =>{
         this.threadsDM[index].selected = (thread.idThreadMessage === parseInt(idMessage)) ? true : false;
       });
@@ -309,7 +317,8 @@ export default {
 
 
           // The correspondant for the view
-          this.currentcorrespondant = threadMessage.user.givenName+" "+threadMessage.user.familyName.substr(0,1).toUpperCase()+".";
+          //this.currentcorrespondant = threadMessage.user.givenName+" "+threadMessage.user.familyName.substr(0,1).toUpperCase()+".";
+          this.currentcorrespondant = contactName;
 
           // Id of the current recipient
           this.idRecipient = idrecipient;
@@ -366,6 +375,9 @@ export default {
 
       this.items.push(tabItem);
 
+    },
+    generateName(firstname,lastname){
+      return firstname+' '+lastname.substr(0,1).toUpperCase()+'.'
     }
   }
 }

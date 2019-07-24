@@ -334,6 +334,8 @@ class UserController extends AbstractController
             if (!$idMessageDefaultSelected) {
                 $idMessageDefault = $thread["id"];
                 $idRecipientDefault = $arrayThread["contactId"];
+                $firstNameRecipientDefault = $arrayThread["contactFirstName"];
+                $lastNameRecipientDefault = $arrayThread["contactLastName"];
                 $arrayThread["selected"] = true;
                 $idMessageDefaultSelected = true;
             }
@@ -346,7 +348,9 @@ class UserController extends AbstractController
             'threadsCarpoolingMessagesForView' => $threadsCarpoolingMessagesForView,
             'userId' => $user->getId(),
             'idMessageDefault' => $idMessageDefault,
-            'idRecipientDefault'=>$idRecipientDefault
+            'idRecipientDefault'=>$idRecipientDefault,
+            'firstNameRecipientDefault'=>$firstNameRecipientDefault,
+            'lastNameRecipientDefault'=>$lastNameRecipientDefault
         ]);
     }
 
