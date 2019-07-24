@@ -115,35 +115,41 @@
           <v-timeline-item
             v-for="(item, i) in items"
             :key="i"
-            fil-dot
+            :fil-dot="item.divider===false"
+            :hide-dot="item.divider===true"
             :right="item.origin==='own'"
             :left="item.origin!=='own'"
             :idmessage="item.idMessage"
+            :class="item.divider ? 'divider' : ''"
           >
-            <v-subheader
-              v-if="item.header"
-              :key="item.header"
+            <template
+              v-if="item.divider===false"
+              v-slot:icon
             >
-              {{ item.header }}
-            </v-subheader>
-            <v-divider
-              v-else-if="item.divider"
-              :key="index"
-              :inset="item.inset"
-            />
-            <template v-slot:icon>
               <v-avatar>
                 <i class="material-icons">
                   {{ item.icon }}
                 </i>
               </v-avatar>
             </template>
-            <template v-slot:opposite>
+            <template
+              v-if="item.divider===false"
+              v-slot:opposite
+            >
               <span>{{ item.createdTimeReadable }}</span>
             </template>
-            <v-card class="elevation-2">
+            <v-card
+              v-if="item.divider===false"
+              class="elevation-2"
+            >
               <v-card-text>{{ item.text }}</v-card-text>
             </v-card>
+            <span
+              v-if="item.divider===true"
+              class="datesDividers"
+            >
+              {{ item.createdDateReadable }}
+            </span>
           </v-timeline-item>
         </v-timeline>   
 
@@ -280,22 +286,49 @@ export default {
         .then(res => {
           let messagesThread = (res.data.messages);
           this.items.length = 0;
+
+          // The date of the first message
+          let divider = {
+            "divider":true,
+            "createdDateReadable": res.data.createdDateReadable
+          }
+          this.addMessageToItems(divider);
+
+
           let threadMessage = {
             'id': res.data.id,
             'user': res.data.user,
             'text': res.data.text,
             'createdDateReadable': res.data.createdDateReadable,
-            'createdTimeReadable': res.data.createdTimeReadable
+            'createdTimeReadable': res.data.createdTimeReadable,
+            'divider': false
           };
 
+
           this.addMessageToItems(threadMessage);
+
+
+          // The correspondant for the view
           this.currentcorrespondant = threadMessage.user.givenName+" "+threadMessage.user.familyName.substr(0,1).toUpperCase()+".";
 
           // Id of the current recipient
           this.idRecipient = idrecipient;
           
+          let currentDate = res.data.createdDateReadable;
           for (let message of messagesThread) {
+
+            // If the date is different, push a divider
+            if(message.createdDateReadable!==currentDate){
+              let divider = {
+                "divider":true,
+                "createdDateReadable": message.createdDateReadable
+              }
+              currentDate = message.createdDateReadable;
+              this.addMessageToItems(divider);
+            }
+
             this.addMessageToItems(message);
+
           }
           this.spinner = false;
         })
@@ -317,15 +350,22 @@ export default {
     },
     addMessageToItems(message){
       let tabItem = new Array();
-      tabItem["idMessage"] = message.id;
-      tabItem["userFirstName"] = message.user.givenName;
-      tabItem["userLastName"] = message.user.familyName.substr(0,1).toUpperCase()+".";
-      tabItem["icon"] = "account_circle";
-      tabItem["text"] = message.text;
+
+      tabItem["divider"] = (message.divider!==undefined) ? message.divider : false;
       tabItem["createdDateReadable"] = message.createdDateReadable;
-      tabItem["createdTimeReadable"] = message.createdTimeReadable;
-      (message.user.id==this.userid) ? tabItem["origin"] = "own" : tabItem["origin"] = "contact";
+
+      if(!message.divider){
+        tabItem["idMessage"] = message.id;
+        tabItem["userFirstName"] = message.user.givenName;
+        tabItem["userLastName"] = message.user.familyName.substr(0,1).toUpperCase()+".";
+        tabItem["icon"] = "account_circle";
+        tabItem["text"] = message.text;
+        tabItem["createdTimeReadable"] = message.createdTimeReadable;
+        (message.user.id==this.userid) ? tabItem["origin"] = "own" : tabItem["origin"] = "contact";
+      }
+      
       this.items.push(tabItem);
+
     }
   }
 }

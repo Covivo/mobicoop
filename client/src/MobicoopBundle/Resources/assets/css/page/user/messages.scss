@@ -43,10 +43,24 @@ body {
     #messagesColumn {
       //background-color: #80F19A;
       .v-timeline {
-        .v-timeline-item--right {
-          .v-timeline-item__body {
-            .v-card {
-              background-color: $primary;
+        .v-timeline-item {
+          &.divider {
+            div {
+              width: 100%;
+              max-width: 100%;
+              text-align: center;
+              background-color: #FFF;
+              .datesDividers {
+                color: $secondary;
+                font-weight: bold;
+              }
+            }
+          }
+          &.v-timeline-item--right {
+            .v-timeline-item__body {
+              .v-card {
+                background-color: $primary;
+              }
             }
           }
         }
