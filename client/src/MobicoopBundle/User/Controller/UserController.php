@@ -368,7 +368,7 @@ class UserController extends AbstractController
         $thread["createdTimeReadable"] = $createdDateFirstMessage->format("H:i:s");
 
         // Children messages
-        foreach($thread["messages"] as $key => $message){
+        foreach ($thread["messages"] as $key => $message) {
             $createdDate = new DateTime($message["createdDate"]);
             $thread["messages"][$key]["createdDateReadable"] = $createdDate->format("d/m/Y");
             $thread["messages"][$key]["createdTimeReadable"] = $createdDate->format("H:i:s");
