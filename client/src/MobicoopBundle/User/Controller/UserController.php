@@ -386,21 +386,17 @@ class UserController extends AbstractController
         $this->denyAccessUnlessGranted('messages', $user);
 
         if ($request->isMethod('POST')) {
-            $idThreadMessage = $request->request->get('idThreadMessage');
-            $idRecipient = $request->request->get('idRecipient');
+             $idThreadMessage = $request->request->get('idThreadMessage');
+             $idRecipient = $request->request->get('idRecipient');
 
-            $messageToSend = new Message();
-            $messageToSend->setUser($user);
+            $messageToSend = $internalMessageManager->createInternalMessage(
+                $user,
+                $userManager->getUser($idRecipient),
+                "",
+                $request->request->get('text'),
+                $internalMessageManager->getMessage($idThreadMessage)
+            );
 
-            $recipient = new Recipient();
-            $recipient->setUser($userManager->getUser($idRecipient));
-
-            $recipient->setStatus(Recipient::STATUS_PENDING);
-            $recipient->setSentDate(new \DateTime());
-            $messageToSend->addRecipient($recipient);
-
-            $messageToSend->setText($request->request->get('text'));
-            $messageToSend->setMessage($internalMessageManager->getMessage($idThreadMessage));
             return new Response($internalMessageManager->sendInternalMessage($messageToSend, DataProvider::RETURN_JSON));
         }
         return new Response(json_encode("Not a post"));

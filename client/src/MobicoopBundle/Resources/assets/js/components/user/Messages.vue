@@ -363,7 +363,7 @@ export default {
         tabItem["createdTimeReadable"] = message.createdTimeReadable;
         (message.user.id==this.userid) ? tabItem["origin"] = "own" : tabItem["origin"] = "contact";
       }
-      
+
       this.items.push(tabItem);
 
     }
