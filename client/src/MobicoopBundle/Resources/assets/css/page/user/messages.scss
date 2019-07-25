@@ -1,5 +1,8 @@
 @import '../../app.scss';
 body {
+  .v-application--wrap {
+    min-height: auto !important;
+  }
   .section {
     padding: 0;
     .container {
@@ -13,11 +16,6 @@ body {
       font-size: 20px;
       div {
         background-color: $secondary;
-      }
-    }
-    .v-tabs {
-      .v-tabs__bar {
-        margin-bottom: 10px;
       }
     }
     #spinnerMessages {
@@ -55,20 +53,24 @@ body {
                 color: $secondary;
                 font-weight: bold;
               }
+              &.v-timeline-item__divider {
+                display: none;
+              }
             }
           }
-          &.v-timeline-item--right {
+          &.own {
             .v-timeline-item__body {
               .v-card {
                 background-color: $primary;
               }
             }
           }
+          .v-timeline-item__body {
+            font-weight: bold;
+          }
         }
       }
       #validSendMessage {
-        background-color: $primary-dark;
-        color: #FFF;
         font-weight: bold;
       }
     }

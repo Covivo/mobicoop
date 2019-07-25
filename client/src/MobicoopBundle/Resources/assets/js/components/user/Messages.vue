@@ -1,249 +1,282 @@
 <template>
-  <v-container
-    text-xs-center
-    grid-list-md
-    fluid
-  >
-    <v-layout id="headGridMessages">
-      <v-flex
-        xs4
-        pt-5
-        pb-4
-        mr-1
-        pl-2
+  <v-app>
+    <v-content>
+      <v-container
+        text-xs-center
+        grid-list-md
+        fluid
       >
-        Messages
-      </v-flex>
-      <v-flex
-        xs5
-        text-xs-left
-        pt-5
-        pb-4
-        mr-1
-        pl-2
-      >
-        {{ currentcorrespondant }}
-      </v-flex>
-      <v-flex
-        xs3
-        text-xs-left
-        pt-5
-        pb-4
-        pl-2
-      >
-        Annonces(s)
-      </v-flex>
-    </v-layout>
-    <v-layout
-      fill-height
-    >
-      <v-flex
-        id="threadColumn"
-        xs4
-      >
-        <!-- Threads -->
-        <v-tabs
-          v-model="active_tab"
-          slider-color="blue"
-          grow
-        >
-          <v-tab
-            :key="0"
-            ripple
+        <v-layout id="headGridMessages">
+          <v-flex
+            xs4
+            pt-5
+            pb-4
+            mr-1
+            pl-2
           >
-            Demandes en cours
-          </v-tab>
-          <v-tab-item v-if="this.threadsCM.length==0">
-            Aucun message de covoiturage
-          </v-tab-item>
-          <v-tab-item v-else>
-            <v-card
-              v-for="(threadCM, index) in threadsCM"
-              :key="index"
-              class="threads mx-auto"
-              :class="threadCM.selected ? 'selected' : ''"
-              max-width="400"
-              @click="updateMessages(threadCM.idThreadMessage,threadCM.contactId)"
-            >
-              <v-card-title>
-                <i class="material-icons">
-                  account_circle
-                </i>
-                &nbsp;<span class="title font-weight-light">{{ threadCM.contactFirstName }} {{ threadCM.contactLastName.substr(0,1).toUpperCase()+"." }}</span>
-              </v-card-title>
-            </v-card>
-          </v-tab-item>
-          <v-tab
-            :key="1"
-            ripple
+            Messages
+          </v-flex>
+          <v-flex
+            xs5
+            text-xs-left
+            pt-5
+            pb-4
+            mr-1
+            pl-2
           >
-            Boîte de dialogue
-          </v-tab>
-          <v-tab-item v-if="this.threadsDM.length==0">
-            Aucun message direct
-          </v-tab-item>
-          <v-tab-item v-else>
-            <v-card
-              v-for="(thread, index) in threadsDM"
-              :key="index"
-              class="threads mx-auto"
-              :class="thread.selected ? 'selected' : ''"
-              max-width="400"
-              dark
-              @click="updateMessages(thread.idThreadMessage,thread.contactId,generateName(thread.contactFirstName,thread.contactLastName))"
-            >
-              <v-card-title>
-                <i class="material-icons">
-                  account_circle
-                </i>
-                &nbsp;<span class="title font-weight-light">{{ generateName(thread.contactFirstName,thread.contactLastName) }}</span>
-              </v-card-title>
-            </v-card>
-          </v-tab-item>
-        </v-tabs>
-      </v-flex>
-
-
-
-
-      <v-flex
-        id="messagesColumn"
-        xs5
-      >
-        <!-- Messages -->
-
-        <v-timeline
-          align-top
-        >
-          <v-timeline-item
-            v-for="(item, i) in items"
-            :key="i"
-            :fil-dot="item.divider===false"
-            :hide-dot="item.divider===true"
-            :right="item.origin==='own'"
-            :left="item.origin!=='own'"
-            :idmessage="item.idMessage"
-            :class="item.divider ? 'divider' : ''"
+            {{ currentcorrespondant }}
+          </v-flex>
+          <v-flex
+            xs3
+            text-xs-left
+            pt-5
+            pb-4
+            pl-2
           >
-            <template
-              v-if="item.divider===false"
-              v-slot:icon
-            >
-              <v-avatar>
-                <i class="material-icons">
-                  {{ item.icon }}
-                </i>
-              </v-avatar>
-            </template>
-            <template
-              v-if="item.divider===false"
-              v-slot:opposite
-            >
-              <span>{{ item.createdTimeReadable }}</span>
-            </template>
-            <v-card
-              v-if="item.divider===false"
-              class="elevation-2"
-            >
-              <v-card-text>{{ item.text }}</v-card-text>
-            </v-card>
-            <span
-              v-if="item.divider===true"
-              class="datesDividers"
-            >
-              {{ item.createdDateReadable }}
-            </span>
-          </v-timeline-item>
-        </v-timeline>   
-
-        <v-container
-          fluid
-          grid-list-md
-        >
-          <v-layout
-            row
-            wrap
+            Annonces(s)
+          </v-flex>
+        </v-layout>
+        <v-layout>
+          <v-flex
+            id="threadColumn"
+            xs4
           >
-            <v-flex xs10>
-              <v-textarea
-                v-model="textToSend"
-                name="typedMessage"
-                box
-                label="Saisissez un message"
-                auto-grow
-                rows="2"
-                background-color="#FFFFFF"
-                value=""
-              />
-            </v-flex>
-            <v-flex
-              xs2
-              align-self-center
+            <!-- Threads -->
+            <v-tabs
+              slider-color="secondary"
+              color="secondary"
+              grow
             >
-              <div class="text-xs-center">
-                <v-btn
-                  id="validSendMessage"
-                  class="mx-2"
-                  fab
-                  round
-                  :idthreadmessage="idThreadMessage"
-                  @click="sendInternalMessage()"
+              <v-tab
+                :key="0"
+                ripple
+              >
+                Demandes en cours
+              </v-tab>
+              <v-tab-item v-if="this.threadsCM.length==0">
+                Aucun message de covoiturage
+              </v-tab-item>
+              <v-tab-item
+                v-else
+              >
+                <v-card
+                  v-for="(threadCM, index) in threadsCM"
+                  :key="index"
+                  class="threads mx-auto mt-2"
+                  :class="threadCM.selected ? 'selected' : ''"
+                  max-width="400"
+                  @click="updateMessages(threadCM.idThreadMessage,threadCM.contactId)"
                 >
-                  <v-icon>
-                    send
-                  </v-icon>
-                </v-btn>
-              </div>            
-            </v-flex>
-          </v-layout>
-        </v-container>
-      </v-flex>
-      <v-flex
-        id="contextColumn"
-        xs3
-      >
-        <!-- Context -->
-        <v-layout
-          row
-          wrap
-        >
-          <v-flex xs12>
-            <h3>{{ currentcorrespondant }}</h3>
-          </v-flex>
-        </v-layout>
-        <v-layout
-          v-if="currentAskHistory"
-          row
-          wrap
-        >
-          <v-flex xs12>
-            askhistory
-          </v-flex>
-        </v-layout>
-      </v-flex>
-    </v-layout>
+                  <v-card-title>
+                    <i class="material-icons">
+                      account_circle
+                    </i>
+                    &nbsp;<span class="title font-weight-light">{{ threadCM.contactFirstName }} {{ threadCM.contactLastName.substr(0,1).toUpperCase()+"." }}</span>
+                  </v-card-title>
+                </v-card>
+              </v-tab-item>
+              <v-tab
+                :key="1"
+                ripple
+              >
+                Boîte de dialogue
+              </v-tab>
 
-    <div class="text-xs-center">
-      <v-dialog
-        id="spinnerMessages"
-        v-model="spinner"
-        hide-overlay
-        persistent
-        width="300"
-      >
-        <v-card>
-          <v-card-text>
-            {{ textSpinner }}
-            <v-progress-linear
-              indeterminate
-              color="white"
-              class="mb-0"
-            />
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-    </div>
-  </v-container>
+              <v-tab-item v-if="this.threadsDM.length==0">
+                Aucun message direct
+              </v-tab-item>
+              <v-tab-item v-else>
+                <v-card
+                  v-for="(thread, index) in threadsDM"
+                  :key="index"
+                  class="threads mx-auto mt-2"
+                  :class="thread.selected ? 'selected' : ''"
+                  max-width="400"
+                  @click="updateMessages(thread.idThreadMessage,thread.contactId,generateName(thread.contactFirstName,thread.contactLastName))"
+                >
+                  <v-card-title>
+                    <i class="material-icons">
+                      account_circle
+                    </i>
+                    &nbsp;<span class="title font-weight-light">{{ generateName(thread.contactFirstName,thread.contactLastName) }}</span>
+                  </v-card-title>
+                </v-card>
+              </v-tab-item>
+            </v-tabs>
+          </v-flex>
+
+
+
+
+          <v-flex
+            id="messagesColumn"
+            xs5
+          >
+            <!-- Messages -->
+
+            <v-timeline>
+              <v-timeline-item
+                v-for="(item, i) in items"
+                :key="i"
+                :fil-dot="item.divider===false"
+                :hide-dot="item.divider===true"
+                :right="item.origin==='own'"
+                :left="item.origin!=='own'"
+                :idmessage="item.idMessage"
+                :class="(item.divider ? 'divider' : '')+' '+item.origin"
+              >
+                <template
+                  v-if="item.divider===false"
+                  v-slot:icon
+                >
+                  <v-avatar color="secondary">
+                    <i
+                      class="material-icons"
+                    >
+                      {{ item.icon }}
+                    </i>
+                  </v-avatar>
+                </template>
+                <template
+                  v-if="item.divider===false"
+                  v-slot:opposite
+                >
+                  <span>{{ item.createdTimeReadable }}</span>
+                </template>
+                <v-card
+                  v-if="item.divider===false"
+                  class="elevation-2"
+                >
+                  <v-card-text>{{ item.text }}</v-card-text>
+                </v-card>
+                <span
+                  v-if="item.divider===true"
+                  class="datesDividers"
+                >
+                  {{ item.createdDateReadable }}
+                </span>
+              </v-timeline-item>
+            </v-timeline>   
+
+            <v-container
+              fluid
+              grid-list-md
+            >
+              <v-layout
+                row
+                wrap
+              >
+                <v-flex xs10>
+                  <v-textarea
+                    v-model="textToSend"
+                    name="typedMessage"
+                    filled
+                    label="Saisissez un message"
+                    auto-grow
+                    rows="2"
+                    background-color="#FFFFFF"
+                    value=""
+                  />
+                </v-flex>
+                <v-flex
+                  xs2
+                  align-self-center
+                >
+                  <div class="text-xs-center">
+                    <v-btn
+                      id="validSendMessage"
+                      class="mx-2 black--text"
+                      fab
+                      rounded
+                      :idthreadmessage="idThreadMessage"
+                      color="primary"
+                      @click="sendInternalMessage()"
+                    >
+                      <v-icon>
+                        send
+                      </v-icon>
+                    </v-btn>
+                  </div>            
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-flex>
+          <v-flex
+            id="contextColumn"
+            xs3
+          >
+            <!-- Context -->
+            <v-layout>
+              <v-flex
+                xs12
+                text-center
+              >
+                <v-card>
+                  <v-card-text>
+                    {{ currentcorrespondant }}
+                  </v-card-text>
+                  <v-card-text v-if="currentAskHistory">
+                    zog zog
+                  </v-card-text>
+                  <v-card-text v-else>
+                    N'est pas lié à un covoiturage
+                  </v-card-text>
+                  <v-btn
+                    v-if="currentAskHistory && currentAskHistory.ask.status==1"
+                    rounded
+                    color="secondary"
+                    class="mb-2"
+                  >
+                    Demander un covoiturage
+                  </v-btn>
+                  <div
+                    v-if="currentAskHistory && currentAskHistory.ask.status==2"
+                    class="my-2"
+                  >
+                    <v-btn
+                      color="success"
+                      class="mb-2"
+                      fab
+                    >
+                      <v-icon>done</v-icon>
+                    </v-btn>
+                    <v-btn
+                      color="error"
+                      class="mb-2"
+                      fab
+                    >
+                      <v-icon>clear</v-icon>
+                    </v-btn>
+                  </div>
+                </v-card>
+              </v-flex>
+            </v-layout>
+          </v-flex>
+        </v-layout>
+
+        <div class="text-xs-center">
+          <v-dialog
+            v-model="spinner"
+            hide-overlay
+            persistent
+            width="300"
+          >
+            <v-card id="spinnerMessages">
+              <v-card-text>
+                {{ textSpinner }}
+                <v-progress-linear
+                  color="blue accent-4"
+                  indeterminate
+                  rounded
+                  height="6"
+                />
+              </v-card-text>
+            </v-card>
+          </v-dialog>
+        </div>
+      </v-container>
+    </v-content>
+  </v-app>
 </template>
 <script>
 import axios from 'axios';
@@ -292,7 +325,6 @@ export default {
       textSpinnerLoading:"Chargement des messages",
       textSpinnerSendMessage:"Envoi...",
       textSpinner:"",
-      active_tab: -1,
       currentAskHistory:null
     }
   },
@@ -353,11 +385,6 @@ export default {
           // Id of the current recipient
           this.idRecipient = idrecipient;
           
-          // I check if the I need to swich tab
-          if(res.data.askHistory===null){
-            this.active_tab=1;
-          }
-          
           let currentDate = res.data.createdDateReadable;
           for (let message of messagesThread) {
 
@@ -378,7 +405,7 @@ export default {
         })
     },
     updateContextPanel(){
-      console.error(this.currentAskHistory);
+      
     },
     sendInternalMessage(){
       let messageToSend = new FormData();
