@@ -1,21 +1,22 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}{{ metaDescription }}{% endblock %}
+{% block title %}
+  {{ metaDescription }}
+{% endblock %}
 {% block stylesheets %}
-  {{ encore_entry_link_tags('bundle_home') }}
+  {{ encore_entry_link_tags("#{assets_prefix ?? ''}home") }}
 {% endblock %}
 {% block body %}
-<section class="hero firstSection">
-    </section>
-    <section id="home">
-        <Homesearchform geo-search-url="/geosearch?search=" route="covoiturage/recherche"></Homesearchform>
-    </section>
-    <section class="hero lastSection">
-    </section>
-    <section class="hero communautes has-text-centered">
+  <section class="hero firstSection"></section>
+  <section id="home">
+    <Homesearchform geo-search-url="/geosearch?search=" route="covoiturage/recherche"></Homesearchform>
+  </section>
+  <section class="hero lastSection"></section>
+  <section class="hero communautes has-text-centered">
     <a class="lien" href="{{ path('community_list') }}">Liste des communautés</a>
-    </section>
+  </section>
 {% endblock %}
+
 {% block javascripts %}
-  {{ encore_entry_script_tags('bundle_home') }}
+  {{ encore_entry_script_tags("#{assets_prefix ?? ''}home") }}
 {% endblock %}
