@@ -413,7 +413,6 @@ class UserController extends AbstractController
      */
     public function getAskHistoryDetails()
     {
-
     }
 
     // ADMIN
