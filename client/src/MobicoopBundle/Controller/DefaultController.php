@@ -24,9 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Zend\Diactoros\Response\EmptyResponse;
 
 class DefaultController extends AbstractController
 {

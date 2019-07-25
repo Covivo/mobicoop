@@ -213,7 +213,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface
     /**
      * Date of password mofification.
      *
-     * @var integer|null $pupdtime
+     * @var DateTime|null $pupdtime
      *   Date of password mofification.
      *
      * @Groups({"post","put", "password_token"})
@@ -638,7 +638,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface
     /**
      * Return the date of password mofification.
      *
-     * @return integer
+     * @return DateTime
      */
     public function getPupdtime()
     {
@@ -648,9 +648,9 @@ class User implements ResourceInterface, UserInterface, EquatableInterface
     /**
      * Set the date of password mofification.
      *
-     * @param integer|null $pupdtime
+     * @param DateTime|null $pupdtime
      */
-    public function setPupdtime(?int $pupdtime)
+    public function setPupdtime(?DateTime $pupdtime)
     {
         $this->pupdtime = $pupdtime;
         return $this;

@@ -14,16 +14,6 @@
 {% block navBar %}{% include "@Mobicoop/navBar.html.twig" %}{% endblock %}
 <main role="main" id="main">
     <div id="app">
-        {% block flashbag %}
-            {# read and display several types of flash messages #}
-            {% for label, messages in app.flashes(['success', 'warning', 'error']) %}
-                {% for message in messages %}
-                    <div class="flash-{{ label }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endfor %}
-        {% endblock %}
         {% block body %}
         {% endblock %}
     </div>

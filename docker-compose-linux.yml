@@ -2,8 +2,8 @@ version: "2.4"
 services:
   mobicoop_platform:
     container_name: mobicoop_platform
-#    image: mobicoop/php-node-chromium:2.0.0
-    build: ./docker/mobicoop_platform
+    image: mobicoop/php-node-chromium:2.0.0
+    # build: ./
     ports:
       - '9000:9000'
       - '8079:8079'
@@ -52,14 +52,6 @@ services:
     networks:
       - mobicoop_platform
 
-  mailhog:
-    image: mailhog/mailhog:v1.0.0
-    container_name: mobicoop_mailhog
-    ports:
-      - "8025:8025"
-      - "1025:1025"
-    networks:
-      - mobicoop_platform
 networks:
   mobicoop_platform:
     name: mobicoop_platform

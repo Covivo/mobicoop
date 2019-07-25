@@ -337,7 +337,7 @@ class UserController extends AbstractController
         $user = $userManager->findByToken($token);
         $error = false;
 
-        if (empty($user) || (time() - (int)$user->getPupdtime()) > 86400) {
+        if (empty($user) || (time() - (int)$user->getPupdtime()->getTimestamp()) > 86400) {
             // set flash messages
             $session->getFlashBag()->add('error', 'Votre lien a expiré!!!');
 

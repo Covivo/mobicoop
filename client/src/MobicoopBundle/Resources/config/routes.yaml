@@ -75,7 +75,7 @@ user_password_forgot:
 
 user_password_reset:
     path:
-        fr: /utiliateur/mot-de-passe/reset/{token}
+        fr: /utilisateur/mot-de-passe/reset/{token}
         en: /user/password/reset/{token}
     requirements:
         token: .*
