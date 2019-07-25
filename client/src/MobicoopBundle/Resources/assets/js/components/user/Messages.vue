@@ -44,7 +44,7 @@
         <!-- Threads -->
         <v-tabs
           v-model="active_tab"
-          slider-color="yellow"
+          slider-color="blue"
           grow
         >
           <v-tab
@@ -203,6 +203,23 @@
         xs3
       >
         <!-- Context -->
+        <v-layout
+          row
+          wrap
+        >
+          <v-flex xs12>
+            <h3>{{ currentcorrespondant }}</h3>
+          </v-flex>
+        </v-layout>
+        <v-layout
+          v-if="currentAskHistory"
+          row
+          wrap
+        >
+          <v-flex xs12>
+            askhistory
+          </v-flex>
+        </v-layout>
       </v-flex>
     </v-layout>
 
@@ -307,7 +324,6 @@ export default {
           this.items.length = 0; // Reset items (the source of messages column)
 
           // update askHistory
-          console.error(res.data.askHistory);
           this.currentAskHistory = res.data.askHistory;
 
           // The date of the first message
