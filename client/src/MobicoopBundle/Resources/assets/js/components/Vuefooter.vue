@@ -6,19 +6,56 @@
       <v-layout
         justify-center
         row
-        wrap
       >
-        <v-img
+        <a
           href="https://www.facebook.com/Mobicoop/"
           target="_blank"
-          src="/images/footer/facebook.svg"
-          max-width="24px"
-          max-height="24px"
-        />
+        >
+          <v-img
+          
+            src="/images/footer/facebook.svg"
+            max-width="50px"
+            max-height="50px"
+          />
+        </a>
+        <a
+          href="https://twitter.com/MobicoopCovoit?lang=fr"
+          target="_blank"
+        >
+          <v-img
+          
+            src="/images/footer/twitter.svg"
+            max-width="50px"
+            max-height="50px"
+          />
+        </a>
+        <a
+          href="https://www.instagram.com/mobicoopcovoiturage/"
+          target="_blank"
+        >
+          <v-img
+          
+            src="/images/footer/instagram.svg"
+            max-width="50px"
+            max-height="50px"
+          />
+        </a>
+        <a
+          href="https://framasphere.org/people/9bfd3a40f8fb0134e71f2a0000053625"
+          target="_blank"
+        >
+          <v-img
+            href="https://framasphere.org/people/9bfd3a40f8fb0134e71f2a0000053625"
+            target="_blank"
+            src="/images/footer/framasphere.svg"
+            max-width="50px"
+            max-height="50px"
+          />
+        </a>
         <v-flex
-          py-3
-          text-xs-center
-          xs12 
+          py-4
+          text-center
+          xs12
         >
           <strong>Mobicoop</strong> by Mobicoop team. The source code is licensed AGPL3. The website content is licensed AGPL3 too
         </v-flex>

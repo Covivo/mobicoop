@@ -92,8 +92,6 @@ body {
       color: $white;
       background-color: $tertiary;
     }
-
-    @include outlinedFocus($focusColor);
   }
   .date {
     color: $tertiary;
@@ -111,8 +109,6 @@ body {
     border-radius: 0;
     background-color: #585858;
     color: $white;
-
-    @include outlinedFocus($focusColor);
   }
   #heureDepart {
     box-shadow: none;
@@ -122,8 +118,6 @@ body {
     border-radius: 0;
     background-color: #585858;
     color: $white;
-
-    @include outlinedFocus($focusColor);
   }
   #origin {
     box-shadow: none;
@@ -134,8 +128,6 @@ body {
     border-bottom: solid 1px $white;
     border-radius: 0;
     background-color: #585858;
-
-    @include outlinedFocus($focusColor);
     .input {
       color: $white;
     }
@@ -151,8 +143,6 @@ body {
     border-bottom: solid 1px $white;
     border-radius: 0;
     background-color: #585858;
-
-    @include outlinedFocus($focusColor);
     .input {
       color: $white;
     }

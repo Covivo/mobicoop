@@ -1,35 +1,11 @@
 @import '_variables.scss';
 body {
-  .application--wrap {
-    min-height: 0;
-  }
   nav {
     .v-toolbar__content {
       background-color: $primary;
-      button {
-        .v-btn__content {
-          color: $primary-dark;
-          &:hover {
-            color: #FFF;
-          }
-        }
-      }
     }
   }
-  footer {
-    &.v-footer.theme--light {
-      background-color: $primary;
-      color: $primary-dark;
-      a {
-        color: $primary-dark;
-      }
-      .footer-font {
-        font-size: 21px;
-        text-transform: uppercase;
-        margin-bottom: 15px;
-        font-weight: bold;
-        color: $primary-dark;
-      }
-    }
+  .theme--light.v-footer {
+    background-color: $primary;
   }
 }
