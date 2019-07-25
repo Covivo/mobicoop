@@ -23,6 +23,7 @@
 
 namespace App\User\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\PersistentCollection;
@@ -55,6 +56,7 @@ use App\User\Controller\UserThreads;
 use App\User\Controller\UserUpdatePassword;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\LoginFilter;
+use App\User\Filter\TokenFilter;
 use App\Communication\Entity\Notified;
 
 /**
@@ -132,6 +134,7 @@ use App\Communication\Entity\Notified;
  * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial"})
  * @ApiFilter(HomeAddressTerritoryFilter::class, properties={"homeAddressTerritory"})
  * @ApiFilter(LoginFilter::class, properties={"login"})
+ * @ApiFilter(TokenFilter::class, properties={"token"})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate", "createdDate"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
@@ -382,10 +385,10 @@ class User implements UserInterface, EquatableInterface
     /**
      * Date of password mofification.
      *
-     * @var integer|null $pupdtime
+     * @var DateTime|null $pupdtime
      *   Date of password mofification.
      *
-     * @ORM\Column(type="integer", length=100, nullable=true)
+     * @ORM\Column(type="datetime", length=100, nullable=true)
      * @Groups({"read","write"})
      */
     private $pupdtime;
@@ -393,7 +396,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * Return the date of password mofification.
      *
-     * @return integer
+     * @return Datetime
      */
     public function getPupdtime()
     {
@@ -403,9 +406,9 @@ class User implements UserInterface, EquatableInterface
     /**
      * Set the date of password mofification.
      *
-     * @param integer|null $pupdtime
+     * @param Datetime|null $pupdtime
      */
-    public function setPupdtime(?int $pupdtime)
+    public function setPupdtime(?DateTime $pupdtime)
     {
         $this->pupdtime = $pupdtime;
         return $this;

@@ -1,6 +1,0 @@
-swiftmailer:
-  url: nulll
-  transport: "smtp"
-  host:      "mailhog"
-  port:      "1025"
-  command: /usr/local/bin/mhsendmail

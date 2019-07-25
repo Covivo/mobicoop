@@ -26,6 +26,7 @@ namespace App\User\Service;
 use App\User\Entity\User;
 use App\User\Event\UserPasswordChangeAskedEvent;
 use App\User\Event\UserPasswordChangedEvent;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Right\Repository\RoleRepository;
@@ -136,13 +137,20 @@ class UserManager
         return [];
     }
  
+ /**
+	* Gere la demande de modification du mot de passe.
+	*
+	* @param User $user
+	* @return User
+	*/
  public function updateUserPasswordRequest(User $user)
  {
-	$time = time();
+	$datetime = new DateTime();
+	$time= $datetime->getTimestamp();
 	$token = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
 	// encoding of the password
 	$user->setToken($token);
-	$user->setPupdtime($time);
+	$user->setPupdtime($datetime);
 	 // persist the user
 	 $this->entityManager->persist($user);
 	 $this->entityManager->flush();
@@ -153,10 +161,16 @@ class UserManager
 	 return $user;
  }
  
+ /**
+	* Gere la confirmation de demande de modification du mot de passe.
+	*
+	* @param User $user
+	* @return User
+	*/
  public function updateUserPasswordConfirm(User $user)
  {
 		$user->setToken('');
-		$user->setPupdtime(-1);
+		$user->setPupdtime(NULL);
 		// persist the user
 		$this->entityManager->persist($user);
 		$this->entityManager->flush();
