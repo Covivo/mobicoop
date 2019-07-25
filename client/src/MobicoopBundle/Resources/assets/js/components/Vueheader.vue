@@ -1,33 +1,32 @@
 <template>
   <v-toolbar>
     <v-toolbar-title>
-      <img
+      <a href="/"><img
         class="logo"
         src="/images/logo.png"
         alt="Mobicoop"
-      >
+      ></a>
     </v-toolbar-title>
     <v-spacer />
-    <v-toolbar-items class="hidden-sm-and-down">
-      <v-btn
-        rounded
-        href="/utilisateur/inscription"
-      >
-        Inscription
-      </v-btn>
-      <v-btn
-        rounded="true"
-        href="/utilisateur/connexion"
-      >
-        Connexion
-      </v-btn>
-      <v-btn
-        rounded
-        href="/covoiturage/annonce/poster"
-      >
-        Publier une annonce
-      </v-btn>
-    </v-toolbar-items>
+    <v-btn
+      class="signup"
+      href="/utilisateur/inscription"
+    >
+      Inscription
+    </v-btn>
+    <v-btn
+      rounded
+      class="connexion"
+      href="/utilisateur/connexion"
+    >
+      Connexion
+    </v-btn>
+    <v-btn
+      class="shareAd"
+      href="/covoiturage/annonce/poster"
+    >
+      Publier une annonce
+    </v-btn>
     <v-menu class="hidden-md-and-up">
       <v-toolbar-side-icon slot="activator" />
       <v-list>
@@ -47,9 +46,9 @@
 export default {
   data: () => ({
     menu: [
-      { icon: 'home', title: 'Inscription', link: 'localhost:8081/utilisateur/inscription' },
-      { icon: 'info', title: 'Connexion', link: 'localhost:8081/utilisateur/connexion' },
-      { icon: 'warning', title: 'Publier une annonce', link:'localhost:8081/covoiturage/annonce/poster' }
+      { title: 'Inscription', link: 'localhost:8081/utilisateur/inscription' },
+      { title: 'Connexion', link: '/utilisateur/connexion' },
+      { title: 'Publier une annonce', link:'/covoiturage/annonce/poster' }
     ]
   }),
 

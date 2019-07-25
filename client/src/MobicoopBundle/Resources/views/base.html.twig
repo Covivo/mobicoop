@@ -9,22 +9,18 @@
 </head>
 <body>
     <div id="app">
-        {% block navBar %}
             <nav id="header">
                 <Vueheader></Vueheader>
             </nav>
-        {% endblock %}
         <main role="main" id="main">
             <div>
-                {% block body %}
+                {% block main %}
                 {% endblock %}
             </div>
         </main>
-        {% block footer %}
             <footer id="footer">
                 <Vuefooter></Vuefooter>
             </footer>
-        {% endblock %}
     </div>
 </body>
 
