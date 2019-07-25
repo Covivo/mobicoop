@@ -358,7 +358,7 @@ class UserController extends AbstractController
      * Get a complete thread from a first message
      *
      */
-    public function getThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager)
+    public function getThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request)
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);

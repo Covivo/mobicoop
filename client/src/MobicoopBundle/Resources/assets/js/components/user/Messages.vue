@@ -43,9 +43,12 @@
       >
         <!-- Threads -->
         <v-tabs
+          v-model="active_tab"
           slider-color="yellow"
+          grow
         >
           <v-tab
+            :key="0"
             ripple
           >
             Demandes en cours
@@ -72,6 +75,7 @@
             </v-card>
           </v-tab-item>
           <v-tab
+            :key="1"
             ripple
           >
             Boîte de dialogue
@@ -271,7 +275,8 @@ export default {
       idRecipient:null,
       textSpinnerLoading:"Chargement des messages",
       textSpinnerSendMessage:"Envoi...",
-      textSpinner:""
+      textSpinner:"",
+      active_tab: -1
     }
   },
   mounted () {
@@ -317,11 +322,15 @@ export default {
 
 
           // The correspondant for the view
-          //this.currentcorrespondant = threadMessage.user.givenName+" "+threadMessage.user.familyName.substr(0,1).toUpperCase()+".";
           this.currentcorrespondant = contactName;
 
           // Id of the current recipient
           this.idRecipient = idrecipient;
+          
+          // I check if the I need to swich tab
+          if(res.data.askHistory===null){
+            this.active_tab=1;
+          }
           
           let currentDate = res.data.createdDateReadable;
           for (let message of messagesThread) {
@@ -378,7 +387,7 @@ export default {
     },
     generateName(firstname,lastname){
       return firstname+' '+lastname.substr(0,1).toUpperCase()+'.'
-    }
+    },
   }
 }
 </script>
