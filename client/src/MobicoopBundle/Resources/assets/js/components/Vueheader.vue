@@ -17,7 +17,6 @@
     <v-btn
       rounded
       class="connexion"
-      href="/utilisateur/connexion"
     >
       Connexion
     </v-btn>
