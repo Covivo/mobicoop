@@ -331,7 +331,8 @@ class UserController extends AbstractController
             $arrayThread["text"] = $thread["text"];
             $arrayThread["askHistory"] = $thread["askHistory"];
 
-            if (!$idMessageDefaultSelected) {
+            // The default message is the first direct message or the last carpooling message
+            if (!$idMessageDefaultSelected || !is_null($thread["askHistory"])) {
                 $idMessageDefault = $thread["id"];
                 $idRecipientDefault = $arrayThread["contactId"];
                 $firstNameRecipientDefault = $arrayThread["contactFirstName"];
@@ -356,7 +357,7 @@ class UserController extends AbstractController
 
     /**
      * Get a complete thread from a first message
-     *
+     * Ajax Request
      */
     public function getThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request)
     {
@@ -377,12 +378,12 @@ class UserController extends AbstractController
             $thread["messages"][$key]["createdDateReadable"] = $createdDate->format("D d F Y");
             $thread["messages"][$key]["createdTimeReadable"] = $createdDate->format("H:i:s");
         }
-
         return new Response(json_encode($thread));
     }
 
     /**
      * Send an internal message to another user
+     * Ajax Request
      */
     public function sendInternalMessage(UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request)
     {
@@ -406,6 +407,14 @@ class UserController extends AbstractController
         return new Response(json_encode("Not a post"));
     }
 
+    /**
+     * Get the details of an AskHistory
+     * Ajax Request
+     */
+    public function getAskHistoryDetails()
+    {
+
+    }
 
     // ADMIN
 

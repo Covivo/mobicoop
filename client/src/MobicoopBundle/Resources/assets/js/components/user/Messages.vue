@@ -63,14 +63,13 @@
               class="threads mx-auto"
               :class="threadCM.selected ? 'selected' : ''"
               max-width="400"
-              dark
               @click="updateMessages(threadCM.idThreadMessage,threadCM.contactId)"
             >
               <v-card-title>
                 <i class="material-icons">
                   account_circle
                 </i>
-                &nbsp;<span class="title font-weight-light white--text">{{ threadCM.contactFirstName }} {{ threadCM.contactLastName.substr(0,1).toUpperCase()+"." }}</span>
+                &nbsp;<span class="title font-weight-light">{{ threadCM.contactFirstName }} {{ threadCM.contactLastName.substr(0,1).toUpperCase()+"." }}</span>
               </v-card-title>
             </v-card>
           </v-tab-item>
@@ -97,7 +96,7 @@
                 <i class="material-icons">
                   account_circle
                 </i>
-                &nbsp;<span class="title font-weight-light white--text">{{ generateName(thread.contactFirstName,thread.contactLastName) }}</span>
+                &nbsp;<span class="title font-weight-light">{{ generateName(thread.contactFirstName,thread.contactLastName) }}</span>
               </v-card-title>
             </v-card>
           </v-tab-item>
@@ -203,7 +202,7 @@
         id="contextColumn"
         xs3
       >
-        droite
+        <!-- Context -->
       </v-flex>
     </v-layout>
 
@@ -276,7 +275,14 @@ export default {
       textSpinnerLoading:"Chargement des messages",
       textSpinnerSendMessage:"Envoi...",
       textSpinner:"",
-      active_tab: -1
+      active_tab: -1,
+      currentAskHistory:null
+    }
+  },
+  watch: {
+    // whenever question changes, this function will run
+    currentAskHistory: function (newCurrentAskHistory, oldCurrentAskHistory) {
+      this.updateContextPanel();
     }
   },
   mounted () {
@@ -298,7 +304,11 @@ export default {
         .get("/utilisateur/messages/"+idMessage)
         .then(res => {
           let messagesThread = (res.data.messages);
-          this.items.length = 0;
+          this.items.length = 0; // Reset items (the source of messages column)
+
+          // update askHistory
+          console.error(res.data.askHistory);
+          this.currentAskHistory = res.data.askHistory;
 
           // The date of the first message
           let divider = {
@@ -350,6 +360,9 @@ export default {
           }
           this.spinner = false;
         })
+    },
+    updateContextPanel(){
+      console.error(this.currentAskHistory);
     },
     sendInternalMessage(){
       let messageToSend = new FormData();

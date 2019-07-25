@@ -69,7 +69,7 @@ class Ask
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"read","threads","thread"})
      */
     private $id;
 
@@ -78,7 +78,7 @@ class Ask
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads","thread"})
      */
     private $status;
 
@@ -87,7 +87,7 @@ class Ask
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads","thread"})
      */
     private $type;
 
@@ -95,6 +95,7 @@ class Ask
      * @var \DateTimeInterface Creation date of the solicitation.
      *
      * @ORM\Column(type="datetime")
+     * @Groups({"threads","thread"})
      */
     private $createdDate;
 
@@ -115,7 +116,7 @@ class Ask
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="asks")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads","thread"})
      * @MaxDepth(1)
      */
     private $matching;
@@ -124,7 +125,7 @@ class Ask
      * @var Ask|null The linked ask.
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask")
-     * @Groups({"read"})
+     * @Groups({"read","threads","thread"})
      * @MaxDepth(1)
      */
     private $askLinked;
@@ -146,7 +147,7 @@ class Ask
      * @Assert\NotBlank
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="ask", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads","thread"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */

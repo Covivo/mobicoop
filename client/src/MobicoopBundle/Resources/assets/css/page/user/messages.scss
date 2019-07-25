@@ -31,9 +31,10 @@ body {
       //background-color: #F00;
       .threads {
         margin-bottom: 10px;
-        background-color: $primary;
+        background-color: #FFF;
+        color: #000;
         &.selected {
-          background-color: $secondary;
+          background-color: $primary;
         }
         &:hover {
           cursor: pointer;
