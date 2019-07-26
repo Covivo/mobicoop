@@ -32,7 +32,6 @@ use Psr\Log\LoggerInterface;
  */
 class AskManager
 {
-
     private $dataProvider;
     private $logger;
     
@@ -81,5 +80,5 @@ class AskManager
             return $response->getValue();
         }
         return null;
-    }    
+    }
 }

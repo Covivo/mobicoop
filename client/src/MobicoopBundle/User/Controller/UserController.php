@@ -415,18 +415,16 @@ class UserController extends AbstractController
      */
     public function updateAsk(Request $request, AskManager $askManager)
     {
-
         if ($request->isMethod('POST')) {
-
             $idAsk = $request->request->get('idAsk');
 
             // Get the Ask
             $ask = $askManager->getAsk($idAsk);
 
             // Change the status
-            if($request->request->get('status')!==null &&
+            if ($request->request->get('status')!==null &&
                 is_numeric($request->request->get('status'))
-            ){
+            ) {
                 // Modify the Ask status
                 $ask->setStatus($request->request->get('status'));
             }
