@@ -35,7 +35,7 @@ class DefaultController extends AbstractController
      *
      */
     public function index()
-    {  
+    {
         return $this->render(
             '@Mobicoop/default/index.html.twig',
             [
