@@ -58,7 +58,7 @@ class Matching
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"read","threads","thread"})
      */
     private $id;
 
@@ -66,6 +66,7 @@ class Matching
      * @var \DateTimeInterface Creation date of the matching.
      *
      * @ORM\Column(type="datetime")
+     * @Groups({"read","threads","thread"})
      */
     private $createdDate;
 
@@ -75,7 +76,7 @@ class Matching
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingOffers")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read"})
+     * @Groups({"read","threads","thread"})
      * @MaxDepth(1)
      */
     private $proposalOffer;
@@ -86,7 +87,7 @@ class Matching
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingRequests")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read"})
+     * @Groups({"read","threads","thread"})
      * @MaxDepth(1)
      */
     private $proposalRequest;
@@ -97,7 +98,7 @@ class Matching
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     * @Groups({"read"})
+     * @Groups({"read","threads","thread"})
      */
     private $criteria;
 
@@ -115,7 +116,7 @@ class Matching
      * @Assert\NotBlank
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="matching", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads","thread"})
      */
     private $waypoints;
 
