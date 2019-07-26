@@ -162,7 +162,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read", "threads", "completeThread"})
+     * @Groups({"read", "threads", "thread"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -180,7 +180,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write", "threads", "completeThread"})
+     * @Groups({"read","write", "threads", "thread"})
      */
     private $givenName;
 
@@ -188,7 +188,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The family name of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write", "threads", "completeThread"})
+     * @Groups({"read","write", "threads", "thread"})
      */
     private $familyName;
 

@@ -69,6 +69,7 @@ use Mobicoop\Bundle\MobicoopBundle\Permission\Entity\Permission;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Recipient;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 
 /**
  * Custom deserializer service.
@@ -152,6 +153,9 @@ class Deserializer
                 break;
             case AskHistory::class:
                 return self::deserializeAskHistory($data);
+                break;
+            case Ask::class:
+                return self::deserializeAsk($data);
                 break;
             case Recipient::class:
                 return self::deserializeRecipient($data);
@@ -715,6 +719,7 @@ class Deserializer
 
     private function deserializeMessage(array $data): ?Message
     {
+        dump("message");
         $message = new Message();
         $message = self::autoSet($message, $data);
         if (isset($data["@id"])) {
@@ -736,12 +741,25 @@ class Deserializer
         return $message;
     }
     
+    private function deserializeAsk(array $data): ?Ask
+    {
+        $ask = new Ask();
+        $ask = self::autoSet($ask, $data);
+        if (isset($data["@id"])) {
+            $ask->setIri($data["@id"]);
+        }
+        return $ask;
+    }
+
     private function deserializeAskHistory(array $data): ?AskHistory
     {
         $askHistory = new AskHistory();
         $askHistory = self::autoSet($askHistory, $data);
         if (isset($data["@id"])) {
             $askHistory->setIri($data["@id"]);
+        }
+        if (isset($data["ask"])) {
+            $askHistory->setAsk(self::deserializeAsk($data["ask"]));
         }
         return $askHistory;
     }

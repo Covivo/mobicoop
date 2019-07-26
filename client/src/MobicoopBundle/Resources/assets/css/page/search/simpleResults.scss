@@ -1,6 +1,27 @@
 /*****************************
       SIMPLE SEARCH RESULTS
 ******************************/
+@import '~bulma/sass/utilities/_all';
+@import '../../_variables';
+$colors: (
+  'primary': ($primary, $primary-invert),
+  'secondary': ($secondary, $secondary-invert),
+  'tertiary': ($tertiary, $tertiary-invert),
+  'dark': ($primary-dark, $primary),
+  'white': ($white, $black),
+  'black': ($black, $white),
+  'light': ($light, $light-invert),
+  'success': ($success, $success-invert),
+  'warning': ($warning, $warning-invert),
+  'danger': ($danger, $danger-invert),
+);
+
+$link: $primary;
+$link-invert: $primary-invert;
+$link-focus-border: $primary;
+
+@import '~bulma';
+@import '~buefy/src/scss/buefy';
 @import '../../app.scss';
 body {
   h2 {
@@ -71,8 +92,6 @@ body {
       color: $white;
       background-color: $tertiary;
     }
-
-    @include outlinedFocus($focusColor);
   }
   .date {
     color: $tertiary;
@@ -90,8 +109,6 @@ body {
     border-radius: 0;
     background-color: #585858;
     color: $white;
-
-    @include outlinedFocus($focusColor);
   }
   #heureDepart {
     box-shadow: none;
@@ -101,8 +118,6 @@ body {
     border-radius: 0;
     background-color: #585858;
     color: $white;
-
-    @include outlinedFocus($focusColor);
   }
   #origin {
     box-shadow: none;
@@ -113,8 +128,6 @@ body {
     border-bottom: solid 1px $white;
     border-radius: 0;
     background-color: #585858;
-
-    @include outlinedFocus($focusColor);
     .input {
       color: $white;
     }
@@ -130,8 +143,6 @@ body {
     border-bottom: solid 1px $white;
     border-radius: 0;
     background-color: #585858;
-
-    @include outlinedFocus($focusColor);
     .input {
       color: $white;
     }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -25,22 +25,27 @@ namespace Mobicoop\Bundle\MobicoopBundle\Communication\Service;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider as MobicoopDataProvider;
+use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Recipient;
 
 /**
- * Mass management service.
+ * Internal message management service.
  */
 class InternalMessageManager
 {
     private $dataProvider;
+    private $userManager;
 
     /**
     * Constructor.
-    * @param DataProvider $dataProvider The data provider that provides the Mass
+    * @param DataProvider $dataProvider The data provider that provides the Message
     */
-    public function __construct(DataProvider $dataProvider)
+    public function __construct(DataProvider $dataProvider, UserManager $userManager)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Message::class);
+        $this->userManager = $userManager;
     }
 
     /**
@@ -61,16 +66,17 @@ class InternalMessageManager
     /**
      * Get complete thread from a message
      *
-     * @param int $id The first message id
+     * @param int $id       The first message id
+     * @param int $format   The format to use
      *
      * @return array|null The complete thread
      */
-    public function getCompleteThread(int $id, $format=null)
+    public function getThread(int $id, int $format=null)
     {
         if ($format!==null) {
             $this->dataProvider->setFormat($format);
         }
-        $response = $this->dataProvider->getSubCollection($id, Message::class, "completeThread");
+        $response = $this->dataProvider->getSubCollection($id, Message::class, "thread");
         if ($response->getCode() == 200) {
             return $response->getValue();
         }
@@ -80,15 +86,46 @@ class InternalMessageManager
     /**
      * Send an internal message
      *
-     * @param Message $message The message to send
+     * @param Message   $message    The message to send
+     * @param int       $format     The format to use
      *
      */
-    public function sendInternalMessage(Message $message)
+    public function sendInternalMessage(Message $message, int $format=null)
     {
+        if ($format!==null) {
+            $this->dataProvider->setFormat($format);
+        }
         $response = $this->dataProvider->post($message);
         if ($response->getCode() == 201) {
             return $response->getValue();
         }
         return null;
+    }
+
+    /**
+     * Create an internal message
+     *
+     * @return Message
+     */
+    public function createInternalMessage(User $sender, User $userRecipient, $title, $text, $threadMessage=null)
+    {
+        $messageToSend = new Message();
+        $messageToSend->setUser($sender);
+
+        $recipient = new Recipient();
+        $recipient->setUser($userRecipient);
+
+        $recipient->setStatus(Recipient::STATUS_PENDING);
+        $recipient->setSentDate(new \DateTime());
+        $messageToSend->addRecipient($recipient);
+
+        $messageToSend->setTitle($title);
+        $messageToSend->setText($text);
+        
+        if ($threadMessage!==null) {
+            $messageToSend->setMessage($threadMessage);
+        }
+
+        return $messageToSend;
     }
 }

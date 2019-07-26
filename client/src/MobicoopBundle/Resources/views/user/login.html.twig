@@ -1,10 +1,23 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}{% trans from 'ui' %}user.login.title{% endtrans %}{% endblock %}
-{% block stylesheets %}
-    {{ encore_entry_link_tags('bundle_user/login') }}
+{% block title %}
+  {% trans from 'ui' %}user.login.title{% endtrans %}
 {% endblock %}
-{% block body %}
+{% block stylesheets %}
+  {# ☣️ String interpolation only works with double quotted, see https://twig.symfony.com/doc/2.x/templates.html#string-interpolation #}
+  {# assets_prefix if an env variable, not defined in client but defined in the main mobicoop_platform #}
+{{ encore_entry_link_tags("#{assets_prefix ?? ''}user/login") }}
+{% endblock %}
+  {% block main %}
+
+    <section class="hero connexion is-passur"> <div class="hero-body">
+      <div class="container">
+        <h1 class="title has-text-centered">
+          Connexion
+        </h1>
+      </div>
+    </div>
+  </section>
 
     <section class="hero connexion is-passur">
         <div class="hero-body">
@@ -60,6 +73,5 @@
 
 {% endblock %}
 {% block javascripts %}
-    {{ encore_entry_script_tags('bundle_user/login') }}
+  {{ encore_entry_script_tags("#{assets_prefix ?? ''}user/login") }}
 {% endblock %}
- 

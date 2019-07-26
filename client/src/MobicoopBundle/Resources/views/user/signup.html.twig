@@ -1,11 +1,12 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}{% trans from 'ui' %}user.signup.title{% endtrans %}{% endblock %}
-{% block stylesheets %}
-    {{ encore_entry_link_tags('bundle_user/signup') }}
+{% block title %}
+  {% trans from 'ui' %}user.signup.title{% endtrans %}
 {% endblock %}
-{% block body %}
-
+{% block stylesheets %}
+  {{ encore_entry_link_tags("#{assets_prefix ?? ''}user/signup") }}
+{% endblock %}
+{% block main %}
     <section class="hero is-passur">
         <div class="hero-body">
             <div class="container">
@@ -28,6 +29,5 @@
 
 {% endblock %}
 {% block javascripts %}
-    {{ encore_entry_script_tags('bundle_user/signup') }}
+  {{ encore_entry_script_tags("#{assets_prefix ?? ''}user/signup") }}
 {% endblock %}
- 

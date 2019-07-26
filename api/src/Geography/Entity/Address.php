@@ -88,7 +88,7 @@ class Address
      * @var string The house number.
      *
      * @ORM\Column(type="string", length=45, nullable=true)
-     * @Groups({"read","write","pt","mass","massCompute"})
+     * @Groups({"read","write","pt","mass","massCompute","threads","thread"})
      */
     private $houseNumber;
 
@@ -97,7 +97,7 @@ class Address
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"read","write","pt","mass","massCompute"})
-     * @Assert\NotBlank(groups={"mass","massCompute"})
+     * @Assert\NotBlank(groups={"mass","massCompute","threads","thread"})
      */
     private $street;
 
@@ -105,7 +105,7 @@ class Address
      * @var string The full street address.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write","pt","mass","massCompute"})
+     * @Groups({"read","write","pt","mass","massCompute","threads","thread"})
      */
     private $streetAddress;
 
@@ -114,7 +114,7 @@ class Address
      *
      * @ORM\Column(type="string", length=15, nullable=true)
      * @Groups({"read","write","pt","mass","massCompute"})
-     * @Assert\NotBlank(groups={"mass","massCompute"})
+     * @Assert\NotBlank(groups={"mass","massCompute","threads","thread"})
      */
     private $postalCode;
 
@@ -122,7 +122,7 @@ class Address
      * @var string|null The sublocality of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt","mass","massCompute"})
+     * @Groups({"read","write","pt","mass","massCompute","threads","thread"})
      */
     private $subLocality;
 
@@ -130,8 +130,8 @@ class Address
      * @var string|null The locality of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt","mass","massCompute"})
-     * @Assert\NotBlank(groups={"mass","massCompute"})
+     * @Groups({"read","write","pt","mass","massCompute","threads","thread"})
+     * @Assert\NotBlank(groups={"mass","massCompute","threads","thread"})
      */
     private $addressLocality;
 
@@ -139,7 +139,7 @@ class Address
      * @var string|null The locality admin of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt","mass","massCompute"})
+     * @Groups({"read","write","pt","mass","massCompute","threads","thread"})
      */
     private $localAdmin;
 
@@ -147,7 +147,7 @@ class Address
      * @var string|null The county of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt","mass","massCompute"})
+     * @Groups({"read","write","pt","mass","massCompute","threads","thread"})
      */
     private $county;
 
@@ -155,7 +155,7 @@ class Address
      * @var string|null The macro county of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt","mass","massCompute"})
+     * @Groups({"read","write","pt","mass","massCompute","threads","thread"})
      */
     private $macroCounty;
 
@@ -163,7 +163,7 @@ class Address
      * @var string|null The region of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt","mass","massCompute"})
+     * @Groups({"read","write","pt","mass","massCompute","threads","thread"})
      */
     private $region;
 
@@ -171,7 +171,7 @@ class Address
      * @var string|null The macro region of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt","mass","massCompute"})
+     * @Groups({"read","write","pt","mass","massCompute","threads","thread"})
      */
     private $macroRegion;
 
@@ -179,7 +179,7 @@ class Address
      * @var string|null The country of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt","mass","massCompute"})
+     * @Groups({"read","write","pt","mass","massCompute","threads","thread"})
      */
     private $addressCountry;
 
@@ -187,7 +187,7 @@ class Address
      * @var string|null The country code of the address.
      *
      * @ORM\Column(type="string", length=10, nullable=true)
-     * @Groups({"read","write","pt","mass","massCompute"})
+     * @Groups({"read","write","pt","mass","massCompute","threads","thread"})
      */
     private $countryCode;
 
@@ -195,7 +195,7 @@ class Address
      * @var float|null The latitude of the address.
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write","pt","mass","massCompute"})
+     * @Groups({"read","write","pt","mass","massCompute","threads","thread"})
      */
     private $latitude;
 
@@ -203,7 +203,7 @@ class Address
      * @var float|null The longitude of the address.
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write","pt","mass","massCompute"})
+     * @Groups({"read","write","pt","mass","massCompute","threads","thread"})
      */
     private $longitude;
 

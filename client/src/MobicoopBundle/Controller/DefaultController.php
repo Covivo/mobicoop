@@ -35,11 +35,11 @@ class DefaultController extends AbstractController
      */
     public function index()
     {
-        $baseUri = $_ENV['API_URI'];
         return $this->render(
             '@Mobicoop/default/index.html.twig',
             [
-                'baseUri' => $baseUri,
+                'baseUri' => $_ENV['API_URI'],
+                'geoCompleteUri' => $_ENV['GEOCOMPLETE_URI'],
                 'metaDescription' => 'Homepage of Mobicoop'
             ]
         );

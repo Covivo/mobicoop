@@ -1,51 +1,61 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}{% trans from 'ui' %}user.profile_update.title{% endtrans %}{% endblock %}
+{% block title %}
+  {% trans from 'ui' %}user.profile_update.title{% endtrans %}
+{% endblock %}
 {% block stylesheets %}
-    {{ encore_entry_link_tags('bundle_user/updateProfile') }}
+  {{ encore_entry_link_tags("#{assets_prefix ?? ''}user/updateProfile") }}
 {% endblock %}
-{% block body %}
+{% block main %}
 
-<section class="hero is-passur">
-	<div class="hero-body">
-    	<div class="container">
-      		<h1 class="title">
-				{% trans from 'ui' %}user.profile.title{% endtrans %}
-      		</h1>
-			  <p class="sub-title">
-			  Accédez à votre profil et modifier vos paramètres à partir de cette page
-			  </p>
-    	</div>
-  	</div>
-</section>
-<section class="navigation">
-<nav class="breadcrumb is-centered has-bullet-separator breadcrumbTop" aria-label="breadcrumbs">
-  <ul>
-    <li><a  href="#">{% trans from 'ui' %}user.profile.title{% endtrans %}</a></li>
-	<li><a class="updatePassword" href="{{ path('user_password_update') }}">{% trans from 'ui' %}user.profile.buttons.password{% endtrans %}</a></li>
-    <li><a  href="{{ path('user_proposals') }}">{% trans from 'ui' %}user.profile.buttons.ads{% endtrans %}</a></li>
-	{% if delete_profile is same as ('true') %}
-	<li><a href="{{ path('user_profile_delete')}}">delete</a></li>
-	{% endif %}
-  </ul>
-</nav>
-</section>
-<section class="section" id='update'>
-	<div class="container updateForm">
-	    {% if user %}
-    				<section>
-						<div class="container">
-							<Updateprofile geo-search-url="/geosearch?search=" given-name="{{user.givenName}}" family-name="{{user.familyName}}" telephone="{{user.telephone}}" email="{{user.email}}" gender="{{user.gender}}" birth-year="{{user.birthYear}}" street="{{(user.homeAddress) ? user.homeAddress.street : ''}}" street-address="{{(user.homeAddress) ? user.homeAddress.streetAddress : ''}}" postal-code="{{(user.homeAddress) ? user.homeAddress.postalCode : ''}}" sub-locality="{{(user.homeAddress) ? user.homeAddress.subLocality : ''}}" address-locality="{{(user.homeAddress) ? user.homeAddress.addressLocality : ''}}" local-admin="{{(user.homeAddress) ? user.homeAddress.localAdmin : ''}}" county="{{(user.homeAddress) ? user.homeAddress.county : ''}}" macro-county="{{(user.homeAddress) ? user.homeAddress.macroCounty : ''}}" region="{{(user.homeAddress) ? user.homeAddress.region : ''}}" macro-region="{{(user.homeAddress) ? user.homeAddress.macroRegion : ''}}" address-country="{{(user.homeAddress) ? user.homeAddress.addressCountry : ''}}" country-code="{{(user.homeAddress) ? user.homeAddress.countryCode : ''}}" latitude="{{(user.homeAddress) ? user.homeAddress.latitude : ''}}" longitude="{{(user.homeAddress) ? user.homeAddress.longitude : ''}}" sent-token="{{ csrf_token('profile-update') }}"></Updateprofile>
-						</div>
-					</section>		
-			{% else %}	
-   			<span class="tag is-danger">User not found.</span>
-   		{% endif %}
+  <section class="hero is-passur">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">
+          {% trans from 'ui' %}user.profile.title{% endtrans %}
+        </h1>
+        <p class="sub-title">
+          Accédez à votre profil et modifier vos paramètres à partir de cette page
+        </p>
+      </div>
     </div>
-</section>
-
+  </section>
+  <section class="navigation">
+    <nav aria-label="breadcrumbs" class="breadcrumb is-centered has-bullet-separator breadcrumbTop">
+      <ul>
+        <li>
+          <a href="#">{% trans from 'ui' %}user.profile.title{% endtrans %}</a>
+        </li>
+        <li>
+          <a class="updatePassword" href="{{ path('user_password_update') }}">{% trans from 'ui' %}user.profile.buttons.password{% endtrans %}</a>
+        </li>
+        <li>
+          <a href="{{ path('user_proposals') }}">{% trans from 'ui' %}user.profile.buttons.ads{% endtrans %}</a>
+        </li>
+        {% if delete_profile is same as ('true') %}
+          <li>
+            <a href="{{ path('user_profile_delete')}}">delete</a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  </section>
+  <section class="section" id='update'>
+    <div class="container updateForm">
+      {% if user %}
+        <section>
+          <div class="container">
+            <Updateprofile geo-search-url="/geosearch?search=" given-name="{{user.givenName}}" family-name="{{user.familyName}}" telephone="{{user.telephone}}" email="{{user.email}}" gender="{{user.gender}}" birth-year="{{user.birthYear}}" street="{{(user.homeAddress) ? user.homeAddress.street : ''}}" street-address="{{(user.homeAddress) ? user.homeAddress.streetAddress : ''}}" postal-code="{{(user.homeAddress) ? user.homeAddress.postalCode : ''}}" sub-locality="{{(user.homeAddress) ? user.homeAddress.subLocality : ''}}" address-locality="{{(user.homeAddress) ? user.homeAddress.addressLocality : ''}}" local-admin="{{(user.homeAddress) ? user.homeAddress.localAdmin : ''}}" county="{{(user.homeAddress) ? user.homeAddress.county : ''}}" macro-county="{{(user.homeAddress) ? user.homeAddress.macroCounty : ''}}" region="{{(user.homeAddress) ? user.homeAddress.region : ''}}" macro-region="{{(user.homeAddress) ? user.homeAddress.macroRegion : ''}}" address-country="{{(user.homeAddress) ? user.homeAddress.addressCountry : ''}}" country-code="{{(user.homeAddress) ? user.homeAddress.countryCode : ''}}" latitude="{{(user.homeAddress) ? user.homeAddress.latitude : ''}}" longitude="{{(user.homeAddress) ? user.homeAddress.longitude : ''}}" sent-token="{{ csrf_token('profile-update') }}"></Updateprofile>
+          </div>
+        </section>
+      {% else %}
+        <span class="tag is-danger">User not found.</span>
+      {% endif %}
+    </div>
+  </section>
 
 {% endblock %}
+
 {% block javascripts %}
-    {{ encore_entry_script_tags('bundle_user/updateProfile') }}
+  {{ encore_entry_script_tags("#{assets_prefix ?? ''}user/updateProfile") }}
 {% endblock %}

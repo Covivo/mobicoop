@@ -419,27 +419,38 @@ class UserController extends AbstractController
 
         $threadsDirectMessagesForView = [];
         $threadsCarpoolingMessagesForView = [];
+        $idMessageDefault = null;
+        $idRecipientDefault = null;
 
         // Building threads array
         $threads = $userManager->getThreads($user);
-        $selected = true;
         $idMessageDefaultSelected = false;
+        
         foreach ($threads["threads"] as $thread) {
-            $arrayThread["idFirstMessage"] = $thread["id"];
-            $arrayThread["contactId"] = $thread["recipients"][0]["user"]["id"];
-            $arrayThread["contactFirstName"] = $thread["recipients"][0]["user"]["givenName"];
-            $arrayThread["contactLastName"] = $thread["recipients"][0]["user"]["familyName"];
+            $arrayThread["idThreadMessage"] = $thread["id"];
+            if (!isset($thread["user"]["id"])) {
+                // the user is the sender
+                $arrayThread["contactId"] =  $thread["recipients"][0]["user"]["id"];
+                $arrayThread["contactFirstName"] = $thread["recipients"][0]["user"]["givenName"];
+                $arrayThread["contactLastName"] = $thread["recipients"][0]["user"]["familyName"];
+            } else {
+                // the user is the recipient
+                $arrayThread["contactId"] =  $thread["user"]["id"];
+                $arrayThread["contactFirstName"] = $thread["user"]["givenName"];
+                $arrayThread["contactLastName"] = $thread["user"]["familyName"];
+            }
             $arrayThread["text"] = $thread["text"];
             $arrayThread["askHistory"] = $thread["askHistory"];
 
-            if (!$idMessageDefaultSelected) {
+            // The default message is the first direct message or the last carpooling message
+            if (!$idMessageDefaultSelected || !is_null($thread["askHistory"])) {
                 $idMessageDefault = $thread["id"];
-                $idRecipientDefault = $thread["recipients"][0]["user"]["id"];
-                $arrayThread["selected"] = $selected;
+                $idRecipientDefault = $arrayThread["contactId"];
+                $firstNameRecipientDefault = $arrayThread["contactFirstName"];
+                $lastNameRecipientDefault = $arrayThread["contactLastName"];
+                $arrayThread["selected"] = true;
                 $idMessageDefaultSelected = true;
             }
-
-            $selected &= false;
 
             // Push on the right array
             (is_null($thread["askHistory"])) ? $threadsDirectMessagesForView[] = $arrayThread : $threadsCarpoolingMessagesForView[] = $arrayThread;
@@ -449,57 +460,71 @@ class UserController extends AbstractController
             'threadsCarpoolingMessagesForView' => $threadsCarpoolingMessagesForView,
             'userId' => $user->getId(),
             'idMessageDefault' => $idMessageDefault,
-            'idRecipientDefault'=>$idRecipientDefault
+            'idRecipientDefault'=>$idRecipientDefault,
+            'firstNameRecipientDefault'=>$firstNameRecipientDefault,
+            'lastNameRecipientDefault'=>$lastNameRecipientDefault
         ]);
     }
 
     /**
      * Get a complete thread from a first message
+     * Ajax Request
      */
-    public function getCompleteThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager)
+    public function getThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request)
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
 
-        return new Response(json_encode($internalMessageManager->getCompleteThread($idFirstMessage, DataProvider::RETURN_JSON)));
+        $thread = $internalMessageManager->getThread($idFirstMessage, DataProvider::RETURN_JSON);
+
+        // Format the date with a human readable version
+        // First message
+        $createdDateFirstMessage = new DateTime($thread["createdDate"]);
+        $thread["createdDateReadable"] = $createdDateFirstMessage->format("D d F Y");
+        $thread["createdTimeReadable"] = $createdDateFirstMessage->format("H:i:s");
+
+        // Children messages
+        foreach ($thread["messages"] as $key => $message) {
+            $createdDate = new DateTime($message["createdDate"]);
+            $thread["messages"][$key]["createdDateReadable"] = $createdDate->format("D d F Y");
+            $thread["messages"][$key]["createdTimeReadable"] = $createdDate->format("H:i:s");
+        }
+        return new Response(json_encode($thread));
     }
 
-
+    /**
+     * Send an internal message to another user
+     * Ajax Request
+     */
     public function sendInternalMessage(UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request)
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
 
-        $text = "";
         if ($request->isMethod('POST')) {
-            $text = $request->request->get('text');
-            $idLastMessage = $request->request->get('idLastMessage');
+            $idThreadMessage = $request->request->get('idThreadMessage');
             $idRecipient = $request->request->get('idRecipient');
 
-            $messageToSend = new Message();
-            $messageToSend->setUser($user);
+            $messageToSend = $internalMessageManager->createInternalMessage(
+                $user,
+                $userManager->getUser($idRecipient),
+                "",
+                $request->request->get('text'),
+                $internalMessageManager->getMessage($idThreadMessage)
+            );
 
-            $recipient = new Recipient();
-            $recipient->setUser($userManager->getUser($idRecipient));
-
-            $recipient->setStatus(Recipient::STATUS_PENDING);
-            $recipient->setSentDate(new \DateTime());
-            $messageToSend->addRecipient($recipient);
-
-            $messageToSend->setText($text);
-
-            $messageToSend->setMessage($internalMessageManager->getMessage($idLastMessage));
-
-//            return new Response(json_encode($idRecipient));
-
-            $response = $internalMessageManager->sendInternalMessage($messageToSend);
-
-            return new Response(json_encode($response));
+            return new Response($internalMessageManager->sendInternalMessage($messageToSend, DataProvider::RETURN_JSON));
         }
-
         return new Response(json_encode("Not a post"));
     }
 
+    /**
+     * Get the details of an AskHistory
+     * Ajax Request
+     */
+    public function getAskHistoryDetails()
+    {
+    }
 
     // ADMIN
 
