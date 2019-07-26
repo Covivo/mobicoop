@@ -142,8 +142,11 @@ class NotificationManager
                     break;
             }
         }
+        else
+				 $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
+        
         $email->setObject($this->templating->render(
-            $notification->getTemplateTitle() ? $this->emailTitleTemplatePath . $notification->getTemplateTitle() : $this->emailTitleTemplatePath . $notification->getAction()->getName(),
+            $notification->getTemplateTitle() ? $this->emailTitleTemplatePath . $notification->getTemplateTitle() : $this->emailTitleTemplatePath . $notification->getAction()->getName().'.html.twig',
             [
                 'context' => $titleContext
             ]

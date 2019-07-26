@@ -210,6 +210,26 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      */
     private $homeAddress;
 
+    /**
+     * Date of password mofification.
+     *
+     * @var DateTime|null $pupdtime
+     *   Date of password mofification.
+     *
+     * @Groups({"post","put", "password_token"})
+     */
+    private $pupdtime;
+
+
+    /**
+     * Token of password mofification.
+     *
+     * @var string|null $token
+     *   Token of password mofification.
+     *
+     *  @Groups({"post","put","password_token"})
+     */
+    private $token;
 
 
     public function __construct($id=null, $status=null)
@@ -606,6 +626,57 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         }
         return null;
     }
+
+    /**
+     * @param Address[]|null $homeAddress
+     */
+    public function setHomeAddress(?Address $homeAddress)
+    {
+        $this->homeAddress = $homeAddress;
+    }
+
+    /**
+     * Return the date of password mofification.
+     *
+     * @return DateTime
+     */
+    public function getPupdtime()
+    {
+        return $this->pupdtime;
+    }
+
+    /**
+     * Set the date of password mofification.
+     *
+     * @param DateTime|null $pupdtime
+     */
+    public function setPupdtime(?DateTime $pupdtime)
+    {
+        $this->pupdtime = $pupdtime;
+        return $this;
+    }
+
+    /**
+     * Return the Token of password mofification.
+     *
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->token;
+    }
+
+    /**
+     * Set the Token of password mofification.
+     *
+     * @param string|null $token
+     */
+    public function setToken(?string $token)
+    {
+        $this->token = $token;
+        return $this;
+    }
+
     
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()

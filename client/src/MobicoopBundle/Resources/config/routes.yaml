@@ -67,12 +67,28 @@ user_password_update:
         en: /user/password/update
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordUpdate
 
+# forgot password
+user_password_forgot:
+    path:
+        fr: /utilisateur/mot-de-passe/oubli
+        en: /user/password/forgot
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordForgot
+
+user_password_reset:
+    path:
+        fr: /utilisateur/mot-de-passe/reset/{token}
+        en: /user/password/reset/{token}
+    requirements:
+        token: .*
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordReset
+
 # profile delete
 user_profile_delete:
     path:
         fr: /utilisateur/profil/supprimer
         en: /user/profile/delete
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileDelete
+
 
 # logout
 logout:
