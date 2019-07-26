@@ -52,7 +52,7 @@ final class AddressLoggedSearchCollectionDataProvider implements CollectionDataP
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        if ($this->request->get("q") !== null) { 
+        if ($this->request->get("q") !== null) {
             return $this->geoSearcher->geoCode($this->request->get("q"), $this->request->get("user"));
         }
         return [];

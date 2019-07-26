@@ -64,7 +64,7 @@ class GeoSearcher
      */
     public function geoCode(string $input, int $userId=null)
     {
-        // the result array will contain different addresses : 
+        // the result array will contain different addresses :
         // - named addresses (if the user is logged)
         // - relaypoints (with or without private relaypoints depending on if th user is logged)
         // - sig addresses
@@ -73,11 +73,11 @@ class GeoSearcher
         
         // 1 - named addresses
         if ($userId) {
-            $result[] = $this->addressRepository->findByName($input,$userId);
+            $result[] = $this->addressRepository->findByName($input, $userId);
         }
 
         // 2 - relay points
-        $relayPoints = $this->relayPointRepository->findByNameAndStatus($input,RelayPoint::STATUS_ACTIVE);
+        $relayPoints = $this->relayPointRepository->findByNameAndStatus($input, RelayPoint::STATUS_ACTIVE);
         // exclude the private relay points
         foreach ($relayPoints as $relayPoint) {
             $exclude = false;
