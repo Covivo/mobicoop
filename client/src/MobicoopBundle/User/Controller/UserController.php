@@ -150,15 +150,15 @@ class UserController extends AbstractController
             //     }
             //     return $this->json(['error' => $error, 'success' => $success]);
             // }
-				 // create user in database
-				 $userManager->createUser($user);
-				}
+            // create user in database
+            $userManager->createUser($user);
+        }
  
-		 if (!$form->isSubmitted()) {
-			return $this->render('@Mobicoop/user/signup.html.twig', [
-				'error' => $error
-			]);
-		 }
+        if (!$form->isSubmitted()) {
+            return $this->render('@Mobicoop/user/signup.html.twig', [
+                'error' => $error
+            ]);
+        }
         return $this->json(['error' => $error, 'success' => $success]);
     }
 
@@ -297,7 +297,6 @@ class UserController extends AbstractController
                 }
             }
             if (empty($user)) {
-
                 return $this->redirectToRoute('user_password_forgot');
             } else {
                 $data= $userManager->updateUserToken($user);
