@@ -2,7 +2,7 @@
 
 {% block title %}Résultats{% endblock %}
 {% block stylesheets %}
-    {{ encore_entry_link_tags('bundle_search/simpleResults') }}
+    {{ encore_entry_link_tags("#{assets_prefix ?? ''}search/simpleResults") }}
 {% endblock %}
 {% block body %}
     <section class="hero is-secondary">
@@ -313,5 +313,5 @@
     </section>
 {% endblock %}
 {% block javascripts %}
-    {{ encore_entry_script_tags('bundle_search/simpleResults') }}
+    {{ encore_entry_script_tags("#{assets_prefix ?? ''}search/simpleResults") }}
 {% endblock %}

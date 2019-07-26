@@ -2,28 +2,28 @@
 
 {% block title %}{% endblock %}
 {% block stylesheets %}
-    {{ encore_entry_link_tags('bundle_autocomplete') }}
+  {{ encore_entry_link_tags("#{assets_prefix ?? ''}autocomplete") }}
 {% endblock %}
 
 {% block body %}
-    <span>nancy</span>
-    <autocomplete></autocomplete>
+  <span>nancy</span>
+  <autocomplete></autocomplete>
 
-    Resultats pour Nancy :
+  Resultats pour Nancy :
 
-    {% for GeoSearch in GeoSearch.member %}
-        <br>
-        {{ GeoSearch.AddressLocality }}
-        {{ GeoSearch.streetAddress }}
-        {{ GeoSearch.postalCode }}
-        {{ GeoSearch.AddressCountry }}
-        {{ GeoSearch.latitude }}
-        {{ GeoSearch.longitude }}
-    {% endfor %}
+  {% for GeoSearch in GeoSearch.member %}
+    <br>
+    {{ GeoSearch.AddressLocality }}
+    {{ GeoSearch.streetAddress }}
+    {{ GeoSearch.postalCode }}
+    {{ GeoSearch.AddressCountry }}
+    {{ GeoSearch.latitude }}
+    {{ GeoSearch.longitude }}
+  {% endfor %}
 
 
 {% endblock %}
 
 {% block javascripts %}
-    {{ encore_entry_script_tags('bundle_autocomplete') }}
+  {{ encore_entry_script_tags("#{assets_prefix ?? ''}autocomplete") }}
 {% endblock %}
