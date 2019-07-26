@@ -5,8 +5,8 @@
 {% block stylesheets %}
   {{ encore_entry_link_tags("#{assets_prefix ?? ''}article/article") }}
 {% endblock %}
-{% block body %}
-  <div class="container">
+{% block main %}
+    <div class="container">
     {% if article %}
       <h1 class="title is-size-1">{{ article.title }}</h1>
       {% for section in article.sections %}

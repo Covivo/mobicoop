@@ -1,12 +1,9 @@
-'use strict';
-
-// any CSS you require will output into a single css file (app.css in this case)
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 import VueI18n from 'vue-i18n'
 import 'vuetify/dist/vuetify.min.css'; 
 import md from "material-design-icons-iconfont"; 
-import '../../../css/page/community/communities.scss';
+import '../../../css/page/proposal/proposal.scss';
 
 // Vue components
 import Vueheader from '../../components/Vueheader';
