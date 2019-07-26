@@ -14,6 +14,9 @@ import Vuefooter from '../../components/Vuefooter';
 // import traductions
 import messages from '../../../../translations/translations.json';
 
+// import color theme
+import colorTheme from '../../../../themes/mobicoop.json';
+console.error(colorTheme);
 Vue.use(VueI18n)
 Vue.use(Vuetify)
 Vue.use(md)
@@ -28,14 +31,7 @@ new Vue({
   i18n,
   el: '#app',
   vuetify: new Vuetify({
-    theme: {
-      themes: {
-        light: {
-          primary: '#81F19A',
-          secondary: '#023D7F'
-        },
-      },
-    },
+    theme: colorTheme
   }),
   components: {
     Messages,
