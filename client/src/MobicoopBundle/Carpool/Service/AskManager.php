@@ -25,7 +25,6 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
-use Psr\Log\LoggerInterface;
 
 /**
  * Ad management service.
@@ -33,17 +32,15 @@ use Psr\Log\LoggerInterface;
 class AskManager
 {
     private $dataProvider;
-    private $logger;
     
     /**
      * Constructor.
      *
      */
-    public function __construct(DataProvider $dataProvider, LoggerInterface $loggerInterface)
+    public function __construct(DataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Ask::class);
-        $this->logger = $loggerInterface;
     }
 
     /**
@@ -58,10 +55,8 @@ class AskManager
         $response = $this->dataProvider->getItem($id);
         if ($response->getCode() == 200) {
             $ask = $response->getValue();
-            $this->logger->info('Ask | Is found');
             return $ask;
         }
-        $this->logger->error('Ask | is Not found');
         return null;
     }
     
@@ -76,9 +71,26 @@ class AskManager
     {
         $response = $this->dataProvider->put($ask);
         if ($response->getCode() == 200) {
-            $this->logger->info('Ask Update | Start');
             return $response->getValue();
         }
         return null;
     }
+
+    /**
+     * Get all the AskHistories of an Ask
+     *
+     * @param int $idAsk The Ask id
+     *
+     * @return array|null The AskHistories found or null if not found.
+     */
+    public function getAskHistories(int $idAsk)
+    {
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSubCollection($idAsk, 'askhistory','ask_histories');
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
+
 }

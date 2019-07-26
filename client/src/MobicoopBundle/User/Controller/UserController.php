@@ -361,7 +361,7 @@ class UserController extends AbstractController
      * Get a complete thread from a first message
      * Ajax Request
      */
-    public function getThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request)
+    public function getThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager, AskManager $askManager)
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
@@ -380,6 +380,17 @@ class UserController extends AbstractController
             $thread["messages"][$key]["createdDateReadable"] = $createdDate->format("D d F Y");
             $thread["messages"][$key]["createdTimeReadable"] = $createdDate->format("H:i:s");
         }
+
+        if(!is_null($thread["askHistory"])){
+            // Get the last AskHistory
+            // You do that because you can have a AskHistory without a message
+            $askHistories = $askManager->getAskHistories($thread["askHistory"]["ask"]["id"]);
+            $thread["lastAskHistory"] = end($askHistories);
+        }
+        else{
+            $thread["lastAskHistory"] = null;
+        }
+
         return new Response(json_encode($thread));
     }
 

@@ -214,7 +214,7 @@
                     {{ $t("ui.pages.messages.label.notLinkedToACarpool") }}
                   </v-card-text>
                   <v-btn
-                    v-if="currentAskHistory && currentAskHistory.ask.status==1"
+                    v-if="currentAskHistory && currentAskHistory.ask.status==1 && askUser == userid"
                     rounded
                     color="secondary"
                     class="mb-2"
@@ -222,8 +222,16 @@
                   >
                     {{ $t("ui.button.askCarpool") }}
                   </v-btn>
+                  <v-card
+                    v-else
+                    color="success"
+                  >
+                    <v-card-text class="white--text">
+                      Proposition de covoiturage envoyée
+                    </v-card-text>
+                  </v-card>
                   <div
-                    v-if="currentAskHistory && currentAskHistory.ask.status==2"
+                    v-if="currentAskHistory && currentAskHistory.ask.status==2 && askUser != userid"
                     class="my-2"
                   >
                     <v-btn
@@ -352,7 +360,8 @@ export default {
       textSpinnerSendMessage:this.$t('ui.pages.messages.spinner.sendMessage'),
       textSpinnerAskCarpool:this.$t('ui.pages.messages.spinner.askCarpool'),
       textSpinner:"",
-      currentAskHistory:null
+      currentAskHistory:null,
+      askUser:0
     }
   },
   watch: {
@@ -382,8 +391,9 @@ export default {
           let messagesThread = (res.data.messages);
           this.items.length = 0; // Reset items (the source of messages column)
 
-          // update askHistory
-          this.currentAskHistory = res.data.askHistory;
+          // update askHistory et askUser
+          this.currentAskHistory = res.data.lastAskHistory;
+          this.askUser = res.data.user.id;
 
           // The date of the first message
           let divider = {
