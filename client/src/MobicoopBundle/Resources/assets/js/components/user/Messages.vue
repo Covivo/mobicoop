@@ -11,7 +11,7 @@
             xs4
             class="pt-5 pb-4 mr-1 pl-2"
           >
-            Messages
+            {{ $t("ui.pages.messages.label.messages") }}
           </v-flex>
           <v-flex
             xs5
@@ -25,7 +25,7 @@
             text-xs-left
             class="pt-5 pb-4 pl-2"
           >
-            Annonces(s)
+            {{ $t("ui.pages.messages.label.context") }}
           </v-flex>
         </v-layout>
         <v-layout>
@@ -43,10 +43,10 @@
                 :key="0"
                 ripple
               >
-                Demandes en cours
+                {{ $t("ui.pages.messages.label.ongoingasks") }}
               </v-tab>
               <v-tab-item v-if="this.threadsCM.length==0">
-                Aucun message de covoiturage
+                {{ $t("ui.pages.messages.label.nocarpoolmessages") }}
               </v-tab-item>
               <v-tab-item
                 v-else
@@ -71,11 +71,11 @@
                 :key="1"
                 ripple
               >
-                Boîte de dialogue
+                {{ $t("ui.pages.messages.label.directmessages") }}
               </v-tab>
 
               <v-tab-item v-if="this.threadsDM.length==0">
-                Aucun message direct
+                {{ $t("ui.pages.messages.label.nodirectmessages") }}
               </v-tab-item>
               <v-tab-item v-else>
                 <v-card
@@ -163,7 +163,7 @@
                     v-model="textToSend"
                     name="typedMessage"
                     filled
-                    label="Saisissez un message"
+                    :label="$t('ui.form.enterMessage')"
                     auto-grow
                     rows="2"
                     background-color="#FFFFFF"
@@ -219,7 +219,7 @@
                     color="secondary"
                     class="mb-2"
                   >
-                    Demander un covoiturage
+                    {{ $t("ui.button.askCarpool") }}
                   </v-btn>
                   <div
                     v-if="currentAskHistory && currentAskHistory.ask.status==2"

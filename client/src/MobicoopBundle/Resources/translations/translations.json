@@ -5,10 +5,12 @@
                     "previous": "Précédent",
                     "next": "Suivant",
                     "register": "Je m'inscris",
-                    "save": "Enregistrer"
+                    "save": "Enregistrer",
+                    "askCarpool":"Demander un covoiturage"
                 }, 
                 "form": {
-                    "errors": "Merci de corriger les erreurs suivantes "
+                    "errors": "Merci de corriger les erreurs suivantes ",
+                    "enterMessage": "Saisissez un message"
                 },
                 "pages": {
                     "signup": {
@@ -17,6 +19,16 @@
                             "errors": {
                                 "required": "La validation de la charte est requise"
                             }
+                        }
+                    },
+                    "messages": {
+                        "label": {
+                            "messages":"Messages",
+                            "context":"Annonces(s)",
+                            "ongoingasks":"Demandes en cours",
+                            "directmessages":"Boîte de dialogue",
+                            "nocarpoolmessages":"Aucun message de covoiturage",
+                            "nodirectmessages":"Aucun message direct"
                         }
                     }
                 }
