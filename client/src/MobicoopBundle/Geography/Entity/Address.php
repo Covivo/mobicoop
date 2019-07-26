@@ -173,6 +173,12 @@ class Address implements ResourceInterface
     private $user;
 
     /**
+     * @var boolean The address is a home address.
+     * @Groups({"post","put"})
+     */
+    private $home;
+
+    /**
      * @var string|null Label for display
      */
     private $displayLabel;
@@ -383,6 +389,16 @@ class Address implements ResourceInterface
     public function setUser(?User $user)
     {
         $this->user = $user;
+    }
+
+    public function isHome(): ?bool
+    {
+        return $this->home;
+    }
+    
+    public function setHome(bool $isHome)
+    {
+        $this->home = $isHome;
     }
 
     public function getDisplayLabel(): ?string

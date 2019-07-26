@@ -262,6 +262,14 @@ class Address
     private $user;
 
     /**
+     * @var boolean The address is a home address.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $home;
+
+    /**
      * @var string|null Label for display
      *
      * @Groups({"read","pt"})
@@ -482,6 +490,18 @@ class Address
     public function setUser(?User $user)
     {
         $this->user = $user;
+    }
+
+    public function isHome(): ?bool
+    {
+        return $this->home;
+    }
+    
+    public function setHome(bool $isHome): self
+    {
+        $this->home = $isHome;
+        
+        return $this;
     }
 
     public function getDisplayLabel(): ?string

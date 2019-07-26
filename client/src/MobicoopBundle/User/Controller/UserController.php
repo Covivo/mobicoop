@@ -53,6 +53,7 @@ use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Recipient;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Controller class for user related actions.
@@ -86,7 +87,7 @@ class UserController extends AbstractController
     /**
      * User registration.
      */
-    public function userSignUp(UserManager $userManager, Request $request)
+    public function userSignUp(UserManager $userManager, Request $request, TranslatorInterface $translator)
     {
         $this->denyAccessUnlessGranted('register');
 
@@ -115,12 +116,13 @@ class UserController extends AbstractController
             $address->setLongitude($data['longitude']);
             $address->setMacroCounty($data['macroCounty']);
             $address->setMacroRegion($data['macroRegion']);
-            $address->setName($data['name']);
+            $address->setName($translator->trans('homeAddress',[],'signup'));
             $address->setPostalCode($data['postalCode']);
             $address->setRegion($data['region']);
             $address->setStreet($data['street']);
             $address->setStreetAddress($data['streetAddress']);
             $address->setSubLocality($data['subLocality']);
+            $address->setHome(true);
 
             // pass front info into user form
             $user->setEmail($data['email']);
