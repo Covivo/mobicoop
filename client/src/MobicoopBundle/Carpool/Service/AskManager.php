@@ -86,11 +86,10 @@ class AskManager
     public function getAskHistories(int $idAsk)
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
-        $response = $this->dataProvider->getSubCollection($idAsk, 'askhistory','ask_histories');
+        $response = $this->dataProvider->getSubCollection($idAsk, 'askhistory', 'ask_histories');
         if ($response->getCode() == 200) {
             return $response->getValue();
         }
         return null;
     }
-
 }
