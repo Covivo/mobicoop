@@ -37,18 +37,19 @@ user_messages:
         en: /user/messages
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessages
 
+# send an internal message
 send_user_message:
     path:
         fr: /utilisateur/messages/envoyer
         en: /user/messages/send
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::sendInternalMessage
 
-# messages : complete thread
-user_message_complete_thread:
+# get a message thread
+user_message_thread:
     path:
         fr: /utilisateur/messages/{idFirstMessage}
         en: /user/messages/{idFirstMessage}
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getCompleteThread
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getThread
     requirements:
         idFirstMessage: '\d+'
 

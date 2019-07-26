@@ -31,7 +31,7 @@
               :class="thread.selected ? 'selected' : ''"
               max-width="400"
               dark
-              @click="updateMessages(thread.idFirstMessage,index,thread.contactId)"
+              @click="updateMessages(thread.idThreadMessage,thread.contactId)"
             >
               <v-card-title>
                 <i class="material-icons">
@@ -57,7 +57,7 @@
               :class="threadCM.selected ? 'selected' : ''"
               max-width="400"
               dark
-              @click="updateMessages(threadCM.idFirstMessage,index,threadCM.contactId)"
+              @click="updateMessages(threadCM.idThreadMessage,threadCM.contactId)"
             >
               <v-card-title>
                 <i class="material-icons">
@@ -132,7 +132,7 @@
                 <v-btn
                   id="validSendMessage"
                   round
-                  :idlastmessage="idLastMessage"
+                  :idthreadmessage="idThreadMessage"
                   @click="sendInternalMessage()"
                 >
                   Envoyer
@@ -205,7 +205,7 @@ export default {
       threadsCM: this.threadscarpoolingmessagesforview,
       spinner:false,
       textToSend:"",
-      idLastMessage:-1,
+      idThreadMessage:this.idmessagedefault,
       idRecipient:null,
       textSpinnerLoading:"Chargement des messages",
       textSpinnerSendMessage:"Envoi...",
@@ -217,45 +217,43 @@ export default {
     this.updateMessages();
   },
   methods: {
-    updateMessages(idMessage=this.idmessagedefault,idThreadSelected=0,idrecipient=this.idrecipientdefault){
-      this.threadsDM.forEach((thread, index) =>{
-        this.threadsDM[index].selected = (index === idThreadSelected) ? true : false;
+    updateMessages(idMessage=this.idmessagedefault,idrecipient=this.idrecipientdefault){
+      this.threadsDM.forEach((thread,index) =>{
+        this.threadsDM[index].selected = (thread.idThreadMessage === parseInt(idMessage)) ? true : false;
       });
       this.threadsCM.forEach((thread, index) =>{
-        this.threadsCM[index].selected = (index === idThreadSelected) ? true : false;
+        this.threadsCM[index].selected = (thread.idThreadMessage === parseInt(idMessage)) ? true : false;
       });
       this.textSpinner = this.textSpinnerLoading;
       this.spinner = true;
+      this.idThreadMessage = idMessage;
       axios
         .get("/utilisateur/messages/"+idMessage)
         .then(res => {
-          let messagesThread = (res.data);
+          
+          let messagesThread = (res.data.messages);
           this.items.length = 0;
+
+          let threadMessage = {
+            'id': res.data.id,
+            'user': res.data.user,
+            'text': res.data.text
+          };
+
+          this.addMessageToItems(threadMessage);
+
+          // Id of the current recipient
+          this.idRecipient = idrecipient;
+
           for (let message of messagesThread) {
-            let tabItem = new Array();
-
-            // All messages of the current thread
-            tabItem["idMessage"] = message.id;
-            tabItem["userFirstName"] = message.user.givenName;
-            tabItem["userLastName"] = message.user.familyName.substr(0,1).toUpperCase()+".";
-            tabItem["icon"] = "account_circle";
-            tabItem["text"] = message.text;
-            (message.user.id==this.userid) ? tabItem["origin"] = "own" : tabItem["origin"] = "contact";
-            this.items.push(tabItem);
-
-            // Id of the last message to be send for a message post
-            (this.idLastMessage<message.id) ? this.idLastMessage=message.id : "";
-
-            // Id of the current recipient
-            this.idRecipient = idrecipient;
-
-            this.spinner = false;
+            this.addMessageToItems(message);
           }
+          this.spinner = false;
         })
     },
     sendInternalMessage(){
       let messageToSend = new FormData();
-      messageToSend.append("idLastMessage",this.idLastMessage);
+      messageToSend.append("idThreadMessage",this.idThreadMessage);
       messageToSend.append("text",this.textToSend);
       messageToSend.append("idRecipient",this.idRecipient);
       this.textSpinner = this.textSpinnerSendMessage;
@@ -264,9 +262,20 @@ export default {
         .post("/utilisateur/messages/envoyer",messageToSend)
         .then(res => {
           console.error(res.data);
+          this.textToSend = "";
           this.spinner = false;
-          this.updateMessages();
+          this.updateMessages(res.data.message.id);
         });
+    },
+    addMessageToItems(message){
+      let tabItem = new Array();
+      tabItem["idMessage"] = message.id;
+      tabItem["userFirstName"] = message.user.givenName;
+      tabItem["userLastName"] = message.user.familyName.substr(0,1).toUpperCase()+".";
+      tabItem["icon"] = "account_circle";
+      tabItem["text"] = message.text;
+      (message.user.id==this.userid) ? tabItem["origin"] = "own" : tabItem["origin"] = "contact";
+      this.items.push(tabItem);
     }
   }
 }

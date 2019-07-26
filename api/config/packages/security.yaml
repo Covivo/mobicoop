@@ -66,6 +66,12 @@ security:
             stateless: true
             anonymous: true
 
+        # firewall for geosearch
+        geosearch:
+            pattern:  ^/addresses/search
+            stateless: true
+            anonymous: true
+
         # firewall for dev (profiler)
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -86,4 +92,5 @@ security:
         - { path: ^/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/docs.json, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/rd/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/addresses/search, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }

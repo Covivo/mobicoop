@@ -38,8 +38,8 @@ use App\User\Entity\User;
  * @ORM\Entity()
  * @ApiResource(
  *      attributes={
- *          "fetchEager": false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="false"},
+ *          "force_eager"=false,
+ *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={"get","post"},
@@ -75,7 +75,8 @@ class Recipient
      *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="recipients")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write","threads","completeThread"})
+     * @Groups({"read","write","threads","thread"})
+     * @MaxDepth(1)
      */
     private $user;
 
@@ -93,7 +94,7 @@ class Recipient
      * @var \DateTimeInterface Sent date of the message.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read","write","threads","completeThread"})
+     * @Groups({"read","write","threads","thread"})
      */
     private $sentDate;
 
@@ -101,7 +102,7 @@ class Recipient
      * @var \DateTimeInterface Read date of the message.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read","write","threads","completeThread"})
+     * @Groups({"read","write","threads","thread"})
      */
     private $readDate;
 
@@ -109,7 +110,7 @@ class Recipient
      * @var ArrayCollection|null The notifications sent for the recipient.
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="recipient", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","write","completeThread"})
+     * @Groups({"read","write","thread"})
      * @MaxDepth(1)
      */
     private $notifieds;
