@@ -7,7 +7,7 @@
   {{ encore_entry_link_tags("#{assets_prefix ?? ''}user/messages") }}
 {% endblock %}
 
-{% block body %}
+{% block main %}
 
 <section class="hero is-primary">
 	<div class="hero-body">
@@ -36,18 +36,6 @@
     	{% else %}
       		<span class="tag is-danger">No messages yet.</span>
       	{% endif %}
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      {% if threadsDirectMessagesForView or threadsCarpoolingMessagesForView %}
-        <div id="messages">
-          <Messages :threadsdirectmessagesforview="{{ threadsDirectMessagesForView|json_encode }}" :threadscarpoolingmessagesforview="{{ threadsCarpoolingMessagesForView|json_encode }}" userid="{{ userId }}" idmessagedefault="{{ idMessageDefault }}" idrecipientdefault="{{ idRecipientDefault }}"></Messages>
-        </div>
-      {% else %}
-        <span class="tag is-danger">User not found.</span>
-      {% endif %}
     </div>
   </section>
 {% endblock %}
