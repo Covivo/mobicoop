@@ -39,7 +39,7 @@ use DateTime;
 /**
  * A user.
  */
-class User implements ResourceInterface, UserInterface, EquatableInterface
+class User implements ResourceInterface, UserInterface, EquatableInterface, \JsonSerializable
 {
     const MAX_DEVIATION_TIME = 600;
     const MAX_DEVIATION_DISTANCE = 10000;
@@ -630,7 +630,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface
     /**
      * @param Address[]|null $homeAddress
      */
-    public function setHomeAddress(?array $homeAddress)
+    public function setHomeAddress(?Address $homeAddress)
     {
         $this->homeAddress = $homeAddress;
     }
@@ -675,5 +675,21 @@ class User implements ResourceInterface, UserInterface, EquatableInterface
     {
         $this->token = $token;
         return $this;
+    }
+
+    
+    // If you want more info from user you just have to add it to the jsonSerialize function
+    public function jsonSerialize()
+    {
+        return
+        [
+            'id'            => $this->getId(),
+            'givenName'     => $this->getGivenName(),
+            'familyName'    => $this->getFamilyName(),
+            'gender'        => $this->getGender(),
+            'status'        => $this->getStatus(),
+            'email'         => $this->getEmail(),
+            'telephone'     => $this->getTelephone(),
+        ];
     }
 }

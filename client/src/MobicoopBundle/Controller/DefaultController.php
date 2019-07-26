@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
+use App\User\Service\UserManager;
 
 class DefaultController extends AbstractController
 {
