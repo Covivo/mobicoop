@@ -293,27 +293,17 @@ class UserController extends AbstractController
                 if (!empty($userRequest->getTelephone())) {
                     $user = $userManager->findByPhone($userRequest->getTelephone());
                 } else {
-                    // set flash messages
-                    $session->getFlashBag()->add('error', 'Email et téléphone non renseignés');
-
                     return $this->redirectToRoute('user_password_forgot');
                 }
             }
             if (empty($user)) {
-                // set flash messages
-                $session->getFlashBag()->add('error', 'Email et téléphone érronés');
 
                 return $this->redirectToRoute('user_password_forgot');
             } else {
                 $data= $userManager->updateUserToken($user);
                 if (!empty($data)) {
-                    // set flash messages
-                    $session->getFlashBag()->add('success', 'Un email de confirmation vous a été envoyé!');
                     return $this->redirectToRoute('user_password_forgot');
                 } else {
-                    // set flash messages
-                    $session->getFlashBag()->add('error', 'Probleme sur le site, veuillez reessayer ou contacter l\'administrateur!');
-
                     return $this->redirectToRoute('user_password_forgot');
                 }
             }
@@ -338,9 +328,6 @@ class UserController extends AbstractController
         $error = false;
 
         if (empty($user) || (time() - (int)$user->getPupdtime()->getTimestamp()) > 86400) {
-            // set flash messages
-            $session->getFlashBag()->add('error', 'Votre lien a expiré!!!');
-
             return $this->redirectToRoute('user_password_forgot');
         } else {
             $form = $this->createFormBuilder($user)
@@ -362,13 +349,9 @@ class UserController extends AbstractController
                     $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                     $this->get('security.token_storage')->setToken($token);
                     $this->get('session')->set('_security_main', serialize($token));
-                    // set flash messages
-                    $session->getFlashBag()->add('success', 'Votre mot de passé a été modifié avec success');
                     $userManager->flushUserToken($user);
                     return $this->redirectToRoute('user_profile_update');
                 } else {
-                    // set flash messages
-                    $session->getFlashBag()->add('error', 'Probleme sur le site, veuillez reessayer ou contacter l\'administrateur!');
                     return $this->redirectToRoute('user_password_forgot');
                 }
             } else {
