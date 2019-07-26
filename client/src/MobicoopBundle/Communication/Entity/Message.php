@@ -76,7 +76,7 @@ class Message implements ResourceInterface
     /**
      * @var AskHistory|null The ask history item if the message is related to an ask.
      *
-     * @Groups({"put","post","get"})
+     * @Groups({"put","post","get","completeThread"})
      */
     private $askHistory;
 
