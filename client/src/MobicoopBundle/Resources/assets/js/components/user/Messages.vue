@@ -9,29 +9,21 @@
         <v-layout id="headGridMessages">
           <v-flex
             xs4
-            pt-5
-            pb-4
-            mr-1
-            pl-2
+            class="pt-5 pb-4 mr-1 pl-2"
           >
             Messages
           </v-flex>
           <v-flex
             xs5
             text-xs-left
-            pt-5
-            pb-4
-            mr-1
-            pl-2
+            class="pt-5 pb-4 mr-1 pl-2"
           >
             {{ currentcorrespondant }}
           </v-flex>
           <v-flex
             xs3
             text-xs-left
-            pt-5
-            pb-4
-            pl-2
+            class="pt-5 pb-4 pl-2"
           >
             Annonces(s)
           </v-flex>
