@@ -24,9 +24,13 @@
 namespace App\Geography\Service;
 
 use App\Geography\Entity\Address;
+use App\Community\Entity\CommunityUser;
 use Geocoder\Plugin\PluginProvider;
 use Geocoder\Query\GeocodeQuery;
 use Geocoder\Query\ReverseQuery;
+use App\Geography\Repository\AddressRepository;
+use App\RelayPoint\Repository\RelayPointRepository;
+use App\RelayPoint\Entity\RelayPoint;
 
 /**
  * The geo searcher service.
@@ -36,28 +40,70 @@ use Geocoder\Query\ReverseQuery;
 class GeoSearcher
 {
     private $geocoder;
+    private $addressRepository;
+    private $relayPointRepository;
     private $params;
 
     /**
      * Constructor.
      */
-    public function __construct(PluginProvider $geocoder, array $params)
+    public function __construct(PluginProvider $geocoder, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository, array $params)
     {
         $this->geocoder = $geocoder;
+        $this->addressRepository = $addressRepository;
+        $this->relayPointRepository = $relayPointRepository;
         $this->params = $params;
     }
 
     /**
-     * Returns an array of geocoded addresses
+     * Returns an array of result addresses (named addresses, relaypoints, sig addresses...)
      *
      * @param string $input     The string representing the user input
+     * @param int $userId       The user id
      * @return array            The results
      */
-    public function geoCode(string $input)
+    public function geoCode(string $input, int $userId=null)
     {
+        // the result array will contain different addresses : 
+        // - named addresses (if the user is logged)
+        // - relaypoints (with or without private relaypoints depending on if th user is logged)
+        // - sig addresses
+        // - other objects ? to be defined
         $result = [];
+        
+        // 1 - named addresses
+        if ($userId) {
+            $result[] = $this->addressRepository->findByName($input,$userId);
+        }
+
+        // 2 - relay points
+        $relayPoints = $this->relayPointRepository->findByNameAndStatus($input,RelayPoint::STATUS_ACTIVE);
+        // exclude the private relay points
+        foreach ($relayPoints as $relayPoint) {
+            $exclude = false;
+            if ($relayPoint->getCommunity() && $relayPoint->isPrivate()) {
+                $exclude = true;
+                if ($userId) {
+                    // todo : maybe find a quicker way than a foreach :)
+                    foreach ($relayPoint->getCommunity()->getCommunityUsers() as $communityUser) {
+                        if ($communityUser->getUser()->getId() == $userId && $communityUser->getStatus() == CommunityUser::STATUS_ACCEPTED) {
+                            $exclude = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!$exclude) {
+                $address = $relayPoint->getAddress();
+                $address->setRelayPoint($relayPoint);
+                $result[] = $address;
+            }
+        }
+        
+        // 3 - sig addresses
         $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input))->all();
         foreach ($geoResults as $geoResult) {
+            // ?? todo : exclude all results that doesn't include any input word at all
             $address = new Address();
             if ($geoResult->getCoordinates() && $geoResult->getCoordinates()->getLatitude()) {
                 $address->setLatitude((string)$geoResult->getCoordinates()->getLatitude());
@@ -155,41 +201,9 @@ class GeoSearcher
                     ($geoResult->getStreetNumber() < 500)
                 ) {
                     return $geoResult->getStreetNumber() . ";" . $geoResult->getStreetName() . ";" . $geoResult->getPostalCode() . ";" . $geoResult->getLocality();
-                    break;
                 }
             }
         }
         return false;
-
-        // $address = new Address();
-        // $address->setLatitude((string)$geoResult->getCoordinates()->getLatitude());
-        // $address->setLongitude((string)$geoResult->getCoordinates()->getLongitude());
-        // $address->setHouseNumber($geoResult->getStreetNumber());
-        // $address->setStreet($geoResult->getStreetName());
-        // $address->setStreetAddress($geoResult->getStreetName() ? trim(($geoResult->getStreetNumber() ? $geoResult->getStreetNumber() : '') . ' ' . $geoResult->getStreetName()) : null);
-        // $address->setSubLocality($geoResult->getSubLocality());
-        // $address->setAddressLocality($geoResult->getLocality());
-        // foreach ($geoResult->getAdminLevels() as $level) {
-        //     switch ($level->getLevel()) {
-        //         case 1:
-        //             $address->setLocalAdmin($level->getName());
-        //             break;
-        //         case 2:
-        //             $address->setCounty($level->getName());
-        //             break;
-        //         case 3:
-        //             $address->setMacroCounty($level->getName());
-        //             break;
-        //         case 4:
-        //             $address->setRegion($level->getName());
-        //             break;
-        //         case 5:
-        //             $address->setMacroRegion($level->getName());
-        //             break;
-        //     }
-        // }
-        // $address->setPostalCode($geoResult->getPostalCode());
-        // $address->setAddressCountry($geoResult->getCountry()->getName());
-        // $address->setCountryCode($geoResult->getCountry()->getCode());
     }
 }
