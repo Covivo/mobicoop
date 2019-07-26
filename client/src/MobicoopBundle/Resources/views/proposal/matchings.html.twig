@@ -1,8 +1,10 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
 {% block title %}Hello{% endblock %}
-
-{% block body %}
+{% block stylesheets %}
+    {{ encore_entry_link_tags('bundle_proposal/proposal') }}
+{% endblock %}
+{% block main %}
 
 <section class="hero is-primary">
 	<div class="hero-body">
@@ -166,4 +168,7 @@
   	</div>
 </section>
 
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('bundle_proposal/proposal') }}
 {% endblock %}

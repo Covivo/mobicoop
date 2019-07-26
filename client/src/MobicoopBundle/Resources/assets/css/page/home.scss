@@ -23,9 +23,6 @@ $link-focus-border: $primary;
 @import '~bulma';
 @import '~buefy/src/scss/buefy';
 @import '../app.scss';
-.header {
-  background: url('/images/header.png');
-}
 .SearchBar {
   background-color: $tertiary;
   border-radius: 10px;

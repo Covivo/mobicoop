@@ -77,6 +77,6 @@
     "vue-i18n": "^8.11.2",
     "vue-loader": "^15.4.2",
     "vue-template-compiler": "^2.5.17",
-    "vuetify": "^1.5.16"
+    "vuetify": "^2.0.0"
   }
 }

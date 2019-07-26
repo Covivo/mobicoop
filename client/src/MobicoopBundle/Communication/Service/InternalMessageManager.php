@@ -25,6 +25,9 @@ namespace Mobicoop\Bundle\MobicoopBundle\Communication\Service;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider as MobicoopDataProvider;
+use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Recipient;
 
 /**
  * Internal message management service.
@@ -32,15 +35,17 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider as MobicoopDataProvi
 class InternalMessageManager
 {
     private $dataProvider;
+    private $userManager;
 
     /**
     * Constructor.
     * @param DataProvider $dataProvider The data provider that provides the Message
     */
-    public function __construct(DataProvider $dataProvider)
+    public function __construct(DataProvider $dataProvider, UserManager $userManager)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Message::class);
+        $this->userManager = $userManager;
     }
 
     /**
@@ -95,5 +100,32 @@ class InternalMessageManager
             return $response->getValue();
         }
         return null;
+    }
+
+    /**
+     * Create an internal message
+     *
+     * @return Message
+     */
+    public function createInternalMessage(User $sender, User $userRecipient, $title, $text, $threadMessage=null)
+    {
+        $messageToSend = new Message();
+        $messageToSend->setUser($sender);
+
+        $recipient = new Recipient();
+        $recipient->setUser($userRecipient);
+
+        $recipient->setStatus(Recipient::STATUS_PENDING);
+        $recipient->setSentDate(new \DateTime());
+        $messageToSend->addRecipient($recipient);
+
+        $messageToSend->setTitle($title);
+        $messageToSend->setText($text);
+        
+        if ($threadMessage!==null) {
+            $messageToSend->setMessage($threadMessage);
+        }
+
+        return $messageToSend;
     }
 }
