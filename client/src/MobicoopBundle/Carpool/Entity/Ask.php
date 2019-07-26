@@ -23,7 +23,9 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
@@ -31,7 +33,7 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 /**
  * Carpooling : ask from/to a driver and/or a passenger (after a matching between an offer and a request).
  */
-class Ask
+class Ask implements ResourceInterface
 {
     /**
      * @var int The id of this ask.
@@ -39,9 +41,15 @@ class Ask
     private $id;
 
     /**
+     * @var string|null The iri of this ask.
+     */
+    private $iri;
+
+    /**
      * @var int Ask status (0 = waiting; 1 = accepted; 2 = declined).
      *
      * @Assert\NotBlank
+     * @Groups({"post","put"})
      */
     private $status;
 
@@ -49,11 +57,13 @@ class Ask
      * @var int The ask type (1 = one way trip; 2 = outward of a round trip; 3 = return of a round trip)).
      *
      * @Assert\NotBlank
+     * @Groups({"post","put"})
      */
     private $type;
 
     /**
      * @var \DateTimeInterface Creation date of the solicitation.
+     * @Groups({"post"})
      */
     private $createdDate;
 
@@ -61,6 +71,7 @@ class Ask
      * @var User The user that creates the ask.
      *
      * @Assert\NotBlank
+     * @Groups({"post"})
      */
     private $user;
 
@@ -68,12 +79,13 @@ class Ask
      * @var Matching The matching at the origin of the ask.
      *
      * @Assert\NotBlank
+     * @Groups({"post"})
      */
     private $matching;
 
     /**
      * @var Ask|null The linked ask.
-     *
+     * @Groups({"post"})
      */
     private $askLinked;
 
@@ -81,6 +93,7 @@ class Ask
      * @var Criteria The criteria applied to the ask.
      *
      * @Assert\NotBlank
+     * @Groups({"post"})
      */
     private $criteria;
     
@@ -88,6 +101,7 @@ class Ask
      * @var Waypoint[] The waypoints of the ask.
      *
      * @Assert\NotBlank
+     * @Groups({"post","put"})
      */
     private $waypoints;
     
@@ -99,6 +113,21 @@ class Ask
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    public function getIri()
+    {
+        return $this->iri;
+    }
+    
+    public function setIri($iri)
+    {
+        $this->iri = $iri;
     }
 
     public function getStatus(): ?int

@@ -203,7 +203,7 @@
                 xs12
                 text-center
               >
-                <v-card>
+                <v-card class="pa-2">
                   <v-card-text>
                     {{ currentcorrespondant }}
                   </v-card-text>
@@ -211,13 +211,14 @@
                     zog zog
                   </v-card-text>
                   <v-card-text v-else>
-                    N'est pas lié à un covoiturage
+                    {{ $t("ui.pages.messages.label.notLinkedToACarpool") }}
                   </v-card-text>
                   <v-btn
                     v-if="currentAskHistory && currentAskHistory.ask.status==1"
                     rounded
                     color="secondary"
                     class="mb-2"
+                    @click="dialogAskCarpool=true"
                   >
                     {{ $t("ui.button.askCarpool") }}
                   </v-btn>
@@ -266,6 +267,38 @@
             </v-card>
           </v-dialog>
         </div>
+
+        <v-dialog
+          v-model="dialogAskCarpool"
+          persistent
+          max-width="290"
+        >
+          <v-card>
+            <v-card-title class="headline">
+              {{ $t("ui.modals.carpooling.askCarpoolTitle") }}
+            </v-card-title>
+            <v-card-text>{{ $t("ui.modals.carpooling.askCarpoolText") }}</v-card-text>
+            <v-card-actions>
+              <v-spacer />
+              <v-btn
+                class="font-weight-bold"
+                color="red darken-1"
+                text
+                @click="dialogAskCarpool = false"
+              >
+                {{ $t("ui.button.refuse") }}
+              </v-btn>
+              <v-btn
+                class="font-weight-bold"
+                color="green darken-1"
+                text
+                @click="askCarpool(2)"
+              >
+                {{ $t("ui.button.accept") }}
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-container>
     </v-content>
   </v-app>
@@ -310,12 +343,14 @@ export default {
       threadsDM: this.threadsdirectmessagesforview,
       threadsCM: this.threadscarpoolingmessagesforview,
       spinner:false,
+      dialogAskCarpool:false,
       textToSend:"",
       idThreadMessage:this.idmessagedefault,
       currentcorrespondant:"...",
       idRecipient:null,
-      textSpinnerLoading:"Chargement des messages",
-      textSpinnerSendMessage:"Envoi...",
+      textSpinnerLoading:this.$t('ui.pages.messages.spinner.loading'),
+      textSpinnerSendMessage:this.$t('ui.pages.messages.spinner.sendMessage'),
+      textSpinnerAskCarpool:this.$t('ui.pages.messages.spinner.askCarpool'),
       textSpinner:"",
       currentAskHistory:null
     }
@@ -412,6 +447,20 @@ export default {
           this.textToSend = "";
           this.spinner = false;
           this.updateMessages(res.data.message.id);
+        });
+    },
+    askCarpool(status){
+      this.dialogAskCarpool = false;
+      this.textSpinner = this.textSpinnerAskCarpool;
+      this.spinner = true;
+      let params = new FormData();
+      params.append("idAsk",this.currentAskHistory.ask.id);
+      params.append("status",status);
+      axios
+        .post("/utilisateur/messages/updateAsk",params)
+        .then(res => {
+          this.currentAskHistory.ask.status = res.data.status;
+          this.spinner = false;
         });
     },
     addMessageToItems(message){

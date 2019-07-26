@@ -6,11 +6,19 @@
                     "next": "Suivant",
                     "register": "Je m'inscris",
                     "save": "Enregistrer",
-                    "askCarpool":"Demander un covoiturage"
+                    "askCarpool":"Demander un covoiturage",
+                    "accept":"J'accepte",
+                    "refuse":"Je refuse"
                 }, 
                 "form": {
                     "errors": "Merci de corriger les erreurs suivantes ",
                     "enterMessage": "Saisissez un message"
+                },
+                "modals": {
+                    "carpooling": {
+                        "askCarpoolTitle":"Demande de covoiturage",
+                        "askCarpoolText":"Etes-vous sur de vouloir envoyer une demande de covoiturage ?"
+                    }
                 },
                 "pages": {
                     "signup": {
@@ -28,7 +36,13 @@
                             "ongoingasks":"Demandes en cours",
                             "directmessages":"Boîte de dialogue",
                             "nocarpoolmessages":"Aucun message de covoiturage",
-                            "nodirectmessages":"Aucun message direct"
+                            "nodirectmessages":"Aucun message direct",
+                            "notLinkedToACarpool":"N'est pas lié à un covoiturage"
+                        },
+                        "spinner":{
+                            "loading":"Chargement des messages",
+                            "sendMessage":"Envoi...",
+                            "askCarpool":"Envoi de votre demande..."
                         }
                     }
                 }

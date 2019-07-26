@@ -105,7 +105,7 @@ class Ask
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="asks")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","thread"})
      * @MaxDepth(1)
      */
     private $user;

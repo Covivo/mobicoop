@@ -45,6 +45,8 @@ use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Recipient;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskManager;
 
 /**
  * Controller class for user related actions.
@@ -408,12 +410,42 @@ class UserController extends AbstractController
     }
 
     /**
-     * Get the details of an AskHistory
+     * Update and ask
      * Ajax Request
      */
-    public function getAskHistoryDetails()
+    public function updateAsk(Request $request, AskManager $askManager)
     {
+
+        if ($request->isMethod('POST')) {
+
+            $idAsk = $request->request->get('idAsk');
+
+            // Get the Ask
+            $ask = $askManager->getAsk($idAsk);
+
+            // Change the status
+            if($request->request->get('status')!==null &&
+                is_numeric($request->request->get('status'))
+            ){
+                // Modify the Ask status
+                $ask->setStatus($request->request->get('status'));
+            }
+            
+            // Update the Ask via API
+            $ask = $askManager->updateAsk($ask);
+
+            $return = [
+                "id"=>$ask->getId(),
+                "status"=>$ask->getStatus()
+            ];
+
+            return new Response(json_encode($return));
+        }
+
+        return new Response(json_encode("Not a post"));
     }
+
+
 
     // ADMIN
 
