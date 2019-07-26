@@ -331,7 +331,7 @@ class UserManager
      */
     public function updateUserToken($user)
     {
-        return $this->flushUserToken($user,'password_update_request');
+        return $this->flushUserToken($user, 'password_update_request');
     }
 
     /**
@@ -343,7 +343,9 @@ class UserManager
     public function flushUserToken(User $user, string $operation = null)
     {
         dump($user, $operation);
-        if(empty($operation)) $operation='password_update';
+        if (empty($operation)) {
+            $operation='password_update';
+        }
         $response = $this->dataProvider->putSpecial($user, ['password_token'], $operation);
         if ($response->getCode() == 200) {
             $this->logger->info('User Token Update | Start');
