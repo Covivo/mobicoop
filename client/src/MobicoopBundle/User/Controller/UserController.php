@@ -116,7 +116,7 @@ class UserController extends AbstractController
             $address->setLongitude($data['longitude']);
             $address->setMacroCounty($data['macroCounty']);
             $address->setMacroRegion($data['macroRegion']);
-            $address->setName($translator->trans('homeAddress',[],'signup'));
+            $address->setName($translator->trans('homeAddress', [], 'signup'));
             $address->setPostalCode($data['postalCode']);
             $address->setRegion($data['region']);
             $address->setStreet($data['street']);
