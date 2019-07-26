@@ -16,7 +16,7 @@ import messages from '../../../../translations/translations.json';
 
 // import color theme
 import colorTheme from '../../../../themes/mobicoop.json';
-console.error(colorTheme);
+
 Vue.use(VueI18n)
 Vue.use(Vuetify)
 Vue.use(md)

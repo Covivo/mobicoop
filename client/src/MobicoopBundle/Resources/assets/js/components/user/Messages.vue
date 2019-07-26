@@ -6,24 +6,26 @@
         grid-list-md
         fluid
       >
-        <v-layout id="headGridMessages">
+        <v-layout
+          id="headGridMessages"
+        >
           <v-flex
             xs4
-            class="pt-5 pb-4 mr-1 pl-2"
+            class="pt-5 pb-4 mr-1 pl-2 secondary white--text font-weight-bold headline"
           >
             {{ $t("ui.pages.messages.label.messages") }}
           </v-flex>
           <v-flex
             xs5
             text-xs-left
-            class="pt-5 pb-4 mr-1 pl-2"
+            class="pt-5 pb-4 mr-1 pl-2 secondary white--text font-weight-bold headline"
           >
             {{ currentcorrespondant }}
           </v-flex>
           <v-flex
             xs3
             text-xs-left
-            class="pt-5 pb-4 pl-2"
+            class="pt-5 pb-4 pl-2 secondary white--text font-weight-bold headline"
           >
             {{ $t("ui.pages.messages.label.context") }}
           </v-flex>
@@ -55,7 +57,7 @@
                   v-for="(threadCM, index) in threadsCM"
                   :key="index"
                   class="threads mx-auto mt-2"
-                  :class="threadCM.selected ? 'selected' : ''"
+                  :class="threadCM.selected ? 'primary' : ''"
                   max-width="400"
                   @click="updateMessages(threadCM.idThreadMessage,threadCM.contactId)"
                 >
@@ -137,13 +139,14 @@
                 </template>
                 <v-card
                   v-if="item.divider===false"
-                  class="elevation-2"
+                  class="elevation-2 font-weight-bold"
+                  :class="(item.origin==='own')?'primary':''"
                 >
                   <v-card-text>{{ item.text }}</v-card-text>
                 </v-card>
                 <span
                   v-if="item.divider===true"
-                  class="datesDividers"
+                  class="secondary--text font-weight-bold"
                 >
                   {{ item.createdDateReadable }}
                 </span>
@@ -177,7 +180,7 @@
                   <div class="text-xs-center">
                     <v-btn
                       id="validSendMessage"
-                      class="mx-2 black--text"
+                      class="mx-2 black--text font-weight-bold"
                       fab
                       rounded
                       :idthreadmessage="idThreadMessage"
@@ -227,7 +230,7 @@
                     color="success"
                   >
                     <v-card-text class="white--text">
-                      Proposition de covoiturage envoyée
+                      {{ $t("ui.infos.carpooling.askAlreadySent") }}
                     </v-card-text>
                   </v-card>
                   <div
@@ -262,8 +265,11 @@
             persistent
             width="300"
           >
-            <v-card id="spinnerMessages">
-              <v-card-text>
+            <v-card
+              id="spinnerMessages"
+              class="secondary"
+            >
+              <v-card-text class="white--text">
                 {{ textSpinner }}
                 <v-progress-linear
                   color="blue accent-4"

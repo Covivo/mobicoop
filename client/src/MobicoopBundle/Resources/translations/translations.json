@@ -20,6 +20,11 @@
                         "askCarpoolText":"Etes-vous sur de vouloir envoyer une demande de covoiturage ?"
                     }
                 },
+                "infos": {
+                    "carpooling": {
+                        "askAlreadySent": "Proposition de covoiturage envoyée"
+                    }
+                },
                 "pages": {
                     "signup": {
                         "chart": {
