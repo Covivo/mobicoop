@@ -24,9 +24,7 @@ Vue.use(Vuetify);
 Vue.use(md);
 Vue.use(VueI18n);
 
-Vue.use(Buefy,{
-  defaultTooltipType: 'is-mobicoopgreen'
-});
+Vue.use(Buefy);
 Vue.use(VueFormWizard);
 const i18n = new VueI18n({
   locale: 'fr', // set locale

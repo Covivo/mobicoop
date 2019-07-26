@@ -9,9 +9,17 @@
     {% block stylesheets %}{% endblock %}
 </head>
 <body>
+{% if app.user %}
+{% set logged = 'true' %}
+{% endif %}
+
     <div id="app">
             <nav id="header">
-                <Vueheader></Vueheader>
+            {% if app.user %}
+                <Vueheader :user={{app.user|json_encode()}}></Vueheader>
+            {% else %}
+                 <Vueheader></Vueheader>        
+            {% endif %}
             </nav>
         <main role="main" id="main">
             <div>

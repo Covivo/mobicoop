@@ -9,22 +9,43 @@
         /></a>
       </v-toolbar-title>
       <v-spacer />
-      <v-btn
-        
-        text
-        :href="$t('navBar.buttons.signup.route')"
+      <div
+        v-if="user"
       >
-        {{ $t('navBar.buttons.signup.label') }}
-      </v-btn>
+        <v-btn
+          text
+          :href="$t('navBar.buttons.messages.route')"
+        >
+          {{ $t('navBar.buttons.messages.label') }}
+        </v-btn>
+        <v-btn
+          text
+          :href="$t('navBar.buttons.myProfile.route')"
+        >
+          {{ $t('navBar.buttons.myProfile.label') }}
+        </v-btn>
+        <v-btn
+          text
+          :href="$t('navBar.buttons.logOut.route')"
+        >
+          {{ $t('navBar.buttons.logOut.label') }}
+        </v-btn>
+      </div>
+      <div v-else>
+        <v-btn
+          text
+          :href="$t('navBar.buttons.signup.route')"
+        >
+          {{ $t('navBar.buttons.signup.label') }}
+        </v-btn>
+        <v-btn
+          text
+          :href="$t('navBar.buttons.logIn.route')"
+        >
+          {{ $t('navBar.buttons.logIn.label') }}
+        </v-btn>
+      </div>
       <v-btn
-        
-        text
-        :href="$t('navBar.buttons.connexion.route')"
-      >
-        {{ $t('navBar.buttons.connexion.label') }}
-      </v-btn>
-      <v-btn
-        
         rounded
         :href="$t('navBar.buttons.shareAnAd.route')"
       >
@@ -35,6 +56,11 @@
 </template>
 <script>
 export default {
-  
+  props: {
+    user: {
+      type: Object,
+      default: null
+    }
+  }
 }
 </script>
