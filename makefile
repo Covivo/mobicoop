@@ -100,6 +100,18 @@ update:
 	sleep 20
 	@make -s migrate
 
+db-migrate:
+	$(info $(builder)------------------------------------------------------)
+	$(info $(builder)Make ($(os)): DB Migration...)
+	$(info $(builder)------------------------------------------------------$(reset))
+	@docker-compose -f docker-compose-builder-$(os).yml run --rm db-migrate
+
+db-diff:
+	$(info $(builder)------------------------------------------------------)
+	$(info $(builder)Make ($(os)): DB Diff...)
+	$(info $(builder)------------------------------------------------------$(reset))
+	@docker-compose -f docker-compose-builder-$(os).yml run --rm db-diff
+
 logs: 
 	$(info $(green)------------------------------------------------------)
 	$(info $(green)Mobicoop Logs)
