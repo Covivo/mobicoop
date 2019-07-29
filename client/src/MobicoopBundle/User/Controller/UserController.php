@@ -131,27 +131,11 @@ class UserController extends AbstractController
             $user->setGivenName($data['givenName']);
             $user->setFamilyName($data['familyName']);
             $user->setGender($data['gender']);
-
             $user->setBirthYear($data['birthYear']);
 
-
-            // add the home address to the user
-            
+            // add the home address to the user            
             $user->addAddress($address);
 
-            // Not Valid populate error
-            // if (!$form->isValid()) {
-            //     $error = [];
-            //     // Fields
-            //     foreach ($form as $child) {
-            //         if (!$child->isValid()) {
-            //             foreach ($child->getErrors(true) as $err) {
-            //                 $error[$child->getName()][] = $err->getMessage();
-            //             }
-            //         }
-            //     }
-            //     return $this->json(['error' => $error, 'success' => $success]);
-            // }
             // create user in database
             $userManager->createUser($user);
         }
@@ -167,7 +151,7 @@ class UserController extends AbstractController
     /**
      * User profile update.
      */
-    public function userProfileUpdate(UserManager $userManager, Request $request, AddressManager $addressManager)
+    public function userProfileUpdate(UserManager $userManager, Request $request, AddressManager $addressManager, TranslatorInterface $translator)
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
@@ -203,6 +187,8 @@ class UserController extends AbstractController
             $homeAddress->setStreet($data['street']);
             $homeAddress->setStreetAddress($data['streetAddress']);
             $homeAddress->setSubLocality($data['subLocality']);
+            $homeAddress->setName($translator->trans('homeAddress', [], 'signup'));
+            $homeAddress->setHome(true);
             
             // pass front info into user form
             $user->setEmail($data['email']);
