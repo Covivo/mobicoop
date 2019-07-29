@@ -5,7 +5,7 @@
         :id="name"
         ref="autocomplete"
         :data="data"
-        :value="placeholder"
+        :placeholder="placeholder"
         :open-on-focus="true"
         field="concatenedAddr"
         icon-pack="fa"
