@@ -22,7 +22,9 @@
                 },
                 "infos": {
                     "carpooling": {
-                        "askAlreadySent": "Proposition de covoiturage envoyée"
+                        "askAlreadySent": "Proposition de covoiturage envoyée",
+                        "accepted": "Proposition de covoiturage acceptée",
+                        "refused": "Proposition de covoiturage refusée"
                     }
                 },
                 "pages": {
@@ -47,7 +49,8 @@
                         "spinner":{
                             "loading":"Chargement des messages",
                             "sendMessage":"Envoi...",
-                            "askCarpool":"Envoi de votre demande..."
+                            "askCarpool":"Envoi de votre demande...",
+                            "updateCarpool":"Mise à jour de de votre demande..."
                         }
                     }
                 }

@@ -207,6 +207,7 @@
                 text-center
               >
                 <v-card class="pa-2">
+                  <!-- The current carpool history -->
                   <v-card-text>
                     {{ currentcorrespondant }}
                   </v-card-text>
@@ -216,6 +217,8 @@
                   <v-card-text v-else>
                     {{ $t("ui.pages.messages.label.notLinkedToACarpool") }}
                   </v-card-text>
+                  
+                  <!-- Button for asking a Carpool (only the contact initiator) -->
                   <v-btn
                     v-if="currentAskHistory && currentAskHistory.ask.status==1 && askUser == userid"
                     rounded
@@ -225,14 +228,36 @@
                   >
                     {{ $t("ui.button.askCarpool") }}
                   </v-btn>
+
+                  <!-- Carpooling status -->
+                  <!-- Carpool Asked -->
                   <v-card
                     v-else-if="currentAskHistory && currentAskHistory.ask.status==2 && askUser == userid"
-                    color="success"
+                    color="warning"
                   >
                     <v-card-text class="white--text">
                       {{ $t("ui.infos.carpooling.askAlreadySent") }}
                     </v-card-text>
                   </v-card>
+                  <!-- Carpool Confirmed -->
+                  <v-card
+                    v-else-if="currentAskHistory.ask.status==3"
+                    color="success"
+                  >
+                    <v-card-text class="white--text">
+                      {{ $t("ui.infos.carpooling.accepted") }}
+                    </v-card-text>
+                  </v-card>
+                  <!-- Carpool Refused -->
+                  <v-card
+                    v-else-if="currentAskHistory.ask.status==4"
+                    color="error"
+                  >
+                    <v-card-text class="white--text">
+                      {{ $t("ui.infos.carpooling.refused") }}
+                    </v-card-text>
+                  </v-card>
+                  <!-- Accept/Refuse a Carpool -->
                   <div
                     v-if="currentAskHistory && currentAskHistory.ask.status==2 && askUser != userid"
                     class="my-2"
@@ -247,6 +272,7 @@
                           class="mb-2"
                           fab
                           v-on="on"
+                          @click="updateCarpool(3)"
                         >
                           <v-icon>done</v-icon>
                         </v-btn>
@@ -263,6 +289,7 @@
                           class="mb-2"
                           fab
                           v-on="on"
+                          @click="updateCarpool(4)"
                         >
                           <v-icon>clear</v-icon>
                         </v-btn>
@@ -324,7 +351,7 @@
                 class="font-weight-bold"
                 color="green darken-1"
                 text
-                @click="askCarpool(2)"
+                @click="updateCarpool(2)"
               >
                 {{ $t("ui.button.accept") }}
               </v-btn>
@@ -383,6 +410,7 @@ export default {
       textSpinnerLoading:this.$t('ui.pages.messages.spinner.loading'),
       textSpinnerSendMessage:this.$t('ui.pages.messages.spinner.sendMessage'),
       textSpinnerAskCarpool:this.$t('ui.pages.messages.spinner.askCarpool'),
+      textSpinnerUpdateCarpool:this.$t('ui.pages.messages.spinner.updateCarpool'),
       textSpinner:"",
       currentAskHistory:null,
       askUser:0
@@ -483,9 +511,9 @@ export default {
           this.updateMessages(res.data.message.id);
         });
     },
-    askCarpool(status){
+    updateCarpool(status){
       this.dialogAskCarpool = false;
-      this.textSpinner = this.textSpinnerAskCarpool;
+      this.textSpinner = this.textSpinnerUpdateCarpool;
       this.spinner = true;
       let params = new FormData();
       params.append("idAsk",this.currentAskHistory.ask.id);

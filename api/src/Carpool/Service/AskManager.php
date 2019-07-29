@@ -90,7 +90,8 @@ class AskManager
     /**
      * Create the associated AskHistory of an Ask
      */
-    private function createAssociatedAskHistory(Ask $ask){
+    private function createAssociatedAskHistory(Ask $ask)
+    {
         $askHistory = new AskHistory();
         
         $askHistory->setStatus($ask->getStatus());
