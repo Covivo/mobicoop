@@ -84,7 +84,7 @@
                   v-for="(thread, index) in threadsDM"
                   :key="index"
                   class="threads mx-auto mt-2"
-                  :class="thread.selected ? 'selected' : ''"
+                  :class="thread.selected ? 'primary' : ''"
                   max-width="400"
                   @click="updateMessages(thread.idThreadMessage,thread.contactId,generateName(thread.contactFirstName,thread.contactLastName))"
                 >
@@ -208,15 +208,42 @@
               >
                 <v-card class="pa-2">
                   <!-- The current carpool history -->
-                  <v-card-text>
+                  <v-card-text class="font-weight-bold">
                     {{ currentcorrespondant }}
                   </v-card-text>
-                  <v-card-text v-if="currentAskHistory">
-                    zog zog
-                  </v-card-text>
-                  <v-card-text v-else>
-                    {{ $t("ui.pages.messages.label.notLinkedToACarpool") }}
-                  </v-card-text>
+                  <v-card
+                    v-if="currentAskHistory"
+                    class="mb-3"
+                  >
+                    <v-card-text>
+                      {{ currentAskHistory.ask.matching.criteria.fromDateReadable }} {{ $t("ui.infos.misc.at") }} {{ currentAskHistory.ask.matching.criteria.fromTimeReadable }}
+                    </v-card-text>
+                    <!-- Timeline of the journey -->
+                    <v-timeline dense>
+                      <v-timeline-item
+                        v-for="(waypoint, index) in geography['waypoints']"
+                        :key="index"
+                        small
+                        :icon="( (index>0) && (index<waypoint.length-1) ) ? 'arrow_right_alt' : ''"
+                        :color="( (index>0) && (index<waypoint.length-1) ) ? 'warning' : 'primary'"
+                        :icon-color="( (index>0) && (index<waypoint.length-1) ) ? 'warning' : 'primary'"
+                        :fill-dot="( (index>0) && (index<waypoint.length-1) )"
+                      >
+                        {{ waypoint }}
+                      </v-timeline-item>
+                    </v-timeline>
+
+                    <v-divider />
+                    <v-layout row>
+                      <v-flex xs6 />
+                      <v-flex xs6 />
+                    </v-layout>
+                  </v-card>
+                  <v-card v-else>
+                    <v-card-text>
+                      {{ $t("ui.pages.messages.label.notLinkedToACarpool") }}
+                    </v-card-text>
+                  </v-card>
                   
                   <!-- Button for asking a Carpool (only the contact initiator) -->
                   <v-btn
@@ -241,7 +268,7 @@
                   </v-card>
                   <!-- Carpool Confirmed -->
                   <v-card
-                    v-else-if="currentAskHistory.ask.status==3"
+                    v-else-if="currentAskHistory && currentAskHistory.ask.status==3"
                     color="success"
                   >
                     <v-card-text class="white--text">
@@ -250,7 +277,7 @@
                   </v-card>
                   <!-- Carpool Refused -->
                   <v-card
-                    v-else-if="currentAskHistory.ask.status==4"
+                    v-else-if="currentAskHistory && currentAskHistory.ask.status==4"
                     color="error"
                   >
                     <v-card-text class="white--text">
@@ -413,7 +440,8 @@ export default {
       textSpinnerUpdateCarpool:this.$t('ui.pages.messages.spinner.updateCarpool'),
       textSpinner:"",
       currentAskHistory:null,
-      askUser:0
+      askUser:0,
+      geography:[]
     }
   },
   watch: {
@@ -490,11 +518,19 @@ export default {
             this.addMessageToItems(message);
 
           }
+
           this.spinner = false;
         })
     },
     updateContextPanel(){
-      
+      if(this.currentAskHistory !== null){
+        this.geography.length = 0; // Reset geography infos      
+        this.geography["waypoints"] = new Array();
+        for(let waypoint of this.currentAskHistory.ask.matching.waypoints){
+        // Get the diffrent waypoints
+          this.geography["waypoints"].push(waypoint.address.addressLocality);
+        }
+      }
     },
     sendInternalMessage(){
       let messageToSend = new FormData();

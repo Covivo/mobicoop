@@ -380,12 +380,19 @@ class UserController extends AbstractController
             $thread["messages"][$key]["createdDateReadable"] = $createdDate->format("D d F Y");
             $thread["messages"][$key]["createdTimeReadable"] = $createdDate->format("H:i:s");
         }
-
+        
         if (!is_null($thread["askHistory"])) {
             // Get the last AskHistory
             // You do that because you can have a AskHistory without a message
             $askHistories = $askManager->getAskHistories($thread["askHistory"]["ask"]["id"]);
             $thread["lastAskHistory"] = end($askHistories);
+
+            $fromDate = new DateTime($thread["lastAskHistory"]["ask"]["matching"]["criteria"]["fromDate"]);
+            $thread["lastAskHistory"]["ask"]["matching"]["criteria"]["fromDateReadable"] = $fromDate->format("D d F Y");
+            $fromTime = new DateTime($thread["lastAskHistory"]["ask"]["matching"]["criteria"]["fromTime"]);
+            $thread["lastAskHistory"]["ask"]["matching"]["criteria"]["fromTimeReadable"] = $fromTime->format("G\hi");
+            
+
         } else {
             $thread["lastAskHistory"] = null;
         }

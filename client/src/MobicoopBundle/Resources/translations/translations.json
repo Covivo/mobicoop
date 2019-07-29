@@ -25,6 +25,9 @@
                         "askAlreadySent": "Proposition de covoiturage envoyée",
                         "accepted": "Proposition de covoiturage acceptée",
                         "refused": "Proposition de covoiturage refusée"
+                    },
+                    "misc": {
+                        "at": "à"
                     }
                 },
                 "pages": {
