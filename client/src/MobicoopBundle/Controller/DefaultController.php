@@ -40,7 +40,6 @@ class DefaultController extends AbstractController
             '@Mobicoop/default/index.html.twig',
             [
                 'baseUri' => $_ENV['API_URI'],
-                'geoCompleteUri' => $_ENV['GEOCOMPLETE_URI'],
                 'metaDescription' => 'Homepage of Mobicoop'
             ]
         );

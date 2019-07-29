@@ -15,7 +15,9 @@ import 'vue-form-wizard/dist/vue-form-wizard.min.css'; // TODO ☣️ remove it 
 
 Vue.use(Vuetify);
 Vue.use(VueI18n);
-Vue.use(Buefy); // TODO ☣️ remove it when not needed anymore
+Vue.use(Buefy, { // TODO ☣️ remove it when not needed anymore
+  defaultTooltipType: 'is-mobicoopgreen'
+});
 Vue.use(VueFormWizard); // TODO ☣️ remove it when not needed anymore
 
 
