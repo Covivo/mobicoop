@@ -86,9 +86,10 @@ async function createCanvas() {
 
   // Copy app.js because it's a specific version for client
   let appjs = path.resolve(__dirname, 'client-canvas/app.js');
-  console.log(appjs, `${destinationAssets}/js`)
+  let gitignore = path.resolve(__dirname, 'client-canvas/.gitignore');
   process.stdout.write(kuler(`Copying specific assets for ${destinationAssets} 🚀 \n`, 'pink'));
   [err, success] = await to(fs.copy(appjs, `${destinationAssets}/js/app.js`));
+  [err, success] = await to(fs.copy(gitignore, `${destinationProject}/.gitignore`));
 
 
   /**
