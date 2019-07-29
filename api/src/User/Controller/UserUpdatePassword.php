@@ -23,41 +23,41 @@
  namespace App\User\Controller;
 
 use App\Right\Service\PermissionManager;
- use App\User\Entity\User;
- use App\User\Repository\UserRepository;
- use App\User\Service\UserManager;
- use Symfony\Component\HttpFoundation\RequestStack;
+use App\User\Entity\User;
+use App\User\Repository\UserRepository;
+use App\User\Service\UserManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 
- class UserUpdatePassword
- {
-     /**
-      * @var UserManager $userManager
-      */
-     private $userManager;
+class UserUpdatePassword
+{
+    /**
+     * @var UserManager $userManager
+     */
+    private $userManager;
  
-     private $request;
-     private $permissionManager;
-     private $userRepository;
+    private $request;
+    private $permissionManager;
+    private $userRepository;
  
-     public function __construct(RequestStack $requestStack, PermissionManager $permissionManager, UserRepository $userRepository, UserManager $userManager)
-     {
-         $this->request = $requestStack->getCurrentRequest();
-         $this->permissionManager = $permissionManager;
-         $this->userRepository = $userRepository;
-         $this->userManager= $userManager;
-     }
+    public function __construct(RequestStack $requestStack, PermissionManager $permissionManager, UserRepository $userRepository, UserManager $userManager)
+    {
+        $this->request = $requestStack->getCurrentRequest();
+        $this->permissionManager = $permissionManager;
+        $this->userRepository = $userRepository;
+        $this->userManager= $userManager;
+    }
  
-     /**
-      * This method is invoked when a user try to update or ask the update of his password.
-      * It returns the altered user.
-      *
-      * @param User $data
-      * @param string $data
-      * @return User
-      */
-     public function __invoke(User $data, string $name): User
-     {
-         switch ($name) {
+    /**
+     * This method is invoked when a user try to update or ask the update of his password.
+     * It returns the altered user.
+     *
+     * @param User $data
+     * @param string $data
+     * @return User
+     */
+    public function __invoke(User $data, string $name): User
+    {
+        switch ($name) {
         case 'request':
          $data = $this->userManager->updateUserPasswordRequest($data);
          break;
@@ -65,6 +65,6 @@ use App\Right\Service\PermissionManager;
          $data = $this->userManager->updateUserPasswordConfirm($data);
          break;
      }
-         return $data;
-     }
- }
+        return $data;
+    }
+}
