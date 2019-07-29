@@ -5,13 +5,13 @@
 // import Vue from 'vue';
 
 import { Vue, vuetify, i18n } from '../config/vue-config'
-import '../../css/page/home.scss';
 
 // Vue components
 import Homesearchform from '../components/Homesearchform';
 import Vueheader from '../components/Vueheader';
 import Vuefooter from '../components/Vuefooter';
 
+import '../../css/page/home.scss';
 
 new Vue({
   i18n,

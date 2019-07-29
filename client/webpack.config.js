@@ -20,16 +20,27 @@ Encore
   .enableVersioning(Encore.isProduction())
   // enables Sass/SCSS support
   .enableVueLoader()
+  // .enableSassLoader(options => {
+  //   options.implementation = require('sass')
+  //   options.fiber = require('fibers')
+  // }) // ☣️This is the way encore works but vuetify show warning error about order mini-css-....
   .addPlugin(new VuetifyLoaderPlugin())
-  // .addLoader({
-  //   test: /\.s[ac]ss$/,
-  //   loader: 'handlebars-loader'
-  // })
-  .enableSassLoader(options => {
-    options.implementation = require('sass')
-    options.fiber = require('fibers')
+  .addLoader({
+    test: /\.s(c|a)ss$/,
+    use: [
+      'vue-style-loader',
+      'css-loader',
+      {
+        loader: 'sass-loader',
+        options: {
+          implementation: require('sass'),
+          fiber: require('fibers')
+        }
+      }
+    ]
   })
   .setManifestKeyPrefix('/build')
+  .enablePostCssLoader()
 
 // for production we do not add some plugin & loader
 if (!Encore.isProduction()) {
@@ -58,7 +69,6 @@ if (!Encore.isProduction()) {
       // babelConfig.presets.push('stage-3');
       // This will add compatibility for old nav
     })
-    .enablePostCssLoader()
 }
 
 // Add base assets
