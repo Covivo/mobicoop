@@ -1,8 +1,6 @@
 <template>
   <div class="tile center-all">
-    <div
-      class="columns is-centered is-vcentered SearchBar"
-    >
+    <div class="columns is-centered is-vcentered SearchBar">
       <div class="column has-text-centered is-one-third">
         <!-- inputs outward destination -->
         <label
@@ -59,7 +57,8 @@
             :href="checkUrlValid ? urlToCall : null"
             alt="Rechercher un covoiturage"
             title="Rechercher"
-          ><span>Rechercher</span>
+          >
+            <span>Rechercher</span>
           </a>
         </label>
       </div>
@@ -68,12 +67,11 @@
 </template>
 
 <script>
-
 import moment from "moment";
 import Geocomplete from "./Geocomplete";
 // import BDatepicker from "buefy/src/components/datepicker/Datepicker";
 export default {
-  name: 'Homesearchform',
+  name: "Homesearchform",
   components: {
     // BDatepicker,
     Geocomplete
@@ -91,15 +89,7 @@ export default {
   data() {
     return {
       swapped: false,
-      daysShort: [
-        "Dim",
-        "Lun",
-        "Mar",
-        "Mer",
-        "Jeu",
-        "Ven",
-        "Sam"
-      ],
+      daysShort: ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
       months: [
         "Janvier",
         "Fevrier",
@@ -116,68 +106,94 @@ export default {
       ],
       origin: {},
       destination: {},
-      outwardDate: new Date(), 
+      outwardDate: new Date(),
       outwardTime: new Date(),
       baseUrl: window.location.origin,
       message: null
     };
   },
   computed: {
-    // check if the minimal infos are available to have a valid url to launch the search 
-    checkUrlValid(){
-      return this.origin.addressLocality && this.destination.addressLocality && this.origin.latitude && this.origin.longitude && this.destination.latitude && this.destination.longitude && this.outwardDate && this.outwardTime 
+    // check if the minimal infos are available to have a valid url to launch the search
+    checkUrlValid() {
+      return (
+        this.origin.addressLocality &&
+        this.destination.addressLocality &&
+        this.origin.latitude &&
+        this.origin.longitude &&
+        this.destination.latitude &&
+        this.destination.longitude &&
+        this.outwardDate &&
+        this.outwardTime
+      );
     },
     // formate the date
     dateFormated() {
-      return this.outwardDate ? moment(this.outwardDate).format('YYYYMMDD') : null ;
+      return this.outwardDate
+        ? moment(this.outwardDate).format("YYYYMMDD")
+        : null;
     },
     // format the time
     timeFormated() {
-      return this.outwardTime ? moment(this.outwardTime).format('HHmmss') : null;
+      return this.outwardTime
+        ? moment(this.outwardTime).format("HHmmss")
+        : null;
     },
     // formate the addresses and return nothing if not defined
     originStreetAddressFormated() {
-      let originStreetAddress = this.origin.streetAddress.trim().toLowerCase().replace(/ /g, '+')
-      return originStreetAddress !="" ? `${originStreetAddress}+` : "";
+      let originStreetAddress =
+        this.origin.streetAddress &&
+        this.origin.streetAddress
+          .trim()
+          .toLowerCase()
+          .replace(/ /g, "+");
+      return originStreetAddress != "" ? `${originStreetAddress}+` : "";
     },
     destinationStreetAddressFormated() {
-      let destinationStreetAddress = this.destination.streetAddress.trim().toLowerCase().replace(/ /g, '+')
-      return destinationStreetAddress !="" ? `${destinationStreetAddress}+` : "";
+      let destinationStreetAddress =
+        this.destination.streetAddress &&
+        this.destination.streetAddress
+          .trim()
+          .toLowerCase()
+          .replace(/ /g, "+");
+      return destinationStreetAddress != ""
+        ? `${destinationStreetAddress}+`
+        : "";
     },
     // formate the postalCodes and return nothing if not defined
     originPostalCodeFormated() {
       return this.origin.postalCode ? `${this.origin.postalCode}+` : "";
     },
     destinationPostalCodeFormated() {
-      return this.destination.postalCode ? `${this.destination.postalCode}+` : "";
+      return this.destination.postalCode
+        ? `${this.destination.postalCode}+`
+        : "";
     },
     // creation of the url to call
     urlToCall() {
-      return `${this.baseUrl}/${this.route}/${this.originStreetAddressFormated}${this.originPostalCodeFormated}${this.origin.addressLocality}/${this.destinationStreetAddressFormated}${this.destinationPostalCodeFormated}${this.destination.addressLocality}/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.dateFormated}${this.timeFormated}/resultats`;  
-    } 
+      return `${this.baseUrl}/${this.route}/${this.originStreetAddressFormated}${this.originPostalCodeFormated}${this.origin.addressLocality}/${this.destinationStreetAddressFormated}${this.destinationPostalCodeFormated}${this.destination.addressLocality}/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.dateFormated}${this.timeFormated}/resultats`;
+    }
   },
 
   methods: {
     selectedGeo(val) {
       let name = val.name;
       this[name] = val;
-      
     },
     swap() {
       this.swapped = !this.swapped;
-      let oldOrigin = {...this.$refs.origin.selected};
+      let oldOrigin = { ...this.$refs.origin.selected };
       let oldOriginList = [...this.$refs.origin.data];
-      let oldDestination = {...this.$refs.destination.selected};
+      let oldDestination = { ...this.$refs.destination.selected };
       let oldDestinationList = [...this.$refs.destination.data];
-      this.$refs.origin.swap(oldDestinationList,oldDestination)
-      this.$refs.destination.swap(oldOriginList,oldOrigin)
+      this.$refs.origin.swap(oldDestinationList, oldDestination);
+      this.$refs.destination.swap(oldOriginList, oldOrigin);
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.interchanged{
+.interchanged {
   cursor: pointer;
 }
 </style>
