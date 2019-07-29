@@ -1,8 +1,6 @@
 <template>
   <v-app>
-    <v-footer
-      height="auto"
-    >
+    <v-footer height="auto">
       <v-layout
         justify-center
         row
@@ -11,46 +9,43 @@
           href="https://www.facebook.com/Mobicoop/"
           target="_blank"
         >
-          <v-img
-          
+          <img
             src="/images/footer/facebook.svg"
-            max-width="50px"
-            max-height="50px"
-          />
+            width="50px"
+            height="50px"
+          >
         </a>
         <a
           href="https://twitter.com/MobicoopCovoit?lang=fr"
           target="_blank"
         >
-          <v-img
-          
+          <img
             src="/images/footer/twitter.svg"
-            max-width="50px"
-            max-height="50px"
-          />
+            width="50px"
+            height="50px"
+          >
         </a>
         <a
           href="https://www.instagram.com/mobicoopcovoiturage/"
           target="_blank"
         >
-          <v-img
-          
+          <img
             src="/images/footer/instagram.svg"
-            max-width="50px"
-            max-height="50px"
-          />
+            width="50px"
+            height="50px"
+          >
         </a>
         <a
           href="https://framasphere.org/people/9bfd3a40f8fb0134e71f2a0000053625"
           target="_blank"
         >
-          <v-img
+          <img
             href="https://framasphere.org/people/9bfd3a40f8fb0134e71f2a0000053625"
             target="_blank"
             src="/images/footer/framasphere.svg"
-            max-width="50px"
-            max-height="50px"
-          />
+            width="50px"
+            height="50px"
+          >
         </a>
         <v-flex
           py-4
@@ -64,5 +59,4 @@
   </v-app>
 </template>
 <script>
-
 </script>

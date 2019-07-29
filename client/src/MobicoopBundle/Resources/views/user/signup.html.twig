@@ -23,7 +23,7 @@
         {% endif %}
         <div class="container" id='signup'>
 
-            <Signupform geo-search-url="/geosearch?search=" sent-token="{{ csrf_token('user-signup') }}"></Signupform>
+            <Signupform geo-search-url="{{ geoCompleteUri }}" sent-token="{{ csrf_token('user-signup') }}"></Signupform>
         </div>
     </section>
 

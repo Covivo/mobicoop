@@ -30,6 +30,7 @@ services:
     working_dir: /var/www/api
     # command: cat /var/www/api/.env
     entrypoint: bash entrypoint.sh 
+
   db-diff:
     extends:
       service: base
