@@ -93,12 +93,11 @@ migrate:
 
 update:
 	@make -s stop
-	@make -s remove
 	git pull
 	@make -s install
 	@make -s start
 	sleep 20
-	@make -s migrate
+	@make -s db-migrate
 
 db-migrate:
 	$(info $(builder)------------------------------------------------------)
