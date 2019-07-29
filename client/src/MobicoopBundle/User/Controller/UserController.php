@@ -133,7 +133,7 @@ class UserController extends AbstractController
             $user->setGender($data['gender']);
             $user->setBirthYear($data['birthYear']);
 
-            // add the home address to the user            
+            // add the home address to the user
             $user->addAddress($address);
 
             // create user in database
