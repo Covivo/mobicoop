@@ -34,6 +34,7 @@ use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Controller\AskPost;
+use App\Carpool\Controller\AskPut;
 
 /**
  * Carpooling : ask from/to a driver and/or a passenger (after a matching between an offer and a request).
@@ -53,7 +54,13 @@ use App\Carpool\Controller\AskPost;
  *              "controller"=AskPost::class,
  *          },
  *      },
- *      itemOperations={"get","put","delete"}
+ *      itemOperations={"get","delete",
+ *          "put"={
+ *              "method"="PUT",
+ *              "path"="/asks/{id}",
+ *              "controller"=AskPut::class,
+ *          }
+ *      }
  * )
  */
 class Ask

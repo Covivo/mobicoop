@@ -226,7 +226,7 @@
                     {{ $t("ui.button.askCarpool") }}
                   </v-btn>
                   <v-card
-                    v-else
+                    v-else-if="currentAskHistory && currentAskHistory.ask.status==2 && askUser == userid"
                     color="success"
                   >
                     <v-card-text class="white--text">
@@ -237,20 +237,38 @@
                     v-if="currentAskHistory && currentAskHistory.ask.status==2 && askUser != userid"
                     class="my-2"
                   >
-                    <v-btn
-                      color="success"
-                      class="mb-2"
-                      fab
+                    <v-tooltip
+                      bottom
+                      color="primary"
                     >
-                      <v-icon>done</v-icon>
-                    </v-btn>
-                    <v-btn
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          color="success"
+                          class="mb-2"
+                          fab
+                          v-on="on"
+                        >
+                          <v-icon>done</v-icon>
+                        </v-btn>
+                      </template>
+                      <span class="black--text">{{ $t("ui.button.accept") }}</span>
+                    </v-tooltip>
+                    <v-tooltip
+                      bottom
                       color="error"
-                      class="mb-2"
-                      fab
                     >
-                      <v-icon>clear</v-icon>
-                    </v-btn>
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          color="error"
+                          class="mb-2"
+                          fab
+                          v-on="on"
+                        >
+                          <v-icon>clear</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>{{ $t("ui.button.refuse") }}</span>
+                    </v-tooltip>
                   </div>
                 </v-card>
               </v-flex>

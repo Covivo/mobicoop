@@ -103,7 +103,7 @@ class AskHistory implements MessagerInterface
     private $ask;
 
     /**
-     * @var Message The message linked the ask history item.
+     * @var Message|null The message linked the ask history item.
      *
      * @ORM\OneToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="askHistory", cascade={"persist", "remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
@@ -166,7 +166,7 @@ class AskHistory implements MessagerInterface
         return $this;
     }
 
-    public function getMessage(): Message
+    public function getMessage(): ?Message
     {
         return $this->message;
     }

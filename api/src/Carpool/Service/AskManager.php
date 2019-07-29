@@ -28,6 +28,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Carpool\Event\AskPostedEvent;
+use App\Carpool\Event\AskUpdatedEvent;
+use App\Carpool\Entity\AskHistory;
 
 /**
  * Ask manager service.
@@ -65,5 +67,38 @@ class AskManager
         $event = new AskPostedEvent($ask);
         $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
         return $ask;
+    }
+
+    /**
+     * Update an ask.
+     *
+     */
+    public function updateAsk(Ask $ask)
+    {
+        // todo : check if an ask already exists for the match and the proposals
+        
+        $this->entityManager->persist($ask);
+
+        $this->createAssociatedAskHistory($ask);
+
+        // dispatch en event
+        $event = new AskUpdatedEvent($ask);
+        $this->eventDispatcher->dispatch(AskUpdatedEvent::NAME, $event);
+        return $ask;
+    }
+
+    /**
+     * Create the associated AskHistory of an Ask
+     */
+    private function createAssociatedAskHistory(Ask $ask){
+        $askHistory = new AskHistory();
+        
+        $askHistory->setStatus($ask->getStatus());
+        $askHistory->setType($ask->getType());
+        $askHistory->setAsk($ask);
+
+        $this->entityManager->persist($askHistory);
+
+        return $askHistory;
     }
 }
