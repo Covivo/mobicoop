@@ -30,12 +30,12 @@ services:
     working_dir: /var/www/api
     # command: cat /var/www/api/.env
     entrypoint: bash entrypoint.sh 
-  doctrine-diff:
+  db-diff:
     extends:
       service: base
     working_dir: /var/www/api
     command: php bin/console doctrine:migrations:diff -n -v
-  doctrine-migrate:
+  db-migrate:
     extends:
       service: base
     working_dir: /var/www/api

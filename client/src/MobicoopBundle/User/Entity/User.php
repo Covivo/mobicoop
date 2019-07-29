@@ -620,7 +620,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     public function getHomeAddress(): ?Address
     {
         foreach ($this->addresses as $address) {
-            if ($address->getName() == self::HOME_ADDRESS_NAME) {
+            if ($address->isHome()) {
                 return $address;
             }
         }

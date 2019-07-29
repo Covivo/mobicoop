@@ -35,6 +35,7 @@ use App\Carpool\Entity\WayPoint;
 use App\User\Entity\User;
 use CrEOF\Spatial\PHP\Types\Geometry\Point;
 use App\Geography\Controller\AddressSearch;
+use App\RelayPoint\Entity\RelayPoint;
 
 /**
  * A postal address (including textual informations and / or geometric coordinates).
@@ -63,6 +64,28 @@ use App\Geography\Controller\AddressSearch;
  *                     }
  *                   }
  *              }
+ *          },
+ *          "loggedSearch"={
+ *              "method"="GET",
+ *              "path"="/addresses/loggedSearch",
+ *              "swagger_context"={
+ *                  "parameters"={
+ *                     {
+ *                         "name" = "q",
+ *                         "in" = "query",
+ *                         "required" = "true",
+ *                         "type" = "string",
+ *                         "description" = "The query"
+ *                     },
+ *                     {
+ *                         "name" = "user",
+ *                         "in" = "query",
+ *                         "type" = "number",
+ *                         "format" = "integer",
+ *                         "description" = "The user id"
+ *                     }
+ *                   }
+ *              }
  *          }
  *      },
  *      itemOperations={"get","put"}
@@ -72,6 +95,7 @@ use App\Geography\Controller\AddressSearch;
 class Address
 {
     const DEFAULT_ID = 999999999999;
+    const HOME_ADDRESS = "homeAddress";
 
     /**
      * @var int The id of this address.
@@ -238,12 +262,25 @@ class Address
     private $user;
 
     /**
+     * @var boolean The address is a home address.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $home;
+
+    /**
      * @var string|null Label for display
      *
      * @Groups({"read","pt"})
      */
     private $displayLabel;
 
+    /**
+     * @var RelayPoint|null The relaypoint related to the address.
+     * @Groups({"read","pt"})
+     */
+    private $relayPoint;
 
     public function __construct($id = null)
     {
@@ -455,6 +492,18 @@ class Address
         $this->user = $user;
     }
 
+    public function isHome(): ?bool
+    {
+        return $this->home;
+    }
+    
+    public function setHome(bool $isHome): self
+    {
+        $this->home = $isHome;
+        
+        return $this;
+    }
+
     public function getDisplayLabel(): ?string
     {
         return $this->displayLabel;
@@ -463,6 +512,16 @@ class Address
     public function setDisplayLabel(?string $displayLabel)
     {
         $this->displayLabel = $displayLabel;
+    }
+
+    public function getRelayPoint(): ?RelayPoint
+    {
+        return $this->relayPoint;
+    }
+
+    public function setRelayPoint(?RelayPoint $relayPoint)
+    {
+        $this->relayPoint = $relayPoint;
     }
 
     // DOCTRINE EVENTS
