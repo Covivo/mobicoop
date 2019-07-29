@@ -3,19 +3,20 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify/lib'
 import VueI18n from 'vue-i18n'
+import Buefy from 'buefy'; // TODO ☣️ remove it when not needed anymore
+import VueFormWizard from 'vue-form-wizard';  // TODO ☣️ remove it when not needed anymore
+
+
 // import md from "material-design-icons-iconfont";
 import '@mdi/font/css/materialdesignicons.css' // Ensure you are using css-loader
 import messages from '../../../translations/translations.json';
-import Buefy from 'buefy';
+import 'vue-form-wizard/dist/vue-form-wizard.min.css'; // TODO ☣️ remove it when not needed anymore
 
 
 Vue.use(Vuetify);
-Vue.use(Buefy); // drop it when all buefy used int he project will be removed
-// Vue.use(md);
 Vue.use(VueI18n);
-// Vue.use(VueFormWizard);
-
-// import traductions
+Vue.use(Buefy); // TODO ☣️ remove it when not needed anymore
+Vue.use(VueFormWizard); // TODO ☣️ remove it when not needed anymore
 
 
 const i18n = new VueI18n({
