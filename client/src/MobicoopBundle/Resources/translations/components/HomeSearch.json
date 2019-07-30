@@ -5,7 +5,8 @@
         "origin": "Lieu de départ",
         "destination": "Lieu d'arrivée",
         "switch": {
-            "label": "Trajet régulier"
+            "label": "Trajet régulier",
+            "help": "Cochez cette case pour spécifier que votre trajet est régulier"
         },
         "datePicker": {
             "label": "Date de départ"
@@ -25,7 +26,8 @@
         "origin": "Departure location",
         "destination": "Arrival location",
         "switch": {
-            "label": "Regular ride"
+            "label": "Regular ride",
+            "help": "Switch to indicate a regular ride"
         },
         "datePicker": {
             "label": "Departure date"

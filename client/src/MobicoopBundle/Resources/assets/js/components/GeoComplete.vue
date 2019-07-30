@@ -117,6 +117,7 @@ export default {
           })
           // Set Data & show them
           if(this.isLoading) return; // Another request is fetching, we do not show the previous one
+          console.error(res.data['hydra:member']);
           this.entries = [...res.data['hydra:member']];
         })
         .catch(err => {

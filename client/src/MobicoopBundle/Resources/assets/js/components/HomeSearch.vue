@@ -44,7 +44,7 @@
         <v-flex xs3>
           <GeoComplete
             :url="geoSearchUrl" 
-            :label="labelOrigin"
+            :label="labelDestination"
           />
         </v-flex>
       </v-layout>
@@ -67,7 +67,14 @@
             v-model="regular"
             inset
           />
-          <v-icon>mdi-help-circle-outline</v-icon>
+          <v-tooltip right>
+            <template v-slot:activator="{ on }">
+              <v-icon v-on="on">
+                mdi-help-circle-outline
+              </v-icon>
+            </template>
+            <span>{{ $t('switch.help') }}</span>
+          </v-tooltip>
         </v-flex>
       </v-layout>
       <v-layout
@@ -79,7 +86,7 @@
           offset-xs2
         >
           <v-menu
-            v-model="menu2"
+            v-model="menu"
             :close-on-content-click="false"
             :nudge-right="40"
             transition="scale-transition"
@@ -92,27 +99,29 @@
                 v-model="date"
                 :label="$t('datePicker.label')"
                 readonly
+                :messages="$t('ui.form.optional')"
                 v-on="on"
               />
             </template>
             <v-date-picker
               v-model="date"
               scrollable
+              :locale="locale"
             >
               <v-spacer />
               <v-btn
                 text
                 color="primary"
-                @click="menu2 = false"
+                @click="menu = false"
               >
-                Cancel
+                {{ $t('ui.button.cancel') }}
               </v-btn>
               <v-btn
                 text
                 color="primary"
                 @click="$refs.dialog.save(date)"
               >
-                OK
+                {{ $t('ui.button.valid') }}
               </v-btn>
             </v-date-picker>
           </v-menu>
@@ -137,7 +146,6 @@
           <v-btn
             color="success"
             rounded
-            flat
           >  
             {{ $t('buttons.search.label') }}
           </v-btn>
@@ -166,18 +174,16 @@ export default {
     route: {
       type: String,
       default: ""
-    },
-    user: {
-      type: Object,
-      default: {}
     }
   },
   data () {
     return {
       regular: false,
-      date: new Date().toISOString().substr(0, 10),
-      menu2: false,
-      labelOrigin: this.$t('origin')
+      date: null,
+      menu: false,
+      labelOrigin: this.$t('origin'),
+      labelDestination: this.$t('destination'),
+      locale: this.$i18n.locale
     }
   },
 }

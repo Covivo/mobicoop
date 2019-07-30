@@ -5,10 +5,13 @@
                     "previous": "Précédent",
                     "next": "Suivant",
                     "register": "Je m'inscris",
-                    "save": "Enregistrer"
+                    "save": "Enregistrer",
+                    "cancel": "Annuler",
+                    "valid": "Valider"
                 }, 
                 "form": {
-                    "errors": "Merci de corriger les erreurs suivantes "
+                    "errors": "Merci de corriger les erreurs suivantes ",
+                    "optional": "facultatif"
                 },
                 "pages": {
                     "home": {
