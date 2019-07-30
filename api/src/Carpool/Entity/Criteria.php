@@ -519,7 +519,7 @@ class Criteria
      * @var Direction|null The direction used in the journey as a passenger.
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
-     * @Groups({"read"})
+     * @Groups({"read","thread"})
      */
     private $directionPassenger;
     

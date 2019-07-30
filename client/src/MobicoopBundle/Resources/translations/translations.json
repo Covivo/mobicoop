@@ -24,7 +24,11 @@
                     "carpooling": {
                         "askAlreadySent": "Proposition de covoiturage envoyée",
                         "accepted": "Proposition de covoiturage acceptée",
-                        "refused": "Proposition de covoiturage refusée"
+                        "refused": "Proposition de covoiturage refusée",
+                        "distance": "Distance",
+                        "duration": "Durée",
+                        "availableSeats": "Places disponibles",
+                        "price": "Prix"
                     },
                     "misc": {
                         "at": "à"

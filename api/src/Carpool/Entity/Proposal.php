@@ -235,7 +235,7 @@ class Proposal
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="proposal", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","thread"})
      */
     private $criteria;
     

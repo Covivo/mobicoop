@@ -58,7 +58,6 @@
                   :key="index"
                   class="threads mx-auto mt-2"
                   :class="threadCM.selected ? 'primary' : ''"
-                  max-width="400"
                   @click="updateMessages(threadCM.idThreadMessage,threadCM.contactId)"
                 >
                   <v-card-title>
@@ -208,7 +207,7 @@
               >
                 <v-card class="pa-2">
                   <!-- The current carpool history -->
-                  <v-card-text class="font-weight-bold">
+                  <v-card-text class="font-weight-bold headline">
                     {{ currentcorrespondant }}
                   </v-card-text>
                   <v-card
@@ -221,13 +220,14 @@
                     <!-- Timeline of the journey -->
                     <v-timeline dense>
                       <v-timeline-item
-                        v-for="(waypoint, index) in geography['waypoints']"
+                        v-for="(waypoint, index) in infosJourney['waypoints']"
                         :key="index"
-                        small
                         :icon="( (index>0) && (index<waypoint.length-1) ) ? 'arrow_right_alt' : ''"
-                        :color="( (index>0) && (index<waypoint.length-1) ) ? 'warning' : 'primary'"
+                        :color="( (index>0) && (index<waypoint.length-1) ) ? '' : 'primary'"
                         :icon-color="( (index>0) && (index<waypoint.length-1) ) ? 'warning' : 'primary'"
                         :fill-dot="( (index>0) && (index<waypoint.length-1) )"
+                        class="text-left pb-2"
+                        :class="( (index>0) && (index<waypoint.length-1) ) ? 'waypoint' : ''"
                       >
                         {{ waypoint }}
                       </v-timeline-item>
@@ -235,8 +235,34 @@
 
                     <v-divider />
                     <v-layout row>
-                      <v-flex xs6 />
-                      <v-flex xs6 />
+                      <v-flex
+                        xs8
+                        text-left
+                      >
+                        <v-card-text class="py-1">
+                          {{ $t("ui.infos.carpooling.distance") }}
+                        </v-card-text>
+                        <v-card-text class="py-1">
+                          {{ $t("ui.infos.carpooling.availableSeats") }}
+                        </v-card-text>
+                        <v-card-text class="font-weight-bold py-1">
+                          {{ $t("ui.infos.carpooling.price") }}
+                        </v-card-text>
+                      </v-flex>
+                      <v-flex
+                        xs4
+                        text-right
+                      >
+                        <v-card-text class="py-1">
+                          {{ infosJourney["distanceRounded"] }}km
+                        </v-card-text>
+                        <v-card-text class="py-1">
+                          {{ infosJourney["seats"] }}
+                        </v-card-text>
+                        <v-card-text class="font-weight-bold py-1">
+                          {{ infosJourney["price"] }} €
+                        </v-card-text>
+                      </v-flex>
                     </v-layout>
                   </v-card>
                   <v-card v-else>
@@ -441,7 +467,7 @@ export default {
       textSpinner:"",
       currentAskHistory:null,
       askUser:0,
-      geography:[]
+      infosJourney:[]
     }
   },
   watch: {
@@ -524,13 +550,25 @@ export default {
     },
     updateContextPanel(){
       if(this.currentAskHistory !== null){
-        this.geography.length = 0; // Reset geography infos      
-        this.geography["waypoints"] = new Array();
+        this.infosJourney.length = 0; // Reset journey infos      
+
+        this.infosJourney["waypoints"] = new Array();
         for(let waypoint of this.currentAskHistory.ask.matching.waypoints){
         // Get the diffrent waypoints
-          this.geography["waypoints"].push(waypoint.address.addressLocality);
+          this.infosJourney["waypoints"].push(waypoint.address.addressLocality);
         }
       }
+
+      // update distance
+      this.infosJourney["distance"] = parseInt(this.currentAskHistory.ask.matching.proposalRequest.criteria.directionPassenger.distance)/1000;
+      this.infosJourney["distanceRounded"] = Math.round(this.infosJourney["distance"]);
+
+      // update price
+      this.infosJourney["price"] = (this.infosJourney["distance"] * parseFloat(this.currentAskHistory.ask.matching.proposalRequest.criteria.priceKm)).toFixed(2);
+
+      // seats
+      this.infosJourney["seats"] = this.currentAskHistory.ask.matching.criteria.seats;
+
     },
     sendInternalMessage(){
       let messageToSend = new FormData();

@@ -29,4 +29,19 @@ body {
       }
     }
   }
+  #contextColumn {
+    .v-timeline-item {
+      &.waypoint {
+        .v-timeline-item__dot {
+          //box-shadow: none;
+          .v-timeline-item__inner-dot {
+            //background-color: #FFF;
+          }
+        }
+      }
+      .v-timeline-item__body {
+        padding-top: 8px;
+      }
+    }
+  }
 }
