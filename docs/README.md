@@ -225,9 +225,10 @@ A developer doc is available [here](https://mobicoop.gitlab.io/mobicoop/build/do
     Mobicoop comes with a simple script to run, it will create a canvas skeleton based on mobicoop front-end & link the main bundle to it.
     Just go to the root of Mobicoop repo and do the flollowing:
 
-`mkdir -p ../path/to/newFront`
-
-`npm run create-front-canvas ../path/to/newFront`
+1. `npm run create-front-canvas $$nameOfProject$$` will create the folder next to the current
+2. Edit the webpack file into the $$nameOfProject$$ folder & comment/uncomment the needeed
+3. Read the doc inside the created folder 
+4. Every Specific file copied is in `bin/helper/client-canvas` do not forget to update thoses files when needed! (for eg add dependencies inside package.json)
 
     ☢️ *Do not forget to commit into monorepo  ( & create branch if needed) when you edit bundle files* ☣️ 
 

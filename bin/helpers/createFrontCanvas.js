@@ -23,6 +23,7 @@ if (!program.project) {
 }
 
 const pathToClient = path.resolve(__dirname, '../../client');
+const pathToRoot = path.resolve(__dirname, '../../');
 const pathToMobicoopBundle = path.resolve(pathToClient, 'src/MobicoopBundle');
 const destinationProject = path.resolve(__dirname, `../../../${program.project}`);
 const pathToClientAssets = path.resolve(pathToMobicoopBundle, 'Resources/assets');
@@ -59,7 +60,7 @@ async function createCanvas() {
    * Copy all client files but filters to destination
    */
   const filter = {
-    elementToExclude: ['MobicoopBundle', 'node_modules', 'vendor', 'var', 'cypress', 'assets', ''],
+    elementToExclude: ['MobicoopBundle', 'node_modules', 'vendor', 'var', 'cypress.json', 'phpunit.xml.dist', 'assets', 'package-lock', 'kahlan-config.php', 'tests', 'package.json'],
     extToExclude: ['.lock'],
     filter: function (currentPath) {
       if (this.elementToExclude.includes(path.basename(currentPath)) || this.extToExclude.includes(path.extname(currentPath))) { return false; }
@@ -102,42 +103,41 @@ async function createCanvas() {
   /**
    * Copy specific client assets (client-canvas-folder)
    */
+  console.log(kuler(`Copying specific assets for ${destinationAssets} 🚀 \n`, 'pink'));
   let appjs = path.resolve(__dirname, 'client-canvas/app.js');
   let gitignore = path.resolve(__dirname, 'client-canvas/docker-compose-builder-darwin.yml');
   let dcbl = path.resolve(__dirname, 'client-canvas/docker-compose-builder-linux.yml');
   let dcbd = path.resolve(__dirname, 'client-canvas/docker-compose-builder-linux.yml');
   let dcl = path.resolve(__dirname, 'client-canvas/docker-compose-linux.yml');
   let dcd = path.resolve(__dirname, 'client-canvas/docker-compose-darwin.yml');
-  console.log(kuler(`Copying specific assets for ${destinationAssets} 🚀 \n`, 'pink'));
+  let gitlabci = path.resolve(__dirname, 'client-canvas/.gitlab-ci');
+  let packagejson = path.resolve(__dirname, 'client-canvas/package.json');
+  let makefile = path.resolve(__dirname, 'client-canvas/makefile');
+  let entryBuilder = path.resolve(__dirname, 'client-canvas/entrypoint-builder.sh');
+  let entry = path.resolve(__dirname, 'client-canvas/entrypoint.sh');
   [err, success] = await to(fs.copy(appjs, `${destinationAssets}/js/app.js`));
   [err, success] = await to(fs.copy(dcbd, `${destinationProject}/docker-compose-builder-darwin.yml`));
   [err, success] = await to(fs.copy(dcbl, `${destinationProject}/docker-compose-builder-linux.yml`));
   [err, success] = await to(fs.copy(dcd, `${destinationProject}/docker-compose-darwin.yml`));
   [err, success] = await to(fs.copy(dcl, `${destinationProject}/docker-compose-linux.yml`));
+  [err, success] = await to(fs.copy(packagejson, `${destinationProject}/package.json`));
+  [err, success] = await to(fs.copy(gitlabci, `${destinationProject}/.gitlab-ci`));
+  [err, success] = await to(fs.copy(makefile, `${destinationProject}/makefile`));
+  [err, success] = await to(fs.copy(entryBuilder, `${destinationProject}/entrypoint-builder.sh`));
+  [err, success] = await to(fs.copy(entry, `${destinationProject}/entrypoint.sh`));
 
-
-  /**
-   * 
-   * We need to add those behind to all js file in dest 
-   * 'use strict';
-
-import '../../../../src/MobicoopBundle/Resources/assets/js/page/search/simpleResults.js';
-import '../../../css/page/search/simpleResults.scss';
-   */
-
-  // We add bundle to .gitignore
-  // [err, success] = await to(fs.appendFile(path.resolve(destinationProject, '.gitignore'), '\nsrc/MobicoopBundle'));
-  // if (!err) console.log(kuler('Added bundle to .gitignore \n', 'green'));
-  // console.log(kuler('☢️ Do not forget to commit into monorepo when you edit bundle files ☣️ \n', 'cyan'));
 }
 
+/**
+ * Replace some text to help the creation of the new client platform
+ */
 async function replaceDataInCanvas() {
   const options = {
     files: `${destinationProject}/**/*`,
     from: /\$\$NAME\$\$/gi,
-    to: `${program.project}-platform`,
+    to: `${program.project}_platform`,
   };
-  return replace(options);
+  await replace(options);
 }
 
 
@@ -153,8 +153,5 @@ function crawlDir(dir) {
       fs.writeFileSync(`${fullPath}/.gitkeep`, '');
       crawlDir(fullPath);
     }
-    // if(path.extname(fullPath) === '.js'){
-    //   fs.createFileSync()
-    // }
   });
 }
