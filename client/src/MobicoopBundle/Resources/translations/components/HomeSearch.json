@@ -1,10 +1,38 @@
 {
     "fr": {
         "title": "Mobicoop",
-        "subtitle": "Un service de covoiturage de proximité, convivial et solidaire.<br />Trouvez dès à présent votre covoiturage ou proposez votre trajet."
+        "subtitle": "Un service de covoiturage de proximité, convivial et solidaire.<br />Trouvez dès à présent votre covoiturage ou proposez votre trajet.",
+        "switch": {
+            "label": "Trajet régulier"
+        },
+        "datePicker": {
+            "label": "Date de départ"
+        },
+        "buttons": {
+            "shareAnAd": {
+                "label": "Publier une annonce"
+            },
+            "search": {
+                "label": "Rechercher"
+            }
+        }
     },
     "en": {
         "title": "Mobicoop",
-        "subtitle": "Mobicoop"
+        "subtitle": "Explanation in english",
+        "switch": {
+            "label": "Regular ride"
+        },
+        "datePicker": {
+            "label": "Departure date"
+        },
+        "buttons": {
+            "shareAnAd": {
+                "label": "Share an ad"
+            },
+            "search": {
+                "label": "Search"
+            }
+        }
     }
 }

@@ -30,27 +30,27 @@
     "en": {
         "buttons": {
             "signup": {
-                "label": "Inscription",
-                "route": "/utilisateur/inscription"
+                "label": "Sign up",
+                "route": "/user/signup"
             },
             "logIn": {
-                "label": "Connexion",
-                "route": "/utilisateur/connexion"
+                "label": "Login",
+                "route": "/user/login"
             },
             "shareAnAd": {
-                "label": "Publier une annonce",
-                "route": "/covoiturage/annonce/poster"
+                "label": "Share an ad",
+                "route": "/carpool/ad/share"
             },
             "messages": {
                 "label": "Messages",
-                "route": "/utilisateur/messages"
+                "route": "/user/messages"
             },
             "myProfile": {
-                "label": "Mon profil",
-                "route": "/utilisateur/profil/modifier"
+                "label": "My profile",
+                "route": "/user/profile/update"
             },
             "logOut": {
-                "label": "Déconnexion",
+                "label": "Logout",
                 "route": "/user/logout"
             }
         }
