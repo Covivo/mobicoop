@@ -80,5 +80,5 @@ class AskHistoryManager
             return $response->getValue();
         }
         return null;
-    }    
- }
+    }
+}

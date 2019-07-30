@@ -422,7 +422,7 @@ class UserController extends AbstractController
             );
 
             // If there is an AskHistory i will post an AskHistory with the message within. If not, i only send a Message.
-            if(trim($request->request->get('idAskHistory'))!==""){
+            if (trim($request->request->get('idAskHistory'))!=="") {
                 
                 // Get the current AskHistory
                 $currentAskHistory = $askHistoryManager->getAskHistory($request->request->get('idAskHistory'));
@@ -434,15 +434,13 @@ class UserController extends AbstractController
                 $askHistory->setStatus($currentAskHistory->getStatus());
                 $askHistory->setType($currentAskHistory->getType());
 
-                print_r($askHistoryManager->createAskHistory($askHistory));die;
+                print_r($askHistoryManager->createAskHistory($askHistory));
+                die;
                 
                 return new Response($askHistoryManager->createAskHistory($askHistory, DataProvider::RETURN_JSON));
-
-            }
-            else{
+            } else {
                 return new Response($internalMessageManager->sendInternalMessage($messageToSend, DataProvider::RETURN_JSON));
             }
-
         }
         return new Response(json_encode("Not a post"));
     }
