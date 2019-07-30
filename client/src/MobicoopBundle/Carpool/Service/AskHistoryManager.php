@@ -24,12 +24,12 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
 
 /**
- * Ask management service.
+ * AskHistory management service.
  */
-class AskManager
+class AskHistoryManager
 {
     private $dataProvider;
     
@@ -40,17 +40,17 @@ class AskManager
     public function __construct(DataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
-        $this->dataProvider->setClass(Ask::class);
+        $this->dataProvider->setClass(AskHistory::class);
     }
 
     /**
-     * Get an Ask by its identifier
+     * Get an AskHistory by its identifier
      *
      * @param int $id The Ask id
      *
-     * @return Ask|null The Ask found or null if not found.
+     * @return AskHistory|null The AskHistory found or null if not found.
      */
-    public function getAsk(int $id)
+    public function getAskHistory(int $id)
     {
         $response = $this->dataProvider->getItem($id);
         if ($response->getCode() == 200) {
@@ -61,35 +61,24 @@ class AskManager
     }
     
     /**
-     * Update an Ask
+     * Create a AskHistory
      *
-     * @param Ask $ask The Ask to update
+     * @param AskHistory    $proposal The proposal to create
+     * @param int           $format The format to use
      *
-     * @return Ask|null The Ask updated or null if error.
+     * @return AskHistory|null The AskHistory created or null if error.
      */
-    public function updateAsk(Ask $ask)
+    public function createAskHistory(AskHistory $askHistory, int $format=null)
     {
-        $response = $this->dataProvider->put($ask);
-        if ($response->getCode() == 200) {
-            return $response->getValue();
+        if ($format!==null) {
+            $this->dataProvider->setFormat($format);
         }
-        return null;
-    }
 
-    /**
-     * Get all the AskHistories of an Ask
-     *
-     * @param int $idAsk The Ask id
-     *
-     * @return array|null The AskHistories found or null if not found.
-     */
-    public function getAskHistories(int $idAsk)
-    {
-        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
-        $response = $this->dataProvider->getSubCollection($idAsk, 'askhistory', 'ask_histories');
-        if ($response->getCode() == 200) {
+        $response = $this->dataProvider->post($askHistory);
+
+        if ($response->getCode() == 201) {
             return $response->getValue();
         }
         return null;
-    }
-}
+    }    
+ }

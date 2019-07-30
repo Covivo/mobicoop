@@ -47,6 +47,8 @@ use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Recipient;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskManager;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskHistoryManager;
 
 /**
  * Controller class for user related actions.
@@ -402,7 +404,7 @@ class UserController extends AbstractController
      * Send an internal message to another user
      * Ajax Request
      */
-    public function sendInternalMessage(UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request)
+    public function sendInternalMessage(UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request, AskHistoryManager $askHistoryManager)
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
@@ -419,7 +421,28 @@ class UserController extends AbstractController
                 $internalMessageManager->getMessage($idThreadMessage)
             );
 
-            return new Response($internalMessageManager->sendInternalMessage($messageToSend, DataProvider::RETURN_JSON));
+            // If there is an AskHistory i will post an AskHistory with the message within. If not, i only send a Message.
+            if(trim($request->request->get('idAskHistory'))!==""){
+                
+                // Get the current AskHistory
+                $currentAskHistory = $askHistoryManager->getAskHistory($request->request->get('idAskHistory'));
+
+                // Create the new Ask History to post
+                $askHistory = new AskHistory();
+                $askHistory->setMessage($messageToSend);
+                $askHistory->setAsk($currentAskHistory->getAsk());
+                $askHistory->setStatus($currentAskHistory->getStatus());
+                $askHistory->setType($currentAskHistory->getType());
+
+                print_r($askHistoryManager->createAskHistory($askHistory));die;
+                
+                return new Response($askHistoryManager->createAskHistory($askHistory, DataProvider::RETURN_JSON));
+
+            }
+            else{
+                return new Response($internalMessageManager->sendInternalMessage($messageToSend, DataProvider::RETURN_JSON));
+            }
+
         }
         return new Response(json_encode("Not a post"));
     }

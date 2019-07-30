@@ -575,6 +575,9 @@ export default {
       messageToSend.append("idThreadMessage",this.idThreadMessage);
       messageToSend.append("text",this.textToSend);
       messageToSend.append("idRecipient",this.idRecipient);
+      if(this.currentAskHistory!==null){
+        messageToSend.append("idAskHistory",this.currentAskHistory.id);
+      }
       this.textSpinner = this.textSpinnerSendMessage;
       this.spinner = true;
       axios
@@ -582,7 +585,12 @@ export default {
         .then(res => {
           this.textToSend = "";
           this.spinner = false;
-          this.updateMessages(res.data.message.id);
+          if(this.updateMessages(res.data.message)!==undefined){
+            this.updateMessages(res.data.message.id);
+          }
+          else{
+            this.updateMessages();
+          }
         });
     },
     updateCarpool(status){
@@ -597,6 +605,7 @@ export default {
         .then(res => {
           this.currentAskHistory.ask.status = res.data.status;
           this.spinner = false;
+          this.updateMessages();
         });
     },
     addMessageToItems(message){

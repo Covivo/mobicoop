@@ -37,11 +37,13 @@ class Ask implements ResourceInterface
 {
     /**
      * @var int The id of this ask.
+     * @Groups({"post"})
      */
     private $id;
 
     /**
      * @var string|null The iri of this ask.
+     * @Groups({"post"})
      */
     private $iri;
 

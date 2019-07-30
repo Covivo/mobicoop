@@ -273,6 +273,7 @@ class Criteria
     
     /**
      * @var boolean The user accepts any route as a passenger from its origin to the destination.
+     * @Groups({"post","put"})
      */
     private $anyRouteAsPassenger;
     

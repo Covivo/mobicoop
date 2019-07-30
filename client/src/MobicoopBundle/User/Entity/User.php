@@ -80,7 +80,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface
     /**
      * @var string|null The first name of the user.
      *
-     * @Groups({"post","put"})
+     * @Groups({"get","post","put"})
      */
     private $givenName;
     
