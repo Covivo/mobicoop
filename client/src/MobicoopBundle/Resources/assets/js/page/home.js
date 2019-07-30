@@ -4,7 +4,7 @@
 // import 'babel-polyfill';
 // import Vue from 'vue';
 
-import { Vue, vuetify, i18n } from '../config/vue-config'
+import { Vue, vuetify, i18n, VApp } from '../config/vue-config'
 
 // Vue components
 import Homesearchform from '../components/Homesearchform';
@@ -18,6 +18,7 @@ new Vue({
   el: '#app',
   vuetify,
   components: {
+    VApp,
     Homesearchform,
     Vueheader,
     Vuefooter

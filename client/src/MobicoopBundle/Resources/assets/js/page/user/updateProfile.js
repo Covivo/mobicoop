@@ -1,6 +1,6 @@
 'use strict';
 
-import { Vue, vuetify, i18n } from '../../config/vue-config'
+import { Vue, vuetify, i18n, VApp } from '../../config/vue-config'
 import '../../../css/page/user/updateProfile.scss';
 
 // Vue components
@@ -16,6 +16,7 @@ new Vue({
   el: '#app',
   vuetify,
   components: {
+    VApp,
     Updateprofile,
     Vueheader,
     Vuefooter

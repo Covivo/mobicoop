@@ -2,7 +2,7 @@
 
 // any CSS you require will output into a single css file (app.css in this case)
 import moment from 'moment';
-import { Vue, vuetify, i18n } from '../../config/vue-config'
+import { Vue, vuetify, i18n, VApp } from '../../config/vue-config'
 import '../../../css/page/search/simpleResults.scss';
 
 // Vue components
@@ -27,6 +27,7 @@ new Vue({
   el: '#app',
   vuetify,
   components: {
+    VApp,
     Resultssearchform,
     BDatepicker,
     Journey,

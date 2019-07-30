@@ -1,62 +1,60 @@
 <template>
-  <v-app>
-    <v-footer height="auto">
-      <v-layout
-        justify-center
-        row
+  <v-footer height="auto">
+    <v-layout
+      justify-center
+      row
+    >
+      <a
+        href="https://www.facebook.com/Mobicoop/"
+        target="_blank"
       >
-        <a
-          href="https://www.facebook.com/Mobicoop/"
-          target="_blank"
+        <img
+          src="/images/footer/facebook.svg"
+          width="50px"
+          height="50px"
         >
-          <img
-            src="/images/footer/facebook.svg"
-            width="50px"
-            height="50px"
-          >
-        </a>
-        <a
-          href="https://twitter.com/MobicoopCovoit?lang=fr"
-          target="_blank"
+      </a>
+      <a
+        href="https://twitter.com/MobicoopCovoit?lang=fr"
+        target="_blank"
+      >
+        <img
+          src="/images/footer/twitter.svg"
+          width="50px"
+          height="50px"
         >
-          <img
-            src="/images/footer/twitter.svg"
-            width="50px"
-            height="50px"
-          >
-        </a>
-        <a
-          href="https://www.instagram.com/mobicoopcovoiturage/"
-          target="_blank"
+      </a>
+      <a
+        href="https://www.instagram.com/mobicoopcovoiturage/"
+        target="_blank"
+      >
+        <img
+          src="/images/footer/instagram.svg"
+          width="50px"
+          height="50px"
         >
-          <img
-            src="/images/footer/instagram.svg"
-            width="50px"
-            height="50px"
-          >
-        </a>
-        <a
+      </a>
+      <a
+        href="https://framasphere.org/people/9bfd3a40f8fb0134e71f2a0000053625"
+        target="_blank"
+      >
+        <img
           href="https://framasphere.org/people/9bfd3a40f8fb0134e71f2a0000053625"
           target="_blank"
+          src="/images/footer/framasphere.svg"
+          width="50px"
+          height="50px"
         >
-          <img
-            href="https://framasphere.org/people/9bfd3a40f8fb0134e71f2a0000053625"
-            target="_blank"
-            src="/images/footer/framasphere.svg"
-            width="50px"
-            height="50px"
-          >
-        </a>
-        <v-flex
-          py-4
-          text-center
-          xs12
-        >
-          <strong>Mobicoop</strong> by Mobicoop team. The source code is licensed AGPL3. The website content is licensed AGPL3 too
-        </v-flex>
-      </v-layout>
-    </v-footer>
-  </v-app>
+      </a>
+      <v-flex
+        py-4
+        text-center
+        xs12
+      >
+        <strong>Mobicoop</strong> by Mobicoop team. The source code is licensed AGPL3. The website content is licensed AGPL3 too
+      </v-flex>
+    </v-layout>
+  </v-footer>
 </template>
 <script>
 </script>

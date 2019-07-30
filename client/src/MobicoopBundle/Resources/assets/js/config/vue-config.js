@@ -1,7 +1,7 @@
 "use strict"
 
 import Vue from 'vue'
-import Vuetify from 'vuetify/lib'
+import Vuetify, { VApp } from 'vuetify/lib'
 import VueI18n from 'vue-i18n'
 import Buefy from 'buefy'; // TODO ☣️ remove it when not needed anymore
 import VueFormWizard from 'vue-form-wizard';  // TODO ☣️ remove it when not needed anymore
@@ -33,6 +33,7 @@ const vuetify = new Vuetify({
 });
 
 export {
+  VApp,
   vuetify,
   i18n,
   Vue

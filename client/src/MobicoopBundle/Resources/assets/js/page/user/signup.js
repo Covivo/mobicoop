@@ -1,6 +1,6 @@
 'use strict';
 
-import { Vue, vuetify, i18n } from '../../config/vue-config'
+import { Vue, vuetify, i18n, VApp } from '../../config/vue-config'
 import '../../../css/page/user/signup.scss';
 
 // Vue components
@@ -14,6 +14,7 @@ new Vue({
   el: '#app',
   vuetify,
   components: {
+    VApp,
     Signupform,
     Vueheader,
     Vuefooter
