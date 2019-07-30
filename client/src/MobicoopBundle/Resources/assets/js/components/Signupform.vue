@@ -130,7 +130,7 @@
               icon=""
               class="tabContent"
             >
-              <geocomplete
+              <GeoComplete
                 id="homeAddress"
                 name="homeAddress"
                 :placeholder="$t('models.user.homeTown.placeholder')"
@@ -156,13 +156,11 @@
 
 <script>
 import axios from "axios";
-import Geocomplete from "./Geocomplete";
-// import BDatepicker from "buefy/src/components/datepicker/Datepicker";
+import GeoComplete from "./GeoComplete";
+
 export default {
-  name: 'Resultssearchform',
   components: {
-    // BDatepicker,
-    Geocomplete
+    GeoComplete
   },
   props: {
     geoSearchUrl: {
