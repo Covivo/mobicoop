@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+    <file original="file.ext" source-language="en" target-language="fr" datatype="plaintext">
+        <body>
+            <trans-unit id="9bc1dcca9fa7916350496a6f16e30c11" approved="yes">
+                <source>Live translation</source>
+                <target xml:lang="fr" state="translated">Traduction communautaire contextuelle</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

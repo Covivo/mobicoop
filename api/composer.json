@@ -28,10 +28,11 @@
         "symfony/monolog-bundle": "^3.3",
         "symfony/security-bundle": "4.2.*",
         "symfony/swiftmailer-bundle": "^3.2",
+        "symfony/translation": "4.2.*",
+        "symfony/web-server-bundle": "*",
         "symfony/yaml": "*",
         "vich/uploader-bundle": "^1.8",
-        "willdurand/geocoder-bundle": "^5.3",
-        "symfony/web-server-bundle": "*"
+        "willdurand/geocoder-bundle": "^5.3"
     },
     "require-dev": {
         "symfony/maker-bundle": "^1.7"
