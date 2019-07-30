@@ -109,7 +109,7 @@
                   <span>Aller-retour</span>
                 </b-radio-button>
               </b-field>
-              <geocomplete
+              <GeoComplete
                 name="origin"
                 placeholder="Depuis"
                 :url="geoSearchUrl"

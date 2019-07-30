@@ -2,6 +2,8 @@
     "fr": {
         "title": "Mobicoop",
         "subtitle": "Un service de covoiturage de proximité, convivial et solidaire.<br />Trouvez dès à présent votre covoiturage ou proposez votre trajet.",
+        "origin": "Lieu de départ",
+        "destination": "Lieu d'arrivée",
         "switch": {
             "label": "Trajet régulier"
         },
@@ -20,6 +22,8 @@
     "en": {
         "title": "Mobicoop",
         "subtitle": "Explanation in english",
+        "origin": "Departure location",
+        "destination": "Arrival location",
         "switch": {
             "label": "Regular ride"
         },
@@ -34,5 +38,7 @@
                 "label": "Search"
             }
         }
+        
     }
+    
 }

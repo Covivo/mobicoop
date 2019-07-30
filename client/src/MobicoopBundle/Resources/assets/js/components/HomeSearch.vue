@@ -27,7 +27,10 @@
           xs3
           offset-xs2
         >
-          <GeoComplete :url="geoSearchUrl" />
+          <GeoComplete
+            :url="geoSearchUrl" 
+            :label="labelOrigin"
+          />
         </v-flex>
         <v-flex
           class="text-center"
@@ -39,7 +42,10 @@
           >
         </v-flex>
         <v-flex xs3>
-          <GeoComplete :url="geoSearchUrl" />
+          <GeoComplete
+            :url="geoSearchUrl" 
+            :label="labelOrigin"
+          />
         </v-flex>
       </v-layout>
       <v-layout
@@ -167,6 +173,7 @@ export default {
       regular: false,
       date: new Date().toISOString().substr(0, 10),
       menu2: false,
+      labelOrigin: this.$t('origin')
     }
   },
 }

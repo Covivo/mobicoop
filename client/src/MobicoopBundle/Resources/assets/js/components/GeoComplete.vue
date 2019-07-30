@@ -3,17 +3,57 @@
     v-model="address"
     :loading="isLoading"
     :items="items"
+    :label="label"
     :search-input.sync="search"
     hide-no-data
     hide-details
+    clearable
     item-text="concatenedAddr"
     color="success"
     return-object
     no-filter
-  />
+  >
+    <!-- template for selected item  -->
+    <template v-slot:selection="data">
+      <template>
+        <v-list>
+          <v-list-item>
+            <v-list-item-avatar>
+              <v-icon
+                v-text="data.item.icon"
+              />
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title v-html="data.item.concatenedAddr" />
+              <v-list-item-subtitle v-html="data.item.addressCountry" />
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </template>
+    </template>
+    <!-- template for list items  -->
+    <template v-slot:item="data">
+      <template>
+        <v-list>
+          <v-list-item>
+            <v-list-item-avatar>
+              <v-icon
+                v-text="data.item.icon"
+              />
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title v-html="data.item.concatenedAddr" />
+              <v-list-item-subtitle v-html="data.item.addressCountry" />
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </template>
+    </template>
+  </v-autocomplete>
 </template>
 
 <script>
+import Translations from "../../../translations/components/GeoComplete.json";
 import axios from "axios";
 import debounce from "lodash/debounce";
 
@@ -22,8 +62,12 @@ const defaultString = {
   default: ""
 };
 export default {
+  i18n: {
+    messages: Translations
+  },
   props: {
     url: defaultString,
+    label: defaultString
   },
   data () {
     return {
@@ -31,14 +75,15 @@ export default {
       isLoading: false,
       search: null,
       address: null,
-      filter: null,
+      filter: null
     }
   },
   computed: {
     items () {
       return this.entries.map(entry => {
         const concatenedAddr = entry.concatenedAddr
-        return Object.assign({}, entry, { concatenedAddr })
+        const icon = 'mdi-map-marker'
+        return Object.assign({}, entry, { concatenedAddr, icon })
       })
     },
   },
