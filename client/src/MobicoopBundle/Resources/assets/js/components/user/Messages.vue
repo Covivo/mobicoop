@@ -562,17 +562,17 @@ export default {
         // Get the diffrent waypoints
           this.infosJourney["waypoints"].push(waypoint.address.addressLocality);
         }
+
+        // update distance
+        this.infosJourney["distance"] = parseInt(this.currentAskHistory.ask.matching.proposalRequest.criteria.directionPassenger.distance)/1000;
+        this.infosJourney["distanceRounded"] = Math.round(this.infosJourney["distance"]);
+
+        // update price
+        this.infosJourney["price"] = (this.infosJourney["distance"] * parseFloat(this.currentAskHistory.ask.matching.proposalRequest.criteria.priceKm)).toFixed(2);
+
+        // seats
+        this.infosJourney["seats"] = this.currentAskHistory.ask.matching.criteria.seats;
       }
-
-      // update distance
-      this.infosJourney["distance"] = parseInt(this.currentAskHistory.ask.matching.proposalRequest.criteria.directionPassenger.distance)/1000;
-      this.infosJourney["distanceRounded"] = Math.round(this.infosJourney["distance"]);
-
-      // update price
-      this.infosJourney["price"] = (this.infosJourney["distance"] * parseFloat(this.currentAskHistory.ask.matching.proposalRequest.criteria.priceKm)).toFixed(2);
-
-      // seats
-      this.infosJourney["seats"] = this.currentAskHistory.ask.matching.criteria.seats;
 
     },
     sendInternalMessage(){
