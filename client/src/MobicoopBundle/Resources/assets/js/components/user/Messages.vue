@@ -106,7 +106,7 @@
         >
           <!-- Messages -->
 
-          <v-timeline>
+          <v-timeline v-if="(this.threadsDM.length>0 || this.threadsCM.length>0)">
             <v-timeline-item
               v-for="(item, i) in items"
               :key="i"
@@ -150,6 +150,7 @@
           </v-timeline>   
 
           <v-container
+            v-if="(this.threadsDM.length>0 || this.threadsCM.length>0)"
             fluid
             grid-list-md
           >
@@ -202,7 +203,10 @@
               xs12
               text-center
             >
-              <v-card class="pa-2">
+              <v-card
+                v-if="(this.threadsDM.length>0 || this.threadsCM.length>0)"
+                class="pa-2"
+              >
                 <!-- The current carpool history -->
                 <v-card-text class="font-weight-bold headline">
                   {{ currentcorrespondant }}
@@ -477,7 +481,9 @@ export default {
   },
   mounted () {
     this.textSpinner = this.textSpinnerLoading;
-    this.updateMessages();
+    if(this.threadsDM.length>0 || this.threadsCM.length>0){
+      this.updateMessages();
+    }
   },
   methods: {
     updateMessages(idMessage=this.idmessagedefault,idrecipient=this.idrecipientdefault,contactName = this.generateName(this.firstnamerecipientdefault,this.lastnamerecipientdefault)){
