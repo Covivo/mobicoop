@@ -7,7 +7,10 @@
       <v-flex xs8>
         <h1>{{ $t('title') }}</h1>
         <h3 v-html="$t('subtitle')" />
-        <GeoComplete :url="geoSearchUrl" />
+        <GeoComplete 
+          :url="geoSearchUrl" 
+          :label="labelOrigin"
+        />
       </v-flex>
     </v-layout>
   </v-content>
@@ -33,6 +36,11 @@ export default {
       type: String,
       default: ""
     }
-  }
+  },
+  data() {
+    return {
+      labelOrigin: this.$t('origin')
+    }
+  } 
 }
 </script>

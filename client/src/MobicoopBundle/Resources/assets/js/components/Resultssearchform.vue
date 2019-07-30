@@ -57,7 +57,7 @@
                 class="label"
                 for="origin"
               >
-                <geocomplete
+                <GeoComplete
                   id="origin"
                   name="origin"
                   :placeholder="origin"
@@ -76,7 +76,7 @@
                 class="label"
                 for="destination"
               >
-                <geocomplete
+                <GeoComplete
                   id="destination"
                   name="destination"
                   :placeholder="destination"
@@ -112,13 +112,13 @@
 <script>
 
 import moment from "moment";
-import Geocomplete from "./Geocomplete";
+import GeoComplete from "./GeoComplete";
 // import BDatepicker from "buefy/src/components/datepicker/Datepicker";
 export default {
   name: 'Resultssearchform',
   components: {
     // BDatepicker,
-    Geocomplete
+    GeoComplete
   },
   props: {
     geoSearchUrl: {

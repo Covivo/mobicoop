@@ -96,7 +96,7 @@
               </div>
               <div class="column">
                 <b-field :label="$t('models.user.homeTown.label')">
-                  <geocomplete
+                  <GeoComplete
                     id="homeAddress"
                     name="homeAddress"
                     :placeholder="addressLocality != 'null' ? addressLocality : home"
@@ -127,13 +127,13 @@
 
 <script>
 import axios from "axios";
-import Geocomplete from "./Geocomplete";
+import GeoComplete from "./GeoComplete";
 // import BDatepicker from "buefy/src/components/datepicker/Datepicker";
 export default {
   name: 'Resultssearchform',
   components: {
     // BDatepicker,
-    Geocomplete
+    GeoComplete
   },
   props: {
     geoSearchUrl: {
