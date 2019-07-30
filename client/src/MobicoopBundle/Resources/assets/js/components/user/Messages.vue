@@ -1,419 +1,417 @@
 <template>
-  <v-app>
-    <v-content>
-      <v-container
-        text-xs-center
-        grid-list-md
-        fluid
+  <v-content>
+    <v-container
+      text-xs-center
+      grid-list-md
+      fluid
+    >
+      <v-layout
+        id="headGridMessages"
       >
-        <v-layout
-          id="headGridMessages"
+        <v-flex
+          xs4
+          class="pt-5 pb-4 mr-1 pl-2 secondary white--text font-weight-bold headline"
         >
-          <v-flex
-            xs4
-            class="pt-5 pb-4 mr-1 pl-2 secondary white--text font-weight-bold headline"
+          {{ $t("ui.pages.messages.label.messages") }}
+        </v-flex>
+        <v-flex
+          xs5
+          text-xs-left
+          class="pt-5 pb-4 mr-1 pl-2 secondary white--text font-weight-bold headline"
+        >
+          {{ currentcorrespondant }}
+        </v-flex>
+        <v-flex
+          xs3
+          text-xs-left
+          class="pt-5 pb-4 pl-2 secondary white--text font-weight-bold headline"
+        >
+          {{ $t("ui.pages.messages.label.context") }}
+        </v-flex>
+      </v-layout>
+      <v-layout>
+        <v-flex
+          id="threadColumn"
+          xs4
+        >
+          <!-- Threads -->
+          <v-tabs
+            slider-color="secondary"
+            color="secondary"
+            grow
           >
-            {{ $t("ui.pages.messages.label.messages") }}
-          </v-flex>
-          <v-flex
-            xs5
-            text-xs-left
-            class="pt-5 pb-4 mr-1 pl-2 secondary white--text font-weight-bold headline"
-          >
-            {{ currentcorrespondant }}
-          </v-flex>
-          <v-flex
-            xs3
-            text-xs-left
-            class="pt-5 pb-4 pl-2 secondary white--text font-weight-bold headline"
-          >
-            {{ $t("ui.pages.messages.label.context") }}
-          </v-flex>
-        </v-layout>
-        <v-layout>
-          <v-flex
-            id="threadColumn"
-            xs4
-          >
-            <!-- Threads -->
-            <v-tabs
-              slider-color="secondary"
-              color="secondary"
-              grow
+            <v-tab
+              :key="0"
+              ripple
             >
-              <v-tab
-                :key="0"
-                ripple
-              >
-                {{ $t("ui.pages.messages.label.ongoingasks") }}
-              </v-tab>
-              <v-tab-item v-if="this.threadsCM.length==0">
-                {{ $t("ui.pages.messages.label.nocarpoolmessages") }}
-              </v-tab-item>
-              <v-tab-item
-                v-else
-              >
-                <v-card
-                  v-for="(threadCM, index) in threadsCM"
-                  :key="index"
-                  class="threads mx-auto mt-2"
-                  :class="threadCM.selected ? 'primary' : ''"
-                  @click="updateMessages(threadCM.idThreadMessage,threadCM.contactId)"
-                >
-                  <v-card-title>
-                    <i class="material-icons">
-                      account_circle
-                    </i>
-                    &nbsp;<span class="title font-weight-light">{{ threadCM.contactFirstName }} {{ threadCM.contactLastName.substr(0,1).toUpperCase()+"." }}</span>
-                  </v-card-title>
-                </v-card>
-              </v-tab-item>
-              <v-tab
-                :key="1"
-                ripple
-              >
-                {{ $t("ui.pages.messages.label.directmessages") }}
-              </v-tab>
-
-              <v-tab-item v-if="this.threadsDM.length==0">
-                {{ $t("ui.pages.messages.label.nodirectmessages") }}
-              </v-tab-item>
-              <v-tab-item v-else>
-                <v-card
-                  v-for="(thread, index) in threadsDM"
-                  :key="index"
-                  class="threads mx-auto mt-2"
-                  :class="thread.selected ? 'primary' : ''"
-                  max-width="400"
-                  @click="updateMessages(thread.idThreadMessage,thread.contactId,generateName(thread.contactFirstName,thread.contactLastName))"
-                >
-                  <v-card-title>
-                    <i class="material-icons">
-                      account_circle
-                    </i>
-                    &nbsp;<span class="title font-weight-light">{{ generateName(thread.contactFirstName,thread.contactLastName) }}</span>
-                  </v-card-title>
-                </v-card>
-              </v-tab-item>
-            </v-tabs>
-          </v-flex>
-
-
-
-
-          <v-flex
-            id="messagesColumn"
-            xs5
-          >
-            <!-- Messages -->
-
-            <v-timeline>
-              <v-timeline-item
-                v-for="(item, i) in items"
-                :key="i"
-                :fil-dot="item.divider===false"
-                :hide-dot="item.divider===true"
-                :right="item.origin==='own'"
-                :left="item.origin!=='own'"
-                :idmessage="item.idMessage"
-                :class="(item.divider ? 'divider' : '')+' '+item.origin"
-              >
-                <template
-                  v-if="item.divider===false"
-                  v-slot:icon
-                >
-                  <v-avatar color="secondary">
-                    <i
-                      class="material-icons"
-                    >
-                      {{ item.icon }}
-                    </i>
-                  </v-avatar>
-                </template>
-                <template
-                  v-if="item.divider===false"
-                  v-slot:opposite
-                >
-                  <span>{{ item.createdTimeReadable }}</span>
-                </template>
-                <v-card
-                  v-if="item.divider===false"
-                  class="elevation-2 font-weight-bold"
-                  :class="(item.origin==='own')?'primary':''"
-                >
-                  <v-card-text>{{ item.text }}</v-card-text>
-                </v-card>
-                <span
-                  v-if="item.divider===true"
-                  class="secondary--text font-weight-bold"
-                >
-                  {{ item.createdDateReadable }}
-                </span>
-              </v-timeline-item>
-            </v-timeline>   
-
-            <v-container
-              fluid
-              grid-list-md
+              {{ $t("ui.pages.messages.label.ongoingasks") }}
+            </v-tab>
+            <v-tab-item v-if="this.threadsCM.length==0">
+              {{ $t("ui.pages.messages.label.nocarpoolmessages") }}
+            </v-tab-item>
+            <v-tab-item
+              v-else
             >
-              <v-layout
-                row
-                wrap
+              <v-card
+                v-for="(threadCM, index) in threadsCM"
+                :key="index"
+                class="threads mx-auto mt-2"
+                :class="threadCM.selected ? 'primary' : ''"
+                @click="updateMessages(threadCM.idThreadMessage,threadCM.contactId)"
               >
-                <v-flex xs10>
-                  <v-textarea
-                    v-model="textToSend"
-                    name="typedMessage"
-                    filled
-                    :label="$t('ui.form.enterMessage')"
-                    auto-grow
-                    rows="2"
-                    background-color="#FFFFFF"
-                    value=""
-                  />
-                </v-flex>
-                <v-flex
-                  xs2
-                  align-self-center
-                >
-                  <div class="text-xs-center">
-                    <v-btn
-                      id="validSendMessage"
-                      class="mx-2 black--text font-weight-bold"
-                      fab
-                      rounded
-                      :idthreadmessage="idThreadMessage"
-                      color="primary"
-                      @click="sendInternalMessage()"
-                    >
-                      <v-icon>
-                        send
-                      </v-icon>
-                    </v-btn>
-                  </div>            
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-flex>
-          <v-flex
-            id="contextColumn"
-            xs3
+                <v-card-title>
+                  <i class="material-icons">
+                    account_circle
+                  </i>
+                  &nbsp;<span class="title font-weight-light">{{ threadCM.contactFirstName }} {{ threadCM.contactLastName.substr(0,1).toUpperCase()+"." }}</span>
+                </v-card-title>
+              </v-card>
+            </v-tab-item>
+            <v-tab
+              :key="1"
+              ripple
+            >
+              {{ $t("ui.pages.messages.label.directmessages") }}
+            </v-tab>
+
+            <v-tab-item v-if="this.threadsDM.length==0">
+              {{ $t("ui.pages.messages.label.nodirectmessages") }}
+            </v-tab-item>
+            <v-tab-item v-else>
+              <v-card
+                v-for="(thread, index) in threadsDM"
+                :key="index"
+                class="threads mx-auto mt-2"
+                :class="thread.selected ? 'primary' : ''"
+                max-width="400"
+                @click="updateMessages(thread.idThreadMessage,thread.contactId,generateName(thread.contactFirstName,thread.contactLastName))"
+              >
+                <v-card-title>
+                  <i class="material-icons">
+                    account_circle
+                  </i>
+                  &nbsp;<span class="title font-weight-light">{{ generateName(thread.contactFirstName,thread.contactLastName) }}</span>
+                </v-card-title>
+              </v-card>
+            </v-tab-item>
+          </v-tabs>
+        </v-flex>
+
+
+
+
+        <v-flex
+          id="messagesColumn"
+          xs5
+        >
+          <!-- Messages -->
+
+          <v-timeline>
+            <v-timeline-item
+              v-for="(item, i) in items"
+              :key="i"
+              :fil-dot="item.divider===false"
+              :hide-dot="item.divider===true"
+              :right="item.origin==='own'"
+              :left="item.origin!=='own'"
+              :idmessage="item.idMessage"
+              :class="(item.divider ? 'divider' : '')+' '+item.origin"
+            >
+              <template
+                v-if="item.divider===false"
+                v-slot:icon
+              >
+                <v-avatar color="secondary">
+                  <i
+                    class="material-icons"
+                  >
+                    {{ item.icon }}
+                  </i>
+                </v-avatar>
+              </template>
+              <template
+                v-if="item.divider===false"
+                v-slot:opposite
+              >
+                <span>{{ item.createdTimeReadable }}</span>
+              </template>
+              <v-card
+                v-if="item.divider===false"
+                class="elevation-2 font-weight-bold"
+                :class="(item.origin==='own')?'primary':''"
+              >
+                <v-card-text>{{ item.text }}</v-card-text>
+              </v-card>
+              <span
+                v-if="item.divider===true"
+                class="secondary--text font-weight-bold"
+              >
+                {{ item.createdDateReadable }}
+              </span>
+            </v-timeline-item>
+          </v-timeline>   
+
+          <v-container
+            fluid
+            grid-list-md
           >
-            <!-- Context -->
-            <v-layout>
+            <v-layout
+              row
+              wrap
+            >
+              <v-flex xs10>
+                <v-textarea
+                  v-model="textToSend"
+                  name="typedMessage"
+                  filled
+                  :label="$t('ui.form.enterMessage')"
+                  auto-grow
+                  rows="2"
+                  background-color="#FFFFFF"
+                  value=""
+                />
+              </v-flex>
               <v-flex
-                xs12
-                text-center
+                xs2
+                align-self-center
               >
-                <v-card class="pa-2">
-                  <!-- The current carpool history -->
-                  <v-card-text class="font-weight-bold headline">
-                    {{ currentcorrespondant }}
-                  </v-card-text>
-                  <v-card
-                    v-if="currentAskHistory"
-                    class="mb-3"
-                  >
-                    <v-card-text>
-                      {{ currentAskHistory.ask.matching.criteria.fromDateReadable }} {{ $t("ui.infos.misc.at") }} {{ currentAskHistory.ask.matching.criteria.fromTimeReadable }}
-                    </v-card-text>
-                    <!-- Timeline of the journey -->
-                    <v-timeline dense>
-                      <v-timeline-item
-                        v-for="(waypoint, index) in infosJourney['waypoints']"
-                        :key="index"
-                        :icon="( (index>0) && (index<waypoint.length-1) ) ? 'arrow_right_alt' : ''"
-                        :color="( (index>0) && (index<waypoint.length-1) ) ? '' : 'primary'"
-                        :icon-color="( (index>0) && (index<waypoint.length-1) ) ? 'warning' : 'primary'"
-                        :fill-dot="( (index>0) && (index<waypoint.length-1) )"
-                        class="text-left pb-2"
-                        :class="( (index>0) && (index<waypoint.length-1) ) ? 'waypoint' : ''"
-                      >
-                        {{ waypoint }}
-                      </v-timeline-item>
-                    </v-timeline>
-
-                    <v-divider />
-                    <v-layout row>
-                      <v-flex
-                        xs8
-                        text-left
-                      >
-                        <v-card-text class="py-1">
-                          {{ $t("ui.infos.carpooling.distance") }}
-                        </v-card-text>
-                        <v-card-text class="py-1">
-                          {{ $t("ui.infos.carpooling.availableSeats") }}
-                        </v-card-text>
-                        <v-card-text class="font-weight-bold py-1">
-                          {{ $t("ui.infos.carpooling.price") }}
-                        </v-card-text>
-                      </v-flex>
-                      <v-flex
-                        xs4
-                        text-right
-                      >
-                        <v-card-text class="py-1">
-                          {{ infosJourney["distanceRounded"] }}km
-                        </v-card-text>
-                        <v-card-text class="py-1">
-                          {{ infosJourney["seats"] }}
-                        </v-card-text>
-                        <v-card-text class="font-weight-bold py-1">
-                          {{ infosJourney["price"] }} €
-                        </v-card-text>
-                      </v-flex>
-                    </v-layout>
-                  </v-card>
-                  <v-card v-else>
-                    <v-card-text>
-                      {{ $t("ui.pages.messages.label.notLinkedToACarpool") }}
-                    </v-card-text>
-                  </v-card>
-                  
-                  <!-- Button for asking a Carpool (only the contact initiator) -->
+                <div class="text-xs-center">
                   <v-btn
-                    v-if="currentAskHistory && currentAskHistory.ask.status==1 && askUser == userid"
+                    id="validSendMessage"
+                    class="mx-2 black--text font-weight-bold"
+                    fab
                     rounded
-                    color="secondary"
-                    class="mb-2"
-                    @click="dialogAskCarpool=true"
+                    :idthreadmessage="idThreadMessage"
+                    color="primary"
+                    @click="sendInternalMessage()"
                   >
-                    {{ $t("ui.button.askCarpool") }}
+                    <v-icon>
+                      send
+                    </v-icon>
                   </v-btn>
-
-                  <!-- Carpooling status -->
-                  <!-- Carpool Asked -->
-                  <v-card
-                    v-else-if="currentAskHistory && currentAskHistory.ask.status==2 && askUser == userid"
-                    color="warning"
-                  >
-                    <v-card-text class="white--text">
-                      {{ $t("ui.infos.carpooling.askAlreadySent") }}
-                    </v-card-text>
-                  </v-card>
-                  <!-- Carpool Confirmed -->
-                  <v-card
-                    v-else-if="currentAskHistory && currentAskHistory.ask.status==3"
-                    color="success"
-                  >
-                    <v-card-text class="white--text">
-                      {{ $t("ui.infos.carpooling.accepted") }}
-                    </v-card-text>
-                  </v-card>
-                  <!-- Carpool Refused -->
-                  <v-card
-                    v-else-if="currentAskHistory && currentAskHistory.ask.status==4"
-                    color="error"
-                  >
-                    <v-card-text class="white--text">
-                      {{ $t("ui.infos.carpooling.refused") }}
-                    </v-card-text>
-                  </v-card>
-                  <!-- Accept/Refuse a Carpool -->
-                  <div
-                    v-if="currentAskHistory && currentAskHistory.ask.status==2 && askUser != userid"
-                    class="my-2"
-                  >
-                    <v-tooltip
-                      bottom
-                      color="primary"
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-btn
-                          color="success"
-                          class="mb-2"
-                          fab
-                          v-on="on"
-                          @click="updateCarpool(3)"
-                        >
-                          <v-icon>done</v-icon>
-                        </v-btn>
-                      </template>
-                      <span class="black--text">{{ $t("ui.button.accept") }}</span>
-                    </v-tooltip>
-                    <v-tooltip
-                      bottom
-                      color="error"
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-btn
-                          color="error"
-                          class="mb-2"
-                          fab
-                          v-on="on"
-                          @click="updateCarpool(4)"
-                        >
-                          <v-icon>clear</v-icon>
-                        </v-btn>
-                      </template>
-                      <span>{{ $t("ui.button.refuse") }}</span>
-                    </v-tooltip>
-                  </div>
-                </v-card>
+                </div>            
               </v-flex>
             </v-layout>
-          </v-flex>
-        </v-layout>
-
-        <div class="text-xs-center">
-          <v-dialog
-            v-model="spinner"
-            hide-overlay
-            persistent
-            width="300"
-          >
-            <v-card
-              id="spinnerMessages"
-              class="secondary"
-            >
-              <v-card-text class="white--text">
-                {{ textSpinner }}
-                <v-progress-linear
-                  color="blue accent-4"
-                  indeterminate
-                  rounded
-                  height="6"
-                />
-              </v-card-text>
-            </v-card>
-          </v-dialog>
-        </div>
-
-        <v-dialog
-          v-model="dialogAskCarpool"
-          persistent
-          max-width="290"
+          </v-container>
+        </v-flex>
+        <v-flex
+          id="contextColumn"
+          xs3
         >
-          <v-card>
-            <v-card-title class="headline">
-              {{ $t("ui.modals.carpooling.askCarpoolTitle") }}
-            </v-card-title>
-            <v-card-text>{{ $t("ui.modals.carpooling.askCarpoolText") }}</v-card-text>
-            <v-card-actions>
-              <v-spacer />
-              <v-btn
-                class="font-weight-bold"
-                color="red darken-1"
-                text
-                @click="dialogAskCarpool = false"
-              >
-                {{ $t("ui.button.refuse") }}
-              </v-btn>
-              <v-btn
-                class="font-weight-bold"
-                color="green darken-1"
-                text
-                @click="updateCarpool(2)"
-              >
-                {{ $t("ui.button.accept") }}
-              </v-btn>
-            </v-card-actions>
+          <!-- Context -->
+          <v-layout>
+            <v-flex
+              xs12
+              text-center
+            >
+              <v-card class="pa-2">
+                <!-- The current carpool history -->
+                <v-card-text class="font-weight-bold headline">
+                  {{ currentcorrespondant }}
+                </v-card-text>
+                <v-card
+                  v-if="currentAskHistory"
+                  class="mb-3"
+                >
+                  <v-card-text>
+                    {{ currentAskHistory.ask.matching.criteria.fromDateReadable }} {{ $t("ui.infos.misc.at") }} {{ currentAskHistory.ask.matching.criteria.fromTimeReadable }}
+                  </v-card-text>
+                  <!-- Timeline of the journey -->
+                  <v-timeline dense>
+                    <v-timeline-item
+                      v-for="(waypoint, index) in infosJourney['waypoints']"
+                      :key="index"
+                      :icon="( (index>0) && (index<waypoint.length-1) ) ? 'arrow_right_alt' : ''"
+                      :color="( (index>0) && (index<waypoint.length-1) ) ? '' : 'primary'"
+                      :icon-color="( (index>0) && (index<waypoint.length-1) ) ? 'warning' : 'primary'"
+                      :fill-dot="( (index>0) && (index<waypoint.length-1) )"
+                      class="text-left pb-2"
+                      :class="( (index>0) && (index<waypoint.length-1) ) ? 'waypoint' : ''"
+                    >
+                      {{ waypoint }}
+                    </v-timeline-item>
+                  </v-timeline>
+
+                  <v-divider />
+                  <v-layout row>
+                    <v-flex
+                      xs8
+                      text-left
+                    >
+                      <v-card-text class="py-1">
+                        {{ $t("ui.infos.carpooling.distance") }}
+                      </v-card-text>
+                      <v-card-text class="py-1">
+                        {{ $t("ui.infos.carpooling.availableSeats") }}
+                      </v-card-text>
+                      <v-card-text class="font-weight-bold py-1">
+                        {{ $t("ui.infos.carpooling.price") }}
+                      </v-card-text>
+                    </v-flex>
+                    <v-flex
+                      xs4
+                      text-right
+                    >
+                      <v-card-text class="py-1">
+                        {{ infosJourney["distanceRounded"] }}km
+                      </v-card-text>
+                      <v-card-text class="py-1">
+                        {{ infosJourney["seats"] }}
+                      </v-card-text>
+                      <v-card-text class="font-weight-bold py-1">
+                        {{ infosJourney["price"] }} €
+                      </v-card-text>
+                    </v-flex>
+                  </v-layout>
+                </v-card>
+                <v-card v-else>
+                  <v-card-text>
+                    {{ $t("ui.pages.messages.label.notLinkedToACarpool") }}
+                  </v-card-text>
+                </v-card>
+                  
+                <!-- Button for asking a Carpool (only the contact initiator) -->
+                <v-btn
+                  v-if="currentAskHistory && currentAskHistory.ask.status==1 && askUser == userid"
+                  rounded
+                  color="secondary"
+                  class="mb-2"
+                  @click="dialogAskCarpool=true"
+                >
+                  {{ $t("ui.button.askCarpool") }}
+                </v-btn>
+
+                <!-- Carpooling status -->
+                <!-- Carpool Asked -->
+                <v-card
+                  v-else-if="currentAskHistory && currentAskHistory.ask.status==2 && askUser == userid"
+                  color="warning"
+                >
+                  <v-card-text class="white--text">
+                    {{ $t("ui.infos.carpooling.askAlreadySent") }}
+                  </v-card-text>
+                </v-card>
+                <!-- Carpool Confirmed -->
+                <v-card
+                  v-else-if="currentAskHistory && currentAskHistory.ask.status==3"
+                  color="success"
+                >
+                  <v-card-text class="white--text">
+                    {{ $t("ui.infos.carpooling.accepted") }}
+                  </v-card-text>
+                </v-card>
+                <!-- Carpool Refused -->
+                <v-card
+                  v-else-if="currentAskHistory && currentAskHistory.ask.status==4"
+                  color="error"
+                >
+                  <v-card-text class="white--text">
+                    {{ $t("ui.infos.carpooling.refused") }}
+                  </v-card-text>
+                </v-card>
+                <!-- Accept/Refuse a Carpool -->
+                <div
+                  v-if="currentAskHistory && currentAskHistory.ask.status==2 && askUser != userid"
+                  class="my-2"
+                >
+                  <v-tooltip
+                    bottom
+                    color="primary"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-btn
+                        color="success"
+                        class="mb-2"
+                        fab
+                        v-on="on"
+                        @click="updateCarpool(3)"
+                      >
+                        <v-icon>done</v-icon>
+                      </v-btn>
+                    </template>
+                    <span class="black--text">{{ $t("ui.button.accept") }}</span>
+                  </v-tooltip>
+                  <v-tooltip
+                    bottom
+                    color="error"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-btn
+                        color="error"
+                        class="mb-2"
+                        fab
+                        v-on="on"
+                        @click="updateCarpool(4)"
+                      >
+                        <v-icon>clear</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>{{ $t("ui.button.refuse") }}</span>
+                  </v-tooltip>
+                </div>
+              </v-card>
+            </v-flex>
+          </v-layout>
+        </v-flex>
+      </v-layout>
+
+      <div class="text-xs-center">
+        <v-dialog
+          v-model="spinner"
+          hide-overlay
+          persistent
+          width="300"
+        >
+          <v-card
+            id="spinnerMessages"
+            class="secondary"
+          >
+            <v-card-text class="white--text">
+              {{ textSpinner }}
+              <v-progress-linear
+                color="blue accent-4"
+                indeterminate
+                rounded
+                height="6"
+              />
+            </v-card-text>
           </v-card>
         </v-dialog>
-      </v-container>
-    </v-content>
-  </v-app>
+      </div>
+
+      <v-dialog
+        v-model="dialogAskCarpool"
+        persistent
+        max-width="290"
+      >
+        <v-card>
+          <v-card-title class="headline">
+            {{ $t("ui.modals.carpooling.askCarpoolTitle") }}
+          </v-card-title>
+          <v-card-text>{{ $t("ui.modals.carpooling.askCarpoolText") }}</v-card-text>
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              class="font-weight-bold"
+              color="red darken-1"
+              text
+              @click="dialogAskCarpool = false"
+            >
+              {{ $t("ui.button.refuse") }}
+            </v-btn>
+            <v-btn
+              class="font-weight-bold"
+              color="green darken-1"
+              text
+              @click="updateCarpool(2)"
+            >
+              {{ $t("ui.button.accept") }}
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-container>
+  </v-content>
 </template>
 <script>
 import axios from 'axios';
