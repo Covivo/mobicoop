@@ -4,8 +4,8 @@ import { Vue, vuetify, i18n, VApp } from '../../config/vue-config'
 import '../../../css/page/user/login.scss';
 
 // Vue components
-import Vueheader from '../../components/Vueheader';
-import Vuefooter from '../../components/Vuefooter';
+import MHeader from '../../components/MHeader';
+import MFooter from '../../components/MFooter';
 
 new Vue({
   i18n,
@@ -13,7 +13,7 @@ new Vue({
   vuetify,
   components: {
     VApp,
-    Vueheader,
-    Vuefooter
+    MHeader,
+    MFooter
   }
 })

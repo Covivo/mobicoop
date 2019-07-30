@@ -11,6 +11,9 @@
                     "errors": "Merci de corriger les erreurs suivantes "
                 },
                 "pages": {
+                    "home": {
+                        
+                    },
                     "signup": {
                         "chart": {
                             "chartValid": "Je valide la charte",
@@ -83,34 +86,6 @@
                         "errors": {
                             "required": "La ville de résidence est requise"
                         }
-                    }
-                }
-            },
-            "navBar": {
-                "buttons": {
-                    "signup": {
-                        "label": "Inscription",
-                        "route": "/utilisateur/inscription"
-                    },
-                    "logIn": {
-                        "label": "Connexion",
-                        "route": "/utilisateur/connexion"
-                    },
-                    "shareAnAd": {
-                        "label": "Publier une annonce",
-                        "route": "/covoiturage/annonce/poster"
-                    },
-                    "messages": {
-                        "label": "Messages",
-                        "route": "/utilisateur/messages"
-                    },
-                    "myProfile": {
-                        "label": "Mon profil",
-                        "route": "/utilisateur/profil/modifier"
-                    },
-                    "logOut": {
-                        "label": "Déconnexion",
-                        "route": "/user/logout"
                     }
                 }
             }

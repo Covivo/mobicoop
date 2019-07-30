@@ -3,18 +3,19 @@
 {% block title %}
   {{ metaDescription }}
 {% endblock %}
+
 {% block stylesheets %}
   {{ encore_entry_link_tags("#{assets_prefix ?? ''}home") }}
 {% endblock %}
+
 {% block main %}
-<section class="hero firstSection">
-    </section>
-    <section id="home">
-        <Homesearchform geo-search-url="{{ geoCompleteUri }}" route="covoiturage/recherche"></Homesearchform>
-    </section>
-    <section class="hero lastSection">
-    </section>
-    <section class="hero communautes has-text-centered">
+  <home-search 
+    geo-search-url="{{ geoCompleteUri }}" 
+    route="{{ searchRoute }}"
+    >
+  </home-search>
+
+  <section>
     <a class="lien" href="{{ path('community_list') }}">Liste des communautés</a>
   </section>
 {% endblock %}

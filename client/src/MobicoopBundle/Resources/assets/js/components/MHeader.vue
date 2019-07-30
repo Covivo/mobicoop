@@ -14,48 +14,54 @@
       >
         <v-btn
           text
-          :href="$t('navBar.buttons.messages.route')"
+          :href="$t('buttons.messages.route')"
         >
-          {{ $t('navBar.buttons.messages.label') }}
+          {{ $t('buttons.messages.label') }}
         </v-btn>
         <v-btn
           text
-          :href="$t('navBar.buttons.myProfile.route')"
+          :href="$t('buttons.myProfile.route')"
         >
-          {{ $t('navBar.buttons.myProfile.label') }}
+          {{ $t('buttons.myProfile.label') }}
         </v-btn>
         <v-btn
           text
-          :href="$t('navBar.buttons.logOut.route')"
+          :href="$t('buttons.logOut.route')"
         >
-          {{ $t('navBar.buttons.logOut.label') }}
+          {{ $t('buttons.logOut.label') }}
         </v-btn>
       </div>
       <div v-else>
         <v-btn
           text
-          :href="$t('navBar.buttons.signup.route')"
+          :href="$t('buttons.signup.route')"
         >
-          {{ $t('navBar.buttons.signup.label') }}
+          {{ $t('buttons.signup.label') }}
         </v-btn>
         <v-btn
           text
-          :href="$t('navBar.buttons.logIn.route')"
+          :href="$t('buttons.logIn.route')"
         >
-          {{ $t('navBar.buttons.logIn.label') }}
+          {{ $t('buttons.logIn.label') }}
         </v-btn>
       </div>
       <v-btn
         rounded
-        :href="$t('navBar.buttons.shareAnAd.route')"
+        :href="$t('buttons.shareAnAd.route')"
       >
-        {{ $t('navBar.buttons.shareAnAd.label') }}
+        {{ $t('buttons.shareAnAd.label') }}
       </v-btn>
     </v-toolbar>
   </div>
 </template>
+
 <script>
+import Translations from "../../../translations/components/MHeader.json";
+
 export default {
+  i18n: {
+    messages: Translations
+  },
   props: {
     user: {
       type: Object,

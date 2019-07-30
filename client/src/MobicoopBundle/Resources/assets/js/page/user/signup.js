@@ -5,8 +5,8 @@ import '../../../css/page/user/signup.scss';
 
 // Vue components
 import Signupform from '../../components/Signupform';
-import Vueheader from '../../components/Vueheader';
-import Vuefooter from '../../components/Vuefooter';
+import MHeader from '../../components/MHeader';
+import MFooter from '../../components/MFooter';
 
 
 new Vue({
@@ -16,7 +16,7 @@ new Vue({
   components: {
     VApp,
     Signupform,
-    Vueheader,
-    Vuefooter
+    MHeader,
+    MFooter
   }
 })
