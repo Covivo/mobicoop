@@ -24,6 +24,9 @@
 namespace App\User\Service;
 
 use App\User\Entity\User;
+use App\User\Event\UserPasswordChangeAskedEvent;
+use App\User\Event\UserPasswordChangedEvent;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Right\Repository\RoleRepository;
@@ -34,6 +37,7 @@ use App\Community\Entity\CommunityUser;
 use App\User\Event\UserRegisteredEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * User manager service.
@@ -48,14 +52,15 @@ class UserManager
     private $messageRepository;
     private $logger;
     private $eventDispatcher;
-
+    private $encoder;
+ 
     /**
-     * Constructor.
-     *
-     * @param EntityManagerInterface $entityManager
-     * @param LoggerInterface $logger
-     */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository)
+        * Constructor.
+        *
+        * @param EntityManagerInterface $entityManager
+        * @param LoggerInterface $logger
+        */
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -63,6 +68,7 @@ class UserManager
         $this->communityRepository = $communityRepository;
         $this->messageRepository = $messageRepository;
         $this->eventDispatcher = $dispatcher;
+        $this->encoder = $encoder;
     }
     
     /**
@@ -84,6 +90,24 @@ class UserManager
         // dispatch en event
         $event = new UserRegisteredEvent($user);
         $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
+        // return the user
+        return $user;
+    }
+ 
+    /**
+     * Update a user.
+     *
+     * @param User $user    The user to register
+     * @return User         The user created
+     */
+    public function updateUser(User $user)
+    {
+        // persist the user
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        // dispatch en event
+        $event = new UserPasswordChangedEvent($user);
+        $this->eventDispatcher->dispatch(UserPasswordChangedEvent::NAME, $event);
         // return the user
         return $user;
     }
@@ -111,5 +135,49 @@ class UserManager
             return $threads;
         }
         return [];
+    }
+ 
+    /**
+       * Gere la demande de modification du mot de passe.
+       *
+       * @param User $user
+       * @return User
+       */
+    public function updateUserPasswordRequest(User $user)
+    {
+        $datetime = new DateTime();
+        $time= $datetime->getTimestamp();
+        $token = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+        // encoding of the password
+        $user->setToken($token);
+        $user->setPupdtime($datetime);
+        // persist the user
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        // dispatch en event
+        $event = new UserPasswordChangeAskedEvent($user);
+        $this->eventDispatcher->dispatch(UserPasswordChangeAskedEvent::NAME, $event);
+        // return the user
+        return $user;
+    }
+ 
+    /**
+       * Gere la confirmation de demande de modification du mot de passe.
+       *
+       * @param User $user
+       * @return User
+       */
+    public function updateUserPasswordConfirm(User $user)
+    {
+        $user->setToken('');
+        $user->setPupdtime(null);
+        // persist the user
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        // dispatch en event
+        $event = new UserPasswordChangedEvent($user);
+        $this->eventDispatcher->dispatch(UserPasswordChangedEvent::NAME, $event);
+        // return the user
+        return $user;
     }
 }

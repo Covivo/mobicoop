@@ -39,7 +39,7 @@ use DateTime;
 /**
  * A user.
  */
-class User implements ResourceInterface, UserInterface, EquatableInterface
+class User implements ResourceInterface, UserInterface, EquatableInterface, \JsonSerializable
 {
     const MAX_DEVIATION_TIME = 600;
     const MAX_DEVIATION_DISTANCE = 10000;
@@ -210,6 +210,26 @@ class User implements ResourceInterface, UserInterface, EquatableInterface
      */
     private $homeAddress;
 
+    /**
+     * Date of password mofification.
+     *
+     * @var DateTime|null $pupdtime
+     *   Date of password mofification.
+     *
+     * @Groups({"post","put", "password_token"})
+     */
+    private $pupdtime;
+
+
+    /**
+     * Token of password mofification.
+     *
+     * @var string|null $token
+     *   Token of password mofification.
+     *
+     *  @Groups({"post","put","password_token"})
+     */
+    private $token;
 
 
     public function __construct($id=null, $status=null)
@@ -600,10 +620,76 @@ class User implements ResourceInterface, UserInterface, EquatableInterface
     public function getHomeAddress(): ?Address
     {
         foreach ($this->addresses as $address) {
-            if ($address->getName() == self::HOME_ADDRESS_NAME) {
+            if ($address->isHome()) {
                 return $address;
             }
         }
         return null;
+    }
+
+    /**
+     * @param Address[]|null $homeAddress
+     */
+    public function setHomeAddress(?Address $homeAddress)
+    {
+        $this->homeAddress = $homeAddress;
+    }
+
+    /**
+     * Return the date of password mofification.
+     *
+     * @return DateTime
+     */
+    public function getPupdtime()
+    {
+        return $this->pupdtime;
+    }
+
+    /**
+     * Set the date of password mofification.
+     *
+     * @param DateTime|null $pupdtime
+     */
+    public function setPupdtime(?DateTime $pupdtime)
+    {
+        $this->pupdtime = $pupdtime;
+        return $this;
+    }
+
+    /**
+     * Return the Token of password mofification.
+     *
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->token;
+    }
+
+    /**
+     * Set the Token of password mofification.
+     *
+     * @param string|null $token
+     */
+    public function setToken(?string $token)
+    {
+        $this->token = $token;
+        return $this;
+    }
+
+    
+    // If you want more info from user you just have to add it to the jsonSerialize function
+    public function jsonSerialize()
+    {
+        return
+        [
+            'id'            => $this->getId(),
+            'givenName'     => $this->getGivenName(),
+            'familyName'    => $this->getFamilyName(),
+            'gender'        => $this->getGender(),
+            'status'        => $this->getStatus(),
+            'email'         => $this->getEmail(),
+            'telephone'     => $this->getTelephone(),
+        ];
     }
 }

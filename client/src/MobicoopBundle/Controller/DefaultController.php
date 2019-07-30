@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
+use App\User\Service\UserManager;
 
 class DefaultController extends AbstractController
 {
@@ -39,7 +40,6 @@ class DefaultController extends AbstractController
             '@Mobicoop/default/index.html.twig',
             [
                 'baseUri' => $_ENV['API_URI'],
-                'geoCompleteUri' => $_ENV['GEOCOMPLETE_URI'],
                 'metaDescription' => 'Homepage of Mobicoop'
             ]
         );

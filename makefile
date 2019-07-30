@@ -93,12 +93,23 @@ migrate:
 
 update:
 	@make -s stop
-	@make -s remove
 	git pull
 	@make -s install
 	@make -s start
 	sleep 20
-	@make -s migrate
+	@make -s db-migrate
+
+db-migrate:
+	$(info $(builder)------------------------------------------------------)
+	$(info $(builder)Make ($(os)): DB Migration...)
+	$(info $(builder)------------------------------------------------------$(reset))
+	@docker-compose -f docker-compose-builder-$(os).yml run --rm db-migrate
+
+db-diff:
+	$(info $(builder)------------------------------------------------------)
+	$(info $(builder)Make ($(os)): DB Diff...)
+	$(info $(builder)------------------------------------------------------$(reset))
+	@docker-compose -f docker-compose-builder-$(os).yml run --rm db-diff
 
 logs: 
 	$(info $(green)------------------------------------------------------)

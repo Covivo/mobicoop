@@ -30,12 +30,12 @@ use App\Geography\Service\GeoSearcher;
 use App\Geography\Entity\Address;
 
 /**
- * Collection data provider for anonymous address search.
+ * Collection data provider for logged address search.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  *
  */
-final class AddressSearchCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class AddressLoggedSearchCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $request;
     
@@ -47,13 +47,13 @@ final class AddressSearchCollectionDataProvider implements CollectionDataProvide
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Address::class === $resourceClass && $operationName === "search";
+        return Address::class === $resourceClass && $operationName === "loggedSearch";
     }
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         if ($this->request->get("q") !== null) {
-            return $this->geoSearcher->geoCode($this->request->get("q"));
+            return $this->geoSearcher->geoCode($this->request->get("q"), $this->request->get("user"));
         }
         return [];
     }

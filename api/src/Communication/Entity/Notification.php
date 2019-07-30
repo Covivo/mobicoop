@@ -122,7 +122,7 @@ class Notification
 
     public function getTemplateTitle(): ?string
     {
-        return $this->template;
+        return $this->templateTitle;
     }
     
     public function setTemplateTitle(?string $templateTitle): self

@@ -1,31 +1,41 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Welcome!{% endblock %}</title>
-    {{ encore_entry_link_tags('app') }}
-  
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    {% block stylesheets %}{% endblock %}
-</head>
-<body>
-    <div id="app">
-            <nav id="header">
-                <Vueheader></Vueheader>
-            </nav>
-        <main role="main" id="main">
-            <div>
-                {% block main %}
-                {% endblock %}
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            {% block title %}Welcome!
+            {% endblock %}
+        </title>
+        {{ encore_entry_link_tags('app') }}
+
+        <meta content="width=device-width, initial-scale=1" name="viewport"> {% block stylesheets %}{% endblock %}
+        </head>
+        <body>
+            {% if app.user %}
+                {% set logged = 'true' %}
+            {% endif %}
+
+            <div id="app">
+                <v-app>
+                    <nav id="header">
+                        {% if app.user %}
+                            <Vueheader :user={{app.user|json_encode()}}></Vueheader>
+                        {% else %}
+                            <Vueheader></Vueheader>
+                        {% endif %}
+                    </nav>
+                    <main id="main" role="main">
+                        <div>
+                            {% block main %}{% endblock %}
+                        </div>
+                    </main>
+                    <footer id="footer">
+                        <Vuefooter></Vuefooter>
+                    </footer>
+                </v-app>
             </div>
-        </main>
-            <footer id="footer">
-                <Vuefooter></Vuefooter>
-            </footer>
-    </div>
-</body>
+        </body>
 
-{{ encore_entry_script_tags('app') }}
-{% block javascripts %}{% endblock %}
-</html>
-
+        {{ encore_entry_script_tags('app') }}
+        {% block javascripts %}{% endblock %}
+    </html>

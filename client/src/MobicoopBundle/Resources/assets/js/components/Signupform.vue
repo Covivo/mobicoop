@@ -289,7 +289,7 @@ export default {
       if (this.form.validation == false) {
         this.errors.push(this.$t('ui.pages.signup.chart.errors.required'));
       }
-      e.preventDefault();
+      // e.preventDefault();
     },
   }
 };

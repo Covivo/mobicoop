@@ -21,20 +21,19 @@
  *    LICENSE
  **************************/
 
-namespace App\Geography\Repository;
+namespace App\RelayPoint\Repository;
 
-use App\Geography\Entity\Address;
+use App\RelayPoint\Entity\RelayPoint;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use App\Geography\Entity\Territory;
 
 /**
- * @method Address|null find($id, $lockMode = null, $lockVersion = null)
- * @method Address|null findOneBy(array $criteria, array $orderBy = null)
- * @method Address[]    findAll()
- * @method Address[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method RelayPoint|null find($id, $lockMode = null, $lockVersion = null)
+ * @method RelayPoint|null findOneBy(array $criteria, array $orderBy = null)
+ * @method RelayPoint[]    findAll()
+ * @method RelayPoint[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class AddressRepository
+class RelayPointRepository
 {
     /**
      * @var EntityRepository
@@ -46,7 +45,7 @@ class AddressRepository
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->repository = $entityManager->getRepository(Address::class);
+        $this->repository = $entityManager->getRepository(RelayPoint::class);
     }
 
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
@@ -55,17 +54,16 @@ class AddressRepository
     }
 
     /**
-     * Return all addresses with the given name for the given user id.
+     * Return all relaypoint with the given name and status.
      *
      * @param string $name
-     * @param integer $userId
-     * @return mixed|NULL|\Doctrine\DBAL\Driver\Statement|array     The addresses found
+     * @return mixed|NULL|\Doctrine\DBAL\Driver\Statement|array     The relay points found
      */
-    public function findByName(string $name, int $userId)
+    public function findByNameAndStatus(string $name, int $status)
     {
         $query = $this->entityManager->createQuery("
-            SELECT a from App\Geography\Entity\Address a
-            where a.name like '%" . $name . "%' and a.user = $userId
+            SELECT rp from App\RelayPoint\Entity\RelayPoint rp
+            where rp.name like '%" . $name . "%' and rp.status = $status
         ");
         
         return $query->getResult()
@@ -73,15 +71,15 @@ class AddressRepository
     }
     
     /**
-     * Return all addresses in the given territory.
+     * Return all relay points in the given territory.
      *
-     * @return mixed|NULL|\Doctrine\DBAL\Driver\Statement|array     The addresses found
+     * @return mixed|NULL|\Doctrine\DBAL\Driver\Statement|array     The relay points found
      */
     public function findAllInTerritory(Territory $territory)
     {
         $query = $this->entityManager->createQuery("
-            SELECT a from App\Geography\Entity\Address a, App\Geography\Entity\Territory t
-            where t.id = " . $territory->getId() . "
+            SELECT rp from App\RelayPoint\Entity\RelayPoint rp, a from App\Geography\Entity\Address a, App\Geography\Entity\Territory t
+            where rp.address_id = a.id and t.id = " . $territory->getId() . "
             and ST_CONTAINS(t.geoJsonDetail,a.geoJson)=1
         ");
         

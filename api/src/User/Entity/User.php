@@ -23,6 +23,7 @@
 
 namespace App\User\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\PersistentCollection;
@@ -52,8 +53,10 @@ use App\User\Controller\UserRegistration;
 use App\User\Controller\UserPermissions;
 use App\User\Controller\UserLogin;
 use App\User\Controller\UserThreads;
+use App\User\Controller\UserUpdatePassword;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\LoginFilter;
+use App\User\Filter\TokenFilter;
 use App\Communication\Entity\Notified;
 
 /**
@@ -85,6 +88,18 @@ use App\Communication\Entity\Notified;
  *          "get"={
  *              "normalization_context"={"groups"={"read"}},
  *          },
+ *         "password_update"={
+ *              "method"="PUT",
+ *              "path"="/users/{id}/password_update",
+ *              "controller"=UserUpdatePassword::class,
+ *              "defaults"={"name"="reply"}
+ *          },
+ *        "password_update_request"={
+ *              "method"="PUT",
+ *              "path"="/users/{id}/password_update_request",
+ *              "controller"=UserUpdatePassword::class,
+ *              "defaults"={"name"="request"}
+ *          },
  *          "permissions"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"permissions"}},
@@ -108,7 +123,10 @@ use App\Communication\Entity\Notified;
  *              "controller"=UserThreads::class,
  *              "path"="/users/{id}/threads"
  *          },
- *          "put",
+ *          "put"={
+ *              "method"="PUT",
+ *              "path"="/users/{id}",
+ *          },
  *          "delete"
  *      }
  * )
@@ -116,6 +134,7 @@ use App\Communication\Entity\Notified;
  * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial"})
  * @ApiFilter(HomeAddressTerritoryFilter::class, properties={"homeAddressTerritory"})
  * @ApiFilter(LoginFilter::class, properties={"login"})
+ * @ApiFilter(TokenFilter::class, properties={"token"})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate", "createdDate"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
@@ -364,10 +383,48 @@ class User implements UserInterface, EquatableInterface
     private $createdDate;
 
     /**
-     * @var array|null The permissions granted
-     * @Groups("permissions")
+     * Date of password mofification.
+     *
+     * @var DateTime|null $pupdtime
+     *   Date of password mofification.
+     *
+     * @ORM\Column(type="datetime", length=100, nullable=true)
+     * @Groups({"read","write"})
      */
-    private $permissions;
+    private $pupdtime;
+
+    /**
+     * Return the date of password mofification.
+     *
+     * @return Datetime
+     */
+    public function getPupdtime()
+    {
+        return $this->pupdtime;
+    }
+
+    /**
+     * Set the date of password mofification.
+     *
+     * @param Datetime|null $pupdtime
+     */
+    public function setPupdtime(?DateTime $pupdtime)
+    {
+        $this->pupdtime = $pupdtime;
+        return $this;
+    }
+
+
+    /**
+     * Token of password modification.
+     *
+     * @var string|null $token
+     *   password token.
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $token;
 
     /**
      * @var array|null The threads of the user
@@ -393,6 +450,33 @@ class User implements UserInterface, EquatableInterface
         }
         $this->setStatus($status);
     }
+
+    /**
+     * Return the Token of password mofification.
+     *
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->token;
+    }
+
+    /**
+     * Set the Token of password mofification.
+     *
+     * @param string|null $token
+     */
+    public function setToken(?string $token)
+    {
+        $this->token = $token;
+        return $this;
+    }
+
+    /**
+     * @var array|null The permissions granted
+     * @Groups("permissions")
+     */
+    private $permissions;
 
     public function getId(): ?int
     {

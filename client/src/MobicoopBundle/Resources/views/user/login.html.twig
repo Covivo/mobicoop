@@ -10,56 +10,57 @@
 {% endblock %}
   {% block main %}
 
-    <section class="hero connexion is-passur"> <div class="hero-body">
-      <div class="container">
-        <h1 class="title has-text-centered">
-          Connexion
-        </h1>
-      </div>
-    </div>
-  </section>
+    <section class="hero connexion is-passur">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title has-text-centered">
+                    Connexion
+                </h1>
+            </div>
+        </div>
+    </section>
 
-  <section class="section loginForm">
-    {% if error %}
-      <div class="columns">
-        <div class="column has-text-centered">
-          <p class="error">La connexion a échoué</p>
+    <section class="section loginForm">
+        {% if error %}
+            <div class="columns">
+                <div class="column has-text-centered">
+                    <p class="error">La connexion a échoué</p>
+                </div>
+            </div>
+        {% endif %}
+        {{ form_start(form) }}
+        <div class="columns is-centered email">
+            {{ form_row(form.username) }}
         </div>
-      </div>
-    {% endif %}
-    {{ form_start(form) }}
-    <div class="columns is-centered email">
-      {{ form_row(form.username)}}
-    </div>
-    <div class="columns is-centered ou">
-      <p>
-        ou
-      </p>
-    </div>
-    <div
-      class="columns is-centered phone">
-      {# fake form_row(phone) because she don't exist yet and it's why she's disabled... #}
-      <div class="field is-horizontal">
-        <div class="field-label">
-          <label class="label">Téléphone</label>
+        <div class="columns is-centered ou">
+            <p> ou </p>
         </div>
-        <div class="field-body">
-          <div>
-            <input class="input" disabled placeholder="téléphone portable"/>
-          </div>
+        <div class="columns is-centered phone">
+            {# fake form_row(phone) because she don't exist yet and it's why she's disabled... #}
+            <div class="field is-horizontal">
+                <div class="field-label">
+                    <label class="label">Téléphone</label>
+                </div>
+                <div class="field-body">
+                    <div>
+                        <input class="input" placeholder="téléphone portable" disabled/>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <div class="columns is-centered password">
-      {{form_row(form.password)}}
-    </div>
-    <div class="columns is-centered login">
-      {{form_row(form.login)}}
-    </div>
-    {{ form_errors(form) }}
-    {{ form_end(form) }}
+        <div class="columns is-centered password">
+            {{ form_row(form.password) }}
+        </div>
+        <div class="columns is-centered login">
+            {{ form_row(form.login) }}
+        </div>
+        {{ form_errors(form) }}
+        {% if not is_granted('IS_AUTHENTICATED_FULLY') %}
+            <a class="" href="{{ path('user_password_forgot') }}">Mot de passe oublié?</a>
+        {% endif %}
+        {{ form_end(form) }}
 
-  </section>
+    </section>
 
 {% endblock %}
 {% block javascripts %}
