@@ -9,6 +9,8 @@ const kuler = require('kuler');
 const program = require('commander');
 const path = require('path');
 const to = require('await-to-js').default;
+const replace = require('replace-in-file');
+
 
 program
   .version('0.1.0')
@@ -16,48 +18,67 @@ program
   .parse(process.argv);
 
 if (!program.project) {
-  process.stderr.write(kuler('You did not specify a name project to copy canvas to .. ', 'orange'));
+  console.error(kuler('You did not specify a name project to copy canvas to .. ', 'orange'));
   process.exit(0);
 }
 
-// This function check copy to path sent
+const pathToClient = path.resolve(__dirname, '../../client');
+const pathToMobicoopBundle = path.resolve(pathToClient, 'src/MobicoopBundle');
+const destinationProject = path.resolve(__dirname, `../../../${program.project}`);
+const pathToClientAssets = path.resolve(pathToMobicoopBundle, 'Resources/assets');
+const destinationAssets = path.resolve(destinationProject, 'assets');
+
+
+/** -------------------------------------------------
+                Start the creation
+*-----------------------------------------------------*/
+createCanvas().then(_ => {
+  crawlDir(destinationAssets);
+  replaceDataInCanvas().then(_ => console.log('ok')).catch(err => console.error(err))
+})
+
+
+
+/**
+ * Main function to create new client
+ */
 async function createCanvas() {
 
-  // Destination next to the platform
-  let destinationProject = path.resolve(__dirname, `../../../${program.project}`);
-
-  // Check if specified path is a dir & exists
+  /**
+   * Create the dir folder base on name sent
+   */
   let err, exists, success, folders;
   [err, exists] = await to(fs.mkdirp(destinationProject));
   if (err) {
-    process.stderr.write(kuler(`Path specified is not writable or already exists! ${destinationProject} \n`, 'red'));
+    console.error(kuler(`Path specified is not writable or already exists! ${destinationProject} \n`, 'red'));
     console.error(err);
     process.exit(0);
   }
-  // Copy mobicoop files to sent path
 
-  let pathToClient = path.resolve(__dirname, '../../client');
-  // bundle needed for structures assets
-  let pathToMobicoopBundle = path.resolve(pathToClient, 'src/MobicoopBundle');
-  //filter so that we don't need to copy Bundle
+  /**
+   * Copy all client files but filters to destination
+   */
   const filter = {
-    dirToExclude: ['MobicoopBundle', 'node_modules', 'vendor', 'var', 'cypress', 'assets'],
+    elementToExclude: ['MobicoopBundle', 'node_modules', 'vendor', 'var', 'cypress', 'assets', ''],
+    extToExclude: ['.lock'],
     filter: function (currentPath) {
-      if (this.dirToExclude.includes(path.basename(currentPath))) { return false; }
+      if (this.elementToExclude.includes(path.basename(currentPath)) || this.extToExclude.includes(path.extname(currentPath))) { return false; }
       return true;
     }
   };
 
-  // Copy all file but bundle !
-  process.stdout.write(kuler(`Copying files to ${destinationProject}\n`, 'green'));
+  console.log(kuler(`Copying files to ${destinationProject}\n`, 'green'));
   [err, success] = await to(fs.copy(pathToClient, destinationProject, filter));
+
   if (err) {
-    process.stderr.write(kuler('Cannot copy to specified path!\n', 'red'));
+    console.error(kuler('Cannot copy to specified path!\n', 'red'));
     console.error(err);
     process.exit(0);
   }
 
-  // Create structure assets from bundle
+  /**
+   * Create Assets structure
+   */
   const filterAssets = {
     filter: function (currentPath) {
       let assetsToKeep = ['_variables.scss']
@@ -67,29 +88,32 @@ async function createCanvas() {
       return true;
     }
   };
-  let pathToClientAssets = path.resolve(pathToMobicoopBundle, 'Resources/assets');
-  let destinationAssets = path.resolve(destinationProject, 'assets');
 
   fs.mkdirp(destinationAssets);
 
-  console.log(pathToClientAssets, destinationAssets)
-
-  process.stdout.write(kuler(`Creating assets structure into ${destinationAssets} \n`, 'green'));
+  console.log(kuler(`Creating assets structure into ${destinationAssets} \n`, 'green'));
   [err, success] = await to(fs.copy(pathToClientAssets, destinationAssets, filterAssets));
   if (err) {
-    process.stderr.write(kuler('Cannot copy to specified path!\n', 'red'));
+    console.error(kuler('Cannot copy to specified path!\n', 'red'));
     console.error(err);
     process.exit(0);
   }
 
-  crawlDir(destinationAssets);
-
-  // Copy app.js because it's a specific version for client
+  /**
+   * Copy specific client assets (client-canvas-folder)
+   */
   let appjs = path.resolve(__dirname, 'client-canvas/app.js');
-  let gitignore = path.resolve(__dirname, 'client-canvas/.gitignore');
-  process.stdout.write(kuler(`Copying specific assets for ${destinationAssets} 🚀 \n`, 'pink'));
+  let gitignore = path.resolve(__dirname, 'client-canvas/docker-compose-builder-darwin.yml');
+  let dcbl = path.resolve(__dirname, 'client-canvas/docker-compose-builder-linux.yml');
+  let dcbd = path.resolve(__dirname, 'client-canvas/docker-compose-builder-linux.yml');
+  let dcl = path.resolve(__dirname, 'client-canvas/docker-compose-linux.yml');
+  let dcd = path.resolve(__dirname, 'client-canvas/docker-compose-darwin.yml');
+  console.log(kuler(`Copying specific assets for ${destinationAssets} 🚀 \n`, 'pink'));
   [err, success] = await to(fs.copy(appjs, `${destinationAssets}/js/app.js`));
-  [err, success] = await to(fs.copy(gitignore, `${destinationProject}/.gitignore`));
+  [err, success] = await to(fs.copy(dcbd, `${destinationProject}/docker-compose-builder-darwin.yml`));
+  [err, success] = await to(fs.copy(dcbl, `${destinationProject}/docker-compose-builder-linux.yml`));
+  [err, success] = await to(fs.copy(dcd, `${destinationProject}/docker-compose-darwin.yml`));
+  [err, success] = await to(fs.copy(dcl, `${destinationProject}/docker-compose-linux.yml`));
 
 
   /**
@@ -103,12 +127,18 @@ import '../../../css/page/search/simpleResults.scss';
 
   // We add bundle to .gitignore
   // [err, success] = await to(fs.appendFile(path.resolve(destinationProject, '.gitignore'), '\nsrc/MobicoopBundle'));
-  // if (!err) process.stdout.write(kuler('Added bundle to .gitignore \n', 'green'));
-  // process.stdout.write(kuler('☢️ Do not forget to commit into monorepo when you edit bundle files ☣️ \n', 'cyan'));
+  // if (!err) console.log(kuler('Added bundle to .gitignore \n', 'green'));
+  // console.log(kuler('☢️ Do not forget to commit into monorepo when you edit bundle files ☣️ \n', 'cyan'));
 }
 
-// Run the main job
-createCanvas();
+async function replaceDataInCanvas() {
+  const options = {
+    files: `${destinationProject}/**/*`,
+    from: /\$\$NAME\$\$/gi,
+    to: `${program.project}-platform`,
+  };
+  return replace(options);
+}
 
 
 /**
