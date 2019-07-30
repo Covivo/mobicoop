@@ -10,6 +10,8 @@ const read = require('fs-readdir-recursive');
 let files = read('./assets/js/page');
 let filesBundle = read('./src/MobicoopBundle/Resources/assets/js/page');
 // ⚙️ UNCOMMENT below if you are using a client platform  ⚙️ //
+// let bundleRealPath = fs.realpathSync(__dirname + '/src/MobicoopBundle');
+// let bundleNodeModules = path.resolve(bundleRealPath + '../../../node_modules');
 // let bundleVendor = path.resolve(bundleRealPath + '../../../vendor');
 // let bundlePublic = path.resolve(bundleRealPath + '../../../public');
 
@@ -46,7 +48,10 @@ if (!Encore.isProduction()) {
     test: /\.(js|vue)$/,
     enforce: 'pre',
     loader: 'eslint-loader',
+    // ⚙️ COMMENT below if you are using a client platform  ⚙️ //
     exclude: ['/node_modules', '/vendor', '/public'],
+    // ⚙️ UNCOMMENT below if you are using a client platform  ⚙️ //
+    // exclude: ['/node_modules', '/vendor', '/public', bundleNodeModules, bundleVendor, bundlePublic],
     options: {
       fix: true
     }
