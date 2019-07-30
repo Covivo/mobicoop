@@ -1,5 +1,5 @@
 'use strict';
-import { Vue, vuetify, i18n, VApp, VIcon } from '@js/config/vue-config'
+import { Vue, vuetify, i18n, VApp } from '@js/config/vue-config'
 import '@css/page/user/messages.scss';
 
 // Vue components
@@ -13,7 +13,6 @@ new Vue({
   vuetify,
   components: {
     VApp,
-    VIcon,
     Messages,
     Vueheader,
     Vuefooter

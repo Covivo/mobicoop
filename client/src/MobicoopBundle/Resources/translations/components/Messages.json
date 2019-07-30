@@ -1,0 +1,92 @@
+{
+    "fr": {
+            "ui": {
+                "button": {
+                    "askCarpool":"Demander un covoiturage",
+                    "accept":"J'accepte",
+                    "refuse":"Je refuse"
+                }, 
+                "modals": {
+                    "carpooling": {
+                        "askCarpoolTitle":"Demande de covoiturage",
+                        "askCarpoolText":"Etes-vous sur de vouloir envoyer une demande de covoiturage ?"
+                    }
+                },
+                "infos": {
+                    "carpooling": {
+                        "askAlreadySent": "Proposition de covoiturage envoyée",
+                        "accepted": "Proposition de covoiturage acceptée",
+                        "refused": "Proposition de covoiturage refusée",
+                        "distance": "Distance",
+                        "duration": "Durée",
+                        "availableSeats": "Places disponibles",
+                        "price": "Prix"
+                    }
+                },
+                "pages": {
+                    "messages": {
+                        "label": {
+                            "messages":"Messages",
+                            "context":"Annonces(s)",
+                            "ongoingasks":"Demandes en cours",
+                            "directmessages":"Boîte de dialogue",
+                            "nocarpoolmessages":"Aucun message de covoiturage",
+                            "nodirectmessages":"Aucun message direct",
+                            "notLinkedToACarpool":"N'est pas lié à un covoiturage"
+                        },
+                        "spinner":{
+                            "loading":"Chargement des messages",
+                            "sendMessage":"Envoi...",
+                            "askCarpool":"Envoi de votre demande...",
+                            "updateCarpool":"Mise à jour de de votre demande..."
+                        }
+                    }
+                }
+            }
+        },
+    "en": {
+        "ui": {
+            "button": {
+                "askCarpool":"Ask a Carpool",
+                "accept":"Accept",
+                "refuse":"Refuse"
+            }, 
+            "modals": {
+                "carpooling": {
+                    "askCarpoolTitle":"Ask of a carpool",
+                    "askCarpoolText":"Are you sure you want to as for a carpool ?"
+                }
+            },
+            "infos": {
+                "carpooling": {
+                    "askAlreadySent": "Carpool proposal sent",
+                    "accepted": "Carpool proposal accepted",
+                    "refused": "Carpool proposal refused",
+                    "distance": "Distance",
+                    "duration": "Duration",
+                    "availableSeats": "Available seats",
+                    "price": "Price"
+                }
+            },
+            "pages": {
+                "messages": {
+                    "label": {
+                        "messages":"Messages",
+                        "context":"Carpool(s)",
+                        "ongoingasks":"Ongoing proposals",
+                        "directmessages":"Dialog box",
+                        "nocarpoolmessages":"No carpool message",
+                        "nodirectmessages":"No direct message",
+                        "notLinkedToACarpool":"Not carpool linked"
+                    },
+                    "spinner":{
+                        "loading":"Loading messages",
+                        "sendMessage":"Sending...",
+                        "askCarpool":"Sending your proposal...",
+                        "updateCarpool":"Update your proposal..."
+                    }
+                }
+            }
+        }
+    }
+}

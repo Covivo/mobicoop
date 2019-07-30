@@ -1,7 +1,7 @@
 "use strict"
 
 import Vue from 'vue'
-import Vuetify, { VApp, VIcon } from 'vuetify/lib'
+import Vuetify, { VApp } from 'vuetify/lib'
 import VueI18n from 'vue-i18n'
 import Buefy from 'buefy'; // TODO ☣️ remove it when not needed anymore
 import VueFormWizard from 'vue-form-wizard';  // TODO ☣️ remove it when not needed anymore
@@ -30,14 +30,13 @@ const i18n = new VueI18n({
 
 const vuetify = new Vuetify({
   icons: {
-    iconfont: 'mdi', // default - only for display purposes
+    iconfont: 'mdi', // default - only for display purposes (https://materialdesignicons.com/)
   },
   theme: colorTheme
 });
 
 export {
   VApp,
-  VIcon,
   vuetify,
   i18n,
   Vue

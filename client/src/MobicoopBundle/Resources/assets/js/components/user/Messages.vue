@@ -60,9 +60,9 @@
                 @click="updateMessages(threadCM.idThreadMessage,threadCM.contactId)"
               >
                 <v-card-title>
-                  <i class="material-icons">
-                    account_circle
-                  </i>
+                  <v-icon>
+                    mdi-account-circle
+                  </v-icon>
                   &nbsp;<span class="title font-weight-light">{{ threadCM.contactFirstName }} {{ threadCM.contactLastName.substr(0,1).toUpperCase()+"." }}</span>
                 </v-card-title>
               </v-card>
@@ -87,9 +87,9 @@
                 @click="updateMessages(thread.idThreadMessage,thread.contactId,generateName(thread.contactFirstName,thread.contactLastName))"
               >
                 <v-card-title>
-                  <i class="material-icons">
-                    account_circle
-                  </i>
+                  <v-icon>
+                    mdi-account-circle
+                  </v-icon>
                   &nbsp;<span class="title font-weight-light">{{ generateName(thread.contactFirstName,thread.contactLastName) }}</span>
                 </v-card-title>
               </v-card>
@@ -122,11 +122,9 @@
                 v-slot:icon
               >
                 <v-avatar color="secondary">
-                  <i
-                    class="material-icons"
-                  >
+                  <v-icon>
                     {{ item.icon }}
-                  </i>
+                  </v-icon>
                 </v-avatar>
               </template>
               <template
@@ -186,7 +184,7 @@
                     @click="sendInternalMessage()"
                   >
                     <v-icon>
-                      send
+                      mdi-send
                     </v-icon>
                   </v-btn>
                 </div>            
@@ -221,7 +219,7 @@
                     <v-timeline-item
                       v-for="(waypoint, index) in infosJourney['waypoints']"
                       :key="index"
-                      :icon="( (index>0) && (index<waypoint.length-1) ) ? 'arrow_right_alt' : ''"
+                      :icon="( (index>0) && (index<waypoint.length-1) ) ? 'mdi-arrow-right' : ''"
                       :color="( (index>0) && (index<waypoint.length-1) ) ? '' : 'primary'"
                       :icon-color="( (index>0) && (index<waypoint.length-1) ) ? 'warning' : 'primary'"
                       :fill-dot="( (index>0) && (index<waypoint.length-1) )"
@@ -415,8 +413,11 @@
 </template>
 <script>
 import axios from 'axios';
-
+import Translations from "../../../../translations/components/Messages.json";
 export default {
+  i18n: {
+    messages: Translations
+  },
   props: {
     threadsdirectmessagesforview: {
       type: Array,
@@ -616,7 +617,7 @@ export default {
         tabItem["idMessage"] = message.id;
         tabItem["userFirstName"] = message.user.givenName;
         tabItem["userLastName"] = message.user.familyName.substr(0,1).toUpperCase()+".";
-        tabItem["icon"] = "account_circle";
+        tabItem["icon"] = "mdi-account-circle";
         tabItem["text"] = message.text;
         tabItem["createdTimeReadable"] = message.createdTimeReadable;
         (message.user.id==this.userid) ? tabItem["origin"] = "own" : tabItem["origin"] = "contact";

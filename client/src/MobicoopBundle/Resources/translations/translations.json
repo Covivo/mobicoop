@@ -5,31 +5,13 @@
                     "previous": "Précédent",
                     "next": "Suivant",
                     "register": "Je m'inscris",
-                    "save": "Enregistrer",
-                    "askCarpool":"Demander un covoiturage",
-                    "accept":"J'accepte",
-                    "refuse":"Je refuse"
+                    "save": "Enregistrer"
                 }, 
                 "form": {
                     "errors": "Merci de corriger les erreurs suivantes ",
                     "enterMessage": "Saisissez un message"
                 },
-                "modals": {
-                    "carpooling": {
-                        "askCarpoolTitle":"Demande de covoiturage",
-                        "askCarpoolText":"Etes-vous sur de vouloir envoyer une demande de covoiturage ?"
-                    }
-                },
                 "infos": {
-                    "carpooling": {
-                        "askAlreadySent": "Proposition de covoiturage envoyée",
-                        "accepted": "Proposition de covoiturage acceptée",
-                        "refused": "Proposition de covoiturage refusée",
-                        "distance": "Distance",
-                        "duration": "Durée",
-                        "availableSeats": "Places disponibles",
-                        "price": "Prix"
-                    },
                     "misc": {
                         "at": "à"
                     }
@@ -41,23 +23,6 @@
                             "errors": {
                                 "required": "La validation de la charte est requise"
                             }
-                        }
-                    },
-                    "messages": {
-                        "label": {
-                            "messages":"Messages",
-                            "context":"Annonces(s)",
-                            "ongoingasks":"Demandes en cours",
-                            "directmessages":"Boîte de dialogue",
-                            "nocarpoolmessages":"Aucun message de covoiturage",
-                            "nodirectmessages":"Aucun message direct",
-                            "notLinkedToACarpool":"N'est pas lié à un covoiturage"
-                        },
-                        "spinner":{
-                            "loading":"Chargement des messages",
-                            "sendMessage":"Envoi...",
-                            "askCarpool":"Envoi de votre demande...",
-                            "updateCarpool":"Mise à jour de de votre demande..."
                         }
                     }
                 }
