@@ -2,6 +2,7 @@ const Encore = require('@symfony/webpack-encore');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 const fs = require('fs');
+const path = require('path');
 const _ = require('lodash');
 const read = require('fs-readdir-recursive');
 
@@ -87,5 +88,11 @@ encoreConfig.watchOptions = {
   poll: 1000
 }
 
+encoreConfig.resolve.alias = _.merge(encoreConfig.resolve.alias, { // merge is very important because if not present vue is not found because cnore add aliasl !! https://github.com/vuejs-templates/webpack/issues/215#issuecomment-514220431
+  '@js': path.resolve(__dirname, 'src/MobicoopBundle/Resources/assets/js'),
+  '@css': path.resolve(__dirname, 'src/MobicoopBundle/Resources/assets/css'),
+});
+
+console.error(path.resolve(__dirname, 'src/MobicoopBundle/Resources/assets'))
 
 module.exports = [encoreConfig];

@@ -1,17 +1,13 @@
 'use strict';
 
-// any CSS you require will output into a single css file (app.css in this case)
-// import 'babel-polyfill';
-// import Vue from 'vue';
-
-import { Vue, vuetify, i18n, VApp } from '../config/vue-config'
+import { Vue, vuetify, i18n, VApp } from '@js/config/vue-config'
 
 // Vue components
-import Homesearchform from '../components/Homesearchform';
-import Vueheader from '../components/Vueheader';
-import Vuefooter from '../components/Vuefooter';
+import Homesearchform from '@js/components/Homesearchform';
+import Vueheader from '@js/components/Vueheader';
+import Vuefooter from '@js/components/Vuefooter';
 
-import '../../css/page/home.scss';
+import '@css/page/home.scss';
 
 new Vue({
   i18n,
