@@ -10,35 +10,6 @@ body {
     }
   }
   #messages {
-    #headGridMessages {
-      color: #FFF;
-      font-weight: bold;
-      font-size: 20px;
-      div {
-        background-color: $secondary;
-      }
-    }
-    #spinnerMessages {
-      .v-card__text {
-        background-color: $secondary;
-        color: #FFF;
-      }
-    }
-    //height: 1000px;
-    #threadColumn {
-      //background-color: #F00;
-      .threads {
-        margin-bottom: 10px;
-        background-color: #FFF;
-        color: #000;
-        &.selected {
-          background-color: $primary;
-        }
-        &:hover {
-          cursor: pointer;
-        }
-      }
-    }
     #messagesColumn {
       //background-color: #80F19A;
       .v-timeline {
@@ -49,33 +20,28 @@ body {
               max-width: 100%;
               text-align: center;
               background-color: #FFF;
-              .datesDividers {
-                color: $secondary;
-                font-weight: bold;
-              }
               &.v-timeline-item__divider {
                 display: none;
               }
             }
           }
-          &.own {
-            .v-timeline-item__body {
-              .v-card {
-                background-color: $primary;
-              }
-            }
-          }
-          .v-timeline-item__body {
-            font-weight: bold;
+        }
+      }
+    }
+  }
+  #contextColumn {
+    .v-timeline-item {
+      &.waypoint {
+        .v-timeline-item__dot {
+          //box-shadow: none;
+          .v-timeline-item__inner-dot {
+            //background-color: #FFF;
           }
         }
       }
-      #validSendMessage {
-        font-weight: bold;
+      .v-timeline-item__body {
+        padding-top: 8px;
       }
-    }
-    #contextColumn {
-      //background-color: #00F;
     }
   }
 }

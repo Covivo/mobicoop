@@ -44,6 +44,7 @@ use App\Communication\Entity\Notified;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -103,7 +104,7 @@ class AskHistory implements MessagerInterface
     private $ask;
 
     /**
-     * @var Message The message linked the ask history item.
+     * @var Message|null The message linked the ask history item.
      *
      * @ORM\OneToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="askHistory", cascade={"persist", "remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
@@ -166,7 +167,7 @@ class AskHistory implements MessagerInterface
         return $this;
     }
 
-    public function getMessage(): Message
+    public function getMessage(): ?Message
     {
         return $this->message;
     }

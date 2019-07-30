@@ -6,26 +6,28 @@
         grid-list-md
         fluid
       >
-        <v-layout id="headGridMessages">
+        <v-layout
+          id="headGridMessages"
+        >
           <v-flex
             xs4
-            class="pt-5 pb-4 mr-1 pl-2"
+            class="pt-5 pb-4 mr-1 pl-2 secondary white--text font-weight-bold headline"
           >
-            Messages
+            {{ $t("ui.pages.messages.label.messages") }}
           </v-flex>
           <v-flex
             xs5
             text-xs-left
-            class="pt-5 pb-4 mr-1 pl-2"
+            class="pt-5 pb-4 mr-1 pl-2 secondary white--text font-weight-bold headline"
           >
             {{ currentcorrespondant }}
           </v-flex>
           <v-flex
             xs3
             text-xs-left
-            class="pt-5 pb-4 pl-2"
+            class="pt-5 pb-4 pl-2 secondary white--text font-weight-bold headline"
           >
-            Annonces(s)
+            {{ $t("ui.pages.messages.label.context") }}
           </v-flex>
         </v-layout>
         <v-layout>
@@ -43,10 +45,10 @@
                 :key="0"
                 ripple
               >
-                Demandes en cours
+                {{ $t("ui.pages.messages.label.ongoingasks") }}
               </v-tab>
               <v-tab-item v-if="this.threadsCM.length==0">
-                Aucun message de covoiturage
+                {{ $t("ui.pages.messages.label.nocarpoolmessages") }}
               </v-tab-item>
               <v-tab-item
                 v-else
@@ -55,8 +57,7 @@
                   v-for="(threadCM, index) in threadsCM"
                   :key="index"
                   class="threads mx-auto mt-2"
-                  :class="threadCM.selected ? 'selected' : ''"
-                  max-width="400"
+                  :class="threadCM.selected ? 'primary' : ''"
                   @click="updateMessages(threadCM.idThreadMessage,threadCM.contactId)"
                 >
                   <v-card-title>
@@ -71,18 +72,18 @@
                 :key="1"
                 ripple
               >
-                Boîte de dialogue
+                {{ $t("ui.pages.messages.label.directmessages") }}
               </v-tab>
 
               <v-tab-item v-if="this.threadsDM.length==0">
-                Aucun message direct
+                {{ $t("ui.pages.messages.label.nodirectmessages") }}
               </v-tab-item>
               <v-tab-item v-else>
                 <v-card
                   v-for="(thread, index) in threadsDM"
                   :key="index"
                   class="threads mx-auto mt-2"
-                  :class="thread.selected ? 'selected' : ''"
+                  :class="thread.selected ? 'primary' : ''"
                   max-width="400"
                   @click="updateMessages(thread.idThreadMessage,thread.contactId,generateName(thread.contactFirstName,thread.contactLastName))"
                 >
@@ -137,13 +138,14 @@
                 </template>
                 <v-card
                   v-if="item.divider===false"
-                  class="elevation-2"
+                  class="elevation-2 font-weight-bold"
+                  :class="(item.origin==='own')?'primary':''"
                 >
                   <v-card-text>{{ item.text }}</v-card-text>
                 </v-card>
                 <span
                   v-if="item.divider===true"
-                  class="datesDividers"
+                  class="secondary--text font-weight-bold"
                 >
                   {{ item.createdDateReadable }}
                 </span>
@@ -163,7 +165,7 @@
                     v-model="textToSend"
                     name="typedMessage"
                     filled
-                    label="Saisissez un message"
+                    :label="$t('ui.form.enterMessage')"
                     auto-grow
                     rows="2"
                     background-color="#FFFFFF"
@@ -177,7 +179,7 @@
                   <div class="text-xs-center">
                     <v-btn
                       id="validSendMessage"
-                      class="mx-2 black--text"
+                      class="mx-2 black--text font-weight-bold"
                       fab
                       rounded
                       :idthreadmessage="idThreadMessage"
@@ -203,42 +205,150 @@
                 xs12
                 text-center
               >
-                <v-card>
-                  <v-card-text>
+                <v-card class="pa-2">
+                  <!-- The current carpool history -->
+                  <v-card-text class="font-weight-bold headline">
                     {{ currentcorrespondant }}
                   </v-card-text>
-                  <v-card-text v-if="currentAskHistory">
-                    zog zog
-                  </v-card-text>
-                  <v-card-text v-else>
-                    N'est pas lié à un covoiturage
-                  </v-card-text>
+                  <v-card
+                    v-if="currentAskHistory"
+                    class="mb-3"
+                  >
+                    <v-card-text>
+                      {{ currentAskHistory.ask.matching.criteria.fromDateReadable }} {{ $t("ui.infos.misc.at") }} {{ currentAskHistory.ask.matching.criteria.fromTimeReadable }}
+                    </v-card-text>
+                    <!-- Timeline of the journey -->
+                    <v-timeline dense>
+                      <v-timeline-item
+                        v-for="(waypoint, index) in infosJourney['waypoints']"
+                        :key="index"
+                        :icon="( (index>0) && (index<waypoint.length-1) ) ? 'arrow_right_alt' : ''"
+                        :color="( (index>0) && (index<waypoint.length-1) ) ? '' : 'primary'"
+                        :icon-color="( (index>0) && (index<waypoint.length-1) ) ? 'warning' : 'primary'"
+                        :fill-dot="( (index>0) && (index<waypoint.length-1) )"
+                        class="text-left pb-2"
+                        :class="( (index>0) && (index<waypoint.length-1) ) ? 'waypoint' : ''"
+                      >
+                        {{ waypoint }}
+                      </v-timeline-item>
+                    </v-timeline>
+
+                    <v-divider />
+                    <v-layout row>
+                      <v-flex
+                        xs8
+                        text-left
+                      >
+                        <v-card-text class="py-1">
+                          {{ $t("ui.infos.carpooling.distance") }}
+                        </v-card-text>
+                        <v-card-text class="py-1">
+                          {{ $t("ui.infos.carpooling.availableSeats") }}
+                        </v-card-text>
+                        <v-card-text class="font-weight-bold py-1">
+                          {{ $t("ui.infos.carpooling.price") }}
+                        </v-card-text>
+                      </v-flex>
+                      <v-flex
+                        xs4
+                        text-right
+                      >
+                        <v-card-text class="py-1">
+                          {{ infosJourney["distanceRounded"] }}km
+                        </v-card-text>
+                        <v-card-text class="py-1">
+                          {{ infosJourney["seats"] }}
+                        </v-card-text>
+                        <v-card-text class="font-weight-bold py-1">
+                          {{ infosJourney["price"] }} €
+                        </v-card-text>
+                      </v-flex>
+                    </v-layout>
+                  </v-card>
+                  <v-card v-else>
+                    <v-card-text>
+                      {{ $t("ui.pages.messages.label.notLinkedToACarpool") }}
+                    </v-card-text>
+                  </v-card>
+                  
+                  <!-- Button for asking a Carpool (only the contact initiator) -->
                   <v-btn
-                    v-if="currentAskHistory && currentAskHistory.ask.status==1"
+                    v-if="currentAskHistory && currentAskHistory.ask.status==1 && askUser == userid"
                     rounded
                     color="secondary"
                     class="mb-2"
+                    @click="dialogAskCarpool=true"
                   >
-                    Demander un covoiturage
+                    {{ $t("ui.button.askCarpool") }}
                   </v-btn>
+
+                  <!-- Carpooling status -->
+                  <!-- Carpool Asked -->
+                  <v-card
+                    v-else-if="currentAskHistory && currentAskHistory.ask.status==2 && askUser == userid"
+                    color="warning"
+                  >
+                    <v-card-text class="white--text">
+                      {{ $t("ui.infos.carpooling.askAlreadySent") }}
+                    </v-card-text>
+                  </v-card>
+                  <!-- Carpool Confirmed -->
+                  <v-card
+                    v-else-if="currentAskHistory && currentAskHistory.ask.status==3"
+                    color="success"
+                  >
+                    <v-card-text class="white--text">
+                      {{ $t("ui.infos.carpooling.accepted") }}
+                    </v-card-text>
+                  </v-card>
+                  <!-- Carpool Refused -->
+                  <v-card
+                    v-else-if="currentAskHistory && currentAskHistory.ask.status==4"
+                    color="error"
+                  >
+                    <v-card-text class="white--text">
+                      {{ $t("ui.infos.carpooling.refused") }}
+                    </v-card-text>
+                  </v-card>
+                  <!-- Accept/Refuse a Carpool -->
                   <div
-                    v-if="currentAskHistory && currentAskHistory.ask.status==2"
+                    v-if="currentAskHistory && currentAskHistory.ask.status==2 && askUser != userid"
                     class="my-2"
                   >
-                    <v-btn
-                      color="success"
-                      class="mb-2"
-                      fab
+                    <v-tooltip
+                      bottom
+                      color="primary"
                     >
-                      <v-icon>done</v-icon>
-                    </v-btn>
-                    <v-btn
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          color="success"
+                          class="mb-2"
+                          fab
+                          v-on="on"
+                          @click="updateCarpool(3)"
+                        >
+                          <v-icon>done</v-icon>
+                        </v-btn>
+                      </template>
+                      <span class="black--text">{{ $t("ui.button.accept") }}</span>
+                    </v-tooltip>
+                    <v-tooltip
+                      bottom
                       color="error"
-                      class="mb-2"
-                      fab
                     >
-                      <v-icon>clear</v-icon>
-                    </v-btn>
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          color="error"
+                          class="mb-2"
+                          fab
+                          v-on="on"
+                          @click="updateCarpool(4)"
+                        >
+                          <v-icon>clear</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>{{ $t("ui.button.refuse") }}</span>
+                    </v-tooltip>
                   </div>
                 </v-card>
               </v-flex>
@@ -253,8 +363,11 @@
             persistent
             width="300"
           >
-            <v-card id="spinnerMessages">
-              <v-card-text>
+            <v-card
+              id="spinnerMessages"
+              class="secondary"
+            >
+              <v-card-text class="white--text">
                 {{ textSpinner }}
                 <v-progress-linear
                   color="blue accent-4"
@@ -266,6 +379,38 @@
             </v-card>
           </v-dialog>
         </div>
+
+        <v-dialog
+          v-model="dialogAskCarpool"
+          persistent
+          max-width="290"
+        >
+          <v-card>
+            <v-card-title class="headline">
+              {{ $t("ui.modals.carpooling.askCarpoolTitle") }}
+            </v-card-title>
+            <v-card-text>{{ $t("ui.modals.carpooling.askCarpoolText") }}</v-card-text>
+            <v-card-actions>
+              <v-spacer />
+              <v-btn
+                class="font-weight-bold"
+                color="red darken-1"
+                text
+                @click="dialogAskCarpool = false"
+              >
+                {{ $t("ui.button.refuse") }}
+              </v-btn>
+              <v-btn
+                class="font-weight-bold"
+                color="green darken-1"
+                text
+                @click="updateCarpool(2)"
+              >
+                {{ $t("ui.button.accept") }}
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-container>
     </v-content>
   </v-app>
@@ -310,14 +455,19 @@ export default {
       threadsDM: this.threadsdirectmessagesforview,
       threadsCM: this.threadscarpoolingmessagesforview,
       spinner:false,
+      dialogAskCarpool:false,
       textToSend:"",
       idThreadMessage:this.idmessagedefault,
       currentcorrespondant:"...",
       idRecipient:null,
-      textSpinnerLoading:"Chargement des messages",
-      textSpinnerSendMessage:"Envoi...",
+      textSpinnerLoading:this.$t('ui.pages.messages.spinner.loading'),
+      textSpinnerSendMessage:this.$t('ui.pages.messages.spinner.sendMessage'),
+      textSpinnerAskCarpool:this.$t('ui.pages.messages.spinner.askCarpool'),
+      textSpinnerUpdateCarpool:this.$t('ui.pages.messages.spinner.updateCarpool'),
       textSpinner:"",
-      currentAskHistory:null
+      currentAskHistory:null,
+      askUser:0,
+      infosJourney:[]
     }
   },
   watch: {
@@ -347,8 +497,9 @@ export default {
           let messagesThread = (res.data.messages);
           this.items.length = 0; // Reset items (the source of messages column)
 
-          // update askHistory
-          this.currentAskHistory = res.data.askHistory;
+          // update askHistory et askUser
+          this.currentAskHistory = res.data.lastAskHistory;
+          this.askUser = res.data.user.id;
 
           // The date of the first message
           let divider = {
@@ -393,17 +544,40 @@ export default {
             this.addMessageToItems(message);
 
           }
+
           this.spinner = false;
         })
     },
     updateContextPanel(){
-      
+      if(this.currentAskHistory !== null){
+        this.infosJourney.length = 0; // Reset journey infos      
+
+        this.infosJourney["waypoints"] = new Array();
+        for(let waypoint of this.currentAskHistory.ask.matching.waypoints){
+        // Get the diffrent waypoints
+          this.infosJourney["waypoints"].push(waypoint.address.addressLocality);
+        }
+      }
+
+      // update distance
+      this.infosJourney["distance"] = parseInt(this.currentAskHistory.ask.matching.proposalRequest.criteria.directionPassenger.distance)/1000;
+      this.infosJourney["distanceRounded"] = Math.round(this.infosJourney["distance"]);
+
+      // update price
+      this.infosJourney["price"] = (this.infosJourney["distance"] * parseFloat(this.currentAskHistory.ask.matching.proposalRequest.criteria.priceKm)).toFixed(2);
+
+      // seats
+      this.infosJourney["seats"] = this.currentAskHistory.ask.matching.criteria.seats;
+
     },
     sendInternalMessage(){
       let messageToSend = new FormData();
       messageToSend.append("idThreadMessage",this.idThreadMessage);
       messageToSend.append("text",this.textToSend);
       messageToSend.append("idRecipient",this.idRecipient);
+      if(this.currentAskHistory!==null){
+        messageToSend.append("idAskHistory",this.currentAskHistory.id);
+      }
       this.textSpinner = this.textSpinnerSendMessage;
       this.spinner = true;
       axios
@@ -411,7 +585,27 @@ export default {
         .then(res => {
           this.textToSend = "";
           this.spinner = false;
-          this.updateMessages(res.data.message.id);
+          if(this.updateMessages(res.data.message)!==undefined){
+            this.updateMessages(res.data.message.id);
+          }
+          else{
+            this.updateMessages();
+          }
+        });
+    },
+    updateCarpool(status){
+      this.dialogAskCarpool = false;
+      this.textSpinner = this.textSpinnerUpdateCarpool;
+      this.spinner = true;
+      let params = new FormData();
+      params.append("idAsk",this.currentAskHistory.ask.id);
+      params.append("status",status);
+      axios
+        .post("/utilisateur/messages/updateAsk",params)
+        .then(res => {
+          this.currentAskHistory.ask.status = res.data.status;
+          this.spinner = false;
+          this.updateMessages();
         });
     },
     addMessageToItems(message){

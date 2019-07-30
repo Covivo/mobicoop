@@ -53,6 +53,13 @@ user_message_thread:
     requirements:
         idFirstMessage: '\d+'
 
+# Update an Ask from messages
+user_message_update_ask:
+    path:
+        fr: /utilisateur/messages/updateAsk
+        en: /user/messages/updateAsk
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::updateAsk
+
 # profile update
 user_profile_update:
     path:

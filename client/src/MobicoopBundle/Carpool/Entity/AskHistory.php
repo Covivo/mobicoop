@@ -26,12 +26,15 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 
 /**
  * Carpooling : a history item for an ask (all the items represent a thread for the ask).
  */
-class AskHistory
+class AskHistory implements ResourceInterface
 {
     const STATUS_INITIATED = 1;
     const STATUS_PENDING = 2;
@@ -39,14 +42,20 @@ class AskHistory
     const STATUS_DECLINED = 4;
 
     /**
-     * @var int The id of this ask.
+     * @var int The id of this askHistory.
      */
     private $id;
 
     /**
+     * @var string|null The iri of this askHistory.
+     */
+    private $iri;
+    
+    /**
      * @var int Ask status (0 = waiting; 1 = accepted; 2 = declined).
      *
      * @Assert\NotBlank
+     * @Groups({"put","post"})
      */
     private $status;
 
@@ -54,43 +63,64 @@ class AskHistory
      * @var int The ask type (1 = one way trip; 2 = outward of a round trip; 3 = return of a round trip)).
      *
      * @Assert\NotBlank
+     * @Groups({"put","post"})
      */
     private $type;
 
     /**
      * @var \DateTimeInterface Creation date of the solicitation.
+     * @Groups({"put","post"})
      */
     private $createdDate;
 
     /**
      * @var Ask|null The linked ask.
-     *
+     * @Groups({"put","post"})
      * @MaxDepth(1)
      */
     private $ask;
 
     /**
      * @var Message The message linked the ask history item.
-     *
+     * @Groups({"put","post"})
      * @MaxDepth(1)
      */
     private $message;
 
     /**
      * @var ArrayCollection|null The notifications sent for the ask history.
-     *
+     * @Groups({"put","post"})
      * @MaxDepth(1)
      */
     private $notifieds;
     
     public function __construct()
     {
-        $this->waypoints = new ArrayCollection();
+        $this->notifieds = new ArrayCollection();
     }
     
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+    
+    public function getIri(): ?id
+    {
+        return $this->iri;
+    }
+    
+    public function setIri($iri): self
+    {
+        $this->iri = $iri;
+
+        return $this;
     }
 
     public function getStatus(): ?int

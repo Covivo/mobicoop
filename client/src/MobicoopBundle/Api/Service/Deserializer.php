@@ -719,7 +719,6 @@ class Deserializer
 
     private function deserializeMessage(array $data): ?Message
     {
-        dump("message");
         $message = new Message();
         $message = self::autoSet($message, $data);
         if (isset($data["@id"])) {
@@ -733,11 +732,6 @@ class Deserializer
                 $message->addRecipient(self::deserializeRecipient($recipient));
             }
         }
-        if (isset($data["askHistory"])) {
-            foreach ($data["askHistory"] as $askHistory) {
-                $message->addAskHistory(self::deserializeAskHistory($askHistory));
-            }
-        }
         return $message;
     }
     
@@ -747,6 +741,23 @@ class Deserializer
         $ask = self::autoSet($ask, $data);
         if (isset($data["@id"])) {
             $ask->setIri($data["@id"]);
+        }
+        if (isset($data["user"])) {
+            $ask->setUser(self::deserializeUser($data["user"]));
+        }
+        if (isset($data["matching"])) {
+            $ask->setMatching(self::deserializeMatching($data["matching"]));
+        }
+        if (isset($data["criteria"])) {
+            $ask->setCriteria(self::deserializeCriteria($data["criteria"]));
+        }
+        if (isset($data["ask"])) {
+            $ask->setAsk(self::deserializeAsk($data["ask"]));
+        }
+        if (isset($data["waypoints"])) {
+            foreach ($data["waypoints"] as $waypoint) {
+                $ask->addWaypoint(self::deserializeWaypoint($waypoint));
+            }
         }
         return $ask;
     }

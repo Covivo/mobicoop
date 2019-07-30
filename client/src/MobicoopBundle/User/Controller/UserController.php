@@ -53,6 +53,10 @@ use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Recipient;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskManager;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskHistoryManager;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -457,7 +461,7 @@ class UserController extends AbstractController
      * Get a complete thread from a first message
      * Ajax Request
      */
-    public function getThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request)
+    public function getThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager, AskManager $askManager)
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
@@ -476,6 +480,21 @@ class UserController extends AbstractController
             $thread["messages"][$key]["createdDateReadable"] = $createdDate->format("D d F Y");
             $thread["messages"][$key]["createdTimeReadable"] = $createdDate->format("H:i:s");
         }
+        
+        if (!is_null($thread["askHistory"])) {
+            // Get the last AskHistory
+            // You do that because you can have a AskHistory without a message
+            $askHistories = $askManager->getAskHistories($thread["askHistory"]["ask"]["id"]);
+            $thread["lastAskHistory"] = end($askHistories);
+
+            $fromDate = new DateTime($thread["lastAskHistory"]["ask"]["matching"]["criteria"]["fromDate"]);
+            $thread["lastAskHistory"]["ask"]["matching"]["criteria"]["fromDateReadable"] = $fromDate->format("D d F Y");
+            $fromTime = new DateTime($thread["lastAskHistory"]["ask"]["matching"]["criteria"]["fromTime"]);
+            $thread["lastAskHistory"]["ask"]["matching"]["criteria"]["fromTimeReadable"] = $fromTime->format("G\hi");
+        } else {
+            $thread["lastAskHistory"] = null;
+        }
+
         return new Response(json_encode($thread));
     }
 
@@ -483,7 +502,7 @@ class UserController extends AbstractController
      * Send an internal message to another user
      * Ajax Request
      */
-    public function sendInternalMessage(UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request)
+    public function sendInternalMessage(UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request, AskHistoryManager $askHistoryManager)
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
@@ -500,18 +519,65 @@ class UserController extends AbstractController
                 $internalMessageManager->getMessage($idThreadMessage)
             );
 
-            return new Response($internalMessageManager->sendInternalMessage($messageToSend, DataProvider::RETURN_JSON));
+            // If there is an AskHistory i will post an AskHistory with the message within. If not, i only send a Message.
+            if (trim($request->request->get('idAskHistory'))!=="") {
+                
+                // Get the current AskHistory
+                $currentAskHistory = $askHistoryManager->getAskHistory($request->request->get('idAskHistory'));
+
+                // Create the new Ask History to post
+                $askHistory = new AskHistory();
+                $askHistory->setMessage($messageToSend);
+                $askHistory->setAsk($currentAskHistory->getAsk());
+                $askHistory->setStatus($currentAskHistory->getStatus());
+                $askHistory->setType($currentAskHistory->getType());
+
+                print_r($askHistoryManager->createAskHistory($askHistory));
+                die;
+                
+                return new Response($askHistoryManager->createAskHistory($askHistory, DataProvider::RETURN_JSON));
+            } else {
+                return new Response($internalMessageManager->sendInternalMessage($messageToSend, DataProvider::RETURN_JSON));
+            }
         }
         return new Response(json_encode("Not a post"));
     }
 
     /**
-     * Get the details of an AskHistory
+     * Update and ask
      * Ajax Request
      */
-    public function getAskHistoryDetails()
+    public function updateAsk(Request $request, AskManager $askManager)
     {
+        if ($request->isMethod('POST')) {
+            $idAsk = $request->request->get('idAsk');
+
+            // Get the Ask
+            $ask = $askManager->getAsk($idAsk);
+
+            // Change the status
+            if ($request->request->get('status')!==null &&
+                is_numeric($request->request->get('status'))
+            ) {
+                // Modify the Ask status
+                $ask->setStatus($request->request->get('status'));
+            }
+            
+            // Update the Ask via API
+            $ask = $askManager->updateAsk($ask);
+
+            $return = [
+                "id"=>$ask->getId(),
+                "status"=>$ask->getStatus()
+            ];
+
+            return new Response(json_encode($return));
+        }
+
+        return new Response(json_encode("Not a post"));
     }
+
+
 
     // ADMIN
 
