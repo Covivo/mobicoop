@@ -412,11 +412,13 @@ class UserController extends AbstractController
         $threadsCarpoolingMessagesForView = [];
         $idMessageDefault = null;
         $idRecipientDefault = null;
+        $firstNameRecipientDefault = "";
+        $lastNameRecipientDefault = "";
 
         // Building threads array
         $threads = $userManager->getThreads($user);
         $idMessageDefaultSelected = false;
-        
+
         foreach ($threads["threads"] as $thread) {
             $arrayThread["idThreadMessage"] = $thread["id"];
             if (!isset($thread["user"]["id"])) {

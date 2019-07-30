@@ -6,6 +6,8 @@ import VueI18n from 'vue-i18n'
 import Buefy from 'buefy'; // TODO ☣️ remove it when not needed anymore
 import VueFormWizard from 'vue-form-wizard';  // TODO ☣️ remove it when not needed anymore
 
+// import color theme
+import colorTheme from '../../../themes/mobicoop.json';
 
 // import md from "material-design-icons-iconfont";
 import '@mdi/font/css/materialdesignicons.css' // Ensure you are using css-loader
@@ -28,8 +30,9 @@ const i18n = new VueI18n({
 
 const vuetify = new Vuetify({
   icons: {
-    iconfont: 'mdi', // default - only for display purposes
+    iconfont: 'mdi', // default - only for display purposes (https://materialdesignicons.com/)
   },
+  theme: colorTheme
 });
 
 export {
