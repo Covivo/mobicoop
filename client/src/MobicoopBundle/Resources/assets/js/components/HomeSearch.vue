@@ -166,6 +166,10 @@ export default {
     route: {
       type: String,
       default: ""
+    },
+    user: {
+      type: Object,
+      default: {}
     }
   },
   data () {
