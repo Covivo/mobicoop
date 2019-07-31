@@ -3,6 +3,7 @@
         "light": {
             "primary": "#81F19A",
             "secondary": "#023D7F",
+            "tertiary":"#FF0000",
             "accent": "#82B1FF",
             "error": "#FF5252",
             "info": "#2196F3",
