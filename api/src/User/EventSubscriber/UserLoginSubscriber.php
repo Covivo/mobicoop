@@ -60,7 +60,5 @@ final class UserLoginSubscriber implements EventSubscriberInterface
         }
 
         //echo "youpi";exit;
-
     }
-
 }
