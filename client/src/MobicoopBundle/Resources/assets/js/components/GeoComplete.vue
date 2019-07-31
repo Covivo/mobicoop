@@ -12,6 +12,7 @@
     color="success"
     return-object
     no-filter
+    @change="changedAddress()"
   >
     <!-- template for selected item  -->
     <template v-slot:selection="data">
@@ -89,12 +90,17 @@ export default {
   },
   watch: {
     search (val) {
-      if (val.length>2){
-        val && val !== this.address && this.getAsyncData(val)
+      if (val) {
+        if (val.length>2){
+          val && val !== this.address && this.getAsyncData(val)
+        }
       }
     }
   },
   methods: {
+    changedAddress: function() {
+      this.$emit('address-selected',this.address);
+    },
     getAsyncData: debounce(function(val) {
       this.isLoading = true;
       axios
@@ -117,7 +123,7 @@ export default {
           })
           // Set Data & show them
           if(this.isLoading) return; // Another request is fetching, we do not show the previous one
-          console.error(res.data['hydra:member']);
+          //console.error(res.data['hydra:member']);
           this.entries = [...res.data['hydra:member']];
         })
         .catch(err => {

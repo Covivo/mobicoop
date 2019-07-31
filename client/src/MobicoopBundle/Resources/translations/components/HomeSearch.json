@@ -4,6 +4,10 @@
         "subtitle": "Un service de covoiturage de proximité, convivial et solidaire.<br />Trouvez dès à présent votre covoiturage ou proposez votre trajet.",
         "origin": "Lieu de départ",
         "destination": "Lieu d'arrivée",
+        "swap": {
+            "alt": "Intervertir origine et destination",
+            "help": "Cliquez pour intervertir origine et destination"
+        },
         "switch": {
             "label": "Trajet régulier",
             "help": "Cochez cette case pour spécifier que votre trajet est régulier"
@@ -25,6 +29,10 @@
         "subtitle": "Explanation in english",
         "origin": "Departure location",
         "destination": "Arrival location",
+        "swap": {
+            "alt": "Swap origin and destination addresses",
+            "help": "Click to swap origin and destination addresses"
+        },
         "switch": {
             "label": "Regular ride",
             "help": "Switch to indicate a regular ride"

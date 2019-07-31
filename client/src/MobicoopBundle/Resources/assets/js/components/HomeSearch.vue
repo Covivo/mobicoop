@@ -33,21 +33,35 @@
           <GeoComplete
             :url="geoSearchUrl" 
             :label="labelOrigin"
+            @address-selected="originSelected"
           />
         </v-flex>
         <v-flex
           class="text-center"
           xs2
         >
-          <img
-            src="images/PictoInterchanger.svg"
-            alt="Intervertir origin et destination"
-          >
+          <v-tooltip right>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                text
+                icon
+                @click="swap"
+              >
+                <img
+                  src="images/PictoInterchanger.svg"
+                  :alt="$t('swap.alt')"
+                  v-on="on"
+                >
+              </v-btn>
+            </template>
+            <span>{{ $t('swap.help') }}</span>
+          </v-tooltip>
         </v-flex>
         <v-flex xs3>
           <GeoComplete
             :url="geoSearchUrl" 
             :label="labelDestination"
+            @address-selected="destinationSelected"
           />
         </v-flex>
       </v-layout>
@@ -130,6 +144,7 @@
           <v-btn
             rounded
             outlined
+            @click="publish"
           >
             {{ $t('buttons.shareAnAd.label') }}
           </v-btn>
@@ -138,7 +153,7 @@
           <v-btn
             color="success"
             rounded
-            @click="test"
+            @click="search"
           >  
             {{ $t('buttons.search.label') }}
           </v-btn>
@@ -183,7 +198,8 @@ export default {
       labelOrigin: this.$t('origin'),
       labelDestination: this.$t('destination'),
       locale: this.$i18n.locale,
-
+      origin: {},
+      destination: {}
     }
   },
   computed: {
@@ -193,8 +209,20 @@ export default {
     }
   },
   methods: {
-    test () {
-      console.error(this.date)
+    originSelected: function(address) {
+      this.origin = address
+    },
+    destinationSelected: function(address) {
+      this.destination = address
+    },
+    swap: function() {
+      console.error('swap !')
+    },
+    search: function() {
+      console.error('search !')
+    },
+    publish: function() {
+      console.error('publish !')
     }
   }
   
