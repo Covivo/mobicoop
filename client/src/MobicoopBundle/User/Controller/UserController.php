@@ -236,10 +236,9 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $error["message"] = "Ok";
             
-            if($request->request->get('password')!==null){
+            if ($request->request->get('password')!==null) {
                 $user->setPassword($request->request->get('password'));
-            }
-            else{
+            } else {
                 $error["state"] = "true";
                 $error["message"] = "Empty password";
                 return new Response(json_encode($error));
