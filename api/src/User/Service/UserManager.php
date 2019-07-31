@@ -149,7 +149,7 @@ class UserManager
         $time= $datetime->getTimestamp();
         $token = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
         // encoding of the password
-        $user->setToken($token);
+        $user->setPwdToken($token);
         $user->setPupdtime($datetime);
         // persist the user
         $this->entityManager->persist($user);
@@ -169,7 +169,7 @@ class UserManager
        */
     public function updateUserPasswordConfirm(User $user)
     {
-        $user->setToken('');
+        $user->setPwdToken(null);
         $user->setPupdtime(null);
         // persist the user
         $this->entityManager->persist($user);

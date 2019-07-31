@@ -259,10 +259,8 @@ class UserController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      * @throws Exception
      */
-    public function userPasswordForgot(UserManager $userManager, Request $request, \Swift_Mailer $mailer)
+    public function userPasswordForgot(UserManager $userManager, Request $request)
     {
-        /** @var Session $session */
-        $session= $this->get('session');
         $userRequest= new User();
         $form = $this->createFormBuilder($userRequest)
         ->add('email', EmailType::class, ['required'=> false])
@@ -309,9 +307,7 @@ class UserController extends AbstractController
      */
     public function userPasswordReset(UserManager $userManager, Request $request, string $token, \Swift_Mailer $mailer)
     {
-        /** @var Session $session */
-        $session= $this->get('session');
-        $user = $userManager->findByToken($token);
+        $user = $userManager->findByPwdToken($token);
         $error = false;
 
         if (empty($user) || (time() - (int)$user->getPupdtime()->getTimestamp()) > 86400) {

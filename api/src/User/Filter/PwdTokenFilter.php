@@ -26,16 +26,16 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use Doctrine\ORM\QueryBuilder;
 
-final class TokenFilter extends AbstractContextAwareFilter
+final class PwdTokenFilter extends AbstractContextAwareFilter
 {
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        if ($property != "token") {
+        if ($property != "pwdToken") {
             return;
         }
         
         $queryBuilder
-            ->andWhere('u.token = \'' .$value . '\'');
+            ->andWhere('u.pwdToken = \'' .$value . '\'');
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
@@ -52,8 +52,8 @@ final class TokenFilter extends AbstractContextAwareFilter
                 'type' => 'string',
                 'required' => false,
                 'swagger' => [
-                    'description' => 'Token for login purpose',
-                    'name' => 'token',
+                    'description' => 'Filter for password change purpose',
+                    'name' => 'pwdToken',
                     'type' => 'string',
                 ],
             ];

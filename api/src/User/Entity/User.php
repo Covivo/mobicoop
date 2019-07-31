@@ -56,7 +56,7 @@ use App\User\Controller\UserThreads;
 use App\User\Controller\UserUpdatePassword;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\LoginFilter;
-use App\User\Filter\TokenFilter;
+use App\User\Filter\PwdTokenFilter;
 use App\Communication\Entity\Notified;
 
 /**
@@ -134,7 +134,7 @@ use App\Communication\Entity\Notified;
  * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial"})
  * @ApiFilter(HomeAddressTerritoryFilter::class, properties={"homeAddressTerritory"})
  * @ApiFilter(LoginFilter::class, properties={"login"})
- * @ApiFilter(TokenFilter::class, properties={"token"})
+ * @ApiFilter(PwdTokenFilter::class, properties={"pwdToken"})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate", "createdDate"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
@@ -383,10 +383,7 @@ class User implements UserInterface, EquatableInterface
     private $createdDate;
 
     /**
-     * Date of password mofification.
-     *
-     * @var DateTime|null $pupdtime
-     *   Date of password mofification.
+     * @var DateTime|null  Date of password mofification.
      *
      * @ORM\Column(type="datetime", length=100, nullable=true)
      * @Groups({"read","write"})
@@ -394,37 +391,20 @@ class User implements UserInterface, EquatableInterface
     private $pupdtime;
 
     /**
-     * Return the date of password mofification.
-     *
-     * @return Datetime
-     */
-    public function getPupdtime()
-    {
-        return $this->pupdtime;
-    }
-
-    /**
-     * Set the date of password mofification.
-     *
-     * @param Datetime|null $pupdtime
-     */
-    public function setPupdtime(?DateTime $pupdtime)
-    {
-        $this->pupdtime = $pupdtime;
-        return $this;
-    }
-
-
-    /**
-     * Token of password modification.
-     *
-     * @var string|null $token
-     *   password token.
+     * @var string|null Token for password modification..
      *
      * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups({"read","write"})
      */
-    private $token;
+    private $pwdToken;
+
+    /**
+     * @var string|null Token for geographical search authorization.
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $geoToken;
 
     /**
      * @var array|null The threads of the user
@@ -449,27 +429,6 @@ class User implements UserInterface, EquatableInterface
             $status = self::STATUS_ACTIVE;
         }
         $this->setStatus($status);
-    }
-
-    /**
-     * Return the Token of password mofification.
-     *
-     * @return string
-     */
-    public function getToken()
-    {
-        return $this->token;
-    }
-
-    /**
-     * Set the Token of password mofification.
-     *
-     * @param string|null $token
-     */
-    public function setToken(?string $token)
-    {
-        $this->token = $token;
-        return $this;
     }
 
     /**
@@ -956,6 +915,39 @@ class User implements UserInterface, EquatableInterface
     {
         $this->createdDate = $createdDate;
 
+        return $this;
+    }
+
+    public function getPupdtime()
+    {
+        return $this->pupdtime;
+    }
+
+    public function setPupdtime(?DateTime $pupdtime): self
+    {
+        $this->pupdtime = $pupdtime;
+        return $this;
+    }
+
+    public function getPwdToken()
+    {
+        return $this->pwdToken;
+    }
+
+    public function setPwdToken(?string $pwdToken): self
+    {
+        $this->pwdToken = $pwdToken;
+        return $this;
+    }
+
+    public function getGeoToken()
+    {
+        return $this->geoToken;
+    }
+
+    public function setGeoToken(?string $geoToken): self
+    {
+        $this->geoToken = $geoToken;
         return $this;
     }
 
