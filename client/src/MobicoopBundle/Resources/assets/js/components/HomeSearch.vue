@@ -210,42 +210,10 @@ export default {
       moment.locale(this.locale);
       return this.date ? moment(this.date).format(this.$t('ui.i18n.date.format.fullDate')) : ''
     },
-    checkUrlValid() {
-      return true    },
-
-    // formate the addresses and return nothing if not defined
-    originStreetAddressFormated() {
-      let originStreetAddress =
-        this.origin.streetAddress &&
-        this.origin.streetAddress
-          .trim()
-          .toLowerCase()
-          .replace(/ /g, "+");
-      return originStreetAddress != "" ? `${this.originStreetAddress}+` : "";
-    },
-    destinationStreetAddressFormated() {
-      let destinationStreetAddress =
-        this.destination.streetAddress &&
-        this.destination.streetAddress
-          .trim()
-          .toLowerCase()
-          .replace(/ /g, "+");
-      return destinationStreetAddress != ""
-        ? `${destinationStreetAddress}+`
-        : "";
-    },
-    // formate the postalCodes and return nothing if not defined
-    originPostalCodeFormated() {
-      return this.origin.postalCode ? `${this.origin.postalCode}+` : "";
-    },
-    destinationPostalCodeFormated() {
-      return this.destination.postalCode
-        ? `${this.destination.postalCode}+`
-        : "";
-    },
+    
     // creation of the url to call
     urlToCall() {
-      return `${this.baseUrl}/${this.route}/${this.originStreetAddressFormated}${this.originPostalCodeFormated}${this.origin.addressLocality}/${this.destinationStreetAddressFormated}${this.destinationPostalCodeFormated}${this.destination.addressLocality}/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/resultats`;
+      return `${this.baseUrl}/${this.route}/nancy/metz/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.dateFormated()}/resultats`;
     }
   },
   methods: {
@@ -255,15 +223,19 @@ export default {
     destinationSelected: function(address) {
       this.destination = address
     },
+    dateFormated() {
+      return moment(new Date).format("YYYYMMDDHHmmss");
+    },
     swap: function() {
       console.error('swap !')
     },
     search: function() {
-      window.location.href = this.urlToCall()
+      window.location.href = this.urlToCall
     },
     publish: function() {
       console.error('publish !')
     },
+
   }
   
 }
