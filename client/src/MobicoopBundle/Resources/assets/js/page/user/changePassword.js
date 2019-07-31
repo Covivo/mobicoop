@@ -1,12 +1,12 @@
 'use strict';
 
 import { Vue, vuetify, i18n, VApp } from '@js/config/vue-config'
-import '@css/page/user/updateProfile.scss';
+import '@css/page/user/profile.scss';
 
 // Vue components
 
 // Vue components
-import Updateprofile from '@js/components/Updateprofile';
+import Profile from '@js/components/user/Profile';
 import Vueheader from '@js/components/Vueheader';
 import Vuefooter from '@js/components/Vuefooter';
 
@@ -17,7 +17,7 @@ new Vue({
   vuetify,
   components: {
     VApp,
-    Updateprofile,
+    Profile,
     Vueheader,
     Vuefooter
   }

@@ -85,6 +85,13 @@
                             "required": "Le mot de passe est requis"
                         }
                     },
+                    "passwordRepeat": {
+                        "label": "Mot de passe (confirmation)",
+                        "placeholder": "Mot de passe (confirmation)",
+                        "errors": {
+                            "required": "Veuillez confirmer le mot de passe"
+                        }
+                    },
                     "homeTown": {
                         "label": "Commune de résidence",
                         "placeholder": "Commune de résidence",
@@ -116,10 +123,20 @@
                         "label": "Mon profil",
                         "route": "/utilisateur/profil/modifier"
                     },
+                    "myProposals": {
+                        "label": "Mes annonces",
+                        "route": "/utilisateur/profil/modifier"
+                    },
                     "logOut": {
                         "label": "Déconnexion",
                         "route": "/user/logout"
                     }
+                }
+            },
+            "snackBar":{
+                "user":{
+                    "passwordUpdated":"Mot de passe mis à jour",
+                    "passwordUpdateError":"Erreur dans la mise à jour du mot de passe"
                 }
             }
         }
