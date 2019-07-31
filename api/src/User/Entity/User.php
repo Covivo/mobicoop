@@ -54,6 +54,7 @@ use App\User\Controller\UserPermissions;
 use App\User\Controller\UserLogin;
 use App\User\Controller\UserThreads;
 use App\User\Controller\UserUpdatePassword;
+use App\User\Controller\UserUpdate;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\LoginFilter;
 use App\User\Filter\PwdTokenFilter;
@@ -126,6 +127,7 @@ use App\Communication\Entity\Notified;
  *          "put"={
  *              "method"="PUT",
  *              "path"="/users/{id}",
+ *              "controller"=UserUpdate::class,
  *          },
  *          "delete"
  *      }

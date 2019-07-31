@@ -28,7 +28,7 @@ use App\User\Repository\UserRepository;
 use App\User\Service\UserManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class UserUpdatePassword
+class UserUpdate
 {
     /**
      * @var UserManager $userManager
@@ -48,23 +48,16 @@ class UserUpdatePassword
     }
  
     /**
-     * This method is invoked when a user try to update or ask the update of his password.
+     * This method is invoked when a user updates its profile.
      * It returns the altered user.
      *
      * @param User $data
      * @param string $data
      * @return User
      */
-    public function __invoke(User $data, string $name): User
+    public function __invoke(User $data): User
     {
-        switch ($name) {
-            case 'request':
-                $data = $this->userManager->updateUserPasswordRequest($data);
-                break;
-            case 'reply':
-                $data = $this->userManager->updateUserPasswordConfirm($data);
-                break;
-        }
+        $data = $this->userManager->updateUser($data);
         return $data;
     }
 }

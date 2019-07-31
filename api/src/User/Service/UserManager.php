@@ -38,6 +38,7 @@ use App\User\Event\UserRegisteredEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use App\User\Event\UserUpdatedSelfEvent;
 
 /**
  * User manager service.
@@ -84,6 +85,11 @@ class UserManager
         $userRole = new UserRole();
         $userRole->setRole($role);
         $user->addUserRole($userRole);
+        // creation of the geotoken
+        $datetime = new DateTime();
+        $time = $datetime->getTimestamp();
+        $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+        $user->setGeoToken($geoToken);
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -102,12 +108,17 @@ class UserManager
      */
     public function updateUser(User $user)
     {
+        // update of the geotoken
+        $datetime = new DateTime();
+        $time = $datetime->getTimestamp();
+        $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+        $user->setGeoToken($geoToken);
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
         // dispatch en event
-        $event = new UserPasswordChangedEvent($user);
-        $this->eventDispatcher->dispatch(UserPasswordChangedEvent::NAME, $event);
+        $event = new UserUpdatedSelfEvent($user);
+        $this->eventDispatcher->dispatch(UserUpdatedSelfEvent::NAME, $event);
         // return the user
         return $user;
     }
@@ -147,10 +158,13 @@ class UserManager
     {
         $datetime = new DateTime();
         $time= $datetime->getTimestamp();
-        $token = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+        $pwdToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
         // encoding of the password
-        $user->setPwdToken($token);
+        $user->setPwdToken($pwdToken);
         $user->setPupdtime($datetime);
+        // update of the geotoken
+        $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+        $user->setGeoToken($geoToken);
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();

@@ -163,7 +163,6 @@ class UserController extends AbstractController
         $form = $this->createForm(UserForm::class, $user, ['validation_groups'=>['update']]);
         $error = false;
            
-        
         if ($request->isMethod('POST')) {
 
             //get all data from form (user + homeAddress)
