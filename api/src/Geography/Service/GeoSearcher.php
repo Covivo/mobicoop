@@ -82,7 +82,10 @@ class GeoSearcher
         
         // 1 - named addresses
         if ($user) {
-            $result[] = $this->addressRepository->findByName($input, $user->getId());
+            $namedAddresses = $this->addressRepository->findByName($input, $user->getId());
+            if (count($namedAddresses)>0) {
+                $result = $namedAddresses;
+            }
         }
 
         // 2 - relay points

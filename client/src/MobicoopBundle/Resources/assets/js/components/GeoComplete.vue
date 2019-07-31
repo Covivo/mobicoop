@@ -68,7 +68,8 @@ export default {
   },
   props: {
     url: defaultString,
-    label: defaultString
+    label: defaultString,
+    token: defaultString
   },
   data () {
     return {
@@ -86,7 +87,7 @@ export default {
         const icon = 'mdi-map-marker'
         return Object.assign({}, entry, { concatenedAddr, icon })
       })
-    },
+    }
   },
   watch: {
     search (val) {
@@ -104,7 +105,7 @@ export default {
     getAsyncData: debounce(function(val) {
       this.isLoading = true;
       axios
-        .get(`${this.url}${val}`)
+        .get(`${this.url}${val}`+(this.token?'&token='+this.token:''))
         .then(res => {
           this.isLoading = false;
           
@@ -123,7 +124,6 @@ export default {
           })
           // Set Data & show them
           if(this.isLoading) return; // Another request is fetching, we do not show the previous one
-          //console.error(res.data['hydra:member']);
           this.entries = [...res.data['hydra:member']];
         })
         .catch(err => {

@@ -33,6 +33,7 @@
           <GeoComplete
             :url="geoSearchUrl" 
             :label="labelOrigin"
+            :token="user ? user.geoToken : ''"
             @address-selected="originSelected"
           />
         </v-flex>
@@ -61,6 +62,7 @@
           <GeoComplete
             :url="geoSearchUrl" 
             :label="labelDestination"
+            :token="user ? user.geoToken : ''"
             @address-selected="destinationSelected"
           />
         </v-flex>
