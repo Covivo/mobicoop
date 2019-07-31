@@ -5,7 +5,8 @@
                     "previous": "Précédent",
                     "next": "Suivant",
                     "register": "Je m'inscris",
-                    "save": "Enregistrer"
+                    "save": "Enregistrer",
+                    "connection": "Se connecter"
                 }, 
                 "form": {
                     "errors": "Merci de corriger les erreurs suivantes ",
@@ -66,7 +67,8 @@
                         "label": "Email",
                         "placeholder": "Email",
                         "errors": {
-                            "required": "L'adresse email est requise"
+                            "required": "L'adresse email est requise",
+                            "valid": "L'adresse email doit être valide"
                         }
                     },
                     "phone": {

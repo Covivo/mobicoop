@@ -77,14 +77,14 @@ class UserController extends AbstractController
 
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
+        $errorMessage = "";
+        if(!is_null($error)){
+            $errorMessage = $error->getMessage();
+        }
         
-        $login = new Login();
-
-        $form = $this->createForm(UserLoginForm::class, $login);
 
         return $this->render('@Mobicoop/user/login.html.twig', [
-            "form"=>$form->createView(),
-            "error"=>$error
+            "errorMessage"=>$errorMessage
             ]);
     }
 

@@ -1,0 +1,8 @@
+{
+    "fr":{
+        "errorCredentials":"Nom d'utilisateur ou Mot de passe incorrect."
+    },
+    "en":{
+        "errorCredentials":"Bad username or password."
+    }
+}
