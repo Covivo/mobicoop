@@ -25,6 +25,13 @@
                             }
                         }
                     }
+                },
+                "i18n": {
+                    "date": {
+                        "format": {
+                            "fullDate": "ddd Do MMMM YYYY"
+                        }
+                    }
                 }
             },
             "models": {

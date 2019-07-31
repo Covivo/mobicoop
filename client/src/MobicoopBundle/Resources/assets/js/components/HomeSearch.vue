@@ -5,6 +5,7 @@
       grid-list-md
       fluid
     >
+      <!-- Title and subtitle -->
       <v-layout
         justify-center
         align-center
@@ -19,6 +20,8 @@
           />
         </v-flex>
       </v-layout>
+
+      <!-- Geocompletes -->
       <v-layout
         class="mt-5"
         align-center
@@ -34,7 +37,7 @@
         </v-flex>
         <v-flex
           class="text-center"
-          xs1
+          xs2
         >
           <img
             src="images/PictoInterchanger.svg"
@@ -48,20 +51,23 @@
           />
         </v-flex>
       </v-layout>
+      
+      <!-- Switch -->
       <v-layout
         class="mt-5"
         align-center
+        fill-height
       >
         <v-flex
           xs2
           offset-xs2
         >
-          <p>{{ $t('switch.label') }}</p>
+          {{ $t('switch.label') }}
         </v-flex>
         <v-flex
-          xs2
+          xs1
           row
-          class="text-left"
+          class="text-right"
         >
           <v-switch
             v-model="regular"
@@ -77,6 +83,8 @@
           </v-tooltip>
         </v-flex>
       </v-layout>
+
+      <!-- Datepicker -->
       <v-layout
         class="mt-5"
         align-center
@@ -88,15 +96,13 @@
           <v-menu
             v-model="menu"
             :close-on-content-click="false"
-            :nudge-right="40"
-            transition="scale-transition"
-            offset-y
             full-width
-            min-width="290px"
+            max-width="290"
           >
             <template v-slot:activator="{ on }">
               <v-text-field
-                v-model="date"
+                :value="computedDateFormat"
+                clearable
                 :label="$t('datePicker.label')"
                 readonly
                 :messages="$t('ui.form.optional')"
@@ -105,28 +111,14 @@
             </template>
             <v-date-picker
               v-model="date"
-              scrollable
               :locale="locale"
-            >
-              <v-spacer />
-              <v-btn
-                text
-                color="primary"
-                @click="menu = false"
-              >
-                {{ $t('ui.button.cancel') }}
-              </v-btn>
-              <v-btn
-                text
-                color="primary"
-                @click="$refs.dialog.save(date)"
-              >
-                {{ $t('ui.button.valid') }}
-              </v-btn>
-            </v-date-picker>
+              @input="menu=false"
+            />
           </v-menu>
         </v-flex>
       </v-layout>
+
+      <!-- Buttons -->
       <v-layout
         class="mt-5"
         align-center
@@ -146,6 +138,7 @@
           <v-btn
             color="success"
             rounded
+            @click="test"
           >  
             {{ $t('buttons.search.label') }}
           </v-btn>
@@ -156,8 +149,10 @@
 </template>
 
 <script>
+import moment from "moment";
 import Translations from "../../../translations/components/HomeSearch.json";
 import GeoComplete from "./GeoComplete";
+
 
 export default {
   i18n: {
@@ -187,8 +182,21 @@ export default {
       menu: false,
       labelOrigin: this.$t('origin'),
       labelDestination: this.$t('destination'),
-      locale: this.$i18n.locale
+      locale: this.$i18n.locale,
+
     }
   },
+  computed: {
+    computedDateFormat () {
+      moment.locale(this.locale);
+      return this.date ? moment(this.date).format(this.$t('ui.i18n.date.format.fullDate')) : ''
+    }
+  },
+  methods: {
+    test () {
+      console.error(this.date)
+    }
+  }
+  
 }
 </script>
