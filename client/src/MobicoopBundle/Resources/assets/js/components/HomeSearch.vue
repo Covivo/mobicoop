@@ -11,7 +11,7 @@
         align-center
         class="mt-5"
       >
-        <v-flex xs8>
+        <v-flex xs6>
           <h1>
             {{ $t('title') }}
           </h1>
@@ -27,18 +27,19 @@
         align-center
       >
         <v-flex
-          xs3
-          offset-xs2
+          xs2
+          offset-xs3
         >
           <GeoComplete
             :url="geoSearchUrl" 
             :label="labelOrigin"
+            :token="user ? user.geoToken : ''"
             @address-selected="originSelected"
           />
         </v-flex>
         <v-flex
           class="text-center"
-          xs2
+          xs1
         >
           <v-tooltip right>
             <template v-slot:activator="{ on }">
@@ -57,10 +58,11 @@
             <span>{{ $t('swap.help') }}</span>
           </v-tooltip>
         </v-flex>
-        <v-flex xs3>
+        <v-flex xs2>
           <GeoComplete
             :url="geoSearchUrl" 
             :label="labelDestination"
+            :token="user ? user.geoToken : ''"
             @address-selected="destinationSelected"
           />
         </v-flex>
@@ -73,8 +75,8 @@
         fill-height
       >
         <v-flex
-          xs2
-          offset-xs2
+          xs1
+          offset-xs3
         >
           {{ $t('switch.label') }}
         </v-flex>
@@ -104,8 +106,8 @@
         align-center
       >
         <v-flex
-          xs3
-          offset-xs2
+          xs2
+          offset-xs3
         >
           <v-menu
             v-model="menu"
@@ -139,7 +141,7 @@
       >
         <v-flex
           xs2
-          offset-xs2
+          offset-xs3
         >
           <v-btn
             rounded
@@ -153,7 +155,7 @@
           <v-btn
             color="success"
             rounded
-            @click="search"
+            @click="search" 
           >  
             {{ $t('buttons.search.label') }}
           </v-btn>
@@ -199,13 +201,51 @@ export default {
       labelDestination: this.$t('destination'),
       locale: this.$i18n.locale,
       origin: {},
-      destination: {}
+      destination: {},
+      baseUrl: window.location.origin,
     }
   },
   computed: {
     computedDateFormat () {
       moment.locale(this.locale);
       return this.date ? moment(this.date).format(this.$t('ui.i18n.date.format.fullDate')) : ''
+    },
+    checkUrlValid() {
+      return true    },
+
+    // formate the addresses and return nothing if not defined
+    originStreetAddressFormated() {
+      let originStreetAddress =
+        this.origin.streetAddress &&
+        this.origin.streetAddress
+          .trim()
+          .toLowerCase()
+          .replace(/ /g, "+");
+      return originStreetAddress != "" ? `${this.originStreetAddress}+` : "";
+    },
+    destinationStreetAddressFormated() {
+      let destinationStreetAddress =
+        this.destination.streetAddress &&
+        this.destination.streetAddress
+          .trim()
+          .toLowerCase()
+          .replace(/ /g, "+");
+      return destinationStreetAddress != ""
+        ? `${destinationStreetAddress}+`
+        : "";
+    },
+    // formate the postalCodes and return nothing if not defined
+    originPostalCodeFormated() {
+      return this.origin.postalCode ? `${this.origin.postalCode}+` : "";
+    },
+    destinationPostalCodeFormated() {
+      return this.destination.postalCode
+        ? `${this.destination.postalCode}+`
+        : "";
+    },
+    // creation of the url to call
+    urlToCall() {
+      return `${this.baseUrl}/${this.route}/${this.originStreetAddressFormated}${this.originPostalCodeFormated}${this.origin.addressLocality}/${this.destinationStreetAddressFormated}${this.destinationPostalCodeFormated}${this.destination.addressLocality}/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/resultats`;
     }
   },
   methods: {
@@ -219,11 +259,11 @@ export default {
       console.error('swap !')
     },
     search: function() {
-      console.error('search !')
+      window.location.href = this.urlToCall()
     },
     publish: function() {
       console.error('publish !')
-    }
+    },
   }
   
 }
