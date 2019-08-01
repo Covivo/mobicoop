@@ -18,9 +18,8 @@ let filesBundle = read('./src/MobicoopBundle/Resources/assets/js/page');
 Encore
   .setOutputPath('public/build/')
   .setPublicPath('/build')
-  // ⚙️ UNCOMMENT below if you are not a client platform  ⚙️ //
-  // .addEntry('app', './src/MobicoopBundle/Resources/assets/js/app.js')
-  // ⚙️ UNCOMMENT below if you are client platform &  want a commun app.js file  ⚙️ //
+  .addEntry('bundle_app', './src/MobicoopBundle/Resources/assets/js/app.js')
+  // ⚙️ UNCOMMENT below if you are client platform ⚙️ //
   // .addEntry('app', './assets/js/app.js')  
   .splitEntryChunks()
   .enableVersioning(Encore.isProduction())
