@@ -1,4 +1,10 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-    {{ message }}
+    Votre inscription au service  {{api_env('CLIENT_NAME')}}  est bien prise en compte.
+
+    Veuillez cliquer sur ce lien pour confirmer votre email
+    {{ api_env('CLIENT_URL') ~ api_env('CLIENT_EMAIL_CONFIRM_URI')|replace(':token', context.user.token)}}
+
+    Ou utilisez le code de validation directement sur le site :
+    {{ context.user.token }}
 {% endblock %}

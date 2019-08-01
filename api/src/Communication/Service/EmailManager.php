@@ -25,6 +25,7 @@ namespace App\Communication\Service;
 
 use App\Communication\Entity\Email;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Email sending service via Swift_Mailer
@@ -39,8 +40,19 @@ class EmailManager
     private $emailReplyToDefault;
     private $templatePath;
     private $logger;
-
-    public function __construct(\Swift_Mailer $mailer, \Twig_Environment $templating, LoggerInterface $logger, string $emailSender, string $emailReplyTo, string $templatePath)
+    private $translator;
+ 
+ /**
+	* EmailManager constructor.
+	* @param \Swift_Mailer $mailer
+	* @param \Twig_Environment $templating
+	* @param LoggerInterface $logger
+	* @param TranslatorInterface $translator
+	* @param string $emailSender
+	* @param string $emailReplyTo
+	* @param string $templatePath
+	*/
+ public function __construct(\Swift_Mailer $mailer, \Twig_Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $emailSender, string $emailReplyTo, string $templatePath)
     {
         $this->mailer = $mailer;
         $this->templating = $templating;
@@ -48,6 +60,7 @@ class EmailManager
         $this->emailReplyToDefault = $emailReplyTo;
         $this->templatePath = $templatePath;
         $this->logger = $logger;
+        $this->translator= $translator;
     }
 
     /**
@@ -57,7 +70,7 @@ class EmailManager
      * @param array $context optional array of parameters that can be included in the template
      * @return string
      */
-    public function send(Email $mail, $template, $context=[])
+    public function send(Email $mail, $template, $context=[], $lang='fr_FR')
     {
         $failures = "";
 
@@ -75,6 +88,8 @@ class EmailManager
             $replyToEmail = $mail->getReturnEmail();
         }
 
+        $sessionLocale= $this->translator->getLocale();
+        $this->translator->setLocale($lang);
         $message = (new \Swift_Message($mail->getObject()))
             ->setFrom($senderEmail)
             ->setTo($mail->getRecipientEmail())
@@ -89,6 +104,7 @@ class EmailManager
                 ),
                 'text/html'
             );
+        $this->translator->setLocale($sessionLocale);
 
         $failures = $this->mailer->send($message, $failures);
 
