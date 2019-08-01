@@ -4,8 +4,8 @@ import '@css/page/user/messages.scss';
 
 // Vue components
 import Messages from '../../components/user/Messages';
-import Vueheader from '../../components/Vueheader';
-import Vuefooter from '../../components/Vuefooter';
+import MHeader from '../../components/MHeader';
+import MFooter from '../../components/MFooter';
 
 new Vue({
   i18n,
@@ -14,7 +14,7 @@ new Vue({
   components: {
     VApp,
     Messages,
-    Vueheader,
-    Vuefooter
+    MHeader,
+    MFooter
   }
 })

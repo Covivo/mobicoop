@@ -3,7 +3,7 @@
 import { Vue, vuetify, i18n, VApp } from '@js/config/vue-config'
 
 // Vue components
-import Homesearchform from '@js/components/Homesearchform';
+import HomeSearch from '@js/components/HomeSearch';
 import MHeader from '@js/components/MHeader';
 import MFooter from '@js/components/MFooter';
 

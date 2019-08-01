@@ -7,8 +7,8 @@ import '@css/page/user/profile.scss';
 
 // Vue components
 import Profile from '@js/components/user/Profile';
-import Vueheader from '@js/components/Vueheader';
-import Vuefooter from '@js/components/Vuefooter';
+import MHeader from '@js/components/MHeader';
+import MFooter from '@js/components/MFooter';
 
 
 new Vue({
@@ -18,7 +18,7 @@ new Vue({
   components: {
     VApp,
     Profile,
-    Vueheader,
-    Vuefooter
+    MHeader,
+    MFooter
   }
 })
