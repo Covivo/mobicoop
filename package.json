@@ -33,7 +33,7 @@
     "update-db": "cd api && npm run update-db",
     "transfer-copyright": "node bin/helpers/transferCopyright.js",
     "generateDocs": "php bin/phpDocumentor.phar -d 'client/src','api/src' --ignore '*/Migrations/*'  -t docs/php --title Mobicoop",
-    "create-front-canvas": "node bin/helpers/createFrontCanvas.js -d",
+    "create-front-canvas": "node bin/helpers/createFrontCanvas.js -n",
     "link-bundle": "node bin/helpers/linkBundle.js -d",
     "contributor-checker": "node bin/helpers/hooks/contributor-license-agreement-checker.js",
     "contribute": "node bin/helpers/hooks/contributor-license-agreement-adder.js"
@@ -64,8 +64,8 @@
     "git-user-name": "^2.0.0",
     "kuler": "^1.0.1",
     "npm-run-all": "^4.1.5",
-    "simple-git": "^1.105.0",
-    "vuetify": "^1.5.16"
+    "replace-in-file": "^4.1.1",
+    "simple-git": "^1.105.0"
   },
   "devDependencies": {
     "ghooks": "^2.0.4",

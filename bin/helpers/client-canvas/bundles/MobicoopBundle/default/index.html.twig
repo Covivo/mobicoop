@@ -1,0 +1,24 @@
+{% embed "@Bundle/default/index.html.twig" %}
+
+    {% block title %}
+        $$NAME$$
+    {% endblock %}
+    {% block body %}
+        <section class="hero firstSection is-flex">
+            <div class="hero-body">
+                <div class="container">
+                    <h2 class="title">$$NAME$$, site de covoiturage !</h2>
+                    <p>Vos covoiturages du quotidien</p>
+                </div>
+                {% block simpleSearch %}
+                    <div id="home">
+                        <Homesearchform geo-search-url="/geosearch?search=" route="covoiturage/recherche"></Homesearchform>
+                    </div>
+                {% endblock %}
+            </div>
+        </section>
+
+    {% endblock %}
+
+
+{% endembed %}

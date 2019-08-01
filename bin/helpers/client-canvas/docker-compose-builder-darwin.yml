@@ -1,0 +1,29 @@
+version: '2.4'
+services:
+  base:
+    environment:
+      - COMPOSER_PROCESS_TIMEOUT=1200
+    image: mobicoop/php-node-chromium:2.0.0
+    volumes:
+      - ./:/var/www:delegated
+      - ouestgo-var:/var/www/var
+      # - mobicoop-bundle-sync:/var/www/src/MobicoopBundle:nocopy
+      - ${MOBICOOP_CLIENT:?you forgot to export MOBICOOP_CLIENT}:/var/client:delegated
+    working_dir: /var/www
+  simlink:
+    extends:
+      service: base
+    working_dir: /var/www/src
+    command: ln -fs /var/client/src/MobicoopBundle /var/www/src/MobicoopBundle
+  install:
+    extends:
+      service: base
+    command: npm install
+  install-vendor:
+    extends:
+      service: base
+    entrypoint: bash entrypoint-builder.sh
+    # command: npm run install-ci
+
+volumes:
+  ouestgo-var:

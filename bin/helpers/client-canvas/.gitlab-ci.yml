@@ -1,0 +1,106 @@
+# Docker image needed for CI
+image: mobicoop/php-node-chromium:2.0.0
+
+# Cache modules in between jobs
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:    # excluded : not cached
+  - node_modules/
+  # - mobicoop-platform/api/node_modules/
+  # - mobicoop-platform/api/vendor/
+  # - mobicoop-platform/client/node_modules/
+  # - mobicoop-platform/client/vendor/
+  # - mobicoop-platform/admin/node_modules/
+
+# Name of the stages that can be executed on a pipeline by the runner
+stages:
+  - deploy
+  - prod_deploy
+
+      
+#
+# Deployment for dev branch
+#
+dev_deploy:
+  stage: deploy
+  environment:
+    name: dev
+    url: https://dev.$$URL$$
+  only:
+    - dev
+  variables:
+    APP_ENV: dev   # /!\ important : symfony env variable /!\
+  before_script:
+    - git clone https://gitlab.com/mobicoop/mobicoop-platform
+    - cd mobicoop-platform && npm install --unsafe-perm && npm run install-all-ci && cd ../src && ln -s ../mobicoop-platform/client/src/MobicoopBundle && cd ../
+    - npm install --unsafe-perm
+    - npm run install-ci
+  script:
+    - echo "${SSH_DEV_PRIVATE_KEY}" > id_rsa
+    - chmod 700 id_rsa
+    - mv id_rsa ${HOME}/.ssh
+    - echo "${SSH_DEV_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
+    - rsync --stats --quiet --group=www-data -rvzlt --exclude-from=.gitlab-exclude --delete --compress-level=9 -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_DEV_USER}@${SSH_DEV_IP}:/var/www/ouestgo/dev
+    - ssh -o StrictHostKeyChecking=no ${SSH_DEV_USER}@${SSH_DEV_IP} "cd /var/www/ouestgo/dev/mobicoop-platform/api; php bin/console doctrine:migrations:migrate -n;cd /var/www/ouestgo/dev/mobicoop-platform/admin;npm run build"    # database migration
+  except:
+    refs:
+      - tags    # job not executed on tags
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /skipci/    # job not executed when commit message contains this expression
+
+#
+# Deployment for dev branch
+#
+test_deploy:
+  stage: deploy
+  environment:
+    name: test
+    url: https://test.$$URL$$
+  only:
+    - master
+  # variables:
+  #   APP_ENV: test   # /!\ important : symfony env variable /!\
+  before_script:
+    - git clone https://gitlab.com/mobicoop/mobicoop-platform
+    - cd mobicoop-platform && git checkout master && npm install --unsafe-perm && npm run install-all-ci && cd ../src && ln -s ../mobicoop-platform/client/src/MobicoopBundle && cd ../
+    - npm install --unsafe-perm
+    - npm run install-ci
+  script:
+    - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa
+    - chmod 700 id_rsa
+    - mv id_rsa ${HOME}/.ssh
+    - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
+    - rsync --stats --quiet --group=www-data -rvzlt --exclude-from=.gitlab-exclude --delete --compress-level=9 -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/ouestgo/test
+    - ssh -o StrictHostKeyChecking=no ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/ouestgo/test/mobicoop-platform/api; php bin/console doctrine:migrations:migrate --env=test -n;cd /var/www/ouestgo/test/mobicoop-platform/admin;npm run build"    # database migration
+  when: manual      # /!\ important : job executed manually /!\  
+  except:
+    refs:
+      - tags    # job not executed on tags
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /skipci/    # job not executed when commit message contains this expression
+
+#
+# Deployment for master branch
+#
+prod_deploy:
+  stage: prod_deploy
+  environment:
+    name: prod
+    url: http://$$URL$$
+  only:     # job executed only on master branch
+    - master
+  # variables:
+  #   APP_ENV: prod   # /!\ important : symfony env variable /!\
+  before_script:
+    - git clone https://gitlab.com/mobicoop/mobicoop-platform
+    - cd mobicoop-platform && git checkout master && npm install --unsafe-perm && npm run install-all-ci && cd ../src && ln -s ../mobicoop-platform/client/src/MobicoopBundle && cd ../
+    - npm install --unsafe-perm
+    - npm run install-ci
+  script:
+    - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa
+    - chmod 700 id_rsa
+    - mv id_rsa ${HOME}/.ssh
+    - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
+    - rsync --stats --quiet --group=www-data -rvzlt --exclude-from=.gitlab-exclude --delete --compress-level=9 -e 'ssh -o StrictHostKeyChecking=no' ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/ouestgo/prod
+    - ssh -o StrictHostKeyChecking=no ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/ouestgo/prod/mobicoop-platform/api; php bin/console doctrine:migrations:migrate --env=prod -n;cd /var/www/ouestgo/prod/mobicoop-platform/admin;npm run build"    # database migration
+  when: manual      # /!\ important : job executed manually /!\  

@@ -417,6 +417,7 @@ GitHub.sublime-settings
 /var/bootstrap.php.cache
 !bin/console
 !bin/symfony_requirements
+!bin/helpers
 
 # Assets and user uploads
 /web/bundles/
