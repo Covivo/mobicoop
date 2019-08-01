@@ -111,12 +111,6 @@
                         }
                     }
                 }
-            },
-            "snackBar":{
-                "user":{
-                    "passwordUpdated":"Mot de passe mis à jour",
-                    "passwordUpdateError":"Erreur dans la mise à jour du mot de passe"
-                }
             }
         }
 }

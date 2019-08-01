@@ -1,0 +1,28 @@
+{
+    "fr": {
+        "tabs": {
+            "myProfile": "Mon profil",
+            "password": "Mot de passe",
+            "myProposals": "Mes annonces"
+        },
+        "form":{
+            "newPassword":"Nouveau mot de passe",
+            "newPasswordRepeat":"Nouveau mot de passe (confirmation)",
+            "errors":{
+                "required":"Le mot de passe est requis",
+                "notIdentiquals":"Les mots de passes ne sont pas identiques"
+            }
+        },
+        "snackBar":{
+            "passwordUpdated":"Mot de passe mis à jour",
+            "textSnackError":"Erreur dans la mise à jour du mot de passe"
+        }
+    },    
+    "en": {
+        "tabs": {
+            "myProfile": "My profile",
+            "password": "Password",
+            "myProposals": "My proposals"
+        }
+    }    
+}

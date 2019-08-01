@@ -11,7 +11,7 @@
         text
         @click="snackbar = false"
       >
-        Close
+        <v-icon>mdi-close-circle-outline</v-icon>
       </v-btn>
     </v-snackbar>
     <v-container
@@ -32,7 +32,7 @@
               :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
               :type="show1 ? 'text' : 'password'"
               name="password"
-              :label="$t('models.user.password.placeholder')"
+              :label="$t('form.newPassword')"
               required
               :rules="passwordRules"
               @click:append="show1 = !show1"
@@ -42,7 +42,7 @@
               :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
               :type="show2 ? 'text' : 'password'"
               name="passwordRepeat"
-              :label="$t('models.user.passwordRepeat.placeholder')"
+              :label="$t('form.newPasswordRepeat')"
               required
               :rules="passwordRepeatRules"
               @click:append="show2 = !show2"
@@ -65,25 +65,30 @@
 </template>
 <script>
 import axios from 'axios';
+import Translations from "../../../../translations/components/Profile.json";
+
 export default {
+  i18n: {
+    messages: Translations
+  },
   props: {
   },
   data(){
     return {
       snackbar:false,
       loading:false,
-      textSnackOk:this.$t('snackBar.user.passwordUpdated'),
-      textSnackError:this.$t('snackBar.user.passwordUpdateError'),
+      textSnackOk:this.$t('snackBar.passwordUpdated'),
+      textSnackError:this.$t('snackBar.passwordUpdateError'),
       errorUpdate:false,
       valid:true,
       password: '',
       passwordRules: [
-        v => !!v || this.$t('models.user.password.errors.required'),
+        v => !!v || this.$t('form.errors.required'),
       ],
       passwordRepeat: '',
       passwordRepeatRules: [
-        v => !!v || this.$t('models.user.password.errors.required'),
-        v => (!!v && v) === this.password || 'Les mots de passes ne sont pas identiques'
+        v => !!v || this.$t('form.errors.required'),
+        v => (!!v && v) === this.password || this.$t('form.errors.notIdentiquals')
       ],
       show1: false,
       show2: false

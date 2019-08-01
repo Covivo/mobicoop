@@ -13,11 +13,11 @@
             color="secondary"
             grow
           >
-            <v-tab>{{ $t("navBar.buttons.myProfile.label") }}</v-tab>
+            <v-tab>{{ $t("tabs.myProfile") }}</v-tab>
             <v-tab-item><UpdateProfile /></v-tab-item>
-            <v-tab>{{ $t("models.user.password.label") }}</v-tab>
+            <v-tab>{{ $t("tabs.password") }}</v-tab>
             <v-tab-item><ChangePassword /></v-tab-item>
-            <v-tab>{{ $t("navBar.buttons.myProposals.label") }}</v-tab>
+            <v-tab>{{ $t("tabs.myProposals") }}</v-tab>
             <v-tab-item><MyProposals /></v-tab-item>
           </v-tabs>
         </v-flex>
@@ -29,7 +29,12 @@
 import UpdateProfile from '@js/components/user/UpdateProfile';
 import ChangePassword from '@js/components/user/ChangePassword';
 import MyProposals from '@js/components/user/MyProposals';
+import Translations from "../../../../translations/components/Profile.json";
+
 export default {
+  i18n: {
+    messages: Translations
+  },
   components: {
     UpdateProfile,
     ChangePassword,
