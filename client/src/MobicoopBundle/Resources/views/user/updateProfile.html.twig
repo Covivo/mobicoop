@@ -1,7 +1,7 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
 {% block title %}
-  {% trans from 'ui' %}user.messages.title{% endtrans %}
+  {% trans from 'ui' %}user.profile.title{% endtrans %}
 {% endblock %}
 {% block stylesheets %}
   {{ encore_entry_link_tags("#{assets_prefix ?? ''}user/profile") }}
@@ -13,7 +13,7 @@
 	<div class="hero-body">
     	<div class="container">
       		<h1 class="title">
-				{% trans from 'ui' %}user.messages.h1{% endtrans %}
+				{% trans from 'ui' %}user.profile.h1{% endtrans %}
       		</h1>
     	</div>
   	</div>
