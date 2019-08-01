@@ -105,6 +105,7 @@ async function createCanvas() {
    */
   console.log(kuler(`Copying specific assets for ${destinationAssets} 🚀 \n`, 'pink'));
   let appjs = path.resolve(__dirname, 'client-canvas/app.js');
+  let themes = path.resolve(pathToMobicoopBundle, './Resources/themes');
   let gitignore = path.resolve(__dirname, 'client-canvas/docker-compose-builder-darwin.yml');
   let dcbl = path.resolve(__dirname, 'client-canvas/docker-compose-builder-linux.yml');
   let dcbd = path.resolve(__dirname, 'client-canvas/docker-compose-builder-linux.yml');
@@ -129,6 +130,7 @@ async function createCanvas() {
   [err, success] = await to(fs.copy(entryBuilder, `${destinationProject}/entrypoint-builder.sh`));
   [err, success] = await to(fs.copy(entry, `${destinationProject}/entrypoint.sh`));
   [err, success] = await to(fs.copy(bundles, `${destinationProject}/templates/bundles`));
+  [err, success] = await to(fs.copy(themes, `${destinationProject}/themes`));
 
 }
 

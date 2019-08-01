@@ -61,11 +61,15 @@
 </template>
 
 <script>
-import Translations from "../../../translations/components/MFooter.json";
+import { merge } from "lodash";
+import Translations from "@translations/components/MFooter.json";
+import TranslationsClient from "@clientTranslations/components/MFooter.json";
+
+let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   i18n: {
-    messages: Translations
+    messages: TranslationsMerged
   }
-}
+};
 </script>

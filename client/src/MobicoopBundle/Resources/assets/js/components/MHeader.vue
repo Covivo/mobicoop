@@ -5,16 +5,16 @@
       color="primary"
     >
       <v-toolbar-title>
-        <a href="/"><v-img
-          class="logo"
-          src="/images/logo.png"
-          alt="Mobicoop"
-        /></a>
+        <a href="/">
+          <v-img
+            class="logo"
+            src="/images/logo.png"
+            alt="Mobicoop"
+          />
+        </a>
       </v-toolbar-title>
       <v-spacer />
-      <div
-        v-if="user"
-      >
+      <div v-if="user">
         <v-btn
           text
           :href="$t('buttons.messages.route')"
@@ -59,11 +59,18 @@
 </template>
 
 <script>
-import Translations from "../../../translations/components/MHeader.json";
+import { merge } from "lodash";
+import Translations from "@translations/components/MHeader.json";
+// console.error("@clientTranslations");
+import TranslationsClient from "@clientTranslations/components/MHeader.json";
+
+let TranslationsMerged = merge(Translations, TranslationsClient);
+
+console.error(TranslationsMerged.fr);
 
 export default {
   i18n: {
-    messages: Translations
+    messages: TranslationsMerged
   },
   props: {
     user: {
@@ -71,5 +78,5 @@ export default {
       default: null
     }
   }
-}
+};
 </script>

@@ -1,22 +1,18 @@
 <template>
   <v-content>
-    <v-container
-      fluid
-    />
+    <v-container fluid />
     <v-layout
       justify-center
       text-center
     >
-      <v-flex
-        xs4
-      >
+      <v-flex xs4>
         <v-alert
           v-if="errorDisplay!==''"
           type="error"
           class="text-left"
         >
           {{ errorDisplay }}
-        </v-alert>          
+        </v-alert>
         <v-form
           id="formLogin"
           ref="form"
@@ -64,52 +60,56 @@
   </v-content>
 </template>
 <script>
-import Translations from "../../../../translations/components/Login.json";
+import { merge } from "lodash";
+import Translations from "@translations/components/Login.json";
+import TranslationsClient from "@clientTranslations/components/Login.json";
+
+let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
-    messages: Translations
+    messages: TranslationsMerged
   },
   props: {
-    errormessage:{
+    errormessage: {
       type: String,
       default: ""
     },
-    urlforgotenpassword:{
+    urlforgotenpassword: {
       type: String,
       default: ""
     }
   },
-  data(){
+  data() {
     return {
       valid: true,
-      email:'',
+      email: "",
       emailRules: [
-        v => !!v || this.$t('models.user.email.errors.required'),
-        v => /.+@.+/.test(v) || this.$t('models.user.email.errors.valid')
+        v => !!v || this.$t("models.user.email.errors.required"),
+        v => /.+@.+/.test(v) || this.$t("models.user.email.errors.valid")
       ],
       show1: false,
-      password: '',
+      password: "",
       passwordRules: [
-        v => !!v || this.$t('models.user.password.errors.required')
+        v => !!v || this.$t("models.user.password.errors.required")
       ],
-      errorDisplay:'',
-      urlForgotenPassword:this.urlforgotenpassword   
-    }
+      errorDisplay: "",
+      urlForgotenPassword: this.urlforgotenpassword
+    };
   },
-  mounted () {
+  mounted() {
     this.treatErrorMessage(this.errormessage);
   },
   methods: {
-    validate () {
+    validate() {
       if (this.$refs.form.validate()) {
         // Do something
       }
     },
-    treatErrorMessage(errorMessage){
-      if(errorMessage==="Bad credentials."){
-        this.errorDisplay = this.$t('errorCredentials');
+    treatErrorMessage(errorMessage) {
+      if (errorMessage === "Bad credentials.") {
+        this.errorDisplay = this.$t("errorCredentials");
       }
     }
   }
-}
+};
 </script>

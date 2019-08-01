@@ -12,12 +12,8 @@
         class="mt-5"
       >
         <v-flex xs6>
-          <h1>
-            {{ $t('title') }}
-          </h1>
-          <h3
-            v-html="$t('subtitle')"
-          />
+          <h1>{{ $t('title') }}</h1>
+          <h3 v-html="$t('subtitle')" />
         </v-flex>
       </v-layout>
 
@@ -31,7 +27,7 @@
           offset-xs3
         >
           <GeoComplete
-            :url="geoSearchUrl" 
+            :url="geoSearchUrl"
             :label="labelOrigin"
             :token="user ? user.geoToken : ''"
             @address-selected="originSelected"
@@ -60,14 +56,14 @@
         </v-flex>
         <v-flex xs2>
           <GeoComplete
-            :url="geoSearchUrl" 
+            :url="geoSearchUrl"
             :label="labelDestination"
             :token="user ? user.geoToken : ''"
             @address-selected="destinationSelected"
           />
         </v-flex>
       </v-layout>
-      
+
       <!-- Switch -->
       <v-layout
         class="mt-5"
@@ -161,7 +157,7 @@
             rounded
             :disabled="searchUnavailable"
             @click="search"
-          >  
+          >
             {{ $t('buttons.search.label') }}
           </v-btn>
         </v-flex>
@@ -172,13 +168,17 @@
 
 <script>
 import moment from "moment";
-import Translations from "../../../translations/components/HomeSearch.json";
 import GeoComplete from "./GeoComplete";
 
+import { merge } from "lodash";
+import Translations from "@translations/components/HomeSearch.json";
+import TranslationsClient from "@clientTranslations/components/HomeSearch.json";
+
+let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   i18n: {
-    messages: Translations
+    messages: TranslationsMerged
   },
   components: {
     GeoComplete
@@ -197,55 +197,58 @@ export default {
       default: null
     }
   },
-  data () {
+  data() {
     return {
       regular: false,
       date: null,
       menu: false,
-      labelOrigin: this.$t('origin'),
-      labelDestination: this.$t('destination'),
+      labelOrigin: this.$t("origin"),
+      labelDestination: this.$t("destination"),
       locale: this.$i18n.locale,
       origin: null,
       destination: null,
       baseUrl: window.location.origin
-    }
+    };
   },
   computed: {
-    computedDateFormat () {
+    computedDateFormat() {
       moment.locale(this.locale);
-      return this.date ? moment(this.date).format(this.$t('ui.i18n.date.format.fullDate')) : ''
+      return this.date
+        ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
+        : "";
     },
     dateFormated() {
-      return !this.date ? moment(new Date).format("YYYYMMDDHHmmss") : moment(this.date).format("YYYYMMDDHHmmss");
+      return !this.date
+        ? moment(new Date()).format("YYYYMMDDHHmmss")
+        : moment(this.date).format("YYYYMMDDHHmmss");
     },
     // creation of the url to call
     urlToCall() {
       return `${this.baseUrl}/${this.route}/origine/destination/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.dateFormated}/resultats`;
     },
     searchUnavailable() {
-      return (!this.origin || !this.destination)
-    },
-  
+      return !this.origin || !this.destination;
+    }
   },
   methods: {
     originSelected: function(address) {
-      this.origin = address
+      this.origin = address;
     },
     destinationSelected: function(address) {
-      this.destination = address
+      this.destination = address;
     },
     swap: function() {
-      console.error('swap !')
+      console.error("swap !");
     },
     search: function() {
-      window.location.href = this.urlToCall
+      window.location.href = this.urlToCall;
     },
     publish: function() {
-      console.error('publish !')
+      console.error("publish !");
     },
     clearDate() {
-      this.date = null
+      this.date = null;
     }
   }
-}
+};
 </script>

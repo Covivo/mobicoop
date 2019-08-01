@@ -5,9 +5,7 @@
       grid-list-md
       fluid
     >
-      <v-layout
-        id="headGridMessages"
-      >
+      <v-layout id="headGridMessages">
         <v-flex
           xs4
           class="pt-5 pb-4 mr-1 pl-2 secondary white--text font-weight-bold headline"
@@ -46,12 +44,12 @@
             >
               {{ $t("ui.pages.messages.label.ongoingasks") }}
             </v-tab>
-            <v-tab-item v-if="this.threadsCM.length==0">
+            <v-tab-item
+              v-if="this.threadsCM.length==0"
+            >
               {{ $t("ui.pages.messages.label.nocarpoolmessages") }}
             </v-tab-item>
-            <v-tab-item
-              v-else
-            >
+            <v-tab-item v-else>
               <v-card
                 v-for="(threadCM, index) in threadsCM"
                 :key="index"
@@ -60,10 +58,10 @@
                 @click="updateMessages(threadCM.idThreadMessage,threadCM.contactId)"
               >
                 <v-card-title>
-                  <v-icon>
-                    mdi-account-circle
-                  </v-icon>
-                  &nbsp;<span class="title font-weight-light">{{ threadCM.contactFirstName }} {{ threadCM.contactLastName.substr(0,1).toUpperCase()+"." }}</span>
+                  <v-icon>mdi-account-circle</v-icon>&nbsp;
+                  <span
+                    class="title font-weight-light"
+                  >{{ threadCM.contactFirstName }} {{ threadCM.contactLastName.substr(0,1).toUpperCase()+"." }}</span>
                 </v-card-title>
               </v-card>
             </v-tab-item>
@@ -74,7 +72,9 @@
               {{ $t("ui.pages.messages.label.directmessages") }}
             </v-tab>
 
-            <v-tab-item v-if="this.threadsDM.length==0">
+            <v-tab-item
+              v-if="this.threadsDM.length==0"
+            >
               {{ $t("ui.pages.messages.label.nodirectmessages") }}
             </v-tab-item>
             <v-tab-item v-else>
@@ -87,18 +87,15 @@
                 @click="updateMessages(thread.idThreadMessage,thread.contactId,generateName(thread.contactFirstName,thread.contactLastName))"
               >
                 <v-card-title>
-                  <v-icon>
-                    mdi-account-circle
-                  </v-icon>
-                  &nbsp;<span class="title font-weight-light">{{ generateName(thread.contactFirstName,thread.contactLastName) }}</span>
+                  <v-icon>mdi-account-circle</v-icon>&nbsp;
+                  <span
+                    class="title font-weight-light"
+                  >{{ generateName(thread.contactFirstName,thread.contactLastName) }}</span>
                 </v-card-title>
               </v-card>
             </v-tab-item>
           </v-tabs>
         </v-flex>
-
-
-
 
         <v-flex
           id="messagesColumn"
@@ -122,9 +119,7 @@
                 v-slot:icon
               >
                 <v-avatar color="secondary">
-                  <v-icon>
-                    {{ item.icon }}
-                  </v-icon>
+                  <v-icon>{{ item.icon }}</v-icon>
                 </v-avatar>
               </template>
               <template
@@ -143,11 +138,9 @@
               <span
                 v-if="item.divider===true"
                 class="secondary--text font-weight-bold"
-              >
-                {{ item.createdDateReadable }}
-              </span>
+              >{{ item.createdDateReadable }}</span>
             </v-timeline-item>
-          </v-timeline>   
+          </v-timeline>
 
           <v-container
             v-if="(this.threadsDM.length>0 || this.threadsCM.length>0)"
@@ -167,7 +160,7 @@
                   auto-grow
                   rows="2"
                   background-color="#FFFFFF"
-                  value=""
+                  value
                 />
               </v-flex>
               <v-flex
@@ -184,11 +177,9 @@
                     color="primary"
                     @click="sendInternalMessage()"
                   >
-                    <v-icon>
-                      mdi-send
-                    </v-icon>
+                    <v-icon>mdi-send</v-icon>
                   </v-btn>
-                </div>            
+                </div>
               </v-flex>
             </v-layout>
           </v-container>
@@ -215,9 +206,7 @@
                   v-if="currentAskHistory"
                   class="mb-3"
                 >
-                  <v-card-text>
-                    {{ currentAskHistory.ask.matching.criteria.fromDateReadable }} {{ $t("ui.infos.misc.at") }} {{ currentAskHistory.ask.matching.criteria.fromTimeReadable }}
-                  </v-card-text>
+                  <v-card-text>{{ currentAskHistory.ask.matching.criteria.fromDateReadable }} {{ $t("ui.infos.misc.at") }} {{ currentAskHistory.ask.matching.criteria.fromTimeReadable }}</v-card-text>
                   <!-- Timeline of the journey -->
                   <v-timeline dense>
                     <v-timeline-item
@@ -246,7 +235,9 @@
                       <v-card-text class="py-1">
                         {{ $t("ui.infos.carpooling.availableSeats") }}
                       </v-card-text>
-                      <v-card-text class="font-weight-bold py-1">
+                      <v-card-text
+                        class="font-weight-bold py-1"
+                      >
                         {{ $t("ui.infos.carpooling.price") }}
                       </v-card-text>
                     </v-flex>
@@ -267,11 +258,9 @@
                   </v-layout>
                 </v-card>
                 <v-card v-else>
-                  <v-card-text>
-                    {{ $t("ui.pages.messages.label.notLinkedToACarpool") }}
-                  </v-card-text>
+                  <v-card-text>{{ $t("ui.pages.messages.label.notLinkedToACarpool") }}</v-card-text>
                 </v-card>
-                  
+
                 <!-- Button for asking a Carpool (only the contact initiator) -->
                 <v-btn
                   v-if="currentAskHistory && currentAskHistory.ask.status==1 && askUser == userid"
@@ -416,38 +405,46 @@
   </v-content>
 </template>
 <script>
-import axios from 'axios';
-import Translations from "../../../../translations/components/Messages.json";
+import axios from "axios";
+import { merge } from "lodash";
+import Translations from "@translations/components/Messages.json";
+import TranslationsClient from "@clientTranslations/components/Messages.json";
+
+let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
-    messages: Translations
+    messages: TranslationsMerged
   },
   props: {
     threadsdirectmessagesforview: {
       type: Array,
-      default: function(){return []}
+      default: function() {
+        return [];
+      }
     },
     threadscarpoolingmessagesforview: {
       type: Array,
-      default: function(){return []}
+      default: function() {
+        return [];
+      }
     },
-    userid:{
+    userid: {
       type: String,
       default: ""
     },
-    idmessagedefault:{
+    idmessagedefault: {
       type: String,
       default: ""
     },
-    idrecipientdefault:{
+    idrecipientdefault: {
       type: String,
       default: ""
     },
-    firstnamerecipientdefault:{
+    firstnamerecipientdefault: {
       type: String,
       default: ""
     },
-    lastnamerecipientdefault:{
+    lastnamerecipientdefault: {
       type: String,
       default: ""
     }
@@ -457,184 +454,198 @@ export default {
       items: [],
       threadsDM: this.threadsdirectmessagesforview,
       threadsCM: this.threadscarpoolingmessagesforview,
-      spinner:false,
-      dialogAskCarpool:false,
-      textToSend:"",
-      idThreadMessage:this.idmessagedefault,
-      currentcorrespondant:"...",
-      idRecipient:null,
-      textSpinnerLoading:this.$t('ui.pages.messages.spinner.loading'),
-      textSpinnerSendMessage:this.$t('ui.pages.messages.spinner.sendMessage'),
-      textSpinnerAskCarpool:this.$t('ui.pages.messages.spinner.askCarpool'),
-      textSpinnerUpdateCarpool:this.$t('ui.pages.messages.spinner.updateCarpool'),
-      textSpinner:"",
-      currentAskHistory:null,
-      askUser:0,
-      infosJourney:[]
-    }
+      spinner: false,
+      dialogAskCarpool: false,
+      textToSend: "",
+      idThreadMessage: this.idmessagedefault,
+      currentcorrespondant: "...",
+      idRecipient: null,
+      textSpinnerLoading: this.$t("ui.pages.messages.spinner.loading"),
+      textSpinnerSendMessage: this.$t("ui.pages.messages.spinner.sendMessage"),
+      textSpinnerAskCarpool: this.$t("ui.pages.messages.spinner.askCarpool"),
+      textSpinnerUpdateCarpool: this.$t(
+        "ui.pages.messages.spinner.updateCarpool"
+      ),
+      textSpinner: "",
+      currentAskHistory: null,
+      askUser: 0,
+      infosJourney: []
+    };
   },
   watch: {
     // whenever question changes, this function will run
-    currentAskHistory: function (newCurrentAskHistory, oldCurrentAskHistory) {
+    currentAskHistory: function(newCurrentAskHistory, oldCurrentAskHistory) {
       this.updateContextPanel();
     }
   },
-  mounted () {
+  mounted() {
     this.textSpinner = this.textSpinnerLoading;
-    if(this.threadsDM.length>0 || this.threadsCM.length>0){
+    if (this.threadsDM.length > 0 || this.threadsCM.length > 0) {
       this.updateMessages();
     }
   },
   methods: {
-    updateMessages(idMessage=this.idmessagedefault,idrecipient=this.idrecipientdefault,contactName = this.generateName(this.firstnamerecipientdefault,this.lastnamerecipientdefault)){
-      this.threadsDM.forEach((thread,index) =>{
-        this.threadsDM[index].selected = (thread.idThreadMessage === parseInt(idMessage)) ? true : false;
+    updateMessages(
+      idMessage = this.idmessagedefault,
+      idrecipient = this.idrecipientdefault,
+      contactName = this.generateName(
+        this.firstnamerecipientdefault,
+        this.lastnamerecipientdefault
+      )
+    ) {
+      this.threadsDM.forEach((thread, index) => {
+        this.threadsDM[index].selected =
+          thread.idThreadMessage === parseInt(idMessage) ? true : false;
       });
-      this.threadsCM.forEach((thread, index) =>{
-        this.threadsCM[index].selected = (thread.idThreadMessage === parseInt(idMessage)) ? true : false;
+      this.threadsCM.forEach((thread, index) => {
+        this.threadsCM[index].selected =
+          thread.idThreadMessage === parseInt(idMessage) ? true : false;
       });
       this.textSpinner = this.textSpinnerLoading;
       this.spinner = true;
       this.idThreadMessage = idMessage;
-      axios
-        .get("/utilisateur/messages/"+idMessage)
-        .then(res => {
-          let messagesThread = (res.data.messages);
-          this.items.length = 0; // Reset items (the source of messages column)
+      axios.get("/utilisateur/messages/" + idMessage).then(res => {
+        let messagesThread = res.data.messages;
+        this.items.length = 0; // Reset items (the source of messages column)
 
-          // update askHistory et askUser
-          this.currentAskHistory = res.data.lastAskHistory;
-          this.askUser = res.data.user.id;
+        // update askHistory et askUser
+        this.currentAskHistory = res.data.lastAskHistory;
+        this.askUser = res.data.user.id;
 
-          // The date of the first message
-          let divider = {
-            "divider":true,
-            "createdDateReadable": res.data.createdDateReadable
-          }
-          this.addMessageToItems(divider);
+        // The date of the first message
+        let divider = {
+          divider: true,
+          createdDateReadable: res.data.createdDateReadable
+        };
+        this.addMessageToItems(divider);
 
+        let threadMessage = {
+          id: res.data.id,
+          user: res.data.user,
+          text: res.data.text,
+          createdDateReadable: res.data.createdDateReadable,
+          createdTimeReadable: res.data.createdTimeReadable,
+          divider: false
+        };
 
-          let threadMessage = {
-            'id': res.data.id,
-            'user': res.data.user,
-            'text': res.data.text,
-            'createdDateReadable': res.data.createdDateReadable,
-            'createdTimeReadable': res.data.createdTimeReadable,
-            'divider': false
-          };
+        this.addMessageToItems(threadMessage);
 
+        // The correspondant for the view
+        this.currentcorrespondant = contactName;
 
-          this.addMessageToItems(threadMessage);
+        // Id of the current recipient
+        this.idRecipient = idrecipient;
 
-
-          // The correspondant for the view
-          this.currentcorrespondant = contactName;
-
-          // Id of the current recipient
-          this.idRecipient = idrecipient;
-          
-          let currentDate = res.data.createdDateReadable;
-          for (let message of messagesThread) {
-
-            // If the date is different, push a divider
-            if(message.createdDateReadable!==currentDate){
-              let divider = {
-                "divider":true,
-                "createdDateReadable": message.createdDateReadable
-              }
-              currentDate = message.createdDateReadable;
-              this.addMessageToItems(divider);
-            }
-
-            this.addMessageToItems(message);
-
+        let currentDate = res.data.createdDateReadable;
+        for (let message of messagesThread) {
+          // If the date is different, push a divider
+          if (message.createdDateReadable !== currentDate) {
+            let divider = {
+              divider: true,
+              createdDateReadable: message.createdDateReadable
+            };
+            currentDate = message.createdDateReadable;
+            this.addMessageToItems(divider);
           }
 
-          this.spinner = false;
-        })
+          this.addMessageToItems(message);
+        }
+
+        this.spinner = false;
+      });
     },
-    updateContextPanel(){
-      if(this.currentAskHistory !== null){
-        this.infosJourney.length = 0; // Reset journey infos      
+    updateContextPanel() {
+      if (this.currentAskHistory !== null) {
+        this.infosJourney.length = 0; // Reset journey infos
 
         this.infosJourney["waypoints"] = new Array();
-        for(let waypoint of this.currentAskHistory.ask.matching.waypoints){
-        // Get the diffrent waypoints
+        for (let waypoint of this.currentAskHistory.ask.matching.waypoints) {
+          // Get the diffrent waypoints
           this.infosJourney["waypoints"].push(waypoint.address.addressLocality);
         }
 
         // update distance
-        this.infosJourney["distance"] = parseInt(this.currentAskHistory.ask.matching.proposalRequest.criteria.directionPassenger.distance)/1000;
-        this.infosJourney["distanceRounded"] = Math.round(this.infosJourney["distance"]);
+        this.infosJourney["distance"] =
+          parseInt(
+            this.currentAskHistory.ask.matching.proposalRequest.criteria
+              .directionPassenger.distance
+          ) / 1000;
+        this.infosJourney["distanceRounded"] = Math.round(
+          this.infosJourney["distance"]
+        );
 
         // update price
-        this.infosJourney["price"] = (this.infosJourney["distance"] * parseFloat(this.currentAskHistory.ask.matching.proposalRequest.criteria.priceKm)).toFixed(2);
+        this.infosJourney["price"] = (
+          this.infosJourney["distance"] *
+          parseFloat(
+            this.currentAskHistory.ask.matching.proposalRequest.criteria.priceKm
+          )
+        ).toFixed(2);
 
         // seats
-        this.infosJourney["seats"] = this.currentAskHistory.ask.matching.criteria.seats;
+        this.infosJourney[
+          "seats"
+        ] = this.currentAskHistory.ask.matching.criteria.seats;
       }
-
     },
-    sendInternalMessage(){
+    sendInternalMessage() {
       let messageToSend = new FormData();
-      messageToSend.append("idThreadMessage",this.idThreadMessage);
-      messageToSend.append("text",this.textToSend);
-      messageToSend.append("idRecipient",this.idRecipient);
-      if(this.currentAskHistory!==null){
-        messageToSend.append("idAskHistory",this.currentAskHistory.id);
+      messageToSend.append("idThreadMessage", this.idThreadMessage);
+      messageToSend.append("text", this.textToSend);
+      messageToSend.append("idRecipient", this.idRecipient);
+      if (this.currentAskHistory !== null) {
+        messageToSend.append("idAskHistory", this.currentAskHistory.id);
       }
       this.textSpinner = this.textSpinnerSendMessage;
       this.spinner = true;
-      axios
-        .post("/utilisateur/messages/envoyer",messageToSend)
-        .then(res => {
-          this.textToSend = "";
-          this.spinner = false;
-          if(this.updateMessages(res.data.message)!==undefined){
-            this.updateMessages(res.data.message.id);
-          }
-          else{
-            this.updateMessages();
-          }
-        });
+      axios.post("/utilisateur/messages/envoyer", messageToSend).then(res => {
+        this.textToSend = "";
+        this.spinner = false;
+        if (this.updateMessages(res.data.message) !== undefined) {
+          this.updateMessages(res.data.message.id);
+        } else {
+          this.updateMessages();
+        }
+      });
     },
-    updateCarpool(status){
+    updateCarpool(status) {
       this.dialogAskCarpool = false;
       this.textSpinner = this.textSpinnerUpdateCarpool;
       this.spinner = true;
       let params = new FormData();
-      params.append("idAsk",this.currentAskHistory.ask.id);
-      params.append("status",status);
-      axios
-        .post("/utilisateur/messages/updateAsk",params)
-        .then(res => {
-          this.currentAskHistory.ask.status = res.data.status;
-          this.spinner = false;
-          this.updateMessages();
-        });
+      params.append("idAsk", this.currentAskHistory.ask.id);
+      params.append("status", status);
+      axios.post("/utilisateur/messages/updateAsk", params).then(res => {
+        this.currentAskHistory.ask.status = res.data.status;
+        this.spinner = false;
+        this.updateMessages();
+      });
     },
-    addMessageToItems(message){
+    addMessageToItems(message) {
       let tabItem = new Array();
 
-      tabItem["divider"] = (message.divider!==undefined) ? message.divider : false;
+      tabItem["divider"] =
+        message.divider !== undefined ? message.divider : false;
       tabItem["createdDateReadable"] = message.createdDateReadable;
 
-      if(!message.divider){
+      if (!message.divider) {
         tabItem["idMessage"] = message.id;
         tabItem["userFirstName"] = message.user.givenName;
-        tabItem["userLastName"] = message.user.familyName.substr(0,1).toUpperCase()+".";
+        tabItem["userLastName"] =
+          message.user.familyName.substr(0, 1).toUpperCase() + ".";
         tabItem["icon"] = "mdi-account-circle";
         tabItem["text"] = message.text;
         tabItem["createdTimeReadable"] = message.createdTimeReadable;
-        (message.user.id==this.userid) ? tabItem["origin"] = "own" : tabItem["origin"] = "contact";
+        message.user.id == this.userid
+          ? (tabItem["origin"] = "own")
+          : (tabItem["origin"] = "contact");
       }
 
       this.items.push(tabItem);
-
     },
-    generateName(firstname,lastname){
-      return firstname+' '+lastname.substr(0,1).toUpperCase()+'.'
-    },
+    generateName(firstname, lastname) {
+      return firstname + " " + lastname.substr(0, 1).toUpperCase() + ".";
+    }
   }
-}
+};
 </script>

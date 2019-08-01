@@ -20,9 +20,7 @@
         <v-list>
           <v-list-item>
             <v-list-item-avatar>
-              <v-icon
-                v-text="data.item.icon"
-              />
+              <v-icon v-text="data.item.icon" />
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title v-html="data.item.concatenedAddr" />
@@ -38,9 +36,7 @@
         <v-list>
           <v-list-item>
             <v-list-item-avatar>
-              <v-icon
-                v-text="data.item.icon"
-              />
+              <v-icon v-text="data.item.icon" />
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title v-html="data.item.concatenedAddr" />
@@ -54,9 +50,14 @@
 </template>
 
 <script>
-import Translations from "../../../translations/components/GeoComplete.json";
 import axios from "axios";
 import debounce from "lodash/debounce";
+import merge from "lodash/merge";
+
+import Translations from "@translations/components/GeoComplete.json";
+import TranslationsClient from "@clientTranslations/components/GeoComplete.json";
+
+let TranslationsMerged = merge(Translations, TranslationsClient);
 
 const defaultString = {
   type: String,
@@ -64,92 +65,109 @@ const defaultString = {
 };
 export default {
   i18n: {
-    messages: Translations
+    messages: TranslationsMerged
   },
   props: {
     url: defaultString,
     label: defaultString,
     token: defaultString
   },
-  data () {
+  data() {
     return {
       entries: [],
       isLoading: false,
       search: null,
       address: null,
       filter: null
-    }
+    };
   },
   computed: {
-    items () {
+    items() {
       return this.entries.map(entry => {
-        const concatenedAddr = entry.concatenedAddr
-        const icon = entry.icon
-        return Object.assign({}, entry, { concatenedAddr, icon })
-      })
+        const concatenedAddr = entry.concatenedAddr;
+        const icon = entry.icon;
+        return Object.assign({}, entry, { concatenedAddr, icon });
+      });
     }
   },
   watch: {
-    search (val) {
+    search(val) {
       if (val) {
-        if (val.length>2){
-          val && val !== this.address && this.getAsyncData(val)
+        if (val.length > 2) {
+          val && val !== this.address && this.getAsyncData(val);
         }
       }
     }
   },
   methods: {
     changedAddress: function() {
-      this.$emit('address-selected',this.address);
+      this.$emit("address-selected", this.address);
     },
     getAsyncData: debounce(function(val) {
       this.isLoading = true;
       axios
-        .get(`${this.url}${val}`+(this.token?'&token='+this.token:''))
+        .get(`${this.url}${val}` + (this.token ? "&token=" + this.token : ""))
         .then(res => {
           this.isLoading = false;
-          
+
           // Add a property concatenedAddr to be shown into the autocomplete field after selection
-          let addresses = res.data['hydra:member'];
+          let addresses = res.data["hydra:member"];
           // No Adresses return, we stop here
-          if(!addresses.length){return;}
-          addresses.forEach( (address,addressKey) => {
-            let houseNumber = address.houseNumber ? `${address.houseNumber} ` : '';
-            let street = address.street ? `${address.street} ` : '';
-            let streetAddress = address.streetAddress ? `${address.streetAddress} ` : '';
-            let computedStreet = streetAddress ? `${streetAddress}` : `${houseNumber}${street}`;
-            let postalCode = address.postalCode ? `${address.postalCode} ` : '';
-            let addressLocality = address.addressLocality ? address.addressLocality : '';
-            addresses[addressKey].concatenedAddr = `${computedStreet}${postalCode}${addressLocality}`;
-            addresses[addressKey].icon = 'mdi-map-marker';
+          if (!addresses.length) {
+            return;
+          }
+          addresses.forEach((address, addressKey) => {
+            let houseNumber = address.houseNumber
+              ? `${address.houseNumber} `
+              : "";
+            let street = address.street ? `${address.street} ` : "";
+            let streetAddress = address.streetAddress
+              ? `${address.streetAddress} `
+              : "";
+            let computedStreet = streetAddress
+              ? `${streetAddress}`
+              : `${houseNumber}${street}`;
+            let postalCode = address.postalCode ? `${address.postalCode} ` : "";
+            let addressLocality = address.addressLocality
+              ? address.addressLocality
+              : "";
+            addresses[
+              addressKey
+            ].concatenedAddr = `${computedStreet}${postalCode}${addressLocality}`;
+            addresses[addressKey].icon = "mdi-map-marker";
             if (address.home) {
-              addresses[addressKey].concatenedAddr = `${address.name} - ${computedStreet}${postalCode}${addressLocality}`;
-              addresses[addressKey].icon = 'mdi-home-map-marker'
+              addresses[
+                addressKey
+              ].concatenedAddr = `${address.name} - ${computedStreet}${postalCode}${addressLocality}`;
+              addresses[addressKey].icon = "mdi-home-map-marker";
             } else if (address.relayPoint) {
-              addresses[addressKey].icon = 'mdi-parking'
+              addresses[addressKey].icon = "mdi-parking";
             } else if (address.name) {
-              addresses[addressKey].concatenedAddr = `${address.name} - ${computedStreet}${postalCode}${addressLocality}`;
-              addresses[addressKey].icon = 'mdi-map'
+              addresses[
+                addressKey
+              ].concatenedAddr = `${address.name} - ${computedStreet}${postalCode}${addressLocality}`;
+              addresses[addressKey].icon = "mdi-map";
             }
-          })
-          addresses.forEach( (address,addressKey) => {
-            let addressLocality = address.addressLocality ? address.addressLocality : '';
-            if(!addressLocality){ // No locality return, do not show them (region, department ..)
-              addresses.splice(addressKey,1);
-            } 
-          })
+          });
+          addresses.forEach((address, addressKey) => {
+            let addressLocality = address.addressLocality
+              ? address.addressLocality
+              : "";
+            if (!addressLocality) {
+              // No locality return, do not show them (region, department ..)
+              addresses.splice(addressKey, 1);
+            }
+          });
           // Set Data & show them
-          if(this.isLoading) return; // Another request is fetching, we do not show the previous one
-          this.entries = [...res.data['hydra:member']];
+          if (this.isLoading) return; // Another request is fetching, we do not show the previous one
+          this.entries = [...res.data["hydra:member"]];
         })
         .catch(err => {
           this.items = [];
           console.error(err);
         })
-        .finally(() => (this.isLoading = false))
-
-    }, 1000),
-
+        .finally(() => (this.isLoading = false));
+    }, 1000)
   }
-}
+};
 </script>

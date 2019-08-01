@@ -94,13 +94,16 @@ encoreConfig.watchOptions = {
 encoreConfig.resolve.alias = _.merge(encoreConfig.resolve.alias, { // merge is very important because if not present vue is not found because cnore add aliasl !! https://github.com/vuejs-templates/webpack/issues/215#issuecomment-514220431
   '@js': path.resolve(__dirname, 'src/MobicoopBundle/Resources/assets/js'),
   '@css': path.resolve(__dirname, 'src/MobicoopBundle/Resources/assets/css'),
-  '@translations': path.resolve(__dirname, 'src/MobicoopBundle/Resources/assets/translations'),
+  '@translations': path.resolve(__dirname, 'src/MobicoopBundle/Resources/translations'),
   '@assets': path.resolve(__dirname, 'src/MobicoopBundle/Resources/assets'),
+  '@themes': path.resolve(__dirname, 'src/MobicoopBundle/Resources/themes'),
+  '@clientTranslations': path.resolve(__dirname, './translations'),
   // ⚙️ UNCOMMENT below if you are using a client platform  ⚙️ //
   // '@clientJs': path.resolve(__dirname, './assets/js'),
   // '@clientCss': path.resolve(__dirname, './assets/css'),
-  // '@clientTranslations': path.resolve(__dirname, './assets/translations'),
   // '@clientAssets': path.resolve(__dirname, './assets'),
+  // '@themes': path.resolve(__dirname, './themes'),
+
 });
 
 
