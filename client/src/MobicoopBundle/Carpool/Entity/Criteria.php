@@ -699,7 +699,7 @@ class Criteria
         return $this->maxDeviationDistance;
     }
     
-    public function getAnyRouteAsPassenger(): bool
+    public function getAnyRouteAsPassenger(): ?bool
     {
         return $this->anyRouteAsPassenger;
     }
