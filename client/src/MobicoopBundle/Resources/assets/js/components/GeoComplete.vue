@@ -84,7 +84,7 @@ export default {
     items () {
       return this.entries.map(entry => {
         const concatenedAddr = entry.concatenedAddr
-        const icon = 'mdi-map-marker'
+        const icon = entry.icon
         return Object.assign({}, entry, { concatenedAddr, icon })
       })
     }
@@ -113,13 +113,29 @@ export default {
           let addresses = res.data['hydra:member'];
           // No Adresses return, we stop here
           if(!addresses.length){return;}
-          addresses.forEach( (adress,adressKey) => {
-            let streetAddress = addresses[adressKey].streetAddress ? `${addresses[adressKey].streetAddress} ` : '';
-            let postalCode = addresses[adressKey].postalCode ? `${addresses[adressKey].postalCode} ` : '';
-            let addressLocality = addresses[adressKey].addressLocality ? addresses[adressKey].addressLocality : '';
-            addresses[adressKey].concatenedAddr = `${streetAddress}${postalCode}${addressLocality}`;
+          addresses.forEach( (address,addressKey) => {
+            let houseNumber = address.houseNumber ? `${address.houseNumber} ` : '';
+            let street = address.street ? `${address.street} ` : '';
+            let streetAddress = address.streetAddress ? `${address.streetAddress} ` : '';
+            let computedStreet = streetAddress ? `${streetAddress}` : `${houseNumber}${street}`;
+            let postalCode = address.postalCode ? `${address.postalCode} ` : '';
+            let addressLocality = address.addressLocality ? address.addressLocality : '';
+            addresses[addressKey].concatenedAddr = `${computedStreet}${postalCode}${addressLocality}`;
+            addresses[addressKey].icon = 'mdi-map-marker';
+            if (address.home) {
+              addresses[addressKey].concatenedAddr = `${address.name} - ${computedStreet}${postalCode}${addressLocality}`;
+              addresses[addressKey].icon = 'mdi-home-map-marker'
+            } else if (address.relayPoint) {
+              addresses[addressKey].icon = 'mdi-parking'
+            } else if (address.name) {
+              addresses[addressKey].concatenedAddr = `${address.name} - ${computedStreet}${postalCode}${addressLocality}`;
+              addresses[addressKey].icon = 'mdi-map'
+            }
+          })
+          addresses.forEach( (address,addressKey) => {
+            let addressLocality = address.addressLocality ? address.addressLocality : '';
             if(!addressLocality){ // No locality return, do not show them (region, department ..)
-              addresses.splice(adressKey,1);
+              addresses.splice(addressKey,1);
             } 
           })
           // Set Data & show them
