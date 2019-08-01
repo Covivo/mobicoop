@@ -1,9 +1,7 @@
 @import '_variables.scss';
 body {
-  nav {
-    .v-toolbar__content {
-      background-color: $primary;
-    }
+  .v-toolbar__content {
+    background-color: $primary;
   }
   .theme--light.v-footer {
     background-color: $primary;

@@ -4,8 +4,8 @@ import { Vue, vuetify, i18n, VApp } from '@js/config/vue-config'
 
 // Vue components
 import Homesearchform from '@js/components/Homesearchform';
-import Vueheader from '@js/components/Vueheader';
-import Vuefooter from '@js/components/Vuefooter';
+import MHeader from '@js/components/MHeader';
+import MFooter from '@js/components/MFooter';
 
 import '@css/page/home.scss';
 
@@ -15,8 +15,8 @@ new Vue({
   vuetify,
   components: {
     VApp,
-    Homesearchform,
-    Vueheader,
-    Vuefooter
+    HomeSearch,
+    MHeader,
+    MFooter
   }
 })

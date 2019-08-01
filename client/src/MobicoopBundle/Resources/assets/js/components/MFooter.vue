@@ -56,5 +56,13 @@
     </v-layout>
   </v-footer>
 </template>
+
 <script>
+import Translations from "../../../translations/components/MFooter.json";
+
+export default {
+  i18n: {
+    messages: Translations
+  }
+}
 </script>

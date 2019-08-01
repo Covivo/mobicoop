@@ -31,6 +31,7 @@ use Geocoder\Query\ReverseQuery;
 use App\Geography\Repository\AddressRepository;
 use App\RelayPoint\Repository\RelayPointRepository;
 use App\RelayPoint\Entity\RelayPoint;
+use App\User\Repository\UserRepository;
 
 /**
  * The geo searcher service.
@@ -40,6 +41,7 @@ use App\RelayPoint\Entity\RelayPoint;
 class GeoSearcher
 {
     private $geocoder;
+    private $userRepository;
     private $addressRepository;
     private $relayPointRepository;
     private $params;
@@ -47,9 +49,10 @@ class GeoSearcher
     /**
      * Constructor.
      */
-    public function __construct(PluginProvider $geocoder, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository, array $params)
+    public function __construct(PluginProvider $geocoder, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository, array $params)
     {
         $this->geocoder = $geocoder;
+        $this->userRepository = $userRepository;
         $this->addressRepository = $addressRepository;
         $this->relayPointRepository = $relayPointRepository;
         $this->params = $params;
@@ -59,10 +62,10 @@ class GeoSearcher
      * Returns an array of result addresses (named addresses, relaypoints, sig addresses...)
      *
      * @param string $input     The string representing the user input
-     * @param int $userId       The user id
+     * @param string $token     The geographic token authorization
      * @return array            The results
      */
-    public function geoCode(string $input, int $userId=null)
+    public function geoCode(string $input, string $token=null)
     {
         // the result array will contain different addresses :
         // - named addresses (if the user is logged)
@@ -70,10 +73,19 @@ class GeoSearcher
         // - sig addresses
         // - other objects ? to be defined
         $result = [];
+
+        // if we have a token, we search for the corresponding user
+        $user = null;
+        if ($token) {
+            $user = $this->userRepository->findOneBy(['geoToken'=>$token]);
+        }
         
         // 1 - named addresses
-        if ($userId) {
-            $result[] = $this->addressRepository->findByName($input, $userId);
+        if ($user) {
+            $namedAddresses = $this->addressRepository->findByName($input, $user->getId());
+            if (count($namedAddresses)>0) {
+                $result = $namedAddresses;
+            }
         }
 
         // 2 - relay points
@@ -83,10 +95,10 @@ class GeoSearcher
             $exclude = false;
             if ($relayPoint->getCommunity() && $relayPoint->isPrivate()) {
                 $exclude = true;
-                if ($userId) {
+                if ($user) {
                     // todo : maybe find a quicker way than a foreach :)
                     foreach ($relayPoint->getCommunity()->getCommunityUsers() as $communityUser) {
-                        if ($communityUser->getUser()->getId() == $userId && $communityUser->getStatus() == CommunityUser::STATUS_ACCEPTED) {
+                        if ($communityUser->getUser()->getId() == $user->getId() && $communityUser->getStatus() == CommunityUser::STATUS_ACCEPTED) {
                             $exclude = false;
                             break;
                         }
@@ -148,7 +160,6 @@ class GeoSearcher
             if (trim($address->getStreetAddress())!=="") {
                 $displayLabelTab[] = $address->getStreetAddress();
             }
-
 
             $displayLabelTab[] = $address->getAddressLocality();
 

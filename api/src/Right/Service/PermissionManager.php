@@ -98,7 +98,7 @@ class PermissionManager
                 }
             }
         }
-
+        
         // we check if a the user has the specific right to do the action
         foreach ($user->getUserRights() as $userRight) {
             if (is_null($userRight->getTerritory()) || $userRight->getTerritory() == $territory) {
@@ -137,7 +137,9 @@ class PermissionManager
         $permission = false;
         // we check if the children of the role have the right
         foreach ($this->roleRepository->findChildren($role) as $child) {
-            $permission = $this->roleHasRight($child, $right);
+            if ($this->roleHasRight($child, $right)) {
+                return true;
+            }
         }
         return $permission;
     }

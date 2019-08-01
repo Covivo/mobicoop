@@ -9,8 +9,8 @@ import '@css/page/search/simpleResults.scss';
 import Resultssearchform from '@js/components/Resultssearchform';
 import Journey from '@js/components/Journey'
 import BDatepicker from "buefy/src/components/datepicker/Datepicker"
-import Vueheader from '@js/components/Vueheader';
-import Vuefooter from '@js/components/Vuefooter';
+import MHeader from '@js/components/MHeader';
+import MFooter from '@js/components/MFooter';
 
 
 // add possibility to format date by using moment
@@ -31,8 +31,8 @@ new Vue({
     Resultssearchform,
     BDatepicker,
     Journey,
-    Vueheader,
-    Vuefooter
+    MHeader,
+    MFooter
   }
 })
 

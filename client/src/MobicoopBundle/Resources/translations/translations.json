@@ -10,7 +10,8 @@
                 }, 
                 "form": {
                     "errors": "Merci de corriger les erreurs suivantes ",
-                    "enterMessage": "Saisissez un message"
+                    "enterMessage": "Saisissez un message",
+                    "optional": "facultatif"
                 },
                 "infos": {
                     "misc": {
@@ -18,12 +19,22 @@
                     }
                 },
                 "pages": {
+                    "home": {
+                        
+                    },
                     "signup": {
                         "chart": {
                             "chartValid": "Je valide la charte",
                             "errors": {
                                 "required": "La validation de la charte est requise"
                             }
+                        }
+                    }
+                },
+                "i18n": {
+                    "date": {
+                        "format": {
+                            "fullDate": "ddd Do MMMM YYYY"
                         }
                     }
                 }
@@ -98,38 +109,6 @@
                         "errors": {
                             "required": "La ville de résidence est requise"
                         }
-                    }
-                }
-            },
-            "navBar": {
-                "buttons": {
-                    "signup": {
-                        "label": "Inscription",
-                        "route": "/utilisateur/inscription"
-                    },
-                    "logIn": {
-                        "label": "Connexion",
-                        "route": "/utilisateur/connexion"
-                    },
-                    "shareAnAd": {
-                        "label": "Publier une annonce",
-                        "route": "/covoiturage/annonce/poster"
-                    },
-                    "messages": {
-                        "label": "Messages",
-                        "route": "/utilisateur/messages"
-                    },
-                    "myProfile": {
-                        "label": "Mon profil",
-                        "route": "/utilisateur/profil/modifier"
-                    },
-                    "myProposals": {
-                        "label": "Mes annonces",
-                        "route": "/utilisateur/profil/modifier"
-                    },
-                    "logOut": {
-                        "label": "Déconnexion",
-                        "route": "/user/logout"
                     }
                 }
             },

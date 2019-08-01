@@ -6,8 +6,8 @@ import '@css/page/ad/create.scss';
 
 // Vue components
 import Adcreateform from '@js/components/Adcreateform';
-import Vueheader from '@js/components/Vueheader';
-import Vuefooter from '@js/components/Vuefooter';
+import MHeader from '@js/components/MHeader';
+import MFooter from '@js/components/MFooter';
 
 new Vue({
   el: '#app',
@@ -16,7 +16,7 @@ new Vue({
   components: {
     VApp,
     Adcreateform,
-    Vueheader,
-    Vuefooter
+    MHeader,
+    MFooter
   }
 })

@@ -211,26 +211,22 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $homeAddress;
 
     /**
-     * Date of password mofification.
-     *
-     * @var DateTime|null $pupdtime
-     *   Date of password mofification.
-     *
+     * @var DateTime|null Date of password modification.
      * @Groups({"post","put", "password_token"})
      */
     private $pupdtime;
 
+    /**
+     * @var string|null Token for password modification.
+     *  @Groups({"post","put"})
+     */
+    private $pwdToken;
 
     /**
-     * Token of password mofification.
-     *
-     * @var string|null $token
-     *   Token of password mofification.
-     *
-     *  @Groups({"post","put","password_token"})
+     * @var string|null Token for geographic authorization.
+     *  @Groups({"post","put"})
      */
-    private $token;
-
+    private $geoToken;
 
     public function __construct($id=null, $status=null)
     {
@@ -661,9 +657,9 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      *
      * @return string
      */
-    public function getToken()
+    public function getPwdToken()
     {
-        return $this->token;
+        return $this->pwdToken;
     }
 
     /**
@@ -671,9 +667,20 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      *
      * @param string|null $token
      */
-    public function setToken(?string $token)
+    public function setPwdToken(?string $pwdToken)
     {
-        $this->token = $token;
+        $this->pwdToken = $pwdToken;
+        return $this;
+    }
+
+    public function getGeoToken()
+    {
+        return $this->geoToken;
+    }
+
+    public function setGeoToken(?string $geoToken)
+    {
+        $this->geoToken = $geoToken;
         return $this;
     }
 
@@ -690,6 +697,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'status'        => $this->getStatus(),
             'email'         => $this->getEmail(),
             'telephone'     => $this->getTelephone(),
+            'geoToken'      => $this->getGeoToken()
         ];
     }
 }
