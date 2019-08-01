@@ -18,10 +18,11 @@ let filesBundle = read('./src/MobicoopBundle/Resources/assets/js/page');
 Encore
   .setOutputPath('public/build/')
   .setPublicPath('/build')
-  // ⚙️ UNCOMMENT below if you want a commun app.js file  ⚙️ //
+  // ⚙️ UNCOMMENT below if you are not a client platform  ⚙️ //
   // .addEntry('app', './src/MobicoopBundle/Resources/assets/js/app.js')
   // ⚙️ UNCOMMENT below if you are client platform &  want a commun app.js file  ⚙️ //
-  // .addEntry('app', './assets/js/app.js')  .splitEntryChunks()
+  // .addEntry('app', './assets/js/app.js')  
+  .splitEntryChunks()
   .enableVersioning(Encore.isProduction())
   .enableVueLoader()
   .addPlugin(new VuetifyLoaderPlugin())
@@ -80,7 +81,6 @@ for (let file of files) {
 }
 
 // Add bundle assets
-// ⚙️ COMMENT below if you are using a client platform  ⚙️ //
 for (let file of filesBundle) {
   Encore.addEntry(`bundle_${file.split('.js')[0]}`, `./src/MobicoopBundle/Resources/assets/js/page/${file}`)
 }
@@ -95,9 +95,13 @@ encoreConfig.watchOptions = {
 encoreConfig.resolve.alias = _.merge(encoreConfig.resolve.alias, { // merge is very important because if not present vue is not found because cnore add aliasl !! https://github.com/vuejs-templates/webpack/issues/215#issuecomment-514220431
   '@js': path.resolve(__dirname, 'src/MobicoopBundle/Resources/assets/js'),
   '@css': path.resolve(__dirname, 'src/MobicoopBundle/Resources/assets/css'),
+  '@translations': path.resolve(__dirname, 'src/MobicoopBundle/Resources/assets/translations'),
+  '@assets': path.resolve(__dirname, 'src/MobicoopBundle/Resources/assets'),
   // ⚙️ UNCOMMENT below if you are using a client platform  ⚙️ //
   // '@clientJs': path.resolve(__dirname, './assets/js'),
   // '@clientCss': path.resolve(__dirname, './assets/css'),
+  // '@clientTranslations': path.resolve(__dirname, './assets/translations'),
+  // '@clientAssets': path.resolve(__dirname, './assets'),
 });
 
 

@@ -1,0 +1,24 @@
+version: "2.4"
+services:
+
+  $$NAME$$:
+    container_name: $$NAME$$
+    image: mobicoop/php-node-chromium:2.0.0
+    # build: ./
+    ports:
+      - '9089:9089'
+      - '9091:9091'
+    working_dir: /var/www
+    entrypoint: zsh /var/www/entrypoint.sh
+    tty: true
+    environment:
+      - COMPOSER_PROCESS_TIMEOUT=1200
+    volumes:
+      - ./:/var/www:delegated
+      - ${MOBICOOP_CLIENT?:you forgot to export MOBICOOP_CLIENT}:/var/client:delegated
+    networks:
+      - mobicoop_platform
+
+networks:
+  mobicoop_platform:
+    external: true

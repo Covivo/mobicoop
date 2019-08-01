@@ -6,7 +6,7 @@
             {% block title %}Welcome!
             {% endblock %}
         </title>
-        {{ encore_entry_link_tags('app') }}
+        {{ encore_entry_link_tags("#{assets_prefix ?? ''}app") }}
 
         <meta content="width=device-width, initial-scale=1" name="viewport"> {% block stylesheets %}{% endblock %}
         </head>
@@ -36,6 +36,6 @@
             </div>
         </body>
 
-        {{ encore_entry_script_tags('app') }}
+        {{ encore_entry_script_tags("#{assets_prefix ?? ''}app") }}
         {% block javascripts %}{% endblock %}
     </html>

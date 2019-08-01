@@ -60,10 +60,10 @@ async function createCanvas() {
    * Copy all client files but filters to destination
    */
   const filter = {
-    elementToExclude: ['MobicoopBundle', 'node_modules', 'vendor', 'var', 'cypress.json', 'phpunit.xml.dist', 'assets', 'package-lock', 'kahlan-config.php', 'tests', 'package.json'],
-    extToExclude: ['.lock'],
+    elementToExclude: ['MobicoopBundle', 'node_modules', 'vendor', 'var', 'cypress.json', 'cypress', 'build', 'phpunit.xml.dist', 'assets', 'database', 'package-lock.json', 'kahlan-config.php', 'tests', 'package.json'],
+    // extToExclude: ['.lock'],
     filter: function (currentPath) {
-      if (this.elementToExclude.includes(path.basename(currentPath)) || this.extToExclude.includes(path.extname(currentPath))) { return false; }
+      if (this.elementToExclude.includes(path.basename(currentPath))) { return false; }
       return true;
     }
   };
@@ -82,7 +82,7 @@ async function createCanvas() {
    */
   const filterAssets = {
     filter: function (currentPath) {
-      let assetsToKeep = ['_variables.scss']
+      let assetsToKeep = ['_variables.scss', 'app.scss']
       let basename = path.basename(currentPath);
       let stats = fs.lstatSync(currentPath);
       if (!stats.isDirectory() && !assetsToKeep.includes(basename)) { return false; }
@@ -113,8 +113,10 @@ async function createCanvas() {
   let gitlabci = path.resolve(__dirname, 'client-canvas/.gitlab-ci');
   let packagejson = path.resolve(__dirname, 'client-canvas/package.json');
   let makefile = path.resolve(__dirname, 'client-canvas/makefile');
+  let readme = path.resolve(__dirname, 'client-canvas/Readme.md');
   let entryBuilder = path.resolve(__dirname, 'client-canvas/entrypoint-builder.sh');
   let entry = path.resolve(__dirname, 'client-canvas/entrypoint.sh');
+  let bundles = path.resolve(__dirname, 'client-canvas/bundles');
   [err, success] = await to(fs.copy(appjs, `${destinationAssets}/js/app.js`));
   [err, success] = await to(fs.copy(dcbd, `${destinationProject}/docker-compose-builder-darwin.yml`));
   [err, success] = await to(fs.copy(dcbl, `${destinationProject}/docker-compose-builder-linux.yml`));
@@ -123,8 +125,10 @@ async function createCanvas() {
   [err, success] = await to(fs.copy(packagejson, `${destinationProject}/package.json`));
   [err, success] = await to(fs.copy(gitlabci, `${destinationProject}/.gitlab-ci`));
   [err, success] = await to(fs.copy(makefile, `${destinationProject}/makefile`));
+  [err, success] = await to(fs.copy(readme, `${destinationProject}/Readme.md`));
   [err, success] = await to(fs.copy(entryBuilder, `${destinationProject}/entrypoint-builder.sh`));
   [err, success] = await to(fs.copy(entry, `${destinationProject}/entrypoint.sh`));
+  [err, success] = await to(fs.copy(bundles, `${destinationProject}/templates/bundles`));
 
 }
 
@@ -137,7 +141,19 @@ async function replaceDataInCanvas() {
     from: /\$\$NAME\$\$/gi,
     to: `${program.project}_platform`,
   };
+  const optionsEnv = {
+    files: `${destinationProject}/.env`,
+    from: /APP_NAME=mobicoop_platform/gi,
+    to: `APP_NAME=${program.project}_platform`,
+  };
+  // const optionsReadme = {
+  //   files: `${destinationProject}/Readme`,
+  //   from: /mobicoop/gi,
+  //   to: program.project,
+  // };
   await replace(options);
+  await replace(optionsEnv);
+  // await replace(optionsReadme);
 }
 
 
