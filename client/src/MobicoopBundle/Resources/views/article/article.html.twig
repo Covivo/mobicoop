@@ -1,10 +1,17 @@
 {% extends '@Mobicoop/base.html.twig' %}
+
 {% block title %}
+{% if article %}
   {{ article.title }}
+{% else %}
+  Article
+{% endif %}  
 {% endblock %}
+
 {% block stylesheets %}
   {{ encore_entry_link_tags("#{assets_prefix ?? ''}article/article") }}
 {% endblock %}
+
 {% block main %}
     <div class="container">
     {% if article %}
@@ -14,7 +21,7 @@
         <h3 class="subtitle">{{ section.subTitle }}</h3>
         {% for paragraph in  section.paragraphs %}
           <div class="paragraph has-text-justified">
-            <p>{{ paragraph.text }}</p>
+            <p>{{ paragraph.text | raw }}</p>
           </div>
         {% endfor %}
       {% endfor %}
@@ -23,6 +30,7 @@
     {% endif %}
   </div>
 {% endblock %}
+
 {% block javascripts %}
   {{ encore_entry_script_tags("#{assets_prefix ?? ''}article/article") }}
 {% endblock %}
