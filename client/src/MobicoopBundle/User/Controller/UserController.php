@@ -58,6 +58,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskHistoryManager;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use function GuzzleHttp\json_encode;
 
 /**
  * Controller class for user related actions.
@@ -164,7 +165,6 @@ class UserController extends AbstractController
         // get the homeAddress
         $homeAddress = $user->getHomeAddress();
          
-        $form = $this->createForm(UserForm::class, $user, ['validation_groups'=>['update']]);
         $error = false;
            
         
@@ -220,37 +220,46 @@ class UserController extends AbstractController
 
     /**
      * User password update.
+     * Ajax
      */
     public function userPasswordUpdate(UserManager $userManager, Request $request)
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('password', $user);
-        $form = $this->createForm(
-            UserForm::class,
-            $user,
-            ['validation_groups'=>['password']]
-        );
 
-        $form->handleRequest($request);
-        $error = false;
+        $error = [
+            'state' => false,
+            'message' => "",
+        ];
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST')) {
+            $error["message"] = "Ok";
+            
+            if ($request->request->get('password')!==null) {
+                $user->setPassword($request->request->get('password'));
+            } else {
+                $error["state"] = "true";
+                $error["message"] = "Empty password";
+                return new Response(json_encode($error));
+            }
+
             if ($user = $userManager->updateUserPassword($user)) {
                 // after successful update, we re-log the user
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                 $this->get('security.token_storage')->setToken($token);
                 $this->get('session')->set('_security_main', serialize($token));
-                return $this->redirectToRoute('user_profile_update');
+                $error["message"] = "Ok";
+                return new Response(json_encode($error));
             }
-            $error = true;
+            $error["state"] = "true";
+            $error["message"] = "Update password failed";
+            return new Response(json_encode($error));
         }
 
-        return $this->render('@Mobicoop/user/password.html.twig', [
-            'form' => $form->createView(),
-            'user' => $user,
-            'error' => $error
-        ]);
+        $error["state"] = "true";
+        $error["message"] = "Request failed";
+        return new Response(json_encode($error));
     }
 
 
