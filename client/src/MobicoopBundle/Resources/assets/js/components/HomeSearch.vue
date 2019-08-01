@@ -39,7 +39,7 @@
         </v-flex>
         <v-flex
           class="text-center"
-          xs1
+          xs2
         >
           <v-tooltip right>
             <template v-slot:activator="{ on }">
@@ -88,6 +88,7 @@
           <v-switch
             v-model="regular"
             inset
+            color="success"
           />
           <v-tooltip right>
             <template v-slot:activator="{ on }">
@@ -113,7 +114,6 @@
             v-model="menu"
             :close-on-content-click="false"
             full-width
-            max-width="290"
           >
             <template v-slot:activator="{ on }">
               <v-text-field
@@ -123,10 +123,13 @@
                 readonly
                 :messages="$t('ui.form.optional')"
                 v-on="on"
+                @click:clear="clearDate"
               />
             </template>
             <v-date-picker
               v-model="date"
+              header-color="primary"
+              color="secondary"
               :locale="locale"
               @input="menu=false"
             />
@@ -146,6 +149,7 @@
           <v-btn
             rounded
             outlined
+            disabled
             @click="publish"
           >
             {{ $t('buttons.shareAnAd.label') }}
@@ -155,7 +159,8 @@
           <v-btn
             color="success"
             rounded
-            @click="search" 
+            :disabled="searchUnavailable"
+            @click="search"
           >  
             {{ $t('buttons.search.label') }}
           </v-btn>
@@ -200,9 +205,9 @@ export default {
       labelOrigin: this.$t('origin'),
       labelDestination: this.$t('destination'),
       locale: this.$i18n.locale,
-      origin: {},
-      destination: {},
-      baseUrl: window.location.origin,
+      origin: null,
+      destination: null,
+      baseUrl: window.location.origin
     }
   },
   computed: {
@@ -210,11 +215,17 @@ export default {
       moment.locale(this.locale);
       return this.date ? moment(this.date).format(this.$t('ui.i18n.date.format.fullDate')) : ''
     },
-    
+    dateFormated() {
+      return !this.date ? moment(new Date).format("YYYYMMDDHHmmss") : moment(this.date).format("YYYYMMDDHHmmss");
+    },
     // creation of the url to call
     urlToCall() {
-      return `${this.baseUrl}/${this.route}/nancy/metz/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.dateFormated()}/resultats`;
-    }
+      return `${this.baseUrl}/${this.route}/origine/destination/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.dateFormated}/resultats`;
+    },
+    searchUnavailable() {
+      return (!this.origin || !this.destination)
+    },
+  
   },
   methods: {
     originSelected: function(address) {
@@ -222,9 +233,6 @@ export default {
     },
     destinationSelected: function(address) {
       this.destination = address
-    },
-    dateFormated() {
-      return moment(new Date).format("YYYYMMDDHHmmss");
     },
     swap: function() {
       console.error('swap !')
@@ -235,8 +243,9 @@ export default {
     publish: function() {
       console.error('publish !')
     },
-
+    clearDate() {
+      this.date = null
+    }
   }
-  
 }
 </script>
