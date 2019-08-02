@@ -28,6 +28,7 @@ const pathToMobicoopBundle = path.resolve(pathToClient, 'src/MobicoopBundle');
 const destinationProject = path.resolve(__dirname, `../../../${program.project}`);
 const pathToClientAssets = path.resolve(pathToMobicoopBundle, 'Resources/assets');
 const destinationAssets = path.resolve(destinationProject, 'assets');
+const translationsPath = path.resolve(destinationProject, 'translations');
 
 
 /** -------------------------------------------------
@@ -35,6 +36,7 @@ const destinationAssets = path.resolve(destinationProject, 'assets');
 *-----------------------------------------------------*/
 createCanvas().then(_ => {
   crawlDir(destinationAssets);
+  crawlDir(translationsPath, '{}', '.json');
   replaceDataInCanvas().then(_ => console.log('ok')).catch(err => console.error(err))
 })
 
@@ -106,9 +108,10 @@ async function createCanvas() {
   console.log(kuler(`Copying specific assets for ${destinationAssets} 🚀 \n`, 'pink'));
   let appjs = path.resolve(__dirname, 'client-canvas/app.js');
   let themes = path.resolve(pathToMobicoopBundle, './Resources/themes');
-  let gitignore = path.resolve(__dirname, 'client-canvas/docker-compose-builder-darwin.yml');
+  let translationsComponents = path.resolve(translationsPath, './components');
+  let gitignore = path.resolve(__dirname, 'client-canvas/.gitignore');
   let dcbl = path.resolve(__dirname, 'client-canvas/docker-compose-builder-linux.yml');
-  let dcbd = path.resolve(__dirname, 'client-canvas/docker-compose-builder-linux.yml');
+  let dcbd = path.resolve(__dirname, 'client-canvas/docker-compose-builder-darwin.yml');
   let dcl = path.resolve(__dirname, 'client-canvas/docker-compose-linux.yml');
   let dcd = path.resolve(__dirname, 'client-canvas/docker-compose-darwin.yml');
   let gitlabci = path.resolve(__dirname, 'client-canvas/.gitlab-ci');
@@ -127,10 +130,12 @@ async function createCanvas() {
   [err, success] = await to(fs.copy(gitlabci, `${destinationProject}/.gitlab-ci`));
   [err, success] = await to(fs.copy(makefile, `${destinationProject}/makefile`));
   [err, success] = await to(fs.copy(readme, `${destinationProject}/Readme.md`));
+  [err, success] = await to(fs.copy(gitignore, `${destinationProject}/.gitignore`));
   [err, success] = await to(fs.copy(entryBuilder, `${destinationProject}/entrypoint-builder.sh`));
   [err, success] = await to(fs.copy(entry, `${destinationProject}/entrypoint.sh`));
   [err, success] = await to(fs.copy(bundles, `${destinationProject}/templates/bundles`));
   [err, success] = await to(fs.copy(themes, `${destinationProject}/themes`));
+  [err, success] = await to(fs.copy(translationsComponents, `${destinationProject}/translations/components`));
 
 }
 
@@ -148,14 +153,8 @@ async function replaceDataInCanvas() {
     from: /APP_NAME=mobicoop_platform/gi,
     to: `APP_NAME=${program.project}_platform`,
   };
-  // const optionsReadme = {
-  //   files: `${destinationProject}/Readme`,
-  //   from: /mobicoop/gi,
-  //   to: program.project,
-  // };
   await replace(options);
   await replace(optionsEnv);
-  // await replace(optionsReadme);
 }
 
 
@@ -163,13 +162,16 @@ async function replaceDataInCanvas() {
  * recursively crawl directory from dir entrypoint & add a gitkeep inside all folders!
  * @param {string} dir 
  */
-function crawlDir(dir) {
+function crawlDir(dir, replace, ext) {
   fs.readdirSync(dir).forEach(element => {
     let fullPath = path.join(dir, element);
+    if (fs.lstatSync(fullPath).isFile() && replace && path.extname(fullPath) === ext) {
+      fs.writeFileSync(fullPath, replace);
+    }
     if (fs.lstatSync(fullPath).isDirectory()) {
       // add a gitkeep inside all directory strcutures so that they stay in git!
       fs.writeFileSync(`${fullPath}/.gitkeep`, '');
-      crawlDir(fullPath);
+      crawlDir(fullPath, replace, ext);
     }
   });
 }
