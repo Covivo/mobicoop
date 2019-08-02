@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "start": "php bin/console server:run 0.0.0.0:8081 & npm run compile-and-watch-vue",
+    "start": "php bin/console server:run 0.0.0.0:8081 & npm run compile",
     "start-ci": "php bin/console server:run -q --no-debug 127.0.0.1:8081 & npm run compile",
     "test": "node src/MobicoopBundle/spec/runtests.js",
     "test-and-coverage": "node src/MobicoopBundle/spec/runtests.js -c",
@@ -81,7 +81,7 @@
     "vue-i18n": "^8.11.2",
     "vue-loader": "^15.4.2",
     "vue-template-compiler": "^2.5.17",
-    "vuetify": "^2.0.0",
+    "vuetify": "^2.0.4",
     "vuetify-loader": "^1.3.0"
   }
 }
