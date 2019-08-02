@@ -66,8 +66,6 @@ import TranslationsClient from "@clientTranslations/components/MHeader.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
-console.error(TranslationsMerged.fr);
-
 export default {
   i18n: {
     messages: TranslationsMerged

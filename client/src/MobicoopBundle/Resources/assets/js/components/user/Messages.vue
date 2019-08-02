@@ -407,13 +407,15 @@
 <script>
 import axios from "axios";
 import { merge } from "lodash";
+import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/Messages.json";
 import TranslationsClient from "@clientTranslations/components/Messages.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
-    messages: TranslationsMerged
+    messages: TranslationsMerged,
+    sharedMessages: CommonTranslations
   },
   props: {
     threadsdirectmessagesforview: {

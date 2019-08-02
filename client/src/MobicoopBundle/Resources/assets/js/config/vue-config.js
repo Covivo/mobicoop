@@ -12,13 +12,7 @@ import colorTheme from '@themes/mobicoop.json';
 
 // import md from "material-design-icons-iconfont";
 import '@mdi/font/css/materialdesignicons.css' // Ensure you are using css-loader
-import translations from '@translations/translations.json';
-import translationsClient from '@clientTranslations/translations.json';
 import 'vue-form-wizard/dist/vue-form-wizard.min.css'; // TODO ☣️ remove it when not needed anymore
-
-let translationsMerged = _.merge(translations, translationsClient);
-
-// console.error(translationsMerged)
 
 Vue.use(Vuetify);
 Vue.use(VueI18n);
@@ -29,8 +23,7 @@ Vue.use(VueFormWizard); // TODO ☣️ remove it when not needed anymore
 
 
 const i18n = new VueI18n({
-  locale: 'fr', // set locale
-  translationsMerged, // set locale messages
+  locale: 'fr' // set locale
 });
 
 const vuetify = new Vuetify({
