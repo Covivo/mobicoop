@@ -63,7 +63,7 @@
       </trans-unit>
       <trans-unit id="ZySoXq7" resname="Avis de re-initialisation de mot de passe">
         <source>Avis de re-initialisation de mot de passe</source>
-        <target>__Avis de re-initialisation de mot de passe</target>
+        <target>You have requested to modify your password</target>
       </trans-unit>
       <trans-unit id="YQIE.M5" resname="Une nouvelle annonce de covoiturage correspondant à votre trajet">
         <source>Une nouvelle annonce de covoiturage correspondant à votre trajet</source>
@@ -238,6 +238,58 @@
       <trans-unit id="2.lX2F3" resname="pour gérer vos alertes email.">
         <source>pour gérer vos alertes email.</source>
         <target>To manage your email</target>
+      </trans-unit>
+      <trans-unit id="i5cUDhL" resname="Votre mot de passe">
+        <source>Votre mot de passe</source>
+        <target>Your password</target>
+      </trans-unit>
+      <trans-unit id="_LNoPfp" resname="a bien été changé.">
+        <source>a bien été changé.</source>
+        <target>has recently been changed.</target>
+      </trans-unit>
+      <trans-unit id="2P.uC_d" resname="Merci d’utiliser">
+        <source>Merci d’utiliser</source>
+        <target>__Thanks to use our service</target>
+      </trans-unit>
+      <trans-unit id="k0jL0C8" resname="Vous avez demandé un nouveau mot de passe.">
+        <source>Vous avez demandé un nouveau mot de passe.</source>
+        <target>You have recently asked a password update.</target>
+      </trans-unit>
+      <trans-unit id="G6JhVP7" resname="Veuillez cliquer sur ce lien pour changer votre mot de passe :">
+        <source>Veuillez cliquer sur ce lien pour changer votre mot de passe :</source>
+        <target>Please, click here to change your password :</target>
+      </trans-unit>
+      <trans-unit id="xsmmB10" resname="Merci!">
+        <source>Merci!</source>
+        <target>Thank you!</target>
+      </trans-unit>
+      <trans-unit id="FcA_2B2" resname="Votre inscription au service">
+        <source>Votre inscription au service</source>
+        <target>Your subscription</target>
+      </trans-unit>
+      <trans-unit id="IiI5JvN" resname="est bien prise en compte">
+        <source>est bien prise en compte</source>
+        <target>have been fufilled</target>
+      </trans-unit>
+      <trans-unit id="mUk6OLQ" resname="Veuillez cliquer sur ce lien pour confirmer votre email">
+        <source>Veuillez cliquer sur ce lien pour confirmer votre email</source>
+        <target>Please click here to confirm your email.</target>
+      </trans-unit>
+      <trans-unit id="rO24ftf" resname="Ou utilisez le code de validation directement sur le site">
+        <source>Ou utilisez le code de validation directement sur le site</source>
+        <target>Or use directly the website validation code</target>
+      </trans-unit>
+      <trans-unit id="m0rEmRr" resname="Vous avez un message">
+        <source>Vous avez un message</source>
+        <target>You have received a message</target>
+      </trans-unit>
+      <trans-unit id="kXLo7sm" resname="Bonjour">
+        <source>Bonjour</source>
+        <target>Dear</target>
+      </trans-unit>
+      <trans-unit id="rlCQX_N" resname="A très bientôt sur">
+        <source>A très bientôt sur</source>
+        <target>See you next on</target>
       </trans-unit>
     </body>
   </file>
