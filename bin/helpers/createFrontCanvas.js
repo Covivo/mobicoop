@@ -110,6 +110,7 @@ async function createCanvas() {
   let themes = path.resolve(pathToMobicoopBundle, './Resources/themes');
   let translationsComponents = path.resolve(translationsPath, './components');
   let gitignore = path.resolve(__dirname, 'client-canvas/.gitignore');
+  let gitexclude = path.resolve(__dirname, 'client-canvas/.gitlab-exclude');
   let dcbl = path.resolve(__dirname, 'client-canvas/docker-compose-builder-linux.yml');
   let dcbd = path.resolve(__dirname, 'client-canvas/docker-compose-builder-darwin.yml');
   let dcl = path.resolve(__dirname, 'client-canvas/docker-compose-linux.yml');
@@ -131,6 +132,7 @@ async function createCanvas() {
   [err, success] = await to(fs.copy(makefile, `${destinationProject}/makefile`));
   [err, success] = await to(fs.copy(readme, `${destinationProject}/Readme.md`));
   [err, success] = await to(fs.copy(gitignore, `${destinationProject}/.gitignore`));
+  [err, success] = await to(fs.copy(gitexclude, `${destinationProject}/.gitlab-exclude`));
   [err, success] = await to(fs.copy(entryBuilder, `${destinationProject}/entrypoint-builder.sh`));
   [err, success] = await to(fs.copy(entry, `${destinationProject}/entrypoint.sh`));
   [err, success] = await to(fs.copy(bundles, `${destinationProject}/templates/bundles`));
