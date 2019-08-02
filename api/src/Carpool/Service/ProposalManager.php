@@ -24,6 +24,7 @@
 namespace App\Carpool\Service;
 
 use App\Carpool\Entity\Proposal;
+use App\Carpool\Event\AskPostedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Criteria;
 use App\Geography\Entity\Address;
@@ -168,7 +169,10 @@ class ProposalManager
 
         $end = new \DateTime("UTC");
         $this->logger->info('Proposal creation | Total duration ' . ($end->diff($date))->format("%s.%f seconds"));
-
+ 
+				// dispatch en event
+				$event = new AskPostedEvent($proposal);
+				$this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
         return $proposal;
     }
 
