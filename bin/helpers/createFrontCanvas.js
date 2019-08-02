@@ -114,7 +114,7 @@ async function createCanvas() {
   let dcbd = path.resolve(__dirname, 'client-canvas/docker-compose-builder-darwin.yml');
   let dcl = path.resolve(__dirname, 'client-canvas/docker-compose-linux.yml');
   let dcd = path.resolve(__dirname, 'client-canvas/docker-compose-darwin.yml');
-  let gitlabci = path.resolve(__dirname, 'client-canvas/.gitlab-ci');
+  let gitlabci = path.resolve(__dirname, 'client-canvas/.gitlab-ci.yml');
   let packagejson = path.resolve(__dirname, 'client-canvas/package.json');
   let makefile = path.resolve(__dirname, 'client-canvas/makefile');
   let readme = path.resolve(__dirname, 'client-canvas/Readme.md');
@@ -127,7 +127,7 @@ async function createCanvas() {
   [err, success] = await to(fs.copy(dcd, `${destinationProject}/docker-compose-darwin.yml`));
   [err, success] = await to(fs.copy(dcl, `${destinationProject}/docker-compose-linux.yml`));
   [err, success] = await to(fs.copy(packagejson, `${destinationProject}/package.json`));
-  [err, success] = await to(fs.copy(gitlabci, `${destinationProject}/.gitlab-ci`));
+  [err, success] = await to(fs.copy(gitlabci, `${destinationProject}/.gitlab-ci.yml`));
   [err, success] = await to(fs.copy(makefile, `${destinationProject}/makefile`));
   [err, success] = await to(fs.copy(readme, `${destinationProject}/Readme.md`));
   [err, success] = await to(fs.copy(gitignore, `${destinationProject}/.gitignore`));
