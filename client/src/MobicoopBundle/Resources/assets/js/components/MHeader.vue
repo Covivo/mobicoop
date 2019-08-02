@@ -1,6 +1,9 @@
 <template>
   <div>
-    <v-toolbar flat>
+    <v-toolbar
+      flat
+      color="primary"
+    >
       <v-toolbar-title>
         <a href="/"><v-img
           class="logo"
