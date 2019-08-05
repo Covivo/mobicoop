@@ -32,6 +32,7 @@ final class Version20190708104300 extends AbstractMigration
         $this->addSql('INSERT INTO `action` (`id`, `name`, `uname`) VALUES (8, \'carpool_matching_new\', \'New carpool matchings\');');
         $this->addSql('INSERT INTO `action` (`id`, `name`, `uname`) VALUES (9, \'carpool_ad_renewal\', \'Ad renewal\');');
         $this->addSql('INSERT INTO `action` (`id`, `name`, `uname`) VALUES (10, \'user_updated_self\', \'User updated its profile\');');
+        $this->addSql('INSERT INTO `action` (`id`, `name`, `uname`) VALUES (11, \'carpool_proposal_posted\', \'User Publish a proposal\');');
 
         // insert notifications
         $this->addSql('INSERT INTO `notification` (`id`, `action_id`, `medium_id`, `template`, `active`, `active_default`) VALUES (1, 1, 2, null, 1, 1);');
@@ -55,6 +56,7 @@ final class Version20190708104300 extends AbstractMigration
         $this->addSql('INSERT INTO `notification` (`id`, `action_id`, `medium_id`, `template`, `active`, `active_default`) VALUES (19, 9, 2, null, 1, 1);');
         $this->addSql('INSERT INTO `notification` (`id`, `action_id`, `medium_id`, `template`, `active`, `active_default`) VALUES (20, 9, 3, null, 1, 1);');
         $this->addSql('INSERT INTO `notification` (`id`, `action_id`, `medium_id`, `template`, `active`, `active_default`) VALUES (21, 10, 1, null, 1, 1);');
+        $this->addSql('INSERT INTO `notification` (`id`, `action_id`, `medium_id`, `template`, `active`, `active_default`) VALUES (22, 11, 2, null, 1, 1);');
     }
 
     public function down(Schema $schema) : void

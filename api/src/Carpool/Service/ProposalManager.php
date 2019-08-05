@@ -25,6 +25,7 @@ namespace App\Carpool\Service;
 
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Event\AskPostedEvent;
+use App\Carpool\Event\ProposalPostedEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Criteria;
 use App\Geography\Entity\Address;
@@ -38,6 +39,7 @@ use App\DataProvider\Entity\GeoRouterProvider;
 use Psr\Log\LoggerInterface;
 use App\Geography\Service\TerritoryManager;
 use App\User\Repository\UserRepository;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Proposal manager service.
@@ -55,8 +57,9 @@ class ProposalManager
     private $territoryManager;
     private $userRepository;
     private $logger;
-
-    /**
+    private $eventDispatcher;
+ 
+ /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
@@ -66,7 +69,7 @@ class ProposalManager
      * @param GeoRouter $geoRouter
      * @param ZoneManager $zoneManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, LoggerInterface $logger, UserRepository $userRepository)
+    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, LoggerInterface $logger, UserRepository $userRepository,  EventDispatcherInterface $dispatcher)
     {
         $this->entityManager = $entityManager;
         $this->proposalMatcher = $proposalMatcher;
@@ -77,6 +80,7 @@ class ProposalManager
         $this->territoryManager = $territoryManager;
         $this->logger = $logger;
         $this->userRepository = $userRepository;
+        $this->eventDispatcher= $dispatcher;
     }
     
     /**
@@ -171,8 +175,8 @@ class ProposalManager
         $this->logger->info('Proposal creation | Total duration ' . ($end->diff($date))->format("%s.%f seconds"));
  
 				// dispatch en event
-				$event = new AskPostedEvent($proposal);
-				$this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
+				$event = new ProposalPostedEvent($proposal);
+				$this->eventDispatcher->dispatch(ProposalPostedEvent::NAME, $event);
         return $proposal;
     }
 

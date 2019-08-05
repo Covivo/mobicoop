@@ -23,6 +23,7 @@
 
 namespace App\Communication\EventSubscriber;
 
+use App\Carpool\Event\ProposalPostedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Communication\Service\NotificationManager;
 use App\Carpool\Event\AskPostedEvent;
@@ -51,7 +52,8 @@ class CarpoolSubscriber implements EventSubscriberInterface
             AskAcceptedEvent::NAME => 'onAskAccepted',
             AskRefusedEvent::NAME => 'onAskRefused',
             MatchingNewEvent::NAME => 'onNewMatching',
-            AdRenewalEvent::NAME => 'onAdRenewal'
+            AdRenewalEvent::NAME => 'onAdRenewal',
+				    ProposalPostedEvent::NAME => 'onProposalPosted'
         ];
     }
 
@@ -128,6 +130,16 @@ class CarpoolSubscriber implements EventSubscriberInterface
             $this->notificationManager->notifies(MatchingNewEvent::NAME, $event->getMatching()->getProposalRequest()->getUser());
         }
     }
+ 
+ /**
+	* Execute when proposal is posted.
+	*
+	* @param ProposalPostedEvent $event
+	*/
+		public function onProposalPosted(ProposalPostedEvent $event)
+		{
+			$this->notificationManager->notifies(ProposalPostedEvent::NAME, $event->getProposal()->getUser(), $event->getProposal());
+		}
 
     /**
      * Executed when an ad needs to be renewed
