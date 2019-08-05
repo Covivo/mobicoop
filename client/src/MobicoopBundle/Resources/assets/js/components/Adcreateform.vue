@@ -109,7 +109,7 @@
                   <span>Aller-retour</span>
                 </b-radio-button>
               </b-field>
-              <geocomplete
+              <GeoComplete
                 name="origin"
                 placeholder="Depuis"
                 :url="geoSearchUrl"
@@ -121,7 +121,7 @@
                 :icon="form.type === 2 ? 'arrows-alt-v' : 'long-arrow-alt-down'"
                 size="is-large"
               />
-              <geocomplete
+              <GeoComplete
                 placeholder="Vers"
                 :url="geoSearchUrl"
                 name="destination"
@@ -430,12 +430,12 @@
 <script>
 import axios from "axios";
 import moment from 'moment'
-import Geocomplete from "./Geocomplete";
+import GeoComplete from "./GeoComplete";
 import BSelect from "buefy/src/components/select/Select";
 export default {
   components: {
     BSelect,
-    Geocomplete
+    GeoComplete
   },
   props: {
     sentFrequency: {

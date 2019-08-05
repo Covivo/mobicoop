@@ -81,7 +81,7 @@ class EmailManager
             ->setReplyTo($replyToEmail)
             ->setBody(
                 $this->templating->render(
-                    $this->templatePath.$template,
+                    $this->templatePath.$template.'.html.twig',
                     array(
                         'context' => $context,
                         'message' => str_replace(array("\r\n", "\r", "\n"), "<br />", $mail->getMessage()),

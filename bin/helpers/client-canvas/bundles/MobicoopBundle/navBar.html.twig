@@ -1,0 +1,49 @@
+<nav aria-label="main navigation" class="navbar common-nav" role="navigation">
+    <div class="navbar-brand">
+        <a href="/" tabindex="0">
+            <img alt="Logo $$NAME$$" class="navLogo " src="https://picsum.photos/id/237/200/100"/>
+        </a>
+        <a aria-expanded="false" aria-label="menu" class="navbar-burger" data-target="navMenu" role="button">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+    <div class="navbar-menu" id="navMenu">
+        <div class="navbar-start">
+            <div class="navbar-item">
+                <div class="buttons">
+                    <a class="skip button" href="#main">Aller au contenu</a>
+                </div>
+
+            </div>
+        </div>
+        <div class="navbar-end">
+            <div class="navbar-item buttons">
+                <div class="buttons">
+                    {% if not is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                        <a href="{{ path('user_sign_up') }}" class="button is-primary">
+                            {% trans from 'ui' %}menu.signup{% endtrans %}
+                        </a>
+                        <a href="{{ path('user_login') }}" class="button is-primary">
+                            {% trans from 'ui' %}menu.login{% endtrans %}
+                        </a>
+                    {% else %}
+                        <a href="{{ path('user_messages') }}" class="button is-primary">
+                            {% trans from 'ui' %}menu.messages{% endtrans %}
+                        </a>
+                        <a href="{{ path('user_profile_update') }}" class="button is-primary">
+                            {% trans from 'ui' %}menu.profile{% endtrans %}
+                        </a>
+                        <a href="{{ path('logout') }}" class="button is-primary">
+                            {% trans from 'ui' %}menu.logout{% endtrans %}
+                        </a>
+                    {% endif %}
+                    <a href="{{ path('carpool_ad') }}" class="button is-success">
+                        {% trans from 'ui' %}menu.ad_create{% endtrans %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

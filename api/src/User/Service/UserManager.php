@@ -24,6 +24,9 @@
 namespace App\User\Service;
 
 use App\User\Entity\User;
+use App\User\Event\UserPasswordChangeAskedEvent;
+use App\User\Event\UserPasswordChangedEvent;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Right\Repository\RoleRepository;
@@ -33,6 +36,9 @@ use App\Community\Repository\CommunityRepository;
 use App\Community\Entity\CommunityUser;
 use App\User\Event\UserRegisteredEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use App\Communication\Repository\MessageRepository;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use App\User\Event\UserUpdatedSelfEvent;
 
 /**
  * User manager service.
@@ -44,22 +50,26 @@ class UserManager
     private $entityManager;
     private $roleRepository;
     private $communityRepository;
+    private $messageRepository;
     private $logger;
     private $eventDispatcher;
-
+    private $encoder;
+ 
     /**
-     * Constructor.
-     *
-     * @param EntityManagerInterface $entityManager
-     * @param LoggerInterface $logger
-     */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository)
+        * Constructor.
+        *
+        * @param EntityManagerInterface $entityManager
+        * @param LoggerInterface $logger
+        */
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->roleRepository = $roleRepository;
         $this->communityRepository = $communityRepository;
+        $this->messageRepository = $messageRepository;
         $this->eventDispatcher = $dispatcher;
+        $this->encoder = $encoder;
     }
     
     /**
@@ -75,12 +85,40 @@ class UserManager
         $userRole = new UserRole();
         $userRole->setRole($role);
         $user->addUserRole($userRole);
+        // creation of the geotoken
+        $datetime = new DateTime();
+        $time = $datetime->getTimestamp();
+        $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+        $user->setGeoToken($geoToken);
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
         // dispatch en event
         $event = new UserRegisteredEvent($user);
         $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
+        // return the user
+        return $user;
+    }
+ 
+    /**
+     * Update a user.
+     *
+     * @param User $user    The user to register
+     * @return User         The user created
+     */
+    public function updateUser(User $user)
+    {
+        // update of the geotoken
+        $datetime = new DateTime();
+        $time = $datetime->getTimestamp();
+        $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+        $user->setGeoToken($geoToken);
+        // persist the user
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        // dispatch en event
+        $event = new UserUpdatedSelfEvent($user);
+        $this->eventDispatcher->dispatch(UserUpdatedSelfEvent::NAME, $event);
         // return the user
         return $user;
     }
@@ -100,5 +138,60 @@ class UserManager
             return $communities;
         }
         return [];
+    }
+
+    public function getThreads(User $user): array
+    {
+        if ($threads = $this->messageRepository->findThreads($user)) {
+            return $threads;
+        }
+        return [];
+    }
+ 
+    /**
+       * Gere la demande de modification du mot de passe.
+       *
+       * @param User $user
+       * @return User
+       */
+    public function updateUserPasswordRequest(User $user)
+    {
+        $datetime = new DateTime();
+        $time= $datetime->getTimestamp();
+        $pwdToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+        // encoding of the password
+        $user->setPwdToken($pwdToken);
+        $user->setPupdtime($datetime);
+        // update of the geotoken
+        $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+        $user->setGeoToken($geoToken);
+        // persist the user
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        // dispatch en event
+        $event = new UserPasswordChangeAskedEvent($user);
+        $this->eventDispatcher->dispatch(UserPasswordChangeAskedEvent::NAME, $event);
+        // return the user
+        return $user;
+    }
+ 
+    /**
+       * Gere la confirmation de demande de modification du mot de passe.
+       *
+       * @param User $user
+       * @return User
+       */
+    public function updateUserPasswordConfirm(User $user)
+    {
+        $user->setPwdToken(null);
+        $user->setPupdtime(null);
+        // persist the user
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+        // dispatch en event
+        $event = new UserPasswordChangedEvent($user);
+        $this->eventDispatcher->dispatch(UserPasswordChangedEvent::NAME, $event);
+        // return the user
+        return $user;
     }
 }

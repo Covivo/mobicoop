@@ -31,6 +31,17 @@ services:
     # command: cat /var/www/api/.env
     entrypoint: bash entrypoint.sh 
 
+  db-diff:
+    extends:
+      service: base
+    working_dir: /var/www/api
+    command: php bin/console doctrine:migrations:diff -n -v
+  db-migrate:
+    extends:
+      service: base
+    working_dir: /var/www/api
+    command: php bin/console doctrine:migrations:migrate -n -v
+
 networks:
   mobicoop_platform:
     name: mobicoop_platform

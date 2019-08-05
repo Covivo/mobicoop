@@ -23,6 +23,7 @@
 
 namespace App\User\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\PersistentCollection;
@@ -51,8 +52,12 @@ use App\Communication\Entity\Recipient;
 use App\User\Controller\UserRegistration;
 use App\User\Controller\UserPermissions;
 use App\User\Controller\UserLogin;
+use App\User\Controller\UserThreads;
+use App\User\Controller\UserUpdatePassword;
+use App\User\Controller\UserUpdate;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\LoginFilter;
+use App\User\Filter\PwdTokenFilter;
 use App\Communication\Entity\Notified;
 
 /**
@@ -84,6 +89,18 @@ use App\Communication\Entity\Notified;
  *          "get"={
  *              "normalization_context"={"groups"={"read"}},
  *          },
+ *         "password_update"={
+ *              "method"="PUT",
+ *              "path"="/users/{id}/password_update",
+ *              "controller"=UserUpdatePassword::class,
+ *              "defaults"={"name"="reply"}
+ *          },
+ *        "password_update_request"={
+ *              "method"="PUT",
+ *              "path"="/users/{id}/password_update_request",
+ *              "controller"=UserUpdatePassword::class,
+ *              "defaults"={"name"="request"}
+ *          },
  *          "permissions"={
  *              "method"="GET",
  *              "normalization_context"={"groups"={"permissions"}},
@@ -101,7 +118,17 @@ use App\Communication\Entity\Notified;
  *                   }
  *              }
  *          },
- *          "put",
+ *          "threads"={
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"threads"}},
+ *              "controller"=UserThreads::class,
+ *              "path"="/users/{id}/threads"
+ *          },
+ *          "put"={
+ *              "method"="PUT",
+ *              "path"="/users/{id}",
+ *              "controller"=UserUpdate::class,
+ *          },
  *          "delete"
  *      }
  * )
@@ -109,6 +136,7 @@ use App\Communication\Entity\Notified;
  * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial"})
  * @ApiFilter(HomeAddressTerritoryFilter::class, properties={"homeAddressTerritory"})
  * @ApiFilter(LoginFilter::class, properties={"login"})
+ * @ApiFilter(PwdTokenFilter::class, properties={"pwdToken"})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate", "createdDate"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
@@ -136,7 +164,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"read", "threads", "thread"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -154,7 +182,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write", "threads", "thread"})
      */
     private $givenName;
 
@@ -162,7 +190,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The family name of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write", "threads", "thread"})
      */
     private $familyName;
 
@@ -258,6 +286,8 @@ class User implements UserInterface, EquatableInterface
      * @var ArrayCollection|null A user may have many addresses.
      *
      * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Address", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @MaxDepth(1)
+     * @ApiSubresource
      * @Groups({"read","write"})
      */
     private $addresses;
@@ -325,6 +355,8 @@ class User implements UserInterface, EquatableInterface
      * @var ArrayCollection|null The messages sent by the user.
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Message", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @MaxDepth(1)
+     * @ApiSubresource
      */
     private $messages;
 
@@ -332,6 +364,8 @@ class User implements UserInterface, EquatableInterface
      * @var ArrayCollection|null The messages received by the user.
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Recipient", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @MaxDepth(1)
+     * @ApiSubresource
      */
     private $recipients;
 
@@ -351,10 +385,34 @@ class User implements UserInterface, EquatableInterface
     private $createdDate;
 
     /**
-     * @var array|null The permissions granted
-     * @Groups("permissions")
+     * @var DateTime|null  Date of password mofification.
+     *
+     * @ORM\Column(type="datetime", length=100, nullable=true)
+     * @Groups({"read","write"})
      */
-    private $permissions;
+    private $pupdtime;
+
+    /**
+     * @var string|null Token for password modification..
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $pwdToken;
+
+    /**
+     * @var string|null Token for geographical search authorization.
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $geoToken;
+
+    /**
+     * @var array|null The threads of the user
+     * @Groups("threads")
+     */
+    private $threads;
 
     public function __construct($status = null)
     {
@@ -374,6 +432,12 @@ class User implements UserInterface, EquatableInterface
         }
         $this->setStatus($status);
     }
+
+    /**
+     * @var array|null The permissions granted
+     * @Groups("permissions")
+     */
+    private $permissions;
 
     public function getId(): ?int
     {
@@ -856,6 +920,39 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getPupdtime()
+    {
+        return $this->pupdtime;
+    }
+
+    public function setPupdtime(?DateTime $pupdtime): self
+    {
+        $this->pupdtime = $pupdtime;
+        return $this;
+    }
+
+    public function getPwdToken()
+    {
+        return $this->pwdToken;
+    }
+
+    public function setPwdToken(?string $pwdToken): self
+    {
+        $this->pwdToken = $pwdToken;
+        return $this;
+    }
+
+    public function getGeoToken()
+    {
+        return $this->geoToken;
+    }
+
+    public function setGeoToken(?string $geoToken): self
+    {
+        $this->geoToken = $geoToken;
+        return $this;
+    }
+
     public function getRoles()
     {
         // we return an array of ROLE_***
@@ -909,6 +1006,18 @@ class User implements UserInterface, EquatableInterface
     public function setPermissions(array $permissions): self
     {
         $this->permissions = $permissions;
+
+        return $this;
+    }
+
+    public function getThreads(): ?array
+    {
+        return $this->threads;
+    }
+
+    public function setThreads(array $threads): self
+    {
+        $this->threads = $threads;
 
         return $this;
     }

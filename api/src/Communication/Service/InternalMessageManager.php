@@ -33,6 +33,7 @@ use App\User\Entity\User;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Event\InternalMessageReceivedEvent;
 use App\Communication\Entity\MessagerInterface;
+use App\Communication\Repository\MessageRepository;
 
 /**
  * Internal message manager
@@ -43,15 +44,17 @@ class InternalMessageManager
 {
     private $entityManager;
     private $mediumRepository;
+    private $messageRepository;
     private $eventDispatcher;
     private $logger;
 
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, MediumRepository $mediumRepository, LoggerInterface $logger)
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, MediumRepository $mediumRepository, LoggerInterface $logger, MessageRepository $messageRepository)
     {
         $this->entityManager = $entityManager;
         $this->mediumRepository = $mediumRepository;
         $this->logger = $logger;
         $this->eventDispatcher = $eventDispatcher;
+        $this->messageRepository = $messageRepository;
     }
 
     /**

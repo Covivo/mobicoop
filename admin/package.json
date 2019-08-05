@@ -16,7 +16,7 @@
     "react-scripts": "^2.1.1"
   },
   "scripts": {
-    "start": "cross-env PORT=8082 FORCE_COLOR=true BROWSER=none NODE_ENV=dev node runstart.js",
+    "start": "PORT=8082 FORCE_COLOR=true BROWSER=none NODE_ENV=dev react-scripts start | cat",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"

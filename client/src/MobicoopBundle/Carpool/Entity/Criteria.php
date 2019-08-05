@@ -273,6 +273,7 @@ class Criteria
     
     /**
      * @var boolean The user accepts any route as a passenger from its origin to the destination.
+     * @Groups({"post","put"})
      */
     private $anyRouteAsPassenger;
     
@@ -698,7 +699,7 @@ class Criteria
         return $this->maxDeviationDistance;
     }
     
-    public function getAnyRouteAsPassenger(): bool
+    public function getAnyRouteAsPassenger(): ?bool
     {
         return $this->anyRouteAsPassenger;
     }

@@ -1,5 +1,7 @@
 twig:
-    paths: ['%kernel.project_dir%/templates']
+    paths: 
+        '%kernel.project_dir%/templates': Mobicoop
+        '%kernel.project_dir%/src/MobicoopBundle/Resources/views': Bundle 
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
     cache: false
@@ -8,3 +10,6 @@ twig:
     - '@Mobicoop/form/mobicoop.html.twig'
     globals:
         delete_profile: '%env(DELETE_PROFILE)%'
+        app_name: '%env(APP_NAME)%'
+        assets_prefix: '%env(ASSETS_PREFIX)%'
+        geoCompleteUri: '%env(GEOCOMPLETE_URI)%'

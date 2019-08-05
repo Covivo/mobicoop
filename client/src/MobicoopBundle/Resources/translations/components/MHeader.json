@@ -1,0 +1,58 @@
+{
+    "fr": {
+        "buttons": {
+            "signup": {
+                "label": "Inscription",
+                "route": "/utilisateur/inscription"
+            },
+            "logIn": {
+                "label": "Connexion",
+                "route": "/utilisateur/connexion"
+            },
+            "shareAnAd": {
+                "label": "Publier une annonce",
+                "route": "/covoiturage/annonce/poster"
+            },
+            "messages": {
+                "label": "Messages",
+                "route": "/utilisateur/messages"
+            },
+            "myProfile": {
+                "label": "Mon profil",
+                "route": "/utilisateur/profil/modifier"
+            },
+            "logOut": {
+                "label": "Déconnexion",
+                "route": "/user/logout"
+            }
+        }
+    },
+    "en": {
+        "buttons": {
+            "signup": {
+                "label": "Sign up",
+                "route": "/user/signup"
+            },
+            "logIn": {
+                "label": "Login",
+                "route": "/user/login"
+            },
+            "shareAnAd": {
+                "label": "Share an ad",
+                "route": "/carpool/ad/share"
+            },
+            "messages": {
+                "label": "Messages",
+                "route": "/user/messages"
+            },
+            "myProfile": {
+                "label": "My profile",
+                "route": "/user/profile/update"
+            },
+            "logOut": {
+                "label": "Logout",
+                "route": "/user/logout"
+            }
+        }
+    }
+}

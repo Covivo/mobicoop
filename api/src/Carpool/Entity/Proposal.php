@@ -137,7 +137,7 @@ class Proposal
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"read","threads","thread"})
      */
     private $id;
 
@@ -146,14 +146,14 @@ class Proposal
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads","thread"})
      */
     private $type;
     
     /**
      * @var string A comment about the proposal.
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads","thread"})
      */
     private $comment;
 
@@ -161,7 +161,7 @@ class Proposal
      * @var \DateTimeInterface Creation date of the proposal.
      *
      * @ORM\Column(type="datetime")
-     * @Groups("read")
+     * @Groups({"read","threads","thread"})
      */
     private $createdDate;
 
@@ -235,7 +235,7 @@ class Proposal
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="proposal", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","thread"})
      */
     private $criteria;
     

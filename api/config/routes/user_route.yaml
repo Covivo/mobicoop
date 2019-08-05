@@ -1,0 +1,6 @@
+user_password_reset:
+  path:
+    fr: /utilisateur/mot-de-passe/reset/{token}
+    en: /user/password/reset/{token}
+  requirements:
+    token: .*

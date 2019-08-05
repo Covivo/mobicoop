@@ -1,27 +1,34 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Welcome!{% endblock %}</title>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
-          integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-    {{ encore_entry_link_tags('app') }}
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    {% block stylesheets %}{% endblock %}
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            {% block title %}Welcome!
+            {% endblock %}
+        </title>
+        {{ encore_entry_link_tags("#{assets_prefix ?? ''}app") }}
 
-{% block navBar %}{% include "@Mobicoop/navBar.html.twig" %}{% endblock %}
-<main role="main" id="main">
-    <div id="app">
-        {% block body %}
-        {% endblock %}
-    </div>
-</main>
+        <meta content="width=device-width, initial-scale=1" name="viewport"> {% block stylesheets %}{% endblock %}
+        </head>
+        <body>
 
-{% block footer %}{% include "@Mobicoop/footer.html.twig" %}{% endblock %}
-</body>
+            <div id="app">
+                <v-app>
+                    {% if app.user %}
+                        <m-header :user={{app.user|json_encode()}}></m-header>
+                    {% else %}
+                        <m-header></m-header>
+                    {% endif %}
+                    <main id="main" role="main">
+                        <div>
+                            {% block main %}{% endblock %}
+                        </div>
+                    </main>
+                    <m-footer></m-footer>
+                </v-app>
+            </div>
+        </body>
 
-{{ encore_entry_script_tags('app') }}
-{% block javascripts %}{% endblock %}
-</html>
+        {{ encore_entry_script_tags("#{assets_prefix ?? ''}app") }}
+        {% block javascripts %}{% endblock %}
+    </html>

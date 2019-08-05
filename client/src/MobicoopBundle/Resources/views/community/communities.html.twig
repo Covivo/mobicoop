@@ -1,11 +1,13 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
-{% block title %}Les Communautés{% endblock %}
-{% block stylesheets %}
-    {{ encore_entry_link_tags('bundle_community/communities') }}
+{% block title %}Les Communautés
 {% endblock %}
-{% block body %}
-   <section class="hero firstSection">
+{% block stylesheets %}
+    {{ encore_entry_link_tags("#{assets_prefix ?? ''}community/communities") }}
+
+{% endblock %}
+{% block main %}
+    <section class="hero firstSection">
         <div class="hero-body">
             <div class="container">
                 <h1 class="title">
@@ -16,37 +18,30 @@
     </section>
     <section class="hero">
         <div class="hero-body">
-            <div class="container">
-                <h2 class="is-size-3">
-                    Qu'est-ce qu'une communauté?
-                </h2>
-                <p>Une communauté est un regroupement d’inscrits ayant un intérêt en commun. Elle permet par exemple d’identifier les salariés d’une entreprise, d’une zone d’activités, les personnes fréquentant une salle de spectacle ou encore les habitants d’une commune, pour faciliter les mises en relation des covoitureurs.
-                </p>
-            </div>
-            </br>
+            {{ include("@Mobicoop/community/_comExplanation.html.twig") }}
+
+
+            <br>
             <div class="container">
                 <h2 class="is-size-3">
                     Une communauté, pour quoi faire?
                 </h2>
                 <p>La création d’une communauté permet :
                 </p>
-                </br>
+                <br>
                 <ul>
                     <li>- à ses membres de se voir mutuellement et d’échanger entre eux</li>
-                    <li>- de faciliter la mise en relation des covoitureurs en augmentant la confiance entre membres</li>   
+                    <li>- de faciliter la mise en relation des covoitureurs en augmentant la confiance entre membres</li>
                     <li>- de disposer d’un widget personnalisé à installer par exemple sur un intranet</li>
-                    <li>- de disposer, pour le créateur de la communauté, de statistiques sur les inscrits et les covoitureurs de sa communauté</li>            
+                    <li>- de disposer, pour le créateur de la communauté, de statistiques sur les inscrits et les covoitureurs de sa communauté</li>
                 </ul>
             </div>
-            </br>
+            <br>
             <div class="container">
                 <h2 class="is-size-3">
                     Qui peut créer une communauté?
                 </h2>
-                <p>Toute personne qui le souhaite peut créer une communauté dans OuestGo à condition qu’elle soit inscrite sur le site et ait envie d’animer et de dynamiser le covoiturage à son niveau.
-Créer une communauté se fait en quelques clics sur ouestgo.fr. Cela vous permettra d’accéder au front office librement.
-Si vous souhaitez aller plus loin dans l’animation et accéder au back office, contactez xxxxx@megalis.xxx.
-L’ensemble des fonctionnalités d’une communauté est accessible gratuitement.
+                <p>Toute personne qui le souhaite peut créer une communauté dans OuestGo à condition qu’elle soit inscrite sur le site et ait envie d’animer et de dynamiser le covoiturage à son niveau. Créer une communauté se fait en quelques clics sur ouestgo.fr. Cela vous permettra d’accéder au front office librement. Si vous souhaitez aller plus loin dans l’animation et accéder au back office, contactez xxxxx@megalis.xxx. L’ensemble des fonctionnalités d’une communauté est accessible gratuitement.
                 </p>
             </div>
         </div>
@@ -56,53 +51,53 @@ L’ensemble des fonctionnalités d’une communauté est accessible gratuitemen
             <div class="column">
                 <h2 class="is-size-2">
                     Communautés disponibles
-                </h2> 
-            </div>        
+                </h2>
+            </div>
         </div>
         <div class="columns">
             {% if hydra and hydra.member|length>0 %}
                 {% for community in hydra.member %}
-                {% if not community.secured %}
-                <div class="card column">
-                    <div class="card-image">
-                        <figure class="image is-3by1">
-                        <img src="https://bulma.io/images/placeholders/720x240.png" alt="Placeholder image">
-                        </figure>
+                    {#                    uncomment to hide secured communities#}
+                    {#                    {% if not community.secured %}#}
+                        <div class="card column"> <div class="card-image">
+                            <figure class="image is-3by1">
+                                <img alt="Placeholder image" src="https://bulma.io/images/placeholders/720x240.png">
+                            </figure>
+                        </div>
+                        <div class="card-content">
+                            <div class="media">
+                                <div class="media-content">
+                                    <p class="title is-4">{{community.name}}</p>
+                                </div>
+                            </div>
+                            <div class="content">
+                                {{community.description}}
+                                <br>
+                                {{community.fullDescription}}
+                                <br>
+                                {#                            {{ community.isMembersHidden ? 'Membres privés' : 'Membres publics' }}#}
+                                <br>
+                                {#                            {{ community.isProposalsHidden ? 'Annonces privées' : 'Annonces publiques'}}#}
+                                <br>
+                                <a class="button" href="{{path('community_show', { 'id': community.id })}}">Voir plus</a>
+                                {% if community.isMembersHidden or community.isProposalsHidden %}
+                                    <a class="button" href="{{path('community_join', { 'id': community.id })}}">Rejoindre la communauté</a>
+                                {% else %}
+                                    <a class="button" href="{{path('carpool_ad', { 'id': community.id })}}">Déposer un trajet dans la communauté</a>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-content">
-                        <div class="media">
-                        <div class="media-content">
-                            <p class="title is-4">{{community.name}}</p>
-                        </div>
-                        </div>
-                        <div class="content">
-                            {{community.description}}     
-                        <br>
-                        {{community.fullDescription}}
-                        <br>
-                            {{ community.isMembersHidden ? 'true' : 'false' }}
-                            <br>
-                            proposal hidden {{ community.isProposalsHidden }}
-                            <br>
-                            <a class="button" href="{{path('community_show', { 'id': community.id })}}">Voir plus</a>
-                            {% if community.isMembersHidden or community.isProposalsHidden %}
-                            <a class="button" href="{{path('community_join', { 'id': community.id })}}">Rejoindre la communauté</a>
-                            {% else %}
-                            <a class="button" href="{{path('carpool_ad', { 'id': community.id })}}">Déposer un trajet dans la communauté</a>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
+                    {#uncomment to hide secured communities#}
+                    {#                    {% endif %}#}
                 {% endfor %}
             {% endif %}
         </div>
     </section>
     <section class="hero communautes has-text-centered">
-    <a class="lien is-vcentered" href="{{ path('community_create') }}">Créer une communauté</a>
+        <a class="lien is-vcentered" href="{{ path('community_create') }}">Créer une communauté</a>
     </section>
-   
 {% endblock %}
 {% block javascripts %}
-    {{ encore_entry_script_tags('bundle_community/communities') }}
+    {{ encore_entry_script_tags("#{assets_prefix ?? ''}community/communities") }}
 {% endblock %}

@@ -1,24 +1,22 @@
 'use strict';
 
-// any CSS you require will output into a single css file (app.css in this case)
-import 'babel-polyfill';
-import Vue from 'vue';
-import Buefy from 'buefy';
-import VueFormWizard from 'vue-form-wizard';
-import 'vue-form-wizard/dist/vue-form-wizard.min.css';
-import '../../css/page/home.scss';
+import { Vue, vuetify, i18n, VApp } from '@js/config/vue-config'
 
 // Vue components
-import Homesearchform from '../components/Homesearchform';
+import HomeSearch from '@js/components/HomeSearch';
+import MHeader from '@js/components/MHeader';
+import MFooter from '@js/components/MFooter';
 
-Vue.use(Buefy,{
-  defaultTooltipType: 'is-mobicoopgreen'
-});
-Vue.use(VueFormWizard);
-  
+import '@css/page/home.scss';
+
 new Vue({
-  el: '#home',
+  i18n,
+  el: '#app',
+  vuetify,
   components: {
-    Homesearchform
+    VApp,
+    HomeSearch,
+    MHeader,
+    MFooter
   }
 })

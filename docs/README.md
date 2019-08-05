@@ -33,7 +33,9 @@ If you want to use docker we  provide you a simple way to install/start everythi
 
 *Facing problems using docker with our project ? We may have answer at or [FAQ](#ℹ️Docker)*
 
-⚡️ Export env variable inside your .zshrc/.bashrc : `export SIG_GEOCODER_URI=0.0.0.0 && export SIG_GEOROUTER_URI=0.0.0.0`
+⚡️ Do not forget to duplicate the .env  into a .env.local & edit the SIG_GEOCODER & SIG_GEOROUTER  
+
+If you want to work on mobicoop we can provide you a some ip for those elements (they are used for autococomplete & road calc)
 
 
 
@@ -223,9 +225,10 @@ A developer doc is available [here](https://mobicoop.gitlab.io/mobicoop/build/do
     Mobicoop comes with a simple script to run, it will create a canvas skeleton based on mobicoop front-end & link the main bundle to it.
     Just go to the root of Mobicoop repo and do the flollowing:
 
-`mkdir -p ../path/to/newFront`
-
-`npm run create-front-canvas ../path/to/newFront`
+1. `npm run create-front-canvas $$nameOfProject$$` will create the folder next to the current
+2. Edit the webpack file into the $$nameOfProject$$ folder & comment/uncomment the needeed
+3. Read the doc inside the created folder 
+4. Every Specific file copied is in `bin/helper/client-canvas` do not forget to update thoses files when needed! (for eg add dependencies inside package.json)
 
     ☢️ *Do not forget to commit into monorepo  ( & create branch if needed) when you edit bundle files* ☣️ 
 
@@ -239,15 +242,15 @@ A developer doc is available [here](https://mobicoop.gitlab.io/mobicoop/build/do
 `npm run link-bundle ../path/to/my/already-existing-app`
 
 
-### ℹ️ How can I contribute to the mobicoop developpement ？
+### ℹ️ How can I contribute to Mobicoop Platofmr developpement ？
 
-    To contribute to Mobicoop Platform, please do the following:
+To contribute to Mobicoop Platform, please do the following:
 
-    1. Complete and sign the Contributor License Agreement ([see examples here](https://gitlab.com/mobicoop/mobicoop-platform/tree/master/docs/ContributorLicenseAgreement)) : must be part of your first commit
-    2. Create a branch by feature or fork the repo
-    3. [Start](#start) the 3 apps  (mandatory to watch js/css/sass):
-    4. Add some Unit Tests and/or functional tests and check if build passes
-    5. Create a pull request & set reviewer before merge
+1. Complete and sign the Contributor License Agreement ([see examples here](https://gitlab.com/mobicoop/mobicoop-platform/tree/master/docs/ContributorLicenseAgreement)) : must be part of your first commit
+2. Create a branch by feature or fork the repo
+3. [Start](#start) the 3 apps  (mandatory to watch js/css/sass):
+4. Add some Unit Tests and/or functional tests and check if build passes
+5. Create a pull request & set reviewer before merge
 
   We have some guidelines 📖📚
   - [JS GuideLine](https://github.com/airbnb/javascript#whitespace) 
@@ -339,17 +342,17 @@ Please use powershell with our project, in requirement you will need:
 
 ### ℹ️ Could you give me some informations about your licence ？
 
-    Mobicoop software is owned by Mobicoop cooperative. Mobicoop cooperative is opened to any individual, company or public authority who wish to become a shareholder.
-    In order to increase the impact of our platform to any sort of clients whatever type of contractual relationship they require, Mobicoop software is dual-licensed:
-    - [AGPL-3](https://www.gnu.org/licenses/agpl-3.0)
-    - proprietary software
+Mobicoop software is owned by Mobicoop cooperative. Mobicoop cooperative is opened to any individual, company or public authority who wish to become a shareholder.
+In order to increase the impact of our platform to any sort of clients whatever type of contractual relationship they require, Mobicoop software is dual-licensed:
+- [AGPL-3](https://www.gnu.org/licenses/agpl-3.0)
+- proprietary software
 
-    Since Mobicoop is dual licensed AGPLv3/proprietary, all components used for Mobicoop must be compatible with both licenses. As a consequence, all components integrated into Mobicoop source code **must be released with a _permissive_ open source license**. More information on license compatibility for [software components](https://dwheeler.com/essays/floss-license-slide.html) and [content components (Creative Commons issues)](https://opensource.stackexchange.com/questions/7750/which-creative-commons-licenses-are-permissive-enough-for-proprietary-software/7751).
+Since Mobicoop is dual licensed AGPLv3/proprietary, all components used for Mobicoop must be compatible with both licenses. As a consequence, all components integrated into Mobicoop source code **must be released with a _permissive_ open source license**. More information on license compatibility for [software components](https://dwheeler.com/essays/floss-license-slide.html) and [content components (Creative Commons issues)](https://opensource.stackexchange.com/questions/7750/which-creative-commons-licenses-are-permissive-enough-for-proprietary-software/7751).
 
-    Mobicoop CI process includes a License Management which checks the license of all components part of a merge request. The most common _permissive_ licenses have already been added to the approved licenses list of this License Management process.
-    In case you have one of the following situation while merging, please get in touch with Mobicoop project licensing issues expert before merging:
-    - one of the license pops up as non part of the approved license for the project
-    - a component is license under AGPLv3 and is not Mobicoop itself
+Mobicoop CI process includes a License Management which checks the license of all components part of a merge request. The most common _permissive_ licenses have already been added to the approved licenses list of this License Management process.
+In case you have one of the following situation while merging, please get in touch with Mobicoop project licensing issues expert before merging:
+- one of the license pops up as non part of the approved license for the project
+- a component is license under AGPLv3 and is not Mobicoop itself
 
 ### ℹ️How to contribute to Mobicoop 
 
@@ -369,6 +372,7 @@ Please use powershell with our project, in requirement you will need:
 - Start `make start`, start the api, client, admin
 - stop `make stop` , will stop all the containers
 - restart `make restart` , will restats all the containers
+- Update `make update`, stop & remove containers, pull the branch, install deps & restart containers
 - logs `make logs` , will show you the last 100 lines logs for all containers
 - status `make status` , will get info about the current container status
 - remove `make remove` , will remove the sopped containers
@@ -389,12 +393,33 @@ Please use powershell with our project, in requirement you will need:
 
 - Windows does not have a prebuild make , install one of this [two possibilities](http://stat545.com/automation02_windows.html)
 
-### ℹ️ What are the hardware requirements needed to run an instance of Mobicoop-platform ?
+### ℹ️ What are the hardware requirements needed to run an instance of Mobicoop Platform ?
 
 The instance of Mobicoop-platform itself doesn't need a tremendous server configuration : our test instance runs on a (very) small virtual machine with 2 vCores @3Ghz, 7Go of RAM and 50Go SSD !
 
 Of course you will need more hardware requirements if you think your instance will be very used; in this case 250Go SSD, 8 cores and 16Go RAM would be a good configuration, especially if you need to make mass matching.
 
 On the other hand, the platform needs information coming from a geographic information system (GIS), which can be VERY needy ! For example, the GIS we use for our platform is a dedicated server with 8 Xeon CPU @2.40Ghz, 64go RAM and 2To HD.
+
+
+### ℹ️ What screen sizes are covered by Mobicoop Platform, and how do you manage mobile devices ?
+
+To offer a similar user experience to mobile users between the mobile app and the web app, a dedicated project exists : **[Mobicoop Mobile](https://gitlab.com/mobicoop/mobicoop-mobile)** .
+Mobile devices are thus managed by a redirection to a web app instance of Mobicoop Mobile hosted with its own subdomain.
+
+The redirection depends on the screen size as follows :
+
+| Device | Vuetify code | Viewport range  | Assigned project  |
+|-----------------|------------|:---------------:|--------------|
+| Extra small | xs  | < 600px      | Mobicoop Mobile    |
+| Small | sm  | 600px > < 960px      | Mobicoop Mobile    |
+| Medium | md  | 960px > < 1264px*      | **Mobicoop Platform**    |
+| Large | lg  | 1264px > < 1904px*      | **Mobicoop Platform**    |
+| Extra large | xl  | > 1904px*     | **Mobicoop Platform**    |
+
+_NB: * -16px on Desktop (see [Vuetify Grid system](https://vuetifyjs.com/en/components/grids) for more information)_
+
+
+
 
 # 🎉Welcome to Mobicoop's contributing program !🎉

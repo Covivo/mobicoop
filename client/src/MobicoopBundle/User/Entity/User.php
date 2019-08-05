@@ -39,7 +39,7 @@ use DateTime;
 /**
  * A user.
  */
-class User implements ResourceInterface, UserInterface, EquatableInterface
+class User implements ResourceInterface, UserInterface, EquatableInterface, \JsonSerializable
 {
     const MAX_DEVIATION_TIME = 600;
     const MAX_DEVIATION_DISTANCE = 10000;
@@ -80,7 +80,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface
     /**
      * @var string|null The first name of the user.
      *
-     * @Groups({"post","put"})
+     * @Groups({"get","post","put"})
      */
     private $givenName;
     
@@ -210,7 +210,23 @@ class User implements ResourceInterface, UserInterface, EquatableInterface
      */
     private $homeAddress;
 
+    /**
+     * @var DateTime|null Date of password modification.
+     * @Groups({"post","put", "password_token"})
+     */
+    private $pupdtime;
 
+    /**
+     * @var string|null Token for password modification.
+     *  @Groups({"post","put"})
+     */
+    private $pwdToken;
+
+    /**
+     * @var string|null Token for geographic authorization.
+     *  @Groups({"post","put"})
+     */
+    private $geoToken;
 
     public function __construct($id=null, $status=null)
     {
@@ -600,10 +616,88 @@ class User implements ResourceInterface, UserInterface, EquatableInterface
     public function getHomeAddress(): ?Address
     {
         foreach ($this->addresses as $address) {
-            if ($address->getName() == self::HOME_ADDRESS_NAME) {
+            if ($address->isHome()) {
                 return $address;
             }
         }
         return null;
+    }
+
+    /**
+     * @param Address[]|null $homeAddress
+     */
+    public function setHomeAddress(?Address $homeAddress)
+    {
+        $this->homeAddress = $homeAddress;
+    }
+
+    /**
+     * Return the date of password mofification.
+     *
+     * @return DateTime
+     */
+    public function getPupdtime()
+    {
+        return $this->pupdtime;
+    }
+
+    /**
+     * Set the date of password mofification.
+     *
+     * @param DateTime|null $pupdtime
+     */
+    public function setPupdtime(?DateTime $pupdtime)
+    {
+        $this->pupdtime = $pupdtime;
+        return $this;
+    }
+
+    /**
+     * Return the Token of password mofification.
+     *
+     * @return string
+     */
+    public function getPwdToken()
+    {
+        return $this->pwdToken;
+    }
+
+    /**
+     * Set the Token of password mofification.
+     *
+     * @param string|null $token
+     */
+    public function setPwdToken(?string $pwdToken)
+    {
+        $this->pwdToken = $pwdToken;
+        return $this;
+    }
+
+    public function getGeoToken()
+    {
+        return $this->geoToken;
+    }
+
+    public function setGeoToken(?string $geoToken)
+    {
+        $this->geoToken = $geoToken;
+        return $this;
+    }
+
+    
+    // If you want more info from user you just have to add it to the jsonSerialize function
+    public function jsonSerialize()
+    {
+        return
+        [
+            'id'            => $this->getId(),
+            'givenName'     => $this->getGivenName(),
+            'familyName'    => $this->getFamilyName(),
+            'gender'        => $this->getGender(),
+            'status'        => $this->getStatus(),
+            'email'         => $this->getEmail(),
+            'telephone'     => $this->getTelephone(),
+            'geoToken'      => $this->getGeoToken()
+        ];
     }
 }

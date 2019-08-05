@@ -44,6 +44,7 @@ use App\Communication\Entity\Notified;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -73,7 +74,7 @@ class AskHistory implements MessagerInterface
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads","thread"})
      */
     private $status;
 
@@ -82,7 +83,7 @@ class AskHistory implements MessagerInterface
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads","thread"})
      */
     private $type;
 
@@ -97,13 +98,13 @@ class AskHistory implements MessagerInterface
      * @var Ask|null The linked ask.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="askHistories")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads","thread"})
      * @MaxDepth(1)
      */
     private $ask;
 
     /**
-     * @var Message The message linked the ask history item.
+     * @var Message|null The message linked the ask history item.
      *
      * @ORM\OneToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="askHistory", cascade={"persist", "remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
@@ -166,7 +167,7 @@ class AskHistory implements MessagerInterface
         return $this;
     }
 
-    public function getMessage(): Message
+    public function getMessage(): ?Message
     {
         return $this->message;
     }
