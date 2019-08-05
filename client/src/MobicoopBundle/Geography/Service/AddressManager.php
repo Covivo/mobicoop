@@ -58,13 +58,13 @@ class AddressManager
     }
 
     /**
-     * Get a user by its identifier
+     * Get an address by its identifier
      *
-     * @param String $id The address id
+     * @param int $id The address id
      *
      * @return Address|null The address found or null if not found.
      */
-    public function getAddress($id)
+    public function getAddress(int $id)
     {
         $response = $this->dataProvider->getItem($id);
         if ($response->getCode() == 200) {
@@ -78,7 +78,7 @@ class AddressManager
 
     
     /**
-     * Update a Address
+     * Update an address
      *
      * @param Address $Address The address to update
      *

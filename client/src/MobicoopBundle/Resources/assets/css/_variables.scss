@@ -1,16 +1,9 @@
-/*
-* This files should contains all common variables to be used between *.scss files
-* the _ in the name means it's a partial file dude! So it will not be generated as a _variable.css 👌
-*/
-
-@import '~bulma/sass/utilities/_all';
-
-/* mobicoop palette */
-
 $primary: #81F19A;
 $secondary: #023D7F;
 $tertiary: #F13FA8;
 $primary-dark: #005933;
+$white: #FFF;
+$black: #000;
 
 $primary-invert: findColorInvert($primary);
 $secondary-invert: findColorInvert($secondary);
@@ -39,22 +32,3 @@ $focusColor:  #F8D613;
     outline: 3px solid $color;
   }
 }
-
-$partners: (
-  mobicoop: (
-    base: rgba(217, 0, 0, 0.5),
-    url: 'www.roulezmalin.com'
-  ),
-  ouestgo: (
-    base: rgba(54, 81, 255, 0.5),
-    url: 'test.ouestgo.fr'
-  ),
-  itinisere: (
-    base: rgba(102, 255, 76, 0.5),
-    url: 'www.tedicov.fr'
-  ),
-  tictactrip: (
-    base: rgba(255, 223, 211, 1),
-    url: 'covoiturage-libre.fr'
-  )
-);

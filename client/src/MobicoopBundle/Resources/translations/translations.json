@@ -1,90 +1,116 @@
 {
     "fr": {
-        "ui": {
-            "button": {
-                "previous": "Précédent",
-                "next": "Suivant",
-                "register": "Je m'inscris",
-                "save": "Enregistrer"
-            }, 
-            "form": {
-                "errors": "Merci de corriger les erreurs suivantes "
+            "ui": {
+                "button": {
+                    "previous": "Précédent",
+                    "next": "Suivant",
+                    "register": "Je m'inscris",
+                    "save": "Enregistrer",
+                    "connection": "Se connecter"
+                }, 
+                "form": {
+                    "errors": "Merci de corriger les erreurs suivantes ",
+                    "enterMessage": "Saisissez un message",
+                    "optional": "facultatif"
+                },
+                "infos": {
+                    "misc": {
+                        "at": "à"
+                    }
+                },
+                "pages": {
+                    "home": {
+                        
+                    },
+                    "signup": {
+                        "chart": {
+                            "chartValid": "Je valide la charte",
+                            "errors": {
+                                "required": "La validation de la charte est requise"
+                            }
+                        }
+                    }
+                },
+                "i18n": {
+                    "date": {
+                        "format": {
+                            "fullDate": "ddd Do MMMM YYYY"
+                        }
+                    }
+                }
             },
-            "pages": {
-                "signup": {
-                    "chart": {
-                        "chartValid": "Je valide la charte",
+            "models": {
+                "user": {
+                    "givenName": {
+                        "label": "Prénom",
+                        "placeholder": "Prénom",
                         "errors": {
-                            "required": "La validation de la charte est requise"
+                            "required": "Le prénom est requis"
+                        }
+                    },
+                    "familyName": {
+                        "label": "Nom",
+                        "placeholder": "Nom",
+                        "errors": {
+                            "required": "Le nom est requis"
+                        }
+                    },
+                    "gender": {
+                        "label": "Civilité",
+                        "placeholder": "Civilité",
+                        "values": {
+                            "male": "Monsieur",
+                            "female": "Madame",
+                            "other": "Autre"
+                        },
+                        "errors": {
+                            "required": "La civilité est requise"
+                        }
+                    },
+                    "birthYear": {
+                        "label": "Année de naissance",
+                        "placeholder": "Année de naissance",
+                        "errors": {
+                            "required": "L'année de naissance est requise"
+                        }
+                    },
+                    "email": {
+                        "label": "Email",
+                        "placeholder": "Email",
+                        "errors": {
+                            "required": "L'adresse email est requise",
+                            "valid": "L'adresse email doit être valide"
+                        }
+                    },
+                    "phone": {
+                        "label": "Téléphone",
+                        "placeholder": "Numéro de téléphone",
+                        "errors": {
+                            "required": "Le numéro de téléphone est requis"
+                        }
+                    },
+                    "password": {
+                        "label": "Mot de passe",
+                        "placeholder": "Mot de passe",
+                        "errors": {
+                            "required": "Le mot de passe est requis"
+                        }
+                    },
+                    "passwordRepeat": {
+                        "label": "Mot de passe (confirmation)",
+                        "placeholder": "Mot de passe (confirmation)",
+                        "errors": {
+                            "required": "Veuillez confirmer le mot de passe"
+                        }
+                    },
+                    "homeTown": {
+                        "label": "Commune de résidence",
+                        "placeholder": "Commune de résidence",
+                        "errors": {
+                            "required": "La ville de résidence est requise"
                         }
                     }
                 }
             }
-        },
-        "models": {
-            "user": {
-                "givenName": {
-                    "label": "Prénom",
-                    "placeholder": "Prénom",
-                    "errors": {
-                        "required": "Le prénom est requis"
-                    }
-                },
-                "familyName": {
-                    "label": "Nom",
-                    "placeholder": "Nom",
-                    "errors": {
-                        "required": "Le nom est requis"
-                    }
-                },
-                "gender": {
-                    "label": "Civilité",
-                    "placeholder": "Civilité",
-                    "values": {
-                        "male": "Monsieur",
-                        "female": "Madame",
-                        "other": "Autre"
-                    },
-                    "errors": {
-                        "required": "La civilité est requise"
-                    }
-                },
-                "birthYear": {
-                    "label": "Année de naissance",
-                    "placeholder": "Année de naissance",
-                    "errors": {
-                        "required": "L'année de naissance est requise"
-                    }
-                },
-                "email": {
-                    "label": "Email",
-                    "placeholder": "Email",
-                    "errors": {
-                        "required": "L'adresse email est requise"
-                    }
-                },
-                "phone": {
-                    "label": "Téléphone",
-                    "placeholder": "Numéro de téléphone",
-                    "errors": {
-                        "required": "Le numéro de téléphone est requis"
-                    }
-                },
-                "password": {
-                    "label": "Mot de passe",
-                    "placeholder": "Mot de passe",
-                    "errors": {
-                        "required": "Le mot de passe est requis"
-                    }
-                },
-                "homeTown": {
-                    "label": "Commune de résidence",
-                    "placeholder": "Commune de résidence",
-                    "errors": {
-                        "required": "La ville de résidence est requise"
-                    }
-                }
-            }
         }
-    }
 }

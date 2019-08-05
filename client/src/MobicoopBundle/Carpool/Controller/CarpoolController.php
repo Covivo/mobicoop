@@ -37,6 +37,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
+use Symfony\Component\Dotenv\Dotenv;
 
 /**
  * Controller class for carpooling related actions.
@@ -48,15 +49,21 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
+
+
     public function ad(AdManager $adManager, UserManager $userManager, Request $request, CommunityManager $communityManager, CommunityController $communityController)
     {
+        //get price from the client/.env file
+        $dotenv = new Dotenv();
+        $dotenv->load(__DIR__.'/../../../../.env');
+        $priceCarpool = $_ENV['PRICE_CARPOOL'];
         $ad = new Ad();
         $this->denyAccessUnlessGranted('post', $ad);
         $ad->setRole(Ad::ROLE_BOTH);
         $ad->setType(Ad::TYPE_ONE_WAY);
         $ad->setFrequency(Ad::FREQUENCY_PUNCTUAL);
 //        $ad->setFrequency(Ad::FREQUENCY_REGULAR);
-        $ad->setPrice(Ad::PRICE);
+        $ad->setPrice($priceCarpool);
         $ad->setUser($userManager->getLoggedUser());
 
         $form = $this->createForm(AdForm::class, $ad, ['csrf_protection' => false]);

@@ -30,19 +30,35 @@ user_proposals:
         en: /user/ads
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProposals
 
-# profile
-user_profile:
-    path:
-        fr: /utilisateur/profil
-        en: /user/profile
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfile
-
 # messages
 user_messages:
     path:
         fr: /utilisateur/messages
         en: /user/messages
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfile
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessages
+
+# send an internal message
+send_user_message:
+    path:
+        fr: /utilisateur/messages/envoyer
+        en: /user/messages/send
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::sendInternalMessage
+
+# get a message thread
+user_message_thread:
+    path:
+        fr: /utilisateur/messages/{idFirstMessage}
+        en: /user/messages/{idFirstMessage}
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getThread
+    requirements:
+        idFirstMessage: '\d+'
+
+# Update an Ask from messages
+user_message_update_ask:
+    path:
+        fr: /utilisateur/messages/updateAsk
+        en: /user/messages/updateAsk
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::updateAsk
 
 # profile update
 user_profile_update:
@@ -58,12 +74,28 @@ user_password_update:
         en: /user/password/update
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordUpdate
 
+# forgot password
+user_password_forgot:
+    path:
+        fr: /utilisateur/mot-de-passe/oubli
+        en: /user/password/forgot
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordForgot
+
+user_password_reset:
+    path:
+        fr: /utilisateur/mot-de-passe/reset/{token}
+        en: /user/password/reset/{token}
+    requirements:
+        token: .*
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordReset
+
 # profile delete
 user_profile_delete:
     path:
         fr: /utilisateur/profil/supprimer
         en: /user/profile/delete
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileDelete
+
 
 # logout
 logout:
@@ -154,7 +186,7 @@ community_join:
         id: '\d+'
 
 ##########################
-# Editorial pages routes #
+# editorial pages routes #
 ##########################
 
 # display project page

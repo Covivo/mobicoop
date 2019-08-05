@@ -30,7 +30,7 @@ use App\Geography\Service\GeoSearcher;
 use App\Geography\Entity\Address;
 
 /**
- * Collection data provider for address search.
+ * Collection data provider for anonymous address search.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  *
@@ -53,7 +53,7 @@ final class AddressSearchCollectionDataProvider implements CollectionDataProvide
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         if ($this->request->get("q") !== null) {
-            return $this->geoSearcher->geoCode($this->request->get("q"));
+            return $this->geoSearcher->geoCode($this->request->get("q"), $this->request->get("token"));
         }
         return [];
     }

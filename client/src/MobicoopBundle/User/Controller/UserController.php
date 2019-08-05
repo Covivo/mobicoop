@@ -23,7 +23,15 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Controller;
 
+use App\Communication\Entity\Email;
+use Herrera\Json\Exception\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -41,6 +49,16 @@ use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Service\AddressManager;
 use Symfony\Component\HttpFoundation\Response;
 use DateTime;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Recipient;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskManager;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskHistoryManager;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use function GuzzleHttp\json_encode;
 
 /**
  * Controller class for user related actions.
@@ -60,21 +78,21 @@ class UserController extends AbstractController
 
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
+        $errorMessage = "";
+        if (!is_null($error)) {
+            $errorMessage = $error->getMessage();
+        }
         
-        $login = new Login();
-
-        $form = $this->createForm(UserLoginForm::class, $login);
 
         return $this->render('@Mobicoop/user/login.html.twig', [
-            "form"=>$form->createView(),
-            "error"=>$error
+            "errorMessage"=>$errorMessage
             ]);
     }
 
     /**
      * User registration.
      */
-    public function userSignUp(UserManager $userManager, Request $request)
+    public function userSignUp(UserManager $userManager, Request $request, TranslatorInterface $translator)
     {
         $this->denyAccessUnlessGranted('register');
 
@@ -103,12 +121,13 @@ class UserController extends AbstractController
             $address->setLongitude($data['longitude']);
             $address->setMacroCounty($data['macroCounty']);
             $address->setMacroRegion($data['macroRegion']);
-            $address->setName($data['name']);
+            $address->setName($translator->trans('homeAddress', [], 'signup'));
             $address->setPostalCode($data['postalCode']);
             $address->setRegion($data['region']);
             $address->setStreet($data['street']);
             $address->setStreetAddress($data['streetAddress']);
             $address->setSubLocality($data['subLocality']);
+            $address->setHome(true);
 
             // pass front info into user form
             $user->setEmail($data['email']);
@@ -117,32 +136,15 @@ class UserController extends AbstractController
             $user->setGivenName($data['givenName']);
             $user->setFamilyName($data['familyName']);
             $user->setGender($data['gender']);
-
             $user->setBirthYear($data['birthYear']);
 
-
             // add the home address to the user
-            
             $user->addAddress($address);
-
-            // Not Valid populate error
-            // if (!$form->isValid()) {
-            //     $error = [];
-            //     // Fields
-            //     foreach ($form as $child) {
-            //         if (!$child->isValid()) {
-            //             foreach ($child->getErrors(true) as $err) {
-            //                 $error[$child->getName()][] = $err->getMessage();
-            //             }
-            //         }
-            //     }
-            //     return $this->json(['error' => $error, 'success' => $success]);
-            // }
 
             // create user in database
             $userManager->createUser($user);
         }
-
+ 
         if (!$form->isSubmitted()) {
             return $this->render('@Mobicoop/user/signup.html.twig', [
                 'error' => $error
@@ -152,22 +154,9 @@ class UserController extends AbstractController
     }
 
     /**
-     * User profile (get the current user).
-     */
-    public function userProfile(UserManager $userManager)
-    {
-        $user = $userManager->getLoggedUser();
-        $this->denyAccessUnlessGranted('profile', $user);
-
-        return $this->render('@Mobicoop/user/detail.html.twig', [
-            'user' => $user
-        ]);
-    }
-
-    /**
      * User profile update.
      */
-    public function userProfileUpdate(UserManager $userManager, Request $request, AddressManager $addressManager)
+    public function userProfileUpdate(UserManager $userManager, Request $request, AddressManager $addressManager, TranslatorInterface $translator)
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
@@ -176,10 +165,8 @@ class UserController extends AbstractController
         // get the homeAddress
         $homeAddress = $user->getHomeAddress();
          
-        $form = $this->createForm(UserForm::class, $user, ['validation_groups'=>['update']]);
         $error = false;
            
-        
         if ($request->isMethod('POST')) {
 
             //get all data from form (user + homeAddress)
@@ -203,6 +190,8 @@ class UserController extends AbstractController
             $homeAddress->setStreet($data['street']);
             $homeAddress->setStreetAddress($data['streetAddress']);
             $homeAddress->setSubLocality($data['subLocality']);
+            $homeAddress->setName($translator->trans('homeAddress', [], 'signup'));
+            $homeAddress->setHome(true);
             
             // pass front info into user form
             $user->setEmail($data['email']);
@@ -230,37 +219,145 @@ class UserController extends AbstractController
 
     /**
      * User password update.
+     * Ajax
      */
     public function userPasswordUpdate(UserManager $userManager, Request $request)
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('password', $user);
-        $form = $this->createForm(
-            UserForm::class,
-            $user,
-            ['validation_groups'=>['password']]
-        );
 
-        $form->handleRequest($request);
-        $error = false;
+        $error = [
+            'state' => false,
+            'message' => "",
+        ];
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST')) {
+            $error["message"] = "Ok";
+            
+            if ($request->request->get('password')!==null) {
+                $user->setPassword($request->request->get('password'));
+            } else {
+                $error["state"] = "true";
+                $error["message"] = "Empty password";
+                return new Response(json_encode($error));
+            }
+
             if ($user = $userManager->updateUserPassword($user)) {
                 // after successful update, we re-log the user
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                 $this->get('security.token_storage')->setToken($token);
                 $this->get('session')->set('_security_main', serialize($token));
-                return $this->redirectToRoute('user_profile_update');
+                $error["message"] = "Ok";
+                return new Response(json_encode($error));
             }
-            $error = true;
+            $error["state"] = "true";
+            $error["message"] = "Update password failed";
+            return new Response(json_encode($error));
         }
 
-        return $this->render('@Mobicoop/user/password.html.twig', [
-            'form' => $form->createView(),
-            'user' => $user,
-            'error' => $error
-        ]);
+        $error["state"] = "true";
+        $error["message"] = "Request failed";
+        return new Response(json_encode($error));
+    }
+
+
+    /**
+     * User password update.
+     * @param UserManager $userManager
+     *     The class managing the user.
+     * @param Request $request
+     *     The symfony request object.
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @throws Exception
+     */
+    public function userPasswordForgot(UserManager $userManager, Request $request)
+    {
+        $userRequest= new User();
+        $form = $this->createFormBuilder($userRequest)
+        ->add('email', EmailType::class, ['required'=> false])
+        ->add('telephone', TextType::class, ['required' => false])
+        ->add('submit', SubmitType::class)
+        ->getForm();
+
+        $form->handleRequest($request);
+        $error = false;
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (!empty($userRequest->getEmail())) {
+                /** @var User $user */
+                $user = $userManager->findByEmail($userRequest->getEmail());
+            } else {
+                if (!empty($userRequest->getTelephone())) {
+                    $user = $userManager->findByPhone($userRequest->getTelephone());
+                } else {
+                    return $this->redirectToRoute('user_password_forgot');
+                }
+            }
+            if (empty($user)) {
+                return $this->redirectToRoute('user_password_forgot');
+            } else {
+                $data= $userManager->updateUserToken($user);
+                if (!empty($data)) {
+                    return $this->redirectToRoute('user_password_forgot');
+                } else {
+                    return $this->redirectToRoute('user_password_forgot');
+                }
+            }
+        } else {
+            return $this->render('@Mobicoop/user/password.html.twig', [
+                'form' => $form->createView(),
+                'user' => $user??$userRequest,
+                'error' => $error,
+                'waitParametersForMail' => true
+            ]);
+        }
+    }
+
+    /**
+     * Reset password
+     */
+    public function userPasswordReset(UserManager $userManager, Request $request, string $token, \Swift_Mailer $mailer)
+    {
+        $user = $userManager->findByPwdToken($token);
+        $error = false;
+
+        if (empty($user) || (time() - (int)$user->getPupdtime()->getTimestamp()) > 86400) {
+            return $this->redirectToRoute('user_password_forgot');
+        } else {
+            $form = $this->createFormBuilder($user)
+                ->add('password', RepeatedType::class, [
+                    'type' => PasswordType::class,
+                    'invalid_message' => 'The password fields must match.',
+                    'options' => ['attr' => ['class' => 'password-field']],
+                    'required' => true,
+                    'first_options'  => ['label' => 'Password'],
+                    'second_options' => ['label' => 'Repeat Password'],
+                ])
+                ->add('submit', SubmitType::class)
+                ->getForm();
+
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                if ($user = $userManager->updateUserPassword($user)) {
+                    // after successful update, we re-log the user
+                    $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                    $this->get('security.token_storage')->setToken($token);
+                    $this->get('session')->set('_security_main', serialize($token));
+                    $userManager->flushUserToken($user);
+                    return $this->redirectToRoute('user_profile_update');
+                } else {
+                    return $this->redirectToRoute('user_password_forgot');
+                }
+            } else {
+                return $this->render('@Mobicoop/user/password.html.twig', [
+                    'form' => $form->createView(),
+                    'user' => $user,
+                    'error' => $error,
+                    'waitParametersForMail' => true
+                ]);
+            }
+        }
     }
 
     /**
@@ -307,6 +404,187 @@ class UserController extends AbstractController
         ]);
     }
 
+    /**
+     * User messages.
+     */
+    public function userMessages(UserManager $userManager, InternalMessageManager $internalMessageManager)
+    {
+        $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('messages', $user);
+
+        $threadsDirectMessagesForView = [];
+        $threadsCarpoolingMessagesForView = [];
+        $idMessageDefault = null;
+        $idRecipientDefault = null;
+        $firstNameRecipientDefault = "";
+        $lastNameRecipientDefault = "";
+
+        // Building threads array
+        $threads = $userManager->getThreads($user);
+        $idMessageDefaultSelected = false;
+
+        foreach ($threads["threads"] as $thread) {
+            $arrayThread["idThreadMessage"] = $thread["id"];
+            if (!isset($thread["user"]["id"])) {
+                // the user is the sender
+                $arrayThread["contactId"] =  $thread["recipients"][0]["user"]["id"];
+                $arrayThread["contactFirstName"] = $thread["recipients"][0]["user"]["givenName"];
+                $arrayThread["contactLastName"] = $thread["recipients"][0]["user"]["familyName"];
+            } else {
+                // the user is the recipient
+                $arrayThread["contactId"] =  $thread["user"]["id"];
+                $arrayThread["contactFirstName"] = $thread["user"]["givenName"];
+                $arrayThread["contactLastName"] = $thread["user"]["familyName"];
+            }
+            $arrayThread["text"] = $thread["text"];
+            $arrayThread["askHistory"] = $thread["askHistory"];
+
+            // The default message is the first direct message or the last carpooling message
+            if (!$idMessageDefaultSelected || !is_null($thread["askHistory"])) {
+                $idMessageDefault = $thread["id"];
+                $idRecipientDefault = $arrayThread["contactId"];
+                $firstNameRecipientDefault = $arrayThread["contactFirstName"];
+                $lastNameRecipientDefault = $arrayThread["contactLastName"];
+                $arrayThread["selected"] = true;
+                $idMessageDefaultSelected = true;
+            }
+
+            // Push on the right array
+            (is_null($thread["askHistory"])) ? $threadsDirectMessagesForView[] = $arrayThread : $threadsCarpoolingMessagesForView[] = $arrayThread;
+        }
+        return $this->render('@Mobicoop/user/messages.html.twig', [
+            'threadsDirectMessagesForView' => $threadsDirectMessagesForView,
+            'threadsCarpoolingMessagesForView' => $threadsCarpoolingMessagesForView,
+            'userId' => $user->getId(),
+            'idMessageDefault' => $idMessageDefault,
+            'idRecipientDefault'=>$idRecipientDefault,
+            'firstNameRecipientDefault'=>$firstNameRecipientDefault,
+            'lastNameRecipientDefault'=>$lastNameRecipientDefault
+        ]);
+    }
+
+    /**
+     * Get a complete thread from a first message
+     * Ajax Request
+     */
+    public function getThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager, AskManager $askManager)
+    {
+        $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('messages', $user);
+
+        $thread = $internalMessageManager->getThread($idFirstMessage, DataProvider::RETURN_JSON);
+
+        // Format the date with a human readable version
+        // First message
+        $createdDateFirstMessage = new DateTime($thread["createdDate"]);
+        $thread["createdDateReadable"] = $createdDateFirstMessage->format("D d F Y");
+        $thread["createdTimeReadable"] = $createdDateFirstMessage->format("H:i:s");
+
+        // Children messages
+        foreach ($thread["messages"] as $key => $message) {
+            $createdDate = new DateTime($message["createdDate"]);
+            $thread["messages"][$key]["createdDateReadable"] = $createdDate->format("D d F Y");
+            $thread["messages"][$key]["createdTimeReadable"] = $createdDate->format("H:i:s");
+        }
+        
+        if (!is_null($thread["askHistory"])) {
+            // Get the last AskHistory
+            // You do that because you can have a AskHistory without a message
+            $askHistories = $askManager->getAskHistories($thread["askHistory"]["ask"]["id"]);
+            $thread["lastAskHistory"] = end($askHistories);
+
+            $fromDate = new DateTime($thread["lastAskHistory"]["ask"]["matching"]["criteria"]["fromDate"]);
+            $thread["lastAskHistory"]["ask"]["matching"]["criteria"]["fromDateReadable"] = $fromDate->format("D d F Y");
+            $fromTime = new DateTime($thread["lastAskHistory"]["ask"]["matching"]["criteria"]["fromTime"]);
+            $thread["lastAskHistory"]["ask"]["matching"]["criteria"]["fromTimeReadable"] = $fromTime->format("G\hi");
+        } else {
+            $thread["lastAskHistory"] = null;
+        }
+
+        return new Response(json_encode($thread));
+    }
+
+    /**
+     * Send an internal message to another user
+     * Ajax Request
+     */
+    public function sendInternalMessage(UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request, AskHistoryManager $askHistoryManager)
+    {
+        $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('messages', $user);
+
+        if ($request->isMethod('POST')) {
+            $idThreadMessage = $request->request->get('idThreadMessage');
+            $idRecipient = $request->request->get('idRecipient');
+
+            $messageToSend = $internalMessageManager->createInternalMessage(
+                $user,
+                $userManager->getUser($idRecipient),
+                "",
+                $request->request->get('text'),
+                $internalMessageManager->getMessage($idThreadMessage)
+            );
+
+            // If there is an AskHistory i will post an AskHistory with the message within. If not, i only send a Message.
+            if (trim($request->request->get('idAskHistory'))!=="") {
+                
+                // Get the current AskHistory
+                $currentAskHistory = $askHistoryManager->getAskHistory($request->request->get('idAskHistory'));
+
+                // Create the new Ask History to post
+                $askHistory = new AskHistory();
+                $askHistory->setMessage($messageToSend);
+                $askHistory->setAsk($currentAskHistory->getAsk());
+                $askHistory->setStatus($currentAskHistory->getStatus());
+                $askHistory->setType($currentAskHistory->getType());
+
+                print_r($askHistoryManager->createAskHistory($askHistory));
+                die;
+                
+                return new Response($askHistoryManager->createAskHistory($askHistory, DataProvider::RETURN_JSON));
+            } else {
+                return new Response($internalMessageManager->sendInternalMessage($messageToSend, DataProvider::RETURN_JSON));
+            }
+        }
+        return new Response(json_encode("Not a post"));
+    }
+
+    /**
+     * Update and ask
+     * Ajax Request
+     */
+    public function updateAsk(Request $request, AskManager $askManager)
+    {
+        if ($request->isMethod('POST')) {
+            $idAsk = $request->request->get('idAsk');
+
+            // Get the Ask
+            $ask = $askManager->getAsk($idAsk);
+
+            // Change the status
+            if ($request->request->get('status')!==null &&
+                is_numeric($request->request->get('status'))
+            ) {
+                // Modify the Ask status
+                $ask->setStatus($request->request->get('status'));
+            }
+            
+            // Update the Ask via API
+            $ask = $askManager->updateAsk($ask);
+
+            $return = [
+                "id"=>$ask->getId(),
+                "status"=>$ask->getStatus()
+            ];
+
+            return new Response(json_encode($return));
+        }
+
+        return new Response(json_encode("Not a post"));
+    }
+
+
+
     // ADMIN
 
     /**
@@ -315,12 +593,12 @@ class UserController extends AbstractController
      * @Route("/user/{id}", name="user", requirements={"id"="\d+"})
      *
      */
-    public function user($id, UserManager $userManager)
-    {
-        return $this->render('@Mobicoop/user/detail.html.twig', [
-            'user' => $userManager->getUser($id)
-        ]);
-    }
+    // public function user($id, UserManager $userManager)
+    // {
+    //     return $this->render('@Mobicoop/user/detail.html.twig', [
+    //         'user' => $userManager->getUser($id)
+    //     ]);
+    // }
 
     /**
      * Retrieve all users.
@@ -328,12 +606,12 @@ class UserController extends AbstractController
      * @Route("/users", name="users")
      *
      */
-    public function users(UserManager $userManager)
-    {
-        return $this->render('@Mobicoop/user/index.html.twig', [
-            'hydra' => $userManager->getUsers()
-        ]);
-    }
+    // public function users(UserManager $userManager)
+    // {
+    //     return $this->render('@Mobicoop/user/index.html.twig', [
+    //         'hydra' => $userManager->getUsers()
+    //     ]);
+    // }
 
     /**
      * Delete a user.
@@ -341,17 +619,17 @@ class UserController extends AbstractController
      * @Route("/user/{id}/delete", name="user_delete", requirements={"id"="\d+"})
      *
      */
-    public function userDelete($id, UserManager $userManager)
-    {
-        if ($userManager->deleteUser($id)) {
-            return $this->redirectToRoute('users');
-        } else {
-            return $this->render('@Mobicoop/user/index.html.twig', [
-                    'hydra' => $userManager->getUsers(),
-                    'error' => 'An error occured'
-            ]);
-        }
-    }
+    // public function userDelete($id, UserManager $userManager)
+    // {
+    //     if ($userManager->deleteUser($id)) {
+    //         return $this->redirectToRoute('users');
+    //     } else {
+    //         return $this->render('@Mobicoop/user/index.html.twig', [
+    //                 'hydra' => $userManager->getUsers(),
+    //                 'error' => 'An error occured'
+    //         ]);
+    //     }
+    // }
     
     /**
      * Retrieve all matchings for a proposal.
@@ -359,16 +637,16 @@ class UserController extends AbstractController
      * @Route("/user/{id}/proposal/{idProposal}/matchings", name="user_proposal_matchings", requirements={"id"="\d+","idProposal"="\d+"})
      *
      */
-    public function userProposalMatchings($id, $idProposal, ProposalManager $proposalManager)
-    {
-        $user = new User($id);
-        $proposal = $proposalManager->getProposal($idProposal);
-        return $this->render('@Mobicoop/proposal/matchings.html.twig', [
-            'user' => $user,
-            'proposal' => $proposal,
-            'hydra' => $proposalManager->getMatchings($proposal)
-        ]);
-    }
+    // public function userProposalMatchings($id, $idProposal, ProposalManager $proposalManager)
+    // {
+    //     $user = new User($id);
+    //     $proposal = $proposalManager->getProposal($idProposal);
+    //     return $this->render('@Mobicoop/proposal/matchings.html.twig', [
+    //         'user' => $user,
+    //         'proposal' => $proposal,
+    //         'hydra' => $proposalManager->getMatchings($proposal)
+    //     ]);
+    // }
 
     /**
      * Delete a proposal of a user.
@@ -376,19 +654,19 @@ class UserController extends AbstractController
      * @Route("/user/{id}/proposal/{idProposal}/delete", name="user_proposal_delete", requirements={"id"="\d+","idProposal"="\d+"})
      *
      */
-    public function userProposalDelete($id, $idProposal, ProposalManager $proposalManager)
-    {
-        if ($proposalManager->deleteProposal($idProposal)) {
-            return $this->redirectToRoute('user_proposals', ['id'=>$id]);
-        } else {
-            $user = new User($id);
-            return $this->render('@Mobicoop/proposal/index.html.twig', [
-                'user' => $user,
-                'hydra' => $proposalManager->getProposals($user),
-                'error' => 'An error occured'
-            ]);
-        }
-    }
+    // public function userProposalDelete($id, $idProposal, ProposalManager $proposalManager)
+    // {
+    //     if ($proposalManager->deleteProposal($idProposal)) {
+    //         return $this->redirectToRoute('user_proposals', ['id'=>$id]);
+    //     } else {
+    //         $user = new User($id);
+    //         return $this->render('@Mobicoop/proposal/index.html.twig', [
+    //             'user' => $user,
+    //             'hydra' => $proposalManager->getProposals($user),
+    //             'error' => 'An error occured'
+    //         ]);
+    //     }
+    // }
 
 
 
@@ -397,33 +675,33 @@ class UserController extends AbstractController
     /**
      * Create a proposal for a user.
      */
-    public function userProposalCreate($id=null, ProposalManager $proposalManager, Request $request)
-    {
-        $proposal = new Proposal();
-        if ($id) {
-            $proposal->setUser(new User($id));
-        } else {
-            $proposal->setUser(new User());
-        }
+    // public function userProposalCreate($id=null, ProposalManager $proposalManager, Request $request)
+    // {
+    //     $proposal = new Proposal();
+    //     if ($id) {
+    //         $proposal->setUser(new User($id));
+    //     } else {
+    //         $proposal->setUser(new User());
+    //     }
 
-        $form = $this->createForm(ProposalForm::class, $proposal);
-        $form->handleRequest($request);
-        $error = false;
+    //     $form = $this->createForm(ProposalForm::class, $proposal);
+    //     $form->handleRequest($request);
+    //     $error = false;
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // for now we add the starting end ending points,
-            // in the future we will need to have dynamic fields
-            $proposal->addPoint($proposal->getStart());
-            $proposal->addPoint($proposal->getDestination());
-            if ($proposal = $proposalManager->createProposal($proposal)) {
-                return $this->redirectToRoute('user_proposal_matchings', ['id'=>$id,'idProposal'=>$proposal->getId()]);
-            }
-            $error = true;
-        }
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         // for now we add the starting end ending points,
+    //         // in the future we will need to have dynamic fields
+    //         $proposal->addPoint($proposal->getStart());
+    //         $proposal->addPoint($proposal->getDestination());
+    //         if ($proposal = $proposalManager->createProposal($proposal)) {
+    //             return $this->redirectToRoute('user_proposal_matchings', ['id'=>$id,'idProposal'=>$proposal->getId()]);
+    //         }
+    //         $error = true;
+    //     }
 
-        return $this->render('@Mobicoop/proposal/create.html.twig', [
-            'form' => $form->createView(),
-            'error' => $error
-        ]);
-    }
+    //     return $this->render('@Mobicoop/proposal/create.html.twig', [
+    //         'form' => $form->createView(),
+    //         'error' => $error
+    //     ]);
+    // }
 }

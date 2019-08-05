@@ -323,11 +323,25 @@ class DataProvider
     public function post(ResourceInterface $object): Response
     {
         try {
-            $clientResponse = $this->client->post($this->resource, [
+            if ($this->format == self::RETURN_ARRAY) {
+                $clientResponse = $this->client->post($this->resource, [
                     RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]), true)
-            ]);
+                ]);
+                $value = json_decode((string) $clientResponse->getBody(), true);
+            } elseif ($this->format == self::RETURN_JSON) {
+                $clientResponse = $this->client->post($this->resource, [
+                        'headers' => ['accept' => 'application/json'],
+                        RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]), true)
+                ]);
+                $value = (string) $clientResponse->getBody();
+            } else {
+                $clientResponse = $this->client->post($this->resource, [
+                    RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]), true)
+                ]);
+                $value = $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true));
+            }
             if ($clientResponse->getStatusCode() == 201) {
-                return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
+                return new Response($clientResponse->getStatusCode(), $value);
             }
         } catch (ServerException $e) {
             return new Response($e->getCode(), $e->getMessage());
@@ -404,6 +418,34 @@ class DataProvider
         }
         return new Response();
     }
+    
+    /**
+     * Specially Put item operation with special operation
+     *
+     * @param ResourceInterface $object An object representing the resource to put
+     *
+     * @return Response The response of the operation.
+     */
+    public function putSpecial(ResourceInterface $object, ?array $groups=null, ?string $operation): Response
+    {
+        if (is_null($groups)) {
+            $groups = ['put'];
+        }
+        try {
+            $clientResponse = $this->client->put($this->resource."/".$object->getId()."/$operation", [
+                    RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>$groups]), true)
+            ]);
+            if ($clientResponse->getStatusCode() == 200) {
+                return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
+            }
+        } catch (TransferException $e) {
+            return new Response($e->getCode());
+        }
+        return new Response();
+    }
+    
+    
+
     
     /**
      * Delete item operation

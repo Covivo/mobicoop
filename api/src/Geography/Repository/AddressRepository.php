@@ -48,6 +48,29 @@ class AddressRepository
         $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(Address::class);
     }
+
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    {
+        return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
+    }
+
+    /**
+     * Return all addresses with the given name for the given user id.
+     *
+     * @param string $name
+     * @param integer $userId
+     * @return mixed|NULL|\Doctrine\DBAL\Driver\Statement|array     The addresses found
+     */
+    public function findByName(string $name, int $userId)
+    {
+        $query = $this->entityManager->createQuery("
+            SELECT a from App\Geography\Entity\Address a
+            where a.name like '%" . $name . "%' and a.user = $userId
+        ");
+        
+        return $query->getResult()
+        ;
+    }
     
     /**
      * Return all addresses in the given territory.

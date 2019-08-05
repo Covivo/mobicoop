@@ -63,14 +63,14 @@ class Direction
     /**
      * @var int The total distance of the direction in meter.
      * @ORM\Column(type="integer")
-     * @Groups({"read","write","mass"})
+     * @Groups({"read","write","mass","thread"})
      */
     private $distance;
     
     /**
      * @var int The total duration of the direction in milliseconds.
      * @ORM\Column(type="integer")
-     * @Groups({"read","write","mass"})
+     * @Groups({"read","write","mass","thread"})
      */
     private $duration;
     

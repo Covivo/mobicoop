@@ -1,0 +1,54 @@
+{
+    "fr": {
+        "title": "Mobicoop",
+        "subtitle": "Un service de covoiturage de proximité, convivial et solidaire.<br />Trouvez dès à présent votre covoiturage ou proposez votre trajet.",
+        "origin": "Lieu de départ",
+        "destination": "Lieu d'arrivée",
+        "swap": {
+            "alt": "Intervertir origine et destination",
+            "help": "Cliquez pour intervertir origine et destination"
+        },
+        "switch": {
+            "label": "Trajet régulier",
+            "help": "Cochez cette case pour spécifier que votre trajet est régulier"
+        },
+        "datePicker": {
+            "label": "Date de départ"
+        },
+        "buttons": {
+            "shareAnAd": {
+                "label": "Publier une annonce"
+            },
+            "search": {
+                "label": "Rechercher"
+            }
+        }
+    },
+    "en": {
+        "title": "Mobicoop",
+        "subtitle": "Explanation in english",
+        "origin": "Departure location",
+        "destination": "Arrival location",
+        "swap": {
+            "alt": "Swap origin and destination addresses",
+            "help": "Click to swap origin and destination addresses"
+        },
+        "switch": {
+            "label": "Regular ride",
+            "help": "Switch to indicate a regular ride"
+        },
+        "datePicker": {
+            "label": "Departure date"
+        },
+        "buttons": {
+            "shareAnAd": {
+                "label": "Share an ad"
+            },
+            "search": {
+                "label": "Search"
+            }
+        }
+        
+    }
+    
+}

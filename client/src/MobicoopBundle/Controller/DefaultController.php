@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
+use App\User\Service\UserManager;
 
 class DefaultController extends AbstractController
 {
@@ -35,11 +36,11 @@ class DefaultController extends AbstractController
      */
     public function index()
     {
-        $baseUri = $_ENV['API_URI'];
         return $this->render(
             '@Mobicoop/default/index.html.twig',
             [
-                'baseUri' => $baseUri,
+                'baseUri' => $_ENV['API_URI'],
+                'searchRoute' => 'covoiturage/recherche',
                 'metaDescription' => 'Homepage of Mobicoop'
             ]
         );

@@ -37,7 +37,7 @@ class Matching
     private $id;
     
     /**
-     * @var string|null The iri of this user.
+     * @var string|null The iri of this matching.
      */
     private $iri;
 

@@ -53,6 +53,35 @@
 <li><a href="#event">event </a></li>
 <li><a href="#image">image </a></li>
 <li><a href="#zone">zone </a></li>
+<li><a href="#role">role </a></li>
+<li><a href="#user_role">user_role </a></li>
+<li><a href="#app">app </a></li>
+<li><a href="#app_role">app_role </a></li>
+<li><a href="#right">right </a></li>
+<li><a href="#role_right">role_right </a></li>
+<li><a href="#user_right">user_right </a></li>
+<li><a href="#territory">territory </a></li>
+<li><a href="#mass">mass </a></li>
+<li><a href="#mass_person">mass_person </a></li>
+<li><a href="#mass_matching">mass_matching </a></li>
+<li><a href="#ptjourney_mass_person">ptjourney_mass_person </a></li>
+<li><a href="#community">community </a></li>
+<li><a href="#community_user">community_user </a></li>
+<li><a href="#community_proposal">community_proposal </a></li>
+<li><a href="#relayPoint">relayPoint </a></li>
+<li><a href="#relayPointType">relayPointType </a></li>
+<li><a href="#relayPoint_relayPointType">relayPoint_relayPointType </a></li>
+<li><a href="#article">article </a></li>
+<li><a href="#section">section </a></li>
+<li><a href="#paragraph">paragraph </a></li>
+<li><a href="#community_security">community_security </a></li>
+<li><a href="#message">message </a></li>
+<li><a href="#recipient">recipient </a></li>
+<li><a href="#medium">medium </a></li>
+<li><a href="#action">action </a></li>
+<li><a href="#notification">notification </a></li>
+<li><a href="#notified">notified </a></li>
+<li><a href="#askHistory">askHistory </a></li>
 </ul>
 <a id="user"></a><table style="width:100%"><caption>Table: user </caption>
 <tr><td>Table Comments</td><td colspan="6">User table</td></tr>
@@ -84,6 +113,7 @@
 <tr><td>anyRouteAsPassenger</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td>1</td><td>The user accepts any route as a passenger from its origin to the destination</td></tr>
 <tr><td>multiTransportMode</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The user accepts other transportation modes</td></tr>
 <tr><td>kmPrice</td><td>DECIMAL(4,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Price per km</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="proposal"></a><table style="width:100%"><caption>Table: proposal </caption>
 <tr><td>Table Comments</td><td colspan="6">Proposal table :
@@ -128,7 +158,7 @@ The proposal is linked with offer or request criteria.
 1 : one way trip
 2 : outward of a round trip
 3 : return of a round trip</td></tr>
-<tr><td>comment</td><td>TEXT</td><td>No</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>comment</td><td>TEXT</td><td>No</td><td>No</td><td>No</td><td></td><td>Comment</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>A comment about the proposal</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="ask"></a><table style="width:100%"><caption>Table: ask </caption>
@@ -150,9 +180,10 @@ The user that creates the ask is either the driver or the passenger.</td></tr>
 <tr><td>idcriteria</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Criteria</td></tr>
 <tr><td>idaskLinked</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Linked ask if the user that responds proposes another ask</td></tr>
 <tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Ask status : 
-0 : waiting
-1 : accepted
-2 : declined</td></tr>
+0 : initiated
+1 : pending
+2 : accepted
+3 : declined</td></tr>
 <tr><td>type</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Ask type : 
 1 : one way trip
 2 : outward of a round trip
@@ -200,7 +231,7 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>idask</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Ask if the waypoint is an ask waypoint (calculated by the georouting algorythm and potentially modified by the user that creates the ask)</td></tr>
 <tr><td>position</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>Position number</td></tr>
 <tr><td>destination</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>0</td><td>True if it's the last point</td></tr>
-<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Address</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="criteria"></a><table style="width:100%"><caption>Table: criteria </caption>
 <tr><td>Table Comments</td><td colspan="6">Criteria table : 
@@ -297,6 +328,7 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>elevation</td><td>DECIMAL(8,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Elevation in metres</td></tr>
 <tr><td>name</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>A name for this address</td></tr>
 <tr><td>iduser</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The owner of the address</td></tr>
+<tr><td>geoJson</td><td>POINT</td><td>No</td><td>No</td><td>No</td><td></td><td>The geoJson representation of the address</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="ptjourney"></a><table style="width:100%"><caption>Table: ptjourney </caption>
 <tr><td>Table Comments</td><td colspan="6">Public transport journey</td></tr>
@@ -379,8 +411,8 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>idptdeparture</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Departure</td></tr>
 <tr><td>idptarrival</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Arrival</td></tr>
 <tr><td>idptline</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Line</td></tr>
-<tr><td>direction</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td></td></tr>
-<tr><td>idtravelMode</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Direction of the line</td></tr>
+<tr><td>direction</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Direction of the line</td></tr>
+<tr><td>idtravelMode</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Travel mode</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="ptline"></a><table style="width:100%"><caption>Table: ptline </caption>
 <tr><td>Table Comments</td><td colspan="6">Public transport line</td></tr>
@@ -401,7 +433,7 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>direction</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Direction if no origin/destination</td></tr>
 <tr><td>number</td><td>VARCHAR(10)</td><td>No</td><td>No</td><td>No</td><td></td><td>Line number</td></tr>
 <tr><td>idptcompany</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Company</td></tr>
-<tr><td>idtravelMode</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>idtravelMode</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Travel mode</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="ptcompany"></a><table style="width:100%"><caption>Table: ptcompany </caption>
 <tr><td>Table Comments</td><td colspan="6">Public transport company</td></tr>
@@ -474,7 +506,7 @@ A waypoint is created by a user who wants to travel by certain points.
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
 <tr><td>distance</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Distance in metres</td></tr>
 <tr><td>duration</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Duration in seconds (based on real distance)</td></tr>
 <tr><td>ascend</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>The total ascend of the route in meter</td></tr>
@@ -483,7 +515,10 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>bboxMinLat</td><td>DECIMAL(9,6)</td><td>No</td><td>No</td><td>No</td><td></td><td>The minimum latitude of the bounding box of the route</td></tr>
 <tr><td>bboxMaxLon</td><td>DECIMAL(9,6)</td><td>No</td><td>No</td><td>No</td><td></td><td>The maximum longitude of the bounding box of the route</td></tr>
 <tr><td>bboxMaxLat</td><td>DECIMAL(9,6)</td><td>No</td><td>No</td><td>No</td><td></td><td>The maximum latitude of the bounding box of the route</td></tr>
+<tr><td>geoJsonBbox</td><td>POLYGON</td><td>No</td><td>No</td><td>No</td><td></td><td>The geoJson representation of the bounding box</td></tr>
+<tr><td>bearing</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>The initial bearing for the direction in degrees related to the north (0°)</td></tr>
 <tr><td>detail</td><td>TEXT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Encoded detail of the direction</td></tr>
+<tr><td>geoJsonDetail</td><td>LINESTRING</td><td>No</td><td>No</td><td>No</td><td></td><td>The geoJson representation of the detail</td></tr>
 <tr><td>snapped</td><td>TEXT</td><td>No</td><td>No</td><td>No</td><td></td><td>Encoded snapped waypoints of the direction</td></tr>
 <tr><td>format</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Encoding format of the detail</td></tr>
 </table><a href="#home">Table List </a></br>
@@ -555,7 +590,7 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>fromDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Starting date</td></tr>
 <tr><td>toDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Ending date</td></tr>
 <tr><td>useTime</td><td>TINYINT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Use time for dates</td></tr>
-<tr><td>url</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>url</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>An url for the event</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date of the event</td></tr>
 <tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>External information link for the event</td></tr>
 <tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Address</td></tr>
@@ -584,13 +619,83 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>originalName</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Original name</td></tr>
 <tr><td>width</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Width in pixels</td></tr>
 <tr><td>height</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Height in pixels</td></tr>
-<tr><td>size</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Size in bytes</td></tr>
+<tr><td>size</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Size in bytes</td></tr>
 <tr><td>mimeType</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Mime type</td></tr>
 <tr><td>position</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Position of the image if mulitple images are related to the same entity</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date of the image</td></tr>
 <tr><td>idevent</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Event</td></tr>
+<tr><td>idcommunity</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Community</td></tr>
+<tr><td>idrelayPoint</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Relay point</td></tr>
+<tr><td>idrelayPointType</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Relay point type</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="zone"></a><table style="width:100%"><caption>Table: zone </caption>
+<tr><td>Table Comments</td><td colspan="6">Geographic zone (in the representation of the world in a grid)</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>iddirection</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Direction</td></tr>
+<tr><td>thinness</td><td>DECIMAL(9,6)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>Precision of the grid in degrees</td></tr>
+<tr><td>zoneid</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>Numeric representation of the zone depending on the precision</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="role"></a><table style="width:100%"><caption>Table: role </caption>
+<tr><td>Table Comments</td><td colspan="6">Role table</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>title</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Title</td></tr>
+<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name</td></tr>
+<tr><td>parent</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Parent role</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="user_role"></a><table style="width:100%"><caption>Table: user_role </caption>
+<tr><td>Table Comments</td><td colspan="6">User role table</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>User</td></tr>
+<tr><td>idrole</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Role</td></tr>
+<tr><td>idterritory</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Territory</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="app"></a><table style="width:100%"><caption>Table: app </caption>
+<tr><td>Table Comments</td><td colspan="6">Apps which can access to the api (front, mobile...)</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>User-friendly name</td></tr>
+<tr><td>username</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Username for authentication</td></tr>
+<tr><td>password</td><td>VARCHAR(100)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Encoded password</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="app_role"></a><table style="width:100%"><caption>Table: app_role </caption>
 <tr><td>Table Comments</td><td colspan="6"></td></tr>
 <tr><td colspan="7">Columns</td></tr>
         <tr>
@@ -602,8 +707,506 @@ A waypoint is created by a user who wants to travel by certain points.
         <th>Default</th>
         <th>Comment</th>
         </tr>
-<tr><td>iddirection</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td></td></tr>
-<tr><td>thinness</td><td>DECIMAL(9,6)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>Precision of the grid in degrees</td></tr>
-<tr><td>zoneid</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>idapp</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>App</td></tr>
+<tr><td>idrole</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Role</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="right"></a><table style="width:100%"><caption>Table: right </caption>
+<tr><td>Table Comments</td><td colspan="6">Table of rights (items) and groups of rights</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>type</td><td>SMALLINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Type of right : 
+1 = item
+2 = group</td></tr>
+<tr><td>name</td><td>VARCHAR(100)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name of the right</td></tr>
+<tr><td>description</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Description of the right</td></tr>
+<tr><td>parent</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Description of the permission</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="role_right"></a><table style="width:100%"><caption>Table: role_right </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>idrole</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Role</td></tr>
+<tr><td>idright</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Right</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="user_right"></a><table style="width:100%"><caption>Table: user_right </caption>
+<tr><td>Table Comments</td><td colspan="6">A user can have specific rights</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>User</td></tr>
+<tr><td>idright</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Right</td></tr>
+<tr><td>idterritory</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Territory</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="territory"></a><table style="width:100%"><caption>Table: territory </caption>
+<tr><td>Table Comments</td><td colspan="6">Territory table</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name of the territory</td></tr>
+<tr><td>detail</td><td>MULTIPOLYGON</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Detail of the territory as a multipolygon</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="mass"></a><table style="width:100%"><caption>Table: mass </caption>
+<tr><td>Table Comments</td><td colspan="6">Mass import table</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>The status of the import</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Import date</td></tr>
+<tr><td>fileName</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>File name</td></tr>
+<tr><td>originalName</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Original name</td></tr>
+<tr><td>size</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Size in bytes</td></tr>
+<tr><td>mimeType</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Mime type</td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>User</td></tr>
+<tr><td>calculationDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date of the start of the calculation</td></tr>
+<tr><td>calculatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date of the end of the calculation</td></tr>
+<tr><td>analyzingDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date of the start of the analyze</td></tr>
+<tr><td>analyzedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date of the end of the analyze</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="mass_person"></a><table style="width:100%"><caption>Table: mass_person </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>givenId</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Import id</td></tr>
+<tr><td>givenName</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>First name</td></tr>
+<tr><td>familyName</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td>Last name</td></tr>
+<tr><td>idmass</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Mass</td></tr>
+<tr><td>personalAddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Personal address</td></tr>
+<tr><td>workAddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Work Address</td></tr>
+<tr><td>outwardTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Outward time</td></tr>
+<tr><td>returnTime</td><td>TIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Return time</td></tr>
+<tr><td>distance</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Distance in metres between the personal address and the work address</td></tr>
+<tr><td>duration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Duration in seconds (based on real distance) between the personal address and the work address</td></tr>
+<tr><td>bboxMinLon</td><td>DECIMAL(9,6)</td><td>No</td><td>No</td><td>No</td><td></td><td>The minimum longitude of the bounding box of the route</td></tr>
+<tr><td>bboxMinLat</td><td>DECIMAL(9,6)</td><td>No</td><td>No</td><td>No</td><td></td><td>The minimum latitude of the bounding box of the route</td></tr>
+<tr><td>bboxMaxLon</td><td>DECIMAL(9,6)</td><td>No</td><td>No</td><td>No</td><td></td><td>The maximum longitude of the bounding box of the route</td></tr>
+<tr><td>bboxMaxLat</td><td>DECIMAL(9,6)</td><td>No</td><td>No</td><td>No</td><td></td><td>The maximum latitude of the bounding box of the route</td></tr>
+<tr><td>bearing</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>The initial bearing for the direction in degrees related to the north (0°)</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="mass_matching"></a><table style="width:100%"><caption>Table: mass_matching </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>idMassPerson1</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Person 1</td></tr>
+<tr><td>idMassPerson2</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Person 2</td></tr>
+<tr><td>distance</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Distance in metres</td></tr>
+<tr><td>duration</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Duration in seconds (based on real distance)</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="ptjourney_mass_person"></a><table style="width:100%"><caption>Table: ptjourney_mass_person </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>idptjourney</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Public transport journey</td></tr>
+<tr><td>idmassPerson</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Person</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="community"></a><table style="width:100%"><caption>Table: community </caption>
+<tr><td>Table Comments</td><td colspan="6">Community table</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>name</td><td>VARCHAR(100)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name</td></tr>
+<tr><td>description</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>The short description</td></tr>
+<tr><td>fullDescription</td><td>TEXT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>The full description</td></tr>
+<tr><td>membersHidden</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Members are only visible by the members of the community</td></tr>
+<tr><td>proposalsHidden</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Proposals are only visible by the members of the community</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Creator of the community</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="community_user"></a><table style="width:100%"><caption>Table: community_user </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>idcommunity</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Community</td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>User</td></tr>
+<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Status:
+0: pending
+1: accepted
+2: refused</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
+<tr><td>acceptedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Accepted date</td></tr>
+<tr><td>refusedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Refused Date</td></tr>
+<tr><td>idadmin</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Admined by</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="community_proposal"></a><table style="width:100%"><caption>Table: community_proposal </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>idcommunity</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Community</td></tr>
+<tr><td>idproposal</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Proposal</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="relayPoint"></a><table style="width:100%"><caption>Table: relayPoint </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name</td></tr>
+<tr><td>description</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Description</td></tr>
+<tr><td>fullDescription</td><td>TEXT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Full description</td></tr>
+<tr><td>private</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td>0</td><td>Private relay point for a community</td></tr>
+<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Status (active/inactive/pending)</td></tr>
+<tr><td>places</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Number of places</td></tr>
+<tr><td>placesDisabled</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Number of places for disabled people</td></tr>
+<tr><td>free</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Free relay point</td></tr>
+<tr><td>secured</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Secured relay point</td></tr>
+<tr><td>official</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Official relay point</td></tr>
+<tr><td>suggested</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Suggested in autocompletions</td></tr>
+<tr><td>permalink</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Permalink</td></tr>
+<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Address</td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Creator</td></tr>
+<tr><td>idcommunity</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Community</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="relayPointType"></a><table style="width:100%"><caption>Table: relayPointType </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>name</td><td>VARCHAR(45)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="relayPoint_relayPointType"></a><table style="width:100%"><caption>Table: relayPoint_relayPointType </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>idrelayPoint</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Relay point</td></tr>
+<tr><td>idrelayPointType</td><td>INT</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td>Relay point type</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="article"></a><table style="width:100%"><caption>Table: article </caption>
+<tr><td>Table Comments</td><td colspan="6">Article table</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>title</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Title</td></tr>
+<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>The status of publication of the article : 
+0 : pending
+1 : published</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="section"></a><table style="width:100%"><caption>Table: section </caption>
+<tr><td>Table Comments</td><td colspan="6">Section of an article</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>title</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Title</td></tr>
+<tr><td>subTitle</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Subtitle</td></tr>
+<tr><td>position</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Position in the article</td></tr>
+<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>The status of publication of the section : 
+0 : pending
+1 : published</td></tr>
+<tr><td>idarticle</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Article</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="paragraph"></a><table style="width:100%"><caption>Table: paragraph </caption>
+<tr><td>Table Comments</td><td colspan="6">Paragraph of a section</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>text</td><td>TEXT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Text</td></tr>
+<tr><td>position</td><td>INT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Position in the section</td></tr>
+<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>The status of publication of the paragraph : 
+0 : pending
+1 : published</td></tr>
+<tr><td>idsection</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Section</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="community_security"></a><table style="width:100%"><caption>Table: community_security </caption>
+<tr><td>Table Comments</td><td colspan="6">Securization of community registration</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>idcommunity</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Community</td></tr>
+<tr><td>filename</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name of the file to check</td></tr>
+<tr><td>field1Name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name of the first field to check</td></tr>
+<tr><td>field1Type</td><td>TINYINT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Type of the first field to check</td></tr>
+<tr><td>field2Name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name of the second field to check</td></tr>
+<tr><td>field2Type</td><td>TINYINT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Type of the second field to check</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="message"></a><table style="width:100%"><caption>Table: message </caption>
+<tr><td>Table Comments</td><td colspan="6">A message sent between 2 or more users.</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>title</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Title</td></tr>
+<tr><td>text</td><td>TEXT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Text</td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Creator of the message</td></tr>
+<tr><td>idmessage</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Reply to the given message</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="recipient"></a><table style="width:100%"><caption>Table: recipient </caption>
+<tr><td>Table Comments</td><td colspan="6">Recipient of the message</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>idmessage</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Message ID</td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Recipient id</td></tr>
+<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Status of the message for the user : 
+0 = pending
+1 = read</td></tr>
+<tr><td>readDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Read date</td></tr>
+<tr><td>sentdate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Sent date</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="medium"></a><table style="width:100%"><caption>Table: medium </caption>
+<tr><td>Table Comments</td><td colspan="6">Communication medium (email, sms...)</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Name of the medium</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="action"></a><table style="width:100%"><caption>Table: action </caption>
+<tr><td>Table Comments</td><td colspan="6">List of actions that can trigger notifications</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Internal name of the action</td></tr>
+<tr><td>uname</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td>User readable name of the action</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="notification"></a><table style="width:100%"><caption>Table: notification </caption>
+<tr><td>Table Comments</td><td colspan="6">A message sent by the system to a user on a given medium</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>idaction</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Action</td></tr>
+<tr><td>idmedium</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Medium</td></tr>
+<tr><td>templateTitle</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Template file for the title</td></tr>
+<tr><td>templateBody</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Template file for the body</td></tr>
+<tr><td>active</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Status of the triggering (active/inactive)</td></tr>
+<tr><td>activeDefault</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Default status of the triggering (active/inactive)</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="notified"></a><table style="width:100%"><caption>Table: notified </caption>
+<tr><td>Table Comments</td><td colspan="6">A sent notification for a user</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>idnotification</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Triggers</td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>User</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
+<tr><td>sentDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Sent date</td></tr>
+<tr><td>receivedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Received date</td></tr>
+<tr><td>readDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Read date</td></tr>
+<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Status of the notification : 
+0 = sent
+1 = received
+2 = read</td></tr>
+<tr><td>idproposal</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The notification concerns a proposal</td></tr>
+<tr><td>idmatching</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The notification concerns a matching</td></tr>
+<tr><td>idrecipient</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The notification concerns a recipient of a message</td></tr>
+<tr><td>idaskHistory</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The notification concerns an ask history</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="askHistory"></a><table style="width:100%"><caption>Table: askHistory </caption>
+<tr><td>Table Comments</td><td colspan="6">History of the ask</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
+<tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Ask status : 
+0 : initiated
+1 : pending
+2 : accepted
+3 : declined</td></tr>
+<tr><td>type</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Ask type : 
+1 : one way trip
+2 : outward of a round trip
+3 : return of a round trip</td></tr>
+<tr><td>idask</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Ask</td></tr>
+<tr><td>idmessage</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Message</td></tr>
 </table><a href="#home">Table List </a></br>
 </body></html>

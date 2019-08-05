@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
@@ -45,7 +46,7 @@ class UserManager
     private $tokenStorage;
     private $logger;
 
-    
+
     /**
      * Constructor.
      *
@@ -62,7 +63,7 @@ class UserManager
         $this->tokenStorage = $tokenStorage;
         $this->logger = $logger;
     }
-    
+
     /**
      * Get a user by its identifier
      *
@@ -86,6 +87,52 @@ class UserManager
     }
 
     /**
+     * Search user by password reset token
+     *
+     * @param string $token
+     *
+     * @return User|null The user found or null if not found.
+     */
+    public function findByPwdToken(string $token)
+    {
+        $response = $this->dataProvider->getCollection(['pwdToken' => $token]);
+        if ($response->getCode() == 200) {
+            /** @var Hydra $user */
+            $user = $response->getValue();
+
+            if ($user->getTotalItems() == 0) {
+                return null;
+            } else {
+                return current($user->getMember());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Search user by reset email
+     *
+     * @param string $email
+     *
+     * @return User|null The user found or null if not found.
+     */
+    public function findByEmail(string $email)
+    {
+        $response = $this->dataProvider->getCollection(['email' => $email]);
+        if ($response->getCode() == 200) {
+            /** @var Hydra $user */
+            $user = $response->getValue();
+
+            if ($user->getTotalItems() == 0) {
+                return null;
+            } else {
+                return current($user->getMember());
+            }
+        }
+        return null;
+    }
+
+    /**
      * Get masses of a user
      *
      * @param int $id The user id
@@ -100,6 +147,7 @@ class UserManager
         }
         return null;
     }
+
     /**
      * Get the logged user.
      *
@@ -121,7 +169,7 @@ class UserManager
         $this->logger->error('User | Not logged');
         return null;
     }
-    
+
     /**
      * Get all users
      *
@@ -137,7 +185,7 @@ class UserManager
         $this->logger->error('User | Not found');
         return null;
     }
-    
+
     /**
      * Create a user
      *
@@ -149,7 +197,7 @@ class UserManager
     {
         // encoding of the password
         $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
-       
+
         $response = $this->dataProvider->post($user);
         if ($response->getCode() == 201) {
             $this->logger->info('User Creation | Start');
@@ -158,7 +206,7 @@ class UserManager
         $this->logger->error('User Creation | Fail');
         return null;
     }
-    
+
     /**
      * Update a user
      *
@@ -175,7 +223,7 @@ class UserManager
         }
         return null;
     }
-    
+
     /**
      * Update a user password
      *
@@ -195,7 +243,7 @@ class UserManager
         $this->logger->info('User Password Update | Fail');
         return null;
     }
-    
+
     /**
      * Delete a user
      *
@@ -241,5 +289,68 @@ class UserManager
             return $communities;
         }
         return null;
+    }
+
+    /**
+     * Get the threads (messages) of a user
+     *
+     * @param User $user The user
+     *
+     * @return array The messages.
+     */
+    public function getThreads(User $user)
+    {
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSubCollection($user->getId(), 'thread', 'threads');
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        }
+        return null;
+    }
+    public function findByPhone(string $getTelephone)
+    {
+        $response = $this->dataProvider->getCollection(['email' => $getTelephone]);
+        if ($response->getCode() == 200) {
+            /** @var Hydra $user */
+            $user = $response->getValue();
+
+            if ($user->getTotalItems() == 0) {
+                return null;
+            } else {
+                return current($user->getMember());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Update the user token.
+     *
+     * @param User $user
+     * @return array|null|object
+     */
+    public function updateUserToken($user)
+    {
+        return $this->flushUserToken($user, 'password_update_request');
+    }
+
+    /**
+     * Flush the user token.
+     *
+     * @param User $user
+     * @return array|null|object
+     */
+    public function flushUserToken(User $user, string $operation = null)
+    {
+        dump($user, $operation);
+        if (empty($operation)) {
+            $operation='password_update';
+        }
+        $response = $this->dataProvider->putSpecial($user, ['password_token'], $operation);
+        if ($response->getCode() == 200) {
+            $this->logger->info('User Token Update | Start');
+            return $response->getValue();
+        }
+        $this->logger->info('User Token Update | Fail');
     }
 }

@@ -34,6 +34,7 @@ use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Carpool\Controller\AskPost;
+use App\Carpool\Controller\AskPut;
 
 /**
  * Carpooling : ask from/to a driver and/or a passenger (after a matching between an offer and a request).
@@ -42,6 +43,7 @@ use App\Carpool\Controller\AskPost;
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
@@ -53,7 +55,13 @@ use App\Carpool\Controller\AskPost;
  *              "controller"=AskPost::class,
  *          },
  *      },
- *      itemOperations={"get","put","delete"}
+ *      itemOperations={"get","delete",
+ *          "put"={
+ *              "method"="PUT",
+ *              "path"="/asks/{id}",
+ *              "controller"=AskPut::class,
+ *          }
+ *      }
  * )
  */
 class Ask
@@ -69,7 +77,7 @@ class Ask
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"read","threads","thread"})
      */
     private $id;
 
@@ -78,7 +86,7 @@ class Ask
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads","thread"})
      */
     private $status;
 
@@ -87,7 +95,7 @@ class Ask
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads","thread"})
      */
     private $type;
 
@@ -95,6 +103,7 @@ class Ask
      * @var \DateTimeInterface Creation date of the solicitation.
      *
      * @ORM\Column(type="datetime")
+     * @Groups({"threads","thread"})
      */
     private $createdDate;
 
@@ -104,7 +113,7 @@ class Ask
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="asks")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","thread"})
      * @MaxDepth(1)
      */
     private $user;
@@ -115,7 +124,7 @@ class Ask
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="asks")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads","thread"})
      * @MaxDepth(1)
      */
     private $matching;
@@ -124,7 +133,7 @@ class Ask
      * @var Ask|null The linked ask.
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask")
-     * @Groups({"read"})
+     * @Groups({"read","threads","thread"})
      * @MaxDepth(1)
      */
     private $askLinked;
@@ -146,7 +155,7 @@ class Ask
      * @Assert\NotBlank
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="ask", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"read","write"})
+     * @Groups({"read","write","threads","thread"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */

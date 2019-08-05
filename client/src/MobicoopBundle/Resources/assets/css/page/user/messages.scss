@@ -1,0 +1,47 @@
+@import '../../app.scss';
+body {
+  .v-application--wrap {
+    min-height: auto !important;
+  }
+  .section {
+    padding: 0;
+    .container {
+      max-width: 100%;
+    }
+  }
+  #messages {
+    #messagesColumn {
+      //background-color: #80F19A;
+      .v-timeline {
+        .v-timeline-item {
+          &.divider {
+            div {
+              width: 100%;
+              max-width: 100%;
+              text-align: center;
+              background-color: #FFF;
+              &.v-timeline-item__divider {
+                display: none;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  #contextColumn {
+    .v-timeline-item {
+      &.waypoint {
+        .v-timeline-item__dot {
+          //box-shadow: none;
+          .v-timeline-item__inner-dot {
+            //background-color: #FFF;
+          }
+        }
+      }
+      .v-timeline-item__body {
+        padding-top: 8px;
+      }
+    }
+  }
+}

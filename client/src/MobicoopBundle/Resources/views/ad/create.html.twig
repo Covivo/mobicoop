@@ -4,16 +4,15 @@
   {% trans from 'ui' %}carpool.ad_create.title{% endtrans %}
 {% endblock %}
 {% block stylesheets %}
-  {{ encore_entry_link_tags('bundle_ad/create') }}
-{% endblock %}
-{% block body %}
+  {{ encore_entry_link_tags("#{assets_prefix ?? ''}ad/create") }}
 
-  <Adcreateform geo-search-url="/geosearch?search=" :sent-frequency="{{ form.frequency.vars.value }}" :sent-type="{{ form.type.vars.value }}" :sent-role="{{ form.role.vars.value }}" sent-token="{{ csrf_token('ad-create') }}" sent-hydra="{{ communities|json_encode() }}"
-  {% if idCommunity %}     sent-community="{{ idCommunity }}" {% endif %}
-  >
-  </Adcreateform>
+{% endblock %}
+{% block main %}
+
+  <Adcreateform  geo-search-url="{{ geoCompleteUri }}" :sent-frequency="{{ form.frequency.vars.value }}" :sent-type="{{ form.type.vars.value }}" :sent-role="{{ form.role.vars.value }}" sent-token="{{ csrf_token('ad-create') }}" sent-hydra="{{ communities|json_encode() }}" {% if idCommunity %} sent-community="{{ idCommunity }}" {% endif %}></Adcreateform>
 
 {% endblock %}
 {% block javascripts %}
-  {{ encore_entry_script_tags('bundle_ad/create') }}
+  {{ encore_entry_script_tags("#{assets_prefix ?? ''}ad/create") }}
+
 {% endblock %}

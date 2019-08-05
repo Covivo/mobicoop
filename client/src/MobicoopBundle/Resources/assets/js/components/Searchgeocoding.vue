@@ -10,12 +10,12 @@
             class="input is-large searchUser"
             type="text"
             @keyup.enter="searchGeoFrance"
-          >
+          />
           <span class="icon is-medium is-left">
-            <i class="fa fa-search"/>
+            <i class="fa fa-search" />
           </span>
           <span class="icon is-medium is-right">
-            <i class="fa fa-empire"/>
+            <i class="fa fa-empire" />
           </span>
         </div>
       </div>
