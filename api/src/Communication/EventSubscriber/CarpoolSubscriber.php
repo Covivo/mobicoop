@@ -38,13 +38,13 @@ class CarpoolSubscriber implements EventSubscriberInterface
 {
     private $notificationManager;
     private $askHistoryRepository;
-
+    
     public function __construct(NotificationManager $notificationManager, AskHistoryRepository $askHistoryRepository)
     {
         $this->notificationManager = $notificationManager;
         $this->askHistoryRepository = $askHistoryRepository;
     }
-
+    
     public static function getSubscribedEvents()
     {
         return [
@@ -53,10 +53,10 @@ class CarpoolSubscriber implements EventSubscriberInterface
             AskRefusedEvent::NAME => 'onAskRefused',
             MatchingNewEvent::NAME => 'onNewMatching',
             AdRenewalEvent::NAME => 'onAdRenewal',
-				    ProposalPostedEvent::NAME => 'onProposalPosted'
+            ProposalPostedEvent::NAME => 'onProposalPosted'
         ];
     }
-
+    
     /**
      * Executed when a new ask is posted
      *
@@ -68,13 +68,15 @@ class CarpoolSubscriber implements EventSubscriberInterface
         // we must notify the recipient of the ask
         if ($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $event->getAsk()->getId()) {
             // the recipient is the driver, the message is related to the first ask history
-            $this->notificationManager->notifies(AskPostedEvent::NAME, $event->getAsk()->getMatching()->getProposalOffer()->getUser(), $event->getAsk()->getAskHistories()[0]);
+            $this->notificationManager->notifies(AskPostedEvent::NAME, $event->getAsk()->getMatching()->getProposalOffer()->getUser(), $event->getAsk()->getAskHistories()[0], ['bodyTemplateNamePrefix' => 'driver_',
+                'bodyTemplateNameSuffix' => ($event->getAsk()->getMatching()->getProposalOffer()->getCriteria()->getFrequency()==1)?'':'_regular']);
         } else {
             // the recipient is the passenger, the message is related to the first ask history
-            $this->notificationManager->notifies(AskPostedEvent::NAME, $event->getAsk()->getMatching()->getProposalRequest()->getUser(), $event->getAsk()->getAskHistories()[0]);
+            $this->notificationManager->notifies(AskPostedEvent::NAME, $event->getAsk()->getMatching()->getProposalRequest()->getUser(), $event->getAsk()->getAskHistories()[0], ['bodyTemplateNamePrefix' => 'passenger_',
+                'bodyTemplateNameSuffix' => ($event->getAsk()->getMatching()->getProposalOffer()->getCriteria()->getFrequency()==1)?'':'_regular']);
         }
     }
-
+    
     /**
      * Executed when an ask is accepted
      *
@@ -84,16 +86,18 @@ class CarpoolSubscriber implements EventSubscriberInterface
     public function onAskAccepted(AskAcceptedEvent $event)
     {
         // we must notify the recipient of the ask, the message is related to the last accepted status of the ask history
-        $lastAskHistory = $this->AskHistoryRepository->findLastByAskAndstatus($event->getAsk(), Ask::STATUS_ACCEPTED);
+        $lastAskHistory = $this->askHistoryRepository->findLastByAskAndstatus($event->getAsk(), Ask::STATUS_ACCEPTED);
         if ($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $event->getAsk()->getId()) {
             // the recipient is the driver
-            $this->notificationManager->notifies(AskAcceptedEvent::NAME, $event->getAsk()->getMatching()->getProposalOffer()->getUser(), $lastAskHistory);
+            $this->notificationManager->notifies(AskAcceptedEvent::NAME, $event->getAsk()->getMatching()->getProposalOffer()->getUser(), $lastAskHistory, ['bodyTemplateNamePrefix' => 'driver_',
+                'bodyTemplateNameSuffix' => ($event->getAsk()->getMatching()->getProposalOffer()->getCriteria()->getFrequency()==1)?'':'_regular']);
         } else {
             // the recipient is the passenger
-            $this->notificationManager->notifies(AskAcceptedEvent::NAME, $event->getAsk()->getMatching()->getProposalRequest()->getUser(), $lastAskHistory);
+            $this->notificationManager->notifies(AskAcceptedEvent::NAME, $event->getAsk()->getMatching()->getProposalRequest()->getUser(), $lastAskHistory, ['bodyTemplateNamePrefix' => 'passenger_',
+                'bodyTemplateNameSuffix' => ($event->getAsk()->getMatching()->getProposalOffer()->getCriteria()->getFrequency()==1)?'':'_regular']);
         }
     }
-
+    
     /**
      * Executed when an ask is declined
      *
@@ -106,13 +110,15 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $lastAskHistory = $this->AskHistoryRepository->findLastByAskAndstatus($event->getAsk(), Ask::STATUS_DECLINED);
         if ($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $event->getAsk()->getId()) {
             // the recipient is the driver
-            $this->notificationManager->notifies(AskRefusedEvent::NAME, $event->getAsk()->getMatching()->getProposalOffer()->getUser(), $lastAskHistory);
+            $this->notificationManager->notifies(AskRefusedEvent::NAME, $event->getAsk()->getMatching()->getProposalOffer()->getUser(), $lastAskHistory,['bodyTemplateNamePrefix' => 'driver_',
+                'bodyTemplateNameSuffix' => ($event->getAsk()->getMatching()->getProposalOffer()->getCriteria()->getFrequency()==1)?'':'_regular']);
         } else {
             // the recipient is the passenger
-            $this->notificationManager->notifies(AskRefusedEvent::NAME, $event->getAsk()->getMatching()->getProposalRequest()->getUser(), $lastAskHistory);
+            $this->notificationManager->notifies(AskRefusedEvent::NAME, $event->getAsk()->getMatching()->getProposalRequest()->getUser(), $lastAskHistory,['bodyTemplateNamePrefix' => 'passenger_',
+                'bodyTemplateNameSuffix' => ($event->getAsk()->getMatching()->getProposalOffer()->getCriteria()->getFrequency()==1)?'':'_regular']);
         }
     }
-
+    
     /**
      * Executed when a new matching is discovered
      *
@@ -124,23 +130,25 @@ class CarpoolSubscriber implements EventSubscriberInterface
         // we must notify the user that posted the first proposal of the matching
         if ($event->getMatching()->getProposalOffer()->getCreatedDate() < $event->getMatching()->getProposalRequest()->getCreatedDate()) {
             // the recipient is the driver
-            $this->notificationManager->notifies(MatchingNewEvent::NAME, $event->getMatching()->getProposalOffer()->getUser());
+            $this->notificationManager->notifies(MatchingNewEvent::NAME, $event->getMatching()->getProposalOffer()->getUser(),NULL, ['bodyTemplateNamePrefix' => 'driver_',
+                'bodyTemplateNameSuffix' => ($event->getMatching()->getProposalOffer()->getCriteria()->getFrequency()==1)?'':'_regular']);
         } else {
             // the recipient is the passenger
-            $this->notificationManager->notifies(MatchingNewEvent::NAME, $event->getMatching()->getProposalRequest()->getUser());
+            $this->notificationManager->notifies(MatchingNewEvent::NAME, $event->getMatching()->getProposalRequest()->getUser(), NULL, ['bodyTemplateNamePrefix' => 'passenger_',
+                'bodyTemplateNameSuffix' => ($event->getMatching()->getProposalOffer()->getCriteria()->getFrequency()==1)?'':'_regular']);
         }
     }
- 
- /**
-	* Execute when proposal is posted.
-	*
-	* @param ProposalPostedEvent $event
-	*/
-		public function onProposalPosted(ProposalPostedEvent $event)
-		{
-			$this->notificationManager->notifies(ProposalPostedEvent::NAME, $event->getProposal()->getUser(), $event->getProposal());
-		}
-
+    
+    /**
+     * Execute when proposal is posted.
+     *
+     * @param ProposalPostedEvent $event
+     */
+    public function onProposalPosted(ProposalPostedEvent $event)
+    {
+        $this->notificationManager->notifies(ProposalPostedEvent::NAME, $event->getProposal()->getUser(), $event->getProposal());
+    }
+    
     /**
      * Executed when an ad needs to be renewed
      *

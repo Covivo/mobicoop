@@ -74,7 +74,7 @@ class NotificationManager
      * @param object $object    The object linked to the notification (if more information is needed to be joined in the notification)
      * @return void
      */
-    public function notifies(string $action, User $recipient, ?object $object = null)
+    public function notifies(string $action, User $recipient, ?object $object = null, $options= [])
     {
         $notifications = $this->notificationRepository->findActiveByAction($action);
         if ($notifications && is_array($notifications)) {
@@ -88,7 +88,7 @@ class NotificationManager
                         $this->createNotified($notification, $recipient, $object);
                         break;
                     case Medium::MEDIUM_EMAIL:
-                        $this->notifyByEmail($notification, $recipient, $object);
+                        $this->notifyByEmail($notification, $recipient, $object,$options);
                         $this->createNotified($notification, $recipient, $object);
                         $this->logger->info("Email notification for $action / " . $recipient->getEmail());
                         break;
@@ -116,7 +116,7 @@ class NotificationManager
      * @param object|null   $object
      * @return void
      */
-    private function notifyByEmail(Notification $notification, User $recipient, ?object $object = null)
+    private function notifyByEmail(Notification $notification, User $recipient, ?object $object = null, $options= [])
     {
         $email = new Email();
         $email->setRecipientEmail($recipient->getEmail());
@@ -145,6 +145,11 @@ class NotificationManager
         } else {
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
         }
+        $bodyTemplateNamePrefix= $bodyTemplateNameSuffix= '';
+        if(!empty($options)){
+            $bodyTemplateNamePrefix = $options['bodyTemplateNamePrefix'];
+            $bodyTemplateNameSuffix = $options['bodyTemplateNameSuffix'];
+        }
         
         $email->setObject($this->templating->render(
             $notification->getTemplateTitle() ? $this->emailTitleTemplatePath . $notification->getTemplateTitle() : $this->emailTitleTemplatePath . $notification->getAction()->getName().'.html.twig',
@@ -153,7 +158,7 @@ class NotificationManager
             ]
         ));
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
-        $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext, $recipient->getLanguage());
+        $this->emailManager->send($email, $bodyTemplateNamePrefix.$notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName().$bodyTemplateNameSuffix, $bodyContext, $recipient->getLanguage());
     }
 
     /**
