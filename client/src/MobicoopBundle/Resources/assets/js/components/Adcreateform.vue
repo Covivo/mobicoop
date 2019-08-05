@@ -3,427 +3,456 @@
     id="adCreateForm"
     class="section"
   >
-    <div class="tile is-ancestor">
-      <div class="tile is-vertical is-12">
-        <div class="tile is-child center-all">
-          <form-wizard
-            back-button-text="Précédent"
-            next-button-text="Suivant"
-            finish-button-text="Je partage mon annonce"
-            title="Partager une annonce"
-            subtitle="Suivez les étapes.."
-            color="#023D7F"
-            class="tile is-vertical is-8"
-            @on-complete="onComplete"
-          >
-            <!-- ROLE -->
-            <tab-content
-              title="Vous êtes"
-              icon="fa fa-user-friends"
-              class="tabContent"
+    <v-container
+      grid-list-md
+      text-xs-center
+    >
+      <v-layout
+        row
+        wrap
+      >
+        <v-flex xs2 />
+        <v-flex xs8>
+          <h1>Publier une annonce Test</h1>
+          <h5>
+            <h3>Commencer votre annonce</h3>
+            <v-stepper
+              v-model="step"
+              alt-labels
             >
-              <h3>Je suis:</h3>
-              <b-field class="fieldsContainer">
-                <b-radio-button
-                  v-model="form.role"
-                  name="role"
-                  :native-value="1"
-                  type="is-secondary"
+              <v-stepper-header>
+                <v-stepper-step
+                  editable
+                  step="1"
+                  color="success"
                 >
-                  <b-icon icon="close" />
-                  <span>🚙 Conducteur</span>
-                </b-radio-button>
-                <b-radio-button
-                  v-model="form.role"
-                  name="role"
-                  :native-value="2"
-                  type="is-tertiary"
-                >
-                  <b-icon icon="check" />
-                  <span>👨‍⚖️ Passager</span>
-                </b-radio-button>
-                <b-radio-button
-                  v-model="form.role"
-                  name="role"
-                  :native-value="3"
-                  type="is-primary"
-                >
-                  Passager ou Conducteur
-                </b-radio-button>
-                <b-select
-                  v-if="!idCommunity"
-                  v-model="form.community"
-                  name="selectCommunity"
-                  :native-value="4"
-                  type="is-primary"
-                >
-                  <option
-                    v-for="(community,index) in communities"
-                    :key="index"
-                    :value="index"
-                  >
-                    {{ community }}
-                  </option>
-                </b-select>
-                <b-radio-button
-                  v-else
-                  v-model="form.idCommunity"
-                  name="role"
-                  :native-value="5"
-                  type="is-primary"
-                >
-                  {{ communities[idCommunity] }}
-                </b-radio-button>
-              </b-field>
-            </tab-content>
-            <!-- TYPE TRAJET -->
-            <tab-content
-              title="Trajet"
-              icon="fa fa-route"
-              class="tabContent"
-            >
-              <h3>Détails de votre trajet</h3>
-              <b-field class="fieldsContainer">
-                <b-radio-button
-                  v-model="form.type"
-                  name="type"
-                  :native-value="1"
-                  type="is-secondary"
-                >
-                  <b-icon
-                    pack="fas"
-                    icon="long-arrow-alt-right"
-                  />
-                  <span>Aller</span>
-                </b-radio-button>
-                <b-radio-button
-                  v-model="form.type"
-                  name="type"
-                  :native-value="2"
-                  type="is-secondary"
-                >
-                  <b-icon
-                    pack="fas"
-                    icon="exchange-alt"
-                  />
-                  <span>Aller-retour</span>
-                </b-radio-button>
-              </b-field>
-              <GeoComplete
-                name="origin"
-                placeholder="Depuis"
-                :url="geoSearchUrl"
-                @geoSelected="selectedGeo"
-              />
-              <b-icon
-                pack="fas"
-                type="is-secondary"
-                :icon="form.type === 2 ? 'arrows-alt-v' : 'long-arrow-alt-down'"
-                size="is-large"
-              />
-              <GeoComplete
-                placeholder="Vers"
-                :url="geoSearchUrl"
-                name="destination"
-                @geoSelected="selectedGeo"
-              />
-            </tab-content>
-            <!-- FREQUENCY & Submit -->
-            <tab-content
-              title="Fréquence"
-              icon="fa fa-calendar-check"
-              class="tabContent"
-            >
-              <h3>Fréquence du trajet:</h3>
-              <b-field class="fieldsContainer">
-                <b-radio-button
-                  v-model="form.frequency"
-                  name="frequency"
-                  :native-value="1"
-                  type="is-secondary"
-                >
-                  <b-icon icon="close" />
-                  <span>Ponctuel</span>
-                </b-radio-button>
-                <b-radio-button
-                  v-model="form.frequency"
-                  name="frequency"
-                  :native-value="2"
-                  type="is-secondary"
-                >
-                  <b-icon icon="check" />
-                  <span>Régulier</span>
-                </b-radio-button>
-              </b-field>
-              <!-- DATE, TIME , MARGIN -->
-              <div class="columns">
-                <!-- Punctual one way Trip -->
-                <div
-                  v-if="form.frequency ===1"
-                  class="column"
-                >
-                  <h5 class="title column is-full">
-                    Aller
-                  </h5>
-                  <b-datepicker
-                    v-model="form.outwardDate"
-                    :placeholder="'Date de départ...'"
-                    :day-names="daysShort"
-                    :month-names="months"
-                    :first-day-of-week="1"
-                    class="column is-full"
-                    position="is-top-right"
-                    icon-pack="fas"
-                  />
-                  <div class="column is-full">
-                    <div
-                      v-for="(day,index) in nbOfDaysToPlan"
-                      :key="index"
-                      class="columns"
-                    >
-                      <div
-                        v-if="nbOfDaysToPlan>1"
-                        class="column is-2 dayNameColumn"
-                      >
-                        <a class="button is-secondary is-2">{{ days[index] }}</a>
-                      </div>
-                      <b-timepicker
-                        v-model="form.outwardTime"
-                        class="column"
-                        placeholder="Heure de départ..."
-                      >
-                        <button
-                          class="button is-primary"
-                          @click="form.outwardTime = new Date()"
-                        >
-                          <b-icon icon="clock" />
-                          <span>Maintenant</span>
-                        </button>
-                        <button
-                          class="button is-tertiary"
-                          @click="form.outwardTime = null"
-                        >
-                          <b-icon icon="close" />
-                          <span>Effacer</span>
-                        </button>
-                      </b-timepicker>
-                      <!-- MARGIN -->
-                      <b-select
-                        v-model="form.outwardMargin"
-                        class="column is-4"
-                        placeholder="Marge"
-                      >
-                        <option
-                          v-for="(margin,key) in marginsMn"
-                          :key="key"
-                          :value="margin"
-                        >
-                          {{ (1 > margin/60 > 0) ? margin : `${Math.trunc(margin/60)}H${margin%60}` }}
-                        </option>
-                      </b-select>
-                    </div>
-                  </div>
-                </div>
-                <!-- Regular one way trip-->
-                <div
-                  v-if="form.frequency ===2"
-                  class="column"
-                >
-                  <h5 class="title column is-full">
-                    Aller
-                  </h5>
-                  <b-datepicker
-                    v-model="form.fromDate"
-                    :placeholder="'Date de début'"
-                    :day-names="daysShort"
-                    :month-names="months"
-                    :first-day-of-week="1"
-                    class="column is-full"
-                    position="is-top-right"
-                    icon-pack="fas"
-                  />
-                  <b-datepicker
-                    v-if="form.type ===1"
-                    v-model="form.toDate"
-                    :placeholder="'Date de fin'"
-                    :day-names="daysShort"
-                    :month-names="months"
-                    :first-day-of-week="1"
-                    class="column is-full"
-                    position="is-top-right"
-                    icon-pack="fas"
-                  />
+                  Planification
+                </v-stepper-step>
 
-                  <div class="column is-full">
-                    <div
-                      v-for="(day,index) in nbOfDaysToPlan"
-                      :key="index"
-                      class="columns"
-                    >
-                      <div
-                        v-if="nbOfDaysToPlan>1"
-                        class="column is-2 dayNameColumn"
-                      >
-                        <a class="button is-secondary is-2">{{ days[index] }}</a>
-                      </div>
-                      <b-timepicker
-                        v-model="form['outward'+daysShort[index]+'Time']"
-                        class="column"
-                        placeholder="Heure de départ..."
-                      >
-                        <button
-                          class="button is-primary"
-                          @click="form['outward'+daysShort[index]+'Time']= new Date()"
-                        >
-                          <b-icon icon="clock" />
-                          <span>Maintenant</span>
-                        </button>
-                        <button
-                          class="button is-tertiary"
-                          @click="form['outward'+daysShort[index]+'Time'] = null"
-                        >
-                          <b-icon icon="close" />
-                          <span>Effacer</span>
-                        </button>
-                      </b-timepicker>
-                      <!-- MARGIN -->
-                      <b-select
-                        v-model="form['outward'+daysShort[index]+'Margin']"
-                        class="column is-4"
-                        placeholder="Marge"
-                      >
-                        <option
-                          v-for="(margin,key) in marginsMn"
-                          :key="key"
-                          :value="margin"
-                        >
-                          {{ (1 > margin/60 > 0) ? margin : `${Math.trunc(margin/60)}H${margin%60}` }}
-                        </option>
-                      </b-select>
-                    </div>
-                  </div>
-                </div>
+                <v-divider />
+                <!-- Travel -->
+                <v-stepper-step
+                  editable
+                  step="2"
+                  color="success"
+                >
+                  Trajet
+                </v-stepper-step>
 
-                <!-- RETURN Punctual trip-->
-                <div
-                  v-if="form.type === 2 && form.frequency === 1"
-                  class="column"
+                <v-divider />
+
+                <v-stepper-step
+                  editable
+                  step="3"
+                  color="success"
                 >
-                  <h2 class="title column is-full">
-                    Retour
-                  </h2>
-                  <b-datepicker
-                    v-model="form.returnDate"
-                    :placeholder="'Date de retour...'"
-                    icon="calendar-today"
-                    class="column is-full"
-                  />
-                  <div
-                    class="columns"
-                  >
-                    <b-timepicker
-                      v-model="form.returnTime"
-                      placeholder="heure de retour..."
-                      class="column"
-                    >
-                      <button
-                        class="button is-primary"
-                        @click="form.returnTime = new Date()"
-                      >
-                        <b-icon icon="clock" />
-                        <span>Maintenant</span>
-                      </button>
-                      <button
-                        class="button is-tertiary"
-                        @click="form.returnTime = null"
-                      >
-                        <b-icon icon="close" />
-                        <span>Effacer</span>
-                      </button>
-                    </b-timepicker>
-                    <!-- MARGIN -->
-                    <b-select
-                      v-model="form.returnMargin"
-                      class="column is-4"
-                      placeholder="Marge"
-                    >
-                      <option
-                        v-for="(margin,key) in marginsMn"
-                        :key="key"
-                        :value="margin"
-                      >
-                        {{ (1 > margin/60 > 0) ? margin : `${Math.trunc(margin/60)}H${margin%60}` }}
-                      </option>
-                    </b-select>
-                  </div>
-                </div>
-                <!-- RETURN Regular trip-->
-                <div
-                  v-if="form.type === 2 && form.frequency === 2"
-                  class="column"
+                  Passagers
+                </v-stepper-step>
+                <v-divider />
+
+                <v-stepper-step
+                  editable
+                  step="4"
+                  color="success"
                 >
-                  <h2 class="title column is-full">
-                    Retour
-                  </h2>
-                  <b-datepicker
-                    v-model="form.toDate"
-                    :placeholder="'Date de fin'"
-                    icon="calendar-today"
-                    class="column is-full"
-                  />
-                  <div
-                    v-for="(day,index) in nbOfDaysToPlan"
-                    :key="index"
-                    class="columns"
+                  Participation
+                </v-stepper-step>
+                <v-divider />
+
+                <v-stepper-step
+                  editable
+                  step="5"
+                  color="success"
+                >
+                  Message
+                </v-stepper-step>
+                <v-divider />
+
+                <v-stepper-step
+                  color="success"
+                  editable
+                  step="6"
+                >
+                  Récapitulatif
+                </v-stepper-step>
+              </v-stepper-header>
+
+              <!-- Planification -->
+              <v-stepper-items>
+                <v-stepper-content step="1">
+                  <v-container
+                    grid-list-md
+                    text-xs-center
                   >
-                    <div
-                      v-if="nbOfDaysToPlan>1"
-                      class="column is-2 dayNameColumn"
+                    <v-layout
+                      row
+                      wrap
                     >
-                      <a class="button is-secondary is-2">{{ days[index] }}</a>
-                    </div>
-                    <b-timepicker
-                      v-model="form['return'+daysShort[index]+'Time']"
-                      placeholder="heure de retour..."
-                      class="column"
+                      <v-flex
+                        xs2
+                      />
+                      <v-flex
+                        xs6
+                      >
+                        <v-menu
+                          v-model="menu2"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          lazy
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="date1"
+                              label="Date de départ"
+                              prepend-icon=""
+                              readonly
+                              v-on="on"
+                            />
+                          </template>
+                          <v-date-picker
+                            v-model="date1"
+                            @input="menu2 = false"
+                          />
+                        </v-menu>
+                      </v-flex>
+                      <v-flex
+                        xs4
+                      >
+                        <v-menu
+                          ref="menu"
+                          v-model="menu3"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          :return-value.sync="time1"
+                          lazy
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          max-width="290px"
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="time1"
+                              label="Heure de départ"
+                              prepend-icon=""
+                              readonly
+                              v-on="on"
+                            />
+                          </template>
+                          <v-time-picker
+                            v-if="menu3"
+                            v-model="time1"
+                            format="24hr"
+                            @click:minute="$refs.menu.save(time1)"
+                          />
+                        </v-menu>
+                      </v-flex>
+                    </v-layout>
+                    <v-layout
+                      row
+                      wrap
                     >
-                      <button
-                        class="button is-primary"
-                        @click="form['return'+daysShort[index]+'Time'] = new Date()"
+                      <v-flex
+                        xs2
                       >
-                        <b-icon icon="clock" />
-                        <span>Maintenant</span>
-                      </button>
-                      <button
-                        class="button is-tertiary"
-                        @click="form['return'+daysShort[index]+'Time'] = null"
+                        <v-checkbox
+                          label="retour"
+                          color="success"
+                          value="success"
+                          hide-details
+                        />
+                      </v-flex>
+                      <v-flex
+                        xs6
                       >
-                        <b-icon icon="close" />
-                        <span>Effacer</span>
-                      </button>
-                    </b-timepicker>
-                    <!-- MARGIN -->
-                    <b-select
-                      v-model="form['return'+daysShort[index]+'Margin']"
-                      class="column is-4"
-                      placeholder="Marge"
+                        <v-menu
+                          v-model="menu4"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          lazy
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="date2"
+                              label="Date de retour"
+                              prepend-icon=""
+                              readonly
+                              v-on="on"
+                            />
+                          </template>
+                          <v-date-picker
+                            v-model="date2"
+                            @input="menu4 = false"
+                          />
+                        </v-menu>
+                      </v-flex>
+                      <v-flex
+                        xs4
+                      >
+                        <v-menu
+                          ref="menu"
+                          v-model="menu5"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          :return-value.sync="time2"
+                          lazy
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          max-width="290px"
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="time2"
+                              label="Heure de retour"
+                              prepend-icon=""
+                              readonly
+                              v-on="on"
+                            />
+                          </template>
+                          <v-time-picker
+                            v-if="menu5"
+                            v-model="time2"
+                            format="24hr"
+                            @click:minute="$refs.menu.save(time2)"
+                          />
+                        </v-menu>
+                      </v-flex>
+                    </v-layout>
+                  </v-container>
+                </v-stepper-content>
+
+                <v-stepper-content step="2">
+                  <v-container
+                    grid-list-md
+                    text-xs-center
+                  >
+                    <v-layout
+                      row
+                      wrap
                     >
-                      <option
-                        v-for="(margin,key) in marginsMn"
-                        :key="key"
-                        :value="margin"
+                      <v-flex
+                        xs12
+                      />
+                      <v-flex
+                        xs6
                       >
-                        {{ (1 > margin/60 > 0) ? margin : `${Math.trunc(margin/60)}H${margin%60}` }}
-                      </option>
-                    </b-select>
-                  </div>
-                </div>
-              </div>
-            </tab-content>
-          </form-wizard>
-        </div>
-      </div>
-    </div>
+                        <GeoComplete
+                          name="origin"
+                          placeholder="Depuis"
+                          :url="geoSearchUrl"
+                          @geoSelected="selectedGeo"
+                        />
+                      </v-flex>
+                      <v-flex
+                        xs4
+                      />
+                    </v-layout>
+                    <v-layout
+                      row
+                      wrap
+                    >
+                      <v-flex
+                        xs12
+                      />
+                      <v-flex
+                        xs6
+                      >
+                        <GeoComplete
+                          placeholder="Vers"
+                          :url="geoSearchUrl"
+                          name="destination"
+                          @geoSelected="selectedGeo"
+                        />
+                      </v-flex>
+                      <v-flex
+                        xs4
+                      />
+                    </v-layout>
+                  </v-container>
+                </v-stepper-content>
+
+                <!-- Passenger(s) -->
+                <v-stepper-content
+                  step="3"
+                >
+                  <v-layout
+                    row
+                  >
+                    <v-flex
+                      xs12
+                      offset-sm3
+                    >
+                      <v-layout>
+                        J'ai de la place pour :
+                        <v-select
+                          style="width:15px"
+                          label="Place(s)"
+                          :items="[1,2,3,4]"
+                        />
+                        passager(s)
+                      </v-layout>
+                      <v-layout>
+                        J'ai de la place pour des gros bagages
+                        <v-switch
+                          class="ma-2"
+                        />
+                      </v-layout>
+                      <v-layout>
+                        Je peux tranporter un vélo
+                        <v-switch
+                          class="ma-2"
+                        />
+                      </v-layout>
+                      <v-layout>
+                        Maximum 2 personnes à l'arrière
+                        <v-switch
+                          d-inline
+                          class="ma-2"
+                        />
+                      </v-layout>
+                    </v-flex>
+                  </v-layout>
+                </v-stepper-content>
+
+                <!-- Price Carpool -->
+                <v-stepper-content
+                  step="4"
+                >
+                  <v-layout
+                    wrap
+                    row
+                  >
+                    <v-layout align-center>
+                      Participation
+                      <p>
+                        <v-text-field>
+                          Default Slot
+                        </v-text-field>
+                        <!-- TODO get the .env variable that defines the carpool price value -->
+                        0.06€/km
+                      </p>
+                      passager(s)
+                    </v-layout>
+                  </v-layout>
+                </v-stepper-content>
+
+                <!-- Message -->
+                <v-stepper-content
+                  step="5"
+                >
+                  <v-layout
+                    wrap
+                    row
+                  >
+                    <v-layout align-center>
+                      Mon message aux passagers
+                    </v-layout>
+                    <v-textarea
+                      name="input-7-1"
+                      label="Mon message aux passagers"
+                      value=""
+                      placeholder="Laissez un petit message ..."
+                    />
+                  </v-layout>
+                </v-stepper-content>
+
+                <!-- summary / recap -->
+                <v-stepper-content
+                  step="6"
+                >
+                  <v-layout
+                    wrap
+                    row
+                  >
+                    TODO make the sumary
+                    <v-layout align-center>
+                      Mon message aux passagers
+                    </v-layout>
+                    <v-textarea
+                      name="input-7-1"
+                      label="Mon message aux passagers"
+                      value=""
+                      placeholder="Laissez un petit message ..."
+                    />
+                  </v-layout>
+                </v-stepper-content>
+              </v-stepper-items>
+            </v-stepper>
+          </h5>
+        </v-flex>
+      </v-layout>
+      <!-- </v-stepper-content> -->
+
+      <v-stepper-content step="4">
+        <VCard
+          class="mb-5"
+          color="grey lighten-1"
+          height="200px"
+        />
+      </v-stepper-content>
+
+      <v-stepper-content step="5">
+        <VCard
+          class="mb-5"
+          color="grey lighten-1"
+          height="200px"
+        />
+      </v-stepper-content>
+
+      <v-stepper-content step="6">
+        <VCard
+          class="mb-5"
+          color="grey lighten-1"
+          height="200px"
+        />
+      </v-stepper-content>
+      <!-- je teste pour voir ce que ça raconte si on fait propre -->
+      <v-layout justify-center>
+        <v-btn
+          v-if="step > 1"
+          rounded
+          color="primary"
+          align-center
+          @click="--step"
+        >
+          Précédent
+        </v-btn>
+
+        <v-btn
+          v-if="step < 6"
+          rounded
+          color="primary"
+          align-center
+          style="margin-left: 30px"
+          @click="step++"
+        >
+          Suivant
+        </v-btn>
+        <v-btn
+          v-if="step === 6"
+          rounded
+          color="primary"
+          style="margin-left: 30px"
+          align-center
+        >
+          Publier mon annonce
+        </v-btn>
+      </v-layout>
+      <!-- </v-flex> -->
+      <v-flex xs2 />
+      <!-- </v-layout> -->
+    </v-container>
   </section>
 </template>
 
@@ -431,10 +460,8 @@
 import axios from "axios";
 import moment from 'moment'
 import GeoComplete from "./GeoComplete";
-import BSelect from "buefy/src/components/select/Select";
 export default {
   components: {
-    BSelect,
     GeoComplete
   },
   props: {
@@ -473,6 +500,18 @@ export default {
   },
   data() {
     return {
+      //add data from vuetify test before merging all
+      step: 1,
+      date1: new Date().toISOString().substr(0, 10),
+      time1: null,
+      date2: new Date().toISOString().substr(0, 10),
+      time2: null,
+      menu2: false,
+      menu3: false,
+      menu4: false,
+      menu5: false,
+      numberP: [1,2,3,4,5],
+      /////////////////////////////////////
       origin: null,
       outward: this.sentOutward,
       communities: JSON.parse(this.sentHydra),
@@ -598,9 +637,9 @@ export default {
       this.form[name + "AddressLocality"] = val.addressLocality;
     },
     /**
-     * Send the form to the route /covoiturage/annonce/poster
-     */
-    onComplete() { 
+       * Send the form to the route /covoiturage/annonce/poster
+       */
+    onComplete() {
       let adForm = new FormData();
       for (let prop in this.form) {
         let value = this.form[prop];
@@ -641,18 +680,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.tabContent {
-  text-align: center;
-}
-.fieldsContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.dayNameColumn {
-  text-align: left;
-  a {
-    width: 100%;
+  .tabContent {
+    text-align: center;
   }
-}
+  .fieldsContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .dayNameColumn {
+    text-align: left;
+    a {
+      width: 100%;
+    }
+  }
+
+   .layout .align-center {
+     padding:12px !important;
+     color: blueviolet;
+   }
+
 </style>
