@@ -1,11 +1,11 @@
 'use strict';
-
 import { Vue, vuetify, i18n, VApp } from '@js/config/vue-config'
 import '@css/page/user/login.scss';
 
 // Vue components
-import Vueheader from '@js/components/Vueheader';
-import Vuefooter from '@js/components/Vuefooter';
+import Login from '@js/components/user/Login';
+import MHeader from '@js/components/MHeader';
+import MFooter from '@js/components/MFooter';
 
 new Vue({
   i18n,
@@ -13,7 +13,8 @@ new Vue({
   vuetify,
   components: {
     VApp,
-    Vueheader,
-    Vuefooter
+    Login,
+    MHeader,
+    MFooter
   }
 })

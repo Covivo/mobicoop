@@ -6,35 +6,22 @@
                     "next": "Suivant",
                     "register": "Je m'inscris",
                     "save": "Enregistrer",
-                    "askCarpool":"Demander un covoiturage",
-                    "accept":"J'accepte",
-                    "refuse":"Je refuse"
+                    "connection": "Se connecter"
                 }, 
                 "form": {
                     "errors": "Merci de corriger les erreurs suivantes ",
-                    "enterMessage": "Saisissez un message"
-                },
-                "modals": {
-                    "carpooling": {
-                        "askCarpoolTitle":"Demande de covoiturage",
-                        "askCarpoolText":"Etes-vous sur de vouloir envoyer une demande de covoiturage ?"
-                    }
+                    "enterMessage": "Saisissez un message",
+                    "optional": "facultatif"
                 },
                 "infos": {
-                    "carpooling": {
-                        "askAlreadySent": "Proposition de covoiturage envoyée",
-                        "accepted": "Proposition de covoiturage acceptée",
-                        "refused": "Proposition de covoiturage refusée",
-                        "distance": "Distance",
-                        "duration": "Durée",
-                        "availableSeats": "Places disponibles",
-                        "price": "Prix"
-                    },
                     "misc": {
                         "at": "à"
                     }
                 },
                 "pages": {
+                    "home": {
+                        
+                    },
                     "signup": {
                         "chart": {
                             "chartValid": "Je valide la charte",
@@ -42,22 +29,12 @@
                                 "required": "La validation de la charte est requise"
                             }
                         }
-                    },
-                    "messages": {
-                        "label": {
-                            "messages":"Messages",
-                            "context":"Annonces(s)",
-                            "ongoingasks":"Demandes en cours",
-                            "directmessages":"Boîte de dialogue",
-                            "nocarpoolmessages":"Aucun message de covoiturage",
-                            "nodirectmessages":"Aucun message direct",
-                            "notLinkedToACarpool":"N'est pas lié à un covoiturage"
-                        },
-                        "spinner":{
-                            "loading":"Chargement des messages",
-                            "sendMessage":"Envoi...",
-                            "askCarpool":"Envoi de votre demande...",
-                            "updateCarpool":"Mise à jour de de votre demande..."
+                    }
+                },
+                "i18n": {
+                    "date": {
+                        "format": {
+                            "fullDate": "ddd Do MMMM YYYY"
                         }
                     }
                 }
@@ -101,7 +78,8 @@
                         "label": "Email",
                         "placeholder": "Email",
                         "errors": {
-                            "required": "L'adresse email est requise"
+                            "required": "L'adresse email est requise",
+                            "valid": "L'adresse email doit être valide"
                         }
                     },
                     "phone": {
@@ -118,40 +96,19 @@
                             "required": "Le mot de passe est requis"
                         }
                     },
+                    "passwordRepeat": {
+                        "label": "Mot de passe (confirmation)",
+                        "placeholder": "Mot de passe (confirmation)",
+                        "errors": {
+                            "required": "Veuillez confirmer le mot de passe"
+                        }
+                    },
                     "homeTown": {
                         "label": "Commune de résidence",
                         "placeholder": "Commune de résidence",
                         "errors": {
                             "required": "La ville de résidence est requise"
                         }
-                    }
-                }
-            },
-            "navBar": {
-                "buttons": {
-                    "signup": {
-                        "label": "Inscription",
-                        "route": "/utilisateur/inscription"
-                    },
-                    "logIn": {
-                        "label": "Connexion",
-                        "route": "/utilisateur/connexion"
-                    },
-                    "shareAnAd": {
-                        "label": "Publier une annonce",
-                        "route": "/covoiturage/annonce/poster"
-                    },
-                    "messages": {
-                        "label": "Messages",
-                        "route": "/utilisateur/messages"
-                    },
-                    "myProfile": {
-                        "label": "Mon profil",
-                        "route": "/utilisateur/profil/modifier"
-                    },
-                    "logOut": {
-                        "label": "Déconnexion",
-                        "route": "/user/logout"
                     }
                 }
             }

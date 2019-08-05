@@ -18,8 +18,8 @@ security:
             form_login:
                 login_path: user_login
                 check_path: user_login
-                username_parameter: user_login_form[username]
-                password_parameter: user_login_form[password]
+                username_parameter: email
+                password_parameter: password
             # https://symfony.com/doc/current/security/form_login_setup.html
 
             logout:

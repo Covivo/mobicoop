@@ -81,8 +81,8 @@ class NotificationManager
             foreach ($notifications as $notification) {
                 switch ($notification->getMedium()->getId()) {
                     case Medium::MEDIUM_MESSAGE:
-                        $this->logger->info("Internal message notification for $action / " . get_class($object) . " / " . $recipient->getEmail());
                         if (!is_null($object)) {
+                            $this->logger->info("Internal message notification for $action / " . get_class($object) . " / " . $recipient->getEmail());
                             $this->internalMessageManager->sendForObject([$recipient], $object);
                         }
                         $this->createNotified($notification, $recipient, $object);

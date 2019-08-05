@@ -87,15 +87,15 @@ class UserManager
     }
 
     /**
-     * Search user by reset token
+     * Search user by password reset token
      *
      * @param string $token
      *
      * @return User|null The user found or null if not found.
      */
-    public function findByToken(string $token)
+    public function findByPwdToken(string $token)
     {
-        $response = $this->dataProvider->getCollection(['token' => $token]);
+        $response = $this->dataProvider->getCollection(['pwdToken' => $token]);
         if ($response->getCode() == 200) {
             /** @var Hydra $user */
             $user = $response->getValue();

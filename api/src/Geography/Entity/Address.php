@@ -61,28 +61,12 @@ use App\RelayPoint\Entity\RelayPoint;
  *                         "required" = "true",
  *                         "type" = "string",
  *                         "description" = "The query"
- *                     }
- *                   }
- *              }
- *          },
- *          "loggedSearch"={
- *              "method"="GET",
- *              "path"="/addresses/loggedSearch",
- *              "swagger_context"={
- *                  "parameters"={
- *                     {
- *                         "name" = "q",
- *                         "in" = "query",
- *                         "required" = "true",
- *                         "type" = "string",
- *                         "description" = "The query"
  *                     },
  *                     {
- *                         "name" = "user",
+ *                         "name" = "token",
  *                         "in" = "query",
- *                         "type" = "number",
- *                         "format" = "integer",
- *                         "description" = "The user id"
+ *                         "type" = "string",
+ *                         "description" = "The geographic token authorization"
  *                     }
  *                   }
  *              }

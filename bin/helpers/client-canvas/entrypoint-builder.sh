@@ -1,0 +1,1 @@
+cd src && ln -fs /var/client/src/MobicoopBundle && cd ../ && npm run install-ci

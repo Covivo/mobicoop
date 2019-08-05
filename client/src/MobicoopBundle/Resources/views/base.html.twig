@@ -6,36 +6,29 @@
             {% block title %}Welcome!
             {% endblock %}
         </title>
-        {{ encore_entry_link_tags('app') }}
+        {{ encore_entry_link_tags("#{assets_prefix ?? ''}app") }}
 
         <meta content="width=device-width, initial-scale=1" name="viewport"> {% block stylesheets %}{% endblock %}
         </head>
         <body>
-            {% if app.user %}
-                {% set logged = 'true' %}
-            {% endif %}
 
             <div id="app">
                 <v-app>
-                    <nav id="header">
-                        {% if app.user %}
-                            <Vueheader :user={{app.user|json_encode()}}></Vueheader>
-                        {% else %}
-                            <Vueheader></Vueheader>
-                        {% endif %}
-                    </nav>
+                    {% if app.user %}
+                        <m-header :user={{app.user|json_encode()}}></m-header>
+                    {% else %}
+                        <m-header></m-header>
+                    {% endif %}
                     <main id="main" role="main">
                         <div>
                             {% block main %}{% endblock %}
                         </div>
                     </main>
-                    <footer id="footer">
-                        <Vuefooter></Vuefooter>
-                    </footer>
+                    <m-footer></m-footer>
                 </v-app>
             </div>
         </body>
 
-        {{ encore_entry_script_tags('app') }}
+        {{ encore_entry_script_tags("#{assets_prefix ?? ''}app") }}
         {% block javascripts %}{% endblock %}
     </html>

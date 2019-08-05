@@ -58,13 +58,13 @@ class UserUpdatePassword
     public function __invoke(User $data, string $name): User
     {
         switch ($name) {
-        case 'request':
-         $data = $this->userManager->updateUserPasswordRequest($data);
-         break;
-        case 'reply':
-         $data = $this->userManager->updateUserPasswordConfirm($data);
-         break;
-     }
+            case 'request':
+                $data = $this->userManager->updateUserPasswordRequest($data);
+                break;
+            case 'reply':
+                $data = $this->userManager->updateUserPasswordConfirm($data);
+                break;
+        }
         return $data;
     }
 }

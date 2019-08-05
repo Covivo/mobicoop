@@ -9,22 +9,21 @@ const read = require('fs-readdir-recursive');
 
 let files = read('./assets/js/page');
 let filesBundle = read('./src/MobicoopBundle/Resources/assets/js/page');
+// ⚙️ UNCOMMENT below if you are using a client platform  ⚙️ //
+// let bundleRealPath = fs.realpathSync(__dirname + '/src/MobicoopBundle');
+// let bundleNodeModules = path.resolve(bundleRealPath + '../../../node_modules');
+// let bundleVendor = path.resolve(bundleRealPath + '../../../vendor');
+// let bundlePublic = path.resolve(bundleRealPath + '../../../public');
 
 Encore
-  // directory where compiled assets will be stored
   .setOutputPath('public/build/')
-  // public path used by the web server to access the output path
   .setPublicPath('/build')
-  .addEntry('app', './src/MobicoopBundle/Resources/assets/js/app.js')
+  .addEntry('bundle_app', './src/MobicoopBundle/Resources/assets/js/app.js')
+  // ⚙️ UNCOMMENT below if you are client platform ⚙️ //
+  // .addEntry('app', './assets/js/app.js')  
   .splitEntryChunks()
-  // .cleanupOutputBeforeBuild()
   .enableVersioning(Encore.isProduction())
-  // enables Sass/SCSS support
   .enableVueLoader()
-  // .enableSassLoader(options => {
-  //   options.implementation = require('sass')
-  //   options.fiber = require('fibers')
-  // }) // ☣️This is the way encore works but vuetify show warning error about order mini-css-....
   .addPlugin(new VuetifyLoaderPlugin())
   .addLoader({
     test: /\.s(c|a)ss$/,
@@ -43,13 +42,16 @@ Encore
   .setManifestKeyPrefix('/build')
   .enablePostCssLoader()
 
-// for production we do not add some plugin & loader
+// for Dev we do not add some plugin & loader
 if (!Encore.isProduction()) {
   Encore.addLoader({
     test: /\.(js|vue)$/,
     enforce: 'pre',
     loader: 'eslint-loader',
+    // ⚙️ COMMENT below if you are using a client platform  ⚙️ //
     exclude: ['/node_modules', '/vendor', '/public'],
+    // ⚙️ UNCOMMENT below if you are using a client platform  ⚙️ //
+    // exclude: ['/node_modules', '/vendor', '/public', bundleNodeModules, bundleVendor, bundlePublic],
     options: {
       fix: true
     }
@@ -88,11 +90,21 @@ encoreConfig.watchOptions = {
   poll: 1000
 }
 
+// Add aliases for files !
 encoreConfig.resolve.alias = _.merge(encoreConfig.resolve.alias, { // merge is very important because if not present vue is not found because cnore add aliasl !! https://github.com/vuejs-templates/webpack/issues/215#issuecomment-514220431
   '@js': path.resolve(__dirname, 'src/MobicoopBundle/Resources/assets/js'),
   '@css': path.resolve(__dirname, 'src/MobicoopBundle/Resources/assets/css'),
+  '@translations': path.resolve(__dirname, 'src/MobicoopBundle/Resources/translations'),
+  '@assets': path.resolve(__dirname, 'src/MobicoopBundle/Resources/assets'),
+  '@themes': path.resolve(__dirname, 'src/MobicoopBundle/Resources/themes'),
+  '@clientTranslations': path.resolve(__dirname, './translations'),
+  // ⚙️ UNCOMMENT below if you are using a client platform  ⚙️ //
+  // '@clientJs': path.resolve(__dirname, './assets/js'),
+  // '@clientCss': path.resolve(__dirname, './assets/css'),
+  // '@clientAssets': path.resolve(__dirname, './assets'),
+  // '@themes': path.resolve(__dirname, './themes'),
+
 });
 
-console.error(path.resolve(__dirname, 'src/MobicoopBundle/Resources/assets'))
 
 module.exports = [encoreConfig];

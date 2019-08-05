@@ -58,6 +58,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskHistoryManager;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use function GuzzleHttp\json_encode;
 
 /**
  * Controller class for user related actions.
@@ -77,14 +78,14 @@ class UserController extends AbstractController
 
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
+        $errorMessage = "";
+        if (!is_null($error)) {
+            $errorMessage = $error->getMessage();
+        }
         
-        $login = new Login();
-
-        $form = $this->createForm(UserLoginForm::class, $login);
 
         return $this->render('@Mobicoop/user/login.html.twig', [
-            "form"=>$form->createView(),
-            "error"=>$error
+            "errorMessage"=>$errorMessage
             ]);
     }
 
@@ -164,10 +165,8 @@ class UserController extends AbstractController
         // get the homeAddress
         $homeAddress = $user->getHomeAddress();
          
-        $form = $this->createForm(UserForm::class, $user, ['validation_groups'=>['update']]);
         $error = false;
            
-        
         if ($request->isMethod('POST')) {
 
             //get all data from form (user + homeAddress)
@@ -220,37 +219,46 @@ class UserController extends AbstractController
 
     /**
      * User password update.
+     * Ajax
      */
     public function userPasswordUpdate(UserManager $userManager, Request $request)
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('password', $user);
-        $form = $this->createForm(
-            UserForm::class,
-            $user,
-            ['validation_groups'=>['password']]
-        );
 
-        $form->handleRequest($request);
-        $error = false;
+        $error = [
+            'state' => false,
+            'message' => "",
+        ];
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($request->isMethod('POST')) {
+            $error["message"] = "Ok";
+            
+            if ($request->request->get('password')!==null) {
+                $user->setPassword($request->request->get('password'));
+            } else {
+                $error["state"] = "true";
+                $error["message"] = "Empty password";
+                return new Response(json_encode($error));
+            }
+
             if ($user = $userManager->updateUserPassword($user)) {
                 // after successful update, we re-log the user
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                 $this->get('security.token_storage')->setToken($token);
                 $this->get('session')->set('_security_main', serialize($token));
-                return $this->redirectToRoute('user_profile_update');
+                $error["message"] = "Ok";
+                return new Response(json_encode($error));
             }
-            $error = true;
+            $error["state"] = "true";
+            $error["message"] = "Update password failed";
+            return new Response(json_encode($error));
         }
 
-        return $this->render('@Mobicoop/user/password.html.twig', [
-            'form' => $form->createView(),
-            'user' => $user,
-            'error' => $error
-        ]);
+        $error["state"] = "true";
+        $error["message"] = "Request failed";
+        return new Response(json_encode($error));
     }
 
 
@@ -263,10 +271,8 @@ class UserController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      * @throws Exception
      */
-    public function userPasswordForgot(UserManager $userManager, Request $request, \Swift_Mailer $mailer)
+    public function userPasswordForgot(UserManager $userManager, Request $request)
     {
-        /** @var Session $session */
-        $session= $this->get('session');
         $userRequest= new User();
         $form = $this->createFormBuilder($userRequest)
         ->add('email', EmailType::class, ['required'=> false])
@@ -313,9 +319,7 @@ class UserController extends AbstractController
      */
     public function userPasswordReset(UserManager $userManager, Request $request, string $token, \Swift_Mailer $mailer)
     {
-        /** @var Session $session */
-        $session= $this->get('session');
-        $user = $userManager->findByToken($token);
+        $user = $userManager->findByPwdToken($token);
         $error = false;
 
         if (empty($user) || (time() - (int)$user->getPupdtime()->getTimestamp()) > 86400) {
@@ -412,11 +416,13 @@ class UserController extends AbstractController
         $threadsCarpoolingMessagesForView = [];
         $idMessageDefault = null;
         $idRecipientDefault = null;
+        $firstNameRecipientDefault = "";
+        $lastNameRecipientDefault = "";
 
         // Building threads array
         $threads = $userManager->getThreads($user);
         $idMessageDefaultSelected = false;
-        
+
         foreach ($threads["threads"] as $thread) {
             $arrayThread["idThreadMessage"] = $thread["id"];
             if (!isset($thread["user"]["id"])) {

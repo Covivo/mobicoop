@@ -1,5 +1,8 @@
 <template>
-  <v-footer height="auto">
+  <v-footer
+    height="auto"
+    color="primary"
+  >
     <v-layout
       justify-center
       row
@@ -56,5 +59,17 @@
     </v-layout>
   </v-footer>
 </template>
+
 <script>
+import { merge } from "lodash";
+import Translations from "@translations/components/MFooter.json";
+import TranslationsClient from "@clientTranslations/components/MFooter.json";
+
+let TranslationsMerged = merge(Translations, TranslationsClient);
+
+export default {
+  i18n: {
+    messages: TranslationsMerged
+  }
+};
 </script>
