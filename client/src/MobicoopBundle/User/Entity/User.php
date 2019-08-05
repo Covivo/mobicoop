@@ -218,7 +218,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
 
     /**
      * @var string|null Token for password modification.
-     *  @Groups({"post","put"})
+     *  @Groups({"post","put", "password_token"})
      */
     private $pwdToken;
 

@@ -220,20 +220,19 @@
       <trans-unit id="nrupJ_5" resname="Une&#10;                                                                        question ?">
         <source>Une
                                                                         question ?</source>
-        <target>__Une
-                                                                        question ?</target>
+        <target>Do you have a question?</target>
       </trans-unit>
       <trans-unit id="akpKKLm" resname="Formulaire de contact">
         <source>Formulaire de contact</source>
-        <target>__Formulaire de contact</target>
+        <target>Contact form</target>
       </trans-unit>
       <trans-unit id="J9EkMuf" resname="Foire Aux Questions">
         <source>Foire Aux Questions</source>
-        <target>__Foire Aux Questions</target>
+        <target>Frequently asked Questions</target>
       </trans-unit>
       <trans-unit id="BX6c09b" resname="Cliquez-ici">
         <source>Cliquez-ici</source>
-        <target>__Cliquez-ici</target>
+        <target>Click here</target>
       </trans-unit>
       <trans-unit id="2.lX2F3" resname="pour gérer vos alertes email.">
         <source>pour gérer vos alertes email.</source>
@@ -290,6 +289,18 @@
       <trans-unit id="rlCQX_N" resname="A très bientôt sur">
         <source>A très bientôt sur</source>
         <target>See you next on</target>
+      </trans-unit>
+      <trans-unit id="SgojxLs" resname="Nous sommes content de vous rendre service.">
+        <source>Nous sommes content de vous rendre service.</source>
+        <target>It is really nice to work for you.</target>
+      </trans-unit>
+      <trans-unit id="VT_f.R4" resname="Nous vous notifions par ce message que votre annonce a été posté avec succes!">
+        <source>Nous vous notifions par ce message que votre annonce a été posté avec succes!</source>
+        <target>We want to notify you that your proposal was posted</target>
+      </trans-unit>
+      <trans-unit id="JoZrPCA" resname="Merci">
+        <source>Merci</source>
+        <target>Thank you</target>
       </trans-unit>
     </body>
   </file>

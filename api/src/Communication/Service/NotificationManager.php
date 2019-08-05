@@ -120,13 +120,14 @@ class NotificationManager
     {
         $email = new Email();
         $email->setRecipientEmail($recipient->getEmail());
+        echo $recipient->getId();
         $titleContext = [];
         $bodyContext = [];
         if ($object) {
             switch (get_class($object)) {
                 case Proposal::class:
                     $titleContext = [];
-                    $bodyContext = [];
+                    $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
                     break;
                 case Matching::class:
                     $titleContext = [];

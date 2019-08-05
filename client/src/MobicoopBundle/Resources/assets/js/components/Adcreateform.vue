@@ -630,7 +630,9 @@ export default {
         })
       // ajouter ici un .then pour enregistrer une annonce avec une communauté
         .then(function(response) {
-          window.location.href = '/covoiturage/annonce/'+response.data.proposal+'/resultats';
+          if(response.data.proposal !== 'undefined' ) {
+            window.location.href = '/covoiturage/annonce/' + response.data.proposal + '/resultats';
+          }
         })
         .catch(function(error) {
           console.error(error);

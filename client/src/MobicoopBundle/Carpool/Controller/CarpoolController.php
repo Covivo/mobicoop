@@ -144,6 +144,7 @@ class CarpoolController extends AbstractController
             $success = true;
         } catch (Error $err) {
             $error = $err;
+            $success= false;
         }
         $proposalSuccess = $success ? $proposal->getId() : false;
 
