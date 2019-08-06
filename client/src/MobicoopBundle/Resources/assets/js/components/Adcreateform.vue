@@ -26,6 +26,15 @@
                   step="1"
                   color="success"
                 >
+                  Commencer votre annonce
+                </v-stepper-step>
+                <v-divider />
+
+                <v-stepper-step
+                  editable
+                  step="2"
+                  color="success"
+                >
                   Planification
                 </v-stepper-step>
 
@@ -33,7 +42,7 @@
                 <!-- Travel -->
                 <v-stepper-step
                   editable
-                  step="2"
+                  step="3"
                   color="success"
                 >
                   Trajet
@@ -43,7 +52,7 @@
 
                 <v-stepper-step
                   editable
-                  step="3"
+                  step="4"
                   color="success"
                 >
                   Passagers
@@ -52,7 +61,7 @@
 
                 <v-stepper-step
                   editable
-                  step="4"
+                  step="5"
                   color="success"
                 >
                   Participation
@@ -61,7 +70,7 @@
 
                 <v-stepper-step
                   editable
-                  step="5"
+                  step="6"
                   color="success"
                 >
                   Message
@@ -71,15 +80,186 @@
                 <v-stepper-step
                   color="success"
                   editable
-                  step="6"
+                  step="7"
                 >
                   Récapitulatif
                 </v-stepper-step>
               </v-stepper-header>
 
               <!-- Planification -->
-              <v-stepper-items>
+              <v-stepper-items
+                style="height: 500px"
+              >
                 <v-stepper-content step="1">
+                  <v-container
+                    grid-list-md
+                    text-xs-center
+                  >
+                    <v-layout
+                      row
+                      wrap
+                    >
+                      <v-flex
+                        xs2
+                      />
+                      <v-flex
+                        xs6
+                      >
+                        <v-menu
+                          v-model="menu2"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          lazy
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="date1"
+                              label="Date de départ"
+                              prepend-icon=""
+                              readonly
+                              v-on="on"
+                            />
+                          </template>
+                          <v-date-picker
+                            v-model="date1"
+                            @input="menu2 = false"
+                          />
+                        </v-menu>
+                      </v-flex>
+                      <v-flex
+                        xs4
+                      >
+                        <v-menu
+                          ref="menu"
+                          v-model="menu3"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          :return-value.sync="time1"
+                          lazy
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          max-width="290px"
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="time1"
+                              label="Heure de départ"
+                              prepend-icon=""
+                              readonly
+                              v-on="on"
+                            />
+                          </template>
+                          <v-time-picker
+                            v-if="menu3"
+                            v-model="time1"
+                            format="24hr"
+                            @click:minute="$refs.menu.save(time1)"
+                          />
+                        </v-menu>
+                      </v-flex>
+                    </v-layout>
+                    <v-layout
+                      row
+                      wrap
+                    >
+                      <v-flex
+                        xs2
+                      >
+                        <v-checkbox
+                          label="retour"
+                          color="success"
+                          value="success"
+                          hide-details
+                        />
+                      </v-flex>
+                      <v-flex
+                        xs6
+                      >
+                        <v-menu
+                          v-model="menu4"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          lazy
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="date2"
+                              label="Date de retour"
+                              prepend-icon=""
+                              readonly
+                              v-on="on"
+                            />
+                          </template>
+                          <v-date-picker
+                            v-model="date2"
+                            @input="menu4 = false"
+                          />
+                        </v-menu>
+                      </v-flex>
+                      <v-flex
+                        xs4
+                      >
+                        <v-menu
+                          ref="menu"
+                          v-model="menu5"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          :return-value.sync="time2"
+                          lazy
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          max-width="290px"
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="time2"
+                              label="Heure de retour"
+                              prepend-icon=""
+                              readonly
+                              v-on="on"
+                            />
+                          </template>
+                          <v-time-picker
+                            v-if="menu5"
+                            v-model="time2"
+                            format="24hr"
+                            @click:minute="$refs.menu.save(time2)"
+                          />
+                        </v-menu>
+                        {{ communities.value }}
+                        <v-select
+                          v-if="!idCommunity"
+                          v-model="form.community"
+                          name="selectCommunity"
+                          :native-value="4"
+                          type="is-primary"
+                          :items="communities"
+                          :item-text="Object.values(communities)"
+                          :item-value="Object.keys(communities)"
+                        />
+                        <p
+                          v-else
+                        >
+                          {{ communities[idCommunity] }}
+                        </p>
+                      </v-flex>
+                    </v-layout>
+                  </v-container>
+                </v-stepper-content>
+
+                <v-stepper-content step="2">
                   <v-container
                     grid-list-md
                     text-xs-center
@@ -232,7 +412,7 @@
                   </v-container>
                 </v-stepper-content>
 
-                <v-stepper-content step="2">
+                <v-stepper-content step="3">
                   <v-container
                     grid-list-md
                     text-xs-center
@@ -284,7 +464,7 @@
 
                 <!-- Passenger(s) -->
                 <v-stepper-content
-                  step="3"
+                  step="4"
                 >
                   <v-layout
                     row
@@ -327,47 +507,24 @@
 
                 <!-- Price Carpool -->
                 <v-stepper-content
-                  step="4"
-                >
-                  <v-layout
-                    wrap
-                    row
-                  >
-                    <v-layout align-center>
-                      Participation
-                      <p>
-                        <v-text-field>
-                          Default Slot
-                        </v-text-field>
-                        <!-- TODO get the .env variable that defines the carpool price value -->
-                        0.06€/km
-                      </p>
-                      passager(s)
-                    </v-layout>
-                  </v-layout>
-                </v-stepper-content>
-
-                <!-- Message -->
-                <v-stepper-content
                   step="5"
                 >
                   <v-layout
                     wrap
                     row
+                    align-center
                   >
-                    <v-layout align-center>
-                      Mon message aux passagers
-                    </v-layout>
-                    <v-textarea
-                      name="input-7-1"
-                      label="Mon message aux passagers"
-                      value=""
-                      placeholder="Laissez un petit message ..."
-                    />
+                    Participation
+                    <p>
+                      <v-text-field type="number" />
+                      <!-- TODO get the .env variable that defines the carpool price value -->
+                      0.06€/km
+                    </p>
+                    passager(s)
                   </v-layout>
                 </v-stepper-content>
 
-                <!-- summary / recap -->
+                <!-- Message -->
                 <v-stepper-content
                   step="6"
                 >
@@ -375,48 +532,92 @@
                     wrap
                     row
                   >
-                    TODO make the sumary
-                    <v-layout align-center>
-                      Mon message aux passagers
-                    </v-layout>
-                    <v-textarea
-                      name="input-7-1"
-                      label="Mon message aux passagers"
-                      value=""
-                      placeholder="Laissez un petit message ..."
-                    />
+                    <v-flex xs8>
+                      <div class="text-center">
+                        <v-textarea
+                          name="input-7-1"
+                          label="Mon message aux passagers"
+                          value=""
+                          placeholder="Laissez un petit message ..."
+                        />
+                      </div>
+                    </v-flex>
                   </v-layout>
+                </v-stepper-content>
+
+                <!-- summary / recap -->
+                <v-stepper-content
+                  step="7"
+                >
+                  <v-container
+                    fluid
+                    class="pa-0 text-center"
+                  >
+                    <v-layout
+                      wrap
+                      align-center
+                    >
+                      <v-flex
+                        xs12
+                        sm12
+                      >
+                        <div class="text-center">
+                          <div class="my-2">
+                            <v-btn
+                              small
+                              color="primary"
+                              dark
+                            >
+                              Small Button
+                            </v-btn>
+                          </div>
+                          <div>TODO make the summary</div>
+                          <div class="my-2">
+                            <v-btn
+                              color="warning"
+                              dark
+                            >
+                              Normal Button
+                            </v-btn>
+                          </div>
+                          <div>
+                            Rappel Trajet
+                          </div>
+                          <div class="my-2">
+                            <v-btn
+                              color="error"
+                              dark
+                              large
+                            >
+                              Large Button
+                            </v-btn>
+                          </div>
+                          <div>
+                            Mon message aux passagers
+                            <v-textarea
+                              class="my-2"
+                              name="input-7-1"
+                              label="Mon message aux passagers"
+                              value=""
+                              placeholder="Laissez un petit message ..."
+                            />
+                          </div>
+                          <div class="my-2">
+                            Carte du trajet
+                          </div>
+                        </div>
+                      </v-flex>
+                    </v-layout>
+                  </v-container>
                 </v-stepper-content>
               </v-stepper-items>
             </v-stepper>
           </h5>
         </v-flex>
       </v-layout>
+
       <!-- </v-stepper-content> -->
 
-      <v-stepper-content step="4">
-        <VCard
-          class="mb-5"
-          color="grey lighten-1"
-          height="200px"
-        />
-      </v-stepper-content>
-
-      <v-stepper-content step="5">
-        <VCard
-          class="mb-5"
-          color="grey lighten-1"
-          height="200px"
-        />
-      </v-stepper-content>
-
-      <v-stepper-content step="6">
-        <VCard
-          class="mb-5"
-          color="grey lighten-1"
-          height="200px"
-        />
-      </v-stepper-content>
       <!-- je teste pour voir ce que ça raconte si on fait propre -->
       <v-layout justify-center>
         <v-btn
@@ -430,7 +631,7 @@
         </v-btn>
 
         <v-btn
-          v-if="step < 6"
+          v-if="step < 7"
           rounded
           color="primary"
           align-center
@@ -440,7 +641,7 @@
           Suivant
         </v-btn>
         <v-btn
-          v-if="step === 6"
+          v-if="step === 7"
           rounded
           color="primary"
           style="margin-left: 30px"
@@ -701,5 +902,9 @@ export default {
      padding:12px !important;
      color: blueviolet;
    }
+
+  .v-stepper__items{
+    height: 800px;
+  }
 
 </style>
