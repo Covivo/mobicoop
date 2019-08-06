@@ -238,14 +238,13 @@
                             @click:minute="$refs.menu.save(time2)"
                           />
                         </v-menu>
-                        {{ communities.value }}
                         <v-select
                           v-if="!idCommunity"
                           v-model="form.community"
                           name="selectCommunity"
                           :native-value="4"
                           type="is-primary"
-                          :items="communities"
+                          :items="Object.keys(communities) + '' + Object.values(communities)"
                           :item-text="Object.values(communities)"
                           :item-value="Object.keys(communities)"
                         />

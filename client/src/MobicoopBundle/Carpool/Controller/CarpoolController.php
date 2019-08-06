@@ -94,11 +94,15 @@ class CarpoolController extends AbstractController
                             continue;
                         }
                     }
-                    $communities[$community->getId()] = $community->getName();
+
+//                    $communities[$community->getId()] = $community->getName();
+                    $communityToTab = (object)["id"=> $community->getId(), "communityName"=> $community->getName()];
+                    $communities[]=$communityToTab;
                 }
             }
         }
-
+        dump($communities);
+//a creuser pour afficher les communautés dans le adcreateform en passant par un objet
 
         if ($request->isMethod('POST')) {
             $createToken = $request->request->get('createToken');
