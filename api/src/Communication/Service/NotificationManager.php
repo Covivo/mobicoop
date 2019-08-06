@@ -23,6 +23,7 @@
 
 namespace App\Communication\Service;
 
+use App\Communication\Entity\MessagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Communication\Repository\NotificationRepository;
 use App\Communication\Entity\Medium;
@@ -74,7 +75,7 @@ class NotificationManager
      * @param object $object    The object linked to the notification (if more information is needed to be joined in the notification)
      * @return void
      */
-    public function notifies(string $action, User $recipient, ?object $object = null, $options= [])
+    public function notifies(string $action, User $recipient, ?object $object = null)
     {
         $notifications = $this->notificationRepository->findActiveByAction($action);
         if ($notifications && is_array($notifications)) {
@@ -82,13 +83,15 @@ class NotificationManager
                 switch ($notification->getMedium()->getId()) {
                     case Medium::MEDIUM_MESSAGE:
                         if (!is_null($object)) {
-                            $this->logger->info("Internal message notification for $action / " . get_class($object) . " / " . $recipient->getEmail());
-                            $this->internalMessageManager->sendForObject([$recipient], $object);
+                                $this->logger->info("Internal message notification for $action / " . get_class($object) . " / " . $recipient->getEmail());
+                            if($object instanceof  MessagerInterface) {
+                                $this->internalMessageManager->sendForObject([$recipient], $object);
+                            }
                         }
                         $this->createNotified($notification, $recipient, $object);
                         break;
                     case Medium::MEDIUM_EMAIL:
-                        $this->notifyByEmail($notification, $recipient, $object,$options);
+                        $this->notifyByEmail($notification, $recipient, $object);
                         $this->createNotified($notification, $recipient, $object);
                         $this->logger->info("Email notification for $action / " . $recipient->getEmail());
                         break;
@@ -116,7 +119,7 @@ class NotificationManager
      * @param object|null   $object
      * @return void
      */
-    private function notifyByEmail(Notification $notification, User $recipient, ?object $object = null, $options= [])
+    private function notifyByEmail(Notification $notification, User $recipient, ?object $object = null)
     {
         $email = new Email();
         $email->setRecipientEmail($recipient->getEmail());
@@ -131,7 +134,7 @@ class NotificationManager
                     break;
                 case Matching::class:
                     $titleContext = [];
-                    $bodyContext = [];
+                    $bodyContext = ['user'=>$recipient, 'notification'=> $notification, 'matching'=> $object];
                     break;
                 case AskHistory::class:
                     $titleContext = [];
@@ -145,11 +148,6 @@ class NotificationManager
         } else {
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
         }
-        $bodyTemplateNamePrefix= $bodyTemplateNameSuffix= '';
-        if(!empty($options)){
-            $bodyTemplateNamePrefix = $options['bodyTemplateNamePrefix'];
-            $bodyTemplateNameSuffix = $options['bodyTemplateNameSuffix'];
-        }
         
         $email->setObject($this->templating->render(
             $notification->getTemplateTitle() ? $this->emailTitleTemplatePath . $notification->getTemplateTitle() : $this->emailTitleTemplatePath . $notification->getAction()->getName().'.html.twig',
@@ -158,7 +156,7 @@ class NotificationManager
             ]
         ));
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
-        $this->emailManager->send($email, $bodyTemplateNamePrefix.$notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName().$bodyTemplateNameSuffix, $bodyContext, $recipient->getLanguage());
+        $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext, $recipient->getLanguage());
     }
 
     /**

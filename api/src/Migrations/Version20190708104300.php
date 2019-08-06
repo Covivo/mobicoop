@@ -65,7 +65,7 @@ final class Version20190708104300 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('DELETE FROM `medium` WHERE `id` IN (1,2,3,4);');
-        $this->addSql('DELETE FROM `action` WHERE `id` IN (1,2,3,4,,5,6,7,8,9,10);');
-        $this->addSql('DELETE FROM `notification` WHERE `id` IN (1,2,3,4,,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21);');
+        $this->addSql('DELETE FROM `action` WHERE `id` IN (1,2,3,4,,5,6,7,8,9,10,11);');
+        $this->addSql('DELETE FROM `notification` WHERE `id` IN (1,2,3,4,,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22);');
     }
 }

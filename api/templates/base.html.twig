@@ -92,7 +92,7 @@
     <span class="preheader"
           style="color: rgb(243, 243, 243); font-size: 1px; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; visibility: hidden; display: none !important;"></span>
     <table class="body"
-           style="border-collapse: collapse; border-spacing: 0px; color: rgb(10, 10, 10); font-family: helvetica, arial, sans-serif; font-size: 16px; font-weight: 400; height: 100%; line-height: 1.3; margin: 0px; padding: 0px; text-align: left; vertical-align: top; width: 100%; background: rgb(255, 255, 255) !important;">
+           style="border-collapse: collapse; border-spacing: 0px; color: rgb(10, 10, 10); font-family: helvetica, arial, sans-serif; font-size: 16px; font-weight: 400; height: 100%; line-height: 1.3; margin: 0px; padding: 0px; text-align: left; vertical-align: top; width: 100%; background: {{api_env('MAIL_BODY_BACKGROUND_COLOR')}} !important;">
         <tbody style="">
         <tr style="padding: 0px; text-align: left; vertical-align: top;">
             <td class="center"
@@ -100,7 +100,7 @@
                 valign="top" align="center">
                 <center style="min-width: 720px; width: 100%;">
                     <table class="wrapper header float-center"
-                           style="background: rgb(255, 255, 255); border-collapse: collapse; border-spacing: 0px; float: none; margin: 0px auto; padding: 0px; text-align: center; vertical-align: top;"
+                           style="background: {{api_env('MAIL_BODY_BACKGROUND_COLOR')}}; border-collapse: collapse; border-spacing: 0px; float: none; margin: 0px auto; padding: 0px; text-align: center; vertical-align: top;"
                            align="center">
                         <tbody style="">
                         <tr style="padding: 0px; text-align: left; vertical-align: top;">
@@ -125,9 +125,8 @@
                                                             <tr style="padding: 0px; text-align: left; vertical-align: top;">
                                                                 <th style="color: rgb(10, 10, 10); font-family: helvetica, arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 1.3; margin: 0px; padding: 0px; text-align: left;"><span
                                                                             class="Object" role="link"
-                                                                            id="OBJ_PREFIX_DWT3190_com_zimbra_url"><span
-                                                                                class="Object" role="link"
-                                                                                id="OBJ_PREFIX_DWT3198_com_zimbra_url"><a
+                                                                            ><span
+                                                                                class="Object" role="link"><a
                                                                                     href="{{ api_env('CLIENT_URL') }}"
                                                                                     style="color: rgb(33, 153, 232); font-family: helvetica, arial, sans-serif; font-weight: 400; line-height: 1.3; margin: 0px; padding: 0px; text-align: left; text-decoration: none;"
                                                                                     target="_blank"><img class="logo
@@ -191,19 +190,20 @@
                                                     <th style="color: rgb(10, 10, 10); font-family: helvetica, arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 1.3; margin: 0px; padding: 0px; text-align: left;">
                                                         <p style="color: rgb(10, 10, 10); font-family: helvetica, arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 1.3; margin: 0px 0px 10px; padding: 0px; text-align: left;">
                                                             {{ "Bonjour"|trans }} <span class="pseudo"
-                                                                          style="color: rgb(40, 75, 153); font-weight: 700;">{{ context.user.givenName }}</span>,
+                                                                                        style="color: {{api_env('MAIL_FOOTER_BACKGROUND_COLOR')}}; font-weight: 700;">{{ context.user.givenName }}</span>,
                                                         </p>
                                                         <br style="">
                                                         <p style="color: rgb(10, 10, 10); font-family: helvetica, arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 1.3; margin: 0px 0px 10px; padding: 0px; text-align: left;"> {% block body %}{% endblock %}</p>
                                                         <p style="color: rgb(10, 10, 10); font-family: helvetica, arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 1.3; margin: 0px 0px 10px; padding: 0px; text-align: left;">
                                                             <br style="">
-                                                            {{ "A très bientôt sur"|trans }} <span class="site-name" style=""><span
+                                                            {{ "A très bientôt sur"|trans }} <span class="site-name"
+                                                                                                   style=""><span
                                                                         class="Object" role="link"
-                                                                        id="OBJ_PREFIX_DWT3191_com_zimbra_url"><span
+                                                                        ><span
                                                                             class="Object" role="link"
-                                                                            id="OBJ_PREFIX_DWT3199_com_zimbra_url"><a
+                                                                            ><a
                                                                                 href="{{ api_env("CLIENT_URL") }}"
-                                                                                style="color: rgb(40, 75, 153); font-family: helvetica, arial, sans-serif; font-weight: 700; line-height: 1.3; margin: 0px; padding: 0px; text-align: left; text-decoration: none !important;"
+                                                                                style="color: {{api_env('MAIL_FOOTER_BACKGROUND_COLOR')}}; font-family: helvetica, arial, sans-serif; font-weight: 700; line-height: 1.3; margin: 0px; padding: 0px; text-align: left; text-decoration: none !important;"
                                                                                 target="_blank">{{ api_env('CLIENT_NAME') }}</a></span></span></span>
                                                             ! </p>
                                                     </th>
@@ -219,104 +219,104 @@
                                     </tbody>
                                 </table>
                                 {% block footer %}
-                                <table class="wrapper secondary"
-                                       style="background: rgb(40, 75, 153); border-collapse: collapse; border-radius: 5px; border-spacing: 0px; padding: 0px; text-align: left; vertical-align: top; width: 100%;"
-                                       align="center">
-                                    <tbody style="">
-                                    <tr style="padding: 0px; text-align: left; vertical-align: top;">
-                                        <td class="wrapper-inner"
-                                            style="color: rgb(10, 10, 10); font-family: helvetica, arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 1.3; margin: 0px; padding: 0px; text-align: left; vertical-align: top; overflow-wrap: break-word; border-collapse: collapse !important;">
-                                            <table class="spacer"
-                                                   style="border-collapse: collapse; border-spacing: 0px; padding: 0px; text-align: left; vertical-align: top; width: 100%;">
-                                                <tbody style="">
-                                                <tr style="padding: 0px; text-align: left; vertical-align: top;">
-                                                    <td style="color: rgb(10, 10, 10); font-family: helvetica, arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 16px; margin: 0px; padding: 0px; text-align: left; vertical-align: top; overflow-wrap: break-word; border-collapse: collapse !important;"
-                                                        height="16px">&nbsp;
-                                                    </td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                            <table class="row"
-                                                   style="border-collapse: collapse; border-spacing: 0px; display: table; padding: 0px; position: relative; text-align: left; vertical-align: top; width: 100%;">
-                                                <tbody style="">
-                                                <tr style="padding: 0px; text-align: left; vertical-align: top;">
-                                                    <th class="small-12 large-5
+                                    <table class="wrapper secondary"
+                                           style="background: {{api_env('MAIL_FOOTER_BACKGROUND_COLOR')}}; border-collapse: collapse; border-radius: 5px; border-spacing: 0px; padding: 0px; text-align: left; vertical-align: top; width: 100%;"
+                                           align="center">
+                                        <tbody style="">
+                                        <tr style="padding: 0px; text-align: left; vertical-align: top;">
+                                            <td class="wrapper-inner"
+                                                style="color: rgb(10, 10, 10); font-family: helvetica, arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 1.3; margin: 0px; padding: 0px; text-align: left; vertical-align: top; overflow-wrap: break-word; border-collapse: collapse !important;">
+                                                <table class="spacer"
+                                                       style="border-collapse: collapse; border-spacing: 0px; padding: 0px; text-align: left; vertical-align: top; width: 100%;">
+                                                    <tbody style="">
+                                                    <tr style="padding: 0px; text-align: left; vertical-align: top;">
+                                                        <td style="color: rgb(10, 10, 10); font-family: helvetica, arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 16px; margin: 0px; padding: 0px; text-align: left; vertical-align: top; overflow-wrap: break-word; border-collapse: collapse !important;"
+                                                            height="16px">&nbsp;
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                                <table class="row"
+                                                       style="border-collapse: collapse; border-spacing: 0px; display: table; padding: 0px; position: relative; text-align: left; vertical-align: top; width: 100%;">
+                                                    <tbody style="">
+                                                    <tr style="padding: 0px; text-align: left; vertical-align: top;">
+                                                        <th class="small-12 large-5
                                         columns last"
-                                                        style="color: rgb(10, 10, 10); font-family: helvetica, arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 1.3; margin: 0px auto; padding: 0px 5px 16px 25px; text-align: left; width: 295px;">
-                                                        <table style="border-collapse: collapse; border-spacing: 0px; padding: 0px; text-align: left; vertical-align: top; width: 100%;">
-                                                            <tbody style="">
-                                                            <tr style="padding: 0px; text-align: left; vertical-align: top;">
-                                                                <th style="color: rgb(10, 10, 10); font-family: helvetica, arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 1.3; margin: 0px; padding: 0px; text-align: left;">
-                                                                    <h5 class="small-text-center"
-                                                                        style="font-family: helvetica, arial, sans-serif; font-size: 14px; font-weight: 700; line-height: 1.3; margin: 0px; padding: 0px; text-align: left; overflow-wrap: normal; color: rgb(255, 255, 255) !important; text-decoration: none !important;">
-                                                                        {{ "Une
-                                                                        question ?"|trans}}</h5>
-                                                                    <p class="small-text-center"
-                                                                       style="font-family: helvetica, arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 1.3; margin: 0px; padding: 0px; text-align: left; color: rgb(255, 255, 255) !important; text-decoration: none !important;">
+                                                            style="color: rgb(10, 10, 10); font-family: helvetica, arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 1.3; margin: 0px auto; padding: 0px 5px 16px 25px; text-align: left; width: 295px;">
+                                                            <table style="border-collapse: collapse; border-spacing: 0px; padding: 0px; text-align: left; vertical-align: top; width: 100%;">
+                                                                <tbody style="">
+                                                                <tr style="padding: 0px; text-align: left; vertical-align: top;">
+                                                                    <th style="color: rgb(10, 10, 10); font-family: helvetica, arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 1.3; margin: 0px; padding: 0px; text-align: left;">
+                                                                        <h5 class="small-text-center"
+                                                                            style="font-family: helvetica, arial, sans-serif; font-size: 14px; font-weight: 700; line-height: 1.3; margin: 0px; padding: 0px; text-align: left; overflow-wrap: normal; color: {{api_env('MAIL_BODY_BACKGROUND_COLOR')}} !important; text-decoration: none !important;">
+                                                                            {{ "Une
+                                                                        question ?"|trans }}</h5>
+                                                                        <p class="small-text-center"
+                                                                           style="font-family: helvetica, arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 1.3; margin: 0px; padding: 0px; text-align: left; color: {{api_env('MAIL_BODY_BACKGROUND_COLOR')}} !important; text-decoration: none !important;">
                                                                         <span class="Object" role="link"
-                                                                              id="OBJ_PREFIX_DWT3192_com_zimbra_url"><span
+                                                                              ><span
                                                                                     class="Object" role="link"
-                                                                                    id="OBJ_PREFIX_DWT3200_com_zimbra_url"><a
+                                                                                    ><a
                                                                                         href="{{ api_env('CLIENT_URL') }}/contact"
-                                                                                        style="font-family: helvetica, arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 1.3; margin: 0px; padding: 0px; text-align: left; color: rgb(255, 255, 255) !important; text-decoration: none !important;"
-                                                                                        target="_blank"> {{  "Formulaire de contact" | trans}}</a></span></span>
-                                                                    </p>
-                                                                    <p class="small-text-center"
-                                                                       style="font-family: helvetica, arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 1.3; margin: 0px; padding: 0px; text-align: left; color: rgb(255, 255, 255) !important; text-decoration: none !important;">
+                                                                                        style="font-family: helvetica, arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 1.3; margin: 0px; padding: 0px; text-align: left; color: {{api_env('MAIL_BODY_BACKGROUND_COLOR')}} !important; text-decoration: none !important;"
+                                                                                        target="_blank"> {{ "Formulaire de contact" | trans }}</a></span></span>
+                                                                        </p>
+                                                                        <p class="small-text-center"
+                                                                           style="font-family: helvetica, arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 1.3; margin: 0px; padding: 0px; text-align: left; color: {{api_env('MAIL_BODY_BACKGROUND_COLOR')}} !important; text-decoration: none !important;">
                                                                         <span class="Object" role="link"
-                                                                              id="OBJ_PREFIX_DWT3193_com_zimbra_url"><span
+                                                                              ><span
                                                                                     class="Object" role="link"
-                                                                                    id="OBJ_PREFIX_DWT3201_com_zimbra_url"><a
+                                                                                    ><a
                                                                                         href="{{ api_env('CLIENT_URL') }}/article/faq"
-                                                                                        style="font-family: helvetica, arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 1.3; margin: 0px; padding: 0px; text-align: left; color: rgb(255, 255, 255) !important; text-decoration: none !important;"
+                                                                                        style="font-family: helvetica, arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 1.3; margin: 0px; padding: 0px; text-align: left; color: {{api_env('MAIL_BODY_BACKGROUND_COLOR')}} !important; text-decoration: none !important;"
                                                                                         target="_blank"> {{ "Foire Aux Questions"| trans }}</a></span></span>
-                                                                    </p>
-                                                                </th>
-                                                            </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </th>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                                <table class="row"
-                                       style="border-collapse: collapse; border-spacing: 0px; display: table; padding: 0px; position: relative; text-align: left; vertical-align: top; width: 100%;">
-                                    <tbody style="">
-                                    <tr style="padding: 0px; text-align: left; vertical-align: top;">
-                                        <th class="small-12 large-12 columns first
+                                                                        </p>
+                                                                    </th>
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </th>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <table class="row"
+                                           style="border-collapse: collapse; border-spacing: 0px; display: table; padding: 0px; position: relative; text-align: left; vertical-align: top; width: 100%;">
+                                        <tbody style="">
+                                        <tr style="padding: 0px; text-align: left; vertical-align: top;">
+                                            <th class="small-12 large-12 columns first
                                 last"
-                                            style="color: rgb(10, 10, 10); font-family: helvetica, arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 1.3; margin: 0px auto; padding: 0px 5px 16px; text-align: left; width: 715px;">
-                                            <table style="border-collapse: collapse; border-spacing: 0px; padding: 0px; text-align: left; vertical-align: top; width: 100%;">
-                                                <tbody style="">
-                                                <tr style="padding: 0px; text-align: left; vertical-align: top;">
-                                                    <th style="color: rgb(10, 10, 10); font-family: helvetica, arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 1.3; margin: 0px; padding: 0px; text-align: left;">
-                                                        <p class="text-center
+                                                style="color: rgb(10, 10, 10); font-family: helvetica, arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 1.3; margin: 0px auto; padding: 0px 5px 16px; text-align: left; width: 715px;">
+                                                <table style="border-collapse: collapse; border-spacing: 0px; padding: 0px; text-align: left; vertical-align: top; width: 100%;">
+                                                    <tbody style="">
+                                                    <tr style="padding: 0px; text-align: left; vertical-align: top;">
+                                                        <th style="color: rgb(10, 10, 10); font-family: helvetica, arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 1.3; margin: 0px; padding: 0px; text-align: left;">
+                                                            <p class="text-center
                                           unsubscribe"
-                                                           style="color: rgb(187, 187, 187); font-family: helvetica, arial, sans-serif; font-size: 12px; font-weight: 400; line-height: 1.3; margin: 0px 0px 10px; padding: 0px; text-align: center; text-decoration: none !important;">
+                                                               style="color: rgb(187, 187, 187); font-family: helvetica, arial, sans-serif; font-size: 12px; font-weight: 400; line-height: 1.3; margin: 0px 0px 10px; padding: 0px; text-align: center; text-decoration: none !important;">
                                                             <span class="Object" role="link"
-                                                                  id="OBJ_PREFIX_DWT3194_com_zimbra_url"><span
+                                                                  ><span
                                                                         class="Object" role="link"
-                                                                        id="OBJ_PREFIX_DWT3202_com_zimbra_url"><a
+                                                                        ><a
                                                                             href="{{ api_env('CLIENT_EMAIL_UNSUBSCRIBE_URL') }}"
                                                                             style="color: rgb(33, 153, 232); font-family: helvetica, arial, sans-serif; font-weight: 400; line-height: 1.3; margin: 0px; padding: 0px; text-align: left; text-decoration: none;"
-                                                                            target="_blank">{{ "Cliquez-ici"| trans}}</a></span></span>
-                                                            {{  "pour gérer vos alertes email."| trans }}</p>
-                                                    </th>
-                                                    <th class="expander"
-                                                        style="color: rgb(10, 10, 10); font-family: helvetica, arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 1.3; margin: 0px; text-align: left; visibility: hidden; width: 0px; padding: 0px !important;">
-                                                        <br style="">
-                                                    </th>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </th>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                                                                            target="_blank">{{ "Cliquez-ici"| trans }}</a></span></span>
+                                                                {{ "pour gérer vos alertes email."| trans }}</p>
+                                                        </th>
+                                                        <th class="expander"
+                                                            style="color: rgb(10, 10, 10); font-family: helvetica, arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 1.3; margin: 0px; text-align: left; visibility: hidden; width: 0px; padding: 0px !important;">
+                                                            <br style="">
+                                                        </th>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </th>
+                                        </tr>
+                                        </tbody>
+                                    </table>
                                 {% endblock %}
                             </td>
                         </tr>
@@ -328,10 +328,10 @@
         </tbody>
     </table>
 
-        <div style="display: none; white-space: nowrap; font: 15px/0 courier;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-        </div>
+    <div style="display: none; white-space: nowrap; font: 15px/0 courier;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    </div>
 </div>
 {% block javascripts %}{% endblock %}
 </body>

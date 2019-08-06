@@ -1,0 +1,6 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <p>{{ 'Une nouvelle annonce de covoiturage correspondant à votre trajet'|trans }} {{ startAddress }} – {{ destinationAddress }} {{ 'vient d\'être publiée.'|trans }}
+
+{{ 'Rendez-vous dans'|trans }}  <a href="{{ api_env('CLIENT_URL') ~ api_env('CLIENT_ANONCE_URI') }}">{{ "Mes annonces"|trans }}</a> {{ "pour consulter les annonces correspondantes et prendre contact"|trans }}.
+{% endblock %}
