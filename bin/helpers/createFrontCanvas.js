@@ -83,11 +83,12 @@ async function createCanvas() {
    * Create Assets structure
    */
   const filterAssets = {
+    elementToExclude: ['config','client'],
     filter: function (currentPath) {
       let assetsToKeep = ['_variables.scss', 'app.scss']
       let basename = path.basename(currentPath);
       let stats = fs.lstatSync(currentPath);
-      if (!stats.isDirectory() && !assetsToKeep.includes(basename)) { return false; }
+      if ((!stats.isDirectory() && !assetsToKeep.includes(basename)) || (this.elementToExclude.includes(path.basename(currentPath)))) { return false; }
       return true;
     }
   };
@@ -108,6 +109,7 @@ async function createCanvas() {
   console.log(kuler(`Copying specific assets for ${destinationAssets} 🚀 \n`, 'pink'));
   let appjs = path.resolve(__dirname, 'client-canvas/app.js');
   let themes = path.resolve(pathToMobicoopBundle, './Resources/themes');
+  let clientjs = path.resolve(pathToMobicoopBundle, './Resources/assets/js/client');
   let translationsComponents = path.resolve(translationsPath, './components');
   let gitignore = path.resolve(__dirname, 'client-canvas/.gitignore');
   let gitexclude = path.resolve(__dirname, 'client-canvas/.gitlab-exclude');
@@ -137,6 +139,7 @@ async function createCanvas() {
   [err, success] = await to(fs.copy(entry, `${destinationProject}/entrypoint.sh`));
   [err, success] = await to(fs.copy(bundles, `${destinationProject}/templates/bundles`));
   [err, success] = await to(fs.copy(themes, `${destinationProject}/themes`));
+  [err, success] = await to(fs.copy(clientjs, `${destinationProject}/assets/js`));
   [err, success] = await to(fs.copy(translationsComponents, `${destinationProject}/translations/components`));
 
 }
