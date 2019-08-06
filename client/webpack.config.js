@@ -1,6 +1,6 @@
 const Encore = require('@symfony/webpack-encore');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
-const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
+// const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
@@ -24,7 +24,7 @@ Encore
   .splitEntryChunks()
   .enableVersioning(Encore.isProduction())
   .enableVueLoader()
-  .addPlugin(new VuetifyLoaderPlugin())
+  // .addPlugin(new VuetifyLoaderPlugin())
   .addLoader({
     test: /\.s(c|a)ss$/,
     use: [

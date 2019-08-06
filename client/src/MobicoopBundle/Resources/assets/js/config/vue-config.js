@@ -1,26 +1,18 @@
-"use strict"
+'use strict';
 
 import Vue from 'vue'
-import Vuetify, { VApp } from 'vuetify/lib'
+import Vuetify, { VList, VListItem, VListItemAvatar, VListItemContent, VListItemTitle, VListItemSubtitle, VCardText, VSwitch, VIcon, VTextField, VApp, VLayout, VContainer, VFlex, VBtn, VToolbar, VToolbarTitle, VImg, VSpacer, VContent, VAutocomplete, VTooltip, VMenu, VDatePicker, VFooter } from 'vuetify/lib'
 import VueI18n from 'vue-i18n'
-import Buefy from 'buefy'; // TODO ☣️ remove it when not needed anymore
-import VueFormWizard from 'vue-form-wizard';  // TODO ☣️ remove it when not needed anymore
-import * as _ from 'lodash';
-
-// import color theme
 import colorTheme from '@themes/mobicoop.json';
-
-// import md from "material-design-icons-iconfont";
 import '@mdi/font/css/materialdesignicons.css' // Ensure you are using css-loader
-import 'vue-form-wizard/dist/vue-form-wizard.min.css'; // TODO ☣️ remove it when not needed anymore
 
-Vue.use(Vuetify);
-Vue.use(VueI18n);
-Vue.use(Buefy, { // TODO ☣️ remove it when not needed anymore
-  defaultTooltipType: 'is-mobicoopgreen'
+Vue.use(Vuetify, {
+  components: {
+    VList, VListItem, VListItemAvatar, VListItemContent, VListItemTitle, VListItemSubtitle, 
+    VCardText, VSwitch, VIcon, VTextField, VApp, VLayout, VContainer, VFlex, VBtn, VToolbar, VToolbarTitle, VImg, VSpacer, VContent, VAutocomplete, VTooltip, VMenu, VDatePicker, VFooter
+  }
 });
-Vue.use(VueFormWizard); // TODO ☣️ remove it when not needed anymore
-
+Vue.use(VueI18n);
 
 const i18n = new VueI18n({
   locale: 'fr' // set locale
@@ -34,10 +26,7 @@ const vuetify = new Vuetify({
 });
 
 export {
-  VApp,
+  Vue,
   vuetify,
-  i18n,
-  Vue
+  i18n
 }
-
-// export default new Vuetify({ ... });
