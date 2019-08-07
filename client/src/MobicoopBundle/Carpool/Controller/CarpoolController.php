@@ -101,9 +101,6 @@ class CarpoolController extends AbstractController
                 }
             }
         }
-        dump($communities);
-//a creuser pour afficher les communautés dans le adcreateform en passant par un objet
-
         if ($request->isMethod('POST')) {
             $createToken = $request->request->get('createToken');
             if (!$this->isCsrfTokenValid('ad-create', $createToken)) {

@@ -244,9 +244,9 @@
                           name="selectCommunity"
                           :native-value="4"
                           type="is-primary"
-                          :items="Object.keys(communities) + '' + Object.values(communities)"
-                          :item-text="Object.values(communities)"
-                          :item-value="Object.keys(communities)"
+                          :items="communities"
+                          item-text="communityName"
+                          item-value="id"
                         />
                         <p
                           v-else
@@ -867,7 +867,6 @@ export default {
             "Content-Type": "multipart/form-data"
           }
         })
-      // ajouter ici un .then pour enregistrer une annonce avec une communauté
         .then(function(response) {
           window.location.href = '/covoiturage/annonce/'+response.data.proposal+'/resultats';
         })
