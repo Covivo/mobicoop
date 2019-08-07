@@ -385,15 +385,15 @@ class User implements UserInterface, EquatableInterface
     private $createdDate;
 
     /**
-     * @var DateTime|null  Date of password mofification.
+     * @var DateTime|null  Date of password token generation modification.
      *
      * @ORM\Column(type="datetime", length=100, nullable=true)
      * @Groups({"read","write"})
      */
-    private $pupdtime;
+    private $pwdTokenDate;
 
     /**
-     * @var string|null Token for password modification..
+     * @var string|null Token for password modification.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups({"read","write"})
@@ -409,19 +409,23 @@ class User implements UserInterface, EquatableInterface
     private $geoToken;
 
     /**
+     * @var string User language
+     * @Groups({"read","write"})
+     * @ORM\Column(name="language", type="string", length=10, nullable=true)
+     */
+    private $language;
+
+    /**
      * @var array|null The threads of the user
      * @Groups("threads")
      */
     private $threads;
- 
+
     /**
-       * Language de l'utilisateur.
-       *
-       * @var string $language
-       * @Groups({"read","write", "api"})
-       * @ORM\Column(name="language", type="string", nullable=false)
-       */
-    private $language= 'fr_FR';
+     * @var array|null The permissions granted
+     * @Groups("permissions")
+     */
+    private $permissions;
 
     public function __construct($status = null)
     {
@@ -441,12 +445,6 @@ class User implements UserInterface, EquatableInterface
         }
         $this->setStatus($status);
     }
-
-    /**
-     * @var array|null The permissions granted
-     * @Groups("permissions")
-     */
-    private $permissions;
 
     public function getId(): ?int
     {
@@ -606,6 +604,51 @@ class User implements UserInterface, EquatableInterface
     {
         $this->multiTransportMode = $multiTransportMode;
 
+        return $this;
+    }
+
+    public function getPwdToken(): ?string
+    {
+        return $this->pwdToken;
+    }
+
+    public function setPwdToken(?string $pwdToken): self
+    {
+        $this->pwdToken = $pwdToken;
+        $this->setPwdTokenDate($pwdToken ? new DateTime() : null);
+        return $this;
+    }
+
+    public function getPwdTokenDate(): ?\DateTimeInterface
+    {
+        return $this->pwdTokenDate;
+    }
+
+    public function setPwdTokenDate(?DateTime $pwdTokenDate): self
+    {
+        $this->pwdTokenDate = $pwdTokenDate;
+        return $this;
+    }
+
+    public function getGeoToken(): ?string
+    {
+        return $this->geoToken;
+    }
+
+    public function setGeoToken(?string $geoToken): self
+    {
+        $this->geoToken = $geoToken;
+        return $this;
+    }
+
+    public function getLanguage(): ?string
+    {
+        return $this->language;
+    }
+ 
+    public function setLanguage(?string $language): self
+    {
+        $this->language= $language;
         return $this;
     }
 
@@ -929,39 +972,6 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getPupdtime()
-    {
-        return $this->pupdtime;
-    }
-
-    public function setPupdtime(?DateTime $pupdtime): self
-    {
-        $this->pupdtime = $pupdtime;
-        return $this;
-    }
-
-    public function getPwdToken()
-    {
-        return $this->pwdToken;
-    }
-
-    public function setPwdToken(?string $pwdToken): self
-    {
-        $this->pwdToken = $pwdToken;
-        return $this;
-    }
-
-    public function getGeoToken()
-    {
-        return $this->geoToken;
-    }
-
-    public function setGeoToken(?string $geoToken): self
-    {
-        $this->geoToken = $geoToken;
-        return $this;
-    }
-
     public function getRoles()
     {
         // we return an array of ROLE_***
@@ -1043,13 +1053,4 @@ class User implements UserInterface, EquatableInterface
         $this->setCreatedDate(new \Datetime());
     }
  
-    public function getLanguage()
-    {
-        return $this->language;
-    }
- 
-    public function setLanguage($language)
-    {
-        $this->language= $language;
-    }
 }
