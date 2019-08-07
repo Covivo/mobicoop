@@ -103,8 +103,6 @@ final class Version20190806091803 extends AbstractMigration
         $this->addSql('INSERT INTO `notification` (`id`, `action_id`, `medium_id`, `template_body`, `active`, `active_default`) VALUES (80, 29, 3, null, 1, 1);');
         $this->addSql('INSERT INTO `notification` (`id`, `action_id`, `medium_id`, `template_body`, `active`, `active_default`) VALUES (81, 30, 3, null, 1, 1);');
         $this->addSql('INSERT INTO `notification` (`id`, `action_id`, `medium_id`, `template_body`, `active`, `active_default`) VALUES (82, 31, 3, null, 1, 1);');
-        
-        
     }
     
     public function down(Schema $schema) : void

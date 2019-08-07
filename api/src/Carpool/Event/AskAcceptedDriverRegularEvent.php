@@ -22,7 +22,6 @@
 
 namespace App\Carpool\Event;
 
-
 class AskAcceptedDriverRegularEvent extends AskAcceptedEvent
 {
     public const NAME = 'driver_'.AskAcceptedEvent::NAME.'_regular';

@@ -83,8 +83,8 @@ class NotificationManager
                 switch ($notification->getMedium()->getId()) {
                     case Medium::MEDIUM_MESSAGE:
                         if (!is_null($object)) {
-                                $this->logger->info("Internal message notification for $action / " . get_class($object) . " / " . $recipient->getEmail());
-                            if($object instanceof  MessagerInterface) {
+                            $this->logger->info("Internal message notification for $action / " . get_class($object) . " / " . $recipient->getEmail());
+                            if ($object instanceof  MessagerInterface) {
                                 $this->internalMessageManager->sendForObject([$recipient], $object);
                             }
                         }

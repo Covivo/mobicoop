@@ -22,7 +22,6 @@
 
 namespace App\Carpool\Event;
 
-
 class AskPostedDriverPunctualEvent extends AskPostedEvent
 {
     public const NAME = 'driver_'.AskPostedEvent::NAME;

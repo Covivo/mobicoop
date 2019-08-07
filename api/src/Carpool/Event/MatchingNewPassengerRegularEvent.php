@@ -23,7 +23,6 @@
 
 namespace App\Carpool\Event;
 
-
 /**
  * Event sent when a new matching is created.
  */
