@@ -249,9 +249,10 @@
                           item-value="id"
                         />
                         <p
-                          v-else
+                          v-for="(community) in communities"
+                          v-if="community.id == idCommunity"
                         >
-                          {{ communities[idCommunity] }}
+                          {{ community.communityName }}
                         </p>
                       </v-flex>
                     </v-layout>
