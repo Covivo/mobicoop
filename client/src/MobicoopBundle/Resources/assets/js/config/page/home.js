@@ -11,7 +11,7 @@ import Vuetify, {
   // header
   VToolbar, VToolbarTitle, VBtn, VImg,
   // footer
-  VFooter, VCardText,
+  VFooter, VChip, VCardText,
   // content
   VSwitch, VMenu, VDatePicker, VTextField,  VTooltip,
   // geocomplete
@@ -25,7 +25,7 @@ Vue.use(Vuetify, {
     // header
     VToolbar, VToolbarTitle, VBtn, VImg,
     // footer
-    VFooter, VCardText,
+    VFooter, VChip, VCardText,
     // content
     VSwitch, VMenu, VDatePicker, VTextField,  VTooltip,
     // geocomplete

@@ -54,7 +54,11 @@
         text-center
         xs12
       >
-        <strong>Mobicoop</strong> by Mobicoop team. The source code is licensed AGPL3. The website content is licensed AGPL3 too
+        <strong>Mobicoop</strong> <v-chip
+          class="ma-2"
+        >
+          {{ version }}
+        </v-chip> by Mobicoop team. The source code is licensed AGPL3. The website content is licensed AGPL3 too
       </v-flex>
     </v-layout>
   </v-footer>
@@ -64,12 +68,18 @@
 import { merge } from "lodash";
 import Translations from "@translations/components/MFooter.json";
 import TranslationsClient from "@clientTranslations/components/MFooter.json";
+import Package from '@root/package.json'
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   i18n: {
     messages: TranslationsMerged
+  },
+  data() {
+    return {
+      version:Package.version
+    }
   }
 };
 </script>
