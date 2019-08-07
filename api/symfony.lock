@@ -257,9 +257,6 @@
     "symfony/cache": {
         "version": "v4.2.3"
     },
-    "symfony/cache-contracts": {
-        "version": "v1.1.5"
-    },
     "symfony/config": {
         "version": "v4.2.3"
     },
@@ -289,9 +286,6 @@
     },
     "symfony/event-dispatcher": {
         "version": "v4.2.3"
-    },
-    "symfony/event-dispatcher-contracts": {
-        "version": "v1.1.5"
     },
     "symfony/expression-language": {
         "version": "v4.2.3"
@@ -419,9 +413,6 @@
     "symfony/serializer": {
         "version": "v4.2.3"
     },
-    "symfony/service-contracts": {
-        "version": "v1.1.5"
-    },
     "symfony/swiftmailer-bundle": {
         "version": "2.5",
         "recipe": {
@@ -447,9 +438,6 @@
             "version": "3.3",
             "ref": "1fb02a6e1c8f3d4232cce485c9afa868d63b115a"
         }
-    },
-    "symfony/translation-contracts": {
-        "version": "v1.1.5"
     },
     "symfony/twig-bridge": {
         "version": "v4.2.3"

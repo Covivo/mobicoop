@@ -22,7 +22,6 @@
 
 namespace App\Carpool\Event;
 
-
 class AskRefusedDriverPunctualEvent extends AskRefusedEvent
 {
     public const NAME = 'driver_'.AskRefusedEvent::NAME;

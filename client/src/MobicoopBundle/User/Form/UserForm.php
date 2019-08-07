@@ -45,18 +45,20 @@ use Mobicoop\Bundle\MobicoopBundle\Form\Type\AriaChoiceType;
  */
 class UserForm extends AbstractType
 {
-	 public  function loadFile($url) {
-		 $data = file_get_contents($url);
-		 $rows = explode("\n",$data);
-		 $s = array();
-		 foreach($rows as $row) {
-			$data= str_getcsv($row);
-			if(count($data) == 2)
-		    $s[$data[0]]= $data[1];
-		 }
-		  array_shift($s);
-		 return $s;
-	 }
+    public function loadFile($url)
+    {
+        $data = file_get_contents($url);
+        $rows = explode("\n", $data);
+        $s = array();
+        foreach ($rows as $row) {
+            $data= str_getcsv($row);
+            if (count($data) == 2) {
+                $s[$data[0]]= $data[1];
+            }
+        }
+        array_shift($s);
+        return $s;
+    }
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $birthYears = [];
@@ -65,10 +67,9 @@ class UserForm extends AbstractType
             $birthYears[$i] = $i;
         }
         $languageList= getenv('LANGUAGE_LIST');
-        if(empty($languageList)){
+        if (empty($languageList)) {
             $isolangs = $this->loadFile(getenv('LANGUAGE_URL'));
-        }
-        else{
+        } else {
             $isolangs = $this->parseLanguageList($languageList);
         }
 
@@ -147,17 +148,17 @@ class UserForm extends AbstractType
                 'class' => 'ariaSelect'
             ]
         ])
-			  ->add('language', ChoiceType::class, [
-			      'placeholder' => 'language.placeholder',
-				    'choices' => $isolangs,
-				    'translation_domain'=> 'user',
-						'choice_translation_domain' => false,
-						'label' => 'language.label',
-						'help' => 'language.placeholder',
-						'attr' => [
-							'class' => 'ariaSelect'
-						]
-				])
+              ->add('language', ChoiceType::class, [
+                  'placeholder' => 'language.placeholder',
+                    'choices' => $isolangs,
+                    'translation_domain'=> 'user',
+                        'choice_translation_domain' => false,
+                        'label' => 'language.label',
+                        'help' => 'language.placeholder',
+                        'attr' => [
+                            'class' => 'ariaSelect'
+                        ]
+                ])
         ->add('telephone', TextType::class, [
             'translation_domain' => 'user',
             'label' => 'telephone.label',
@@ -215,6 +216,6 @@ class UserForm extends AbstractType
     
     public function parseLanguageList($languageList)
     {
-         return json_decode($languageList, true);
+        return json_decode($languageList, true);
     }
 }

@@ -228,14 +228,14 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      */
     private $geoToken;
  
-		/**
-		 * Language de l'utilisateur.
-		 *
-		 * @var string $language
-		 * @Groups({"put","post", "api"})
-		 */
-		private $language= 'fr_FR';
-		
+    /**
+     * Language de l'utilisateur.
+     *
+     * @var string $language
+     * @Groups({"put","post", "api"})
+     */
+    private $language= 'fr_FR';
+        
     public function __construct($id=null, $status=null)
     {
         if ($id) {
@@ -708,24 +708,24 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'geoToken'      => $this->getGeoToken()
         ];
     }
-		
-		/**
-		 * get the native language of the client.
-		 *
-		 * @return string
-		 */
-		public function getLanguage(): string
-		{
-		 return $this->language;
-		}
-		
-		/**
-		 * Set the native language of the client.
-		 *
-		 * @param string $language
-		 */
-		public function setLanguage(string $language)
-		{
-		 $this->language = $language;
-		}
+        
+    /**
+     * get the native language of the client.
+     *
+     * @return string
+     */
+    public function getLanguage(): string
+    {
+        return $this->language;
+    }
+        
+    /**
+     * Set the native language of the client.
+     *
+     * @param string $language
+     */
+    public function setLanguage(string $language)
+    {
+        $this->language = $language;
+    }
 }

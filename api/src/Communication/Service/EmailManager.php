@@ -42,17 +42,17 @@ class EmailManager
     private $logger;
     private $translator;
  
- /**
-	* EmailManager constructor.
-	* @param \Swift_Mailer $mailer
-	* @param \Twig_Environment $templating
-	* @param LoggerInterface $logger
-	* @param TranslatorInterface $translator
-	* @param string $emailSender
-	* @param string $emailReplyTo
-	* @param string $templatePath
-	*/
- public function __construct(\Swift_Mailer $mailer, \Twig_Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $emailSender, string $emailReplyTo, string $templatePath)
+    /**
+       * EmailManager constructor.
+       * @param \Swift_Mailer $mailer
+       * @param \Twig_Environment $templating
+       * @param LoggerInterface $logger
+       * @param TranslatorInterface $translator
+       * @param string $emailSender
+       * @param string $emailReplyTo
+       * @param string $templatePath
+       */
+    public function __construct(\Swift_Mailer $mailer, \Twig_Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $emailSender, string $emailReplyTo, string $templatePath)
     {
         $this->mailer = $mailer;
         $this->templating = $templating;

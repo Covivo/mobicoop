@@ -22,7 +22,6 @@
 
 namespace App\Carpool\Event;
 
-
 class AskAcceptedPassengerPunctualEvent extends AskAcceptedEvent
 {
     public const NAME = 'passenger_'.AskAcceptedEvent::NAME;

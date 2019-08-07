@@ -217,8 +217,7 @@ class ProposalManager
         float $destinationLongitude,
         \Datetime $date,
         ?int $userId = null
-    )
-    {
+    ) {
         
         // we create a new Proposal object with its Criteria and Waypoints
         $proposal = new Proposal();
@@ -352,8 +351,7 @@ class ProposalManager
         string $outward_saturday_maxtime = null,
         string $outward_sunday_mintime = null,
         string $outward_sunday_maxtime = null
-    )
-    {
+    ) {
         // test : we return all proposals
         // we create a proposal with the parameters
         $proposal = new Proposal();
