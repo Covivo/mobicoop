@@ -15,7 +15,7 @@ import Vuetify, {
   // header
   VToolbar, VToolbarTitle, VBtn, VImg,
   // footer
-  VFooter,
+  VFooter, VCardText,
   // geocomplete
   VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon
 } from 'vuetify/lib'
@@ -27,7 +27,7 @@ Vue.use(Vuetify, {
     // header
     VToolbar, VToolbarTitle, VBtn, VImg,
     // footer
-    VFooter,
+    VFooter, VCardText,
     // geocomplete
     VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon
   }

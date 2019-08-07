@@ -11,10 +11,10 @@ import Vuetify, {
   // header
   VToolbar, VToolbarTitle, VBtn, VImg,
   // footer
-  VFooter,
+  VFooter, VCardText,
   // content
   // messages
-  VTabs, VTab, VTabItem, VTimeline, VTimelineItem, VTextarea, VIcon, VCard, VCardTitle, VCardText, VDialog, VProgressLinear, VAvatar
+  VTabs, VTab, VTabItem, VTimeline, VTimelineItem, VTextarea, VIcon, VCard, VCardTitle, VDialog, VProgressLinear, VAvatar
 } from 'vuetify/lib'
 
 Vue.use(Vuetify, {
@@ -24,10 +24,10 @@ Vue.use(Vuetify, {
     // header
     VToolbar, VToolbarTitle, VBtn, VImg,
     // footer
-    VFooter,
+    VFooter, VCardText,
     // content
     // messages
-    VTabs, VTab, VTabItem, VTimeline, VTimelineItem, VTextarea, VIcon, VCard, VCardTitle, VCardText, VDialog, VProgressLinear, VAvatar
+    VTabs, VTab, VTabItem, VTimeline, VTimelineItem, VTextarea, VIcon, VCard, VCardTitle, VDialog, VProgressLinear, VAvatar
   }
 })
 Vue.use(VueI18n)
