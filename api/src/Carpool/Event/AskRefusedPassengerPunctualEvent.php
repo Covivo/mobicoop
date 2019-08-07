@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -23,13 +22,8 @@
 
 namespace App\Carpool\Event;
 
-use Symfony\Component\EventDispatcher\Event;
-use App\Carpool\Entity\Matching;
 
-/**
- * Event sent when a new matching is created.
- */
-class MatchingNewPassengerSimpleEvent extends MatchingNewEvent
+class AskRefusedPassengerPunctualEvent extends AskRefusedEvent
 {
-    public const NAME = 'passenger_'.MatchingNewEvent::NAME;
+    public const NAME = 'passenger_'.AskRefusedEvent::NAME;
 }

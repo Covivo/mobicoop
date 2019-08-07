@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -23,10 +22,8 @@
 
 namespace App\Carpool\Event;
 
-/**
- * Event sent when a new matching is created.
- */
-class MatchingNewDriverSimpleEvent extends MatchingNewEvent
+
+class AskUpdatedPassengerPunctualEvent extends AskUpdatedEvent
 {
-    public const NAME = 'driver_'.MatchingNewEvent::NAME;
+    public const NAME = 'passenger_'.AskUpdatedEvent::NAME;
 }

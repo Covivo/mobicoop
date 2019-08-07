@@ -64,7 +64,13 @@ class UserForm extends AbstractType
         for ($i=($curYear-getenv('USER_MIN_AGE'));$i>=($curYear-getenv('USER_MAX_AGE'));$i--) {
             $birthYears[$i] = $i;
         }
-        $isolangs = $this->loadFile(getenv('LANGUAGE_URL'));
+        $languageList= getenv('LANGUAGE_LIST');
+        if(empty($languageList)){
+            $isolangs = $this->loadFile(getenv('LANGUAGE_URL'));
+        }
+        else{
+            $isolangs = $this->parseLanguageList($languageList);
+        }
 
         $builder
         ->add('givenName', AriaTextType::class, [
@@ -205,5 +211,10 @@ class UserForm extends AbstractType
             'data_class' => User::class,
             'validation_groups' => array('signUp','update','password'),
         ));
+    }
+    
+    public function parseLanguageList($languageList)
+    {
+         return json_decode($languageList, true);
     }
 }

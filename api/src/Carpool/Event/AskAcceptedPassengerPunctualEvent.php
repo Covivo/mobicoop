@@ -23,7 +23,7 @@
 namespace App\Carpool\Event;
 
 
-class AskRefusedDriverRegularEvent extends AskRefusedEvent
+class AskAcceptedPassengerPunctualEvent extends AskAcceptedEvent
 {
-    public const NAME = 'driver_'.AskRefusedEvent::NAME.'_regular';
+    public const NAME = 'passenger_'.AskAcceptedEvent::NAME;
 }

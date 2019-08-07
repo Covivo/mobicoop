@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -22,8 +23,10 @@
 
 namespace App\Carpool\Event;
 
-
-class AskRefusedDriverRegularEvent extends AskRefusedEvent
+/**
+ * Event sent when a new matching is created.
+ */
+class MatchingNewDriverPunctualEvent extends MatchingNewEvent
 {
-    public const NAME = 'driver_'.AskRefusedEvent::NAME.'_regular';
+    public const NAME = 'driver_'.MatchingNewEvent::NAME;
 }
