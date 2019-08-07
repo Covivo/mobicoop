@@ -1,20 +1,16 @@
-'use strict';
+'use strict'
 
-import { Vue, vuetify, i18n, VApp } from '@js/config/vue-config'
+import { Vue, vuetify, i18n } from '@js/config/page/home'
 
-// Vue components
-import HomeSearch from '@js/components/HomeSearch';
-import MHeader from '@js/components/MHeader';
-import MFooter from '@js/components/MFooter';
-
-import '@css/page/home.scss';
+import HomeSearch from '@js/components/HomeSearch'
+import MHeader from '@js/components/MHeader'
+import MFooter from '@js/components/MFooter'
 
 new Vue({
   i18n,
   el: '#app',
   vuetify,
   components: {
-    VApp,
     HomeSearch,
     MHeader,
     MFooter
