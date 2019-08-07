@@ -15,7 +15,7 @@ import Vuetify, {
   // header
   VToolbar, VToolbarTitle, VBtn, VImg,
   // footer
-  VFooter,
+  VFooter, VCardText,
   // geocomplete
   VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon
 } from 'vuetify/lib'
@@ -27,7 +27,7 @@ Vue.use(Vuetify, {
     // header
     VToolbar, VToolbarTitle, VBtn, VImg,
     // footer
-    VFooter,
+    VFooter, VCardText,
     // geocomplete
     VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon
   }
@@ -50,20 +50,8 @@ const vuetify = new Vuetify({
   theme: colorTheme
 })
 
-import '@css/page/ad/create.scss'
-
-// Vue components
-import Adcreateform from '@js/components/Adcreateform'
-import MHeader from '@js/components/MHeader'
-import MFooter from '@js/components/MFooter'
-
-new Vue({
-  el: '#app',
+export {
+  Vue,
   vuetify,
-  i18n,
-  components: {
-    Adcreateform,
-    MHeader,
-    MFooter
-  }
-})
+  i18n
+}

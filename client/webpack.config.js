@@ -1,11 +1,10 @@
 const Encore = require('@symfony/webpack-encore');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
-const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
-const fs = require('fs');
 const path = require('path');
-const _ = require('lodash');
 const read = require('fs-readdir-recursive');
-
+const _ = require('lodash');
+// ⚙️ UNCOMMENT below if you are using a client platform  ⚙️ //
+// const fs = require('fs');
 
 let files = read('./assets/js/page');
 let filesBundle = read('./src/MobicoopBundle/Resources/assets/js/page');
@@ -24,12 +23,19 @@ Encore
   .splitEntryChunks()
   .enableVersioning(Encore.isProduction())
   .enableVueLoader()
-  .addPlugin(new VuetifyLoaderPlugin())
   .addLoader({
     test: /\.s(c|a)ss$/,
     use: [
       'vue-style-loader',
+      // ⚙️ COMMENT below if you are using a client platform  ⚙️ //
       'css-loader',
+      // ⚙️ UNCOMMENT below if you are using a client platform  ⚙️ //
+      // {
+      //   loader: 'css-loader',
+      //   options: {
+      //     url: false
+      //   }
+      // },
       {
         loader: 'sass-loader',
         options: {
@@ -98,13 +104,12 @@ encoreConfig.resolve.alias = _.merge(encoreConfig.resolve.alias, { // merge is v
   '@assets': path.resolve(__dirname, 'src/MobicoopBundle/Resources/assets'),
   '@themes': path.resolve(__dirname, 'src/MobicoopBundle/Resources/themes'),
   '@clientTranslations': path.resolve(__dirname, './translations'),
+  '@images': path.resolve(__dirname, './public/images'),
   // ⚙️ UNCOMMENT below if you are using a client platform  ⚙️ //
   // '@clientJs': path.resolve(__dirname, './assets/js'),
   // '@clientCss': path.resolve(__dirname, './assets/css'),
   // '@clientAssets': path.resolve(__dirname, './assets'),
   // '@themes': path.resolve(__dirname, './themes'),
-
 });
-
 
 module.exports = [encoreConfig];
