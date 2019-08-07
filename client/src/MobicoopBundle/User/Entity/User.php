@@ -218,7 +218,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
 
     /**
      * @var string|null Token for password modification.
-     *  @Groups({"post","put"})
+     *  @Groups({"post","put", "password_token"})
      */
     private $pwdToken;
 
@@ -227,7 +227,15 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      *  @Groups({"post","put"})
      */
     private $geoToken;
-
+ 
+		/**
+		 * Language de l'utilisateur.
+		 *
+		 * @var string $language
+		 * @Groups({"put","post", "api"})
+		 */
+		private $language= 'fr_FR';
+		
     public function __construct($id=null, $status=null)
     {
         if ($id) {
@@ -700,4 +708,24 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'geoToken'      => $this->getGeoToken()
         ];
     }
+		
+		/**
+		 * get the native language of the client.
+		 *
+		 * @return string
+		 */
+		public function getLanguage(): string
+		{
+		 return $this->language;
+		}
+		
+		/**
+		 * Set the native language of the client.
+		 *
+		 * @param string $language
+		 */
+		public function setLanguage(string $language)
+		{
+		 $this->language = $language;
+		}
 }

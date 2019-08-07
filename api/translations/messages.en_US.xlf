@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="fr" target-language="en-US" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="AroNFkk" resname="ne pourra pas covoiturer avec vous vers">
+        <source>ne pourra pas covoiturer avec vous vers</source>
+        <target>__ne pourra pas covoiturer avec vous vers</target>
+      </trans-unit>
+      <trans-unit id="9dOqIeQ" resname="les jours suivants">
+        <source>les jours suivants</source>
+        <target>__les jours suivants</target>
+      </trans-unit>
+      <trans-unit id="YBssJHO" resname="du">
+        <source>du</source>
+        <target>__du</target>
+      </trans-unit>
+      <trans-unit id="YyzS.qc" resname="au">
+        <source>au</source>
+        <target>__au</target>
+      </trans-unit>
+      <trans-unit id="3eBmHPJ" resname="Voici son message">
+        <source>Voici son message</source>
+        <target>__Voici son message</target>
+      </trans-unit>
+      <trans-unit id="oefhzho" resname="Pensez à renouveler votre annonce de covoiturage">
+        <source>Pensez à renouveler votre annonce de covoiturage</source>
+        <target>__Pensez à renouveler votre annonce de covoiturage</target>
+      </trans-unit>
+      <trans-unit id="20m6cSR" resname="Nouvelle(s) annonce(s) de covoiturage">
+        <source>Nouvelle(s) annonce(s) de covoiturage</source>
+        <target>__Nouvelle(s) annonce(s) de covoiturage</target>
+      </trans-unit>
+      <trans-unit id="RV520PZ" resname="Modification de votre profil">
+        <source>Modification de votre profil</source>
+        <target>__Modification de votre profil</target>
+      </trans-unit>
+      <trans-unit id="diwHg0D" resname="Confirmation de re-initialisation de mot de passe">
+        <source>Confirmation de re-initialisation de mot de passe</source>
+        <target>__Confirmation de re-initialisation de mot de passe</target>
+      </trans-unit>
+      <trans-unit id="pX64ZC5" resname="Demande de covoiturage">
+        <source>Demande de covoiturage</source>
+        <target>__Demande de covoiturage</target>
+      </trans-unit>
+      <trans-unit id="P9rI0NT" resname="Proposition de covoiturage déclinée">
+        <source>Proposition de covoiturage déclinée</source>
+        <target>__Proposition de covoiturage déclinée</target>
+      </trans-unit>
+      <trans-unit id="wYxt8a4" resname="Votre inscription">
+        <source>Votre inscription</source>
+        <target>__Votre inscription</target>
+      </trans-unit>
+      <trans-unit id="3Sz1Liq" resname="Récapitulatif covoiturage">
+        <source>Récapitulatif covoiturage</source>
+        <target>__Récapitulatif covoiturage</target>
+      </trans-unit>
+      <trans-unit id="TzsgYdV" resname="vous contacte">
+        <source>vous contacte</source>
+        <target>__vous contacte</target>
+      </trans-unit>
+      <trans-unit id="ZySoXq7" resname="Avis de re-initialisation de mot de passe">
+        <source>Avis de re-initialisation de mot de passe</source>
+        <target>You have requested to modify your password</target>
+      </trans-unit>
+      <trans-unit id="YQIE.M5" resname="Une nouvelle annonce de covoiturage correspondant à votre trajet">
+        <source>Une nouvelle annonce de covoiturage correspondant à votre trajet</source>
+        <target>__Une nouvelle annonce de covoiturage correspondant à votre trajet</target>
+      </trans-unit>
+      <trans-unit id="hLQBMfU" resname="vient d'être publiée.">
+        <source>vient d'être publiée.</source>
+        <target>__vient d'être publiée.</target>
+      </trans-unit>
+      <trans-unit id="hJabPLL" resname="Rendez-vous dans">
+        <source>Rendez-vous dans</source>
+        <target>__Rendez-vous dans</target>
+      </trans-unit>
+      <trans-unit id="_lIFo7J" resname="Mes annonces">
+        <source>Mes annonces</source>
+        <target>__Mes annonces</target>
+      </trans-unit>
+      <trans-unit id="7vYp7zq" resname="pour consulter les annonces correspondantes et prendre contact">
+        <source>pour consulter les annonces correspondantes et prendre contact</source>
+        <target>__pour consulter les annonces correspondantes et prendre contact</target>
+      </trans-unit>
+      <trans-unit id="bc0OXlX" resname="ne pourra pas covoiturer avec vous pour le trajet du">
+        <source>ne pourra pas covoiturer avec vous pour le trajet du</source>
+        <target>__ne pourra pas covoiturer avec vous pour le trajet du</target>
+      </trans-unit>
+      <trans-unit id=".r4AFXK" resname="en direction de">
+        <source>en direction de</source>
+        <target>__en direction de</target>
+      </trans-unit>
+      <trans-unit id="aD7r2.X" resname="Voici son message :">
+        <source>Voici son message :</source>
+        <target>__Voici son message :</target>
+      </trans-unit>
+      <trans-unit id="NUwdZQY" resname="Attention dans quelques jours vos trajets enregistrés ne seront plus valables sur votre profil et ne seront donc plus visibles par les autres covoitureurs.">
+        <source>Attention dans quelques jours vos trajets enregistrés ne seront plus valables sur votre profil et ne seront donc plus visibles par les autres covoitureurs.</source>
+        <target>__Attention dans quelques jours vos trajets enregistrés ne seront plus valables sur votre profil et ne seront donc plus visibles par les autres covoitureurs.</target>
+      </trans-unit>
+      <trans-unit id="6D5XQ0e" resname="Vous êtes maintenant plus de">
+        <source>Vous êtes maintenant plus de</source>
+        <target>__Vous êtes maintenant plus de</target>
+      </trans-unit>
+      <trans-unit id="h4FEued" resname="à utiliser le service ! Partagez vos trajets et trouvez votre bonheur !">
+        <source>à utiliser le service ! Partagez vos trajets et trouvez votre bonheur !</source>
+        <target>__à utiliser le service ! Partagez vos trajets et trouvez votre bonheur !</target>
+      </trans-unit>
+      <trans-unit id="iIhaEMH" resname="Voici le récapitulatif de vos covoiturages.">
+        <source>Voici le récapitulatif de vos covoiturages.</source>
+        <target>__Voici le récapitulatif de vos covoiturages.</target>
+      </trans-unit>
+      <trans-unit id="TJ9oTqM" resname="Le numéro de téléphone de">
+        <source>Le numéro de téléphone de</source>
+        <target>__Le numéro de téléphone de</target>
+      </trans-unit>
+      <trans-unit id="ThSsC_w" resname="est le">
+        <source>est le</source>
+        <target>__est le</target>
+      </trans-unit>
+      <trans-unit id="RzyZ8KP" resname="Trajet régulier Distance covoiturée">
+        <source>Trajet régulier Distance covoiturée</source>
+        <target>__Trajet régulier Distance covoiturée</target>
+      </trans-unit>
+      <trans-unit id="hN9fb87" resname="Détour conducteur">
+        <source>Détour conducteur</source>
+        <target>__Détour conducteur</target>
+      </trans-unit>
+      <trans-unit id="HOYraH_" resname="Prise en charge à">
+        <source>Prise en charge à</source>
+        <target>__Prise en charge à</target>
+      </trans-unit>
+      <trans-unit id="gjxaGg_" resname="Dépose à">
+        <source>Dépose à</source>
+        <target>__Dépose à</target>
+      </trans-unit>
+      <trans-unit id="kNU8hGi" resname="Heures de RDV">
+        <source>Heures de RDV</source>
+        <target>__Heures de RDV</target>
+      </trans-unit>
+      <trans-unit id="Kn89OWz" resname="Lundi">
+        <source>Lundi</source>
+        <target>__Lundi</target>
+      </trans-unit>
+      <trans-unit id="uQa.Hc8" resname="Mardi">
+        <source>Mardi</source>
+        <target>__Mardi</target>
+      </trans-unit>
+      <trans-unit id="LV8XUUG" resname="Mercredi">
+        <source>Mercredi</source>
+        <target>__Mercredi</target>
+      </trans-unit>
+      <trans-unit id="qWkbNaj" resname="Jeudi">
+        <source>Jeudi</source>
+        <target>__Jeudi</target>
+      </trans-unit>
+      <trans-unit id="H7vAm2F" resname="Vendredi">
+        <source>Vendredi</source>
+        <target>__Vendredi</target>
+      </trans-unit>
+      <trans-unit id="i4cOgdS" resname="Samedi">
+        <source>Samedi</source>
+        <target>__Samedi</target>
+      </trans-unit>
+      <trans-unit id="KBOxyrT" resname="Dimanche">
+        <source>Dimanche</source>
+        <target>__Dimanche</target>
+      </trans-unit>
+      <trans-unit id="ovvHVLn" resname="Le">
+        <source>Le</source>
+        <target>__Le</target>
+      </trans-unit>
+      <trans-unit id="C2ciqK3" resname="Du">
+        <source>Du</source>
+        <target>__Du</target>
+      </trans-unit>
+      <trans-unit id="X6YwsTh" resname="Commentaire du passager">
+        <source>Commentaire du passager</source>
+        <target>__Commentaire du passager</target>
+      </trans-unit>
+      <trans-unit id="WyJ.HnI" resname="ContacterPlaces réservées">
+        <source>ContacterPlaces réservées</source>
+        <target>__ContacterPlaces réservées</target>
+      </trans-unit>
+      <trans-unit id="g.Jb4PP" resname="Prix indicatif">
+        <source>Prix indicatif</source>
+        <target>__Prix indicatif</target>
+      </trans-unit>
+      <trans-unit id="bHrMb66" resname="vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous.">
+        <source>vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous.</source>
+        <target>__vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous.</target>
+      </trans-unit>
+      <trans-unit id="el.4Ip1" resname="Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de">
+        <source>Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de</source>
+        <target>__Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de</target>
+      </trans-unit>
+      <trans-unit id="aXVoq1U" resname="en cliquant ici">
+        <source>en cliquant ici</source>
+        <target>__en cliquant ici</target>
+      </trans-unit>
+      <trans-unit id="97aiyQ3" resname="Trajet occasionelle Distance covoiturée">
+        <source>Trajet occasionelle Distance covoiturée</source>
+        <target>__Trajet occasionelle Distance covoiturée</target>
+      </trans-unit>
+      <trans-unit id="x8_2LvX" resname="La modification suivante de votre profil est confirmée">
+        <source>La modification suivante de votre profil est confirmée</source>
+        <target>__La modification suivante de votre profil est confirmée</target>
+      </trans-unit>
+      <trans-unit id="f9BO.DB" resname="Vous pouvez répondre à ce message via la messagerie de">
+        <source>Vous pouvez répondre à ce message via la messagerie de</source>
+        <target>__Vous pouvez répondre à ce message via la messagerie de</target>
+      </trans-unit>
+      <trans-unit id="pWCAJAy" resname="Si ce mail comporte un message ne respectant pas la charte, n'hésitez pas à nous contacter.">
+        <source>Si ce mail comporte un message ne respectant pas la charte, n'hésitez pas à nous contacter.</source>
+        <target>__Si ce mail comporte un message ne respectant pas la charte, n'hésitez pas à nous contacter.</target>
+      </trans-unit>
+      <trans-unit id="nrupJ_5" resname="Une&#10;                                                                        question ?">
+        <source>Une
+                                                                        question ?</source>
+        <target>Do you have a question?</target>
+      </trans-unit>
+      <trans-unit id="akpKKLm" resname="Formulaire de contact">
+        <source>Formulaire de contact</source>
+        <target>Contact form</target>
+      </trans-unit>
+      <trans-unit id="J9EkMuf" resname="Foire Aux Questions">
+        <source>Foire Aux Questions</source>
+        <target>Frequently asked Questions</target>
+      </trans-unit>
+      <trans-unit id="BX6c09b" resname="Cliquez-ici">
+        <source>Cliquez-ici</source>
+        <target>Click here</target>
+      </trans-unit>
+      <trans-unit id="2.lX2F3" resname="pour gérer vos alertes email.">
+        <source>pour gérer vos alertes email.</source>
+        <target>To manage your email</target>
+      </trans-unit>
+      <trans-unit id="i5cUDhL" resname="Votre mot de passe">
+        <source>Votre mot de passe</source>
+        <target>Your password</target>
+      </trans-unit>
+      <trans-unit id="_LNoPfp" resname="a bien été changé.">
+        <source>a bien été changé.</source>
+        <target>has recently been changed.</target>
+      </trans-unit>
+      <trans-unit id="2P.uC_d" resname="Merci d’utiliser">
+        <source>Merci d’utiliser</source>
+        <target>__Thanks to use our service</target>
+      </trans-unit>
+      <trans-unit id="k0jL0C8" resname="Vous avez demandé un nouveau mot de passe.">
+        <source>Vous avez demandé un nouveau mot de passe.</source>
+        <target>You have recently asked a password update.</target>
+      </trans-unit>
+      <trans-unit id="G6JhVP7" resname="Veuillez cliquer sur ce lien pour changer votre mot de passe :">
+        <source>Veuillez cliquer sur ce lien pour changer votre mot de passe :</source>
+        <target>Please, click here to change your password :</target>
+      </trans-unit>
+      <trans-unit id="xsmmB10" resname="Merci!">
+        <source>Merci!</source>
+        <target>Thank you!</target>
+      </trans-unit>
+      <trans-unit id="FcA_2B2" resname="Votre inscription au service">
+        <source>Votre inscription au service</source>
+        <target>Your subscription</target>
+      </trans-unit>
+      <trans-unit id="IiI5JvN" resname="est bien prise en compte">
+        <source>est bien prise en compte</source>
+        <target>have been fufilled</target>
+      </trans-unit>
+      <trans-unit id="mUk6OLQ" resname="Veuillez cliquer sur ce lien pour confirmer votre email">
+        <source>Veuillez cliquer sur ce lien pour confirmer votre email</source>
+        <target>Please click here to confirm your email.</target>
+      </trans-unit>
+      <trans-unit id="rO24ftf" resname="Ou utilisez le code de validation directement sur le site">
+        <source>Ou utilisez le code de validation directement sur le site</source>
+        <target>Or use directly the website validation code</target>
+      </trans-unit>
+      <trans-unit id="m0rEmRr" resname="Vous avez un message">
+        <source>Vous avez un message</source>
+        <target>You have received a message</target>
+      </trans-unit>
+      <trans-unit id="kXLo7sm" resname="Bonjour">
+        <source>Bonjour</source>
+        <target>Dear</target>
+      </trans-unit>
+      <trans-unit id="rlCQX_N" resname="A très bientôt sur">
+        <source>A très bientôt sur</source>
+        <target>See you next on</target>
+      </trans-unit>
+      <trans-unit id="SgojxLs" resname="Nous sommes content de vous rendre service.">
+        <source>Nous sommes content de vous rendre service.</source>
+        <target>It is really nice to work for you.</target>
+      </trans-unit>
+      <trans-unit id="VT_f.R4" resname="Nous vous notifions par ce message que votre annonce a été posté avec succes!">
+        <source>Nous vous notifions par ce message que votre annonce a été posté avec succes!</source>
+        <target>We want to notify you that your proposal was posted</target>
+      </trans-unit>
+      <trans-unit id="JoZrPCA" resname="Merci">
+        <source>Merci</source>
+        <target>Thank you</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

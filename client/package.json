@@ -59,6 +59,7 @@
     "@babel/polyfill": "^7.4.4",
     "@symfony/webpack-encore": "^0.21.0",
     "axios": "^0.18.1",
+    "core-js": "^2.6.9",
     "babel-polyfill": "^6.26.0",
     "buefy": "^0.7.7",
     "commander": "^2.18.0",

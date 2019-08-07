@@ -413,6 +413,15 @@ class User implements UserInterface, EquatableInterface
      * @Groups("threads")
      */
     private $threads;
+ 
+ /**
+	* Language de l'utilisateur.
+	*
+	* @var string $language
+	* @Groups({"read","write", "api"})
+	* @ORM\Column(name="language", type="string", nullable=false)
+	*/
+    private $language= 'fr_FR';
 
     public function __construct($status = null)
     {
@@ -1033,4 +1042,14 @@ class User implements UserInterface, EquatableInterface
     {
         $this->setCreatedDate(new \Datetime());
     }
+ 
+ public function getLanguage()
+ {
+  return $this->language;
+ }
+ 
+ public function setLanguage($language)
+ {
+	 $this->language= $language;
+ }
 }

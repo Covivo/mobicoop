@@ -1,4 +1,6 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-    {{ message }}
+    {{ "Attention dans quelques jours vos trajets enregistrés ne seront plus valables sur votre profil et ne seront donc plus visibles par les autres covoitureurs."|trans }}
+
+    {{ "Vous êtes maintenant plus de"| trans }} @NbInscrits  {{ "à utiliser le service ! Partagez vos trajets et trouvez votre bonheur !"|trans}}
 {% endblock %}

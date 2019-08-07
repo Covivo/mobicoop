@@ -1,0 +1,8 @@
+
+{% extends 'base.html.twig' %}
+{% block body %}
+ @PrenomOuPseudoPassager {{ "ne pourra pas covoiturer avec vous vers"|trans }} @AdresseDepose {{ "les jours suivants"|trans }} :
+ @Jours {{ "du"|trans }} du  @DateDebut {{ "au"|trans }} @DateFin
+    {{ "Voici son message"|trans}} :
+ @Commentaires
+{% endblock %}

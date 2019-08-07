@@ -46,7 +46,7 @@ class AskHistoryRepository
      * Find last ask history by ask and status
      *
      * @param string $action
-     * @return void
+     * @return AskHistory
      */
     public function findLastByAskAndStatus(Ask $ask, int $status)
     {
