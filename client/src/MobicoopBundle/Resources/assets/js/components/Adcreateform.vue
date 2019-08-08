@@ -93,17 +93,7 @@
                 style="height: 500px"
               >
                 <v-stepper-content step="1">
-                  <v-container>
-                    <v-layout
-                      class="mt-5"
-                      align-center
-                    >
-                      <p>Je suis conducteur</p>
-                      <v-spacer />
-                      <p>Je suis Passager</p>
-                    </v-layout>
-                  </v-container>
-                  <HomeSearch />
+                  <search-journey display-roles />
                 </v-stepper-content>
 
                 <v-stepper-content step="2">
@@ -482,11 +472,11 @@
 import axios from "axios";
 import moment from 'moment'
 import GeoComplete from "./GeoComplete";
-import HomeSearch from "./HomeSearch";
+import SearchJourney from "./SearchJourney";
 
 export default {
   components: {
-    HomeSearch,
+    SearchJourney,
     GeoComplete
   },
   props: {
@@ -525,7 +515,6 @@ export default {
   },
   data() {
     return {
-      //add data from vuetify test before merging all
       step: 1,
       date1: new Date().toISOString().substr(0, 10),
       time1: null,
