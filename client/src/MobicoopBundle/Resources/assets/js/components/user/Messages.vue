@@ -83,7 +83,6 @@
                 :key="index"
                 class="threads mx-auto mt-2"
                 :class="thread.selected ? 'primary' : ''"
-                max-width="400"
                 @click="updateMessages(thread.idThreadMessage,thread.contactId,generateName(thread.contactFirstName,thread.contactLastName))"
               >
                 <v-card-title>
@@ -317,7 +316,7 @@
                         v-on="on"
                         @click="updateCarpool(3)"
                       >
-                        <v-icon>done</v-icon>
+                        <v-icon>mdi-check</v-icon>
                       </v-btn>
                     </template>
                     <span class="black--text">{{ $t("ui.button.accept") }}</span>
@@ -334,7 +333,7 @@
                         v-on="on"
                         @click="updateCarpool(4)"
                       >
-                        <v-icon>clear</v-icon>
+                        <v-icon>mdi-close</v-icon>
                       </v-btn>
                     </template>
                     <span>{{ $t("ui.button.refuse") }}</span>
