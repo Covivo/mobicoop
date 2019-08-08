@@ -156,7 +156,7 @@
 
 <script>
 import axios from "axios";
-import GeoComplete from "./GeoComplete";
+import GeoComplete from "@js/components/GeoComplete";
 
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
@@ -168,9 +168,6 @@ export default {
   i18n: {
     messages: TranslationsMerged,
     sharedMessages: CommonTranslations
-  },
-  components: {
-    GeoComplete
   },
   components: {
     GeoComplete
