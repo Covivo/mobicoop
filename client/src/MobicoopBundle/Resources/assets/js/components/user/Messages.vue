@@ -83,7 +83,6 @@
                 :key="index"
                 class="threads mx-auto mt-2"
                 :class="thread.selected ? 'primary' : ''"
-                max-width="400"
                 @click="updateMessages(thread.idThreadMessage,thread.contactId,generateName(thread.contactFirstName,thread.contactLastName))"
               >
                 <v-card-title>

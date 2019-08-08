@@ -53,8 +53,9 @@ class NotificationManager
     private $smsTemplatePath;
     private $logger;
     private $notificationRepository;
+    private $enabled;
 
-    public function __construct(EntityManagerInterface $entityManager, \Twig_Environment $templating, InternalMessageManager $internalMessageManager, EmailManager $emailManager, LoggerInterface $logger, NotificationRepository $notificationRepository, string $emailTemplatePath, string $emailTitleTemplatePath, string $smsTemplatePath)
+    public function __construct(EntityManagerInterface $entityManager, \Twig_Environment $templating, InternalMessageManager $internalMessageManager, EmailManager $emailManager, LoggerInterface $logger, NotificationRepository $notificationRepository, string $emailTemplatePath, string $emailTitleTemplatePath, string $smsTemplatePath, bool $enabled)
     {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
@@ -65,6 +66,7 @@ class NotificationManager
         $this->emailTitleTemplatePath = $emailTitleTemplatePath;
         $this->smsTemplatePath = $smsTemplatePath;
         $this->templating = $templating;
+        $this->enabled = $enabled;
     }
 
     /**
@@ -77,6 +79,8 @@ class NotificationManager
      */
     public function notifies(string $action, User $recipient, ?object $object = null)
     {
+        if(!$this->enabled) return;
+        
         $notifications = $this->notificationRepository->findActiveByAction($action);
         if ($notifications && is_array($notifications)) {
             foreach ($notifications as $notification) {
@@ -84,7 +88,7 @@ class NotificationManager
                     case Medium::MEDIUM_MESSAGE:
                         if (!is_null($object)) {
                             $this->logger->info("Internal message notification for $action / " . get_class($object) . " / " . $recipient->getEmail());
-                            if ($object instanceof  MessagerInterface) {
+                            if ($object instanceof  MessagerInterface && !is_null($object->getMessage())) {
                                 $this->internalMessageManager->sendForObject([$recipient], $object);
                             }
                         }
@@ -138,7 +142,7 @@ class NotificationManager
                     break;
                 case AskHistory::class:
                     $titleContext = [];
-                    $bodyContext = [];
+                    $bodyContext = ['user'=>$recipient];
                     break;
                 case Recipient::class:
                     $titleContext = [];
