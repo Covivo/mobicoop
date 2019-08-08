@@ -20,9 +20,7 @@
               v-model="step"
               alt-labels
             >
-              <v-stepper-header
-                v-show="step!==1"
-              >
+              <v-stepper-header>
                 <v-stepper-step
                   editable
                   step="1"
@@ -93,17 +91,172 @@
                 style="height: 500px"
               >
                 <v-stepper-content step="1">
-                  <v-container>
+                  <v-container
+                    grid-list-md
+                    text-xs-center
+                  >
                     <v-layout
-                      class="mt-5"
-                      align-center
+                      row
+                      wrap
                     >
-                      <p>Je suis conducteur</p>
-                      <v-spacer />
-                      <p>Je suis Passager</p>
+                      <v-flex
+                        xs2
+                      />
+                      <v-flex
+                        xs6
+                      >
+                        <v-menu
+                          v-model="menu2"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          lazy
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="date1"
+                              label="Date de départ"
+                              prepend-icon=""
+                              readonly
+                              v-on="on"
+                            />
+                          </template>
+                          <v-date-picker
+                            v-model="date1"
+                            @input="menu2 = false"
+                          />
+                        </v-menu>
+                      </v-flex>
+                      <v-flex
+                        xs4
+                      >
+                        <v-menu
+                          ref="menu"
+                          v-model="menu3"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          :return-value.sync="time1"
+                          lazy
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          max-width="290px"
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="time1"
+                              label="Heure de départ"
+                              prepend-icon=""
+                              readonly
+                              v-on="on"
+                            />
+                          </template>
+                          <v-time-picker
+                            v-if="menu3"
+                            v-model="time1"
+                            format="24hr"
+                            @click:minute="$refs.menu.save(time1)"
+                          />
+                        </v-menu>
+                      </v-flex>
+                    </v-layout>
+                    <v-layout
+                      row
+                      wrap
+                    >
+                      <v-flex
+                        xs2
+                      >
+                        <v-checkbox
+                          label="retour"
+                          color="success"
+                          value="success"
+                          hide-details
+                        />
+                      </v-flex>
+                      <v-flex
+                        xs6
+                      >
+                        <v-menu
+                          v-model="menu4"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          lazy
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="date2"
+                              label="Date de retour"
+                              prepend-icon=""
+                              readonly
+                              v-on="on"
+                            />
+                          </template>
+                          <v-date-picker
+                            v-model="date2"
+                            @input="menu4 = false"
+                          />
+                        </v-menu>
+                      </v-flex>
+                      <v-flex
+                        xs4
+                      >
+                        <v-menu
+                          ref="menu"
+                          v-model="menu5"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          :return-value.sync="time2"
+                          lazy
+                          transition="scale-transition"
+                          offset-y
+                          full-width
+                          max-width="290px"
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="time2"
+                              label="Heure de retour"
+                              prepend-icon=""
+                              readonly
+                              v-on="on"
+                            />
+                          </template>
+                          <v-time-picker
+                            v-if="menu5"
+                            v-model="time2"
+                            format="24hr"
+                            @click:minute="$refs.menu.save(time2)"
+                          />
+                        </v-menu>
+                        <v-select
+                          v-if="!idCommunity"
+                          v-model="form.community"
+                          name="selectCommunity"
+                          :native-value="4"
+                          type="is-primary"
+                          :items="communities"
+                          item-text="communityName"
+                          item-value="id"
+                        />
+                        <p
+                          v-for="(community) in communities"
+                          v-if="community.id == idCommunity"
+                        >
+                          {{ community.communityName }}
+                        </p>
+                      </v-flex>
                     </v-layout>
                   </v-container>
-                  <HomeSearch />
                 </v-stepper-content>
 
                 <v-stepper-content step="2">
@@ -482,11 +635,15 @@
 import axios from "axios";
 import moment from 'moment'
 import GeoComplete from "./GeoComplete";
-import HomeSearch from "./HomeSearch";
+
+
+import { merge } from "lodash";
+import CommonTranslations from "@translations/translations.json";
+import Translations from "@translations/components/HomeSearch.json";
+import TranslationsClient from "@clientTranslations/components/HomeSearch.json";
 
 export default {
   components: {
-    HomeSearch,
     GeoComplete
   },
   props: {
@@ -704,28 +861,28 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    .tabContent {
-        text-align: center;
+  .tabContent {
+    text-align: center;
+  }
+  .fieldsContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .dayNameColumn {
+    text-align: left;
+    a {
+      width: 100%;
     }
-    .fieldsContainer {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .dayNameColumn {
-        text-align: left;
-        a {
-            width: 100%;
-        }
-    }
+  }
 
-    .layout .align-center {
-        padding:12px !important;
-        color: blueviolet;
-    }
+   .layout .align-center {
+     padding:12px !important;
+     color: blueviolet;
+   }
 
-    .v-stepper__items{
-        height: 800px;
-    }
+  .v-stepper__items{
+    height: 800px;
+  }
 
 </style>
