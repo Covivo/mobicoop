@@ -1052,5 +1052,4 @@ class User implements UserInterface, EquatableInterface
     {
         $this->setCreatedDate(new \Datetime());
     }
- 
 }

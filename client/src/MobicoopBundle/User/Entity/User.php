@@ -727,5 +727,4 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'geoToken'      => $this->getGeoToken()
         ];
     }
-        
 }
