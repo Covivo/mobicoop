@@ -13,7 +13,7 @@ import Vuetify, {
   // footer
   VFooter, VChip, VCardText,
   // content
-  VSwitch, VMenu, VDatePicker, VTextField,  VTooltip,
+  VSwitch, VMenu, VDatePicker, VTextField,  VTooltip, VCard, VCardTitle, VCardActions,
   // geocomplete
   VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon
 } from 'vuetify/lib'
@@ -27,7 +27,7 @@ Vue.use(Vuetify, {
     // footer
     VFooter, VChip, VCardText,
     // content
-    VSwitch, VMenu, VDatePicker, VTextField,  VTooltip,
+    VSwitch, VMenu, VDatePicker, VTextField,  VTooltip, VCard, VCardTitle, VCardActions,
     // geocomplete
     VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon
   }

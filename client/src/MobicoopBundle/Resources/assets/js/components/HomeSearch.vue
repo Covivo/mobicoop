@@ -4,164 +4,171 @@
       text-xs-center
       grid-list-md
       fluid
+      class="pt-0 px-0"
+      :class="this.backgroundColor+' '+this.textColor"
     >
-      <!-- Title and subtitle -->
-      <v-layout
-        justify-center
-        align-center
-        class="mt-5"
+      <div
+        class="backgroundImage"
+        :style="style"
       >
-        <v-flex xs6>
-          <h1>{{ $t('title') }}</h1>
-          <h3 v-html="$t('subtitle')" />
-        </v-flex>
-      </v-layout>
+        <!-- Title and subtitle -->
+        <v-layout
+          justify-center
+          align-center
+          class="mt-5"
+        >
+          <v-flex xs6>
+            <h1>{{ $t('title') }}</h1>
+            <h3 v-html="$t('subtitle')" />
+          </v-flex>
+        </v-layout>
 
-      <!-- Geocompletes -->
-      <v-layout
-        class="mt-5"
-        align-center
-      >
-        <v-flex
-          xs2
-          offset-xs3
+        <!-- Geocompletes -->
+        <v-layout
+          class="mt-5"
+          align-center
         >
-          <GeoComplete
-            :url="geoSearchUrl"
-            :label="labelOrigin"
-            :token="user ? user.geoToken : ''"
-            @address-selected="originSelected"
-          />
-        </v-flex>
-        <v-flex
-          class="text-center"
-          xs2
-        >
-          <v-tooltip right>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                text
-                icon
-                @click="swap"
-              >
-                <img
-                  src="images/PictoInterchanger.svg"
-                  :alt="$t('swap.alt')"
-                  v-on="on"
-                >
-              </v-btn>
-            </template>
-            <span>{{ $t('swap.help') }}</span>
-          </v-tooltip>
-        </v-flex>
-        <v-flex xs2>
-          <GeoComplete
-            :url="geoSearchUrl"
-            :label="labelDestination"
-            :token="user ? user.geoToken : ''"
-            @address-selected="destinationSelected"
-          />
-        </v-flex>
-      </v-layout>
-
-      <!-- Switch -->
-      <v-layout
-        class="mt-5"
-        align-center
-        fill-height
-      >
-        <v-flex
-          xs1
-          offset-xs3
-        >
-          {{ $t('switch.label') }}
-        </v-flex>
-        <v-flex
-          xs1
-          row
-          class="text-right"
-        >
-          <v-switch
-            v-model="regular"
-            inset
-            color="success"
-          />
-          <v-tooltip right>
-            <template v-slot:activator="{ on }">
-              <v-icon v-on="on">
-                mdi-help-circle-outline
-              </v-icon>
-            </template>
-            <span>{{ $t('switch.help') }}</span>
-          </v-tooltip>
-        </v-flex>
-      </v-layout>
-
-      <!-- Datepicker -->
-      <v-layout
-        class="mt-5"
-        align-center
-      >
-        <v-flex
-          xs2
-          offset-xs3
-        >
-          <v-menu
-            v-model="menu"
-            :close-on-content-click="false"
-            full-width
+          <v-flex
+            xs2
+            offset-xs3
           >
-            <template v-slot:activator="{ on }">
-              <v-text-field
-                :value="computedDateFormat"
-                clearable
-                :label="$t('datePicker.label')"
-                readonly
-                :messages="$t('ui.form.optional')"
-                v-on="on"
-                @click:clear="clearDate"
-              />
-            </template>
-            <v-date-picker
-              v-model="date"
-              header-color="primary"
-              color="secondary"
-              :locale="locale"
-              @input="menu=false"
+            <GeoComplete
+              :url="geoSearchUrl"
+              :label="labelOrigin"
+              :token="user ? user.geoToken : ''"
+              @address-selected="originSelected"
             />
-          </v-menu>
-        </v-flex>
-      </v-layout>
+          </v-flex>
+          <v-flex
+            class="text-center"
+            xs2
+          >
+            <v-tooltip right>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  text
+                  icon
+                  @click="swap"
+                >
+                  <img
+                    src="images/PictoInterchanger.svg"
+                    :alt="$t('swap.alt')"
+                    v-on="on"
+                  >
+                </v-btn>
+              </template>
+              <span>{{ $t('swap.help') }}</span>
+            </v-tooltip>
+          </v-flex>
+          <v-flex xs2>
+            <GeoComplete
+              :url="geoSearchUrl"
+              :label="labelDestination"
+              :token="user ? user.geoToken : ''"
+              @address-selected="destinationSelected"
+            />
+          </v-flex>
+        </v-layout>
 
-      <!-- Buttons -->
-      <v-layout
-        class="mt-5"
-        align-center
-      >
-        <v-flex
-          xs2
-          offset-xs3
+        <!-- Switch -->
+        <v-layout
+          class="mt-5"
+          align-center
+          fill-height
         >
-          <v-btn
-            rounded
-            outlined
-            disabled
-            @click="publish"
+          <v-flex
+            xs1
+            offset-xs3
           >
-            {{ $t('buttons.shareAnAd.label') }}
-          </v-btn>
-        </v-flex>
-        <v-flex xs2>
-          <v-btn
-            color="success"
-            rounded
-            :disabled="searchUnavailable"
-            @click="search"
+            {{ $t('switch.label') }}
+          </v-flex>
+          <v-flex
+            xs1
+            row
+            class="text-right"
           >
-            {{ $t('buttons.search.label') }}
-          </v-btn>
-        </v-flex>
-      </v-layout>
+            <v-switch
+              v-model="regular"
+              inset
+              color="success"
+            />
+            <v-tooltip right>
+              <template v-slot:activator="{ on }">
+                <v-icon v-on="on">
+                  mdi-help-circle-outline
+                </v-icon>
+              </template>
+              <span>{{ $t('switch.help') }}</span>
+            </v-tooltip>
+          </v-flex>
+        </v-layout>
+
+        <!-- Datepicker -->
+        <v-layout
+          class="mt-5"
+          align-center
+        >
+          <v-flex
+            xs2
+            offset-xs3
+          >
+            <v-menu
+              v-model="menu"
+              :close-on-content-click="false"
+              full-width
+            >
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  :value="computedDateFormat"
+                  clearable
+                  :label="$t('datePicker.label')"
+                  readonly
+                  :messages="$t('ui.form.optional')"
+                  v-on="on"
+                  @click:clear="clearDate"
+                />
+              </template>
+              <v-date-picker
+                v-model="date"
+                header-color="primary"
+                color="secondary"
+                :locale="locale"
+                @input="menu=false"
+              />
+            </v-menu>
+          </v-flex>
+        </v-layout>
+
+        <!-- Buttons -->
+        <v-layout
+          class="mt-5"
+          align-center
+        >
+          <v-flex
+            xs2
+            offset-xs3
+          >
+            <v-btn
+              rounded
+              outlined
+              disabled
+              @click="publish"
+            >
+              {{ $t('buttons.shareAnAd.label') }}
+            </v-btn>
+          </v-flex>
+          <v-flex xs2>
+            <v-btn
+              :color="this.colorButtonSearch"
+              rounded
+              :disabled="searchUnavailable"
+              @click="search"
+            >
+              {{ $t('buttons.search.label') }}
+            </v-btn>
+          </v-flex>
+        </v-layout>
+      </div>
     </v-container>
   </v-content>
 </template>
@@ -197,6 +204,23 @@ export default {
     user: {
       type: Object,
       default: null
+    },
+    backgroundColor: { // Optional for style binding in container (vuetify class expected like primary)
+      type: String,
+      default: ""
+    },
+    textColor: { // Optional for style binding in container and other component (vuetify class expected like white--color)
+      type: String,
+      default: ""
+    },
+    // Optionnal props for styling (-> computed)
+    backgroundImage: {
+      type: String,
+      default: ""
+    },
+    colorButtonSearch:{
+      type: String,
+      default: "success"
     }
   },
   data() {
@@ -230,6 +254,11 @@ export default {
     },
     searchUnavailable() {
       return !this.origin || !this.destination;
+    },
+    style(){
+      let styleBackgroundImage = "";
+      (this.backgroundImage!=='') ? styleBackgroundImage = "background-image:url("+this.backgroundImage+")" : styleBackgroundImage = '';
+      return styleBackgroundImage;
     }
   },
   methods: {
@@ -254,3 +283,8 @@ export default {
   }
 };
 </script>
+<style lang="scss" scoped>
+.backgroundImage{
+  background-size: cover;
+}
+</style>
