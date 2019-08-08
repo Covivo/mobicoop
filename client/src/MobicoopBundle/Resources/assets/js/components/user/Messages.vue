@@ -317,7 +317,7 @@
                         v-on="on"
                         @click="updateCarpool(3)"
                       >
-                        <v-icon>done</v-icon>
+                        <v-icon>mdi-check</v-icon>
                       </v-btn>
                     </template>
                     <span class="black--text">{{ $t("ui.button.accept") }}</span>
@@ -334,7 +334,7 @@
                         v-on="on"
                         @click="updateCarpool(4)"
                       >
-                        <v-icon>clear</v-icon>
+                        <v-icon>mdi-close</v-icon>
                       </v-btn>
                     </template>
                     <span>{{ $t("ui.button.refuse") }}</span>

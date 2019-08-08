@@ -14,7 +14,7 @@ import Vuetify, {
   VFooter, VChip, VCardText,
   // content
   // messages
-  VTabs, VTab, VTabItem, VTimeline, VTimelineItem, VTextarea, VIcon, VCard, VCardTitle, VDialog, VProgressLinear, VAvatar
+  VTabs, VTab, VTabItem, VTimeline, VTimelineItem, VTextarea, VIcon, VCard, VCardTitle, VDialog, VProgressLinear, VAvatar, VDivider, VCardActions, VTooltip
 } from 'vuetify/lib'
 
 Vue.use(Vuetify, {
@@ -27,7 +27,7 @@ Vue.use(Vuetify, {
     VFooter, VChip, VCardText,
     // content
     // messages
-    VTabs, VTab, VTabItem, VTimeline, VTimelineItem, VTextarea, VIcon, VCard, VCardTitle, VDialog, VProgressLinear, VAvatar
+    VTabs, VTab, VTabItem, VTimeline, VTimelineItem, VTextarea, VIcon, VCard, VCardTitle, VDialog, VProgressLinear, VAvatar, VDivider, VCardActions, VTooltip
   }
 })
 Vue.use(VueI18n)
