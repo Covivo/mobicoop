@@ -23,6 +23,7 @@
 
 namespace App\Communication\Service;
 
+use App\Communication\Entity\MessagerInterface;
 use Psr\Log\LoggerInterface;
 use App\Communication\Repository\NotificationRepository;
 use App\Communication\Entity\Medium;
@@ -83,7 +84,9 @@ class NotificationManager
                     case Medium::MEDIUM_MESSAGE:
                         if (!is_null($object)) {
                             $this->logger->info("Internal message notification for $action / " . get_class($object) . " / " . $recipient->getEmail());
-                            $this->internalMessageManager->sendForObject([$recipient], $object);
+                            if ($object instanceof  MessagerInterface) {
+                                $this->internalMessageManager->sendForObject([$recipient], $object);
+                            }
                         }
                         $this->createNotified($notification, $recipient, $object);
                         break;
@@ -120,17 +123,18 @@ class NotificationManager
     {
         $email = new Email();
         $email->setRecipientEmail($recipient->getEmail());
+        echo $recipient->getId();
         $titleContext = [];
         $bodyContext = [];
         if ($object) {
             switch (get_class($object)) {
                 case Proposal::class:
                     $titleContext = [];
-                    $bodyContext = [];
+                    $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
                     break;
                 case Matching::class:
                     $titleContext = [];
-                    $bodyContext = [];
+                    $bodyContext = ['user'=>$recipient, 'notification'=> $notification, 'matching'=> $object];
                     break;
                 case AskHistory::class:
                     $titleContext = [];
@@ -152,7 +156,7 @@ class NotificationManager
             ]
         ));
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
-        $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext);
+        $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext, $recipient->getLanguage());
     }
 
     /**

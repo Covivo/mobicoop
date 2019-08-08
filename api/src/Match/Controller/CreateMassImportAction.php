@@ -52,6 +52,7 @@ final class CreateMassImportAction
 
     public function __invoke(Request $request): ?Mass
     {
+        /** @var Mass $mass */
         $mass = new Mass();
         $mass->setStatus(Mass::STATUS_INCOMING);
 

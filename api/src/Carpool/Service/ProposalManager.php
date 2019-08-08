@@ -23,20 +23,23 @@
 
 namespace App\Carpool\Service;
 
-use App\Carpool\Entity\Proposal;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Criteria;
-use App\Geography\Entity\Address;
+use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;
+use App\Carpool\Event\MatchingNewEvent;
+use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Repository\ProposalRepository;
+use App\DataProvider\Entity\GeoRouterProvider;
+use App\Geography\Entity\Address;
+use App\Geography\Entity\Zone;
 use App\Geography\Repository\DirectionRepository;
 use App\Geography\Service\GeoRouter;
-use App\Geography\Service\ZoneManager;
-use App\Geography\Entity\Zone;
-use App\DataProvider\Entity\GeoRouterProvider;
-use Psr\Log\LoggerInterface;
 use App\Geography\Service\TerritoryManager;
+use App\Geography\Service\ZoneManager;
 use App\User\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Proposal manager service.
@@ -54,7 +57,8 @@ class ProposalManager
     private $territoryManager;
     private $userRepository;
     private $logger;
-
+    private $eventDispatcher;
+    
     /**
      * Constructor.
      *
@@ -65,7 +69,7 @@ class ProposalManager
      * @param GeoRouter $geoRouter
      * @param ZoneManager $zoneManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, LoggerInterface $logger, UserRepository $userRepository)
+    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, LoggerInterface $logger, UserRepository $userRepository, EventDispatcherInterface $dispatcher)
     {
         $this->entityManager = $entityManager;
         $this->proposalMatcher = $proposalMatcher;
@@ -76,26 +80,27 @@ class ProposalManager
         $this->territoryManager = $territoryManager;
         $this->logger = $logger;
         $this->userRepository = $userRepository;
+        $this->eventDispatcher = $dispatcher;
     }
     
     /**
      * Create a proposal.
      *
-     * @param Proposal $proposal    The proposal to create
-     * @param boolean $persist      If we persist the proposal in the database (false for a simple search)
+     * @param Proposal $proposal The proposal to create
+     * @param boolean $persist If we persist the proposal in the database (false for a simple search)
      * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
      * @return Proposal             The created proposal
      */
-    public function createProposal(Proposal $proposal, $persist=true, bool $excludeProposalUser=true)
+    public function createProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true)
     {
         $date = new \DateTime("UTC");
         $this->logger->info('Proposal creation | Start ' . $date->format("Ymd H:i:s.u"));
-
+        
         // temporary initialisation, will be dumped when implementation of these fields will be done
         $proposal->getCriteria()->setSeats(1);
         $proposal->getCriteria()->setAnyRouteAsPassenger(true);
         $proposal->getCriteria()->setStrictDate(true);
-
+        
         // calculation of the min and max times
         if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
             list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getFromTime(), $proposal->getCriteria()->getMarginDuration());
@@ -138,7 +143,7 @@ class ProposalManager
                 $proposal->getCriteria()->setSunMaxTime($maxTime);
             }
         }
-
+        
         // creation of the directions
         $addresses = [];
         foreach ($proposal->getWaypoints() as $waypoint) {
@@ -155,35 +160,44 @@ class ProposalManager
                 $proposal->getCriteria()->setDirectionPassenger($direction);
             }
         }
-
+        
         // matching analyze
         $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
         $this->logger->info('Proposal creation | End matching ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
+        
         if ($persist) {
             // TODO : here we should remove the previously matched proposal if they already exist
             $this->entityManager->persist($proposal);
             $this->logger->info('Proposal creation | End persist ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         }
-
+        
         $end = new \DateTime("UTC");
         $this->logger->info('Proposal creation | Total duration ' . ($end->diff($date))->format("%s.%f seconds"));
-
+        
+        $matchings = $proposal->getMatchingOffers();
+        foreach ($matchings as $matching) {
+            // dispatch en event
+            $event = new MatchingNewEvent($matching);
+            $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
+        }
+        // dispatch en event
+        $event = new ProposalPostedEvent($proposal);
+        $this->eventDispatcher->dispatch(ProposalPostedEvent::NAME, $event);
         return $proposal;
     }
-
+    
     /**
      * Get the matchings for the given proposal.
      * Used for simple search.
      *
-     * @param Proposal $proposal    The proposal for which we search the matchings
+     * @param Proposal $proposal The proposal for which we search the matchings
      * @return Proposal             The posted proposal with its matchings
      */
     public function getMatchings(Proposal $proposal)
     {
         return $this->createProposal($proposal, false, false);
     }
-
+    
     /**
      * Create a minimal proposal for a simple search.
      * Only punctual and one way trip.
@@ -202,9 +216,9 @@ class ProposalManager
         float $destinationLatitude,
         float $destinationLongitude,
         \Datetime $date,
-        ?int $userId=null
-        ) {
-
+        ?int $userId = null
+    ) {
+        
         // we create a new Proposal object with its Criteria and Waypoints
         $proposal = new Proposal();
         $proposal->setType(Proposal::TYPE_ONE_WAY);
@@ -216,13 +230,13 @@ class ProposalManager
         $criteria->setMarginDuration(900);
         $criteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
         $proposal->setCriteria($criteria);
-
+        
         if (!is_null($userId)) {
             if ($user = $this->userRepository->find($userId)) {
                 $proposal->setUser($user);
             }
         }
-
+        
         $waypointOrigin = new Waypoint();
         $originAddress = new Address();
         $originAddress->setLatitude((string)$originLatitude);
@@ -230,7 +244,7 @@ class ProposalManager
         $waypointOrigin->setAddress($originAddress);
         $waypointOrigin->setPosition(0);
         $waypointOrigin->setDestination(false);
-
+        
         $waypointDestination = new Waypoint();
         $destinationAddress = new Address();
         $destinationAddress->setLatitude((string)$destinationLatitude);
@@ -238,14 +252,14 @@ class ProposalManager
         $waypointDestination->setAddress($destinationAddress);
         $waypointDestination->setPosition(1);
         $waypointDestination->setDestination(true);
-
+        
         $proposal->addWaypoint($waypointOrigin);
         $proposal->addWaypoint($waypointDestination);
-
+        
         return $this->getMatchings($proposal);
     }
-
-
+    
+    
     /**
      * Updates directions without zones (so by extension, updates the related proposals, that's why it's in this file...)
      * Used for testing purpose, shouldn't be useful as zones are added when proposals/directions are posted.
@@ -337,7 +351,7 @@ class ProposalManager
         string $outward_saturday_maxtime = null,
         string $outward_sunday_mintime = null,
         string $outward_sunday_maxtime = null
-        ) {
+    ) {
         // test : we return all proposals
         // we create a proposal with the parameters
         $proposal = new Proposal();
@@ -378,7 +392,7 @@ class ProposalManager
         // @todo add the time parameters
         return $this->proposalRepository->findMatchingProposals($proposal, false);
     }
-
+    
     // returns the min and max time from a time and a margin
     private static function getMinMaxTime($time, $margin)
     {

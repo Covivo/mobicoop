@@ -11,7 +11,7 @@ import Vuetify, {
   // header
   VToolbar, VToolbarTitle, VBtn, VImg,
   // footer
-  VFooter, VCardText,
+  VFooter, VChip, VCardText,
   // content
   // messages
   VTabs, VTab, VTabItem, VTimeline, VTimelineItem, VTextarea, VIcon, VCard, VCardTitle, VDialog, VProgressLinear, VAvatar
@@ -24,7 +24,7 @@ Vue.use(Vuetify, {
     // header
     VToolbar, VToolbarTitle, VBtn, VImg,
     // footer
-    VFooter, VCardText,
+    VFooter, VChip, VCardText,
     // content
     // messages
     VTabs, VTab, VTabItem, VTimeline, VTimelineItem, VTextarea, VIcon, VCard, VCardTitle, VDialog, VProgressLinear, VAvatar
