@@ -79,7 +79,9 @@ class NotificationManager
      */
     public function notifies(string $action, User $recipient, ?object $object = null)
     {
-        if(!$this->enabled) return;
+        if (!$this->enabled) {
+            return;
+        }
         
         $notifications = $this->notificationRepository->findActiveByAction($action);
         if ($notifications && is_array($notifications)) {
