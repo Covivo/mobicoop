@@ -32,33 +32,36 @@
           />
         </v-flex>
       </v-layout>
+      
       <!-- Buttons -->
       <v-layout
         class="mt-5"
+        justify-center
         row
       >
-        <v-flex
-          xs2
-          offset-xs3
-        >
-          <v-btn
-            rounded
-            outlined
-            disabled
-            @click="publish"
+        <v-flex xs10>
+          <v-flex
+            xs4
           >
-            {{ $t('buttons.shareAnAd.label') }}
-          </v-btn>
-        </v-flex>
-        <v-flex xs2>
-          <v-btn
-            color="success"
-            rounded
-            :disabled="searchUnavailable"
-            @click="search"
-          >
-            {{ $t('buttons.search.label') }}
-          </v-btn>
+            <v-btn
+              rounded
+              outlined
+              disabled
+              @click="publish"
+            >
+              {{ $t('buttons.shareAnAd.label') }}
+            </v-btn>
+          </v-flex>
+          <v-flex xs4>
+            <v-btn
+              color="success"
+              rounded
+              :disabled="searchUnavailable"
+              @click="search"
+            >
+              {{ $t('buttons.search.label') }}
+            </v-btn>
+          </v-flex>
         </v-flex>
       </v-layout>
     </v-container>
