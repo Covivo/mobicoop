@@ -40,7 +40,7 @@ final class JoinAction
     }
 
     public function __invoke(CommunityUser $data)
-    {
+    {   if (is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad community  id is provided"));
         if ($this->communityManager->canJoin($data)) {
             return $data;
         }

@@ -34,7 +34,8 @@ use App\Carpool\Entity\Ask;
 class AskPost
 {
     private $askManager;
-
+    private $translator;
+    
     public function __construct(AskManager $askManager)
     {
         $this->askManager = $askManager;
@@ -47,7 +48,7 @@ class AskPost
      * @return Ask
      */
     public function __invoke(Ask $data): Ask
-    {
+    {   if (is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad Ask id is provided"));
         $data = $this->askManager->createAsk($data);
         return $data;
     }

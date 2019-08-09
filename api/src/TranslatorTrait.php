@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -21,38 +20,25 @@
  *    LICENSE
  **************************/
 
-namespace App\Article\Controller;
+namespace App;
 
-use App\Article\Service\ArticleManager;
-use App\Article\Entity\Section;
+
 use Symfony\Component\Translation\TranslatorInterface;
 
-/**
- * Controller class for section up position change.
- *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
- */
-class SectionUp
+trait TranslatorTrait
 {
-    private $articleManager;
+    /**
+     * @var TranslatorInterface $translator
+     */
     private $translator;
     
-    public function __construct(ArticleManager $articleManager, TranslatorInterface $translator)
-    {
-        $this->articleManager = $articleManager;
-        $this->translator= $translator;
-    }
-
+    
     /**
-     * This method is invoked when a section up position change is asked.
-     * It returns the edited section.
-     *
-     * @param Section $data
-     * @return Section
+     * @required
+     * @param TranslatorInterface $translator
      */
-    public function __invoke(Section $data): Section
+    public function setTranslator(TranslatorInterface $translator)
     {
-        if(is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad Section id is provided"));
-        return $this->articleManager->changeSectionPosition($data, $this->articleManager::DIRECTION_UP);
+        $this->translator = $translator;
     }
 }

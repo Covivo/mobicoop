@@ -25,6 +25,7 @@ namespace App\Article\Controller;
 
 use App\Article\Service\ArticleManager;
 use App\Article\Entity\Paragraph;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Controller class for paragraph up position change.
@@ -34,10 +35,12 @@ use App\Article\Entity\Paragraph;
 class ParagraphUp
 {
     private $articleManager;
-
-    public function __construct(ArticleManager $articleManager)
+    private $translator;
+    
+    public function __construct(ArticleManager $articleManager,  TranslatorInterface $translator)
     {
         $this->articleManager = $articleManager;
+        $this->translator= $translator;
     }
 
     /**
@@ -49,6 +52,7 @@ class ParagraphUp
      */
     public function __invoke(Paragraph $data): Paragraph
     {
+        if(is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad Paragraph id is provided"));
         return $this->articleManager->changeParagraphPosition($data, $this->articleManager::DIRECTION_UP);
     }
 }
