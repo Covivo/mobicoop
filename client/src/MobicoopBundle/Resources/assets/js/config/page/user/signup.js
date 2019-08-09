@@ -9,13 +9,15 @@ import Buefy from 'buefy'; // TODO ☣️ remove it when not needed anymore
 import VueFormWizard from 'vue-form-wizard';  // TODO ☣️ remove it when not needed anymore
 import 'vue-form-wizard/dist/vue-form-wizard.min.css'; // TODO ☣️ remove it when not needed anymore
 
-import Vuetify, { 
+import Vuetify, {
   // general
-  VApp, VContainer, VFlex, VLayout, VContent, VSpacer,
+  VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VAlert,
   // header
   VToolbar, VToolbarTitle, VBtn, VImg,
   // footer
   VFooter, VChip, VCardText,
+  // content
+  VForm, VTextField,
   // geocomplete
   VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon
 } from 'vuetify/lib'
@@ -23,11 +25,13 @@ import Vuetify, {
 Vue.use(Vuetify, {
   components: {
     // general
-    VApp, VContainer, VFlex, VLayout, VContent, VSpacer,
+    VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VAlert,
     // header
     VToolbar, VToolbarTitle, VBtn, VImg,
     // footer
     VFooter, VChip, VCardText,
+    // content
+    VForm, VTextField,
     // geocomplete
     VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon
   }
@@ -35,7 +39,6 @@ Vue.use(Vuetify, {
 Vue.use(VueI18n)
 
 Vue.use(Buefy, { // TODO ☣️ remove it when not needed anymore
-  defaultTooltipType: 'is-mobicoopgreen'
 });
 Vue.use(VueFormWizard); // TODO ☣️ remove it when not needed anymore
 
