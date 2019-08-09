@@ -99,6 +99,13 @@ update:
 	sleep 20
 	@make -s db-migrate
 
+pull:
+	@make -s stop
+	git pull
+	@make -s start
+	sleep 20
+	@make -s db-migrate
+
 db-migrate:
 	$(info $(builder)------------------------------------------------------)
 	$(info $(builder)Make ($(os)): DB Migration...)
