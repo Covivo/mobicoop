@@ -13,7 +13,11 @@
             class="tile is-vertical is-8"
             @on-complete="checkForm"
           >
-            <p v-if="errors.length">
+            <v-alert
+              v-if="errors.length"
+              type="error"
+              class="text-left"
+            >
               <b>{{ $t('ui.form.errors') }}:</b>
               <ul>
                 <li
@@ -24,7 +28,8 @@
                   {{ error }}
                 </li>
               </ul>
-            </p>
+              {{ error }}
+            </v-alert>
             <tab-content
               title=""
               icon=""
@@ -155,10 +160,19 @@
 </template>
 
 <script>
+import { merge } from "lodash";
+import CommonTranslations from "@translations/translations.json";
+import Translations from "@translations/components/Login.json";
+import TranslationsClient from "@clientTranslations/components/Login.json";
 import axios from "axios";
 import GeoComplete from "./GeoComplete";
 
+let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
+  i18n: {
+    messages: TranslationsMerged,
+    sharedMessages: CommonTranslations
+  },
   components: {
     GeoComplete
   },
