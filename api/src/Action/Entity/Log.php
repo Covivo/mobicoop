@@ -400,5 +400,4 @@ class Log
     {
         $this->setDate(new \Datetime());
     }
-    
 }
