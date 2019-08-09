@@ -13,13 +13,12 @@
         fill-height
       >
         <v-flex
-          xs1
-          offset-xs3
+          xs3
         >
           Driver
         </v-flex>
         <v-flex
-          xs1
+          xs2
           row
           class="text-right"
         >
@@ -30,15 +29,14 @@
             @change="switched"
           />
         </v-flex>
-
+        <v-spacer />
         <v-flex
-          xs1
-          offset-xs3
+          xs3
         >
           Passenger
         </v-flex>
         <v-flex
-          xs1
+          xs2
           row
           class="text-right"
         >
@@ -59,8 +57,7 @@
         align-center
       >
         <v-flex
-          xs2
-          offset-xs3
+          xs5
         >
           <GeoComplete
             :url="geoSearchUrl"
@@ -90,7 +87,7 @@
             <span>{{ $t('swap.help') }}</span>
           </v-tooltip>
         </v-flex>
-        <v-flex xs2>
+        <v-flex xs5>
           <GeoComplete
             :url="geoSearchUrl"
             :label="labelDestination"
@@ -107,13 +104,12 @@
         fill-height
       >
         <v-flex
-          xs1
-          offset-xs3
+          xs2
         >
           {{ $t('switch.label') }}
         </v-flex>
         <v-flex
-          xs1
+          xs3
           row
           class="text-right"
         >
@@ -140,8 +136,7 @@
         align-center
       >
         <v-flex
-          xs2
-          offset-xs3
+          xs5
         >
           <v-menu
             v-model="menu"

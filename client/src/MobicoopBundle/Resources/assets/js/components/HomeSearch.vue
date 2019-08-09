@@ -3,10 +3,10 @@
     <v-container
       text-xs-center
       grid-list-md
-      fluid
     >
       <!-- Title and subtitle -->
       <v-layout
+        row
         justify-center
         align-center
         class="mt-5"
@@ -17,40 +17,50 @@
         </v-flex>
       </v-layout>
 
-      <!--SearchJourney-->
-      <search-journey
-        :geo-search-url="geoSearchUrl"
-        :user="user"
-        @change="searchChanged"
-      />
-
+      <v-layout
+        row
+        justify-center
+      >
+        <v-flex
+          xs8
+        >
+          <!--SearchJourney-->
+          <search-journey
+            :geo-search-url="geoSearchUrl"
+            :user="user"
+            @change="searchChanged"
+          />
+        </v-flex>
+      </v-layout>
       <!-- Buttons -->
       <v-layout
         class="mt-5"
-        align-center
+        justify-center
+        row
       >
-        <v-flex
-          xs2
-          offset-xs3
-        >
-          <v-btn
-            rounded
-            outlined
-            disabled
-            @click="publish"
+        <v-flex xs10>
+          <v-flex
+            xs4
           >
-            {{ $t('buttons.shareAnAd.label') }}
-          </v-btn>
-        </v-flex>
-        <v-flex xs2>
-          <v-btn
-            color="success"
-            rounded
-            :disabled="searchUnavailable"
-            @click="search"
-          >
-            {{ $t('buttons.search.label') }}
-          </v-btn>
+            <v-btn
+              rounded
+              outlined
+              disabled
+              @click="publish"
+            >
+              {{ $t('buttons.shareAnAd.label') }}
+            </v-btn>
+          </v-flex>
+          <v-flex xs4>
+            <v-btn
+              color="success"
+              rounded
+              :disabled="searchUnavailable"
+              @click="search"
+            >
+              {{ $t('buttons.search.label') }}
+            </v-btn>
+          </v-flex>
         </v-flex>
       </v-layout>
     </v-container>

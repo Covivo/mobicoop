@@ -6,431 +6,450 @@
     <v-container
       grid-list-md
       text-xs-center
+      fluid
     >
-      <v-layout
-        row
-        wrap
-      >
-        <v-flex xs2 />
-        <v-flex xs8>
+      <v-layout justify-center>
+        <v-flex
+          xs8
+          justify-center
+        >
           <h1>Publier une annonce Test</h1>
-          <h5>
-            <h3>Commencer votre annonce</h3>
-            <v-stepper
-              v-model="step"
-              alt-labels
+          <h3>Commencer votre annonce</h3>
+          <v-stepper
+            v-model="step"
+            alt-labels
+          >
+            <v-stepper-header
+              v-show="step!==1"
             >
-              <v-stepper-header
-                v-show="step!==1"
+              <v-stepper-step
+                editable
+                step="1"
+                color="success"
               >
-                <v-stepper-step
-                  editable
-                  step="1"
-                  color="success"
-                >
-                  Commencer votre annonce
-                </v-stepper-step>
-                <v-divider />
+                Commencer votre annonce
+              </v-stepper-step>
+              <v-divider />
 
-                <v-stepper-step
-                  editable
-                  step="2"
-                  color="success"
-                >
-                  Planification
-                </v-stepper-step>
-
-                <v-divider />
-                <!-- Travel -->
-                <v-stepper-step
-                  editable
-                  step="3"
-                  color="success"
-                >
-                  Trajet
-                </v-stepper-step>
-
-                <v-divider />
-
-                <v-stepper-step
-                  editable
-                  step="4"
-                  color="success"
-                >
-                  Passagers
-                </v-stepper-step>
-                <v-divider />
-
-                <v-stepper-step
-                  editable
-                  step="5"
-                  color="success"
-                >
-                  Participation
-                </v-stepper-step>
-                <v-divider />
-
-                <v-stepper-step
-                  editable
-                  step="6"
-                  color="success"
-                >
-                  Message
-                </v-stepper-step>
-                <v-divider />
-
-                <v-stepper-step
-                  color="success"
-                  editable
-                  step="7"
-                >
-                  Récapitulatif
-                </v-stepper-step>
-              </v-stepper-header>
-
-              <!-- Planification -->
-              <v-stepper-items
-                style="height: 500px"
+              <v-stepper-step
+                editable
+                step="2"
+                color="success"
               >
-                <v-stepper-content step="1">
-                  <search-journey display-roles />
-                </v-stepper-content>
+                Planification
+              </v-stepper-step>
 
-                <v-stepper-content step="2">
-                  <v-container
-                    grid-list-md
-                    text-xs-center
+              <v-divider />
+              <!-- Travel -->
+              <v-stepper-step
+                editable
+                step="3"
+                color="success"
+              >
+                Trajet
+              </v-stepper-step>
+
+              <v-divider />
+
+              <v-stepper-step
+                editable
+                step="4"
+                color="success"
+              >
+                Passagers
+              </v-stepper-step>
+              <v-divider />
+
+              <v-stepper-step
+                editable
+                step="5"
+                color="success"
+              >
+                Participation
+              </v-stepper-step>
+              <v-divider />
+
+              <v-stepper-step
+                editable
+                step="6"
+                color="success"
+              >
+                Message
+              </v-stepper-step>
+              <v-divider />
+
+              <v-stepper-step
+                color="success"
+                editable
+                step="7"
+              >
+                Récapitulatif
+              </v-stepper-step>
+            </v-stepper-header>
+
+            <!-- Planification -->
+            <v-stepper-items>
+              <v-stepper-content step="1">
+                <search-journey
+                  xs12
+                  display-roles
+                  :geo-search-url="geoSearchUrl"
+                  :user="user"
+                  @change="searchChanged"
+                />
+              </v-stepper-content>
+
+              <v-stepper-content step="2">
+                <v-container
+                  grid-list-md
+                  text-xs-center
+                >
+                  <!--                  <v-flex xs-8>-->
+                  <v-layout
+                    row
+                    wrap
+                    align-center
+                    justify-center
                   >
-                    <v-layout
-                      row
-                      wrap
+                    <v-flex xs2 />
+                    <v-flex
+                      xs3
                     >
-                      <v-flex
-                        xs2
-                      />
-                      <v-flex
-                        xs6
+                      <v-menu
+                        v-model="menu2"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        lazy
+                        transition="scale-transition"
+                        offset-y
+                        full-width
+                        min-width="290px"
                       >
-                        <v-menu
-                          v-model="menu2"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          lazy
-                          transition="scale-transition"
-                          offset-y
-                          full-width
-                          min-width="290px"
-                        >
-                          <template v-slot:activator="{ on }">
-                            <v-text-field
-                              v-model="date1"
-                              label="Date de départ"
-                              prepend-icon=""
-                              readonly
-                              v-on="on"
-                            />
-                          </template>
-                          <v-date-picker
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
                             v-model="date1"
-                            @input="menu2 = false"
+                            label="Date de départ"
+                            prepend-icon=""
+                            readonly
+                            v-on="on"
                           />
-                        </v-menu>
-                      </v-flex>
-                      <v-flex
-                        xs4
-                      >
-                        <v-menu
-                          ref="menu"
-                          v-model="menu3"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          :return-value.sync="time1"
-                          lazy
-                          transition="scale-transition"
-                          offset-y
-                          full-width
-                          max-width="290px"
-                          min-width="290px"
-                        >
-                          <template v-slot:activator="{ on }">
-                            <v-text-field
-                              v-model="time1"
-                              label="Heure de départ"
-                              prepend-icon=""
-                              readonly
-                              v-on="on"
-                            />
-                          </template>
-                          <v-time-picker
-                            v-if="menu3"
-                            v-model="time1"
-                            format="24hr"
-                            @click:minute="$refs.menu.save(time1)"
-                          />
-                        </v-menu>
-                      </v-flex>
-                    </v-layout>
-                    <v-layout
-                      row
-                      wrap
-                    >
-                      <v-flex
-                        xs2
-                      >
-                        <v-checkbox
-                          label="retour"
-                          color="success"
-                          value="success"
-                          hide-details
+                        </template>
+                        <v-date-picker
+                          v-model="date1"
+                          @input="menu2 = false"
                         />
-                      </v-flex>
-                      <v-flex
-                        xs6
-                      >
-                        <v-menu
-                          v-model="menu4"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          lazy
-                          transition="scale-transition"
-                          offset-y
-                          full-width
-                          min-width="290px"
-                        >
-                          <template v-slot:activator="{ on }">
-                            <v-text-field
-                              v-model="date2"
-                              label="Date de retour"
-                              prepend-icon=""
-                              readonly
-                              v-on="on"
-                            />
-                          </template>
-                          <v-date-picker
-                            v-model="date2"
-                            @input="menu4 = false"
-                          />
-                        </v-menu>
-                      </v-flex>
-                      <v-flex
-                        xs4
-                      >
-                        <v-menu
-                          ref="menu"
-                          v-model="menu5"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          :return-value.sync="time2"
-                          lazy
-                          transition="scale-transition"
-                          offset-y
-                          full-width
-                          max-width="290px"
-                          min-width="290px"
-                        >
-                          <template v-slot:activator="{ on }">
-                            <v-text-field
-                              v-model="time2"
-                              label="Heure de retour"
-                              prepend-icon=""
-                              readonly
-                              v-on="on"
-                            />
-                          </template>
-                          <v-time-picker
-                            v-if="menu5"
-                            v-model="time2"
-                            format="24hr"
-                            @click:minute="$refs.menu.save(time2)"
-                          />
-                        </v-menu>
-                      </v-flex>
-                    </v-layout>
-                  </v-container>
-                </v-stepper-content>
-
-                <v-stepper-content step="3">
-                  <v-container
-                    grid-list-md
-                    text-xs-center
-                  >
-                    <v-layout
-                      row
-                      wrap
+                      </v-menu>
+                    </v-flex>
+                    <v-flex xs1 />
+                    <v-flex
+                      xs2
                     >
-                      <v-flex
-                        xs12
+                      <v-menu
+                        ref="menu"
+                        v-model="menu3"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        :return-value.sync="time1"
+                        lazy
+                        transition="scale-transition"
+                        offset-y
+                        full-width
+                        max-width="290px"
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="time1"
+                            label="Heure de départ"
+                            prepend-icon=""
+                            readonly
+                            v-on="on"
+                          />
+                        </template>
+                        <v-time-picker
+                          v-if="menu3"
+                          v-model="time1"
+                          format="24hr"
+                          @click:minute="$refs.menu.save(time1)"
+                        />
+                      </v-menu>
+                    </v-flex>
+                  </v-layout>
+                  <v-layout
+                    row
+                    wrap
+                    align-center
+                    justify-center
+                  >
+                    <v-flex
+                      xs2
+                    >
+                      <v-checkbox
+                        label="retour"
+                        color="success"
+                        value="success"
+                        hide-details
                       />
-                      <v-flex
-                        xs6
+                    </v-flex>
+                    <v-flex
+                      xs3
+                    >
+                      <v-menu
+                        v-model="menu4"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        lazy
+                        transition="scale-transition"
+                        offset-y
+                        full-width
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="date2"
+                            label="Date de retour"
+                            prepend-icon=""
+                            readonly
+                            v-on="on"
+                          />
+                        </template>
+                        <v-date-picker
+                          v-model="date2"
+                          @input="menu4 = false"
+                        />
+                      </v-menu>
+                    </v-flex>
+                    <v-flex xs1 />
+                    <v-flex
+                      xs2
+                    >
+                      <v-menu
+                        ref="menu"
+                        v-model="menu5"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        :return-value.sync="time2"
+                        lazy
+                        transition="scale-transition"
+                        offset-y
+                        full-width
+                        max-width="290px"
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="time2"
+                            label="Heure de retour"
+                            prepend-icon=""
+                            readonly
+                            v-on="on"
+                          />
+                        </template>
+                        <v-time-picker
+                          v-if="menu5"
+                          v-model="time2"
+                          format="24hr"
+                          @click:minute="$refs.menu.save(time2)"
+                        />
+                      </v-menu>
+                    </v-flex>
+                  </v-layout>
+                  <!--                  </v-flex>-->
+                </v-container>
+              </v-stepper-content>
+
+              <v-stepper-content step="3">
+                <v-container
+                  grid-list-md
+                  text-xs-center
+                >
+                  <v-layout
+                    align-center
+                    justify-center
+                  >
+                    <v-flex
+                      xs7
+                    >
+                      <v-layout
+                        mt-5
                       >
                         <GeoComplete
                           name="origin"
                           placeholder="Depuis"
                           :url="geoSearchUrl"
+                          mt-10
                           @geoSelected="selectedGeo"
                         />
-                      </v-flex>
-                      <v-flex
-                        xs4
-                      />
-                    </v-layout>
-                    <v-layout
-                      row
-                      wrap
-                    >
-                      <v-flex
-                        xs12
-                      />
-                      <v-flex
-                        xs6
+                      </v-layout>
+                      <p>
+                        <v-icon
+                          large
+                        >
+                          mdi-chevron-right
+                        </v-icon>
+                        Ajouter une étape
+                      </p>
+                      <v-layout
+                        mt-10
                       >
                         <GeoComplete
                           placeholder="Vers"
                           :url="geoSearchUrl"
                           name="destination"
+                          mt-15
                           @geoSelected="selectedGeo"
-                        />
-                      </v-flex>
-                      <v-flex
-                        xs4
-                      />
-                    </v-layout>
-                  </v-container>
-                </v-stepper-content>
-
-                <!-- Passenger(s) -->
-                <v-stepper-content
-                  step="4"
-                >
-                  <v-layout
-                    row
-                  >
-                    <v-flex
-                      xs12
-                      offset-sm3
-                    >
-                      <v-layout>
-                        J'ai de la place pour :
-                        <v-select
-                          style="width:15px"
-                          label="Place(s)"
-                          :items="[1,2,3,4]"
-                        />
-                        passager(s)
-                      </v-layout>
-                      <v-layout>
-                        J'ai de la place pour des gros bagages
-                        <v-switch
-                          class="ma-2"
-                        />
-                      </v-layout>
-                      <v-layout>
-                        Je peux tranporter un vélo
-                        <v-switch
-                          class="ma-2"
-                        />
-                      </v-layout>
-                      <v-layout>
-                        Maximum 2 personnes à l'arrière
-                        <v-switch
-                          d-inline
-                          class="ma-2"
                         />
                       </v-layout>
                     </v-flex>
                   </v-layout>
-                </v-stepper-content>
+                </v-container>
+              </v-stepper-content>
 
-                <!-- Price Carpool -->
-                <v-stepper-content
-                  step="5"
+              <!-- Passenger(s) -->
+              <v-stepper-content
+                step="4"
+              >
+                <v-layout
+                  row
+                  align-center
+                  justify-center
+                  mt-2
+                >
+                  <v-flex
+                    xs8
+                  >
+                    <v-layout
+                      row
+                      wrap
+                    >
+                      J'ai de la place pour :
+                      <v-select
+                        style="width:15px"
+                        label="Place(s)"
+                        :items="[1,2,3,4]"
+                      />
+                      passager(s)
+                    </v-layout>
+
+                    <v-layout>
+                      J'ai de la place pour des gros bagages
+                      <v-spacer />
+                      <v-switch
+                        class="ma-2"
+                      />
+                    </v-layout>
+                    <v-layout>
+                      Je peux transporter un vélo
+                      <v-spacer />
+                      <v-switch
+                        class="ma-2"
+                      />
+                    </v-layout>
+                    <v-layout>
+                      Maximum 2 personnes à l'arrière
+                      <v-spacer />
+                      <v-switch
+                        d-inline
+                        class="ma-2"
+                      />
+                    </v-layout>
+                  </v-flex>
+                </v-layout>
+              </v-stepper-content>
+
+              <!-- Price Carpool -->
+              <v-stepper-content
+                step="5"
+              >
+                <v-layout
+                  wrap
+                  row
+                  align-center
+                  justify-center
+                >
+                  Participation
+                  <p>
+                    <v-text-field type="number" />
+                    <!-- TODO get the .env variable that defines the carpool price value -->
+                    0.06€/km
+                  </p>
+                  passager(s)
+                </v-layout>
+              </v-stepper-content>
+
+              <!-- Message -->
+              <v-stepper-content
+                step="6"
+              >
+                <v-layout
+                  wrap
+                  row
+                  align-center
+                  justify-center
+                >
+                  <v-flex xs8>
+                    <div class="text-center">
+                      <v-textarea
+                        name="input-7-1"
+                        label="Mon message aux passagers"
+                        value=""
+                        placeholder="Laissez un petit message ..."
+                      />
+                    </div>
+                  </v-flex>
+                </v-layout>
+              </v-stepper-content>
+
+              <!-- summary / recap -->
+              <v-stepper-content
+                step="7"
+              >
+                <v-container
+                  fluid
+                  class="pa-0 text-center"
                 >
                   <v-layout
                     wrap
-                    row
                     align-center
+                    justify-center
                   >
-                    Participation
-                    <p>
-                      <v-text-field type="number" />
-                      <!-- TODO get the .env variable that defines the carpool price value -->
-                      0.06€/km
-                    </p>
-                    passager(s)
-                  </v-layout>
-                </v-stepper-content>
-
-                <!-- Message -->
-                <v-stepper-content
-                  step="6"
-                >
-                  <v-layout
-                    wrap
-                    row
-                  >
-                    <v-flex xs8>
+                    <v-flex
+                      xs10
+                    >
                       <div class="text-center">
-                        <v-textarea
-                          name="input-7-1"
-                          label="Mon message aux passagers"
-                          value=""
-                          placeholder="Laissez un petit message ..."
-                        />
+                        <div>TODO make the summary</div>
+                        <div>
+                          Rappel Trajet
+                        </div>
+                        <div>
+                          Mon message aux passagers
+                          <v-textarea
+                            class="my-2"
+                            name="input-7-1"
+                            label="Mon message aux passagers"
+                            value=""
+                            placeholder="Laissez un petit message ..."
+                          />
+                        </div>
+                        <div class="my-2">
+                          Carte du trajet
+                        </div>
                       </div>
                     </v-flex>
                   </v-layout>
-                </v-stepper-content>
-
-                <!-- summary / recap -->
-                <v-stepper-content
-                  step="7"
-                >
-                  <v-container
-                    fluid
-                    class="pa-0 text-center"
-                  >
-                    <v-layout
-                      wrap
-                      align-center
-                    >
-                      <v-flex
-                        xs12
-                        sm12
-                      >
-                        <div class="text-center">
-                          <div>TODO make the summary</div>
-                          <div>
-                            Rappel Trajet
-                          </div>
-                          <div>
-                            Mon message aux passagers
-                            <v-textarea
-                              class="my-2"
-                              name="input-7-1"
-                              label="Mon message aux passagers"
-                              value=""
-                              placeholder="Laissez un petit message ..."
-                            />
-                          </div>
-                          <div class="my-2">
-                            Carte du trajet
-                          </div>
-                        </div>
-                      </v-flex>
-                    </v-layout>
-                  </v-container>
-                </v-stepper-content>
-              </v-stepper-items>
-            </v-stepper>
-          </h5>
+                </v-container>
+              </v-stepper-content>
+            </v-stepper-items>
+          </v-stepper>
         </v-flex>
       </v-layout>
-
       <!-- </v-stepper-content> -->
 
-      <!-- je teste pour voir ce que ça raconte si on fait propre -->
-      <v-layout justify-center>
+      <!-- Buttons Previous and Next step -->
+      <v-layout
+        mt-5
+        justify-center
+      >
         <v-btn
           v-if="step > 1"
           rounded
@@ -462,7 +481,6 @@
         </v-btn>
       </v-layout>
       <!-- </v-flex> -->
-      <v-flex xs2 />
       <!-- </v-layout> -->
     </v-container>
   </section>
@@ -511,6 +529,10 @@ export default {
     sentCommunity: {
       type: String,
       default: ""
+    },
+    user: {
+      type: Object,
+      default: null
     }
   },
   data() {
@@ -713,8 +735,8 @@ export default {
         color: blueviolet;
     }
 
-    .v-stepper__items{
-        height: 800px;
+    .v-stepper{
+        height: 600px;
     }
 
 </style>
