@@ -156,9 +156,19 @@
 
 <script>
 import axios from "axios";
-import GeoComplete from "./GeoComplete";
+import GeoComplete from "@js/components/GeoComplete";
 
+import { merge } from "lodash";
+import CommonTranslations from "@translations/translations.json";
+import Translations from "@translations/components/SignUp.json";
+import TranslationsClient from "@clientTranslations/components/SignUp.json";
+
+let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
+  i18n: {
+    messages: TranslationsMerged,
+    sharedMessages: CommonTranslations
+  },
   components: {
     GeoComplete
   },

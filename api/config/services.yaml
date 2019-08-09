@@ -82,8 +82,9 @@ services:
     App\Communication\Service\NotificationManager:
         arguments:
             $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
-            $emailTitleTemplatePath: '%env(resolve:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%'
+            $emailTitleTemplatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%/%env(resolve:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%'
             $smsTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_SMS_PATH)%'
+            $enabled: '%env(bool:resolve:NOTIFICATION_ENABLED)%'
         tags: 
             - { name: monolog.logger, channel: notification }
     

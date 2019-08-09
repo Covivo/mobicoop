@@ -66,10 +66,8 @@ class InternalMessageManager
      */
     public function sendForObject(array $recipients, MessagerInterface $object)
     {
-        $medium = $this->mediumRepository->find(Medium::MEDIUM_MESSAGE);
         foreach ($recipients as $userRecipient) {
             $recipient = new Recipient();
-            $recipient->setMedium($medium);
             $recipient->setUser($userRecipient);
             $recipient->setStatus(Recipient::STATUS_PENDING);
             $object->getMessage()->addRecipient($recipient);

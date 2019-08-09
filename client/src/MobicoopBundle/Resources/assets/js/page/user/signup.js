@@ -4,7 +4,7 @@ import { Vue, vuetify, i18n } from '@js/config/page/user/signup'
 
 import '@css/page/user/signup.scss'
 
-import Signupform from '@js/components/Signupform'
+import Signupform from '@js/components/user/Signupform'
 import MHeader from '@js/components/MHeader'
 import MFooter from '@js/components/MFooter'
 
