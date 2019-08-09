@@ -59,6 +59,8 @@ use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\LoginFilter;
 use App\User\Filter\PwdTokenFilter;
 use App\Communication\Entity\Notified;
+use App\Action\Entity\Log;
+use App\Solidary\Entity\Solidary;
 
 /**
  * A user.
@@ -283,6 +285,45 @@ class User implements UserInterface, EquatableInterface
     private $multiTransportMode;
 
     /**
+     * @var \DateTimeInterface Creation date of the user.
+     *
+     * @ORM\Column(type="datetime")
+     * @Groups("read")
+     */
+    private $createdDate;
+
+    /**
+     * @var DateTime|null  Date of password token generation modification.
+     *
+     * @ORM\Column(type="datetime", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $pwdTokenDate;
+
+    /**
+     * @var string|null Token for password modification.
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $pwdToken;
+
+    /**
+     * @var string|null Token for geographical search authorization.
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $geoToken;
+
+    /**
+     * @var string User language
+     * @Groups({"read","write"})
+     * @ORM\Column(name="language", type="string", length=10, nullable=true)
+     */
+    private $language;
+
+    /**
      * @var ArrayCollection|null A user may have many addresses.
      *
      * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Address", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
@@ -301,7 +342,7 @@ class User implements UserInterface, EquatableInterface
     private $cars;
 
     /**
-     * @var ArrayCollection|null The proposals made by this user.
+     * @var ArrayCollection|null The proposals made for this user (in general by the user itself, except when it is a "posting for").
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      * @MaxDepth(1)
@@ -310,11 +351,27 @@ class User implements UserInterface, EquatableInterface
     private $proposals;
 
     /**
-     * @var ArrayCollection|null The asks made by this user.
+     * @var ArrayCollection|null The proposals made by this user for another user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="userDelegate", cascade={"remove"}, orphanRemoval=true)
+     * @MaxDepth(1)
+     * @Apisubresource
+     */
+    private $proposalsDelegate;
+
+    /**
+     * @var ArrayCollection|null The asks made for this user.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      */
     private $asks;
+
+    /**
+     * @var ArrayCollection|null The asks made by this user (in general by the user itself, except when it is a "posting for").
+     *
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="userDelegate", cascade={"remove"}, orphanRemoval=true)
+     */
+    private $asksDelegate;
 
     /**
      * @var ArrayCollection|null The images of the user.
@@ -377,43 +434,45 @@ class User implements UserInterface, EquatableInterface
     private $notifieds;
 
     /**
-     * @var \DateTimeInterface Creation date of the user.
+     * @var ArrayCollection|null A user may have many action logs.
      *
-     * @ORM\Column(type="datetime")
-     * @Groups("read")
-     */
-    private $createdDate;
-
-    /**
-     * @var DateTime|null  Date of password token generation modification.
-     *
-     * @ORM\Column(type="datetime", length=100, nullable=true)
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
      */
-    private $pwdTokenDate;
+    private $logs;
 
     /**
-     * @var string|null Token for password modification.
+     * @var ArrayCollection|null A user may have many diary action logs as an admin.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="admin", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
      */
-    private $pwdToken;
+    private $logsAdmin;
 
     /**
-     * @var string|null Token for geographical search authorization.
+     * @var ArrayCollection|null A user may have many action logs.
      *
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\OneToMany(targetEntity="\App\User\Entity\Diary", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
      */
-    private $geoToken;
+    private $diaries;
 
     /**
-     * @var string User language
+     * @var ArrayCollection|null A user may have many diary action logs.
+     *
+     * @ORM\OneToMany(targetEntity="\App\User\Entity\Diary", mappedBy="admin", cascade={"persist","remove"}, orphanRemoval=true)
      * @Groups({"read","write"})
-     * @ORM\Column(name="language", type="string", length=10, nullable=true)
      */
-    private $language;
+    private $diariesAdmin;
+
+    /**
+     * @var ArrayCollection|null The solidary records for this user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+     * @MaxDepth(1)
+     * @Apisubresource
+     */
+    private $solidaries;
 
     /**
      * @var array|null The threads of the user
@@ -432,7 +491,9 @@ class User implements UserInterface, EquatableInterface
         $this->addresses = new ArrayCollection();
         $this->cars = new ArrayCollection();
         $this->proposals = new ArrayCollection();
+        $this->proposalsDelegate = new ArrayCollection();
         $this->asks = new ArrayCollection();
+        $this->asksDelegate = new ArrayCollection();
         $this->userRoles = new ArrayCollection();
         $this->userRights = new ArrayCollection();
         $this->masses = new ArrayCollection();
@@ -440,6 +501,11 @@ class User implements UserInterface, EquatableInterface
         $this->messages = new ArrayCollection();
         $this->recipients = new ArrayCollection();
         $this->notifieds = new ArrayCollection();
+        $this->logs = new ArrayCollection();
+        $this->logsAdmin = new ArrayCollection();
+        $this->diaries = new ArrayCollection();
+        $this->diariesAdmin = new ArrayCollection();
+        $this->solidaries = new ArrayCollection();
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -764,6 +830,34 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getProposalsDelegate()
+    {
+        return $this->proposalsDelegate->getValues();
+    }
+
+    public function addProposalDelegate(Proposal $proposalDelegate): self
+    {
+        if (!$this->proposalsDelegate->contains($proposalDelegate)) {
+            $this->proposalsDelegate->add($proposalDelegate);
+            $proposalDelegate->setUserDelegate($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProposalDelegate(Proposal $proposalDelegate): self
+    {
+        if ($this->proposalsDelegate->contains($proposalDelegate)) {
+            $this->proposalsDelegate->removeElement($proposalDelegate);
+            // set the owning side to null (unless already changed)
+            if ($proposalDelegate->getUserDelegate() === $this) {
+                $proposalDelegate->setUserDelegate(null);
+            }
+        }
+
+        return $this;
+    }
+
     public function getAsks()
     {
         return $this->asks->getValues();
@@ -786,6 +880,34 @@ class User implements UserInterface, EquatableInterface
             // set the owning side to null (unless already changed)
             if ($ask->getUser() === $this) {
                 $ask->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getAsksDelegate()
+    {
+        return $this->asksDelegate->getValues();
+    }
+
+    public function addAskDelegate(Ask $askDelegate): self
+    {
+        if (!$this->asksDelegate->contains($askDelegate)) {
+            $this->asksDelegate->add($askDelegate);
+            $askDelegate->setUserDelegate($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAskDelegate(Ask $askDelegate): self
+    {
+        if ($this->asksDelegate->contains($askDelegate)) {
+            $this->asksDelegate->removeElement($askDelegate);
+            // set the owning side to null (unless already changed)
+            if ($askDelegate->getUserDelegate() === $this) {
+                $askDelegate->setUserDelegate(null);
             }
         }
 
@@ -957,6 +1079,146 @@ class User implements UserInterface, EquatableInterface
             }
         }
         
+        return $this;
+    }
+
+    public function getLogs()
+    {
+        return $this->logs->getValues();
+    }
+
+    public function addLog(Log $log): self
+    {
+        if (!$this->logs->contains($log)) {
+            $this->logs->add($log);
+            $log->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLog(Log $log): self
+    {
+        if ($this->logs->contains($log)) {
+            $this->logs->removeElement($log);
+            // set the owning side to null (unless already changed)
+            if ($log->getUser() === $this) {
+                $log->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getLogsAdmin()
+    {
+        return $this->logsAdmin->getValues();
+    }
+
+    public function addLogAdmin(Log $logAdmin): self
+    {
+        if (!$this->logsAdmin->contains($logAdmin)) {
+            $this->logsAdmin->add($logAdmin);
+            $logAdmin->setAdmin($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLogAdmin(Log $logAdmin): self
+    {
+        if ($this->logsAdmin->contains($logAdmin)) {
+            $this->logsAdmin->removeElement($logAdmin);
+            // set the owning side to null (unless already changed)
+            if ($logAdmin->getAdmin() === $this) {
+                $logAdmin->setAdmin(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getDiaries()
+    {
+        return $this->diaries->getValues();
+    }
+
+    public function addDiary(Diary $diary): self
+    {
+        if (!$this->diaries->contains($diary)) {
+            $this->diaries->add($diary);
+            $diary->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDiary(Diary $diary): self
+    {
+        if ($this->diaries->contains($diary)) {
+            $this->diaries->removeElement($diary);
+            // set the owning side to null (unless already changed)
+            if ($diary->getUser() === $this) {
+                $diary->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getDiariesAdmin()
+    {
+        return $this->diariesAdmin->getValues();
+    }
+
+    public function addDiaryAdmin(Diary $diaryAdmin): self
+    {
+        if (!$this->diariesAdmin->contains($diaryAdmin)) {
+            $this->diariesAdmin->add($diaryAdmin);
+            $diaryAdmin->setAdmin($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDiaryAdmin(Diary $diaryAdmin): self
+    {
+        if ($this->diariesAdmin->contains($diaryAdmin)) {
+            $this->diariesAdmin->removeElement($diaryAdmin);
+            // set the owning side to null (unless already changed)
+            if ($diaryAdmin->getAdmin() === $this) {
+                $diaryAdmin->setAdmin(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getSolidaries()
+    {
+        return $this->solidaries->getValues();
+    }
+
+    public function addSolidary(Solidary $solidary): self
+    {
+        if (!$this->solidaries->contains($solidary)) {
+            $this->solidaries->add($solidary);
+            $solidary->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSolidary(Solidary $solidary): self
+    {
+        if ($this->solidaries->contains($solidary)) {
+            $this->solidaries->removeElement($solidary);
+            // set the owning side to null (unless already changed)
+            if ($solidary->getUser() === $this) {
+                $solidary->setUser(null);
+            }
+        }
+
         return $this;
     }
 

@@ -225,7 +225,7 @@ class Address
 
     /**
      * @var string The geoJson point of the address.
-     * @ORM\Column(type="point", nullable=true)
+     * ORM\Column(type="point", nullable=true)
      * @Groups({"read","write"})
      */
     private $geoJson;

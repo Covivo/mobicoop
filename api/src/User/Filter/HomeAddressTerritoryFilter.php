@@ -42,7 +42,7 @@ final class HomeAddressTerritoryFilter extends AbstractContextAwareFilter
         $queryBuilder
             ->leftJoin('u.addresses', 'homeAddress')
             ->join('\App\Geography\entity\Territory', 'homeAddressTerritory')
-            ->andWhere(sprintf('homeAddressTerritory.id = %s AND homeAddress.name=\'homeAddress\' AND ST_INTERSECTS(homeAddressTerritory.geoJsonDetail,homeAddress.geoJson)=1', $value));
+            ->andWhere(sprintf('homeAddressTerritory.id = %s AND homeAddress.home=1 AND ST_INTERSECTS(homeAddressTerritory.geoJsonDetail,homeAddress.geoJson)=1', $value));
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
