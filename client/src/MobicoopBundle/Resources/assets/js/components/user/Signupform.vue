@@ -28,7 +28,6 @@
                   {{ error }}
                 </li>
               </ul>
-              {{ error }}
             </v-alert>
             <tab-content
               title=""
@@ -46,7 +45,7 @@
                 />
               </b-field>
               <b-field :label="$t('models.user.phone.label')">
-                <b-input 
+                <b-input
                   v-model="form.telephone"
                   :placeholder="$t('models.user.phone.placeholder')"
                   class="telephone"
@@ -60,7 +59,7 @@
                   password-reveal
                   :placeholder="$t('models.user.password.placeholder')"
                 />
-              </b-field> 
+              </b-field>
             </tab-content>
 
             <tab-content
@@ -70,14 +69,14 @@
             >
               <b-field :label="$t('models.user.givenName.label')">
                 <b-input
-                  v-model="form.givenName" 
+                  v-model="form.givenName"
                   :placeholder="$t('models.user.givenName.placeholder')"
                   class="givenName"
                 />
               </b-field>
               <b-field :label="$t('models.user.familyName.label')">
                 <b-input
-                  v-model="form.familyName" 
+                  v-model="form.familyName"
                   :placeholder="$t('models.user.familyName.placeholder')"
                   class="familyName"
                 />
@@ -88,7 +87,7 @@
               title=""
               icon=""
               class="tabContent"
-            >     
+            >
               <b-field :label="$t('models.user.gender.label')">
                 <b-select
                   v-model="form.gender"
@@ -142,7 +141,6 @@
                 :url="geoSearchUrl"
                 @geoSelected="selectedGeo"
               />
-
               <div class="field">
                 <b-checkbox
                   v-model="form.validation"
@@ -156,7 +154,7 @@
         </div>
       </div>
     </div>
-  </section>                
+  </section>
 </template>
 
 <script>
@@ -253,35 +251,41 @@ export default {
       this.form.postalCode = val.postalCode
     },
     checkForm: function (e) {
+      console.log("checking form");
       if (this.form.email && this.form.telephone && this.form.password && this.form.givenName && this.form.familyName && this.form.gender && this.form.birthYear && this.form.validation == true) {
+        console.log("passed");
         let userForm = new FormData;
         for (let prop in this.form) {
+          console.log(prop)
           let value = this.form[prop];
+          console.log(value)
           // if(!value) continue;
           // let renamedProp = `user_form[${prop}]`;
-          // userForm.append(renamedProp, value);
           let renamedProp = prop === "createToken" ? prop : `user_form[${prop}]`;
           userForm.append(renamedProp, value);
+          // userForm.set(prop, value);
+          // userForm.set(renamedProp, value);
         }
-        axios 
+        axios
           .post("/utilisateur/inscription", userForm, {
             headers: {
               "Content-Type": "multipart/form-data"
             }
-          } )
+          })
           .then(function(response) {
-            window.location.href = '/';
+            // window.location.href = '/';
+            console.log("is account created ?")
             console.error(response);
           })
           .catch(function(error) {
             console.error(error);
-          });  
-      } 
+          });
+      }
       this.errors = [];
 
       if (!this.form.email) {
         this.errors.push(this.$t('models.user.email.errors.required'));
-      } 
+      }
       if (!this.form.telephone) {
         this.errors.push(this.$t('models.user.phone.errors.required'));
       }
@@ -300,9 +304,9 @@ export default {
       if (!this.form.birthYear) {
         this.errors.push(this.$t('models.user.birthYear.errors.required'));
       }
-      if (!this.form.longitude) {
-        this.errors.push(this.$t('models.user.homeTown.errors.required'));
-      }
+      // if (!this.form.longitude) {
+      //   this.errors.push(this.$t('models.user.homeTown.errors.required'));
+      // }//TODO : a retirer et mettre un texte (position pas obligatoire à fournir [..])
       if (this.form.validation == false) {
         this.errors.push(this.$t('ui.pages.signup.chart.errors.required'));
       }
