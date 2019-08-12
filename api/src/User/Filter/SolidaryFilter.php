@@ -54,7 +54,7 @@ final class SolidaryFilter extends AbstractContextAwareFilter
                         $sr->createQueryBuilder('qbs')
                         ->select('IDENTITY(s.user)')
                         ->distinct()
-                        ->from('\App\Solidary\entity\Solidary','s')
+                        ->from('\App\Solidary\entity\Solidary', 's')
                         ->getDQL()
                     )
                 );
@@ -66,7 +66,7 @@ final class SolidaryFilter extends AbstractContextAwareFilter
                         $sr->createQueryBuilder('qbs')
                         ->select('IDENTITY(s.user)')
                         ->distinct()
-                        ->from('\App\Solidary\entity\Solidary','s')
+                        ->from('\App\Solidary\entity\Solidary', 's')
                         ->getDQL()
                     )
                 );
