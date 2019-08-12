@@ -148,7 +148,7 @@
                         <template v-slot:activator="{ on }">
                           <v-text-field
                             v-model="date1"
-                            label="Date de départ"
+                            :label="$t('stepper.content.planification.departure_date.label')"
                             prepend-icon=""
                             readonly
                             v-on="on"
@@ -180,7 +180,7 @@
                         <template v-slot:activator="{ on }">
                           <v-text-field
                             v-model="time1"
-                            label="Heure de départ"
+                            :label="$t('stepper.content.planification.departure_time.label')"
                             prepend-icon=""
                             readonly
                             v-on="on"
@@ -205,7 +205,7 @@
                       xs2
                     >
                       <v-checkbox
-                        label="retour"
+                        :label="$t('stepper.content.planification.two_way.label')"
                         color="success"
                         value="success"
                         hide-details
@@ -227,7 +227,7 @@
                         <template v-slot:activator="{ on }">
                           <v-text-field
                             v-model="date2"
-                            label="Date de retour"
+                            :label="$t('stepper.content.planification.return_date.label')"
                             prepend-icon=""
                             readonly
                             v-on="on"
@@ -259,7 +259,7 @@
                         <template v-slot:activator="{ on }">
                           <v-text-field
                             v-model="time2"
-                            label="Heure de retour"
+                            :label="$t('stepper.content.planification.return_time.label')"
                             prepend-icon=""
                             readonly
                             v-on="on"
@@ -295,7 +295,8 @@
                       >
                         <GeoComplete
                           name="origin"
-                          placeholder="Depuis"
+                          :label="$t('stepper.content.map.origin.label')"
+                          :placeholder="$t('stepper.content.map.origin.placeholder')"
                           :url="geoSearchUrl"
                           mt-10
                           @geoSelected="selectedGeo"
@@ -307,13 +308,14 @@
                         >
                           mdi-chevron-right
                         </v-icon>
-                        Ajouter une étape
+                        {{ $t('stepper.content.map.ad_waypoint') }}
                       </p>
                       <v-layout
                         mt-10
                       >
                         <GeoComplete
-                          placeholder="Vers"
+                          :label="$t('stepper.content.map.destination.label')"
+                          :placeholder="$t('stepper.content.map.destination.placeholder')"
                           :url="geoSearchUrl"
                           name="destination"
                           mt-15
@@ -342,31 +344,31 @@
                       row
                       wrap
                     >
-                      J'ai de la place pour :
+                      {{ $t('stepper.content.passengers.seats.question') }}
                       <v-select
                         style="width:15px"
-                        label="Place(s)"
+                        :label="$t('stepper.content.passengers.seats.label')"
                         :items="[1,2,3,4]"
                       />
-                      passager(s)
+                      {{ $t('stepper.content.passengers.seats.passengers') }}
                     </v-layout>
 
                     <v-layout>
-                      J'ai de la place pour des gros bagages
+                      {{ $t('stepper.content.passengers.luggage') }}
                       <v-spacer />
                       <v-switch
                         class="ma-2"
                       />
                     </v-layout>
                     <v-layout>
-                      Je peux transporter un vélo
+                      {{ $t('stepper.content.passengers.bike') }}
                       <v-spacer />
                       <v-switch
                         class="ma-2"
                       />
                     </v-layout>
                     <v-layout>
-                      Maximum 2 personnes à l'arrière
+                      {{ $t('stepper.content.passengers.back_seats') }}
                       <v-spacer />
                       <v-switch
                         d-inline
@@ -473,11 +475,11 @@
         <v-btn
           v-if="step > 1"
           rounded
-          color="primary"
+          color="primary" 
           align-center
           @click="--step"
         >
-          Précédent
+          {{ $t('stepper.buttons.previous') }}
         </v-btn>
 
         <v-btn
@@ -488,7 +490,7 @@
           style="margin-left: 30px"
           @click="step++"
         >
-          Suivant
+          {{ $t('stepper.buttons.next') }}
         </v-btn>
         <v-btn
           v-if="step === 7"
@@ -497,7 +499,7 @@
           style="margin-left: 30px"
           align-center
         >
-          Publier mon annonce
+          {{ $t('stepper.buttons.publish_ad') }}
         </v-btn>
       </v-layout>
     </v-container>
@@ -527,35 +529,7 @@ export default {
     GeoComplete
   },
   props: {
-    sentFrequency: {
-      type: Number,
-      default: 1
-    },
-    sentRole: {
-      type: Number,
-      default: 1
-    },
-    sentType: {
-      type: Number,
-      default: 1
-    },
     geoSearchUrl: {
-      type: String,
-      default: ""
-    },
-    sentOutward: {
-      type: String,
-      default: ""
-    },
-    sentToken: {
-      type: String,
-      default: ""
-    },
-    sentHydra: {
-      type: String,
-      default: ""
-    },
-    sentCommunity: {
       type: String,
       default: ""
     },
