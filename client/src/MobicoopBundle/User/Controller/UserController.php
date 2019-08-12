@@ -160,6 +160,7 @@ class UserController extends AbstractController
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
+        $form = $this->createForm(UserForm::class, $user, ['validation_groups'=>['update']]);
         $this->denyAccessUnlessGranted('update', $user);
 
         // get the homeAddress

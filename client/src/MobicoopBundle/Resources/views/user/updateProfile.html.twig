@@ -22,7 +22,7 @@
 <section class="section">
 	<div class="container">
 		<div id="profile">
-    		<Profile></Profile>
+    		<Profile :user={{app.user|json_encode()}}></Profile>
 		</div>
     </div>
   </section>
