@@ -1,94 +1,114 @@
 <template>
-  <section
-    id="adCreateForm"
-    class="section"
-  >
+  <v-content>
     <v-container
       grid-list-md
       text-xs-center
       fluid
     >
+      <!-- Title and subtitle -->
       <v-layout justify-center>
         <v-flex
-          xs8
+          xs6
+          text-center
+        >
+          <h1>{{ $t('title') }}</h1>
+          <h3 v-if="step==1">
+            {{ $t('subtitle') }}
+          </h3>
+          <!-- todo : remove this awful trick !! -->
+          <h3 v-else>
+            &nbsp;
+          </h3>
+        </v-flex>
+      </v-layout>
+
+      <!-- Stepper -->
+      <v-layout justify-center>
+        <v-flex
+          xs6
           justify-center
         >
-          <h1>Publier une annonce Test</h1>
-          <h3>Commencer votre annonce</h3>
           <v-stepper
             v-model="step"
             alt-labels
           >
+            <!-- Stepper Header -->
             <v-stepper-header
               v-show="step!==1"
             >
+              <!-- Step 1 : search journey -->
               <v-stepper-step
                 editable
                 step="1"
                 color="success"
               >
-                Commencer votre annonce
+                {{ $t('stepper.header.search_journey') }}
               </v-stepper-step>
               <v-divider />
 
+              <!-- Step 2 : planification -->
               <v-stepper-step
                 editable
                 step="2"
                 color="success"
               >
-                Planification
+                {{ $t('stepper.header.planification') }}
               </v-stepper-step>
-
               <v-divider />
-              <!-- Travel -->
+
+              <!-- Step 3 : map -->
               <v-stepper-step
                 editable
                 step="3"
                 color="success"
               >
-                Trajet
+                {{ $t('stepper.header.map') }}
               </v-stepper-step>
-
               <v-divider />
 
+              <!-- Step 4 : passengers (if driver) -->
               <v-stepper-step
                 editable
                 step="4"
                 color="success"
               >
-                Passagers
+                {{ $t('stepper.header.passengers') }}
               </v-stepper-step>
               <v-divider />
 
+              <!-- Step 5 : participation (if driver) -->
               <v-stepper-step
                 editable
                 step="5"
                 color="success"
               >
-                Participation
+                {{ $t('stepper.header.participation') }}
               </v-stepper-step>
               <v-divider />
 
+              <!-- Step 6 : message -->
               <v-stepper-step
                 editable
                 step="6"
                 color="success"
               >
-                Message
+                {{ $t('stepper.header.message') }}
               </v-stepper-step>
               <v-divider />
 
+              <!-- Step 7 : summary -->
               <v-stepper-step
                 color="success"
                 editable
                 step="7"
               >
-                Récapitulatif
+                {{ $t('stepper.header.summary') }}
               </v-stepper-step>
             </v-stepper-header>
 
-            <!-- Planification -->
+            <!-- Stepper Content -->
             <v-stepper-items>
+              <!-- Step 1 : search journey -->
               <v-stepper-content step="1">
                 <search-journey
                   xs12
@@ -99,21 +119,21 @@
                 />
               </v-stepper-content>
 
+              <!-- Step 2 : planification -->
               <v-stepper-content step="2">
                 <v-container
                   grid-list-md
                   text-xs-center
                 >
-                  <!--                  <v-flex xs-8>-->
                   <v-layout
                     row
                     wrap
                     align-center
                     justify-center
                   >
-                    <v-flex xs2 />
                     <v-flex
                       xs3
+                      offset-xs2
                     >
                       <v-menu
                         v-model="menu2"
@@ -254,10 +274,10 @@
                       </v-menu>
                     </v-flex>
                   </v-layout>
-                  <!--                  </v-flex>-->
                 </v-container>
               </v-stepper-content>
 
+              <!-- Step 3 : map -->
               <v-stepper-content step="3">
                 <v-container
                   grid-list-md
@@ -305,7 +325,7 @@
                 </v-container>
               </v-stepper-content>
 
-              <!-- Passenger(s) -->
+              <!-- Step 4 : passengers (if driver) -->
               <v-stepper-content
                 step="4"
               >
@@ -357,7 +377,7 @@
                 </v-layout>
               </v-stepper-content>
 
-              <!-- Price Carpool -->
+              <!-- Step 5 : participation (if driver) -->
               <v-stepper-content
                 step="5"
               >
@@ -377,7 +397,7 @@
                 </v-layout>
               </v-stepper-content>
 
-              <!-- Message -->
+              <!-- Step 6 : message -->
               <v-stepper-content
                 step="6"
               >
@@ -400,7 +420,7 @@
                 </v-layout>
               </v-stepper-content>
 
-              <!-- summary / recap -->
+              <!-- Step 7 : summary -->
               <v-stepper-content
                 step="7"
               >
@@ -480,19 +500,28 @@
           Publier mon annonce
         </v-btn>
       </v-layout>
-      <!-- </v-flex> -->
-      <!-- </v-layout> -->
     </v-container>
-  </section>
+  </v-content>
 </template>
 
 <script>
+import { merge } from "lodash";
+import CommonTranslations from "@translations/translations.json";
+import Translations from "@translations/components/AdPublish.json";
+import TranslationsClient from "@clientTranslations/components/AdPublish.json";
+
 import axios from "axios";
 import moment from 'moment'
 import GeoComplete from "./GeoComplete";
 import SearchJourney from "./SearchJourney";
 
+let TranslationsMerged = merge(Translations, TranslationsClient);
+
 export default {
+  i18n: {
+    messages: TranslationsMerged,
+    sharedMessages: CommonTranslations
+  },
   components: {
     SearchJourney,
     GeoComplete
@@ -550,101 +579,11 @@ export default {
       /////////////////////////////////////
       origin: null,
       outward: this.sentOutward,
-      communities: JSON.parse(this.sentHydra),
-      idCommunity: this.sentCommunity,
       timeStart: new Date(),
       timeReturn: new Date(),
-      days: [
-        "dimanche",
-        "lundi",
-        "mardi",
-        "mercredi",
-        "jeudi",
-        "vendredi",
-        "samedi"
-      ],
-      daysEn: [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday"
-      ],
-      months: [
-        "Janvier",
-        "Fevrier",
-        "Mars",
-        "Avril",
-        "Mai",
-        "Juin",
-        "Juillet",
-        "Aout",
-        "Septembre",
-        "Octobre",
-        "Novembre",
-        "Décembre"
-      ],
-      // margins in minutes
-      marginsMn: [5, 10, 15, 20, 25, 30, 45, 60, 90, 120, 150],
-      form: {
-        createToken: this.sentToken,
-        origin: "",
-        originStreetAddress : null,
-        originPostalCode: null,
-        originAddressLocality: null,
-        originAddressCountry: null,
-        originLatitude: null,
-        originLongitude: null,
-        destinationLatitude: null,
-        destinationLongitude: null,
-        destination: "",
-        destinationStreetAddress: null,
-        destinationPostalCode: null,
-        destinationAddressLocality: null,
-        destinationAddressCountry: null,
-        role: this.sentRole,
-        type: this.sentType,
-        frequency: this.sentFrequency,
-        outwardDate: null,
-        outwardMargin: null,
-        outwardTime: null,
-        returnDate: null,
-        returnMargin: null,
-        returnTime: null,
-        // Regular
-        fromDate: null,
-        toDate: null,
-        returnMonTime: null,
-        returnMonMargin: null,
-        returnTueTime: null,
-        returnTueMargin: null,
-        returnThuTime: null,
-        returnThuMargin: null,
-        returnWedTime: null,
-        returnWedMargin: null,
-        returnFriTime: null,
-        returnFriMargin: null,
-        returnSatTime: null,
-        returnSatMargin: null,
-        returnSunTime: null,
-        returnSunMargin: null,
-        outwardMonTime: null,
-        outwardMonMargin: null,
-        outwardTueTime: null,
-        outwardTueMargin: null,
-        outwardThuTime: null,
-        outwardThuMargin: null,
-        outwardWedTime: null,
-        outwardWedMargin: null,
-        outwardFriTime: null,
-        outwardFriMargin: null,
-        outwardSatTime: null,
-        outwardSatMargin: null,
-        outwardSunTime: null,
-        outwardSunMargin: null,
-        community: this.sentCommunity || null
+      search: {
+        type: Object,
+        default: null
       }
     };
   },
@@ -671,6 +610,9 @@ export default {
 
       this.form[name + "AddressCountry"] = val.addressCountry;
       this.form[name + "AddressLocality"] = val.addressLocality;
+    },
+    searchChanged: function(search) {
+      this.search = search;
     },
     /**
        * Send the form to the route /covoiturage/annonce/poster

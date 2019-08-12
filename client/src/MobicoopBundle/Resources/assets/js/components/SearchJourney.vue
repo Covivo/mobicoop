@@ -15,7 +15,7 @@
         <v-flex
           xs3
         >
-          Driver
+          {{ $t('switch.driver.label') }}
         </v-flex>
         <v-flex
           xs2
@@ -33,7 +33,7 @@
         <v-flex
           xs3
         >
-          Passenger
+          {{ $t('switch.passenger.label') }}
         </v-flex>
         <v-flex
           xs2
@@ -77,11 +77,7 @@
                 icon
                 @click="swap"
               >
-                <img
-                  src="images/PictoInterchanger.svg"
-                  :alt="$t('swap.alt')"
-                  v-on="on"
-                >
+                <v-icon>mdi-swap-horizontal</v-icon>
               </v-btn>
             </template>
             <span>{{ $t('swap.help') }}</span>
@@ -106,7 +102,7 @@
         <v-flex
           xs2
         >
-          {{ $t('switch.label') }}
+          {{ $t('switch.regular.label') }}
         </v-flex>
         <v-flex
           xs3
@@ -125,7 +121,7 @@
                 mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>{{ $t('switch.help') }}</span>
+            <span>{{ $t('switch.regular.help') }}</span>
           </v-tooltip>
         </v-flex>
       </v-layout>

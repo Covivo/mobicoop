@@ -9,8 +9,16 @@
             "help": "Cliquez pour intervertir origine et destination"
         },
         "switch": {
-            "label": "Trajet régulier",
-            "help": "Cochez cette case pour spécifier que votre trajet est régulier"
+            "driver": {
+                "label": "Conducteur"
+            },
+            "passenger": {
+                "label": "Passager"
+            },
+            "regular": {
+                "label": "Trajet régulier",
+                "help": "Cochez cette case pour spécifier que votre trajet est régulier"
+            }
         },
         "datePicker": {
             "label": "Date de départ"

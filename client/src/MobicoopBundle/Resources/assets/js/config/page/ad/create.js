@@ -5,10 +5,6 @@ import VueI18n from 'vue-i18n'
 import colorTheme from '@themes/mobicoop.json'
 import '@mdi/font/css/materialdesignicons.css'
 
-import Buefy from 'buefy'; // TODO ☣️ remove it when not needed anymore
-import VueFormWizard from 'vue-form-wizard';  // TODO ☣️ remove it when not needed anymore
-import 'vue-form-wizard/dist/vue-form-wizard.min.css'; // TODO ☣️ remove it when not needed anymore
-
 import Vuetify, { 
   // general
   VApp, VContainer, VFlex, VLayout, VContent, VSpacer,
@@ -17,7 +13,11 @@ import Vuetify, {
   // footer
   VFooter, VChip, VCardText,
   // geocomplete
-  VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon
+  VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon, 
+  // ad publish
+  VStepper, VStepperHeader, VStepperStep, VDivider, VStepperItems, VStepperContent, VCheckbox, VSelect, VTextarea, 
+  // content
+  VSwitch, VMenu, VDatePicker, VTimePicker, VTextField,  VTooltip
 } from 'vuetify/lib'
 
 Vue.use(Vuetify, {
@@ -29,15 +29,14 @@ Vue.use(Vuetify, {
     // footer
     VFooter, VChip, VCardText,
     // geocomplete
-    VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon
+    VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon,
+    // ad publish
+    VStepper, VStepperHeader, VStepperStep, VDivider, VStepperItems, VStepperContent, VCheckbox, VSelect, VTextarea, 
+    // content
+    VSwitch, VMenu, VDatePicker, VTimePicker, VTextField,  VTooltip
   }
 })
 Vue.use(VueI18n)
-
-Vue.use(Buefy, { // TODO ☣️ remove it when not needed anymore
-  defaultTooltipType: 'is-mobicoopgreen'
-});
-Vue.use(VueFormWizard); // TODO ☣️ remove it when not needed anymore
 
 const i18n = new VueI18n({
   locale: 'fr' // set locale

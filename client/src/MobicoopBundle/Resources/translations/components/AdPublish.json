@@ -1,0 +1,17 @@
+{
+    "fr": {
+        "title": "Publier une annonce",
+        "subtitle": "Commencer votre annonce",
+        "stepper": {
+            "header": {
+                "search_journey": "Commencer votre annonce",
+                "planification": "Planification",
+                "map": "Trajet",
+                "passengers": "Passagers",
+                "participation": "Participation",
+                "message": "Message",
+                "summary": "Récapitulatif"
+            }
+        }
+    }
+}
