@@ -25,10 +25,12 @@ namespace App\Match\Controller;
 
 use App\Match\Service\MassImportManager;
 use App\Match\Entity\Mass;
+use App\TranslatorTrait;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 final class MassReMatchAction
 {
+    use TranslatorTrait;
     private $massImportManager;
     private $request;
 
@@ -40,6 +42,7 @@ final class MassReMatchAction
 
     public function __invoke(Mass $data): Mass
     {
+        if (is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad Mass id is provided"));
         $statusAuthorized = [
             Mass::STATUS_ANALYZED,
             Mass::STATUS_MATCHED

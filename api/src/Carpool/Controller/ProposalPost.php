@@ -34,7 +34,7 @@ use App\TranslatorTrait;
  */
 class ProposalPost
 {
-    
+    use TranslatorTrait;
     private $proposalManager;
 
     public function __construct(ProposalManager $proposalManager)

@@ -31,7 +31,6 @@ use Doctrine\ORM\EntityRepository;
  * @method RelayPoint|null find($id, $lockMode = null, $lockVersion = null)
  * @method RelayPoint|null findOneBy(array $criteria, array $orderBy = null)
  * @method RelayPoint[]    findAll()
- * @method RelayPoint[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class RelayPointRepository
 {

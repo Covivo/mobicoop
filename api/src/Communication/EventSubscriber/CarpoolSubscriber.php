@@ -33,10 +33,14 @@ use App\Carpool\Event\MatchingNewEvent;
 use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Repository\AskHistoryRepository;
 use App\Communication\Service\NotificationManager;
+use App\TranslatorTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
 
 class CarpoolSubscriber implements EventSubscriberInterface
 {
+    use TranslatorTrait;
+    
     private $notificationManager;
     private $askHistoryRepository;
     const DYNAMIC_EVENT_NAMESPACE='App\Carpool\Event';
@@ -71,6 +75,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $askType=($event->getAsk()->getMatching()->getProposalOffer()->getCriteria()->getFrequency()==1)?'Punctual':'Regular';
         $askUser=($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $event->getAsk()->getId())?'Driver':'Passenger';
         $class= self::DYNAMIC_EVENT_NAMESPACE.'\AskPosted'.$askUser.$askType.'Event';
+        if(!class_exists($class)) throw new ClassNotFoundException($this->translator->trans('Class '.$class.' not found'));
         $this->notificationManager->notifies($class::NAME, $event->getAsk()->getMatching()->getProposalRequest()->getUser(), $event->getAsk()->getAskHistories()[0]);
     }
     
@@ -87,6 +92,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $askType=($event->getAsk()->getMatching()->getProposalOffer()->getCriteria()->getFrequency()==1)?'Punctual':'Regular';
         $askUser=($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $event->getAsk()->getId())?'Driver':'Passenger';
         $class= self::DYNAMIC_EVENT_NAMESPACE.'\AskAccepted'.$askUser.$askType.'Event';
+        if(!class_exists($class)) throw new ClassNotFoundException($this->translator->trans('Class '.$class.' not found'));
         $this->notificationManager->notifies($class::NAME, $event->getAsk()->getMatching()->getProposalRequest()->getUser(), $lastAskHistory);
     }
     
@@ -103,6 +109,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $askType=($event->getAsk()->getMatching()->getProposalOffer()->getCriteria()->getFrequency()==1)?'Punctual':'Regular';
         $askUser=($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $event->getAsk()->getId())?'Driver':'Passenger';
         $class= self::DYNAMIC_EVENT_NAMESPACE.'\AskRefused'.$askUser.$askType.'Event';
+        if(!class_exists($class)) throw new ClassNotFoundException($this->translator->trans('Class '.$class.' not found'));
         $this->notificationManager->notifies($class::NAME, $event->getAsk()->getMatching()->getProposalRequest()->getUser(), $lastAskHistory);
     }
     
@@ -117,6 +124,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $askType=($event->getAsk()->getMatching()->getProposalOffer()->getCriteria()->getFrequency()==1)?'Punctual':'Regular';
         $askUser=($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $event->getAsk()->getId())?'Driver':'Passenger';
         $class= self::DYNAMIC_EVENT_NAMESPACE.'\AskUpdated'.$askUser.$askType.'Event';
+        if(!class_exists($class)) throw new ClassNotFoundException($this->translator->trans('Class '.$class.' not found'));
         $this->notificationManager->notifies($class::NAME, $event->getAsk()->getMatching()->getProposalRequest()->getUser(), $lastAskHistory);
     }
     
@@ -131,6 +139,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $askType=($event->getMatching()->getProposalOffer()->getCriteria()->getFrequency()==1)?'Punctual':'Regular';
         $askUser=($event->getMatching()->getProposalOffer()->getCreatedDate() < $event->getMatching()->getProposalRequest()->getCreatedDate())?'Driver':'Passenger';
         $class= self::DYNAMIC_EVENT_NAMESPACE.'\MatchingNew'.$askUser.$askType.'Event';
+        if(!class_exists($class)) throw new ClassNotFoundException($this->translator->trans('Class '.$class.' not found'));
         $proposalObject= ($askUser=='Driver')? $event->getMatching()->getProposalOffer()->getUser(): $event->getMatching()->getProposalRequest()->getUser();
         $this->notificationManager->notifies($class::NAME, $proposalObject, $event->getMatching());
     }

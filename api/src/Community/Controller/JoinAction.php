@@ -24,12 +24,14 @@
 namespace App\Community\Controller;
 
 use App\Community\Service\CommunityManager;
+use App\TranslatorTrait;
 use Psr\Log\LoggerInterface;
 use App\Community\Entity\CommunityUser;
 use Symfony\Component\HttpFoundation\Response;
 
 final class JoinAction
 {
+    use TranslatorTrait;
     private $communityManager;
     private $logger;
 

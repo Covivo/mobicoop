@@ -23,13 +23,16 @@
  namespace App\User\Controller;
 
 use App\Right\Service\PermissionManager;
+use App\TranslatorTrait;
 use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use App\User\Service\UserManager;
+use http\Exception\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class UserUpdatePassword
 {
+    use TranslatorTrait;
     /**
      * @var UserManager $userManager
      */
@@ -57,6 +60,7 @@ class UserUpdatePassword
      */
     public function __invoke(User $data, string $name): User
     {
+        if (is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
         switch ($name) {
             case 'request':
                 $data = $this->userManager->updateUserPasswordRequest($data);
@@ -64,6 +68,8 @@ class UserUpdatePassword
             case 'reply':
                 $data = $this->userManager->updateUserPasswordConfirm($data);
                 break;
+            default:
+                throw new InvalidArgumentException($this->translator->trans('Unrecognized parameter :%name%', ['name' => $name]));
         }
         return $data;
     }

@@ -23,6 +23,7 @@
 
 namespace App\User\Controller;
 
+use App\TranslatorTrait;
 use Symfony\Component\HttpFoundation\RequestStack;
 use App\Right\Service\PermissionManager;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,6 +40,7 @@ use App\User\Entity\User;
  */
 class UserPermissions
 {
+    use TranslatorTrait;
     private $request;
     private $permissionManager;
     private $userRepository;
@@ -62,13 +64,14 @@ class UserPermissions
      */
     public function __invoke(User $data): ?User
     {
+        if (is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
         // we check if we limit to a territory
         $territory = null;
         if ($this->request->get("territory")) {
             $territory = $this->territoryRepository->find($this->request->get("territory"));
         }
         // we search the permissions
-        $data->setPermissions($this->permissionManager->getUserPermissions($data, $territory));
+        $data->setPermissions($this->permissionManager->getUserPermissions($data));
         return $data;
     }
 }

@@ -25,6 +25,7 @@ namespace App\Article\Controller;
 
 use App\Article\Service\ArticleManager;
 use App\Article\Entity\Section;
+use App\TranslatorTrait;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -34,13 +35,12 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class SectionUp
 {
+    use TranslatorTrait;
     private $articleManager;
-    private $translator;
     
-    public function __construct(ArticleManager $articleManager, TranslatorInterface $translator)
+    public function __construct(ArticleManager $articleManager)
     {
         $this->articleManager = $articleManager;
-        $this->translator= $translator;
     }
 
     /**
