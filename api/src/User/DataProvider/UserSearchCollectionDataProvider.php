@@ -68,6 +68,7 @@ final class UserSearchCollectionDataProvider implements CollectionDataProviderIn
             }
         }
 
+        
         return $queryBuilder->getQuery()->getResult();
     }
 }

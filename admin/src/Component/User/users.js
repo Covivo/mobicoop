@@ -1,10 +1,12 @@
 import React from 'react';
+//import bcrypt from 'bcryptjs';
+
 import { 
     Create, Edit, List, Show,
     TabbedForm, FormTab,
-    SimpleShowLayout,
+    TabbedShowLayout, Tab,
     Datagrid,
-    TextInput, DisabledInput, SelectInput, DateInput, ReferenceInput,
+    TextInput, DisabledInput, SelectInput, DateInput, ReferenceInput, BooleanInput,
     email,
     TextField, EmailField, DateField, 
     ShowButton, EditButton,
@@ -23,6 +25,7 @@ const UserFilter = (props) => (
         <TextInput source="givenName" label="Prénom" />
         <TextInput source="familyName" label="Nom" alwaysOn />
         <TextInput source="email" label="Email" alwaysOn />
+        <BooleanInput source="solidary" label="Solidaire" allowEmpty={false} defaultValue={true} />
         <ReferenceInput 
             source="homeAddressTerritory" 
             label="Territoire" 
@@ -47,17 +50,27 @@ export const UserList = (props) => (
     </List>
 );
 
+
+
 // Show
 export const UserShow = (props) => (
     <Show { ...props } title="Utilisateurs > afficher">
-        <SimpleShowLayout>
-            <TextField source="originId" label="ID"/>
-            <TextField source="givenName" label="Prénom"/>
-            <TextField source="familyName" label="Nom"/>
-            <EmailField source="email" label="Email" />
-            <DateField source="createdDate" label="Date de création"/>
-            <EditButton />
-        </SimpleShowLayout>
+        <TabbedShowLayout>
+            <Tab label="Identité">
+                <TextField source="originId" label="ID"/>
+                <TextField source="givenName" label="Prénom"/>
+                <TextField source="familyName" label="Nom"/>
+                <EmailField source="email" label="Email" />
+                <DateField source="createdDate" label="Date de création"/>
+                <EditButton />
+            </Tab>
+            <Tab label="Préférences">
+
+            </Tab>
+            <Tab label="Adresses">
+
+            </Tab>
+        </TabbedShowLayout>
     </Show>
 );
 
@@ -74,7 +87,7 @@ export const UserCreate = (props) => (
                 <TextInput source="telephone" label="Téléphone"/>
             </FormTab>
             <FormTab label="Sécurité">
-                <TextInput source="password" label="Mot de passe"  type="password" />
+                <TextInput source="password" label="Mot de passe" type="password"/>
             </FormTab>
             <FormTab label="Préférences">
 
