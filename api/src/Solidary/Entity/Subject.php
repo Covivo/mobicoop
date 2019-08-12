@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  *    LICENSE
  **************************/
 
-namespace App\Communication\Entity;
+namespace App\Solidary\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -33,7 +33,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
- * An action that can trigger a notification.
+ * A solidary subject.
  *
  * @ORM\Entity
  * @ApiResource(
@@ -44,14 +44,14 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *      collectionOperations={"get"},
  *      itemOperations={"get"}
  * )
- * @ApiFilter(OrderFilter::class, properties={"id", "name", "uname"}, arguments={"orderParameterName"="order"})
- * @ApiFilter(SearchFilter::class, properties={"name":"partial", "uname":"partial"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
  */
-class Action
+class Subject
 {
     
     /**
-     * @var int The id of this action.
+     * @var int The id of this subject.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -62,22 +62,13 @@ class Action
     private $id;
 
     /**
-     * @var string Name of the action.
+     * @var string Label of the subject.
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
      * @Groups({"read","write"})
      */
-    private $name;
-
-    /**
-     * @var string User readable name of the action.
-     *
-     * @Assert\NotBlank
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
-     */
-    private $uname;
+    private $label;
     
     public function getId(): ?int
     {
@@ -91,26 +82,14 @@ class Action
         return $this;
     }
     
-    public function getName(): ?string
+    public function getLabel(): ?string
     {
-        return $this->name;
+        return $this->label;
     }
 
-    public function setName(string $name): self
+    public function setLabel(string $label): self
     {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getUname(): ?string
-    {
-        return $this->uname;
-    }
-
-    public function setUname(string $uname): self
-    {
-        $this->uname = $uname;
+        $this->label = $label;
 
         return $this;
     }

@@ -31,7 +31,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use App\Communication\Entity\Action;
+use App\Action\Entity\Action;
 use App\Communication\Entity\Medium;
 
 /**
@@ -98,7 +98,7 @@ class Notification
     /**
      * @var Action The action.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Action")
+     * @ORM\ManyToOne(targetEntity="\App\Action\Entity\Action")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
