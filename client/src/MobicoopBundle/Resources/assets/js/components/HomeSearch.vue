@@ -32,7 +32,7 @@
           />
         </v-flex>
       </v-layout>
-      
+
       <!-- Buttons -->
       <v-layout
         class="mt-5"
