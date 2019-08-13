@@ -1,16 +1,39 @@
-<template>
+/**
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * This project is dual licensed under AGPL and proprietary licence.
+ ***************************
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Affero General Public License as
+ *    published by the Free Software Foundation, either version 3 of the
+ *    License, or (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Affero General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Affero General Public License
+ *    along with this program.  If not, see <gnu.org/licenses>.
+ ***************************
+ *    Licence MOBICOOP described in the file
+ *    LICENSE
+ **************************/
+ 
+ <template>
   <v-content>
     <v-container fluid>
-      <v-layout
+      <v-row
         justify-center
         text-center
       >
-        <v-flex xs10>
+        <v-col xs10>
           <v-form
             ref="form"
             v-model="valid"
             lazy-validation
           >
+
+            <!--Email-->
             <v-text-field
               v-model="user.email"
               :label="$t('models.user.email.label')"
@@ -18,36 +41,68 @@
               class="email"
             />
 
+            <!--Telephone-->
             <v-text-field
               v-model="user.telephone"
               :label="$t('models.user.phone.label')"
               class="telephone"
             />
 
+            <!--GivenName-->
             <v-text-field
               v-model="user.givenName"
               :label="$t('models.user.givenName.label')" 
               class="givenName"
             />
 
+            <!--FamilyName-->
             <v-text-field
               v-model="user.familyName"
               :label="$t('models.user.familyName.label')" 
               class="familyName"
             />
-          
 
+            <!--Gender-->
+            <v-select
+              v-model="gender"
+              :label="$t('models.user.gender.label')"
+              :items="genders"
+              item-text="gender"
+              item-value="value"
+            />
+
+            <!--birthyear-->
+            <v-select
+              id="birthYear"
+              v-model="user.birthYear"
+              :items="years"
+              :label="$t('models.user.birthYear.label')"
+              class="birthYear"
+            />
+
+
+            <!--GeoComplete-->
+            <GeoComplete
+              :url="geoSearchUrl"
+              :label="$t('models.user.homeTown.label')"
+              :token="user ? user.geoToken : ''"
+              @address-selected="homeAddressSelected"
+            />
+
+            <!--Save Button-->
             <v-btn
               class="button saveButton"
+              color="success"
+              rounded
               type="button"
               :value="$t('ui.button.save')"
-              @click="checkForm"
+              @click="validate"
             >
               {{ $t('ui.button.save') }}
             </v-btn>
           </v-form>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
   </v-content>
 </template>
@@ -74,15 +129,19 @@ export default {
   props: {
     geoSearchUrl: {
       type: String,
-      default: ""
+      default: null
     },
     user: {
       type: Object,
       default: null
     },
-    sentToken: {
+    ageMin: {
       type: String,
-      default: ""
+      default: null
+    },
+    ageMax: {
+      type: String,
+      default: null
     }
   },
   data() {
@@ -90,108 +149,57 @@ export default {
       valid: true,
       errors: [],
       loading: false,
-      home: this.$t('models.user.homeTown.placeholder'),
-      homeAddress:{
-        required: true,
-        value: {
-          addressCountry: this.addressCountry,
-          addressLocality: this.addressLocality,
-          countryCode: this.countryCode,
-          county: this.county,
-          latitude: this.latitude,
-          localAdmin: this.localAdmin,
-          longitude: this.longitude,
-          macroCounty: this.macroCounty,
-          macroRegion: this.macroRegion,
-          postalCode: this.postalCode,
-          region: this.region,
-          street: this.street,
-          streetAddress: this.streetAddress,
-          subLocality: this.subLocality,
-        }
+      gender: {
+        value: this.user.gender
       },
-      form:{
-        createToken: this.sentToken,
-        email: this.email,
-        givenName: this.givenName,
-        familyName: this.familyName,
-        gender: this.gender,
-        birthYear: this.birthYear,
-        telephone: this.telephone,
-        password: null,
-        validation: false,
-        addressCountry: this.addressCountry,
-        addressLocality: this.addressLocality,
-        countryCode: this.countryCode,
-        county: this.county,
-        latitude: this.latitude,
-        localAdmin: this.localAdmin,
-        longitude: this.longitude,
-        macroCounty: this.macroCounty,
-        macroRegion: this.macroRegion,
-        postalCode: this.postalCode,
-        region: this.region,
-        street: this.street,
-        streetAddress: this.streetAddress,
-        subLocality: this.subLocality
-      }
+      homeAddress: null,
+      genders:[
+        { value: 2, gender: this.$t('models.user.gender.values.male')},
+        { value: 1, gender: this.$t('models.user.gender.values.female')},
+        { value: 3, gender: this.$t('models.user.gender.values.other')},
+      ],
     };
   },
   computed : {
     years () {
-      const year = new Date().getFullYear()
-      return Array.from({length: year - 1910}, (value, index) => 1910 + index)
-    },
-  },
- 
-  methods: {
-    selectedGeo(val) {
-      let name = val.name;
-      this[name] = val;
-      this.form.addressCountry = val.addressCountry
-      this.form.addressLocality = val.addressLocality
-      this.form.countryCode = val.countryCode
-      this.form.county = val.county
-      this.form.latitude = val.latitude
-      this.form.localAdmin = val.localAdmin
-      this.form.longitude = val.longitude
-      this.form.macroCounty = val.macroCounty
-      this.form.macroRegion = val.macroRegion
-      this.form.name = val.name
-      this.form.region = val.region
-      this.form.street = val.street
-      this.form.streetAddress = val.streetAddress
-      this.form.subLocality = val.subLocality
-      this.form.postalCode = val.postalCode
+      const currentYear = new Date().getFullYear();
+      const ageMin = Number(this.ageMin);
+      const ageMax = Number(this.ageMax);
+      return Array.from({length: ageMax - ageMin}, (value, index) => (currentYear - ageMin) - index)
     },
 
+  },
+  methods: {
+    homeAddressSelected(address){
+      this.homeAddress = address;
+    },
     validate () {
       if (this.$refs.form.validate()) {
         this.checkForm();
       }
     },
-
-    checkForm: function (e) {
-      let userForm = new FormData;
-      for (let prop in this.form) {
-        let value = this.form[prop];
-        // if(!value) continue;
-        let renamedProp = `user_form[${prop}]`;
-        userForm.append(renamedProp, value);
-        //let renamedProp = prop === "createToken" ? prop : `user_form[${prop}]`;
-        //userForm.append(renamedProp, value);
-      }
-      console.error(userForm);
+    checkForm () {
       axios 
-        .post("/utilisateur/profil/modifier", userForm, {
-          headers: {
-            "Content-Type": "multipart/form-data"
+        .post("/utilisateur/profil/modifier", {
+          email: this.user.email,
+          familyName: this.user.familyName,
+          gender: this.user.gender,
+          givenName: this.user.givenName,
+          homeAddress: this.homeAddress,
+          telephone: this.user.telephone,
+          birthYear: this.user.birthYear,
+        }, {
+          headers:{
+            'content-type': 'application/json'
           }
-        } )
-      this.$toast.open({
-        message: 'Votre profil a bien été mis à jour!',
-        type: 'is-success',
-      })  
+        })
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      
     },
   }
 };
