@@ -225,7 +225,7 @@ class Address
 
     /**
      * @var string The geoJson point of the address.
-     * ORM\Column(type="point", nullable=true) // Remove @ to counter Doctrine Spacial extension bug. TO DO : Upgrade extension when fixed and put back the @
+     * @ORM\Column(type="point", nullable=true)
      * @Groups({"read","write"})
      */
     private $geoJson;

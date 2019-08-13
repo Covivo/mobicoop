@@ -136,8 +136,7 @@ class UserController extends AbstractController
             $user->setFamilyName($data['familyName']);
             $user->setGender($data['gender']);
             $user->setBirthYear($data['birthYear']);
-//            $user->setBirthYear(1995);
-//            $user->setBirthDate(DateTime::createFromFormat('Y-m-d', 1995 . '-1-1'));
+
             // add the home address to the user
             $user->addAddress($address);
 

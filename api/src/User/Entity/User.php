@@ -419,7 +419,7 @@ class User implements UserInterface, EquatableInterface
        *
        * @var string $language
        * @Groups({"read","write", "api"})
-       * @ORM\Column(name="language", type="string", nullable=false)
+       * @ORM\Column(name="language", type="string", nullable=true)
        */
     private $language= 'fr_FR';
 
