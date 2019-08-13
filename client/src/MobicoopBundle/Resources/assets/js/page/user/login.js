@@ -1,12 +1,12 @@
 'use strict'
 
-import { Vue, vuetify, i18n } from '@js/config/page/user/login'
+import { Vue, vuetify, i18n } from '@js/config/user/login'
 
 import '@css/page/user/login.scss'
 
-import Login from '@js/components/user/Login'
-import MHeader from '@js/components/MHeader'
-import MFooter from '@js/components/MFooter'
+import Login from '@components/user/Login'
+import MHeader from '@components/base/MHeader'
+import MFooter from '@components/base/MFooter'
 
 new Vue({
   i18n,

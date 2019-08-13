@@ -1,12 +1,12 @@
 'use strict'
 
-import { Vue, vuetify, i18n } from '@js/config/page/user/signup'
+import { Vue, vuetify, i18n } from '@js/config/user/signup'
 
 import '@css/page/user/signup.scss'
 
-import Signupform from '@js/components/user/Signupform'
-import MHeader from '@js/components/MHeader'
-import MFooter from '@js/components/MFooter'
+import Signupform from '@components/user/Signupform'
+import MHeader from '@components/base/MHeader'
+import MFooter from '@components/base/MFooter'
 
 new Vue({
   i18n,

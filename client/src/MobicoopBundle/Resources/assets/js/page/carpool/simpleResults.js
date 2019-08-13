@@ -1,15 +1,15 @@
 'use strict'
 
-import { Vue, vuetify, i18n } from '@js/config/page/search/simpleResults'
+import { Vue, vuetify, i18n } from '@js/config/carpool/simpleResults'
 
 import moment from 'moment'
 import '@css/page/search/simpleResults.scss'
 
-import Resultssearchform from '@js/components/Resultssearchform'
-import Journey from '@js/components/Journey'
+import Resultssearchform from '@components/carpool/Resultssearchform'
+import Journey from '@components/carpool/Journey'
 import BDatepicker from 'buefy/src/components/datepicker/Datepicker'
-import MHeader from '@js/components/MHeader'
-import MFooter from '@js/components/MFooter'
+import MHeader from '@components/base/MHeader'
+import MFooter from '@components/base/MFooter'
 
 // add possibility to format date by using moment
 Vue.config.productionTip = false

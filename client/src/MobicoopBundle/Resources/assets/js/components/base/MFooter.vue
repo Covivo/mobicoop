@@ -66,8 +66,8 @@
 
 <script>
 import { merge } from "lodash";
-import Translations from "@translations/components/MFooter.json";
-import TranslationsClient from "@clientTranslations/components/MFooter.json";
+import Translations from "@translations/components/base/MFooter.json";
+import TranslationsClient from "@clientTranslations/components/base/MFooter.json";
 import Package from '@root/package.json'
 
 let TranslationsMerged = merge(Translations, TranslationsClient);

@@ -36,32 +36,30 @@
       <!-- Buttons -->
       <v-layout
         class="mt-5"
-        justify-center
         row
       >
-        <v-flex xs10>
-          <v-flex
-            xs4
+        <v-flex
+          xs2
+          offset-xs3
+        >
+          <v-btn
+            rounded
+            outlined
+            disabled
+            @click="publish"
           >
-            <v-btn
-              rounded
-              outlined
-              disabled
-              @click="publish"
-            >
-              {{ $t('buttons.shareAnAd.label') }}
-            </v-btn>
-          </v-flex>
-          <v-flex xs4>
-            <v-btn
-              color="success"
-              rounded
-              :disabled="searchUnavailable"
-              @click="search"
-            >
-              {{ $t('buttons.search.label') }}
-            </v-btn>
-          </v-flex>
+            {{ $t('buttons.shareAnAd.label') }}
+          </v-btn>
+        </v-flex>
+        <v-flex xs2>
+          <v-btn
+            color="success"
+            rounded
+            :disabled="searchUnavailable"
+            @click="search"
+          >
+            {{ $t('buttons.search.label') }}
+          </v-btn>
         </v-flex>
       </v-layout>
     </v-container>
@@ -69,12 +67,11 @@
 </template>
 
 <script>
-import SearchJourney from "./SearchJourney";
-
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/HomeSearch.json";
-import TranslationsClient from "@clientTranslations/components/HomeSearch.json";
+import Translations from "@translations/components/home/HomeSearch.json";
+import TranslationsClient from "@clientTranslations/components/home/HomeSearch.json";
+import SearchJourney from "@components/carpool/SearchJourney";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 

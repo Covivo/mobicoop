@@ -60,9 +60,8 @@
 
 <script>
 import { merge } from "lodash";
-import Translations from "@translations/components/MHeader.json";
-// console.error("@clientTranslations");
-import TranslationsClient from "@clientTranslations/components/MHeader.json";
+import Translations from "@translations/components/base/MHeader.json";
+import TranslationsClient from "@clientTranslations/components/base/MHeader.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 

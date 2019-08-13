@@ -389,13 +389,13 @@
                   align-center
                   justify-center
                 >
-                  Participation
+                  {{ $t('stepper.content.participation.price') }}
                   <p>
                     <v-text-field type="number" />
                     <!-- TODO get the .env variable that defines the carpool price value -->
                     0.06€/km
                   </p>
-                  passager(s)
+                  {{ $t('stepper.content.participation.passengers') }}
                 </v-layout>
               </v-stepper-content>
 
@@ -413,9 +413,9 @@
                     <div class="text-center">
                       <v-textarea
                         name="input-7-1"
-                        label="Mon message aux passagers"
+                        :label="$t('stepper.content.message.label')"
                         value=""
-                        placeholder="Laissez un petit message ..."
+                        :placeholder="$t('stepper.content.message.placeholder')"
                       />
                     </div>
                   </v-flex>
@@ -509,13 +509,13 @@
 <script>
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/AdPublish.json";
-import TranslationsClient from "@clientTranslations/components/AdPublish.json";
+import Translations from "@translations/components/carpool/AdPublish.json";
+import TranslationsClient from "@clientTranslations/components/carpool/AdPublish.json";
 
 import axios from "axios";
 import moment from 'moment'
-import GeoComplete from "./GeoComplete";
-import SearchJourney from "./SearchJourney";
+import GeoComplete from "@components/utilities/GeoComplete";
+import SearchJourney from "@components/carpool/SearchJourney";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 

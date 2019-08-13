@@ -4,7 +4,7 @@
   {% trans from 'ui' %}carpool.ad_create.title{% endtrans %}
 {% endblock %}
 {% block stylesheets %}
-  {{ encore_entry_link_tags("#{assets_prefix ?? ''}ad/create") }}
+  {{ encore_entry_link_tags("#{assets_prefix ?? ''}carpool/publish") }}
 
 {% endblock %}
 {% block main %}
@@ -13,6 +13,6 @@
 
 {% endblock %}
 {% block javascripts %}
-  {{ encore_entry_script_tags("#{assets_prefix ?? ''}ad/create") }}
+  {{ encore_entry_script_tags("#{assets_prefix ?? ''}carpool/publish") }}
 
 {% endblock %}

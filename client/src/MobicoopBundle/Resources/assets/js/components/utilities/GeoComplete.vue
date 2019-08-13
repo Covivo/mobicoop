@@ -54,8 +54,8 @@ import axios from "axios";
 import debounce from "lodash/debounce";
 import merge from "lodash/merge";
 
-import Translations from "@translations/components/GeoComplete.json";
-import TranslationsClient from "@clientTranslations/components/GeoComplete.json";
+import Translations from "@translations/components/utilities/GeoComplete.json";
+import TranslationsClient from "@clientTranslations/components/utilities/GeoComplete.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 

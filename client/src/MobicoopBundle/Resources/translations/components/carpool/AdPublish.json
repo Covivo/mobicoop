@@ -51,8 +51,14 @@
                     "bike": "Je peux transporter un vélo",
                     "back_seats": "Maximum 2 personnes à l'arrière"
                 },
-                "participation": "Participation",
-                "message": "Message",
+                "participation": {
+                    "price" : "Participation",
+                    "passengers" : "passager(s)"
+                },
+                "message": {
+                    "label": "Mon message",
+                    "placeholder": "Laissez un petit message"
+                },
                 "summary": "Récapitulatif"
             },
             "buttons": {

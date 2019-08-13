@@ -112,7 +112,7 @@
 <script>
 
 import moment from "moment";
-import GeoComplete from "./GeoComplete";
+import GeoComplete from "@components/utilities/GeoComplete";
 
 export default {
   name: 'Resultssearchform',
