@@ -35,10 +35,56 @@
               :label="$t('models.user.familyName.label')" 
               class="familyName"
             />
-          
 
+            <v-select
+              v-model="user.gender"
+              :label="$t('models.user.gender.label')"
+              class="gender"
+              :items="gender"
+            />
+
+            <v-menu
+              ref="menu"
+              v-model="menu"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              offset-y
+              full-width
+              min-width="290px"
+            >
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-model="form.birthYear"
+                  :label="$t('models.user.birthYear.label')"
+                  v-on="on"
+                />
+              </template>
+              <v-date-picker
+                ref="picker"
+                v-model="form.birthYear"
+                :max="new Date().toISOString().substr(0, 10)"
+                min="1950-01-01"
+                @change="save"
+              />
+            </v-menu>
+
+            <v-text-field :label="$t('models.user.homeTown.label')">
+              <GeoComplete
+                id="homeAddress"
+                v-model="user.addressLocality"
+                name="homeAddress"
+                :placeholder="addressLocality != 'null' ? addressLocality : home"
+                :url="geoSearchUrl"
+                :token="user ? user.geoToken : ''"
+                @geoSelected="selectedGeo"
+              />
+            </v-text-field>
+
+           
             <v-btn
               class="button saveButton"
+              color="success"
+              rounded
               type="button"
               :value="$t('ui.button.save')"
               @click="checkForm"
@@ -90,6 +136,7 @@ export default {
       valid: true,
       errors: [],
       loading: false,
+      
       home: this.$t('models.user.homeTown.placeholder'),
       homeAddress:{
         required: true,
@@ -111,6 +158,14 @@ export default {
         }
       },
       form:{
+        item:[
+          this.$t('models.user.gender.values.male'),
+          this.$t('models.user.gender.values.female'),
+          this.$t('models.user.gender.values.other')
+        ],
+        genderInitial:this.user.gender,
+        menu: false,
+        date:  null,
         createToken: this.sentToken,
         email: this.email,
         givenName: this.givenName,
@@ -142,8 +197,15 @@ export default {
       const year = new Date().getFullYear()
       return Array.from({length: year - 1910}, (value, index) => 1910 + index)
     },
+    gender() {
+      return this.user.gender
+    }
   },
- 
+  watch: {
+    menu (val) {
+      val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
+    },
+  },
   methods: {
     selectedGeo(val) {
       let name = val.name;
@@ -163,6 +225,14 @@ export default {
       this.form.streetAddress = val.streetAddress
       this.form.subLocality = val.subLocality
       this.form.postalCode = val.postalCode
+    },
+
+    // selectedGeo: function(val) {
+    //   let name = val.name;
+    //   this.form.origin = val.address;
+    // },
+    save (date) {
+      this.$refs.menu.save(date)
     },
 
     validate () {

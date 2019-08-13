@@ -705,7 +705,9 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'status'        => $this->getStatus(),
             'email'         => $this->getEmail(),
             'telephone'     => $this->getTelephone(),
-            'geoToken'      => $this->getGeoToken()
+            'geoToken'      => $this->getGeoToken(),
+            'birthYear'     => $this->getBirthYear(),
+            'addressLocality'=> $this->getHomeAddress(),
         ];
     }
         

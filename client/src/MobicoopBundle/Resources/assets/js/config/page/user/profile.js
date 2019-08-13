@@ -13,7 +13,9 @@ import Vuetify, {
   // footer
   VFooter, VChip, VCardText,
   // content
-  VForm, VTabs, VTab, VTabItem, VSnackbar, VIcon, VTextField
+  VForm, VTabs, VTab, VTabItem, VSnackbar, VIcon, VTextField, VSelect, VDatePicker, VMenu,
+  // geocomplete
+  VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent
 } from 'vuetify/lib'
 
 Vue.use(Vuetify, {
@@ -25,7 +27,9 @@ Vue.use(Vuetify, {
     // footer
     VFooter, VChip, VCardText,
     // content
-    VForm, VTabs, VTab, VTabItem, VSnackbar, VIcon, VTextField
+    VForm, VTabs, VTab, VTabItem, VSnackbar, VIcon, VTextField, VSelect, VDatePicker, VMenu,
+    // geocomplete
+    VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent
   }
 })
 Vue.use(VueI18n)
