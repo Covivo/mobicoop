@@ -37,6 +37,12 @@ doctrine:
                 st_buffer:          CrEOF\Spatial\ORM\Query\AST\Functions\MySql\STBuffer
                 point:              CrEOF\Spatial\ORM\Query\AST\Functions\MySql\Point
         mappings:
+            Action:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Action/Entity'
+                prefix: 'App\Action\Entity'
+                alias: Action
             App:
                 is_bundle: false
                 type: annotation
@@ -109,6 +115,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Right/Entity'
                 prefix: 'App\Right\Entity'
                 alias: Right
+            Solidary:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Solidary/Entity'
+                prefix: 'App\Solidary\Entity'
+                alias: Solidary
             Travel:
                 is_bundle: false
                 type: annotation

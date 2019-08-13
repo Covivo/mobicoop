@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d42c79629f6a22760093d2f44e12854c",
+    "content-hash": "732d391df318516eff4ec5c8e6b89906",
     "packages": [
         {
             "name": "api-platform/api-pack",
@@ -395,26 +395,26 @@
         },
         {
             "name": "creof/geo-parser",
-            "version": "2.1.0",
+            "version": "2.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/creof/geo-parser.git",
-                "reference": "14fbd732207bc264cfeff836230ef6022bb751b6"
+                "reference": "b55553a54c7775576c9ee629847973d0b6d7cbed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/creof/geo-parser/zipball/14fbd732207bc264cfeff836230ef6022bb751b6",
-                "reference": "14fbd732207bc264cfeff836230ef6022bb751b6",
+                "url": "https://api.github.com/repos/creof/geo-parser/zipball/b55553a54c7775576c9ee629847973d0b6d7cbed",
+                "reference": "b55553a54c7775576c9ee629847973d0b6d7cbed",
                 "shasum": ""
             },
             "require": {
                 "doctrine/lexer": ">=1.0",
                 "ext-spl": "*",
-                "php": ">=5.3.3"
+                "php": ">=7.1"
             },
             "require-dev": {
                 "codeclimate/php-test-reporter": "dev-master",
-                "phpunit/phpunit": ">=4.8"
+                "phpunit/phpunit": "~5.0"
             },
             "type": "library",
             "autoload": {
@@ -444,7 +444,7 @@
                 "string",
                 "text"
             ],
-            "time": "2016-05-03T18:19:41+00:00"
+            "time": "2019-08-07T17:45:01+00:00"
         },
         {
             "name": "creof/wkb-parser",

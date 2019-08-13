@@ -110,7 +110,7 @@ class Message
     /**
      * @var Message|null The original message if the message is a reply to another message.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Message")
+     * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="messages")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
