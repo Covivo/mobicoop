@@ -19,7 +19,6 @@
           v-model="menuOutwardDate"
           :close-on-content-click="false"
           :nudge-right="40"
-          lazy
           transition="scale-transition"
           offset-y
           full-width
@@ -27,7 +26,7 @@
         >
           <template v-slot:activator="{ on }">
             <v-text-field
-              v-model="internalOutwardDate"
+              :value="computedOutwardDateFormat"
               :label="$t('outwardDate.label')"
               prepend-icon=""
               readonly
@@ -35,7 +34,8 @@
             />
           </template>
           <v-date-picker
-            v-model="internalOutwardDate"
+            v-model="outwardDate"
+            :locale="locale"
             @input="menuOutwardDate = false"
             @change="change"
           />
@@ -46,12 +46,11 @@
         xs4
       >
         <v-menu
-          ref="menu"
+          ref="menuOutwardTime"
           v-model="menuOutwardTime"
           :close-on-content-click="false"
           :nudge-right="40"
           :return-value.sync="outwardTime"
-          lazy
           transition="scale-transition"
           offset-y
           full-width
@@ -71,7 +70,7 @@
             v-if="menuOutwardTime"
             v-model="outwardTime"
             format="24hr"
-            @click:minute="$refs.menu.save(outwardTime)"
+            @click:minute="$refs.menuOutwardTime.save(outwardTime)"
             @change="change"
           />
         </v-menu>
@@ -104,7 +103,6 @@
           v-model="menuReturnDate"
           :close-on-content-click="false"
           :nudge-right="40"
-          lazy
           transition="scale-transition"
           offset-y
           full-width
@@ -112,15 +110,17 @@
         >
           <template v-slot:activator="{ on }">
             <v-text-field
-              v-model="returnDate"
+              :value="computedReturnDateFormat"
               :label="$t('returnDate.label')"
               prepend-icon=""
               readonly
+              :disabled="!returnTrip"
               v-on="on"
             />
           </template>
           <v-date-picker
             v-model="returnDate"
+            :locale="locale"
             @input="menuReturnDate = false"
             @change="change"
           />
@@ -131,12 +131,11 @@
         xs4
       >
         <v-menu
-          ref="menu"
+          ref="menuReturnTime"
           v-model="menuReturnTime"
           :close-on-content-click="false"
           :nudge-right="40"
           :return-value.sync="returnTime"
-          lazy
           transition="scale-transition"
           offset-y
           full-width
@@ -149,6 +148,7 @@
               :label="$t('returnTime.label')"
               prepend-icon=""
               readonly
+              :disabled="!returnTrip"
               v-on="on"
             />
           </template>
@@ -156,7 +156,7 @@
             v-if="menuReturnTime"
             v-model="returnTime"
             format="24hr"
-            @click:minute="$refs.menu.save(returnTime)"
+            @click:minute="$refs.menuReturnTime.save(returnTime)"
             @change="change"
           />
         </v-menu>
@@ -168,6 +168,7 @@
 </template>
 
 <script>
+import moment from "moment";
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/carpool/AdPlanification.json";
@@ -183,10 +184,6 @@ export default {
   components: {
   },
   props: {
-    outwardDate: {
-      type: String,
-      default: null
-    },
     regular: {
       type: Boolean,
       default: false
@@ -194,7 +191,7 @@ export default {
   },
   data() {
     return {
-      internalOutwardDate: this.outwardDate,
+      outwardDate: null,
       outwardTime: null,
       returnDate: null,
       returnTime: null,
@@ -202,18 +199,28 @@ export default {
       menuOutwardTime: false,
       menuReturnDate: false,
       menuReturnTime: false,
-      returnTrip: false
+      returnTrip: false,
+      locale: this.$i18n.locale
     };
   },
   computed: {
-  },
-  updated() {
-    this.internalOutwardDate = this.outwardDate;
+    computedOutwardDateFormat() {
+      moment.locale(this.locale);
+      return this.outwardDate
+        ? moment(this.outwardDate).format(this.$t("ui.i18n.date.format.fullDate"))
+        : "";
+    },
+    computedReturnDateFormat() {
+      moment.locale(this.locale);
+      return this.returnDate
+        ? moment(this.returnDate).format(this.$t("ui.i18n.date.format.fullDate"))
+        : "";
+    },
   },
   methods: {
     change() {
       this.$emit("change", {
-        outwardDate: this.internalOutwardDate,
+        outwardDate: this.outwardDate,
         outwardTime: this.outwardTime,
         returnDate: this.returnDate,
         returnTime: this.returnTime,

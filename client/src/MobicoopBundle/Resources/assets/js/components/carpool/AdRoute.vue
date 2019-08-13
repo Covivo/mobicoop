@@ -15,30 +15,139 @@
         >
           <GeoComplete
             name="origin"
-            :label="$t('stepper.content.map.origin.label')"
-            :placeholder="$t('stepper.content.map.origin.placeholder')"
+            :label="$t('origin.label')"
             :url="geoSearchUrl"
-            mt-10
             @address-selected="originSelected"
           />
         </v-layout>
-        <p>
-          <v-icon
-            large
+        
+        <p v-if="!waypoint4">
+          <v-btn
+            text
+            icon
+            @click="addWaypoint"
           >
-            mdi-chevron-right
-          </v-icon>
-          {{ $t('stepper.content.map.ad_waypoint') }}
+            <v-icon
+              large
+            >
+              mdi-chevron-right
+            </v-icon>
+          </v-btn>
+          {{ $t('addWaypoint') }}
         </p>
+
+        <template v-if="waypoint1">
+          <v-layout
+            mt-10
+          >
+            <GeoComplete
+              name="etape1"
+              label="etape1"
+              :url="geoSearchUrl"
+              @address-selected="destinationSelected"
+            />
+
+            <p v-if="!waypoint2">
+              <v-btn
+                text
+                icon
+                @click="removeWaypoint"
+              >
+                <v-icon
+                  large
+                >
+                  mdi-delete
+                </v-icon>
+              </v-btn>
+            </p>
+          </v-layout>
+        </template>
+
+        <template v-if="waypoint2">
+          <v-layout
+            mt-10
+          >
+            <GeoComplete
+              name="etape2"
+              label="etape2"
+              :url="geoSearchUrl"
+              @address-selected="destinationSelected"
+            />
+            <p v-if="!waypoint3">
+              <v-btn
+                text
+                icon
+                @click="removeWaypoint"
+              >
+                <v-icon
+                  large
+                >
+                  mdi-delete
+                </v-icon>
+              </v-btn>
+            </p>
+          </v-layout>
+        </template>
+
+        <template v-if="waypoint3">
+          <v-layout
+            mt-10
+          >
+            <GeoComplete
+              name="etape3"
+              label="etape3"
+              :url="geoSearchUrl"
+              @address-selected="destinationSelected"
+            />
+            <p v-if="!waypoint4">
+              <v-btn
+                text
+                icon
+                @click="removeWaypoint"
+              >
+                <v-icon
+                  large
+                >
+                  mdi-delete
+                </v-icon>
+              </v-btn>
+            </p>
+          </v-layout>
+        </template>
+
+        <template v-if="waypoint4">
+          <v-layout
+            mt-10
+          >
+            <GeoComplete
+              name="etape4"
+              label="etape4"
+              :url="geoSearchUrl"
+              @address-selected="destinationSelected"
+            />
+            <p>
+              <v-btn
+                text
+                icon
+                @click="removeWaypoint"
+              >
+                <v-icon
+                  large
+                >
+                  mdi-delete
+                </v-icon>
+              </v-btn>
+            </p>
+          </v-layout>
+        </template>
+
         <v-layout
           mt-10
         >
           <GeoComplete
-            :label="$t('stepper.content.map.destination.label')"
-            :placeholder="$t('stepper.content.map.destination.placeholder')"
-            :url="geoSearchUrl"
             name="destination"
-            mt-15
+            :label="$t('destination.label')"
+            :url="geoSearchUrl"
             @address-selected="destinationSelected"
           />
         </v-layout>
@@ -78,7 +187,11 @@ export default {
   data() {
     return {
       origin: null,
-      destination: null
+      destination: null,
+      waypoint1: false,
+      waypoint2: false,
+      waypoint3: false,
+      waypoint4: false
     };
   },
   computed: {
@@ -86,12 +199,54 @@ export default {
   methods: {
     originSelected: function(address) {
       this.origin = address;
-      this.$emit("origin-selected", address);
+      this.emitEvent();
     },
     destinationSelected: function(address) {
       this.destination = address;
-      this.$emit("destination-selected", address);
+      this.emitEvent();
     },
+    emitEvent: function() {
+      this.$emit("change", {
+        origin: this.origin,
+        destination: this.destination
+      });
+    },
+    addWaypoint() {
+      if (this.waypoint1 === false) {
+        this.waypoint1 = true;
+        return;
+      }
+      if (this.waypoint2 === false) {
+        this.waypoint2 = true;
+        return;
+      }
+      if (this.waypoint3 === false) {
+        this.waypoint3 = true;
+        return;
+      }
+      if (this.waypoint4 === false) {
+        this.waypoint4 = true;
+      }
+      return;
+    },
+    removeWaypoint() {
+      if (this.waypoint4 === true) {
+        this.waypoint4 = false;
+        return;
+      }
+      if (this.waypoint3 === true) {
+        this.waypoint3 = false;
+        return;
+      }
+      if (this.waypoint2 === true) {
+        this.waypoint2 = false;
+        return;
+      }
+      if (this.waypoint1 === true) {
+        this.waypoint1 = false;
+      }
+      return;
+    }
   }
 };
 </script>

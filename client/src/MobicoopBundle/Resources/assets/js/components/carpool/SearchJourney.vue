@@ -138,6 +138,7 @@
             v-model="menu"
             :close-on-content-click="false"
             full-width
+            min-width="290px"
           >
             <template v-slot:activator="{ on }">
               <v-text-field
@@ -151,7 +152,7 @@
               />
             </template>
             <v-date-picker
-              v-model="internalDate"
+              v-model="date"
               header-color="primary"
               color="secondary"
               :locale="locale"
@@ -185,10 +186,9 @@ export default {
     GeoComplete
   },
   props: {
-    date: null,
     geoSearchUrl: {
       type: String,
-      default: ""
+      default: null
     },
     user: {
       type: Object,
@@ -201,7 +201,7 @@ export default {
   },
   data() {
     return {
-      internalDate: this.date,
+      date: null,
       regular: false,
       menu: false,
       passenger: false,
@@ -216,8 +216,8 @@ export default {
   computed: {
     computedDateFormat() {
       moment.locale(this.locale);
-      return this.internalDate
-        ? moment(this.internalDate).format(this.$t("ui.i18n.date.format.fullDate"))
+      return this.date
+        ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
         : "";
     },
   },
@@ -244,13 +244,13 @@ export default {
         origin: this.origin,
         destination: this.destination,
         regular: this.regular,
-        date: this.internalDate,
+        date: this.date,
         passenger: this.passenger,
         driver: this.driver
       });
     },
     clearDate() {
-      this.internalDate = null;
+      this.date = null;
       this.emitEvent();
     }
   }

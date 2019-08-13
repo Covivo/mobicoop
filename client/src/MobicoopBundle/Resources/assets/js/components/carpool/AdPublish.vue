@@ -114,24 +114,23 @@
                   display-roles
                   :geo-search-url="geoSearchUrl"
                   :user="user"
-                  :date="outwardDate"
                   @change="searchChanged"
                 />
               </v-stepper-content>
 
               <!-- Step 2 : planification -->
               <v-stepper-content step="2">
-                <ad-planification
-                  :outward-date="outwardDate"
-                  @change="planificationChanged"
+                <ad-planification 
+                  @change="planificationChanged" 
                 />
               </v-stepper-content>
 
-              <!-- Step 3 : map -->
+              <!-- Step 3 : route -->
               <v-stepper-content step="3">
                 <ad-route 
                   :geo-search-url="geoSearchUrl"
                   :user="user"
+                  @change="routeChanged"
                 />
               </v-stepper-content>
 
@@ -146,7 +145,7 @@
                   mt-2
                 >
                   <v-flex
-                    xs8
+                    xs10
                   >
                     <v-layout
                       row
@@ -154,8 +153,7 @@
                     >
                       {{ $t('stepper.content.passengers.seats.question') }}
                       <v-select
-                        style="width:15px"
-                        :label="$t('stepper.content.passengers.seats.label')"
+                        v-model="step4.seats"
                         :items="[1,2,3,4]"
                       />
                       {{ $t('stepper.content.passengers.seats.passengers') }}
@@ -165,6 +163,7 @@
                       {{ $t('stepper.content.passengers.luggage') }}
                       <v-spacer />
                       <v-switch
+                        v-model="step4.luggage"
                         class="ma-2"
                       />
                     </v-layout>
@@ -172,13 +171,15 @@
                       {{ $t('stepper.content.passengers.bike') }}
                       <v-spacer />
                       <v-switch
+                        v-model="step4.bike"
                         class="ma-2"
                       />
                     </v-layout>
                     <v-layout>
-                      {{ $t('stepper.content.passengers.back_seats') }}
+                      {{ $t('stepper.content.passengers.backSeats') }}
                       <v-spacer />
                       <v-switch
+                        v-model="step4.backSeats"
                         d-inline
                         class="ma-2"
                       />
@@ -199,9 +200,11 @@
                 >
                   {{ $t('stepper.content.participation.price') }}
                   <p>
-                    <v-text-field type="number" />
-                    <!-- TODO get the .env variable that defines the carpool price value -->
-                    0.06€/km
+                    <v-text-field 
+                      v-model="price"
+                      type="number"
+                    />
+                    {{ pricePerKm }}€/km
                   </p>
                   {{ $t('stepper.content.participation.passengers') }}
                 </v-layout>
@@ -220,9 +223,9 @@
                   <v-flex xs8>
                     <div class="text-center">
                       <v-textarea
+                        v-model="step6.message"
                         name="input-7-1"
                         :label="$t('stepper.content.message.label')"
-                        value=""
                         :placeholder="$t('stepper.content.message.placeholder')"
                       />
                     </div>
@@ -315,14 +318,18 @@ export default {
     user: {
       type: Object,
       default: null
+    },
+    defaultPriceKm: {
+      type: Number,
+      default: 0.06
     }
   },
   data() {
     return {
-      outwardDate: {
-        type: String,
-        default: null
-      },
+      seats: 1,
+      price: null,
+      pricePerKm: this.defaultPriceKm,
+      distance: 0, 
       step: {
         type: Number,
         default: 1
@@ -340,16 +347,13 @@ export default {
         default: null
       },
       step4: {
-        type: Object,
-        default: null
-      },
-      step5: {
-        type: Object,
-        default: null
+        'seats': 1,
+        'luggage': false,
+        'bike': false,
+        'backSeats': false
       },
       step6: {
-        type: Object,
-        default: null
+        'message': null
       },
       step7: {
         type: Object,
@@ -374,43 +378,25 @@ export default {
         type: Object,
         default: null
       }*/
-    };
+    }
   },
-  computed: {
-    daysShort() {
-      return this.daysEn.map(day => day.substring(0, 3));
+  watch: {
+    price() {
+      this.pricePerKm = this.price / this.distance;
     },
-    nbOfDaysToPlan(){
-      if(this.form.frequency === 2) return this.days.length;
-      return 1;
+    distance() {
+      this.price = this.distance * this.pricePerKm;
     }
   },
   methods: {
-    selectedGeo(val) {
-      let name = val.name;
-      this.form[name] = `${val.streetAddress ? val.streetAddress + " " : ""}${
-        val.addressLocality
-      } ${val.addressCountry}`;
-      this.form[name + "Latitude"] = val.latitude;
-      this.form[name + "Longitude"] = val.longitude;
-
-      this.form[name + "StreetAddress"] = val.streetAddress;
-      this.form[name + "PostalCode"] = val.postalCode;
-
-      this.form[name + "AddressCountry"] = val.addressCountry;
-      this.form[name + "AddressLocality"] = val.addressLocality;
-    },
     searchChanged: function(search) {
-      if (search.date != this.outwardDate) {
-        this.outwardDate = search.date;
-      }
       this.step1 = search;
     },
     planificationChanged(planification) {
-      if (planification.outwardDate != this.outwardDate) {
-        this.outwardDate = planification.outwardDate;
-      }
       this.step2 = planification;
+    },
+    routeChanged(route) {
+      this.step3 = route;
     },
     /**
        * Send the form to the route /covoiturage/annonce/poster
@@ -457,28 +443,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    .tabContent {
-        text-align: center;
-    }
-    .fieldsContainer {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .dayNameColumn {
-        text-align: left;
-        a {
-            width: 100%;
-        }
-    }
-
-    .layout .align-center {
-        padding:12px !important;
-        color: blueviolet;
-    }
-
     .v-stepper{
-        height: 600px;
+        min-height: 600px;
     }
-
 </style>

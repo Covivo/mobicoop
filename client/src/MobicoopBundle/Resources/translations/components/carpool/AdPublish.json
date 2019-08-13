@@ -13,17 +13,6 @@
                 "summary": "Récapitulatif"
             },
             "content": {
-                "map": {
-                    "ad_waypoint": "Ajouter une étape",
-                    "origin": {
-                        "label": "Origine",
-                        "placeholder": "Depuis"
-                    },
-                    "destination": {
-                        "label": "Destination",
-                        "placeholder": "Vers"
-                    }
-                },
                 "passengers": {
                     "seats": {
                         "question": "j'ai de la place pour:",
@@ -32,14 +21,14 @@
                     },
                     "luggage": "J'ai de la place pour des gros bagages:",
                     "bike": "Je peux transporter un vélo",
-                    "back_seats": "Maximum 2 personnes à l'arrière"
+                    "backSeats": "Maximum 2 personnes à l'arrière"
                 },
                 "participation": {
                     "price" : "Participation",
                     "passengers" : "passager(s)"
                 },
                 "message": {
-                    "label": "Mon message",
+                    "label": "Mon message aux passagers",
                     "placeholder": "Laissez un petit message"
                 },
                 "summary": "Récapitulatif"
@@ -47,7 +36,7 @@
             "buttons": {
                 "next": "Suivant",
                 "previous": "Précédent",
-                "publish_ad": "Publer mon annonce"    
+                "publish_ad": "Publier mon annonce"    
             }
         }
     }

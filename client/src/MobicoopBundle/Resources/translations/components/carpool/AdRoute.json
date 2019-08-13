@@ -1,2 +1,11 @@
 {
+    "fr": {
+        "addWaypoint": "Ajouter une étape",
+        "origin": {
+            "label": "Origine"
+        },
+        "destination": {
+            "label": "Destination"
+        }
+    }
 }
