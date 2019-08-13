@@ -48,8 +48,7 @@
             >
               {{ $t('ui.button.next') }}
             </v-btn>
-            <v-spacer />
-            
+
             <!--STEP 2-->
             <v-text-field
               id="givenName"
