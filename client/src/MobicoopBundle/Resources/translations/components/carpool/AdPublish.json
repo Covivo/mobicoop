@@ -13,23 +13,6 @@
                 "summary": "Récapitulatif"
             },
             "content": {
-                "planification": {
-                    "departure_date": {
-                        "label": "Date de départ"
-                    },
-                    "return_date" : {
-                        "label": "Date de retour"
-                    },
-                    "departure_time": {
-                        "label": "Heure de départ"
-                    },
-                    "return_time" : {
-                        "label": "Heure de retour"
-                    } ,
-                    "two_way": {
-                        "label": "Retour"
-                    }
-                },
                 "map": {
                     "ad_waypoint": "Ajouter une étape",
                     "origin": {

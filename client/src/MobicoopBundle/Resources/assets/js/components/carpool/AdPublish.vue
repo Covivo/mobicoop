@@ -111,220 +111,28 @@
               <!-- Step 1 : search journey -->
               <v-stepper-content step="1">
                 <search-journey
-                  xs12
                   display-roles
                   :geo-search-url="geoSearchUrl"
                   :user="user"
+                  :date="outwardDate"
                   @change="searchChanged"
                 />
               </v-stepper-content>
 
               <!-- Step 2 : planification -->
               <v-stepper-content step="2">
-                <v-container
-                  grid-list-md
-                  text-xs-center
-                >
-                  <v-layout
-                    row
-                    wrap
-                    align-center
-                    justify-center
-                  >
-                    <v-flex
-                      xs3
-                      offset-xs2
-                    >
-                      <v-menu
-                        v-model="menu2"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        lazy
-                        transition="scale-transition"
-                        offset-y
-                        full-width
-                        min-width="290px"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            v-model="date1"
-                            :label="$t('stepper.content.planification.departure_date.label')"
-                            prepend-icon=""
-                            readonly
-                            v-on="on"
-                          />
-                        </template>
-                        <v-date-picker
-                          v-model="date1"
-                          @input="menu2 = false"
-                        />
-                      </v-menu>
-                    </v-flex>
-                    <v-flex xs1 />
-                    <v-flex
-                      xs2
-                    >
-                      <v-menu
-                        ref="menu"
-                        v-model="menu3"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        :return-value.sync="time1"
-                        lazy
-                        transition="scale-transition"
-                        offset-y
-                        full-width
-                        max-width="290px"
-                        min-width="290px"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            v-model="time1"
-                            :label="$t('stepper.content.planification.departure_time.label')"
-                            prepend-icon=""
-                            readonly
-                            v-on="on"
-                          />
-                        </template>
-                        <v-time-picker
-                          v-if="menu3"
-                          v-model="time1"
-                          format="24hr"
-                          @click:minute="$refs.menu.save(time1)"
-                        />
-                      </v-menu>
-                    </v-flex>
-                  </v-layout>
-                  <v-layout
-                    row
-                    wrap
-                    align-center
-                    justify-center
-                  >
-                    <v-flex
-                      xs2
-                    >
-                      <v-checkbox
-                        :label="$t('stepper.content.planification.two_way.label')"
-                        color="success"
-                        value="success"
-                        hide-details
-                      />
-                    </v-flex>
-                    <v-flex
-                      xs3
-                    >
-                      <v-menu
-                        v-model="menu4"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        lazy
-                        transition="scale-transition"
-                        offset-y
-                        full-width
-                        min-width="290px"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            v-model="date2"
-                            :label="$t('stepper.content.planification.return_date.label')"
-                            prepend-icon=""
-                            readonly
-                            v-on="on"
-                          />
-                        </template>
-                        <v-date-picker
-                          v-model="date2"
-                          @input="menu4 = false"
-                        />
-                      </v-menu>
-                    </v-flex>
-                    <v-flex xs1 />
-                    <v-flex
-                      xs2
-                    >
-                      <v-menu
-                        ref="menu"
-                        v-model="menu5"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        :return-value.sync="time2"
-                        lazy
-                        transition="scale-transition"
-                        offset-y
-                        full-width
-                        max-width="290px"
-                        min-width="290px"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            v-model="time2"
-                            :label="$t('stepper.content.planification.return_time.label')"
-                            prepend-icon=""
-                            readonly
-                            v-on="on"
-                          />
-                        </template>
-                        <v-time-picker
-                          v-if="menu5"
-                          v-model="time2"
-                          format="24hr"
-                          @click:minute="$refs.menu.save(time2)"
-                        />
-                      </v-menu>
-                    </v-flex>
-                  </v-layout>
-                </v-container>
+                <ad-planification
+                  :outward-date="outwardDate"
+                  @change="planificationChanged"
+                />
               </v-stepper-content>
 
               <!-- Step 3 : map -->
               <v-stepper-content step="3">
-                <v-container
-                  grid-list-md
-                  text-xs-center
-                >
-                  <v-layout
-                    align-center
-                    justify-center
-                  >
-                    <v-flex
-                      xs7
-                    >
-                      <v-layout
-                        mt-5
-                      >
-                        <GeoComplete
-                          name="origin"
-                          :label="$t('stepper.content.map.origin.label')"
-                          :placeholder="$t('stepper.content.map.origin.placeholder')"
-                          :url="geoSearchUrl"
-                          mt-10
-                          @geoSelected="selectedGeo"
-                        />
-                      </v-layout>
-                      <p>
-                        <v-icon
-                          large
-                        >
-                          mdi-chevron-right
-                        </v-icon>
-                        {{ $t('stepper.content.map.ad_waypoint') }}
-                      </p>
-                      <v-layout
-                        mt-10
-                      >
-                        <GeoComplete
-                          :label="$t('stepper.content.map.destination.label')"
-                          :placeholder="$t('stepper.content.map.destination.placeholder')"
-                          :url="geoSearchUrl"
-                          name="destination"
-                          mt-15
-                          @geoSelected="selectedGeo"
-                        />
-                      </v-layout>
-                    </v-flex>
-                  </v-layout>
-                </v-container>
+                <ad-route 
+                  :geo-search-url="geoSearchUrl"
+                  :user="user"
+                />
               </v-stepper-content>
 
               <!-- Step 4 : passengers (if driver) -->
@@ -426,40 +234,7 @@
               <v-stepper-content
                 step="7"
               >
-                <v-container
-                  fluid
-                  class="pa-0 text-center"
-                >
-                  <v-layout
-                    wrap
-                    align-center
-                    justify-center
-                  >
-                    <v-flex
-                      xs10
-                    >
-                      <div class="text-center">
-                        <div>TODO make the summary</div>
-                        <div>
-                          Rappel Trajet
-                        </div>
-                        <div>
-                          Mon message aux passagers
-                          <v-textarea
-                            class="my-2"
-                            name="input-7-1"
-                            label="Mon message aux passagers"
-                            value=""
-                            placeholder="Laissez un petit message ..."
-                          />
-                        </div>
-                        <div class="my-2">
-                          Carte du trajet
-                        </div>
-                      </div>
-                    </v-flex>
-                  </v-layout>
-                </v-container>
+                <ad-summary />
               </v-stepper-content>
             </v-stepper-items>
           </v-stepper>
@@ -514,8 +289,10 @@ import TranslationsClient from "@clientTranslations/components/carpool/AdPublish
 
 import axios from "axios";
 import moment from 'moment'
-import GeoComplete from "@components/utilities/GeoComplete";
 import SearchJourney from "@components/carpool/SearchJourney";
+import AdPlanification from "@components/carpool/AdPlanification";
+import AdRoute from "@components/carpool/AdRoute";
+import AdSummary from "@components/carpool/AdSummary";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -526,7 +303,9 @@ export default {
   },
   components: {
     SearchJourney,
-    GeoComplete
+    AdPlanification,
+    AdRoute,
+    AdSummary
   },
   props: {
     geoSearchUrl: {
@@ -540,7 +319,43 @@ export default {
   },
   data() {
     return {
-      step: 1,
+      outwardDate: {
+        type: String,
+        default: null
+      },
+      step: {
+        type: Number,
+        default: 1
+      },
+      step1: {
+        type: Object,
+        default: null
+      },
+      step2: {
+        type: Object,
+        default: null
+      },
+      step3: {
+        type: Object,
+        default: null
+      },
+      step4: {
+        type: Object,
+        default: null
+      },
+      step5: {
+        type: Object,
+        default: null
+      },
+      step6: {
+        type: Object,
+        default: null
+      },
+      step7: {
+        type: Object,
+        default: null
+      },
+      /*step: 1,
       date1: new Date().toISOString().substr(0, 10),
       time1: null,
       date2: new Date().toISOString().substr(0, 10),
@@ -558,7 +373,7 @@ export default {
       search: {
         type: Object,
         default: null
-      }
+      }*/
     };
   },
   computed: {
@@ -586,7 +401,16 @@ export default {
       this.form[name + "AddressLocality"] = val.addressLocality;
     },
     searchChanged: function(search) {
-      this.search = search;
+      if (search.date != this.outwardDate) {
+        this.outwardDate = search.date;
+      }
+      this.step1 = search;
+    },
+    planificationChanged(planification) {
+      if (planification.outwardDate != this.outwardDate) {
+        this.outwardDate = planification.outwardDate;
+      }
+      this.step2 = planification;
     },
     /**
        * Send the form to the route /covoiturage/annonce/poster

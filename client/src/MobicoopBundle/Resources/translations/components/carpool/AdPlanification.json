@@ -1,0 +1,19 @@
+{
+    "fr": {
+        "outwardDate": {
+            "label": "Date de départ"
+        },
+        "returnDate" : {
+            "label": "Date de retour"
+        },
+        "outwardTime": {
+            "label": "Heure de départ"
+        },
+        "returnTime" : {
+            "label": "Heure de retour"
+        } ,
+        "returnTrip": {
+            "label": "Retour"
+        }
+    }
+}

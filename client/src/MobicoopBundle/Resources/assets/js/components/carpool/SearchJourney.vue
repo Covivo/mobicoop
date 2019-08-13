@@ -151,7 +151,7 @@
               />
             </template>
             <v-date-picker
-              v-model="date"
+              v-model="internalDate"
               header-color="primary"
               color="secondary"
               :locale="locale"
@@ -185,6 +185,7 @@ export default {
     GeoComplete
   },
   props: {
+    date: null,
     geoSearchUrl: {
       type: String,
       default: ""
@@ -200,8 +201,8 @@ export default {
   },
   data() {
     return {
+      internalDate: this.date,
       regular: false,
-      date: null,
       menu: false,
       passenger: false,
       driver: false,
@@ -215,15 +216,10 @@ export default {
   computed: {
     computedDateFormat() {
       moment.locale(this.locale);
-      return this.date
-        ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
+      return this.internalDate
+        ? moment(this.internalDate).format(this.$t("ui.i18n.date.format.fullDate"))
         : "";
     },
-    dateFormated() {
-      return !this.date
-        ? moment(new Date()).format("YYYYMMDDHHmmss")
-        : moment(this.date).format("YYYYMMDDHHmmss");
-    }
   },
   methods: {
     originSelected: function(address) {
@@ -244,18 +240,17 @@ export default {
       this.emitEvent();
     },
     emitEvent: function(){
-      console.error(this.dateFormated)
       this.$emit("change", {
         origin: this.origin,
         destination: this.destination,
         regular: this.regular,
-        date: this.dateFormated,
+        date: this.internalDate,
         passenger: this.passenger,
         driver: this.driver
       });
     },
     clearDate() {
-      this.date = null;
+      this.internalDate = null;
       this.emitEvent();
     }
   }
