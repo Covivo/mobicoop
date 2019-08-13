@@ -22,12 +22,12 @@
  
  namespace App\User\Controller;
 
+use ApiPlatform\Core\Exception\InvalidArgumentException;
 use App\Right\Service\PermissionManager;
 use App\TranslatorTrait;
 use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use App\User\Service\UserManager;
-use http\Exception\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class UserUpdatePassword
