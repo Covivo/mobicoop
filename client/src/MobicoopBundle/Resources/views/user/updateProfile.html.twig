@@ -22,8 +22,10 @@
 <section class="section">
 	<div class="container">
 		<div id="profile">
-    		<Profile :user={{app.user|json_encode()}}></Profile>
-		</div>
+    		<Profile :user={{app.user|json_encode()}}
+			geo-search-url="{{ geoCompleteUri }}" 
+			></Profile>
+		</div> 
     </div>
   </section>
 {% endblock %}

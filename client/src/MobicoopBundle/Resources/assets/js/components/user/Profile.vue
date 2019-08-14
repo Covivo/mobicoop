@@ -13,7 +13,10 @@
           >
             <v-tab>{{ $t("tabs.myProfile") }}</v-tab>
             <v-tab-item>
-              <UpdateProfile :user="user" />
+              <UpdateProfile
+                :user="user"
+                :geo-search-url="geoSearchUrl"
+              />
             </v-tab-item>
             <v-tab>{{ $t("tabs.password") }}</v-tab>
             <v-tab-item>
@@ -54,9 +57,14 @@ export default {
       type: Object,
       default: null
     },
+    geoSearchUrl: {
+      type: String,
+      default: null
+    },
   },
   data() {
     return {
+
     };
   }
 };
