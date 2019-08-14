@@ -1,52 +1,45 @@
 <template>
-  <v-autocomplete
-    v-model="address"
-    :loading="isLoading"
-    :items="items"
-    :label="label"
-    :search-input.sync="search"
-    hide-no-data
-    hide-details
-    clearable
-    item-text="concatenedAddr"
-    color="success"
-    return-object
-    no-filter
-    @change="changedAddress()"
-  >
-    <!-- template for selected item  -->
-    <template v-slot:selection="data">
-      <template>
-        <v-list>
-          <v-list-item>
-            <v-list-item-avatar>
-              <v-icon v-text="data.item.icon" />
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title v-html="data.item.concatenedAddr" />
-              <v-list-item-subtitle v-html="data.item.addressCountry" />
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
+  <v-form :ref="name">
+    <v-autocomplete
+      v-model="address"
+      :loading="isLoading"
+      :items="items"
+      :label="label"
+      :search-input.sync="search"
+      hide-no-data
+      clearable
+      item-text="concatenedAddr"
+      color="success"
+      return-object
+      no-filter
+      :required="required"
+      :rules="geoRules"
+      @change="changedAddress()"
+    >
+      <!-- template for selected item  -->
+      <template v-slot:selection="data">
+        <template>
+          {{ data.item.concatenedAddr }}
+        </template>
       </template>
-    </template>
-    <!-- template for list items  -->
-    <template v-slot:item="data">
-      <template>
-        <v-list>
-          <v-list-item>
-            <v-list-item-avatar>
-              <v-icon v-text="data.item.icon" />
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title v-html="data.item.concatenedAddr" />
-              <v-list-item-subtitle v-html="data.item.addressCountry" />
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
+      <!-- template for list items  -->
+      <template v-slot:item="data">
+        <template>
+          <v-list>
+            <v-list-item>
+              <v-list-item-avatar>
+                <v-icon v-text="data.item.icon" />
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title v-html="data.item.concatenedAddr" />
+                <v-list-item-subtitle v-html="data.item.addressCountry" />
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </template>
       </template>
-    </template>
-  </v-autocomplete>
+    </v-autocomplete>
+  </v-form>
 </template>
 
 <script>
@@ -70,7 +63,14 @@ export default {
   props: {
     url: defaultString,
     label: defaultString,
-    token: defaultString
+    token: defaultString,
+    required: Boolean,
+    requiredError: defaultString,
+    name: String,
+    initAddress: {
+      type: Object,
+      default: null
+    }
   },
   data() {
     return {
@@ -88,6 +88,14 @@ export default {
         const icon = entry.icon;
         return Object.assign({}, entry, { concatenedAddr, icon });
       });
+    },
+    geoRules() {
+      if (this.required) {
+        return [
+          v => !!v || this.requiredError
+        ];
+      }
+      return [];
     }
   },
   watch: {
@@ -97,10 +105,17 @@ export default {
           val && val !== this.address && this.getAsyncData(val);
         }
       }
+    },
+    initAddress() {
+      this.address = this.initAddress;
+      this.entries = [];
+      if (this.address) {
+        this.entries.push(this.address);
+      }
     }
   },
   methods: {
-    changedAddress: function() {
+    changedAddress() {
       this.$emit("address-selected", this.address);
     },
     getAsyncData: debounce(function(val) {

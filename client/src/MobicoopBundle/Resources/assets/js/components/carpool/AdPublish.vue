@@ -1,15 +1,13 @@
 <template>
   <v-content>
-    <v-container
-      grid-list-md
-      text-xs-center
-      fluid
-    >
+    <v-container fluid>
       <!-- Title and subtitle -->
-      <v-layout justify-center>
-        <v-flex
-          xs6
-          text-center
+      <v-row 
+        justify="center"
+      >
+        <v-col
+          cols="6"
+          align="center"
         >
           <h1>{{ $t('title') }}</h1>
           <h3 v-if="step==1">
@@ -19,22 +17,26 @@
           <h3 v-else>
             &nbsp;
           </h3>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
 
       <!-- Stepper -->
-      <v-layout justify-center>
-        <v-flex
-          xs6
-          justify-center
+      <v-row 
+        justify="center"
+      >
+        <v-col
+          cols="6"
+          align="center"
         >
           <v-stepper
             v-model="step"
             alt-labels
+            class="elevation-0"
           >
             <!-- Stepper Header -->
             <v-stepper-header
               v-show="step!==1"
+              class="elevation-0"
             >
               <!-- Step 1 : search journey -->
               <v-stepper-step
@@ -114,6 +116,9 @@
                   display-roles
                   :geo-search-url="geoSearchUrl"
                   :user="user"
+                  :init-outward-date="outwardDate"
+                  :init-origin-address="originAddress"
+                  :init-destination-address="destinationAddress"
                   @change="searchChanged"
                 />
               </v-stepper-content>
@@ -121,6 +126,7 @@
               <!-- Step 2 : planification -->
               <v-stepper-content step="2">
                 <ad-planification 
+                  :init-outward-date="outwardDate"
                   @change="planificationChanged" 
                 />
               </v-stepper-content>
@@ -130,6 +136,8 @@
                 <ad-route 
                   :geo-search-url="geoSearchUrl"
                   :user="user"
+                  :init-origin-address="originAddress"
+                  :init-destination-address="destinationAddress"
                   @change="routeChanged"
                 />
               </v-stepper-content>
@@ -138,76 +146,179 @@
               <v-stepper-content
                 step="4"
               >
-                <v-layout
-                  row
-                  align-center
-                  justify-center
-                  mt-2
+                <v-row
+                  dense
+                  align="center"
+                  justify="center"
                 >
-                  <v-flex
-                    xs10
+                  <v-col
+                    cols="3"
+                    align="right"
                   >
-                    <v-layout
-                      row
-                      wrap
-                    >
-                      {{ $t('stepper.content.passengers.seats.question') }}
-                      <v-select
-                        v-model="step4.seats"
-                        :items="[1,2,3,4]"
-                      />
-                      {{ $t('stepper.content.passengers.seats.passengers') }}
-                    </v-layout>
+                    {{ $t('stepper.content.passengers.seats.question') }}
+                  </v-col>
 
-                    <v-layout>
-                      {{ $t('stepper.content.passengers.luggage') }}
-                      <v-spacer />
-                      <v-switch
-                        v-model="step4.luggage"
-                        class="ma-2"
-                      />
-                    </v-layout>
-                    <v-layout>
-                      {{ $t('stepper.content.passengers.bike') }}
-                      <v-spacer />
-                      <v-switch
-                        v-model="step4.bike"
-                        class="ma-2"
-                      />
-                    </v-layout>
-                    <v-layout>
-                      {{ $t('stepper.content.passengers.backSeats') }}
-                      <v-spacer />
-                      <v-switch
-                        v-model="step4.backSeats"
-                        d-inline
-                        class="ma-2"
-                      />
-                    </v-layout>
-                  </v-flex>
-                </v-layout>
+                  <v-col
+                    cols="1"
+                  >
+                    <v-select
+                      v-model="step4.seats"
+                      :items="[1,2,3,4]"
+                    />
+                  </v-col>
+                  
+                  <v-col
+                    cols="2"
+                    align="left"
+                  >
+                    {{ $t('stepper.content.passengers.seats.passengers') }}
+                  </v-col>
+                </v-row>
+
+                <v-row
+                  align="center"
+                  dense
+                >
+                  <v-col
+                    cols="5"
+                    offset="3"
+                    align="left"
+                  >
+                    {{ $t('stepper.content.passengers.luggage.label') }}
+                  </v-col>
+                  <v-col
+                    cols="1"
+                  >
+                    <v-switch
+                      v-model="step4.luggage"
+                      inset
+                      hide-details
+                      class="mt-0 mb-1"
+                    />
+                  </v-col>
+                  <v-col
+                    cols="1"
+                    align="left"
+                  >
+                    <v-tooltip right>
+                      <template v-slot:activator="{ on }">
+                        <v-icon v-on="on">
+                          mdi-help-circle-outline
+                        </v-icon>
+                      </template>
+                      <span>{{ $t('stepper.content.passengers.luggage.help') }}</span>
+                    </v-tooltip>
+                  </v-col>
+                </v-row>
+
+                <v-row
+                  align="center"
+                  dense
+                >
+                  <v-col
+                    cols="5"
+                    offset="3"
+                    align="left"
+                  >
+                    {{ $t('stepper.content.passengers.bike.label') }}
+                  </v-col>
+                  <v-col
+                    cols="1"
+                  >
+                    <v-switch
+                      v-model="step4.bike"
+                      inset
+                      hide-details
+                      class="mt-0 mb-1"
+                    />
+                  </v-col>
+                  <v-col
+                    cols="1"
+                    align="left"
+                  >
+                    <v-tooltip right>
+                      <template v-slot:activator="{ on }">
+                        <v-icon v-on="on">
+                          mdi-help-circle-outline
+                        </v-icon>
+                      </template>
+                      <span>{{ $t('stepper.content.passengers.bike.help') }}</span>
+                    </v-tooltip>
+                  </v-col>
+                </v-row>
+  
+                <v-row
+                  align="center"
+                  dense
+                >
+                  <v-col
+                    cols="5"
+                    offset="3"
+                    align="left"
+                  >
+                    {{ $t('stepper.content.passengers.backSeats.label') }}
+                  </v-col>
+                  <v-col
+                    cols="1"
+                  >
+                    <v-switch
+                      v-model="step4.backSeats"
+                      inset
+                      hide-details
+                      class="mt-0 mb-1"
+                    />
+                  </v-col>
+                  <v-col
+                    cols="1"
+                    align="left"
+                  >
+                    <v-tooltip right>
+                      <template v-slot:activator="{ on }">
+                        <v-icon v-on="on">
+                          mdi-help-circle-outline
+                        </v-icon>
+                      </template>
+                      <span>{{ $t('stepper.content.passengers.backSeats.help') }}</span>
+                    </v-tooltip>
+                  </v-col>
+                </v-row>
               </v-stepper-content>
 
               <!-- Step 5 : participation (if driver) -->
               <v-stepper-content
                 step="5"
               >
-                <v-layout
-                  wrap
-                  row
-                  align-center
-                  justify-center
+                <v-row
+                  dense
+                  align="center"
+                  justify="center"
                 >
-                  {{ $t('stepper.content.participation.price') }}
-                  <p>
+                  <v-col
+                    cols="3"
+                    align="right"
+                  >
+                    {{ $t('stepper.content.participation.price') }}
+                  </v-col>
+
+                  <v-col
+                    cols="1"
+                  >
                     <v-text-field 
                       v-model="price"
                       type="number"
+                      suffix="€"
+                      :hint="hintPricePerKm"
+                      persistent-hint
                     />
-                    {{ pricePerKm }}€/km
-                  </p>
-                  {{ $t('stepper.content.participation.passengers') }}
-                </v-layout>
+                  </v-col>
+                  
+                  <v-col
+                    cols="2"
+                    align="left"
+                  >
+                    {{ $t('stepper.content.participation.passengers') }}
+                  </v-col>
+                </v-row>
               </v-stepper-content>
 
               <!-- Step 6 : message -->
@@ -241,8 +352,8 @@
               </v-stepper-content>
             </v-stepper-items>
           </v-stepper>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
       <!-- </v-stepper-content> -->
 
       <!-- Buttons Previous and Next step -->
@@ -330,21 +441,24 @@ export default {
       price: null,
       pricePerKm: this.defaultPriceKm,
       distance: 0, 
+      outwardDate: null,
+      originAddress: null,
+      destinationAddress: null,
       step: {
         type: Number,
         default: 1
       },
       step1: {
         type: Object,
-        default: null
+        default: {}
       },
       step2: {
         type: Object,
-        default: null
+        default: {}
       },
       step3: {
         type: Object,
-        default: null
+        default: {}
       },
       step4: {
         'seats': 1,
@@ -359,30 +473,16 @@ export default {
         type: Object,
         default: null
       },
-      /*step: 1,
-      date1: new Date().toISOString().substr(0, 10),
-      time1: null,
-      date2: new Date().toISOString().substr(0, 10),
-      time2: null,
-      menu2: false,
-      menu3: false,
-      menu4: false,
-      menu5: false,
-      numberP: [1,2,3,4,5],
-      /////////////////////////////////////
-      origin: null,
-      outward: this.sentOutward,
-      timeStart: new Date(),
-      timeReturn: new Date(),
-      search: {
-        type: Object,
-        default: null
-      }*/
+    }
+  },
+  computed: {
+    hintPricePerKm() {
+      return this.pricePerKm+'€/km';
     }
   },
   watch: {
     price() {
-      this.pricePerKm = this.price / this.distance;
+      this.pricePerKm = (this.distance>0 ? Math.round(this.price / this.distance * 100)/100 : this.defaultPriceKm);
     },
     distance() {
       this.price = this.distance * this.pricePerKm;
@@ -391,12 +491,20 @@ export default {
   methods: {
     searchChanged: function(search) {
       this.step1 = search;
+      this.step2.outwardDate = search.date;
+      this.outwardDate = search.date;
+      this.originAddress = search.origin;
+      this.destinationAddress = search.destination;
     },
     planificationChanged(planification) {
       this.step2 = planification;
+      this.step1.date = planification.outwardDate;
+      this.outwardDate = planification.outwardDate;
     },
     routeChanged(route) {
       this.step3 = route;
+      this.originAddress = route.origin;
+      this.destinationAddress = route.destination;
     },
     /**
        * Send the form to the route /covoiturage/annonce/poster
@@ -441,9 +549,3 @@ export default {
   }
 };
 </script>
-
-<style lang="scss" scoped>
-    .v-stepper{
-        min-height: 600px;
-    }
-</style>

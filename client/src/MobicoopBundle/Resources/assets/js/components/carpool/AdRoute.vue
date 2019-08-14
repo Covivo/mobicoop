@@ -1,158 +1,214 @@
 <template>
   <v-container
-    grid-list-md
-    text-xs-center
+    fluid
   >
-    <v-layout
-      align-center
-      justify-center
+    <!-- Origin -->
+    <v-row
+      align="center"
+      no-gutters
     >
-      <v-flex
-        xs7
+      <v-col
+        cols="6"
+        offset="3"
       >
-        <v-layout
-          mt-5
+        <GeoComplete
+          name="origin"
+          :label="$t('origin.label')"
+          :url="geoSearchUrl"
+          :init-address="initOriginAddress"
+          :required-error="$t('origin.error')"
+          required
+          @address-selected="originSelected"
+        />
+      </v-col>
+    </v-row>
+
+    <v-row
+      v-show="!waypoints[3].visible"
+      align="center"
+      no-gutters
+    >
+      <v-col
+        cols="6"
+        offset="3"
+        align="left"
+      >
+        <v-btn
+          text
+          icon
+          @click="addWaypoint"
         >
-          <GeoComplete
-            name="origin"
-            :label="$t('origin.label')"
-            :url="geoSearchUrl"
-            @address-selected="originSelected"
-          />
-        </v-layout>
-        
-        <p v-if="!waypoint4">
-          <v-btn
-            text
-            icon
-            @click="addWaypoint"
+          <v-icon
+            large
           >
-            <v-icon
-              large
-            >
-              mdi-chevron-right
-            </v-icon>
-          </v-btn>
-          {{ $t('addWaypoint') }}
-        </p>
+            mdi-plus-circle-outline
+          </v-icon>
+        </v-btn>
+        {{ $t('addWaypoint') }}
+      </v-col>
+    </v-row>
 
-        <template v-if="waypoint1">
-          <v-layout
-            mt-10
-          >
-            <GeoComplete
-              name="etape1"
-              label="etape1"
-              :url="geoSearchUrl"
-              @address-selected="destinationSelected"
-            />
+    <!-- Waypoints -->
+    <!-- For now additional waypoints are hardcorded and limited to 4 -->
+    <v-row
+      v-show="waypoints[0].visible"
+      align="center"
+      no-gutters
+    >
+      <v-col
+        cols="6"
+        offset="3"
+      >
+        <GeoComplete
+          name="etape1"
+          :label="$t('waypoint1.label')"
+          :url="geoSearchUrl"
+          @address-selected="waypointSelected(0, ...arguments)"
+        />
+      </v-col>
 
-            <p v-if="!waypoint2">
-              <v-btn
-                text
-                icon
-                @click="removeWaypoint"
-              >
-                <v-icon
-                  large
-                >
-                  mdi-delete
-                </v-icon>
-              </v-btn>
-            </p>
-          </v-layout>
-        </template>
-
-        <template v-if="waypoint2">
-          <v-layout
-            mt-10
-          >
-            <GeoComplete
-              name="etape2"
-              label="etape2"
-              :url="geoSearchUrl"
-              @address-selected="destinationSelected"
-            />
-            <p v-if="!waypoint3">
-              <v-btn
-                text
-                icon
-                @click="removeWaypoint"
-              >
-                <v-icon
-                  large
-                >
-                  mdi-delete
-                </v-icon>
-              </v-btn>
-            </p>
-          </v-layout>
-        </template>
-
-        <template v-if="waypoint3">
-          <v-layout
-            mt-10
-          >
-            <GeoComplete
-              name="etape3"
-              label="etape3"
-              :url="geoSearchUrl"
-              @address-selected="destinationSelected"
-            />
-            <p v-if="!waypoint4">
-              <v-btn
-                text
-                icon
-                @click="removeWaypoint"
-              >
-                <v-icon
-                  large
-                >
-                  mdi-delete
-                </v-icon>
-              </v-btn>
-            </p>
-          </v-layout>
-        </template>
-
-        <template v-if="waypoint4">
-          <v-layout
-            mt-10
-          >
-            <GeoComplete
-              name="etape4"
-              label="etape4"
-              :url="geoSearchUrl"
-              @address-selected="destinationSelected"
-            />
-            <p>
-              <v-btn
-                text
-                icon
-                @click="removeWaypoint"
-              >
-                <v-icon
-                  large
-                >
-                  mdi-delete
-                </v-icon>
-              </v-btn>
-            </p>
-          </v-layout>
-        </template>
-
-        <v-layout
-          mt-10
+      <v-col
+        v-show="!waypoints[1].visible"
+        cols="1"
+      >
+        <v-btn
+          text
+          icon
+          @click="removeWaypoint(0)"
         >
-          <GeoComplete
-            name="destination"
-            :label="$t('destination.label')"
-            :url="geoSearchUrl"
-            @address-selected="destinationSelected"
-          />
-        </v-layout>
-      </v-flex>
-    </v-layout>
+          <v-icon
+            large
+          >
+            mdi-close-circle-outline
+          </v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
+
+    <v-row 
+      v-show="waypoints[1].visible"
+      align="center"
+      no-gutters
+    >
+      <v-col
+        cols="6"
+        offset="3"
+      >
+        <GeoComplete
+          name="etape2"
+          :label="$t('waypoint2.label')"
+          :url="geoSearchUrl"
+          @address-selected="waypointSelected(1, ...arguments)"
+        />
+      </v-col>
+
+      <v-col
+        v-show="!waypoints[2].visible"
+        cols="1"
+      >
+        <v-btn
+          text
+          icon
+          @click="removeWaypoint(1)"
+        >
+          <v-icon
+            large
+          >
+            mdi-close-circle-outline
+          </v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
+
+    <v-row
+      v-show="waypoints[2].visible"
+      align="center"
+      no-gutters
+    >
+      <v-col
+        cols="6"
+        offset="3"
+      >
+        <GeoComplete
+          name="etape3"
+          :label="$t('waypoint3.label')"
+          :url="geoSearchUrl"
+          @address-selected="waypointSelected(2, ...arguments)"
+        />
+      </v-col>
+
+      <v-col
+        v-show="!waypoints[3].visible"
+        cols="1"
+      >
+        <v-btn
+          text
+          icon
+          @click="removeWaypoint(2)"
+        >
+          <v-icon
+            large
+          >
+            mdi-close-circle-outline
+          </v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
+
+    <v-row
+      v-show="waypoints[3].visible"
+      align="center"
+      no-gutters
+    >
+      <v-col
+        cols="6"
+        offset="3"
+      >
+        <GeoComplete
+          name="etape4"
+          :label="$t('waypoint4.label')"
+          :url="geoSearchUrl"
+          @address-selected="waypointSelected(3, ...arguments)"
+        />
+      </v-col>
+
+      <v-col
+        cols="1"
+      >
+        <v-btn
+          text
+          icon
+          @click="removeWaypoint(3)"
+        >
+          <v-icon
+            large
+          >
+            mdi-close-circle-outline
+          </v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
+
+    <!-- destination -->
+    <v-row
+      align="center"
+      no-gutters
+    >
+      <v-col
+        cols="6"
+        offset="3"
+      >
+        <GeoComplete
+          name="destination"
+          :label="$t('destination.label')"
+          :required-error="$t('destination.error')"
+          required
+          :url="geoSearchUrl"
+          :init-address="initDestinationAddress"
+          @address-selected="destinationSelected"
+        />
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -182,19 +238,47 @@ export default {
     user: {
       type: Object,
       default: null
+    },
+    initOriginAddress: {
+      type: Object,
+      default: null
+    },
+    initDestinationAddress: {
+      type: Object,
+      default: null
     }
   },
   data() {
     return {
       origin: null,
       destination: null,
-      waypoint1: false,
-      waypoint2: false,
-      waypoint3: false,
-      waypoint4: false
+      waypoints: [
+        {
+          visible: false,
+          address: null
+        },
+        {
+          visible: false,
+          address: null
+        },
+        {
+          visible: false,
+          address: null
+        },
+        {
+          visible: false,
+          address: null
+        },
+      ]
     };
   },
-  computed: {
+  watch: {
+    initOriginAddress() {
+      this.origin = this.initOriginAddress;
+    },
+    initDestinationAddress() {
+      this.destination = this.initDestinationAddress;
+    }
   },
   methods: {
     originSelected: function(address) {
@@ -205,47 +289,31 @@ export default {
       this.destination = address;
       this.emitEvent();
     },
+    waypointSelected(id,address) {
+      this.waypoints[id].address = address;
+      this.emitEvent();
+    },
     emitEvent: function() {
       this.$emit("change", {
         origin: this.origin,
-        destination: this.destination
+        destination: this.destination,
+        waypoints: this.waypoints
       });
     },
     addWaypoint() {
-      if (this.waypoint1 === false) {
-        this.waypoint1 = true;
-        return;
+      if (!this.waypoints[0].visible) {
+        this.waypoints[0].visible = true;
+      } else if (this.waypoints[0].visible && !this.waypoints[1].visible) {
+        this.waypoints[1].visible = true;
+      } else if (this.waypoints[0].visible && this.waypoints[1].visible && !this.waypoints[2].visible) {
+        this.waypoints[2].visible = true;
+      } else if (this.waypoints[0].visible && this.waypoints[1].visible && this.waypoints[2].visible && !this.waypoints[3].visible) {
+        this.waypoints[3].visible = true;
       }
-      if (this.waypoint2 === false) {
-        this.waypoint2 = true;
-        return;
-      }
-      if (this.waypoint3 === false) {
-        this.waypoint3 = true;
-        return;
-      }
-      if (this.waypoint4 === false) {
-        this.waypoint4 = true;
-      }
-      return;
     },
-    removeWaypoint() {
-      if (this.waypoint4 === true) {
-        this.waypoint4 = false;
-        return;
-      }
-      if (this.waypoint3 === true) {
-        this.waypoint3 = false;
-        return;
-      }
-      if (this.waypoint2 === true) {
-        this.waypoint2 = false;
-        return;
-      }
-      if (this.waypoint1 === true) {
-        this.waypoint1 = false;
-      }
-      return;
+    removeWaypoint(id) {
+      this.waypoints[id].visible = false;
+      this.waypoints[id].address = null;
     }
   }
 };

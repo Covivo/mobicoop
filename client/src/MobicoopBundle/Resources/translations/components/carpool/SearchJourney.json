@@ -2,8 +2,14 @@
     "fr": {
         "title": "Mobicoop",
         "subtitle": "Un service de covoiturage de proximité, convivial et solidaire.<br />Trouvez dès à présent votre covoiturage ou proposez votre trajet.",
-        "origin": "Lieu de départ",
-        "destination": "Lieu d'arrivée",
+        "origin": {
+            "label": "Lieu de départ",
+            "error": "Obligatoire"
+        },
+        "destination": {
+            "label": "Lieu d'arrivée",
+            "error": "Obligatoire"
+        },
         "swap": {
             "alt": "Intervertir origine et destination",
             "help": "Cliquez pour intervertir origine et destination"

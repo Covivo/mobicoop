@@ -15,17 +15,25 @@
             "content": {
                 "passengers": {
                     "seats": {
-                        "question": "j'ai de la place pour:",
-                        "label": "place(s) disponible(s)",
-                        "passengers": "passager(s)"
+                        "question": "J'ai de la place pour ",
+                        "passengers": " passager(s)"
                     },
-                    "luggage": "J'ai de la place pour des gros bagages:",
-                    "bike": "Je peux transporter un vélo",
-                    "backSeats": "Maximum 2 personnes à l'arrière"
+                    "luggage": {
+                        "label": "J'ai de la place pour des gros bagages",
+                        "help": "Cochez cette case si votre véhicule peut transporter des gros bagages"
+                    },
+                    "bike": {
+                        "label": "Je peux transporter un vélo",
+                        "help": "Cochez cette case si votre véhicule peut transporter un vélo"
+                    },
+                    "backSeats": {
+                        "label": "Maximum 2 personnes à l'arrière",
+                        "help": "Cochez cette case si votre véhicule ne permet pas de transporter plus de 2 personnes sur les sièges arrières"
+                    }
                 },
                 "participation": {
-                    "price" : "Participation",
-                    "passengers" : "passager(s)"
+                    "price" : "Participation de ",
+                    "passengers" : " par passager"
                 },
                 "message": {
                     "label": "Mon message aux passagers",

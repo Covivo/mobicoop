@@ -7,13 +7,13 @@ import '@mdi/font/css/materialdesignicons.css'
 
 import Vuetify, { 
   // general
-  VApp, VContainer, VFlex, VLayout, VContent, VSpacer,
+  VApp, VContainer, VFlex, VLayout, VContent, VRow, VCol, VSpacer,
   // header
   VToolbar, VToolbarTitle, VBtn, VImg,
   // footer
   VFooter, VChip, VCardText,
   // geocomplete
-  VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon, 
+  VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon, VForm,
   // ad publish
   VStepper, VStepperHeader, VStepperStep, VDivider, VStepperItems, VStepperContent, VCheckbox, VSelect, VTextarea, 
   // content
@@ -23,13 +23,13 @@ import Vuetify, {
 Vue.use(Vuetify, {
   components: {
     // general
-    VApp, VContainer, VFlex, VLayout, VContent, VSpacer,
+    VApp, VContainer, VFlex, VLayout, VContent, VRow, VCol, VSpacer,
     // header
     VToolbar, VToolbarTitle, VBtn, VImg,
     // footer
     VFooter, VChip, VCardText,
     // geocomplete
-    VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon,
+    VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon, VForm,
     // ad publish
     VStepper, VStepperHeader, VStepperStep, VDivider, VStepperItems, VStepperContent, VCheckbox, VSelect, VTextarea, 
     // content

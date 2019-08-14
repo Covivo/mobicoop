@@ -1,44 +1,37 @@
 <template>
   <v-content color="secondary">
     <v-container
-      text-xs-center
-      grid-list-md
       fluid
     >
       <!--Role-->
-      <v-layout
+      <v-row
         v-if="displayRoles"
-        class="mt-5"
-        align-center
-        fill-height
+        align="center"
+        justify="center"
+        dense
       >
-        <v-flex
-          xs3
+        <v-col
+          cols="2"
         >
           {{ $t('switch.driver.label') }}
-        </v-flex>
-        <v-flex
-          xs2
-          row
-          class="text-right"
+        </v-col>
+        <v-col
+          cols="1"
         >
           <v-switch
             v-model="driver"
-            inset
             color="success"
+            inset
             @change="switched"
           />
-        </v-flex>
-        <v-spacer />
-        <v-flex
-          xs3
+        </v-col>
+        <v-col
+          cols="2"
         >
           {{ $t('switch.passenger.label') }}
-        </v-flex>
-        <v-flex
-          xs2
-          row
-          class="text-right"
+        </v-col>
+        <v-col
+          cols="2"
         >
           <v-switch
             v-model="passenger"
@@ -46,29 +39,29 @@
             color="success"
             @change="switched"
           />
-        </v-flex>
-      </v-layout>
-
-
+        </v-col>
+      </v-row>
 
       <!-- Geocompletes -->
-      <v-layout
-        class="mt-5"
-        align-center
+      <v-row
+        align="center"
+        dense
       >
-        <v-flex
-          xs5
+        <v-col
+          cols="5"
         >
           <GeoComplete
             :url="geoSearchUrl"
             :label="labelOrigin"
             :token="user ? user.geoToken : ''"
+            required
+            :required-error="requiredErrorOrigin"
+            :init-address="customInitOriginAddress"
             @address-selected="originSelected"
           />
-        </v-flex>
-        <v-flex
-          class="text-center"
-          xs2
+        </v-col>
+        <v-col
+          cols="2"
         >
           <v-tooltip right>
             <template v-slot:activator="{ on }">
@@ -82,39 +75,49 @@
             </template>
             <span>{{ $t('swap.help') }}</span>
           </v-tooltip>
-        </v-flex>
-        <v-flex xs5>
+        </v-col>
+        <v-col 
+          cols="5"
+        >
           <GeoComplete
             :url="geoSearchUrl"
             :label="labelDestination"
             :token="user ? user.geoToken : ''"
+            required
+            :required-error="requiredErrorDestination"
+            :init-address="customInitDestinationAddress"
             @address-selected="destinationSelected"
           />
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
 
       <!-- Switch -->
-      <v-layout
-        class="mt-5"
-        align-center
-        fill-height
+      <v-row
+        align="center"
+        no-gutters
       >
-        <v-flex
-          xs2
+        <v-col
+          cols="3"
+          align="left"
         >
           {{ $t('switch.regular.label') }}
-        </v-flex>
-        <v-flex
-          xs3
-          row
-          class="text-right"
+        </v-col>
+        <v-col
+          cols="1"
         >
           <v-switch
             v-model="regular"
             inset
+            hide-details
+            class="mt-0"
             color="success"
             @change="switched"
           />
+        </v-col>
+        <v-col
+          cols="1"
+          align="left"
+        >
           <v-tooltip right>
             <template v-slot:activator="{ on }">
               <v-icon v-on="on">
@@ -123,21 +126,22 @@
             </template>
             <span>{{ $t('switch.regular.help') }}</span>
           </v-tooltip>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
 
       <!-- Datepicker -->
-      <v-layout
-        class="mt-5"
-        align-center
+      <v-row
+        align="center"
+        dense
       >
-        <v-flex
-          xs5
+        <v-col
+          cols="5"
         >
           <v-menu
             v-model="menu"
             :close-on-content-click="false"
             full-width
+            offset-y
             min-width="290px"
           >
             <template v-slot:activator="{ on }">
@@ -156,12 +160,13 @@
               header-color="primary"
               color="secondary"
               :locale="locale"
+              no-title
               @input="menu=false"
               @change="dateChanged"
             />
           </v-menu>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
   </v-content>
 </template>
@@ -197,6 +202,15 @@ export default {
     displayRoles: {
       type: Boolean,
       default: false
+    },
+    initOutwardDate: String,
+    initOriginAddress: {
+      type: Object,
+      default: null
+    },
+    initDestinationAddress: {
+      type: Object,
+      default: null
     }
   },
   data() {
@@ -206,11 +220,15 @@ export default {
       menu: false,
       passenger: false,
       driver: false,
-      labelOrigin: this.$t("origin"),
-      labelDestination: this.$t("destination"),
+      labelOrigin: this.$t("origin.label"),
+      labelDestination: this.$t("destination.label"),
+      requiredErrorOrigin: this.$t("origin.error"),
+      requiredErrorDestination: this.$t("destination.error"),
       locale: this.$i18n.locale,
       origin: null,
-      destination: null
+      destination: null,
+      customInitOriginAddress: null,
+      customInitDestinationAddress: null,
     };
   },
   computed: {
@@ -220,6 +238,19 @@ export default {
         ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
         : "";
     },
+  },
+  watch: {
+    initOutwardDate() {
+      this.date = this.initOutwardDate;
+    },
+    initOriginAddress() {
+      this.customInitOriginAddress = this.initOriginAddress;
+      this.origin = this.initOriginAddress;
+    },
+    initDestinationAddress() {
+      this.customInitDestinationAddress = this.initDestinationAddress;
+      this.destination = this.initDestinationAddress;
+    }
   },
   methods: {
     originSelected: function(address) {
@@ -231,6 +262,11 @@ export default {
       this.emitEvent();
     },
     swap: function() {
+      let tempOriginAddress = this.customInitOriginAddress;
+      this.origin = this.customInitDestinationAddress;
+      this.customInitOriginAddress = this.customInitDestinationAddress;
+      this.destination = tempOriginAddress;
+      this.customInitDestinationAddress = tempOriginAddress;
       this.emitEvent();
     },
     switched: function(){
