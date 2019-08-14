@@ -164,8 +164,7 @@ class UserController extends AbstractController
         $this->denyAccessUnlessGranted('update', $user);
 
         // get the homeAddress
-        $homeAddress = $user->getHomeAddress();
-         
+        // $user->setHomeAddress($user->getHomeAddress());
         $error = false;
            
         if ($request->isMethod('POST')) {
@@ -214,7 +213,8 @@ class UserController extends AbstractController
       
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
                 'error' => $error,
-                'user' => $user
+                'user' => $user,
+                //'homeAddress' => $homeAddress
             ]);
     }
 

@@ -37,10 +37,11 @@
             />
 
             <v-select
-              v-model="user.gender"
+              v-model="gender"
               :label="$t('models.user.gender.label')"
-              class="gender"
-              :items="gender"
+              :items="genders"
+              item-text="gender"
+              item-value="value"
             />
 
             <v-menu
@@ -68,19 +69,15 @@
               />
             </v-menu>
 
-            <v-text-field :label="$t('models.user.homeTown.label')">
-              <GeoComplete
-                id="homeAddress"
-                v-model="user.addressLocality"
-                name="homeAddress"
-                :placeholder="addressLocality != 'null' ? addressLocality : home"
-                :url="geoSearchUrl"
-                :token="user ? user.geoToken : ''"
-                @geoSelected="selectedGeo"
-              />
-            </v-text-field>
+            <GeoComplete
+              v-model="form.addressLocality"
+              :url="geoSearchUrl"
+              :label="$t('models.user.homeTown.label')"
+              :token="user ? user.geoToken : ''"
+              :home-address="user.homeAddress"
+              @address-selected="homeAddressSelected"
+            />
 
-           
             <v-btn
               class="button saveButton"
               color="success"
@@ -120,52 +117,32 @@ export default {
   props: {
     geoSearchUrl: {
       type: String,
-      default: ""
+      default: null
     },
     user: {
       type: Object,
       default: null
     },
-    sentToken: {
-      type: String,
-      default: ""
-    }
   },
   data() {
     return {
       valid: true,
       errors: [],
       loading: false,
-      
-      home: this.$t('models.user.homeTown.placeholder'),
-      homeAddress:{
-        required: true,
-        value: {
-          addressCountry: this.addressCountry,
-          addressLocality: this.addressLocality,
-          countryCode: this.countryCode,
-          county: this.county,
-          latitude: this.latitude,
-          localAdmin: this.localAdmin,
-          longitude: this.longitude,
-          macroCounty: this.macroCounty,
-          macroRegion: this.macroRegion,
-          postalCode: this.postalCode,
-          region: this.region,
-          street: this.street,
-          streetAddress: this.streetAddress,
-          subLocality: this.subLocality,
-        }
+      gender: {
+        value: this.user.gender
       },
+
+      genders:[
+        { value: 2, gender: this.$t('models.user.gender.values.male')},
+        { value: 1, gender: this.$t('models.user.gender.values.female')},
+        { value: 3, gender: this.$t('models.user.gender.values.other')},
+      ],
+      home: this.$t('models.user.homeTown.placeholder'),
+      homeAddress: null,
+      menu: false,
+      date:  null,
       form:{
-        item:[
-          this.$t('models.user.gender.values.male'),
-          this.$t('models.user.gender.values.female'),
-          this.$t('models.user.gender.values.other')
-        ],
-        genderInitial:this.user.gender,
-        menu: false,
-        date:  null,
         createToken: this.sentToken,
         email: this.email,
         givenName: this.givenName,
@@ -197,9 +174,6 @@ export default {
       const year = new Date().getFullYear()
       return Array.from({length: year - 1910}, (value, index) => 1910 + index)
     },
-    gender() {
-      return this.user.gender
-    }
   },
   watch: {
     menu (val) {
@@ -207,40 +181,17 @@ export default {
     },
   },
   methods: {
-    selectedGeo(val) {
-      let name = val.name;
-      this[name] = val;
-      this.form.addressCountry = val.addressCountry
-      this.form.addressLocality = val.addressLocality
-      this.form.countryCode = val.countryCode
-      this.form.county = val.county
-      this.form.latitude = val.latitude
-      this.form.localAdmin = val.localAdmin
-      this.form.longitude = val.longitude
-      this.form.macroCounty = val.macroCounty
-      this.form.macroRegion = val.macroRegion
-      this.form.name = val.name
-      this.form.region = val.region
-      this.form.street = val.street
-      this.form.streetAddress = val.streetAddress
-      this.form.subLocality = val.subLocality
-      this.form.postalCode = val.postalCode
+    homeAddressSelected(address){
+      this.homeAddress = address;
     },
-
-    // selectedGeo: function(val) {
-    //   let name = val.name;
-    //   this.form.origin = val.address;
-    // },
     save (date) {
       this.$refs.menu.save(date)
     },
-
     validate () {
       if (this.$refs.form.validate()) {
         this.checkForm();
       }
     },
-
     checkForm: function (e) {
       let userForm = new FormData;
       for (let prop in this.form) {
