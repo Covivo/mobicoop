@@ -28,6 +28,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Response;
 use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
 use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\HydraView;
 
+use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Trace;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -489,6 +490,15 @@ class DataProvider
         }
         if (isset($data['@type'])) {
             $hydra->setType($data['@type']);
+        }
+        if (isset($data['hydra:title'])) {
+            $hydra->setTitle($data['hydra:title']);
+        }
+        if (isset($data['hydra:description'])) {
+            $hydra->setDescription($data['hydra:description']);
+        }
+        if (isset($data['hydra:trace'])) {
+            $hydra->setTraces(Trace::load($data['hydra:trace']));
         }
         if (isset($data['hydra:totalItems'])) {
             $hydra->setTotalItems($data['hydra:totalItems']);

@@ -34,8 +34,8 @@ use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Repository\AskHistoryRepository;
 use App\Communication\Service\NotificationManager;
 use App\TranslatorTrait;
+use Symfony\Component\Debug\Exception\ClassNotFoundException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
 
 class CarpoolSubscriber implements EventSubscriberInterface
 {

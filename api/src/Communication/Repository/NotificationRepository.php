@@ -48,7 +48,6 @@ class NotificationRepository
      * Find active notifications for a given action
      *
      * @param string $action
-     * @return void
      */
     public function findActiveByAction(string $action)
     {

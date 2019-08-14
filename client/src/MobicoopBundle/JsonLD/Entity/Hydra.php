@@ -55,10 +55,59 @@ class Hydra
     private $totalItems;
     
     /**
+     * @var string $title
+     *   Title of the hydra
+     */
+    private $title;
+    
+    /**
+     * @var string $description
+     *   Description of the hydra
+     */
+    private $description;
+    /**
+     * @var Trace[] $traces
+     */
+    private  $traces;
+    
+    /**
      * @var HydraView $view The view of the collection.
      */
     private $view;
-        
+    
+    /**
+     * @param mixed $member
+     */
+    public function addMember($member)
+    {
+        $this->member[] = $member;
+    }
+    
+    /**
+     * @param int $key
+     */
+    public function removeMember(int $key)
+    {
+        array_splice($this->member, $key, 1);
+    }
+    
+    /**
+     * @param Trace $trace
+     */
+    public function addTrace(Trace $trace)
+    {
+        $this->traces[] = $trace;
+    }
+    
+    /**
+     * @param int $key
+     */
+    public function removeTrace(int $key)
+    {
+        array_splice($this->traces, $key, 1);
+    }
+    
+    
     public function getId()
     {
         return $this->id;
@@ -118,4 +167,61 @@ class Hydra
     {
         $this->view = $view;
     }
+    
+    /**
+     * Recupere le titre de l'hydra.
+     *
+     * @return string
+     */
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+    
+    /**
+     * Initialise le titre de l'hydra.
+     *
+     * @param string $title
+     */
+    public function setTitle(string $title)
+    {
+        $this->title = $title;
+    }
+    
+    /**
+     * Recupere la description de l'hydra.
+     *
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+    
+    /**
+     * Initialise la description de l'hydra.
+     *
+     * @param string $description
+     */
+    public function setDescription(string $description)
+    {
+        $this->description = $description;
+    }
+    
+    /**
+     * @return Trace[]
+     */
+    public function getTraces(): array
+    {
+        return $this->traces;
+    }
+    
+    /**
+     * @param Trace[] $traces
+     */
+    public function setTraces(array $traces)
+    {
+        $this->traces = $traces;
+    }
+    
 }
