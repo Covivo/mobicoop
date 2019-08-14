@@ -5,13 +5,9 @@ import VueI18n from 'vue-i18n'
 import colorTheme from '@themes/mobicoop.json'
 import '@mdi/font/css/materialdesignicons.css'
 
-// import Buefy from 'buefy'; // TODO ☣️ remove it when not needed anymore
-// import VueFormWizard from 'vue-form-wizard';  // TODO ☣️ remove it when not needed anymore
-// import 'vue-form-wizard/dist/vue-form-wizard.min.css'; // TODO ☣️ remove it when not needed anymore
-
 import Vuetify, {
   // general
-  VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VAlert,
+  VApp, VContainer, VFlex, VLayout, VCol, VRow, VContent, VSpacer, VAlert, VSwitch,//TODO : delete vswitch
   // header
   VToolbar, VToolbarTitle, VBtn, VImg,
   // footer
@@ -19,15 +15,13 @@ import Vuetify, {
   // content
   VForm, VTextField, VCheckbox, VSelect, VSubheader,
   // geocomplete
-  VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon,
-  // stepper
-  VStepper, VStepperStep, VStepperContent,VCard
+  VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon
 } from 'vuetify/lib'
 
 Vue.use(Vuetify, {
   components: {
     // general
-    VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VAlert,
+    VApp, VContainer, VFlex, VLayout, VCol, VRow, VContent, VSpacer, VAlert, VSwitch,
     // header
     VToolbar, VToolbarTitle, VBtn, VImg,
     // footer
@@ -35,7 +29,7 @@ Vue.use(Vuetify, {
     // content
     VForm, VTextField, VCheckbox, VSelect, VSubheader,
     // geocomplete
-    VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon,
+    VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon
   }
 })
 Vue.use(VueI18n)

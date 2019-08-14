@@ -4,127 +4,153 @@
       id="scroll-target"
       style="max-height: 500px"
       class="overflow-y-auto"
+      fluid
     >
-      <v-layout
-        justify-center
-        text-center
+      <v-row
+        justify="center"
+        align="center"
       >
-        <v-flex xs2>
+        <v-col
+          cols="2"
+          align="center"
+        >
           <v-form
             id="scrolled-content"
             ref="form"
             v-model="valid"
           >
             <!--STEP 1-->
-            <v-text-field
-              id="email"
-              v-model="form.email"
-              :rules="form.emailRules"
-              :label="$t('models.user.email.placeholder')+` *`"
-              name="email"
-              required
-            />
-            <v-text-field
-              v-model="form.telephone"
-              :label="$t('models.user.phone.placeholder')"
-              name="telephone"
-              @keypress="isNumber(event)"
-            />
-            <v-text-field
-              v-model="form.password"
-              :append-icon="form.showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-              :rules="form.passwordRules"
-              :type="form.showPassword ? 'text' : 'password'"
-              name="password"
-              :label="$t('models.user.password.placeholder')+` *`"
-              required
-              @click:append="form.showPassword = !form.showPassword"
-            />
-            <v-btn
-              ref="button"
-              class="my-12"
-              color="primary"
-              @click="$vuetify.goTo('#givenName', options)"
+            <v-form
+              ref="step 1"
+              v-model="step1"
             >
-              {{ $t('ui.button.next') }}
-            </v-btn>
+              <v-text-field
+                id="email"
+                v-model="form.email"
+                :rules="form.emailRules"
+                :label="$t('models.user.email.placeholder')+` *`"
+                name="email"
+                required
+              />
+              <v-text-field
+                v-model="form.telephone"
+                :label="$t('models.user.phone.placeholder')"
+                name="telephone"
+                @keypress="isNumber(event)"
+              />
+              <v-text-field
+                v-model="form.password"
+                :append-icon="form.showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                :rules="form.passwordRules"
+                :type="form.showPassword ? 'text' : 'password'"
+                name="password"
+                :label="$t('models.user.password.placeholder')+` *`"
+                required
+                @click:append="form.showPassword = !form.showPassword"
+              />
+              <v-btn
+                ref="button"
+                v-model="form.email"
+                class="my-13"
+                color="primary"
+                :disabled="!step1"
+                @click="$vuetify.goTo('#givenName', options)"
+              >
+                {{ $t('ui.button.next') }}
+              </v-btn>
+            </v-form>
 
             <!--STEP 2-->
-            <v-text-field
-              id="givenName"
-              v-model="form.givenName"
-              :rules="form.givenNameRules"
-              :label="$t('models.user.givenName.placeholder')+` *`"
-              class="givenName"
-              required
-            />
-            <v-text-field
-              v-model="form.familyName"
-              :rules="form.familyNameRules"
-              :label="$t('models.user.familyName.placeholder')+` *`"
-              class="familyName"
-              required
-            />
-            <v-btn
-              ref="button"
-              color="primary"
-              @click="$vuetify.goTo('#gender', options)"
+            <v-form
+              ref="step 2"
+              v-model="step2"
             >
-              {{ $t('ui.button.next') }}
-            </v-btn>
-
+              <v-text-field
+                id="givenName"
+                v-model="form.givenName"
+                :rules="form.givenNameRules"
+                :label="$t('models.user.givenName.placeholder')+` *`"
+                class="givenName"
+                required
+              />
+              <v-text-field
+                v-model="form.familyName"
+                :rules="form.familyNameRules"
+                :label="$t('models.user.familyName.placeholder')+` *`"
+                class="familyName"
+                required
+              />
+              <v-btn
+                ref="button"
+                class="my-13"
+                color="primary"
+                :disabled="!step2"
+                @click="$vuetify.goTo('#gender', options)"
+              >
+                {{ $t('ui.button.next') }}
+              </v-btn>
+            </v-form>
             <!--STEP 3-->
-            <v-select
-              id="gender"
-              v-model="form.gender"
-              :rules="form.genderRules"
-              :label="$t('models.user.gender.placeholder')+` *`"
-              class="gender"
-              required
+            <v-form
+              ref="step 3"
+              v-model="step3"
             >
-              <option value="1">
-                {{ $t('models.user.gender.values.female') }}
-              </option>
-              <option value="2">
-                {{ $t('models.user.gender.values.male') }}
-              </option>
-              <option value="3">
-                {{ $t('models.user.gender.values.other') }}
-              </option>
-            </v-select>
-            <v-btn
-              ref="button"
-              color="primary"
-              @click="$vuetify.goTo('#birthYear', options)"
-            >
-              {{ $t('ui.button.next') }}
-            </v-btn>
+              <v-select
+                id="gender"
+                v-model="form.gender"
+                :items="form.genderItems"
+                item-text="genderItem"
+                item-value="genderValue"
+                :rules="form.genderRules"
+                :label="$t('models.user.gender.placeholder')+` *`"
+                class="gender"
+                required
+              />
+              <v-btn
+                ref="button"
+                class="my-13"
+                color="primary"
+                :disabled="!step3"
+                @click="$vuetify.goTo('#birthYear', options)"
+              >
+                {{ $t('ui.button.next') }}
+              </v-btn>
+            </v-form>
 
             <!--STEP 4-->
-            <v-select
-              id="birthYear"
-              v-model="form.birthYear"
-              :rules="form.birthYearRules"
-              :label="$t('models.user.birthYear.placeholder')+` *`"
-              class="birthYear"
-              required
+            <v-form
+              ref="step 4"
+              v-model="step4"
             >
-              <option
-                v-for="year in years"
-                :key="year.id"
-                :value="year"
+              <v-select
+                id="birthYear"
+                v-model="form.birthYear"
+                :items="years"
+                :rules="form.birthYearRules"
+                :label="$t('models.user.birthYear.placeholder')+` *`"
+                class="birthYear"
+                required
               >
-                <!--@TODO: convert option to vuetify -> no data available-->
-                {{ year }}
-              </option>
-            </v-select>
-            <v-btn
-              ref="button"
-              color="primary"
-              @click="$vuetify.goTo('#homeAddress', options)"
-            >
-              {{ $t('ui.button.next') }}
-            </v-btn>
+                <option
+                  v-for="year in years"
+                  :key="year.id"
+                  :value="year"
+                >
+                  <!--@TODO: convert option to vuetify -> no data available-->
+                  {{ year }}
+                </option>
+              </v-select>
+              <v-btn
+                ref="button"
+                class="my-13"
+                color="primary"
+                :disabled="!step4"
+                @click="$vuetify.goTo('#homeAddress', options)"
+              >
+                {{ $t('ui.button.next') }}
+              </v-btn>
+            </v-form>
+
             <!--STEP 5-->
             <GeoComplete
               id="homeAddress"
@@ -134,24 +160,24 @@
               @geoSelected="selectedGeo"
             />
             <v-checkbox
-              id="gender"
               v-model="form.validation"
               class="check"
               color="primary"
+              :rules="form.checkbox"
               :label="$t('ui.pages.signup.chart.chartValid')"
+              required
             />
-            <!--TODO: REMOVE ID GENDER (tests)-->
             <v-btn
-              :disabled="!valid"
               color="primary"
-              class="mr-4"
+              class="mr-4 mb-100 mt-12"
+              :disabled="!valid"
               @click="validate"
             >
               {{ $t('ui.button.register') }}
             </v-btn>
           </v-form>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
   </v-content>
 </template>
@@ -177,11 +203,19 @@ export default {
   props: {
     geoSearchUrl: {
       type: String,
-      default: ""
+      default: null
     },
     sentToken: {
       type: String,
-      default: ""
+      default: null
+    },
+    ageMin: {
+      type: String,
+      default: null
+    },
+    ageMax: {
+      type: String,
+      default: null
     }
   },
 
@@ -191,14 +225,18 @@ export default {
       errors: [],
       valid: true,
 
+      //step validators
+      step1: true,
+      step2: true,
+      step3: true,
+      step4: true,
+
       //scrolling data
-      // type: 'element',
       type: 'selector',
       selected: null,
-      elements: ['textField','Button', 'Radio group'],
       duration: 1000,
       //offset : avoid being hidden by header
-      offset: 130,
+      offset: 150,
       easing: "easeOutQuad",
       container: "scroll-target",
 
@@ -225,6 +263,11 @@ export default {
         genderRules: [
           v => !!v || this.$t("models.user.gender.errors.required"),
         ],
+        genderItems: [
+          { genderItem: this.$t('models.user.gender.values.female'), genderValue: '1' },
+          { genderItem: this.$t('models.user.gender.values.male'), genderValue: '2' },
+          { genderItem: this.$t('models.user.gender.values.other'),genderValue: '3' },
+        ],
         birthYear: null,
         birthYearRules: [
           v => !!v || this.$t("models.user.birthYear.errors.required"),
@@ -235,7 +278,10 @@ export default {
         passwordRules: [
           v => !!v || this.$t("models.user.password.errors.required")
         ],
-        validation: false,
+        checkbox: [
+          v => !!v || 'You must agree to continue!'
+        ],
+        validation: null,//TODO : remove when finished
         addressCountry: null,
         addressLocality: null,
         countryCode: null,
@@ -256,12 +302,12 @@ export default {
   },
   computed : {
     years () {
-      const year = new Date().getFullYear();
-      return Array.from({length: year - 1910}, (value, index) => 1910 + index)
+      const currentYear = new Date().getFullYear();
+      const ageMin = Number(this.ageMin);
+      const ageMax = Number(this.ageMax);
+      return Array.from({length: ageMax - ageMin}, (value, index) => (currentYear - ageMin) - index)
     },
-    target () {
-      return "#email"
-    },
+    //options of v-scroll
     options () {
       return {
         duration: this.duration,
@@ -269,7 +315,7 @@ export default {
         easing: this.easing,
         container: this.container,
       }
-    },
+    }
   },
   mounted: function () {
     // this.elem = document.getElementById ( "scrolled-content" )//TODO: REMOVE
@@ -402,11 +448,47 @@ export default {
 </script>
 
 <style>
-  html,body{
-    height: 100%;
-    overflow-y:hidden;
+  /*html,body,v-container{*/
+  /*  height: 100%;*/
+  /*  overflow-y:hidden;*/
+  /*  scrollbar-width: none;*/
+  /*  scrollbar-color: transparent transparent;*/
+  /*  overflow: -moz-scrollbars-none;*/
+  /*}*/
+
+
+  @-moz-document url-prefix() { /* Disable scrollbar Firefox */
+  html,body,v-container{
+    scrollbar-width: none;
+    scrollbar-color: transparent transparent;
   }
+  }
+
+  html { /* Disable scrollbar Chrome & Chromium */
+    overflow: scroll;
+    overflow-x: hidden;
+  }
+  ::-webkit-scrollbar {
+    width: 0px;  /* Remove scrollbar space */
+    background: transparent;  /* Optional: just make scrollbar invisible */
+  }
+
+
+
+
+  /*hide scrollbar for chrome / firefox*/
   /*.element::-webkit-scrollbar { width: 0 !important }*/
   /*.element { overflow: -moz-scrollbars-none; }*/
+  .my-13 {
+    margin-bottom:  52px;
+    margin-top:     52px;
+  }
 
+  .mb-100 {
+    margin-bottom:  300px;
+  }
+  /*$(window).on("mousewheel", function(e){*/
+  /*  e.preventDefault();*/
+  /*});*/
+/*  TODO : see disable user scroll*/
 </style>
