@@ -168,7 +168,6 @@ class UserController extends AbstractController
         $error = false;
            
         if ($request->isMethod('POST')) {
-
             $data = json_decode($request->getContent(), true);
           
 
@@ -206,7 +205,6 @@ class UserController extends AbstractController
             $user->setBirthYear($data['birthYear']);
 
             $userManager->updateUser($user);
-           
         }
         
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
