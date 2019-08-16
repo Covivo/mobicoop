@@ -26,7 +26,6 @@ namespace App\Article\Controller;
 use App\Article\Service\ArticleManager;
 use App\Article\Entity\Paragraph;
 use App\TranslatorTrait;
-use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Controller class for paragraph up position change.

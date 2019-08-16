@@ -52,7 +52,7 @@ class SectionRepository
      * Find the following section of a given section.
      *
      * @param Section $section
-     * @return void
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function findNext(Section $section)
     {
@@ -71,7 +71,7 @@ class SectionRepository
      * Find the previous section of a given section.
      *
      * @param Section $section
-     * @return void
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function findPrevious(Section $section)
     {

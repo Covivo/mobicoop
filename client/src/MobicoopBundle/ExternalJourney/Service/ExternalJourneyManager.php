@@ -39,9 +39,7 @@ class ExternalJourneyManager
         }
         $this->dataProvider->setFormat($format);
         $response = $this->dataProvider->getCollection($params);
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
+        return $response->getValue();
         return null;
     }
 
@@ -58,9 +56,7 @@ class ExternalJourneyManager
         }
         $this->dataProvider->setFormat($format);
         $response = $this->dataProvider->getCollection();
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
+        return $response->getValue();
         return null;
     }
 }

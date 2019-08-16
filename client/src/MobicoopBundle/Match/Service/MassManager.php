@@ -117,9 +117,7 @@ class MassManager
     public function analyzeMass(int $id)
     {
         $response = $this->dataProvider->getSpecialItem($id, "analyze");
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
+        return $response->getValue();
         return null;
     }
 
@@ -133,9 +131,7 @@ class MassManager
     public function reAnalyzeMass(int $id)
     {
         $response = $this->dataProvider->getSpecialItem($id, "reanalyze");
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
+        return $response->getValue();
         return null;
     }
 
@@ -153,9 +149,7 @@ class MassManager
             'maxSuperiorDistanceRatio'=>self::MAX_SUPERIOR_DISTANCE_RATIO
         ];
         $response = $this->dataProvider->getSpecialItem($id, "match", $params);
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
+        return $response->getValue();
         return null;
     }
 
@@ -173,9 +167,7 @@ class MassManager
             'maxSuperiorDistanceRatio'=>self::MAX_SUPERIOR_DISTANCE_RATIO
         ];
         $response = $this->dataProvider->getSpecialItem($id, "rematch", $params);
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
+        return $response->getValue();
         return null;
     }
 
@@ -189,9 +181,7 @@ class MassManager
     public function computeMass(int $id)
     {
         $response = $this->dataProvider->getSpecialItem($id, "compute");
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
+        return $response->getValue();
         return null;
     }
 
@@ -205,9 +195,7 @@ class MassManager
     public function workingPlacesMass(int $id)
     {
         $response = $this->dataProvider->getSpecialItem($id, "workingplaces");
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
+        return $response->getValue();
         return null;
     }
 }

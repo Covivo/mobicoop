@@ -55,7 +55,7 @@ class Trace
         $ctp = func_num_args();
         $args = func_get_args();
         if($ctp!=1 && $ctp!=8) throw new InvalidArgumentException('Bad parameters provided!');
-        list($namespace,  $short_class,  $class,  $type,  $function,  $file,  $line,  $args) = reset($args);
+        list($namespace,  $short_class,  $class,  $type,  $function,  $file,  $line,  $args) = array_values((($ctp==1)?reset($args): $args));
         $this->namespace = $namespace;
         $this->short_class = $short_class;
         $this->class = $class;

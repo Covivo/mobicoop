@@ -142,9 +142,7 @@ class UserManager
     public function getMasses(int $id)
     {
         $response = $this->dataProvider->getSubCollection($id, Mass::class);
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
+        return $response->getValue();
         return null;
     }
 
@@ -302,9 +300,7 @@ class UserManager
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
         $response = $this->dataProvider->getSubCollection($user->getId(), 'thread', 'threads');
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
+        return $response->getValue();
         return null;
     }
     public function findByPhone(string $getTelephone)
@@ -349,6 +345,9 @@ class UserManager
         $response = $this->dataProvider->putSpecial($user, ['password_token'], $operation);
         if ($response->getCode() == 200) {
             $this->logger->info('User Token Update | Start');
+            return $response->getValue();
+        }
+        else{
             return $response->getValue();
         }
         $this->logger->info('User Token Update | Fail');

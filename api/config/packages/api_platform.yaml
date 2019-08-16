@@ -86,7 +86,7 @@ api_platform:
         Doctrine\ORM\ORMException: 'HTTP_SERVICE_UNAVAILABLE'
         Doctrine\ORM\Mapping\MappingException: 'HTTP_SERVICE_UNAVAILABLE'
         DOMException: 'HTTP_INTERNAL_SERVER_ERROR'
-#        ErrorException: 'HTTP_INTERNAL_SERVER_ERROR'
+        ErrorException: 'HTTP_INTERNAL_SERVER_ERROR'
         ImagickDrawException: 'HTTP_INTERNAL_SERVER_ERROR'
         ImagickException: 'HTTP_INTERNAL_SERVER_ERROR'
         ImagickKernelException: 'HTTP_INTERNAL_SERVER_ERROR'

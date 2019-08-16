@@ -70,9 +70,7 @@ class CommunityManager
     public function getCommunities()
     {
         $response = $this->dataProvider->getCollection();
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
+        return $response->getValue();
         return null;
     }
 
@@ -84,9 +82,7 @@ class CommunityManager
     public function getCommunity($id)
     {
         $response = $this->dataProvider->getItem($id);
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
+        return $response->getValue();
         return null;
     }
 

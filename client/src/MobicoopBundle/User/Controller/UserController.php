@@ -25,6 +25,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Controller;
 
 use App\Communication\Entity\Email;
 use Herrera\Json\Exception\Exception;
+use Http\Client\Exception\HttpException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -300,8 +301,6 @@ class UserController extends AbstractController
             } else {
                 $data= $userManager->updateUserToken($user);
                 if (!empty($data)) {
-                    return $this->redirectToRoute('user_password_forgot');
-                } else {
                     return $this->redirectToRoute('user_password_forgot');
                 }
             }

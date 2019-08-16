@@ -53,10 +53,8 @@ class AskManager
     public function getAsk(int $id)
     {
         $response = $this->dataProvider->getItem($id);
-        if ($response->getCode() == 200) {
             $ask = $response->getValue();
             return $ask;
-        }
         return null;
     }
     
@@ -70,9 +68,7 @@ class AskManager
     public function updateAsk(Ask $ask)
     {
         $response = $this->dataProvider->put($ask);
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
+        return $response->getValue();
         return null;
     }
 
@@ -87,9 +83,7 @@ class AskManager
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
         $response = $this->dataProvider->getSubCollection($idAsk, 'askhistory', 'ask_histories');
-        if ($response->getCode() == 200) {
             return $response->getValue();
-        }
         return null;
     }
 }

@@ -26,7 +26,6 @@ namespace App\Carpool\Controller;
 use App\Carpool\Service\AskManager;
 use App\Carpool\Entity\Ask;
 use App\TranslatorTrait;
-use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 
 /**
  * Controller class for ask post.

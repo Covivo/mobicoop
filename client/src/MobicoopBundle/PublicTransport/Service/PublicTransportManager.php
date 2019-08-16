@@ -91,9 +91,7 @@ class PublicTransportManager
             'algorithm'             => $algorithm,
             'modes'                 => $modes
         ]);
-        if ($response->getCode() == 200) {
             return $response->getValue();
-        }
         return null;
     }
 
@@ -126,9 +124,7 @@ class PublicTransportManager
             'transportModes'      => $transportModes,
             'keywords'      => $keywords
         ]);
-        if ($response->getCode() == 200) {
             return $response->getValue();
-        }
         return null;
     }
 
@@ -153,9 +149,7 @@ class PublicTransportManager
             'logicalId'       => $logicalId,
             'transportModes'       => $transportModes
         ]);
-        if ($response->getCode() == 200) {
             return $response->getValue();
-        }
         return null;
     }
 }
