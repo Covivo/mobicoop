@@ -422,7 +422,17 @@ class Address implements ResourceInterface, \JsonSerializable
              'streetAddress'        => $this->getStreetAddress(),
              'postalCode'           => $this->getPostalCode(),
              'addressLocality'      => $this->getAddressLocality(),
-             'name'                 => $this->getName() 
+             'name'                 => $this->getName(),
+             'addressCountry'       => $this->getAddressCountry(),
+             'countryCode'          => $this->getCountryCode(),
+             'county'               => $this->getCounty(),
+             'latitude'             => $this-> getLatitude(),
+             'localAdmin'           => $this-> getLocalAdmin(),
+             'longitude'            => $this-> getLongitude(),
+             'macroCounty'          => $this-> getMacroCounty(),
+             'macroRegion'          => $this-> getMacroRegion(),
+             'region'               => $this-> getRegion(),
+             'subLocality'          => $this-> getSubLocality(),
          ];
      }
 }
