@@ -18,12 +18,13 @@
     	</div>
   	</div>
 </section>
-
 <section class="section">
 	<div class="container">
 		<div id="profile">
     		<Profile :user={{app.user|json_encode()}}
-			geo-search-url="{{ geoCompleteUri }}" 
+			geo-search-url="{{ geoCompleteUri }}"
+ 			age-min="{{ ageMin }}"
+            age-max="{{ ageMax }}"
 			></Profile>
 		</div> 
     </div>

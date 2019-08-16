@@ -16,6 +16,8 @@
               <UpdateProfile
                 :user="user"
                 :geo-search-url="geoSearchUrl"
+                :age-min="ageMin"
+                :age-max="ageMax"
               />
             </v-tab-item>
             <v-tab>{{ $t("tabs.password") }}</v-tab>
@@ -61,6 +63,14 @@ export default {
       type: String,
       default: null
     },
+    ageMin: {
+      type: String,
+      default: null
+    },
+    ageMax: {
+      type: String,
+      default: null
+    }
   },
   data() {
     return {
