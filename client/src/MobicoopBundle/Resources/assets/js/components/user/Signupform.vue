@@ -14,149 +14,152 @@
           cols="2"
           align="center"
         >
+          <v-btn
+            color="primary"
+            class="mr-4 mb-100 mt-12"
+            @click="validate"
+          >
+            {{ $t('ui.button.register') }}
+          </v-btn>
+          <!--STEP 1-->
+          <v-form
+            ref="step 1"
+            v-model="step1"
+          >
+            <v-text-field
+              id="email"
+              v-model="form.email"
+              :rules="form.emailRules"
+              :label="$t('models.user.email.placeholder')+` *`"
+              name="email"
+              required
+            />
+            <v-text-field
+              v-model="form.telephone"
+              :label="$t('models.user.phone.placeholder')"
+              name="telephone"
+              @keypress="isNumber(event)"
+            />
+            <v-text-field
+              v-model="form.password"
+              :append-icon="form.showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              :rules="form.passwordRules"
+              :type="form.showPassword ? 'text' : 'password'"
+              name="password"
+              :label="$t('models.user.password.placeholder')+` *`"
+              required
+              @click:append="form.showPassword = !form.showPassword"
+            />
+            <v-btn
+              ref="button"
+              class="my-13"
+              color="primary"
+              :disabled="!step1"
+              @click="$vuetify.goTo('#givenName', options)"
+            >
+              {{ $t('ui.button.next') }}
+            </v-btn>
+          </v-form>
+
+          <!--STEP 2-->
+          <v-form
+            ref="step 2"
+            v-model="step2"
+          >
+            <v-text-field
+              id="givenName"
+              v-model="form.givenName"
+              :rules="form.givenNameRules"
+              :label="$t('models.user.givenName.placeholder')+` *`"
+              class="givenName"
+              required
+              :disabled="!step1"
+            />
+            <v-text-field
+              v-model="form.familyName"
+              :rules="form.familyNameRules"
+              :label="$t('models.user.familyName.placeholder')+` *`"
+              class="familyName"
+              required
+              :disabled="!step1"
+            />
+            <v-btn
+              ref="button"
+              class="my-13"
+              color="primary"
+              :disabled="!step2"
+              @click="$vuetify.goTo('#gender', options)"
+            >
+              {{ $t('ui.button.next') }}
+            </v-btn>
+          </v-form>
+
+          <!--STEP 3-->
+          <v-form
+            ref="step 3"
+            v-model="step3"
+          >
+            <v-select
+              id="gender"
+              v-model="form.gender"
+              :items="form.genderItems"
+              item-text="genderItem"
+              item-value="genderValue"
+              :rules="form.genderRules"
+              :label="$t('models.user.gender.placeholder')+` *`"
+              required
+              :disabled="!step2"
+            />
+            <v-btn
+              ref="button"
+              class="my-13"
+              color="primary"
+              :disabled="!step3"
+              @click="$vuetify.goTo('#birthYear', options)"
+            >
+              {{ $t('ui.button.next') }}
+            </v-btn>
+          </v-form>
+
+          <!--STEP 4-->
+          <v-form
+            ref="step 4"
+            v-model="step4"
+          >
+            <v-select
+              id="birthYear"
+              v-model="form.birthYear"
+              :items="years"
+              :rules="form.birthYearRules"
+              :label="$t('models.user.birthYear.placeholder')+` *`"
+              required
+              :disabled="!step3"
+            />
+            <v-btn
+              ref="button"
+              class="my-13"
+              color="primary"
+              :disabled="!step4"
+              @click="$vuetify.goTo('#homeAddress', options)"
+            >
+              {{ $t('ui.button.next') }}
+            </v-btn>
+          </v-form>
+
+          <!--STEP 5-->
           <v-form
             id="scrolled-content"
             ref="form"
             v-model="valid"
           >
-            <!--STEP 1-->
-            <v-form
-              ref="step 1"
-              v-model="step1"
-            >
-              <v-text-field
-                id="email"
-                v-model="form.email"
-                :rules="form.emailRules"
-                :label="$t('models.user.email.placeholder')+` *`"
-                name="email"
-                required
-              />
-              <v-text-field
-                v-model="form.telephone"
-                :label="$t('models.user.phone.placeholder')"
-                name="telephone"
-                @keypress="isNumber(event)"
-              />
-              <v-text-field
-                v-model="form.password"
-                :append-icon="form.showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                :rules="form.passwordRules"
-                :type="form.showPassword ? 'text' : 'password'"
-                name="password"
-                :label="$t('models.user.password.placeholder')+` *`"
-                required
-                @click:append="form.showPassword = !form.showPassword"
-              />
-              <v-btn
-                ref="button"
-                v-model="form.email"
-                class="my-13"
-                color="primary"
-                :disabled="!step1"
-                @click="$vuetify.goTo('#givenName', options)"
-              >
-                {{ $t('ui.button.next') }}
-              </v-btn>
-            </v-form>
-
-            <!--STEP 2-->
-            <v-form
-              ref="step 2"
-              v-model="step2"
-            >
-              <v-text-field
-                id="givenName"
-                v-model="form.givenName"
-                :rules="form.givenNameRules"
-                :label="$t('models.user.givenName.placeholder')+` *`"
-                class="givenName"
-                required
-              />
-              <v-text-field
-                v-model="form.familyName"
-                :rules="form.familyNameRules"
-                :label="$t('models.user.familyName.placeholder')+` *`"
-                class="familyName"
-                required
-              />
-              <v-btn
-                ref="button"
-                class="my-13"
-                color="primary"
-                :disabled="!step2"
-                @click="$vuetify.goTo('#gender', options)"
-              >
-                {{ $t('ui.button.next') }}
-              </v-btn>
-            </v-form>
-            <!--STEP 3-->
-            <v-form
-              ref="step 3"
-              v-model="step3"
-            >
-              <v-select
-                id="gender"
-                v-model="form.gender"
-                :items="form.genderItems"
-                item-text="genderItem"
-                item-value="genderValue"
-                :rules="form.genderRules"
-                :label="$t('models.user.gender.placeholder')+` *`"
-                class="gender"
-                required
-              />
-              <v-btn
-                ref="button"
-                class="my-13"
-                color="primary"
-                :disabled="!step3"
-                @click="$vuetify.goTo('#birthYear', options)"
-              >
-                {{ $t('ui.button.next') }}
-              </v-btn>
-            </v-form>
-
-            <!--STEP 4-->
-            <v-form
-              ref="step 4"
-              v-model="step4"
-            >
-              <v-select
-                id="birthYear"
-                v-model="form.birthYear"
-                :items="years"
-                :rules="form.birthYearRules"
-                :label="$t('models.user.birthYear.placeholder')+` *`"
-                class="birthYear"
-                required
-              >
-                <option
-                  v-for="year in years"
-                  :key="year.id"
-                  :value="year"
-                >
-                  <!--@TODO: convert option to vuetify -> no data available-->
-                  {{ year }}
-                </option>
-              </v-select>
-              <v-btn
-                ref="button"
-                class="my-13"
-                color="primary"
-                :disabled="!step4"
-                @click="$vuetify.goTo('#homeAddress', options)"
-              >
-                {{ $t('ui.button.next') }}
-              </v-btn>
-            </v-form>
-
-            <!--STEP 5-->
             <GeoComplete
               id="homeAddress"
               name="homeAddress"
               :label="$t('models.user.homeTown.placeholder')"
               :url="geoSearchUrl"
+              :hint="$t('models.user.homeTown.hint')"
+              persistent-hint
+              :disabled="!step4"
               @geoSelected="selectedGeo"
             />
             <v-checkbox
@@ -166,6 +169,7 @@
               :rules="form.checkbox"
               :label="$t('ui.pages.signup.chart.chartValid')"
               required
+              :disabled="!step4"
             />
             <v-btn
               color="primary"
@@ -218,7 +222,6 @@ export default {
       default: null
     }
   },
-
   data() {
     return {
       event: null,
@@ -236,7 +239,7 @@ export default {
       selected: null,
       duration: 1000,
       //offset : avoid being hidden by header
-      offset: 150,
+      offset: 180,
       easing: "easeOutQuad",
       container: "scroll-target",
 
@@ -281,7 +284,6 @@ export default {
         checkbox: [
           v => !!v || 'You must agree to continue!'
         ],
-        validation: null,//TODO : remove when finished
         addressCountry: null,
         addressLocality: null,
         countryCode: null,
@@ -320,7 +322,6 @@ export default {
   mounted: function () {
     // this.elem = document.getElementById ( "scrolled-content" )//TODO: REMOVE
     this.container = document.getElementById ( "scroll-target" )
-    // this.container.scrollTop = Math.floor ( this.elem.offsetHeight )
   },
   methods: {
     selectedGeo(val) {
@@ -340,97 +341,62 @@ export default {
       this.form.street = val.street;
       this.form.streetAddress = val.streetAddress;
       this.form.subLocality = val.subLocality;
-      this.form.postalCode = val.postalCode
+      this.form.postalCode = val.postalCode;
     },
-
-    checkForm: function (e) {
-      console.log("checking form");
-      if (this.form.email && this.form.telephone && this.form.password && this.form.givenName && this.form.familyName && this.form.gender && this.form.birthYear && this.form.validation === true) {
-        console.log("passed");
-        let userForm = new FormData;
-        for (let prop in this.form) {
-          console.log(prop);
-          let value = this.form[prop];
-          console.log(value);
-          // if(!value) continue;
-          // let renamedProp = `user_form[${prop}]`;
-          let renamedProp = prop === "createToken" ? prop : `user_form[${prop}]`;
-          userForm.append(renamedProp, value);
-          // userForm.set(prop, value);
-          // userForm.set(renamedProp, value);
-        }
-        axios
-          .post("/utilisateur/inscription", userForm, {
-            headers: {
-              "Content-Type": "multipart/form-data"
-            }
-          })
-          .then(function(response) {
-            // window.location.href = '/'; //@TODO : decommenter pour rediriger
-            console.log("is account created ?");
-            console.error(response);
-          })
-          .catch(function(error) {
-            console.error(error);
-          });
-      }
-      this.errors = [];
-
-      if (!this.form.email) {
-        this.errors.push(this.$t('models.user.email.errors.required'));
-      }
-      if (!this.form.telephone) {
-        this.errors.push(this.$t('models.user.phone.errors.required'));
-      }
-      if (!this.form.password) {
-        this.errors.push(this.$t('models.user.password.errors.required'));
-      }
-      if (!this.form.givenName) {
-        this.errors.push(this.$t('models.user.givenName.errors.required'));
-      }
-      if (!this.form.familyName) {
-        this.errors.push(this.$t('models.user.familyName.errors.required'));
-      }
-      if (!this.form.gender) {
-        this.errors.push(this.$t('models.user.gender.errors.required'));
-      }
-      if (!this.form.birthYear) {
-        this.errors.push(this.$t('models.user.birthYear.errors.required'));
-      }
-      // if (!this.form.longitude) {
-      //   this.errors.push(this.$t('models.user.homeTown.errors.required'));
-      // }//TODO : a retirer et mettre un texte (position pas obligatoire à fournir [..])
-      if (this.form.validation === false) {
-        this.errors.push(this.$t('ui.pages.signup.chart.errors.required'));
-      }
-      e.preventDefault();
-    },
-
     validate: function (e) {
-      let userForm = new FormData;
-      for (let prop in this.form) {
-        console.log(prop);
-        let value = this.form[prop];
-        console.log(value);
-        let renamedProp = prop === "createToken" ? prop : `user_form[${prop}]`;
-        userForm.append(renamedProp, value);
-        // userForm.set(prop, value);
-        // userForm.set(renamedProp, value);
-      }
-      axios
-        .post("/utilisateur/inscription", userForm, {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        })
-        .then(function(response) {
+      const params = new URLSearchParams();
+      // for (let prop in this.form) {
+      //   let value = this.form[prop];
+      //   params.append(prop,value);
+      // }
+      params.append('email', 'Fred');
+      params.append('telephone', '0444444444');
+      params.append('password', 'Flintstone');
+      params.append('givenName', 'Flintstone');
+      params.append('familyName', 'Flintstone');
+      params.append('gender', '1');
+      params.append('birthYear', '1997');
+
+      //street
+      params.append('addressCountry', null);
+      params.append('addressLocality', null);
+      params.append('countryCode', null);
+      params.append('county', null);
+      params.append('latitude', null);
+      params.append('localAdmin', null);
+      params.append('longitude', null);
+      params.append('macroCounty', null);
+      params.append('macroRegion', null);
+      params.append('name', null);
+      params.append('postalCode', null);
+      params.append('region', null);
+      params.append('street', null);
+      params.append('streetAddress', null);
+      params.append('subLocality', null);
+
+      axios.post('/utilisateur/inscription', params)
+        .then(function (response) {
           // window.location.href = '/'; //@TODO : decommenter pour rediriger
-          console.log("is account created ?");
-          console.error(response);
+          console.log(response);
         })
-        .catch(function(error) {
-          console.error(error);
+        .catch(function (error) {
+          console.log(error);
         });
+
+
+      // axios
+      //   .post("/utilisateur/inscription",
+      //     {
+      //       firstName: 'Fred',
+      //       lastName: 'Flintstone'
+      //     }
+      //   )
+      //   .then(function(response) {
+      //     console.error(response);
+      //   })
+      //   .catch(function(error) {
+      //     console.error(error);
+      //   });
     },
 
     isNumber: function(evt) {
@@ -444,41 +410,28 @@ export default {
     },
 
   }
+
 };
 </script>
 
 <style>
-  /*html,body,v-container{*/
-  /*  height: 100%;*/
-  /*  overflow-y:hidden;*/
-  /*  scrollbar-width: none;*/
-  /*  scrollbar-color: transparent transparent;*/
-  /*  overflow: -moz-scrollbars-none;*/
-  /*}*/
-
-
   @-moz-document url-prefix() { /* Disable scrollbar Firefox */
-  html,body,v-container{
-    scrollbar-width: none;
-    scrollbar-color: transparent transparent;
-  }
+    html,body,v-container{
+      scrollbar-width: none;
+      scrollbar-color: transparent transparent;
+    }
   }
 
-  html { /* Disable scrollbar Chrome & Chromium */
-    overflow: scroll;
-    overflow-x: hidden;
-  }
   ::-webkit-scrollbar {
     width: 0px;  /* Remove scrollbar space */
     background: transparent;  /* Optional: just make scrollbar invisible */
   }
 
+  /*html,body { !* Disable scrollbar Chrome & Chromium *!*/
+  /*  overflow: scroll;*/
+  /*  overflow-y: hidden;*/
+  /*}*/
 
-
-
-  /*hide scrollbar for chrome / firefox*/
-  /*.element::-webkit-scrollbar { width: 0 !important }*/
-  /*.element { overflow: -moz-scrollbars-none; }*/
   .my-13 {
     margin-bottom:  52px;
     margin-top:     52px;
@@ -487,8 +440,21 @@ export default {
   .mb-100 {
     margin-bottom:  300px;
   }
+
+
   /*$(window).on("mousewheel", function(e){*/
   /*  e.preventDefault();*/
   /*});*/
-/*  TODO : see disable user scroll*/
+
+
+  /*$(window).on("wheel mousewheel", function(e){*/
+  /*if(e.originalEvent.deltaY > 0) {*/
+  /*  e.preventDefault();*/
+  /*  return;*/
+  /*} else if (e.originalEvent.wheelDeltaY < 0) {*/
+  /*  e.preventDefault();*/
+  /*  return;*/
+  /*}*/
+  /*});*/
+  /*  TODO : see disable user scroll*/
 </style>

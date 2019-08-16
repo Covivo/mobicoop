@@ -94,22 +94,28 @@ class UserController extends AbstractController
      */
     public function userSignUp(UserManager $userManager, Request $request, TranslatorInterface $translator)
     {
-        $this->denyAccessUnlessGranted('register');
-
+//        $this->denyAccessUnlessGranted('register');
+//
         $user = new User();
         $address = new Address();
-        $form = $this->createForm(UserForm::class, $user, ['validation_groups'=>['signUp']]);
+//        $form = $this->createForm(UserForm::class, $user, ['validation_groups'=>['signUp']]);
         $error = false;
         $success = false;
         
         if ($request->isMethod('POST')) {
-            $createToken = $request->request->get('createToken');
-            if (!$this->isCsrfTokenValid('user-signup', $createToken)) {
-                return  new Response('Broken Token CSRF ', 403);
-            }
+//            $createToken = $request->request->get('createToken');
+//            if (!$this->isCsrfTokenValid('user-signup', $createToken)) {
+//                return  new Response('Broken Token CSRF ', 403);
+//            }
 
             //get all data from form (user + homeAddress)
-            $data = $request->request->get($form->getName());
+//            var_dump($request);
+//            var_dump($request->request->get("familyName"));
+            $data = $request->request->all();
+//            var_dump($data['familyName']);
+//            var_dump($request->request);
+//            exit;
+//            $data = $request->request->get($form->getName());
             // pass homeAddress info into address entity
             $address->setAddressCountry($data['addressCountry']);
             $address->setAddressLocality($data['addressLocality']);
@@ -144,12 +150,12 @@ class UserController extends AbstractController
             $userManager->createUser($user);
         }
  
-        if (!$form->isSubmitted()) {
+//        if (!$form->isSubmitted()) {
             return $this->render('@Mobicoop/user/signup.html.twig', [
                 'error' => $error
             ]);
-        }
-        return $this->json(['error' => $error, 'success' => $success]);
+//        }
+//        return $this->json(['error' => $error, 'success' => $success]);
     }
 
     /**
