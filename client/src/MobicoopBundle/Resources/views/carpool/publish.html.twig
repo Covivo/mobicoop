@@ -9,7 +9,10 @@
 {% endblock %}
 {% block main %}
 
-  <ad-publish geo-search-url="{{ geoCompleteUri }}"></ad-publish>
+  <ad-publish 
+    geo-search-url="{{ geoCompleteUri }}" 
+    :user={{app.user|json_encode()}} 
+  />
 
 {% endblock %}
 {% block javascripts %}

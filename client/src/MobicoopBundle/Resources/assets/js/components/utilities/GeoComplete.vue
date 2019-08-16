@@ -5,6 +5,7 @@
       :loading="isLoading"
       :items="items"
       :label="label"
+      :hint="hint"
       :search-input.sync="search"
       hide-no-data
       clearable
@@ -12,8 +13,10 @@
       color="success"
       return-object
       no-filter
+      persistent-hint
       :required="required"
       :rules="geoRules"
+      :disabled="disabled"
       @change="changedAddress()"
     >
       <!-- template for selected item  -->
@@ -64,6 +67,11 @@ export default {
     url: defaultString,
     label: defaultString,
     token: defaultString,
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    hint: null,
     required: Boolean,
     requiredError: defaultString,
     name: String,

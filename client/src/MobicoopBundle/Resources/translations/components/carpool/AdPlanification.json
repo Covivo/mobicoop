@@ -11,9 +11,16 @@
         },
         "returnTime" : {
             "label": "Heure de retour"
-        } ,
+        },
+        "regularOutwardTime": {
+            "label": "Départ à"
+        },
+        "regularReturnTime" : {
+            "label": "Retour à"
+        },
         "returnTrip": {
             "label": "Retour"
-        }
+        },
+        "addSchedule": "Ajouter un créneau"
     }
 }

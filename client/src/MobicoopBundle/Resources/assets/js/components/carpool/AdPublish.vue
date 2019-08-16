@@ -6,7 +6,9 @@
         justify="center"
       >
         <v-col
-          cols="6"
+          cols="12"
+          md="8"
+          xl="6"
           align="center"
         >
           <h1>{{ $t('title') }}</h1>
@@ -25,7 +27,9 @@
         justify="center"
       >
         <v-col
-          cols="6"
+          cols="12"
+          md="8"
+          xl="6"
           align="center"
         >
           <v-stepper
@@ -41,7 +45,7 @@
               <!-- Step 1 : search journey -->
               <v-stepper-step
                 editable
-                step="1"
+                :step="1"
                 color="success"
               >
                 {{ $t('stepper.header.search_journey') }}
@@ -51,7 +55,7 @@
               <!-- Step 2 : planification -->
               <v-stepper-step
                 editable
-                step="2"
+                :step="2"
                 color="success"
               >
                 {{ $t('stepper.header.planification') }}
@@ -61,7 +65,7 @@
               <!-- Step 3 : map -->
               <v-stepper-step
                 editable
-                step="3"
+                :step="3"
                 color="success"
               >
                 {{ $t('stepper.header.map') }}
@@ -71,7 +75,7 @@
               <!-- Step 4 : passengers (if driver) -->
               <v-stepper-step
                 editable
-                step="4"
+                :step="4"
                 color="success"
               >
                 {{ $t('stepper.header.passengers') }}
@@ -81,7 +85,7 @@
               <!-- Step 5 : participation (if driver) -->
               <v-stepper-step
                 editable
-                step="5"
+                :step="5"
                 color="success"
               >
                 {{ $t('stepper.header.participation') }}
@@ -91,7 +95,7 @@
               <!-- Step 6 : message -->
               <v-stepper-step
                 editable
-                step="6"
+                :step="6"
                 color="success"
               >
                 {{ $t('stepper.header.message') }}
@@ -102,7 +106,7 @@
               <v-stepper-step
                 color="success"
                 editable
-                step="7"
+                :step="7"
               >
                 {{ $t('stepper.header.summary') }}
               </v-stepper-step>
@@ -127,6 +131,7 @@
               <v-stepper-content step="2">
                 <ad-planification 
                   :init-outward-date="outwardDate"
+                  :regular="regular"
                   @change="planificationChanged" 
                 />
               </v-stepper-content>
@@ -305,6 +310,7 @@
                   >
                     <v-text-field 
                       v-model="price"
+                      :disabled="distance<=0"
                       type="number"
                       suffix="€"
                       :hint="hintPricePerKm"
@@ -372,7 +378,7 @@
         </v-btn>
 
         <v-btn
-          v-if="step < 7"
+          v-if="step < 7 && originAddress != null && destinationAddress != null"
           rounded
           color="primary"
           align-center
@@ -444,10 +450,8 @@ export default {
       outwardDate: null,
       originAddress: null,
       destinationAddress: null,
-      step: {
-        type: Number,
-        default: 1
-      },
+      regular: false,
+      step:1,
       step1: {
         type: Object,
         default: {}
@@ -495,6 +499,7 @@ export default {
       this.outwardDate = search.date;
       this.originAddress = search.origin;
       this.destinationAddress = search.destination;
+      this.regular = search.regular;
     },
     planificationChanged(planification) {
       this.step2 = planification;

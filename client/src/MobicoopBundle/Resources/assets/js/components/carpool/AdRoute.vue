@@ -38,9 +38,7 @@
           icon
           @click="addWaypoint"
         >
-          <v-icon
-            large
-          >
+          <v-icon>
             mdi-plus-circle-outline
           </v-icon>
         </v-btn>
@@ -76,9 +74,7 @@
           icon
           @click="removeWaypoint(0)"
         >
-          <v-icon
-            large
-          >
+          <v-icon>
             mdi-close-circle-outline
           </v-icon>
         </v-btn>
@@ -111,9 +107,7 @@
           icon
           @click="removeWaypoint(1)"
         >
-          <v-icon
-            large
-          >
+          <v-icon>
             mdi-close-circle-outline
           </v-icon>
         </v-btn>
@@ -146,9 +140,7 @@
           icon
           @click="removeWaypoint(2)"
         >
-          <v-icon
-            large
-          >
+          <v-icon>
             mdi-close-circle-outline
           </v-icon>
         </v-btn>
@@ -180,9 +172,7 @@
           icon
           @click="removeWaypoint(3)"
         >
-          <v-icon
-            large
-          >
+          <v-icon>
             mdi-close-circle-outline
           </v-icon>
         </v-btn>

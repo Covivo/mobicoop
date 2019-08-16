@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-form>
+    <v-form v-if="!regular">
       <!-- Punctual -->
       <!-- First row -->
       <v-row
@@ -172,8 +172,200 @@
           </v-menu>
         </v-col>
       </v-row>
-
+    </v-form>
+    
     <!-- Regular -->
+    <v-form v-else>
+      <!-- we have a maximum of 7 different schedules, we iterate on them -->
+      <v-row
+        v-for="item in activeSchedules"
+        :key="item.id"
+        align="center"
+        justify="center"
+      >
+        <v-col
+          cols="8"
+        >
+          <!-- Schedule -->
+          <v-card>
+            <!-- Checkboxes for the days -->
+            <v-row
+              align="center"
+              justify="space-around"
+              dense
+            >
+              <v-checkbox
+                v-model="item.mon"
+                label="L"
+              />
+              <v-checkbox
+                v-model="item.tue"
+                label="Ma"
+              />
+              <v-checkbox
+                v-model="item.wed"
+                label="Me"
+              />
+              <v-checkbox
+                v-model="item.thu"
+                label="J"
+              />
+              <v-checkbox
+                v-model="item.fri"
+                label="V"
+              />
+              <v-checkbox
+                v-model="item.sat"
+                label="S"
+              />
+              <v-checkbox
+                v-model="item.sun"
+                label="D"
+              />
+            </v-row>
+
+            <!-- Times -->
+            <v-row
+              align="center"
+              justify="space-around"
+              dense
+            >
+              <!-- Outward time -->
+              <v-col
+                cols="5"
+              >
+                <v-menu
+                  v-model="item.menuOutwardTime"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                  full-width
+                  max-width="290px"
+                  min-width="290px"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      v-model="item.outwardTime"
+                      :label="$t('regularOutwardTime.label')"
+                      prepend-icon=""
+                      readonly
+                      v-on="on"
+                    >
+                      <v-icon
+                        slot="prepend"
+                      >
+                        mdi-arrow-right-circle
+                      </v-icon>
+                    </v-text-field>
+                  </template>
+                  <!-- 
+                    we can't use $refs with v-for : https://vuejs.org/v2/guide/components-edge-cases.html#Accessing-Child-Component-Instances-amp-Child-Elements 
+                    because $refs are not reactive, we have to use a custom method closeOutwardTime() which will close the menu
+                    -->
+                  <v-time-picker
+                    v-if="item.menuOutwardTime"
+                    v-model="item.outwardTime"
+                    no-title
+                    format="24hr"
+                    @click:minute="closeOutwardTime(item.id)"
+                    @change="change"
+                  />
+                </v-menu>
+              </v-col>
+
+              <!-- Return time -->
+              <v-col
+                cols="5"
+              >
+                <v-menu
+                  v-model="item.menuReturnTime"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                  full-width
+                  max-width="290px"
+                  min-width="290px"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      v-model="item.returnTime"
+                      :label="$t('regularReturnTime.label')"
+                      :hint="$t('ui.form.optional')"
+                      persistent-hint
+                      prepend-icon=""
+                      readonly
+                      v-on="on"
+                    >
+                      <v-icon
+                        slot="prepend"
+                      >
+                        mdi-arrow-left-circle
+                      </v-icon>
+                    </v-text-field>
+                  </template>
+                  <!-- 
+                    we can't use $refs with v-for : https://vuejs.org/v2/guide/components-edge-cases.html#Accessing-Child-Component-Instances-amp-Child-Elements 
+                    because $refs are not reactive, we have to use a custom method close() which will close the menu
+                    -->
+                  <v-time-picker
+                    v-if="item.menuReturnTime"
+                    v-model="item.returnTime"
+                    no-title
+                    format="24hr"
+                    @click:minute="closeReturnTime(item.id)"
+                    @change="change"
+                  />
+                </v-menu>
+              </v-col>
+            </v-row>
+            
+            <!-- Remove schedule -->
+            <v-row
+              align="center"
+              justify="end"
+              dense
+            >
+              <v-col
+                cols="2"
+              >
+                <v-btn
+                  v-if="item.id>1"
+                  text
+                  icon
+                  @click="removeSchedule(item.id)"
+                >
+                  <v-icon>
+                    mdi-delete-circle
+                  </v-icon>
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-col>
+      </v-row>
+
+      <!-- Add schedule -->
+      <v-row
+        v-if="!this.schedules[6].visible"
+        align="center"
+        justify="center"
+        dense
+      >
+        <v-col
+          cols="8"
+        >
+          <v-btn
+            text
+            icon
+            @click="addSchedule"
+          >
+            <v-icon>
+              mdi-plus-circle-outline
+            </v-icon>
+          </v-btn>
+          {{ $t('addSchedule') }}
+        </v-col>
+      </v-row>
     </v-form>
   </v-container>
 </template>
@@ -212,7 +404,103 @@ export default {
       menuReturnDate: false,
       menuReturnTime: false,
       returnTrip: false,
-      locale: this.$i18n.locale
+      locale: this.$i18n.locale,
+      // todo : refactor the following horror with default types...
+      schedules: [
+        {
+          id:1,
+          visible: true,
+          mon: false,
+          tue: false,
+          wed: false,
+          thu: false,
+          fri: false,
+          sat: false,
+          sun: false,
+          outwardTime: null,
+          returnTime: null,
+          menuOutwardTime: false,
+          menuReturnTime: false
+        },
+        {
+          id:2,
+          visible: false,
+          mon: false,
+          tue: false,
+          wed: false,
+          thu: false,
+          fri: false,
+          sat: false,
+          sun: false,
+          outwardTime: null,
+          returnTime: null
+        },
+        {
+          id:3,
+          visible: false,
+          mon: false,
+          tue: false,
+          wed: false,
+          thu: false,
+          fri: false,
+          sat: false,
+          sun: false,
+          outwardTime: null,
+          returnTime: null
+        },
+        {
+          id:4,
+          visible: false,
+          mon: false,
+          tue: false,
+          wed: false,
+          thu: false,
+          fri: false,
+          sat: false,
+          sun: false,
+          outwardTime: null,
+          returnTime: null
+        },
+        {
+          id:5,
+          visible: false,
+          mon: false,
+          tue: false,
+          wed: false,
+          thu: false,
+          fri: false,
+          sat: false,
+          sun: false,
+          outwardTime: null,
+          returnTime: null
+        },
+        {
+          id:6,
+          visible: false,
+          mon: false,
+          tue: false,
+          wed: false,
+          thu: false,
+          fri: false,
+          sat: false,
+          sun: false,
+          outwardTime: null,
+          returnTime: null
+        },
+        {
+          id:7,
+          visible: false,
+          mon: false,
+          tue: false,
+          wed: false,
+          thu: false,
+          fri: false,
+          sat: false,
+          sun: false,
+          outwardTime: null,
+          returnTime: null
+        }
+      ]
     };
   },
   computed: {
@@ -227,6 +515,11 @@ export default {
       return this.returnDate
         ? moment(this.returnDate).format(this.$t("ui.i18n.date.format.fullDate"))
         : "";
+    },
+    activeSchedules() {
+      return this.schedules.filter(function(schedule) {
+        return schedule.visible;
+      });
     }
   },
   watch: {
@@ -241,12 +534,45 @@ export default {
         outwardTime: this.outwardTime,
         returnDate: this.returnDate,
         returnTime: this.returnTime,
-        returnTrip: this.returnTrip
+        returnTrip: this.returnTrip,
+        schedules: this.schedules
       });
     },
     clearOutwardDate() {
       this.outwardDate = null;
       this.change();
+    },
+    closeOutwardTime(id) {
+      for (var i in this.schedules) {
+        if (this.schedules[i].id == id) {
+          this.schedules[i].menuOutwardTime = false;
+          break;
+        }
+      }
+    },
+    closeReturnTime(id) {
+      for (var i in this.schedules) {
+        if (this.schedules[i].id == id) {
+          this.schedules[i].menuReturnTime = false;
+          break;
+        }
+      }
+    },
+    removeSchedule(id) {
+      for (var i in this.schedules) {
+        if (this.schedules[i].id == id) {
+          this.schedules[i].visible = false;
+          break;
+        }
+      }
+    },
+    addSchedule() {
+      for (var i in this.schedules) {
+        if (!this.schedules[i].visible) {
+          this.schedules[i].visible = true;
+          break;
+        }
+      }
     }
   }
 };
