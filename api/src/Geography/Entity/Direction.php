@@ -43,7 +43,56 @@ use CrEOF\Spatial\PHP\Types\Geography\LineString;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={},
+ *      collectionOperations={
+ *          "search"={
+ *              "method"="GET",
+ *              "path"="/direction/search",
+ *              "normalization_context"={"groups"={"read"}},
+ *              "swagger_context" = {
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "origin_latitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The latitude of the origin point"
+ *                      },
+ *                      {
+ *                          "name" = "origin_longitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The longitude of the origin point"
+ *                      },
+ *                      {
+ *                          "name" = "destination_latitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The latitude of the destination point"
+ *                      },
+ *                      {
+ *                          "name" = "destination_longitude",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "number",
+ *                          "format" = "float",
+ *                          "description" = "The longitude of the destination point"
+ *                      },
+ *                      {
+ *                          "name" = "test",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "array",
+ *                          "description" = "array"
+ *                      }
+ *                  }
+ *              }
+ *          }
+ *      },
  *      itemOperations={"get"}
  * )
  *
