@@ -199,6 +199,26 @@
         />
       </v-col>
     </v-row>
+
+    <!-- Avoid motorway -->
+    <v-row
+      align="center"
+      justify="center"
+      dense
+    >
+      <v-col
+        cols="6"
+      >
+        <v-checkbox
+          v-model="avoidMotorway"
+          class="mt-0"
+          :label="$t('avoidMotorway')"
+          color="success"
+          hide-details
+          @change="emitEvent"
+        />
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -259,7 +279,8 @@ export default {
           visible: false,
           address: null
         },
-      ]
+      ],
+      avoidMotorway: false
     };
   },
   watch: {
@@ -287,7 +308,8 @@ export default {
       this.$emit("change", {
         origin: this.origin,
         destination: this.destination,
-        waypoints: this.waypoints
+        waypoints: this.waypoints,
+        avoidMotorway: this.avoidMotorway
       });
     },
     addWaypoint() {

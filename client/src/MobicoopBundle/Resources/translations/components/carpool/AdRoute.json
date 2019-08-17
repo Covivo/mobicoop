@@ -20,6 +20,7 @@
         },
         "waypoint4": {
             "label": "Etape 4"
-        }
+        },
+        "avoidMotorway": "Eviter l'autoroute"
     }
 }

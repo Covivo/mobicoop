@@ -465,10 +465,10 @@ export default {
         default: {}
       },
       step4: {
-        'seats': 1,
-        'luggage': false,
-        'bike': false,
-        'backSeats': false
+        seats: 1,
+        luggage: false,
+        bike: false,
+        backSeats: false
       },
       step6: {
         'message': null
