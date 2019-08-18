@@ -58,6 +58,11 @@ class GeoRouterProvider implements ProviderInterface
     private $geoTools;
     private $bearing;           // bearing will be common to all routes, we will calculate it once for all and share the value
     private $logger;
+    private $avoidMotorway;
+    // to limit the return to points, not full addresses
+    // used if we only need latitudes/longitudes
+    private $pointsOnly;
+
     
     /**
      * Constructor.
@@ -65,11 +70,13 @@ class GeoRouterProvider implements ProviderInterface
      * @param string $uri               The uri of the provider
      * @param boolean $detailDuration   Set to true to get the duration between 2 points
      */
-    public function __construct(string $uri=null, bool $detailDuration=false, GeoTools $geoTools, LoggerInterface $logger)
+    public function __construct(string $uri=null, bool $detailDuration=false, bool $pointsOnly=false, bool $avoidMotorway=false, GeoTools $geoTools, LoggerInterface $logger)
     {
         $this->uri = $uri;
         $this->bearing = 0;
         $this->detailDuration = $detailDuration;
+        $this->avoidMotorway = $avoidMotorway;
+        $this->pointsOnly = $pointsOnly;
         $this->collection = [];
         $this->geoTools = $geoTools;
         $this->logger = $logger;
@@ -103,6 +110,7 @@ class GeoRouterProvider implements ProviderInterface
                                 "&instructions=" . self::GR_INSTRUCTIONS .
                                 "&points_encoded=".self::GR_POINTS_ENCODED .
                                 ($this->detailDuration?'&details=time':'').
+                                ($this->avoidMotorway?'&avoid=motorway&ch.disable=true':'').
                                 "&elevation=" . self::GR_ELEVATION;
                             $getParams[$i] = $params;
                             $requestsOwner[$i] = $ownerId;
@@ -142,6 +150,7 @@ class GeoRouterProvider implements ProviderInterface
                                 "&instructions=" . self::GR_INSTRUCTIONS .
                                 "&points_encoded=".self::GR_POINTS_ENCODED .
                                 ($this->detailDuration?'&details=time':'').
+                                ($this->avoidMotorway?'&avoid=motorway&ch.disable=true':'').
                                 "&elevation=" . self::GR_ELEVATION;
                             $urls[$i] = $rparams;
                             $requestsOwner[$i] = $ownerId;
@@ -200,6 +209,7 @@ class GeoRouterProvider implements ProviderInterface
                         "&instructions=" . self::GR_INSTRUCTIONS .
                         "&points_encoded=".self::GR_POINTS_ENCODED .
                         ($this->detailDuration?'&details=time':'').
+                        ($this->avoidMotorway?'&avoid=motorway&ch.disable=true':'').
                         "&elevation=" . self::GR_ELEVATION;
                     $response = $dataProvider->getCollection($getParams);
                     $this->bearing = $this->geoTools->getRhumbLineBearing($params['points'][0]->getLatitude(), $params['points'][0]->getLongitude(), $params['points'][count($params['points'])-1]->getLatitude(), $params['points'][count($params['points'])-1]->getLongitude());
@@ -207,7 +217,7 @@ class GeoRouterProvider implements ProviderInterface
                 if ($response->getCode() == 200) {
                     $data = json_decode($response->getValue(), true);
                     foreach ($data["paths"] as $path) {
-                        $this->collection[] = self::deserialize($class, $path);
+                        $this->collection[] = $this->deserialize($class, $path);
                     }
                     return $this->collection;
                 }
@@ -231,7 +241,7 @@ class GeoRouterProvider implements ProviderInterface
     {
         switch ($class) {
             case Direction::class:
-                return self::deserializePath($data);
+                return $this->deserializePath($data);
                 break;
             default:
                 break;
@@ -413,18 +423,18 @@ class GeoRouterProvider implements ProviderInterface
      * @param bool $is3D        Data has elevation information
      * @return Address[]        The deserialized Addresses
      */
-    public static function deserializePoints(string $data, bool $encoded, bool $is3D)
+    public function deserializePoints(string $data, bool $encoded, bool $is3D)
     {
         $addresses = [];
         if ($encoded) {
             if ($coordinates = self::decodePath($data, $is3D)) {
                 foreach ($coordinates as $coordinate) {
-                    $addresses[] = self::createAddress($coordinate);
+                    $addresses[] = $this->createAddress($coordinate);
                 }
             }
         } elseif (isset($data['coordinates'])) {
             foreach ($data['coordinates'] as $coordinate) {
-                $addresses[] = self::createAddress($coordinate);
+                $addresses[] = $this->createAddress($coordinate);
             }
         }
         return $addresses;
@@ -494,17 +504,30 @@ class GeoRouterProvider implements ProviderInterface
         return ord(substr($str, $i, 1));
     }
     
-    private static function createAddress($coordinate)
+    private function createAddress($coordinate)
     {
-        $address = new Address();
-        if (isset($coordinate[0])) {
-            $address->setLongitude($coordinate[0]);
-        }
-        if (isset($coordinate[1])) {
-            $address->setLatitude($coordinate[1]);
-        }
-        if (isset($coordinate[2])) {
-            $address->setElevation($coordinate[2]);
+        if (!$this->pointsOnly) {
+            $address = new Address();
+            if (isset($coordinate[0])) {
+                $address->setLongitude($coordinate[0]);
+            }
+            if (isset($coordinate[1])) {
+                $address->setLatitude($coordinate[1]);
+            }
+            if (isset($coordinate[2])) {
+                $address->setElevation($coordinate[2]);
+            }
+        } else {
+            $address = [];
+            if (isset($coordinate[0])) {
+                $address['lon'] = $coordinate[0];
+            }
+            if (isset($coordinate[1])) {
+                $address['lat'] = $coordinate[1];
+            }
+            if (isset($coordinate[2])) {
+                $address['elv'] = $coordinate[2];
+            }
         }
         return $address;
     }

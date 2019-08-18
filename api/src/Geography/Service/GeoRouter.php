@@ -41,6 +41,10 @@ class GeoRouter
     private $batchTemp;
     private $geoTools;
     private $logger;
+    // to limit the return to points, not full addresses
+    // used if we only need latitudes/longitudes
+    private $pointsOnly; 
+    private $avoidMotorway;
 
     /**
      * Constructor.
@@ -55,6 +59,16 @@ class GeoRouter
         $this->batchTemp = $batchTemp;
         $this->geoTools = $geoTools;
         $this->logger = $logger;
+        $this->pointsOnly = false;
+        $this->avoidMotorway = false;
+    }
+
+    public function setPointsOnly(bool $pointsOnly) {
+        $this->pointsOnly = $pointsOnly;
+    }
+
+    public function setAvoidMotorway(bool $avoidMotorway) {
+        $this->avoidMotorway = $avoidMotorway;
     }
 
     /**
@@ -66,7 +80,7 @@ class GeoRouter
      */
     public function getRoutes(array $addresses, bool $detailDuration=false): ?array
     {
-        $georouter = new GeoRouterProvider($this->uri, $detailDuration, $this->geoTools, $this->logger);
+        $georouter = new GeoRouterProvider($this->uri, $detailDuration, $this->pointsOnly, $this->avoidMotorway, $this->geoTools, $this->logger);
         $params = [];
         $params['points'] = $addresses;
         $routes = $georouter->getCollection(Direction::class, '', $params);
@@ -82,7 +96,7 @@ class GeoRouter
      */
     public function getAsyncRoutes(array $addresses, bool $detailDuration=false): ?array
     {
-        $georouter = new GeoRouterProvider($this->uri, $detailDuration, $this->geoTools, $this->logger);
+        $georouter = new GeoRouterProvider($this->uri, $detailDuration, $this->pointsOnly, $this->avoidMotorway, $this->geoTools, $this->logger);
         $params = [];
         $params['arrayPoints'] = $addresses;
         $params['async'] = true;
@@ -101,7 +115,7 @@ class GeoRouter
      */
     public function getMultipleAsyncRoutes(array $addresses, bool $detailDuration=false): ?array
     {
-        $georouter = new GeoRouterProvider($this->uri, $detailDuration, $this->geoTools, $this->logger);
+        $georouter = new GeoRouterProvider($this->uri, $detailDuration, $this->pointsOnly, $this->avoidMotorway, $this->geoTools, $this->logger);
         $params = [];
         $params['arrayPoints'] = $addresses;
         $params['multipleAsync'] = true;
