@@ -322,7 +322,8 @@ class Deserializer
         if (isset($data["points"])) {
             $points = [];
             foreach ($data["points"] as $address) {
-                var_dump($address);exit;
+                var_dump($address);
+                exit;
                 $points[] = self::deserializeAddress($address);
             }
             $direction->setPoints($points);
