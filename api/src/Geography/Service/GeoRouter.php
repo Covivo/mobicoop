@@ -43,7 +43,7 @@ class GeoRouter
     private $logger;
     // to limit the return to points, not full addresses
     // used if we only need latitudes/longitudes
-    private $pointsOnly; 
+    private $pointsOnly;
     private $avoidMotorway;
 
     /**
@@ -63,11 +63,13 @@ class GeoRouter
         $this->avoidMotorway = false;
     }
 
-    public function setPointsOnly(bool $pointsOnly) {
+    public function setPointsOnly(bool $pointsOnly)
+    {
         $this->pointsOnly = $pointsOnly;
     }
 
-    public function setAvoidMotorway(bool $avoidMotorway) {
+    public function setAvoidMotorway(bool $avoidMotorway)
+    {
         $this->avoidMotorway = $avoidMotorway;
     }
 

@@ -46,48 +46,17 @@ use CrEOF\Spatial\PHP\Types\Geography\LineString;
  *      collectionOperations={
  *          "search"={
  *              "method"="GET",
- *              "path"="/direction/search",
+ *              "path"="/directions/search",
  *              "normalization_context"={"groups"={"read"}},
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
- *                          "name" = "origin_latitude",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "number",
- *                          "format" = "float",
- *                          "description" = "The latitude of the origin point"
- *                      },
- *                      {
- *                          "name" = "origin_longitude",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "number",
- *                          "format" = "float",
- *                          "description" = "The longitude of the origin point"
- *                      },
- *                      {
- *                          "name" = "destination_latitude",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "number",
- *                          "format" = "float",
- *                          "description" = "The latitude of the destination point"
- *                      },
- *                      {
- *                          "name" = "destination_longitude",
- *                          "in" = "query",
- *                          "required" = "true",
- *                          "type" = "number",
- *                          "format" = "float",
- *                          "description" = "The longitude of the destination point"
- *                      },
- *                      {
- *                          "name" = "test",
+ *                          "name" = "points",
  *                          "in" = "query",
  *                          "required" = "true",
  *                          "type" = "array",
- *                          "description" = "array"
+ *                          "format" = "float",
+ *                          "description" = "The points in the form points[x][longitude]&points[x][latitude]"
  *                      }
  *                  }
  *              }

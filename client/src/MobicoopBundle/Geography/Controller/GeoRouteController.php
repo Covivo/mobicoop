@@ -29,12 +29,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * TestAutoCompleteController.php
- * Class
- * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
- * Date: 27/11/2018
- * Time: 13:23
- *
+ * GeoRouter controller
  */
 
 class GeoRouteController extends AbstractController
@@ -46,8 +41,9 @@ class GeoRouteController extends AbstractController
      */
     public function GeoRoute(GeoRouterManager $geoRouterManager, Request $request)
     {
-        if ($results = $geoRouterManager->getGeoRoutes($request->query->get('search'))) {
-            return $this->json($results->getMember());
+        $points = ['points'=>$request->query->get('points')];
+        if ($results = $geoRouterManager->getGeoRoutes($points)) {
+            return $this->json($results);
         }
         return $this->json("error");
     }

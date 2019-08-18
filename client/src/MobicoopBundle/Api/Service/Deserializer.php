@@ -160,6 +160,9 @@ class Deserializer
             case Recipient::class:
                 return self::deserializeRecipient($data);
                 break;
+            case Direction::class:
+                return self::deserializeDirection($data);
+                break;
             default:
                 break;
         }
@@ -319,6 +322,7 @@ class Deserializer
         if (isset($data["points"])) {
             $points = [];
             foreach ($data["points"] as $address) {
+                var_dump($address);exit;
                 $points[] = self::deserializeAddress($address);
             }
             $direction->setPoints($points);

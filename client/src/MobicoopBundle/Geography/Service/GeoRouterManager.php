@@ -52,6 +52,7 @@ class GeoRouterManager
      */
     public function getGeoRoutes(array $params)
     {
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
         $response = $this->dataProvider->getSpecialCollection("search", $params);
         if ($response->getCode() == 200) {
             return $response->getValue();
