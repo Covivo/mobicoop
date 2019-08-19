@@ -491,7 +491,8 @@ class User implements UserInterface, EquatableInterface
        * @ORM\Column(name="language", type="string", nullable=true)
        */
     private $language= 'fr_FR';
-
+    
+    /**
      * @var array|null The permissions granted
      * @Groups("permissions")
      */
