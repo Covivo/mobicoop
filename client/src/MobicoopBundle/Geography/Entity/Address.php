@@ -411,10 +411,10 @@ class Address implements ResourceInterface, \JsonSerializable
         $this->displayLabel = $displayLabel;
     }
 
-     // If you want more info from user you just have to add it to the jsonSerialize function
-     public function jsonSerialize()
-     {
-         return
+    // If you want more info from user you just have to add it to the jsonSerialize function
+    public function jsonSerialize()
+    {
+        return
          [
              'id'                   => $this->getId(),
              'houseNumber'          => $this->getHouseNumber(),
@@ -434,5 +434,5 @@ class Address implements ResourceInterface, \JsonSerializable
              'region'               => $this-> getRegion(),
              'subLocality'          => $this-> getSubLocality(),
          ];
-     }
+    }
 }
