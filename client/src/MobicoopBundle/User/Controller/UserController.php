@@ -59,6 +59,8 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskHistoryManager;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use function GuzzleHttp\json_encode;
+use function MongoDB\BSON\fromJSON;
+use function MongoDB\BSON\toJSON;
 
 /**
  * Controller class for user related actions.
@@ -94,40 +96,34 @@ class UserController extends AbstractController
      */
     public function userSignUp(UserManager $userManager, Request $request, TranslatorInterface $translator)
     {
-        $this->denyAccessUnlessGranted('register');
-
         $user = new User();
         $address = new Address();
-        $form = $this->createForm(UserForm::class, $user, ['validation_groups'=>['signUp']]);
         $error = false;
-        $success = false;
-        
-        if ($request->isMethod('POST')) {
-            $createToken = $request->request->get('createToken');
-            if (!$this->isCsrfTokenValid('user-signup', $createToken)) {
-                return  new Response('Broken Token CSRF ', 403);
-            }
 
-            //get all data from form (user + homeAddress)
-            $data = $request->request->get($form->getName());
-            
-            // pass homeAddress info into address entity
-            $address->setAddressCountry($data['addressCountry']);
-            $address->setAddressLocality($data['addressLocality']);
-            $address->setCountryCode($data['countryCode']);
-            $address->setCounty($data['county']);
-            $address->setLatitude($data['latitude']);
-            $address->setLocalAdmin($data['localAdmin']);
-            $address->setLongitude($data['longitude']);
-            $address->setMacroCounty($data['macroCounty']);
-            $address->setMacroRegion($data['macroRegion']);
-            $address->setName($translator->trans('homeAddress', [], 'signup'));
-            $address->setPostalCode($data['postalCode']);
-            $address->setRegion($data['region']);
-            $address->setStreet($data['street']);
-            $address->setStreetAddress($data['streetAddress']);
-            $address->setSubLocality($data['subLocality']);
-            $address->setHome(true);
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+
+            // add home address to user if it exists
+            if (isset($data['address'])) {
+                $address->setAddressCountry($data['address']['addressCountry']);
+                $address->setAddressLocality($data['address']['addressLocality']);
+                $address->setCountryCode($data['address']['countryCode']);
+                $address->setCounty($data['address']['county']);
+                $address->setLatitude($data['address']['latitude']);
+                $address->setLocalAdmin($data['address']['localAdmin']);
+                $address->setLongitude($data['address']['longitude']);
+                $address->setMacroCounty($data['address']['macroCounty']);
+                $address->setMacroRegion($data['address']['macroRegion']);
+                $address->setName($translator->trans('homeAddress', [], 'signup'));
+                $address->setPostalCode($data['address']['postalCode']);
+                $address->setRegion($data['address']['region']);
+                $address->setStreet($data['address']['street']);
+                $address->setStreetAddress($data['address']['streetAddress']);
+                $address->setSubLocality($data['address']['subLocality']);
+                $address->setHome(true);
+            }
+            $user->addAddress($address);
+
 
             // pass front info into user form
             $user->setEmail($data['email']);
@@ -138,19 +134,13 @@ class UserController extends AbstractController
             $user->setGender($data['gender']);
             $user->setBirthYear($data['birthYear']);
 
-            // add the home address to the user
-            $user->addAddress($address);
-
             // create user in database
             $userManager->createUser($user);
         }
  
-        if (!$form->isSubmitted()) {
-            return $this->render('@Mobicoop/user/signup.html.twig', [
+        return $this->render('@Mobicoop/user/signup.html.twig', [
                 'error' => $error
             ]);
-        }
-        return $this->json(['error' => $error, 'success' => $success]);
     }
 
     /**
