@@ -175,12 +175,22 @@ class Proposal
     private $proposalLinked;
     
     /**
-     * @var User|null User who submits the proposal.
+     * @var User User for whom the proposal is submitted (in general the user itself, except when it is a "posting for").
      *
+     * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposals")
+     * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      */
     private $user;
+
+    /**
+     * @var User|null User that create the proposal for another user.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposalsDelegate")
+     * @Groups({"read","write"})
+     */
+    private $userDelegate;
 
     /**
      * @var ArrayCollection The waypoints of the proposal.
@@ -351,6 +361,18 @@ class Proposal
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getUserDelegate(): ?User
+    {
+        return $this->userDelegate;
+    }
+
+    public function setUserDelegate(?User $userDelegate): self
+    {
+        $this->userDelegate = $userDelegate;
 
         return $this;
     }

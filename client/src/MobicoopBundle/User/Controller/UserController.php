@@ -156,6 +156,7 @@ class UserController extends AbstractController
         // get the homeAddress
         $homeAddress = $user->getHomeAddress();
          
+        $form = $this->createForm(UserForm::class, $user, ['validation_groups'=>['update']]);
         $error = false;
            
         if ($request->isMethod('POST')) {
@@ -308,12 +309,12 @@ class UserController extends AbstractController
     /**
      * Reset password
      */
-    public function userPasswordReset(UserManager $userManager, Request $request, string $token, \Swift_Mailer $mailer)
+    public function userPasswordReset(UserManager $userManager, Request $request, string $token)
     {
         $user = $userManager->findByPwdToken($token);
         $error = false;
 
-        if (empty($user) || (time() - (int)$user->getPupdtime()->getTimestamp()) > 86400) {
+        if (empty($user) || (time() - (int)$user->getPwdTokenDate()->getTimestamp()) > 86400) {
             return $this->redirectToRoute('user_password_forgot');
         } else {
             $form = $this->createFormBuilder($user)

@@ -26,7 +26,6 @@ namespace App\Communication\Repository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use App\Communication\Entity\Notification;
-use App\Communication\Entity\Action;
 
 class NotificationRepository
 {

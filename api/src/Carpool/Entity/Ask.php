@@ -119,6 +119,15 @@ class Ask
     private $user;
 
     /**
+     * @var User|null User that create the proposal for another user.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="asksDelegate")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $userDelegate;
+
+    /**
      * @var Matching The matching at the origin of the ask.
      *
      * @Assert\NotBlank
@@ -227,6 +236,18 @@ class Ask
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getUserDelegate(): ?User
+    {
+        return $this->userDelegate;
+    }
+
+    public function setUserDelegate(?User $userDelegate): self
+    {
+        $this->userDelegate = $userDelegate;
 
         return $this;
     }
