@@ -127,6 +127,7 @@
             id="step3"
             ref="step 3"
             v-model="step3"
+            :hidden="!step1"
           >
             <v-select
               v-model="form.gender"
@@ -169,6 +170,7 @@
             id="step4"
             ref="step 4"
             v-model="step4"
+            :hidden="!step2"
           >
             <v-select
               v-model="form.birthYear"
@@ -209,6 +211,7 @@
             id="step5"
             ref="form"
             v-model="step5"
+            :hidden="!step3"
           >
             <GeoComplete
               name="homeAddress"
