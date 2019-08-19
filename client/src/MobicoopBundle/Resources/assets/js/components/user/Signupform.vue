@@ -1,3 +1,23 @@
+<!--* Copyright (c) 2018, MOBICOOP. All rights reserved.-->
+<!--* This project is dual licensed under AGPL and proprietary licence.-->
+<!--***************************-->
+<!--*    This program is free software: you can redistribute it and/or modify-->
+<!--*    it under the terms of the GNU Affero General Public License as-->
+<!--*    published by the Free Software Foundation, either version 3 of the-->
+<!--*    License, or (at your option) any later version.-->
+<!--*-->
+<!--*    This program is distributed in the hope that it will be useful,-->
+<!--*    but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--*    GNU Affero General Public License for more details.-->
+<!--*-->
+<!--*    You should have received a copy of the GNU Affero General Public License-->
+<!--*    along with this program.  If not, see <gnu.org/licenses>.-->
+<!--***************************-->
+<!--*    Licence MOBICOOP described in the file-->
+<!--*    LICENSE-->
+<!--**************************-->
+
 <template>
   <v-content>
     <v-container
@@ -14,13 +34,6 @@
           cols="2"
           align="center"
         >
-          <v-btn
-            color="primary"
-            class="mr-4 mb-100 mt-12"
-            @click="validate"
-          >
-            {{ $t('ui.button.register') }}
-          </v-btn>
           <!--STEP 1-->
           <v-form
             ref="step 1"
@@ -55,7 +68,7 @@
               class="my-13"
               color="primary"
               :disabled="!step1"
-              @click="$vuetify.goTo('#givenName', options)"
+              @click="$vuetify.goTo('#step2', options)"
             >
               {{ $t('ui.button.next') }}
             </v-btn>
@@ -63,11 +76,11 @@
 
           <!--STEP 2-->
           <v-form
+            id="step2"
             ref="step 2"
             v-model="step2"
           >
             <v-text-field
-              id="givenName"
               v-model="form.givenName"
               :rules="form.givenNameRules"
               :label="$t('models.user.givenName.placeholder')+` *`"
@@ -88,7 +101,7 @@
               class="my-13"
               color="primary"
               :disabled="!step2"
-              @click="$vuetify.goTo('#gender', options)"
+              @click="$vuetify.goTo('#step3', options)"
             >
               {{ $t('ui.button.next') }}
             </v-btn>
@@ -96,11 +109,11 @@
 
           <!--STEP 3-->
           <v-form
+            id="step3"
             ref="step 3"
             v-model="step3"
           >
             <v-select
-              id="gender"
               v-model="form.gender"
               :items="form.genderItems"
               item-text="genderItem"
@@ -115,7 +128,7 @@
               class="my-13"
               color="primary"
               :disabled="!step3"
-              @click="$vuetify.goTo('#birthYear', options)"
+              @click="$vuetify.goTo('#step4', options)"
             >
               {{ $t('ui.button.next') }}
             </v-btn>
@@ -123,11 +136,11 @@
 
           <!--STEP 4-->
           <v-form
+            id="step4"
             ref="step 4"
             v-model="step4"
           >
             <v-select
-              id="birthYear"
               v-model="form.birthYear"
               :items="years"
               :rules="form.birthYearRules"
@@ -140,7 +153,7 @@
               class="my-13"
               color="primary"
               :disabled="!step4"
-              @click="$vuetify.goTo('#homeAddress', options)"
+              @click="$vuetify.goTo('#step5', options)"
             >
               {{ $t('ui.button.next') }}
             </v-btn>
@@ -148,25 +161,24 @@
 
           <!--STEP 5-->
           <v-form
-            id="scrolled-content"
+            id="step5"
             ref="form"
-            v-model="valid"
+            v-model="step5"
           >
             <GeoComplete
-              id="homeAddress"
               name="homeAddress"
               :label="$t('models.user.homeTown.placeholder')"
               :url="geoSearchUrl"
               :hint="$t('models.user.homeTown.hint')"
               persistent-hint
               :disabled="!step4"
-              @geoSelected="selectedGeo"
+              @address-selected="selectedGeo"
             />
             <v-checkbox
               v-model="form.validation"
               class="check"
               color="primary"
-              :rules="form.checkbox"
+              :rules="form.checkboxRules"
               :label="$t('ui.pages.signup.chart.chartValid')"
               required
               :disabled="!step4"
@@ -174,7 +186,7 @@
             <v-btn
               color="primary"
               class="mr-4 mb-100 mt-12"
-              :disabled="!valid"
+              :disabled="!step5"
               @click="validate"
             >
               {{ $t('ui.button.register') }}
@@ -203,7 +215,6 @@ export default {
   components: {
     GeoComplete,
   },
-  //@TODO: Uncomment when geocomplete field is up
   props: {
     geoSearchUrl: {
       type: String,
@@ -224,29 +235,25 @@ export default {
   },
   data() {
     return {
+      //
       event: null,
-      errors: [],
-      valid: true,
 
       //step validators
       step1: true,
       step2: true,
       step3: true,
       step4: true,
+      step5: true,
+
 
       //scrolling data
       type: 'selector',
       selected: null,
       duration: 1000,
-      //offset : avoid being hidden by header
       offset: 180,
       easing: "easeOutQuad",
       container: "scroll-target",
 
-      homeAddress:{
-        required: true,
-        value: {}
-      },
       form:{
         createToken: this.sentToken,
         email: null,
@@ -281,24 +288,10 @@ export default {
         passwordRules: [
           v => !!v || this.$t("models.user.password.errors.required")
         ],
-        checkbox: [
-          v => !!v || 'You must agree to continue!'
-        ],
-        addressCountry: null,
-        addressLocality: null,
-        countryCode: null,
-        county: null,
-        latitude: null,
-        localAdmin: null,
-        longitude: null,
-        macroCounty: null,
-        macroRegion: null,
-        name: null,
-        postalCode: null,
-        region: null,
-        street: null,
-        streetAddress: null,
-        subLocality: null
+        homeAddress:null,
+        checkboxRules: [
+          v => !!v || this.$t("ui.pages.signup.chart.errors.required")
+        ]
       }
     };
   },
@@ -320,83 +313,36 @@ export default {
     }
   },
   mounted: function () {
-    // this.elem = document.getElementById ( "scrolled-content" )//TODO: REMOVE
+    //get scroll target
     this.container = document.getElementById ( "scroll-target" )
   },
   methods: {
-    selectedGeo(val) {
-      let name = val.name;
-      this[name] = val;
-      this.form.addressCountry = val.addressCountry;
-      this.form.addressLocality = val.addressLocality;
-      this.form.countryCode = val.countryCode;
-      this.form.county = val.county;
-      this.form.latitude = val.latitude;
-      this.form.localAdmin = val.localAdmin;
-      this.form.longitude = val.longitude;
-      this.form.macroCounty = val.macroCounty;
-      this.form.macroRegion = val.macroRegion;
-      this.form.name = val.name;
-      this.form.region = val.region;
-      this.form.street = val.street;
-      this.form.streetAddress = val.streetAddress;
-      this.form.subLocality = val.subLocality;
-      this.form.postalCode = val.postalCode;
+    selectedGeo(address) {
+      this.form.homeAddress = address;
     },
     validate: function (e) {
-      const params = new URLSearchParams();
-      // for (let prop in this.form) {
-      //   let value = this.form[prop];
-      //   params.append(prop,value);
-      // }
-      params.append('email', 'Fred');
-      params.append('telephone', '0444444444');
-      params.append('password', 'Flintstone');
-      params.append('givenName', 'Flintstone');
-      params.append('familyName', 'Flintstone');
-      params.append('gender', '1');
-      params.append('birthYear', '1997');
-
-      //street
-      params.append('addressCountry', null);
-      params.append('addressLocality', null);
-      params.append('countryCode', null);
-      params.append('county', null);
-      params.append('latitude', null);
-      params.append('localAdmin', null);
-      params.append('longitude', null);
-      params.append('macroCounty', null);
-      params.append('macroRegion', null);
-      params.append('name', null);
-      params.append('postalCode', null);
-      params.append('region', null);
-      params.append('street', null);
-      params.append('streetAddress', null);
-      params.append('subLocality', null);
-
-      axios.post('/utilisateur/inscription', params)
+      axios.post('/utilisateur/inscription',
+        {
+          email:this.form.email,
+          telephone:this.form.telephone,
+          password:this.form.password,
+          givenName:this.form.givenName,
+          familyName:this.form.familyName,
+          gender:this.form.gender,
+          birthYear:this.form.birthYear,
+          address:this.form.homeAddress
+        },{
+          headers:{
+            'content-type': 'application/json'
+          }
+        })
         .then(function (response) {
-          // window.location.href = '/'; //@TODO : decommenter pour rediriger
-          console.log(response);
+          window.location.href = '/';
+          // console.log(response);
         })
         .catch(function (error) {
           console.log(error);
         });
-
-
-      // axios
-      //   .post("/utilisateur/inscription",
-      //     {
-      //       firstName: 'Fred',
-      //       lastName: 'Flintstone'
-      //     }
-      //   )
-      //   .then(function(response) {
-      //     console.error(response);
-      //   })
-      //   .catch(function(error) {
-      //     console.error(error);
-      //   });
     },
 
     isNumber: function(evt) {
@@ -408,29 +354,23 @@ export default {
         return true;
       }
     },
-
   }
 
 };
 </script>
 
 <style>
-  @-moz-document url-prefix() { /* Disable scrollbar Firefox */
+  @-moz-document url-prefix() { /* Disable scrollbar for Firefox */
     html,body,v-container{
       scrollbar-width: none;
       scrollbar-color: transparent transparent;
     }
   }
 
-  ::-webkit-scrollbar {
-    width: 0px;  /* Remove scrollbar space */
-    background: transparent;  /* Optional: just make scrollbar invisible */
+  ::-webkit-scrollbar { /* Disable scrollbar for Chrome and Edge */
+    width: 0px;
+    background: transparent;
   }
-
-  /*html,body { !* Disable scrollbar Chrome & Chromium *!*/
-  /*  overflow: scroll;*/
-  /*  overflow-y: hidden;*/
-  /*}*/
 
   .my-13 {
     margin-bottom:  52px;
@@ -440,21 +380,4 @@ export default {
   .mb-100 {
     margin-bottom:  300px;
   }
-
-
-  /*$(window).on("mousewheel", function(e){*/
-  /*  e.preventDefault();*/
-  /*});*/
-
-
-  /*$(window).on("wheel mousewheel", function(e){*/
-  /*if(e.originalEvent.deltaY > 0) {*/
-  /*  e.preventDefault();*/
-  /*  return;*/
-  /*} else if (e.originalEvent.wheelDeltaY < 0) {*/
-  /*  e.preventDefault();*/
-  /*  return;*/
-  /*}*/
-  /*});*/
-  /*  TODO : see disable user scroll*/
 </style>
