@@ -1,163 +1,206 @@
+<!--* Copyright (c) 2018, MOBICOOP. All rights reserved.-->
+<!--* This project is dual licensed under AGPL and proprietary licence.-->
+<!--***************************-->
+<!--*    This program is free software: you can redistribute it and/or modify-->
+<!--*    it under the terms of the GNU Affero General Public License as-->
+<!--*    published by the Free Software Foundation, either version 3 of the-->
+<!--*    License, or (at your option) any later version.-->
+<!--*-->
+<!--*    This program is distributed in the hope that it will be useful,-->
+<!--*    but WITHOUT ANY WARRANTY; without even the implied warranty of-->
+<!--*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the-->
+<!--*    GNU Affero General Public License for more details.-->
+<!--*-->
+<!--*    You should have received a copy of the GNU Affero General Public License-->
+<!--*    along with this program.  If not, see <gnu.org/licenses>.-->
+<!--***************************-->
+<!--*    Licence MOBICOOP described in the file-->
+<!--*    LICENSE-->
+<!--**************************-->
+
 <template>
-  <section>
-    <div class="tile is-ancestor">
-      <div class="tile is-vertical is-12">
-        <div class="tile is-child center-all">
-          <form-wizard
-            :back-button-text="$t('ui.button.previous')"
-            :next-button-text="$t('ui.button.next')"
-            :finish-button-text="$t('ui.button.register')"
-            title=""
-            subtitle=""
-            color="#023D7F"
-            class="tile is-vertical is-8"
-            @on-complete="checkForm"
+  <v-content>
+    <v-container
+      id="scroll-target"
+      style="max-height: 500px"
+      class="overflow-y-auto"
+      fluid
+    >
+      <v-row
+        justify="center"
+        align="center"
+      >
+        <v-col
+          cols="2"
+          align="center"
+        >
+          <!--STEP 1-->
+          <v-form
+            ref="step 1"
+            v-model="step1"
           >
-            <p v-if="errors.length">
-              <b>{{ $t('ui.form.errors') }}:</b>
-              <ul>
-                <li
-                  v-for="error in errors"
-                  :key="error.id"
-                  class="is-danger"
-                >
-                  {{ error }}
-                </li>
-              </ul>
-            </p>
-            <tab-content
-              title=""
-              icon=""
-              class="tabContent"
+            <v-text-field
+              id="email"
+              v-model="form.email"
+              :rules="form.emailRules"
+              :label="$t('models.user.email.placeholder')+` *`"
+              name="email"
+              required
+            />
+            <v-text-field
+              v-model="form.telephone"
+              :label="$t('models.user.phone.placeholder')"
+              name="telephone"
+              @keypress="isNumber(event)"
+            />
+            <v-text-field
+              v-model="form.password"
+              :append-icon="form.showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              :rules="form.passwordRules"
+              :type="form.showPassword ? 'text' : 'password'"
+              name="password"
+              :label="$t('models.user.password.placeholder')+` *`"
+              required
+              @click:append="form.showPassword = !form.showPassword"
+            />
+            <v-btn
+              ref="button"
+              class="my-13"
+              color="primary"
+              :disabled="!step1"
+              @click="$vuetify.goTo('#step2', options)"
             >
-              <b-field
-                :label="$t('models.user.email.label')"
-              >
-                <b-input
-                  v-model="form.email"
-                  type="email"
-                  :placeholder="$t('models.user.email.placeholder')"
-                  class="email"
-                />
-              </b-field>
-              <b-field :label="$t('models.user.phone.label')">
-                <b-input 
-                  v-model="form.telephone"
-                  :placeholder="$t('models.user.phone.placeholder')"
-                  class="telephone"
-                />
-              </b-field>
-              <b-field :label="$t('models.user.password.label')">
-                <b-input
-                  v-model="form.password"
-                  class="password"
-                  type="password"
-                  password-reveal
-                  :placeholder="$t('models.user.password.placeholder')"
-                />
-              </b-field> 
-            </tab-content>
+              {{ $t('ui.button.next') }}
+            </v-btn>
+          </v-form>
 
-            <tab-content
-              title=""
-              icon=""
-              class="tabContent"
+          <!--STEP 2-->
+          <v-form
+            id="step2"
+            ref="step 2"
+            v-model="step2"
+          >
+            <v-text-field
+              v-model="form.givenName"
+              :rules="form.givenNameRules"
+              :label="$t('models.user.givenName.placeholder')+` *`"
+              class="givenName"
+              required
+              :disabled="!step1"
+            />
+            <v-text-field
+              v-model="form.familyName"
+              :rules="form.familyNameRules"
+              :label="$t('models.user.familyName.placeholder')+` *`"
+              class="familyName"
+              required
+              :disabled="!step1"
+            />
+            <v-btn
+              ref="button"
+              class="my-13"
+              color="primary"
+              :disabled="!step2"
+              @click="$vuetify.goTo('#step3', options)"
             >
-              <b-field :label="$t('models.user.givenName.label')">
-                <b-input
-                  v-model="form.givenName" 
-                  :placeholder="$t('models.user.givenName.placeholder')"
-                  class="givenName"
-                />
-              </b-field>
-              <b-field :label="$t('models.user.familyName.label')">
-                <b-input
-                  v-model="form.familyName" 
-                  :placeholder="$t('models.user.familyName.placeholder')"
-                  class="familyName"
-                />
-              </b-field>
-            </tab-content>
+              {{ $t('ui.button.next') }}
+            </v-btn>
+          </v-form>
 
-            <tab-content
-              title=""
-              icon=""
-              class="tabContent"
-            >     
-              <b-field :label="$t('models.user.gender.label')">
-                <b-select
-                  v-model="form.gender"
-                  :placeholder="$t('models.user.gender.placeholder')"
-                  class="gender"
-                >
-                  <option value="1">
-                    {{ $t('models.user.gender.values.female') }}
-                  </option>
-                  <option value="2">
-                    {{ $t('models.user.gender.values.male') }}
-                  </option>
-                  <option value="3">
-                    {{ $t('models.user.gender.values.other') }}
-                  </option>
-                </b-select>
-              </b-field>
-            </tab-content>
-
-            <tab-content
-              title=""
-              icon=""
-              class="tabContent"
+          <!--STEP 3-->
+          <v-form
+            id="step3"
+            ref="step 3"
+            v-model="step3"
+          >
+            <v-select
+              v-model="form.gender"
+              :items="form.genderItems"
+              item-text="genderItem"
+              item-value="genderValue"
+              :rules="form.genderRules"
+              :label="$t('models.user.gender.placeholder')+` *`"
+              required
+              :disabled="!step2"
+            />
+            <v-btn
+              ref="button"
+              class="my-13"
+              color="primary"
+              :disabled="!step3"
+              @click="$vuetify.goTo('#step4', options)"
             >
-              <b-field :label="$t('models.user.birthYear.label')">
-                <b-select
-                  v-model="form.birthYear"
-                  :placeholder="$t('models.user.birthYear.placeholder')"
-                  class="birthYear"
-                >
-                  <option
-                    v-for="year in years"
-                    :key="year.id"
-                    :value="year"
-                  >
-                    {{ year }}
-                  </option>
-                </b-select>
-              </b-field>
-            </tab-content>
+              {{ $t('ui.button.next') }}
+            </v-btn>
+          </v-form>
 
-            <tab-content
-              title=""
-              icon=""
-              class="tabContent"
+          <!--STEP 4-->
+          <v-form
+            id="step4"
+            ref="step 4"
+            v-model="step4"
+          >
+            <v-select
+              v-model="form.birthYear"
+              :items="years"
+              :rules="form.birthYearRules"
+              :label="$t('models.user.birthYear.placeholder')+` *`"
+              required
+              :disabled="!step3"
+            />
+            <v-btn
+              ref="button"
+              class="my-13"
+              color="primary"
+              :disabled="!step4"
+              @click="$vuetify.goTo('#step5', options)"
             >
-              <GeoComplete
-                id="homeAddress"
-                name="homeAddress"
-                :placeholder="$t('models.user.homeTown.placeholder')"
-                :url="geoSearchUrl"
-                @geoSelected="selectedGeo"
-              />
+              {{ $t('ui.button.next') }}
+            </v-btn>
+          </v-form>
 
-              <div class="field">
-                <b-checkbox
-                  v-model="form.validation"
-                  class="check"
-                >
-                  {{ $t('ui.pages.signup.chart.chartValid') }}
-                </b-checkbox>
-              </div>
-            </tab-content>
-          </form-wizard>
-        </div>
-      </div>
-    </div>
-  </section>                
+          <!--STEP 5-->
+          <v-form
+            id="step5"
+            ref="form"
+            v-model="step5"
+          >
+            <GeoComplete
+              name="homeAddress"
+              :label="$t('models.user.homeTown.placeholder')"
+              :url="geoSearchUrl"
+              :hint="$t('models.user.homeTown.hint')"
+              persistent-hint
+              :disabled="!step4"
+              @address-selected="selectedGeo"
+            />
+            <v-checkbox
+              v-model="form.validation"
+              class="check"
+              color="primary"
+              :rules="form.checkboxRules"
+              :label="$t('ui.pages.signup.chart.chartValid')"
+              required
+              :disabled="!step4"
+            />
+            <v-btn
+              color="primary"
+              class="mr-4 mb-100 mt-12"
+              :disabled="!step5"
+              @click="validate"
+            >
+              {{ $t('ui.button.register') }}
+            </v-btn>
+          </v-form>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-content>
 </template>
 
 <script>
 import axios from "axios";
 import GeoComplete from "@js/components/GeoComplete";
-
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/SignUp.json";
@@ -170,135 +213,171 @@ export default {
     sharedMessages: CommonTranslations
   },
   components: {
-    GeoComplete
+    GeoComplete,
   },
   props: {
     geoSearchUrl: {
       type: String,
-      default: ""
+      default: null
     },
     sentToken: {
       type: String,
-      default: ""
+      default: null
+    },
+    ageMin: {
+      type: String,
+      default: null
+    },
+    ageMax: {
+      type: String,
+      default: null
     }
   },
   data() {
     return {
-      errors: [],
-      homeAddress:{
-        required: true,
-        value: {}
-      },
+      //
+      event: null,
+
+      //step validators
+      step1: true,
+      step2: true,
+      step3: true,
+      step4: true,
+      step5: true,
+
+
+      //scrolling data
+      type: 'selector',
+      selected: null,
+      duration: 1000,
+      offset: 180,
+      easing: "easeOutQuad",
+      container: "scroll-target",
+
       form:{
         createToken: this.sentToken,
         email: null,
+        emailRules: [
+          v => !!v || this.$t("models.user.email.errors.required"),
+          v => /.+@.+/.test(v) || this.$t("models.user.email.errors.valid")
+        ],
         givenName: null,
+        givenNameRules: [
+          v => !!v || this.$t("models.user.givenName.errors.required"),
+        ],
         familyName: null,
+        familyNameRules: [
+          v => !!v || this.$t("models.user.familyName.errors.required"),
+        ],
         gender: null,
+        genderRules: [
+          v => !!v || this.$t("models.user.gender.errors.required"),
+        ],
+        genderItems: [
+          { genderItem: this.$t('models.user.gender.values.female'), genderValue: '1' },
+          { genderItem: this.$t('models.user.gender.values.male'), genderValue: '2' },
+          { genderItem: this.$t('models.user.gender.values.other'),genderValue: '3' },
+        ],
         birthYear: null,
+        birthYearRules: [
+          v => !!v || this.$t("models.user.birthYear.errors.required"),
+        ],
         telephone: null,
         password: null,
-        validation: false,
-        addressCountry: null,
-        addressLocality: null,
-        countryCode: null,
-        county: null,
-        latitude: null,
-        localAdmin: null,
-        longitude: null,
-        macroCounty: null,
-        macroRegion: null,
-        name: null,
-        postalCode: null,
-        region: null,
-        street: null,
-        streetAddress: null,
-        subLocality: null
+        showPassword: false,
+        passwordRules: [
+          v => !!v || this.$t("models.user.password.errors.required")
+        ],
+        homeAddress:null,
+        checkboxRules: [
+          v => !!v || this.$t("ui.pages.signup.chart.errors.required")
+        ]
       }
     };
   },
   computed : {
     years () {
-      const year = new Date().getFullYear()
-      return Array.from({length: year - 1910}, (value, index) => 1910 + index)
+      const currentYear = new Date().getFullYear();
+      const ageMin = Number(this.ageMin);
+      const ageMax = Number(this.ageMax);
+      return Array.from({length: ageMax - ageMin}, (value, index) => (currentYear - ageMin) - index)
     },
+    //options of v-scroll
+    options () {
+      return {
+        duration: this.duration,
+        offset: this.offset,
+        easing: this.easing,
+        container: this.container,
+      }
+    }
+  },
+  mounted: function () {
+    //get scroll target
+    this.container = document.getElementById ( "scroll-target" )
   },
   methods: {
-    selectedGeo(val) {
-      let name = val.name;
-      this[name] = val;
-      this.form.addressCountry = val.addressCountry
-      this.form.addressLocality = val.addressLocality
-      this.form.countryCode = val.countryCode
-      this.form.county = val.county
-      this.form.latitude = val.latitude
-      this.form.localAdmin = val.localAdmin
-      this.form.longitude = val.longitude
-      this.form.macroCounty = val.macroCounty
-      this.form.macroRegion = val.macroRegion
-      this.form.name = val.name
-      this.form.region = val.region
-      this.form.street = val.street
-      this.form.streetAddress = val.streetAddress
-      this.form.subLocality = val.subLocality
-      this.form.postalCode = val.postalCode
+    selectedGeo(address) {
+      this.form.homeAddress = address;
     },
-    checkForm: function (e) {
-      if (this.form.email && this.form.telephone && this.form.password && this.form.givenName && this.form.familyName && this.form.gender && this.form.birthYear && this.form.validation == true) {
-        let userForm = new FormData;
-        for (let prop in this.form) {
-          let value = this.form[prop];
-          // if(!value) continue;
-          // let renamedProp = `user_form[${prop}]`;
-          // userForm.append(renamedProp, value);
-          let renamedProp = prop === "createToken" ? prop : `user_form[${prop}]`;
-          userForm.append(renamedProp, value);
-        }
-        axios 
-          .post("/utilisateur/inscription", userForm, {
-            headers: {
-              "Content-Type": "multipart/form-data"
-            }
-          } )
-          .then(function(response) {
-            window.location.href = '/';
-            console.error(response);
-          })
-          .catch(function(error) {
-            console.error(error);
-          });  
-      } 
-      this.errors = [];
+    validate: function (e) {
+      axios.post('/utilisateur/inscription',
+        {
+          email:this.form.email,
+          telephone:this.form.telephone,
+          password:this.form.password,
+          givenName:this.form.givenName,
+          familyName:this.form.familyName,
+          gender:this.form.gender,
+          birthYear:this.form.birthYear,
+          address:this.form.homeAddress
+        },{
+          headers:{
+            'content-type': 'application/json'
+          }
+        })
+        .then(function (response) {
+          window.location.href = '/';
+          // console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
 
-      if (!this.form.email) {
-        this.errors.push(this.$t('models.user.email.errors.required'));
-      } 
-      if (!this.form.telephone) {
-        this.errors.push(this.$t('models.user.phone.errors.required'));
+    isNumber: function(evt) {
+      evt = (evt) ? evt : window.event;
+      var charCode = (evt.which) ? evt.which : evt.keyCode;
+      if (-(charCode < 48 || charCode > 57) && charCode !== 46) {
+        evt.preventDefault();;
+      } else {
+        return true;
       }
-      if (!this.form.password) {
-        this.errors.push(this.$t('models.user.password.errors.required'));
-      }
-      if (!this.form.givenName) {
-        this.errors.push(this.$t('models.user.givenName.errors.required'));
-      }
-      if (!this.form.familyName) {
-        this.errors.push(this.$t('models.user.familyName.errors.required'));
-      }
-      if (!this.form.gender) {
-        this.errors.push(this.$t('models.user.gender.errors.required'));
-      }
-      if (!this.form.birthYear) {
-        this.errors.push(this.$t('models.user.birthYear.errors.required'));
-      }
-      if (!this.form.longitude) {
-        this.errors.push(this.$t('models.user.homeTown.errors.required'));
-      }
-      if (this.form.validation == false) {
-        this.errors.push(this.$t('ui.pages.signup.chart.errors.required'));
-      }
-      // e.preventDefault();
     },
   }
+
 };
 </script>
+
+<style>
+  @-moz-document url-prefix() { /* Disable scrollbar for Firefox */
+    html,body,v-container{
+      scrollbar-width: none;
+      scrollbar-color: transparent transparent;
+    }
+  }
+
+  ::-webkit-scrollbar { /* Disable scrollbar for Chrome and Edge */
+    width: 0px;
+    background: transparent;
+  }
+
+  .my-13 {
+    margin-bottom:  52px;
+    margin-top:     52px;
+  }
+
+  .mb-100 {
+    margin-bottom:  300px;
+  }
+</style>

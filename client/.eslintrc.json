@@ -15,7 +15,7 @@
   "rules": {
     "no-unused-vars": ["warn", { "args": "none", "vars": "local" }],
     "indent": [2, 2],
-    "no-console": ["error", { "allow": ["warn", "error"] }]
+    "no-console": ["error", { "allow": ["warn", "error", "log"] }]
   },
   "env": {
     "es6": true,

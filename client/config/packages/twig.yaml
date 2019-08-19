@@ -13,3 +13,5 @@ twig:
         app_name: '%env(APP_NAME)%'
         assets_prefix: '%env(ASSETS_PREFIX)%'
         geoCompleteUri: '%env(GEOCOMPLETE_URI)%'
+        ageMin: '%env(USER_MIN_AGE)%'
+        ageMax: '%env(USER_MAX_AGE)%'
