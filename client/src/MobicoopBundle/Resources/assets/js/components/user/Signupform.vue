@@ -96,15 +96,30 @@
               required
               :disabled="!step1"
             />
-            <v-btn
-              ref="button"
-              class="my-13"
-              color="primary"
-              :disabled="!step2"
-              @click="$vuetify.goTo('#step3', options)"
+            <v-row
+              justify="center"
+              align="center"
+              class="mb-25"
             >
-              {{ $t('ui.button.next') }}
-            </v-btn>
+              <v-btn
+                ref="button"
+                class="my-13 mr-12"
+                color="primary"
+                :disabled="!step1"
+                @click="$vuetify.goTo('#step2', options)"
+              >
+                {{ $t('ui.button.previous') }}
+              </v-btn>
+              <v-btn
+                ref="button"
+                class="my-13"
+                color="primary"
+                :disabled="!step2"
+                @click="$vuetify.goTo('#step3', options)"
+              >
+                {{ $t('ui.button.next') }}
+              </v-btn>
+            </v-row>
           </v-form>
 
           <!--STEP 3-->
@@ -123,15 +138,30 @@
               required
               :disabled="!step2"
             />
-            <v-btn
-              ref="button"
-              class="my-13"
-              color="primary"
-              :disabled="!step3"
-              @click="$vuetify.goTo('#step4', options)"
+            <v-row
+              justify="center"
+              align="center"
+              class="mb-40"
             >
-              {{ $t('ui.button.next') }}
-            </v-btn>
+              <v-btn
+                ref="button"
+                class="my-13 mr-12"
+                color="primary"
+                :disabled="!step2"
+                @click="$vuetify.goTo('#step3', options)"
+              >
+                {{ $t('ui.button.previous') }}
+              </v-btn>
+              <v-btn
+                ref="button"
+                class="my-13"
+                color="primary"
+                :disabled="!step3"
+                @click="$vuetify.goTo('#step4', options)"
+              >
+                {{ $t('ui.button.next') }}
+              </v-btn>
+            </v-row>
           </v-form>
 
           <!--STEP 4-->
@@ -148,15 +178,30 @@
               required
               :disabled="!step3"
             />
-            <v-btn
-              ref="button"
-              class="my-13"
-              color="primary"
-              :disabled="!step4"
-              @click="$vuetify.goTo('#step5', options)"
+            <v-row
+              justify="center"
+              align="center"
+              class="mb-40"
             >
-              {{ $t('ui.button.next') }}
-            </v-btn>
+              <v-btn
+                ref="button"
+                class="my-13 mr-12"
+                color="primary"
+                :disabled="!step3"
+                @click="$vuetify.goTo('#step4', options)"
+              >
+                {{ $t('ui.button.previous') }}
+              </v-btn>
+              <v-btn
+                ref="button"
+                class="my-13"
+                color="primary"
+                :disabled="!step4"
+                @click="$vuetify.goTo('#step5', options)"
+              >
+                {{ $t('ui.button.next') }}
+              </v-btn>
+            </v-row>
           </v-form>
 
           <!--STEP 5-->
@@ -338,7 +383,7 @@ export default {
         })
         .then(function (response) {
           window.location.href = '/';
-          // console.log(response);
+          console.log(response);
         })
         .catch(function (error) {
           console.log(error);
@@ -379,5 +424,12 @@ export default {
 
   .mb-100 {
     margin-bottom:  300px;
+  }
+
+  .mb-25 {
+      margin-bottom:  100px;
+  }
+  .mb-40 {
+    margin-bottom:  160px;
   }
 </style>
