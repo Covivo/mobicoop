@@ -32,3 +32,7 @@ services:
       
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    mobicoop_bundle_mobicoop.security.access_denied_handler:
+        class: Mobicoop\Bundle\MobicoopBundle\Security\AccessDeniedHandler
+        calls:
+        - [handle, ['@?', '@?']]

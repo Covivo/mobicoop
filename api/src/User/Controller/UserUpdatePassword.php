@@ -62,7 +62,6 @@ class UserUpdatePassword
     public function __invoke(User $data, string $name): User
     {
         if (is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
-        throw new InvalidArgumentException($this->translator->trans('Unrecognized parameter :%name%', ['%name%' => $name]));
         switch ($name) {
             case 'request':
                 $data = $this->userManager->updateUserPasswordRequest($data);

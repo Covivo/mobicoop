@@ -23,6 +23,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Community\Controller;
 
 use Mobicoop\Bundle\MobicoopBundle\Community\Form\CommunityUserForm;
+use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
@@ -37,6 +38,7 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Form\CommunityForm;
  */
 class CommunityController extends AbstractController
 {
+    use HydraControllerTrait;
     /**
      * Get all communities.
      */
@@ -83,8 +85,12 @@ class CommunityController extends AbstractController
     {
         $communityUser = new CommunityUser();
         $community = $communityManager->getCommunity($id);
+        $reponseofmanager= $this->handleManagerReturnValue($community);
+        if(!empty($reponseofmanager)) return $reponseofmanager;
         $this->denyAccessUnlessGranted('show', $community);
         $user = $userManager->getLoggedUser();
+        $reponseofmanager= $this->handleManagerReturnValue($user);
+        if(!empty($reponseofmanager)) return $reponseofmanager;
         $form = $this->createForm(CommunityUserForm::class, $communityUser);
         $errorLoginSecured = false;
         $communityUser->setCommunity($community);
@@ -129,6 +135,8 @@ class CommunityController extends AbstractController
     {
         $community = $communityManager->getCommunity($id);
         $user = $userManager->getLoggedUser();
+        $reponseofmanager= $this->handleManagerReturnValue($user);
+        if(!empty($reponseofmanager)) return $reponseofmanager;
         $usersCommunity = array();
 
         //test if the community has members
@@ -146,7 +154,9 @@ class CommunityController extends AbstractController
             $communityUser->setCreatedDate(new \DateTime());
             $communityUser->setStatus(0);
 
-            $communityManager->joinCommunity($communityUser);
+            $data=$communityManager->joinCommunity($communityUser);
+            $reponseofmanager= $this->handleManagerReturnValue($data);
+            if(!empty($reponseofmanager)) return $reponseofmanager;
         }
 
         return $this->redirectToRoute('community_show', ['id' => $id]);

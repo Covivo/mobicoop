@@ -24,6 +24,8 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Geography\Controller;
 
 use Mobicoop\Bundle\MobicoopBundle\Geography\Service\GeoSearchManager;
+use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
+use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -39,6 +41,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AutoCompleteController extends AbstractController
 {
+    use HydraControllerTrait;
     /**
      * Retrieve all geosearch results of an input
      *
@@ -46,7 +49,10 @@ class AutoCompleteController extends AbstractController
      */
     public function GeoSearch(GeoSearchManager $geoSearchManager, Request $request)
     {
+        /** @var Hydra $results */
         if ($results = $geoSearchManager->getGeoSearch(['q'=>$request->query->get('search')])) {
+            $reponseofmanager= $this->handleManagerReturnValue($results);
+            if(!empty($reponseofmanager)) return $reponseofmanager;
             return $this->json($results->getMember());
         }
         return $this->json("error");
