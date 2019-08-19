@@ -692,7 +692,6 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         $this->geoToken = $geoToken;
         return $this;
     }
-
         
     /**
      * get the native language of the client.
