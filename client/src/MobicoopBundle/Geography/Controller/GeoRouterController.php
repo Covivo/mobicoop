@@ -26,20 +26,17 @@ namespace Mobicoop\Bundle\MobicoopBundle\Geography\Controller;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Service\GeoRouterManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * GeoRouter controller
  */
 
-class GeoRouteController extends AbstractController
+class GeoRouterController extends AbstractController
 {
     /**
      * Retrieve all direction results of an input
-     *
-     * @Route("/georoute")
      */
-    public function GeoRoute(GeoRouterManager $geoRouterManager, Request $request)
+    public function geoRoute(GeoRouterManager $geoRouterManager, Request $request)
     {
         $points = ['points'=>$request->query->get('points')];
         if ($results = $geoRouterManager->getGeoRoutes($points)) {

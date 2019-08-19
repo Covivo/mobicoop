@@ -197,30 +197,37 @@
               <v-checkbox
                 v-model="item.mon"
                 label="L"
+                color="success"
               />
               <v-checkbox
                 v-model="item.tue"
                 label="Ma"
+                color="success"
               />
               <v-checkbox
                 v-model="item.wed"
                 label="Me"
+                color="success"
               />
               <v-checkbox
                 v-model="item.thu"
                 label="J"
+                color="success"
               />
               <v-checkbox
                 v-model="item.fri"
                 label="V"
+                color="success"
               />
               <v-checkbox
                 v-model="item.sat"
                 label="S"
+                color="success"
               />
               <v-checkbox
                 v-model="item.sun"
                 label="D"
+                color="success"
               />
             </v-row>
 

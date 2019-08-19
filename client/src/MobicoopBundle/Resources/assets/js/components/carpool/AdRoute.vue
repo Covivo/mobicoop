@@ -219,11 +219,35 @@
         />
       </v-col>
     </v-row>
+
+    <!-- Communities -->
+
+    <!-- Map (soon...) -->
+    <v-row
+      v-if="direction != null"
+      align="center"
+      justify="center"
+    >
+      <v-col
+        cols="6"
+      >
+        <!-- Route detail -->
+        <v-card>
+          <v-row
+            align="center"
+            justify="space-around"
+          >
+            {{ $t('distance') }} : {{ direction.distance / 1000 }} km
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script>
 import { merge } from "lodash";
+import axios from "axios";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/carpool/AdRoute.json";
 import TranslationsClient from "@clientTranslations/components/carpool/AdRoute.json";
@@ -242,6 +266,10 @@ export default {
   },
   props: {
     geoSearchUrl: {
+      type: String,
+      default: ""
+    },
+    geoRouteUrl: {
       type: String,
       default: ""
     },
@@ -280,36 +308,69 @@ export default {
           address: null
         },
       ],
-      avoidMotorway: false
+      avoidMotorway: false,
+      direction: null
     };
   },
   watch: {
     initOriginAddress() {
       this.origin = this.initOriginAddress;
+      this.getRoute();
     },
     initDestinationAddress() {
       this.destination = this.initDestinationAddress;
+      this.getRoute();
     }
   },
   methods: {
     originSelected: function(address) {
       this.origin = address;
-      this.emitEvent();
+      this.getRoute();
+      //this.emitEvent();
     },
     destinationSelected: function(address) {
       this.destination = address;
-      this.emitEvent();
+      this.getRoute();
+      //this.emitEvent();
     },
     waypointSelected(id,address) {
       this.waypoints[id].address = address;
-      this.emitEvent();
+      this.getRoute();
+      //this.emitEvent();
+    },
+    getRoute() {
+      if (this.origin != null && this.destination != null) {
+        let params = `?points[0][longitude]=${this.origin.longitude}&points[0][latitude]=${this.origin.latitude}`;
+        let nbWaypoints = 0;
+        this.waypoints.forEach((item,key) => {
+          if (item.visible) {
+            nbWaypoints++;
+            params += `&points[${nbWaypoints}][longitude]=${item.address.longitude}&points[${nbWaypoints}][latitude]=${item.address.latitude}`;
+          }
+        });
+        nbWaypoints++;
+        params += `&points[${nbWaypoints}][longitude]=${this.destination.longitude}&points[${nbWaypoints}][latitude]=${this.destination.latitude}`;
+        axios
+          .get(`${this.geoRouteUrl}${params}`)
+          .then(res => {
+            this.direction = res.data.member[0];
+            this.emitEvent();
+          })
+          .catch(err => {
+            console.error(err);
+            this.emitEvent();
+          });
+      } else {
+        this.emitEvent();
+      }
     },
     emitEvent: function() {
       this.$emit("change", {
         origin: this.origin,
         destination: this.destination,
         waypoints: this.waypoints,
-        avoidMotorway: this.avoidMotorway
+        avoidMotorway: this.avoidMotorway,
+        direction: this.direction
       });
     },
     addWaypoint() {
@@ -326,6 +387,7 @@ export default {
     removeWaypoint(id) {
       this.waypoints[id].visible = false;
       this.waypoints[id].address = null;
+      this.getRoute();
     }
   }
 };

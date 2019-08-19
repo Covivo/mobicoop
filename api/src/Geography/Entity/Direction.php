@@ -192,12 +192,18 @@ class Direction
     private $co2;
 
     /**
-     * @var array|Address[]|null The decoded points (from detail) of the direction.
-     * Can be under the form of Address objects or latitude/longitude.
+     * @var Address[]|null The decoded points (from detail) of the direction as Address objects.
      * Can be used to draw the path on a map.
      * @Groups("read")
      */
     private $points;
+
+    /**
+     * @var array|Address[]|null The decoded points (from detail) of the direction as latitude/longitude array.
+     * Can be used to draw the path on a map.
+     * @Groups("read")
+     */
+    private $directPoints;
 
     /**
      * @var Address[]|null The decoded snapped waypoints of the direction.
@@ -440,6 +446,18 @@ class Direction
     public function setPoints(array $points): self
     {
         $this->points = $points;
+        
+        return $this;
+    }
+
+    public function getDirectPoints(): ?array
+    {
+        return $this->directPoints;
+    }
+    
+    public function setDirectPoints(array $directPoints): self
+    {
+        $this->directPoints = $directPoints;
         
         return $this;
     }

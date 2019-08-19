@@ -140,6 +140,7 @@
               <v-stepper-content step="3">
                 <ad-route 
                   :geo-search-url="geoSearchUrl"
+                  geo-route-url="/georoute"
                   :user="user"
                   :init-origin-address="originAddress"
                   :init-destination-address="destinationAddress"
@@ -199,6 +200,7 @@
                       inset
                       hide-details
                       class="mt-0 mb-1"
+                      color="success"
                     />
                   </v-col>
                   <v-col
@@ -235,6 +237,7 @@
                       inset
                       hide-details
                       class="mt-0 mb-1"
+                      color="success"
                     />
                   </v-col>
                   <v-col
@@ -271,6 +274,7 @@
                       inset
                       hide-details
                       class="mt-0 mb-1"
+                      color="success"
                     />
                   </v-col>
                   <v-col
@@ -306,7 +310,7 @@
                   </v-col>
 
                   <v-col
-                    cols="1"
+                    cols="2"
                   >
                     <v-text-field 
                       v-model="price"
@@ -489,7 +493,7 @@ export default {
       this.pricePerKm = (this.distance>0 ? Math.round(this.price / this.distance * 100)/100 : this.defaultPriceKm);
     },
     distance() {
-      this.price = this.distance * this.pricePerKm;
+      this.price = Math.round(this.distance * this.pricePerKm * 100)/100;
     }
   },
   methods: {
@@ -510,6 +514,7 @@ export default {
       this.step3 = route;
       this.originAddress = route.origin;
       this.destinationAddress = route.destination;
+      this.distance = route.direction.distance / 1000;
     },
     /**
        * Send the form to the route /covoiturage/annonce/poster

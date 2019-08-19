@@ -479,6 +479,8 @@ class DataProvider
         
         // $data comes from a GuzzleHttp request; it's a json hydra collection so when need to parse the json to an array
         $data = json_decode($data, true);
+
+        
         
         $hydra = new Hydra();
         if (isset($data['@context'])) {

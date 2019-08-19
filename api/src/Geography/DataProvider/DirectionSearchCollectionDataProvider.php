@@ -62,6 +62,6 @@ final class DirectionSearchCollectionDataProvider implements CollectionDataProvi
             $waypoint->setLongitude($point['longitude']);
             $addresses[] = $waypoint;
         }
-        return [$this->geoRouter->getRoutes($addresses)];
+        return $this->geoRouter->getRoutes($addresses);
     }
 }

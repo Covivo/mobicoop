@@ -282,7 +282,11 @@ class GeoRouterProvider implements ProviderInterface
             // we keep the encoded AND the decoded points (all the points of the path returned by the SIG)
             // the decoded points are not stored in the database
             $direction->setDetail($data["points"]);
-            $direction->setPoints($this->deserializePoints($data['points'], true, filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
+            if (!$this->pointsOnly) {
+                $direction->setPoints($this->deserializePoints($data['points'], true, filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
+            } else {
+                $direction->setDirectPoints($this->deserializePoints($data['points'], true, filter_var(self::GR_ELEVATION, FILTER_VALIDATE_BOOLEAN)));
+            }
         }
         if (isset($data['snapped_waypoints'])) {
             // we keep the encoded AND the decoded snapped waypoints (all the waypoints used to define the direction : start point, intermediate points, end point)
