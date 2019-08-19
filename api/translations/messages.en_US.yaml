@@ -101,16 +101,11 @@ arguments: 'messages'
 Valeur: 'messages'
 Arguments: 'messages'
 Page non trouvé: 'messages'
-The requested page couldn't be located:
-  Checkout for any URL
-  misspelling or: 'messages'
-  Checkout for any URL misspelling or: 'messages'
 La page recherché est introuvable, vérifier l'url ou: 'messages'
 revenez à la page d'acceuil: 'messages'
 Revenez à la page d'acceuil: 'messages'
-le serveur a retourné: : 'messages'
-Quelque chose est cassé:
-  S'il vous plaît laissez-nous savoir ce que vous faisiez lorsque cette erreur s'est produite:
-
-    Nous allons le réparer dès que possible:
-    Désolé pour tout inconvénient causé: 'messages'
+le serveur a retourné: 'messages'
+Quelque chose est cassé: 'messages'
+S'il vous plaît laissez-nous savoir ce que vous faisiez lorsque cette erreur s'est produite: 'messages'
+Nous allons le réparer dès que possible: 'messages'
+Désolé pour tout inconvénient causé: 'messages'
