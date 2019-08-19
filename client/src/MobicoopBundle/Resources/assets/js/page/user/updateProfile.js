@@ -4,7 +4,7 @@ import { Vue, vuetify, i18n } from '@js/config/page/user/updateProfile'
 
 // import '@css/page/user/profile.scss'
 
-import UpdateProfile from '@js/components/user/updateProfile'
+import UpdateProfile from '@js/components/user/UpdateProfile'
 import MHeader from '@js/components/MHeader'
 import MFooter from '@js/components/MFooter'
 
