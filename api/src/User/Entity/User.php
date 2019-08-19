@@ -484,15 +484,6 @@ class User implements UserInterface, EquatableInterface
     private $threads;
 
     /**
-       * Language de l'utilisateur.
-       *
-       * @var string $language
-       * @Groups({"read","write", "api"})
-       * @ORM\Column(name="language", type="string", nullable=true)
-       */
-    private $language= 'fr_FR';
-    
-    /**
      * @var array|null The permissions granted
      * @Groups("permissions")
      */
