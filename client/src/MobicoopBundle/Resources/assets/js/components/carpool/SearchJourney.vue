@@ -3,170 +3,177 @@
     <v-container
       fluid
     >
-      <!--Role-->
-      <v-row
-        v-if="displayRoles"
-        align="center"
-        justify="center"
-        dense
+      <v-form
+        ref="form"
+        v-model="valid"
       >
-        <v-col
-          cols="2"
+        <!--Role-->
+        <v-row
+          v-if="displayRoles"
+          align="center"
+          justify="center"
+          dense
         >
-          {{ $t('switch.driver.label') }}
-        </v-col>
-        <v-col
-          cols="1"
-        >
-          <v-switch
-            v-model="driver"
-            color="success"
-            inset
-            @change="switched"
-          />
-        </v-col>
-        <v-col
-          cols="2"
-        >
-          {{ $t('switch.passenger.label') }}
-        </v-col>
-        <v-col
-          cols="2"
-        >
-          <v-switch
-            v-model="passenger"
-            inset
-            color="success"
-            @change="switched"
-          />
-        </v-col>
-      </v-row>
-
-      <!-- Geocompletes -->
-      <v-row
-        align="center"
-        dense
-      >
-        <v-col
-          cols="5"
-        >
-          <GeoComplete
-            :url="geoSearchUrl"
-            :label="labelOrigin"
-            :token="user ? user.geoToken : ''"
-            required
-            :required-error="requiredErrorOrigin"
-            :init-address="customInitOriginAddress"
-            @address-selected="originSelected"
-          />
-        </v-col>
-        <v-col
-          cols="2"
-        >
-          <v-tooltip right>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                text
-                icon
-                @click="swap"
-              >
-                <v-icon>mdi-swap-horizontal</v-icon>
-              </v-btn>
-            </template>
-            <span>{{ $t('swap.help') }}</span>
-          </v-tooltip>
-        </v-col>
-        <v-col 
-          cols="5"
-        >
-          <GeoComplete
-            :url="geoSearchUrl"
-            :label="labelDestination"
-            :token="user ? user.geoToken : ''"
-            required
-            :required-error="requiredErrorDestination"
-            :init-address="customInitDestinationAddress"
-            @address-selected="destinationSelected"
-          />
-        </v-col>
-      </v-row>
-
-      <!-- Switch -->
-      <v-row
-        align="center"
-        no-gutters
-      >
-        <v-col
-          cols="3"
-          align="left"
-        >
-          {{ $t('switch.regular.label') }}
-        </v-col>
-        <v-col
-          cols="1"
-        >
-          <v-switch
-            v-model="regular"
-            inset
-            hide-details
-            class="mt-0"
-            color="success"
-            @change="switched"
-          />
-        </v-col>
-        <v-col
-          cols="1"
-          align="left"
-        >
-          <v-tooltip right>
-            <template v-slot:activator="{ on }">
-              <v-icon v-on="on">
-                mdi-help-circle-outline
-              </v-icon>
-            </template>
-            <span>{{ $t('switch.regular.help') }}</span>
-          </v-tooltip>
-        </v-col>
-      </v-row>
-
-      <!-- Datepicker -->
-      <v-row
-        align="center"
-        dense
-      >
-        <v-col
-          cols="5"
-        >
-          <v-menu
-            v-model="menu"
-            :close-on-content-click="false"
-            full-width
-            offset-y
-            min-width="290px"
+          <v-col
+            cols="12"
           >
-            <template v-slot:activator="{ on }">
-              <v-text-field
-                :value="computedDateFormat"
-                clearable
-                :label="$t('datePicker.label')"
-                readonly
-                :messages="$t('ui.form.optional')"
-                v-on="on"
-                @click:clear="clearDate"
-              />
-            </template>
-            <v-date-picker
-              v-model="date"
-              header-color="primary"
-              color="secondary"
-              :locale="locale"
-              no-title
-              @input="menu=false"
-              @change="dateChanged"
+            <v-row
+              align="center"
+              justify="space-around"
+              dense
+            >
+              <v-radio-group
+                v-model="role"
+                row
+                :rules="roleRules"
+                @change="roleChanged"
+              >
+                <v-radio
+                  :value="1"
+                  :label="$t('radio.driver.label')"
+                  color="success"
+                />
+                <v-radio
+                  :value="2"
+                  :label="$t('radio.passenger.label')"
+                  color="success"
+                />
+                <v-radio
+                  :value="3"
+                  :label="$t('radio.both.label')"
+                  color="success"
+                />
+              </v-radio-group>
+            </v-row>
+          </v-col>
+        </v-row>
+
+        <!-- Geocompletes -->
+        <v-row
+          align="center"
+          dense
+        >
+          <v-col
+            cols="5"
+          >
+            <GeoComplete
+              :url="geoSearchUrl"
+              :label="labelOrigin"
+              :token="user ? user.geoToken : ''"
+              required
+              :required-error="requiredErrorOrigin"
+              :init-address="customInitOriginAddress"
+              @address-selected="originSelected"
             />
-          </v-menu>
-        </v-col>
-      </v-row>
+          </v-col>
+          <v-col
+            cols="2"
+          >
+            <v-tooltip right>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  text
+                  icon
+                  @click="swap"
+                >
+                  <v-icon>mdi-swap-horizontal</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ $t('swap.help') }}</span>
+            </v-tooltip>
+          </v-col>
+          <v-col 
+            cols="5"
+          >
+            <GeoComplete
+              :url="geoSearchUrl"
+              :label="labelDestination"
+              :token="user ? user.geoToken : ''"
+              required
+              :required-error="requiredErrorDestination"
+              :init-address="customInitDestinationAddress"
+              @address-selected="destinationSelected"
+            />
+          </v-col>
+        </v-row>
+
+        <!-- Switch -->
+        <v-row
+          align="center"
+          no-gutters
+        >
+          <v-col
+            cols="3"
+            align="left"
+          >
+            {{ $t('switch.regular.label') }}
+          </v-col>
+          <v-col
+            cols="1"
+          >
+            <v-switch
+              v-model="regular"
+              inset
+              hide-details
+              class="mt-0"
+              color="success"
+              @change="switched"
+            />
+          </v-col>
+          <v-col
+            cols="1"
+            align="left"
+          >
+            <v-tooltip right>
+              <template v-slot:activator="{ on }">
+                <v-icon v-on="on">
+                  mdi-help-circle-outline
+                </v-icon>
+              </template>
+              <span>{{ $t('switch.regular.help') }}</span>
+            </v-tooltip>
+          </v-col>
+        </v-row>
+
+        <!-- Datepicker -->
+        <v-row
+          align="center"
+          dense
+        >
+          <v-col
+            cols="5"
+          >
+            <v-menu
+              v-model="menu"
+              :close-on-content-click="false"
+              full-width
+              offset-y
+              min-width="290px"
+            >
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  :value="computedDateFormat"
+                  clearable
+                  :label="$t('datePicker.label')"
+                  readonly
+                  :messages="$t('ui.form.optional')"
+                  v-on="on"
+                  @click:clear="clearDate"
+                />
+              </template>
+              <v-date-picker
+                v-model="date"
+                header-color="primary"
+                color="secondary"
+                :locale="locale"
+                no-title
+                @input="menu=false"
+                @change="dateChanged"
+              />
+            </v-menu>
+          </v-col>
+        </v-row>
+      </v-form>
     </v-container>
   </v-content>
 </template>
@@ -218,6 +225,7 @@ export default {
       date: null,
       regular: false,
       menu: false,
+      role: null,
       passenger: false,
       driver: false,
       labelOrigin: this.$t("origin.label"),
@@ -229,6 +237,7 @@ export default {
       destination: null,
       customInitOriginAddress: null,
       customInitDestinationAddress: null,
+      valid: false
     };
   },
   computed: {
@@ -237,6 +246,14 @@ export default {
       return this.date
         ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
         : "";
+    },
+    roleRules() {
+      if (this.displayRoles) {
+        return [
+          v => !!v || "required"
+        ];
+      }
+      return [];
     },
   },
   watch: {
@@ -275,6 +292,18 @@ export default {
     dateChanged: function() {
       this.emitEvent();
     },
+    roleChanged: function() {
+      this.driver = true;
+      this.passenger = true;
+      if (this.role == 1) {
+        this.driver = true;
+        this.passenger = false;
+      } else if (this.role == 2) {
+        this.driver = false;
+        this.passenger = true;
+      }
+      this.emitEvent();
+    },
     emitEvent: function(){
       this.$emit("change", {
         origin: this.origin,
@@ -282,7 +311,8 @@ export default {
         regular: this.regular,
         date: this.date,
         passenger: this.passenger,
-        driver: this.driver
+        driver: this.driver,
+        valid: this.valid
       });
     },
     clearDate() {

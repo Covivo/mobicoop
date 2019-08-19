@@ -224,7 +224,7 @@
 
     <!-- Map (soon...) -->
     <v-row
-      v-if="direction != null"
+      v-if="direction"
       align="center"
       justify="center"
     >

@@ -14,13 +14,18 @@
             "alt": "Intervertir origine et destination",
             "help": "Cliquez pour intervertir origine et destination"
         },
-        "switch": {
+        "radio": {
             "driver": {
-                "label": "Conducteur"
+                "label": "Je suis conducteur.rice"
             },
             "passenger": {
-                "label": "Passager"
+                "label": "Je suis passager.ère"
             },
+            "both": {
+                "label": "Peu importe"
+            }
+        },
+        "switch": {
             "regular": {
                 "label": "Trajet régulier",
                 "help": "Cochez cette case pour spécifier que votre trajet est régulier"

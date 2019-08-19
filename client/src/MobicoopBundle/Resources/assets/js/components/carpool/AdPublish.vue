@@ -74,6 +74,7 @@
 
               <!-- Step 4 : passengers (if driver) -->
               <v-stepper-step
+                v-if="step1.driver"
                 editable
                 :step="4"
                 color="success"
@@ -84,6 +85,7 @@
 
               <!-- Step 5 : participation (if driver) -->
               <v-stepper-step
+                v-if="step1.driver"
                 editable
                 :step="5"
                 color="success"
@@ -95,7 +97,7 @@
               <!-- Step 6 : message -->
               <v-stepper-step
                 editable
-                :step="6"
+                :step="step1.driver ? 6 : 4"
                 color="success"
               >
                 {{ $t('stepper.header.message') }}
@@ -106,7 +108,7 @@
               <v-stepper-step
                 color="success"
                 editable
-                :step="7"
+                :step="step1.driver ? 7 : 5"
               >
                 {{ $t('stepper.header.summary') }}
               </v-stepper-step>
@@ -140,7 +142,7 @@
               <v-stepper-content step="3">
                 <ad-route 
                   :geo-search-url="geoSearchUrl"
-                  geo-route-url="/georoute"
+                  :geo-route-url="geoRouteUrl"
                   :user="user"
                   :init-origin-address="originAddress"
                   :init-destination-address="destinationAddress"
@@ -150,6 +152,7 @@
 
               <!-- Step 4 : passengers (if driver) -->
               <v-stepper-content
+                v-if="step1.driver"
                 step="4"
               >
                 <v-row
@@ -295,6 +298,7 @@
 
               <!-- Step 5 : participation (if driver) -->
               <v-stepper-content
+                v-if="step1.driver"
                 step="5"
               >
                 <v-row
@@ -313,7 +317,7 @@
                     cols="2"
                   >
                     <v-text-field 
-                      v-model="price"
+                      v-model="step5.price"
                       :disabled="distance<=0"
                       type="number"
                       suffix="€"
@@ -333,7 +337,7 @@
 
               <!-- Step 6 : message -->
               <v-stepper-content
-                step="6"
+                :step="step1.driver ? 6 : 4"
               >
                 <v-layout
                   wrap
@@ -356,7 +360,7 @@
 
               <!-- Step 7 : summary -->
               <v-stepper-content
-                step="7"
+                :step="step1.driver ? 7 : 5"
               >
                 <ad-summary />
               </v-stepper-content>
@@ -374,6 +378,7 @@
         <v-btn
           v-if="step > 1"
           rounded
+          outlined
           color="primary" 
           align-center
           @click="--step"
@@ -382,7 +387,7 @@
         </v-btn>
 
         <v-btn
-          v-if="step < 7 && originAddress != null && destinationAddress != null"
+          v-if="step < 7 && originAddress != null && destinationAddress != null && (this.step1.passenger || this.step1.driver)"
           rounded
           color="primary"
           align-center
@@ -436,6 +441,10 @@ export default {
       type: String,
       default: ""
     },
+    geoRouteUrl: {
+      type: String,
+      default: "/georoute"
+    },
     user: {
       type: Object,
       default: null
@@ -447,9 +456,6 @@ export default {
   },
   data() {
     return {
-      seats: 1,
-      price: null,
-      pricePerKm: this.defaultPriceKm,
       distance: 0, 
       outwardDate: null,
       originAddress: null,
@@ -474,8 +480,12 @@ export default {
         bike: false,
         backSeats: false
       },
+      step5: {
+        price: null,
+        pricePerKm: this.defaultPriceKm
+      },
       step6: {
-        'message': null
+        message: null
       },
       step7: {
         type: Object,
@@ -485,15 +495,18 @@ export default {
   },
   computed: {
     hintPricePerKm() {
-      return this.pricePerKm+'€/km';
+      return this.step5.pricePerKm+'€/km';
+    },
+    price() {
+      return this.step5.price;
     }
   },
   watch: {
     price() {
-      this.pricePerKm = (this.distance>0 ? Math.round(this.price / this.distance * 100)/100 : this.defaultPriceKm);
+      this.step5.pricePerKm = (this.distance>0 ? Math.round(this.step5.price / this.distance * 100)/100 : this.defaultPriceKm);
     },
     distance() {
-      this.price = Math.round(this.distance * this.pricePerKm * 100)/100;
+      this.step5.price = Math.round(this.distance * this.step5.pricePerKm * 100)/100;
     }
   },
   methods: {
@@ -514,7 +527,10 @@ export default {
       this.step3 = route;
       this.originAddress = route.origin;
       this.destinationAddress = route.destination;
-      this.distance = route.direction.distance / 1000;
+      this.distance = route.direction ? route.direction.distance / 1000 : null;
+    },
+    validStep() {
+      
     },
     /**
        * Send the form to the route /covoiturage/annonce/poster

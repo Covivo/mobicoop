@@ -7,7 +7,7 @@ import '@mdi/font/css/materialdesignicons.css'
 
 import Vuetify, { 
   // general
-  VApp, VContainer, VFlex, VLayout, VContent, VSpacer,
+  VApp, VContainer, VFlex, VLayout, VContent, VRow, VCol, VSpacer,
   // header
   VToolbar, VToolbarTitle, VBtn, VImg,
   // footer
@@ -15,13 +15,13 @@ import Vuetify, {
   // content
   VSwitch, VMenu, VDatePicker, VTextField,  VTooltip, VCard, VCardTitle, VCardActions,
   // geocomplete
-  VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon
+  VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon, VForm,
 } from 'vuetify/lib'
 
 Vue.use(Vuetify, {
   components: {
     // general
-    VApp, VContainer, VFlex, VLayout, VContent, VSpacer,
+    VApp, VContainer, VFlex, VLayout, VContent, VRow, VCol, VSpacer,
     // header
     VToolbar, VToolbarTitle, VBtn, VImg,
     // footer
@@ -29,7 +29,7 @@ Vue.use(Vuetify, {
     // content
     VSwitch, VMenu, VDatePicker, VTextField,  VTooltip, VCard, VCardTitle, VCardActions,
     // geocomplete
-    VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon
+    VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon, VForm,
   }
 })
 Vue.use(VueI18n)
