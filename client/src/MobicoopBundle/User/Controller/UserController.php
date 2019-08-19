@@ -101,11 +101,10 @@ class UserController extends AbstractController
         $error = false;
 
         if ($request->isMethod('POST')) {
-
-            $data = json_decode($request->getContent(),true);
+            $data = json_decode($request->getContent(), true);
 
             // add home address to user if it exists
-            if (isset($data['address'])){
+            if (isset($data['address'])) {
                 $address->setAddressCountry($data['address']['addressCountry']);
                 $address->setAddressLocality($data['address']['addressLocality']);
                 $address->setCountryCode($data['address']['countryCode']);
