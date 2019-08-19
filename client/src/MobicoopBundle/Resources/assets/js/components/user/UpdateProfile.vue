@@ -64,7 +64,7 @@
 
             <!--Gender-->
             <v-select
-              v-model="gender"
+              v-model="user.gender"
               :label="$t('models.user.gender.label')"
               :items="genders"
               item-text="gender"
@@ -79,7 +79,6 @@
               :label="$t('models.user.birthYear.label')"
               class="birthYear"
             />
-
 
             <!--GeoComplete-->
             <GeoComplete
@@ -101,6 +100,16 @@
               {{ $t('ui.button.save') }}
             </v-btn>
           </v-form>
+
+           <!--SnackBar-->
+           <v-snackbar
+            v-model="snackbar"
+            color="success"
+            top="true"s
+            timeout="2000"
+          >
+            {{ $t('snackBar.profileUpdated') }}
+          </v-snackbar>
         </v-col>
       </v-row>
     </v-container>
@@ -113,8 +122,8 @@ import GeoComplete from "@js/components/GeoComplete";
 
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/SignUp.json";
-import TranslationsClient from "@clientTranslations/components/SignUp.json";
+import Translations from "@translations/components/ProfileUpdate.json";
+import TranslationsClient from "@clientTranslations/components/ProfileUpdate.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -146,6 +155,7 @@ export default {
   },
   data() {
     return {
+      snackbar: false,
       valid: true,
       errors: [],
       loading: false,
@@ -154,8 +164,8 @@ export default {
       },
       homeAddress: null,
       genders:[
-        { value: 2, gender: this.$t('models.user.gender.values.male')},
         { value: 1, gender: this.$t('models.user.gender.values.female')},
+        { value: 2, gender: this.$t('models.user.gender.values.male')},
         { value: 3, gender: this.$t('models.user.gender.values.other')},
       ],
     };
@@ -176,6 +186,7 @@ export default {
     validate () {
       if (this.$refs.form.validate()) {
         this.checkForm();
+        this.snackbar = true;
       }
     },
     checkForm () {

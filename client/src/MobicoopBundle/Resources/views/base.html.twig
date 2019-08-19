@@ -15,7 +15,7 @@
         <div id="app">
             <v-app>
                 {% if app.user %}
-                    <m-header :user={{app.user|json_encode()}}></m-header>
+                    <m-header :user="{{app.user|json_encode}}"></m-header>
                 {% else %}
                     <m-header></m-header>
                 {% endif %}
