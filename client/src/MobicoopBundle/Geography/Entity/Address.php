@@ -32,7 +32,7 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 /**
  * A postal address.
  */
-class Address implements ResourceInterface
+class Address implements ResourceInterface, \JsonSerializable
 {
     /**
      * @var int The id of this address.
@@ -410,4 +410,29 @@ class Address implements ResourceInterface
     {
         $this->displayLabel = $displayLabel;
     }
+
+     // If you want more info from user you just have to add it to the jsonSerialize function
+     public function jsonSerialize()
+     {
+         return
+         [
+             'id'                   => $this->getId(),
+             'houseNumber'          => $this->getHouseNumber(),
+             'street'               => $this->getStreet(),
+             'streetAddress'        => $this->getStreetAddress(),
+             'postalCode'           => $this->getPostalCode(),
+             'addressLocality'      => $this->getAddressLocality(),
+             'name'                 => $this->getName(),
+             'addressCountry'       => $this->getAddressCountry(),
+             'countryCode'          => $this->getCountryCode(),
+             'county'               => $this->getCounty(),
+             'latitude'             => $this-> getLatitude(),
+             'localAdmin'           => $this-> getLocalAdmin(),
+             'longitude'            => $this-> getLongitude(),
+             'macroCounty'          => $this-> getMacroCounty(),
+             'macroRegion'          => $this-> getMacroRegion(),
+             'region'               => $this-> getRegion(),
+             'subLocality'          => $this-> getSubLocality(),
+         ];
+     }
 }

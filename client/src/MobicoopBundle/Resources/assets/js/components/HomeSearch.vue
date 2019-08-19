@@ -195,7 +195,7 @@ export default {
   props: {
     geoSearchUrl: {
       type: String,
-      default: ""
+      default: null
     },
     route: {
       type: String,

@@ -269,9 +269,6 @@
             "ref": "0fa049c19069a65f52c1c181d64be3de672c1504"
         }
     },
-    "symfony/contracts": {
-        "version": "v1.0.2"
-    },
     "symfony/debug": {
         "version": "v4.2.3"
     },

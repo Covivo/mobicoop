@@ -13,7 +13,12 @@
           >
             <v-tab>{{ $t("tabs.myProfile") }}</v-tab>
             <v-tab-item>
-              <UpdateProfile />
+              <UpdateProfile
+                :user="user"
+                :geo-search-url="geoSearchUrl"
+                :age-min="ageMin"
+                :age-max="ageMax"
+              />
             </v-tab-item>
             <v-tab>{{ $t("tabs.password") }}</v-tab>
             <v-tab-item>
@@ -49,9 +54,28 @@ export default {
     ChangePassword,
     MyProposals
   },
-  props: {},
+  props: {
+    user: {
+      type: Object,
+      default: null
+    },
+    geoSearchUrl: {
+      type: String,
+      default: null
+    },
+    ageMin: {
+      type: String,
+      default: null
+    },
+    ageMax: {
+      type: String,
+      default: null
+    }
+  },
   data() {
-    return {};
+    return {
+
+    };
   }
 };
 </script>

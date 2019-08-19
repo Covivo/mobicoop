@@ -154,57 +154,51 @@ class UserController extends AbstractController
 
         // get the homeAddress
         $homeAddress = $user->getHomeAddress();
-         
-        $form = $this->createForm(UserForm::class, $user, ['validation_groups'=>['update']]);
+        
         $error = false;
            
         if ($request->isMethod('POST')) {
-
-            //get all data from form (user + homeAddress)
-            $data = $request->request->get($form->getName());
-
-            //pass homeAddress info into address entity
+            $data = json_decode($request->getContent(), true);
+          
             if (!$homeAddress) {
                 $homeAddress = new Address();
             }
-            $homeAddress->setAddressCountry($data['addressCountry']);
-            $homeAddress->setAddressLocality($data['addressLocality']);
-            $homeAddress->setCountryCode($data['countryCode']);
-            $homeAddress->setCounty($data['county']);
-            $homeAddress->setLatitude($data['latitude']);
-            $homeAddress->setLocalAdmin($data['localAdmin']);
-            $homeAddress->setLongitude($data['longitude']);
-            $homeAddress->setMacroCounty($data['macroCounty']);
-            $homeAddress->setMacroRegion($data['macroRegion']);
-            $homeAddress->setPostalCode($data['postalCode']);
-            $homeAddress->setRegion($data['region']);
-            $homeAddress->setStreet($data['street']);
-            $homeAddress->setStreetAddress($data['streetAddress']);
-            $homeAddress->setSubLocality($data['subLocality']);
+            $homeAddress->setAddressCountry($data['homeAddress']['addressCountry']);
+            $homeAddress->setAddressLocality($data['homeAddress']['addressLocality']);
+            $homeAddress->setCountryCode($data['homeAddress']['countryCode']);
+            $homeAddress->setCounty($data['homeAddress']['county']);
+            $homeAddress->setLatitude($data['homeAddress']['latitude']);
+            $homeAddress->setLocalAdmin($data['homeAddress']['localAdmin']);
+            $homeAddress->setLongitude($data['homeAddress']['longitude']);
+            $homeAddress->setMacroCounty($data['homeAddress']['macroCounty']);
+            $homeAddress->setMacroRegion($data['homeAddress']['macroRegion']);
+            $homeAddress->setPostalCode($data['homeAddress']['postalCode']);
+            $homeAddress->setRegion($data['homeAddress']['region']);
+            $homeAddress->setStreet($data['homeAddress']['street']);
+            $homeAddress->setStreetAddress($data['homeAddress']['streetAddress']);
+            $homeAddress->setSubLocality($data['homeAddress']['subLocality']);
             $homeAddress->setName($translator->trans('homeAddress', [], 'signup'));
             $homeAddress->setHome(true);
             
-            // pass front info into user form
+            if (is_null($homeAddress->getId()) && !empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) {
+                $user->addAddress($homeAddress);
+            } elseif (!empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) {
+                $addressManager->updateAddress($homeAddress);
+            }
+
             $user->setEmail($data['email']);
             $user->setTelephone($data['telephone']);
             $user->setGivenName($data['givenName']);
             $user->setFamilyName($data['familyName']);
             $user->setGender($data['gender']);
             $user->setBirthYear($data['birthYear']);
-            
-            if (is_null($homeAddress->getId()) && !empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) {
-                $homeAddress->setName(User::HOME_ADDRESS_NAME);
-                $user->addAddress($homeAddress);
-            } elseif (!empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) {
-                $addressManager->updateAddress($homeAddress);
-            }
+
             $userManager->updateUser($user);
-            exit;
         }
-      
+        
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
                 'error' => $error,
-                'user' => $user
+                'user' => $user,
             ]);
     }
 
