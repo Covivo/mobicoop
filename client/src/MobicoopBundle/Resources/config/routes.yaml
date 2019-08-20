@@ -135,6 +135,13 @@ carpool_results:
         date: '\d+'
 
 # rdex provider (called with ajax)
+matching_search:
+    path:
+        fr: /matching/search/
+        en: /matching/search/
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::MatchingSearch
+
+# rdex provider (called with ajax)
 rdex_provider:
     path:
         fr: /provider/rdex/ 

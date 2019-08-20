@@ -1,21 +1,40 @@
 'use strict'
 
+/**
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * This project is dual licensed under AGPL and proprietary licence.
+ ***************************
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Affero General Public License as
+ *    published by the Free Software Foundation, either version 3 of the
+ *    License, or (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Affero General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Affero General Public License
+ *    along with this program.  If not, see <gnu.org/licenses>.
+ ***************************
+ *    Licence MOBICOOP described in the file
+ *    LICENSE
+ **************************/
+
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import colorTheme from '@themes/mobicoop.json'
 import '@mdi/font/css/materialdesignicons.css'
 
-import Buefy from 'buefy'; // TODO ☣️ remove it when not needed anymore
-import VueFormWizard from 'vue-form-wizard';  // TODO ☣️ remove it when not needed anymore
-import 'vue-form-wizard/dist/vue-form-wizard.min.css'; // TODO ☣️ remove it when not needed anymore
-
-import Vuetify, { 
+import Vuetify, {
   // general
-  VApp, VContainer, VFlex, VLayout, VContent, VSpacer,
+  VApp, VContainer, VFlex, VLayout, VCol, VRow, VContent, VSpacer,
   // header
   VToolbar, VToolbarTitle, VBtn, VImg,
   // footer
   VFooter, VChip, VCardText,
+  // content
+  VForm, VTextField, VCheckbox, VSelect,
   // geocomplete
   VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon
 } from 'vuetify/lib'
@@ -23,21 +42,19 @@ import Vuetify, {
 Vue.use(Vuetify, {
   components: {
     // general
-    VApp, VContainer, VFlex, VLayout, VContent, VSpacer,
+    VApp, VContainer, VFlex, VLayout, VCol, VRow, VContent, VSpacer,
     // header
     VToolbar, VToolbarTitle, VBtn, VImg,
     // footer
     VFooter, VChip, VCardText,
+    // content
+    VForm, VTextField, VCheckbox, VSelect,
     // geocomplete
     VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon
   }
 })
 Vue.use(VueI18n)
 
-Vue.use(Buefy, { // TODO ☣️ remove it when not needed anymore
-  defaultTooltipType: 'is-mobicoopgreen'
-});
-Vue.use(VueFormWizard); // TODO ☣️ remove it when not needed anymore
 
 const i18n = new VueI18n({
   locale: 'fr' // set locale

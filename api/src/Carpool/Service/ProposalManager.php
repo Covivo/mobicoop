@@ -233,7 +233,6 @@ class ProposalManager
         \Datetime $date,
         ?int $userId = null
     ) {
-        
         // we create a new Proposal object with its Criteria and Waypoints
         $proposal = new Proposal();
         $proposal->setType(Proposal::TYPE_ONE_WAY);
