@@ -101,15 +101,20 @@ class CarpoolController extends AbstractController
      */
     public function MatchingSearch(Request $request, ProposalManager $proposalManager)
     {
-
         $origin_latitude = $request->query->get('origin_latitude');
         $origin_longitude = $request->query->get('origin_longitude');
         $destination_latitude = $request->query->get('destination_latitude');
         $destination_longitude = $request->query->get('destination_longitude');
         $date = Datetime::createFromFormat("Y-m-d\TH:i:s\Z", $request->query->get('date'));
 
-        return $this->json($proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date,
-        DataProvider::RETURN_JSON));
+        return $this->json($proposalManager->getMatchingsForSearch(
+            $origin_latitude,
+            $origin_longitude,
+            $destination_latitude,
+            $destination_longitude,
+            $date,
+            DataProvider::RETURN_JSON
+        ));
     }
 
     /**
