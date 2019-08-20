@@ -15,7 +15,7 @@
           name="origin"
           :label="$t('origin.label')"
           :url="geoSearchUrl"
-          :init-address="initOriginAddress"
+          :init-address="initOrigin"
           :required-error="$t('origin.error')"
           required
           @address-selected="originSelected"
@@ -194,7 +194,7 @@
           :required-error="$t('destination.error')"
           required
           :url="geoSearchUrl"
-          :init-address="initDestinationAddress"
+          :init-address="initDestination"
           @address-selected="destinationSelected"
         />
       </v-col>
@@ -277,11 +277,11 @@ export default {
       type: Object,
       default: null
     },
-    initOriginAddress: {
+    initOrigin: {
       type: Object,
       default: null
     },
-    initDestinationAddress: {
+    initDestination: {
       type: Object,
       default: null
     }
@@ -313,12 +313,12 @@ export default {
     };
   },
   watch: {
-    initOriginAddress() {
-      this.origin = this.initOriginAddress;
+    initOrigin() {
+      this.origin = this.initOrigin;
       this.getRoute();
     },
-    initDestinationAddress() {
-      this.destination = this.initDestinationAddress;
+    initDestination() {
+      this.destination = this.initDestination;
       this.getRoute();
     }
   },
@@ -326,24 +326,21 @@ export default {
     originSelected: function(address) {
       this.origin = address;
       this.getRoute();
-      //this.emitEvent();
     },
     destinationSelected: function(address) {
       this.destination = address;
       this.getRoute();
-      //this.emitEvent();
     },
     waypointSelected(id,address) {
       this.waypoints[id].address = address;
       this.getRoute();
-      //this.emitEvent();
     },
     getRoute() {
       if (this.origin != null && this.destination != null) {
         let params = `?points[0][longitude]=${this.origin.longitude}&points[0][latitude]=${this.origin.latitude}`;
         let nbWaypoints = 0;
         this.waypoints.forEach((item,key) => {
-          if (item.visible) {
+          if (item.visible && item.address) {
             nbWaypoints++;
             params += `&points[${nbWaypoints}][longitude]=${item.address.longitude}&points[${nbWaypoints}][latitude]=${item.address.latitude}`;
           }

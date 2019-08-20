@@ -36,8 +36,12 @@
                     "passengers" : " par passager"
                 },
                 "message": {
-                    "label": "Mon message aux passagers",
-                    "placeholder": "Laissez un petit message"
+                    "title": {
+                        "both" : "Mon message",
+                        "driver": "Mon message aux passagers",
+                        "passenger": "Mon message aux conducteurs"
+                    },
+                    "label": "Laissez un petit message"
                 },
                 "summary": "Récapitulatif"
             },

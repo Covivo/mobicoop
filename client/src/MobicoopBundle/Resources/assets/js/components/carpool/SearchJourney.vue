@@ -25,7 +25,6 @@
               <v-radio-group
                 v-model="role"
                 row
-                :rules="roleRules"
                 @change="roleChanged"
               >
                 <v-radio
@@ -62,7 +61,7 @@
               :token="user ? user.geoToken : ''"
               required
               :required-error="requiredErrorOrigin"
-              :init-address="customInitOriginAddress"
+              :init-address="customInitOrigin"
               @address-selected="originSelected"
             />
           </v-col>
@@ -91,13 +90,13 @@
               :token="user ? user.geoToken : ''"
               required
               :required-error="requiredErrorDestination"
-              :init-address="customInitDestinationAddress"
+              :init-address="customInitDestination"
               @address-selected="destinationSelected"
             />
           </v-col>
         </v-row>
 
-        <!-- Switch -->
+        <!-- Frequency switch -->
         <v-row
           align="center"
           no-gutters
@@ -138,7 +137,6 @@
         <!-- Datepicker -->
         <v-row
           align="center"
-          dense
         >
           <v-col
             cols="5"
@@ -150,15 +148,22 @@
               offset-y
               min-width="290px"
             >
+              <!-- Here we use a little trick to display error message, 
+              as validation rules on a readonly component works only after update of the value...
+              If we just click in and out the error message does not appear.
+              We use a combination of error, error-messages and blur -->
               <template v-slot:activator="{ on }">
                 <v-text-field
                   :value="computedDateFormat"
                   clearable
-                  :label="$t('datePicker.label')"
+                  :label="$t('outwardDate.label')"
                   readonly
-                  :messages="$t('ui.form.optional')"
+                  :disabled="regular"
+                  :error="!date && regular && outwardDateClicked"
+                  :error-messages="checkOutwardDate"
                   v-on="on"
                   @click:clear="clearDate"
+                  @blur="outwardDateBlur"
                 />
               </template>
               <v-date-picker
@@ -210,12 +215,15 @@ export default {
       type: Boolean,
       default: false
     },
-    initOutwardDate: String,
-    initOriginAddress: {
+    initOutwardDate: {
+      type: String,
+      default: null
+    },
+    initOrigin: {
       type: Object,
       default: null
     },
-    initDestinationAddress: {
+    initDestination: {
       type: Object,
       default: null
     }
@@ -223,6 +231,7 @@ export default {
   data() {
     return {
       date: null,
+      outwardDateClicked: false,
       regular: false,
       menu: false,
       role: null,
@@ -232,11 +241,12 @@ export default {
       labelDestination: this.$t("destination.label"),
       requiredErrorOrigin: this.$t("origin.error"),
       requiredErrorDestination: this.$t("destination.error"),
+      requiredErrorOutwardDate: this.$t("outwardDate.error"),
       locale: this.$i18n.locale,
       origin: null,
       destination: null,
-      customInitOriginAddress: null,
-      customInitDestinationAddress: null,
+      customInitOrigin: null,
+      customInitDestination: null,
       valid: false
     };
   },
@@ -245,28 +255,26 @@ export default {
       moment.locale(this.locale);
       return this.date
         ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
-        : "";
+        : null;
     },
-    roleRules() {
-      if (this.displayRoles) {
-        return [
-          v => !!v || "required"
-        ];
+    checkOutwardDate() {
+      if (this.outwardDateClicked && !this.regular && !this.date) {
+        return this.requiredErrorOutwardDate;
       }
-      return [];
-    },
+      return null;
+    }
   },
   watch: {
     initOutwardDate() {
       this.date = this.initOutwardDate;
     },
-    initOriginAddress() {
-      this.customInitOriginAddress = this.initOriginAddress;
-      this.origin = this.initOriginAddress;
+    initOrigin() {
+      this.customInitOrigin = this.initOrigin;
+      this.origin = this.initOrigin;
     },
-    initDestinationAddress() {
-      this.customInitDestinationAddress = this.initDestinationAddress;
-      this.destination = this.initDestinationAddress;
+    initDestination() {
+      this.customInitDestination = this.initDestination;
+      this.destination = this.initDestination;
     }
   },
   methods: {
@@ -279,11 +287,11 @@ export default {
       this.emitEvent();
     },
     swap: function() {
-      let tempOriginAddress = this.customInitOriginAddress;
-      this.origin = this.customInitDestinationAddress;
-      this.customInitOriginAddress = this.customInitDestinationAddress;
-      this.destination = tempOriginAddress;
-      this.customInitDestinationAddress = tempOriginAddress;
+      let tempOrigin = this.customInitOrigin;
+      this.origin = this.customInitDestination;
+      this.customInitOrigin = this.customInitDestination;
+      this.destination = tempOrigin;
+      this.customInitDestination = tempOrigin;
       this.emitEvent();
     },
     switched: function(){
@@ -318,6 +326,9 @@ export default {
     clearDate() {
       this.date = null;
       this.emitEvent();
+    },
+    outwardDateBlur() {
+      this.outwardDateClicked = true;
     }
   }
 };

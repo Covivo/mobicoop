@@ -36,6 +36,11 @@
                         "format": {
                             "fullDate": "ddd Do MMMM YYYY"
                         }
+                    },
+                    "time": {
+                        "format": {
+                            "hourMinute": "HH[h]mm"
+                        }
                     }
                 }
             },

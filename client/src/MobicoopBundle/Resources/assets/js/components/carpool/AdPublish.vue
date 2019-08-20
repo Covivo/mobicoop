@@ -74,7 +74,7 @@
 
               <!-- Step 4 : passengers (if driver) -->
               <v-stepper-step
-                v-if="step1.driver"
+                v-if="driver"
                 editable
                 :step="4"
                 color="success"
@@ -85,7 +85,7 @@
 
               <!-- Step 5 : participation (if driver) -->
               <v-stepper-step
-                v-if="step1.driver"
+                v-if="driver"
                 editable
                 :step="5"
                 color="success"
@@ -97,7 +97,7 @@
               <!-- Step 6 : message -->
               <v-stepper-step
                 editable
-                :step="step1.driver ? 6 : 4"
+                :step="driver ? 6 : 4"
                 color="success"
               >
                 {{ $t('stepper.header.message') }}
@@ -108,7 +108,7 @@
               <v-stepper-step
                 color="success"
                 editable
-                :step="step1.driver ? 7 : 5"
+                :step="driver ? 7 : 5"
               >
                 {{ $t('stepper.header.summary') }}
               </v-stepper-step>
@@ -123,8 +123,8 @@
                   :geo-search-url="geoSearchUrl"
                   :user="user"
                   :init-outward-date="outwardDate"
-                  :init-origin-address="originAddress"
-                  :init-destination-address="destinationAddress"
+                  :init-origin="origin"
+                  :init-destination="destination"
                   @change="searchChanged"
                 />
               </v-stepper-content>
@@ -144,15 +144,15 @@
                   :geo-search-url="geoSearchUrl"
                   :geo-route-url="geoRouteUrl"
                   :user="user"
-                  :init-origin-address="originAddress"
-                  :init-destination-address="destinationAddress"
+                  :init-origin="origin"
+                  :init-destination="destination"
                   @change="routeChanged"
                 />
               </v-stepper-content>
 
               <!-- Step 4 : passengers (if driver) -->
               <v-stepper-content
-                v-if="step1.driver"
+                v-if="driver"
                 step="4"
               >
                 <v-row
@@ -171,7 +171,7 @@
                     cols="1"
                   >
                     <v-select
-                      v-model="step4.seats"
+                      v-model="seats"
                       :items="[1,2,3,4]"
                     />
                   </v-col>
@@ -199,7 +199,7 @@
                     cols="1"
                   >
                     <v-switch
-                      v-model="step4.luggage"
+                      v-model="luggage"
                       inset
                       hide-details
                       class="mt-0 mb-1"
@@ -236,7 +236,7 @@
                     cols="1"
                   >
                     <v-switch
-                      v-model="step4.bike"
+                      v-model="bike"
                       inset
                       hide-details
                       class="mt-0 mb-1"
@@ -273,7 +273,7 @@
                     cols="1"
                   >
                     <v-switch
-                      v-model="step4.backSeats"
+                      v-model="backSeats"
                       inset
                       hide-details
                       class="mt-0 mb-1"
@@ -298,7 +298,7 @@
 
               <!-- Step 5 : participation (if driver) -->
               <v-stepper-content
-                v-if="step1.driver"
+                v-if="driver"
                 step="5"
               >
                 <v-row
@@ -317,7 +317,7 @@
                     cols="2"
                   >
                     <v-text-field 
-                      v-model="step5.price"
+                      v-model="price"
                       :disabled="distance<=0"
                       type="number"
                       suffix="€"
@@ -337,32 +337,52 @@
 
               <!-- Step 6 : message -->
               <v-stepper-content
-                :step="step1.driver ? 6 : 4"
+                :step="driver ? 6 : 4"
               >
-                <v-layout
-                  wrap
-                  row
-                  align-center
-                  justify-center
+                <v-row
+                  dense
+                  align="center"
+                  justify="center"
                 >
-                  <v-flex xs8>
-                    <div class="text-center">
-                      <v-textarea
-                        v-model="step6.message"
-                        name="input-7-1"
-                        :label="$t('stepper.content.message.label')"
-                        :placeholder="$t('stepper.content.message.placeholder')"
-                      />
-                    </div>
-                  </v-flex>
-                </v-layout>
+                  <v-col
+                    cols="6"
+                  >
+                    <p v-if="driver && passenger">
+                      {{ $t('stepper.content.message.title.both') }}
+                    </p>
+                    <p v-else-if="driver">
+                      {{ $t('stepper.content.message.title.driver') }}
+                    </p>
+                    <p v-else>
+                      {{ $t('stepper.content.message.title.passenger') }}
+                    </p>
+                    <v-textarea
+                      v-model="message"
+                      :label="$t('stepper.content.message.label')"
+                    />
+                  </v-col>
+                </v-row>
               </v-stepper-content>
 
               <!-- Step 7 : summary -->
               <v-stepper-content
-                :step="step1.driver ? 7 : 5"
+                :step="driver ? 7 : 5"
               >
-                <ad-summary />
+                <ad-summary 
+                  :driver="driver"
+                  :passenger="passenger"
+                  :regular="regular"
+                  :outward-date="outwardDate"
+                  :outward-time="outwardTime"
+                  :return-date="returnDate"
+                  :return-time="returnTime"
+                  :schedules="schedules"
+                  :seats="seats"
+                  :price="price"
+                  :route="route"
+                  :message="message"
+                  :user="user"
+                />
               </v-stepper-content>
             </v-stepper-items>
           </v-stepper>
@@ -387,7 +407,7 @@
         </v-btn>
 
         <v-btn
-          v-if="step < 7 && originAddress != null && destinationAddress != null && (this.step1.passenger || this.step1.driver)"
+          v-if="step < 7 && origin != null && destination != null && (passenger || driver) && (regular || outwardDate)"
           rounded
           color="primary"
           align-center
@@ -397,7 +417,7 @@
           {{ $t('stepper.buttons.next') }}
         </v-btn>
         <v-btn
-          v-if="step === 7"
+          v-if="step === 7 && valid"
           rounded
           color="primary"
           style="margin-left: 30px"
@@ -457,80 +477,63 @@ export default {
   data() {
     return {
       distance: 0, 
+      duration: 0,
       outwardDate: null,
-      originAddress: null,
-      destinationAddress: null,
+      outwardTime: null,
+      returnDate: null,
+      returnTime: null,
+      origin: null,
+      destination: null,
       regular: false,
       step:1,
-      step1: {
-        type: Object,
-        default: {}
-      },
-      step2: {
-        type: Object,
-        default: {}
-      },
-      step3: {
-        type: Object,
-        default: {}
-      },
-      step4: {
-        seats: 1,
-        luggage: false,
-        bike: false,
-        backSeats: false
-      },
-      step5: {
-        price: null,
-        pricePerKm: this.defaultPriceKm
-      },
-      step6: {
-        message: null
-      },
-      step7: {
-        type: Object,
-        default: null
-      },
+      driver: false,
+      passenger: false,
+      seats: 1,
+      luggage: false,
+      bike: false,
+      backSeats: false,
+      schedules: null,
+      route: null,
+      price: null,
+      pricePerKm: this.defaultPriceKm,
+      message: null,
+      valid: false
     }
   },
   computed: {
     hintPricePerKm() {
-      return this.step5.pricePerKm+'€/km';
-    },
-    price() {
-      return this.step5.price;
+      return this.pricePerKm+'€/km';
     }
   },
   watch: {
     price() {
-      this.step5.pricePerKm = (this.distance>0 ? Math.round(this.step5.price / this.distance * 100)/100 : this.defaultPriceKm);
+      this.pricePerKm = (this.distance>0 ? Math.round(this.price / this.distance * 100)/100 : this.defaultPriceKm);
     },
     distance() {
-      this.step5.price = Math.round(this.distance * this.step5.pricePerKm * 100)/100;
+      this.price = Math.round(this.distance * this.pricePerKm * 100)/100;
     }
   },
   methods: {
     searchChanged: function(search) {
-      this.step1 = search;
-      this.step2.outwardDate = search.date;
-      this.outwardDate = search.date;
-      this.originAddress = search.origin;
-      this.destinationAddress = search.destination;
+      this.passenger = search.passenger;
+      this.driver = search.driver;
+      this.origin = search.origin;
+      this.destination = search.destination;
       this.regular = search.regular;
+      this.outwardDate = search.date;
     },
     planificationChanged(planification) {
-      this.step2 = planification;
-      this.step1.date = planification.outwardDate;
       this.outwardDate = planification.outwardDate;
+      this.outwardTime = planification.outwardTime;
+      this.returnDate = planification.returnDate;
+      this.returnTime = planification.returnTime;
     },
     routeChanged(route) {
-      this.step3 = route;
-      this.originAddress = route.origin;
-      this.destinationAddress = route.destination;
+      this.route = route;
+      this.origin = route.origin;
+      this.destination = route.destination;
       this.distance = route.direction ? route.direction.distance / 1000 : null;
-    },
-    validStep() {
-      
+      this.duration = route.direction ? route.direction.duration : null;
     },
     /**
        * Send the form to the route /covoiturage/annonce/poster

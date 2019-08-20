@@ -57,7 +57,7 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 
 const defaultString = {
   type: String,
-  default: ""
+  default: null
 };
 export default {
   i18n: {
@@ -71,10 +71,10 @@ export default {
       type: Boolean,
       default: false
     },
-    hint: null,
+    hint: defaultString,
     required: Boolean,
     requiredError: defaultString,
-    name: String,
+    name: defaultString,
     initAddress: {
       type: Object,
       default: null

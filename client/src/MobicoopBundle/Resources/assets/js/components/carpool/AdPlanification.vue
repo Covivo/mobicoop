@@ -353,7 +353,7 @@
 
       <!-- Add schedule -->
       <v-row
-        v-if="!this.schedules[6].visible"
+        v-if="!schedules[6].visible"
         align="center"
         justify="center"
         dense
@@ -398,7 +398,10 @@ export default {
       type: Boolean,
       default: false
     },
-    initOutwardDate: String
+    initOutwardDate: {
+      type: String,
+      default: null
+    }
   },
   data() {
     return {

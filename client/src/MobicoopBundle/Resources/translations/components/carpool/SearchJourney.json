@@ -31,8 +31,9 @@
                 "help": "Cochez cette case pour spécifier que votre trajet est régulier"
             }
         },
-        "datePicker": {
-            "label": "Date de départ"
+        "outwardDate": {
+            "label": "Date de départ",
+            "error": "Obligatoire"
         },
         "buttons": {
             "shareAnAd": {
