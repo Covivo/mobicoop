@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Controller;
 
 use Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController;
+use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,6 +47,7 @@ use Symfony\Component\Dotenv\Dotenv;
  */
 class CarpoolController extends AbstractController
 {
+    use HydraControllerTrait;
     /**
      * Create a carpooling ad.
      */
@@ -76,6 +78,8 @@ class CarpoolController extends AbstractController
         }
         //        ajout de la gestion des communautés
         $hydraCommunities = $communityManager->getCommunities();
+        $reponseofmanager= $this->handleManagerReturnValue($hydraCommunities);
+        if(!empty($reponseofmanager)) return $reponseofmanager;
 //        dump($hydraCommunities);
         $communities =[];
         if ($hydraCommunities && count($hydraCommunities->getMember())>0) {
@@ -88,6 +92,8 @@ class CarpoolController extends AbstractController
                             $membersOfCommunity = [$user->getUser()->getId()];
                         }
                         $logged = $userManager->getLoggedUser();
+                        $reponseofmanager= $this->handleManagerReturnValue($logged);
+                        if(!empty($reponseofmanager)) return $reponseofmanager;
                         $isLogged = boolval($logged); // cast to boolean
                         // don't display the secured community if the user is not logged or if the user doesn't belong to the secured community
                         if (!$isLogged || !in_array($logged->getId(), $membersOfCommunity)) {
@@ -141,6 +147,8 @@ class CarpoolController extends AbstractController
         // Error happen durring proposal creation
         try {
             $proposal = $adManager->createProposalFromAd($ad);
+            $reponseofmanager= $this->handleManagerReturnValue($proposal);
+            if(!empty($reponseofmanager)) return $reponseofmanager;
             $success = true;
         } catch (Error $err) {
             $error = $err;
@@ -156,6 +164,9 @@ class CarpoolController extends AbstractController
      */
     public function simpleSearchResults($origin, $destination, $origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date, ProposalManager $proposalManager)
     {
+        $offers= $proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("YmdHis", $date));
+        $reponseofmanager= $this->handleManagerReturnValue($offers);
+        if(!empty($reponseofmanager)) return $reponseofmanager;
         return $this->render('@Mobicoop/search/simple_results.html.twig', [
             'origin' => urldecode($origin),
             'destination' => urldecode($destination),
@@ -164,7 +175,7 @@ class CarpoolController extends AbstractController
             'destination_latitude' => urldecode($destination_latitude),
             'destination_longitude' => urldecode($destination_longitude),
             'date' =>  \Datetime::createFromFormat("YmdHis", $date),
-            'hydra' => $proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("YmdHis", $date)),
+            'hydra' => $offers,
         ]);
     }
 
@@ -198,6 +209,8 @@ class CarpoolController extends AbstractController
     public function adPostResults($id, ProposalManager $proposalManager)
     {
         $proposal = $proposalManager->getProposal($id);
+        $reponseofmanager= $this->handleManagerReturnValue($proposal);
+        if(!empty($reponseofmanager)) return $reponseofmanager;
 
         $this->denyAccessUnlessGranted('results', $proposal);
 

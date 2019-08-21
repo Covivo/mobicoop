@@ -57,10 +57,7 @@ class InternalMessageManager
     public function getMessage(int $idMessage)
     {
         $response = $this->dataProvider->getItem($idMessage);
-        if ($response->getCode() == 200) {
             return $response->getValue();
-        }
-        return null;
     }
     
     /**
@@ -77,9 +74,9 @@ class InternalMessageManager
             $this->dataProvider->setFormat($format);
         }
         $response = $this->dataProvider->getSubCollection($id, Message::class, "thread");
-        if ($response->getCode() == 200) {
+
             return $response->getValue();
-        }
+
         return null;
     }
 

@@ -54,10 +54,7 @@ class ImageManager
     public function getImage(int $id)
     {
         $response = $this->dataProvider->getItem($id);
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
-        return null;
+        return $response->getValue();
     }
     
     /**

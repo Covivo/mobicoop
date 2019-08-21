@@ -23,6 +23,7 @@
 
 namespace App\User\Controller;
 
+use App\TranslatorTrait;
 use App\User\Service\UserManager;
 use App\User\Entity\User;
 
@@ -33,6 +34,7 @@ use App\User\Entity\User;
  */
 class UserRegistration
 {
+    use TranslatorTrait;
     private $userManager;
 
     public function __construct(UserManager $userManager)
@@ -49,6 +51,7 @@ class UserRegistration
      */
     public function __invoke(User $data): User
     {
+        if (is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
         $data = $this->userManager->registerUser($data);
         return $data;
     }

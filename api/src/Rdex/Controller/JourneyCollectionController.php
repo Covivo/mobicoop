@@ -23,6 +23,7 @@
 
 namespace App\Rdex\Controller;
 
+use App\TranslatorTrait;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use App\Rdex\Service\RdexManager;
@@ -37,6 +38,7 @@ use App\Rdex\Entity\RdexJourney;
  */
 class JourneyCollectionController
 {
+    use TranslatorTrait;
     private $rdexManager;
     protected $request;
     
@@ -54,6 +56,7 @@ class JourneyCollectionController
      */
     public function __invoke(array $data): Response
     {
+        if (is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad RdexJourney id is provided"));
         $response = new Response();
         // if there are no parameters we stop without errors, in could be an api check, it shouldn't throw an error
         if ($this->rdexManager->isEmptyRequest($this->request)) {

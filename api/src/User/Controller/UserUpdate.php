@@ -23,6 +23,7 @@
  namespace App\User\Controller;
 
 use App\Right\Service\PermissionManager;
+use App\TranslatorTrait;
 use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use App\User\Service\UserManager;
@@ -30,6 +31,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class UserUpdate
 {
+    use TranslatorTrait;
     /**
      * @var UserManager $userManager
      */
@@ -57,6 +59,7 @@ class UserUpdate
      */
     public function __invoke(User $data): User
     {
+        if (is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
         $data = $this->userManager->updateUser($data);
         return $data;
     }

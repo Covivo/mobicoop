@@ -25,6 +25,8 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Controller;
 
 use App\Communication\Entity\Email;
 use Herrera\Json\Exception\Exception;
+use Http\Client\Exception\HttpException;
+use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -71,6 +73,7 @@ use function MongoDB\BSON\toJSON;
 class UserController extends AbstractController
 {
 
+    use HydraControllerTrait;
     /**
      * User login.
      */
@@ -135,7 +138,9 @@ class UserController extends AbstractController
             $user->setBirthYear($data['birthYear']);
 
             // create user in database
-            $userManager->createUser($user);
+            $data= $userManager->createUser($user);
+            $reponseofmanager= $this->handleManagerReturnValue($data);
+            if(!empty($reponseofmanager)) return $reponseofmanager;
         }
  
         return $this->render('@Mobicoop/user/signup.html.twig', [
@@ -150,6 +155,8 @@ class UserController extends AbstractController
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
+        $reponseofmanager= $this->handleManagerReturnValue($user);
+        if(!empty($reponseofmanager)) return $reponseofmanager;
         $this->denyAccessUnlessGranted('update', $user);
 
         // get the homeAddress
@@ -183,7 +190,9 @@ class UserController extends AbstractController
             if (is_null($homeAddress->getId()) && !empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) {
                 $user->addAddress($homeAddress);
             } elseif (!empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) {
-                $addressManager->updateAddress($homeAddress);
+                $data= $addressManager->updateAddress($homeAddress);
+                $reponseofmanager= $this->handleManagerReturnValue($data);
+                if(!empty($reponseofmanager)) return $reponseofmanager;
             }
 
             $user->setEmail($data['email']);
@@ -192,8 +201,9 @@ class UserController extends AbstractController
             $user->setFamilyName($data['familyName']);
             $user->setGender($data['gender']);
             $user->setBirthYear($data['birthYear']);
-
-            $userManager->updateUser($user);
+            $data = $userManager->updateUser($user);
+            $reponseofmanager= $this->handleManagerReturnValue($data);
+            if(!empty($reponseofmanager)) return $reponseofmanager;
         }
         
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
@@ -210,6 +220,8 @@ class UserController extends AbstractController
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
+        $reponseofmanager= $this->handleManagerReturnValue($user);
+        if(!empty($reponseofmanager)) return $reponseofmanager;
         $this->denyAccessUnlessGranted('password', $user);
 
         $error = [
@@ -229,6 +241,8 @@ class UserController extends AbstractController
             }
 
             if ($user = $userManager->updateUserPassword($user)) {
+                $reponseofmanager= $this->handleManagerReturnValue($user);
+                if(!empty($reponseofmanager)) return $reponseofmanager;
                 // after successful update, we re-log the user
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                 $this->get('security.token_storage')->setToken($token);
@@ -272,6 +286,8 @@ class UserController extends AbstractController
             if (!empty($userRequest->getEmail())) {
                 /** @var User $user */
                 $user = $userManager->findByEmail($userRequest->getEmail());
+                $reponseofmanager= $this->handleManagerReturnValue($user);
+                if(!empty($reponseofmanager)) return $reponseofmanager;
             } else {
                 if (!empty($userRequest->getTelephone())) {
                     $user = $userManager->findByPhone($userRequest->getTelephone());
@@ -283,9 +299,9 @@ class UserController extends AbstractController
                 return $this->redirectToRoute('user_password_forgot');
             } else {
                 $data= $userManager->updateUserToken($user);
+                $reponseofmanager= $this->handleManagerReturnValue($data);
+                if(!empty($reponseofmanager)) return $reponseofmanager;
                 if (!empty($data)) {
-                    return $this->redirectToRoute('user_password_forgot');
-                } else {
                     return $this->redirectToRoute('user_password_forgot');
                 }
             }
@@ -305,6 +321,8 @@ class UserController extends AbstractController
     public function userPasswordReset(UserManager $userManager, Request $request, string $token)
     {
         $user = $userManager->findByPwdToken($token);
+        $reponseofmanager= $this->handleManagerReturnValue($user);
+        if(!empty($reponseofmanager)) return $reponseofmanager;
         $error = false;
 
         if (empty($user) || (time() - (int)$user->getPwdTokenDate()->getTimestamp()) > 86400) {
@@ -325,6 +343,8 @@ class UserController extends AbstractController
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
                 if ($user = $userManager->updateUserPassword($user)) {
+                    $reponseofmanager= $this->handleManagerReturnValue($user);
+                    if(!empty($reponseofmanager)) return $reponseofmanager;
                     // after successful update, we re-log the user
                     $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                     $this->get('security.token_storage')->setToken($token);
@@ -351,6 +371,8 @@ class UserController extends AbstractController
     public function userProfileDelete(UserManager $userManager, Request $request)
     {
         $user = $userManager->getLoggedUser();
+        $reponseofmanager= $this->handleManagerReturnValue($user);
+        if(!empty($reponseofmanager)) return $reponseofmanager;
         $this->denyAccessUnlessGranted('delete', $user);
 
         $form = $this->createForm(
@@ -363,7 +385,9 @@ class UserController extends AbstractController
         $error = false;
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($userManager->deleteUser($user->getId())) {
+            if ($data=$userManager->deleteUser($user->getId())) {
+                $reponseofmanager= $this->handleManagerReturnValue($data);
+                if(!empty($reponseofmanager)) return $reponseofmanager;
                 return $this->redirectToRoute('home');
             }
             $error = true;
@@ -382,10 +406,15 @@ class UserController extends AbstractController
     public function userProposals(UserManager $userManager, ProposalManager $proposalManager)
     {
         $user = $userManager->getLoggedUser();
+        $reponseofmanager= $this->handleManagerReturnValue($user);
+        if(!empty($reponseofmanager)) return $reponseofmanager;
         $this->denyAccessUnlessGranted('proposals_self', $user);
-
+    
+        $data=$proposalManager->getProposals($user);
+        $reponseofmanager= $this->handleManagerReturnValue($data);
+        if(!empty($reponseofmanager)) return $reponseofmanager;
         return $this->render('@Mobicoop/proposal/index.html.twig', [
-            'hydra' => $proposalManager->getProposals($user)
+            'hydra' => $data
         ]);
     }
 
@@ -406,6 +435,8 @@ class UserController extends AbstractController
 
         // Building threads array
         $threads = $userManager->getThreads($user);
+        $reponseofmanager= $this->handleManagerReturnValue($threads);
+        if(!empty($reponseofmanager)) return $reponseofmanager;
         $idMessageDefaultSelected = false;
 
         foreach ($threads["threads"] as $thread) {
@@ -455,9 +486,13 @@ class UserController extends AbstractController
     public function getThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager, AskManager $askManager)
     {
         $user = $userManager->getLoggedUser();
+        $reponseofmanager= $this->handleManagerReturnValue($user);
+        if(!empty($reponseofmanager)) return $reponseofmanager;
         $this->denyAccessUnlessGranted('messages', $user);
 
         $thread = $internalMessageManager->getThread($idFirstMessage, DataProvider::RETURN_JSON);
+        $reponseofmanager= $this->handleManagerReturnValue($thread);
+        if(!empty($reponseofmanager)) return $reponseofmanager;
 
         // Format the date with a human readable version
         // First message
@@ -476,6 +511,8 @@ class UserController extends AbstractController
             // Get the last AskHistory
             // You do that because you can have a AskHistory without a message
             $askHistories = $askManager->getAskHistories($thread["askHistory"]["ask"]["id"]);
+            $reponseofmanager= $this->handleManagerReturnValue($askHistories);
+            if(!empty($reponseofmanager)) return $reponseofmanager;
             $thread["lastAskHistory"] = end($askHistories);
 
             $fromDate = new DateTime($thread["lastAskHistory"]["ask"]["matching"]["criteria"]["fromDate"]);
@@ -496,6 +533,8 @@ class UserController extends AbstractController
     public function sendInternalMessage(UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request, AskHistoryManager $askHistoryManager)
     {
         $user = $userManager->getLoggedUser();
+        $reponseofmanager= $this->handleManagerReturnValue($user);
+        if(!empty($reponseofmanager)) return $reponseofmanager;
         $this->denyAccessUnlessGranted('messages', $user);
 
         if ($request->isMethod('POST')) {
@@ -509,12 +548,16 @@ class UserController extends AbstractController
                 $request->request->get('text'),
                 $internalMessageManager->getMessage($idThreadMessage)
             );
+            $reponseofmanager= $this->handleManagerReturnValue($messageToSend);
+            if(!empty($reponseofmanager)) return $reponseofmanager;
 
             // If there is an AskHistory i will post an AskHistory with the message within. If not, i only send a Message.
             if (trim($request->request->get('idAskHistory'))!=="") {
                 
                 // Get the current AskHistory
                 $currentAskHistory = $askHistoryManager->getAskHistory($request->request->get('idAskHistory'));
+                $reponseofmanager= $this->handleManagerReturnValue($currentAskHistory);
+                if(!empty($reponseofmanager)) return $reponseofmanager;
 
                 // Create the new Ask History to post
                 $askHistory = new AskHistory();
@@ -545,6 +588,8 @@ class UserController extends AbstractController
 
             // Get the Ask
             $ask = $askManager->getAsk($idAsk);
+            $reponseofmanager= $this->handleManagerReturnValue($ask);
+            if(!empty($reponseofmanager)) return $reponseofmanager;
 
             // Change the status
             if ($request->request->get('status')!==null &&
@@ -556,6 +601,8 @@ class UserController extends AbstractController
             
             // Update the Ask via API
             $ask = $askManager->updateAsk($ask);
+            $reponseofmanager= $this->handleManagerReturnValue($ask);
+            if(!empty($reponseofmanager)) return $reponseofmanager;
 
             $return = [
                 "id"=>$ask->getId(),

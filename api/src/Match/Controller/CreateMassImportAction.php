@@ -24,6 +24,7 @@
 namespace App\Match\Controller;
 
 use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
+use App\TranslatorTrait;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,6 +36,7 @@ use Psr\Log\LoggerInterface;
 
 final class CreateMassImportAction
 {
+    use TranslatorTrait;
     private $validator;
     private $doctrine;
     private $factory;
@@ -52,6 +54,7 @@ final class CreateMassImportAction
 
     public function __invoke(Request $request): ?Mass
     {
+        if (is_null($request)) throw new \InvalidArgumentException($this->translator->trans("bad request id is provided"));
         /** @var Mass $mass */
         $mass = new Mass();
         $mass->setStatus(Mass::STATUS_INCOMING);

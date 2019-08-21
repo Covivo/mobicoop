@@ -25,6 +25,7 @@ namespace App\Image\Controller;
 
 use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
 use App\Image\Form\ImageForm;
+use App\TranslatorTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -36,6 +37,7 @@ use Psr\Log\LoggerInterface;
 
 final class CreateImageAction
 {
+    use TranslatorTrait;
     private $validator;
     private $doctrine;
     private $factory;
@@ -56,6 +58,7 @@ final class CreateImageAction
      */
     public function __invoke(Request $request): Image
     {
+        if (is_null($request)) throw new \InvalidArgumentException($this->translator->trans("bad request id is provided"));
         $image = new Image();
         
         $form = $this->factory->create(ImageForm::class, $image);

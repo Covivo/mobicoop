@@ -150,7 +150,7 @@ class PermissionManager
      * @param User $user
      * @return Array
      */
-    public function getUserPermissions(User $user): array
+    public function getUserPermissions(User $user, $territory=null): array
     {
         $permissions = [];
         // we search the rights of each role of the user (and its subsequent roles)

@@ -169,7 +169,7 @@ class UserManager
         $this->entityManager->flush();
         // dispatch en event
         $event = new UserPasswordChangeAskedEvent($user);
-        $this->eventDispatcher->dispatch(UserPasswordChangeAskedEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, UserPasswordChangeAskedEvent::NAME);
         // return the user
         return $user;
     }
@@ -188,7 +188,7 @@ class UserManager
         $this->entityManager->flush();
         // dispatch en event
         $event = new UserPasswordChangedEvent($user);
-        $this->eventDispatcher->dispatch(UserPasswordChangedEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, UserPasswordChangedEvent::NAME);
         // return the user
         return $user;
     }

@@ -58,9 +58,6 @@ class GeoSearchManager
     public function getGeoSearch(array $params)
     {
         $response = $this->dataProvider->getSpecialCollection("search", $params);
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
-        return null;
+        return $response->getValue();
     }
 }
