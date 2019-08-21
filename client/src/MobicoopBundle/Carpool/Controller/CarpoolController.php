@@ -50,13 +50,13 @@ class CarpoolController extends AbstractController
      * Create a carpooling ad.
      */
 
-
     public function ad(AdManager $adManager, UserManager $userManager, Request $request, CommunityManager $communityManager, CommunityController $communityController)
     {
         //get price from the client/.env file
         $dotenv = new Dotenv();
         $dotenv->load(__DIR__.'/../../../../.env');
         $priceCarpool = $_ENV['PRICE_CARPOOL'];
+
         $ad = new Ad();
         $this->denyAccessUnlessGranted('post', $ad);
         $ad->setRole(Ad::ROLE_BOTH);
@@ -76,13 +76,11 @@ class CarpoolController extends AbstractController
         }
         //        ajout de la gestion des communautés
         $hydraCommunities = $communityManager->getCommunities();
-//        dump($hydraCommunities);
         $communities =[];
         if ($hydraCommunities && count($hydraCommunities->getMember())>0) {
             foreach ($hydraCommunities->getMember() as $value) {
                 foreach (array($value) as $community) {
                     if ($community->isSecured(true)) {
-//                        dump($community->getCommunityUsers());
                         $membersOfCommunity = array();
                         foreach ($community->getCommunityUsers() as $user) {
                             $membersOfCommunity = [$user->getUser()->getId()];

@@ -8,6 +8,7 @@
         justify="center"
         dense
       >
+        <!-- Outward date -->
         <v-col
           cols="6"
           offset="2"
@@ -46,6 +47,7 @@
           </v-menu>
         </v-col>
 
+        <!-- Outward time -->
         <v-col
           cols="4"
         >
@@ -87,6 +89,7 @@
         justify="center"
         dense
       >
+        <!-- Return trip ? -->
         <v-col
           cols="2"
         >
@@ -100,6 +103,7 @@
           />
         </v-col>
 
+        <!-- Return date -->
         <v-col
           cols="6"
         >
@@ -137,6 +141,7 @@
           </v-menu>
         </v-col>
 
+        <!-- Return time -->
         <v-col
           cols="4"
         >
@@ -198,36 +203,43 @@
                 v-model="item.mon"
                 label="L"
                 color="success"
+                @change="change"
               />
               <v-checkbox
                 v-model="item.tue"
                 label="Ma"
                 color="success"
+                @change="change"
               />
               <v-checkbox
                 v-model="item.wed"
                 label="Me"
                 color="success"
+                @change="change"
               />
               <v-checkbox
                 v-model="item.thu"
                 label="J"
                 color="success"
+                @change="change"
               />
               <v-checkbox
                 v-model="item.fri"
                 label="V"
                 color="success"
+                @change="change"
               />
               <v-checkbox
                 v-model="item.sat"
                 label="S"
                 color="success"
+                @change="change"
               />
               <v-checkbox
                 v-model="item.sun"
                 label="D"
                 color="success"
+                @change="change"
               />
             </v-row>
 
@@ -415,7 +427,7 @@ export default {
       menuReturnTime: false,
       returnTrip: false,
       locale: this.$i18n.locale,
-      // todo : refactor the following horror with default types...
+      // todo : refactor the following horror with default types :)
       schedules: [
         {
           id:1,
@@ -443,7 +455,9 @@ export default {
           sat: false,
           sun: false,
           outwardTime: null,
-          returnTime: null
+          returnTime: null,
+          menuOutwardTime: false,
+          menuReturnTime: false
         },
         {
           id:3,
@@ -456,7 +470,9 @@ export default {
           sat: false,
           sun: false,
           outwardTime: null,
-          returnTime: null
+          returnTime: null,
+          menuOutwardTime: false,
+          menuReturnTime: false
         },
         {
           id:4,
@@ -469,7 +485,9 @@ export default {
           sat: false,
           sun: false,
           outwardTime: null,
-          returnTime: null
+          returnTime: null,
+          menuOutwardTime: false,
+          menuReturnTime: false
         },
         {
           id:5,
@@ -482,7 +500,9 @@ export default {
           sat: false,
           sun: false,
           outwardTime: null,
-          returnTime: null
+          returnTime: null,
+          menuOutwardTime: false,
+          menuReturnTime: false
         },
         {
           id:6,
@@ -495,7 +515,9 @@ export default {
           sat: false,
           sun: false,
           outwardTime: null,
-          returnTime: null
+          returnTime: null,
+          menuOutwardTime: false,
+          menuReturnTime: false
         },
         {
           id:7,
@@ -508,7 +530,9 @@ export default {
           sat: false,
           sun: false,
           outwardTime: null,
-          returnTime: null
+          returnTime: null,
+          menuOutwardTime: false,
+          menuReturnTime: false
         }
       ]
     };
@@ -530,7 +554,7 @@ export default {
       return this.schedules.filter(function(schedule) {
         return schedule.visible;
       });
-    }
+    },
   },
   watch: {
     initOutwardDate() {
@@ -539,13 +563,24 @@ export default {
   },
   methods: {
     change() {
+      let validSchedules = JSON.parse(JSON.stringify(this.activeSchedules)); // little tweak to deep copy :)
+      for (var i=0;i<validSchedules.length;i++) {
+        if (!((validSchedules[i].mon || validSchedules[i].tue || validSchedules[i].wed || validSchedules[i].thu || validSchedules[i].fri || validSchedules[i].sat || validSchedules[i].sun) && validSchedules[i].outwardTime)) {
+          validSchedules.splice(i);
+        } else {
+          delete validSchedules[i].id;
+          delete validSchedules[i].visible;
+          delete validSchedules[i].menuOutwardTime;
+          delete validSchedules[i].menuReturnTime;
+        }        
+      }
       this.$emit("change", {
         outwardDate: this.outwardDate,
         outwardTime: this.outwardTime,
         returnDate: this.returnDate,
         returnTime: this.returnTime,
         returnTrip: this.returnTrip,
-        schedules: this.schedules
+        schedules: validSchedules
       });
     },
     clearOutwardDate() {
@@ -575,6 +610,7 @@ export default {
           break;
         }
       }
+      this.change();
     },
     addSchedule() {
       for (var i in this.schedules) {
@@ -583,6 +619,7 @@ export default {
           break;
         }
       }
+      this.change();
     }
   }
 };

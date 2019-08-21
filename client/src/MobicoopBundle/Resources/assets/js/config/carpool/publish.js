@@ -15,7 +15,7 @@ import Vuetify, {
   // geocomplete
   VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon, VForm,
   // ad publish
-  VStepper, VStepperHeader, VStepperStep, VDivider, VStepperItems, VStepperContent, VCheckbox, VSelect, VTextarea, VCard, VRadioGroup, VRadio,
+  VStepper, VStepperHeader, VStepperStep, VDivider, VStepperItems, VStepperContent, VCheckbox, VSelect, VTextarea, VCard, VCardTitle, VRadioGroup, VRadio, VTimeline, VTimelineItem,
   // content
   VSwitch, VMenu, VDatePicker, VTimePicker, VTextField,  VTooltip
 } from 'vuetify/lib'
@@ -31,7 +31,7 @@ Vue.use(Vuetify, {
     // geocomplete
     VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon, VForm,
     // ad publish
-    VStepper, VStepperHeader, VStepperStep, VDivider, VStepperItems, VStepperContent, VCheckbox, VSelect, VTextarea, VCard, VRadioGroup, VRadio,
+    VStepper, VStepperHeader, VStepperStep, VDivider, VStepperItems, VStepperContent, VCheckbox, VSelect, VTextarea, VCard, VCardTitle, VRadioGroup, VRadio, VTimeline, VTimelineItem,
     // content
     VSwitch, VMenu, VDatePicker, VTimePicker, VTextField,  VTooltip
   }

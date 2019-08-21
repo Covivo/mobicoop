@@ -67,6 +67,7 @@
 </template>
 
 <script>
+import moment from "moment";
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/home/HomeSearch.json";
@@ -103,17 +104,24 @@ export default {
       date: null,
       origin: null,
       destination: null,
-      baseUrl: window.location.origin
+      baseUrl: window.location.origin,
+      locale: this.$i18n.locale
     };
   },
   computed: {
     // creation of the url to call
     urlToCall() {
-      return `${this.baseUrl}/${this.route}/origine/destination/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.date}/resultats`;
+      return `${this.baseUrl}/${this.route}/${this.origin.addressLocality}/${this.destination.addressLocality}/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.computedDateFormat}/resultats`;
     },
     searchUnavailable() {
       return !this.origin || !this.destination;
-    }
+    },
+    computedDateFormat() {
+      moment.locale(this.locale);
+      return this.date
+        ? moment(this.date).format(this.$t("ui.i18n.date.format.fullNumericDate"))
+        : moment(new Date()).format(this.$t("ui.i18n.date.format.fullNumericDate"));
+    },
   },
   methods: {
     searchChanged: function(search) {

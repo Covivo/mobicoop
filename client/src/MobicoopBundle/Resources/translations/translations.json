@@ -34,13 +34,25 @@
                 "i18n": {
                     "date": {
                         "format": {
-                            "fullDate": "ddd Do MMMM YYYY"
+                            "fullDate": "ddd Do MMMM YYYY",
+                            "fullNumericDate": "YMMDDHHmmss"
                         }
                     },
                     "time": {
                         "format": {
                             "hourMinute": "HH[h]mm"
                         }
+                    }
+                },
+                "abbr": {
+                    "day": {
+                        "mon": "L",
+                        "tue": "M",
+                        "wed": "Me",
+                        "thu": "J",
+                        "fri": "V",
+                        "sat": "S",
+                        "sun": "D"
                     }
                 }
             },

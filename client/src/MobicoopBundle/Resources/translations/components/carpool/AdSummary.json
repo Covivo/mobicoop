@@ -1,5 +1,7 @@
 {
     "fr": {
-        "places": "place | places"
+        "places": "place | places",
+        "outward": "Aller",
+        "return": "Retour"
     }
 }

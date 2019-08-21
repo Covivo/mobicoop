@@ -407,7 +407,7 @@
         </v-btn>
 
         <v-btn
-          v-if="step < 7 && origin != null && destination != null && (passenger || driver) && (regular || outwardDate)"
+          v-if="((driver && step < 7) || (step<5)) && origin != null && destination != null && (passenger || driver) && (regular || outwardDate)"
           rounded
           color="primary"
           align-center
@@ -417,11 +417,12 @@
           {{ $t('stepper.buttons.next') }}
         </v-btn>
         <v-btn
-          v-if="step === 7 && valid"
+          v-if="valid"
           rounded
           color="primary"
           style="margin-left: 30px"
           align-center
+          @click="postAd"
         >
           {{ $t('stepper.buttons.publish_ad') }}
         </v-btn>
@@ -472,7 +473,11 @@ export default {
     defaultPriceKm: {
       type: Number,
       default: 0.06
-    }
+    },
+    publishUrl: {
+      type: String,
+      default: ''
+    },
   },
   data() {
     return {
@@ -497,13 +502,38 @@ export default {
       price: null,
       pricePerKm: this.defaultPriceKm,
       message: null,
-      valid: false
+      baseUrl: window.location.origin
     }
   },
   computed: {
     hintPricePerKm() {
       return this.pricePerKm+'€/km';
-    }
+    },
+    validWaypoints() {
+      if (this.route && this.route.waypoints) {
+        return this.route.waypoints.filter(function(waypoint) {
+          return waypoint.visible && waypoint.address;
+        });
+      }
+      return null;
+    },
+    valid() {
+      // step validation
+      if ((this.driver && this.step != 7) || (!this.driver && this.step != 5)) return false;
+      // role validation
+      if (this.driver === false && this.passenger === false) return false;
+      // route validation
+      if (this.distance<=0 || this.duration<=0 || !this.origin || !this.destination || !this.route) return false;
+      // punctual date validation
+      if (!this.regular && !(this.outwardDate && this.outwardTime)) return false;
+      // regular date validation
+      if (this.regular && !this.schedules) return false;
+      // validation ok
+      return true;
+    },
+    urlToCall() {
+      return `${this.baseUrl}/${this.publishUrl}`;
+    },
   },
   watch: {
     price() {
@@ -527,6 +557,7 @@ export default {
       this.outwardTime = planification.outwardTime;
       this.returnDate = planification.returnDate;
       this.returnTime = planification.returnTime;
+      this.schedules = planification.schedules;
     },
     routeChanged(route) {
       this.route = route;
@@ -535,46 +566,44 @@ export default {
       this.distance = route.direction ? route.direction.distance / 1000 : null;
       this.duration = route.direction ? route.direction.duration : null;
     },
-    /**
-       * Send the form to the route /covoiturage/annonce/poster
-       */
-    onComplete() {
-      let adForm = new FormData();
-      for (let prop in this.form) {
-        let value = this.form[prop];
-        if(!value) continue; // Value is empty, just skip it!
-        // Convert date to required format
-        if(prop.toLowerCase().includes('date')){
-          value = moment(value).format('YYYY/MM/DD');
-        }
-        // Convert time to required format
-        if(prop.toLowerCase().includes('time')){
-          value = moment(value).format('HH:mm');
-        }
-        // Convert margin from min to sec
-        if(prop.toLowerCase().includes('margin')){
-          value *= 60;
-        }
-        // rename prop to be usable in the controller
-        let renamedProp = prop === "createToken" ? prop : `ad_form[${prop}]`;
-        adForm.append(renamedProp, value);
+    postAd() {
+      let postObject = {
+        regular: this.regular,
+        driver: this.driver,
+        passenger: this.passenger,
+        origin: this.origin,
+        destination: this.destination
+      };
+      if (this.validWaypoints) postObject.waypoints = this.validWaypoints;
+      if (!this.regular) {
+        if (this.outwardDate) postObject.outwardDate = this.outwardDate;
+        if (this.outwardTime) postObject.outwardTime = this.outwardTime;
+        if (this.returnDate) postObject.returnDate = this.returnDate;
+        if (this.returnTime) postObject.returnTime = this.returnTime;
+      } else if (this.schedules) {
+        postObject.schedules = this.schedules;
       }
-      //  We post the form 🚀
-      axios
-        .post("/covoiturage/annonce/poster", adForm, {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        })
-        .then(function(response) {
-          if(response.data.proposal !== 'undefined' ) {
-            window.location.href = '/covoiturage/annonce/' + response.data.proposal + '/resultats';
-          }
-        })
-        .catch(function(error) {
-          console.error(error);
-        });
-    }
+      if (this.seats) postObject.seats = this.seats;
+      if (this.luggage) postObject.luggage = this.luggage;
+      if (this.bike) postObject.bike = this.bike;
+      if (this.backSeats) postObject.backSeats = this.backSeats;
+      if (this.price) postObject.price = this.price;
+      if (this.message) postObject.message = this.message;
+      console.error(postObject);
+      // axios.post(this.urlToCall,postObject,{
+      //     headers:{
+      //       'content-type': 'application/json'
+      //     }
+      //   })
+      //   .then(function (response) {
+      //     window.location.href = '/';
+      //     console.log(response);
+      //   })
+      //   .catch(function (error) {
+      //     console.log(error);
+      //   });
+    },
+
   }
 };
 </script>
