@@ -118,7 +118,7 @@
 
 <script>
 import axios from "axios";
-import GeoComplete from "@js/components/GeoComplete";
+import GeoComplete from "@js/components/utilities/GeoComplete";
 
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
