@@ -92,9 +92,14 @@ class Direction
     private $format;
 
     /**
-     * @var Address[]|null The decoded points (from detail) of the direction.
+     * @var Address[]|null The decoded points (from detail) of the direction as Address objects.
      */
     private $points;
+
+    /**
+     * @var []|null The decoded points (from detail) of the direction as arrays of longitude/latitude.
+     */
+    private $directPoints;
 
     public function getId(): ?int
     {
@@ -244,6 +249,18 @@ class Direction
     public function setPoints(array $points): self
     {
         $this->points = $points;
+        
+        return $this;
+    }
+
+    public function getDirectPoints(): ?array
+    {
+        return $this->directPoints;
+    }
+    
+    public function setDirectPoints(array $directPoints): self
+    {
+        $this->directPoints = $directPoints;
         
         return $this;
     }

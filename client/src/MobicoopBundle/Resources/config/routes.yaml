@@ -209,3 +209,14 @@ news:
         fr: /nouveautes
         en: /news
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showNews
+
+####################
+# geography routes #
+####################
+
+# geourouter route
+georouter:
+    path:
+        fr: /georoute
+        en: /georoute
+    controller: Mobicoop\Bundle\MobicoopBundle\Geography\Controller\GeoRouterController::geoRoute

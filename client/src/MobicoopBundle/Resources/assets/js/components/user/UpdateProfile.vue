@@ -85,6 +85,7 @@
               :url="geoSearchUrl"
               :label="$t('models.user.homeTown.label')"
               :token="user ? user.geoToken : ''"
+              :init-address="user.homeAddress ? user.homeAddress : null"
               @address-selected="homeAddressSelected"
             />
 
@@ -105,8 +106,8 @@
            <v-snackbar
             v-model="snackbar"
             color="success"
-            top="true"s
-            timeout="2000"
+            top
+            :timeout="2000"
           >
             {{ $t('snackBar.profileUpdated') }}
           </v-snackbar>
@@ -118,7 +119,7 @@
 
 <script>
 import axios from "axios";
-import GeoComplete from "@js/components/GeoComplete";
+import GeoComplete from "@js/components/utilities/GeoComplete";
 
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";

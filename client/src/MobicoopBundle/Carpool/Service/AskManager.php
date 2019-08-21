@@ -53,8 +53,8 @@ class AskManager
     public function getAsk(int $id)
     {
         $response = $this->dataProvider->getItem($id);
-            $ask = $response->getValue();
-            return $ask;
+        $ask = $response->getValue();
+        return $ask;
     }
     
     /**
@@ -81,6 +81,6 @@ class AskManager
     {
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
         $response = $this->dataProvider->getSubCollection($idAsk, 'askhistory', 'ask_histories');
-            return $response->getValue();
+        return $response->getValue();
     }
 }

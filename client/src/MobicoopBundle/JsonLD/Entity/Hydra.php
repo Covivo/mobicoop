@@ -68,7 +68,7 @@ class Hydra
     /**
      * @var Trace[] $traces
      */
-    private  $traces;
+    private $traces;
     
     /**
      * @var HydraView $view The view of the collection.
@@ -173,7 +173,7 @@ class Hydra
      *
      * @return string
      */
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
@@ -193,7 +193,7 @@ class Hydra
      *
      * @return string
      */
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -211,7 +211,7 @@ class Hydra
     /**
      * @return Trace[]
      */
-    public function getTraces(): array
+    public function getTraces(): ?array
     {
         return $this->traces;
     }
@@ -223,5 +223,4 @@ class Hydra
     {
         $this->traces = $traces;
     }
-    
 }

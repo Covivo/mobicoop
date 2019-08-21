@@ -62,8 +62,8 @@
 <script>
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/Login.json";
-import TranslationsClient from "@clientTranslations/components/Login.json";
+import Translations from "@translations/components/user/Login.json";
+import TranslationsClient from "@clientTranslations/components/user/Login.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {

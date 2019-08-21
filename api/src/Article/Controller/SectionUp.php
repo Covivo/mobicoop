@@ -51,7 +51,9 @@ class SectionUp
      */
     public function __invoke(Section $data): Section
     {
-        if(is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad Section id is provided"));
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad Section id is provided"));
+        }
         return $this->articleManager->changeSectionPosition($data, $this->articleManager::DIRECTION_UP);
     }
 }

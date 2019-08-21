@@ -197,11 +197,9 @@ class DataProvider
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), $value);
             }
-        }
-        catch (ClientException|ServerException $e){
+        } catch (ClientException|ServerException $e) {
             return new Response($e->getCode(), self::treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
-        }
-        catch (TransferException $e) {
+        } catch (TransferException $e) {
             return new Response($e->getCode());
         }
         return new Response();
@@ -232,11 +230,9 @@ class DataProvider
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), $value);
             }
-        }
-        catch (ClientException|ServerException $e){
+        } catch (ClientException|ServerException $e) {
             return new Response($e->getCode(), self::treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
-        }
-        catch (TransferException $e) {
+        } catch (TransferException $e) {
             return new Response($e->getCode());
         }
         return new Response();
@@ -260,11 +256,9 @@ class DataProvider
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody()));
             }
-        }
-        catch (ClientException|ServerException $e){
+        } catch (ClientException|ServerException $e) {
             return new Response($e->getCode(), self::treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
-        }
-        catch (TransferException $e) {
+        } catch (TransferException $e) {
             return new Response($e->getCode());
         }
         return new Response();
@@ -289,11 +283,9 @@ class DataProvider
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody()));
             }
-        }
-        catch (ClientException|ServerException $e){
+        } catch (ClientException|ServerException $e) {
             return new Response($e->getCode(), self::treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
-        }
-        catch (TransferException $e) {
+        } catch (TransferException $e) {
             return new Response($e->getCode());
         }
         return new Response();
@@ -325,11 +317,9 @@ class DataProvider
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), self::treatHydraCollection($clientResponse->getBody(), $subClassName));
             }
-        }
-        catch (ClientException|ServerException $e){
+        } catch (ClientException|ServerException $e) {
             return new Response($e->getCode(), self::treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
-        }
-        catch (TransferException $e) {
+        } catch (TransferException $e) {
             return new Response($e->getCode());
         }
         return new Response();
@@ -410,11 +400,9 @@ class DataProvider
             if ($clientResponse->getStatusCode() == 201) {
                 return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
             }
-        }
-        catch (ClientException|ServerException $e){
+        } catch (ClientException|ServerException $e) {
             return new Response($e->getCode(), self::treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
-        }
-        catch (TransferException $e) {
+        } catch (TransferException $e) {
             return new Response($e->getCode());
         }
         return new Response();
@@ -439,11 +427,9 @@ class DataProvider
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
             }
-        }
-        catch (ClientException|ServerException $e){
+        } catch (ClientException|ServerException $e) {
             return new Response($e->getCode(), self::treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
-        }
-        catch (TransferException $e) {
+        } catch (TransferException $e) {
             return new Response($e->getCode());
         }
         return new Response();
@@ -468,11 +454,9 @@ class DataProvider
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
             }
-        }
-        catch (ClientException|ServerException $e){
+        } catch (ClientException|ServerException $e) {
             return new Response($e->getCode(), self::treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
-        }
-        catch (TransferException $e) {
+        } catch (TransferException $e) {
             return new Response($e->getCode());
         }
         return new Response();
@@ -495,11 +479,9 @@ class DataProvider
             if ($clientResponse->getStatusCode() == 204) {
                 return new Response($clientResponse->getStatusCode());
             }
-        }
-        catch (ClientException|ServerException $e){
+        } catch (ClientException|ServerException $e) {
             return new Response($e->getCode(), self::treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
-        }
-        catch (TransferException $e) {
+        } catch (TransferException $e) {
             return new Response($e->getCode());
         }
         return new Response();
@@ -517,6 +499,8 @@ class DataProvider
         
         // $data comes from a GuzzleHttp request; it's a json hydra collection so when need to parse the json to an array
         $data = json_decode($data, true);
+
+        
         
         $hydra = new Hydra();
         if (isset($data['@context'])) {

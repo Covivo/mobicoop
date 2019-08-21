@@ -1,0 +1,27 @@
+{
+    "fr": {
+        "addWaypoint": "Ajouter une étape",
+        "origin": {
+            "label": "Origine",
+            "error": "Obligatoire"
+        },
+        "destination": {
+            "label": "Destination",
+            "error": "Obligatoire"
+        },
+        "waypoint1": {
+            "label": "Etape 1"
+        },
+        "waypoint2": {
+            "label": "Etape 2"
+        },
+        "waypoint3": {
+            "label": "Etape 3"
+        },
+        "waypoint4": {
+            "label": "Etape 4"
+        },
+        "avoidMotorway": "Eviter l'autoroute",
+        "distance": "Distance"
+    }
+}

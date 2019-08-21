@@ -248,11 +248,12 @@
 
 <script>
 import axios from "axios";
-import GeoComplete from "@js/components/GeoComplete";
+import GeoComplete from "@js/components/utilities/GeoComplete";
+
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/SignUp.json";
-import TranslationsClient from "@clientTranslations/components/SignUp.json";
+import Translations from "@translations/components/user/SignUp.json";
+import TranslationsClient from "@clientTranslations/components/user/SignUp.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {

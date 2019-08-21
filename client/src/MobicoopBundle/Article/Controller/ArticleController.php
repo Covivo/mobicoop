@@ -47,7 +47,9 @@ class ArticleController extends AbstractController
     {
         $article = $articleManager->getArticle(self::PROJECT);
         $reponseofmanager= $this->handleManagerReturnValue($article);
-        if(!empty($reponseofmanager)) return $reponseofmanager;
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
         $this->denyAccessUnlessGranted('show', $article);
         return $this->render('@Mobicoop/article/article.html.twig', [
             'article' => $article,
@@ -62,7 +64,9 @@ class ArticleController extends AbstractController
     {
         $article = $articleManager->getArticle(self::CGU);
         $reponseofmanager= $this->handleManagerReturnValue($article);
-        if(!empty($reponseofmanager)) return $reponseofmanager;
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
         $this->denyAccessUnlessGranted('show', $article);
         return $this->render('@Mobicoop/article/article.html.twig', [
             'article' => $article,
@@ -77,7 +81,9 @@ class ArticleController extends AbstractController
     {
         $article = $articleManager->getArticle(self::NEWS);
         $reponseofmanager= $this->handleManagerReturnValue($article);
-        if(!empty($reponseofmanager)) return $reponseofmanager;
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
         $this->denyAccessUnlessGranted('show', $article);
         return $this->render('@Mobicoop/article/article.html.twig', [
             'article' => $article,

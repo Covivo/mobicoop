@@ -52,7 +52,9 @@ class ParagraphDown
      */
     public function __invoke(Paragraph $data): Paragraph
     {
-        if(is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad Paragraph id is provided"));
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad Paragraph id is provided"));
+        }
         return $this->articleManager->changeParagraphPosition($data, $this->articleManager::DIRECTION_DOWN);
     }
 }

@@ -344,8 +344,7 @@ class UserManager
         if ($response->getCode() == 200) {
             $this->logger->info('User Token Update | Start');
             return $response->getValue();
-        }
-        else{
+        } else {
             return $response->getValue();
         }
         $this->logger->info('User Token Update | Fail');
