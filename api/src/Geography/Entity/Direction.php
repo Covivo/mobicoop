@@ -43,7 +43,25 @@ use CrEOF\Spatial\PHP\Types\Geography\LineString;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={},
+ *      collectionOperations={
+ *          "search"={
+ *              "method"="GET",
+ *              "path"="/directions/search",
+ *              "normalization_context"={"groups"={"read"}},
+ *              "swagger_context" = {
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "points",
+ *                          "in" = "query",
+ *                          "required" = "true",
+ *                          "type" = "array",
+ *                          "format" = "float",
+ *                          "description" = "The points in the form points[x][longitude]&points[x][latitude]"
+ *                      }
+ *                  }
+ *              }
+ *          }
+ *      },
  *      itemOperations={"get"}
  * )
  *
@@ -174,11 +192,18 @@ class Direction
     private $co2;
 
     /**
-     * @var Address[]|null The decoded points (from detail) of the direction.
+     * @var Address[]|null The decoded points (from detail) of the direction as Address objects.
      * Can be used to draw the path on a map.
      * @Groups("read")
      */
     private $points;
+
+    /**
+     * @var array|Address[]|null The decoded points (from detail) of the direction as latitude/longitude array.
+     * Can be used to draw the path on a map.
+     * @Groups("read")
+     */
+    private $directPoints;
 
     /**
      * @var Address[]|null The decoded snapped waypoints of the direction.
@@ -421,6 +446,18 @@ class Direction
     public function setPoints(array $points): self
     {
         $this->points = $points;
+        
+        return $this;
+    }
+
+    public function getDirectPoints(): ?array
+    {
+        return $this->directPoints;
+    }
+    
+    public function setDirectPoints(array $directPoints): self
+    {
+        $this->directPoints = $directPoints;
         
         return $this;
     }

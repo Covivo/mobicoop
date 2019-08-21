@@ -35,13 +35,13 @@
   </v-content>
 </template>
 <script>
-import UpdateProfile from "@js/components/user/UpdateProfile";
-import ChangePassword from "@js/components/user/ChangePassword";
-import MyProposals from "@js/components/user/MyProposals";
+import UpdateProfile from "@components/user/UpdateProfile";
+import ChangePassword from "@components/user/ChangePassword";
+import MyProposals from "@components/user/MyProposals";
 
 import { merge } from "lodash";
-import Translations from "@translations/components/Profile.json";
-import TranslationsClient from "@clientTranslations/components/Profile.json";
+import Translations from "@translations/components/user/Profile.json";
+import TranslationsClient from "@clientTranslations/components/user/Profile.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 

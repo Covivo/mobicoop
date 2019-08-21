@@ -1,12 +1,12 @@
 'use strict'
 
-import { Vue, vuetify, i18n } from '@js/config/page/community/communities'
+import { Vue, vuetify, i18n } from '@js/config/community/communities'
 
 import '@css/page/community/communities.scss'
 
 // Vue components
-import MHeader from '@js/components/MHeader'
-import MFooter from '@js/components/MFooter'
+import MHeader from '@components/base/MHeader'
+import MFooter from '@components/base/MFooter'
 
 new Vue({
   el: '#app',

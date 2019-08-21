@@ -1,12 +1,12 @@
 'use strict'
 
-import { Vue, vuetify, i18n } from '@js/config/page/user/messages'
+import { Vue, vuetify, i18n } from '@js/config/user/messages'
 
 import '@css/page/user/messages.scss'
 
-import Messages from '@js/components/user/Messages'
-import MHeader from '@js/components/MHeader'
-import MFooter from '@js/components/MFooter'
+import Messages from '@components/user/Messages'
+import MHeader from '@components/base/MHeader'
+import MFooter from '@components/base/MFooter'
 
 new Vue({
   i18n,
