@@ -55,7 +55,6 @@ class ImageManager
     {
         $response = $this->dataProvider->getItem($id);
         return $response->getValue();
-        return null;
     }
     
     /**

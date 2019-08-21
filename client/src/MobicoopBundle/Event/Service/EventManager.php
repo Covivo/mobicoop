@@ -87,7 +87,6 @@ class EventManager
         }
         $response = $this->dataProvider->getCollection($params);
         return $response->getValue();
-        return null;
     }
     
     /**
@@ -101,7 +100,6 @@ class EventManager
         $response = $this->dataProvider->getItem($id);
 
         return $response->getValue();
-        return null;
     }
     
     /**
@@ -115,7 +113,6 @@ class EventManager
     {
         $response = $this->dataProvider->put($event);
         return $response->getValue();
-        return null;
     }
     
     /**

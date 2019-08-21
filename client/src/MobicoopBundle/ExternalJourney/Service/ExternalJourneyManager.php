@@ -40,7 +40,6 @@ class ExternalJourneyManager
         $this->dataProvider->setFormat($format);
         $response = $this->dataProvider->getCollection($params);
         return $response->getValue();
-        return null;
     }
 
     /**
@@ -57,6 +56,5 @@ class ExternalJourneyManager
         $this->dataProvider->setFormat($format);
         $response = $this->dataProvider->getCollection();
         return $response->getValue();
-        return null;
     }
 }

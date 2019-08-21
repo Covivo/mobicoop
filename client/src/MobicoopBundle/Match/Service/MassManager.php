@@ -118,7 +118,6 @@ class MassManager
     {
         $response = $this->dataProvider->getSpecialItem($id, "analyze");
         return $response->getValue();
-        return null;
     }
 
     /**
@@ -132,7 +131,6 @@ class MassManager
     {
         $response = $this->dataProvider->getSpecialItem($id, "reanalyze");
         return $response->getValue();
-        return null;
     }
 
     /**
@@ -150,7 +148,6 @@ class MassManager
         ];
         $response = $this->dataProvider->getSpecialItem($id, "match", $params);
         return $response->getValue();
-        return null;
     }
 
     /**
@@ -168,7 +165,6 @@ class MassManager
         ];
         $response = $this->dataProvider->getSpecialItem($id, "rematch", $params);
         return $response->getValue();
-        return null;
     }
 
     /**
@@ -182,7 +178,6 @@ class MassManager
     {
         $response = $this->dataProvider->getSpecialItem($id, "compute");
         return $response->getValue();
-        return null;
     }
 
     /**
@@ -196,6 +191,5 @@ class MassManager
     {
         $response = $this->dataProvider->getSpecialItem($id, "workingplaces");
         return $response->getValue();
-        return null;
     }
 }

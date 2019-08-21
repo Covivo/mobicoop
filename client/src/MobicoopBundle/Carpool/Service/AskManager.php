@@ -55,7 +55,6 @@ class AskManager
         $response = $this->dataProvider->getItem($id);
             $ask = $response->getValue();
             return $ask;
-        return null;
     }
     
     /**
@@ -69,7 +68,6 @@ class AskManager
     {
         $response = $this->dataProvider->put($ask);
         return $response->getValue();
-        return null;
     }
 
     /**
@@ -84,6 +82,5 @@ class AskManager
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
         $response = $this->dataProvider->getSubCollection($idAsk, 'askhistory', 'ask_histories');
             return $response->getValue();
-        return null;
     }
 }

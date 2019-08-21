@@ -58,7 +58,6 @@ class InternalMessageManager
     {
         $response = $this->dataProvider->getItem($idMessage);
             return $response->getValue();
-        return null;
     }
     
     /**

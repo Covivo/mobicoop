@@ -55,7 +55,6 @@ class AskHistoryManager
         $response = $this->dataProvider->getItem($id);
             $ask = $response->getValue();
             return $ask;
-        return null;
     }
     
     /**

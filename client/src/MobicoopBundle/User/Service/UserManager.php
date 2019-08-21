@@ -143,7 +143,6 @@ class UserManager
     {
         $response = $this->dataProvider->getSubCollection($id, Mass::class);
         return $response->getValue();
-        return null;
     }
 
     /**
@@ -301,7 +300,6 @@ class UserManager
         $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
         $response = $this->dataProvider->getSubCollection($user->getId(), 'thread', 'threads');
         return $response->getValue();
-        return null;
     }
     public function findByPhone(string $getTelephone)
     {

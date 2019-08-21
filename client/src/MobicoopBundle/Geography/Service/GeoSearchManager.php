@@ -59,6 +59,5 @@ class GeoSearchManager
     {
         $response = $this->dataProvider->getSpecialCollection("search", $params);
         return $response->getValue();
-        return null;
     }
 }

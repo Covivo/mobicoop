@@ -73,7 +73,6 @@ class ProposalManager
         $this->dataProvider->setClass(User::class);
         $response = $this->dataProvider->getSubCollection($user->getId(), Proposal::class);
         return $response->getValue();
-        return null;
     }
     
     /**
@@ -86,7 +85,6 @@ class ProposalManager
     {
         $response = $this->dataProvider->getItem($id);
         return $response->getValue();
-        return null;
     }
     
     /**
@@ -103,7 +101,6 @@ class ProposalManager
             $response = $this->dataProvider->getSubCollection($proposal->getId(), Matching::class, "matching_offers");
         }
         return $response->getValue();
-        return null;
     }
 
     /**
@@ -129,7 +126,6 @@ class ProposalManager
         // we call the special collection operation "search"
         $response = $this->dataProvider->getSpecialCollection("search", $params);
         return $response->getValue();
-        return null;
     }
     
     /**

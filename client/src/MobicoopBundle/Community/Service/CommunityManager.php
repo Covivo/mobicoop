@@ -71,7 +71,6 @@ class CommunityManager
     {
         $response = $this->dataProvider->getCollection();
         return $response->getValue();
-        return null;
     }
 
     /**
@@ -83,7 +82,6 @@ class CommunityManager
     {
         $response = $this->dataProvider->getItem($id);
         return $response->getValue();
-        return null;
     }
 
     /**

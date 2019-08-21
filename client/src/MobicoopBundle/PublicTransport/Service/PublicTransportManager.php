@@ -92,7 +92,6 @@ class PublicTransportManager
             'modes'                 => $modes
         ]);
             return $response->getValue();
-        return null;
     }
 
     /**
@@ -125,7 +124,6 @@ class PublicTransportManager
             'keywords'      => $keywords
         ]);
             return $response->getValue();
-        return null;
     }
 
 
@@ -150,6 +148,5 @@ class PublicTransportManager
             'transportModes'       => $transportModes
         ]);
             return $response->getValue();
-        return null;
     }
 }

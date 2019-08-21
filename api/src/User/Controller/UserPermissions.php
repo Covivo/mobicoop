@@ -71,7 +71,7 @@ class UserPermissions
             $territory = $this->territoryRepository->find($this->request->get("territory"));
         }
         // we search the permissions
-        $data->setPermissions($this->permissionManager->getUserPermissions($data));
+        $data->setPermissions($this->permissionManager->getUserPermissions($data, $territory));
         return $data;
     }
 }

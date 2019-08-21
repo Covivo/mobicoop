@@ -53,6 +53,5 @@ class ArticleManager
     {
         $response = $this->dataProvider->getItem($id);
         return $response->getValue();
-        return null;
     }
 }
