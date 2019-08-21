@@ -52,7 +52,7 @@
         <v-card-text>
           <a
             class="secondary--text"
-            :href="this.urlForgotenPassword"
+            :href="this.urlForgottenPassword"
           >Mot de passe oublié?</a>
         </v-card-text>
       </v-flex>
@@ -76,7 +76,7 @@ export default {
       type: String,
       default: ""
     },
-    urlforgotenpassword: {
+    urlforgottenpassword: {
       type: String,
       default: ""
     }
@@ -95,7 +95,7 @@ export default {
         v => !!v || this.$t("models.user.password.errors.required")
       ],
       errorDisplay: "",
-      urlForgotenPassword: this.urlforgotenpassword
+      urlForgottenPassword: this.urlForgottenPassword
     };
   },
   mounted() {

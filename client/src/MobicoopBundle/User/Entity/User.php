@@ -623,6 +623,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
 
     public function getHomeAddress(): ?Address
     {
+        // return $this->homeAddress;
         foreach ($this->addresses as $address) {
             if ($address->isHome()) {
                 return $address;
@@ -691,7 +692,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         $this->geoToken = $geoToken;
         return $this;
     }
-
+        
     /**
      * get the native language of the client.
      *
@@ -724,7 +725,9 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'status'        => $this->getStatus(),
             'email'         => $this->getEmail(),
             'telephone'     => $this->getTelephone(),
-            'geoToken'      => $this->getGeoToken()
+            'geoToken'      => $this->getGeoToken(),
+            'birthYear'     => $this->getBirthYear(),
+            'homeAddress'   => $this->getHomeAddress(),
         ];
     }
 }

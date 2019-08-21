@@ -7,25 +7,29 @@ import '@mdi/font/css/materialdesignicons.css'
 
 import Vuetify, { 
   // general
-  VApp, VContainer, VFlex, VLayout, VContent, VSpacer,
+  VApp, VContainer, VFlex, VLayout, VCol, VRow, VContent, VSpacer,
   // header
   VToolbar, VToolbarTitle, VBtn, VImg,
   // footer
   VFooter, VChip, VCardText,
   // content
-  VForm, VTabs, VTab, VTabItem, VSnackbar, VIcon, VTextField
+  VForm, VTabs, VTab, VTabItem, VSnackbar, VIcon, VTextField, VSelect, VDatePicker, VMenu,
+  // geocomplete
+  VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent
 } from 'vuetify/lib'
 
 Vue.use(Vuetify, {
   components: {
     // general
-    VApp, VContainer, VFlex, VLayout, VContent, VSpacer,
+    VApp, VContainer, VFlex, VLayout,VCol, VRow, VContent, VSpacer,
     // header
     VToolbar, VToolbarTitle, VBtn, VImg,
     // footer
     VFooter, VChip, VCardText,
     // content
-    VForm, VTabs, VTab, VTabItem, VSnackbar, VIcon, VTextField
+    VForm, VTabs, VTab, VTabItem, VSnackbar, VIcon, VTextField, VSelect, VDatePicker, VMenu,
+    // geocomplete
+    VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent
   }
 })
 Vue.use(VueI18n)
