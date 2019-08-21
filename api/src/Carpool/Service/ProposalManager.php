@@ -175,14 +175,16 @@ class ProposalManager
         $this->logger->info('Proposal creation | Total duration ' . ($end->diff($date))->format("%s.%f seconds"));
         
         $matchings = $proposal->getMatchingOffers();
-        foreach ($matchings as $matching) {
+        if ($persist) {
+            foreach ($matchings as $matching) {
+                // dispatch en event
+                $event = new MatchingNewEvent($matching);
+                $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
+            }
             // dispatch en event
-            $event = new MatchingNewEvent($matching);
-            $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
+            $event = new ProposalPostedEvent($proposal);
+            $this->eventDispatcher->dispatch(ProposalPostedEvent::NAME, $event);
         }
-        // dispatch en event
-        $event = new ProposalPostedEvent($proposal);
-        $this->eventDispatcher->dispatch(ProposalPostedEvent::NAME, $event);
         return $proposal;
     }
     
