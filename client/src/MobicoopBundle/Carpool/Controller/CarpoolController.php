@@ -91,8 +91,8 @@ class CarpoolController extends AbstractController
             'origin_longitude' => urldecode($origin_longitude),
             'destination_latitude' => urldecode($destination_latitude),
             'destination_longitude' => urldecode($destination_longitude),
-            'date' =>  \Datetime::createFromFormat("YmdHis", $date),
-            'MatchingSearchUrl' => "/matching/search/"
+            'date' =>  $date,
+            'MatchingSearchUrl' => "/matching/search"
         ]);
     }
 

@@ -7,12 +7,15 @@
 {% block main %}
 
     <Occasionalresults
-        origin-latitude="{{ origin_latitude }}"
-        origin-longitude="{{ origin_longitude }}"
-        destination-latitude="{{ destination_latitude }}"
-        destination-longitude="{{ destination_longitude }}"
-        date="{{date |date("Ymdhis")}}"
+        origin-latitude = "{{ origin_latitude }}"
+        origin-longitude = "{{ origin_longitude }}"
+        destination-latitude = "{{ destination_latitude }}"
+        destination-longitude = "{{ destination_longitude }}"
+        {# We format date here so it doesn't have to be done in Vue#}
+        date = "{{date}}"
+        matching-search-url = {{ MatchingSearchUrl }}
     />
+
 
 {% endblock %}
 {% block javascripts %}
