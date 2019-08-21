@@ -51,7 +51,9 @@ class ProposalPost
      */
     public function __invoke(Proposal $data): Proposal
     {
-        if (is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad proposal id is provided"));
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad proposal id is provided"));
+        }
         $data = $this->proposalManager->createProposal($data);
         return $data;
     }

@@ -39,7 +39,9 @@ final class MassComputeAction
 
     public function __invoke(Mass $data): Mass
     {
-        if (is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad Mass id is provided"));
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad Mass id is provided"));
+        }
         if ($data->getStatus() >= Mass::STATUS_ANALYZED) {
             $data = $this->massComputeManager->computeResults($data);
         }

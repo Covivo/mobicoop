@@ -68,7 +68,7 @@ class Hydra
     /**
      * @var Trace[] $traces
      */
-    private  $traces;
+    private $traces;
     
     /**
      * @var HydraView $view The view of the collection.
@@ -223,5 +223,4 @@ class Hydra
     {
         $this->traces = $traces;
     }
-    
 }

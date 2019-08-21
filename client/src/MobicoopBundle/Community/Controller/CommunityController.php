@@ -86,11 +86,15 @@ class CommunityController extends AbstractController
         $communityUser = new CommunityUser();
         $community = $communityManager->getCommunity($id);
         $reponseofmanager= $this->handleManagerReturnValue($community);
-        if(!empty($reponseofmanager)) return $reponseofmanager;
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
         $this->denyAccessUnlessGranted('show', $community);
         $user = $userManager->getLoggedUser();
         $reponseofmanager= $this->handleManagerReturnValue($user);
-        if(!empty($reponseofmanager)) return $reponseofmanager;
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
         $form = $this->createForm(CommunityUserForm::class, $communityUser);
         $errorLoginSecured = false;
         $communityUser->setCommunity($community);
@@ -136,7 +140,9 @@ class CommunityController extends AbstractController
         $community = $communityManager->getCommunity($id);
         $user = $userManager->getLoggedUser();
         $reponseofmanager= $this->handleManagerReturnValue($user);
-        if(!empty($reponseofmanager)) return $reponseofmanager;
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
         $usersCommunity = array();
 
         //test if the community has members
@@ -156,7 +162,9 @@ class CommunityController extends AbstractController
 
             $data=$communityManager->joinCommunity($communityUser);
             $reponseofmanager= $this->handleManagerReturnValue($data);
-            if(!empty($reponseofmanager)) return $reponseofmanager;
+            if (!empty($reponseofmanager)) {
+                return $reponseofmanager;
+            }
         }
 
         return $this->redirectToRoute('community_show', ['id' => $id]);

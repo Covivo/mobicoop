@@ -51,7 +51,9 @@ class TerritoryPost
      */
     public function __invoke(Territory $data): Territory
     {
-        if (is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad Territory id is provided"));
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad Territory id is provided"));
+        }
         $data = $this->territoryManager->createTerritory($data);
         return $data;
     }

@@ -54,7 +54,9 @@ final class CreateMassImportAction
 
     public function __invoke(Request $request): ?Mass
     {
-        if (is_null($request)) throw new \InvalidArgumentException($this->translator->trans("bad request id is provided"));
+        if (is_null($request)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad request id is provided"));
+        }
         /** @var Mass $mass */
         $mass = new Mass();
         $mass->setStatus(Mass::STATUS_INCOMING);

@@ -50,7 +50,10 @@ class AskPost
      * @return Ask
      */
     public function __invoke(Ask $data): Ask
-    {   if (is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad Ask id is provided"));
+    {
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad Ask id is provided"));
+        }
         $data = $this->askManager->createAsk($data);
         return $data;
     }

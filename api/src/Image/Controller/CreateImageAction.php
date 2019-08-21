@@ -58,7 +58,9 @@ final class CreateImageAction
      */
     public function __invoke(Request $request): Image
     {
-        if (is_null($request)) throw new \InvalidArgumentException($this->translator->trans("bad request id is provided"));
+        if (is_null($request)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad request id is provided"));
+        }
         $image = new Image();
         
         $form = $this->factory->create(ImageForm::class, $image);

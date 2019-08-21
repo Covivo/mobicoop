@@ -61,7 +61,9 @@ class UserUpdatePassword
      */
     public function __invoke(User $data, string $name): User
     {
-        if (is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
+        }
         switch ($name) {
             case 'request':
                 $data = $this->userManager->updateUserPasswordRequest($data);

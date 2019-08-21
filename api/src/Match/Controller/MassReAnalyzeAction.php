@@ -39,7 +39,9 @@ final class MassReAnalyzeAction
 
     public function __invoke(Mass $data): Mass
     {
-        if (is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad Mass id is provided"));
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad Mass id is provided"));
+        }
         $statusAuthorized = [
             Mass::STATUS_ANALYZED,
             Mass::STATUS_MATCHED

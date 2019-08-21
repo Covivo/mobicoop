@@ -26,7 +26,6 @@ namespace App\User\Event;
 use App\User\Entity\User;
 use Symfony\Contracts\EventDispatcher\Event;
 
-
 /**
  * Event sent when a user asks to change its password.
  */

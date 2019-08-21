@@ -57,7 +57,7 @@ class InternalMessageManager
     public function getMessage(int $idMessage)
     {
         $response = $this->dataProvider->getItem($idMessage);
-            return $response->getValue();
+        return $response->getValue();
     }
     
     /**
@@ -75,7 +75,7 @@ class InternalMessageManager
         }
         $response = $this->dataProvider->getSubCollection($id, Message::class, "thread");
 
-            return $response->getValue();
+        return $response->getValue();
 
         return null;
     }

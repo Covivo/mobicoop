@@ -64,7 +64,9 @@ class UserPermissions
      */
     public function __invoke(User $data): ?User
     {
-        if (is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
+        }
         // we check if we limit to a territory
         $territory = null;
         if ($this->request->get("territory")) {

@@ -51,7 +51,9 @@ class UserRegistration
      */
     public function __invoke(User $data): User
     {
-        if (is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
+        }
         $data = $this->userManager->registerUser($data);
         return $data;
     }

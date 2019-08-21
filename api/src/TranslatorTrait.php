@@ -22,7 +22,6 @@
 
 namespace App;
 
-
 use Symfony\Component\Translation\TranslatorInterface;
 
 trait TranslatorTrait

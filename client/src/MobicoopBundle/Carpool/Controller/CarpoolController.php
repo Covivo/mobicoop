@@ -89,7 +89,9 @@ class CarpoolController extends AbstractController
                         }
                         $logged = $userManager->getLoggedUser();
                         $reponseofmanager= $this->handleManagerReturnValue($logged);
-                        if(!empty($reponseofmanager)) return $reponseofmanager;
+                        if (!empty($reponseofmanager)) {
+                            return $reponseofmanager;
+                        }
                         $isLogged = boolval($logged); // cast to boolean
                         // don't display the secured community if the user is not logged or if the user doesn't belong to the secured community
                         if (!$isLogged || !in_array($logged->getId(), $membersOfCommunity)) {
@@ -145,7 +147,9 @@ class CarpoolController extends AbstractController
         try {
             $proposal = $adManager->createProposalFromAd($ad);
             $reponseofmanager= $this->handleManagerReturnValue($proposal);
-            if(!empty($reponseofmanager)) return $reponseofmanager;
+            if (!empty($reponseofmanager)) {
+                return $reponseofmanager;
+            }
             $success = true;
         } catch (Error $err) {
             $error = $err;
@@ -163,7 +167,9 @@ class CarpoolController extends AbstractController
     {
         $offers= $proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("YmdHis", $date));
         $reponseofmanager= $this->handleManagerReturnValue($offers);
-        if(!empty($reponseofmanager)) return $reponseofmanager;
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
         return $this->render('@Mobicoop/search/simple_results.html.twig', [
             'origin' => urldecode($origin),
             'destination' => urldecode($destination),
@@ -207,7 +213,9 @@ class CarpoolController extends AbstractController
     {
         $proposal = $proposalManager->getProposal($id);
         $reponseofmanager= $this->handleManagerReturnValue($proposal);
-        if(!empty($reponseofmanager)) return $reponseofmanager;
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
 
         $this->denyAccessUnlessGranted('results', $proposal);
 

@@ -52,7 +52,9 @@ class AutoCompleteController extends AbstractController
         /** @var Hydra $results */
         if ($results = $geoSearchManager->getGeoSearch(['q'=>$request->query->get('search')])) {
             $reponseofmanager= $this->handleManagerReturnValue($results);
-            if(!empty($reponseofmanager)) return $reponseofmanager;
+            if (!empty($reponseofmanager)) {
+                return $reponseofmanager;
+            }
             return $this->json($results->getMember());
         }
         return $this->json("error");

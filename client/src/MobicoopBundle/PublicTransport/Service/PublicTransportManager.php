@@ -91,7 +91,7 @@ class PublicTransportManager
             'algorithm'             => $algorithm,
             'modes'                 => $modes
         ]);
-            return $response->getValue();
+        return $response->getValue();
     }
 
     /**
@@ -123,7 +123,7 @@ class PublicTransportManager
             'transportModes'      => $transportModes,
             'keywords'      => $keywords
         ]);
-            return $response->getValue();
+        return $response->getValue();
     }
 
 
@@ -147,6 +147,6 @@ class PublicTransportManager
             'logicalId'       => $logicalId,
             'transportModes'       => $transportModes
         ]);
-            return $response->getValue();
+        return $response->getValue();
     }
 }

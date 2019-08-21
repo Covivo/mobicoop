@@ -1,6 +1,7 @@
 <?php
 
 namespace Mobicoop\Bundle\MobicoopBundle\Traits;
+
 use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -30,12 +31,13 @@ trait HydraControllerTrait
     /**
      * @param Hydra|array|object $hydra
      */
-    public function handleManagerReturnValue($hydra){
+    public function handleManagerReturnValue($hydra)
+    {
     
         /** @var SessionInterface $session */
         $session= $this->get('session');
-        if($hydra instanceof Hydra){
-            if($hydra->getType() == "hydra:Error"){
+        if ($hydra instanceof Hydra) {
+            if ($hydra->getType() == "hydra:Error") {
                 $session->set('hydra', $hydra);
                 return $this->redirectToRoute('api_hydra_errors');
             }

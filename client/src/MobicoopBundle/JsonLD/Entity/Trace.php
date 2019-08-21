@@ -8,7 +8,6 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity;
 
-
 use http\Exception\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 
@@ -54,8 +53,10 @@ class Trace
     {
         $ctp = func_num_args();
         $args = func_get_args();
-        if($ctp!=1 && $ctp!=8) throw new InvalidArgumentException('Bad parameters provided!');
-        list($namespace,  $short_class,  $class,  $type,  $function,  $file,  $line,  $args) = array_values((($ctp==1)?reset($args): $args));
+        if ($ctp!=1 && $ctp!=8) {
+            throw new InvalidArgumentException('Bad parameters provided!');
+        }
+        list($namespace, $short_class, $class, $type, $function, $file, $line, $args) = array_values((($ctp==1)?reset($args): $args));
         $this->namespace = $namespace;
         $this->short_class = $short_class;
         $this->class = $class;
@@ -200,12 +201,12 @@ class Trace
      * @param array $array
      * @return Trace[] array
      */
-    public static function load(array $array): array {
+    public static function load(array $array): array
+    {
         $traces= [];
-        foreach($array as $key=>$value){
+        foreach ($array as $key=>$value) {
             $traces[]= new Trace((array)$value);
         }
         return $traces;
     }
-    
 }

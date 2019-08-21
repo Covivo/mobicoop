@@ -59,7 +59,7 @@ class DefaultController extends AbstractController
         $session= $this->get('session');
         $hydra = $session->get('hydra');
         if ($hydra instanceof Hydra) {
-            return $this->render('@Mobicoop/hydra/error.html.twig',['hydra'=> $hydra]);
+            return $this->render('@Mobicoop/hydra/error.html.twig', ['hydra'=> $hydra]);
         }
         return null;
     }

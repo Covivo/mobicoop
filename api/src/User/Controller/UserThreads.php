@@ -57,7 +57,9 @@ class UserThreads
      */
     public function __invoke(User $data): ?User
     {
-        if (is_null($data)) throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
+        }
         // we search the messages
         $data->setThreads($this->userManager->getThreads($data));
         return $data;
