@@ -87,6 +87,8 @@ class CarpoolController extends AbstractController
             return $reponseofmanager;
         }
         return $this->render('@Mobicoop/search/simple_results.html.twig', [
+            'origin' => urldecode($origin),
+            'destination' => urldecode($destination),
             'origin_latitude' => urldecode($origin_latitude),
             'origin_longitude' => urldecode($origin_longitude),
             'destination_latitude' => urldecode($destination_latitude),
