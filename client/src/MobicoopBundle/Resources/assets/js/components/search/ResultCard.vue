@@ -9,8 +9,14 @@
   </v-card>
 </template>
 <script>
+import ResultJourneyDetailedCard from "./ResultJourneyDetailedCard";
+import ResultUserDetailedCard from "./ResultUserDetailedCard";
 export default {
-  name: "ResultCard"
+  name: "ResultCard",
+  components:{
+    ResultJourneyDetailedCard,
+    ResultUserDetailedCard
+  }
 }
 </script>
 
