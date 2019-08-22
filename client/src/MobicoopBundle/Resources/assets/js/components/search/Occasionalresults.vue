@@ -48,6 +48,7 @@
             fab
             small
             depressed
+            dark
           >
             <v-icon>
               mdi-lead-pencil
