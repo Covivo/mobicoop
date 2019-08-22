@@ -82,7 +82,7 @@
             chips
             clearable
             multiple
-            label="TRIER"
+            label="trier"
           >
             <template v-slot:selection="{ attrs, item, select, selected }">
               <v-chip
@@ -106,7 +106,7 @@
           cols="5"
           align="center"
         >
-          content
+          <result-card />
           <!--    <h3>{{ Results }}</h3>-->
           <!--          card use vdivider for middle line-->
         </v-col>
@@ -123,9 +123,11 @@ import Translations from "@translations/components/simpleResults.json";
 import TranslationsClient from "@clientTranslations/components/simpleResults.json";
 import moment from "moment";
 import 'moment/locale/fr';
+import ResultCard from "./ResultCard";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
+  components: {ResultCard},
   i18n: {
     messages: TranslationsMerged,
     sharedMessages: CommonTranslations
