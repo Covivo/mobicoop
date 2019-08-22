@@ -30,6 +30,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Action\Entity\Action;
 use App\Solidary\Entity\Solidary;
+use App\Solidary\Entity\SolidaryMatching;
 
 /**
  * Animation action diary for a user.

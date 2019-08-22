@@ -13,6 +13,7 @@
 /api/public/upload/events/images/versions/*.jpg
 /api/public/upload/events/images/versions/*.jpeg
 /api/public/upload/events/images/versions/*.png
+/api/public/upload/communities/security/*
 /api/public/upload/communities/images/*.jpg
 /api/public/upload/communities/images/*.jpeg
 /api/public/upload/communities/images/*.png
@@ -28,4 +29,3 @@
 /client/.env.prod.local
 /client/var/log/
 /admin/.env
-api/public/upload/communities/security/*
