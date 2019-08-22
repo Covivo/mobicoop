@@ -34,7 +34,7 @@ import Vuetify, {
   // footer
   VFooter, VChip, VCardText,
   // content
-  VForm, VTextField, VCheckbox, VSelect, VOverlay, VProgressCircular,
+  VForm, VTextField, VCheckbox, VSelect, VOverlay, VProgressCircular, VCombobox,
   // geocomplete
   VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon
 } from 'vuetify/lib'
@@ -48,7 +48,7 @@ Vue.use(Vuetify, {
     // footer
     VFooter, VChip, VCardText,
     // content
-    VForm, VTextField, VCheckbox, VSelect, VOverlay, VProgressCircular,
+    VForm, VTextField, VCheckbox, VSelect, VOverlay, VProgressCircular, VCombobox,
     // geocomplete
     VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon
   }

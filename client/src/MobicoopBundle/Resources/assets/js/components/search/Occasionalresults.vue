@@ -10,38 +10,36 @@
       <!--          size="64"-->
       <!--        />-->
       <!--      </v-overlay>-->
+
+      <!--      Title row-->
       <v-row
         justify="center"
         align="center"
+        class="mt-8"
         no-gutters
       >
         <v-col
           cols="2"
+          class="title-size"
         >
           {{ origin }}
         </v-col>
-        <v-col
-          cols="1"
-          justify="center"
-          align="center"
+
+        <v-icon
+          :color="'yellow darken-2'"
+          size="64"
+          class="no-line-height ml-3 mr-5"
         >
-          <v-icon
-            :color="'yellow darken-2'"
-            size="64"
-            class="no-line-height"
-          >
-            mdi-ray-start-end
-          </v-icon>
-        </v-col>
+          mdi-ray-start-end
+        </v-icon>
         <v-col
           cols="2"
+          class="title-size"
         >
           {{ destination }}
         </v-col>
         <v-col
-          cols="1"
-          justify="center"
-          align="center"
+          cols="auto"
         >
           <v-btn
             color="primary"
@@ -49,6 +47,7 @@
             small
             depressed
             dark
+            class="ml-6-5"
           >
             <v-icon>
               mdi-lead-pencil
@@ -63,7 +62,7 @@
         no-gutters
       >
         <v-col
-          cols="6"
+          cols="5"
         >
           {{ displaydate(date) }}
         </v-col>
@@ -73,10 +72,30 @@
         align="center"
       >
         <v-col
-          cols="6"
-          align="center"
+          cols="5"
+          align-self="start"
         >
-          filtres
+          <!--          TODO : REMOVE WHEN START CODING FILTER COMPONENT-->
+          <v-combobox
+            v-model="chips"
+            :items="items"
+            chips
+            clearable
+            multiple
+            label="TRIER"
+          >
+            <template v-slot:selection="{ attrs, item, select, selected }">
+              <v-chip
+                v-bind="attrs"
+                :input-value="selected"
+                close
+                @click="select"
+                @click:close="remove(item)"
+              >
+                <strong>{{ item }}</strong>&nbsp;
+              </v-chip>
+            </template>
+          </v-combobox>
         </v-col>
       </v-row>
       <v-row
@@ -84,7 +103,7 @@
         align="center"
       >
         <v-col
-          cols="6"
+          cols="5"
           align="center"
         >
           content
@@ -147,8 +166,14 @@ export default {
   },
   data : function() {
     return {
+      //results of the search
       Results : null,
-      loading : true
+
+      loading : true,
+
+      // TODO : REMOVE WHEN START CODING FILTER COMPONENT
+      chips: ['Programming', 'Playing video games', 'Watching movies'],
+      items: ['Streaming', 'Eating'],
     };
   },
   created() {
@@ -173,6 +198,11 @@ export default {
       });
   },
   methods :{
+    // TODO : REMOVE WHEN START CODING FILTER COMPONENT
+    remove (item) {
+      this.chips.splice(this.chips.indexOf(item), 1)
+      this.chips = [...this.chips]
+    },
     //format date for axios request
     dateFormated(date) {
       return moment(new Date(date)).utcOffset("+00:00").format()
@@ -189,5 +219,13 @@ export default {
 <style>
   .no-line-height {
     line-height: 0 !important;
+  }
+  .title-size{
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .ml-6-5{
+    margin-left: 26px;
   }
 </style>
