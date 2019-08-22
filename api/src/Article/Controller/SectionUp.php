@@ -25,6 +25,7 @@ namespace App\Article\Controller;
 
 use App\Article\Service\ArticleManager;
 use App\Article\Entity\Section;
+use App\TranslatorTrait;
 
 /**
  * Controller class for section up position change.
@@ -33,8 +34,9 @@ use App\Article\Entity\Section;
  */
 class SectionUp
 {
+    use TranslatorTrait;
     private $articleManager;
-
+    
     public function __construct(ArticleManager $articleManager)
     {
         $this->articleManager = $articleManager;
@@ -49,6 +51,9 @@ class SectionUp
      */
     public function __invoke(Section $data): Section
     {
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad Section id is provided"));
+        }
         return $this->articleManager->changeSectionPosition($data, $this->articleManager::DIRECTION_UP);
     }
 }

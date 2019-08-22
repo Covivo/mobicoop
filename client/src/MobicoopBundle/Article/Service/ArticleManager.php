@@ -52,9 +52,6 @@ class ArticleManager
     public function getArticle($id)
     {
         $response = $this->dataProvider->getItem($id);
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
-        return null;
+        return $response->getValue();
     }
 }

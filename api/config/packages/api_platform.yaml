@@ -27,6 +27,7 @@ api_platform:
     mapping:
         paths: [
             '%kernel.project_dir%/src/Entity',
+            '%kernel.project_dir%/src/Action/Entity',
             '%kernel.project_dir%/src/App/Entity',
             '%kernel.project_dir%/src/Article/Entity',
             '%kernel.project_dir%/src/Carpool/Entity',
@@ -39,6 +40,7 @@ api_platform:
             '%kernel.project_dir%/src/Match/Entity',
             '%kernel.project_dir%/src/PublicTransport/Entity',
             '%kernel.project_dir%/src/RelayPoint/Entity',
+            '%kernel.project_dir%/src/Solidary/Entity',
             '%kernel.project_dir%/src/Travel/Entity',
             '%kernel.project_dir%/src/User/Entity',
             '%kernel.project_dir%/src/Rdex/Entity',
@@ -46,6 +48,7 @@ api_platform:
             
     resource_class_directories:
         - '%kernel.project_dir%/src/Entity'
+        - '%kernel.project_dir%/src/Action/Entity'
         - '%kernel.project_dir%/src/App/Entity'
         - '%kernel.project_dir%/src/Article/Entity'
         - '%kernel.project_dir%/src/Carpool/Entity'
@@ -60,6 +63,7 @@ api_platform:
         - '%kernel.project_dir%/src/RelayPoint/Entity'
         - '%kernel.project_dir%/src/Rdex/Entity'
         - '%kernel.project_dir%/src/Right/Entity'
+        - '%kernel.project_dir%/src/Solidary/Entity'
         - '%kernel.project_dir%/src/Travel/Entity'
         - '%kernel.project_dir%/src/User/Entity'
         
@@ -68,3 +72,57 @@ api_platform:
         json:     ['application/json']
         xml:      ['application/xml', 'text/xml']
         html:     ['text/html']
+    exception_to_status:
+        # The 4 following handlers are registered by default, keep those lines to prevent unexpected side effects
+        Symfony\Component\Serializer\Exception\ExceptionInterface: 400 # Use a raw status code (recommended)
+        ApiPlatform\Core\Exception\InvalidArgumentException: 'HTTP_BAD_REQUEST' # Or a `Symfony\Component\HttpFoundation\Response`'s constant
+        ApiPlatform\Core\Exception\FilterValidationException: 400
+        Doctrine\ORM\OptimisticLockException: 409
+
+        # Custom mapping
+        #App\Exception\ProductNotFoundException: 404 # Here is the handler for our custom exception
+        ClosedGeneratorException: 'HTTP_NOT_IMPLEMENTED'
+        Doctrine\Common\Persistence\Mapping\MappingException: 'HTTP_SERVICE_UNAVAILABLE'
+        Doctrine\ORM\ORMException: 'HTTP_SERVICE_UNAVAILABLE'
+        Doctrine\ORM\Mapping\MappingException: 'HTTP_SERVICE_UNAVAILABLE'
+        DOMException: 'HTTP_INTERNAL_SERVER_ERROR'
+        ErrorException: 'HTTP_INTERNAL_SERVER_ERROR'
+        ImagickDrawException: 'HTTP_INTERNAL_SERVER_ERROR'
+        ImagickException: 'HTTP_INTERNAL_SERVER_ERROR'
+        ImagickKernelException: 'HTTP_INTERNAL_SERVER_ERROR'
+        ImagickPixelException: 'HTTP_INTERNAL_SERVER_ERROR'
+        ImagickPixelIteratorException:  'HTTP_INTERNAL_SERVER_ERROR'
+        IntlException: 'HTTP_BAD_REQUEST'
+        LogicException: 'HTTP_INTERNAL_SERVER_ERROR'
+        App\Community\Exception\CommunityException: 'HTTP_INTERNAL_SERVER_ERROR'
+        App\Image\Exception\ImageException: 'HTTP_INTERNAL_SERVER_ERROR'
+        App\Image\Exception\OwnerNotFoundException: 'HTTP_INTERNAL_SERVER_ERROR'
+        App\Match\Exception\MassException: 'HTTP_INTERNAL_SERVER_ERROR'
+        App\Match\Exception\OwnerNotFoundException: 'HTTP_INTERNAL_SERVER_ERROR'
+        BadFunctionCallException: 'HTTP_BAD_REQUEST'
+        BadMethodCallException: 'HTTP_BAD_REQUEST'
+        DomainException: 'HTTP_BAD_REQUEST'
+        InvalidArgumentException: 'HTTP_BAD_REQUEST'
+        Symfony\Component\DependencyInjection\Exception\InvalidArgumentException: 'HTTP_BAD_REQUEST'
+        Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException: 'HTTP_BAD_REQUEST'
+        LengthException: 'HTTP_INTERNAL_SERVER_ERROR'
+        OutOfRangeException: 'HTTP_INTERNAL_SERVER_ERROR'
+        PharException: 'HTTP_BAD_REQUEST'
+        ReflectionException: 'HTTP_BAD_REQUEST'
+        RuntimeException: 'HTTP_BAD_REQUEST'
+        Http\Discovery\Exception\StrategyUnavailableException: 'HTTP_BAD_REQUEST'
+        Http\Discovery\Exception\PuliUnavailableException: 'HTTP_BAD_REQUEST'
+        MemcachedException: 'HTTP_BAD_REQUEST'
+        mysqli_sql_exception: 'HTTP_BAD_REQUEST'
+        OutOfBoundsException: 'HTTP_INSUFFICIENT_STORAGE'
+        OverflowException: 'HTTP_INSUFFICIENT_STORAGE'
+        PDOException: 'HTTP_BAD_REQUEST'
+        RangeException: 'HTTP_INSUFFICIENT_STORAGE'
+        Symfony\Component\DependencyInjection\Exception\RuntimeException: 'HTTP_INTERNAL_SERVER_ERROR'
+        Symfony\Component\DependencyInjection\Exception\AutowiringFailedException: 'HTTP_INTERNAL_SERVER_ERROR'
+        Symfony\Component\Security\Core\Exception\RuntimeException: 'HTTP_INTERNAL_SERVER_ERROR'
+        Symfony\Component\Security\Core\Exception\AuthenticationException: 'HTTP_INTERNAL_SERVER_ERROR'
+        UnderflowException: 'HTTP_BAD_REQUEST'
+        UnexpectedValueException: 'HTTP_BAD_REQUEST'
+        #SoapFault:
+        #SodiumException: 'HTTP_BAD_REQUEST'

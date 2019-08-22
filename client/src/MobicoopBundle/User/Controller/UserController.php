@@ -25,6 +25,8 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Controller;
 
 use App\Communication\Entity\Email;
 use Herrera\Json\Exception\Exception;
+use Http\Client\Exception\HttpException;
+use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -59,6 +61,8 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskHistoryManager;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use function GuzzleHttp\json_encode;
+use function MongoDB\BSON\fromJSON;
+use function MongoDB\BSON\toJSON;
 
 /**
  * Controller class for user related actions.
@@ -68,7 +72,7 @@ use function GuzzleHttp\json_encode;
  */
 class UserController extends AbstractController
 {
-
+    use HydraControllerTrait;
     /**
      * User login.
      */
@@ -94,40 +98,34 @@ class UserController extends AbstractController
      */
     public function userSignUp(UserManager $userManager, Request $request, TranslatorInterface $translator)
     {
-        $this->denyAccessUnlessGranted('register');
-
         $user = new User();
         $address = new Address();
-        $form = $this->createForm(UserForm::class, $user, ['validation_groups'=>['signUp']]);
         $error = false;
-        $success = false;
-        
-        if ($request->isMethod('POST')) {
-            $createToken = $request->request->get('createToken');
-            if (!$this->isCsrfTokenValid('user-signup', $createToken)) {
-                return  new Response('Broken Token CSRF ', 403);
-            }
 
-            //get all data from form (user + homeAddress)
-            $data = $request->request->get($form->getName());
-            
-            // pass homeAddress info into address entity
-            $address->setAddressCountry($data['addressCountry']);
-            $address->setAddressLocality($data['addressLocality']);
-            $address->setCountryCode($data['countryCode']);
-            $address->setCounty($data['county']);
-            $address->setLatitude($data['latitude']);
-            $address->setLocalAdmin($data['localAdmin']);
-            $address->setLongitude($data['longitude']);
-            $address->setMacroCounty($data['macroCounty']);
-            $address->setMacroRegion($data['macroRegion']);
-            $address->setName($translator->trans('homeAddress', [], 'signup'));
-            $address->setPostalCode($data['postalCode']);
-            $address->setRegion($data['region']);
-            $address->setStreet($data['street']);
-            $address->setStreetAddress($data['streetAddress']);
-            $address->setSubLocality($data['subLocality']);
-            $address->setHome(true);
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+
+            // add home address to user if it exists
+            if (isset($data['address'])) {
+                $address->setAddressCountry($data['address']['addressCountry']);
+                $address->setAddressLocality($data['address']['addressLocality']);
+                $address->setCountryCode($data['address']['countryCode']);
+                $address->setCounty($data['address']['county']);
+                $address->setLatitude($data['address']['latitude']);
+                $address->setLocalAdmin($data['address']['localAdmin']);
+                $address->setLongitude($data['address']['longitude']);
+                $address->setMacroCounty($data['address']['macroCounty']);
+                $address->setMacroRegion($data['address']['macroRegion']);
+                $address->setName($translator->trans('homeAddress', [], 'signup'));
+                $address->setPostalCode($data['address']['postalCode']);
+                $address->setRegion($data['address']['region']);
+                $address->setStreet($data['address']['street']);
+                $address->setStreetAddress($data['address']['streetAddress']);
+                $address->setSubLocality($data['address']['subLocality']);
+                $address->setHome(true);
+            }
+            $user->addAddress($address);
+
 
             // pass front info into user form
             $user->setEmail($data['email']);
@@ -138,19 +136,17 @@ class UserController extends AbstractController
             $user->setGender($data['gender']);
             $user->setBirthYear($data['birthYear']);
 
-            // add the home address to the user
-            $user->addAddress($address);
-
             // create user in database
-            $userManager->createUser($user);
+            $data= $userManager->createUser($user);
+            $reponseofmanager= $this->handleManagerReturnValue($data);
+            if (!empty($reponseofmanager)) {
+                return $reponseofmanager;
+            }
         }
  
-        if (!$form->isSubmitted()) {
-            return $this->render('@Mobicoop/user/signup.html.twig', [
+        return $this->render('@Mobicoop/user/signup.html.twig', [
                 'error' => $error
             ]);
-        }
-        return $this->json(['error' => $error, 'success' => $success]);
     }
 
     /**
@@ -160,60 +156,66 @@ class UserController extends AbstractController
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
+        $reponseofmanager= $this->handleManagerReturnValue($user);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
         $this->denyAccessUnlessGranted('update', $user);
 
         // get the homeAddress
         $homeAddress = $user->getHomeAddress();
-         
+        
         $error = false;
            
         if ($request->isMethod('POST')) {
-
-            //get all data from form (user + homeAddress)
-            $data = $request->request->get($form->getName());
-
-            //pass homeAddress info into address entity
+            $data = json_decode($request->getContent(), true);
+          
             if (!$homeAddress) {
                 $homeAddress = new Address();
             }
-            $homeAddress->setAddressCountry($data['addressCountry']);
-            $homeAddress->setAddressLocality($data['addressLocality']);
-            $homeAddress->setCountryCode($data['countryCode']);
-            $homeAddress->setCounty($data['county']);
-            $homeAddress->setLatitude($data['latitude']);
-            $homeAddress->setLocalAdmin($data['localAdmin']);
-            $homeAddress->setLongitude($data['longitude']);
-            $homeAddress->setMacroCounty($data['macroCounty']);
-            $homeAddress->setMacroRegion($data['macroRegion']);
-            $homeAddress->setPostalCode($data['postalCode']);
-            $homeAddress->setRegion($data['region']);
-            $homeAddress->setStreet($data['street']);
-            $homeAddress->setStreetAddress($data['streetAddress']);
-            $homeAddress->setSubLocality($data['subLocality']);
+            $homeAddress->setAddressCountry($data['homeAddress']['addressCountry']);
+            $homeAddress->setAddressLocality($data['homeAddress']['addressLocality']);
+            $homeAddress->setCountryCode($data['homeAddress']['countryCode']);
+            $homeAddress->setCounty($data['homeAddress']['county']);
+            $homeAddress->setLatitude($data['homeAddress']['latitude']);
+            $homeAddress->setLocalAdmin($data['homeAddress']['localAdmin']);
+            $homeAddress->setLongitude($data['homeAddress']['longitude']);
+            $homeAddress->setMacroCounty($data['homeAddress']['macroCounty']);
+            $homeAddress->setMacroRegion($data['homeAddress']['macroRegion']);
+            $homeAddress->setPostalCode($data['homeAddress']['postalCode']);
+            $homeAddress->setRegion($data['homeAddress']['region']);
+            $homeAddress->setStreet($data['homeAddress']['street']);
+            $homeAddress->setStreetAddress($data['homeAddress']['streetAddress']);
+            $homeAddress->setSubLocality($data['homeAddress']['subLocality']);
             $homeAddress->setName($translator->trans('homeAddress', [], 'signup'));
             $homeAddress->setHome(true);
             
-            // pass front info into user form
+            if (is_null($homeAddress->getId()) && !empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) {
+                $user->addAddress($homeAddress);
+            } elseif (!empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) {
+                $data= $addressManager->updateAddress($homeAddress);
+                $reponseofmanager= $this->handleManagerReturnValue($data);
+                if (!empty($reponseofmanager)) {
+                    return $reponseofmanager;
+                }
+            }
+
             $user->setEmail($data['email']);
             $user->setTelephone($data['telephone']);
             $user->setGivenName($data['givenName']);
             $user->setFamilyName($data['familyName']);
             $user->setGender($data['gender']);
             $user->setBirthYear($data['birthYear']);
-            
-            if (is_null($homeAddress->getId()) && !empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) {
-                $homeAddress->setName(User::HOME_ADDRESS_NAME);
-                $user->addAddress($homeAddress);
-            } elseif (!empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) {
-                $addressManager->updateAddress($homeAddress);
+            $data = $userManager->updateUser($user);
+            $reponseofmanager= $this->handleManagerReturnValue($data);
+            if (!empty($reponseofmanager)) {
+                return $reponseofmanager;
             }
-            $userManager->updateUser($user);
-            exit;
         }
-      
+        
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
                 'error' => $error,
-                'user' => $user
+                'user' => $user,
             ]);
     }
 
@@ -225,6 +227,10 @@ class UserController extends AbstractController
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
+        $reponseofmanager= $this->handleManagerReturnValue($user);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
         $this->denyAccessUnlessGranted('password', $user);
 
         $error = [
@@ -244,6 +250,10 @@ class UserController extends AbstractController
             }
 
             if ($user = $userManager->updateUserPassword($user)) {
+                $reponseofmanager= $this->handleManagerReturnValue($user);
+                if (!empty($reponseofmanager)) {
+                    return $reponseofmanager;
+                }
                 // after successful update, we re-log the user
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                 $this->get('security.token_storage')->setToken($token);
@@ -287,6 +297,10 @@ class UserController extends AbstractController
             if (!empty($userRequest->getEmail())) {
                 /** @var User $user */
                 $user = $userManager->findByEmail($userRequest->getEmail());
+                $reponseofmanager= $this->handleManagerReturnValue($user);
+                if (!empty($reponseofmanager)) {
+                    return $reponseofmanager;
+                }
             } else {
                 if (!empty($userRequest->getTelephone())) {
                     $user = $userManager->findByPhone($userRequest->getTelephone());
@@ -298,9 +312,11 @@ class UserController extends AbstractController
                 return $this->redirectToRoute('user_password_forgot');
             } else {
                 $data= $userManager->updateUserToken($user);
+                $reponseofmanager= $this->handleManagerReturnValue($data);
+                if (!empty($reponseofmanager)) {
+                    return $reponseofmanager;
+                }
                 if (!empty($data)) {
-                    return $this->redirectToRoute('user_password_forgot');
-                } else {
                     return $this->redirectToRoute('user_password_forgot');
                 }
             }
@@ -317,12 +333,16 @@ class UserController extends AbstractController
     /**
      * Reset password
      */
-    public function userPasswordReset(UserManager $userManager, Request $request, string $token, \Swift_Mailer $mailer)
+    public function userPasswordReset(UserManager $userManager, Request $request, string $token)
     {
         $user = $userManager->findByPwdToken($token);
+        $reponseofmanager= $this->handleManagerReturnValue($user);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
         $error = false;
 
-        if (empty($user) || (time() - (int)$user->getPupdtime()->getTimestamp()) > 86400) {
+        if (empty($user) || (time() - (int)$user->getPwdTokenDate()->getTimestamp()) > 86400) {
             return $this->redirectToRoute('user_password_forgot');
         } else {
             $form = $this->createFormBuilder($user)
@@ -340,6 +360,10 @@ class UserController extends AbstractController
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
                 if ($user = $userManager->updateUserPassword($user)) {
+                    $reponseofmanager= $this->handleManagerReturnValue($user);
+                    if (!empty($reponseofmanager)) {
+                        return $reponseofmanager;
+                    }
                     // after successful update, we re-log the user
                     $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                     $this->get('security.token_storage')->setToken($token);
@@ -366,6 +390,10 @@ class UserController extends AbstractController
     public function userProfileDelete(UserManager $userManager, Request $request)
     {
         $user = $userManager->getLoggedUser();
+        $reponseofmanager= $this->handleManagerReturnValue($user);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
         $this->denyAccessUnlessGranted('delete', $user);
 
         $form = $this->createForm(
@@ -378,7 +406,11 @@ class UserController extends AbstractController
         $error = false;
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($userManager->deleteUser($user->getId())) {
+            if ($data=$userManager->deleteUser($user->getId())) {
+                $reponseofmanager= $this->handleManagerReturnValue($data);
+                if (!empty($reponseofmanager)) {
+                    return $reponseofmanager;
+                }
                 return $this->redirectToRoute('home');
             }
             $error = true;
@@ -397,10 +429,19 @@ class UserController extends AbstractController
     public function userProposals(UserManager $userManager, ProposalManager $proposalManager)
     {
         $user = $userManager->getLoggedUser();
+        $reponseofmanager= $this->handleManagerReturnValue($user);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
         $this->denyAccessUnlessGranted('proposals_self', $user);
-
+    
+        $data=$proposalManager->getProposals($user);
+        $reponseofmanager= $this->handleManagerReturnValue($data);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
         return $this->render('@Mobicoop/proposal/index.html.twig', [
-            'hydra' => $proposalManager->getProposals($user)
+            'hydra' => $data
         ]);
     }
 
@@ -421,6 +462,10 @@ class UserController extends AbstractController
 
         // Building threads array
         $threads = $userManager->getThreads($user);
+        $reponseofmanager= $this->handleManagerReturnValue($threads);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
         $idMessageDefaultSelected = false;
 
         foreach ($threads["threads"] as $thread) {
@@ -470,9 +515,17 @@ class UserController extends AbstractController
     public function getThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager, AskManager $askManager)
     {
         $user = $userManager->getLoggedUser();
+        $reponseofmanager= $this->handleManagerReturnValue($user);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
         $this->denyAccessUnlessGranted('messages', $user);
 
         $thread = $internalMessageManager->getThread($idFirstMessage, DataProvider::RETURN_JSON);
+        $reponseofmanager= $this->handleManagerReturnValue($thread);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
 
         // Format the date with a human readable version
         // First message
@@ -491,6 +544,10 @@ class UserController extends AbstractController
             // Get the last AskHistory
             // You do that because you can have a AskHistory without a message
             $askHistories = $askManager->getAskHistories($thread["askHistory"]["ask"]["id"]);
+            $reponseofmanager= $this->handleManagerReturnValue($askHistories);
+            if (!empty($reponseofmanager)) {
+                return $reponseofmanager;
+            }
             $thread["lastAskHistory"] = end($askHistories);
 
             $fromDate = new DateTime($thread["lastAskHistory"]["ask"]["matching"]["criteria"]["fromDate"]);
@@ -511,6 +568,10 @@ class UserController extends AbstractController
     public function sendInternalMessage(UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request, AskHistoryManager $askHistoryManager)
     {
         $user = $userManager->getLoggedUser();
+        $reponseofmanager= $this->handleManagerReturnValue($user);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
         $this->denyAccessUnlessGranted('messages', $user);
 
         if ($request->isMethod('POST')) {
@@ -524,12 +585,20 @@ class UserController extends AbstractController
                 $request->request->get('text'),
                 $internalMessageManager->getMessage($idThreadMessage)
             );
+            $reponseofmanager= $this->handleManagerReturnValue($messageToSend);
+            if (!empty($reponseofmanager)) {
+                return $reponseofmanager;
+            }
 
             // If there is an AskHistory i will post an AskHistory with the message within. If not, i only send a Message.
             if (trim($request->request->get('idAskHistory'))!=="") {
                 
                 // Get the current AskHistory
                 $currentAskHistory = $askHistoryManager->getAskHistory($request->request->get('idAskHistory'));
+                $reponseofmanager= $this->handleManagerReturnValue($currentAskHistory);
+                if (!empty($reponseofmanager)) {
+                    return $reponseofmanager;
+                }
 
                 // Create the new Ask History to post
                 $askHistory = new AskHistory();
@@ -560,6 +629,10 @@ class UserController extends AbstractController
 
             // Get the Ask
             $ask = $askManager->getAsk($idAsk);
+            $reponseofmanager= $this->handleManagerReturnValue($ask);
+            if (!empty($reponseofmanager)) {
+                return $reponseofmanager;
+            }
 
             // Change the status
             if ($request->request->get('status')!==null &&
@@ -571,6 +644,10 @@ class UserController extends AbstractController
             
             // Update the Ask via API
             $ask = $askManager->updateAsk($ask);
+            $reponseofmanager= $this->handleManagerReturnValue($ask);
+            if (!empty($reponseofmanager)) {
+                return $reponseofmanager;
+            }
 
             $return = [
                 "id"=>$ask->getId(),

@@ -148,7 +148,6 @@ class MassImportManager
      * Treat a mass file.
      *
      * @param Mass $mass The mass to treat
-     * @return void
      */
     public function treatMass(Mass $mass)
     {

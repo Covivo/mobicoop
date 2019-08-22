@@ -25,6 +25,7 @@ namespace App\Carpool\Controller;
 
 use App\Carpool\Service\ProposalManager;
 use App\Carpool\Entity\Proposal;
+use App\TranslatorTrait;
 
 /**
  * Controller class for proposal post.
@@ -33,6 +34,7 @@ use App\Carpool\Entity\Proposal;
  */
 class ProposalPost
 {
+    use TranslatorTrait;
     private $proposalManager;
 
     public function __construct(ProposalManager $proposalManager)
@@ -49,6 +51,9 @@ class ProposalPost
      */
     public function __invoke(Proposal $data): Proposal
     {
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad proposal id is provided"));
+        }
         $data = $this->proposalManager->createProposal($data);
         return $data;
     }

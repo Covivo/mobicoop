@@ -25,9 +25,11 @@ namespace App\Match\Controller;
 
 use App\Match\Entity\Mass;
 use App\Match\Service\MassComputeManager;
+use App\TranslatorTrait;
 
 final class MassWorkingPlacesAction
 {
+    use TranslatorTrait;
     private $massComputeManager;
 
     public function __construct(MassComputeManager $massComputeManager)
@@ -37,6 +39,9 @@ final class MassWorkingPlacesAction
 
     public function __invoke(Mass $data): Mass
     {
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad Mass id is provided"));
+        }
         $workingPlaces = $this->massComputeManager->getAllWorkingPlaces($data);
 
         $data->setWorkingPlaces($workingPlaces);

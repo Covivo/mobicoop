@@ -39,10 +39,22 @@ class ArticleManager
 {
     const DIRECTION_UP = "up";
     const DIRECTION_DOWN = "down";
-
+    
+    /**
+     * @var EntityManagerInterface  $entityManager
+     */
     private $entityManager;
+    /**
+     * @var LoggerInterface $logger
+     */
     private $logger;
+    /**
+     * @var SectionRepository  $sectionRepository
+     */
     private $sectionRepository;
+    /**
+     * @var ParagraphRepository $paragraphRepository
+     */
     private $paragraphRepository;
 
     /**

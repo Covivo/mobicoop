@@ -13,7 +13,12 @@
           >
             <v-tab>{{ $t("tabs.myProfile") }}</v-tab>
             <v-tab-item>
-              <UpdateProfile />
+              <UpdateProfile
+                :user="user"
+                :geo-search-url="geoSearchUrl"
+                :age-min="ageMin"
+                :age-max="ageMax"
+              />
             </v-tab-item>
             <v-tab>{{ $t("tabs.password") }}</v-tab>
             <v-tab-item>
@@ -30,13 +35,13 @@
   </v-content>
 </template>
 <script>
-import UpdateProfile from "@js/components/user/UpdateProfile";
-import ChangePassword from "@js/components/user/ChangePassword";
-import MyProposals from "@js/components/user/MyProposals";
+import UpdateProfile from "@components/user/UpdateProfile";
+import ChangePassword from "@components/user/ChangePassword";
+import MyProposals from "@components/user/MyProposals";
 
 import { merge } from "lodash";
-import Translations from "@translations/components/Profile.json";
-import TranslationsClient from "@clientTranslations/components/Profile.json";
+import Translations from "@translations/components/user/Profile.json";
+import TranslationsClient from "@clientTranslations/components/user/Profile.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -49,9 +54,28 @@ export default {
     ChangePassword,
     MyProposals
   },
-  props: {},
+  props: {
+    user: {
+      type: Object,
+      default: null
+    },
+    geoSearchUrl: {
+      type: String,
+      default: null
+    },
+    ageMin: {
+      type: String,
+      default: null
+    },
+    ageMax: {
+      type: String,
+      default: null
+    }
+  },
   data() {
-    return {};
+    return {
+
+    };
   }
 };
 </script>

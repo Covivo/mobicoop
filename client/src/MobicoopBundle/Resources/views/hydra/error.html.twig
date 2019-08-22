@@ -1,0 +1,70 @@
+{% extends '@Mobicoop/base.html.twig' %}
+{# @var hydra \Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra #}
+{% block title %}
+    {{ "Une erreur est survenue!"|trans }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ encore_entry_link_tags("#{assets_prefix ?? ''}home/home") }}
+{% endblock %}
+
+{% block main %}
+    <div style="margin-left: 10px; margin-right: 10px; margin-bottom: 20px">
+        <p><span>{{ "ID"|trans }}: </span><span>{{ hydra.id }}</span></p>
+        <p><span>{{ "Contexte"|trans }}: </span><span>{{ hydra.context }}</span></p>
+        <p><span>{{ "Type"|trans }}: </span><span>{{ hydra.type }}</span></p>
+        <p><span>{{ "Titre"|trans }}: </span><span>{{ hydra.title }}</span></p>
+        <p><span>{{ "Description"|trans }}: </span><span>{{ hydra.description }}</span></p>
+        <br/>
+        {% if app.debug %}
+            <div>
+                <h1>Traces</h1>
+                <table border="1">
+                    <thead>
+                    <th><span>{{ "Namespace"|trans }}:</span></th>
+                    <th><span>{{ "Nom de Classe"|trans }}:</span></th>
+                    <th><span>{{ "Nom complet de la Classe"|trans }}:</span></th>
+                    <th><span>{{ "Type"|trans }}: </span></th>
+                    <th><span>{{ "Fonction"|trans }}:</span></th>
+                    <th><span>{{ "Fichier"|trans }}: </span></th>
+                    <th><span>{{ "ligne"|trans }}: </span></th>
+                    <th><span>{{ "Arguments"|trans }}</span></th>
+                    </thead>
+                    <tbody>
+                    {# @var trace \Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Trace #}
+                    {% for trace in hydra.traces %}
+                        <tr>
+                            <td><span>{{ trace.namespace }}</span></td>
+                            <td><span>{{ trace.shortClass }}</span></td>
+                            <td><span>{{ trace.class }}</span></td>
+                            <td><span>{{ trace.type }}</span></td>
+                            <td><span>{{ trace.function }}</span></td>
+                            <td><span>{{ trace.file }}</span></td>
+                            <td><span>{{ trace.line }}</span></td>
+                            <td>
+                                <ol>
+                                    {% for arg in trace.args %}
+                                        <li>
+                                            <ul>
+                                                <li><span>{{ "Type"|trans }}: </span><span>{{ arg[0] }}</span></li>
+                                                <li><span>{{ "Valeur"|trans }}: </span><span>{{ arg[1] }}</span></li>
+                                            </ul>
+                                        </li>
+                                    {% endfor %}
+                                </ol>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot></tfoot>
+                </table>
+            </div>
+        {% else %}
+            Veuillez contacter l'administrateur!!!
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags("#{assets_prefix ?? ''}home/home") }}
+{% endblock %}

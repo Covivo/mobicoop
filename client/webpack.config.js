@@ -105,6 +105,7 @@ encoreConfig.resolve.alias = _.merge(encoreConfig.resolve.alias, { // merge is v
   '@assets': path.resolve(__dirname, 'src/MobicoopBundle/Resources/assets'),
   '@themes': path.resolve(__dirname, 'src/MobicoopBundle/Resources/themes'),
   '@clientTranslations': path.resolve(__dirname, './translations'),
+  '@components': path.resolve(__dirname, 'src/MobicoopBundle/Resources/assets/js/components'),
   '@images': path.resolve(__dirname, './public/images'),
   // ⚙️ UNCOMMENT below if you are using a client platform  ⚙️ //
   // '@clientJs': path.resolve(__dirname, './assets/js'),
@@ -112,6 +113,7 @@ encoreConfig.resolve.alias = _.merge(encoreConfig.resolve.alias, { // merge is v
   // '@clientAssets': path.resolve(__dirname, './assets'),
   // '@themes': path.resolve(__dirname, './themes'),
   // '@root': path.resolve(__dirname, ''),
+  // '@clientComponents': path.resolve(__dirname, './assets/js/components'),
 });
 
 module.exports = [encoreConfig];

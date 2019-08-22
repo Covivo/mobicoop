@@ -25,6 +25,7 @@ namespace App\Geography\Controller;
 
 use App\Geography\Service\TerritoryManager;
 use App\Geography\Entity\Territory;
+use App\TranslatorTrait;
 
 /**
  * Controller class for territory post.
@@ -33,6 +34,7 @@ use App\Geography\Entity\Territory;
  */
 class TerritoryPost
 {
+    use TranslatorTrait;
     private $territoryManager;
 
     public function __construct(TerritoryManager $territoryManager)
@@ -49,6 +51,9 @@ class TerritoryPost
      */
     public function __invoke(Territory $data): Territory
     {
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad Territory id is provided"));
+        }
         $data = $this->territoryManager->createTerritory($data);
         return $data;
     }

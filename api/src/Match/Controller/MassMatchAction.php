@@ -25,10 +25,12 @@ namespace App\Match\Controller;
 
 use App\Match\Service\MassImportManager;
 use App\Match\Entity\Mass;
+use App\TranslatorTrait;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 final class MassMatchAction
 {
+    use TranslatorTrait;
     private $massImportManager;
     private $request;
 
@@ -40,6 +42,9 @@ final class MassMatchAction
 
     public function __invoke(Mass $data): Mass
     {
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad Mass id is provided"));
+        }
         if ($data->getStatus() == Mass::STATUS_ANALYZED) {
             $maxDetourDurationPercent = 40;
             $maxDetourDistancePercent = 40;

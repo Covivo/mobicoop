@@ -25,6 +25,9 @@ namespace App\Article\Controller;
 
 use App\Article\Service\ArticleManager;
 use App\Article\Entity\Section;
+use App\TranslatorTrait;
+use Symfony\Component\Translation\Translator;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Controller class for section down position change.
@@ -33,8 +36,10 @@ use App\Article\Entity\Section;
  */
 class SectionDown
 {
+    use TranslatorTrait;
+    
     private $articleManager;
-
+    
     public function __construct(ArticleManager $articleManager)
     {
         $this->articleManager = $articleManager;
@@ -49,6 +54,9 @@ class SectionDown
      */
     public function __invoke(Section $data): Section
     {
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad Section id is provided"));
+        }
         return $this->articleManager->changeSectionPosition($data, $this->articleManager::DIRECTION_DOWN);
     }
 }

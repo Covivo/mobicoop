@@ -211,16 +211,16 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $homeAddress;
 
     /**
-     * @var DateTime|null Date of password modification.
-     * @Groups({"post","put", "password_token"})
-     */
-    private $pupdtime;
-
-    /**
      * @var string|null Token for password modification.
      *  @Groups({"post","put", "password_token"})
      */
     private $pwdToken;
+
+    /**
+     * @var DateTime|null Date of token password modification.
+     * @Groups({"post","put", "password_token"})
+     */
+    private $pwdTokenDate;
 
     /**
      * @var string|null Token for geographic authorization.
@@ -623,6 +623,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
 
     public function getHomeAddress(): ?Address
     {
+        // return $this->homeAddress;
         foreach ($this->addresses as $address) {
             if ($address->isHome()) {
                 return $address;
@@ -637,27 +638,6 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     public function setHomeAddress(?Address $homeAddress)
     {
         $this->homeAddress = $homeAddress;
-    }
-
-    /**
-     * Return the date of password mofification.
-     *
-     * @return DateTime
-     */
-    public function getPupdtime()
-    {
-        return $this->pupdtime;
-    }
-
-    /**
-     * Set the date of password mofification.
-     *
-     * @param DateTime|null $pupdtime
-     */
-    public function setPupdtime(?DateTime $pupdtime)
-    {
-        $this->pupdtime = $pupdtime;
-        return $this;
     }
 
     /**
@@ -681,6 +661,27 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
+    /**
+     * Return the date of password mofification.
+     *
+     * @return DateTime
+     */
+    public function getPwdTokenDate()
+    {
+        return $this->pwdTokenDate;
+    }
+
+    /**
+     * Set the date of password mofification.
+     *
+     * @param DateTime|null $pwdTokenDate
+     */
+    public function setPwdTokenDate(?DateTime $pwdTokenDate)
+    {
+        $this->pwdTokenDate = $pwdTokenDate;
+        return $this;
+    }
+
     public function getGeoToken()
     {
         return $this->geoToken;
@@ -690,23 +691,6 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     {
         $this->geoToken = $geoToken;
         return $this;
-    }
-
-    
-    // If you want more info from user you just have to add it to the jsonSerialize function
-    public function jsonSerialize()
-    {
-        return
-        [
-            'id'            => $this->getId(),
-            'givenName'     => $this->getGivenName(),
-            'familyName'    => $this->getFamilyName(),
-            'gender'        => $this->getGender(),
-            'status'        => $this->getStatus(),
-            'email'         => $this->getEmail(),
-            'telephone'     => $this->getTelephone(),
-            'geoToken'      => $this->getGeoToken()
-        ];
     }
         
     /**
@@ -727,5 +711,23 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     public function setLanguage(string $language)
     {
         $this->language = $language;
+    }
+    
+    // If you want more info from user you just have to add it to the jsonSerialize function
+    public function jsonSerialize()
+    {
+        return
+        [
+            'id'            => $this->getId(),
+            'givenName'     => $this->getGivenName(),
+            'familyName'    => $this->getFamilyName(),
+            'gender'        => $this->getGender(),
+            'status'        => $this->getStatus(),
+            'email'         => $this->getEmail(),
+            'telephone'     => $this->getTelephone(),
+            'geoToken'      => $this->getGeoToken(),
+            'birthYear'     => $this->getBirthYear(),
+            'homeAddress'   => $this->getHomeAddress(),
+        ];
     }
 }

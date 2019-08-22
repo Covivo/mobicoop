@@ -23,26 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Api\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
-use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourney;
-use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
-use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassCarpool;
-use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassJourney;
-use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassMatching;
-use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassMatrix;
-use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassPerson;
-use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTAccessibilityStatus;
-use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
-use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLineStop;
-use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLocality;
-use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTStop;
-use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTTripPoint;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
-
 use TypeError;
-
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
@@ -70,6 +51,23 @@ use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Recipient;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Entity\ExternalJourney;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassCarpool;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassJourney;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassMatching;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassMatrix;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\MassPerson;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTAccessibilityStatus;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTJourney;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLineStop;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTLocality;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTStop;
+use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTTripPoint;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 
 /**
  * Custom deserializer service.
@@ -159,6 +157,9 @@ class Deserializer
                 break;
             case Recipient::class:
                 return self::deserializeRecipient($data);
+                break;
+            case Direction::class:
+                return self::deserializeDirection($data);
                 break;
             default:
                 break;
@@ -322,6 +323,9 @@ class Deserializer
                 $points[] = self::deserializeAddress($address);
             }
             $direction->setPoints($points);
+        }
+        if (isset($data["directPoints"])) {
+            $direction->setDirectPoints($data["directPoints"]);
         }
         return $direction;
     }

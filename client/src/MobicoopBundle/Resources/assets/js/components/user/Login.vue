@@ -52,7 +52,7 @@
         <v-card-text>
           <a
             class="secondary--text"
-            :href="this.urlForgotenPassword"
+            :href="this.urlForgottenPassword"
           >Mot de passe oublié?</a>
         </v-card-text>
       </v-flex>
@@ -62,8 +62,8 @@
 <script>
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/Login.json";
-import TranslationsClient from "@clientTranslations/components/Login.json";
+import Translations from "@translations/components/user/Login.json";
+import TranslationsClient from "@clientTranslations/components/user/Login.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
@@ -76,7 +76,7 @@ export default {
       type: String,
       default: ""
     },
-    urlforgotenpassword: {
+    urlforgottenpassword: {
       type: String,
       default: ""
     }
@@ -95,7 +95,7 @@ export default {
         v => !!v || this.$t("models.user.password.errors.required")
       ],
       errorDisplay: "",
-      urlForgotenPassword: this.urlforgotenpassword
+      urlForgottenPassword: this.urlForgottenPassword
     };
   },
   mounted() {

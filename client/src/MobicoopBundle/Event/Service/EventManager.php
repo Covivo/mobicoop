@@ -86,10 +86,7 @@ class EventManager
             $params['itemsPerPage'] = $limit;
         }
         $response = $this->dataProvider->getCollection($params);
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
-        return null;
+        return $response->getValue();
     }
     
     /**
@@ -102,10 +99,7 @@ class EventManager
     {
         $response = $this->dataProvider->getItem($id);
 
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
-        return null;
+        return $response->getValue();
     }
     
     /**
@@ -118,10 +112,7 @@ class EventManager
     public function updateEvent(Event $event)
     {
         $response = $this->dataProvider->put($event);
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
-        return null;
+        return $response->getValue();
     }
     
     /**

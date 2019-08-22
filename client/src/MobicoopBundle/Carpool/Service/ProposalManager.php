@@ -72,10 +72,7 @@ class ProposalManager
         // we will make the request on the User instead of the Proposal
         $this->dataProvider->setClass(User::class);
         $response = $this->dataProvider->getSubCollection($user->getId(), Proposal::class);
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
-        return null;
+        return $response->getValue();
     }
     
     /**
@@ -87,10 +84,7 @@ class ProposalManager
     public function getProposal(int $id)
     {
         $response = $this->dataProvider->getItem($id);
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
-        return null;
+        return $response->getValue();
     }
     
     /**
@@ -106,10 +100,7 @@ class ProposalManager
         } else {
             $response = $this->dataProvider->getSubCollection($proposal->getId(), Matching::class, "matching_offers");
         }
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
-        return null;
+        return $response->getValue();
     }
 
     /**
@@ -134,10 +125,7 @@ class ProposalManager
         ];
         // we call the special collection operation "search"
         $response = $this->dataProvider->getSpecialCollection("search", $params);
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
-        return null;
+        return $response->getValue();
     }
     
     /**

@@ -23,6 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Article\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Mobicoop\Bundle\MobicoopBundle\Article\Service\ArticleManager;
 
@@ -32,6 +33,8 @@ use Mobicoop\Bundle\MobicoopBundle\Article\Service\ArticleManager;
  */
 class ArticleController extends AbstractController
 {
+    use HydraControllerTrait;
+    
     const CGU = 1;
     const NEWS = 2;
     const PROJECT = 3;
@@ -43,6 +46,10 @@ class ArticleController extends AbstractController
     public function showProject(ArticleManager $articleManager)
     {
         $article = $articleManager->getArticle(self::PROJECT);
+        $reponseofmanager= $this->handleManagerReturnValue($article);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
         $this->denyAccessUnlessGranted('show', $article);
         return $this->render('@Mobicoop/article/article.html.twig', [
             'article' => $article,
@@ -56,6 +63,10 @@ class ArticleController extends AbstractController
     public function showCgu(ArticleManager $articleManager)
     {
         $article = $articleManager->getArticle(self::CGU);
+        $reponseofmanager= $this->handleManagerReturnValue($article);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
         $this->denyAccessUnlessGranted('show', $article);
         return $this->render('@Mobicoop/article/article.html.twig', [
             'article' => $article,
@@ -69,6 +80,10 @@ class ArticleController extends AbstractController
     public function showNews(ArticleManager $articleManager)
     {
         $article = $articleManager->getArticle(self::NEWS);
+        $reponseofmanager= $this->handleManagerReturnValue($article);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
         $this->denyAccessUnlessGranted('show', $article);
         return $this->render('@Mobicoop/article/article.html.twig', [
             'article' => $article,

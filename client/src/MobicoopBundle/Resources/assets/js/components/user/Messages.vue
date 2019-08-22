@@ -34,6 +34,7 @@
         >
           <!-- Threads -->
           <v-tabs
+            v-model="modelTabs"
             slider-color="secondary"
             color="secondary"
             grow
@@ -41,15 +42,31 @@
             <v-tab
               :key="0"
               ripple
+              href="#tab-cm"
+              class="ml-0"
             >
               {{ $t("ui.pages.messages.label.ongoingasks") }}
             </v-tab>
+            <v-tab
+              :key="1"
+              ripple
+              href="#tab-dm"
+              class="ml-0"
+            >
+              {{ $t("ui.pages.messages.label.directmessages") }}
+            </v-tab>
+          </v-tabs>
+          <v-tabs-items v-model="modelTabs">
             <v-tab-item
               v-if="this.threadsCM.length==0"
+              value="tab-cm"
             >
               {{ $t("ui.pages.messages.label.nocarpoolmessages") }}
             </v-tab-item>
-            <v-tab-item v-else>
+            <v-tab-item
+              v-else
+              value="tab-cm"
+            >
               <v-card
                 v-for="(threadCM, index) in threadsCM"
                 :key="index"
@@ -65,25 +82,21 @@
                 </v-card-title>
               </v-card>
             </v-tab-item>
-            <v-tab
-              :key="1"
-              ripple
-            >
-              {{ $t("ui.pages.messages.label.directmessages") }}
-            </v-tab>
-
             <v-tab-item
               v-if="this.threadsDM.length==0"
+              value="tab-dm"
             >
               {{ $t("ui.pages.messages.label.nodirectmessages") }}
             </v-tab-item>
-            <v-tab-item v-else>
+            <v-tab-item
+              v-else
+              value="tab-dm"
+            >
               <v-card
                 v-for="(thread, index) in threadsDM"
                 :key="index"
                 class="threads mx-auto mt-2"
                 :class="thread.selected ? 'primary' : ''"
-                max-width="400"
                 @click="updateMessages(thread.idThreadMessage,thread.contactId,generateName(thread.contactFirstName,thread.contactLastName))"
               >
                 <v-card-title>
@@ -94,7 +107,7 @@
                 </v-card-title>
               </v-card>
             </v-tab-item>
-          </v-tabs>
+          </v-tabs-items>
         </v-flex>
 
         <v-flex
@@ -317,7 +330,7 @@
                         v-on="on"
                         @click="updateCarpool(3)"
                       >
-                        <v-icon>done</v-icon>
+                        <v-icon>mdi-check</v-icon>
                       </v-btn>
                     </template>
                     <span class="black--text">{{ $t("ui.button.accept") }}</span>
@@ -334,7 +347,7 @@
                         v-on="on"
                         @click="updateCarpool(4)"
                       >
-                        <v-icon>clear</v-icon>
+                        <v-icon>mdi-close</v-icon>
                       </v-btn>
                     </template>
                     <span>{{ $t("ui.button.refuse") }}</span>
@@ -408,8 +421,8 @@
 import axios from "axios";
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/Messages.json";
-import TranslationsClient from "@clientTranslations/components/Messages.json";
+import Translations from "@translations/components/user/Messages.json";
+import TranslationsClient from "@clientTranslations/components/user/Messages.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
@@ -471,7 +484,8 @@ export default {
       textSpinner: "",
       currentAskHistory: null,
       askUser: 0,
-      infosJourney: []
+      infosJourney: [],
+      modelTabs:"tab-cm"
     };
   },
   watch: {
@@ -552,6 +566,10 @@ export default {
 
           this.addMessageToItems(message);
         }
+
+
+        // We check that the good tab is active
+        (this.currentAskHistory === null) ? this.modelTabs = "tab-dm" : this.modelTabs = "tab-cm";
 
         this.spinner = false;
       });

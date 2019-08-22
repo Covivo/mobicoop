@@ -66,8 +66,8 @@ import axios from "axios";
 
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/Profile.json";
-import TranslationsClient from "@clientTranslations/components/Profile.json";
+import Translations from "@translations/components/user/Profile.json";
+import TranslationsClient from "@clientTranslations/components/user/Profile.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 

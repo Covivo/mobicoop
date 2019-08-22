@@ -25,6 +25,7 @@ security:
             logout:
                 path: /user/logout
                 target: /
+            access_denied_handler: mobicoop_bundle_mobicoop.security.access_denied_handler
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used

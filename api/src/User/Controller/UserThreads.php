@@ -23,6 +23,7 @@
 
 namespace App\User\Controller;
 
+use App\TranslatorTrait;
 use Symfony\Component\HttpFoundation\RequestStack;
 use App\Right\Service\PermissionManager;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,6 +41,7 @@ use App\User\Service\UserManager;
  */
 class UserThreads
 {
+    use TranslatorTrait;
     private $userManager;
 
     public function __construct(UserManager $userManager)
@@ -55,6 +57,9 @@ class UserThreads
      */
     public function __invoke(User $data): ?User
     {
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
+        }
         // we search the messages
         $data->setThreads($this->userManager->getThreads($data));
         return $data;

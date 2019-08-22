@@ -53,11 +53,8 @@ class AskHistoryManager
     public function getAskHistory(int $id)
     {
         $response = $this->dataProvider->getItem($id);
-        if ($response->getCode() == 200) {
-            $ask = $response->getValue();
-            return $ask;
-        }
-        return null;
+        $ask = $response->getValue();
+        return $ask;
     }
     
     /**

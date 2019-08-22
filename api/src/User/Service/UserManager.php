@@ -149,7 +149,7 @@ class UserManager
     }
  
     /**
-       * Gere la demande de modification du mot de passe.
+       * User password change request.
        *
        * @param User $user
        * @return User
@@ -157,11 +157,10 @@ class UserManager
     public function updateUserPasswordRequest(User $user)
     {
         $datetime = new DateTime();
-        $time= $datetime->getTimestamp();
-        $pwdToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+        $time = $datetime->getTimestamp();
         // encoding of the password
+        $pwdToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
         $user->setPwdToken($pwdToken);
-        $user->setPupdtime($datetime);
         // update of the geotoken
         $geoToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
         $user->setGeoToken($geoToken);
@@ -170,13 +169,13 @@ class UserManager
         $this->entityManager->flush();
         // dispatch en event
         $event = new UserPasswordChangeAskedEvent($user);
-        $this->eventDispatcher->dispatch(UserPasswordChangeAskedEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, UserPasswordChangeAskedEvent::NAME);
         // return the user
         return $user;
     }
  
     /**
-       * Gere la confirmation de demande de modification du mot de passe.
+       * User password change confirmation.
        *
        * @param User $user
        * @return User
@@ -184,13 +183,12 @@ class UserManager
     public function updateUserPasswordConfirm(User $user)
     {
         $user->setPwdToken(null);
-        $user->setPupdtime(null);
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
         // dispatch en event
         $event = new UserPasswordChangedEvent($user);
-        $this->eventDispatcher->dispatch(UserPasswordChangedEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, UserPasswordChangedEvent::NAME);
         // return the user
         return $user;
     }

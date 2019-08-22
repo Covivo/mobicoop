@@ -23,7 +23,10 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use App\User\Service\UserManager;
 
@@ -44,5 +47,20 @@ class DefaultController extends AbstractController
                 'metaDescription' => 'Homepage of Mobicoop'
             ]
         );
+    }
+    
+    /**
+     * Error Page.
+     * @Route("/provider/errors", name="api_hydra_errors")
+     *
+     */
+    public function showErrorsAction()
+    {
+        $session= $this->get('session');
+        $hydra = $session->get('hydra');
+        if ($hydra instanceof Hydra) {
+            return $this->render('@Mobicoop/hydra/error.html.twig', ['hydra'=> $hydra]);
+        }
+        return null;
     }
 }

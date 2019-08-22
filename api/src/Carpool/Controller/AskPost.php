@@ -25,6 +25,7 @@ namespace App\Carpool\Controller;
 
 use App\Carpool\Service\AskManager;
 use App\Carpool\Entity\Ask;
+use App\TranslatorTrait;
 
 /**
  * Controller class for ask post.
@@ -33,8 +34,10 @@ use App\Carpool\Entity\Ask;
  */
 class AskPost
 {
+    use TranslatorTrait;
+    
     private $askManager;
-
+    
     public function __construct(AskManager $askManager)
     {
         $this->askManager = $askManager;
@@ -48,6 +51,9 @@ class AskPost
      */
     public function __invoke(Ask $data): Ask
     {
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad Ask id is provided"));
+        }
         $data = $this->askManager->createAsk($data);
         return $data;
     }
