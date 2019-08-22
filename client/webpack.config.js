@@ -113,6 +113,7 @@ encoreConfig.resolve.alias = _.merge(encoreConfig.resolve.alias, { // merge is v
   // '@clientAssets': path.resolve(__dirname, './assets'),
   // '@themes': path.resolve(__dirname, './themes'),
   // '@root': path.resolve(__dirname, ''),
+  // '@clientComponents': path.resolve(__dirname, './assets/js/components'),
 });
 
 module.exports = [encoreConfig];

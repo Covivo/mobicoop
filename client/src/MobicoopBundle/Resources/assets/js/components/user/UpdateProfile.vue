@@ -123,8 +123,8 @@ import GeoComplete from "@js/components/utilities/GeoComplete";
 
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/ProfileUpdate.json";
-import TranslationsClient from "@clientTranslations/components/ProfileUpdate.json";
+import Translations from "@translations/components/user/UpdateProfile.json";
+import TranslationsClient from "@clientTranslations/components/user/UpdateProfile.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
