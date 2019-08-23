@@ -3,7 +3,11 @@
     height="215"
     flat
   >
-    <result-journey-detailed-card />
+    <result-journey-detailed-card 
+      :origin="origin"
+      :destination="destination"
+      :date="date"
+    />
     <v-divider class="divider-width" />
     <result-user-detailed-card />
   </v-card>
@@ -16,7 +20,41 @@ export default {
   components:{
     ResultJourneyDetailedCard,
     ResultUserDetailedCard
-  }
+  },
+  props: {
+    origin: {
+      type: String,
+      default: null
+    },
+    destination: {
+      type: String,
+      default: null
+    },
+    originLatitude: {
+      type: String,
+      default: null
+    },
+    originLongitude: {
+      type: String,
+      default: null
+    },
+    destinationLatitude: {
+      type: String,
+      default: null
+    },
+    destinationLongitude: {
+      type: String,
+      default: null
+    },
+    date: {
+      type: String,
+      default: null
+    },
+    matchingSearchUrl: {
+      type: String,
+      default: null
+    },
+  }, 
 }
 </script>
 

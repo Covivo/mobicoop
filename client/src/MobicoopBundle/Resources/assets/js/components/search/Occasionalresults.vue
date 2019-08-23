@@ -106,7 +106,11 @@
           cols="5"
           align="center"
         >
-          <result-card />
+          <result-card 
+            :origin="origin"
+            :destination="destination"
+            :date="date"
+          />
           <!--    <h3>{{ Results }}</h3>-->
           <!--          card use vdivider for middle line-->
         </v-col>
@@ -210,7 +214,7 @@ export default {
       return moment(new Date(date)).utcOffset("+00:00").format()
     },
     displaydate(date){
-      return moment (new Date(date)).utcOffset("+00:00").format('ddd d MMMM YYYY')
+      return moment (new Date(date)).utcOffset("+00:00").format('ddd D MMMM YYYY')
     }
     //fill Results
   }
