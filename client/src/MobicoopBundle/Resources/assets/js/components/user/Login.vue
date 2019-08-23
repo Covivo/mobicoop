@@ -41,6 +41,7 @@
 
           <v-btn
             :disabled="!valid"
+            :loading="loading"
             color="success"
             type="submit"
             rounded
@@ -84,6 +85,7 @@ export default {
   data() {
     return {
       valid: true,
+      loading: false,
       email: "",
       emailRules: [
         v => !!v || this.$t("models.user.email.errors.required"),
@@ -103,6 +105,7 @@ export default {
   },
   methods: {
     validate() {
+      this.loading = true;
       if (this.$refs.form.validate()) {
         // Do something
       }
@@ -110,6 +113,7 @@ export default {
     treatErrorMessage(errorMessage) {
       if (errorMessage === "Bad credentials.") {
         this.errorDisplay = this.$t("errorCredentials");
+        this.loading = false;
       }
     }
   }
