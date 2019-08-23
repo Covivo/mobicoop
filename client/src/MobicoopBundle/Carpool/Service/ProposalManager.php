@@ -152,7 +152,8 @@ class ProposalManager
      */
     public function createProposalFromAd(array $ad)
     {
-var_dump($ad);exit;
+        var_dump($ad);
+        exit;
         $proposal = new Proposal();
         if ($ad['regular'] === "true") {
             // regular
@@ -496,7 +497,5 @@ var_dump($ad);exit;
 //     $proposalReturn = $this->proposalManager->createProposal($proposalReturn);
 // }
 // return $proposalOutward;
-
-
     }
 }

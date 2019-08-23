@@ -54,7 +54,7 @@ class CarpoolController extends AbstractController
         if ($request->isMethod('POST')) {
             $this->denyAccessUnlessGranted('post', $proposal);
             $data = json_decode($request->getContent(), true);
-            $result = $proposalManager->createProposalFromAd($data);                
+            $result = $proposalManager->createProposalFromAd($data);
             return $this->json(['result'=>$result]);
         }
 
