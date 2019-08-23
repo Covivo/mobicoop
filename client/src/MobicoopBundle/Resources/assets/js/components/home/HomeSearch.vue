@@ -44,6 +44,7 @@
         >
           <v-btn
             rounded
+            :loading="loading"
             outlined
             disabled
             @click="publish"
@@ -55,6 +56,7 @@
           <v-btn
             color="success"
             rounded
+            :loading="loading"
             :disabled="searchUnavailable"
             @click="search"
           >
@@ -100,6 +102,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       regular: false,
       date: null,
       origin: null,
@@ -131,9 +134,11 @@ export default {
       this.date = search.date;
     },
     search: function() {
+      this.loading = true;
       window.location.href = this.urlToCall;
     },
     publish: function() {
+      this.loading = true;
       console.error("publish !");
     }
   }
