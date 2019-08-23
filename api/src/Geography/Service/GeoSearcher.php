@@ -190,5 +190,4 @@ class GeoSearcher
         }
         return false;
     }
-
 }

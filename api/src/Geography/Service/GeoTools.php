@@ -142,7 +142,7 @@ class GeoTools
      * @param Address $address
      * @return string
      */
-    public function getDisplayLabel(Address $address): string 
+    public function getDisplayLabel(Address $address): string
     {
         // Determine the more logical display label considering the params
 
