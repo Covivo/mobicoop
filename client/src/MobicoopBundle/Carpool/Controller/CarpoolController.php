@@ -26,19 +26,13 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Controller;
 use Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Form\AdForm;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
-use Symfony\Component\HttpFoundation\Response;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
-use Symfony\Component\Dotenv\Dotenv;
 
 /**
  * Controller class for carpooling related actions.
@@ -52,112 +46,84 @@ class CarpoolController extends AbstractController
      * Create a carpooling ad.
      */
 
-    public function ad(AdManager $adManager, UserManager $userManager, Request $request, CommunityManager $communityManager, CommunityController $communityController)
+    public function post(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager, CommunityController $communityController)
     {
-        //get price from the client/.env file
-        $dotenv = new Dotenv();
-        $dotenv->load(__DIR__.'/../../../../.env');
-        $priceCarpool = $_ENV['PRICE_CARPOOL'];
+        $proposal = new Proposal();
+        $this->denyAccessUnlessGranted('create_ad', $proposal);
 
-        $ad = new Ad();
-        $this->denyAccessUnlessGranted('post', $ad);
-        $ad->setRole(Ad::ROLE_BOTH);
-        $ad->setType(Ad::TYPE_ONE_WAY);
-        $ad->setFrequency(Ad::FREQUENCY_PUNCTUAL);
-//        $ad->setFrequency(Ad::FREQUENCY_REGULAR);
-        $ad->setPrice($priceCarpool);
-        $ad->setUser($userManager->getLoggedUser());
-
-        $form = $this->createForm(AdForm::class, $ad, ['csrf_protection' => false]);
-        $error = false;
-        $success = false;
-        $idCommunity ='';
-
-        if (count($_GET) > 0 && array_key_exists('id', $_GET) && !is_null($_GET['id']) && $_GET['id'] !='') {
-            $idCommunity = $_GET['id'];
-        }
-        //        ajout de la gestion des communautés
-        $hydraCommunities = $communityManager->getCommunities();
-        $communities =[];
-        if ($hydraCommunities && count($hydraCommunities->getMember())>0) {
-            foreach ($hydraCommunities->getMember() as $value) {
-                foreach (array($value) as $community) {
-                    if ($community->isSecured(true)) {
-                        $membersOfCommunity = array();
-                        foreach ($community->getCommunityUsers() as $user) {
-                            $membersOfCommunity = [$user->getUser()->getId()];
-                        }
-                        $logged = $userManager->getLoggedUser();
-                        $reponseofmanager= $this->handleManagerReturnValue($logged);
-                        if (!empty($reponseofmanager)) {
-                            return $reponseofmanager;
-                        }
-                        $isLogged = boolval($logged); // cast to boolean
-                        // don't display the secured community if the user is not logged or if the user doesn't belong to the secured community
-                        if (!$isLogged || !in_array($logged->getId(), $membersOfCommunity)) {
-                            continue;
-                        }
-                    }
-
-//                    $communities[$community->getId()] = $community->getName();
-                    $communityToTab = (object)["id"=> $community->getId(), "communityName"=> $community->getName()];
-                    $communities[]=$communityToTab;
-                }
-            }
-        }
         if ($request->isMethod('POST')) {
-            $createToken = $request->request->get('createToken');
-            if (!$this->isCsrfTokenValid('ad-create', $createToken)) {
-                return new Response('Broken Token CSRF ', 403);
-            }
-            $form->submit($request->request->get($form->getName()));
-            // $form->submit($request->request->all());
-
-//            test if a community is filled
-            if ($ad->getCommunity() !== '' && !is_null($ad->getCommunity())) {
-                $communityController->joinCommunity($ad->getCommunity(), $communityManager, $userManager);
-            }
+            $this->denyAccessUnlessGranted('post', $proposal);
+            $data = json_decode($request->getContent(), true);
+            $result = $proposalManager->createProposalFromAd($data);                
+            return $this->json(['result'=>$result]);
         }
 
-        // If it's a get, just render the form !
-        if (!$form->isSubmitted()) {
-            return $this->render('@Mobicoop/carpool/publish.html.twig', [
-                'form' => $form->createView(),
-                'error' => $error,
-                'communities' => $communities,
-                'idCommunity' => $idCommunity
-            ]);
-        }
+        return $this->render('@Mobicoop/carpool/publish.html.twig');
 
-        // Not Valid populate error
-        if (!$form->isValid()) {
-            $error = [];
-            // Fields
-            foreach ($form as $child) {
-                if (!$child->isValid()) {
-                    foreach ($child->getErrors(true) as $err) {
-                        $error[$child->getName()][] = $err->getMessage();
-                    }
-                }
-            }
-            return $this->json(['error' => $error, 'success' => $success]);
-        }
+
+        // $ad->setRole(Ad::ROLE_BOTH);
+        // $ad->setType(Ad::TYPE_ONE_WAY);
+        // $ad->setFrequency(Ad::FREQUENCY_PUNCTUAL);
+//        $ad->setFrequency(Ad::FREQUENCY_REGULAR);
+        // $ad->setPrice($priceCarpool);
+        // $ad->setUser($userManager->getLoggedUser());
+
+        //        ajout de la gestion des communautés
+//         $hydraCommunities = $communityManager->getCommunities();
+//         $communities =[];
+//         if ($hydraCommunities && count($hydraCommunities->getMember())>0) {
+//             foreach ($hydraCommunities->getMember() as $value) {
+//                 foreach (array($value) as $community) {
+//                     if ($community->isSecured(true)) {
+//                         $membersOfCommunity = array();
+//                         foreach ($community->getCommunityUsers() as $user) {
+//                             $membersOfCommunity = [$user->getUser()->getId()];
+//                         }
+//                         $logged = $userManager->getLoggedUser();
+//                         $reponseofmanager= $this->handleManagerReturnValue($logged);
+//                         if (!empty($reponseofmanager)) {
+//                             return $reponseofmanager;
+//                         }
+//                         $isLogged = boolval($logged); // cast to boolean
+//                         // don't display the secured community if the user is not logged or if the user doesn't belong to the secured community
+//                         if (!$isLogged || !in_array($logged->getId(), $membersOfCommunity)) {
+//                             continue;
+//                         }
+//                     }
+
+// //                    $communities[$community->getId()] = $community->getName();
+//                     $communityToTab = (object)["id"=> $community->getId(), "communityName"=> $community->getName()];
+//                     $communities[]=$communityToTab;
+//                 }
+//             }
+//         }
+        //if ($request->isMethod('POST')) {
+            // if ($ad->getCommunity() !== '' && !is_null($ad->getCommunity())) {
+            //     $communityController->joinCommunity($ad->getCommunity(), $communityManager, $userManager);
+            // }
+
+        //}
+
+        //    return $this->render('@Mobicoop/carpool/publish.html.twig', [
+                // 'communities' => $communities,
+                // 'idCommunity' => $idCommunity
+        //    ]);
 
         // Error happen durring proposal creation
-        try {
-            $proposal = $adManager->createProposalFromAd($ad);
-            $reponseofmanager= $this->handleManagerReturnValue($proposal);
-            if (!empty($reponseofmanager)) {
-                return $reponseofmanager;
-            }
-            $success = true;
-        } catch (Error $err) {
-            $error = $err;
-            $success= false;
-        }
-        $proposalSuccess = $success ? $proposal->getId() : false;
+        // try {
+        //     $proposal = $adManager->createProposalFromAd($ad);
+        //     $reponseofmanager= $this->handleManagerReturnValue($proposal);
+        //     if (!empty($reponseofmanager)) {
+        //         return $reponseofmanager;
+        //     }
+        //     $success = true;
+        // } catch (Error $err) {
+        //     $error = $err;
+        //     $success= false;
+        // }
+        // $proposalSuccess = $success ? $proposal->getId() : false;
 
-        return $this->json(['error' => $error, 'success' => $success, 'proposal' => $proposalSuccess]);
+        // return $this->json(['error' => $error, 'success' => $success, 'proposal' => $proposalSuccess]);
     }
 
     /**

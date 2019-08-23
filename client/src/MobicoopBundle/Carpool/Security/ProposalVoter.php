@@ -31,6 +31,8 @@ use Mobicoop\Bundle\MobicoopBundle\Permission\Service\PermissionManager;
 
 class ProposalVoter extends Voter
 {
+    const CREATE_AD = 'create_ad';
+    const POST = 'post';
     const RESULTS = 'results';
 
     private $permissionManager;
@@ -44,12 +46,14 @@ class ProposalVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
+            self::CREATE_AD,
+            self::POST,
             self::RESULTS
             ])) {
             return false;
         }
 
-        // only vote on Ad objects inside this voter
+        // only vote on Proposal objects inside this voter
         if (!$subject instanceof Proposal) {
             return false;
         }
@@ -63,11 +67,30 @@ class ProposalVoter extends Voter
         $proposal = $subject;
 
         switch ($attribute) {
+            case self::CREATE_AD:
+                return $this->canCreateProposal($proposal);
+            case self::POST:
+                return $this->canPostProposal($proposal, $user);
             case self::RESULTS:
                 return $this->canViewProposalResults($proposal, $user);
         }
 
         throw new \LogicException('This code should not be reached!');
+    }
+
+    private function canCreateProposal(Proposal $proposal)
+    {
+        // everbody can create a proposal
+        return true;
+    }
+
+    private function canPostProposal(Proposal $proposal, User $user)
+    {
+        // only registered users can post a proposal
+        if (!$user instanceof User) {
+            return false;
+        }
+        return true;
     }
 
     private function canViewProposalResults(Proposal $proposal, User $user)

@@ -110,7 +110,7 @@ carpool_ad:
     path:
         fr: /covoiturage/annonce/poster
         en: /carpool/ad/share
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::ad
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::post
 
 # simple search results
 carpool_results:

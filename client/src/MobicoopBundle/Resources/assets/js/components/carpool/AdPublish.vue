@@ -418,6 +418,8 @@
         </v-btn>
         <v-btn
           v-if="valid"
+          :loading="loading"
+          :disabled="loading"
           rounded
           color="primary"
           style="margin-left: 30px"
@@ -476,7 +478,7 @@ export default {
     },
     publishUrl: {
       type: String,
-      default: ''
+      default: 'covoiturage/annonce/poster'
     },
   },
   data() {
@@ -502,7 +504,8 @@ export default {
       price: null,
       pricePerKm: this.defaultPriceKm,
       message: null,
-      baseUrl: window.location.origin
+      baseUrl: window.location.origin,
+      loading: false
     }
   },
   computed: {
@@ -590,18 +593,23 @@ export default {
       if (this.price) postObject.price = this.price;
       if (this.message) postObject.message = this.message;
       console.error(postObject);
-      // axios.post(this.urlToCall,postObject,{
-      //     headers:{
-      //       'content-type': 'application/json'
-      //     }
-      //   })
-      //   .then(function (response) {
-      //     window.location.href = '/';
-      //     console.log(response);
-      //   })
-      //   .catch(function (error) {
-      //     console.log(error);
-      //   });
+      this.loading = true;
+      var self = this;
+      axios.post(this.urlToCall,postObject,{
+        headers:{
+          'content-type': 'application/json'
+        }
+      })
+        .then(function (response) {
+          //window.location.href = '/';
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .finally(function () {
+          self.loading = false;
+        });
     },
 
   }
