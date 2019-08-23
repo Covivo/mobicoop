@@ -426,13 +426,15 @@ class Address implements ResourceInterface, \JsonSerializable
              'addressCountry'       => $this->getAddressCountry(),
              'countryCode'          => $this->getCountryCode(),
              'county'               => $this->getCounty(),
-             'latitude'             => $this-> getLatitude(),
-             'localAdmin'           => $this-> getLocalAdmin(),
-             'longitude'            => $this-> getLongitude(),
-             'macroCounty'          => $this-> getMacroCounty(),
-             'macroRegion'          => $this-> getMacroRegion(),
-             'region'               => $this-> getRegion(),
-             'subLocality'          => $this-> getSubLocality(),
+             'latitude'             => $this->getLatitude(),
+             'localAdmin'           => $this->getLocalAdmin(),
+             'longitude'            => $this->getLongitude(),
+             'macroCounty'          => $this->getMacroCounty(),
+             'macroRegion'          => $this->getMacroRegion(),
+             'region'               => $this->getRegion(),
+             'subLocality'          => $this->getSubLocality(),
+             'displayLabel'         => $this->getDisplayLabel(),
+             'home'                 => $this->isHome()
          ];
     }
 }

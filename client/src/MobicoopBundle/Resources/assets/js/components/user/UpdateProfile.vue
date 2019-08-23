@@ -86,6 +86,7 @@
               :label="$t('models.user.homeTown.label')"
               :token="user ? user.geoToken : ''"
               :init-address="user.homeAddress ? user.homeAddress : null"
+              :display-name-in-selected="false"
               @address-selected="homeAddressSelected"
             />
 
