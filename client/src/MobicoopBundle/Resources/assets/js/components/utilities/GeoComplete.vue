@@ -9,7 +9,7 @@
       :search-input.sync="search"
       hide-no-data
       clearable
-      item-text="concatenedAddr"
+      item-text="selectedDisplayedLabel"
       color="success"
       return-object
       no-filter
@@ -22,7 +22,7 @@
       <!-- template for selected item  -->
       <template v-slot:selection="data">
         <template>
-          {{ data.item.concatenedAddr }}
+          {{ data.item.selectedDisplayedLabel }}
         </template>
       </template>
       <!-- template for list items  -->
@@ -30,11 +30,11 @@
         <template>
           <v-list>
             <v-list-item>
-              <v-list-item-avatar>
+              <v-list-item-avatar v-if="displayIcon">
                 <v-icon v-text="data.item.icon" />
               </v-list-item-avatar>
               <v-list-item-content>
-                <v-list-item-title v-html="data.item.concatenedAddr" />
+                <v-list-item-title v-html="data.item.displayedLabel" />
                 <v-list-item-subtitle v-html="data.item.addressCountry" />
               </v-list-item-content>
             </v-list-item>
@@ -71,6 +71,14 @@ export default {
       type: Boolean,
       default: false
     },
+    displayNameInSelected: {
+      type: Boolean,
+      default: true
+    },
+    displayIcon: {
+      type: Boolean,
+      default: true
+    },
     hint: defaultString,
     required: Boolean,
     requiredError: defaultString,
@@ -92,9 +100,7 @@ export default {
   computed: {
     items() {
       return this.entries.map(entry => {
-        const concatenedAddr = entry.concatenedAddr;
-        const icon = entry.icon;
-        return Object.assign({}, entry, { concatenedAddr, icon });
+        return Object.assign({}, entry);
       });
     },
     geoRules() {
@@ -114,11 +120,28 @@ export default {
         }
       }
     },
-    initAddress() {
-      this.address = this.initAddress;
-      this.entries = [];
-      if (this.address) {
-        this.entries.push(this.address);
+    initAddress: {
+      immediate: true,
+      handler(newVal, oldVal) {
+        this.address = this.initAddress;
+        this.entries = [];
+        if (this.address) {
+          this.address.icon = "mdi-map-marker";
+          this.address.displayedLabel = `${this.address.displayLabel}`;
+          this.address.selectedDisplayedLabel = `${this.address.displayLabel}`;
+          if (this.address.home) {
+            this.address.displayedLabel = `${this.address.name} - ${this.address.displayLabel}`;
+            if (this.displayNameInSelected) this.address.selectedDisplayedLabel = `${this.address.name} - ${this.address.displayLabel}`;
+            if (this.displayIcon) this.address.icon = "mdi-home-map-marker";
+          } else if (this.address.relayPoint) {
+            if (this.displayIcon) this.address.icon = "mdi-parking";
+          } else if (this.address.name) {
+            this.address.displayedLabel = `${this.address.name} - ${this.address.displayLabel}`;
+            if (this.displayNameInSelected) this.address.selectedDisplayedLabel = `${this.address.name} - ${this.address.displayLabel}`;
+            if (this.displayIcon) this.address.icon = "mdi-map";
+          }
+          this.entries.push(this.address);
+        } 
       }
     }
   },
@@ -133,43 +156,26 @@ export default {
         .then(res => {
           this.isLoading = false;
 
-          // Add a property concatenedAddr to be shown into the autocomplete field after selection
+          // Modify property displayLabel to be shown into the autocomplete field after selection
           let addresses = res.data["hydra:member"];
           // No Adresses return, we stop here
           if (!addresses.length) {
             return;
           }
           addresses.forEach((address, addressKey) => {
-            let houseNumber = address.houseNumber
-              ? `${address.houseNumber} `
-              : "";
-            let street = address.street ? `${address.street} ` : "";
-            let streetAddress = address.streetAddress
-              ? `${address.streetAddress} `
-              : "";
-            let computedStreet = streetAddress
-              ? `${streetAddress}`
-              : `${houseNumber}${street}`;
-            let postalCode = address.postalCode ? `${address.postalCode} ` : "";
-            let addressLocality = address.addressLocality
-              ? address.addressLocality
-              : "";
-            addresses[
-              addressKey
-            ].concatenedAddr = `${computedStreet}${postalCode}${addressLocality}`;
             addresses[addressKey].icon = "mdi-map-marker";
+            addresses[addressKey].displayedLabel = `${address.displayLabel}`;
+            addresses[addressKey].selectedDisplayedLabel = `${address.displayLabel}`;
             if (address.home) {
-              addresses[
-                addressKey
-              ].concatenedAddr = `${address.name} - ${computedStreet}${postalCode}${addressLocality}`;
-              addresses[addressKey].icon = "mdi-home-map-marker";
+              addresses[addressKey].displayedLabel = `${address.name} - ${address.displayLabel}`;
+              if (this.displayNameInSelected) addresses[addressKey].selectedDisplayedLabel = `${address.name} - ${address.displayLabel}`;
+              if (this.displayIcon) addresses[addressKey].icon = "mdi-home-map-marker";
             } else if (address.relayPoint) {
-              addresses[addressKey].icon = "mdi-parking";
+              if (this.displayIcon) addresses[addressKey].icon = "mdi-parking";
             } else if (address.name) {
-              addresses[
-                addressKey
-              ].concatenedAddr = `${address.name} - ${computedStreet}${postalCode}${addressLocality}`;
-              addresses[addressKey].icon = "mdi-map";
+              addresses[addressKey].displayedLabel = `${address.name} - ${address.displayLabel}`;
+              if (this.displayNameInSelected) addresses[addressKey].selectedDisplayedLabel = `${address.name} - ${address.displayLabel}`;
+              if (this.displayIcon) addresses[addressKey].icon = "mdi-map";
             }
           });
           addresses.forEach((address, addressKey) => {

@@ -41,21 +41,21 @@ use App\User\Repository\UserRepository;
 class GeoSearcher
 {
     private $geocoder;
+    private $geoTools;
     private $userRepository;
     private $addressRepository;
     private $relayPointRepository;
-    private $params;
 
     /**
      * Constructor.
      */
-    public function __construct(PluginProvider $geocoder, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository, array $params)
+    public function __construct(PluginProvider $geocoder, GeoTools $geoTools, UserRepository $userRepository, AddressRepository $addressRepository, RelayPointRepository $relayPointRepository)
     {
         $this->geocoder = $geocoder;
+        $this->geoTools = $geoTools;
         $this->userRepository = $userRepository;
         $this->addressRepository = $addressRepository;
         $this->relayPointRepository = $relayPointRepository;
-        $this->params = $params;
     }
 
     /**
@@ -84,7 +84,10 @@ class GeoSearcher
         if ($user) {
             $namedAddresses = $this->addressRepository->findByName($input, $user->getId());
             if (count($namedAddresses)>0) {
-                $result = $namedAddresses;
+                foreach ($namedAddresses as $address) {
+                    //$address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+                    $result[] = $address;
+                }
             }
         }
 
@@ -108,6 +111,7 @@ class GeoSearcher
             if (!$exclude) {
                 $address = $relayPoint->getAddress();
                 $address->setRelayPoint($relayPoint);
+                //$address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
                 $result[] = $address;
             }
         }
@@ -154,39 +158,8 @@ class GeoSearcher
             if ($geoResult->getCountry() && $geoResult->getCountry()->getCode()) {
                 $address->setCountryCode($geoResult->getCountry()->getCode());
             }
-
-            // Determine the more logical display label considering the params
-            $displayLabelTab = [];
-            if (trim($address->getStreetAddress())!=="") {
-                $displayLabelTab[] = $address->getStreetAddress();
-            }
-
-            $displayLabelTab[] = $address->getAddressLocality();
-
-            if (trim($address->getPostalCode())!=="") {
-                $displayLabelTab[] = $address->getPostalCode();
-            }
-
-            // Theses following parameters are in your .env.local
-            if (isset($this->params[0]['displayRegion']) && trim($this->params[0]['displayRegion'])==="true") {
-                if (trim($address->getMacroRegion())!=="") {
-                    $displayLabelTab[] = $address->getMacroRegion();
-                }
-            }
-
-            if (isset($this->params[0]['displayCountry']) && trim($this->params[0]['displayCountry'])==="true") {
-                if (trim($address->getCountryCode())!=="") {
-                    $displayLabelTab[] = $address->getCountryCode();
-                }
-            }
-
-            // if no separators in .env.local, we are using comma
-            $displaySeparator = ", ";
-            if (isset($this->params[0]['displaySeparator'])) {
-                $displaySeparator = $this->params[0]['displaySeparator'];
-            }
-
-            $address->setDisplayLabel(implode($displaySeparator, $displayLabelTab));
+            
+            $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
 
             $result[] = $address;
         }
@@ -217,4 +190,5 @@ class GeoSearcher
         }
         return false;
     }
+
 }

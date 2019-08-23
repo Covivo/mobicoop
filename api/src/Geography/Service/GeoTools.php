@@ -23,6 +23,8 @@
 
 namespace App\Geography\Service;
 
+use App\Geography\Entity\Address;
+
 /**
  * Geographical tools.
  *
@@ -30,6 +32,16 @@ namespace App\Geography\Service;
  */
 class GeoTools
 {
+    private $params;
+
+    /**
+     * Constructor.
+     */
+    public function __construct(array $params)
+    {
+        $this->params = $params;
+    }
+
     /**
      * Calculates the great-circle distance between two points, with
      * the Haversine formula.
@@ -122,5 +134,68 @@ class GeoTools
     {
         //return round(((($distance)/1000) * 7 * 0.0232), $round);
         return round($distance/1000 * 213, $round);
+    }
+
+    /**
+     * Return logical display label depending on env
+     *
+     * @param Address $address
+     * @return string
+     */
+    public function getDisplayLabel(Address $address): string 
+    {
+        // Determine the more logical display label considering the params
+
+        // street address
+        $displayLabelTab = [];
+        if (trim($address->getStreetAddress())!=="") {
+            $displayLabelTab[] = $address->getStreetAddress();
+        }
+
+        // locality
+        $displayLabelTab[] = $address->getAddressLocality();
+
+        // postal code
+        if (trim($address->getPostalCode())!=="") {
+            $displayLabelTab[] = $address->getPostalCode();
+        }
+
+        // The following parameters are in your env or local env
+
+        // postal code
+        if (isset($this->params[0]['displayPostalCode']) && trim($this->params[0]['displayPostalCode'])==="true") {
+            if (trim($address->getPostalCode())!=="") {
+                $displayLabelTab[] = $address->getPostalCode();
+            }
+        }
+
+        // subregion
+        if (isset($this->params[0]['displaySubRegion']) && trim($this->params[0]['displaySubRegion'])==="true") {
+            if (trim($address->getRegion())!=="") {
+                $displayLabelTab[] = $address->getRegion();
+            }
+        }
+
+        // region
+        if (isset($this->params[0]['displayRegion']) && trim($this->params[0]['displayRegion'])==="true") {
+            if (trim($address->getMacroRegion())!=="") {
+                $displayLabelTab[] = $address->getMacroRegion();
+            }
+        }
+
+        // country
+        if (isset($this->params[0]['displayCountry']) && trim($this->params[0]['displayCountry'])==="true") {
+            if (trim($address->getAddressCountry())!=="") {
+                $displayLabelTab[] = $address->getAddressCountry();
+            }
+        }
+
+        // if no separators in local env, we are using comma
+        $displaySeparator = ", ";
+        if (isset($this->params[0]['displaySeparator'])) {
+            $displaySeparator = $this->params[0]['displaySeparator'];
+        }
+
+        return implode($displaySeparator, $displayLabelTab);
     }
 }
