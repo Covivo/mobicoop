@@ -505,7 +505,8 @@ export default {
       pricePerKm: this.defaultPriceKm,
       message: null,
       baseUrl: window.location.origin,
-      loading: false
+      loading: false,
+      userDelegated: null // if user delegation
     }
   },
   computed: {
@@ -577,6 +578,7 @@ export default {
         origin: this.origin,
         destination: this.destination
       };
+      if (this.userDelegated) postObject.userDelegated = this.userDelegated;
       if (this.validWaypoints) postObject.waypoints = this.validWaypoints;
       if (!this.regular) {
         if (this.outwardDate) postObject.outwardDate = this.outwardDate;
@@ -592,7 +594,6 @@ export default {
       if (this.backSeats) postObject.backSeats = this.backSeats;
       if (this.price) postObject.price = this.price;
       if (this.message) postObject.message = this.message;
-      console.error(postObject);
       this.loading = true;
       var self = this;
       axios.post(this.urlToCall,postObject,{

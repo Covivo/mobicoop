@@ -23,6 +23,8 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Service;
 
+use App\Carpool\Entity\Criteria;
+use App\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Matching;
@@ -34,16 +36,18 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 class ProposalManager
 {
     private $dataProvider;
+    private $userManager;
     
     /**
      * Constructor.
      *
      * @param DataProvider $dataProvider
      */
-    public function __construct(DataProvider $dataProvider)
+    public function __construct(DataProvider $dataProvider, UserManager $userManager)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Proposal::class);
+        $this->userManager = $userManager;
     }
     
     /**
@@ -148,20 +152,31 @@ class ProposalManager
      * Create a proposal from an ad
      *
      * @param array $ad The data posted by the user
+     * @param User $poster The poster of the ad
      * @return void
      */
-    public function createProposalFromAd(array $ad)
+    public function createProposalFromAd(array $ad, User $poster)
     {
         var_dump($ad);
         exit;
         $proposal = new Proposal();
+        $criteria = new Criteria();
+
+        if (isset($ad['user'])) {
+            $user = $this->userManager->getUser($ad['user']);
+            $proposal->setUser($user);
+            $proposal->setUserDelegate($poster);
+        } else {
+            $proposal->setUser($poster);
+        }
+        $proposal->setType(Ad::TYPE_ONE_WAY);
         if ($ad['regular'] === "true") {
             // regular
             $proposal->setFrequency(Ad::FREQUENCY_REGULAR);
         } else {
             // punctual
             $proposal->setFrequency(Ad::FREQUENCY_PUNCTUAL);
-            $proposal->setType(Ad::TYPE_ONE_WAY);
+            
             if ($ad['returnDate'] != '' && $ad['returnTime'] != '') {
                 $proposal->setType(Ad::TYPE_RETURN_TRIP);
             }

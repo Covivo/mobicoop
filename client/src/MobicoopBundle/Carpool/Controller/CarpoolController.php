@@ -42,22 +42,27 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 class CarpoolController extends AbstractController
 {
     use HydraControllerTrait;
+
     /**
      * Create a carpooling ad.
      */
-
     public function post(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager, CommunityController $communityController)
     {
         $proposal = new Proposal();
-        $this->denyAccessUnlessGranted('create_ad', $proposal);
+        $poster = $userManager->getLoggedUser();
 
         if ($request->isMethod('POST')) {
-            $this->denyAccessUnlessGranted('post', $proposal);
             $data = json_decode($request->getContent(), true);
-            $result = $proposalManager->createProposalFromAd($data);
+            if (isset($data['userDelegated']) && $data['userDelegated'] != $poster->getId()) {
+                $this->denyAccessUnlessGranted('post_delegate', $proposal);
+            } else {
+                $this->denyAccessUnlessGranted('post', $proposal);
+            }
+            $result = $proposalManager->createProposalFromAd($data, $poster);
             return $this->json(['result'=>$result]);
         }
 
+        $this->denyAccessUnlessGranted('create_ad', $proposal);
         return $this->render('@Mobicoop/carpool/publish.html.twig');
 
 

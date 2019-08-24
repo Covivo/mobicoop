@@ -64,10 +64,16 @@ class Proposal implements ResourceInterface
     private $proposalLinked;
     
     /**
-     * @var User|null User who submits the proposal.
+     * @var User|null User for whom the proposal is submitted (in general the user itself, except when it is a "posting for").
      * @Groups({"post","put"})
      */
     private $user;
+
+    /**
+     * @var User|null User that create the proposal for another user.
+     * @Groups({"post","put"})
+     */
+    private $userDelegate;
 
     /**
     * @var int Proposal type (one way / outward / return).
@@ -219,6 +225,18 @@ class Proposal implements ResourceInterface
     public function setUser(?User $user): self
     {
         $this->user = $user;
+        
+        return $this;
+    }
+
+    public function getUserDelegate(): ?User
+    {
+        return $this->userDelegate;
+    }
+    
+    public function setUserDelegate(?User $userDelegate): self
+    {
+        $this->userDelegate = $userDelegate;
         
         return $this;
     }
