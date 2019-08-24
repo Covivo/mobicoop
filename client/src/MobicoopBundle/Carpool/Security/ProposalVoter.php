@@ -112,7 +112,7 @@ class ProposalVoter extends Voter
         if (!$user instanceof User) {
             return false;
         }
-        // only the author of the proposal or a dedicated user can view the results    
+        // only the author of the proposal or a dedicated user can view the results
         if (($proposal->getUser()->getId() != $user->getId()) && (!$this->permissionManager->checkPermission('proposal_results_delegate', $user))) {
             return false;
         }
