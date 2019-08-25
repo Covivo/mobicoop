@@ -37,17 +37,19 @@ class ProposalManager
 {
     private $dataProvider;
     private $userManager;
+    private $marginTime;
     
     /**
      * Constructor.
      *
      * @param DataProvider $dataProvider
      */
-    public function __construct(DataProvider $dataProvider, UserManager $userManager)
+    public function __construct(DataProvider $dataProvider, UserManager $userManager, int $marginTime)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Proposal::class);
         $this->userManager = $userManager;
+        $this->marginTime = $marginTime;
     }
     
     /**
@@ -157,8 +159,8 @@ class ProposalManager
      */
     public function createProposalFromAd(array $ad, User $poster)
     {
-        var_dump($ad);
-        exit;
+        // var_dump($ad);
+        // exit;
         $proposal = new Proposal();
         $criteria = new Criteria();
 
@@ -170,13 +172,22 @@ class ProposalManager
             $proposal->setUser($poster);
         }
         $proposal->setType(Ad::TYPE_ONE_WAY);
-        if ($ad['regular'] === "true") {
+        $proposal->setComment($ad['message']);
+        $criteria->setDriver($ad['driver']);
+        $criteria->setPassenger($ad['passenger']);
+        $criteria->setPriceKm($ad['price']);
+
+        if ($ad['regular']) {
             // regular
             $proposal->setFrequency(Ad::FREQUENCY_REGULAR);
+            
         } else {
             // punctual
             $proposal->setFrequency(Ad::FREQUENCY_PUNCTUAL);
-            
+            $criteria->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad['outwardDate']));
+            $criteria->setFromTime(\DateTime::createFromFormat('H:i', $ad['outwardTime']));
+            $criteria->setMarginDuration($this->marginTime);
+
             if ($ad['returnDate'] != '' && $ad['returnTime'] != '') {
                 $proposal->setType(Ad::TYPE_RETURN_TRIP);
             }

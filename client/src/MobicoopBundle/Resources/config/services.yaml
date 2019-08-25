@@ -49,7 +49,10 @@ services:
         resource: '@MobicoopBundle/Carpool/Controller/*'
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
-        resource: '@MobicoopBundle/Carpool/Service/*'    
+        resource: '@MobicoopBundle/Carpool/Service/*'  
+    Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager:
+        arguments:
+            $marginTime: '%env(resolve:CARPOOL_MARGIN_TIME)%'  
     Mobicoop\Bundle\MobicoopBundle\Carpool\Security\:
         resource: '@MobicoopBundle/Carpool/Security/*'
 
