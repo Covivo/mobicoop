@@ -180,7 +180,6 @@ class ProposalManager
         if ($ad['regular']) {
             // regular
             $proposal->setFrequency(Ad::FREQUENCY_REGULAR);
-            
         } else {
             // punctual
             $proposal->setFrequency(Ad::FREQUENCY_PUNCTUAL);
