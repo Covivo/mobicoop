@@ -28,4 +28,5 @@
 /client/.env.test.local
 /client/.env.prod.local
 /client/var/log/
+/client/public/google*.html
 /admin/.env
