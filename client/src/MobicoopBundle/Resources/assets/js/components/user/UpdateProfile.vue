@@ -21,6 +21,21 @@
  
  <template>
   <v-content>
+    <!--SnackBar-->
+    <v-snackbar
+      v-model="snackbar"
+      :color="(this.errorUpdate)?'error':'success'"
+      top
+    >
+      {{ (this.errorUpdate)?this.textSnackError:this.textSnackOk }}
+      <v-btn
+        color="white"
+        text
+        @click="snackbar = false"
+      >
+      <v-icon>mdi-close-circle-outline</v-icon>
+      </v-btn>
+    </v-snackbar>
     <v-container fluid>
       <v-row
         justify-center
@@ -95,6 +110,8 @@
               class="button saveButton"
               color="success"
               rounded
+              :disabled="!valid"
+              :loading="loading"
               type="button"
               :value="$t('ui.button.save')"
               @click="validate"
@@ -102,16 +119,6 @@
               {{ $t('ui.button.save') }}
             </v-btn>
           </v-form>
-
-           <!--SnackBar-->
-           <v-snackbar
-            v-model="snackbar"
-            color="success"
-            top
-            :timeout="2000"
-          >
-            {{ $t('snackBar.profileUpdated') }}
-          </v-snackbar>
         </v-col>
       </v-row>
     </v-container>
@@ -158,6 +165,9 @@ export default {
   data() {
     return {
       snackbar: false,
+      textSnackOk: this.$t('snackBar.profileUpdated'),
+      textSnackError: this.$t("snackBar.passwordUpdateError"),
+      errorUpdate: false,  
       valid: true,
       errors: [],
       loading: false,
@@ -188,10 +198,10 @@ export default {
     validate () {
       if (this.$refs.form.validate()) {
         this.checkForm();
-        this.snackbar = true;
       }
     },
     checkForm () {
+      this.loading = true;
       axios 
         .post("/utilisateur/profil/modifier", {
           email: this.user.email,
@@ -206,12 +216,11 @@ export default {
             'content-type': 'application/json'
           }
         })
-        .then(function (response) {
-          console.log(response);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+        .then(res => {
+          this.errorUpdate = res.data.state;
+          this.loading = false;
+          this.snackbar = true;
+      });
     },
   }
 };
