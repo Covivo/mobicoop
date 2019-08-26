@@ -34,7 +34,12 @@
           class="text-left text-address-size"
         >
           <v-row>
-            {{ origin }}
+            <span
+              class="d-inline-block text-truncate"
+              style="max-width: 150px;"
+            >
+              {{ origin }}
+            </span>
           </v-row>
         </v-col> 
 
@@ -59,7 +64,12 @@
           class="text-left text-address-size"
         >
           <v-row>
-            {{ destination }}
+            <span
+              class="d-inline-block text-truncate"
+              style="max-width: 150px;"
+            >
+              {{ destination }}
+            </span>
           </v-row>
         </v-col>
 
