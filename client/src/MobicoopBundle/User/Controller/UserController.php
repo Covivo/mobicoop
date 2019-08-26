@@ -193,8 +193,8 @@ class UserController extends AbstractController
             if (is_null($homeAddress->getId()) && !empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) {
                 $user->addAddress($homeAddress);
             } elseif (!empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) {
-                $address = $addressManager->updateAddress($homeAddress);
-                $reponseofmanager= $this->handleManagerReturnValue($address);
+                $data= $addressManager->updateAddress($homeAddress);
+                $reponseofmanager= $this->handleManagerReturnValue($data);
                 if (!empty($reponseofmanager)) {
                     return $reponseofmanager;
                 }

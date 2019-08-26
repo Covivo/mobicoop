@@ -15,3 +15,5 @@ twig:
         geoCompleteUri: '%env(GEOCOMPLETE_URI)%'
         ageMin: '%env(USER_MIN_AGE)%'
         ageMax: '%env(USER_MAX_AGE)%'
+        priceKm: '%env(CARPOOL_PRICE)%'
+        marginTime: '%env(CARPOOL_MARGIN_TIME)%'

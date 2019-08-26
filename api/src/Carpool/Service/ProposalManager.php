@@ -97,7 +97,6 @@ class ProposalManager
         $this->logger->info('Proposal creation | Start ' . $date->format("Ymd H:i:s.u"));
         
         // temporary initialisation, will be dumped when implementation of these fields will be done
-        $proposal->getCriteria()->setSeats(1);
         $proposal->getCriteria()->setAnyRouteAsPassenger(true);
         $proposal->getCriteria()->setStrictDate(true);
         
@@ -162,6 +161,7 @@ class ProposalManager
         }
         
         // matching analyze
+        $this->logger->info('Proposal creation | Start matching ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
         $this->logger->info('Proposal creation | End matching ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
@@ -178,6 +178,7 @@ class ProposalManager
         if ($persist) {
             foreach ($matchings as $matching) {
                 // dispatch en event
+                // maybe send a unique event for all matchings ?
                 $event = new MatchingNewEvent($matching);
                 $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
             }

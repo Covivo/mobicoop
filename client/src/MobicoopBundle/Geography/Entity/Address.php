@@ -396,9 +396,9 @@ class Address implements ResourceInterface, \JsonSerializable
         return $this->home;
     }
     
-    public function setHome(bool $isHome)
+    public function setHome(?bool $isHome)
     {
-        $this->home = $isHome;
+        $this->home = $isHome ? $isHome : false;
     }
 
     public function getDisplayLabel(): ?string
