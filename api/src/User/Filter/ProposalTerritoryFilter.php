@@ -40,13 +40,12 @@ final class ProposalTerritoryFilter extends AbstractContextAwareFilter
         }
         
         $queryBuilder
-            ->select('u')
-            ->from('\App\User\Entity\User', 'u')
-            ->join('\App\Carpool\Entity\Proposal', 'p', 'WITH', 'p.user_id = u.id')
-            ->join('\App\Carpool\Entity\Criteria', 'c', 'WITH', 'p.criteria_id = c.id')
-            ->join('\App\Geography\Entity\Direction', 'd', 'WITH', 'c.direction_driver_id = d.id OR c.direction_passenger_id = d.id')
+            ->leftJoin('u.proposals', 'p')
+            ->leftJoin('p.criteria', 'c')
+            ->leftJoin('c.directionDriver', 'dd')
+            ->leftJoin('c.directionPassenger', 'dp')
             ->join('\App\Geography\Entity\Territory', 'proposalTerritory')
-            ->andWhere(sprintf('proposalTerritory.id = %s AND ST_INTERSECTS(proposalTerritory.geoJsonDetail,d.geoJsonDetail)=1', $value));
+            ->andWhere(sprintf('proposalTerritory.id = %s AND (ST_INTERSECTS(proposalTerritory.geoJsonDetail,dd.geoJsonDetail)=1 OR ST_INTERSECTS(proposalTerritory.geoJsonDetail,dp.geoJsonDetail)=1)', $value));
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)

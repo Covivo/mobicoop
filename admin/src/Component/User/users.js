@@ -27,7 +27,7 @@ const UserFilter = (props) => (
         <TextInput source="email" label="Email" alwaysOn />
         <BooleanInput source="solidary" label="Solidaire" allowEmpty={false} defaultValue={true} />
         <ReferenceInput 
-            source="homeAddressTerritory" 
+            source="territory" 
             label="Territoire" 
             reference="territories" 
             allowEmpty={false} 
