@@ -148,7 +148,7 @@ class ProposalManager
         foreach ($proposal->getWaypoints() as $waypoint) {
             $addresses[] = $waypoint->getAddress();
         }
-        if ($routes = $this->geoRouter->getRoutes($addresses)) {        
+        if ($routes = $this->geoRouter->getRoutes($addresses)) {
             $direction = $routes[0];
             // creation of the crossed zones
             $direction = $this->zoneManager->createZonesForDirection($direction);

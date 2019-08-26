@@ -174,14 +174,22 @@ class ProposalManager
             $proposal->setUser($poster);
         }
         $proposal->setType(Proposal::TYPE_ONE_WAY);
-        if (isset($ad['message'])) $proposal->setComment($ad['message']);
+        if (isset($ad['message'])) {
+            $proposal->setComment($ad['message']);
+        }
         $criteria->setDriver($ad['driver']);
         $criteria->setPassenger($ad['passenger']);
         $criteria->setPriceKm($ad['price']);
         $criteria->setSeats($ad['seats']);
-        if (isset($ad['luggage'])) $criteria->setLuggage($ad['luggage']);
-        if (isset($ad['bike'])) $criteria->setBike($ad['bike']);
-        if (isset($ad['backSeats'])) $criteria->setBackSeats($ad['backSeats']);
+        if (isset($ad['luggage'])) {
+            $criteria->setLuggage($ad['luggage']);
+        }
+        if (isset($ad['bike'])) {
+            $criteria->setBike($ad['bike']);
+        }
+        if (isset($ad['backSeats'])) {
+            $criteria->setBackSeats($ad['backSeats']);
+        }
 
         if ($ad['regular']) {
             // regular
@@ -246,24 +254,60 @@ class ProposalManager
         // waypoints
         $waypointOrigin = new Waypoint();
         $originAddress = new Address();
-        if (isset($ad['origin']['houseNumber'])) $originAddress->setHouseNumber($ad['origin']['houseNumber']);
-        if (isset($ad['origin']['street'])) $originAddress->setStreet($ad['origin']['street']);
-        if (isset($ad['origin']['streetAddress'])) $originAddress->setStreetAddress($ad['origin']['streetAddress']);
-        if (isset($ad['origin']['postalCode'])) $originAddress->setPostalCode($ad['origin']['postalCode']);
-        if (isset($ad['origin']['subLocality'])) $originAddress->setSubLocality($ad['origin']['subLocality']);
-        if (isset($ad['origin']['addressLocality'])) $originAddress->setAddressLocality($ad['origin']['addressLocality']);
-        if (isset($ad['origin']['localAdmin'])) $originAddress->setLocalAdmin($ad['origin']['localAdmin']);
-        if (isset($ad['origin']['county'])) $originAddress->setCounty($ad['origin']['county']);
-        if (isset($ad['origin']['macroCounty'])) $originAddress->setMacroCounty($ad['origin']['macroCounty']);
-        if (isset($ad['origin']['region'])) $originAddress->setRegion($ad['origin']['region']);
-        if (isset($ad['origin']['macroRegion'])) $originAddress->setMacroRegion($ad['origin']['macroRegion']);
-        if (isset($ad['origin']['addressCountry'])) $originAddress->setAddressCountry($ad['origin']['addressCountry']);
-        if (isset($ad['origin']['countryCode'])) $originAddress->setCountryCode($ad['origin']['countryCode']);
-        if (isset($ad['origin']['latitude'])) $originAddress->setLatitude($ad['origin']['latitude']);
-        if (isset($ad['origin']['longitude'])) $originAddress->setLongitude($ad['origin']['longitude']);
-        if (isset($ad['origin']['elevation'])) $originAddress->setElevation($ad['origin']['elevation']);
-        if (isset($ad['origin']['name'])) $originAddress->setName($ad['origin']['name']);
-        if (isset($ad['origin']['home'])) $originAddress->setHome($ad['origin']['home']);
+        if (isset($ad['origin']['houseNumber'])) {
+            $originAddress->setHouseNumber($ad['origin']['houseNumber']);
+        }
+        if (isset($ad['origin']['street'])) {
+            $originAddress->setStreet($ad['origin']['street']);
+        }
+        if (isset($ad['origin']['streetAddress'])) {
+            $originAddress->setStreetAddress($ad['origin']['streetAddress']);
+        }
+        if (isset($ad['origin']['postalCode'])) {
+            $originAddress->setPostalCode($ad['origin']['postalCode']);
+        }
+        if (isset($ad['origin']['subLocality'])) {
+            $originAddress->setSubLocality($ad['origin']['subLocality']);
+        }
+        if (isset($ad['origin']['addressLocality'])) {
+            $originAddress->setAddressLocality($ad['origin']['addressLocality']);
+        }
+        if (isset($ad['origin']['localAdmin'])) {
+            $originAddress->setLocalAdmin($ad['origin']['localAdmin']);
+        }
+        if (isset($ad['origin']['county'])) {
+            $originAddress->setCounty($ad['origin']['county']);
+        }
+        if (isset($ad['origin']['macroCounty'])) {
+            $originAddress->setMacroCounty($ad['origin']['macroCounty']);
+        }
+        if (isset($ad['origin']['region'])) {
+            $originAddress->setRegion($ad['origin']['region']);
+        }
+        if (isset($ad['origin']['macroRegion'])) {
+            $originAddress->setMacroRegion($ad['origin']['macroRegion']);
+        }
+        if (isset($ad['origin']['addressCountry'])) {
+            $originAddress->setAddressCountry($ad['origin']['addressCountry']);
+        }
+        if (isset($ad['origin']['countryCode'])) {
+            $originAddress->setCountryCode($ad['origin']['countryCode']);
+        }
+        if (isset($ad['origin']['latitude'])) {
+            $originAddress->setLatitude($ad['origin']['latitude']);
+        }
+        if (isset($ad['origin']['longitude'])) {
+            $originAddress->setLongitude($ad['origin']['longitude']);
+        }
+        if (isset($ad['origin']['elevation'])) {
+            $originAddress->setElevation($ad['origin']['elevation']);
+        }
+        if (isset($ad['origin']['name'])) {
+            $originAddress->setName($ad['origin']['name']);
+        }
+        if (isset($ad['origin']['home'])) {
+            $originAddress->setHome($ad['origin']['home']);
+        }
         $waypointOrigin->setAddress($originAddress);
         $waypointOrigin->setPosition(0);
         $waypointOrigin->setDestination(false);
@@ -274,24 +318,60 @@ class ProposalManager
             if ($waypoint['visible']) {
                 $waypointStep = new Waypoint();
                 $stepAddress = new Address();
-                if (isset($waypoint['address']['houseNumber'])) $stepAddress->setHouseNumber($waypoint['address']['houseNumber']);
-                if (isset($waypoint['address']['street'])) $stepAddress->setStreet($waypoint['address']['street']);
-                if (isset($waypoint['address']['streetAddress'])) $stepAddress->setStreetAddress($waypoint['address']['streetAddress']);
-                if (isset($waypoint['address']['postalCode'])) $stepAddress->setPostalCode($waypoint['address']['postalCode']);
-                if (isset($waypoint['address']['subLocality'])) $stepAddress->setSubLocality($waypoint['address']['subLocality']);
-                if (isset($waypoint['address']['addressLocality'])) $stepAddress->setAddressLocality($waypoint['address']['addressLocality']);
-                if (isset($waypoint['address']['localAdmin'])) $stepAddress->setLocalAdmin($waypoint['address']['localAdmin']);
-                if (isset($waypoint['address']['county'])) $stepAddress->setCounty($waypoint['address']['county']);
-                if (isset($waypoint['address']['macroCounty'])) $stepAddress->setMacroCounty($waypoint['address']['macroCounty']);
-                if (isset($waypoint['address']['region'])) $stepAddress->setRegion($waypoint['address']['region']);
-                if (isset($waypoint['address']['macroRegion'])) $stepAddress->setMacroRegion($waypoint['address']['macroRegion']);
-                if (isset($waypoint['address']['addressCountry'])) $stepAddress->setAddressCountry($waypoint['address']['addressCountry']);
-                if (isset($waypoint['address']['countryCode'])) $stepAddress->setCountryCode($waypoint['address']['countryCode']);
-                if (isset($waypoint['address']['latitude'])) $stepAddress->setLatitude($waypoint['address']['latitude']);
-                if (isset($waypoint['address']['longitude'])) $stepAddress->setLongitude($waypoint['address']['longitude']);
-                if (isset($waypoint['address']['elevation'])) $stepAddress->setElevation($waypoint['address']['elevation']);
-                if (isset($waypoint['address']['name'])) $stepAddress->setName($waypoint['address']['name']);
-                if (isset($waypoint['address']['home'])) $stepAddress->setHome($waypoint['address']['home']);
+                if (isset($waypoint['address']['houseNumber'])) {
+                    $stepAddress->setHouseNumber($waypoint['address']['houseNumber']);
+                }
+                if (isset($waypoint['address']['street'])) {
+                    $stepAddress->setStreet($waypoint['address']['street']);
+                }
+                if (isset($waypoint['address']['streetAddress'])) {
+                    $stepAddress->setStreetAddress($waypoint['address']['streetAddress']);
+                }
+                if (isset($waypoint['address']['postalCode'])) {
+                    $stepAddress->setPostalCode($waypoint['address']['postalCode']);
+                }
+                if (isset($waypoint['address']['subLocality'])) {
+                    $stepAddress->setSubLocality($waypoint['address']['subLocality']);
+                }
+                if (isset($waypoint['address']['addressLocality'])) {
+                    $stepAddress->setAddressLocality($waypoint['address']['addressLocality']);
+                }
+                if (isset($waypoint['address']['localAdmin'])) {
+                    $stepAddress->setLocalAdmin($waypoint['address']['localAdmin']);
+                }
+                if (isset($waypoint['address']['county'])) {
+                    $stepAddress->setCounty($waypoint['address']['county']);
+                }
+                if (isset($waypoint['address']['macroCounty'])) {
+                    $stepAddress->setMacroCounty($waypoint['address']['macroCounty']);
+                }
+                if (isset($waypoint['address']['region'])) {
+                    $stepAddress->setRegion($waypoint['address']['region']);
+                }
+                if (isset($waypoint['address']['macroRegion'])) {
+                    $stepAddress->setMacroRegion($waypoint['address']['macroRegion']);
+                }
+                if (isset($waypoint['address']['addressCountry'])) {
+                    $stepAddress->setAddressCountry($waypoint['address']['addressCountry']);
+                }
+                if (isset($waypoint['address']['countryCode'])) {
+                    $stepAddress->setCountryCode($waypoint['address']['countryCode']);
+                }
+                if (isset($waypoint['address']['latitude'])) {
+                    $stepAddress->setLatitude($waypoint['address']['latitude']);
+                }
+                if (isset($waypoint['address']['longitude'])) {
+                    $stepAddress->setLongitude($waypoint['address']['longitude']);
+                }
+                if (isset($waypoint['address']['elevation'])) {
+                    $stepAddress->setElevation($waypoint['address']['elevation']);
+                }
+                if (isset($waypoint['address']['name'])) {
+                    $stepAddress->setName($waypoint['address']['name']);
+                }
+                if (isset($waypoint['address']['home'])) {
+                    $stepAddress->setHome($waypoint['address']['home']);
+                }
                 $waypointStep->setAddress($stepAddress);
                 $waypointStep->setPosition($position);
                 $waypointStep->setDestination(false);
@@ -302,24 +382,60 @@ class ProposalManager
 
         $waypointDestination = new Waypoint();
         $destinationAddress = new Address();
-        if (isset($ad['destination']['houseNumber'])) $destinationAddress->setHouseNumber($ad['destination']['houseNumber']);
-        if (isset($ad['destination']['street'])) $destinationAddress->setStreet($ad['destination']['street']);
-        if (isset($ad['destination']['streetAddress'])) $destinationAddress->setStreetAddress($ad['destination']['streetAddress']);
-        if (isset($ad['destination']['postalCode'])) $destinationAddress->setPostalCode($ad['destination']['postalCode']);
-        if (isset($ad['destination']['subLocality'])) $destinationAddress->setSubLocality($ad['destination']['subLocality']);
-        if (isset($ad['destination']['addressLocality'])) $destinationAddress->setAddressLocality($ad['destination']['addressLocality']);
-        if (isset($ad['destination']['localAdmin'])) $destinationAddress->setLocalAdmin($ad['destination']['localAdmin']);
-        if (isset($ad['destination']['county'])) $destinationAddress->setCounty($ad['destination']['county']);
-        if (isset($ad['destination']['macroCounty'])) $destinationAddress->setMacroCounty($ad['destination']['macroCounty']);
-        if (isset($ad['destination']['region'])) $destinationAddress->setRegion($ad['destination']['region']);
-        if (isset($ad['destination']['macroRegion'])) $destinationAddress->setMacroRegion($ad['destination']['macroRegion']);
-        if (isset($ad['destination']['addressCountry'])) $destinationAddress->setAddressCountry($ad['destination']['addressCountry']);
-        if (isset($ad['destination']['countryCode'])) $destinationAddress->setCountryCode($ad['destination']['countryCode']);
-        if (isset($ad['destination']['latitude'])) $destinationAddress->setLatitude($ad['destination']['latitude']);
-        if (isset($ad['destination']['longitude'])) $destinationAddress->setLongitude($ad['destination']['longitude']);
-        if (isset($ad['destination']['elevation'])) $destinationAddress->setElevation($ad['destination']['elevation']);
-        if (isset($ad['destination']['name'])) $destinationAddress->setName($ad['destination']['name']);
-        if (isset($ad['destination']['home'])) $destinationAddress->setHome($ad['destination']['home']);
+        if (isset($ad['destination']['houseNumber'])) {
+            $destinationAddress->setHouseNumber($ad['destination']['houseNumber']);
+        }
+        if (isset($ad['destination']['street'])) {
+            $destinationAddress->setStreet($ad['destination']['street']);
+        }
+        if (isset($ad['destination']['streetAddress'])) {
+            $destinationAddress->setStreetAddress($ad['destination']['streetAddress']);
+        }
+        if (isset($ad['destination']['postalCode'])) {
+            $destinationAddress->setPostalCode($ad['destination']['postalCode']);
+        }
+        if (isset($ad['destination']['subLocality'])) {
+            $destinationAddress->setSubLocality($ad['destination']['subLocality']);
+        }
+        if (isset($ad['destination']['addressLocality'])) {
+            $destinationAddress->setAddressLocality($ad['destination']['addressLocality']);
+        }
+        if (isset($ad['destination']['localAdmin'])) {
+            $destinationAddress->setLocalAdmin($ad['destination']['localAdmin']);
+        }
+        if (isset($ad['destination']['county'])) {
+            $destinationAddress->setCounty($ad['destination']['county']);
+        }
+        if (isset($ad['destination']['macroCounty'])) {
+            $destinationAddress->setMacroCounty($ad['destination']['macroCounty']);
+        }
+        if (isset($ad['destination']['region'])) {
+            $destinationAddress->setRegion($ad['destination']['region']);
+        }
+        if (isset($ad['destination']['macroRegion'])) {
+            $destinationAddress->setMacroRegion($ad['destination']['macroRegion']);
+        }
+        if (isset($ad['destination']['addressCountry'])) {
+            $destinationAddress->setAddressCountry($ad['destination']['addressCountry']);
+        }
+        if (isset($ad['destination']['countryCode'])) {
+            $destinationAddress->setCountryCode($ad['destination']['countryCode']);
+        }
+        if (isset($ad['destination']['latitude'])) {
+            $destinationAddress->setLatitude($ad['destination']['latitude']);
+        }
+        if (isset($ad['destination']['longitude'])) {
+            $destinationAddress->setLongitude($ad['destination']['longitude']);
+        }
+        if (isset($ad['destination']['elevation'])) {
+            $destinationAddress->setElevation($ad['destination']['elevation']);
+        }
+        if (isset($ad['destination']['name'])) {
+            $destinationAddress->setName($ad['destination']['name']);
+        }
+        if (isset($ad['destination']['home'])) {
+            $destinationAddress->setHome($ad['destination']['home']);
+        }
         $waypointDestination->setAddress($destinationAddress);
         $waypointDestination->setPosition($position);
         $waypointDestination->setDestination(true);
@@ -333,7 +449,7 @@ class ProposalManager
         }
         $proposalOutward = $response->getValue();
 
-        // proposal successfully created, we check if there's a return 
+        // proposal successfully created, we check if there's a return
         if ($proposal->getType() == Proposal::TYPE_OUTWARD) {
             // creation of the return trip
             $proposalReturn = clone $proposal;
@@ -342,9 +458,15 @@ class ProposalManager
             $criteriaReturn->setPassenger($ad['passenger']);
             $criteriaReturn->setPriceKm($ad['price']);
             $criteriaReturn->setSeats($ad['seats']);
-            if (isset($ad['luggage'])) $criteriaReturn->setLuggage($ad['luggage']);
-            if (isset($ad['bike'])) $criteriaReturn->setBike($ad['bike']);
-            if (isset($ad['backSeats'])) $criteriaReturn->setBackSeats($ad['backSeats']);
+            if (isset($ad['luggage'])) {
+                $criteriaReturn->setLuggage($ad['luggage']);
+            }
+            if (isset($ad['bike'])) {
+                $criteriaReturn->setBike($ad['bike']);
+            }
+            if (isset($ad['backSeats'])) {
+                $criteriaReturn->setBackSeats($ad['backSeats']);
+            }
             $proposalReturn->setType(Proposal::TYPE_RETURN);
             $proposalReturn->setCriteria($criteriaReturn);
             if ($ad['regular']) {
