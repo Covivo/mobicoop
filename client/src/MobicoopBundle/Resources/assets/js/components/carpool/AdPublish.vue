@@ -480,6 +480,10 @@ export default {
       type: String,
       default: 'covoiturage/annonce/poster'
     },
+    resultsUrl: {
+      type: String,
+      default: 'covoiturage/annonce/{id}/resultats'
+    },
   },
   data() {
     return {
@@ -602,7 +606,10 @@ export default {
         }
       })
         .then(function (response) {
-          //window.location.href = '/';
+          if (response.data && response.data.result && response.data.result.id) {
+            var urlRedirect = `${self.baseUrl}/`+self.resultsUrl.replace(/{id}/,response.data.result.id);
+            window.location.href = urlRedirect;
+          }
           console.log(response);
         })
         .catch(function (error) {

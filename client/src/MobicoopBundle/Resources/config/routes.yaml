@@ -106,11 +106,20 @@ logout:
 ##################
 
 # post an ad
-carpool_ad:
+carpool_ad_post:
     path:
         fr: /covoiturage/annonce/poster
         en: /carpool/ad/share
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::post
+
+# ad results
+carpool_ad_results:
+    path:
+        fr: /covoiturage/annonce/{id}/resultats
+        en: /carpool/ad/{id}/results
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::postResults
+    requirements:
+        id: '\d+'
 
 # simple search results
 carpool_results:
@@ -139,15 +148,6 @@ rdex_journey:
         en: /journey/rdex
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexJourney    
 
-
-# ad results
-ad_results:
-    path:
-        fr: /covoiturage/annonce/{id}/resultats
-        en: /carpool/ad/{id}/results
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::adPostResults
-    requirements:
-        id: '\d+'
 
 ####################
 # community routes #

@@ -46,7 +46,7 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
-    public function post(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager, CommunityController $communityController)
+    public function post(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
     {
         $proposal = new Proposal();
         $poster = $userManager->getLoggedUser();
@@ -58,77 +58,13 @@ class CarpoolController extends AbstractController
             } else {
                 $this->denyAccessUnlessGranted('post', $proposal);
             }
-            $result = $proposalManager->createProposalFromAd($data, $poster);
+            if ($result = $proposalManager->createProposalFromAd($data, $poster));
             return $this->json(['result'=>$result]);
         }
 
         $this->denyAccessUnlessGranted('create_ad', $proposal);
+        // todo : add a csrf token
         return $this->render('@Mobicoop/carpool/publish.html.twig');
-
-
-        // $ad->setRole(Ad::ROLE_BOTH);
-        // $ad->setType(Ad::TYPE_ONE_WAY);
-        // $ad->setFrequency(Ad::FREQUENCY_PUNCTUAL);
-//        $ad->setFrequency(Ad::FREQUENCY_REGULAR);
-        // $ad->setPrice($priceCarpool);
-        // $ad->setUser($userManager->getLoggedUser());
-
-        //        ajout de la gestion des communautés
-//         $hydraCommunities = $communityManager->getCommunities();
-//         $communities =[];
-//         if ($hydraCommunities && count($hydraCommunities->getMember())>0) {
-//             foreach ($hydraCommunities->getMember() as $value) {
-//                 foreach (array($value) as $community) {
-//                     if ($community->isSecured(true)) {
-//                         $membersOfCommunity = array();
-//                         foreach ($community->getCommunityUsers() as $user) {
-//                             $membersOfCommunity = [$user->getUser()->getId()];
-//                         }
-//                         $logged = $userManager->getLoggedUser();
-//                         $reponseofmanager= $this->handleManagerReturnValue($logged);
-//                         if (!empty($reponseofmanager)) {
-//                             return $reponseofmanager;
-//                         }
-//                         $isLogged = boolval($logged); // cast to boolean
-//                         // don't display the secured community if the user is not logged or if the user doesn't belong to the secured community
-//                         if (!$isLogged || !in_array($logged->getId(), $membersOfCommunity)) {
-//                             continue;
-//                         }
-//                     }
-
-// //                    $communities[$community->getId()] = $community->getName();
-//                     $communityToTab = (object)["id"=> $community->getId(), "communityName"=> $community->getName()];
-//                     $communities[]=$communityToTab;
-//                 }
-//             }
-//         }
-        //if ($request->isMethod('POST')) {
-            // if ($ad->getCommunity() !== '' && !is_null($ad->getCommunity())) {
-            //     $communityController->joinCommunity($ad->getCommunity(), $communityManager, $userManager);
-            // }
-
-        //}
-
-        //    return $this->render('@Mobicoop/carpool/publish.html.twig', [
-                // 'communities' => $communities,
-                // 'idCommunity' => $idCommunity
-        //    ]);
-
-        // Error happen durring proposal creation
-        // try {
-        //     $proposal = $adManager->createProposalFromAd($ad);
-        //     $reponseofmanager= $this->handleManagerReturnValue($proposal);
-        //     if (!empty($reponseofmanager)) {
-        //         return $reponseofmanager;
-        //     }
-        //     $success = true;
-        // } catch (Error $err) {
-        //     $error = $err;
-        //     $success= false;
-        // }
-        // $proposalSuccess = $success ? $proposal->getId() : false;
-
-        // return $this->json(['error' => $error, 'success' => $success, 'proposal' => $proposalSuccess]);
     }
 
     /**
@@ -178,47 +114,16 @@ class CarpoolController extends AbstractController
         return $this->json($externalJourneyManager->getExternalJourney($params, DataProvider::RETURN_JSON));
     }
     /**
-     * Ad post results.
+     * Results of a carpooling ad.
      */
-    public function adPostResults($id, ProposalManager $proposalManager)
+    public function postResults($id, ProposalManager $proposalManager)
     {
         $proposal = $proposalManager->getProposal($id);
         $reponseofmanager= $this->handleManagerReturnValue($proposal);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
-
         $this->denyAccessUnlessGranted('results', $proposal);
-
-        // foreach ($proposal->getMatchingOffers() as $matching) {
-        //     if ($matching->getProposalOffer() instanceof Proposal) {
-        //         if (!$matching->getProposalOffer()->getUser() instanceof User) {
-        //             $proposalOffer = $proposalManager->getProposal($matching->getProposalOffer()->getId());
-        //             $matching->getProposalOffer()->setUser($proposalOffer->getUser());
-        //         }
-        //     }
-        //     if ($matching->getProposalRequest() instanceof Proposal) {
-        //         if (!$matching->getProposalRequest()->getUser() instanceof User) {
-        //             $proposalRequest = $proposalManager->getProposal($matching->getProposalRequest()->getId());
-        //             $matching->getProposalRequest()->setUser($proposalRequest->getUser());
-        //         }
-        //     }
-        // }
-        // foreach ($proposal->getMatchingRequests() as $matching) {
-        //     if ($matching->getProposalOffer() instanceof Proposal) {
-        //         if (!$matching->getProposalOffer()->getUser() instanceof User) {
-        //             $proposalOffer = $proposalManager->getProposal($matching->getProposalOffer()->getId());
-        //             $matching->getProposalOffer()->setUser($proposalOffer->getUser());
-        //         }
-        //     }
-        //     if ($matching->getProposalRequest() instanceof Proposal) {
-        //         if (!$matching->getProposalRequest()->getUser() instanceof User) {
-        //             $proposalRequest = $proposalManager->getProposal($matching->getProposalRequest()->getId());
-        //             $matching->getProposalRequest()->setUser($proposalRequest->getUser());
-        //         }
-        //     }
-        // }
-
         return $this->render('@Mobicoop/proposal/ad_results.html.twig', [
             'proposal' => $proposal
         ]);

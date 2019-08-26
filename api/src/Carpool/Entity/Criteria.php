@@ -477,7 +477,7 @@ class Criteria
     /**
      * @var boolean The user accepts any route as a passenger from its origin to the destination.
      *
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write","thread"})
      */
     private $anyRouteAsPassenger;
@@ -497,7 +497,47 @@ class Criteria
     * @Groups({"read","write","thread"})
     */
     private $priceKm;
-    
+
+    /**
+     * @var boolean Big luggage accepted / asked.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write","thread"})
+     */
+    private $luggage;
+
+    /**
+     * @var boolean Bike accepted / asked.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write","thread"})
+     */
+    private $bike;
+
+    /**
+     * @var boolean 2 passengers max on the back seats.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write","thread"})
+     */
+    private $backSeats;
+
+    /**
+     * @var boolean Solidary request.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write","thread"})
+     */
+    private $solidary;
+
+    /**
+     * @var boolean Solidary exclusive.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write","thread"})
+     */
+    private $solidaryExclusive;
+
     /**
      * @var Car|null The car used in the journey.
      *
@@ -1197,19 +1237,19 @@ class Criteria
         return $this;
     }
     
-    public function getAnyRouteAsPassenger(): bool
+    public function getAnyRouteAsPassenger(): ?bool
     {
         return $this->anyRouteAsPassenger;
     }
     
-    public function setAnyRouteAsPassenger(bool $anyRouteAsPassenger): self
+    public function setAnyRouteAsPassenger(?bool $anyRouteAsPassenger): self
     {
         $this->anyRouteAsPassenger = $anyRouteAsPassenger;
         
         return $this;
     }
     
-    public function getMultiTransportMode(): bool
+    public function getMultiTransportMode(): ?bool
     {
         return (!is_null($this->multiTransportMode) ? $this->multiTransportMode : true);
     }
@@ -1229,6 +1269,66 @@ class Criteria
     public function setPriceKm(?string $priceKm)
     {
         $this->priceKm = $priceKm;
+    }
+
+    public function hasLuggage(): ?bool
+    {
+        return $this->luggage;
+    }
+    
+    public function setLuggage(?bool $hasLuggage): self
+    {
+        $this->luggage = $hasLuggage;
+        
+        return $this;
+    }
+
+    public function hasBike(): ?bool
+    {
+        return $this->bike;
+    }
+    
+    public function setBike(?bool $hasBike): self
+    {
+        $this->bike = $hasBike;
+        
+        return $this;
+    }
+
+    public function hasBackSeats(): ?bool
+    {
+        return $this->backSeats;
+    }
+    
+    public function setBackSeats(?bool $hasBackSeats): self
+    {
+        $this->backSeats = $hasBackSeats;
+        
+        return $this;
+    }
+
+    public function isSolidary(): ?bool
+    {
+        return $this->solidary;
+    }
+    
+    public function setSolidary(?bool $isSolidary): self
+    {
+        $this->solidary = $isSolidary;
+        
+        return $this;
+    }
+
+    public function isSolidaryExclusive(): ?bool
+    {
+        return $this->solidary;
+    }
+    
+    public function setSolidaryExclusive(?bool $isSolidaryExclusive): self
+    {
+        $this->solidaryExclusive = $isSolidaryExclusive;
+        
+        return $this;
     }
     
     public function getCar(): ?Car

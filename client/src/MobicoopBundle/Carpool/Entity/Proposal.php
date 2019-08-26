@@ -35,7 +35,7 @@ use Mobicoop\Bundle\MobicoopBundle\Travel\Entity\TravelMode;
 /**
  * Carpooling : proposal (offer from a driver / request from a passenger).
  */
-class Proposal implements ResourceInterface
+class Proposal implements ResourceInterface, \JsonSerializable
 {
     const TYPE_ONE_WAY = 1;
     const TYPE_OUTWARD = 2;
@@ -45,6 +45,9 @@ class Proposal implements ResourceInterface
             "one_way"=>self::TYPE_ONE_WAY,
             "return"=>self::TYPE_OUTWARD
     ];
+
+    // proposal validity in years if no end date provided
+    const PROPOSAL_VALIDITY = 10;
     
     /**
      * @var int The id of this proposal.
@@ -425,5 +428,15 @@ class Proposal implements ResourceInterface
         }
         
         return $this;
+    }
+
+    // If you want more info from user you just have to add it to the jsonSerialize function
+    public function jsonSerialize()
+    {
+        return
+        [
+            'id'                => $this->getId(),
+            'proposalLinkedId'  => (int)$this->getProposalLinked()
+        ];
     }
 }
