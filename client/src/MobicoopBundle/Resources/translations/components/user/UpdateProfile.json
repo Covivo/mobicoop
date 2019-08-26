@@ -2,7 +2,7 @@
     "fr":{
         "snackBar":{
             "profileUpdated":"Votre profil a bien été mis à jour!",
-            "errorProfileUpdate": "Erreur, votre proil n'a pas été mis à jour."
+            "errorProfileUpdate": "Erreur, votre profil n'a pas été mis à jour."
         }
     }
 }
