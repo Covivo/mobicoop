@@ -56,6 +56,7 @@ use App\User\Controller\UserThreads;
 use App\User\Controller\UserUpdatePassword;
 use App\User\Controller\UserUpdate;
 use App\User\Filter\HomeAddressTerritoryFilter;
+use App\User\Filter\ProposalTerritoryFilter;
 use App\User\Filter\LoginFilter;
 use App\User\Filter\PwdTokenFilter;
 use App\User\Filter\SolidaryFilter;
@@ -138,6 +139,7 @@ use App\Solidary\Entity\Solidary;
  * @ApiFilter(NumericFilter::class, properties={"id"})
  * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial", "geoToken":"exact"})
  * @ApiFilter(HomeAddressTerritoryFilter::class, properties={"homeAddressTerritory"})
+ * @ApiFilter(ProposalTerritoryFilter::class, properties={"proposalTerritory"})
  * @ApiFilter(LoginFilter::class, properties={"login"})
  * @ApiFilter(PwdTokenFilter::class, properties={"pwdToken"})
  * @ApiFilter(SolidaryFilter::class, properties={"solidary"})
