@@ -208,7 +208,7 @@
             >
               <v-card
                 v-if="(this.threadsDM.length>0 || this.threadsCM.length>0)"
-                class="pa-2"
+                class="pa-2 text-center"
               >
                 <!-- The current carpool history -->
                 <v-card-text class="font-weight-bold headline">
@@ -236,7 +236,7 @@
                   </v-timeline>
 
                   <v-divider />
-                  <v-row row>
+                  <v-row>
                     <v-col
                       class="col-8"
                       text-left
@@ -317,40 +317,31 @@
                   v-if="currentAskHistory && currentAskHistory.ask.status==2 && askUser != userid"
                   class="my-2"
                 >
-                  <v-tooltip
-                    bottom
-                    color="primary"
-                  >
-                    <template v-slot:activator="{ on }">
-                      <v-btn
-                        color="success"
-                        class="mb-2"
-                        fab
-                        v-on="on"
-                        @click="updateCarpool(3)"
-                      >
-                        <v-icon>mdi-check</v-icon>
-                      </v-btn>
-                    </template>
-                    <span class="black--text">{{ $t("ui.button.accept") }}</span>
-                  </v-tooltip>
-                  <v-tooltip
-                    bottom
-                    color="error"
-                  >
-                    <template v-slot:activator="{ on }">
-                      <v-btn
-                        color="error"
-                        class="mb-2"
-                        fab
-                        v-on="on"
-                        @click="updateCarpool(4)"
-                      >
-                        <v-icon>mdi-close</v-icon>
-                      </v-btn>
-                    </template>
-                    <span>{{ $t("ui.button.refuse") }}</span>
-                  </v-tooltip>
+                  <v-container text-center>
+                    <v-row>
+                      <v-col class="col-12 col-lg-6">
+                        <v-btn
+                          color="success"
+                          rounded
+                          @click="updateCarpool(3)"
+                        >
+                          {{ $t("ui.button.accept") }}
+                          <v-icon right>
+                            mdi-check
+                          </v-icon>
+                        </v-btn>
+                      </v-col>
+                      <v-col class="col-12 col-lg-6">
+                        <v-btn
+                          color="error"
+                          rounded
+                          @click="updateCarpool(4)"
+                        >
+                          {{ $t("ui.button.refuse") }} <v-icon>mdi-close</v-icon>
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-container>
                 </div>
               </v-card>
             </v-col>
