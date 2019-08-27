@@ -56,13 +56,14 @@
           <v-row
             class="text-city-size"
           >
-            {{ splitCityOrigin() }}
+            {{ origin }}
+            <!-- {{ splitCityOrigin() }} -->
           </v-row>
           <v-row
             class="d-inline-block text-truncate text-address-size"
             style="max-width: 100px;"
           >
-            {{ splitAddressOrigin() }}
+            <!-- {{ splitAddressOrigin() }} -->
           </v-row>
         </v-col> 
 
@@ -83,13 +84,14 @@
           <v-row
             class="text-city-size"
           >
-            {{ splitCityDestination() }}
+            {{ destination }}
+            <!-- {{ splitCityDestination() }} -->
           </v-row>
           <v-row
             class="d-inline-block text-truncate text-address-size"
             style="max-width: 100px;"
           >
-            {{ splitAddressDestination() }}
+            <!-- {{ splitAddressDestination() }} -->
           </v-row>
         </v-col> 
 
@@ -140,6 +142,10 @@ export default {
       type: String,
       default: null
     },
+    carpoolResults: {
+      type: Object,
+      default: null
+    },
     matchingSearchUrl: {
       type: String,
       default: null
@@ -151,8 +157,6 @@ export default {
       resultCityOrigin:  null,
       resultAddressDestination: null,
       resultCityDestination:  null,
-      city: null,
-      address: null,
       driver: false,
       passenger: true,
     };
@@ -162,28 +166,29 @@ export default {
     displaydate(date){
       return moment (new Date(date)).utcOffset("+00:00").format('ddd DD/MM ')
     },
+    
     // TODO : FIND AN OTHER METHOD, JUST FOR THE MOMENT :: BAD [" ... "], NOT OPTIMIZED
-    splitCityOrigin () {
-      this.resultCityOrigin= this.origin.split(', ')
-      return this.city= this.resultCityOrigin.slice(1)
-    },
-    splitAddressOrigin () {
-      this.resultAddressOrigin = this.origin.split(', ')
-      return this.address = this.resultAddressOrigin.slice(0,1)
-    },
-    splitCityDestination () {
-      this.resultCityDestination = this.destination.split(', ')
-      return this.city= this.resultCityDestination.slice(1)
-    },
-    splitAddressDestination () {
-      this.resultAddressDestination = this.destination.split(', ')
-      return this.address = this.resultAddressDestination.slice(0,1)
-    },
+    // splitCityOrigin () {
+    //   this.resultCityOrigin= this.origin.split(', ')
+    //   return this.city= this.resultCityOrigin.slice(1)
+    // },
+    // splitAddressOrigin () {
+    //   this.resultAddressOrigin = this.origin.split(', ')
+    //   return this.address = this.resultAddressOrigin.slice(0,1)
+    // },
+    // splitCityDestination () {
+    //   this.resultCityDestination = this.destination.split(', ')
+    //   return this.city= this.resultCityDestination.slice(1)
+    // },
+    // splitAddressDestination () {
+    //   this.resultAddressDestination = this.destination.split(', ')
+    //   return this.address = this.resultAddressDestination.slice(0,1)
+    // },
   }  
 }
 </script>
 
-  <style scoped>
+<style scoped>
   .text-city-size {
   font-size: 16px;
     font-weight: bold;
@@ -195,4 +200,4 @@ export default {
   .date-uppercase {
         text-transform: capitalize;
   }
-  </style>
+</style>

@@ -110,8 +110,9 @@
             :origin="origin"
             :destination="destination"
             :date="date"
+            :carpool-results="results"
           />
-          <!--    <h3>{{ Results }}</h3>-->
+          <!--    <h3>{{ results }}</h3>-->
           <!--          card use vdivider for middle line-->
         </v-col>
       </v-row>
@@ -173,7 +174,7 @@ export default {
   data : function() {
     return {
       //results of the search
-      Results : null,
+      results : null,
 
       loading : true,
 
@@ -197,7 +198,8 @@ export default {
       .then((response) => {
         console.log(response);
         this.loading = false;
-        return this.Results = response.data[0];
+        // console.error(response.data[0]);
+        return this.results = response.data[0];
       })
       .catch((error) => {
         console.log(error);

@@ -7,7 +7,9 @@
       :origin="origin"
       :destination="destination"
       :date="date"
+      :carpool-results="carpoolResults"
     />
+    
     <v-divider class="divider-width" />
     <result-user-detailed-card />
   </v-card>
@@ -54,6 +56,11 @@ export default {
       type: String,
       default: null
     },
+    carpoolResults: {
+      type: Object,
+      default: null
+    }
+      
   }, 
 }
 </script>
