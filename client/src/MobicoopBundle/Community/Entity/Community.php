@@ -36,7 +36,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 /**
  *  A community.
  */
-class Community implements ResourceInterface
+class Community implements ResourceInterface, \JsonSerializable
 {
     /**
      * @var int The id of this community.
@@ -363,5 +363,17 @@ class Community implements ResourceInterface
         $this->private = $private;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+        [
+            'id'            => $this->getId(),
+            'iri'           => $this->getIri(),
+            'name'          => $this->getName(),
+            'description'   => $this->getDescription(),
+            'images'        => $this->getImages()
+        ];
     }
 }

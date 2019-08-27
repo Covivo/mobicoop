@@ -23,10 +23,14 @@
 
 namespace App\Community\Service;
 
+use App\Community\Entity\Community;
 use Psr\Log\LoggerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Community\Entity\CommunitySecurity;
 use App\Community\Entity\CommunityUser;
+use App\Community\Repository\CommunityRepository;
+use App\User\Entity\User;
+use App\User\Repository\UserRepository;
 
 /**
  * Community manager.
@@ -40,6 +44,8 @@ class CommunityManager
     private $entityManager;
     private $logger;
     private $securityPath;
+    private $userRepository;
+    private $communityRepository;
 
     /**
      * Constructor
@@ -50,11 +56,15 @@ class CommunityManager
     public function __construct(
         EntityManagerInterface $entityManager,
         LoggerInterface $logger,
-        string $securityPath
+        string $securityPath,
+        UserRepository $userRepository,
+        CommunityRepository $communityRepository
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->securityPath = $securityPath;
+        $this->userRepository = $userRepository;
+        $this->communityRepository = $communityRepository;
     }
 
     /**
@@ -84,6 +94,42 @@ class CommunityManager
             }
         }
         return $authorized;
+    }
+
+    /**
+     * Check if a user can join a community
+     * To join an opened community, no credentials is needed, the user just need to be registered.
+     * To join a closed community, a user needs to give credentials, we will call them login and password
+     * even if they represent other kind of information (id, date of birth...).
+     *
+     * @param CommunityUser $communityUser
+     * @return bool
+     */
+    public function registerUserInCommunity(Community $community, User $user)
+    {
+        if (!$this->communityRepository->isRegistered($community, $user)) {
+            $communityUser = new CommunityUser();
+            $communityUser->setUser($user);
+            $communityUser->setCommunity($community);
+            $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED);
+            $this->entityManager->persist($communityUser);
+            $this->entityManager->flush();
+        }
+    }
+
+    /**
+     * Get communities available for a user
+     *
+     * @param integer $userId The user id
+     * @return void
+     */
+    public function getAvailableCommunitiesForUser(?int $userId)
+    {
+        $user = null;
+        if ($userId && !$user = $this->userRepository->find($userId)) {
+            return [];
+        }
+        return $this->communityRepository->findAvailableCommunitiesForUser($user);
     }
 
     /**

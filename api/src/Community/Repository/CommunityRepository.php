@@ -24,6 +24,7 @@
 namespace App\Community\Repository;
 
 use App\Community\Entity\Community;
+use App\Community\Entity\CommunityUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use App\User\Entity\User;
@@ -52,7 +53,42 @@ class CommunityRepository
     }
 
     /**
-     * Find communities for the given user
+     * Find communities by criteria
+     *
+     * @param array $criteria
+     * @return void
+     */
+    public function findBy(array $criteria)
+    {
+        return $this->repository->findBy($criteria);
+    }
+
+    /**
+     * Find available communities for a user
+     * Available communities = communities free of registration or communities where the user is registered
+     *
+     * @return void
+     */
+    public function findAvailableCommunitiesForUser(?User $user)
+    {
+        if ($user) {
+            return $this->repository->createQueryBuilder('c')
+            ->leftJoin('c.communityUsers', 'cu')
+            ->leftJoin('c.communitySecurities', 'cs')
+            ->where("cs.id is null OR (cu.user = :user AND cu.status = :status)")
+            ->setParameter('user', $user)
+            ->setParameter('status', CommunityUser::STATUS_ACCEPTED)
+            ->getQuery()->getResult();
+        }
+        return $this->repository->createQueryBuilder('c')
+        ->leftJoin('c.communityUsers', 'cu')
+        ->leftJoin('c.communitySecurities', 'cs')
+        ->where("cs.id is null")
+        ->getQuery()->getResult();
+    }
+
+    /**
+     * Find communities where the given user is registered
      *
      * @param User $user
      * @param boolean|null $proposalsHidden
@@ -79,5 +115,27 @@ class CommunityRepository
             ->setParameter('memberStatus', $memberStatus);
         }
         return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find if a user is registered in a given community
+     *
+     * @param Community $community
+     * @param User $user
+     *
+     * @return void
+     */
+    public function isRegistered(Community $community, User $user)
+    {
+        $result = $this->repository->createQueryBuilder('c')
+        ->join('c.communityUsers', 'cu')
+        ->where('cu.user = :user and cu.community = :community')
+        ->setParameter('user', $user)
+        ->setParameter('community', $community)
+        ->getQuery()->getResult();
+        if ($result) {
+            return true;
+        }
+        return false;
     }
 }

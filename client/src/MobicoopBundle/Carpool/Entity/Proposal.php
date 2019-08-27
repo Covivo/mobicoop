@@ -306,16 +306,16 @@ class Proposal implements ResourceInterface, \JsonSerializable
         return $this->communities->getValues();
     }
 
-    public function addCommunity(Community $community): self
+    // we can add a community as a full community object or with its IRI
+    public function addCommunity($community): self
     {
-
-//        if (!$this->communities->contains($community)) {
-        $this->communities[] = $community;
-//        }
+        if (!$this->communities->contains($community)) {
+            $this->communities[] = $community;
+        }
         return $this;
     }
 
-    public function removeCommunity(Community $community): self
+    public function removeCommunity($community): self
     {
         if ($this->communities->contains($community)) {
             $this->communities->removeElement($community);

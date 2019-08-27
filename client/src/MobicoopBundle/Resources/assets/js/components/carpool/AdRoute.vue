@@ -221,6 +221,51 @@
     </v-row>
 
     <!-- Communities -->
+    <v-row
+      align="center"
+      justify="center"
+      class="mt-2"
+    >
+      <v-col
+        cols="6"
+      >
+        <v-autocomplete
+          v-model="selectedCommunities"
+          :items="communities"
+          outlined
+          chips
+          :label="$t('communities')"
+          item-text="name"
+          item-value="iri"
+          multiple
+          @change="emitEvent"
+        >
+          <template v-slot:selection="data">
+            <v-chip
+              v-bind="data.attrs"
+              :input-value="data.selected"
+              close
+              @click="data.select"
+              @click:close="removeCommunity(data.item)"
+            >
+              {{ data.item.name }}
+            </v-chip>
+          </template>
+          <template v-slot:item="data">
+            <template v-if="typeof data.item !== 'object'">
+              <v-list-item-content v-text="data.item" />
+            </template>
+            <template v-else>
+              <v-list-item-content>
+                <v-list-item-title v-html="data.item.name" />
+                <v-list-item-subtitle v-html="data.item.description" />
+              </v-list-item-content>
+            </template>
+          </template>
+        </v-autocomplete>
+      </v-col>
+    </v-row>
+
 
     <!-- Map (soon...) -->
     <v-row
@@ -277,6 +322,10 @@ export default {
       type: Object,
       default: null
     },
+    communities: {
+      type: Array,
+      default: null
+    },
     initOrigin: {
       type: Object,
       default: null
@@ -309,7 +358,8 @@ export default {
         },
       ],
       avoidMotorway: false,
-      direction: null
+      direction: null,
+      selectedCommunities: null
     };
   },
   watch: {
@@ -367,7 +417,8 @@ export default {
         destination: this.destination,
         waypoints: this.waypoints,
         avoidMotorway: this.avoidMotorway,
-        direction: this.direction
+        direction: this.direction,
+        communities: this.selectedCommunities
       });
     },
     addWaypoint() {
@@ -385,7 +436,14 @@ export default {
       this.waypoints[id].visible = false;
       this.waypoints[id].address = null;
       this.getRoute();
-    }
+    },
+    removeCommunity(item) {
+      const index = this.selectedCommunities.indexOf(item.iri);
+      if (index >= 0) {
+        this.selectedCommunities.splice(index, 1);
+        this.emitEvent();
+      }
+    },
   }
 };
 </script>
