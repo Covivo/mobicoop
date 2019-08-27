@@ -5,32 +5,31 @@
       grid-list-md
       fluid
     >
-      <v-layout id="headGridMessages">
-        <v-flex
-          xs4
-          class="pt-5 pb-4 mr-1 pl-2 secondary white--text font-weight-bold headline"
+      <v-row
+        id="headGridMessages"
+      >
+        <v-col
+          class="col-4 pt-5 pb-4 pl-2 secondary white--text font-weight-bold headline"
         >
           {{ $t("ui.pages.messages.label.messages") }}
-        </v-flex>
-        <v-flex
-          xs5
+        </v-col>
+        <v-col
           text-xs-left
-          class="pt-5 pb-4 mr-1 pl-2 secondary white--text font-weight-bold headline"
+          class="col-5 pt-5 pb-4 pl-2 secondary white--text font-weight-bold headline"
         >
           {{ currentcorrespondant }}
-        </v-flex>
-        <v-flex
-          xs3
+        </v-col>
+        <v-col
           text-xs-left
-          class="pt-5 pb-4 pl-2 secondary white--text font-weight-bold headline"
+          class="col-3 pt-5 pb-4 pl-2 mr-0 secondary white--text font-weight-bold headline"
         >
           {{ $t("ui.pages.messages.label.context") }}
-        </v-flex>
-      </v-layout>
-      <v-layout>
-        <v-flex
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col
           id="threadColumn"
-          xs4
+          class="col-4"
         >
           <!-- Threads -->
           <v-tabs
@@ -108,11 +107,11 @@
               </v-card>
             </v-tab-item>
           </v-tabs-items>
-        </v-flex>
+        </v-col>
 
-        <v-flex
+        <v-col
           id="messagesColumn"
-          xs5
+          class="col-5"
         >
           <!-- Messages -->
 
@@ -160,11 +159,11 @@
             fluid
             grid-list-md
           >
-            <v-layout
+            <v-row
               row
               wrap
             >
-              <v-flex xs10>
+              <v-col class="col-9">
                 <v-textarea
                   v-model="textToSend"
                   name="typedMessage"
@@ -175,9 +174,9 @@
                   background-color="#FFFFFF"
                   value
                 />
-              </v-flex>
-              <v-flex
-                xs2
+              </v-col>
+              <v-col
+                class="col-3"
                 align-self-center
               >
                 <div class="text-xs-center">
@@ -193,18 +192,18 @@
                     <v-icon>mdi-send</v-icon>
                   </v-btn>
                 </div>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-container>
-        </v-flex>
-        <v-flex
+        </v-col>
+        <v-col
           id="contextColumn"
-          xs3
+          class="col-3"
         >
           <!-- Context -->
-          <v-layout>
-            <v-flex
-              xs12
+          <v-row>
+            <v-col
+              class="col-12"
               text-center
             >
               <v-card
@@ -237,9 +236,9 @@
                   </v-timeline>
 
                   <v-divider />
-                  <v-layout row>
-                    <v-flex
-                      xs8
+                  <v-row row>
+                    <v-col
+                      class="col-8"
                       text-left
                     >
                       <v-card-text class="py-1">
@@ -253,9 +252,9 @@
                       >
                         {{ $t("ui.infos.carpooling.price") }}
                       </v-card-text>
-                    </v-flex>
-                    <v-flex
-                      xs4
+                    </v-col>
+                    <v-col
+                      class="col-4"
                       text-right
                     >
                       <v-card-text class="py-1">
@@ -267,8 +266,8 @@
                       <v-card-text class="font-weight-bold py-1">
                         {{ infosJourney["price"] }} €
                       </v-card-text>
-                    </v-flex>
-                  </v-layout>
+                    </v-col>
+                  </v-row>
                 </v-card>
                 <v-card v-else>
                   <v-card-text>{{ $t("ui.pages.messages.label.notLinkedToACarpool") }}</v-card-text>
@@ -354,10 +353,10 @@
                   </v-tooltip>
                 </div>
               </v-card>
-            </v-flex>
-          </v-layout>
-        </v-flex>
-      </v-layout>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
 
       <div class="text-xs-center">
         <v-dialog
@@ -669,3 +668,10 @@ export default {
   }
 };
 </script>
+<style lang="scss" scoped>
+#headGridMessages{
+  .col{
+    border-left: 2px solid white !important;
+  }
+}
+</style>
