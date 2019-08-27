@@ -174,7 +174,11 @@ class ProposalManager
         $end = new \DateTime("UTC");
         $this->logger->info('Proposal creation | Total duration ' . ($end->diff($date))->format("%s.%f seconds"));
         
-        $matchings = $proposal->getMatchingOffers();
+        $matchingsOffers = $proposal->getMatchingOffers();
+        $matchingsRequest = $proposal->getMatchingRequests();
+        $matchings=[];
+        while(($item = array_shift($matchingsOffers)) !== null && array_push($matchings, $item));
+        while(($item = array_shift($matchingsRequest)) !== null && array_push($matchings, $item));
         if ($persist) {
             foreach ($matchings as $matching) {
                 // dispatch en event
