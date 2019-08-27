@@ -4,11 +4,29 @@
       <v-row>
         <!-- avatar --> 
         <v-col
+          v-if="passenger"
           justify-space-around
         >
           <v-avatar
             color="primary"
-          />
+          >
+            <v-icon dark>
+              mdi-account-supervisor
+            </v-icon>
+          </v-avatar>
+        </v-col>
+
+        <v-col
+          v-else-if="driver"
+          justify-space-around
+        >
+          <v-avatar
+            color="secondary"
+          >
+            <v-icon dark>
+              mdi-steering
+            </v-icon>
+          </v-avatar>
         </v-col>
 
         <!-- hour -->
@@ -85,27 +103,6 @@
           <h3>50€</h3>
         </v-col>
       </v-row>
-
-      <!-- TEST DRIVER PASSENGER WITH A BUTTON --> 
-      <v-btn
-        color="primary"
-        fab
-        large
-        depressed
-        @click="testmethod('driver')"
-      >
-        <v-icon>mdi-account-supervisor</v-icon><br>
-      </v-btn>
-
-      <v-btn
-        color="secondary"
-        fab
-        large
-        depressed
-        @click="testmethod('passenger')"
-      >
-        <v-icon>mdi-steering</v-icon><br>
-      </v-btn>
     </v-container>
   </v-content>
 </template>
@@ -156,6 +153,8 @@ export default {
       resultCityDestination:  null,
       city: null,
       address: null,
+      driver: false,
+      passenger: true,
     };
   },
    
@@ -180,10 +179,6 @@ export default {
       this.resultAddressDestination = this.destination.split(', ')
       return this.address = this.resultAddressDestination.slice(0,1)
     },
-    // TODO : FIND AN METHOD IN ORDER CHANGE ICON IF PASSENGER,DRIVER OR BOTH
-    testmethod: function (message) {
-      alert(message)
-    }
   }  
 }
 </script>
