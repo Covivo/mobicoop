@@ -107,7 +107,7 @@ class CommunityManager
      */
     public function registerUserInCommunity(Community $community, User $user)
     {
-        if (!$this->communityRepository->isRegistered($community,$user)) {
+        if (!$this->communityRepository->isRegistered($community, $user)) {
             $communityUser = new CommunityUser();
             $communityUser->setUser($user);
             $communityUser->setCommunity($community);
@@ -123,7 +123,8 @@ class CommunityManager
      * @param integer $userId The user id
      * @return void
      */
-    public function getAvailableCommunitiesForUser(?int $userId) {
+    public function getAvailableCommunitiesForUser(?int $userId)
+    {
         $user = null;
         if ($userId && !$user = $this->userRepository->find($userId)) {
             return [];

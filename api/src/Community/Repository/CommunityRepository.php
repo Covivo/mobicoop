@@ -76,8 +76,8 @@ class CommunityRepository
             ->leftJoin('c.communityUsers', 'cu')
             ->leftJoin('c.communitySecurities', 'cs')
             ->where("cs.id is null OR (cu.user = :user AND cu.status = :status)")
-            ->setParameter('user',$user)
-            ->setParameter('status',CommunityUser::STATUS_ACCEPTED)
+            ->setParameter('user', $user)
+            ->setParameter('status', CommunityUser::STATUS_ACCEPTED)
             ->getQuery()->getResult();
         }
         return $this->repository->createQueryBuilder('c')
@@ -122,7 +122,7 @@ class CommunityRepository
      *
      * @param Community $community
      * @param User $user
-     * 
+     *
      * @return void
      */
     public function isRegistered(Community $community, User $user)
@@ -138,5 +138,4 @@ class CommunityRepository
         }
         return false;
     }
-
 }

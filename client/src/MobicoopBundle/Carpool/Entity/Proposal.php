@@ -309,9 +309,8 @@ class Proposal implements ResourceInterface, \JsonSerializable
     // we can add a community as a full community object or with its IRI
     public function addCommunity($community): self
     {
-
         if (!$this->communities->contains($community)) {
-        $this->communities[] = $community;
+            $this->communities[] = $community;
         }
         return $this;
     }

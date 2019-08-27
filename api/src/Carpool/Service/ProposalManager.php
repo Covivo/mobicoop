@@ -175,7 +175,7 @@ class ProposalManager
 
             // if the proposal is related to communities, we register the user to the communities
             foreach ($proposal->getCommunities() as $community) {
-                $this->communityManager->registerUserInCommunity($community,$proposal->getUser());
+                $this->communityManager->registerUserInCommunity($community, $proposal->getUser());
             }
         }
         

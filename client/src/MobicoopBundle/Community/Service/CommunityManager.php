@@ -80,7 +80,7 @@ class CommunityManager
     */
     public function getAvailableUserCommunities(?User $user)
     {
-        $response = $this->dataProvider->getSpecialCollection('available',$user ? ['userId'=>$user->getId()] : null);
+        $response = $this->dataProvider->getSpecialCollection('available', $user ? ['userId'=>$user->getId()] : null);
         return $response->getValue();
     }
 
