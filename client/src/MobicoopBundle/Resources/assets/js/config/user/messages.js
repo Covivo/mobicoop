@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import colorTheme from '@themes/mobicoop.json'
+import MBtn from '@components/utilities/MBtn'
 import '@mdi/font/css/materialdesignicons.css'
 
 import Vuetify, { 

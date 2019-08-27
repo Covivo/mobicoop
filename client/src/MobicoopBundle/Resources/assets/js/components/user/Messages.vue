@@ -320,25 +320,28 @@
                   <v-container text-center>
                     <v-row>
                       <v-col class="col-12 col-lg-6">
-                        <v-btn
+                        <!-- <v-btn
                           color="success"
                           rounded
                           @click="updateCarpool(3)"
                         >
-                          {{ $t("ui.button.accept") }}
-                          <v-icon right>
-                            mdi-check
-                          </v-icon>
-                        </v-btn>
+                          {{ $t("ui.button.accept") }} <v-icon>mdi-check</v-icon>
+                        </v-btn> -->
+                        <m-btn
+                          color="success"
+                          @click.native="updateCarpool(3)"
+                        >
+                          {{ $t("ui.button.accept") }} <v-icon>mdi-check</v-icon>
+                        </m-btn>
                       </v-col>
                       <v-col class="col-12 col-lg-6">
-                        <v-btn
+                        <m-btn
                           color="error"
                           rounded
-                          @click="updateCarpool(4)"
+                          @click.native="updateCarpool(4)"
                         >
                           {{ $t("ui.button.refuse") }} <v-icon>mdi-close</v-icon>
-                        </v-btn>
+                        </m-btn>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -413,12 +416,16 @@ import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/Messages.json";
 import TranslationsClient from "@clientTranslations/components/user/Messages.json";
+import MBtn from '@components/utilities/MBtn'
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
     messages: TranslationsMerged,
     sharedMessages: CommonTranslations
+  },
+  components: {
+    MBtn
   },
   props: {
     threadsdirectmessagesforview: {
