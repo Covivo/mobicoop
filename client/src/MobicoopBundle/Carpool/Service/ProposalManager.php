@@ -177,6 +177,11 @@ class ProposalManager
         if (isset($ad['message'])) {
             $proposal->setComment($ad['message']);
         }
+        if (isset($ad['communities'])) {
+            foreach ($ad['communities'] as $community) {
+                $proposal->addCommunity($community);
+            }
+        }
         $criteria->setDriver($ad['driver']);
         $criteria->setPassenger($ad['passenger']);
         $criteria->setPriceKm($ad['price']);
@@ -190,7 +195,6 @@ class ProposalManager
         if (isset($ad['backSeats'])) {
             $criteria->setBackSeats($ad['backSeats']);
         }
-
         if ($ad['regular']) {
             // regular
             $criteria->setFrequency(Criteria::FREQUENCY_REGULAR);
@@ -453,6 +457,11 @@ class ProposalManager
         if ($proposal->getType() == Proposal::TYPE_OUTWARD) {
             // creation of the return trip
             $proposalReturn = clone $proposal;
+            if (isset($ad['communities'])) {
+                foreach ($ad['communities'] as $community) {
+                    $proposalReturn->addCommunity($community);
+                }
+            }
             $criteriaReturn = new Criteria();
             $criteriaReturn->setDriver($ad['driver']);
             $criteriaReturn->setPassenger($ad['passenger']);

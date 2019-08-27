@@ -146,6 +146,7 @@
                   :user="user"
                   :init-origin="origin"
                   :init-destination="destination"
+                  :communities="communities"
                   @change="routeChanged"
                 />
               </v-stepper-content>
@@ -472,6 +473,10 @@ export default {
       type: Object,
       default: null
     },
+    communities: {
+      type: Array,
+      default: null
+    },
     defaultPriceKm: {
       type: Number,
       default: 0.06
@@ -510,7 +515,8 @@ export default {
       message: null,
       baseUrl: window.location.origin,
       loading: false,
-      userDelegated: null // if user delegation
+      userDelegated: null, // if user delegation
+      selectedCommunities: null
     }
   },
   computed: {
@@ -573,6 +579,7 @@ export default {
       this.destination = route.destination;
       this.distance = route.direction ? route.direction.distance / 1000 : null;
       this.duration = route.direction ? route.direction.duration : null;
+      this.selectedCommunities = route.communities ? route.communities : null;
     },
     postAd() {
       let postObject = {
@@ -584,6 +591,7 @@ export default {
       };
       if (this.userDelegated) postObject.userDelegated = this.userDelegated;
       if (this.validWaypoints) postObject.waypoints = this.validWaypoints;
+      if (this.selectedCommunities) postObject.communities = this.selectedCommunities;
       if (!this.regular) {
         if (this.outwardDate) postObject.outwardDate = this.outwardDate;
         if (this.outwardTime) postObject.outwardTime = this.outwardTime;

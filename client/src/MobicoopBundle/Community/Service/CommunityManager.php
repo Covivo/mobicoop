@@ -74,6 +74,17 @@ class CommunityManager
     }
 
     /**
+    * Get all communities available for a user
+    * @return array|null The communities found or null if not found.
+    *
+    */
+    public function getAvailableUserCommunities(?User $user)
+    {
+        $response = $this->dataProvider->getSpecialCollection('available',$user ? ['userId'=>$user->getId()] : null);
+        return $response->getValue();
+    }
+
+    /**
      * Get one community
      *
      * @return Community|null

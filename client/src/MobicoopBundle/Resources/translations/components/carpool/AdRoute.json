@@ -22,6 +22,7 @@
             "label": "Etape 4"
         },
         "avoidMotorway": "Eviter l'autoroute",
+        "communities": "Publier l'annonce dans ces communautés",
         "distance": "Distance"
     }
 }
