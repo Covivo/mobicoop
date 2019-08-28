@@ -31,7 +31,7 @@
         align="center"
       >
         <v-col
-          cols="2"
+          cols="4"
           align="center"
         >
           <!--STEP 1-->
@@ -66,7 +66,7 @@
             <v-btn
               ref="button"
               class="my-13"
-              color="primary"
+              color="success"
               :disabled="!step1"
               @click="$vuetify.goTo('#step2', options)"
             >
@@ -104,7 +104,7 @@
               <v-btn
                 ref="button"
                 class="my-13 mr-12"
-                color="primary"
+                color="success"
                 :disabled="!step1"
                 @click="$vuetify.goTo('#step2', options)"
               >
@@ -113,7 +113,7 @@
               <v-btn
                 ref="button"
                 class="my-13"
-                color="primary"
+                color="success"
                 :disabled="!step2"
                 @click="$vuetify.goTo('#step3', options)"
               >
@@ -147,7 +147,7 @@
               <v-btn
                 ref="button"
                 class="my-13 mr-12"
-                color="primary"
+                color="success"
                 :disabled="!step2"
                 @click="$vuetify.goTo('#step3', options)"
               >
@@ -156,7 +156,7 @@
               <v-btn
                 ref="button"
                 class="my-13"
-                color="primary"
+                color="success"
                 :disabled="!step3"
                 @click="$vuetify.goTo('#step4', options)"
               >
@@ -188,7 +188,7 @@
               <v-btn
                 ref="button"
                 class="my-13 mr-12"
-                color="primary"
+                color="success"
                 :disabled="!step3"
                 @click="$vuetify.goTo('#step4', options)"
               >
@@ -197,7 +197,7 @@
               <v-btn
                 ref="button"
                 class="my-13"
-                color="primary"
+                color="success"
                 :disabled="!step4"
                 @click="$vuetify.goTo('#step5', options)"
               >
@@ -225,14 +225,14 @@
             <v-checkbox
               v-model="form.validation"
               class="check"
-              color="primary"
+              color="success"
               :rules="form.checkboxRules"
               :label="$t('ui.pages.signup.chart.chartValid')"
               required
               :disabled="!step4"
             />
             <v-btn
-              color="primary"
+              color="success"
               class="mr-4 mb-100 mt-12"
               :disabled="!step5"
               @click="validate"

@@ -102,7 +102,7 @@ export default {
   data() {
     return {
       loading: false,
-      regular: false,
+      regular: true,
       date: null,
       origin: null,
       destination: null,
