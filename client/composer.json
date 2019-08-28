@@ -7,6 +7,7 @@
         "ext-iconv": "*",
         "fabpot/goutte": "^3.2",
         "guzzlehttp/guzzle": "~6.0",
+        "phpoffice/phpspreadsheet": "^1.9",
         "sensio/framework-extra-bundle": "^5.1",
         "symfony/asset": "*",
         "symfony/cache": "4.3.*",
@@ -29,10 +30,10 @@
         "symfony/twig-bundle": "*",
         "symfony/validator": "*",
         "symfony/web-link": "*",
+        "symfony/web-server-bundle": "*",
         "symfony/webpack-encore-bundle": "^1.0",
         "symfony/yaml": "*",
-        "wikimedia/composer-merge-plugin": "^1.4",
-        "symfony/web-server-bundle": "*"
+        "wikimedia/composer-merge-plugin": "^1.4"
     },
     "require-dev": {
         "elephantly/kahlan-bundle": "^0.9.8",

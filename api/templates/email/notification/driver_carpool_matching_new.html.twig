@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-    <p>{{ 'Une nouvelle annonce de covoiturage correspondant à votre trajet'|trans }} {{ context.matching.waypoints[0].region }} – {{ context.matching.waypoints[1].region }} {{ 'vient d\'être publiée.'|trans }}
+    <p>{{ 'Une nouvelle annonce de covoiturage correspondant à votre trajet'|trans }} {{ context.matching.waypoints[0].address.streetAddress }} – {{ context.matching.waypoints[1].address.streetAddress }} {{ 'vient d\'être publiée.'|trans }}
 
 {{ 'Rendez-vous dans'|trans }}  <a href="{{ api_env('CLIENT_URL') ~ api_env('CLIENT_ANONCE_URI') }}">{{ "Mes annonces"|trans }}</a> {{ "pour consulter les annonces correspondantes et prendre contact"|trans }}.
 {% endblock %}

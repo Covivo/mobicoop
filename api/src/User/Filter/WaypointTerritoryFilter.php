@@ -26,11 +26,11 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use Doctrine\ORM\QueryBuilder;
 
-final class HomeAddressTerritoryFilter extends AbstractContextAwareFilter
+final class WaypointTerritoryFilter extends AbstractContextAwareFilter
 {
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        if ($property != "homeAddressTerritory") {
+        if ($property != "waypointTerritory") {
             return;
         }
 
@@ -40,9 +40,11 @@ final class HomeAddressTerritoryFilter extends AbstractContextAwareFilter
         }
         
         $queryBuilder
-            ->leftJoin('u.addresses', 'homeAddress')
-            ->join('\App\Geography\Entity\Territory', 'homeAddressTerritory')
-            ->andWhere(sprintf('homeAddressTerritory.id = %s AND homeAddress.home=1 AND ST_INTERSECTS(homeAddressTerritory.geoJsonDetail,homeAddress.geoJson)=1', $value));
+            ->leftJoin('u.proposals', 'p')
+            ->leftJoin('p.waypoints', 'w')
+            ->leftJoin('w.address', 'a')
+            ->join('\App\Geography\Entity\Territory', 'waypointTerritory')
+            ->andWhere(sprintf('(waypointTerritory.id = %s AND (ST_INTERSECTS(waypointTerritory.geoJsonDetail,a.geoJson)=1))', $value));
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
@@ -60,8 +62,8 @@ final class HomeAddressTerritoryFilter extends AbstractContextAwareFilter
                 'format' => 'integer',
                 'required' => false,
                 'swagger' => [
-                    'description' => 'Filter on users that have their home address in the given territory',
-                    'name' => 'homeAddressTerritory',
+                    'description' => 'Filter on users that have a waypoint in the given territory',
+                    'name' => 'waypointTerritory',
                     'type' => 'integer',
                 ],
             ];

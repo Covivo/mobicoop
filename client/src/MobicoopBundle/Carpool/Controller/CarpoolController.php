@@ -53,18 +53,26 @@ class CarpoolController extends AbstractController
 
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            if (isset($data['userDelegated']) && $data['userDelegated'] != $poster->getId()) {
+            if ($poster && isset($data['userDelegated']) && $data['userDelegated'] != $poster->getId()) {
                 $this->denyAccessUnlessGranted('post_delegate', $proposal);
             } else {
                 $this->denyAccessUnlessGranted('post', $proposal);
             }
-            if ($result = $proposalManager->createProposalFromAd($data, $poster));
-            return $this->json(['result'=>$result]);
+            return $this->json(['result'=>$proposalManager->createProposalFromAd($data, $poster)]);
         }
 
         $this->denyAccessUnlessGranted('create_ad', $proposal);
         // todo : add a csrf token
-        return $this->render('@Mobicoop/carpool/publish.html.twig');
+
+        // get the communities available for the user
+        $communities = $communityManager->getAvailableUserCommunities($poster)->getMember();
+
+        return $this->render(
+            '@Mobicoop/carpool/publish.html.twig',
+            [
+                'communities'=>$communities
+            ]
+        );
     }
 
     /**

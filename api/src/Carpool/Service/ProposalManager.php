@@ -29,6 +29,7 @@ use App\Carpool\Entity\Waypoint;
 use App\Carpool\Event\MatchingNewEvent;
 use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Repository\ProposalRepository;
+use App\Community\Service\CommunityManager;
 use App\DataProvider\Entity\GeoRouterProvider;
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Zone;
@@ -58,7 +59,8 @@ class ProposalManager
     private $userRepository;
     private $logger;
     private $eventDispatcher;
-    
+    private $communityManager;
+
     /**
      * Constructor.
      *
@@ -69,7 +71,7 @@ class ProposalManager
      * @param GeoRouter $geoRouter
      * @param ZoneManager $zoneManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, LoggerInterface $logger, UserRepository $userRepository, EventDispatcherInterface $dispatcher)
+    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, CommunityManager $communityManager, LoggerInterface $logger, UserRepository $userRepository, EventDispatcherInterface $dispatcher)
     {
         $this->entityManager = $entityManager;
         $this->proposalMatcher = $proposalMatcher;
@@ -81,6 +83,7 @@ class ProposalManager
         $this->logger = $logger;
         $this->userRepository = $userRepository;
         $this->eventDispatcher = $dispatcher;
+        $this->communityManager = $communityManager;
     }
     
     /**
@@ -169,12 +172,21 @@ class ProposalManager
             // TODO : here we should remove the previously matched proposal if they already exist
             $this->entityManager->persist($proposal);
             $this->logger->info('Proposal creation | End persist ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+            // if the proposal is related to communities, we register the user to the communities
+            foreach ($proposal->getCommunities() as $community) {
+                $this->communityManager->registerUserInCommunity($community, $proposal->getUser());
+            }
         }
         
         $end = new \DateTime("UTC");
         $this->logger->info('Proposal creation | Total duration ' . ($end->diff($date))->format("%s.%f seconds"));
         
-        $matchings = $proposal->getMatchingOffers();
+        $matchingsOffers = $proposal->getMatchingOffers();
+        $matchingsRequest = $proposal->getMatchingRequests();
+        $matchings=[];
+        while(($item = array_shift($matchingsOffers)) !== null && array_push($matchings, $item));
+        while(($item = array_shift($matchingsRequest)) !== null && array_push($matchings, $item));
         if ($persist) {
             foreach ($matchings as $matching) {
                 // dispatch en event
