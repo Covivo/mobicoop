@@ -25,7 +25,7 @@ namespace App\Communication\Service;
 
 use App\Communication\Entity\Email;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Email sending service via Swift_Mailer

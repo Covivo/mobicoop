@@ -53,6 +53,13 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postLoad }
 
+    # Address Load Listener
+    mobicoop.address.address_load_listener:
+        class: App\Geography\EventListener\AddressLoadListener
+        arguments: ['@App\Geography\Service\GeoTools'] # GeoTools injected for displayLabel
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
+
 
     # CONTROLLERS AND SERVICES
 
@@ -139,10 +146,10 @@ services:
         tags: 
             - { name: monolog.logger, channel: georouter }
 
-    App\Geography\Service\GeoSearcher:
+    App\Geography\Service\GeoTools:
         arguments:
             $params:
-                - { displayCountry: '%env(resolve:DISPLAY_COUNTRY)%', displayRegion: '%env(resolve:DISPLAY_REGION)%', displaySeparator: '%env(resolve:DISPLAY_SEPARATOR)%' }
+                - { displayCountry: '%env(resolve:DISPLAY_COUNTRY)%', displayRegion: '%env(resolve:DISPLAY_REGION)%', displaySubRegion: '%env(resolve:DISPLAY_SUBREGION)%', displayPostalCode: '%env(resolve:DISPLAY_POSTALCODE)%', displaySeparator: '%env(resolve:DISPLAY_SEPARATOR)%' }
     
     # Image
     App\Image\Controller\:

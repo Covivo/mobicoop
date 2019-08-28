@@ -7,6 +7,7 @@
 /api/config/rdex/*.json
 /api/config/jwt/
 /api/var/log/
+/api/public/robots.txt
 /api/public/upload/events/images/*.jpg
 /api/public/upload/events/images/*.jpeg
 /api/public/upload/events/images/*.png
@@ -28,4 +29,7 @@
 /client/.env.test.local
 /client/.env.prod.local
 /client/var/log/
+/client/public/google*.html
+/client/public/robots.txt
 /admin/.env
+/admin/build/robots.txt

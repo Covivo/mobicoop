@@ -125,6 +125,7 @@
                   :init-outward-date="outwardDate"
                   :init-origin="origin"
                   :init-destination="destination"
+                  :regular="true"
                   @change="searchChanged"
                 />
               </v-stepper-content>
@@ -146,6 +147,7 @@
                   :user="user"
                   :init-origin="origin"
                   :init-destination="destination"
+                  :communities="communities"
                   @change="routeChanged"
                 />
               </v-stepper-content>
@@ -399,7 +401,7 @@
           v-if="step > 1"
           rounded
           outlined
-          color="primary" 
+          color="success" 
           align-center
           @click="--step"
         >
@@ -409,7 +411,7 @@
         <v-btn
           v-if="((driver && step < 7) || (step<5)) && origin != null && destination != null && (passenger || driver) && (regular || outwardDate)"
           rounded
-          color="primary"
+          color="success"
           align-center
           style="margin-left: 30px"
           @click="step++"
@@ -418,8 +420,10 @@
         </v-btn>
         <v-btn
           v-if="valid"
+          :loading="loading"
+          :disabled="loading"
           rounded
-          color="primary"
+          color="success"
           style="margin-left: 30px"
           align-center
           @click="postAd"
@@ -470,13 +474,21 @@ export default {
       type: Object,
       default: null
     },
+    communities: {
+      type: Array,
+      default: null
+    },
     defaultPriceKm: {
       type: Number,
       default: 0.06
     },
     publishUrl: {
       type: String,
-      default: ''
+      default: 'covoiturage/annonce/poster'
+    },
+    resultsUrl: {
+      type: String,
+      default: 'covoiturage/annonce/{id}/resultats'
     },
   },
   data() {
@@ -489,10 +501,10 @@ export default {
       returnTime: null,
       origin: null,
       destination: null,
-      regular: false,
+      regular: true,
       step:1,
-      driver: false,
-      passenger: false,
+      driver: true,
+      passenger: true,
       seats: 1,
       luggage: false,
       bike: false,
@@ -502,7 +514,10 @@ export default {
       price: null,
       pricePerKm: this.defaultPriceKm,
       message: null,
-      baseUrl: window.location.origin
+      baseUrl: window.location.origin,
+      loading: false,
+      userDelegated: null, // if user delegation
+      selectedCommunities: null
     }
   },
   computed: {
@@ -565,6 +580,7 @@ export default {
       this.destination = route.destination;
       this.distance = route.direction ? route.direction.distance / 1000 : null;
       this.duration = route.direction ? route.direction.duration : null;
+      this.selectedCommunities = route.communities ? route.communities : null;
     },
     postAd() {
       let postObject = {
@@ -574,7 +590,9 @@ export default {
         origin: this.origin,
         destination: this.destination
       };
+      if (this.userDelegated) postObject.userDelegated = this.userDelegated;
       if (this.validWaypoints) postObject.waypoints = this.validWaypoints;
+      if (this.selectedCommunities) postObject.communities = this.selectedCommunities;
       if (!this.regular) {
         if (this.outwardDate) postObject.outwardDate = this.outwardDate;
         if (this.outwardTime) postObject.outwardTime = this.outwardTime;
@@ -589,19 +607,26 @@ export default {
       if (this.backSeats) postObject.backSeats = this.backSeats;
       if (this.price) postObject.price = this.price;
       if (this.message) postObject.message = this.message;
-      console.error(postObject);
-      // axios.post(this.urlToCall,postObject,{
-      //     headers:{
-      //       'content-type': 'application/json'
-      //     }
-      //   })
-      //   .then(function (response) {
-      //     window.location.href = '/';
-      //     console.log(response);
-      //   })
-      //   .catch(function (error) {
-      //     console.log(error);
-      //   });
+      this.loading = true;
+      var self = this;
+      axios.post(this.urlToCall,postObject,{
+        headers:{
+          'content-type': 'application/json'
+        }
+      })
+        .then(function (response) {
+          if (response.data && response.data.result && response.data.result.id) {
+            var urlRedirect = `${self.baseUrl}/`+self.resultsUrl.replace(/{id}/,response.data.result.id);
+            window.location.href = urlRedirect;
+          }
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+        .finally(function () {
+          self.loading = false;
+        });
     },
 
   }

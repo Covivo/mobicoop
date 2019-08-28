@@ -226,17 +226,17 @@ export default {
     initDestination: {
       type: Object,
       default: null
-    }
+    }    
   },
   data() {
     return {
       date: null,
       outwardDateClicked: false,
-      regular: false,
       menu: false,
-      role: null,
-      passenger: false,
-      driver: false,
+      regular: true,
+      role: 3,
+      passenger: true,
+      driver: true,
       labelOrigin: this.$t("origin.label"),
       labelDestination: this.$t("destination.label"),
       requiredErrorOrigin: this.$t("origin.error"),

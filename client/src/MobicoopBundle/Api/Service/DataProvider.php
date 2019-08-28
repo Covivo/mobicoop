@@ -499,8 +499,6 @@ class DataProvider
         
         // $data comes from a GuzzleHttp request; it's a json hydra collection so when need to parse the json to an array
         $data = json_decode($data, true);
-
-        
         
         $hydra = new Hydra();
         if (isset($data['@context'])) {
@@ -585,10 +583,7 @@ class RemoveNullObjectNormalizer extends ObjectNormalizer
 {
     public function normalize($object, $format = null, array $context = [])
     {
-        // handling circular references
-        $this->setCircularReferenceHandler(function ($object, string $format = null, array $context = []) {
-            return $object;
-        });
+        // circular references are now handled by a dedicated class in Api\Serializer
 
         $data = parent::normalize($object, $format, $context);
         if (is_array($data)) {

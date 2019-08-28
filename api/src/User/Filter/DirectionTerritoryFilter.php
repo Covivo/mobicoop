@@ -26,11 +26,11 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use Doctrine\ORM\QueryBuilder;
 
-final class HomeAddressTerritoryFilter extends AbstractContextAwareFilter
+final class DirectionTerritoryFilter extends AbstractContextAwareFilter
 {
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        if ($property != "homeAddressTerritory") {
+        if ($property != "directionTerritory") {
             return;
         }
 
@@ -40,9 +40,12 @@ final class HomeAddressTerritoryFilter extends AbstractContextAwareFilter
         }
         
         $queryBuilder
-            ->leftJoin('u.addresses', 'homeAddress')
-            ->join('\App\Geography\Entity\Territory', 'homeAddressTerritory')
-            ->andWhere(sprintf('homeAddressTerritory.id = %s AND homeAddress.home=1 AND ST_INTERSECTS(homeAddressTerritory.geoJsonDetail,homeAddress.geoJson)=1', $value));
+            ->leftJoin('u.proposals', 'p')
+            ->leftJoin('p.criteria', 'c')
+            ->leftJoin('c.directionDriver', 'dd')
+            ->leftJoin('c.directionPassenger', 'dp')
+            ->join('\App\Geography\Entity\Territory', 'directionTerritory')
+            ->andWhere(sprintf('directionTerritory.id = %s AND (ST_INTERSECTS(directionTerritory.geoJsonDetail,dd.geoJsonDetail)=1 OR ST_INTERSECTS(directionTerritory.geoJsonDetail,dp.geoJsonDetail)=1)', $value));
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
@@ -60,8 +63,8 @@ final class HomeAddressTerritoryFilter extends AbstractContextAwareFilter
                 'format' => 'integer',
                 'required' => false,
                 'swagger' => [
-                    'description' => 'Filter on users that have their home address in the given territory',
-                    'name' => 'homeAddressTerritory',
+                    'description' => 'Filter on users that have a proposal in the given territory',
+                    'name' => 'proposalTerritory',
                     'type' => 'integer',
                 ],
             ];

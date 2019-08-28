@@ -230,7 +230,7 @@ class ImageManager
         string $filter,
         string $extension,
         string $prefix
-        ) {
+    ) {
         $versionName = $prefix . $fileName . "." . $extension;
         $liipImage = $this->dataManager->find($filter, $baseFolder.$folderOrigin.$image->getFileName());
         $resized = $this->filterManager->applyFilter($liipImage, $filter)->getContent();

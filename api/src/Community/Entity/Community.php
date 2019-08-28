@@ -53,7 +53,26 @@ use App\Community\Controller\JoinAction;
  *          "denormalization_context"={"groups"={"write"}},
  *          "pagination_client_items_per_page"=true
  *      },
- *      collectionOperations={"get","post"},
+ *      collectionOperations={
+ *          "get",
+ *          "post",
+ *          "available"={
+ *              "method"="GET",
+ *              "path"="/communities/available",
+ *              "normalization_context"={"groups"={"read"}},
+ *              "swagger_context" = {
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "userId",
+ *                          "in" = "query",
+ *                          "type" = "number",
+ *                          "format" = "integer",
+ *                          "description" = "The id of the user for which we want the communities"
+ *                      }
+ *                  }
+ *              }
+ *          }
+ *      },
  *      itemOperations={"get","put","delete"}
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "name", "description", "createdDate"}, arguments={"orderParameterName"="order"})

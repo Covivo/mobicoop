@@ -287,6 +287,36 @@ class Criteria
      * @Groups({"post","put"})
      */
     private $priceKm;
+
+    /**
+     * @var boolean|null Big luggage accepted / asked.
+     * @Groups({"post","put"})
+     */
+    private $luggage;
+
+    /**
+     * @var boolean|null Bike accepted / asked.
+     * @Groups({"post","put"})
+     */
+    private $bike;
+
+    /**
+     * @var boolean|null 2 passengers max on the back seats.
+     * @Groups({"post","put"})
+     */
+    private $backSeats;
+
+    /**
+     * @var boolean|null Solidary request.
+     * @Groups({"post","put"})
+     */
+    private $solidary;
+
+    /**
+     * @var boolean|null Solidary exclusive.
+     * @Groups({"post","put"})
+     */
+    private $solidaryExclusive;
     
     /**
      * @var Car|null The car used in the journey.
@@ -718,7 +748,7 @@ class Criteria
         return $this;
     }
     
-    public function setAnyRouteAsPassenger(bool $anyRouteAsPassenger): self
+    public function setAnyRouteAsPassenger(?bool $anyRouteAsPassenger): self
     {
         $this->anyRouteAsPassenger = $anyRouteAsPassenger;
         
@@ -745,6 +775,66 @@ class Criteria
     public function setPriceKm(?string $priceKm)
     {
         $this->priceKm = $priceKm;
+    }
+
+    public function hasLuggage(): ?bool
+    {
+        return $this->luggage;
+    }
+    
+    public function setLuggage(?bool $hasLuggage): self
+    {
+        $this->luggage = $hasLuggage;
+        
+        return $this;
+    }
+
+    public function hasBike(): ?bool
+    {
+        return $this->bike;
+    }
+    
+    public function setBike(?bool $hasBike): self
+    {
+        $this->bike = $hasBike;
+        
+        return $this;
+    }
+
+    public function hasBackSeats(): ?bool
+    {
+        return $this->backSeats;
+    }
+    
+    public function setBackSeats(?bool $hasBackSeats): self
+    {
+        $this->backSeats = $hasBackSeats;
+        
+        return $this;
+    }
+
+    public function isSolidary(): ?bool
+    {
+        return $this->solidary;
+    }
+    
+    public function setSolidary(?bool $isSolidary): self
+    {
+        $this->solidary = $isSolidary;
+        
+        return $this;
+    }
+
+    public function isSolidaryExclusive(): ?bool
+    {
+        return $this->solidary;
+    }
+
+    public function setSolidaryExclusive(?bool $isSolidaryExclusive): self
+    {
+        $this->solidaryExclusive = $isSolidaryExclusive;
+        
+        return $this;
     }
     
     public function getCar(): ?Car

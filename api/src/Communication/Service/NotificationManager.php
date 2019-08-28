@@ -129,7 +129,6 @@ class NotificationManager
     {
         $email = new Email();
         $email->setRecipientEmail($recipient->getEmail());
-        echo $recipient->getId();
         $titleContext = [];
         $bodyContext = [];
         if ($object) {

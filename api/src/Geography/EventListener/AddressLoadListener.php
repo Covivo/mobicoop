@@ -21,40 +21,29 @@
  *    LICENSE
  **************************/
 
-namespace App\Article\Controller;
+namespace App\Geography\EventListener;
 
-use App\Article\Service\ArticleManager;
-use App\Article\Entity\Section;
-use App\TranslatorTrait;
+use App\Geography\Entity\Address;
+use App\Geography\Service\GeoTools;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 
 /**
- * Controller class for section down position change.
- *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * Address Event listener
  */
-class SectionDown
+class AddressLoadListener
 {
-    use TranslatorTrait;
-    
-    private $articleManager;
-    
-    public function __construct(ArticleManager $articleManager)
+    private $geoTools;
+
+    public function __construct(GeoTools $geoTools)
     {
-        $this->articleManager = $articleManager;
+        $this->geoTools = $geoTools;
     }
 
-    /**
-     * This method is invoked when a section down position change is asked.
-     * It returns the edited section.
-     *
-     * @param Section $data
-     * @return Section
-     */
-    public function __invoke(Section $data): Section
+    public function postLoad(LifecycleEventArgs $args)
     {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Section id is provided"));
+        $address = $args->getEntity();
+        if ($address instanceof Address) {
+            $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
         }
-        return $this->articleManager->changeSectionPosition($data, $this->articleManager::DIRECTION_DOWN);
     }
 }

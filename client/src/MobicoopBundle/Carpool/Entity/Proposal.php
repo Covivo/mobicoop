@@ -35,7 +35,7 @@ use Mobicoop\Bundle\MobicoopBundle\Travel\Entity\TravelMode;
 /**
  * Carpooling : proposal (offer from a driver / request from a passenger).
  */
-class Proposal implements ResourceInterface
+class Proposal implements ResourceInterface, \JsonSerializable
 {
     const TYPE_ONE_WAY = 1;
     const TYPE_OUTWARD = 2;
@@ -45,6 +45,9 @@ class Proposal implements ResourceInterface
             "one_way"=>self::TYPE_ONE_WAY,
             "return"=>self::TYPE_OUTWARD
     ];
+
+    // proposal validity in years if no end date provided
+    const PROPOSAL_VALIDITY = 10;
     
     /**
      * @var int The id of this proposal.
@@ -64,10 +67,16 @@ class Proposal implements ResourceInterface
     private $proposalLinked;
     
     /**
-     * @var User|null User who submits the proposal.
+     * @var User|null User for whom the proposal is submitted (in general the user itself, except when it is a "posting for").
      * @Groups({"post","put"})
      */
     private $user;
+
+    /**
+     * @var User|null User that create the proposal for another user.
+     * @Groups({"post","put"})
+     */
+    private $userDelegate;
 
     /**
     * @var int Proposal type (one way / outward / return).
@@ -222,6 +231,18 @@ class Proposal implements ResourceInterface
         
         return $this;
     }
+
+    public function getUserDelegate(): ?User
+    {
+        return $this->userDelegate;
+    }
+    
+    public function setUserDelegate(?User $userDelegate): self
+    {
+        $this->userDelegate = $userDelegate;
+        
+        return $this;
+    }
     
     /**
      * @return Collection|Waypoint[]
@@ -285,16 +306,16 @@ class Proposal implements ResourceInterface
         return $this->communities->getValues();
     }
 
-    public function addCommunity(Community $community): self
+    // we can add a community as a full community object or with its IRI
+    public function addCommunity($community): self
     {
-
-//        if (!$this->communities->contains($community)) {
-        $this->communities[] = $community;
-//        }
+        if (!$this->communities->contains($community)) {
+            $this->communities[] = $community;
+        }
         return $this;
     }
 
-    public function removeCommunity(Community $community): self
+    public function removeCommunity($community): self
     {
         if ($this->communities->contains($community)) {
             $this->communities->removeElement($community);
@@ -407,5 +428,15 @@ class Proposal implements ResourceInterface
         }
         
         return $this;
+    }
+
+    // If you want more info from user you just have to add it to the jsonSerialize function
+    public function jsonSerialize()
+    {
+        return
+        [
+            'id'                => $this->getId(),
+            'proposalLinkedId'  => (int)$this->getProposalLinked()
+        ];
     }
 }

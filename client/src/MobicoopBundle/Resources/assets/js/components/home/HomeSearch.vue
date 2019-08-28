@@ -55,6 +55,7 @@
           <v-btn
             color="success"
             rounded
+            :loading="loading"
             :disabled="searchUnavailable"
             @click="search"
           >
@@ -100,7 +101,8 @@ export default {
   },
   data() {
     return {
-      regular: false,
+      loading: false,
+      regular: true,
       date: null,
       origin: null,
       destination: null,
@@ -114,7 +116,7 @@ export default {
       return `${this.baseUrl}/${this.route}/${this.origin.addressLocality}/${this.destination.addressLocality}/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.computedDateFormat}/resultats`;
     },
     searchUnavailable() {
-      return !this.origin || !this.destination;
+      return (!this.origin || !this.destination || this.loading == true)      
     },
     computedDateFormat() {
       moment.locale(this.locale);
@@ -131,9 +133,12 @@ export default {
       this.date = search.date;
     },
     search: function() {
+      this.loading = true;
+      
       window.location.href = this.urlToCall;
     },
     publish: function() {
+      this.loading = true;
       console.error("publish !");
     }
   }

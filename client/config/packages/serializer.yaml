@@ -1,0 +1,3 @@
+framework:
+    serializer:
+        circular_reference_handler: 'Mobicoop\Bundle\MobicoopBundle\Api\Serializer\CircularReferenceHandler'

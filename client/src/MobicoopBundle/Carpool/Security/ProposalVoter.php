@@ -31,6 +31,9 @@ use Mobicoop\Bundle\MobicoopBundle\Permission\Service\PermissionManager;
 
 class ProposalVoter extends Voter
 {
+    const CREATE_AD = 'create_ad';
+    const POST = 'post';
+    const POST_DELEGATE = 'post_delegate';
     const RESULTS = 'results';
 
     private $permissionManager;
@@ -44,12 +47,15 @@ class ProposalVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
+            self::CREATE_AD,
+            self::POST,
+            self::POST_DELEGATE,
             self::RESULTS
             ])) {
             return false;
         }
 
-        // only vote on Ad objects inside this voter
+        // only vote on Proposal objects inside this voter
         if (!$subject instanceof Proposal) {
             return false;
         }
@@ -63,6 +69,12 @@ class ProposalVoter extends Voter
         $proposal = $subject;
 
         switch ($attribute) {
+            case self::CREATE_AD:
+                return $this->canCreateProposal();
+            case self::POST:
+                return $this->canPostProposal($user);
+            case self::POST_DELEGATE:
+                return $this->canPostDelegateProposal($user);
             case self::RESULTS:
                 return $this->canViewProposalResults($proposal, $user);
         }
@@ -70,10 +82,38 @@ class ProposalVoter extends Voter
         throw new \LogicException('This code should not be reached!');
     }
 
+    private function canCreateProposal()
+    {
+        // everbody can create a proposal
+        return true;
+    }
+
+    private function canPostProposal(User $user)
+    {
+        // only registered users can post a proposal
+        if (!$user instanceof User) {
+            return false;
+        }
+        return true;
+    }
+
+    private function canPostDelegateProposal(User $user)
+    {
+        // only dedicated users can post a proposal for another user
+        if (!$user instanceof User) {
+            return false;
+        }
+        return $this->permissionManager->checkPermission('proposal_post_delegate', $user);
+    }
+
     private function canViewProposalResults(Proposal $proposal, User $user)
     {
-        if ($user instanceof User && $proposal->getUser()->getId() != $user->getId()) {
-            // only the author of the proposal can view the results
+        // only registered users can view proposal results
+        if (!$user instanceof User) {
+            return false;
+        }
+        // only the author of the proposal or a dedicated user can view the results
+        if (($proposal->getUser()->getId() != $user->getId()) && (!$this->permissionManager->checkPermission('proposal_results_delegate', $user))) {
             return false;
         }
         return $this->permissionManager->checkPermission('proposal_results', $user);
