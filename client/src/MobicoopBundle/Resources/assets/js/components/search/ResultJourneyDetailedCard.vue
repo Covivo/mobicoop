@@ -1,79 +1,76 @@
 <template>
   <v-content>
-    <v-container
-      fluid
-      class="journey-details-height mb-3"
-    >
-      <v-row>
+    <v-container fluid>
+      <v-list-item>
         <!-- avatar --> 
-        <v-col
+
+        <v-list-item-avatar
           v-if="passenger"
-          justify-space-around
+          color="primary"
+          size="60"
+          class="ml-2"
         >
-          <v-avatar
-            color="primary"
+          <v-icon
+            dark
+            size="35"
           >
-            <v-icon dark>
-              mdi-account-supervisor
-            </v-icon>
-          </v-avatar>
-        </v-col>
+            mdi-account-supervisor
+          </v-icon>
+        </v-list-item-avatar>
 
-        <v-col
+        <v-list-item-avatar
           v-else-if="driver"
-          justify-space-around
+          color="secondary"
+          size="60"
+          class="ml-2"
         >
-          <v-avatar
-            color="secondary"
+          <v-icon
+            dark
+            size="35"
           >
-            <v-icon dark>
-              mdi-steering
-            </v-icon>
-          </v-avatar>
-        </v-col>
+            mdi-steering
+          </v-icon>
+        </v-list-item-avatar>
 
-        <!-- hour -->
-        <v-col
-          class="text-address-size"
+        <!-- Hour & Date -->
+        <v-list-item-content
+          class="ml-2"
         >
-          <v-row
-            top
+          <v-list-item-title
+            class="text-address-size"
           >
             <h3>09h00</h3>
-          </v-row>
+          </v-list-item-title>
+          <v-list-item-title class="date-uppercase">
+            {{ displaydate(date) }}
+          </v-list-item-title>
+        </v-list-item-content>
 
-          <!-- date -->
-          <v-row
-            class="date-uppercase"
-          >  
-            <p>
-              {{ displaydate(date) }}
-            </p>
-          </v-row>  
-        </v-col>
+
 
         <!-- origin -->
-        <v-col
-          class="text-left"
+        <v-list-item-content
+          class=" text-left ml-2"
         >
-          <v-row
+          <v-list-item-title
             class="text-city-size"
           >
-            {{ origin }}
-            <!-- {{ splitCityOrigin() }} -->
-          </v-row>
-          <v-row
+            Nancy
+          </v-list-item-title>
+          <v-list-item-title
             class="d-inline-block text-truncate text-address-size"
             style="max-width: 100px;"
           >
-            <!-- {{ splitAddressOrigin() }} -->
-          </v-row>
-        </v-col> 
+            Boulevard d'Autrasie
+          </v-list-item-title>
+        </v-list-item-content>
 
         <!-- icon --> 
-        <v-col>
+        <v-col
+          cols="1"
+        >
           <v-icon
-            color="primary"
+            scolor="secondary"
             size="32"
           >
             mdi-ray-start-end
@@ -81,33 +78,38 @@
         </v-col> 
 
         <!-- destination --> 
-        <v-col
-          class="text-left"
+        <v-list-item-content
+          class=" text-left ml-1"
         >
-          <v-row
+          <v-list-item-title
             class="text-city-size"
           >
-            {{ destination }}
-            <!-- {{ splitCityDestination() }} -->
-          </v-row>
-          <v-row
+            Sanary-sur-Mer
+          </v-list-item-title>
+          <v-list-item-title
             class="d-inline-block text-truncate text-address-size"
             style="max-width: 100px;"
           >
-            <!-- {{ splitAddressDestination() }} -->
-          </v-row>
-        </v-col> 
+            Rue d’Arcole
+          </v-list-item-title>
+        </v-list-item-content>
 
         <!--seats --> 
-        <v-col>
+        <v-col
+          align="center"
+        >
           <p>3 places</p>
         </v-col>
 
         <!-- price --> 
-        <v-col>
-          <h3>50€</h3>
+        <v-col
+          align="center"
+          justify="end"
+          class="price"
+        >
+          <p>50€</p>
         </v-col>
-      </v-row>
+      </v-list-item>
     </v-container>
   </v-content>
 </template>
@@ -169,24 +171,6 @@ export default {
     displaydate(date){
       return moment (new Date(date)).utcOffset("+00:00").format('ddd DD/MM ')
     },
-    
-    // TODO : FIND AN OTHER METHOD, JUST FOR THE MOMENT :: BAD [" ... "], NOT OPTIMIZED
-    // splitCityOrigin () {
-    //   this.resultCityOrigin= this.origin.split(', ')
-    //   return this.city= this.resultCityOrigin.slice(1)
-    // },
-    // splitAddressOrigin () {
-    //   this.resultAddressOrigin = this.origin.split(', ')
-    //   return this.address = this.resultAddressOrigin.slice(0,1)
-    // },
-    // splitCityDestination () {
-    //   this.resultCityDestination = this.destination.split(', ')
-    //   return this.city= this.resultCityDestination.slice(1)
-    // },
-    // splitAddressDestination () {
-    //   this.resultAddressDestination = this.destination.split(', ')
-    //   return this.address = this.resultAddressDestination.slice(0,1)
-    // },
   }  
 }
 </script>
@@ -204,7 +188,8 @@ export default {
         text-transform: capitalize;
   }
 
-  .journey-details-height{
-    height: 100px
+  .price {
+    font-size: 18px;
+      font-weight: bold;
   }
 </style>

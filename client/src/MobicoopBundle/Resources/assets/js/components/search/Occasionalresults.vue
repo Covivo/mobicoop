@@ -86,7 +86,7 @@
             chips
             clearable
             multiple
-            label="trier"
+            label="Filtres"
           >
             <template v-slot:selection="{ attrs, item, select, selected }">
               <v-chip
@@ -100,6 +100,14 @@
               </v-chip>
             </template>
           </v-combobox>
+          <v-row
+            justify="start"
+            align="center"
+            class="mt-8"
+            no-gutters
+          >
+            <h3> 2 annonces trouvées </h3>
+          </v-row>
         </v-col>
       </v-row>
 
@@ -116,8 +124,27 @@
             :date="date"
             :carpool-results="results"
           />
+
+          
           <!--    <h3>{{ results }}</h3>-->
           <!--          card use vdivider for middle line-->
+        </v-col>
+      </v-row>
+
+      <!-- TODO : REMOVE  -->
+      <v-row
+        justify="center"
+        align="center"
+      >
+        <v-col
+          cols="6"
+        >
+          <result-card 
+            :origin="origin"
+            :destination="destination"
+            :date="date"
+            :carpool-results="results"
+          />
         </v-col>
       </v-row>
     </v-container>
@@ -183,8 +210,8 @@ export default {
       loading : true,
 
       // TODO : REMOVE WHEN START CODING FILTER COMPONENT
-      chips: ['Programming', 'Playing video games', 'Watching movies'],
-      items: ['Streaming', 'Eating'],
+      chips: ['Horaire', 'Type d\'annonce', 'Civilité'],
+      items: ['Communauté', 'Espace'],
     };
   },
   created() {
