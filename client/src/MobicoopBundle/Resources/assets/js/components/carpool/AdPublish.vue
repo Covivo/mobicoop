@@ -125,6 +125,7 @@
                   :init-outward-date="outwardDate"
                   :init-origin="origin"
                   :init-destination="destination"
+                  :regular="true"
                   @change="searchChanged"
                 />
               </v-stepper-content>
@@ -400,7 +401,7 @@
           v-if="step > 1"
           rounded
           outlined
-          color="primary" 
+          color="success" 
           align-center
           @click="--step"
         >
@@ -410,7 +411,7 @@
         <v-btn
           v-if="((driver && step < 7) || (step<5)) && origin != null && destination != null && (passenger || driver) && (regular || outwardDate)"
           rounded
-          color="primary"
+          color="success"
           align-center
           style="margin-left: 30px"
           @click="step++"
@@ -422,7 +423,7 @@
           :loading="loading"
           :disabled="loading"
           rounded
-          color="primary"
+          color="success"
           style="margin-left: 30px"
           align-center
           @click="postAd"
@@ -500,10 +501,10 @@ export default {
       returnTime: null,
       origin: null,
       destination: null,
-      regular: false,
+      regular: true,
       step:1,
-      driver: false,
-      passenger: false,
+      driver: true,
+      passenger: true,
       seats: 1,
       luggage: false,
       bike: false,
