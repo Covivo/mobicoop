@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -20,24 +21,15 @@
  *    LICENSE
  **************************/
 
-namespace App;
+namespace Mobicoop\Bundle\MobicoopBundle\Api\Serializer;
 
-use Symfony\Contracts\Translation\TranslatorInterface;
-
-trait TranslatorTrait
+/**
+ * Mobicoop circular reference handler.
+ */
+class CircularReferenceHandler
 {
-    /**
-     * @var TranslatorInterface $translator
-     */
-    protected $translator;
-    
-    
-    /**
-     * @required
-     * @param TranslatorInterface $translator
-     */
-    public function setTranslator(TranslatorInterface $translator)
+    public function __invoke($object)
     {
-        $this->translator = $translator;
+        return $object;
     }
 }

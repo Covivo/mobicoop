@@ -35,6 +35,8 @@ services:
     # Api
     Mobicoop\Bundle\MobicoopBundle\Api\Service\:
         resource: '@MobicoopBundle/Api/Service/*' 
+    Mobicoop\Bundle\MobicoopBundle\Api\Serializer\:
+        resource: '@MobicoopBundle/Api/Serializer/*' 
 
     # Article
     Mobicoop\Bundle\MobicoopBundle\Article\Controller\:
