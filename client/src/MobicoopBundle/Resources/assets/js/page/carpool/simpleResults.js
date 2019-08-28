@@ -17,7 +17,6 @@ new Vue({
   components: {
     Occasionalresults,
     ResultCard,
-
     MHeader,
     MFooter
   }

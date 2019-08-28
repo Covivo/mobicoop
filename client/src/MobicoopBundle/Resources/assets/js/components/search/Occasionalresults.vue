@@ -13,11 +13,14 @@
 
       <!--      Title row-->
       <v-row
-        justify="center"
+        justify="start"
         align="center"
         class="mt-8"
         no-gutters
       >
+        <v-col
+          cols="3"
+        />
         <v-col
           cols="2"
           class="title-size"
@@ -62,17 +65,18 @@
         no-gutters
       >
         <v-col
-          cols="5"
+          cols="6"
         >
           {{ displaydate(date) }}
         </v-col>
       </v-row>
+      <!--      filter row-->
       <v-row
         justify="center"
         align="center"
       >
         <v-col
-          cols="5"
+          cols="6"
           align-self="start"
         >
           <!--          TODO : REMOVE WHEN START CODING FILTER COMPONENT-->
@@ -98,13 +102,13 @@
           </v-combobox>
         </v-col>
       </v-row>
+
       <v-row
         justify="center"
         align="center"
       >
         <v-col
-          cols="5"
-          align="center"
+          cols="6"
         >
           <result-card 
             :origin="origin"
