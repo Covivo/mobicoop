@@ -29,7 +29,7 @@
                             "messages":"Messages",
                             "context":"Annonces(s)",
                             "ongoingasks":"Demandes en cours",
-                            "directmessages":"Boîte de dialogue",
+                            "directmessages":"Autres messages",
                             "nocarpoolmessages":"Aucun message de covoiturage",
                             "nodirectmessages":"Aucun message direct",
                             "notLinkedToACarpool":"N'est pas lié à un covoiturage"
@@ -74,7 +74,7 @@
                         "messages":"Messages",
                         "context":"Carpool(s)",
                         "ongoingasks":"Ongoing proposals",
-                        "directmessages":"Dialog box",
+                        "directmessages":"Other messages",
                         "nocarpoolmessages":"No carpool message",
                         "nodirectmessages":"No direct message",
                         "notLinkedToACarpool":"Not carpool linked"
