@@ -337,7 +337,6 @@
                       <v-col class="col-12 col-lg-6">
                         <m-btn
                           color="error"
-                          rounded
                           @click.native="updateCarpool(4)"
                         >
                           {{ $t("ui.button.refuse") }} <v-icon>mdi-close</v-icon>
