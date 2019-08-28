@@ -1,6 +1,9 @@
 <template>
   <v-content>
-    <v-container fluid>
+    <v-container
+      fluid
+      class="journey-details-height mb-3"
+    >
       <v-row>
         <!-- avatar --> 
         <v-col
@@ -199,5 +202,9 @@ export default {
 
   .date-uppercase {
         text-transform: capitalize;
+  }
+
+  .journey-details-height{
+    height: 100px
   }
 </style>

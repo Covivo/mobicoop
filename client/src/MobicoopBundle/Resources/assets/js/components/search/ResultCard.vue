@@ -1,6 +1,5 @@
 <template>
   <v-card
-    height="215"
     flat
   >
     <result-journey-detailed-card 
@@ -9,8 +8,11 @@
       :date="date"
       :carpool-results="carpoolResults"
     />
-    
-    <v-divider class="divider-width" />
+    <v-row
+      justify="center"
+    >
+      <v-divider class="divider-width" />
+    </v-row>
     <result-user-detailed-card />
   </v-card>
 </template>
