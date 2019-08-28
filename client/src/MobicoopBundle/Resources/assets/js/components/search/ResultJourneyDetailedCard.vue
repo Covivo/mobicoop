@@ -70,7 +70,7 @@
         <!-- icon --> 
         <v-col>
           <v-icon
-            :color="secondary"
+            color="primary"
             size="32"
           >
             mdi-ray-start-end
