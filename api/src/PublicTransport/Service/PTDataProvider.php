@@ -78,7 +78,7 @@ class PTDataProvider
         string $dateType,
         string $algorithm,
         string $modes
-            ): ?array {
+    ): ?array {
         if (!array_key_exists($provider, self::PROVIDERS)) {
             return null;
         }

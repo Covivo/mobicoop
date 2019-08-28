@@ -809,7 +809,7 @@ class Deserializer
             $typeExtractors,
             $descriptionExtractors,
             $accessExtractors
-                );
+        );
         
         $properties = $propertyInfo->getProperties(get_class($object));
         foreach ($properties as $property) {

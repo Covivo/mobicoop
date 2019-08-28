@@ -78,7 +78,7 @@ class PublicTransportManager
         string $dateType,
         string $algorithm,
         string $modes
-        ) {
+    ) {
         $response = $this->dataProvider->getCollection([
             'provider'              => $provider,
             'apikey'                => $apikey,
