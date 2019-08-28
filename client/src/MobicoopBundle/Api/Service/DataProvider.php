@@ -583,10 +583,7 @@ class RemoveNullObjectNormalizer extends ObjectNormalizer
 {
     public function normalize($object, $format = null, array $context = [])
     {
-        // handling circular references
-        $this->setCircularReferenceHandler(function ($object, string $format = null, array $context = []) {
-            return $object;
-        });
+        // circular references are now handled by a dedicated class in Api\Serializer
 
         $data = parent::normalize($object, $format, $context);
         if (is_array($data)) {

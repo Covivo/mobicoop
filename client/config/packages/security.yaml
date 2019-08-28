@@ -34,5 +34,4 @@ security:
         # - { path: ^/profile, roles: ROLE_USER }
     encoders:
         Mobicoop\Bundle\MobicoopBundle\User\Entity\User:
-            algorithm: bcrypt
-            cost: 12
+            algorithm: auto

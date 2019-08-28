@@ -2,11 +2,11 @@ security:
 
     encoders:
         Symfony\Component\Security\Core\User\User: 
-            algorithm: bcrypt
+            algorithm: auto
         App\App\Entity\App:
-            algorithm: bcrypt
+            algorithm: auto
         App\User\Entity\User:
-            algorithm: bcrypt
+            algorithm: auto
 
     # providers for authentication
     providers:
