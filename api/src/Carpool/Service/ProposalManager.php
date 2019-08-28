@@ -185,8 +185,8 @@ class ProposalManager
         $matchingsOffers = $proposal->getMatchingOffers();
         $matchingsRequest = $proposal->getMatchingRequests();
         $matchings=[];
-        while(($item = array_shift($matchingsOffers)) !== null && array_push($matchings, $item));
-        while(($item = array_shift($matchingsRequest)) !== null && array_push($matchings, $item));
+        while (($item = array_shift($matchingsOffers)) !== null && array_push($matchings, $item));
+        while (($item = array_shift($matchingsRequest)) !== null && array_push($matchings, $item));
         if ($persist) {
             foreach ($matchings as $matching) {
                 // dispatch en event
