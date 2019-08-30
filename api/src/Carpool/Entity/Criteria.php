@@ -67,7 +67,7 @@ class Criteria
      * @var boolean The user can be a driver.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"results","write","thread"})
      */
     private $driver;
 
@@ -75,7 +75,7 @@ class Criteria
      * @var boolean The user can be a passenger.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"results","write","thread"})
      */
     private $passenger;
     
@@ -84,7 +84,7 @@ class Criteria
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write","thread"})
+     * @Groups({"results","write","thread"})
      */
     private $frequency;
 
@@ -93,7 +93,7 @@ class Criteria
      *
      * @Assert\NotBlank
      * @ORM\Column(type="integer")
-     * @Groups({"read","write","thread"})
+     * @Groups({"results","write","thread"})
      */
     private $seats;
 

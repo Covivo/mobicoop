@@ -158,10 +158,6 @@ export default {
   },
   data: function() {
     return {
-      resultAddressOrigin: null,
-      resultCityOrigin:  null,
-      resultAddressDestination: null,
-      resultCityDestination:  null,
       driver: false,
       passenger: true,
     };

@@ -64,7 +64,7 @@ use App\Communication\Entity\Notified;
  *          "simple_search"={
  *              "method"="GET",
  *              "path"="/proposals/search",
- *              "normalization_context"={"groups"={"read"}},
+ *              "normalization_context"={"groups"={"results"}},
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -146,7 +146,7 @@ class Proposal
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write","threads","thread"})
+     * @Groups({"read","results","write","threads","thread"})
      */
     private $type;
     
@@ -180,7 +180,7 @@ class Proposal
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposals")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"results","write"})
      */
     private $user;
 
@@ -230,7 +230,7 @@ class Proposal
      * @var ArrayCollection|null The matching of the proposal (if proposal is a request).
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read"})
+     * @Groups({"results"})
      */
     private $matchingRequests;
 

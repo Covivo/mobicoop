@@ -126,25 +126,8 @@
           />
 
           
-          <!--    <h3>{{ results }}</h3>-->
+          <h3>{{ results.type }}</h3>
           <!--          card use vdivider for middle line-->
-        </v-col>
-      </v-row>
-
-      <!-- TODO : REMOVE  -->
-      <v-row
-        justify="center"
-        align="center"
-      >
-        <v-col
-          cols="6"
-        >
-          <result-card 
-            :origin="origin"
-            :destination="destination"
-            :date="date"
-            :carpool-results="results"
-          />
         </v-col>
       </v-row>
     </v-container>

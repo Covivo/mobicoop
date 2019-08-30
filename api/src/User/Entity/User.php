@@ -198,7 +198,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The first name of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write", "threads", "thread"})
+     * @Groups({"results","write", "threads", "thread"})
      */
     private $givenName;
 
@@ -206,7 +206,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The family name of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write", "threads", "thread"})
+     * @Groups({"results","write", "threads", "thread"})
      */
     private $familyName;
 
@@ -216,7 +216,7 @@ class User implements UserInterface, EquatableInterface
      * @Assert\NotBlank
      * @Assert\Email()
      * @ORM\Column(type="string", length=100, unique=true)
-     * @Groups({"read","write"})
+     * @Groups({"results","write"})
      */
     private $email;
 
@@ -262,7 +262,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null The telephone number of the user.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"results","write"})
      */
     private $telephone;
 
@@ -392,7 +392,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"read","write"})
+     * @Groups({"results","write"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
