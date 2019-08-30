@@ -39,7 +39,7 @@ class GeoTools
      */
     public function __construct(array $params)
     {
-        $this->params = $params;
+        $this->params = $params;    
     }
 
     /**
@@ -145,46 +145,47 @@ class GeoTools
     public function getDisplayLabel(Address $address): string
     {
         // Determine the more logical display label considering the params
-
-        // street address
         $displayLabelTab = [];
-        if (trim($address->getStreetAddress())!=="") {
-            $displayLabelTab[] = $address->getStreetAddress();
+
+        // The following parameters are in your env or local env
+        
+        // street address
+        if (isset($this->params['displayStreetAddress']) && trim($this->params['displayStreetAddress'])==="true") {
+            if (trim($address->getStreetAddress())!=="") {
+                $displayLabelTab[] = $address->getStreetAddress();
+            }
+        }
+
+        // postal code
+        if (isset($this->params['displayLocality']) && trim($this->params['displayLocality'])==="true") {
+            if (trim($address->getAddressLocality())!=="") {
+                $displayLabelTab[] = $address->getAddressLocality();
+            }
         }
 
         // locality
-        $displayLabelTab[] = $address->getAddressLocality();
-
-        // postal code
-        if (trim($address->getPostalCode())!=="") {
-            $displayLabelTab[] = $address->getPostalCode();
-        }
-
-        // The following parameters are in your env or local env
-
-        // postal code
-        if (isset($this->params[0]['displayPostalCode']) && trim($this->params[0]['displayPostalCode'])==="true") {
+        if (isset($this->params['displayPostalCode']) && trim($this->params['displayPostalCode'])==="true") {
             if (trim($address->getPostalCode())!=="") {
                 $displayLabelTab[] = $address->getPostalCode();
             }
         }
 
         // subregion
-        if (isset($this->params[0]['displaySubRegion']) && trim($this->params[0]['displaySubRegion'])==="true") {
+        if (isset($this->params['displaySubRegion']) && trim($this->params['displaySubRegion'])==="true") {
             if (trim($address->getRegion())!=="") {
                 $displayLabelTab[] = $address->getRegion();
             }
         }
 
         // region
-        if (isset($this->params[0]['displayRegion']) && trim($this->params[0]['displayRegion'])==="true") {
+        if (isset($this->params['displayRegion']) && trim($this->params['displayRegion'])==="true") {
             if (trim($address->getMacroRegion())!=="") {
                 $displayLabelTab[] = $address->getMacroRegion();
             }
         }
 
         // country
-        if (isset($this->params[0]['displayCountry']) && trim($this->params[0]['displayCountry'])==="true") {
+        if (isset($this->params['displayCountry']) && trim($this->params['displayCountry'])==="true") {
             if (trim($address->getAddressCountry())!=="") {
                 $displayLabelTab[] = $address->getAddressCountry();
             }
@@ -192,8 +193,8 @@ class GeoTools
 
         // if no separators in local env, we are using comma
         $displaySeparator = ", ";
-        if (isset($this->params[0]['displaySeparator'])) {
-            $displaySeparator = $this->params[0]['displaySeparator'];
+        if (isset($this->params['displaySeparator'])) {
+            $displaySeparator = $this->params['displaySeparator'];
         }
 
         return implode($displaySeparator, $displayLabelTab);
