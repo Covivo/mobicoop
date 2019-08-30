@@ -234,7 +234,8 @@
             <v-btn
               color="success"
               class="mr-4 mb-100 mt-12"
-              :disabled="!step5"
+              :disabled="!step5 || loading"
+              :loading="loading"
               @click="validate"
             >
               {{ $t('ui.button.register') }}
@@ -286,6 +287,7 @@ export default {
     return {
       //
       event: null,
+      loading: false,
 
       //step validators
       step1: true,
@@ -370,6 +372,7 @@ export default {
       this.form.homeAddress = address;
     },
     validate: function (e) {
+      this.loading = true,
       axios.post('/utilisateur/inscription',
         {
           email:this.form.email,
