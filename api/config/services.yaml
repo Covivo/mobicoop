@@ -149,7 +149,13 @@ services:
     App\Geography\Service\GeoTools:
         arguments:
             $params:
-                - { displayCountry: '%env(resolve:DISPLAY_COUNTRY)%', displayRegion: '%env(resolve:DISPLAY_REGION)%', displaySubRegion: '%env(resolve:DISPLAY_SUBREGION)%', displayPostalCode: '%env(resolve:DISPLAY_POSTALCODE)%', displaySeparator: '%env(resolve:DISPLAY_SEPARATOR)%' }
+                displayCountry: '%env(resolve:DISPLAY_COUNTRY)%'
+                displayRegion: '%env(resolve:DISPLAY_REGION)%'
+                displaySubRegion: '%env(resolve:DISPLAY_SUBREGION)%'
+                displayLocality: '%env(resolve:DISPLAY_LOCALITY)%'
+                displayPostalCode: '%env(resolve:DISPLAY_POSTALCODE)%'
+                displayStreetAddress: '%env(resolve:DISPLAY_STREETADDRESS)%'
+                displaySeparator: '%env(resolve:DISPLAY_SEPARATOR)%'
     
     # Image
     App\Image\Controller\:
