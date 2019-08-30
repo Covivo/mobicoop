@@ -1,3 +1,4 @@
+{# @var community \Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community #}
 {% extends '@Mobicoop/base.html.twig' %}
 
 {% block title %}Communauté
@@ -31,7 +32,7 @@
             </figure>
           </div>
           <div class="media-content">
-            <p class="title is-4">{{community.name}}</p>
+            <p class="title is-4">{{ community.name }}</p>
             <p class="subtitle is-6">Créateur de la communauté :
               {{community.user.givenName ~ " " ~ community.user.familyName}}</p>
           </div>
@@ -46,7 +47,7 @@
       {% if isMember %}
         <p class="dataValid">
           Vous êtes membre de cette communauté !</p>
-        <a class="button" href="{{path('carpool_ad', { 'id': community.id })}}">Déposer un trajet dans la communauté</a>
+        <a class="button" href="{{path('carpool_ad_post', { 'id': community.id })}}">Déposer un trajet dans la communauté</a>
       {% else %}
         {% if community.secured %}
           <p class="dataInvalid">{{ errorLoginSecured }}</p>
@@ -73,6 +74,9 @@
         {% endif %}
       {% endif %}
     </div>
+  </section>
+  <section class="hero community-members has-text-centered">
+    {% include "@Mobicoop/components/MemberList.html.twig" %}
   </section>
   <section class="hero communautes has-text-centered">
     <a class="lien" href="{{ path('community_list') }}">Liste des communautés</a>

@@ -83,7 +83,7 @@
                                 {% if community.isMembersHidden or community.isProposalsHidden %}
                                     <a class="button" href="{{path('community_join', { 'id': community.id })}}">Rejoindre la communauté</a>
                                 {% else %}
-                                    <a class="button" href="{{path('carpool_ad', { 'id': community.id })}}">Déposer un trajet dans la communauté</a>
+                                    <a class="button" href="{{path('carpool_ad_post', { 'id': community.id })}}">Déposer un trajet dans la communauté</a>
                                 {% endif %}
                             </div>
                         </div>
