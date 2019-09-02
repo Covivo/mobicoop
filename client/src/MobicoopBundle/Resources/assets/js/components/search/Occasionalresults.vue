@@ -124,9 +124,6 @@
             :date="date"
             :carpool-results="results"
           />
-
-          
-          <h3>{{ results.type }}</h3>
           <!--          card use vdivider for middle line-->
         </v-col>
       </v-row>
@@ -183,7 +180,7 @@ export default {
     matchingSearchUrl: {
       type: String,
       default: null
-    },
+    }
   },
   data : function() {
     return {

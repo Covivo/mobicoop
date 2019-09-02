@@ -1,5 +1,5 @@
 <template>
-  <v-card
+  <v-card 
     flat
   >
     <result-journey-detailed-card 
@@ -13,7 +13,9 @@
     >
       <v-divider class="divider-width" />
     </v-row>
-    <result-user-detailed-card />
+    <result-user-detailed-card 
+      :carpool-results="carpoolResults"
+    />
   </v-card>
 </template>
 <script>
@@ -62,8 +64,7 @@ export default {
       type: Object,
       default: null
     }
-      
-  }, 
+  },
 }
 </script>
 

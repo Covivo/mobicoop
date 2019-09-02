@@ -248,7 +248,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface|null The birth date of the user.
      *
      * @ORM\Column(type="date", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"results","write"})
      *
      * @ApiProperty(
      *     attributes={

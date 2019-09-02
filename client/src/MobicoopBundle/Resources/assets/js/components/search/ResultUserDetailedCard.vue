@@ -15,9 +15,9 @@
         <!--        user data-->
         <v-list-item-content>
           <v-list-item-title class="font-weight-bold">
-            Hervé D.
+            {{ carpoolResults.matchingRequests[0].proposalOffer.user.givenName }}.{{ carpoolResults.matchingRequests[0].proposalOffer.user.familyName }}
           </v-list-item-title>
-          <v-list-item-title>35 ans</v-list-item-title>
+          <v-list-item-title>{{ carpoolResults.matchingRequests[0].proposalOffer.user.birthDate }} </v-list-item-title>
           <v-list-item-title
             class="caption font-weight-light font-italic"
           >
@@ -58,7 +58,7 @@
             <div
               class="ml-2"
             >
-              0613524206
+              {{ carpoolResults.matchingRequests[0].proposalOffer.user.telephone }}
             </div>
           </v-btn>
           <v-btn
@@ -108,16 +108,54 @@
 <script>
 export default {
   name: "ResultUserDetailedCard",
+  props: {
+    origin: {
+      type: String,
+      default: null
+    },
+    destination: {
+      type: String,
+      default: null
+    },
+    originLatitude: {
+      type: String,
+      default: null
+    },
+    originLongitude: {
+      type: String,
+      default: null
+    },
+    destinationLatitude: {
+      type: String,
+      default: null
+    },
+    destinationLongitude: {
+      type: String,
+      default: null
+    },
+    date: {
+      type: String,
+      default: null
+    },
+    carpoolResults: {
+      type: Object,
+      default: null
+    },
+    matchingSearchUrl: {
+      type: String,
+      default: null
+    },
+  },
   data : function() {
     return {
-      togglePhoneButton: false
+      togglePhoneButton: false,
     };
   },
   methods: {
     toggleButton: function(){
       this.togglePhoneButton = !this.togglePhoneButton;
-    }
-  }
+    },
+  } 
 }
 </script>
 

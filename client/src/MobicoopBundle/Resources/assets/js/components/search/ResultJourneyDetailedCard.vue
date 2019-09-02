@@ -98,7 +98,7 @@
         <v-col
           align="center"
         >
-          <p>3 places</p>
+          <p> {{ carpoolResults.matchingRequests[0].criteria.seats }} place(s)</p>
         </v-col>
 
         <!-- price --> 
@@ -107,7 +107,7 @@
           justify="end"
           class="price"
         >
-          <p>50€</p>
+          <p>{{ carpoolResults.matchingRequests[0].criteria.priceKm }} €</p>
         </v-col>
       </v-list-item>
     </v-container>

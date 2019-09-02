@@ -494,7 +494,7 @@ class Criteria
     * @var float|null The price per km.
     *
     * @ORM\Column(type="decimal", precision=4, scale=2, nullable=true)
-    * @Groups({"read","write","thread"})
+    * @Groups({"results","write","thread"})
     */
     private $priceKm;
 
