@@ -113,17 +113,29 @@ export default {
   computed: {
     // creation of the url to call
     urlToCall() {
-      return `${this.baseUrl}/${this.route}/${this.origin.addressLocality}/${this.destination.addressLocality}/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.computedDateFormat}/resultats`;
+      // return `${this.baseUrl}/${this.route}/${this.origin.addressLocality}/${this.destination.addressLocality}/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.computedDateFormat}/resultats`;
+      return `${this.baseUrl}/${this.route}/Boulevard_d’Austrasie,_Nancy/Rue_d’Arcole,_Sanary-sur-Mer/48.6937223/6.1834097/49.1196964/6.1763552/${this.dateFormated}/resultats`;
+
+
     },
-    searchUnavailable() {
-      return (!this.origin || !this.destination || this.loading == true)      
-    },
+    // TODO : DON'T FORGET TO UNCOMMENT
+    // searchUnavailable() {
+    //   return (!this.origin || !this.destination || this.loading == true)      
+    // },
     computedDateFormat() {
       moment.locale(this.locale);
       return this.date
         ? moment(this.date).format(this.$t("ui.i18n.date.format.fullNumericDate"))
         : moment(new Date()).format(this.$t("ui.i18n.date.format.fullNumericDate"));
     },
+    dateFormated() {
+      // return !this.date
+      //   ? moment(new Date()).format("YYYYMMDDHHmmss")
+      //   : moment(this.date).format("YYYYMMDDHHmmss");
+      return moment(new Date('2019-08-31T08:00:00.000Z')).utcOffset("+00:00").format() //@TODO: Uncomment true method
+      //TODO : see if we apply GMT or not
+    },
+
   },
   methods: {
     searchChanged: function(search) {

@@ -209,7 +209,7 @@ export default {
       .then((response) => {
         console.log(response);
         this.loading = false;
-        // console.error(response.data[0]);
+        console.error(response.data[0]);
         return this.results = response.data[0];
       })
       .catch((error) => {

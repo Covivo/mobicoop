@@ -67,7 +67,7 @@ class Criteria
      * @var boolean The user can be a driver.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"results","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $driver;
 
@@ -75,7 +75,7 @@ class Criteria
      * @var boolean The user can be a passenger.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"results","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $passenger;
     
@@ -84,7 +84,7 @@ class Criteria
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"results","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $frequency;
 
@@ -93,7 +93,7 @@ class Criteria
      *
      * @Assert\NotBlank
      * @ORM\Column(type="integer")
-     * @Groups({"results","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $seats;
 
@@ -494,7 +494,7 @@ class Criteria
     * @var float|null The price per km.
     *
     * @ORM\Column(type="decimal", precision=4, scale=2, nullable=true)
-    * @Groups({"results","write","thread"})
+    * @Groups({"read","results","write","thread"})
     */
     private $priceKm;
 

@@ -7,8 +7,8 @@ import '@css/page/search/simpleResults.scss'
 import Occasionalresults from '@js/components/search/Occasionalresults'
 import ResultCard from "../../components/search/ResultCard";
 
-import MHeader from '@js/components/MHeader'
-import MFooter from '@js/components/MFooter'
+import MHeader from '@js/components/base/MHeader'
+import MFooter from '@js/components/base/MFooter'
 
 new Vue({
   i18n,

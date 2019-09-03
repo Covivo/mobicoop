@@ -81,8 +81,8 @@ class CarpoolController extends AbstractController
      */
     public function simpleSearchResults($origin, $destination, $origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date, ProposalManager $proposalManager)
     {
-        $offers= $proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("YmdHis", $date));
-        $reponseofmanager= $this->handleManagerReturnValue($offers);
+        // $offers= $proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("YmdHis", $date));
+        // $reponseofmanager= $this->handleManagerReturnValue($offers);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
@@ -94,6 +94,7 @@ class CarpoolController extends AbstractController
             'destination_latitude' => urldecode($destination_latitude),
             'destination_longitude' => urldecode($destination_longitude),
             'date' =>  $date,
+            // 'hydra' => $offers,
             'MatchingSearchUrl' => "/matching/search"
         ]);
     }

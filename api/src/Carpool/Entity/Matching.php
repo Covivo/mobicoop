@@ -76,7 +76,7 @@ class Matching
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingOffers")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"results","threads","thread"})
+     * @Groups({"read","results","threads","thread"})
      * @MaxDepth(1)
      */
     private $proposalOffer;
@@ -87,7 +87,7 @@ class Matching
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingRequests")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","threads","thread"})
+     * @Groups({"read","results","threads","thread"})
      * @MaxDepth(1)
      */
     private $proposalRequest;
@@ -98,7 +98,7 @@ class Matching
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     * @Groups({"results","threads","thread"})
+     * @Groups({"read","results","threads","thread"})
      */
     private $criteria;
 

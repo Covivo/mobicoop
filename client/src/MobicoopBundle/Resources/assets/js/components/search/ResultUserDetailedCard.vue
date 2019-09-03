@@ -15,7 +15,7 @@
         <!--        user data-->
         <v-list-item-content>
           <v-list-item-title class="font-weight-bold">
-            {{ carpoolResults.matchingRequests[0].proposalOffer.user.givenName }}.{{ carpoolResults.matchingRequests[0].proposalOffer.user.familyName }}
+            {{ carpoolResults.matchingRequests[0].proposalOffer.user.givenName }} {{ carpoolResults.matchingRequests[0].proposalOffer.user.familyName.substr(0,1).toUpperCase()+"." }}
           </v-list-item-title>
           <v-list-item-title>{{ carpoolResults.matchingRequests[0].proposalOffer.user.birthDate }} </v-list-item-title>
           <v-list-item-title
@@ -101,6 +101,11 @@
           </v-btn>
         </v-row>
       </v-list-item>
+
+      <v-row>
+        {{ carpoolResults.matchingRequests[0].proposalOffer.user.birthDate }}
+        {{ carpoolResults.matchingRequests }}
+      </v-row>
     </v-container>
   </v-content>
 </template>
@@ -149,6 +154,8 @@ export default {
   data : function() {
     return {
       togglePhoneButton: false,
+      age: null
+
     };
   },
   methods: {

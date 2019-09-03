@@ -180,7 +180,7 @@ class Proposal
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposals")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"results","write"})
+     * @Groups({"read","results","write"})
      */
     private $user;
 
@@ -222,7 +222,8 @@ class Proposal
      * @var ArrayCollection|null The matching of the proposal (if proposal is an offer).
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read"})
+     * @Groups({"read","results"})
+     * @MaxDepth(1)
      */
     private $matchingOffers;
 
@@ -230,7 +231,7 @@ class Proposal
      * @var ArrayCollection|null The matching of the proposal (if proposal is a request).
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"results"})
+     * @Groups({"read","results"})
      */
     private $matchingRequests;
 
