@@ -48,6 +48,7 @@ use GuzzleHttp\HandlerStack;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\JwtMiddleware;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\JwtManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Strategy\Auth\JsonAuthStrategy;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Data provider service.
@@ -383,14 +384,17 @@ class DataProvider
         foreach (self::FILE_PROPERTIES as $property=>$getter) {
             if (method_exists($object, $getter)) {
                 $file = $object->$getter();
-                $multipart[] = [
-                    'name'      => $property,
-                    'contents'  => fopen($file->getPathname(), 'rb')
-                ];
-                $multipart[] = [
-                    'name'      => self::FILE_ORIGINAL_NAME_PROPERTY,
-                    'contents'  => $file->getClientOriginalName()
-                ];
+
+                if($file instanceof UploadedFile){
+                    $multipart[] = [
+                        'name'      => $property,
+                        'contents'  => fopen($file->getPathname(), 'rb')
+                    ];
+                    $multipart[] = [
+                        'name'      => self::FILE_ORIGINAL_NAME_PROPERTY,
+                        'contents'  => $file->getClientOriginalName()
+                    ];
+                }
             }
         }
         try {
