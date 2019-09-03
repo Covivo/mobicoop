@@ -53,9 +53,6 @@ final class CreateImageAction
         $this->logger = $logger;
     }
     
-    /**
-     * @IsGranted("ROLE_USER")
-     */
     public function __invoke(Request $request): Image
     {
         if (is_null($request)) {
