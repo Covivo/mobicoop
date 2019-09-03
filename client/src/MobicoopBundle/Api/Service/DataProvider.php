@@ -385,7 +385,7 @@ class DataProvider
             if (method_exists($object, $getter)) {
                 $file = $object->$getter();
 
-                if($file instanceof UploadedFile){
+                if ($file instanceof UploadedFile) {
                     $multipart[] = [
                         'name'      => $property,
                         'contents'  => fopen($file->getPathname(), 'rb')
