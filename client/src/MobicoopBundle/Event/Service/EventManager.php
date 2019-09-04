@@ -83,7 +83,7 @@ class EventManager
             $params['order[id]'] = $order;
         }
         if ($limit) {
-            $params['itemsPerPage'] = $limit;
+            $params['perPage'] = $limit;
         }
         $response = $this->dataProvider->getCollection($params);
         return $response->getValue();
