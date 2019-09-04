@@ -1,9 +1,0 @@
-{# @var community \Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community#}
-{% set users= [] %}
-{% for cuser in community.communityUsers %}
-    {# @var user \App\User\Entity\User #}
-    {%  set user= cuser.user %}
-    {% set users = users|merge([user]) %}
-{% endfor %}
-<member-list
-        :users="{{ users|json_encode(1) }}"></member-list>

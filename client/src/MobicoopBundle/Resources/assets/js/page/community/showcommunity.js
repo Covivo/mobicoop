@@ -7,15 +7,16 @@ import '@css/page/community/communities.scss'
 // Vue components
 import MHeader from '@components/base/MHeader'
 import MFooter from '@components/base/MFooter'
-import MemberList from '@components/community/MemberList'
+// import MemberList from '@components/community/MemberList'
+import CommunityDisplay from '@components/community/CommunityDisplay'
 
 new Vue({
   el: '#app',
   vuetify,
   i18n,
   components: {
-    MemberList,
+    CommunityDisplay,
     MHeader,
     MFooter
   }
-})
+});

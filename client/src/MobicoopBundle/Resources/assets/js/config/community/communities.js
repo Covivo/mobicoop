@@ -11,7 +11,7 @@ import Vuetify, {
   // header
   VToolbar, VToolbarTitle, VBtn, VImg,
   // footer
-  VFooter, VCardText, VDataTable, VChip, VTextField
+  VFooter, VCardText, VDataTable, VChip, VTextField, VRow, VCol, VCard
 } from 'vuetify/lib'
 
 Vue.use(Vuetify, {
@@ -21,7 +21,7 @@ Vue.use(Vuetify, {
     // header
     VToolbar, VToolbarTitle, VBtn, VImg,
     // footer
-    VFooter, VCardText, VDataTable, VChip, VTextField
+    VFooter, VCardText, VDataTable, VChip, VTextField, VRow, VCol, VCard
   }
 })
 Vue.use(VueI18n)
