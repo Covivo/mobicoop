@@ -39,10 +39,10 @@
           <v-list-item-title
             class="text-address-size"
           >
-            <h3>09h00</h3>
+            <h3>{{ carpoolResults.matchingOffers[0].criteria.fromDate }}</h3>
           </v-list-item-title>
           <v-list-item-title class="date-uppercase">
-            {{ displaydate(date) }}
+            {{ carpoolResults.matchingOffers[0].criteria.fromDate }}
           </v-list-item-title>
         </v-list-item-content>
 
@@ -55,13 +55,13 @@
           <v-list-item-title
             class="text-city-size"
           >
-            Nancy
+            {{ carpoolResults.matchingOffers[0].proposalRequest.waypoints[0].address.addressLocality }}
           </v-list-item-title>
           <v-list-item-title
             class="d-inline-block text-truncate text-address-size"
             style="max-width: 100px;"
           >
-            Boulevard d'Autrasie
+            {{ carpoolResults.matchingOffers[0].proposalRequest.waypoints[0].address.streetAddress }}
           </v-list-item-title>
         </v-list-item-content>
 
@@ -84,13 +84,13 @@
           <v-list-item-title
             class="text-city-size"
           >
-            Sanary-sur-Mer
+            {{ carpoolResults.matchingOffers[0].proposalRequest.waypoints[1].address.addressLocality }}
           </v-list-item-title>
           <v-list-item-title
             class="d-inline-block text-truncate text-address-size"
             style="max-width: 100px;"
           >
-            Rue d’Arcole
+            {{ carpoolResults.matchingOffers[0].proposalRequest.waypoints[1].address.streetAddress }}
           </v-list-item-title>
         </v-list-item-content>
 
@@ -98,7 +98,7 @@
         <v-col
           align="center"
         >
-          <p> {{ carpoolResults.matchingRequests[0].criteria.seats }} place(s)</p>
+          <p> {{ carpoolResults.matchingOffers[0].seats }} place(s)</p>
         </v-col>
 
         <!-- price --> 
@@ -109,6 +109,7 @@
         >
           <p>{{ carpoolResults.matchingRequests[0].criteria.priceKm }} €</p>
         </v-col>
+        <v-row />
       </v-list-item>
     </v-container>
   </v-content>
@@ -154,7 +155,7 @@ export default {
     matchingSearchUrl: {
       type: String,
       default: null
-    },
+    }
   },
   data: function() {
     return {
@@ -162,12 +163,14 @@ export default {
       passenger: true,
     };
   },
-   
   methods : {
-    displaydate(date){
+    displaydate(){
       return moment (new Date(date)).utcOffset("+00:00").format('ddd DD/MM ')
     },
-  }  
+    displaytime(){
+      return moment (new Date(time)).utcOffset("+00:00").format('ddd DD/MM ')
+    },
+  }
 }
 </script>
 

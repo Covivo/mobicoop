@@ -198,7 +198,7 @@ class Proposal
      * @Assert\NotBlank
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"read","write"})
+     * @Groups({"read","results","write"})
      */
     private $waypoints;
     
@@ -246,7 +246,7 @@ class Proposal
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="proposal", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $criteria;
     

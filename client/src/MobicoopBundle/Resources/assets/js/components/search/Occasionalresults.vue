@@ -124,7 +124,7 @@
             :date="date"
             :carpool-results="results"
           />
-          <!--          card use vdivider for middle line-->
+          <!--card use vdivider for middle line-->
         </v-col>
       </v-row>
     </v-container>
@@ -197,7 +197,7 @@ export default {
   created() {
     //fill Results
     this.loading = true;
-    axios.get("/matching/search", {
+    axios.get(this.matchingSearchUrl, {
       params: {
         "origin_latitude": Number(this.originLatitude),
         "origin_longitude": Number(this.originLongitude),
@@ -225,7 +225,7 @@ export default {
     //format date for axios request
     dateFormated(date) {
       return moment(new Date(date)).utcOffset("+00:00").format()
-    },
+    },  
     displaydate(date){
       return moment (new Date(date)).utcOffset("+00:00").format('ddd D MMMM YYYY')
     }

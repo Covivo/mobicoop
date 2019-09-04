@@ -15,9 +15,9 @@
         <!--        user data-->
         <v-list-item-content>
           <v-list-item-title class="font-weight-bold">
-            {{ carpoolResults.matchingRequests[0].proposalOffer.user.givenName }} {{ carpoolResults.matchingRequests[0].proposalOffer.user.familyName.substr(0,1).toUpperCase()+"." }}
+            {{ carpoolResults.matchingOffers[0].proposalRequest.user.givenName }} {{ carpoolResults.matchingOffers[0].proposalRequest.user.familyName.substr(0,1).toUpperCase()+"." }}
           </v-list-item-title>
-          <v-list-item-title>{{ carpoolResults.matchingRequests[0].proposalOffer.user.birthDate }} </v-list-item-title>
+          <v-list-item-title>{{ carpoolResults.matchingOffers[0].proposalRequest.user.birthDate }} </v-list-item-title>
           <v-list-item-title
             class="caption font-weight-light font-italic"
           >
@@ -38,7 +38,7 @@
             mdi-star
           </v-icon>
         </v-row>
-        <!--              user phone and mail-->
+        <!--user phone and mail-->
         <v-row
           align="center"
           justify="end"
@@ -58,7 +58,7 @@
             <div
               class="ml-2"
             >
-              {{ carpoolResults.matchingRequests[0].proposalOffer.user.telephone }}
+              {{ carpoolResults.matchingOffers[0].proposalRequest.user.telephone }}
             </div>
           </v-btn>
           <v-btn
@@ -101,11 +101,6 @@
           </v-btn>
         </v-row>
       </v-list-item>
-
-      <v-row>
-        {{ carpoolResults.matchingRequests[0].proposalOffer.user.birthDate }}
-        {{ carpoolResults.matchingRequests }}
-      </v-row>
     </v-container>
   </v-content>
 </template>

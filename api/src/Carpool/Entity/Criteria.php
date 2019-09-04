@@ -102,7 +102,7 @@ class Criteria
      *
      * @Assert\NotBlank
      * @ORM\Column(type="date")
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $fromDate;
 
@@ -111,7 +111,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $fromTime;
 
@@ -120,7 +120,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $minTime;
 
@@ -129,7 +129,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $maxTime;
 
@@ -137,7 +137,7 @@ class Criteria
      * @var int Accepted margin duration for punctual proposal in seconds.
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $marginDuration;
 
@@ -145,7 +145,7 @@ class Criteria
      * @var boolean For punctual proposals, the user accepts only matchings for the defined date (no ranges).
      *
      * @ORM\Column(type="boolean")
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $strictDate;
 
@@ -153,7 +153,7 @@ class Criteria
      * @var \DateTimeInterface|null The end date if regular proposal, the last accepted date if punctual.
      *
      * @ORM\Column(type="date", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $toDate;
 
@@ -478,7 +478,7 @@ class Criteria
      * @var boolean The user accepts any route as a passenger from its origin to the destination.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $anyRouteAsPassenger;
     
@@ -486,7 +486,7 @@ class Criteria
      * @var boolean|null The user accepts any transportation mode.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $multiTransportMode;
     
@@ -494,7 +494,7 @@ class Criteria
     * @var float|null The price per km.
     *
     * @ORM\Column(type="decimal", precision=4, scale=2, nullable=true)
-    * @Groups({"read","results","write","thread"})
+    * @Groups({"read","write","thread"})
     */
     private $priceKm;
 

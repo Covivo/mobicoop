@@ -113,7 +113,7 @@ class Address
      * @var string The full street address.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write","pt","mass","massCompute","threads","thread"})
+     * @Groups({"read","results","write","pt","mass","massCompute","threads","thread"})
      */
     private $streetAddress;
 
@@ -138,7 +138,7 @@ class Address
      * @var string|null The locality of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"read","write","pt","mass","massCompute","threads","thread"})
+     * @Groups({"read","results","write","pt","mass","massCompute","threads","thread"})
      * @Assert\NotBlank(groups={"mass","massCompute","threads","thread"})
      */
     private $addressLocality;
