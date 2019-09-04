@@ -53,9 +53,9 @@ class ImageRepository
     
     /**
      * Find the next image position for a given related entity (owner)
-     * @param object $owner
+     * @param $owner
      */
-    public function findNextPosition(object $owner)
+    public function findNextPosition($owner)
     {
         $query = $this->repository->createQueryBuilder('i');
         $query->select('MAX(i.position) AS maxPos');
