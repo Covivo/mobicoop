@@ -39,10 +39,10 @@
           <v-list-item-title
             class="text-address-size"
           >
-            <h3>{{ carpoolResults.matchingOffers[0].criteria.fromDate }}</h3>
+            <h3>{{ timeFormated(fromTime) }}</h3>
           </v-list-item-title>
           <v-list-item-title class="date-uppercase">
-            {{ carpoolResults.matchingOffers[0].criteria.fromDate }}
+            {{ dateFormated(fromDate) }}
           </v-list-item-title>
         </v-list-item-content>
 
@@ -161,15 +161,17 @@ export default {
     return {
       driver: false,
       passenger: true,
+      fromTime: this.carpoolResults.matchingOffers[0].criteria.fromTime,
+      fromDate: this.carpoolResults.matchingOffers[0].criteria.fromDate
     };
   },
   methods : {
-    displaydate(){
-      return moment (new Date(date)).utcOffset("+00:00").format('ddd DD/MM ')
+    timeFormated(fromTime) {
+      return moment(new Date(fromTime)).utcOffset("+00:00").format("HH[h]mm")
     },
-    displaytime(){
-      return moment (new Date(time)).utcOffset("+00:00").format('ddd DD/MM ')
-    },
+    dateFormated(fromDate) {
+      return moment(new Date(fromDate)).utcOffset("+00:00").format("ddd DD/MM")
+    }
   }
 }
 </script>
