@@ -74,8 +74,8 @@
             <v-time-picker
               v-if="menuOutwardTime"
               v-model="outwardTime"
-              no-title
               format="24hr"
+              header-color="secondary"
               @click:minute="$refs.menuOutwardTime.save(outwardTime)"
               @change="change"
             />
@@ -169,8 +169,8 @@
             <v-time-picker
               v-if="menuReturnTime"
               v-model="returnTime"
-              no-title
               format="24hr"
+              header-color="secondary"
               @click:minute="$refs.menuReturnTime.save(returnTime)"
               @change="change"
             />
@@ -284,8 +284,8 @@
                   <v-time-picker
                     v-if="item.menuOutwardTime"
                     v-model="item.outwardTime"
-                    no-title
                     format="24hr"
+                    header-color="secondary"
                     @click:minute="closeOutwardTime(item.id)"
                     @change="change"
                   />
@@ -329,8 +329,8 @@
                   <v-time-picker
                     v-if="item.menuReturnTime"
                     v-model="item.returnTime"
-                    no-title
                     format="24hr"
+                    header-color="secondary"
                     @click:minute="closeReturnTime(item.id)"
                     @change="change"
                   />
