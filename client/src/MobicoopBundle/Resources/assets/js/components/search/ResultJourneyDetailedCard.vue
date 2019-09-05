@@ -39,14 +39,12 @@
           <v-list-item-title
             class="text-address-size"
           >
-            <h3>{{ timeFormated(this.carpoolResults.matchingRequests[0].proposalOffer.criteria.fromTime) }}</h3>
+            <h3>{{ computedTimeFormated }}</h3>
           </v-list-item-title>
           <v-list-item-title class="date-uppercase">
-            {{ dateFormated(this.carpoolResults.matchingRequests[0].proposalOffer.criteria.fromDate) }}
+            {{ computedDateFormated }}
           </v-list-item-title>
         </v-list-item-content>
-
-
 
         <!-- origin -->
         <v-list-item-content
@@ -170,11 +168,11 @@ export default {
       passenger: true,
     };
   },
-  methods : {
-    timeFormated() {
+  computed: {
+    computedTimeFormated() {
       return moment(new Date(this.carpoolResults.matchingRequests[0].criteria.fromTime)).utcOffset("+00:00").format("HH[h]mm")
     },
-    dateFormated() {
+    computedDateFormated() {
       return moment(new Date(this.carpoolResults.matchingRequests[0].criteria.fromDate)).utcOffset("+00:00").format("ddd DD/MM")
     }
   }

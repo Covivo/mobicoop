@@ -157,8 +157,6 @@ export default {
     toggleButton: function(){
       this.togglePhoneButton = !this.togglePhoneButton;
     },
-
-    // 1999-01-01T00:00:00+00:00
     formatedYear (){
       return moment().diff(moment(this.carpoolResults.matchingRequests[0].proposalOffer.user.birthDate),'years')
     } 
