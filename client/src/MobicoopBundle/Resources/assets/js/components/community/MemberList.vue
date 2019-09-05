@@ -1,15 +1,26 @@
 <template>
   <v-card>
     <v-card-title>
-      {{ $t('List of members') }}
-      <div class="flex-grow-1" />
-      <v-text-field
-        v-model="search"
-        append-icon="search"
-        label="Search"
-        single-line
-        hide-details
-      />
+      <v-row>
+        <v-col cols="6">
+          {{ $t('List of members') }}
+        </v-col>
+        <v-col cols="6">
+          <div class="flex-grow-1" />
+          <v-card
+            class="ma-3 pa-6"
+            outlined
+            tile
+          >
+            <v-text-field
+              v-model="search"
+              hide-details
+              label="Search"
+              single-line
+            />
+          </v-card>
+        </v-col>
+      </v-row>
     </v-card-title>
     <v-data-table
       :headers="headers"

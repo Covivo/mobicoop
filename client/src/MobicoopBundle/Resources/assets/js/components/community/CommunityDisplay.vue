@@ -1,6 +1,6 @@
 <template>
-  <v-card class="mdi-margin">
-    <v-card id="community_headers">
+  <div class="margin">
+    <div id="community_headers">
       <v-row>
         <v-col
           class="col-4"
@@ -13,64 +13,71 @@
           Carte de la communauté avec l'ensemble des membres
         </v-col>
       </v-row>
-    </v-card>
-    <v-card id="community_body">
+    </div>
+    <div id="community_body">
       <v-row>
-        <v-card class="col-12">
-          <v-card-title>
-            {{ $t('List of members') }}
-            <div class="flex-grow-1" />
-            <v-text-field
-              v-model="search"
-              append-icon="search"
-              label="Search"
-              single-line
-              hide-details
-            />
-          </v-card-title>
-          <v-data-table
-            :headers="headers"
-            :items="users"
-            :search="search"
-          />
-        </v-card>
+        <v-col cols="12">
+          <v-card
+            class="ma-3 pa-6"
+            outlined
+            tile
+          >
+            <member-list :users="users" />
+          </v-card>
+        </v-col>
       </v-row>
-      <v-card><v-row>
-        <v-col
-                class="col-4"
-        >
-          <v-card>
-            Le communauté c'est
-            - inscrits
-            - offres de covoiturage
-            - mises en relation
-            + en V2 nm km covoiturés et CO2 évté depuis début d'année
-          </v-card>
-        </v-col>
-        <v-col
-                class="col-4"
-        >
-          <v-card>
-            ils nous ont rejoints
-            3 derniers inscrits
-          </v-card>
-        </v-col>
-        <v-col
-                class="col-4"
-        >
-          <v-card>
-            Actualité(Administré par la le créateur de la communauté)
-          </v-card>
-        </v-col>
-      </v-row></v-card>
-
-    </v-card>
-    <v-card id="community_footer">
+      <v-container fluid>
+        <v-row>
+          <v-col cols="12">
+            <v-row
+              :align="alignment"
+              :justify="justify"
+              class="grey lighten-5"
+              style="height: 300px;"
+            >
+              <v-col cols="4">
+                <v-card
+                  class="ma-3 pa-6"
+                  outlined
+                  tile
+                >
+                  Le communauté c'est
+                  - inscrits
+                  - offres de covoiturage
+                  - mises en relation
+                  + en V2 nm km covoiturés et CO2 évté depuis début d'année
+                </v-card>
+              </v-col>
+              <v-col cols="4">
+                <v-card
+                  class="ma-3 pa-6"
+                  outlined
+                  tile
+                >
+                  ils nous ont rejoints
+                  3 derniers inscrits
+                </v-card>
+              </v-col>
+              <v-col cols="4">
+                <v-card
+                  class="ma-3 pa-6"
+                  outlined
+                  tile
+                >
+                  Actualité(Administré par la le créateur de la communauté)
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+      </v-container>
+    </div>
+    <div id="community_footer">
       <v-row>
         Module de recherche de trajet
       </v-row>
-    </v-card>
-  </v-card>
+    </div>
+  </div>
 </template>
 <script>
 
@@ -79,10 +86,14 @@ import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/home/HomeSearch.json";
 import TranslationsClient from "@clientTranslations/components/home/HomeSearch.json";
+import MemberList from "./MemberList";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
+  components: {
+    MemberList
+  },
   i18n: {
     messages: TranslationsMerged,
     sharedMessages: CommonTranslations
