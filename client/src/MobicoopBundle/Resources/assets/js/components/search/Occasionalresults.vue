@@ -3,15 +3,18 @@
     <v-container
       fluid
     >
-      <!--      loading overlay-->
-      <!--      <v-overlay :value="loading">-->
-      <!--        <v-progress-circular-->
-      <!--          indeterminate-->
-      <!--          size="64"-->
-      <!--        />-->
-      <!--      </v-overlay>-->
+      <!--loading overlay-->
+      <v-overlay 
+        :value="loading"
+      >
+        <v-progress-circular
+          indeterminate
+          size="64"
+        />
+        </v-progress-circular>
+      </v-overlay>
 
-      <!--      Title row-->
+      <!--Title row-->
       <v-row
         justify="start"
         align="center"

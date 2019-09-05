@@ -1,9 +1,9 @@
 <template>
   <v-content>
     <v-container fluid>
+      <!-- when we're a passenger, it's the potential drivers (matchingRequests) - all offers containing drivers(proposalOffer) -->
       <v-list-item>
         <!-- avatar --> 
-
         <v-list-item-avatar
           v-if="carpoolResults.matchingRequests[0].proposalOffer.criteria.driver"
           color="primary"
