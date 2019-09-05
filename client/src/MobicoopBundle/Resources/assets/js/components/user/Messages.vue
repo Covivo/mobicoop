@@ -73,11 +73,49 @@
                 :class="threadCM.selected ? 'primary' : ''"
                 @click="updateMessages(threadCM.idThreadMessage,threadCM.contactId)"
               >
-                <v-card-title>
-                  <v-icon>mdi-account-circle</v-icon>&nbsp;
-                  <span
-                    class="title font-weight-light"
-                  >{{ threadCM.contactFirstName }} {{ threadCM.contactLastName.substr(0,1).toUpperCase()+"." }}</span>
+                <v-card-title class="pa-0 ma-0">
+                  <v-container>
+                    <v-row
+                      align="start"
+                    >
+                      <v-col class="col-3 text-center ma-0 pa-0">
+                        <v-avatar>
+                          <v-icon class="display-2">
+                            mdi-account-circle
+                          </v-icon>
+                        </v-avatar>
+                      </v-col>
+                      <v-col class="col-6 ma-0 pa-0">
+                        <v-card-text class="pa-0">
+                          <span
+                            class="title font-weight-light secondary--text"
+                          >
+                            {{ threadCM.contactFirstName }} {{ threadCM.contactLastName.substr(0,1).toUpperCase()+"." }}</span><br>
+                          <span :class="threadCM.selected ? 'font-weight-bold' : ''">
+                            {{ threadCM.firstWayPoint }}
+                            <v-icon color="tertiairy">
+                              mdi-arrow-right
+                            </v-icon> {{ threadCM.lastWayPoint }}
+                          </span><br>
+                          <span
+                            v-if="!threadCM.dayChecked"
+                            class="font-italic"
+                          >{{ threadCM.fromDateReadable }} {{ $t("ui.infos.misc.at") }} {{ threadCM.fromTimeReadable }}</span>
+                          <span
+                            v-else
+                            class="font-italic"
+                          >{{ threadCM.dayChecked.join(", ") }}</span>
+                        </v-card-text>
+                      </v-col>
+                      <v-col class="col-3 ma-0 pa-0">
+                        <v-card-text
+                          class="pa-0 ma-0 text-right pr-2 font-italic"
+                        >
+                          {{ threadCM.lastMessageCreatedDate }}
+                        </v-card-text>
+                      </v-col>
+                    </v-row>
+                  </v-container>
                 </v-card-title>
               </v-card>
             </v-tab-item>
@@ -508,10 +546,21 @@ export default {
       this.threadsDM.forEach((thread, index) => {
         this.threadsDM[index].selected =
           thread.idThreadMessage === parseInt(idMessage) ? true : false;
+        if(thread.lastMessageCreatedDate==="today"){
+          thread.lastMessageCreatedDate = this.$t("ui.date.today");
+        }
       });
       this.threadsCM.forEach((thread, index) => {
         this.threadsCM[index].selected =
           thread.idThreadMessage === parseInt(idMessage) ? true : false;
+        if(thread.lastMessageCreatedDate==="today"){
+          thread.lastMessageCreatedDate = this.$t("ui.date.today");
+        }
+        if(thread.dayChecked){
+          thread.dayChecked.forEach((day, index)=>{
+            thread.dayChecked[index] = this.$t("ui.date."+day);
+          });
+        }
       });
       this.textSpinner = this.textSpinnerLoading;
       this.spinner = true;

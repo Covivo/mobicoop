@@ -23,6 +23,16 @@
                         "price": "Prix"
                     }
                 },
+                "date": {
+                    "today": "Aujourd'hui",
+                    "monday": "Lun",
+                    "tuesday": "Mar",
+                    "wednesday": "Mer",
+                    "thursday": "Jeu",
+                    "friday": "Ven",
+                    "saturday": "Sam",
+                    "sunday": "Dim"
+                },
                 "pages": {
                     "messages": {
                         "label": {
@@ -68,6 +78,16 @@
                     "price": "Price"
                 }
             },
+            "date": {
+                "today": "Today",
+                "monday": "Mon",
+                "tuesday": "Tue",
+                "wednesday": "Wed",
+                "thursday": "Thu",
+                "friday": "Fri",
+                "saturday": "Sat",
+                "sunday": "Sun"
+        },
             "pages": {
                 "messages": {
                     "label": {
