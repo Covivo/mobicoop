@@ -469,7 +469,6 @@ class UserController extends AbstractController
         $idMessageDefaultSelected = false;
 
         foreach ($threads["threads"] as $thread) {
-
             $arrayThread["idThreadMessage"] = $thread["id"];
             if (!isset($thread["user"]["id"])) {
                 // the user is the sender
@@ -495,48 +494,59 @@ class UserController extends AbstractController
                 $idMessageDefaultSelected = true;
 
                 // For the summary of the journey
-                if (!is_null($thread["askHistory"])){
+                if (!is_null($thread["askHistory"])) {
                     $arrayThread["firstWayPoint"] = $thread["askHistory"]["ask"]["matching"]["waypoints"][0]["address"]["addressLocality"];
                     $arrayThread["lastWayPoint"] = $thread["askHistory"]["ask"]["matching"]["waypoints"][count($thread["askHistory"]["ask"]["matching"]["waypoints"])-1]["address"]["addressLocality"];
 
                     
-                    if($thread["askHistory"]["ask"]["matching"]['criteria']["frequency"]==1){
+                    if ($thread["askHistory"]["ask"]["matching"]['criteria']["frequency"]==1) {
                         // Punctual, we show the from date
                         $fromDate = new DateTime($thread["askHistory"]["ask"]["matching"]['criteria']["fromDate"]);
                         $fromTime = new DateTime($thread["askHistory"]["ask"]["matching"]['criteria']["fromTime"]);
                         $arrayThread["fromDateReadable"] = $fromDate->format("D d F Y");
                         $arrayThread["fromTimeReadable"] = $fromTime->format("H\hi");
-
-
-                    }
-                    else{
+                    } else {
                         // Regular
                         $dayChecked = [];
-                        if($thread["askHistory"]["ask"]["matching"]['criteria']["monCheck"]!==null)  $dayChecked[] = "monday";
-                        if($thread["askHistory"]["ask"]["matching"]['criteria']["tueCheck"]!==null)  $dayChecked[] = "tuesday";
-                        if($thread["askHistory"]["ask"]["matching"]['criteria']["wedCheck"]!==null)  $dayChecked[] = "wednesday";
-                        if($thread["askHistory"]["ask"]["matching"]['criteria']["thuCheck"]!==null)  $dayChecked[] = "thursday";
-                        if($thread["askHistory"]["ask"]["matching"]['criteria']["friCheck"]!==null)  $dayChecked[] = "friday";
-                        if($thread["askHistory"]["ask"]["matching"]['criteria']["satCheck"]!==null)  $dayChecked[] = "saturday";
-                        if($thread["askHistory"]["ask"]["matching"]['criteria']["sunCheck"]!==null)  $dayChecked[] = "sunday";
+                        if ($thread["askHistory"]["ask"]["matching"]['criteria']["monCheck"]!==null) {
+                            $dayChecked[] = "monday";
+                        }
+                        if ($thread["askHistory"]["ask"]["matching"]['criteria']["tueCheck"]!==null) {
+                            $dayChecked[] = "tuesday";
+                        }
+                        if ($thread["askHistory"]["ask"]["matching"]['criteria']["wedCheck"]!==null) {
+                            $dayChecked[] = "wednesday";
+                        }
+                        if ($thread["askHistory"]["ask"]["matching"]['criteria']["thuCheck"]!==null) {
+                            $dayChecked[] = "thursday";
+                        }
+                        if ($thread["askHistory"]["ask"]["matching"]['criteria']["friCheck"]!==null) {
+                            $dayChecked[] = "friday";
+                        }
+                        if ($thread["askHistory"]["ask"]["matching"]['criteria']["satCheck"]!==null) {
+                            $dayChecked[] = "saturday";
+                        }
+                        if ($thread["askHistory"]["ask"]["matching"]['criteria']["sunCheck"]!==null) {
+                            $dayChecked[] = "sunday";
+                        }
                         $arrayThread["dayChecked"] = $dayChecked;
                     }
-
                 }
 
                 // I need the send date of the last message of this thread
                 $completeThread = $internalMessageManager->getThread($thread["id"], DataProvider::RETURN_JSON);
-                if($completeThread["messages"]!==null && count($completeThread["messages"])>0){
+                if ($completeThread["messages"]!==null && count($completeThread["messages"])>0) {
                     $lastMessageCreatedDate = new DateTime($completeThread["messages"][count($completeThread["messages"])-1]["createdDate"]);
                     $arrayThread["lastMessageCreatedDate"] = $lastMessageCreatedDate->format("d M Y");
-                }
-                else{
+                } else {
                     $lastMessageCreatedDate = new DateTime($completeThread["createdDate"]);
                     $arrayThread["lastMessageCreatedDate"] = $lastMessageCreatedDate->format("d M Y");
                 }
                 // If it's today i just show... today
                 $today = new DateTime(date("Y-m-d"));
-                if($today->format("d F Y")===$arrayThread["lastMessageCreatedDate"]) $arrayThread["lastMessageCreatedDate"] = "today";
+                if ($today->format("d F Y")===$arrayThread["lastMessageCreatedDate"]) {
+                    $arrayThread["lastMessageCreatedDate"] = "today";
+                }
             }
 
             // Push on the right array
