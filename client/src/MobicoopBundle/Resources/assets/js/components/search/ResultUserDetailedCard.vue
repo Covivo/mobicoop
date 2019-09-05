@@ -15,9 +15,9 @@
         <!--        user data-->
         <v-list-item-content>
           <v-list-item-title class="font-weight-bold">
-            {{ carpoolResults.matchingOffers[0].proposalRequest.user.givenName }} {{ carpoolResults.matchingOffers[0].proposalRequest.user.familyName.substr(0,1).toUpperCase()+"." }}
+            {{ carpoolResults.matchingRequests[0].proposalOffer.user.givenName }} {{ carpoolResults.matchingRequests[0].proposalOffer.user.familyName.substr(0,1).toUpperCase()+"." }}
           </v-list-item-title>
-          <v-list-item-title>{{ carpoolResults.matchingOffers[0].proposalRequest.user.birthDate }} </v-list-item-title>
+          <v-list-item-title>{{ formatedYear(carpoolResults.matchingRequests[0].proposalOffer.user.birthDate) }} ans </v-list-item-title>
           <v-list-item-title
             class="caption font-weight-light font-italic"
           >
@@ -58,7 +58,7 @@
             <div
               class="ml-2"
             >
-              {{ carpoolResults.matchingOffers[0].proposalRequest.user.telephone }}
+              {{ carpoolResults.matchingRequests[0].proposalOffer.user.telephone }}
             </div>
           </v-btn>
           <v-btn
@@ -106,6 +106,8 @@
 </template>
 
 <script>
+import moment from "moment";
+import 'moment/locale/fr';
 export default {
   name: "ResultUserDetailedCard",
   props: {
@@ -149,15 +151,18 @@ export default {
   data : function() {
     return {
       togglePhoneButton: false,
-      age: null
-
     };
   },
   methods: {
     toggleButton: function(){
       this.togglePhoneButton = !this.togglePhoneButton;
     },
-  } 
+
+    // 1999-01-01T00:00:00+00:00
+    formatedYear (){
+      return moment().diff(moment(this.carpoolResults.matchingRequests[0].proposalOffer.user.birthDate),'years')
+    } 
+  }
 }
 </script>
 

@@ -132,7 +132,7 @@ export default {
       // return !this.date
       //   ? moment(new Date()).format("YYYYMMDDHHmmss")
       //   : moment(this.date).format("YYYYMMDDHHmmss");
-      return moment(new Date('2019-08-31T08:00:00.000Z')).utcOffset("+00:00").format() //@TODO: Uncomment true method
+      return moment(new Date('2019-09-30T09:00:00.000Z')).utcOffset("+00:00").format() //@TODO: Uncomment true method
       //TODO : see if we apply GMT or not
     },
 

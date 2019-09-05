@@ -5,22 +5,8 @@
         <!-- avatar --> 
 
         <v-list-item-avatar
-          v-if="passenger"
+          v-if="carpoolResults.matchingRequests[0].proposalOffer.criteria.driver"
           color="primary"
-          size="60"
-          class="ml-2"
-        >
-          <v-icon
-            dark
-            size="35"
-          >
-            mdi-account-supervisor
-          </v-icon>
-        </v-list-item-avatar>
-
-        <v-list-item-avatar
-          v-else-if="driver"
-          color="secondary"
           size="60"
           class="ml-2"
         >
@@ -32,6 +18,20 @@
           </v-icon>
         </v-list-item-avatar>
 
+        <v-list-item-avatar
+          v-else-if="carpoolResults.matchingRequests[0].proposalOffer.criteria.passenger"
+          color="secondary"
+          size="60"
+          class="ml-2"
+        >
+          <v-icon
+            dark
+            size="35"
+          >
+            mdi-account-supervisor 
+          </v-icon>
+        </v-list-item-avatar>
+        
         <!-- Hour & Date -->
         <v-list-item-content
           class="ml-2"
@@ -39,10 +39,10 @@
           <v-list-item-title
             class="text-address-size"
           >
-            <h3>{{ timeFormated(fromTime) }}</h3>
+            <h3>{{ timeFormated(this.carpoolResults.matchingRequests[0].proposalOffer.criteria.fromTime) }}</h3>
           </v-list-item-title>
           <v-list-item-title class="date-uppercase">
-            {{ dateFormated(fromDate) }}
+            {{ dateFormated(this.carpoolResults.matchingRequests[0].proposalOffer.criteria.fromDate) }}
           </v-list-item-title>
         </v-list-item-content>
 
@@ -55,13 +55,13 @@
           <v-list-item-title
             class="text-city-size"
           >
-            {{ carpoolResults.matchingOffers[0].proposalRequest.waypoints[0].address.addressLocality }}
+            {{ carpoolResults.matchingRequests[0].proposalOffer.waypoints[0].address.addressLocality }}
           </v-list-item-title>
           <v-list-item-title
             class="d-inline-block text-truncate text-address-size"
             style="max-width: 100px;"
           >
-            {{ carpoolResults.matchingOffers[0].proposalRequest.waypoints[0].address.streetAddress }}
+            {{ carpoolResults.matchingRequests[0].proposalOffer.waypoints[0].address.streetAddress }}
           </v-list-item-title>
         </v-list-item-content>
 
@@ -84,13 +84,13 @@
           <v-list-item-title
             class="text-city-size"
           >
-            {{ carpoolResults.matchingOffers[0].proposalRequest.waypoints[1].address.addressLocality }}
+            {{ carpoolResults.matchingRequests[0].proposalOffer.waypoints[1].address.addressLocality }}
           </v-list-item-title>
           <v-list-item-title
             class="d-inline-block text-truncate text-address-size"
             style="max-width: 100px;"
           >
-            {{ carpoolResults.matchingOffers[0].proposalRequest.waypoints[1].address.streetAddress }}
+            {{ carpoolResults.matchingRequests[0].proposalOffer.waypoints[1].address.streetAddress }}
           </v-list-item-title>
         </v-list-item-content>
 
@@ -98,7 +98,10 @@
         <v-col
           align="center"
         >
-          <p> {{ carpoolResults.matchingOffers[0].seats }} place(s)</p>
+          <p>
+            <!-- place | places -->
+            {{ carpoolResults.matchingRequests[0].proposalOffer.criteria.seats }} place(s)
+          </p>
         </v-col>
 
         <!-- price --> 
@@ -107,7 +110,9 @@
           justify="end"
           class="price"
         >
-          <p>{{ carpoolResults.matchingRequests[0].criteria.priceKm }} €</p>
+          <p>{{ carpoolResults.matchingRequests[0].proposalOffer.criteria.priceKm }} €</p>
+
+          <!-- <p class="is-pulled-right">{{ matching.proposalOffer.criteria.priceKm * ((matching.filters.commonDistance + matching.filters.detourDistance) / 1000)|round(1) }} €</p> -->
         </v-col>
         <v-row />
       </v-list-item>
@@ -116,6 +121,8 @@
 </template>
 <script>
 import moment from "moment";
+import 'moment/locale/fr';
+
 
 export default {
   name: "ResultJourneyDetailedCard",
@@ -161,16 +168,14 @@ export default {
     return {
       driver: false,
       passenger: true,
-      fromTime: this.carpoolResults.matchingOffers[0].criteria.fromTime,
-      fromDate: this.carpoolResults.matchingOffers[0].criteria.fromDate
     };
   },
   methods : {
-    timeFormated(fromTime) {
-      return moment(new Date(fromTime)).utcOffset("+00:00").format("HH[h]mm")
+    timeFormated() {
+      return moment(new Date(this.carpoolResults.matchingRequests[0].criteria.fromTime)).utcOffset("+00:00").format("HH[h]mm")
     },
-    dateFormated(fromDate) {
-      return moment(new Date(fromDate)).utcOffset("+00:00").format("ddd DD/MM")
+    dateFormated() {
+      return moment(new Date(this.carpoolResults.matchingRequests[0].criteria.fromDate)).utcOffset("+00:00").format("ddd DD/MM")
     }
   }
 }

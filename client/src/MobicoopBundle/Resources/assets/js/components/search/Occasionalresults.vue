@@ -79,7 +79,7 @@
           cols="6"
           align-self="start"
         >
-          <!--          TODO : REMOVE WHEN START CODING FILTER COMPONENT-->
+          <!--TODO : REMOVE WHEN START CODING FILTER COMPONENT-->
           <v-combobox
             v-model="chips"
             :items="items"
@@ -106,17 +106,20 @@
             class="mt-8"
             no-gutters
           >
-            <h3> 2 annonces trouvées </h3>
+            <h3> {{ results.matchingRequests.length }} annonces trouvée(s) </h3> 
+            <!-- trouvée | trouvées -->
           </v-row>
         </v-col>
       </v-row>
 
       <v-row
-        justify="center"
         align="center"
       >
         <v-col
+          v-for="matching in results.matchingRequests"
+          key="index.matchingRequests"
           cols="6"
+          offset="3"
         >
           <result-card 
             :origin="origin"
@@ -180,7 +183,7 @@ export default {
     matchingSearchUrl: {
       type: String,
       default: null
-    }
+    },
   },
   data : function() {
     return {
@@ -209,7 +212,7 @@ export default {
       .then((response) => {
         console.log(response);
         this.loading = false;
-        console.error(response.data[0]);
+        // console.error(response.data[0]);
         return this.results = response.data[0];
       })
       .catch((error) => {

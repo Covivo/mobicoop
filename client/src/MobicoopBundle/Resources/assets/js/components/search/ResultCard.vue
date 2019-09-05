@@ -19,6 +19,8 @@
   </v-card>
 </template>
 <script>
+import moment from "moment";
+import 'moment/locale/fr';
 import ResultJourneyDetailedCard from "./ResultJourneyDetailedCard";
 import ResultUserDetailedCard from "./ResultUserDetailedCard";
 export default {
