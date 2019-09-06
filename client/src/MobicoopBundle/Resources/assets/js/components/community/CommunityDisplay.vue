@@ -5,7 +5,17 @@
         <v-col
           class="col-4"
         >
-          Rejoindre la communauté
+          <v-row>
+            <v-col cols="12">
+              <community-infos
+                :community="community"
+                :paths="paths"
+              />
+            </v-col>
+            <v-col cols="12">
+              Rejoindre la communauté
+            </v-col>
+          </v-row>
         </v-col>
         <v-col
           class="col-8"
@@ -87,12 +97,13 @@ import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/home/HomeSearch.json";
 import TranslationsClient from "@clientTranslations/components/home/HomeSearch.json";
 import MemberList from "./MemberList";
+import CommunityInfos from "./CommunityInfos";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components: {
-    MemberList
+    MemberList,CommunityInfos
   },
   i18n: {
     messages: TranslationsMerged,
@@ -100,6 +111,14 @@ export default {
   },
   props:{
     users: {
+      type: Array,
+      default: null
+    },
+    community:{
+      type: Array,
+      default: null
+    },
+    paths:{
       type: Array,
       default: null
     }

@@ -16,6 +16,12 @@
             </div>
         </div>
     </section>
+    <a href="{{ path('community_create') }}">
+        <button data-v-06c1a31a="" type="button"
+                class="v-btn v-btn--contained theme--light v-size--default primary"><span class="v-btn__content">
+                    Créer une communauté
+                  </span></button>
+    </a>
     <section class="hero">
         <div class="hero-body">
             {{ include("@Mobicoop/community/_comExplanation.html.twig") }}
@@ -31,9 +37,12 @@
                 <br>
                 <ul>
                     <li>- à ses membres de se voir mutuellement et d’échanger entre eux</li>
-                    <li>- de faciliter la mise en relation des covoitureurs en augmentant la confiance entre membres</li>
+                    <li>- de faciliter la mise en relation des covoitureurs en augmentant la confiance entre membres
+                    </li>
                     <li>- de disposer d’un widget personnalisé à installer par exemple sur un intranet</li>
-                    <li>- de disposer, pour le créateur de la communauté, de statistiques sur les inscrits et les covoitureurs de sa communauté</li>
+                    <li>- de disposer, pour le créateur de la communauté, de statistiques sur les inscrits et les
+                        covoitureurs de sa communauté
+                    </li>
                 </ul>
             </div>
             <br>
@@ -41,61 +50,22 @@
                 <h2 class="is-size-3">
                     Qui peut créer une communauté?
                 </h2>
-                <p>Toute personne qui le souhaite peut créer une communauté dans OuestGo à condition qu’elle soit inscrite sur le site et ait envie d’animer et de dynamiser le covoiturage à son niveau. Créer une communauté se fait en quelques clics sur ouestgo.fr. Cela vous permettra d’accéder au front office librement. Si vous souhaitez aller plus loin dans l’animation et accéder au back office, contactez xxxxx@megalis.xxx. L’ensemble des fonctionnalités d’une communauté est accessible gratuitement.
+                <p>Toute personne qui le souhaite peut créer une communauté dans OuestGo à condition qu’elle soit
+                    inscrite sur le site et ait envie d’animer et de dynamiser le covoiturage à son niveau. Créer une
+                    communauté se fait en quelques clics sur ouestgo.fr. Cela vous permettra d’accéder au front office
+                    librement. Si vous souhaitez aller plus loin dans l’animation et accéder au back office, contactez
+                    xxxxx@megalis.xxx. L’ensemble des fonctionnalités d’une communauté est accessible gratuitement.
                 </p>
             </div>
         </div>
     </section>
     <section class="hero cardsSection">
         <div class="columns">
-            <div class="column">
-                <h2 class="is-size-2">
-                    Communautés disponibles
-                </h2>
-            </div>
+
+            <community-list
+                    :communities="{{ communities|json_encode(1) }}"
+            ></community-list>
         </div>
-        <div class="columns">
-            {% if hydra and hydra.member|length>0 %}
-                {% for community in hydra.member %}
-                    {#                    uncomment to hide secured communities#}
-                    {#                    {% if not community.secured %}#}
-                        <div class="card column"> <div class="card-image">
-                            <figure class="image is-3by1">
-                                <img alt="Placeholder image" src="https://bulma.io/images/placeholders/720x240.png">
-                            </figure>
-                        </div>
-                        <div class="card-content">
-                            <div class="media">
-                                <div class="media-content">
-                                    <p class="title is-4">{{community.name}}</p>
-                                </div>
-                            </div>
-                            <div class="content">
-                                {{community.description}}
-                                <br>
-                                {{community.fullDescription}}
-                                <br>
-                                {#                            {{ community.isMembersHidden ? 'Membres privés' : 'Membres publics' }}#}
-                                <br>
-                                {#                            {{ community.isProposalsHidden ? 'Annonces privées' : 'Annonces publiques'}}#}
-                                <br>
-                                <a class="button" href="{{path('community_show', { 'id': community.id })}}">Voir plus</a>
-                                {% if community.isMembersHidden or community.isProposalsHidden %}
-                                    <a class="button" href="{{path('community_join', { 'id': community.id })}}">Rejoindre la communauté</a>
-                                {% else %}
-                                    <a class="button" href="{{path('carpool_ad_post', { 'id': community.id })}}">Déposer un trajet dans la communauté</a>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    {#uncomment to hide secured communities#}
-                    {#                    {% endif %}#}
-                {% endfor %}
-            {% endif %}
-        </div>
-    </section>
-    <section class="hero communautes has-text-centered">
-        <a class="lien is-vcentered" href="{{ path('community_create') }}">Créer une communauté</a>
     </section>
 {% endblock %}
 {% block javascripts %}

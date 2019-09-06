@@ -50,12 +50,12 @@
             {{ $t('ui.button.connection') }}
           </v-btn>
         </v-form>
-        <v-card-text>
-          <a
-            class="secondary--text"
-            :href="this.urlForgottenPassword"
-          >Mot de passe oublié?</a>
-        </v-card-text>
+        <v-card-actions
+          :link="true"
+          :href="urlForgottenPassword"
+        >
+          Mot de passe oublié?
+        </v-card-actions>
       </v-flex>
     </v-layout>
   </v-content>

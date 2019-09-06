@@ -2,6 +2,10 @@
 
 {% block title %}{% trans from 'ui' %}Communautés{% endtrans %}{% endblock %}
 
+{% block stylesheets %}
+	{{ encore_entry_link_tags("#{assets_prefix ?? ''}community/communities") }}
+
+{% endblock %}
 {% block main %}
 
 <section class="hero is-secondary">
@@ -28,4 +32,7 @@
     <a class="lien" href="{{ path('community_list') }}">Liste des communautés</a>
 </section>
 
+{% endblock %}
+{% block javascripts %}
+	{{ encore_entry_script_tags("#{assets_prefix ?? ''}community/communities") }}
 {% endblock %}
