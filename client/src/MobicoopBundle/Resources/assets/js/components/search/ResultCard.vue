@@ -1,22 +1,34 @@
 <template>
-  <v-card 
-    flat
-  >
-    <result-journey-detailed-card 
-      :origin="origin"
-      :destination="destination"
-      :date="date"
-      :carpool-results="carpoolResults"
-    />
-    <v-row
-      justify="center"
+  <v-content>
+    <v-container
+      v-for="(matching,index) in proposals"
+      :key="index"
     >
-      <v-divider class="divider-width" />
-    </v-row>
-    <result-user-detailed-card 
-      :carpool-results="carpoolResults"
-    />
-  </v-card>
+      <v-card
+        flat
+      >
+        <result-journey-detailed-card 
+          :origin="origin"
+          :destination="destination"
+          :date="date"
+          :carpool-results="carpoolResults"
+          :matching-search-url="matchingSearchUrl"
+          :matching="matching"
+        />
+        <v-row
+          justify="center"
+        >
+          <v-divider class="divider-width" />
+        </v-row>
+        <result-user-detailed-card 
+          :carpool-results="carpoolResults"
+          :matching-search-url="matchingSearchUrl"
+          :matching="matching"
+        />
+      </v-card>
+      </div>
+    </v-container>
+  </v-content>
 </template>
 <script>
 import moment from "moment";
@@ -67,6 +79,11 @@ export default {
       default: null
     }
   },
+  data() {
+    return {
+      proposals: this.carpoolResults.matchingRequests
+    }
+  }
 }
 </script>
 

@@ -11,7 +11,6 @@
           indeterminate
           size="64"
         />
-        </v-progress-circular>
       </v-overlay>
 
       <!--Title row-->
@@ -119,8 +118,6 @@
         align="center"
       >
         <v-col
-          v-for="matching in results.matchingRequests"
-          key="index.matchingRequests"
           cols="6"
           offset="3"
         >
@@ -129,7 +126,9 @@
             :destination="destination"
             :date="date"
             :carpool-results="results"
+            :matching-search-url="matchingSearchUrl"
           />
+
           <!--card use vdivider for middle line-->
         </v-col>
       </v-row>
@@ -192,7 +191,6 @@ export default {
     return {
       //results of the search
       results : null,
-
       loading : true,
 
       // TODO : REMOVE WHEN START CODING FILTER COMPONENT

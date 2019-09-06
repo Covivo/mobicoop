@@ -1,8 +1,10 @@
 <template>
   <v-content>
-    <v-container fluid>
+    <v-container 
+      fluid
+    >
       <v-list-item>
-        <!--        user avatar-->
+        <!--user avatar-->
         <v-list-item-avatar
           color="grey darken-3"
           size="80"
@@ -12,19 +14,19 @@
             src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortRound&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light"
           />
         </v-list-item-avatar>
-        <!--        user data-->
+        <!--user data-->
         <v-list-item-content>
           <v-list-item-title class="font-weight-bold">
-            {{ carpoolResults.matchingRequests[0].proposalOffer.user.givenName }} {{ carpoolResults.matchingRequests[0].proposalOffer.user.familyName.substr(0,1).toUpperCase()+"." }}
+            {{ matching.proposalOffer.user.givenName }} {{ matching.proposalOffer.user.familyName.substr(0,1).toUpperCase()+"." }}
           </v-list-item-title>
-          <v-list-item-title>{{ formatedYear(carpoolResults.matchingRequests[0].proposalOffer.user.birthDate) }} ans </v-list-item-title>
+          <v-list-item-title>{{ formatedYear(matching.proposalOffer.user.birthDate) }} ans </v-list-item-title>
           <v-list-item-title
             class="caption font-weight-light font-italic"
           >
             Annonce ouestgo.fr
           </v-list-item-title>
         </v-list-item-content>
-        <!--        user stars-->
+        <!--user stars-->
         <v-row
           align="center"
           justify="start"
@@ -58,7 +60,7 @@
             <div
               class="ml-2"
             >
-              {{ carpoolResults.matchingRequests[0].proposalOffer.user.telephone }}
+              {{ matching.proposalOffer.user.telephone }}
             </div>
           </v-btn>
           <v-btn
@@ -147,8 +149,12 @@ export default {
       type: String,
       default: null
     },
+    matching: {
+      type: Object,
+      default: null
+    }
   },
-  data : function() {
+  data () {
     return {
       togglePhoneButton: false,
     };
@@ -158,7 +164,7 @@ export default {
       this.togglePhoneButton = !this.togglePhoneButton;
     },
     formatedYear (){
-      return moment().diff(moment(this.carpoolResults.matchingRequests[0].proposalOffer.user.birthDate),'years')
+      return moment().diff(moment(this.matching.proposalOffer.user.birthDate),'years')
     } 
   }
 }

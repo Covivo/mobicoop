@@ -1,11 +1,13 @@
 <template>
   <v-content>
-    <v-container fluid>
+    <v-container 
+      fluid
+    >
       <!-- when we're a passenger, it's the potential drivers (matchingRequests) - all offers containing drivers(proposalOffer) -->
       <v-list-item>
         <!-- avatar --> 
         <v-list-item-avatar
-          v-if="carpoolResults.matchingRequests[0].proposalOffer.criteria.driver"
+          v-if="matching.proposalOffer.criteria.driver"
           color="primary"
           size="60"
           class="ml-2"
@@ -19,7 +21,7 @@
         </v-list-item-avatar>
 
         <v-list-item-avatar
-          v-else-if="carpoolResults.matchingRequests[0].proposalOffer.criteria.passenger"
+          v-else-if="matching.proposalOffer.criteria.passenger"
           color="secondary"
           size="60"
           class="ml-2"
@@ -53,13 +55,13 @@
           <v-list-item-title
             class="text-city-size"
           >
-            {{ carpoolResults.matchingRequests[0].proposalOffer.waypoints[0].address.addressLocality }}
+            {{ matching.proposalOffer.waypoints[0].address.addressLocality }}
           </v-list-item-title>
           <v-list-item-title
             class="d-inline-block text-truncate text-address-size"
             style="max-width: 100px;"
           >
-            {{ carpoolResults.matchingRequests[0].proposalOffer.waypoints[0].address.streetAddress }}
+            {{ matching.proposalOffer.waypoints[0].address.streetAddress }}
           </v-list-item-title>
         </v-list-item-content>
 
@@ -82,13 +84,13 @@
           <v-list-item-title
             class="text-city-size"
           >
-            {{ carpoolResults.matchingRequests[0].proposalOffer.waypoints[1].address.addressLocality }}
+            {{ matching.proposalOffer.waypoints[1].address.addressLocality }}
           </v-list-item-title>
           <v-list-item-title
             class="d-inline-block text-truncate text-address-size"
             style="max-width: 100px;"
           >
-            {{ carpoolResults.matchingRequests[0].proposalOffer.waypoints[1].address.streetAddress }}
+            {{ matching.proposalOffer.waypoints[1].address.streetAddress }}
           </v-list-item-title>
         </v-list-item-content>
 
@@ -98,7 +100,7 @@
         >
           <p>
             <!-- place | places -->
-            {{ carpoolResults.matchingRequests[0].proposalOffer.criteria.seats }} place(s)
+            {{ matching.proposalOffer.criteria.seats }} place(s)
           </p>
         </v-col>
 
@@ -108,9 +110,7 @@
           justify="end"
           class="price"
         >
-          <p>{{ carpoolResults.matchingRequests[0].proposalOffer.criteria.priceKm }} €</p>
-
-          <!-- <p class="is-pulled-right">{{ matching.proposalOffer.criteria.priceKm * ((matching.filters.commonDistance + matching.filters.detourDistance) / 1000)|round(1) }} €</p> -->
+          <p>{{ matching.proposalOffer.criteria.priceKm }} €</p>
         </v-col>
         <v-row />
       </v-list-item>
@@ -160,20 +160,28 @@ export default {
     matchingSearchUrl: {
       type: String,
       default: null
+    },
+    carpoolResults: {
+      type: Object,
+      default: null
+    },
+    matching: {
+      type: Object,
+      dafault: null
     }
   },
-  data: function() {
+  data() {
     return {
-      driver: false,
-      passenger: true,
+      driver: true,
+      passenger: false
     };
   },
   computed: {
     computedTimeFormated() {
-      return moment(new Date(this.carpoolResults.matchingRequests[0].criteria.fromTime)).utcOffset("+00:00").format("HH[h]mm")
+      return moment(new Date(this.matching.criteria.fromTime)).utcOffset("+00:00").format("HH[h]mm")
     },
     computedDateFormated() {
-      return moment(new Date(this.carpoolResults.matchingRequests[0].criteria.fromDate)).utcOffset("+00:00").format("ddd DD/MM")
+      return moment(new Date(this.matching.criteria.fromDate)).utcOffset("+00:00").format("ddd DD/MM")
     }
   }
 }
