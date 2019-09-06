@@ -135,7 +135,8 @@
                 <ad-planification 
                   :init-outward-date="outwardDate"
                   :regular="regular"
-                  @change="planificationChanged" 
+                  :default-margin-time="defaultMarginTime" 
+                  @change="planificationChanged"
                 />
               </v-stepper-content>
 
@@ -413,7 +414,7 @@
           rounded
           color="success"
           align-center
-          style="margin-left: 30px"
+          style="margin-left: 30px;"
           @click="step++"
         >
           {{ $t('stepper.buttons.next') }}
@@ -424,7 +425,7 @@
           :disabled="loading"
           rounded
           color="success"
-          style="margin-left: 30px"
+          style="margin-left: 30px;"
           align-center
           @click="postAd"
         >
@@ -490,6 +491,10 @@ export default {
       type: String,
       default: 'covoiturage/annonce/{id}/resultats'
     },
+    defaultMarginTime: {
+      type: Number,
+      default: null
+    },
   },
   data() {
     return {
@@ -521,6 +526,7 @@ export default {
     }
   },
   computed: {
+   
     hintPricePerKm() {
       return this.pricePerKm+'€/km';
     },

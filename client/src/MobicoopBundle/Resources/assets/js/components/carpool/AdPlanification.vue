@@ -10,7 +10,7 @@
       >
         <!-- Outward date -->
         <v-col
-          cols="6"
+          cols="5"
           offset="2"
         >
           <v-menu
@@ -81,12 +81,29 @@
             />
           </v-menu>
         </v-col>
+        <v-col
+          cols="1"
+        >
+          <v-tooltip
+            color="info"
+            right
+          >
+            <template v-slot:activator="{ on }">
+              <v-icon
+                v-on="on"
+              >
+                mdi-help-circle-outline
+              </v-icon>
+            </template>
+            <span>
+              {{ infoMarginTime }}</span>
+          </v-tooltip>
+        </v-col>
       </v-row>
 
       <!-- Second row -->
       <v-row
         align="center"
-        justify="center"
         dense
       >
         <!-- Return trip ? -->
@@ -105,7 +122,7 @@
 
         <!-- Return date -->
         <v-col
-          cols="6"
+          cols="5"
         >
           <v-menu
             v-model="menuReturnDate"
@@ -175,6 +192,24 @@
               @change="change"
             />
           </v-menu>
+        </v-col>
+        <v-col
+          cols="1"
+        >
+          <v-tooltip
+            color="info"
+            right
+          >
+            <template v-slot:activator="{ on }">
+              <v-icon
+                v-on="on"
+              >
+                mdi-help-circle-outline
+              </v-icon>
+            </template>
+            <span> {{ infoMarginTime }}
+            </span>
+          </v-tooltip>
         </v-col>
       </v-row>
     </v-form>
@@ -291,6 +326,24 @@
                   />
                 </v-menu>
               </v-col>
+              <v-col
+                cols="1"
+              >
+                <v-tooltip
+                  color="info"
+                  right
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-icon
+                      v-on="on"
+                    >
+                      mdi-help-circle-outline
+                    </v-icon>
+                  </template>
+                  <span>{{ infoMarginTime }}
+                  </span>
+                </v-tooltip>
+              </v-col>
 
               <!-- Return time -->
               <v-col
@@ -336,6 +389,24 @@
                   />
                 </v-menu>
               </v-col>
+              <v-col
+                cols="1"
+              >
+                <v-tooltip
+                  color="info"
+                  right
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-icon
+                      v-on="on"
+                    >
+                      mdi-help-circle-outline
+                    </v-icon>
+                  </template>
+                  <span>{{ infoMarginTime }}
+                  </span>
+                </v-tooltip>
+              </v-col>
             </v-row>
             
             <!-- Remove schedule -->
@@ -366,7 +437,7 @@
       <!-- Add schedule -->
       <v-row
         v-if="!schedules[6].visible"
-        align="center"
+        align="center" 
         justify="center"
         dense
       >
@@ -413,6 +484,10 @@ export default {
     initOutwardDate: {
       type: String,
       default: null
+    },
+    defaultMarginTime: {
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -426,6 +501,7 @@ export default {
       menuReturnDate: false,
       menuReturnTime: false,
       returnTrip: false,
+      marginTime: this.defaultMarginTime,
       locale: this.$i18n.locale,
       // todo : refactor the following horror with default types :)
       schedules: [
@@ -555,6 +631,9 @@ export default {
         return schedule.visible;
       });
     },
+    infoMarginTime() {
+      return this.$t("toolTips.partOne")+this.marginTime/60+ ' min'+this.$t("toolTips.partTwo")
+    }
   },
   watch: {
     initOutwardDate() {
