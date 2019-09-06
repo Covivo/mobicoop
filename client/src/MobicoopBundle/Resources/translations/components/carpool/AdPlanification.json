@@ -21,6 +21,10 @@
         "returnTrip": {
             "label": "Retour"
         },
-        "addSchedule": "Ajouter un créneau"
+        "addSchedule": "Ajouter un créneau",
+        "toolTips": {
+            "partOne": "Votre annonce apparaîtra dans des recherches avec une flexibilité de ",
+            "partTwo": " autour de cet horaire."
+        }
     }
 }
