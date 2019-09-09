@@ -50,12 +50,13 @@
             {{ $t('ui.button.connection') }}
           </v-btn>
         </v-form>
-        <v-card-actions
-          :link="true"
-          :href="urlForgottenPassword"
-        >
-          Mot de passe oublié?
-        </v-card-actions>
+        <v-card-text>
+          <a
+            :href="urlforgottenpassword.value"
+          >
+            Mot de passe oublié?
+          </a>
+        </v-card-text>
       </v-flex>
     </v-layout>
   </v-content>
@@ -74,12 +75,12 @@ export default {
   },
   props: {
     errormessage: {
-      type: String,
-      default: ""
+      type: Object,
+      default: null
     },
     urlforgottenpassword: {
-      type: String,
-      default: ""
+      type: Object,
+      default: null
     }
   },
   data() {
@@ -97,7 +98,6 @@ export default {
         v => !!v || this.$t("models.user.password.errors.required")
       ],
       errorDisplay: "",
-      urlForgottenPassword: this.urlForgottenPassword
     };
   },
   mounted() {

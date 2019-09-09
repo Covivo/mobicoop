@@ -11,7 +11,8 @@ import Vuetify, {
   // header
   VToolbar, VToolbarTitle, VBtn, VImg,
   // footer
-  VFooter, VCardText, VDataTable, VChip, VTextField, VRow, VCol, VCard, VIcon,VCardTitle, VDataIterator
+  VFooter, VCardText, VDataTable, VChip, VTextField, VRow, VCol, VCard, VIcon,VCardTitle, VDataIterator,VTab, VTabs,VTabItem, VTabsItems,
+  VTabsSlider,VDivider, VList, VListItem, VListItemContent,VForm,VAutocomplete, VMenu, VDatePicker, VTooltip, VSwitch,VListItemAvatar, VListItemTitle,VListItemSubtitle
 } from 'vuetify/lib'
 
 Vue.use(Vuetify, {
@@ -21,7 +22,8 @@ Vue.use(Vuetify, {
     // header
     VToolbar, VToolbarTitle, VBtn, VImg,
     // footer
-    VFooter, VCardText, VDataTable, VChip, VTextField, VRow, VCol, VCard, VIcon, VCardTitle, VDataIterator
+    VFooter, VCardText, VDataTable, VChip, VTextField, VRow, VCol, VCard, VIcon, VCardTitle, VDataIterator, VTab, VTabs,VTabItem, VTabsItems,
+    VTabsSlider,VDivider, VList, VListItem, VListItemContent,VForm, VAutocomplete, VMenu, VDatePicker, VTooltip, VSwitch, VListItemAvatar, VListItemTitle,VListItemSubtitle
   }
 })
 Vue.use(VueI18n)

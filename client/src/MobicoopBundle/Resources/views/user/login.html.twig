@@ -22,10 +22,10 @@
 <section class="section">
 	<div class="container">
 		<div id="login">
-            <Login 
-                errormessage="{{ errorMessage }}"
-                urlForgottenPassword="{{ path('user_password_forgot') }}">
-            </Login>
+            <login
+                :errormessage="{{ {'value': errorMessage}|json_encode(1) }}"
+                :urlforgottenpassword="{{ { 'value':path('user_password_forgot')}|json_encode }}">
+            </login>
 		</div>
     </div>
   </section>

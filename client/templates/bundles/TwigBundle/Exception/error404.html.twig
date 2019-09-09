@@ -1,7 +1,7 @@
 {# templates/bundles/TwigBundle/Exception/error404.html.twig #}
 {% extends '@Mobicoop/base.html.twig' %}
 {% block stylesheets %}
-    {{ encore_entry_link_tags("#{assets_prefix ?? ''}home") }}
+    {{ encore_entry_link_tags("#{assets_prefix ?? ''}home/home") }}
 {% endblock %}
 {% block main %}
     <h1>{{ "Page non trouvé"|trans }}</h1>
@@ -12,5 +12,5 @@
     </p>
 {% endblock %}
 {% block javascripts %}
-    {{ encore_entry_script_tags("#{assets_prefix ?? ''}home") }}
+    {{ encore_entry_script_tags("#{assets_prefix ?? ''}home/home") }}
 {% endblock %}

@@ -83,9 +83,14 @@
       </v-container>
     </div>
     <div id="community_footer">
-      <v-row>
-        Module de recherche de trajet
-      </v-row>
+      <home-search
+        :geo-search-url="geodata.geocompleteuri"
+        :route="geodata.searchroute"
+        :user="user"
+        :justsearch="true"
+        :notitle="true"
+        :notembedded="false"
+      />
     </div>
   </div>
 </template>
@@ -98,28 +103,37 @@ import Translations from "@translations/components/home/HomeSearch.json";
 import TranslationsClient from "@clientTranslations/components/home/HomeSearch.json";
 import MemberList from "./MemberList";
 import CommunityInfos from "./CommunityInfos";
+import HomeSearch from "../home/HomeSearch";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components: {
-    MemberList,CommunityInfos
+    MemberList,CommunityInfos,HomeSearch
   },
   i18n: {
     messages: TranslationsMerged,
     sharedMessages: CommonTranslations
   },
   props:{
+    user: {
+      type: Object,
+      default: null
+    },
+    geodata: {
+      type: Object,
+      default: null
+    },
     users: {
       type: Array,
       default: null
     },
     community:{
-      type: Array,
+      type: Object,
       default: null
     },
     paths:{
-      type: Array,
+      type: Object,
       default: null
     }
   },

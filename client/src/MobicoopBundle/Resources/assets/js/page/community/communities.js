@@ -9,12 +9,14 @@ import MHeader from '@components/base/MHeader'
 import MFooter from '@components/base/MFooter'
 import MemberList from '@components/community/MemberList'
 import CommunityList from "../../components/community/CommunityList";
+import CommunityHelp from "../../components/community/CommunityHelp";
 
 new Vue({
   el: '#app',
   vuetify,
   i18n,
   components: {
+    CommunityHelp,
     CommunityList,
     MemberList,
     MHeader,
