@@ -3,11 +3,11 @@
     <v-container 
       fluid
     >
-      <!-- when we're a passenger, it's the potential drivers (matchingRequests) - all offers containing drivers(proposalOffer) -->
+      <!-- it's the potential drivers (matchingRequests) - all offers containing drivers(proposalOffer) -->
       <v-list-item>
-        <!-- avatar --> 
+        <!-- Icon driver--> 
         <v-list-item-avatar
-          v-if="matching.proposalOffer.criteria.driver"
+          v-if="driver === true && passenger === false"
           color="primary"
           size="60"
           class="ml-2"
@@ -20,20 +20,55 @@
           </v-icon>
         </v-list-item-avatar>
 
-        <v-list-item-avatar
-          v-else-if="matching.proposalOffer.criteria.passenger"
-          color="secondary"
-          size="60"
-          class="ml-2"
+        <!-- Icon driver & passenger--> 
+        <v-list-item           
+          v-else-if="passenger === true && driver === true"
         >
-          <v-icon
-            dark
-            size="35"
+          <v-list-item-avatar
+            color="secondary"
+            size="60"
+            class="ml-2"
           >
-            mdi-account-supervisor 
-          </v-icon>
-        </v-list-item-avatar>
-        
+            <v-icon
+              dark
+              size="35"
+            >
+              mdi-account-supervisor 
+            </v-icon>
+          </v-list-item-avatar>
+
+          <v-list-item-avatar
+            color="primary"
+            size="60"
+            class="ml-2"
+          >
+            <v-icon
+              dark
+              size="35"
+            >
+              mdi-steering
+            </v-icon>
+          </v-list-item-avatar>
+        </v-list-item>
+
+        <!-- Icon passenger--> 
+        <v-list-item           
+          v-else-if="passenger === true && driver === false"
+        >
+          <v-list-item-avatar
+            color="secondary"
+            size="60"
+            class="ml-2"
+          >
+            <v-icon
+              dark
+              size="35"
+            >
+              mdi-account-supervisor 
+            </v-icon>
+          </v-list-item-avatar>
+        </v-list-item>
+      
         <!-- Hour & Date -->
         <v-list-item-content
           class="ml-2"
@@ -153,10 +188,6 @@ export default {
       type: String,
       default: null
     },
-    carpoolResults: {
-      type: Object,
-      default: null
-    },
     matchingSearchUrl: {
       type: String,
       default: null
@@ -172,8 +203,8 @@ export default {
   },
   data() {
     return {
-      driver: true,
-      passenger: false
+      driver: this.matching.proposalOffer.criteria.driver,
+      passenger: this.matching.proposalOffer.criteria.passenger
     };
   },
   computed: {

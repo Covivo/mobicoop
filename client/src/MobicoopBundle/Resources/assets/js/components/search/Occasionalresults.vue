@@ -108,7 +108,7 @@
             class="mt-8"
             no-gutters
           >
-            <h3> {{ results.matchingRequests.length }} annonces trouvée(s) </h3> 
+            <h3> {{ results.matchingRequests.length }} annonces trouvée(s) </h3>
             <!-- trouvée | trouvées -->
           </v-row>
         </v-col>
@@ -121,6 +121,7 @@
           cols="6"
           offset="3"
         >
+          <!-- ResultCard  Compenent -->
           <result-card 
             :origin="origin"
             :destination="destination"
@@ -185,7 +186,7 @@ export default {
     matchingSearchUrl: {
       type: String,
       default: null
-    },
+    }
   },
   data : function() {
     return {

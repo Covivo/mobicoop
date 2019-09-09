@@ -26,7 +26,6 @@
           :matching="matching"
         />
       </v-card>
-      </div>
     </v-container>
   </v-content>
 </template>

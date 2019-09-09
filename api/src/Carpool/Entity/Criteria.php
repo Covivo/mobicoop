@@ -120,7 +120,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","results","write","thread"})
+     * @Groups({"read","write","thread"})
      */
     private $minTime;
 
@@ -129,7 +129,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","results","write","thread"})
+     * @Groups({"read","write","thread"})
      */
     private $maxTime;
 
@@ -137,7 +137,7 @@ class Criteria
      * @var int Accepted margin duration for punctual proposal in seconds.
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","results","write","thread"})
+     * @Groups({"read","write","thread"})
      */
     private $marginDuration;
 
@@ -478,7 +478,7 @@ class Criteria
      * @var boolean The user accepts any route as a passenger from its origin to the destination.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","results","write","thread"})
+     * @Groups({"read","write","thread"})
      */
     private $anyRouteAsPassenger;
     
@@ -486,7 +486,7 @@ class Criteria
      * @var boolean|null The user accepts any transportation mode.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","results","write","thread"})
+     * @Groups({"read","write","thread"})
      */
     private $multiTransportMode;
     
