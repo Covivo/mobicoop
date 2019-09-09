@@ -36,6 +36,7 @@
             v-model="step"
             alt-labels
             class="elevation-0"
+            @change="redrawMap()"
           >
             <!-- Stepper Header -->
             <v-stepper-header
@@ -371,21 +372,32 @@
               <v-stepper-content
                 :step="driver ? 7 : 5"
               >
-                <ad-summary 
-                  :driver="driver"
-                  :passenger="passenger"
-                  :regular="regular"
-                  :outward-date="outwardDate"
-                  :outward-time="outwardTime"
-                  :return-date="returnDate"
-                  :return-time="returnTime"
-                  :schedules="schedules"
-                  :seats="seats"
-                  :price="price"
-                  :route="route"
-                  :message="message"
-                  :user="user"
-                />
+                <v-container>
+                  <v-row>
+                    <v-col cols="12">
+                      <ad-summary 
+                        :driver="driver"
+                        :passenger="passenger"
+                        :regular="regular"
+                        :outward-date="outwardDate"
+                        :outward-time="outwardTime"
+                        :return-date="returnDate"
+                        :return-time="returnTime"
+                        :schedules="schedules"
+                        :seats="seats"
+                        :price="price"
+                        :route="route"
+                        :message="message"
+                        :user="user"
+                      />
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12">
+                      <m-map ref="mmap" />
+                    </v-col>
+                  </v-row>
+                </v-container>
               </v-stepper-content>
             </v-stepper-items>
           </v-stepper>
@@ -448,6 +460,7 @@ import SearchJourney from "@components/carpool/SearchJourney";
 import AdPlanification from "@components/carpool/AdPlanification";
 import AdRoute from "@components/carpool/AdRoute";
 import AdSummary from "@components/carpool/AdSummary";
+import MMap from '@components/base/MMap'
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -460,7 +473,8 @@ export default {
     SearchJourney,
     AdPlanification,
     AdRoute,
-    AdSummary
+    AdSummary,
+    MMap
   },
   props: {
     geoSearchUrl: {
@@ -634,6 +648,9 @@ export default {
           self.loading = false;
         });
     },
+    redrawMap(){
+      this.$refs.mmap.redrawMap();
+    }
 
   }
 };

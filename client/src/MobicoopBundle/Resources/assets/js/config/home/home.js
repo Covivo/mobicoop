@@ -4,7 +4,6 @@ import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import colorTheme from '@themes/mobicoop.json'
 import '@mdi/font/css/materialdesignicons.css'
-import {LMap, LTileLayer, LMarker} from 'vue2-leaflet'
 
 import Vuetify, { 
   // general
@@ -30,10 +29,7 @@ Vue.use(Vuetify, {
     // content
     VSwitch, VMenu, VDatePicker, VTextField,  VTooltip, VCard, VCardTitle, VCardActions,
     // geocomplete
-    VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon, VForm,
-
-    // geography
-    LMap, LTileLayer, LMarker
+    VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon, VForm
   }
 })
 Vue.use(VueI18n)

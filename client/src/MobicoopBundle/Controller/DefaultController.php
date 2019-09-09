@@ -49,22 +49,6 @@ class DefaultController extends AbstractController
         );
     }
 
-    /**
-     * HomePage
-     * @Route("/testMap", name="testMap")
-     *
-     */
-    public function testMap()
-    {
-        return $this->render(
-            '@Mobicoop/default/testmap.html.twig',
-            [
-                'baseUri' => $_ENV['API_URI'],
-                'searchRoute' => 'covoiturage/recherche',
-                'metaDescription' => 'Homepage of Mobicoop'
-            ]
-        );
-    }
 
     /**
      * Error Page.
