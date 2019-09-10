@@ -1,7 +1,7 @@
 <template>
   <v-content>
     <v-container
-      v-for="(matching,index) in proposals"
+      v-for="(matching,index) in matchings"
       :key="index"
     >
       <v-card
@@ -79,10 +79,16 @@ export default {
     }
   },
   data() {
-    return {
-      proposals: this.carpoolResults.matchingRequests
+    return {      
+      matchings: []
     }
-  }
+  },
+  watch: {
+    carpoolResults(){
+      // this.matchings.push(this.carpoolResults.matchingRequests,this.carpoolResults.matchingOffers);
+      this.matchings=this.carpoolResults.matchingRequests
+    }
+  },
 }
 </script>
 

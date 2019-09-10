@@ -1,13 +1,13 @@
 <template>
   <v-content>
-    <v-container 
+    <v-container
       fluid
     >
       <!-- it's the potential drivers (matchingRequests) - all offers containing drivers(proposalOffer) -->
       <v-list-item>
         <!-- Icon driver--> 
         <v-list-item-avatar
-          v-if="driver === true && passenger === false"
+          v-show="driver === true && passenger === false"
           color="primary"
           size="60"
           class="ml-2"
@@ -22,7 +22,7 @@
 
         <!-- Icon driver & passenger--> 
         <v-list-item           
-          v-else-if="passenger === true && driver === true"
+          v-show="passenger === true && driver === true"
         >
           <v-list-item-avatar
             color="secondary"
@@ -53,7 +53,7 @@
 
         <!-- Icon passenger--> 
         <v-list-item           
-          v-else-if="passenger === true && driver === false"
+          v-show="passenger === true && driver === false"
         >
           <v-list-item-avatar
             color="secondary"
@@ -149,6 +149,12 @@
         </v-col>
         <v-row />
       </v-list-item>
+      <div class="column is-full is-centered">
+        <span 
+          v-if="matching.length == 0" 
+          class="tag is-warning"
+        >Pas de voyage trouvé.</span>
+      </div>
     </v-container>
   </v-content>
 </template>
@@ -198,7 +204,7 @@ export default {
     },
     matching: {
       type: Object,
-      dafault: null
+      default: null
     }
   },
   data() {
