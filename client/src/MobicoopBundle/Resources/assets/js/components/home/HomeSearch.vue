@@ -1,16 +1,16 @@
 <template>
   <v-content color="secondary">
     <v-container
-      text-xs-center
       grid-list-md
+      text-xs-center
     >
       <!-- Title and subtitle -->
       <v-layout
         v-if="!notitle"
-        row
-        justify-center
         align-center
         class="mt-5"
+        justify-center
+        row
       >
         <v-flex
           v-if="notembedded"
@@ -26,8 +26,8 @@
       </v-layout>
 
       <v-layout
-        row
         justify-center
+        row
       >
         <v-flex
           v-if="notembedded"
@@ -58,14 +58,14 @@
         row
       >
         <v-flex
-          xs2
           offset-xs3
+          xs2
         >
           <v-btn
             v-show="!justsearch"
-            rounded
-            outlined
             disabled
+            outlined
+            rounded
             @click="publish"
           >
             {{ $t('buttons.shareAnAd.label') }}
@@ -73,10 +73,10 @@
         </v-flex>
         <v-flex xs2>
           <v-btn
+            :disabled="searchUnavailable"
+            :loading="loading"
             color="success"
             rounded
-            :loading="loading"
-            :disabled="searchUnavailable"
             @click="search"
           >
             {{ $t('buttons.search.label') }}
