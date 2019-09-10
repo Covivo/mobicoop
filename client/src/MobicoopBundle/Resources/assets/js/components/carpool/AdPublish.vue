@@ -36,7 +36,6 @@
             v-model="step"
             alt-labels
             class="elevation-0"
-            @change="redrawMap()"
           >
             <!-- Stepper Header -->
             <v-stepper-header
@@ -394,7 +393,12 @@
                   </v-row>
                   <v-row>
                     <v-col cols="12">
-                      <m-map ref="mmap" />
+                      <m-map
+                        ref="mmap"
+                        :center-default="[47.413220, -1.219482]"
+                        type-map="adSummary"
+                        :points="pointsToMap"
+                      />
                     </v-col>
                   </v-row>
                 </v-container>
@@ -461,6 +465,7 @@ import AdPlanification from "@components/carpool/AdPlanification";
 import AdRoute from "@components/carpool/AdRoute";
 import AdSummary from "@components/carpool/AdSummary";
 import MMap from '@components/base/MMap'
+import L from "leaflet";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -536,7 +541,9 @@ export default {
       baseUrl: window.location.origin,
       loading: false,
       userDelegated: null, // if user delegation
-      selectedCommunities: null
+      selectedCommunities: null,
+      pointsToMap:[],
+      bbox:null
     }
   },
   computed: {
@@ -576,9 +583,51 @@ export default {
     },
     distance() {
       this.price = Math.round(this.distance * this.pricePerKm * 100)/100;
+    },
+    route(){
+      this.buildPoints();
+    },
+    step(){
+      this.$refs.mmap.redrawMap();
     }
   },
   methods: {
+    buildPoints: function(){
+      this.pointsToMap.length = 0;
+      // Set the origin point with custom icon
+      if(this.origin !== null && this.origin !== undefined){
+        let pointOrigin = {
+          latLng:L.latLng(this.origin.latitude, this.origin.longitude),
+          icon:{
+            url:"/images/cartography/pictos/origin.png",
+            size:[36, 42],
+            anchor:[18, 64]
+          }
+        }      
+        this.pointsToMap.push(pointOrigin);
+      }
+      // Set all the waypoints (default icon for now)
+      this.route.waypoints.forEach((waypoint, index) => {
+        if(waypoint.address !== null){
+          let currentWaypoint = {
+            latLng:L.latLng(waypoint.address.latitude, waypoint.address.longitude),
+          }     
+          this.pointsToMap.push(currentWaypoint);
+        }
+      });
+      // Set the destination point with custom icon
+      if(this.destination !== null && this.destination !== undefined){
+        let pointDestination = {
+          latLng:L.latLng(this.destination.latitude, this.destination.longitude),
+          icon:{
+            url:"/images/cartography/pictos/destination.png",
+            size:[36, 42],
+            anchor:[18, 64]
+          }
+        }         
+        this.pointsToMap.push(pointDestination);
+      }
+    },
     searchChanged: function(search) {
       this.passenger = search.passenger;
       this.driver = search.driver;
@@ -647,9 +696,6 @@ export default {
         .finally(function () {
           self.loading = false;
         });
-    },
-    redrawMap(){
-      this.$refs.mmap.redrawMap();
     }
 
   }
