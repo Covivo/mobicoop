@@ -57,7 +57,7 @@
           </v-tabs>
           <v-tabs-items v-model="modelTabs">
             <v-tab-item
-              v-if="this.threadsCM.length==0"
+              v-if="threadsCM.length==0"
               value="tab-cm"
             >
               {{ $t("ui.pages.messages.label.nocarpoolmessages") }}
@@ -120,7 +120,7 @@
               </v-card>
             </v-tab-item>
             <v-tab-item
-              v-if="this.threadsDM.length==0"
+              v-if="threadsDM.length==0"
               value="tab-dm"
             >
               {{ $t("ui.pages.messages.label.nodirectmessages") }}
@@ -153,7 +153,7 @@
         >
           <!-- Messages -->
 
-          <v-timeline v-if="(this.threadsDM.length>0 || this.threadsCM.length>0)">
+          <v-timeline v-if="(threadsDM.length>0 || threadsCM.length>0)">
             <v-timeline-item
               v-for="(item, i) in items"
               :key="i"
@@ -193,7 +193,7 @@
           </v-timeline>
 
           <v-container
-            v-if="(this.threadsDM.length>0 || this.threadsCM.length>0)"
+            v-if="(threadsDM.length>0 || threadsCM.length>0)"
             fluid
             grid-list-md
           >
@@ -245,7 +245,7 @@
               text-center
             >
               <v-card
-                v-if="(this.threadsDM.length>0 || this.threadsCM.length>0)"
+                v-if="(threadsDM.length>0 || threadsCM.length>0)"
                 class="pa-2 text-center"
               >
                 <!-- The current carpool history -->
@@ -256,22 +256,19 @@
                   v-if="currentAskHistory"
                   class="mb-3"
                 >
-                  <v-card-text>{{ currentAskHistory.ask.matching.criteria.fromDateReadable }} {{ $t("ui.infos.misc.at") }} {{ currentAskHistory.ask.matching.criteria.fromTimeReadable }}</v-card-text>
-                  <!-- Timeline of the journey -->
-                  <v-timeline dense>
-                    <v-timeline-item
-                      v-for="(waypoint, index) in infosJourney['waypoints']"
-                      :key="index"
-                      :icon="( (index>0) && (index<waypoint.length-1) ) ? 'mdi-arrow-right' : ''"
-                      :color="( (index>0) && (index<waypoint.length-1) ) ? '' : 'primary'"
-                      :icon-color="( (index>0) && (index<waypoint.length-1) ) ? 'warning' : 'primary'"
-                      :fill-dot="( (index>0) && (index<waypoint.length-1) )"
-                      class="text-left pb-2"
-                      :class="( (index>0) && (index<waypoint.length-1) ) ? 'waypoint' : ''"
-                    >
-                      {{ waypoint }}
-                    </v-timeline-item>
-                  </v-timeline>
+                  <ad-summary
+                    :summary-component="false"
+                    :driver="true"
+                    :passenger="false"
+                    :regular="true"
+                    :route="route"
+                    :outward-date="outwardDate"
+                    :outward-time="outwardTime"
+                    return-date="2019-09-25"
+                    return-time="15:00"
+                    :schedules="schedules"
+                    :user="user"
+                  />
 
                   <v-divider />
                   <v-row>
@@ -388,7 +385,6 @@
           </v-row>
         </v-col>
       </v-row>
-
       <div class="text-xs-center">
         <v-dialog
           v-model="spinner"
@@ -448,12 +444,14 @@
   </v-content>
 </template>
 <script>
+import moment from "moment";
 import axios from "axios";
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/Messages.json";
 import TranslationsClient from "@clientTranslations/components/user/Messages.json";
 import MBtn from '@components/utilities/MBtn'
+import AdSummary from '@components/carpool/AdSummary'
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
@@ -462,7 +460,8 @@ export default {
     sharedMessages: CommonTranslations
   },
   components: {
-    MBtn
+    MBtn,
+    AdSummary
   },
   props: {
     threadsdirectmessagesforview: {
@@ -496,6 +495,10 @@ export default {
     lastnamerecipientdefault: {
       type: String,
       default: ""
+    },
+    user: {
+      type: Object,
+      default: null
     }
   },
   data() {
@@ -509,6 +512,8 @@ export default {
       idThreadMessage: this.idmessagedefault,
       currentcorrespondant: "...",
       idRecipient: null,
+      route: {},
+      schedules: [],
       textSpinnerLoading: this.$t("ui.pages.messages.spinner.loading"),
       textSpinnerSendMessage: this.$t("ui.pages.messages.spinner.sendMessage"),
       textSpinnerAskCarpool: this.$t("ui.pages.messages.spinner.askCarpool"),
@@ -519,7 +524,9 @@ export default {
       currentAskHistory: null,
       askUser: 0,
       infosJourney: [],
-      modelTabs:"tab-cm"
+      modelTabs:"tab-cm",
+      outwardDate: null,
+      outwardTime: null
     };
   },
   watch: {
@@ -620,14 +627,9 @@ export default {
       });
     },
     updateContextPanel() {
+      console.error(this.currentAskHistory);
       if (this.currentAskHistory !== null) {
         this.infosJourney.length = 0; // Reset journey infos
-
-        this.infosJourney["waypoints"] = new Array();
-        for (let waypoint of this.currentAskHistory.ask.matching.waypoints) {
-          // Get the diffrent waypoints
-          this.infosJourney["waypoints"].push(waypoint.address.addressLocality);
-        }
 
         // update distance
         this.infosJourney["distance"] =
@@ -651,6 +653,100 @@ export default {
         this.infosJourney[
           "seats"
         ] = this.currentAskHistory.ask.matching.criteria.seats;
+      }
+      // build the route of the carpool
+      this.route.waypoints = this.currentAskHistory.ask.matching.waypoints;
+      this.route.direction = this.currentAskHistory.ask.matching.proposalRequest.criteria.directionPassenger;
+      this.route.origin = this.currentAskHistory.ask.matching.waypoints[0].address;
+      for (let waypoint of this.currentAskHistory.ask.matching.waypoints) {
+        if (waypoint.destination == true) {
+          this.route.destination = waypoint.address
+        }
+      }
+      // format the outwardDate and outwardTime
+      this.outwardDate = moment(this.currentAskHistory.ask.criteria.fromDate).format('YYYY-MM-DD')
+      this.outwardTime = moment(this.currentAskHistory.ask.criteria.fromTime).format('hh:mm')
+      // build schedules of the regular carpool
+      if (this.currentAskHistory.ask.criteria.frequency == 2) {
+        let schedule = {
+          fri: false,
+          mon: true,
+          sat: false,
+          sun: false,
+          thu: true,
+          tue: true,
+          wed: false,
+          outwardTime: "15:15",
+          returnTime: null
+        }
+        let schedule2 = {
+          fri: true,
+          mon: false,
+          sat: false,
+          sun: false,
+          thu: false,
+          tue: false,
+          wed: true,
+          outwardTime: "18:15",
+          returnTime: null
+        }
+
+
+        let hours = new Array();
+        if(hours[this.currentAskHistory.ask.criteria.monTime]===undefined){
+          hours[this.currentAskHistory.ask.criteria.monTime] = ["mon"];
+        }
+        else{
+          hours[this.currentAskHistory.ask.criteria.monTime].push(["mon"]);
+        }
+        if(hours[this.currentAskHistory.ask.criteria.tueTime]===undefined){
+          hours[this.currentAskHistory.ask.criteria.tueTime] = ["tue"];
+        }
+        else{
+          hours[this.currentAskHistory.ask.criteria.tueTime].push(["tue"]);
+        }
+        if(hours[this.currentAskHistory.ask.criteria.wedTime]===undefined){
+          hours[this.currentAskHistory.ask.criteria.wedTime] = ["wed"];
+        }
+        else{
+          hours[this.currentAskHistory.ask.criteria.wedTime].push(["wed"]);
+        }
+        if(hours[this.currentAskHistory.ask.criteria.thuTime]===undefined){
+          hours[this.currentAskHistory.ask.criteria.thuTime] = ["thu"];
+        }
+        else{
+          hours[this.currentAskHistory.ask.criteria.thuTime].push(["thu"]);
+        }
+        if(hours[this.currentAskHistory.ask.criteria.friTime]===undefined){
+          hours[this.currentAskHistory.ask.criteria.friTime] = ["fri"];
+        }
+        else{
+          hours[this.currentAskHistory.ask.criteria.friTime].push(["fri"]);
+        }        
+        console.error(hours.length);        
+
+        
+        hours.forEach((hour, index) => {
+          /*let currentSchedule = {
+            outwardTime:moment(index).format('hh:mm')
+          };
+          if(hour[index].indexOf("mon")===-1){
+            currentSchedule.mon = false;
+          }
+          else{
+            currentSchedule.mon = true;
+          }
+          console.error(currentSchedule);
+          this.schedules.push(currentSchedule);*/
+          console.error("la");
+        });
+
+        //this.schedules.push(schedule, schedule2);
+        //console.error(this.schedules);
+        
+
+        
+
       }
     },
     sendInternalMessage() {
