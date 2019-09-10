@@ -395,7 +395,6 @@
                     <v-col cols="12">
                       <m-map
                         ref="mmap"
-                        :center-default="[47.413220, -1.219482]"
                         type-map="adSummary"
                         :points="pointsToMap"
                       />
