@@ -397,6 +397,7 @@
                         ref="mmap"
                         type-map="adSummary"
                         :points="pointsToMap"
+                        :ways="(this.route!==null && this.route.direction!==null)?this.route.direction.directPoints:null"
                       />
                     </v-col>
                   </v-row>
@@ -584,48 +585,48 @@ export default {
       this.price = Math.round(this.distance * this.pricePerKm * 100)/100;
     },
     route(){
-      this.buildPoints();
+      this.buildPointsToMap();
     },
     step(){
       this.$refs.mmap.redrawMap();
     }
   },
   methods: {
-    buildPoints: function(){
+    buildPointsToMap: function(){
       this.pointsToMap.length = 0;
       // Set the origin point with custom icon
       if(this.origin !== null && this.origin !== undefined){
-        let pointOrigin = {
-          latLng:L.latLng(this.origin.latitude, this.origin.longitude),
-          icon:{
-            url:"/images/cartography/pictos/origin.png",
-            size:[36, 42],
-            anchor:[18, 64]
-          }
-        }      
+        let pointOrigin = this.buildPoint(this.origin.latitude,this.origin.longitude,"/images/cartography/pictos/origin.png",[36, 42],[18, 64]);
         this.pointsToMap.push(pointOrigin);
       }
       // Set all the waypoints (default icon for now)
       this.route.waypoints.forEach((waypoint, index) => {
         if(waypoint.address !== null){
-          let currentWaypoint = {
-            latLng:L.latLng(waypoint.address.latitude, waypoint.address.longitude),
-          }     
+          let currentWaypoint = this.buildPoint(waypoint.address.latitude,waypoint.address.longitude);
           this.pointsToMap.push(currentWaypoint);
         }
       });
       // Set the destination point with custom icon
       if(this.destination !== null && this.destination !== undefined){
-        let pointDestination = {
-          latLng:L.latLng(this.destination.latitude, this.destination.longitude),
-          icon:{
-            url:"/images/cartography/pictos/destination.png",
-            size:[36, 42],
-            anchor:[18, 64]
-          }
-        }         
+        let pointDestination = this.buildPoint(this.destination.latitude,this.destination.longitude,"/images/cartography/pictos/destination.png",[36, 42],[18, 64]);
         this.pointsToMap.push(pointDestination);
       }
+    },
+    buildPoint: function(lat,lng,pictoUrl="",size=[],anchor=[]){
+      let point = {
+        latLng:L.latLng(lat, lng),
+        icon: {}
+      }
+
+      if(pictoUrl!==""){
+        point.icon = {
+          url:pictoUrl,
+          size:size,
+          anchor:anchor
+        }
+      }
+        
+      return point;      
     },
     searchChanged: function(search) {
       this.passenger = search.passenger;

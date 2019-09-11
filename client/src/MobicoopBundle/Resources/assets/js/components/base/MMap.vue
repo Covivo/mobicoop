@@ -18,7 +18,7 @@
           :lat-lng="point.latLng"
         >
           <l-icon
-            v-if="point.icon!==undefined"
+            v-if="point.icon.url!==undefined"
             :icon-size="point.icon.size"
             :icon-anchor="point.icon.anchor"
             :icon-url="point.icon.url"
