@@ -397,7 +397,7 @@
                         ref="mmap"
                         type-map="adSummary"
                         :points="pointsToMap"
-                        :ways="(this.route!==null && this.route.direction!==null)?this.route.direction.directPoints:null"
+                        :ways="directionWay"
                       />
                     </v-col>
                   </v-row>
@@ -543,6 +543,7 @@ export default {
       userDelegated: null, // if user delegation
       selectedCommunities: null,
       pointsToMap:[],
+      directionWay:[],
       bbox:null
     }
   },
@@ -586,6 +587,7 @@ export default {
     },
     route(){
       this.buildPointsToMap();
+      if(this.route.direction !== null){this.buildDirectionWay();}
     },
     step(){
       this.$refs.mmap.redrawMap();
@@ -596,7 +598,8 @@ export default {
       this.pointsToMap.length = 0;
       // Set the origin point with custom icon
       if(this.origin !== null && this.origin !== undefined){
-        let pointOrigin = this.buildPoint(this.origin.latitude,this.origin.longitude,"/images/cartography/pictos/origin.png",[36, 42],[18, 64]);
+        let pointOrigin = this.buildPoint(this.origin.latitude,this.origin.longitude,"/images/cartography/pictos/origin.png",[36, 42],[10, 25]);
+        //        let pointOrigin = this.buildPoint(this.origin.latitude,this.origin.longitude);
         this.pointsToMap.push(pointOrigin);
       }
       // Set all the waypoints (default icon for now)
@@ -608,9 +611,14 @@ export default {
       });
       // Set the destination point with custom icon
       if(this.destination !== null && this.destination !== undefined){
-        let pointDestination = this.buildPoint(this.destination.latitude,this.destination.longitude,"/images/cartography/pictos/destination.png",[36, 42],[18, 64]);
+        let pointDestination = this.buildPoint(this.destination.latitude,this.destination.longitude,"/images/cartography/pictos/destination.png",[36, 42],[10, 25]);
         this.pointsToMap.push(pointDestination);
       }
+    },
+    buildDirectionWay(){
+      // You need to push the entire directPoints array because the MMap component can show multiple journeys
+      this.directionWay.length = 0;
+      this.directionWay.push(this.route.direction.directPoints);
     },
     buildPoint: function(lat,lng,pictoUrl="",size=[],anchor=[]){
       let point = {

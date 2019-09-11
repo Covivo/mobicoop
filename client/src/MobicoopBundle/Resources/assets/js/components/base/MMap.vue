@@ -24,6 +24,12 @@
             :icon-url="point.icon.url"
           />
         </l-marker>
+        <l-polyline
+          v-for="(way, i) in ways"
+          :key="'w'+i"
+          :lat-lngs="way"
+          color="blue"
+        />        
       </l-map>
     </v-col>
   </v-row>
@@ -80,9 +86,6 @@ export default {
       attribution:this.attributionCopyright,
       markers:this.points
     };
-  },
-  mounted() {
-    //this.showPoints();
   },
   methods: {
     redrawMap: function() {
