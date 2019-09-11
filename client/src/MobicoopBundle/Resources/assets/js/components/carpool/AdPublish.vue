@@ -602,6 +602,8 @@ export default {
     route(){
       this.buildPointsToMap();
       if(this.route.direction !== null){this.buildDirectionWay();}
+      this.$refs.mmapSummary.redrawMap();
+      this.$refs.mmapRoute.redrawMap();
     },
     step(){
       this.$refs.mmapSummary.redrawMap();
