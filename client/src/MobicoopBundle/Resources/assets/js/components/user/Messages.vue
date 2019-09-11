@@ -257,15 +257,11 @@
                   class="mb-3"
                 >
                   <ad-summary
-                    :summary-component="false"
-                    :driver="true"
-                    :passenger="false"
-                    :regular="true"
+                    :display-info="false"
+                    :regular="regular"
                     :route="route"
                     :outward-date="outwardDate"
                     :outward-time="outwardTime"
-                    return-date="2019-09-25"
-                    return-time="15:00"
                     :schedules="schedules"
                     :user="user"
                   />
@@ -526,7 +522,8 @@ export default {
       infosJourney: [],
       modelTabs:"tab-cm",
       outwardDate: null,
-      outwardTime: null
+      outwardTime: null,
+      regular: false,
     };
   },
   watch: {
@@ -627,7 +624,6 @@ export default {
       });
     },
     updateContextPanel() {
-      console.error(this.currentAskHistory);
       if (this.currentAskHistory !== null) {
         this.infosJourney.length = 0; // Reset journey infos
 
@@ -668,85 +664,33 @@ export default {
       this.outwardTime = moment(this.currentAskHistory.ask.criteria.fromTime).format('hh:mm')
       // build schedules of the regular carpool
       if (this.currentAskHistory.ask.criteria.frequency == 2) {
-        let schedule = {
-          fri: false,
-          mon: true,
-          sat: false,
-          sun: false,
-          thu: true,
-          tue: true,
-          wed: false,
-          outwardTime: "15:15",
-          returnTime: null
-        }
-        let schedule2 = {
-          fri: true,
-          mon: false,
-          sat: false,
-          sun: false,
-          thu: false,
-          tue: false,
-          wed: true,
-          outwardTime: "18:15",
-          returnTime: null
-        }
-
-
+        this.regular = true;
         let hours = new Array();
-        if(hours[this.currentAskHistory.ask.criteria.monTime]===undefined){
-          hours[this.currentAskHistory.ask.criteria.monTime] = ["mon"];
-        }
-        else{
-          hours[this.currentAskHistory.ask.criteria.monTime].push(["mon"]);
-        }
-        if(hours[this.currentAskHistory.ask.criteria.tueTime]===undefined){
-          hours[this.currentAskHistory.ask.criteria.tueTime] = ["tue"];
-        }
-        else{
-          hours[this.currentAskHistory.ask.criteria.tueTime].push(["tue"]);
-        }
-        if(hours[this.currentAskHistory.ask.criteria.wedTime]===undefined){
-          hours[this.currentAskHistory.ask.criteria.wedTime] = ["wed"];
-        }
-        else{
-          hours[this.currentAskHistory.ask.criteria.wedTime].push(["wed"]);
-        }
-        if(hours[this.currentAskHistory.ask.criteria.thuTime]===undefined){
-          hours[this.currentAskHistory.ask.criteria.thuTime] = ["thu"];
-        }
-        else{
-          hours[this.currentAskHistory.ask.criteria.thuTime].push(["thu"]);
-        }
-        if(hours[this.currentAskHistory.ask.criteria.friTime]===undefined){
-          hours[this.currentAskHistory.ask.criteria.friTime] = ["fri"];
-        }
-        else{
-          hours[this.currentAskHistory.ask.criteria.friTime].push(["fri"]);
-        }        
-        console.error(hours.length);        
+        (hours[this.currentAskHistory.ask.criteria.monTime]===undefined) ? hours[this.currentAskHistory.ask.criteria.monTime] = ["mon"] : hours[this.currentAskHistory.ask.criteria.monTime].push("mon");
+        (hours[this.currentAskHistory.ask.criteria.tueTime]===undefined) ? hours[this.currentAskHistory.ask.criteria.tueTime] = ["tue"] : hours[this.currentAskHistory.ask.criteria.tueTime].push("tue");
+        (hours[this.currentAskHistory.ask.criteria.wedTime]===undefined) ? hours[this.currentAskHistory.ask.criteria.wedTime] = ["wed"] : hours[this.currentAskHistory.ask.criteria.wedTime].push("wed");
+        (hours[this.currentAskHistory.ask.criteria.thuTime]===undefined) ? hours[this.currentAskHistory.ask.criteria.thuTime] = ["thu"] : hours[this.currentAskHistory.ask.criteria.thuTime].push("thu");
+        (hours[this.currentAskHistory.ask.criteria.friTime]===undefined) ? hours[this.currentAskHistory.ask.criteria.friTime] = ["fri"] : hours[this.currentAskHistory.ask.criteria.friTime].push("fri");
+        (hours[this.currentAskHistory.ask.criteria.satTime]===undefined) ? hours[this.currentAskHistory.ask.criteria.satTime] = ["sat"] : hours[this.currentAskHistory.ask.criteria.satTime].push("sat");
+        (hours[this.currentAskHistory.ask.criteria.sunTime]===undefined) ? hours[this.currentAskHistory.ask.criteria.sunTime] = ["sun"] : hours[this.currentAskHistory.ask.criteria.sunTime].push("sun");
 
-        
-        hours.forEach((hour, index) => {
-          /*let currentSchedule = {
-            outwardTime:moment(index).format('hh:mm')
+        // build each schedule
+        for (let hour in hours) {
+          let currentSchedule = {
+            outwardTime:moment(hour).format('hh:mm')
           };
-          if(hour[index].indexOf("mon")===-1){
-            currentSchedule.mon = false;
+          currentSchedule.mon = (hours[hour].indexOf("mon")!==-1);
+          currentSchedule.tue = (hours[hour].indexOf("tue")!==-1);
+          currentSchedule.wed = (hours[hour].indexOf("wed")!==-1);
+          currentSchedule.thu = (hours[hour].indexOf("thu")!==-1);
+          currentSchedule.fri = (hours[hour].indexOf("fri")!==-1);
+          currentSchedule.sat = (hours[hour].indexOf("sat")!==-1);
+          currentSchedule.sun = (hours[hour].indexOf("sun")!==-1);
+
+          if(currentSchedule.outwardTime!=="Invalid date"){
+            this.schedules.push(currentSchedule);
           }
-          else{
-            currentSchedule.mon = true;
-          }
-          console.error(currentSchedule);
-          this.schedules.push(currentSchedule);*/
-          console.error("la");
-        });
-
-        //this.schedules.push(schedule, schedule2);
-        //console.error(this.schedules);
-        
-
-        
-
+        }
       }
     },
     sendInternalMessage() {
@@ -801,7 +745,6 @@ export default {
           ? (tabItem["origin"] = "own")
           : (tabItem["origin"] = "contact");
       }
-
       this.items.push(tabItem);
     },
     generateName(firstname, lastname) {
