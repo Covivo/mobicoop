@@ -142,15 +142,29 @@
 
               <!-- Step 3 : route -->
               <v-stepper-content step="3">
-                <ad-route 
-                  :geo-search-url="geoSearchUrl"
-                  :geo-route-url="geoRouteUrl"
-                  :user="user"
-                  :init-origin="origin"
-                  :init-destination="destination"
-                  :communities="communities"
-                  @change="routeChanged"
-                />
+                <v-row>
+                  <v-col cols="12">
+                    <ad-route 
+                      :geo-search-url="geoSearchUrl"
+                      :geo-route-url="geoRouteUrl"
+                      :user="user"
+                      :init-origin="origin"
+                      :init-destination="destination"
+                      :communities="communities"
+                      @change="routeChanged"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12">
+                    <m-map
+                      ref="mmapRoute"
+                      type-map="adSummary"
+                      :points="pointsToMap"
+                      :ways="directionWay"
+                    />
+                  </v-col>
+                </v-row>
               </v-stepper-content>
 
               <!-- Step 4 : passengers (if driver) -->
@@ -394,7 +408,7 @@
                   <v-row>
                     <v-col cols="12">
                       <m-map
-                        ref="mmap"
+                        ref="mmapSummary"
                         type-map="adSummary"
                         :points="pointsToMap"
                         :ways="directionWay"
@@ -590,7 +604,8 @@ export default {
       if(this.route.direction !== null){this.buildDirectionWay();}
     },
     step(){
-      this.$refs.mmap.redrawMap();
+      this.$refs.mmapSummary.redrawMap();
+      this.$refs.mmapRoute.redrawMap();
     }
   },
   methods: {
