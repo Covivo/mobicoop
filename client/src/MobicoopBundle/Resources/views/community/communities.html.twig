@@ -7,16 +7,24 @@
 
 {% endblock %}
 {% block main %}
-
+    <section class="hero firstSection">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">
+                    Les communautés
+                </h1>
+            </div>
+        </div>
+    </section>
     <br/><br/>
     <div class="layout justify-center"
          outlined
          tile>
         <div class="flex xs10">
-            <community-help
-                    :paths="{{ {'community_create':path('community_create')}|json_encode }}"></community-help>
+            <community-help></community-help>
             <br/><br/>
             <community-list
+                    :paths="{{ {'community_create':path('community_create'), 'community_ad_post':path('carpool_ad_post')}|json_encode }}"
                     :communities="{{ communities|json_encode(1) }}"
             ></community-list>
             <br/><br/>

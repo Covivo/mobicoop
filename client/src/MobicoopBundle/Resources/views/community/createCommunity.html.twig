@@ -1,38 +1,24 @@
 {% extends '@Mobicoop/base.html.twig' %}
-
+{# @var form \Symfony\Component\Form\FormView #}
 {% block title %}{% trans from 'ui' %}Communautés{% endtrans %}{% endblock %}
 
 {% block stylesheets %}
-	{{ encore_entry_link_tags("#{assets_prefix ?? ''}community/communities") }}
+    {{ encore_entry_link_tags("#{assets_prefix ?? ''}community/createcommunity") }}
 
 {% endblock %}
 {% block main %}
 
-<section class="hero is-secondary">
-	<div class="hero-body">
-    	<div class="container">
-      		<h1 class="title">
-              Création d'une communauté
-      		</h1>
-    	</div>
-  	</div>
-</section>
-
-<section class="section">
-	<div class="container is-secondary">
-		{% if error %}
-		<span class="tag is-danger">An error occured.</span>
-		{% endif %}
-        {{ form_start(form) }}
-        {{ form_errors(form) }}
-        {{ form_end(form) }}
+<div class="layout justify-center"
+     outlined
+     tile>
+    <div class="flex xs10">
+    <community-create
+			:user="{{ app.user|json_encode }}"
+            :sent-token="{{ csrf_token('communities-post') }}">
+    </community-create>
     </div>
-</section>
-<section class="hero communautes has-text-centered">
-    <a class="lien" href="{{ path('community_list') }}">Liste des communautés</a>
-</section>
-
+    <div>
 {% endblock %}
 {% block javascripts %}
-	{{ encore_entry_script_tags("#{assets_prefix ?? ''}community/communities") }}
+    {{ encore_entry_script_tags("#{assets_prefix ?? ''}community/createcommunity") }}
 {% endblock %}

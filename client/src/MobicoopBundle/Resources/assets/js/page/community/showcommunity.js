@@ -15,8 +15,8 @@ new Vue({
   vuetify,
   i18n,
   components: {
-    CommunityDisplay,
     MHeader,
+    CommunityDisplay,
     MFooter
   }
 });

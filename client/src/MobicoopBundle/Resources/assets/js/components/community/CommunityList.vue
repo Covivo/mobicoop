@@ -19,7 +19,19 @@
         <v-row>
           <v-col
             cols="6"
-            offset-md="6"
+          >
+            <a :href="paths.community_create">
+              <button
+                data-v-06c1a31a=""
+                type="button"
+                class="v-btn v-btn--contained theme--light v-size--default primary"
+              ><span class="v-btn__content">
+                Créer une communauté
+              </span></button>
+            </a>
+          </v-col>
+          <v-col
+            cols="6"
           >
             <div class="flex-grow-1" />
             <v-card
@@ -30,7 +42,7 @@
               <v-text-field
                 v-model="search"
                 hide-details
-                label="Search"
+                :label="$t('Rechercher')"
                 single-line
               />
             </v-card>
@@ -41,7 +53,11 @@
         :search="search"
         :items="communities"
         :items-per-page.sync="itemsPerPage"
-        :footer-props="{ itemsPerPageOptions }"
+        :footer-props="{
+          'items-per-page-options': itemsPerPageOptions,
+          'items-per-page-all-text': $t('Tous'),
+          'itemsPerPageText': $t('Nombre de lignes par page')
+        }"
       >
         <template v-slot:default="props">
           <v-row>
@@ -66,12 +82,11 @@
                     />
                   </v-col>
                   <v-col cols="6">
-                    <v-card-title><h4>{{ item.name }}</h4></v-card-title>
+                    <v-card-title><h4><a :href="linkToCommunityShow(item)">{{ item.name }}</a></h4></v-card-title>
                     <v-divider />
                     <v-list dense>
                       <v-list-item>
-                        <v-list-item-content>Description:</v-list-item-content>
-                        <v-list-item-content class="align-end">
+                        <v-list-item-content>
                           {{ item.description }}
                         </v-list-item-content>
                       </v-list-item>
@@ -81,22 +96,37 @@
                     cols="3"
                     class="text-center"
                   >
-                    <div class="my-2">
-                      <v-btn
-                        color="primary"
-                      >
-                        Voir les covoiturages
-                      </v-btn>
+                    <div
+                      v-if="!item.isMembersHidden && !item.isProposalsHidden"
+                      class="my-2"
+                    >
+                      <a :href="linkToCommunityShow(item)">
+                        <v-btn
+                          color="primary"
+                        >
+                          Voir les annonces
+                        </v-btn>
+                      </a>
                     </div>
-                    <div class="my-2">
-                      <v-btn color="primary">
-                        Voir le widget
-                      </v-btn>
+                    <div
+                      v-if="!item.isMembersHidden && !item.isProposalsHidden"
+                      class="my-2"
+                    >
+                      <a :href="linkToCommunityWidget(item)">
+                        <v-btn color="primary">
+                          Afficher le widget
+                        </v-btn>
+                      </a>
                     </div>
-                    <div class="my-2">
-                      <v-btn color="primary">
-                        Rejoindre la communauté
-                      </v-btn>
+                    <div
+                      v-if="item.isMembersHidden || item.isProposalsHidden"
+                      class="my-2"
+                    >
+                      <a :href="linkToCommunityJoin(item)">
+                        <v-btn color="primary">
+                          Rejoindre la communauté
+                        </v-btn>
+                      </a>
                     </div>
                   </v-col>
                 </v-row>
@@ -128,12 +158,16 @@ export default {
     communities: {
       type: Array,
       default: null
+    },
+    paths: {
+      type: Array,
+      default: null
     }
   },
   data () {
     return {
       search: '',
-      itemsPerPageOptions: [10, 20, 50, 100],
+      itemsPerPageOptions: [10, 20, 50, 100, -1],
       itemsPerPage: 10,
       headers: [
         {
@@ -161,6 +195,17 @@ export default {
       return this.date
         ? moment(this.date).format(this.$t("ui.i18n.date.format.fullNumericDate"))
         : moment(new Date()).format(this.$t("ui.i18n.date.format.fullNumericDate"));
+    }
+  },
+  methods:{
+    linkToCommunityJoin: function (item) {
+      return '/join-community/'+item.id;
+    },
+    linkToCommunityShow: function (item) {
+      return '/community/'+item.id;
+    },
+    linkToCommunityWidget: function (item) {
+      return '/community/show-widget/'+item.id;
     }
   }
 }

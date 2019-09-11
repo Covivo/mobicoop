@@ -1,23 +1,5 @@
 <template>
   <v-card>
-    <v-toolbar
-      flat
-      color="primary"
-      dark
-    >
-      <v-toolbar-title>Aide sur les communautés</v-toolbar-title>
-    </v-toolbar>
-    <v-toolbar>
-      <a :href="paths.community_create">
-        <button
-          data-v-06c1a31a=""
-          type="button"
-          class="v-btn v-btn--contained theme--light v-size--default primary"
-        ><span class="v-btn__content">
-          Créer une communauté
-        </span></button>
-      </a>
-    </v-toolbar>
     <v-tabs vertical>
       <v-tab>
         Qu'est-ce qu'une communauté?
@@ -95,12 +77,6 @@ export default {
   i18n: {
     messages: TranslationsMerged,
     sharedMessages: CommonTranslations
-  },
-  props: {
-    paths: {
-      type: Array,
-      default: null
-    }
   },
   computed: {
     // creation of the url to call

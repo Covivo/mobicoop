@@ -5,9 +5,8 @@
       outlined
       tile
     >
-      {{ $t('Description de la communauté') }}
       <v-row>
-        <v-col cols="6">
+        <v-col cols="12">
           <v-img
             :src="paths['community_images']"
             lazy-src="https://picsum.photos/id/11/10/6"
@@ -16,9 +15,6 @@
             max-width="100%"
             max-height="200"
           />
-        </v-col>
-        <v-col cols="6">
-          <p>{{ community['name'] }}</p>
         </v-col>
       </v-row>
     </section>

@@ -10,6 +10,7 @@
     {# @var community \Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community#}
     {% set users= [] %}
     {% set paths= [] %}
+    {% set lastusers= [] %}
     {% for cuser in community.communityUsers %}
         {# @var user \App\User\Entity\User #}
         {% set user= cuser.user %}
@@ -18,6 +19,19 @@
     {% set defaultPreviewCommunity = 'https://picsum.photos/id/237/600/300' %}
     {% set paths = paths|merge({'community_images':community.images.first |default(defaultPreviewCommunity)}) %}
     {% set searchRoute = 'covoiturage/recherche' %}
+    {% set clastusers = community.communityUsers
+        |sort((communityUsera, communityUserb) =>  ((communityUserb.createdDate < communityUsera.createdDate)?-1:(communityUserb.createdDate < communityUsera.createdDate)?0:1)  )
+        |slice(0,3)%}
+    {% set items = { 'apple': 'fruit', 'orange': 'fruit' } %}
+
+    {% set items = { 'apple': 'unknown' }|merge(items) %}
+    {% for cuser in clastusers %}
+        {# @var user \App\User\Entity\User #}
+        {% set user= cuser.user %}
+        {% set data = [{'avatar':'-', 'name': user.givenName ~ ' ' ~ user.familyName, 'acceptedDate': cuser.createdDate | date("d/m/Y") }] %}
+
+        {% set lastusers = lastusers|merge(data) %}
+    {% endfor %}
     <br/><br/>
     <div class="layout justify-center"
          outlined
@@ -27,7 +41,9 @@
                 :community="{{ community|json_encode(1) }}" :users="{{ users|json_encode(1) }}"
                 :paths="{{ paths|json_encode(1) }}"
                 :geodata="{{ {'geocompleteuri':geoCompleteUri,  'searchroute':searchRoute}|json_encode }}"
-                :user="{{app.user|json_encode}}" ></community-display>
+                :user="{{app.user|json_encode}}"
+                :sign-up-users= "{{ lastusers|json_encode }}"
+        ></community-display>
         </section>
         <br/><br/>
     </div>
