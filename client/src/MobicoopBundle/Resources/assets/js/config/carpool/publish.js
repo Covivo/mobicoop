@@ -4,7 +4,7 @@ import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import colorTheme from '@themes/mobicoop.json'
 import '@mdi/font/css/materialdesignicons.css'
-import {LMap, LTileLayer, LMarker, LIcon, LPolyline} from 'vue2-leaflet' 
+import {LMap, LTileLayer, LMarker, LTooltip, LIcon, LPolyline} from 'vue2-leaflet' 
 
 import Vuetify, { 
   // general
@@ -36,7 +36,7 @@ Vue.use(Vuetify, {
     // content
     VSwitch, VMenu, VDatePicker, VTimePicker, VTextField,  VTooltip,
     //Vue2Leaflet
-    LMap, LTileLayer, LMarker, LIcon, LPolyline
+    LMap, LTileLayer, LMarker, LTooltip, LIcon, LPolyline
   }
 })
 Vue.use(VueI18n)

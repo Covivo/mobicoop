@@ -598,20 +598,19 @@ export default {
       this.pointsToMap.length = 0;
       // Set the origin point with custom icon
       if(this.origin !== null && this.origin !== undefined){
-        let pointOrigin = this.buildPoint(this.origin.latitude,this.origin.longitude,"/images/cartography/pictos/origin.png",[36, 42],[10, 25]);
-        //        let pointOrigin = this.buildPoint(this.origin.latitude,this.origin.longitude);
+        let pointOrigin = this.buildPoint(this.origin.latitude,this.origin.longitude,this.origin.displayLabel,"/images/cartography/pictos/origin.png",[36, 42],[10, 25]);
         this.pointsToMap.push(pointOrigin);
       }
       // Set all the waypoints (default icon for now)
       this.route.waypoints.forEach((waypoint, index) => {
         if(waypoint.address !== null){
-          let currentWaypoint = this.buildPoint(waypoint.address.latitude,waypoint.address.longitude);
+          let currentWaypoint = this.buildPoint(waypoint.address.latitude,waypoint.address.longitude,waypoint.address.displayLabel);
           this.pointsToMap.push(currentWaypoint);
         }
       });
       // Set the destination point with custom icon
       if(this.destination !== null && this.destination !== undefined){
-        let pointDestination = this.buildPoint(this.destination.latitude,this.destination.longitude,"/images/cartography/pictos/destination.png",[36, 42],[10, 25]);
+        let pointDestination = this.buildPoint(this.destination.latitude,this.destination.longitude,this.destination.displayLabel,"/images/cartography/pictos/destination.png",[36, 42],[10, 25]);
         this.pointsToMap.push(pointDestination);
       }
     },
@@ -620,8 +619,9 @@ export default {
       this.directionWay.length = 0;
       this.directionWay.push(this.route.direction.directPoints);
     },
-    buildPoint: function(lat,lng,pictoUrl="",size=[],anchor=[]){
+    buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
       let point = {
+        title:title,
         latLng:L.latLng(lat, lng),
         icon: {}
       }

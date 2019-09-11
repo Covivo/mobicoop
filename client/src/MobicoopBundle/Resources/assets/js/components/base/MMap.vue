@@ -23,6 +23,9 @@
             :icon-anchor="point.icon.anchor"
             :icon-url="point.icon.url"
           />
+          <l-tooltip v-if="point.title!==''">
+            {{ point.title }}
+          </l-tooltip>
         </l-marker>
         <l-polyline
           v-for="(way, i) in ways"
