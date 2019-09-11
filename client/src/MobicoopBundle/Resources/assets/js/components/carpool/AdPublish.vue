@@ -213,7 +213,10 @@
                     cols="1"
                     align="left"
                   >
-                    <v-tooltip right>
+                    <v-tooltip
+                      right
+                      color="info"
+                    >
                       <template v-slot:activator="{ on }">
                         <v-icon v-on="on">
                           mdi-help-circle-outline
@@ -250,7 +253,10 @@
                     cols="1"
                     align="left"
                   >
-                    <v-tooltip right>
+                    <v-tooltip
+                      right
+                      color="info"
+                    >
                       <template v-slot:activator="{ on }">
                         <v-icon v-on="on">
                           mdi-help-circle-outline
@@ -287,7 +293,10 @@
                     cols="1"
                     align="left"
                   >
-                    <v-tooltip right>
+                    <v-tooltip
+                      color="info"
+                      right
+                    >
                       <template v-slot:activator="{ on }">
                         <v-icon v-on="on">
                           mdi-help-circle-outline
