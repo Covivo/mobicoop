@@ -68,7 +68,10 @@
           <v-col
             cols="2"
           >
-            <v-tooltip right>
+            <v-tooltip 
+              color="info"
+              right
+            >
               <template v-slot:activator="{ on }">
                 <v-btn
                   text
@@ -123,7 +126,10 @@
             cols="1"
             align="left"
           >
-            <v-tooltip right>
+            <v-tooltip
+              color="info"
+              right
+            >
               <template v-slot:activator="{ on }">
                 <v-icon v-on="on">
                   mdi-help-circle-outline

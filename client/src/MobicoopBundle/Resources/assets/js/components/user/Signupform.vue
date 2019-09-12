@@ -34,7 +34,7 @@
           cols="4"
           align="center"
         >
-          <!--STEP 1-->
+          <!--STEP 1 User identification-->
           <v-form
             ref="step 1"
             v-model="step1"
@@ -76,7 +76,7 @@
             </v-btn>
           </v-form>
 
-          <!--STEP 2-->
+          <!--STEP 2 Name-->
           <v-form
             id="step2"
             ref="step 2"
@@ -124,7 +124,7 @@
             </v-row>
           </v-form>
 
-          <!--STEP 3-->
+          <!--STEP 3 gender-->
           <v-form
             id="step3"
             ref="step 3"
@@ -167,7 +167,7 @@
             </v-row>
           </v-form>
 
-          <!--STEP 4-->
+          <!--STEP 4 birthyear-->
           <v-form
             id="step4"
             ref="step 4"
@@ -208,7 +208,7 @@
             </v-row>
           </v-form>
 
-          <!--STEP 5-->
+          <!--STEP 5 hometown-->
           <v-form
             id="step5"
             ref="form"
