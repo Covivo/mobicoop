@@ -82,7 +82,7 @@
           align-self="start"
         >
           <!--TODO : REMOVE WHEN START CODING FILTER COMPONENT-->
-          <v-combobox
+          <!-- <v-combobox
             v-model="chips"
             :items="items"
             chips
@@ -101,7 +101,7 @@
                 <strong>{{ item }}</strong>&nbsp;
               </v-chip>
             </template>
-          </v-combobox>
+          </v-combobox> -->
           <v-row
             justify="start"
             align="center"

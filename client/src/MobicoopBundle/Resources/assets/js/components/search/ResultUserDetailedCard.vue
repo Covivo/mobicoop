@@ -157,6 +157,7 @@ export default {
   data () {
     return {
       togglePhoneButton: false,
+      matchings: this.matching
     };
   },
   methods: {

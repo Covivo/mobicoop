@@ -85,10 +85,11 @@ export default {
   },
   watch: {
     carpoolResults(){
-      // this.matchings.push(this.carpoolResults.matchingRequests,this.carpoolResults.matchingOffers);
+      // this.matchings=[this.carpoolResults.matchingRequests].concat([this.carpoolResults.matchingOffers]);
+      // this.matchings=this.carpoolResults.matchingRequests.concat(this.carpoolResults.matchingOffers);
       this.matchings=this.carpoolResults.matchingRequests
     }
-  },
+  }
 }
 </script>
 
