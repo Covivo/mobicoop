@@ -29,7 +29,7 @@ Vue.use(Vuetify, {
     // content
     VSwitch, VMenu, VDatePicker, VTextField,  VTooltip, VCard, VCardTitle, VCardActions,
     // geocomplete
-    VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon, VForm,
+    VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon, VForm
   }
 })
 Vue.use(VueI18n)
