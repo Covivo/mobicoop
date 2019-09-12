@@ -569,7 +569,7 @@ export default {
       this.textSpinner = this.textSpinnerLoading;
       this.spinner = true;
       this.idThreadMessage = idMessage;
-      axios.get("/creer/communaute" + idMessage).then(res => {
+      axios.get("/utilisateur/messages/" + idMessage).then(res => {
         let messagesThread = res.data.messages;
         this.items.length = 0; // Reset items (the source of messages column)
 

@@ -149,7 +149,7 @@ export default {
   },
   methods:{
     poster: function(form){
-      axios.post("",form)
+      axios.post("/creer/communaute",form)
     }
   }
 }
