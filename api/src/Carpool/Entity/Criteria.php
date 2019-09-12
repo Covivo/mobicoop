@@ -84,7 +84,7 @@ class Criteria
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","results","write","thread"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $frequency;
 
@@ -102,7 +102,7 @@ class Criteria
      *
      * @Assert\NotBlank
      * @ORM\Column(type="date")
-     * @Groups({"read","results","write","thread"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $fromDate;
 
@@ -111,7 +111,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","results","write","thread"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $fromTime;
 
@@ -153,7 +153,7 @@ class Criteria
      * @var \DateTimeInterface|null The end date if regular proposal, the last accepted date if punctual.
      *
      * @ORM\Column(type="date", nullable=true)
-     * @Groups({"read","results","write","thread"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $toDate;
 
