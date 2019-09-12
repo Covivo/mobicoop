@@ -80,9 +80,8 @@ class ImageManager
      * Get the owner of the image.
      * @param Image $image
      * @throws OwnerNotFoundException
-     * @return object
      */
-    public function getOwner(Image $image): object
+    public function getOwner(Image $image)
     {
         if (!is_null($image->getEventId())) {
             // the image is an image for an event
@@ -230,7 +229,7 @@ class ImageManager
         string $filter,
         string $extension,
         string $prefix
-        ) {
+    ) {
         $versionName = $prefix . $fileName . "." . $extension;
         $liipImage = $this->dataManager->find($filter, $baseFolder.$folderOrigin.$image->getFileName());
         $resized = $this->filterManager->applyFilter($liipImage, $filter)->getContent();

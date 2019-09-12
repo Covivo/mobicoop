@@ -26,8 +26,6 @@ namespace App\Article\Controller;
 use App\Article\Service\ArticleManager;
 use App\Article\Entity\Section;
 use App\TranslatorTrait;
-use Symfony\Component\Translation\Translator;
-use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Controller class for section down position change.

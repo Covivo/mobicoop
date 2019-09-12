@@ -255,7 +255,7 @@ class RdexManager
             isset($parameters["outward"]["saturday"]["maxtime"]) ? $parameters["outward"]["saturday"]["maxtime"] : null,
             isset($parameters["outward"]["sunday"]["mintime"]) ? $parameters["outward"]["sunday"]["mintime"] : null,
             isset($parameters["outward"]["sunday"]["maxtime"]) ? $parameters["outward"]["sunday"]["maxtime"] : null
-            );
+        );
         
         if (!file_exists(self::RDEX_CONFIG_FILE)) {
             return ['no config.json file.'];

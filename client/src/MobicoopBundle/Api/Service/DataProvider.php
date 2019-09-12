@@ -48,6 +48,7 @@ use GuzzleHttp\HandlerStack;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\JwtMiddleware;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\JwtManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Strategy\Auth\JsonAuthStrategy;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Data provider service.
@@ -383,14 +384,17 @@ class DataProvider
         foreach (self::FILE_PROPERTIES as $property=>$getter) {
             if (method_exists($object, $getter)) {
                 $file = $object->$getter();
-                $multipart[] = [
-                    'name'      => $property,
-                    'contents'  => fopen($file->getPathname(), 'rb')
-                ];
-                $multipart[] = [
-                    'name'      => self::FILE_ORIGINAL_NAME_PROPERTY,
-                    'contents'  => $file->getClientOriginalName()
-                ];
+
+                if ($file instanceof UploadedFile) {
+                    $multipart[] = [
+                        'name'      => $property,
+                        'contents'  => fopen($file->getPathname(), 'rb')
+                    ];
+                    $multipart[] = [
+                        'name'      => self::FILE_ORIGINAL_NAME_PROPERTY,
+                        'contents'  => $file->getClientOriginalName()
+                    ];
+                }
             }
         }
         try {
@@ -583,10 +587,7 @@ class RemoveNullObjectNormalizer extends ObjectNormalizer
 {
     public function normalize($object, $format = null, array $context = [])
     {
-        // handling circular references
-        $this->setCircularReferenceHandler(function ($object, string $format = null, array $context = []) {
-            return $object;
-        });
+        // circular references are now handled by a dedicated class in Api\Serializer
 
         $data = parent::normalize($object, $format, $context);
         if (is_array($data)) {

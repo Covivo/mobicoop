@@ -135,21 +135,36 @@
                 <ad-planification 
                   :init-outward-date="outwardDate"
                   :regular="regular"
-                  @change="planificationChanged" 
+                  :default-margin-time="defaultMarginTime" 
+                  @change="planificationChanged"
                 />
               </v-stepper-content>
 
               <!-- Step 3 : route -->
               <v-stepper-content step="3">
-                <ad-route 
-                  :geo-search-url="geoSearchUrl"
-                  :geo-route-url="geoRouteUrl"
-                  :user="user"
-                  :init-origin="origin"
-                  :init-destination="destination"
-                  :communities="communities"
-                  @change="routeChanged"
-                />
+                <v-row>
+                  <v-col cols="12">
+                    <ad-route 
+                      :geo-search-url="geoSearchUrl"
+                      :geo-route-url="geoRouteUrl"
+                      :user="user"
+                      :init-origin="origin"
+                      :init-destination="destination"
+                      :communities="communities"
+                      @change="routeChanged"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12">
+                    <m-map
+                      ref="mmapRoute"
+                      type-map="adSummary"
+                      :points="pointsToMap"
+                      :ways="directionWay"
+                    />
+                  </v-col>
+                </v-row>
               </v-stepper-content>
 
               <!-- Step 4 : passengers (if driver) -->
@@ -212,7 +227,10 @@
                     cols="1"
                     align="left"
                   >
-                    <v-tooltip right>
+                    <v-tooltip
+                      right
+                      color="info"
+                    >
                       <template v-slot:activator="{ on }">
                         <v-icon v-on="on">
                           mdi-help-circle-outline
@@ -249,7 +267,10 @@
                     cols="1"
                     align="left"
                   >
-                    <v-tooltip right>
+                    <v-tooltip
+                      right
+                      color="info"
+                    >
                       <template v-slot:activator="{ on }">
                         <v-icon v-on="on">
                           mdi-help-circle-outline
@@ -286,7 +307,10 @@
                     cols="1"
                     align="left"
                   >
-                    <v-tooltip right>
+                    <v-tooltip
+                      color="info"
+                      right
+                    >
                       <template v-slot:activator="{ on }">
                         <v-icon v-on="on">
                           mdi-help-circle-outline
@@ -370,21 +394,37 @@
               <v-stepper-content
                 :step="driver ? 7 : 5"
               >
-                <ad-summary 
-                  :driver="driver"
-                  :passenger="passenger"
-                  :regular="regular"
-                  :outward-date="outwardDate"
-                  :outward-time="outwardTime"
-                  :return-date="returnDate"
-                  :return-time="returnTime"
-                  :schedules="schedules"
-                  :seats="seats"
-                  :price="price"
-                  :route="route"
-                  :message="message"
-                  :user="user"
-                />
+                <v-container>
+                  <v-row>
+                    <v-col cols="12">
+                      <ad-summary 
+                        :driver="driver"
+                        :passenger="passenger"
+                        :regular="regular"
+                        :outward-date="outwardDate"
+                        :outward-time="outwardTime"
+                        :return-date="returnDate"
+                        :return-time="returnTime"
+                        :schedules="schedules"
+                        :seats="seats"
+                        :price="price"
+                        :route="route"
+                        :message="message"
+                        :user="user"
+                      />
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12">
+                      <m-map
+                        ref="mmapSummary"
+                        type-map="adSummary"
+                        :points="pointsToMap"
+                        :ways="directionWay"
+                      />
+                    </v-col>
+                  </v-row>
+                </v-container>
               </v-stepper-content>
             </v-stepper-items>
           </v-stepper>
@@ -413,7 +453,7 @@
           rounded
           color="success"
           align-center
-          style="margin-left: 30px"
+          style="margin-left: 30px;"
           @click="step++"
         >
           {{ $t('stepper.buttons.next') }}
@@ -424,7 +464,7 @@
           :disabled="loading"
           rounded
           color="success"
-          style="margin-left: 30px"
+          style="margin-left: 30px;"
           align-center
           @click="postAd"
         >
@@ -447,6 +487,8 @@ import SearchJourney from "@components/carpool/SearchJourney";
 import AdPlanification from "@components/carpool/AdPlanification";
 import AdRoute from "@components/carpool/AdRoute";
 import AdSummary from "@components/carpool/AdSummary";
+import MMap from '@components/base/MMap'
+import L from "leaflet";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -459,7 +501,8 @@ export default {
     SearchJourney,
     AdPlanification,
     AdRoute,
-    AdSummary
+    AdSummary,
+    MMap
   },
   props: {
     geoSearchUrl: {
@@ -490,6 +533,10 @@ export default {
       type: String,
       default: 'covoiturage/annonce/{id}/resultats'
     },
+    defaultMarginTime: {
+      type: Number,
+      default: null
+    },
   },
   data() {
     return {
@@ -517,10 +564,14 @@ export default {
       baseUrl: window.location.origin,
       loading: false,
       userDelegated: null, // if user delegation
-      selectedCommunities: null
+      selectedCommunities: null,
+      pointsToMap:[],
+      directionWay:[],
+      bbox:null
     }
   },
   computed: {
+   
     hintPricePerKm() {
       return this.pricePerKm+'€/km';
     },
@@ -556,9 +607,61 @@ export default {
     },
     distance() {
       this.price = Math.round(this.distance * this.pricePerKm * 100)/100;
+    },
+    route(){
+      this.buildPointsToMap();
+      if(this.route.direction !== null){this.buildDirectionWay();}
+      this.$refs.mmapSummary.redrawMap();
+      this.$refs.mmapRoute.redrawMap();
+    },
+    step(){
+      this.$refs.mmapSummary.redrawMap();
+      this.$refs.mmapRoute.redrawMap();
     }
   },
   methods: {
+    buildPointsToMap: function(){
+      this.pointsToMap.length = 0;
+      // Set the origin point with custom icon
+      if(this.origin !== null && this.origin !== undefined){
+        let pointOrigin = this.buildPoint(this.origin.latitude,this.origin.longitude,this.origin.displayLabel,"/images/cartography/pictos/origin.png",[36, 42],[10, 25]);
+        this.pointsToMap.push(pointOrigin);
+      }
+      // Set all the waypoints (default icon for now)
+      this.route.waypoints.forEach((waypoint, index) => {
+        if(waypoint.address !== null){
+          let currentWaypoint = this.buildPoint(waypoint.address.latitude,waypoint.address.longitude,waypoint.address.displayLabel);
+          this.pointsToMap.push(currentWaypoint);
+        }
+      });
+      // Set the destination point with custom icon
+      if(this.destination !== null && this.destination !== undefined){
+        let pointDestination = this.buildPoint(this.destination.latitude,this.destination.longitude,this.destination.displayLabel,"/images/cartography/pictos/destination.png",[36, 42],[10, 25]);
+        this.pointsToMap.push(pointDestination);
+      }
+    },
+    buildDirectionWay(){
+      // You need to push the entire directPoints array because the MMap component can show multiple journeys
+      this.directionWay.length = 0;
+      this.directionWay.push(this.route.direction.directPoints);
+    },
+    buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
+      let point = {
+        title:title,
+        latLng:L.latLng(lat, lng),
+        icon: {}
+      }
+
+      if(pictoUrl!==""){
+        point.icon = {
+          url:pictoUrl,
+          size:size,
+          anchor:anchor
+        }
+      }
+        
+      return point;      
+    },
     searchChanged: function(search) {
       this.passenger = search.passenger;
       this.driver = search.driver;
@@ -627,7 +730,7 @@ export default {
         .finally(function () {
           self.loading = false;
         });
-    },
+    }
 
   }
 };

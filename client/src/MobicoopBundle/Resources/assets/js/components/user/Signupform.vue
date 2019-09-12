@@ -34,7 +34,7 @@
           cols="4"
           align="center"
         >
-          <!--STEP 1-->
+          <!--STEP 1 User identification-->
           <v-form
             ref="step 1"
             v-model="step1"
@@ -49,7 +49,9 @@
             />
             <v-text-field
               v-model="form.telephone"
-              :label="$t('models.user.phone.placeholder')"
+              :label="$t('models.user.phone.placeholder')+` *`"
+              required
+              :rules="form.telephoneRules"
               name="telephone"
               @keypress="isNumber(event)"
             />
@@ -74,7 +76,7 @@
             </v-btn>
           </v-form>
 
-          <!--STEP 2-->
+          <!--STEP 2 Name-->
           <v-form
             id="step2"
             ref="step 2"
@@ -122,7 +124,7 @@
             </v-row>
           </v-form>
 
-          <!--STEP 3-->
+          <!--STEP 3 gender-->
           <v-form
             id="step3"
             ref="step 3"
@@ -165,7 +167,7 @@
             </v-row>
           </v-form>
 
-          <!--STEP 4-->
+          <!--STEP 4 birthyear-->
           <v-form
             id="step4"
             ref="step 4"
@@ -206,7 +208,7 @@
             </v-row>
           </v-form>
 
-          <!--STEP 5-->
+          <!--STEP 5 hometown-->
           <v-form
             id="step5"
             ref="form"
@@ -234,7 +236,8 @@
             <v-btn
               color="success"
               class="mr-4 mb-100 mt-12"
-              :disabled="!step5"
+              :disabled="!step5 || loading"
+              :loading="loading"
               @click="validate"
             >
               {{ $t('ui.button.register') }}
@@ -286,6 +289,7 @@ export default {
     return {
       //
       event: null,
+      loading: false,
 
       //step validators
       step1: true,
@@ -329,9 +333,13 @@ export default {
         ],
         birthYear: null,
         birthYearRules: [
-          v => !!v || this.$t("models.user.birthYear.errors.required"),
+          v => !!v || this.$t("models.user.birthYear.errors.required")
         ],
         telephone: null,
+        telephoneRules:  [
+          v => !!v || this.$t("models.user.phone.errors.required"),
+          v => (/^((\+)33|0)[1-9](\d{2}){4}$/).test(v) || this.$t("models.user.phone.errors.valid")
+        ],
         password: null,
         showPassword: false,
         passwordRules: [
@@ -370,6 +378,7 @@ export default {
       this.form.homeAddress = address;
     },
     validate: function (e) {
+      this.loading = true,
       axios.post('/utilisateur/inscription',
         {
           email:this.form.email,
@@ -396,7 +405,7 @@ export default {
     isNumber: function(evt) {
       evt = (evt) ? evt : window.event;
       var charCode = (evt.which) ? evt.which : evt.keyCode;
-      if (-(charCode < 48 || charCode > 57) && charCode !== 46) {
+      if (-(charCode < 48 || charCode > 57) && charCode !== 43) {
         evt.preventDefault();;
       } else {
         return true;

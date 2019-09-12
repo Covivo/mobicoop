@@ -70,6 +70,9 @@ class CommunityManager
     public function getCommunities()
     {
         $response = $this->dataProvider->getCollection();
+        if ($response->getCode() >=200 && $response->getCode() <= 300) {
+            return $response->getValue()->getMember();
+        }
         return $response->getValue();
     }
 

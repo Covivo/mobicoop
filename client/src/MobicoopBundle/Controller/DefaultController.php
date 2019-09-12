@@ -48,7 +48,8 @@ class DefaultController extends AbstractController
             ]
         );
     }
-    
+
+
     /**
      * Error Page.
      * @Route("/provider/errors", name="api_hydra_errors")

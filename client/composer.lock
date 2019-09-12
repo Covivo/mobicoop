@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ca6ad297263182461df0966848bd0c15",
+    "content-hash": "278295748fae50975eaaf31f72bdf0ca",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1610,6 +1610,49 @@
                 "sql"
             ],
             "time": "2014-01-12T16:20:24+00:00"
+        },
+        {
+            "name": "limenius/liform",
+            "version": "v0.12.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Limenius/Liform.git",
+                "reference": "dec0e1ef69d72df072e1ff82db3edcb4413cdcbe"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Limenius/Liform/zipball/dec0e1ef69d72df072e1ff82db3edcb4413cdcbe",
+                "reference": "dec0e1ef69d72df072e1ff82db3edcb4413cdcbe",
+                "shasum": ""
+            },
+            "require": {
+                "symfony/form": "~2.8|~3.0|^4.0",
+                "symfony/serializer": "~2.8|~3.0|^4.0",
+                "symfony/translation": "~2.3|~3.0|^4.0"
+            },
+            "require-dev": {
+                "escapestudios/symfony2-coding-standard": "^2.9",
+                "squizlabs/php_codesniffer": "^2.5",
+                "wimg/php-compatibility": "^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Limenius\\Liform\\": "src/Limenius/Liform"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nacho Martin",
+                    "email": "nacho@limenius.com"
+                }
+            ],
+            "description": "Library to transform Symfony Forms into Json Schema",
+            "time": "2017-12-15T17:29:18+00:00"
         },
         {
             "name": "markbaker/complex",

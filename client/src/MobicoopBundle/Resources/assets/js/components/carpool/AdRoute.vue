@@ -222,6 +222,7 @@
 
     <!-- Communities -->
     <v-row
+      v-if="communities.length > 0"
       align="center"
       justify="center"
       class="mt-2"

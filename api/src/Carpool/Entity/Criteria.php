@@ -120,7 +120,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","write","thread","threads"})
      */
     private $minTime;
 
@@ -129,7 +129,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","write","thread","threads"})
      */
     private $maxTime;
 
@@ -161,7 +161,7 @@ class Criteria
      * @var boolean|null The proposal is available on mondays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","write","thread","threads"})
      */
     private $monCheck;
 
@@ -169,7 +169,7 @@ class Criteria
      * @var boolean|null The proposal is available on tuesdays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","write","thread","threads"})
      */
     private $tueCheck;
 
@@ -177,7 +177,7 @@ class Criteria
      * @var boolean|null The proposal is available on wednesdays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","write","thread","threads"})
      */
     private $wedCheck;
 
@@ -185,7 +185,7 @@ class Criteria
      * @var boolean|null The proposal is available on thursdays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","write","thread","threads"})
      */
     private $thuCheck;
 
@@ -193,7 +193,7 @@ class Criteria
      * @var boolean|null The proposal is available on fridays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","write","thread","threads"})
      */
     private $friCheck;
 
@@ -201,7 +201,7 @@ class Criteria
      * @var boolean|null The proposal is available on saturdays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","write","thread","threads"})
      */
     private $satCheck;
 
@@ -209,7 +209,7 @@ class Criteria
      * @var boolean|null The proposal is available on sundays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","write","thread","threads"})
      */
     private $sunCheck;
 

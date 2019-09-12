@@ -1,28 +1,47 @@
 <template>
   <v-content color="secondary">
     <v-container
-      text-xs-center
       grid-list-md
+      text-xs-center
     >
       <!-- Title and subtitle -->
       <v-layout
-        row
-        justify-center
+        v-if="!notitle"
         align-center
         class="mt-5"
+        justify-center
+        row
       >
-        <v-flex xs6>
+        <v-flex
+          v-if="notembedded"
+          xs6
+        >
+          <h1>{{ $t('title') }}</h1>
+          <h3 v-html="$t('subtitle')" />
+        </v-flex>
+        <v-flex v-else>
           <h1>{{ $t('title') }}</h1>
           <h3 v-html="$t('subtitle')" />
         </v-flex>
       </v-layout>
 
       <v-layout
-        row
         justify-center
+        row
       >
         <v-flex
+          v-if="notembedded"
           xs6
+        >
+          <!--SearchJourney-->
+          <search-journey
+            :geo-search-url="geoSearchUrl"
+            :user="user"
+            @change="searchChanged"
+          />
+        </v-flex>
+        <v-flex
+          v-else
         >
           <!--SearchJourney-->
           <search-journey
@@ -58,13 +77,14 @@
         row
       >
         <v-flex
-          xs2
           offset-xs3
+          xs2
         >
           <v-btn
-            rounded
-            outlined
+            v-show="!justsearch"
             disabled
+            outlined
+            rounded
             @click="publish"
           >
             {{ $t('buttons.shareAnAd.label') }}
@@ -72,10 +92,10 @@
         </v-flex>
         <v-flex xs2>
           <v-btn
+            :disabled="searchUnavailable"
+            :loading="loading"
             color="success"
             rounded
-            :loading="loading"
-            :disabled="searchUnavailable"
             @click="search"
           >
             {{ $t('buttons.search.label') }}
@@ -88,7 +108,7 @@
 
 <script>
 import moment from "moment";
-import { merge } from "lodash";
+import {merge} from "lodash";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/home/HomeSearch.json";
 import TranslationsClient from "@clientTranslations/components/home/HomeSearch.json";
@@ -116,6 +136,18 @@ export default {
     user: {
       type: Object,
       default: null
+    },
+    justsearch: {
+      type: Boolean,
+      default: false
+    },
+    notitle: {
+      type: Boolean,
+      default: false
+    },
+    notembedded: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -140,10 +172,9 @@ export default {
 
 
     },
-    // TODO : DON'T FORGET TO UNCOMMENT
-    // searchUnavailable() {
-    //   return (!this.origin || !this.destination || this.loading == true)      
-    // },
+    searchUnavailable() {
+      return (!this.origin || !this.destination || this.loading == true)
+    },
     computedDateFormat() {
       moment.locale(this.locale);
       return this.date
@@ -160,18 +191,18 @@ export default {
 
   },
   methods: {
-    searchChanged: function(search) {
+    searchChanged: function (search) {
       this.origin = search.origin;
       this.destination = search.destination;
       this.regular = search.regular;
       this.date = search.date;
     },
-    search: function() {
+    search: function () {
       this.loading = true;
-      
+
       window.location.href = this.urlToCall;
     },
-    publish: function() {
+    publish: function () {
       this.loading = true;
       console.error("publish !");
     }
