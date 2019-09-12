@@ -113,7 +113,8 @@ class GeoSearcher
                 $address->setRelayPoint($relayPoint);
                 //$address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
                 // To do : better display label for relay point
-                $address->setDisplayLabel($relayPoint->getName().", ".$address->getAddressLocality());
+//                $address->setDisplayLabel($relayPoint->getName().", ".$address->getAddressLocality());
+                $address->setDisplayLabel($relayPoint->getName());
                 $result[] = $address;
             }
         }
