@@ -46,7 +46,7 @@ class CommunityController extends AbstractController
     {
         $this->denyAccessUnlessGranted('list', new Community());
         return $this->render('@Mobicoop/community/communities.html.twig', [
-            'hydra' => $communityManager->getCommunities(),
+            'communities' => $communityManager->getCommunities(),
         ]);
     }
 

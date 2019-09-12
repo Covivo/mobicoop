@@ -1,23 +1,39 @@
 {% extends '@Mobicoop/base.html.twig' %}
 
 {% block title %}
-  {{ metaDescription }}
+    {{ metaDescription }}
 {% endblock %}
 
 {% block stylesheets %}
-  {{ encore_entry_link_tags("#{assets_prefix ?? ''}home/home") }}
+    {{ encore_entry_link_tags("#{assets_prefix ?? ''}home/home") }}
 {% endblock %}
 
 {% block main %}
 
-  {% include "@Mobicoop/components/HomeSearch.html.twig" %}
-
-
-  <section>
-    <a class="lien" href="{{ path('community_list') }}">Liste des communautés</a>
-  </section>
+    <div>
+        {% include "@Mobicoop/components/HomeSearch.html.twig" %}
+    </div>
+    <div class="container text-xs-center grid-list-md">
+        <div class="row grey lighten-5" style="height: 300px;">
+            <div class="col col-4">
+                <div class="ma-3 pa-6 v-card v-card--outlined v-sheet v-sheet--tile theme--light">
+                    <a class="lien" href="{{ path('community_list') }}">Rejoindre une communauté</a>
+                </div>
+            </div>
+            <div class="col col-4">
+                <div class="ma-3 pa-6 v-card v-card--outlined v-sheet v-sheet--tile theme--light">
+                    <a class="lien" href="/events">Les evenements</a>
+                </div>
+            </div>
+            <div class="col col-4">
+                <div class="ma-3 pa-6 v-card v-card--outlined v-sheet v-sheet--tile theme--light">
+                    <a class="lien" href="/solidarite">Besoin d'un coup de pouce?</a>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascripts %}
-  {{ encore_entry_script_tags("#{assets_prefix ?? ''}home/home") }}
+    {{ encore_entry_script_tags("#{assets_prefix ?? ''}home/home") }}
 {% endblock %}

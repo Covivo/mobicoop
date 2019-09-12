@@ -67,7 +67,7 @@ class Criteria
      * @var boolean The user can be a driver.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $driver;
 
@@ -75,7 +75,7 @@ class Criteria
      * @var boolean The user can be a passenger.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $passenger;
     
@@ -84,7 +84,7 @@ class Criteria
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $frequency;
 
@@ -93,7 +93,7 @@ class Criteria
      *
      * @Assert\NotBlank
      * @ORM\Column(type="integer")
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $seats;
 
@@ -102,7 +102,7 @@ class Criteria
      *
      * @Assert\NotBlank
      * @ORM\Column(type="date")
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $fromDate;
 
@@ -111,7 +111,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $fromTime;
 
@@ -120,7 +120,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","write","thread","threads"})
      */
     private $minTime;
 
@@ -129,7 +129,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","write","thread","threads"})
      */
     private $maxTime;
 
@@ -145,7 +145,7 @@ class Criteria
      * @var boolean For punctual proposals, the user accepts only matchings for the defined date (no ranges).
      *
      * @ORM\Column(type="boolean")
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $strictDate;
 
@@ -153,7 +153,7 @@ class Criteria
      * @var \DateTimeInterface|null The end date if regular proposal, the last accepted date if punctual.
      *
      * @ORM\Column(type="date", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $toDate;
 
@@ -161,7 +161,7 @@ class Criteria
      * @var boolean|null The proposal is available on mondays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","write","thread","threads"})
      */
     private $monCheck;
 
@@ -169,7 +169,7 @@ class Criteria
      * @var boolean|null The proposal is available on tuesdays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","write","thread","threads"})
      */
     private $tueCheck;
 
@@ -177,7 +177,7 @@ class Criteria
      * @var boolean|null The proposal is available on wednesdays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","write","thread","threads"})
      */
     private $wedCheck;
 
@@ -185,7 +185,7 @@ class Criteria
      * @var boolean|null The proposal is available on thursdays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","write","thread","threads"})
      */
     private $thuCheck;
 
@@ -193,7 +193,7 @@ class Criteria
      * @var boolean|null The proposal is available on fridays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","write","thread","threads"})
      */
     private $friCheck;
 
@@ -201,7 +201,7 @@ class Criteria
      * @var boolean|null The proposal is available on saturdays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","write","thread","threads"})
      */
     private $satCheck;
 
@@ -209,7 +209,7 @@ class Criteria
      * @var boolean|null The proposal is available on sundays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","write","thread","threads"})
      */
     private $sunCheck;
 
@@ -494,7 +494,7 @@ class Criteria
     * @var float|null The price per km.
     *
     * @ORM\Column(type="decimal", precision=4, scale=2, nullable=true)
-    * @Groups({"read","write","thread"})
+    * @Groups({"read","results","write","thread"})
     */
     private $priceKm;
 

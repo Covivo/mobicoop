@@ -57,7 +57,7 @@
           </v-tabs>
           <v-tabs-items v-model="modelTabs">
             <v-tab-item
-              v-if="this.threadsCM.length==0"
+              v-if="threadsCM.length==0"
               value="tab-cm"
             >
               {{ $t("ui.pages.messages.label.nocarpoolmessages") }}
@@ -73,16 +73,54 @@
                 :class="threadCM.selected ? 'primary' : ''"
                 @click="updateMessages(threadCM.idThreadMessage,threadCM.contactId)"
               >
-                <v-card-title>
-                  <v-icon>mdi-account-circle</v-icon>&nbsp;
-                  <span
-                    class="title font-weight-light"
-                  >{{ threadCM.contactFirstName }} {{ threadCM.contactLastName.substr(0,1).toUpperCase()+"." }}</span>
+                <v-card-title class="pa-0 ma-0">
+                  <v-container>
+                    <v-row
+                      align="start"
+                    >
+                      <v-col class="col-3 text-center ma-0 pa-0">
+                        <v-avatar>
+                          <v-icon class="display-2">
+                            mdi-account-circle
+                          </v-icon>
+                        </v-avatar>
+                      </v-col>
+                      <v-col class="col-6 ma-0 pa-0">
+                        <v-card-text class="pa-0">
+                          <span
+                            class="title font-weight-light secondary--text"
+                          >
+                            {{ threadCM.contactFirstName }} {{ threadCM.contactLastName.substr(0,1).toUpperCase()+"." }}</span><br>
+                          <span :class="threadCM.selected ? 'font-weight-bold' : ''">
+                            {{ threadCM.firstWayPoint }}
+                            <v-icon color="tertiairy">
+                              mdi-arrow-right
+                            </v-icon> {{ threadCM.lastWayPoint }}
+                          </span><br>
+                          <span
+                            v-if="!threadCM.dayChecked"
+                            class="font-italic"
+                          >{{ threadCM.fromDateReadable }} {{ $t("ui.infos.misc.at") }} {{ threadCM.fromTimeReadable }}</span>
+                          <span
+                            v-else
+                            class="font-italic"
+                          >{{ threadCM.dayChecked.join(", ") }}</span>
+                        </v-card-text>
+                      </v-col>
+                      <v-col class="col-3 ma-0 pa-0">
+                        <v-card-text
+                          class="pa-0 ma-0 text-right pr-2 font-italic"
+                        >
+                          {{ threadCM.lastMessageCreatedDate }}
+                        </v-card-text>
+                      </v-col>
+                    </v-row>
+                  </v-container>
                 </v-card-title>
               </v-card>
             </v-tab-item>
             <v-tab-item
-              v-if="this.threadsDM.length==0"
+              v-if="threadsDM.length==0"
               value="tab-dm"
             >
               {{ $t("ui.pages.messages.label.nodirectmessages") }}
@@ -115,7 +153,7 @@
         >
           <!-- Messages -->
 
-          <v-timeline v-if="(this.threadsDM.length>0 || this.threadsCM.length>0)">
+          <v-timeline v-if="(threadsDM.length>0 || threadsCM.length>0)">
             <v-timeline-item
               v-for="(item, i) in items"
               :key="i"
@@ -155,7 +193,7 @@
           </v-timeline>
 
           <v-container
-            v-if="(this.threadsDM.length>0 || this.threadsCM.length>0)"
+            v-if="(threadsDM.length>0 || threadsCM.length>0)"
             fluid
             grid-list-md
           >
@@ -207,7 +245,7 @@
               text-center
             >
               <v-card
-                v-if="(this.threadsDM.length>0 || this.threadsCM.length>0)"
+                v-if="(threadsDM.length>0 || threadsCM.length>0)"
                 class="pa-2 text-center"
               >
                 <!-- The current carpool history -->
@@ -218,22 +256,15 @@
                   v-if="currentAskHistory"
                   class="mb-3"
                 >
-                  <v-card-text>{{ currentAskHistory.ask.matching.criteria.fromDateReadable }} {{ $t("ui.infos.misc.at") }} {{ currentAskHistory.ask.matching.criteria.fromTimeReadable }}</v-card-text>
-                  <!-- Timeline of the journey -->
-                  <v-timeline dense>
-                    <v-timeline-item
-                      v-for="(waypoint, index) in infosJourney['waypoints']"
-                      :key="index"
-                      :icon="( (index>0) && (index<waypoint.length-1) ) ? 'mdi-arrow-right' : ''"
-                      :color="( (index>0) && (index<waypoint.length-1) ) ? '' : 'primary'"
-                      :icon-color="( (index>0) && (index<waypoint.length-1) ) ? 'warning' : 'primary'"
-                      :fill-dot="( (index>0) && (index<waypoint.length-1) )"
-                      class="text-left pb-2"
-                      :class="( (index>0) && (index<waypoint.length-1) ) ? 'waypoint' : ''"
-                    >
-                      {{ waypoint }}
-                    </v-timeline-item>
-                  </v-timeline>
+                  <ad-summary
+                    :display-info="false"
+                    :regular="regular"
+                    :route="route"
+                    :outward-date="outwardDate"
+                    :outward-time="outwardTime"
+                    :schedules="schedules"
+                    :user="user"
+                  />
 
                   <v-divider />
                   <v-row>
@@ -350,7 +381,6 @@
           </v-row>
         </v-col>
       </v-row>
-
       <div class="text-xs-center">
         <v-dialog
           v-model="spinner"
@@ -410,12 +440,14 @@
   </v-content>
 </template>
 <script>
+import moment from "moment";
 import axios from "axios";
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/Messages.json";
 import TranslationsClient from "@clientTranslations/components/user/Messages.json";
 import MBtn from '@components/utilities/MBtn'
+import AdSummary from '@components/carpool/AdSummary'
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
@@ -424,7 +456,8 @@ export default {
     sharedMessages: CommonTranslations
   },
   components: {
-    MBtn
+    MBtn,
+    AdSummary
   },
   props: {
     threadsdirectmessagesforview: {
@@ -458,6 +491,10 @@ export default {
     lastnamerecipientdefault: {
       type: String,
       default: ""
+    },
+    user: {
+      type: Object,
+      default: null
     }
   },
   data() {
@@ -471,6 +508,8 @@ export default {
       idThreadMessage: this.idmessagedefault,
       currentcorrespondant: "...",
       idRecipient: null,
+      route: {},
+      schedules: [],
       textSpinnerLoading: this.$t("ui.pages.messages.spinner.loading"),
       textSpinnerSendMessage: this.$t("ui.pages.messages.spinner.sendMessage"),
       textSpinnerAskCarpool: this.$t("ui.pages.messages.spinner.askCarpool"),
@@ -481,7 +520,10 @@ export default {
       currentAskHistory: null,
       askUser: 0,
       infosJourney: [],
-      modelTabs:"tab-cm"
+      modelTabs:"tab-cm",
+      outwardDate: null,
+      outwardTime: null,
+      regular: false,
     };
   },
   watch: {
@@ -508,10 +550,21 @@ export default {
       this.threadsDM.forEach((thread, index) => {
         this.threadsDM[index].selected =
           thread.idThreadMessage === parseInt(idMessage) ? true : false;
+        if(thread.lastMessageCreatedDate==="today"){
+          thread.lastMessageCreatedDate = this.$t("ui.date.today");
+        }
       });
       this.threadsCM.forEach((thread, index) => {
         this.threadsCM[index].selected =
           thread.idThreadMessage === parseInt(idMessage) ? true : false;
+        if(thread.lastMessageCreatedDate==="today"){
+          thread.lastMessageCreatedDate = this.$t("ui.date.today");
+        }
+        if(thread.dayChecked){
+          thread.dayChecked.forEach((day, index)=>{
+            thread.dayChecked[index] = this.$t("ui.date."+day);
+          });
+        }
       });
       this.textSpinner = this.textSpinnerLoading;
       this.spinner = true;
@@ -574,12 +627,6 @@ export default {
       if (this.currentAskHistory !== null) {
         this.infosJourney.length = 0; // Reset journey infos
 
-        this.infosJourney["waypoints"] = new Array();
-        for (let waypoint of this.currentAskHistory.ask.matching.waypoints) {
-          // Get the diffrent waypoints
-          this.infosJourney["waypoints"].push(waypoint.address.addressLocality);
-        }
-
         // update distance
         this.infosJourney["distance"] =
           parseInt(
@@ -602,6 +649,48 @@ export default {
         this.infosJourney[
           "seats"
         ] = this.currentAskHistory.ask.matching.criteria.seats;
+      }
+      // build the route of the carpool
+      this.route.waypoints = this.currentAskHistory.ask.matching.waypoints;
+      this.route.direction = this.currentAskHistory.ask.matching.proposalRequest.criteria.directionPassenger;
+      this.route.origin = this.currentAskHistory.ask.matching.waypoints[0].address;
+      for (let waypoint of this.currentAskHistory.ask.matching.waypoints) {
+        if (waypoint.destination == true) {
+          this.route.destination = waypoint.address
+        }
+      }
+      // format the outwardDate and outwardTime
+      this.outwardDate = moment(this.currentAskHistory.ask.criteria.fromDate).format('YYYY-MM-DD')
+      this.outwardTime = moment(this.currentAskHistory.ask.criteria.fromTime).format('hh:mm')
+      // build schedules of the regular carpool
+      if (this.currentAskHistory.ask.criteria.frequency == 2) {
+        this.regular = true;
+        let hours = new Array();
+        (hours[this.currentAskHistory.ask.criteria.monTime]===undefined) ? hours[this.currentAskHistory.ask.criteria.monTime] = ["mon"] : hours[this.currentAskHistory.ask.criteria.monTime].push("mon");
+        (hours[this.currentAskHistory.ask.criteria.tueTime]===undefined) ? hours[this.currentAskHistory.ask.criteria.tueTime] = ["tue"] : hours[this.currentAskHistory.ask.criteria.tueTime].push("tue");
+        (hours[this.currentAskHistory.ask.criteria.wedTime]===undefined) ? hours[this.currentAskHistory.ask.criteria.wedTime] = ["wed"] : hours[this.currentAskHistory.ask.criteria.wedTime].push("wed");
+        (hours[this.currentAskHistory.ask.criteria.thuTime]===undefined) ? hours[this.currentAskHistory.ask.criteria.thuTime] = ["thu"] : hours[this.currentAskHistory.ask.criteria.thuTime].push("thu");
+        (hours[this.currentAskHistory.ask.criteria.friTime]===undefined) ? hours[this.currentAskHistory.ask.criteria.friTime] = ["fri"] : hours[this.currentAskHistory.ask.criteria.friTime].push("fri");
+        (hours[this.currentAskHistory.ask.criteria.satTime]===undefined) ? hours[this.currentAskHistory.ask.criteria.satTime] = ["sat"] : hours[this.currentAskHistory.ask.criteria.satTime].push("sat");
+        (hours[this.currentAskHistory.ask.criteria.sunTime]===undefined) ? hours[this.currentAskHistory.ask.criteria.sunTime] = ["sun"] : hours[this.currentAskHistory.ask.criteria.sunTime].push("sun");
+
+        // build each schedule
+        for (let hour in hours) {
+          let currentSchedule = {
+            outwardTime:moment(hour).format('hh:mm')
+          };
+          currentSchedule.mon = (hours[hour].indexOf("mon")!==-1);
+          currentSchedule.tue = (hours[hour].indexOf("tue")!==-1);
+          currentSchedule.wed = (hours[hour].indexOf("wed")!==-1);
+          currentSchedule.thu = (hours[hour].indexOf("thu")!==-1);
+          currentSchedule.fri = (hours[hour].indexOf("fri")!==-1);
+          currentSchedule.sat = (hours[hour].indexOf("sat")!==-1);
+          currentSchedule.sun = (hours[hour].indexOf("sun")!==-1);
+
+          if(currentSchedule.outwardTime!=="Invalid date"){
+            this.schedules.push(currentSchedule);
+          }
+        }
       }
     },
     sendInternalMessage() {
@@ -656,7 +745,6 @@ export default {
           ? (tabItem["origin"] = "own")
           : (tabItem["origin"] = "contact");
       }
-
       this.items.push(tabItem);
     },
     generateName(firstname, lastname) {

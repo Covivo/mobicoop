@@ -11,7 +11,9 @@ import Vuetify, {
   // header
   VToolbar, VToolbarTitle, VBtn, VImg,
   // footer
-  VFooter, VCardText
+  VFooter, VCardText, VDataTable, VChip, VTextField, VRow, VCol, VCard, VIcon,VCardTitle, VDataIterator,VTab, VTabs,VTabItem, VTabsItems,
+  VTabsSlider,VDivider, VList, VListItem, VListItemContent,VForm,VAutocomplete, VMenu, VDatePicker, VTooltip, VSwitch,VListItemAvatar,
+  VListItemTitle,VListItemSubtitle,VData,VDataFooter,VDataTableHeader,VDialog, VCardActions, VTextarea, VBadge, VItemGroup, VListItemGroup, VListItemIcon
 } from 'vuetify/lib'
 
 Vue.use(Vuetify, {
@@ -21,7 +23,9 @@ Vue.use(Vuetify, {
     // header
     VToolbar, VToolbarTitle, VBtn, VImg,
     // footer
-    VFooter, VCardText
+    VFooter, VCardText, VDataTable, VChip, VTextField, VRow, VCol, VCard, VIcon, VCardTitle, VDataIterator, VTab, VTabs,VTabItem, VTabsItems,
+    VTabsSlider,VDivider, VList, VListItem, VListItemContent,VForm, VAutocomplete, VMenu, VDatePicker, VTooltip, VSwitch, VListItemAvatar,
+    VListItemTitle,VListItemSubtitle,VData,VDataFooter,VDataTableHeader,VDialog, VCardActions, VTextarea, VBadge, VItemGroup, VListItemGroup, VListItemIcon
   }
 })
 Vue.use(VueI18n)
@@ -33,6 +37,9 @@ const i18n = new VueI18n({
 const vuetify = new Vuetify({
   icons: {
     iconfont: 'mdi', // default - only for display purposes (https://materialdesignicons.com/)
+  },
+  dataFooter: {
+    'items-per-page-text': 'Nombre de tuples par page'
   },
   theme: colorTheme
 })

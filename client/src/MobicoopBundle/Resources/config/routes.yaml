@@ -132,7 +132,12 @@ carpool_results:
         origin_longitude: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?).\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)'
         destination_latitude: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?).\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)'
         destination_longitude: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?).\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)'
-        date: '\d+'
+
+matching_search:
+    path:
+        fr: /matching/search/
+        en: /matching/search/
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::MatchingSearch
 
 # rdex provider (called with ajax)
 rdex_provider:

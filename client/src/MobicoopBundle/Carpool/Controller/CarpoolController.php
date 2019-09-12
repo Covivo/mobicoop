@@ -23,6 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Controller;
 
+use DateTime;
 use Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -80,8 +81,8 @@ class CarpoolController extends AbstractController
      */
     public function simpleSearchResults($origin, $destination, $origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date, ProposalManager $proposalManager)
     {
-        $offers= $proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("YmdHis", $date));
-        $reponseofmanager= $this->handleManagerReturnValue($offers);
+        // $offers= $proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("YmdHis", $date));
+        // $reponseofmanager= $this->handleManagerReturnValue($offers);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
@@ -92,9 +93,31 @@ class CarpoolController extends AbstractController
             'origin_longitude' => urldecode($origin_longitude),
             'destination_latitude' => urldecode($destination_latitude),
             'destination_longitude' => urldecode($destination_longitude),
-            'date' =>  \Datetime::createFromFormat("YmdHis", $date),
-            'hydra' => $offers,
+            'date' =>  $date,
+            // 'hydra' => $offers,
+            'MatchingSearchUrl' => "/matching/search"
         ]);
+    }
+
+    /**
+     * Matching Search
+     */
+    public function MatchingSearch(Request $request, ProposalManager $proposalManager)
+    {
+        $origin_latitude = $request->query->get('origin_latitude');
+        $origin_longitude = $request->query->get('origin_longitude');
+        $destination_latitude = $request->query->get('destination_latitude');
+        $destination_longitude = $request->query->get('destination_longitude');
+        $date = Datetime::createFromFormat("Y-m-d\TH:i:s\Z", $request->query->get('date'));
+
+        return $this->json($proposalManager->getMatchingsForSearch(
+            $origin_latitude,
+            $origin_longitude,
+            $destination_latitude,
+            $destination_longitude,
+            $date,
+            DataProvider::RETURN_JSON
+        ));
     }
 
     /**

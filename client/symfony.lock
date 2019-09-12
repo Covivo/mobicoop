@@ -129,6 +129,9 @@
     "kriswallsmith/buzz": {
         "version": "v0.15.2"
     },
+    "limenius/liform": {
+        "version": "v0.12.0"
+    },
     "markbaker/complex": {
         "version": "1.4.7"
     },
