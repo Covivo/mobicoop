@@ -12,7 +12,7 @@
           dense
         >
           <v-col
-            cols="6"
+            :cols="displayInfo ? 6 : 10" 
             offset="1"
             align="left"
           >
@@ -63,6 +63,7 @@
         
           <!-- price -->
           <v-col
+            v-if="displayInfo"
             cols="3"
             offset="1"
             align="right"
@@ -73,7 +74,7 @@
 
         <!-- Second line : seats -->
         <v-row
-          v-if="driver"
+          v-if="driver && displayInfo"
           align="center"
           dense
         >
@@ -91,7 +92,7 @@
           dense
         >
           <v-col
-            cols="6"
+            :cols="displayInfo ? 6 : 10" 
             offset="1"
             align="left"
           >
@@ -106,7 +107,7 @@
         >
           <!-- Direction, days, message -->
           <v-col
-            cols="6"
+            :cols="displayInfo ? 6 : 10" 
             offset="1"
             align="left"
           >
@@ -124,11 +125,11 @@
                   <v-row dense>
                     <v-col 
                       v-if="!regular"
-                      cols="6"
+                      :cols="displayInfo ? 6 : 10" 
                     >
                       <strong>{{ computedOutwardTimeFormat }}</strong>
                     </v-col>
-                    <v-col cols="6">
+                    <v-col :cols="displayInfo ? 6 : 12">
                       {{ (route && route.origin) ? route.origin.addressLocality : null }}
                     </v-col>
                   </v-row>
@@ -140,7 +141,7 @@
                   small
                 >
                   <v-row dense>
-                    <v-col cols="6">
+                    <v-col :cols="displayInfo ? 6 : 12">
                       {{ waypoint.address.addressLocality }}
                     </v-col>
                   </v-row>
@@ -153,11 +154,11 @@
                   <v-row dense>
                     <v-col 
                       v-if="!regular"
-                      cols="6"
+                      :cols="displayInfo ? 6 : 10" 
                     >
                       <strong>{{ computedDestinationTime }}</strong>
                     </v-col>
-                    <v-col cols="6">
+                    <v-col :cols="displayInfo ? 6 : 12">
                       {{ (route && route.destination) ? route.destination.addressLocality : null }}
                     </v-col>
                   </v-row>
@@ -293,7 +294,7 @@
                 </v-row>
               </v-col>
             </v-row>
-
+           
             <!-- Message -->
             <v-row
               v-else
@@ -304,6 +305,7 @@
                 cols="12"
               >
                 <v-card
+                  v-if="displayInfo"
                   outlined
                   class="mx-auto"
                 > 
@@ -317,6 +319,7 @@
 
           <!-- User -->
           <v-col
+            v-if="displayInfo"
             cols="3"
             offset="1"
             align="center"
@@ -326,6 +329,7 @@
                 cols="12"
               >
                 <v-card
+
                   outlined
                   class="mx-auto"
                 >
@@ -343,7 +347,7 @@
 
         <!-- Fourth line : message if regular -->
         <v-row
-          v-if="regular"
+          v-if="regular && displayInfo"
           align="center"
           justify="center"
           dense
@@ -448,6 +452,11 @@ export default {
       type: Object,
       default: null
     },
+    // on true display price, seats, user info and message 
+    displayInfo: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {
