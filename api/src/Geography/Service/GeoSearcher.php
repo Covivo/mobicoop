@@ -111,7 +111,7 @@ class GeoSearcher
             if (!$exclude) {
                 $address = $relayPoint->getAddress();
                 $address->setRelayPoint($relayPoint);
-                //$address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+                $address->setDisplayLabel($relayPoint->getName().", ".$address->getAddressLocality());
                 $result[] = $address;
             }
         }
