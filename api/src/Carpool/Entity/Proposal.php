@@ -64,7 +64,7 @@ use App\Communication\Entity\Notified;
  *          "simple_search"={
  *              "method"="GET",
  *              "path"="/proposals/search",
- *              "normalization_context"={"groups"={"read"}},
+ *              "normalization_context"={"groups"={"results"}},
  *              "swagger_context" = {
  *                  "parameters" = {
  *                      {
@@ -146,7 +146,7 @@ class Proposal
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write","threads","thread"})
+     * @Groups({"read","results","write","threads","thread"})
      */
     private $type;
     
@@ -180,7 +180,7 @@ class Proposal
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposals")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
+     * @Groups({"read","results","write"})
      */
     private $user;
 
@@ -198,7 +198,7 @@ class Proposal
      * @Assert\NotBlank
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"read","write"})
+     * @Groups({"read","results","write"})
      */
     private $waypoints;
     
@@ -222,7 +222,8 @@ class Proposal
      * @var ArrayCollection|null The matching of the proposal (if proposal is an offer).
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read"})
+     * @Groups({"read","results"})
+     * @MaxDepth(1)
      */
     private $matchingOffers;
 
@@ -230,7 +231,7 @@ class Proposal
      * @var ArrayCollection|null The matching of the proposal (if proposal is a request).
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read"})
+     * @Groups({"read","results"})
      */
     private $matchingRequests;
 
@@ -245,7 +246,7 @@ class Proposal
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="proposal", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $criteria;
     

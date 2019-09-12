@@ -67,7 +67,7 @@ class Criteria
      * @var boolean The user can be a driver.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $driver;
 
@@ -75,7 +75,7 @@ class Criteria
      * @var boolean The user can be a passenger.
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $passenger;
     
@@ -84,7 +84,7 @@ class Criteria
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
-     * @Groups({"read","write","thread","threads"})
+     * @Groups({"read","results","write","thread"})
      */
     private $frequency;
 
@@ -93,7 +93,7 @@ class Criteria
      *
      * @Assert\NotBlank
      * @ORM\Column(type="integer")
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $seats;
 
@@ -102,7 +102,7 @@ class Criteria
      *
      * @Assert\NotBlank
      * @ORM\Column(type="date")
-     * @Groups({"read","write","thread","threads"})
+     * @Groups({"read","results","write","thread"})
      */
     private $fromDate;
 
@@ -111,7 +111,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread","threads"})
+     * @Groups({"read","results","write","thread"})
      */
     private $fromTime;
 
@@ -145,7 +145,7 @@ class Criteria
      * @var boolean For punctual proposals, the user accepts only matchings for the defined date (no ranges).
      *
      * @ORM\Column(type="boolean")
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $strictDate;
 
@@ -153,7 +153,7 @@ class Criteria
      * @var \DateTimeInterface|null The end date if regular proposal, the last accepted date if punctual.
      *
      * @ORM\Column(type="date", nullable=true)
-     * @Groups({"read","write","thread","threads"})
+     * @Groups({"read","results","write","thread"})
      */
     private $toDate;
 
@@ -494,7 +494,7 @@ class Criteria
     * @var float|null The price per km.
     *
     * @ORM\Column(type="decimal", precision=4, scale=2, nullable=true)
-    * @Groups({"read","write","thread"})
+    * @Groups({"read","results","write","thread"})
     */
     private $priceKm;
 

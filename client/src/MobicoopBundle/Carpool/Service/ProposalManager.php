@@ -121,7 +121,7 @@ class ProposalManager
      * @param \Datetime $date               The date and time in a Datetime object
      * @return array|null The matchings found or null if not found.
      */
-    public function getMatchingsForSearch(float $origin_latitude, float $origin_longitude, float $destination_latitude, float $destination_longitude, \Datetime $date)
+    public function getMatchingsForSearch(float $origin_latitude, float $origin_longitude, float $destination_latitude, float $destination_longitude, \Datetime $date, $format = null)
     {
         // we set the params
         $params = [
@@ -131,6 +131,10 @@ class ProposalManager
             "destination_longitude" => $destination_longitude,
             "date" => $date->format('Y-m-d\TH:i:s\Z')
         ];
+        if (is_null($format)) {
+            $format = $this->dataProvider::RETURN_OBJECT;
+        }
+        $this->dataProvider->setFormat($format);
         // we call the special collection operation "search"
         $response = $this->dataProvider->getSpecialCollection("search", $params);
         return $response->getValue();

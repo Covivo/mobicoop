@@ -47,8 +47,7 @@
             v-model="valid"
             lazy-validation
           >
-
-            <!--Email-->
+              <!--Email-->
             <v-text-field
               v-model="user.email"
               :label="$t('models.user.email.label')"
