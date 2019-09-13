@@ -129,8 +129,6 @@
             :carpool-results="results"
             :matching-search-url="matchingSearchUrl"
           />
-
-          <!--card use vdivider for middle line-->
         </v-col>
       </v-row>
     </v-container>

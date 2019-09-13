@@ -7,6 +7,7 @@
       <v-card
         flat
       >
+        <!-- display result-journey-detailed card - proposal Request and proposalOffer in array(matchings) order-->
         <result-journey-detailed-card 
           :origin="origin"
           :destination="destination"
@@ -15,21 +16,6 @@
           :matching-search-url="matchingSearchUrl"
           :matching="matching.proposalRequest"
         />
-        <v-row
-          justify="center"
-        >
-          <v-divider class="divider-width" />
-        </v-row>
-        <result-user-detailed-card 
-          :carpool-results="carpoolResults"
-          :matching-search-url="matchingSearchUrl"
-          :matching="matching.proposalRequest" 
-        />
-      </v-card>
-
-      <v-card
-        flat
-      >
         <result-journey-detailed-card 
           :origin="origin"
           :destination="destination"
@@ -43,6 +29,16 @@
         >
           <v-divider class="divider-width" />
         </v-row>
+
+        <!-- display result-user-detailed card - proposal Request and proposalOffer in array(matchings) order-->
+        <result-user-detailed-card 
+          :carpool-results="carpoolResults"
+          :matching-search-url="matchingSearchUrl"
+          :matching="matching.proposalRequest" 
+        />   
+        <v-row
+          justify="center"
+        />
         <result-user-detailed-card 
           :carpool-results="carpoolResults"
           :matching-search-url="matchingSearchUrl"
