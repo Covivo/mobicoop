@@ -13,7 +13,7 @@
           :date="date"
           :carpool-results="carpoolResults"
           :matching-search-url="matchingSearchUrl"
-          :matching="matching"
+          :matching="matching.proposalRequest"
         />
         <v-row
           justify="center"
@@ -23,7 +23,30 @@
         <result-user-detailed-card 
           :carpool-results="carpoolResults"
           :matching-search-url="matchingSearchUrl"
-          :matching="matching"
+          :matching="matching.proposalRequest" 
+        />
+      </v-card>
+
+      <v-card
+        flat
+      >
+        <result-journey-detailed-card 
+          :origin="origin"
+          :destination="destination"
+          :date="date"
+          :carpool-results="carpoolResults"
+          :matching-search-url="matchingSearchUrl"
+          :matching="matching.proposalOffer"
+        />
+        <v-row
+          justify="center"
+        >
+          <v-divider class="divider-width" />
+        </v-row>
+        <result-user-detailed-card 
+          :carpool-results="carpoolResults"
+          :matching-search-url="matchingSearchUrl"
+          :matching="matching.proposalOffer" 
         />
       </v-card>
     </v-container>
@@ -85,9 +108,10 @@ export default {
   },
   watch: {
     carpoolResults(){
-      // this.matchings=[this.carpoolResults.matchingRequests].concat([this.carpoolResults.matchingOffers]);
-      // this.matchings=this.carpoolResults.matchingRequests.concat(this.carpoolResults.matchingOffers);
-      this.matchings=this.carpoolResults.matchingRequests
+      // this.matchings.push(this.carpoolResults.matchingRequests,this.carpoolResults.matchingOffers);
+      this.matchings=this.carpoolResults.matchingOffers.concat(this.carpoolResults.matchingRequests);
+      // this.matchings=this.carpoolResults.matchingRequests
+
     }
   }
 }

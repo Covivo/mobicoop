@@ -3,12 +3,38 @@
     <v-container
       fluid
     >  
-      <!-- it's the potential drivers (matchingRequests) - all offers containing drivers(proposalOffer) -->
       <v-list-item>
-        <v-list-item>
-          <!-- Icon driver--> 
+        <!-- Icon driver--> 
+        <v-list-item-avatar
+          v-show="passenger == false"
+          color="primary"
+          size="60"
+        >
+          <v-icon
+            dark
+            size="35"
+          >
+            mdi-steering
+          </v-icon>
+        </v-list-item-avatar>
+
+        <!-- Icon driver & passenger--> 
+        <v-col           
+          v-show="passenger == true && driver == true"
+        >
           <v-list-item-avatar
-            v-show="driver === true && passenger === false"
+            color="secondary"
+            size="60"
+          >
+            <v-icon
+              dark
+              size="35"
+            >
+              mdi-account-supervisor 
+            </v-icon>
+          </v-list-item-avatar>
+
+          <v-list-item-avatar
             color="primary"
             size="60"
           >
@@ -19,135 +45,102 @@
               mdi-steering
             </v-icon>
           </v-list-item-avatar>
+        </v-col>
 
-          <!-- Icon driver & passenger--> 
-          <v-col>
-            <v-list-item           
-              v-show="passenger === true && driver === true"
-            >
-              <v-list-item-avatar
-                color="secondary"
-                size="60"
-              >
-                <v-icon
-                  dark
-                  size="35"
-                >
-                  mdi-account-supervisor 
-                </v-icon>
-              </v-list-item-avatar>
-
-              <v-list-item-avatar
-                color="primary"
-                size="60"
-              >
-                <v-icon
-                  dark
-                  size="35"
-                >
-                  mdi-steering
-                </v-icon>
-              </v-list-item-avatar>
-            </v-list-item>
-          </v-col>
-
-          <!-- Icon passenger--> 
-          <!-- <v-list-item           
-            v-show="passenger === true && driver === false"
+        <!-- Icon passenger--> 
+          
+        <v-list-item-avatar
+          v-show="driver == false"
+          color="secondary"
+          size="60"
+        >
+          <v-icon
+            dark
+            size="35"
           >
-            <v-list-item-avatar
-              color="secondary"
-              size="60"
-            >
-              <v-icon
-                dark
-                size="35"
-              >
-                mdi-account-supervisor 
-              </v-icon>
-            </v-list-item-avatar>
-          </v-list-item> -->
+            mdi-account-supervisor 
+          </v-icon>
+        </v-list-item-avatar>
 
-          <!-- Hour & Date -->
-          <v-list-item-content
-            class="ml-2"
+        <!-- Hour & Date -->
+        <v-list-item-content
+          class="ml-2"
+        >
+          <v-list-item-title
+            class="text-address-size"
           >
-            <v-list-item-title
-              class="text-address-size"
-            >
-              <h3>{{ computedTimeFormated }}</h3>
-            </v-list-item-title>
-            <v-list-item-title class="date-uppercase">
-              {{ computedDateFormated }}
-            </v-list-item-title>
-          </v-list-item-content>
+            <h3>{{ computedTimeFormated }}</h3>
+          </v-list-item-title>
+          <v-list-item-title class="date-uppercase">
+            {{ computedDateFormated }}
+          </v-list-item-title>
+        </v-list-item-content>
 
-          <!-- origin -->
-          <v-list-item-content
-            class=" text-left ml-2"
+        <!-- origin -->
+        <v-list-item-content
+          class=" text-left ml-2"
+        >
+          <v-list-item-title
+            class="text-city-size"
           >
-            <v-list-item-title
-              class="text-city-size"
-            >
-              {{ matching.proposalOffer.waypoints[0].address.addressLocality }}
-            </v-list-item-title>
-            <v-list-item-title
-              class="d-inline-block text-truncate text-address-size"
-              style="max-width: 100px;"
-            >
-              {{ matching.proposalOffer.waypoints[0].address.streetAddress }}
-            </v-list-item-title>
-          </v-list-item-content>
+            {{ matching.waypoints[0].address.addressLocality }}
+          </v-list-item-title>
+          <v-list-item-title
+            class="d-inline-block text-truncate text-address-size"
+            style="max-width: 100px;"
+          >
+            {{ matching.waypoints[0].address.streetAddress }}
+          </v-list-item-title>
+        </v-list-item-content>
 
-          <!-- icon --> 
-          <v-col
-            cols="1"
+        <!-- icon --> 
+        <v-col
+          cols="1"
+        >
+          <v-icon
+            scolor="secondary"
+            size="32"
           >
-            <v-icon
-              scolor="secondary"
-              size="32"
-            >
-              mdi-ray-start-end
-            </v-icon>
-          </v-col> 
+            mdi-ray-start-end
+          </v-icon>
+        </v-col> 
 
-          <!-- destination --> 
-          <v-list-item-content
-            class=" text-left ml-1"
+        <!-- destination --> 
+        <v-list-item-content
+          class=" text-left ml-1"
+        >
+          <v-list-item-title
+            class="text-city-size"
           >
-            <v-list-item-title
-              class="text-city-size"
-            >
-              {{ matching.proposalOffer.waypoints[1].address.addressLocality }}
-            </v-list-item-title>
-            <v-list-item-title
-              class="d-inline-block text-truncate text-address-size"
-              style="max-width: 100px;"
-            >
-              {{ matching.proposalOffer.waypoints[1].address.streetAddress }}
-            </v-list-item-title>
-          </v-list-item-content>
+            {{ matching.waypoints[1].address.addressLocality }}
+          </v-list-item-title>
+          <v-list-item-title
+            class="d-inline-block text-truncate text-address-size"
+            style="max-width: 100px;"
+          >
+            {{ matching.waypoints[1].address.streetAddress }}
+          </v-list-item-title>
+        </v-list-item-content>
 
-          <!--seats --> 
-          <v-col
-            align="center"
-          >
-            <p>
-              <!-- place | places -->
-              {{ matching.proposalOffer.criteria.seats }} place(s)
-            </p>
-          </v-col>
+        <!--seats --> 
+        <v-col
+          align="center"
+        >
+          <p>
+            <!-- place | places -->
+            {{ matching.criteria.seats }} place(s)
+          </p>
+        </v-col>
 
-          <!-- price --> 
-          <v-col
-            align="center"
-            justify="end"
-            class="price"
-          >
-            <p>{{ matching.proposalOffer.criteria.priceKm }} €</p>
-          </v-col>
-          <v-row />
-        </v-list-item>
+        <!-- price --> 
+        <v-col
+          align="center"
+          justify="end"
+          class="price"
+        >
+          <p>{{ matching.criteria.priceKm }} €</p>
+        </v-col>
+        <v-row />
       </v-list-item>
     </v-container>
   </v-content>
@@ -203,8 +196,8 @@ export default {
   },
   data() {
     return {
-      driver: this.matching.proposalOffer.criteria.driver,
-      passenger: this.matching.proposalOffer.criteria.passenger
+      driver: this.matching.criteria.driver,
+      passenger: this.matching.criteria.passenger,
     };
   },
   computed: {

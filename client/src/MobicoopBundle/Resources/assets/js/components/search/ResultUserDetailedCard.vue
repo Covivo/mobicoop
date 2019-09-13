@@ -17,9 +17,9 @@
         <!--user data-->
         <v-list-item-content>
           <v-list-item-title class="font-weight-bold">
-            {{ matching.proposalOffer.user.givenName }} {{ matching.proposalOffer.user.familyName.substr(0,1).toUpperCase()+"." }}
+            {{ matching.user.givenName }} {{ matching.user.familyName.substr(0,1).toUpperCase()+"." }}
           </v-list-item-title>
-          <v-list-item-title>{{ formatedYear(matching.proposalOffer.user.birthDate) }} ans </v-list-item-title>
+          <v-list-item-title>{{ formatedYear(matching.user.birthDate) }} ans </v-list-item-title>
           <v-list-item-title
             class="caption font-weight-light font-italic"
           >
@@ -60,7 +60,7 @@
             <div
               class="ml-2"
             >
-              {{ matching.proposalOffer.user.telephone }}
+              {{ matching.user.telephone }}
             </div>
           </v-btn>
           <v-btn
@@ -157,7 +157,6 @@ export default {
   data () {
     return {
       togglePhoneButton: false,
-      matchings: this.matching
     };
   },
   methods: {
@@ -165,7 +164,7 @@ export default {
       this.togglePhoneButton = !this.togglePhoneButton;
     },
     formatedYear (){
-      return moment().diff(moment(this.matching.proposalOffer.user.birthDate),'years')
+      return moment().diff(moment(this.matching.user.birthDate),'years')
     } 
   }
 }
