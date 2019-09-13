@@ -237,6 +237,7 @@
                 v-slot:activator="{ on }"
               >
                 <a
+                  class="secondary--text"
                   target="_blank"
                   href="/cgu"
                   v-on="on"
