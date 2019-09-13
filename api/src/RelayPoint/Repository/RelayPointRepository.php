@@ -60,7 +60,6 @@ class RelayPointRepository
      */
     public function findByNameAndStatus(string $name, int $status)
     {
-        
         $words = explode(" ", $name);
         $searchString = "rp.name like '%".implode("%' and rp.name like '%", $words)."%'";
         $queryString = "
