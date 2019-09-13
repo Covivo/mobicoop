@@ -643,7 +643,10 @@ export default {
     buildDirectionWay(){
       // You need to push the entire directPoints array because the MMap component can show multiple journeys
       this.directionWay.length = 0;
-      this.directionWay.push(this.route.direction.directPoints);
+      let currentDirectionWay = {
+        latLngs:this.route.direction.directPoints
+      }        
+      this.directionWay.push(currentDirectionWay);
     },
     buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
       let point = {

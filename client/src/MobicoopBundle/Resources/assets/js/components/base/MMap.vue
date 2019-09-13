@@ -30,9 +30,13 @@
         <l-polyline
           v-for="(way, i) in ways"
           :key="'w'+i"
-          :lat-lngs="way"
-          color="blue"
-        />        
+          :lat-lngs="way.latLngs"
+          :color="(way.color!=='' && way.color !==undefined)?way.color:'blue'"
+        >        
+          <l-tooltip v-if="way.title!=='' && way.title !==undefined">
+            {{ way.title }}
+          </l-tooltip>
+        </l-polyline>
       </l-map>
     </v-col>
   </v-row>
