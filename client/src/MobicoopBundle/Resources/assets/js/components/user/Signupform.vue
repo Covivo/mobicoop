@@ -395,6 +395,7 @@ export default {
           }
         })
         .then(function (response) {
+          window.location.href = '/';
           console.log(response);
         })
         .catch(function (error) {
