@@ -61,15 +61,11 @@ class RelayPointRepository
     public function findByNameAndStatus(string $name, int $status)
     {
         
-        //echo $name;die;
-        $words = explode(" ",$name);
-        //var_dump($words);die;
-        $searchString = "rp.name like '%".implode("%' and rp.name like '%",$words)."%'";
-
+        $words = explode(" ", $name);
+        $searchString = "rp.name like '%".implode("%' and rp.name like '%", $words)."%'";
         $queryString = "
             SELECT rp from App\RelayPoint\Entity\RelayPoint rp
             where ".$searchString." and rp.status = ".$status;
-        //echo $queryString;die;
 
         $query = $this->entityManager->createQuery($queryString);
         

@@ -76,7 +76,7 @@ class GeoSearcher
         $result = [];
 
         // First we handle the quote
-        $input = str_replace("'","''",$input);
+        $input = str_replace("'", "''", $input);
 
 
         // if we have a token, we search for the corresponding user
