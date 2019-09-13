@@ -31,9 +31,9 @@
           v-for="(way, i) in ways"
           :key="'w'+i"
           :lat-lngs="way.latLngs"
-          color="blue"
+          :color="(way.color!=='' && way.color !==undefined)?way.color:'blue'"
         >        
-          <l-tooltip v-if="way.title!=''">
+          <l-tooltip v-if="way.title!=='' && way.title !==undefined">
             {{ way.title }}
           </l-tooltip>
         </l-polyline>

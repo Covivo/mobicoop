@@ -644,8 +644,7 @@ export default {
       // You need to push the entire directPoints array because the MMap component can show multiple journeys
       this.directionWay.length = 0;
       let currentDirectionWay = {
-        latLngs:this.route.direction.directPoints,
-        title:this.$t('stepper.content.map.myproposal')
+        latLngs:this.route.direction.directPoints
       }        
       this.directionWay.push(currentDirectionWay);
     },
