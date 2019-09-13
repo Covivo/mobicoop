@@ -229,10 +229,23 @@
               class="check"
               color="success"
               :rules="form.checkboxRules"
-              :label="$t('ui.pages.signup.chart.chartValid')"
               required
               :disabled="!step4"
-            />
+            >
+              <template
+                v-slot:label
+                v-slot:activator="{ on }"
+              >
+                <a
+                  class="secondary--text"
+                  target="_blank"
+                  href="/cgu"
+                  v-on="on"
+                  @click.stop
+                >{{ $t('ui.pages.signup.chart.chartValid') }}
+                </a>
+              </template>
+            </v-checkbox>
             <v-btn
               color="success"
               class="mr-4 mb-100 mt-12"
@@ -395,6 +408,7 @@ export default {
           }
         })
         .then(function (response) {
+          window.location.href = '/';
           console.log(response);
         })
         .catch(function (error) {
