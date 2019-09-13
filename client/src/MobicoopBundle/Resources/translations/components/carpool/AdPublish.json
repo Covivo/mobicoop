@@ -43,7 +43,10 @@
                     },
                     "label": "Laissez un petit message"
                 },
-                "summary": "Récapitulatif"
+                "summary": "Récapitulatif",
+                "map":{
+                    "myproposal":"Votre proposition de trajet"
+                }
             },
             "buttons": {
                 "next": "Suivant",
