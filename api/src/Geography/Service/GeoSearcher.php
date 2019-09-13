@@ -67,12 +67,17 @@ class GeoSearcher
      */
     public function geoCode(string $input, string $token=null)
     {
+//        echo $input;die;
         // the result array will contain different addresses :
         // - named addresses (if the user is logged)
         // - relaypoints (with or without private relaypoints depending on if th user is logged)
         // - sig addresses
         // - other objects ? to be defined
         $result = [];
+
+        // First we handle the quote
+        $input = str_replace("'", "''", $input);
+
 
         // if we have a token, we search for the corresponding user
         $user = null;
