@@ -7,15 +7,6 @@
   {{ encore_entry_link_tags("#{assets_prefix ?? ''}user/signup") }}
 {% endblock %}
 {% block main %}
-    <section class="hero is-passur">
-        <div class="hero-body">
-            <div class="container">
-                <h1 class="title text-center font-weight-bold mt-7">
-                    {% trans from 'ui' %}user.signup.h1{% endtrans %}
-                </h1>
-            </div>
-        </div>
-    </section>
 
     <section class="section">
         {% if error %}

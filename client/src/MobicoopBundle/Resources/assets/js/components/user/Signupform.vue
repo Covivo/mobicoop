@@ -26,6 +26,18 @@
       class="overflow-y-auto"
       fluid
     >
+      <v-row 
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          md="8"
+          xl="6"
+          align="center"
+        >
+          <h1>{{ $t('inscription') }}</h1>
+        </v-col>
+      </v-row>
       <v-row
         justify="center"
         align="center"
