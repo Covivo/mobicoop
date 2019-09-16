@@ -78,57 +78,60 @@
               v-else
               value="tab-cm"
             >
-              <v-card
-                v-for="(threadCM, index) in threadsCM"
-                :key="index"
-                class="threads mx-auto mt-2"
-                :class="threadCM.selected ? 'primary' : ''"
-                @click="updateMessages(threadCM.idThreadMessage,threadCM.contactId)"
-              >
-                <v-card-title class="pa-0 ma-0">
-                  <v-container>
-                    <v-row
-                      align="start"
-                    >
-                      <v-col class="col-3 text-center ma-0 pa-0">
-                        <v-avatar>
-                          <v-icon class="display-2">
-                            mdi-account-circle
-                          </v-icon>
-                        </v-avatar>
-                      </v-col>
-                      <v-col class="col-6 ma-0 pa-0">
-                        <v-card-text class="pa-0">
-                          <span
-                            class="title font-weight-light secondary--text"
+              <v-container class="window-scroll">
+                <v-card
+                  v-for="(threadCM, index) in threadsCM"
+                  :key="index"
+                  class="threads mx-auto mt-2"
+                  :class="threadCM.selected ? 'primary' : ''"
+                  @click="updateMessages(threadCM.idThreadMessage,threadCM.contactId)"
+                >
+                  <v-card-title class="pa-0 ma-0">
+                    <v-container>
+                      <v-row
+                        align="start"
+                      >
+                        <v-col class="col-3 text-center ma-0 pa-0">
+                          <v-avatar>
+                            <v-icon class="display-2">
+                              mdi-account-circle
+                            </v-icon>
+                          </v-avatar>
+                        </v-col>
+                        <v-col class="col-6 ma-0 pa-0">
+                          <v-card-text class="pa-0">
+                            <span
+                              class="title font-weight-light secondary--text"
+                            >
+                              {{ threadCM.contactFirstName }} {{ threadCM.contactLastName.substr(0,1).toUpperCase()+"." }}</span><br>
+                            <span :class="threadCM.selected ? 'font-weight-bold' : ''">
+                              {{ threadCM.firstWayPoint }}
+                              <v-icon color="tertiairy">
+                                mdi-arrow-right
+                              </v-icon> {{ threadCM.lastWayPoint }}
+                            </span><br>
+                            <span
+                              v-if="!threadCM.dayChecked"
+                              class="font-italic"
+                            >{{ threadCM.fromDateReadable }} {{ $t("ui.infos.misc.at") }} {{ threadCM.fromTimeReadable }}</span>
+                            <span
+                              v-else
+                              class="font-italic"
+                            >{{ threadCM.dayChecked.join(", ") }}</span>
+                          </v-card-text>
+                        </v-col>
+                        <v-col class="col-3 ma-0 pa-0">
+                          <v-card-text
+                            class="pa-0 ma-0 text-right pr-2 font-italic"
                           >
-                            {{ threadCM.contactFirstName }} {{ threadCM.contactLastName.substr(0,1).toUpperCase()+"." }}</span><br>
-                          <span :class="threadCM.selected ? 'font-weight-bold' : ''">
-                            {{ threadCM.firstWayPoint }}
-                            <v-icon color="tertiairy">
-                              mdi-arrow-right
-                            </v-icon> {{ threadCM.lastWayPoint }}
-                          </span><br>
-                          <span
-                            v-if="!threadCM.dayChecked"
-                            class="font-italic"
-                          >{{ threadCM.fromDateReadable }} {{ $t("ui.infos.misc.at") }} {{ threadCM.fromTimeReadable }}</span>
-                          <span
-                            v-else
-                            class="font-italic"
-                          >{{ threadCM.dayChecked.join(", ") }}</span>
-                        </v-card-text>
-                      </v-col>
-                      <v-col class="col-3 ma-0 pa-0">
-                        <v-card-text
-                          class="pa-0 ma-0 text-right pr-2 font-italic"
-                        >
-                          {{ threadCM.lastMessageCreatedDate }}
-                        </v-card-text>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card-title>
+                            {{ threadCM.lastMessageCreatedDate }}
+                          </v-card-text>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-title>
+                </v-card>
+              </v-container>
               </v-card>
             </v-tab-item>
             <v-tab-item
@@ -141,20 +144,22 @@
               v-else
               value="tab-dm"
             >
-              <v-card
-                v-for="(thread, index) in threadsDM"
-                :key="index"
-                class="threads mx-auto mt-2"
-                :class="thread.selected ? 'primary' : ''"
-                @click="updateMessages(thread.idThreadMessage,thread.contactId,generateName(thread.contactFirstName,thread.contactLastName))"
-              >
-                <v-card-title>
-                  <v-icon>mdi-account-circle</v-icon>&nbsp;
-                  <span
-                    class="title font-weight-light"
-                  >{{ generateName(thread.contactFirstName,thread.contactLastName) }}</span>
-                </v-card-title>
-              </v-card>
+              <v-container class="window-scroll">
+                <v-card
+                  v-for="(thread, index) in threadsDM"
+                  :key="index"
+                  class="threads mx-auto mt-2"
+                  :class="thread.selected ? 'primary' : ''"
+                  @click="updateMessages(thread.idThreadMessage,thread.contactId,generateName(thread.contactFirstName,thread.contactLastName))"
+                >
+                  <v-card-title>
+                    <v-icon>mdi-account-circle</v-icon>&nbsp;
+                    <span
+                      class="title font-weight-light"
+                    >{{ generateName(thread.contactFirstName,thread.contactLastName) }}</span>
+                  </v-card-title>
+                </v-card>
+              </v-container>
             </v-tab-item>
           </v-tabs-items>
         </v-col>
@@ -165,45 +170,46 @@
         >
           <!-- Messages -->
 
-          <v-timeline v-if="(threadsDM.length>0 || threadsCM.length>0)">
-            <v-timeline-item
-              v-for="(item, i) in items"
-              :key="i"
-              :fil-dot="item.divider===false"
-              :hide-dot="item.divider===true"
-              :right="item.origin==='own'"
-              :left="item.origin!=='own'"
-              :idmessage="item.idMessage"
-              :class="(item.divider ? 'divider' : '')+' '+item.origin"
-            >
-              <template
-                v-if="item.divider===false"
-                v-slot:icon
+          <v-container class="window-scroll">
+            <v-timeline v-if="(threadsDM.length>0 || threadsCM.length>0)">
+              <v-timeline-item
+                v-for="(item, i) in items"
+                :key="i"
+                :fil-dot="item.divider===false"
+                :hide-dot="item.divider===true"
+                :right="item.origin==='own'"
+                :left="item.origin!=='own'"
+                :idmessage="item.idMessage"
+                :class="(item.divider ? 'divider' : '')+' '+item.origin"
               >
-                <v-avatar color="secondary">
-                  <v-icon>{{ item.icon }}</v-icon>
-                </v-avatar>
-              </template>
-              <template
-                v-if="item.divider===false"
-                v-slot:opposite
-              >
-                <span>{{ item.createdTimeReadable }}</span>
-              </template>
-              <v-card
-                v-if="item.divider===false"
-                class="elevation-2 font-weight-bold"
-                :class="(item.origin==='own')?'primary':''"
-              >
-                <v-card-text>{{ item.text }}</v-card-text>
-              </v-card>
-              <span
-                v-if="item.divider===true"
-                class="secondary--text font-weight-bold"
-              >{{ item.createdDateReadable }}</span>
-            </v-timeline-item>
-          </v-timeline>
-
+                <template
+                  v-if="item.divider===false"
+                  v-slot:icon
+                >
+                  <v-avatar color="secondary">
+                    <v-icon>{{ item.icon }}</v-icon>
+                  </v-avatar>
+                </template>
+                <template
+                  v-if="item.divider===false"
+                  v-slot:opposite
+                >
+                  <span>{{ item.createdTimeReadable }}</span>
+                </template>
+                <v-card
+                  v-if="item.divider===false"
+                  class="elevation-2 font-weight-bold"
+                  :class="(item.origin==='own')?'primary':''"
+                >
+                  <v-card-text>{{ item.text }}</v-card-text>
+                </v-card>
+                <span
+                  v-if="item.divider===true"
+                  class="secondary--text font-weight-bold"
+                >{{ item.createdDateReadable }}</span>
+              </v-timeline-item>
+            </v-timeline>
+          </v-container>
           <v-container
             v-if="(threadsDM.length>0 || threadsCM.length>0)"
             fluid
@@ -770,5 +776,9 @@ export default {
   .col{
     border-left: 2px solid white !important;
   }
+}
+.window-scroll{
+  max-height:600px;
+  overflow:auto;
 }
 </style>
