@@ -4,7 +4,7 @@
 {% block title %}Communauté
 {% endblock %}
 {% block stylesheets %}
-    {{ encore_entry_link_tags("#{assets_prefix ?? ''}community/showcommunity") }}
+    {{ encore_entry_link_tags("#{assets_prefix ?? ''}community/showCommunity") }}
 {% endblock %}
 {% block main %}
     {# @var community \Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community#}
@@ -20,8 +20,8 @@
     {% set paths = paths|merge({'community_images':community.images.first |default(defaultPreviewCommunity)}) %}
     {% set searchRoute = 'covoiturage/recherche' %}
     {% set clastusers = community.communityUsers
-        |sort((communityUsera, communityUserb) =>  ((communityUserb.createdDate < communityUsera.createdDate)?-1:(communityUserb.createdDate < communityUsera.createdDate)?0:1)  )
-        |slice(0,3)%}
+        |sort((communityUsera, communityUserb) => ((communityUserb.createdDate < communityUsera.createdDate)? -1 :(communityUserb.createdDate < communityUsera.createdDate) ? 0 : 1 ))
+        |slice(0,3) %}
     {% set items = { 'apple': 'fruit', 'orange': 'fruit' } %}
 
     {% set items = { 'apple': 'unknown' }|merge(items) %}
@@ -50,5 +50,5 @@
     </div>
 {% endblock %}
 {% block javascripts %}
-    {{ encore_entry_script_tags("#{assets_prefix ?? ''}community/showcommunity") }}
+    {{ encore_entry_script_tags("#{assets_prefix ?? ''}community/showCommunity") }}
 {% endblock %}
