@@ -35,7 +35,7 @@
           xl="6"
           align="center"
         >
-          <h1>{{ $t('inscription') }}</h1>
+          <h1>{{ $t('signUp') }}</h1>
         </v-col>
       </v-row>
       <v-row
