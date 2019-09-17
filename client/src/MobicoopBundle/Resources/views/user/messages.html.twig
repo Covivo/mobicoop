@@ -8,11 +8,6 @@
 {% endblock %}
 
 {% block main %}
-
-
-<section class="section">
-	<div class="container">
-		<div id="messages">
     		<Messages 
 				:threadsdirectmessagesforview="{{ threadsDirectMessagesForView|json_encode }}"
 				:threadscarpoolingmessagesforview="{{ threadsCarpoolingMessagesForView|json_encode }}"
@@ -23,9 +18,6 @@
 				lastNameRecipientDefault="{{ lastNameRecipientDefault }}"
 				:user="{{app.user|json_encode}}"
 			></Messages>
-		</div>
-    </div>
-  </section>
 {% endblock %}
 
 {% block javascripts %}

@@ -9,17 +9,13 @@
 
 {% block main %}
 
-<section class="section">
-	<div class="container">
-		<div id="profile">
+
     		<Profile :user="{{app.user|json_encode}}"
 			geo-search-url="{{ geoCompleteUri }}"
  			age-min="{{ ageMin }}"
             age-max="{{ ageMax }}"
 			></Profile>
-		</div> 
-    </div>
-  </section>
+
 {% endblock %}
 
 {% block javascripts %}

@@ -10,7 +10,7 @@
         xl="6"
         align="center"
       >
-        <h1>{{ $t('connection') }}</h1>
+        <h1>{{ $t('title') }}</h1>
       </v-col>
     </v-row>
     <v-layout

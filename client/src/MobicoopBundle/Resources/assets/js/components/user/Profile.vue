@@ -10,14 +10,14 @@
           xl="6"
           align="center"
         >
-          <h1>{{ $t('tabs.myProfile') }}</h1>
+          <h1>{{ $t('tabs.title') }}</h1>
         </v-col>
       </v-row>
       <v-layout
         justify-center
         text-center
       >
-        <v-flex xs10>
+        <v-flex xs8>
           <v-tabs
             slider-color="secondary"
             color="secondary"
