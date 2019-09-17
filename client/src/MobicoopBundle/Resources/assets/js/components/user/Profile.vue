@@ -1,6 +1,18 @@
 <template>
   <v-content>
     <v-container fluid>
+      <v-row 
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          md="8"
+          xl="6"
+          align="center"
+        >
+          <h1>{{ $t('tabs.myProfile') }}</h1>
+        </v-col>
+      </v-row>
       <v-layout
         justify-center
         text-center
