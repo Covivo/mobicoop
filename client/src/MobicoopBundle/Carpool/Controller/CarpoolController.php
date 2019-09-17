@@ -95,14 +95,14 @@ class CarpoolController extends AbstractController
             'destination_longitude' => urldecode($destination_longitude),
             'date' =>  $date,
             // 'hydra' => $offers,
-            'MatchingSearchUrl' => "/matching/search"
+            'matching_search_url' => "/matching/search"
         ]);
     }
 
     /**
      * Matching Search
      */
-    public function MatchingSearch(Request $request, ProposalManager $proposalManager)
+    public function matchingSearch(Request $request, ProposalManager $proposalManager)
     {
         $origin_latitude = $request->query->get('origin_latitude');
         $origin_longitude = $request->query->get('origin_longitude');
@@ -110,14 +110,33 @@ class CarpoolController extends AbstractController
         $destination_longitude = $request->query->get('destination_longitude');
         $date = Datetime::createFromFormat("Y-m-d\TH:i:s\Z", $request->query->get('date'));
 
-        return $this->json($proposalManager->getMatchingsForSearch(
+        $results = $proposalManager->getMatchingsForSearch(
             $origin_latitude,
             $origin_longitude,
             $destination_latitude,
             $destination_longitude,
-            $date,
-            DataProvider::RETURN_JSON
-        ));
+            $date);
+
+        $matchings = [];
+        foreach ($results->getMatchingOffers() as $offer) {
+            $matchings[$offer->getProposalRequest()->getId()] = $offer;
+        }
+        foreach ($results->getMatchingRequests() as $request) {
+            if (!array_key_exists($request->getProposalOffer()->getId(),$matchings)) {
+                $matchings[$request->getProposalRequest()->getId()] = $request;
+            }
+        }
+
+        return $this->json($matchings);
+
+        // return $this->json($proposalManager->getMatchingsForSearch(
+        //     $origin_latitude,
+        //     $origin_longitude,
+        //     $destination_latitude,
+        //     $destination_longitude,
+        //     $date,
+        //     DataProvider::RETURN_JSON
+        // ));
     }
 
     /**

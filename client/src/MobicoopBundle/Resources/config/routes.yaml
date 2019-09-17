@@ -137,7 +137,7 @@ matching_search:
     path:
         fr: /matching/search/
         en: /matching/search/
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::MatchingSearch
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::matchingSearch
 
 # rdex provider (called with ajax)
 rdex_provider:

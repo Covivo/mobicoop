@@ -8,7 +8,7 @@
         flat
       >
         <!-- display result-journey-detailed card - proposal Request and proposalOffer in array(matchings) order-->
-        <result-journey-detailed-card 
+        <result-journey-detailed-card
           :origin="origin"
           :destination="destination"
           :date="date"
@@ -106,8 +106,7 @@ export default {
     carpoolResults(){
       // this.matchings.push(this.carpoolResults.matchingRequests,this.carpoolResults.matchingOffers);
       this.matchings=this.carpoolResults.matchingOffers.concat(this.carpoolResults.matchingRequests);
-      // this.matchings=this.carpoolResults.matchingRequests
-
+      // this.matchings=this.carpoolResults
     }
   }
 }
