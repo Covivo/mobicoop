@@ -110,20 +110,28 @@ class CarpoolController extends AbstractController
         $destination_longitude = $request->query->get('destination_longitude');
         $date = Datetime::createFromFormat("Y-m-d\TH:i:s\Z", $request->query->get('date'));
 
-        $results = $proposalManager->getMatchingsForSearch(
+        // we have to merge matching proposals that concern both driver and passenger into a single matching
+        $matchings = [];
+        $proposalResult = null;
+
+        if ($matchingResults = $proposalManager->getMatchingsForSearch(
             $origin_latitude,
             $origin_longitude,
             $destination_latitude,
             $destination_longitude,
-            $date);
-
-        $matchings = [];
-        foreach ($results->getMatchingOffers() as $offer) {
-            $matchings[$offer->getProposalRequest()->getId()] = $offer;
+            $date)) {
+            if (is_array($matchingResults->getMember()) && count($matchingResults->getMember()) == 1) {
+                $proposalResult = $matchingResults->getMember()[0];
+            }
         }
-        foreach ($results->getMatchingRequests() as $request) {
-            if (!array_key_exists($request->getProposalOffer()->getId(),$matchings)) {
-                $matchings[$request->getProposalRequest()->getId()] = $request;
+        if ($proposalResult) {
+            foreach ($proposalResult->getMatchingOffers() as $offer) {
+                $matchings[$offer->getProposalRequest()->getId()] = $offer;
+            }
+            foreach ($proposalResult->getMatchingRequests() as $request) {
+                if (!array_key_exists($request->getProposalOffer()->getId(),$matchings)) {
+                    $matchings[$request->getProposalOffer()->getId()] = $request;
+                }
             }
         }
 

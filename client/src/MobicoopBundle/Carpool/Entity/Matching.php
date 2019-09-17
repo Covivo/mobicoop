@@ -154,7 +154,7 @@ class Matching
     /**
      * @return Collection|Waypoint[]
      */
-    public function getWaypoints(): Collection
+    public function getWaypoints()
     {
         return $this->waypoints;
     }

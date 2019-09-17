@@ -51,6 +51,7 @@ class Proposal implements ResourceInterface, \JsonSerializable
     
     /**
      * @var int The id of this proposal.
+     * @Groups({"post","put"})
      */
     private $id;
     
