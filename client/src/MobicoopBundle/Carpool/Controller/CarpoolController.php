@@ -119,7 +119,8 @@ class CarpoolController extends AbstractController
             $origin_longitude,
             $destination_latitude,
             $destination_longitude,
-            $date)) {
+            $date
+        )) {
             if (is_array($matchingResults->getMember()) && count($matchingResults->getMember()) == 1) {
                 $proposalResult = $matchingResults->getMember()[0];
             }
@@ -129,7 +130,7 @@ class CarpoolController extends AbstractController
                 $matchings[$offer->getProposalRequest()->getId()] = $offer;
             }
             foreach ($proposalResult->getMatchingRequests() as $request) {
-                if (!array_key_exists($request->getProposalOffer()->getId(),$matchings)) {
+                if (!array_key_exists($request->getProposalOffer()->getId(), $matchings)) {
                     $matchings[$request->getProposalOffer()->getId()] = $request;
                 }
             }
