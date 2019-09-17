@@ -120,7 +120,9 @@ class InternalMessageManager
         $messageToSend->setText($text);
         
         if ($threadMessage!==null) {
-            $messageToSend->setMessage($threadMessage);
+            $firstParentMessage = new Message();
+            $firstParentMessage->setIri($threadMessage->getIri());
+            $messageToSend->setMessage($firstParentMessage);
         }
 
         return $messageToSend;

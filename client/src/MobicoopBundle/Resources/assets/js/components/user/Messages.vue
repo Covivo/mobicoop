@@ -132,7 +132,6 @@
                   </v-card-title>
                 </v-card>
               </v-container>
-              </v-card>
             </v-tab-item>
             <v-tab-item
               v-if="threadsDM.length==0"

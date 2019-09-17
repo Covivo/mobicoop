@@ -662,9 +662,8 @@ class UserController extends AbstractController
                 $askHistory->setStatus($currentAskHistory->getStatus());
                 $askHistory->setType($currentAskHistory->getType());
 
-                print_r($askHistoryManager->createAskHistory($askHistory));
-                die;
-                
+                // print_r($askHistoryManager->createAskHistory($askHistory));
+                // die;
                 return new Response($askHistoryManager->createAskHistory($askHistory, DataProvider::RETURN_JSON));
             } else {
                 return new Response($internalMessageManager->sendInternalMessage($messageToSend, DataProvider::RETURN_JSON));
