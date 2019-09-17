@@ -5,6 +5,18 @@
       grid-list-md
       fluid
     >
+      <v-row 
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          md="8"
+          xl="6"
+          align="center"
+        >
+          <h1>{{ $t('ui.pages.messages.label.messages') }}</h1>
+        </v-col>
+      </v-row>
       <v-row
         id="headGridMessages"
       >
