@@ -122,7 +122,7 @@ class MassImportManager
      * @throws OwnerNotFoundException
      * @return object
      */
-    public function getUser(Mass $mass): object
+    public function getUser(Mass $mass)
     {
         if (!is_null($mass->getUserId())) {
             return $this->userRepository->find($mass->getUserId());
