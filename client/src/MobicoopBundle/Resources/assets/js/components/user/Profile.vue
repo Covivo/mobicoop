@@ -10,7 +10,7 @@
           xl="6"
           align="center"
         >
-          <h1>{{ $t('tabs.title') }}</h1>
+          <h1>{{ $t('page.title') }}</h1>
         </v-col>
       </v-row>
       <v-layout

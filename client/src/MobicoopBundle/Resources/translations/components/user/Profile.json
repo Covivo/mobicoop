@@ -1,7 +1,9 @@
 {
     "fr": {
+        "page": {
+            "title": "Mon profil"
+        },
         "tabs": {
-            "title": "Mon profil",
             "myProfile": "Mon profil",
             "password": "Mot de passe",
             "myProposals": "Mes annonces"
