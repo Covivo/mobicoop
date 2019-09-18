@@ -2,7 +2,7 @@
 
 import { Vue, vuetify, i18n } from '@js/config/community/communities'
 
-import '@css/page/community/createcommunity.scss'
+import '@css/page/community/createCommunity.scss'
 
 // Vue components
 import MHeader from '@components/base/MHeader'
