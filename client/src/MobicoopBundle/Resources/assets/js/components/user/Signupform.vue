@@ -259,7 +259,6 @@
                   class="secondary--text"
                   target="_blank"
                   href="/cgu"
-                  v-on="on"
                   @click.stop
                 >{{ $t('ui.pages.signup.chart.chartValid') }}
                 </a>
@@ -278,7 +277,6 @@
           </v-form>
         </v-col>
       </v-row>
-      </v-layout>
     </v-container>
   </v-content>
 </template>
