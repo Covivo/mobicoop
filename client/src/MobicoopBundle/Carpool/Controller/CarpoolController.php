@@ -47,7 +47,8 @@ class CarpoolController extends AbstractController
     private $urlTiles;
     private $attributionCopyright;
     
-    public function __construct(string $urlTiles, string $attributionCopyright){
+    public function __construct(string $urlTiles, string $attributionCopyright)
+    {
         $this->urlTiles = $urlTiles;
         $this->attributionCopyright = $attributionCopyright;
     }
