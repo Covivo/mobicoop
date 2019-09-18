@@ -7,7 +7,7 @@ import '@mdi/font/css/materialdesignicons.css'
 
 import Vuetify, { 
   // general
-  VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VAlert,
+  VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VAlert, VRow, VCol,
   // header
   VToolbar, VToolbarTitle, VBtn, VImg,
   // footer
@@ -19,7 +19,7 @@ import Vuetify, {
 Vue.use(Vuetify, {
   components: {
     // general
-    VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VAlert,
+    VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VAlert, VRow, VCol,
     // header
     VToolbar, VToolbarTitle, VBtn, VImg,
     // footer
