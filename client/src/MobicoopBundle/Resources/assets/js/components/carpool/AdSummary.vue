@@ -166,9 +166,9 @@
               </v-timeline>
             </v-row>
 
-            <!-- Days if regular -->
+            <!-- Days if regular and there is more than one schedule -->
             <v-row
-              v-if="regular"
+              v-if="regular && schedules.length > 1"
               align="center"
               class="mt-2"
             >
