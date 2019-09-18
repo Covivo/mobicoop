@@ -49,6 +49,9 @@ services:
     # Carpool
     Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\:
         resource: '@MobicoopBundle/Carpool/Controller/*'
+        arguments:
+            $urlTiles: '%env(resolve:URL_TILES)%'
+            $attributionCopyright: '%env(resolve:ATTRIBUTION_COPYRIGHTS)%'
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
         resource: '@MobicoopBundle/Carpool/Service/*'  

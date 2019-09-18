@@ -10,7 +10,7 @@
       >
         <l-tile-layer
           :url="url"
-          :attribution="attribution"
+          :attribution="attributionWithLinks"
         />
         <l-marker
           v-for="(point, index) in points"
@@ -54,7 +54,7 @@ export default {
     },
     urlTiles: {
       type: String,
-      default: "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
+      default: ""
     },
     providerKey: {
       // unused for the moment
@@ -63,7 +63,7 @@ export default {
     },
     attributionCopyright: {
       type: String,
-      default: "&copy; <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"
+      default: ""
     },
     centerDefault: {
       type: Array,
@@ -93,6 +93,17 @@ export default {
       attribution:this.attributionCopyright,
       markers:this.points
     };
+  },
+  computed: {
+    attributionWithLinks(){
+      let arrayAttribution = [];
+      let jsonAttribution = JSON.parse(this.attribution)
+      for(let contributor in jsonAttribution){
+        arrayAttribution.push("<a href='"+jsonAttribution[contributor]+"' title=''>"+contributor+"</a>");
+      }
+
+      return arrayAttribution.join(', ');
+    }
   },
   methods: {
     redrawMap: function() {

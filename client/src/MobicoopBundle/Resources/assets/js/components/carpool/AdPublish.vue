@@ -162,8 +162,8 @@
                       type-map="adSummary"
                       :points="pointsToMap"
                       :ways="directionWay"
-                      url-tiles="https://{s}-tiles.locationiq.com/v2/obk/r/{z}/{x}/{y}.png?key=3a1880f6ba6d15"
-                      attribution-copyright="&copy; <a href='https://locationiq.com'>LocationIQ Maps</a>, <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"
+                      :url-tiles="this.urlTiles"
+                      :attribution-copyright="this.attributionCopyright"
                     />
                   </v-col>
                 </v-row>
@@ -423,8 +423,8 @@
                         type-map="adSummary"
                         :points="pointsToMap"
                         :ways="directionWay"
-                        url-tiles="https://{s}-tiles.locationiq.com/v2/obk/r/{z}/{x}/{y}.png?key=3a1880f6ba6d15"
-                        attribution-copyright="&copy; <a href='https://locationiq.com'>LocationIQ Maps</a>, <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"
+                        :url-tiles="this.urlTiles"
+                        :attribution-copyright="this.attributionCopyright"
                       />
                     </v-col>
                   </v-row>
@@ -541,6 +541,14 @@ export default {
       type: Number,
       default: null
     },
+    urlTiles:{
+      type: String,
+      default: ""
+    },
+    attributionCopyright:{
+      type: String,
+      default: ""
+    }
   },
   data() {
     return {
