@@ -536,11 +536,13 @@ class UserController extends AbstractController
                 // I need the send date of the last message of this thread
                 $completeThread = $internalMessageManager->getThread($thread["id"], DataProvider::RETURN_JSON);
                 if ($completeThread["messages"]!==null && count($completeThread["messages"])>0) {
-                    $lastMessageCreatedDate = new DateTime($completeThread["messages"][count($completeThread["messages"])-1]["createdDate"]);
-                    $arrayThread["lastMessageCreatedDate"] = $lastMessageCreatedDate->format("d M Y");
+                    //$lastMessageCreatedDate = new DateTime($completeThread["messages"][count($completeThread["messages"])-1]["createdDate"]);
+                    //$arrayThread["lastMessageCreatedDate"] = $lastMessageCreatedDate->format("d M Y");
+                    $arrayThread["lastMessageCreatedDate"] = $completeThread["messages"][count($completeThread["messages"])-1]["createdDate"];
                 } else {
-                    $lastMessageCreatedDate = new DateTime($completeThread["createdDate"]);
-                    $arrayThread["lastMessageCreatedDate"] = $lastMessageCreatedDate->format("d M Y");
+                    //$lastMessageCreatedDate = new DateTime($completeThread["createdDate"]);
+                    //$arrayThread["lastMessageCreatedDate"] = $lastMessageCreatedDate->format("d M Y");
+                    $arrayThread["lastMessageCreatedDate"] = $completeThread["createdDate"];
                 }
                 // If it's today i just show... today
                 $today = new DateTime(date("Y-m-d"));

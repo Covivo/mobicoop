@@ -541,6 +541,7 @@ export default {
       outwardDate: null,
       outwardTime: null,
       regular: false,
+      locale: this.$i18n.locale
     };
   },
   watch: {
@@ -564,9 +565,13 @@ export default {
         this.lastnamerecipientdefault
       )
     ) {
+
+      moment.locale(this.locale);
+
       this.threadsDM.forEach((thread, index) => {
         this.threadsDM[index].selected =
         thread.idThreadMessage === parseInt(idMessage) ? true : false;
+        thread.lastMessageCreatedDate = moment(thread.lastMessageCreatedDate).format("DD MMM YYYY");
         if(thread.lastMessageCreatedDate==="today"){
           thread.lastMessageCreatedDate = this.$t("ui.date.today");
         }
@@ -577,14 +582,13 @@ export default {
         if(thread.lastMessageCreatedDate==="today"){
           thread.lastMessageCreatedDate = this.$t("ui.date.today");
         }
-        console.error(thread.dayChecked);
+        thread.lastMessageCreatedDate = moment(thread.lastMessageCreatedDate).format("DD MMM YYYY");
         if(thread.dayChecked){
           thread.dayChecked.forEach((day, index)=>{
             // You need the translation only on the page loading. After that... you can't translate what's already translated
             if(this.$t("ui.date."+day)!=="ui.date."+day){thread.dayChecked[index] = this.$t("ui.date."+day)};
           });
         }
-        console.error(thread.dayChecked);        
       });
       this.textSpinner = this.textSpinnerLoading;
       this.spinner = true;
