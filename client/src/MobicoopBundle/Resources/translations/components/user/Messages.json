@@ -34,6 +34,9 @@
                     "sunday": "Dim"
                 },
                 "pages": {
+                    "title": {
+                        "messages":"Messages"
+                    },
                     "messages": {
                         "label": {
                             "messages":"Messages",

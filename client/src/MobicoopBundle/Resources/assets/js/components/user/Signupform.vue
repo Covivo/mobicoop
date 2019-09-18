@@ -26,6 +26,18 @@
       class="overflow-y-auto"
       fluid
     >
+      <v-row 
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          md="8"
+          xl="6"
+          align="center"
+        >
+          <h1>{{ $t('title') }}</h1>
+        </v-col>
+      </v-row>
       <v-row
         justify="center"
         align="center"
@@ -67,6 +79,7 @@
             />
             <v-btn
               ref="button"
+              rounded
               class="my-13"
               color="success"
               :disabled="!step1"
@@ -105,6 +118,7 @@
             >
               <v-btn
                 ref="button"
+                rounded
                 class="my-13 mr-12"
                 color="success"
                 :disabled="!step1"
@@ -114,6 +128,7 @@
               </v-btn>
               <v-btn
                 ref="button"
+                rounded
                 class="my-13"
                 color="success"
                 :disabled="!step2"
@@ -148,6 +163,7 @@
             >
               <v-btn
                 ref="button"
+                rounded
                 class="my-13 mr-12"
                 color="success"
                 :disabled="!step2"
@@ -157,6 +173,7 @@
               </v-btn>
               <v-btn
                 ref="button"
+                rounded
                 class="my-13"
                 color="success"
                 :disabled="!step3"
@@ -189,6 +206,7 @@
             >
               <v-btn
                 ref="button"
+                rounded
                 class="my-13 mr-12"
                 color="success"
                 :disabled="!step3"
@@ -198,6 +216,7 @@
               </v-btn>
               <v-btn
                 ref="button"
+                rounded
                 class="my-13"
                 color="success"
                 :disabled="!step4"
@@ -248,6 +267,7 @@
             </v-checkbox>
             <v-btn
               color="success"
+              rounded
               class="mr-4 mb-100 mt-12"
               :disabled="!step5 || loading"
               :loading="loading"
@@ -258,6 +278,7 @@
           </v-form>
         </v-col>
       </v-row>
+      </v-layout>
     </v-container>
   </v-content>
 </template>

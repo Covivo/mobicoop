@@ -17,17 +17,20 @@
       <div v-if="user">
         <v-btn
           text
+          rounded
           :href="$t('buttons.messages.route')"
         >
           {{ $t('buttons.messages.label') }}
         </v-btn>
         <v-btn
           text
+          rounded
           :href="$t('buttons.myProfile.route')"
         >
           {{ $t('buttons.myProfile.label') }}
         </v-btn>
         <v-btn
+          rounded
           text
           :href="$t('buttons.logOut.route')"
         >
@@ -36,12 +39,14 @@
       </div>
       <div v-else>
         <v-btn
+          rounded
           text
           :href="$t('buttons.signup.route')"
         >
           {{ $t('buttons.signup.label') }}
         </v-btn>
         <v-btn
+          rounded
           text
           :href="$t('buttons.logIn.route')"
         >

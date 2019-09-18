@@ -8,20 +8,6 @@
 {% endblock %}
 
 {% block main %}
-
-<section class="hero is-primary">
-	<div class="hero-body">
-    	<div class="container">
-      		<h1 class="title">
-				{% trans from 'ui' %}user.messages.h1{% endtrans %}
-      		</h1>
-    	</div>
-  	</div>
-</section>
-
-<section class="section">
-	<div class="container">
-		<div id="messages">
     		<Messages 
 				:threadsdirectmessagesforview="{{ threadsDirectMessagesForView|json_encode }}"
 				:threadscarpoolingmessagesforview="{{ threadsCarpoolingMessagesForView|json_encode }}"
@@ -32,9 +18,6 @@
 				lastNameRecipientDefault="{{ lastNameRecipientDefault }}"
 				:user="{{app.user|json_encode}}"
 			></Messages>
-		</div>
-    </div>
-  </section>
 {% endblock %}
 
 {% block javascripts %}
