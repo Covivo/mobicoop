@@ -8,9 +8,9 @@ import '@css/page/community/communities.scss'
 import MHeader from '@components/base/MHeader'
 import MFooter from '@components/base/MFooter'
 import MemberList from '@components/community/MemberList'
-import CommunityList from "../../components/community/CommunityList";
-import CommunityHelp from "../../components/community/CommunityHelp";
-import CommunityCreate from "../../components/community/CommunityCreate";
+import CommunityList from "@components/community/CommunityList";
+import CommunityHelp from "@components/community/CommunityHelp";
+import CommunityCreate from "@components/community/CommunityCreate";
 
 new Vue({
   el: '#app',

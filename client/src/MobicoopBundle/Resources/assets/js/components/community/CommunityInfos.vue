@@ -38,11 +38,11 @@ export default {
   },
   props:{
     community: {
-      type: Array,
+      type: Object,
       default: null
     },
     paths: {
-      type: Array,
+      type: Object,
       default: null
     }
   },

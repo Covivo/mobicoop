@@ -13,7 +13,7 @@ import Vuetify, {
   // footer
   VFooter, VCardText, VDataTable, VChip, VTextField, VRow, VCol, VCard, VIcon,VCardTitle, VDataIterator,VTab, VTabs,VTabItem, VTabsItems,
   VTabsSlider,VDivider, VList, VListItem, VListItemContent,VForm,VAutocomplete, VMenu, VDatePicker, VTooltip, VSwitch,VListItemAvatar,
-  VListItemTitle,VListItemSubtitle,VData,VDataFooter,VDataTableHeader,VDialog, VCardActions, VTextarea, VBadge, VItemGroup, VListItemGroup, VListItemIcon
+  VListItemTitle,VListItemSubtitle,VData,VDataFooter,VDataTableHeader,VDialog, VCardActions, VTextarea, VBadge, VItemGroup, VListItemGroup, VListItemIcon, VSelect,
 } from 'vuetify/lib'
 
 Vue.use(Vuetify, {
@@ -25,7 +25,7 @@ Vue.use(Vuetify, {
     // footer
     VFooter, VCardText, VDataTable, VChip, VTextField, VRow, VCol, VCard, VIcon, VCardTitle, VDataIterator, VTab, VTabs,VTabItem, VTabsItems,
     VTabsSlider,VDivider, VList, VListItem, VListItemContent,VForm, VAutocomplete, VMenu, VDatePicker, VTooltip, VSwitch, VListItemAvatar,
-    VListItemTitle,VListItemSubtitle,VData,VDataFooter,VDataTableHeader,VDialog, VCardActions, VTextarea, VBadge, VItemGroup, VListItemGroup, VListItemIcon
+    VListItemTitle,VListItemSubtitle,VData,VDataFooter,VDataTableHeader,VDialog, VCardActions, VTextarea, VBadge, VItemGroup, VListItemGroup, VListItemIcon, VSelect,
   }
 })
 Vue.use(VueI18n)

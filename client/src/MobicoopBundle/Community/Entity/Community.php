@@ -373,7 +373,7 @@ class Community implements ResourceInterface, \JsonSerializable
             'iri'           => $this->getIri(),
             'name'          => $this->getName(),
             'description'   => $this->getDescription(),
-            'images'        => $this->getImages()
+            'images'        => $this->getImages(),
         ];
     }
 }

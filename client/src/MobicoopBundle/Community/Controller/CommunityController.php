@@ -102,12 +102,16 @@ class CommunityController extends AbstractController
         $communityUser->setCreatedDate(new \DateTime());
         $communityUser->setStatus(0);
         $form->handleRequest($request);
+        
         $isMember = false;
         $usersCommunity = array();
+
+        $users = [];
         //test if the community has members
         if (count($community->getCommunityUsers()) > 0) {
             foreach ($community->getCommunityUsers() as $userInCommunity) {
                 $usersCommunity = [$userInCommunity->getUser()->getId()];
+                array_push($users, $userInCommunity->getUser());
             }
         }
 
@@ -115,19 +119,23 @@ class CommunityController extends AbstractController
         if (!is_null($user) && $user !=='' && in_array($user->getId(), $usersCommunity)) {
             $isMember = true;
         }
+
         if ($form->isSubmitted() && $form->isValid()) {
             if ($communityUser = $communityManager->joinCommunity($communityUser)) {
                 return $this->redirectToRoute('community_show', ['id' => $id]);
             }
             $errorLoginSecured = "La connexion a échoué";
         }
+        
         return $this->render('@Mobicoop/community/showCommunity.html.twig', [
             'community' => $community,
             'formIdentification' => $form->createView(),
             'communityUser' => $communityUser,
             'user' => $user,
             'errorLoginSecured' => $errorLoginSecured,
-            'isMember' => $isMember
+            'isMember' => $isMember,
+            'searchRoute' => "covoiturage/recherche",
+            'users' => $users
         ]);
     }
 

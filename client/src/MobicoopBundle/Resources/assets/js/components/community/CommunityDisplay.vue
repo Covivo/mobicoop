@@ -84,8 +84,6 @@
         <v-row>
           <v-col cols="12">
             <v-row
-              :align="alignment"
-              :justify="justify"
               class="grey lighten-5"
               style="height: 500px;"
             >

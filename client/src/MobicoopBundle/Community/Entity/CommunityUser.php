@@ -30,7 +30,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 /**
  * A user related to a community.
  */
-class CommunityUser implements ResourceInterface
+class CommunityUser implements ResourceInterface, \JsonSerializable
 {
     const STATUS_PENDING = 0;
     const STATUS_ACCEPTED = 1;
@@ -235,5 +235,20 @@ class CommunityUser implements ResourceInterface
     public function setPassword(string $password)
     {
         $this->password = $password;
+    }
+    
+    public function jsonSerialize()
+    {
+        return
+        [
+            'id'            => $this->getId(),
+            'iri'           => $this->getIri(),
+            'user'          => $this->getUser(),
+            'admin'         => $this->getAdmin(),
+            'createdDate'   => $this->getCreatedDate(),
+            'acceptedDate'  => $this->getAcceptedDate(),
+            'refusedDate'   => $this->getRefusedDate()
+            
+        ];
     }
 }
