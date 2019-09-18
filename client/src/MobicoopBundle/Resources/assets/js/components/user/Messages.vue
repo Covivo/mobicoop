@@ -566,22 +566,25 @@ export default {
     ) {
       this.threadsDM.forEach((thread, index) => {
         this.threadsDM[index].selected =
-          thread.idThreadMessage === parseInt(idMessage) ? true : false;
+        thread.idThreadMessage === parseInt(idMessage) ? true : false;
         if(thread.lastMessageCreatedDate==="today"){
           thread.lastMessageCreatedDate = this.$t("ui.date.today");
         }
       });
       this.threadsCM.forEach((thread, index) => {
         this.threadsCM[index].selected =
-          thread.idThreadMessage === parseInt(idMessage) ? true : false;
+        thread.idThreadMessage === parseInt(idMessage) ? true : false;
         if(thread.lastMessageCreatedDate==="today"){
           thread.lastMessageCreatedDate = this.$t("ui.date.today");
         }
+        console.error(thread.dayChecked);
         if(thread.dayChecked){
           thread.dayChecked.forEach((day, index)=>{
-            thread.dayChecked[index] = this.$t("ui.date."+day);
+            // You need the translation only on the page loading. After that... you can't translate what's already translated
+            if(this.$t("ui.date."+day)!=="ui.date."+day){thread.dayChecked[index] = this.$t("ui.date."+day)};
           });
         }
+        console.error(thread.dayChecked);        
       });
       this.textSpinner = this.textSpinnerLoading;
       this.spinner = true;
@@ -680,9 +683,11 @@ export default {
       this.outwardDate = moment(this.currentAskHistory.ask.criteria.fromDate).format('YYYY-MM-DD')
       this.outwardTime = moment(this.currentAskHistory.ask.criteria.fromTime).format('hh:mm')
       // build schedules of the regular carpool
+      let hours = new Array();
+      this.regular = false;
+      this.schedules.length = 0;
       if (this.currentAskHistory.ask.criteria.frequency == 2) {
         this.regular = true;
-        let hours = new Array();
         (hours[this.currentAskHistory.ask.criteria.monTime]===undefined) ? hours[this.currentAskHistory.ask.criteria.monTime] = ["mon"] : hours[this.currentAskHistory.ask.criteria.monTime].push("mon");
         (hours[this.currentAskHistory.ask.criteria.tueTime]===undefined) ? hours[this.currentAskHistory.ask.criteria.tueTime] = ["tue"] : hours[this.currentAskHistory.ask.criteria.tueTime].push("tue");
         (hours[this.currentAskHistory.ask.criteria.wedTime]===undefined) ? hours[this.currentAskHistory.ask.criteria.wedTime] = ["wed"] : hours[this.currentAskHistory.ask.criteria.wedTime].push("wed");
