@@ -192,9 +192,9 @@ export default {
       results : null,
       loading : true,
 
-      // TODO : REMOVE WHEN START CODING FILTER COMPONENT
-      chips: ['Horaire', 'Type d\'annonce', 'Civilité'],
-      items: ['Communauté', 'Espace'],
+      // // TODO : REMOVE WHEN START CODING FILTER COMPONENT
+      // chips: ['Horaire', 'Type d\'annonce', 'Civilité'],
+      // items: ['Communauté', 'Espace'],
     };
   },
   created() {
