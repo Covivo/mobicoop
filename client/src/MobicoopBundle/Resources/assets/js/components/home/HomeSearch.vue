@@ -167,7 +167,7 @@ export default {
   computed: {
     // creation of the url to call
     urlToCall() {
-      return `${this.baseUrl}/${this.route}/${this.origin.addressLocality}/${this.destination.addressLocality}/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.computedDateFormat}/resultats`;
+      return `${this.baseUrl}/${this.route}/${this.origin.addressLocality}/${this.destination.addressLocality}/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.dateFormated}/resultats`;
       // return `${this.baseUrl}/${this.route}/Boulevard_d’Austrasie,_Nancy/Rue_d’Arcole,_Sanary-sur-Mer/48.6937223/6.1834097/49.1196964/6.1763552/${this.dateFormated}/resultats`;
 
 

@@ -437,7 +437,10 @@ class Proposal implements ResourceInterface, \JsonSerializable
         return
         [
             'id'                => $this->getId(),
-            'proposalLinkedId'  => (int)$this->getProposalLinked()
+            'proposalLinkedId'  => (int)$this->getProposalLinked(),
+            'user'              => $this->getUser(),
+            'criteria'          => $this->getCriteria(),
+            'type'              => $this->getType()
         ];
     }
 }

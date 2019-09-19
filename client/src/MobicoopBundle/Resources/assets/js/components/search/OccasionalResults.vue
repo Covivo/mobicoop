@@ -184,6 +184,10 @@ export default {
     matchingSearchUrl: {
       type: String,
       default: null
+    },
+    user: {
+      type:Object,
+      default: null
     }
   },
   data : function() {
