@@ -276,6 +276,14 @@ class Mass
     private $createdDate;
 
     /**
+     * @var \DateTimeInterface Updated date of the import.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"mass","massPost", "massCompute"})
+     */
+    private $updatedDate;
+
+    /**
      * @var User The user that imports the file.
      *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="masses")
@@ -447,6 +455,18 @@ class Mass
         return $this;
     }
 
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
     public function getUser(): User
     {
         return $this->user;
@@ -580,6 +600,16 @@ class Mass
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
     }
 
     public function getPersonsCoords(): ?array

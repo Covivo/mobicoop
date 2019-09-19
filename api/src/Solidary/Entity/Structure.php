@@ -36,6 +36,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  * A solidary structure.
  *
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
@@ -69,6 +70,22 @@ class Structure
      * @Groups({"read","write"})
      */
     private $name;
+
+    /**
+     * @var \DateTimeInterface Creation date.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read"})
+     */
+    private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Updated date.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read"})
+     */
+    private $updatedDate;
     
     public function getId(): ?int
     {
@@ -92,5 +109,51 @@ class Structure
         $this->name = $name;
 
         return $this;
+    }
+
+    public function getCreatedDate(): ?\DateTimeInterface
+    {
+        return $this->createdDate;
+    }
+
+    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    {
+        $this->createdDate = $createdDate;
+
+        return $this;
+    }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    // DOCTRINE EVENTS
+    
+    /**
+     * Creation date.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoCreatedDate()
+    {
+        $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
     }
 }

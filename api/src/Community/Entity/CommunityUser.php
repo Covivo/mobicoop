@@ -125,6 +125,13 @@ class CommunityUser
     private $createdDate;
 
     /**
+     * @var \DateTimeInterface Updated date of the community user.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updatedDate;
+
+    /**
     * @var \DateTimeInterface Accepted date.
     *
     * @ORM\Column(type="datetime", nullable=true)
@@ -213,6 +220,18 @@ class CommunityUser
         return $this;
     }
 
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
     public function getAcceptedDate(): ?\DateTimeInterface
     {
         return $this->acceptedDate;
@@ -272,6 +291,16 @@ class CommunityUser
     {
         $this->setCreatedDate(new \Datetime());
         $this->setAutoAcceptedOrRefusedDate();
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
     }
 
     /**

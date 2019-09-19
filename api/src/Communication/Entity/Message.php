@@ -144,6 +144,14 @@ class Message
      */
     private $createdDate;
 
+    /**
+     * @var \DateTimeInterface Updated date of the message.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read","threads","thread"})
+     */
+    private $updatedDate;
+
     public function __construct()
     {
         $this->recipients = new ArrayCollection();
@@ -289,6 +297,18 @@ class Message
         return $this;
     }
 
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
 
     /**
@@ -299,5 +319,15 @@ class Message
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
     }
 }

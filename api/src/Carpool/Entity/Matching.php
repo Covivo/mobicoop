@@ -71,6 +71,14 @@ class Matching
     private $createdDate;
 
     /**
+     * @var \DateTimeInterface Updated date of the matching.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read","threads","thread"})
+     */
+    private $updatedDate;
+
+    /**
      * @var Proposal The offer proposal.
      *
      * @Assert\NotBlank
@@ -156,6 +164,18 @@ class Matching
     public function setCreatedDate(\DateTimeInterface $createdDate): self
     {
         $this->createdDate = $createdDate;
+
+        return $this;
+    }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
 
         return $this;
     }
@@ -302,5 +322,15 @@ class Matching
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
     }
 }

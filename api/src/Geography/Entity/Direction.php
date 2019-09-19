@@ -217,6 +217,22 @@ class Direction
      * @var int[]|null The duration from the start to the each snapped waypoint.
      */
     private $durations;
+
+    /**
+     * @var \DateTimeInterface Creation date.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read"})
+     */
+    private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Updated date.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read"})
+     */
+    private $updatedDate;
     
     public function __construct()
     {
@@ -486,7 +502,51 @@ class Direction
         return $this;
     }
 
+    public function getCreatedDate(): ?\DateTimeInterface
+    {
+        return $this->createdDate;
+    }
+
+    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    {
+        $this->createdDate = $createdDate;
+
+        return $this;
+    }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
+    
+    /**
+     * Creation date.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoCreatedDate()
+    {
+        $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
+    }
     
     /**
      * GeoJson representation of the bounding box.

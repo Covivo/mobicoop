@@ -108,6 +108,14 @@ class Ask
     private $createdDate;
 
     /**
+     * @var \DateTimeInterface Updated date of the solicitation.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"threads","thread"})
+     */
+    private $updatedDate;
+
+    /**
      * @var User The user that creates the ask.
      *
      * @Assert\NotBlank
@@ -224,6 +232,18 @@ class Ask
     public function setCreatedDate(\DateTimeInterface $createdDate): self
     {
         $this->createdDate = $createdDate;
+
+        return $this;
+    }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
 
         return $this;
     }
@@ -360,5 +380,15 @@ class Ask
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
     }
 }

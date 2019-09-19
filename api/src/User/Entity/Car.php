@@ -33,6 +33,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * A car.
  *
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -113,6 +114,22 @@ class Car
      * @MaxDepth(1)
      */
     private $user;
+
+    /**
+     * @var \DateTimeInterface Creation date.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read"})
+     */
+    private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Updated date.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read"})
+     */
+    private $updatedDate;
 
     public function getId(): int
     {
@@ -199,5 +216,51 @@ class Car
         $this->user = $user;
         
         return $this;
+    }
+
+    public function getCreatedDate(): ?\DateTimeInterface
+    {
+        return $this->createdDate;
+    }
+
+    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    {
+        $this->createdDate = $createdDate;
+
+        return $this;
+    }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    // DOCTRINE EVENTS
+    
+    /**
+     * Creation date.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoCreatedDate()
+    {
+        $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
     }
 }
