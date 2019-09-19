@@ -152,10 +152,29 @@
                   @click="updateMessages(thread.idThreadMessage,thread.contactId,generateName(thread.contactFirstName,thread.contactLastName))"
                 >
                   <v-card-title>
-                    <v-icon>mdi-account-circle</v-icon>&nbsp;
-                    <span
-                      class="title font-weight-light"
-                    >{{ generateName(thread.contactFirstName,thread.contactLastName) }}</span>
+                    <v-container>
+                      <v-row>
+                        <v-col class="col-3 text-center ma-0 pa-0">
+                          <v-avatar>
+                            <v-icon class="display-2">
+                              mdi-account-circle
+                            </v-icon>
+                          </v-avatar>
+                        </v-col>
+                        <v-col class="col-6 ma-0 pa-0">
+                          <span
+                            class="title font-weight-light"
+                          >{{ generateName(thread.contactFirstName,thread.contactLastName) }}</span>
+                        </v-col>
+                        <v-col class="col-3 ma-0 pa-0">
+                          <v-card-text
+                            class="pa-0 ma-0 text-right pr-2 font-italic"
+                          >
+                            {{ thread.lastMessageCreatedDate }}
+                          </v-card-text>
+                        </v-col>
+                      </v-row>
+                    </v-container>
                   </v-card-title>
                 </v-card>
               </v-container>
@@ -331,6 +350,14 @@
                 >
                   {{ $t("ui.button.askCarpool") }}
                 </v-btn>
+                <!-- Carpool Confirmed -->
+                <v-card
+                  v-else-if="currentAskHistory && currentAskHistory.ask.status==1 && askUser !== userid"
+                >
+                  <v-card-text>
+                    {{ $t("ui.infos.carpooling.carpoolNotAsked") }}
+                  </v-card-text>
+                </v-card>
 
                 <!-- Carpooling status -->
                 <!-- Carpool Asked -->
@@ -368,13 +395,6 @@
                   <v-container text-center>
                     <v-row>
                       <v-col class="col-12 col-lg-6">
-                        <!-- <v-btn
-                          color="success"
-                          rounded
-                          @click="updateCarpool(3)"
-                        >
-                          {{ $t("ui.button.accept") }} <v-icon>mdi-check</v-icon>
-                        </v-btn> -->
                         <m-btn
                           color="success"
                           @click.native="updateCarpool(3)"
@@ -601,23 +621,28 @@ export default {
         this.currentAskHistory = res.data.lastAskHistory;
         this.askUser = res.data.user.id;
 
-        // The date of the first message
-        let divider = {
-          divider: true,
-          createdDateReadable: res.data.createdDateReadable
-        };
-        this.addMessageToItems(divider);
+        // If empty message we don't add it
+        if(res.data.text !== ''){
+          moment(res.data.createdDate).format("ddd DD MMM YYYY");
 
-        let threadMessage = {
-          id: res.data.id,
-          user: res.data.user,
-          text: res.data.text,
-          createdDateReadable: res.data.createdDateReadable,
-          createdTimeReadable: res.data.createdTimeReadable,
-          divider: false
-        };
+          // The date of the first message
+          let divider = {
+            divider: true,
+            createdDateReadable: moment(res.data.createdDate).format("ddd DD MMM YYYY")
+          };
+          this.addMessageToItems(divider);
 
-        this.addMessageToItems(threadMessage);
+          let threadMessage = {
+            id: res.data.id,
+            user: res.data.user,
+            text: res.data.text,
+            createdDateReadable: moment(res.data.createdDate).format("ddd DD MMM YYYY"),
+            createdTimeReadable: moment(res.data.createdTime).format("HH:mm"),
+            divider: false
+          };
+
+          this.addMessageToItems(threadMessage);
+        }
 
         // The correspondant for the view
         this.currentcorrespondant = contactName;
@@ -625,15 +650,15 @@ export default {
         // Id of the current recipient
         this.idRecipient = idrecipient;
 
-        let currentDate = res.data.createdDateReadable;
+        let currentDate = moment(res.data.createdDate).format("DDMMYYYY");
         for (let message of messagesThread) {
           // If the date is different, push a divider
-          if (message.createdDateReadable !== currentDate) {
+          if (moment(message.createdDate).format("DDMMYYYY") !== currentDate) {
             let divider = {
               divider: true,
-              createdDateReadable: message.createdDateReadable
+              createdDateReadable: moment(message.createdDate).format("ddd DD MMM YYYY")
             };
-            currentDate = message.createdDateReadable;
+            currentDate = moment(message.createdDate).format("DDMMYYYY");
             this.addMessageToItems(divider);
           }
 
