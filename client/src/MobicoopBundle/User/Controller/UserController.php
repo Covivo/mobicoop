@@ -637,10 +637,10 @@ class UserController extends AbstractController
 
             $messageToSend = $internalMessageManager->createInternalMessage(
                 $user,
-                $userManager->getUser($idRecipient),
+                $idRecipient,
                 "",
                 $request->request->get('text'),
-                $internalMessageManager->getMessage($idThreadMessage)
+                $idThreadMessage
             );
             $reponseofmanager= $this->handleManagerReturnValue($messageToSend);
             if (!empty($reponseofmanager)) {

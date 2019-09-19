@@ -732,11 +732,7 @@ export default {
       axios.post("/utilisateur/messages/envoyer", messageToSend).then(res => {
         this.textToSend = "";
         this.spinner = false;
-        if (this.updateMessages(res.data.message) !== undefined) {
-          this.updateMessages(res.data.message.id);
-        } else {
-          this.updateMessages();
-        }
+        this.updateMessages(this.idThreadMessage);
       });
     },
     updateCarpool(status) {

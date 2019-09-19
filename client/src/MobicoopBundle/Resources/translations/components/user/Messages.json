@@ -40,7 +40,7 @@
                     "messages": {
                         "label": {
                             "messages":"Messages",
-                            "context":"Annonces(s)",
+                            "context":"Annonce",
                             "ongoingasks":"Demandes en cours",
                             "directmessages":"Autres messages",
                             "nocarpoolmessages":"Aucun message de covoiturage",
@@ -95,7 +95,7 @@
                 "messages": {
                     "label": {
                         "messages":"Messages",
-                        "context":"Carpool(s)",
+                        "context":"Carpool",
                         "ongoingasks":"Ongoing proposals",
                         "directmessages":"Other messages",
                         "nocarpoolmessages":"No carpool message",

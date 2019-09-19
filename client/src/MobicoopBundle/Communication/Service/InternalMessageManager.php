@@ -104,13 +104,13 @@ class InternalMessageManager
      *
      * @return Message
      */
-    public function createInternalMessage(User $sender, User $userRecipient, $title, $text, $threadMessage=null)
+    public function createInternalMessage(User $sender, int $idUserRecipient, $title, $text, $idThreadMessage=null)
     {
         $messageToSend = new Message();
         $messageToSend->setUser($sender);
 
         $recipient = new Recipient();
-        $recipient->setUser($userRecipient);
+        $recipient->setUser(new User($idUserRecipient));
 
         $recipient->setStatus(Recipient::STATUS_PENDING);
         $recipient->setSentDate(new \DateTime());
@@ -119,10 +119,8 @@ class InternalMessageManager
         $messageToSend->setTitle($title);
         $messageToSend->setText($text);
         
-        if ($threadMessage!==null) {
-            $firstParentMessage = new Message();
-            $firstParentMessage->setIri($threadMessage->getIri());
-            $messageToSend->setMessage($firstParentMessage);
+        if ($idThreadMessage!==null) {
+            $messageToSend->setMessage(new Message($idThreadMessage));
         }
 
         return $messageToSend;
