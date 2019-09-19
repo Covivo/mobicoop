@@ -124,7 +124,7 @@
                           <v-card-text
                             class="pa-0 ma-0 text-right pr-2 font-italic"
                           >
-                            {{ threadCM.lastMessageCreatedDate }}
+                            {{ formatDate(threadCM.lastMessageCreatedDate,"DD MMM YYYY") }}
                           </v-card-text>
                         </v-col>
                       </v-row>
@@ -170,7 +170,7 @@
                           <v-card-text
                             class="pa-0 ma-0 text-right pr-2 font-italic"
                           >
-                            {{ thread.lastMessageCreatedDate }}
+                            {{ formatDate(thread.lastMessageCreatedDate,"DD MMM YYYY") }}
                           </v-card-text>
                         </v-col>
                       </v-row>
@@ -591,18 +591,10 @@ export default {
       this.threadsDM.forEach((thread, index) => {
         this.threadsDM[index].selected =
         thread.idThreadMessage === parseInt(idMessage) ? true : false;
-        thread.lastMessageCreatedDate = moment(thread.lastMessageCreatedDate).format("DD MMM YYYY");
-        if(thread.lastMessageCreatedDate==="today"){
-          thread.lastMessageCreatedDate = this.$t("ui.date.today");
-        }
       });
       this.threadsCM.forEach((thread, index) => {
         this.threadsCM[index].selected =
         thread.idThreadMessage === parseInt(idMessage) ? true : false;
-        if(thread.lastMessageCreatedDate==="today"){
-          thread.lastMessageCreatedDate = this.$t("ui.date.today");
-        }
-        thread.lastMessageCreatedDate = moment(thread.lastMessageCreatedDate).format("DD MMM YYYY");
         if(thread.dayChecked){
           thread.dayChecked.forEach((day, index)=>{
             // You need the translation only on the page loading. After that... you can't translate what's already translated
@@ -796,6 +788,9 @@ export default {
     },
     generateName(firstname, lastname) {
       return firstname + " " + lastname.substr(0, 1).toUpperCase() + ".";
+    },
+    formatDate(date,format){
+      return moment(date).format(format);
     }
   }
 };
