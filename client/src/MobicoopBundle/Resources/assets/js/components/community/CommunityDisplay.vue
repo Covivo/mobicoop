@@ -1,222 +1,157 @@
 <template>
-  <div class="margin">
-    <div id="community_headers">
-      <v-row>
-        <v-col
-          class="col-2"
-        >
-          <v-row>
-            <v-col cols="12">
-              <community-infos
-                :community="community"
-                :paths="paths"
-              />
-            </v-col>
-            <v-col cols="12">
-              <div
-                v-if="!community.isMembersHidden && !community.isProposalsHidden"
-                class="my-2"
-              >
-                <a :href="linkToCommunityWidget(community)">
-                  <v-btn color="primary">
-                    Afficher le widget
-                  </v-btn>
-                </a>
-              </div>
-              <div
-                v-if="community.isMembersHidden || community.isProposalsHidden"
-                class="my-2"
-              >
-                <a :href="linkToCommunityJoin(item)">
-                  <v-btn color="primary">
-                    Rejoindre la communauté
-                  </v-btn>
-                </a>
-              </div>
-
-              <div
-                class="my-2"
-              >
-                <a href="/covoiturage/annonce/poster">
-                  <v-btn color="primary">
-                    Publier une annonce
-                  </v-btn>
-                </a>
-              </div>
-            </v-col>
-          </v-row>
-        </v-col>
-        <v-col
-          class="col-10"
-        >
-          <v-card>
-            <v-container>
-              <v-row>
-                <p>{{ community['name'] }}</p>
-              </v-row>
-              <v-row>
-                <p>{{ community['description'] }}</p>
-              </v-row>
-              <v-row>
-                <p>{{ community['fullDescription'] }}</p>
-              </v-row>
-              <v-card height="300px">
-                Carte de la communauté avec l'ensemble des membres
-              </v-card>
-            </v-container>
-          </v-card>
-        </v-col>
-      </v-row>
-    </div>
-    <div id="community_body">
-      <v-row>
-        <v-col cols="12">
-          <v-card
-            class="ma-3 pa-6"
-            outlined
-            tile
-          >
-            <member-list :users="users" />
-          </v-card>
-        </v-col>
-      </v-row>
-      <v-container fluid>
-        <v-row>
-          <v-col cols="12">
-            <v-row
-              class="grey lighten-5"
-              style="height: 500px;"
-            >
-              <v-col cols="4">
-                <v-toolbar
-                  class="ma-3"
-                  style="margin-bottom: 0!important;"
-                >
-                  <v-toolbar-title>La communauté c'est</v-toolbar-title>
-                </v-toolbar>
-                <v-card
-                  class="ma-3 pa-6"
-                  outlined
-                  tile
-                  style="margin-top: 0!important;"
-                >
-                  <v-list shaped>
-                    <v-list-item-group>
-                      <v-list-item
-                        v-for="(statistic, i) in statistics"
-                        :key="i"
-                      >
-                        <v-list-item-icon>
-                          <v-badge left>
-                            <template v-slot:badge>
-                              <span v-text="statistic.number" />
-                            </template>
-                          </v-badge>
-                        </v-list-item-icon>
-                        <v-list-item-content>
-                          <v-list-item-title v-text="statistic.text" />
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-list-item-group>
-                  </v-list>
-                </v-card>
-              </v-col>
-              <v-col cols="4">
-                <v-toolbar
-                  class="ma-3"
-                  style="margin-bottom: 0!important;"
-                >
-                  <v-toolbar-title>ils nous ont rejoints</v-toolbar-title>
-                </v-toolbar>
-                <v-card
-                  class="ma-3 pa-6"
-                  outlined
-                  tile
-                  style="margin-top: 0!important;"
-                >
-                  <v-list shaped>
-                    <v-list-item-group>
-                      <v-list-item
-                        v-for="(aSignupUser, i) in signUpUsers"
-                        :key="i"
-                      >
-                        <v-list-item-icon>
-                          <v-badge
-                            left
-                            style="margin-right: 50px;"
-                          >
-                            <template v-slot:badge>
-                              <img
-                                :src="aSignupUser.avatar"
-                                alt="no_avatar"
-                              >
-                            </template>
-                          </v-badge>
-                        </v-list-item-icon>
-                        <v-list-item-content>
-                          <v-list-item-title v-text="aSignupUser.name" />
-                          <v-list-item-content v-text="aSignupUser.acceptedDate" />
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-list-item-group>
-                  </v-list>
-                </v-card>
-              </v-col>
-              <v-col cols="4">
-                <v-toolbar
-                  class="ma-3"
-                  style="margin-bottom: 0!important;"
-                >
-                  <v-toolbar-title>Actualités</v-toolbar-title>
-                </v-toolbar>
-                <v-card
-                  class="ma-3 pa-6"
-                  outlined
-                  tile
-                  style="margin-top: 0!important;"
-                >
-                  <v-list shaped>
-                    <v-list-item-group>
-                      <v-list-item
-                        v-for="(actuality, i) in actualities"
-                        :key="i"
-                      >
-                        <v-list-item-content>
-                          <v-list-item-title v-text="actuality.title" />
-                          <v-list-item-content style="text-align: right">
-                            <a
-                              :href="'/actuality/'+actuality.id"
-                            >{{ $t('ui.read.more') }}</a>
-                          </v-list-item-content>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-list-item-group>
-                  </v-list>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-      </v-container>
-    </div>
-    <div id="community_footer">
-      <v-toolbar
-        style="margin-bottom: 0!important;"
+  <v-container>
+    <!-- Community : avatar, title and description -->
+    <v-row
+      align="center"
+      justify="center"
+    >
+      <v-col cols="2">
+        <community-infos
+          :paths="paths"
+        />
+      </v-col>
+      
+      <v-col
+        cols="4"
       >
-        <v-toolbar-title>Trouver un trajet dans la communauté {{ community.name }}</v-toolbar-title>
-      </v-toolbar>
-      <v-card>
+        <v-card
+          flat
+          height="25vh"
+          color="primary"
+        >
+          <v-card-text>
+            <p class="display-1">
+              {{ community['name'] }}
+            </p>
+            <p class="body-1">
+              {{ community['description'] }}
+            </p>
+            <p class="body-2">
+              {{ community['fullDescription'] }}
+            </p>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+          
+    <!-- community buttons and map -->
+    <v-row
+      justify="center"
+    >
+      <v-col
+        cols="2"
+        class="text-center"
+      >
+        <div class="my-2 mb-12">
+          <a 
+            href="#"
+          >
+            <v-btn
+              color="success"
+              rounded
+            >
+              Rejoindre la communauté
+            </v-btn>
+          </a>
+        </div>
+       
+        <div class="mt-12">
+          <a
+            href="/covoiturage/annonce/poster"
+          >
+            <v-btn
+              color="success"
+              rounded
+            >
+              Publier une annonce
+            </v-btn>
+          </a>
+        </div>
+      </v-col>
+    
+      <v-col cols="4">
+        <m-map
+          ref="mmapRoute"
+          type-map="adSummary"
+          :points="pointsToMap"
+          :ways="directionWay"
+        />
+      </v-col>
+    </v-row>
+
+    <!-- community members list -->
+    <v-row 
+      align="center"
+      justify="center"
+    >
+      <v-col cols="4">
+        <v-card
+          class="ma-3 pa-6"
+          outlined
+          tile
+        >
+          <member-list :users="users" />
+        </v-card>
+      </v-col>
+      <v-col cols="2">
+        <v-toolbar
+          class="ma-3"
+          style="margin-bottom: 0!important;"
+        >
+          <v-toolbar-title>ils nous ont rejoints</v-toolbar-title>
+        </v-toolbar>
+        <v-card
+          class="ma-3 pa-6"
+          outlined
+          tile
+          style="margin-top: 0!important;"
+        >
+          <v-list shaped>
+            <v-list-item-group>
+              <v-list-item
+                v-for="(aSignupUser, i) in signUpUsers"
+                :key="i"
+              >
+                <v-list-item-icon>
+                  <v-badge
+                    left
+                    style="margin-right: 50px;"
+                  >
+                    <template v-slot:badge>
+                      <img
+                        :src="aSignupUser.avatar"
+                        alt="no_avatar"
+                      >
+                    </template>
+                  </v-badge>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title v-text="aSignupUser.name" />
+                  <v-list-item-content v-text="aSignupUser.acceptedDate" />
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- search journey -->
+    <v-row
+      align="center"
+      justify="center"
+    >
+      <v-col>
         <home-search
           :geo-search-url="geodata.geocompleteuri"
           :route="geodata.searchroute"
           :user="user"
           :justsearch="false"
           :notitle="true"
-          :notembedded="false"
         />
-      </v-card>
-    </div>
-  </div>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 <script>
 
@@ -225,15 +160,17 @@ import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/community/CommunityDisplay.json";
 import TranslationsClient from "@clientTranslations/components/community/CommunityDisplay.json";
-import MemberList from "./MemberList";
-import CommunityInfos from "./CommunityInfos";
-import HomeSearch from "../home/HomeSearch";
+import MemberList from "@components/community/MemberList";
+import CommunityInfos from "@components/community/CommunityInfos";
+import HomeSearch from "@components/home/HomeSearch";
+import MMap from "@components/base/MMap"
+import L from "leaflet";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components: {
-    MemberList,CommunityInfos,HomeSearch
+    MemberList, CommunityInfos, HomeSearch, MMap,
   },
   i18n: {
     messages: TranslationsMerged,
@@ -292,7 +229,10 @@ export default {
         { text: 'Prenom', value: 'givenName' },
         { text: 'Telephone', value: 'telephone' },
         { text: 'Status', value: 'status' }
-      ]
+      ],
+      pointsToMap:[],
+      directionWay:[],
+
     }
   },
   computed: {

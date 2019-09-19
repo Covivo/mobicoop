@@ -31,128 +31,17 @@
         'itemsPerPageText': $t('Nombre de lignes par page')
       }"
     >
-      <template v-slot:top>
-        <v-toolbar
-          flat
-          color="white"
-        >
-          <v-divider
-            class="mx-4"
-            inset
-            vertical
-          />
-          <div class="flex-grow-1" />
-          <v-dialog
-            v-model="dialog"
-            max-width="500px"
-          >
-            <template v-slot:activator="{ on }">
-              <v-btn
-                color="primary"
-                dark
-                class="mb-2"
-                v-on="on"
-              >
-                Nouveau membre
-              </v-btn>
-            </template>
-            <v-card>
-              <v-card-title>
-                <span class="headline">{{ formTitle }}</span>
-              </v-card-title>
-
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col
-                      cols="12"
-                      sm="6"
-                      md="4"
-                    >
-                      <v-text-field
-                        v-model="editedItem.familyName"
-                        label="Nom"
-                      />
-                    </v-col>
-                    <v-col
-                      cols="12"
-                      sm="6"
-                      md="4"
-                    >
-                      <v-text-field
-                        v-model="editedItem.givenName"
-                        label="Prenom"
-                      />
-                    </v-col>
-                    <v-col
-                      cols="12"
-                      sm="6"
-                      md="4"
-                    >
-                      <v-text-field
-                        v-model="editedItem.status"
-                        label="status"
-                      />
-                    </v-col>
-                    <v-col
-                      cols="12"
-                      sm="6"
-                      md="4"
-                    >
-                      <v-text-field
-                        v-model="editedItem.telephone"
-                        label="Telephone"
-                      />
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
-
-              <v-card-actions>
-                <div class="flex-grow-1" />
-                <v-btn
-                  color="blue darken-1"
-                  text
-                  @click="close"
-                >
-                  {{ $t('Annuler') }}
-                </v-btn>
-                <v-btn
-                  color="blue darken-1"
-                  text
-                  @click="save"
-                >
-                  {{ $t('Supprimer') }}
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </v-toolbar>
-      </template>
       <template v-slot:item.action="{ item }">
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-icon
-              color="blue"
-              @click="editItem(item)"
+              color="green"
+              @click="contactItem(item)"
             >
-              mdi-pencil
+              mdi-email
             </v-icon>
           </template>
-          <span>Editer la fiche d'un membre</span>
         </v-tooltip>
-        <v-icon
-          color="red"
-          @click="deleteItem(item)"
-        >
-          mdi-delete
-        </v-icon>
-        <v-icon
-          color="green"
-          @click="contactItem(item)"
-        >
-          mdi-email
-        </v-icon>
       </template>
     </v-data-table>
   </v-card>
