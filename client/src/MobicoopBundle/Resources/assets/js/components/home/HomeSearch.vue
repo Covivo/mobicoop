@@ -5,33 +5,25 @@
       text-xs-center
     >
       <!-- Title and subtitle -->
-      <v-layout
+      <v-row
         v-if="!notitle"
-        align-center
+        align="center"
         class="mt-5"
-        justify-center
-        row
+        justify="center"
       >
-        <v-flex
-          v-if="notembedded"
-          xs6
+        <v-col
+          cols="6"
         >
           <h1>{{ $t('title') }}</h1>
           <h3 v-html="$t('subtitle')" />
-        </v-flex>
-        <v-flex v-else>
-          <h1>{{ $t('title') }}</h1>
-          <h3 v-html="$t('subtitle')" />
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
 
-      <v-layout
-        justify-center
-        row
+      <v-row
+        justify="center"
       >
-        <v-flex
-          v-if="notembedded"
-          xs6
+        <v-col
+          cols="6"
         >
           <!--SearchJourney-->
           <search-journey
@@ -39,28 +31,16 @@
             :user="user"
             @change="searchChanged"
           />
-        </v-flex>
-        <v-flex
-          v-else
-        >
-          <!--SearchJourney-->
-          <search-journey
-            :geo-search-url="geoSearchUrl"
-            :user="user"
-            @change="searchChanged"
-          />
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
       
       <!-- Select Time -->
-      <v-layout
-        row
-        justify-center
-        align-center
-        class="mt-5"
+      <v-row
+        justify="center"
+        align="center"
       >
-        <v-flex
-          xs6
+        <v-col
+          cols="6"
         >
           <v-select
             v-model="time"
@@ -68,17 +48,17 @@
             :items="items"
             label="Heure de départ"
           />
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
 
       <!-- Buttons -->
-      <v-layout
+      <v-row
         class="mt-5"
-        row
+        align="center"
+        justify="center"
       >
-        <v-flex
-          offset-xs3
-          xs2
+        <v-col
+          cols="3"
         >
           <v-btn
             v-show="!justsearch"
@@ -89,8 +69,10 @@
           >
             {{ $t('buttons.shareAnAd.label') }}
           </v-btn>
-        </v-flex>
-        <v-flex xs2>
+        </v-col>
+        <v-col 
+          cols="3"
+        >
           <v-btn
             :disabled="searchUnavailable"
             :loading="loading"
@@ -100,8 +82,8 @@
           >
             {{ $t('buttons.search.label') }}
           </v-btn>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
   </v-content>
 </template>
@@ -145,10 +127,6 @@ export default {
       type: Boolean,
       default: false
     },
-    notembedded: {
-      type: Boolean,
-      default: true
-    }
   },
   data() {
     return {
