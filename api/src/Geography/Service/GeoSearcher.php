@@ -162,7 +162,7 @@ class GeoSearcher
                 $address->setCountryCode($geoResult->getCountry()->getCode());
             }
             // add venue if handled by the provider
-            if (method_exists($geoResult,'getVenue')) {
+            if (method_exists($geoResult, 'getVenue')) {
                 $address->setVenue($geoResult->getVenue());
             }
             

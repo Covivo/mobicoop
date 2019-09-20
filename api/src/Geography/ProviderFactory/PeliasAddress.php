@@ -27,7 +27,6 @@ namespace App\Geography\ProviderFactory;
 
 use Geocoder\Model\Address;
 
-
 /**
  * Address used by Pelias search to handle venues
  */
@@ -54,5 +53,4 @@ class PeliasAddress extends Address
     {
         $this->venue = $venue;
     }
-    
 }

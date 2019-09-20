@@ -115,13 +115,15 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
             $props = $location['properties'];
 
             // we check the confidence and match type from pelias result properties
-            if ($props['match_type'] == 'fallback' && $props['confidence'] < self::MIN_CONFIDENCE) continue;
+            if ($props['match_type'] == 'fallback' && $props['confidence'] < self::MIN_CONFIDENCE) {
+                continue;
+            }
 
             // we check if the search is a venue
             $venue = null;
             if ($props['layer'] == "venue") {
                 $venue = $props['name'];
-            }            
+            }
 
             $bounds = [
                 'south' => null,
