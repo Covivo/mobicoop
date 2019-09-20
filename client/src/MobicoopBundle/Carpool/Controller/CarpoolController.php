@@ -44,6 +44,15 @@ class CarpoolController extends AbstractController
 {
     use HydraControllerTrait;
 
+    private $urlTiles;
+    private $attributionCopyright;
+    
+    public function __construct(string $urlTiles, string $attributionCopyright)
+    {
+        $this->urlTiles = $urlTiles;
+        $this->attributionCopyright = $attributionCopyright;
+    }
+    
     /**
      * Create a carpooling ad.
      */
@@ -67,11 +76,12 @@ class CarpoolController extends AbstractController
 
         // get the communities available for the user
         $communities = $communityManager->getAvailableUserCommunities($poster)->getMember();
-
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
             [
-                'communities'=>$communities
+                'communities'=>$communities,
+                'urlTiles'=>$this->urlTiles,
+                'attributionCopyright'=>$this->attributionCopyright
             ]
         );
     }

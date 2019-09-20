@@ -162,6 +162,8 @@
                       type-map="adSummary"
                       :points="pointsToMap"
                       :ways="directionWay"
+                      :url-tiles="this.urlTiles"
+                      :attribution-copyright="this.attributionCopyright"
                     />
                   </v-col>
                 </v-row>
@@ -421,6 +423,8 @@
                         type-map="adSummary"
                         :points="pointsToMap"
                         :ways="directionWay"
+                        :url-tiles="this.urlTiles"
+                        :attribution-copyright="this.attributionCopyright"
                       />
                     </v-col>
                   </v-row>
@@ -487,7 +491,7 @@ import SearchJourney from "@components/carpool/SearchJourney";
 import AdPlanification from "@components/carpool/AdPlanification";
 import AdRoute from "@components/carpool/AdRoute";
 import AdSummary from "@components/carpool/AdSummary";
-import MMap from '@components/base/MMap'
+import MMap from '@components/utilities/MMap'
 import L from "leaflet";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
@@ -537,6 +541,14 @@ export default {
       type: Number,
       default: null
     },
+    urlTiles:{
+      type: String,
+      default: ""
+    },
+    attributionCopyright:{
+      type: String,
+      default: ""
+    }
   },
   data() {
     return {

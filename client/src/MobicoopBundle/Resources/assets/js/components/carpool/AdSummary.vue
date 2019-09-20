@@ -168,7 +168,7 @@
 
             <!-- Days if regular and there is more than one schedule -->
             <v-row
-              v-if="regular && schedules.length > 1"
+              v-if="regular && schedules!==null && schedules.length > 1"
               align="center"
               class="mt-2"
             >
