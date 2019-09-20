@@ -120,7 +120,7 @@ class CommunityUser
 
     /**
     * @var \DateTimeInterface Creation date of the community user.
-    * 
+    *
     * @ORM\Column(type="datetime")
     * @Groups({"read","write"})
     */
