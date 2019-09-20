@@ -161,12 +161,13 @@ class ProposalManager
      *
      * @param array $ad The data posted by the user
      * @param User $poster The poster of the ad
+     * @param boolean $persist If we persist the proposal in the database (false for a simple search)
      * @return void
      */
-    public function createProposalFromAd(array $ad, User $poster)
+    public function createProposalFromAd(array $ad, User $poster, $persist = true)
     {
         // todo : create a validation method for $ad
-
+        //var_dump($ad);die;
         $proposal = new Proposal();
         $criteria = new Criteria();
 
@@ -450,6 +451,11 @@ class ProposalManager
         $proposal->addWaypoint($waypointDestination);
         $proposal->setCriteria($criteria);
 
+        if(isset($ad['proposalId'])){
+            // There id a proposal we know that is a match
+            $proposal->setMatchedProposal(new Proposal($ad['proposalId']));
+        }
+
         // creation of the outward proposal
         $response = $this->dataProvider->post($proposal);
         if ($response->getCode() != 201) {
@@ -580,4 +586,18 @@ class ProposalManager
  
         return $proposalOutward;
     }
+
+    /**
+     * Create a proposal from a search result
+     *
+     * @param array $ad The data posted by the user (the search)
+     * @param User $poster The poster of the ad
+     * @return void
+     */
+    public function createProposalFromResult(array $ad, User $poster)
+    {
+        // First we need to create a real proposal from the search
+        $proposalFromSearch = $this->createProposalFromAd($ad,$poster);
+
+    }    
 }

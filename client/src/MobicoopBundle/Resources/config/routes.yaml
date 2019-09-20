@@ -139,6 +139,14 @@ matching_search:
         en: /matching/search/
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::MatchingSearch
 
+# contact
+contact_for_carpool_from_results:
+    path:
+        fr: /matching/search/contactforcarpool
+        en: /matching/search/contactforcarpool
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::contactForCarpool
+
+
 # rdex provider (called with ajax)
 rdex_provider:
     path:

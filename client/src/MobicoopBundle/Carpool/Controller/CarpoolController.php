@@ -121,6 +121,53 @@ class CarpoolController extends AbstractController
     }
 
     /**
+     * Initiate contact from carpool results
+     */
+    public function contactForCarpool(Request $request, ProposalManager $proposalManager, UserManager $userManager){
+        $data = [
+            "proposalId" => (int)$request->query->get('proposalId'),
+            "origin"=>[
+                "latitude" => (float)$request->query->get('origin_latitude'),
+                "longitude" => (float)$request->query->get('origin_longitude'),
+                "streetAddress" => $request->query->get('origin_streetAddress'),
+                "addressLocality" => $request->query->get('origin_addressLocality')
+            ],
+            "destination"=>[
+                "latitude" => (float)$request->query->get('destination_latitude'),
+                "longitude" => (float)$request->query->get('destination_longitude'),
+                "streetAddress" => $request->query->get('destination_streetAddress'),
+                "addressLocality" => $request->query->get('destination_addressLocality')
+            ],
+            "waypoints"=>[],
+            "outwardDate" => Datetime::createFromFormat("Y-m-d\TH:i:s\Z", $request->query->get('date'))->format("Y-m-d"),
+            "outwardTime" => Datetime::createFromFormat("Y-m-d\TH:i:s\Z", $request->query->get('date'))->format("H:i"),
+            "seats" => 1,
+            "price" => (float)$request->query->get('priceKm'),
+            "regular" => ((int)$request->query->get('frequency')==1)?false:true
+        ];
+
+        if((bool)$request->query->get('driver') && (bool)$request->query->get('passenger')){
+            $data["driver"] = true;
+            $data["passenger"] = true;
+        }
+        elseif((bool)$request->query->get('driver')){
+            $data["driver"] = false;
+            $data["passenger"] = true;
+        }
+        else{
+            $data["driver"] = true;
+            $data["passenger"] = false;
+        }
+
+        $proposalManager->createProposalFromResult($data, $userManager->getLoggedUser());
+
+
+        return $this->json("ok");
+    }
+
+
+
+    /**
      * Provider rdex
      */
     public function rdexProvider(ExternalJourneyManager $externalJourneyManager)

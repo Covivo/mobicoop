@@ -137,7 +137,7 @@ class Proposal
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read","threads","thread"})
+     * @Groups({"read","results","threads","thread"})
      */
     private $id;
 
@@ -267,6 +267,11 @@ class Proposal
      * @MaxDepth(1)
      */
     private $notifieds;
+
+    /**
+     * @var Proposal|null The proposal we know that already matched by this new proposal
+     */
+    private $matchedProposal;
         
     public function __construct($id=null)
     {
@@ -579,6 +584,18 @@ class Proposal
         return $this;
     }
     
+    public function getMatchedProposal(): ?Proposal
+    {
+        return $this->matchedProposal;
+    }
+
+    public function setMatchedProposal(?Proposal $matchedProposal): self
+    {
+        $this->matchedProposal = $matchedProposal;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
     
     /**

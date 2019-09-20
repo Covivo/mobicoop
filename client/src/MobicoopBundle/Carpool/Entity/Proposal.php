@@ -133,6 +133,11 @@ class Proposal implements ResourceInterface, \JsonSerializable
      */
     private $individualStops;
     
+    /**
+     * @var Proposal|null The proposal we know that already matched by this new proposal
+     */
+    private $matchedProposal;
+
     public function __construct($id=null)
     {
         if ($id) {
@@ -427,6 +432,18 @@ class Proposal implements ResourceInterface, \JsonSerializable
             }
         }
         
+        return $this;
+    }
+
+    public function getMatchedProposal(): ?Proposal
+    {
+        return $this->matchedProposal;
+    }
+
+    public function setMatchedProposal(?Proposal $matchedProposal): self
+    {
+        $this->matchedProposal = $matchedProposal;
+
         return $this;
     }
 
