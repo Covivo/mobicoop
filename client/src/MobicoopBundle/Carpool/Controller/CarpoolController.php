@@ -123,7 +123,8 @@ class CarpoolController extends AbstractController
     /**
      * Initiate contact from carpool results
      */
-    public function contactForCarpool(Request $request, ProposalManager $proposalManager, UserManager $userManager){
+    public function contactForCarpool(Request $request, ProposalManager $proposalManager, UserManager $userManager)
+    {
         $data = [
             "proposalId" => (int)$request->query->get('proposalId'),
             "origin"=>[
@@ -146,15 +147,13 @@ class CarpoolController extends AbstractController
             "regular" => ((int)$request->query->get('frequency')==1)?false:true
         ];
 
-        if((bool)$request->query->get('driver') && (bool)$request->query->get('passenger')){
+        if ((bool)$request->query->get('driver') && (bool)$request->query->get('passenger')) {
             $data["driver"] = true;
             $data["passenger"] = true;
-        }
-        elseif((bool)$request->query->get('driver')){
+        } elseif ((bool)$request->query->get('driver')) {
             $data["driver"] = false;
             $data["passenger"] = true;
-        }
-        else{
+        } else {
             $data["driver"] = true;
             $data["passenger"] = false;
         }

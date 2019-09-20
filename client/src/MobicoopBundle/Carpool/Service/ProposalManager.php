@@ -451,7 +451,7 @@ class ProposalManager
         $proposal->addWaypoint($waypointDestination);
         $proposal->setCriteria($criteria);
 
-        if(isset($ad['proposalId'])){
+        if (isset($ad['proposalId'])) {
             // There id a proposal we know that is a match
             $proposal->setMatchedProposal(new Proposal($ad['proposalId']));
         }
@@ -597,7 +597,6 @@ class ProposalManager
     public function createProposalFromResult(array $ad, User $poster)
     {
         // First we need to create a real proposal from the search
-        $proposalFromSearch = $this->createProposalFromAd($ad,$poster);
-
-    }    
+        $proposalFromSearch = $this->createProposalFromAd($ad, $poster);
+    }
 }
