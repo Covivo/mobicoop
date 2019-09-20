@@ -114,4 +114,23 @@ class CommunityManager
         }
         return null;
     }
+
+    /**
+     * Get last accepted community users
+     * @param community.id          $id                 Id of the community
+     * @return array|null The events found or null if not found.
+     */
+    public function getLastUsers(?int $id)
+    {
+        $this->dataProvider->setClass(CommunityUser::class);
+        $params=[];
+        $params['order[acceptedDate]'] = "asc";
+        $params['status'] = 1;
+        $params['perPage'] = 3;
+        if ($id) {
+            $params['id'] = $id;
+        }
+        $response = $this->dataProvider->getCollection($params);
+        return $response->getValue();
+    }
 }

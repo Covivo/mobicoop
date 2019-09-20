@@ -83,59 +83,55 @@ class CommunityController extends AbstractController
      */
     public function show($id, CommunityManager $communityManager, Request $request, UserManager $userManager)
     {
-        $communityUser = new CommunityUser();
+        //Variable who indicate if user is part of community
+        $isMember = false;
+        // All community users ID
+        $communityUsersId = [];
+        // All community users
+        $users = [];
+        // Last three community users
+        $lastUsers = [];
+
+        // retrive community;
         $community = $communityManager->getCommunity($id);
         $reponseofmanager= $this->handleManagerReturnValue($community);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
+
+        // retrive logged user
         $this->denyAccessUnlessGranted('show', $community);
         $user = $userManager->getLoggedUser();
         $reponseofmanager= $this->handleManagerReturnValue($user);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
-        $form = $this->createForm(CommunityUserForm::class, $communityUser);
-        $errorLoginSecured = false;
-        $communityUser->setCommunity($community);
-        $communityUser->setUser($user);
-        $communityUser->setCreatedDate(new \DateTime());
-        $communityUser->setStatus(0);
-        $form->handleRequest($request);
-        
-        $isMember = false;
-        $usersCommunity = array();
-
-        $users = [];
+               
         //test if the community has members
         if (count($community->getCommunityUsers()) > 0) {
-            foreach ($community->getCommunityUsers() as $userInCommunity) {
-                $usersCommunity = [$userInCommunity->getUser()->getId()];
-                array_push($users, $userInCommunity->getUser());
+            foreach ($community->getCommunityUsers() as $communityUser) {
+                // get all community users ID
+                array_push($communityUsersId, $communityUser->getUser()->getId());
+                // get all community Users
+                array_push($users, $communityUser->getUser());
             }
         }
-
+        $lastUsers = $communityManager->getLastUsers($id);
+        dump($lastUsers);
+       
+       
         //test if the user logged is member of the community
-        if (!is_null($user) && $user !=='' && in_array($user->getId(), $usersCommunity)) {
+        if (!is_null($user) && $user !=='' && in_array($user->getId(), $communityUsersId)) {
             $isMember = true;
-        }
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($communityUser = $communityManager->joinCommunity($communityUser)) {
-                return $this->redirectToRoute('community_show', ['id' => $id]);
-            }
-            $errorLoginSecured = "La connexion a échoué";
         }
         
         return $this->render('@Mobicoop/community/showCommunity.html.twig', [
             'community' => $community,
-            'formIdentification' => $form->createView(),
-            'communityUser' => $communityUser,
             'user' => $user,
-            'errorLoginSecured' => $errorLoginSecured,
             'isMember' => $isMember,
             'searchRoute' => "covoiturage/recherche",
-            'users' => $users
+            'users' => $users,
+            'lastUsers' => $lastUsers
         ]);
     }
 

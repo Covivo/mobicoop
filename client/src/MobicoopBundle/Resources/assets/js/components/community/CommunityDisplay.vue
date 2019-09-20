@@ -17,12 +17,11 @@
         <v-card
           flat
           height="25vh"
-          color="primary"
         >
           <v-card-text>
-            <p class="display-1">
+            <h3 class="headline">
               {{ community['name'] }}
-            </p>
+            </h3>
             <p class="body-1">
               {{ community['description'] }}
             </p>
@@ -37,26 +36,15 @@
     <!-- community buttons and map -->
     <v-row
       justify="center"
+      align="center"
     >
       <v-col
         cols="2"
         class="text-center"
       >
-        <div class="my-2 mb-12">
-          <a 
-            href="#"
-          >
-            <v-btn
-              color="success"
-              rounded
-            >
-              Rejoindre la communauté
-            </v-btn>
-          </a>
-        </div>
-       
-        <div class="mt-12">
+        <div v-if="isMember">
           <a
+            style="text-decoration:none;"
             href="/covoiturage/annonce/poster"
           >
             <v-btn
@@ -64,6 +52,21 @@
               rounded
             >
               Publier une annonce
+            </v-btn>
+          </a>
+        </div>
+
+        <div v-else>
+          <a
+            style="text-decoration:none;"
+            href="#"
+          >
+            <v-btn
+              color="success"
+              rounded
+              @click="test"
+            >
+              Rejoindre la communauté
             </v-btn>
           </a>
         </div>
@@ -86,48 +89,38 @@
     >
       <v-col cols="4">
         <v-card
-          class="ma-3 pa-6"
-          outlined
-          tile
+          flat
         >
           <member-list :users="users" />
         </v-card>
       </v-col>
       <v-col cols="2">
         <v-toolbar
-          class="ma-3"
-          style="margin-bottom: 0!important;"
+          flat
         >
-          <v-toolbar-title>ils nous ont rejoints</v-toolbar-title>
+          <v-toolbar-title class="headline">
+            Ils nous ont rejoints
+          </v-toolbar-title>
         </v-toolbar>
         <v-card
-          class="ma-3 pa-6"
-          outlined
-          tile
-          style="margin-top: 0!important;"
+          flat
         >
           <v-list shaped>
             <v-list-item-group>
               <v-list-item
-                v-for="(aSignupUser, i) in signUpUsers"
+                v-for="(aUser, i) in lastUsers"
                 :key="i"
               >
-                <v-list-item-icon>
-                  <v-badge
-                    left
-                    style="margin-right: 50px;"
-                  >
-                    <template v-slot:badge>
-                      <img
-                        :src="aSignupUser.avatar"
-                        alt="no_avatar"
-                      >
-                    </template>
-                  </v-badge>
-                </v-list-item-icon>
+                <v-list-item-avatar>
+                  <v-avatar color="tertiary">
+                    <v-icon light>
+                      mdi-account-circle
+                    </v-icon>
+                  </v-avatar>
+                </v-list-item-avatar>
                 <v-list-item-content>
-                  <v-list-item-title v-text="aSignupUser.name" />
-                  <v-list-item-content v-text="aSignupUser.acceptedDate" />
+                  <v-list-item-title v-text="aUser.name" />
+                  <v-list-item-content v-text="aUser.acceptedDate" />
                 </v-list-item-content>
               </v-list-item>
             </v-list-item-group>
@@ -137,6 +130,19 @@
     </v-row>
 
     <!-- search journey -->
+    <v-row
+      justify="center"
+      align="center"
+    >
+      <v-col
+        cols="6"
+        class="mt-6"
+      >
+        <p class="headline">
+          Chercher un trajet dans la communauté
+        </p>
+      </v-col>
+    </v-row>
     <v-row
       align="center"
       justify="center"
@@ -148,6 +154,7 @@
           :user="user"
           :justsearch="false"
           :notitle="true"
+          :is-member="isMember"
         />
       </v-col>
     </v-row>
@@ -164,7 +171,6 @@ import MemberList from "@components/community/MemberList";
 import CommunityInfos from "@components/community/CommunityInfos";
 import HomeSearch from "@components/home/HomeSearch";
 import MMap from "@components/base/MMap"
-import L from "leaflet";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -197,11 +203,13 @@ export default {
       type: Object,
       default: null
     },
-    signUpUsers: {
-      type: Array,
-      default: function(){
-        return [{avatar: '_', name: 'Ngouffo Doric', acceptedDate: '12/01/2019'}]
-      }
+    isMember:{
+      type: Boolean,
+      default: false
+    },
+    lastUsers: {
+      type: Object,
+      default: null
     }
   },
   data () {
@@ -259,6 +267,11 @@ export default {
     },
     linkToCommunityWidget: function (item) {
       return '/community/show-widget/'+item.id;
+    },
+    test() {
+      this.lastUsers.push({name: 'Ngouffo Doric', acceptedDate: '12/01/2019'})
+      console.error(this.lastUsers)
+      return 1;
     }
   }
 }

@@ -7,7 +7,6 @@ import '@css/page/community/showCommunity.scss'
 // Vue components
 import MHeader from '@components/base/MHeader'
 import MFooter from '@components/base/MFooter'
-// import MemberList from '@components/community/MemberList'
 import CommunityDisplay from '@components/community/CommunityDisplay'
 
 new Vue({

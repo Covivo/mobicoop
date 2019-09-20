@@ -61,7 +61,7 @@
           cols="3"
         >
           <v-btn
-            v-show="!justsearch"
+            v-if="isMember"
             disabled
             outlined
             rounded
@@ -119,14 +119,15 @@ export default {
       type: Object,
       default: null
     },
-    justsearch: {
-      type: Boolean,
-      default: false
-    },
     notitle: {
       type: Boolean,
       default: false
     },
+    // For the community page. If the user is not a member of the community the publish button is not displayed
+    isMember: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {

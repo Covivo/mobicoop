@@ -1,16 +1,21 @@
 <template>
-  <v-card>
-    <v-card-title>
+  <v-card
+    flat
+  >
+    <v-card-title
+      flat
+    >
       <v-row>
         <v-col cols="6">
-          {{ $t('Liste des membres') }}
+          <p headline>
+            {{ $t('Liste des membres') }}
+          </p>
         </v-col>
         <v-col cols="6">
           <div class="flex-grow-1" />
           <v-card
             class="ma-3 pa-6"
-            outlined
-            tile
+            flat
           >
             <v-text-field
               v-model="search"
@@ -35,7 +40,7 @@
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-icon
-              color="green"
+              color="success"
               @click="contactItem(item)"
             >
               mdi-email
@@ -75,7 +80,7 @@ export default {
       headers: [
         { text: 'Nom', value: 'familyName' },
         { text: 'Prenom', value: 'givenName' },
-        { text: 'Actions', value: 'action', sortable: false }
+        // { text: 'Actions', value: 'action', sortable: false }
       ],
       editedIndex: -1,
       editedItem: {
