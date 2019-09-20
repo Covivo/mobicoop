@@ -112,43 +112,43 @@ class CarpoolController extends AbstractController
         $destination_longitude = $request->query->get('destination_longitude');
         $date = \Datetime::createFromFormat("Y-m-d\TH:i:s\Z", $request->query->get('date'));
 
-        // we have to merge matching proposals that concern both driver and passenger into a single matching
-        $matchings = [];
-        $proposalResult = null;
+        // // we have to merge matching proposals that concern both driver and passenger into a single matching
+        // $matchings = [];
+        // $proposalResult = null;
 
-        if ($matchingResults = $proposalManager->getMatchingsForSearch(
-            $origin_latitude,
-            $origin_longitude,
-            $destination_latitude,
-            $destination_longitude,
-            $date
-        )) {
-            if (is_array($matchingResults->getMember()) && count($matchingResults->getMember()) == 1) {
-                $proposalResult = $matchingResults->getMember()[0];
-            }
-        }
-        if ($proposalResult) {
-            foreach ($proposalResult->getMatchingOffers() as $offer) {
-                $matchings[$offer->getProposalRequest()->getId()] = $offer;
-            }
-            foreach ($proposalResult->getMatchingRequests() as $request) {
-                if (!array_key_exists($request->getProposalOffer()->getId(), $matchings)) {
-                    $matchings[$request->getProposalOffer()->getId()] = $request;
-                }
-            }
-        }
-
-        return $this->json($matchings);
-      
-
-        // return $this->json($proposalManager->getMatchingsForSearch(
+        // if ($matchingResults = $proposalManager->getMatchingsForSearch(
         //     $origin_latitude,
         //     $origin_longitude,
         //     $destination_latitude,
         //     $destination_longitude,
-        //     $date,
-        //     DataProvider::RETURN_JSON
-        // ));
+        //     $date
+        // )) {
+        //     if (is_array($matchingResults->getMember()) && count($matchingResults->getMember()) == 1) {
+        //         $proposalResult = $matchingResults->getMember()[0];
+        //     }
+        // }
+        // if ($proposalResult) {
+        //     foreach ($proposalResult->getMatchingOffers() as $offer) {
+        //         $matchings[$offer->getProposalRequest()->getId()] = $offer;
+        //     }
+        //     foreach ($proposalResult->getMatchingRequests() as $request) {
+        //         if (!array_key_exists($request->getProposalOffer()->getId(), $matchings)) {
+        //             $matchings[$request->getProposalOffer()->getId()] = $request;
+        //         }
+        //     }
+        // }
+
+        // return $this->json($matchings);
+      
+
+        return $this->json($proposalManager->getMatchingsForSearch(
+            $origin_latitude,
+            $origin_longitude,
+            $destination_latitude,
+            $destination_longitude,
+            $date,
+            DataProvider::RETURN_JSON
+        ));
     }
 
     /**

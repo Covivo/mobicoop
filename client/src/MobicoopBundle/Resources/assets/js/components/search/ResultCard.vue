@@ -9,6 +9,10 @@
       >
         <!-- display result-journey-detailed card - proposal Request and proposalOffer in array(matchings) order-->
         <result-journey-detailed-card
+          :origin-latitude="originLatitude"
+          :origin-longitude="originLongitude"
+          :destination-latitude="destinationLatitude"
+          :destination-longitude="destinationLongitude"
           :origin="origin"
           :destination="destination"
           :date="date"
@@ -17,6 +21,10 @@
           :matching="matching.proposalRequest"
         />
         <result-journey-detailed-card 
+          :origin-latitude="originLatitude"
+          :origin-longitude="originLongitude"
+          :destination-latitude="destinationLatitude"
+          :destination-longitude="destinationLongitude"
           :origin="origin"
           :destination="destination"
           :date="date"
@@ -31,7 +39,14 @@
         </v-row>
 
         <!-- display result-user-detailed card - proposal Request and proposalOffer in array(matchings) order-->
-        <result-user-detailed-card 
+        <result-user-detailed-card   
+          :origin-latitude="originLatitude"
+          :origin-longitude="originLongitude"
+          :destination-latitude="destinationLatitude"
+          :destination-longitude="destinationLongitude"
+          :origin="origin"
+          :destination="destination"
+          :date="date"
           :carpool-results="carpoolResults"
           :matching-search-url="matchingSearchUrl"
           :matching="matching.proposalRequest" 
@@ -39,7 +54,14 @@
         <v-row
           justify="center"
         />
-        <result-user-detailed-card 
+        <result-user-detailed-card
+          :origin-latitude="originLatitude"
+          :origin-longitude="originLongitude"
+          :destination-latitude="destinationLatitude"
+          :destination-longitude="destinationLongitude"
+          :origin="origin"
+          :destination="destination"
+          :date="date"
           :carpool-results="carpoolResults"
           :matching-search-url="matchingSearchUrl"
           :matching="matching.proposalOffer" 

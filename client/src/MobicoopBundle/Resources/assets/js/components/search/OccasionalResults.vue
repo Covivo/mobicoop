@@ -122,7 +122,11 @@
           offset="3"
         >
           <!-- ResultCard  Compenent -->
-          <result-card 
+          <result-card
+            :origin-latitude="originLatitude"
+            :origin-longitude="originLongitude"
+            :destination-latitude="destinationLatitude"
+            :destination-longitude="destinationLongitude"
             :origin="origin"
             :destination="destination"
             :date="date"
