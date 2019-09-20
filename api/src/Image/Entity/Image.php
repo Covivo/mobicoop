@@ -203,6 +203,13 @@ class Image
      * @ORM\Column(type="datetime")
      */
     private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Updated date of the image.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updatedDate;
     
     /**
      * @var Event|null The event associated with the image.
@@ -500,6 +507,18 @@ class Image
         
         return $this;
     }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
     
     public function getEvent(): ?Event
     {
@@ -690,5 +709,15 @@ class Image
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
     }
 }

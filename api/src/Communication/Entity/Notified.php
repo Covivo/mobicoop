@@ -107,6 +107,14 @@ class Notified
     private $createdDate;
 
     /**
+     * @var \DateTimeInterface Updated date of the notification.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups("read")
+     */
+    private $updatedDate;
+
+    /**
      * @var \DateTimeInterface Sent date of the notification.
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -301,6 +309,18 @@ class Notified
         return $this;
     }
 
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
 
     /**
@@ -311,5 +331,15 @@ class Notified
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
     }
 }

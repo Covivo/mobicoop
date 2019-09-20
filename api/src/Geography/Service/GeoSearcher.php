@@ -67,7 +67,6 @@ class GeoSearcher
      */
     public function geoCode(string $input, string $token=null)
     {
-//        echo $input;die;
         // the result array will contain different addresses :
         // - named addresses (if the user is logged)
         // - relaypoints (with or without private relaypoints depending on if th user is logged)
@@ -77,7 +76,6 @@ class GeoSearcher
 
         // First we handle the quote
         $input = str_replace("'", "''", $input);
-
 
         // if we have a token, we search for the corresponding user
         $user = null;
@@ -90,7 +88,7 @@ class GeoSearcher
             $namedAddresses = $this->addressRepository->findByName($input, $user->getId());
             if (count($namedAddresses)>0) {
                 foreach ($namedAddresses as $address) {
-                    //$address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
+                    $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
                     $result[] = $address;
                 }
             }
@@ -116,10 +114,7 @@ class GeoSearcher
             if (!$exclude) {
                 $address = $relayPoint->getAddress();
                 $address->setRelayPoint($relayPoint);
-                //$address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
-                // To do : better display label for relay point
-//                $address->setDisplayLabel($relayPoint->getName().", ".$address->getAddressLocality());
-                $address->setDisplayLabel($relayPoint->getName());
+                $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));
                 $result[] = $address;
             }
         }
@@ -165,6 +160,10 @@ class GeoSearcher
             }
             if ($geoResult->getCountry() && $geoResult->getCountry()->getCode()) {
                 $address->setCountryCode($geoResult->getCountry()->getCode());
+            }
+            // add venue if handled by the provider
+            if (method_exists($geoResult, 'getVenue')) {
+                $address->setVenue($geoResult->getVenue());
             }
             
             $address->setDisplayLabel($this->geoTools->getDisplayLabel($address));

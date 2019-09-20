@@ -139,6 +139,8 @@ export default {
             this.address.displayedLabel = `${this.address.name} - ${this.address.displayLabel}`;
             if (this.displayNameInSelected) this.address.selectedDisplayedLabel = `${this.address.name} - ${this.address.displayLabel}`;
             if (this.displayIcon) this.address.icon = "mdi-map";
+          } else if (this.address.venue) {
+            if (this.displayIcon) this.address.icon = "mdi-map-marker-radius";
           }
           this.entries.push(this.address);
         } 
@@ -176,6 +178,8 @@ export default {
               addresses[addressKey].displayedLabel = `${address.name} - ${address.displayLabel}`;
               if (this.displayNameInSelected) addresses[addressKey].selectedDisplayedLabel = `${address.name} - ${address.displayLabel}`;
               if (this.displayIcon) addresses[addressKey].icon = "mdi-map";
+            } else if (address.venue) {
+              if (this.displayIcon) addresses[addressKey].icon = "mdi-map-marker-radius";
             }
           });
           addresses.forEach((address, addressKey) => {

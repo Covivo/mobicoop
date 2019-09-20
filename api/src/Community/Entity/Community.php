@@ -138,6 +138,14 @@ class Community
     * @Groups("read")
     */
     private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Updated date of the community.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups("read")
+     */
+    private $updatedDate;
     
     /**
      * @var User The creator of the community.
@@ -273,6 +281,18 @@ class Community
         
         return $this;
     }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
     
     public function getUser(): User
     {
@@ -404,5 +424,15 @@ class Community
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
     }
 }

@@ -70,6 +70,12 @@ class Ask implements ResourceInterface
     private $createdDate;
 
     /**
+     * @var \DateTimeInterface Updated date of the solicitation.
+     * @Groups("post")
+     */
+    private $updatedDate;
+
+    /**
      * @var User The user that creates the ask.
      *
      * @Assert\NotBlank
@@ -164,6 +170,18 @@ class Ask implements ResourceInterface
     public function setCreatedDate(\DateTimeInterface $createdDate): self
     {
         $this->createdDate = $createdDate;
+
+        return $this;
+    }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
 
         return $this;
     }

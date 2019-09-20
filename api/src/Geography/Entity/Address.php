@@ -239,6 +239,14 @@ class Address
     private $name;
 
     /**
+     * @var string|null The venue name of this address.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $venue;
+
+    /**
      * @var User|null The owner of the address.
      *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="addresses")
@@ -265,6 +273,22 @@ class Address
      * @Groups({"read","pt"})
      */
     private $relayPoint;
+
+    /**
+     * @var \DateTimeInterface Creation date.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read"})
+     */
+    private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Updated date.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read"})
+     */
+    private $updatedDate;
 
     public function __construct($id = null)
     {
@@ -466,6 +490,16 @@ class Address
         $this->name = $name;
     }
 
+    public function getVenue(): ?string
+    {
+        return $this->venue;
+    }
+
+    public function setVenue(?string $venue)
+    {
+        $this->venue = $venue;
+    }
+
     public function getUser(): ?User
     {
         return $this->user;
@@ -508,7 +542,51 @@ class Address
         $this->relayPoint = $relayPoint;
     }
 
+    public function getCreatedDate(): ?\DateTimeInterface
+    {
+        return $this->createdDate;
+    }
+
+    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    {
+        $this->createdDate = $createdDate;
+
+        return $this;
+    }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
+    
+    /**
+     * Creation date.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoCreatedDate()
+    {
+        $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
+    }
     
     /**
      * GeoJson representation.

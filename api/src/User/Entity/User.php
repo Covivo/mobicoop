@@ -307,6 +307,14 @@ class User implements UserInterface, EquatableInterface
     private $createdDate;
 
     /**
+     * @var \DateTimeInterface Updated date of the user.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups("read")
+     */
+    private $updatedDate;
+
+    /**
      * @var DateTime|null  Date of password token generation modification.
      *
      * @ORM\Column(type="datetime", length=100, nullable=true)
@@ -1249,6 +1257,18 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
     public function getRoles()
     {
         // we return an array of ROLE_***
@@ -1328,5 +1348,15 @@ class User implements UserInterface, EquatableInterface
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
     }
 }

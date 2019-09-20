@@ -95,6 +95,13 @@ class AskHistory implements MessagerInterface
     private $createdDate;
 
     /**
+     * @var \DateTimeInterface Updated date of the history item.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updatedDate;
+
+    /**
      * @var Ask|null The linked ask.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="askHistories")
@@ -191,6 +198,18 @@ class AskHistory implements MessagerInterface
         return $this;
     }
 
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
     public function getNotifieds()
     {
         return $this->notifieds->getValues();
@@ -229,5 +248,15 @@ class AskHistory implements MessagerInterface
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
     }
 }

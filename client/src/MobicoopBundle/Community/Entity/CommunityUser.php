@@ -83,6 +83,12 @@ class CommunityUser implements ResourceInterface
     private $createdDate;
 
     /**
+     * @var \DateTimeInterface Updated date of the community user.
+     *
+     */
+    private $updatedDate;
+
+    /**
     * @var \DateTimeInterface Accepted date.
     *
     */
@@ -190,6 +196,18 @@ class CommunityUser implements ResourceInterface
     {
         $this->createdDate = $createdDate;
         
+        return $this;
+    }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
         return $this;
     }
 
