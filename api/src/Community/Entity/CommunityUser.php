@@ -120,8 +120,9 @@ class CommunityUser
 
     /**
     * @var \DateTimeInterface Creation date of the community user.
-    *
+    * 
     * @ORM\Column(type="datetime")
+    * @Groups({"read","write"})
     */
     private $createdDate;
 
@@ -129,6 +130,7 @@ class CommunityUser
     * @var \DateTimeInterface Accepted date.
     *
     * @ORM\Column(type="datetime", nullable=true)
+    * @Groups({"read","write"})
     */
     private $acceptedDate;
 
@@ -136,6 +138,7 @@ class CommunityUser
     * @var \DateTimeInterface Refusal date.
     *
     * @ORM\Column(type="datetime", nullable=true)
+    * @Groups({"read","write"})
     */
     private $refusedDate;
 

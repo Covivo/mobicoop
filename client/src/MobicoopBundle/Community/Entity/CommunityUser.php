@@ -78,19 +78,19 @@ class CommunityUser implements ResourceInterface, \JsonSerializable
 
     /**
     * @var \DateTimeInterface Creation date of the community user.
-    *
+    * @Groups({"post","put"})
     */
     private $createdDate;
 
     /**
     * @var \DateTimeInterface Accepted date.
-    *
+    * @Groups({"post","put"})
     */
     private $acceptedDate;
 
     /**
     * @var \DateTimeInterface Refusal date.
-    *
+    * @Groups({"post","put"})
     */
     private $refusedDate;
 

@@ -131,6 +131,6 @@ class CommunityManager
             $params['id'] = $id;
         }
         $response = $this->dataProvider->getCollection($params);
-        return $response->getValue();
+        return $response->getValue()->getMember();
     }
 }

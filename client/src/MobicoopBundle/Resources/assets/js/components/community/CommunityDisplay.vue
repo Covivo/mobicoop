@@ -64,7 +64,6 @@
             <v-btn
               color="success"
               rounded
-              @click="test"
             >
               Rejoindre la communauté
             </v-btn>
@@ -108,7 +107,7 @@
           <v-list shaped>
             <v-list-item-group>
               <v-list-item
-                v-for="(aUser, i) in lastUsers"
+                v-for="(comUser, i) in lastUsers"
                 :key="i"
               >
                 <v-list-item-avatar>
@@ -119,8 +118,8 @@
                   </v-avatar>
                 </v-list-item-avatar>
                 <v-list-item-content>
-                  <v-list-item-title v-text="aUser.name" />
-                  <v-list-item-content v-text="aUser.acceptedDate" />
+                  <v-list-item-title v-text="comUser.user.givenName" />
+                  <v-list-item-content v-text="comUser.acceptedDate" />
                 </v-list-item-content>
               </v-list-item>
             </v-list-item-group>
@@ -208,7 +207,7 @@ export default {
       default: false
     },
     lastUsers: {
-      type: Object,
+      type: Array,
       default: null
     }
   },
@@ -220,10 +219,6 @@ export default {
         { text: 'Mise en relation', number: 0 },
         { text: 'Km covoiturés', number: 0 },
         { text: 'kg de CO2 consommés', number: 0 },
-      ],
-      actualities:[
-        {'id': 1, 'title': "L'application V2 est bientot la"},
-        {'id': 2, 'title': "La nouvelle fonctionalité: la preuve du covoiturage"}
       ],
       search: '',
       headers: [
@@ -256,6 +251,11 @@ export default {
       return this.date
         ? moment(this.date).format(this.$t("ui.i18n.date.format.fullNumericDate"))
         : moment(new Date()).format(this.$t("ui.i18n.date.format.fullNumericDate"));
+    },
+    test() {
+      for (let lastUser in lastUsers) {
+        
+      }
     }
   },
   methods:{
@@ -268,11 +268,6 @@ export default {
     linkToCommunityWidget: function (item) {
       return '/community/show-widget/'+item.id;
     },
-    test() {
-      this.lastUsers.push({name: 'Ngouffo Doric', acceptedDate: '12/01/2019'})
-      console.error(this.lastUsers)
-      return 1;
-    }
   }
 }
 </script>

@@ -117,9 +117,7 @@ class CommunityController extends AbstractController
             }
         }
         $lastUsers = $communityManager->getLastUsers($id);
-        dump($lastUsers);
-       
-       
+     
         //test if the user logged is member of the community
         if (!is_null($user) && $user !=='' && in_array($user->getId(), $communityUsersId)) {
             $isMember = true;
