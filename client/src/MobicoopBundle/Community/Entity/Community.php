@@ -94,7 +94,7 @@ class Community implements ResourceInterface, \JsonSerializable
 
     /**
      * @var \DateTimeInterface Updated date of the event.
-     * 
+     *
      * @Groups("post")
      */
     private $updatedDate;

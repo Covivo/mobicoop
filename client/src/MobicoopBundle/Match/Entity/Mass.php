@@ -86,7 +86,7 @@ class Mass implements ResourceInterface
 
     /**
      * @var \DateTimeInterface Updated date of the import.
-     * 
+     *
      */
     private $updatedDate;
 

@@ -600,6 +600,4 @@ class Address
             $this->setGeoJson(new Point($this->getLongitude(), $this->getLatitude()));
         }
     }
-
-    
 }

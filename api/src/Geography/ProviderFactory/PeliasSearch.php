@@ -26,7 +26,7 @@ declare(strict_types=1);
 namespace App\Geography\ProviderFactory;
 
 use Geocoder\Collection;
-use Geocoder\Model\Address;
+use App\Geography\ProviderFactory\PeliasAddress;
 use Geocoder\Model\AddressCollection;
 use Geocoder\Query\GeocodeQuery;
 use Geocoder\Query\ReverseQuery;
@@ -48,6 +48,9 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
      * @var string
      */
     const REVERSE_ENDPOINT_URL = 'reverse?point.lat=%f&point.lon=%f&size=%d&lang=%s';
+
+    // minimum confidence to consider a result as pertinent
+    const MIN_CONFIDENCE = 0.8;
 
     /**
      * @var string
@@ -109,6 +112,17 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
         }
         $results = [];
         foreach ($locations as $location) {
+            $props = $location['properties'];
+
+            // we check the confidence and match type from pelias result properties
+            if ($props['match_type'] == 'fallback' && $props['confidence'] < self::MIN_CONFIDENCE) continue;
+
+            // we check if the search is a venue
+            $venue = null;
+            if ($props['layer'] == "venue") {
+                $venue = $props['name'];
+            }            
+
             $bounds = [
                 'south' => null,
                 'west' => null,
@@ -123,14 +137,14 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
                     'east' => $location['bbox'][0],
                 ];
             }
-            $props = $location['properties'];
+            
             $adminLevels = [];
             foreach (['localadmin', 'county', 'macrocounty', 'region', 'macroregion'] as $i => $component) {
                 if (isset($props[$component])) {
                     $adminLevels[] = ['name' => $props[$component], 'level' => $i + 1];
                 }
             }
-            $results[] = Address::createFromArray([
+            $result = PeliasAddress::createFromArray([
                 'providedBy' => $this->getName(),
                 'latitude' => $location['geometry']['coordinates'][1],
                 'longitude' => $location['geometry']['coordinates'][0],
@@ -142,8 +156,10 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
                 'postalCode' => isset($props['postalcode']) ? $props['postalcode'] : null,
                 'adminLevels' => $adminLevels,
                 'country' => isset($props['country']) ? $props['country'] : null,
-                'countryCode' => isset($props['country_a']) ? strtoupper($props['country_a']) : null,
+                'countryCode' => isset($props['country_a']) ? strtoupper($props['country_a']) : null
             ]);
+            $result->setVenue($venue);
+            $results[] = $result;
         }
         return new AddressCollection($results);
     }

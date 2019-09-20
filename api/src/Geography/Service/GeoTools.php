@@ -149,6 +149,22 @@ class GeoTools
 
         // The following parameters are in your env or local env
         
+        // venue
+        if (isset($this->params['displayVenue']) && trim($this->params['displayVenue'])==="true") {
+            if (trim($address->getVenue())!=="") {
+                $displayLabelTab[] = $address->getVenue();
+            }
+        }
+
+        // relay point
+        if (isset($this->params['displayRelayPoint']) && trim($this->params['displayRelayPoint'])==="true") {
+            if ($relayPoint = $address->getRelayPoint()) {
+                if (trim($relayPoint->getName())!=="") {
+                    $displayLabelTab[] = $relayPoint->getName();
+                }
+            }
+        }
+
         // street address
         if (isset($this->params['displayStreetAddress']) && trim($this->params['displayStreetAddress'])==="true") {
             if (trim($address->getStreetAddress())!=="") {

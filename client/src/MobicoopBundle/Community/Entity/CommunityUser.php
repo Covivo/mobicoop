@@ -84,7 +84,7 @@ class CommunityUser implements ResourceInterface
 
     /**
      * @var \DateTimeInterface Updated date of the community user.
-     * 
+     *
      */
     private $updatedDate;
 
