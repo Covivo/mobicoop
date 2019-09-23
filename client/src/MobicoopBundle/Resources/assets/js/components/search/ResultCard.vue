@@ -7,6 +7,32 @@
       <v-card
         flat
       >
+        <driver-passenger
+          :origin-latitude="originLatitude"
+          :origin-longitude="originLongitude"
+          :destination-latitude="destinationLatitude"
+          :destination-longitude="destinationLongitude"
+          :origin="origin"
+          :destination="destination"
+          :date="date"
+          :carpool-results="carpoolResults"
+          :matching-search-url="matchingSearchUrl"
+          :matching="matching.proposalRequest"
+          :regular="regular"
+        />
+        <driver-passenger
+          :origin-latitude="originLatitude"
+          :origin-longitude="originLongitude"
+          :destination-latitude="destinationLatitude"
+          :destination-longitude="destinationLongitude"
+          :origin="origin"
+          :destination="destination"
+          :date="date"
+          :carpool-results="carpoolResults"
+          :matching-search-url="matchingSearchUrl"
+          :matching="matching.proposalOffer"
+          :regular="regular"
+        />
         <!-- display result-journey-detailed card - proposal Request and proposalOffer in array(matchings) order-->
         <result-journey-detailed-card
           :origin-latitude="originLatitude"
@@ -31,6 +57,7 @@
           :carpool-results="carpoolResults"
           :matching-search-url="matchingSearchUrl"
           :matching="matching.proposalOffer"
+          :regular="regular"
         />
         <v-row
           justify="center"
@@ -39,7 +66,7 @@
         </v-row>
 
         <!-- display result-user-detailed card - proposal Request and proposalOffer in array(matchings) order-->
-        <result-user-detailed-card   
+        <result-user-detailed-card  
           :origin-latitude="originLatitude"
           :origin-longitude="originLongitude"
           :destination-latitude="destinationLatitude"
@@ -50,11 +77,12 @@
           :carpool-results="carpoolResults"
           :matching-search-url="matchingSearchUrl"
           :matching="matching.proposalRequest" 
+          :regular="regular"
         />   
         <v-row
           justify="center"
         />
-        <result-user-detailed-card
+        <result-user-detailed-card  
           :origin-latitude="originLatitude"
           :origin-longitude="originLongitude"
           :destination-latitude="destinationLatitude"
@@ -65,6 +93,7 @@
           :carpool-results="carpoolResults"
           :matching-search-url="matchingSearchUrl"
           :matching="matching.proposalOffer" 
+          :regular="regular"
         />
       </v-card>
     </v-container>
@@ -75,11 +104,14 @@ import moment from "moment";
 import 'moment/locale/fr';
 import ResultJourneyDetailedCard from "./ResultJourneyDetailedCard";
 import ResultUserDetailedCard from "./ResultUserDetailedCard";
+import DriverPassenger from "./DriverPassenger";
+
 export default {
   name: "ResultCard",
   components:{
     ResultJourneyDetailedCard,
-    ResultUserDetailedCard
+    ResultUserDetailedCard,
+    DriverPassenger
   },
   props: {
     origin: {
@@ -117,7 +149,11 @@ export default {
     carpoolResults: {
       type: Object,
       default: null
-    }
+    },
+    regular: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {      

@@ -47,6 +47,7 @@
           <search-journey
             :geo-search-url="geoSearchUrl"
             :user="user"
+            :regular="true"
             @change="searchChanged"
           />
         </v-flex>
@@ -175,17 +176,17 @@ export default {
     searchUnavailable() {
       return (!this.origin || !this.destination || this.loading == true)
     },
-    computedDateFormat() {
-      moment.locale(this.locale);
-      return this.date
-        ? moment(new Date(this.date+":"+this.time+":00Z")).utcOffset("+00:00").format()
-        : moment(new Date()).utcOffset("+00:00").format();
-    },
+    // computedDateFormat() {
+    //   moment.locale(this.locale);
+    //   return this.date
+    //     ? moment(new Date(this.date+":"+this.time+":00Z")).utcOffset("+00:00").format()
+    //     : moment(new Date()).utcOffset("+00:00").format();
+    // },
     dateFormated() {
       // return !this.date
       //   ? moment(new Date()).format("YYYYMMDDHHmmss")
       //   : moment(this.date).format("YYYYMMDDHHmmss");
-      return moment(new Date(this.date)).utcOffset("+00:00").format() //@TODO: Uncomment true method
+      return moment(new Date(this.date+":"+this.time+":00Z")).utcOffset("+00:00").format() //@TODO: Uncomment true method
       //TODO : see if we apply GMT or not
     },
 
@@ -199,6 +200,8 @@ export default {
     },
     search: function () {
       this.loading = true;
+      this.regular,
+
 
       window.location.href = this.urlToCall;
     },

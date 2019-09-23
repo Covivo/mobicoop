@@ -5,10 +5,11 @@
     >
       <!-- ponctual -->
       <v-col
-        justify-end
+        v-if="matching.criteria.frequency == 2"
+        cols="12"
       >
         <v-row
-          v-if="matching.criteria.frequency == 2"
+          justify="right"
         >
           <v-chip
             small
@@ -55,74 +56,24 @@
         </v-row>
       </v-col>
       <v-list-item>
-        <!-- Icon driver--> 
-        <v-list-item-avatar
-          v-show="passenger == false"
-          color="primary"
-          size="60"
-        >
-          <v-icon
-            dark
-            size="35"
-          >
-            mdi-steering
-          </v-icon>
-        </v-list-item-avatar>
-
-        <!-- Icon driver & passenger--> 
-        <v-col           
-          v-show="passenger == true && driver == true"
-        >
-          <v-list-item-avatar
-            color="secondary"
-            size="60"
-          >
-            <v-icon
-              dark
-              size="35"
-            >
-              mdi-account-supervisor 
-            </v-icon>
-          </v-list-item-avatar>
-
-          <v-list-item-avatar
-            color="primary"
-            size="60"
-          >
-            <v-icon
-              dark
-              size="35"
-            >
-              mdi-steering
-            </v-icon>
-          </v-list-item-avatar>
-        </v-col>
-
-        <!-- Icon passenger--> 
-          
-        <v-list-item-avatar
-          v-show="driver == false"
-          color="secondary"
-          size="60"
-        >
-          <v-icon
-            dark
-            size="35"
-          >
-            mdi-account-supervisor 
-          </v-icon>
-        </v-list-item-avatar>
-
         <!-- Hour & Date -->
         <v-list-item-content
           class="ml-2"
         >
           <v-list-item-title
+            v-if="matching.criteria.frequency == 1"
             class="text-address-size"
           >
-            <h3>{{ computedTimeFormated }}</h3>
+            <h3>{{ computedTimeFormatedOccasional }}</h3>
           </v-list-item-title>
-          <v-list-item-title class="date-uppercase">
+          <v-list-item-title
+            v-else
+          >
+            <h3>{{ computedTimeFormatedRegular }}</h3>
+          </v-list-item-title>
+          <v-list-item-title 
+            v-if="matching.criteria.frequency == 1"
+          >
             {{ computedDateFormated }}
           </v-list-item-title>
         </v-list-item-content>
@@ -149,7 +100,7 @@
           cols="1"
         >
           <v-icon
-            scolor="secondary"
+            color="secondary"
             size="32"
           >
             mdi-ray-start-end
@@ -175,6 +126,7 @@
 
         <!--seats --> 
         <v-col
+          v-if="passenger==false && driver ==true"
           align="center"
         >
           <p>
@@ -185,6 +137,7 @@
 
         <!-- price --> 
         <v-col
+          v-if="passenger==false && driver ==true"
           align="center"
           justify="end"
           class="price"
@@ -243,6 +196,10 @@ export default {
     matching: {
       type: Object,
       default: null
+    },
+    regular: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -252,13 +209,16 @@ export default {
     };
   },
   computed: {
-    computedTimeFormated() {
+    computedTimeFormatedOccasional() {
       return moment(new Date(this.matching.criteria.fromTime)).utcOffset("+00:00").format("HH[h]mm")
+    },
+    computedTimeFormatedRegular() {
+      return moment(new Date(this.matching.criteria.monTime)).utcOffset("+00:00").format("HH[h]mm")
     },
     computedDateFormated() {
       return moment(new Date(this.matching.criteria.fromDate)).utcOffset("+00:00").format("ddd DD/MM")
     }
-  },
+  }
 }
 </script>
 

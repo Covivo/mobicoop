@@ -54,7 +54,9 @@
             dark
             class="ml-6-5"
           >
-            <v-icon>
+            <v-icon
+              @click="buttonAlert('en cours de développement',$event);"
+            >
               mdi-lead-pencil
             </v-icon>
           </v-btn>
@@ -132,6 +134,7 @@
             :date="date"
             :carpool-results="results"
             :matching-search-url="matchingSearchUrl"
+            :regular="regular"
           />
         </v-col>
       </v-row>
@@ -148,6 +151,8 @@ import TranslationsClient from "@clientTranslations/components/simpleResults.jso
 import moment from "moment";
 import 'moment/locale/fr';
 import ResultCard from "./ResultCard";
+import SearchJourney from "../carpool/SearchJourney";
+
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
@@ -192,7 +197,7 @@ export default {
     user: {
       type:Object,
       default: null
-    }
+    },
   },
   data : function() {
     return {
@@ -239,7 +244,11 @@ export default {
     },  
     displaydate(date){
       return moment (new Date(date)).utcOffset("+00:00").format('ddd D MMMM YYYY')
-    }
+    },
+    buttonAlert(msg, e) {
+      alert(msg);
+      console.log(e);
+    },
     //fill Results
   }
 };
