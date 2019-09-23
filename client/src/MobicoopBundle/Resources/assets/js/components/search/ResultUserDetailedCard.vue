@@ -96,7 +96,8 @@
             color="success"
             large
             dark
-            @click="contactForCarpool(matching.proposalOffer.id)"
+            :loading="loading"
+            @click="dialog = true"
           >
             <span>
               Covoiturer
@@ -105,6 +106,36 @@
         </v-row>
       </v-list-item>
     </v-container>
+
+    <v-dialog
+      v-model="dialog"
+      persistent
+      max-width="290"
+    >
+      <v-card>
+        <v-card-title class="headline">
+          Contacter pour un covoiturage
+        </v-card-title>
+        <v-card-text>Etes-vous sur de vouloir contacter XXX pour un covoiturage ?</v-card-text>
+        <v-card-actions>
+          <div class="flex-grow-1" />
+          <v-btn
+            color="error"
+            text
+            @click="dialog = false"
+          >
+            Non
+          </v-btn>
+          <v-btn
+            color="success"
+            text
+            @click="dialog = false;contactForCarpool(matching.proposalOffer.id);"
+          >
+            Oui
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-content>
 </template>
 
@@ -175,7 +206,9 @@ export default {
   data () {
     return {
       togglePhoneButton: false,
-      matchings: this.matching
+      matchings: this.matching,
+      dialog: false,
+      loading: false
     };
   },
   methods: {
@@ -189,6 +222,7 @@ export default {
       return moment(new Date(date)).utcOffset("+00:00").format()
     }, 
     contactForCarpool(proposalId){
+      this.loading = true;
       axios.get(this.matchingSearchUrl+"/contactforcarpool", {
         params:{
           "proposalId":proposalId,
@@ -208,11 +242,27 @@ export default {
         }
       })
         .then((response) => {
-          console.log(response);
+          if(response.data=="ok"){
+            //this.emitSnackbar('snackBar.success','success')
+            window.location = "/utilisateur/messages";
+          }
+          else{
+            this.emitSnackbar('snackBar.error','error')
+          }
         })
         .catch((error) => {
           console.log(error);
-        });
+          this.emitSnackbar('snackBar.error','error')
+        })
+        .finally(() => {
+          this.loading = false;
+        })
+    },
+    emitSnackbar(text,color){
+      this.$emit('snackbarEvt',{
+        text:text,
+        color:color
+      });
     }
   }
 }

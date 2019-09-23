@@ -162,7 +162,13 @@ class CarpoolController extends AbstractController
             $data["passenger"] = false;
         }
 
-        return $proposalManager->createProposalFromResult($data, $userManager->getLoggedUser());
+        $proposal = $proposalManager->createProposalFromResult($data, $userManager->getLoggedUser());
+        if($proposal!==null){
+            return $this->json("ok");
+        }
+        else{
+            return $this->json("error");
+        }
     }
 
 
