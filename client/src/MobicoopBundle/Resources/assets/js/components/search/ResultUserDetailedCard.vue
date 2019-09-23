@@ -96,6 +96,7 @@
             color="success"
             large
             dark
+            @click="contactForCarpool(matching.proposalOffer.id)"
           >
             <span>
               Covoiturer
@@ -108,6 +109,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import moment from "moment";
 import 'moment/locale/fr';
 export default {
@@ -152,6 +154,22 @@ export default {
     matching: {
       type: Object,
       default: null
+    },
+    seats: {
+      type: Number,
+      default:0
+    },
+    priceKm: {
+      type: Number,
+      default:0
+    },
+    driver: {
+      type: Boolean,
+      default:false
+    },
+    passenger: {
+      type: Boolean,
+      default:false
     }
   },
   data () {
@@ -166,7 +184,36 @@ export default {
     },
     formatedYear (){
       return moment().diff(moment(this.matching.proposalOffer.user.birthDate),'years')
-    } 
+    }, 
+    dateFormated(date) {
+      return moment(new Date(date)).utcOffset("+00:00").format()
+    }, 
+    contactForCarpool(proposalId){
+      axios.get(this.matchingSearchUrl+"/contactforcarpool", {
+        params:{
+          "proposalId":proposalId,
+          "origin_addressLocality": this.origin,
+          "origin_streetAddress": "", /** To do */
+          "destination_addressLocality": this.destination,
+          "destination_streetAddress": "", /** To do */
+          "origin_latitude": Number(this.originLatitude),
+          "origin_longitude": Number(this.originLongitude),
+          "destination_latitude": Number(this.destinationLatitude),
+          "destination_longitude": Number(this.destinationLongitude),
+          "date": this.dateFormated(this.date),
+          "priceKm": this.matching.criteria.priceKm,
+          "driver": this.matching.criteria.driver,
+          "passenger": this.matching.criteria.passenger,
+          "frequency": this.matching.criteria.frequency
+        }
+      })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   }
 }
 </script>

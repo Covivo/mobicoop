@@ -711,7 +711,7 @@ export default {
       if (this.luggage) postObject.luggage = this.luggage;
       if (this.bike) postObject.bike = this.bike;
       if (this.backSeats) postObject.backSeats = this.backSeats;
-      if (this.price) postObject.price = this.price;
+      if (this.price) postObject.price = this.pricePerKm;
       if (this.message) postObject.message = this.message;
       this.loading = true;
       var self = this;
@@ -725,7 +725,7 @@ export default {
             var urlRedirect = `${self.baseUrl}/`+self.resultsUrl.replace(/{id}/,response.data.result.id);
             window.location.href = urlRedirect;
           }
-          console.log(response);
+          //console.log(response);
         })
         .catch(function (error) {
           console.log(error);

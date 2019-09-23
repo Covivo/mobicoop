@@ -128,6 +128,10 @@
             :date="date"
             :carpool-results="results"
             :matching-search-url="matchingSearchUrl"
+            :origin-latitude="originLatitude"
+            :origin-longitude="originLongitude"
+            :destination-latitude="destinationLatitude"
+            :destination-longitude="destinationLongitude"
           />
 
           <!--card use vdivider for middle line-->
