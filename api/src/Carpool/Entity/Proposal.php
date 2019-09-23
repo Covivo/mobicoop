@@ -270,6 +270,7 @@ class Proposal
 
     /**
      * @var Proposal|null The proposal we know that already matched by this new proposal
+     * @Groups({"read","write"})
      */
     private $matchedProposal;
         

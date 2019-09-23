@@ -34,6 +34,7 @@ use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManage
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller class for carpooling related actions.
@@ -158,10 +159,7 @@ class CarpoolController extends AbstractController
             $data["passenger"] = false;
         }
 
-        $proposalManager->createProposalFromResult($data, $userManager->getLoggedUser());
-
-
-        return $this->json("ok");
+        return $proposalManager->createProposalFromResult($data, $userManager->getLoggedUser());
     }
 
 

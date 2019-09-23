@@ -51,11 +51,13 @@ class Proposal implements ResourceInterface, \JsonSerializable
     
     /**
      * @var int The id of this proposal.
+     * @Groups({"post","put"})
      */
     private $id;
     
     /**
      * @var string|null The iri of this proposal.
+     * @Groups({"post","put"})
      */
     private $iri;
 
@@ -135,6 +137,7 @@ class Proposal implements ResourceInterface, \JsonSerializable
     
     /**
      * @var Proposal|null The proposal we know that already matched by this new proposal
+     * @Groups({"post","put"})
      */
     private $matchedProposal;
 
@@ -453,7 +456,8 @@ class Proposal implements ResourceInterface, \JsonSerializable
         return
         [
             'id'                => $this->getId(),
-            'proposalLinkedId'  => (int)$this->getProposalLinked()
+            'proposalLinkedId'  => (int)$this->getProposalLinked(),
+            'matchedProposal'  => $this->getMatchedProposal()
         ];
     }
 }

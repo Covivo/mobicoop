@@ -162,7 +162,7 @@ class ProposalManager
      * @param array $ad The data posted by the user
      * @param User $poster The poster of the ad
      * @param boolean $persist If we persist the proposal in the database (false for a simple search)
-     * @return void
+     * @return Proposal
      */
     public function createProposalFromAd(array $ad, User $poster, $persist = true)
     {
@@ -592,11 +592,11 @@ class ProposalManager
      *
      * @param array $ad The data posted by the user (the search)
      * @param User $poster The poster of the ad
-     * @return void
+     * @return Proposal
      */
     public function createProposalFromResult(array $ad, User $poster)
     {
         // First we need to create a real proposal from the search
-        $proposalFromSearch = $this->createProposalFromAd($ad, $poster);
+        return $this->createProposalFromAd($ad, $poster);
     }
 }
