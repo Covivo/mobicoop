@@ -134,13 +134,13 @@ class CommunityManager
         return $response->getValue()->getMember();
     }
 
-       /**
+    /**
      * Get one community
      *
      * @return Community|null
      */
     public function getCommunityUser(int $communityId, int $userId)
-    {   
+    {
         $this->dataProvider->setClass(CommunityUser::class);
         $response = $this->dataProvider->getCollection(['community.id'=>$communityId, 'user.id'=>$userId]);
         return $response->getValue()->getMember();

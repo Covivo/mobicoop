@@ -121,8 +121,8 @@ class CommunityController extends AbstractController
                 // get all community users ID
                 array_push($communityUsersId, $communityUser->getUser()->getId());
                 if ($communityUser->getStatus() == 1) {
-                // get all community Users
-                array_push($users, $communityUser->getUser());
+                    // get all community Users
+                    array_push($users, $communityUser->getUser());
                 }
             }
         }
@@ -132,7 +132,7 @@ class CommunityController extends AbstractController
         foreach ($lastUsers as $key => $commUser) {
             $lastUsersFormated[$key]["name"]=ucfirst($commUser->getUser()->getGivenName())." ".ucfirst($commUser->getUser()->getFamilyName());
             $lastUsersFormated[$key]["acceptedDate"]=$commUser->getAcceptedDate()->format('d/m/Y');
-                    }
+        }
      
         //test if the user logged is member of the community
         if (!is_null($user) && $user !=='' && in_array($user->getId(), $communityUsersId)) {
@@ -151,7 +151,7 @@ class CommunityController extends AbstractController
             'users' => $users,
             'lastUsers' => $lastUsersFormated,
             'isLogged' => $isLogged,
-            // 'coverImage' => $coverImage 
+            // 'coverImage' => $coverImage
         ]);
     }
 
@@ -163,8 +163,8 @@ class CommunityController extends AbstractController
      * @param UserManager $userManager
      * @return void
      */
-    public function communityUser(int $id, CommunityManager $communityManager, UserManager $userManager) {
-        
+    public function communityUser(int $id, CommunityManager $communityManager, UserManager $userManager)
+    {
         $communityUser = $communityManager->getCommunityUser($id, $userManager->getLoggedUser()->getId());
         $reponseofmanager= $this->handleManagerReturnValue($communityUser);
         if (!empty($reponseofmanager)) {
@@ -192,7 +192,6 @@ class CommunityController extends AbstractController
         }
         //test if the user logged is already a member of the community
         if ($user && $user !=='' && !in_array($user->getId(), $communityUsersId)) {
-           
             $communityUser = new CommunityUser();
             
             $communityUser->setCommunity(new Community($id));
