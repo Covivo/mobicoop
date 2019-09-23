@@ -124,13 +124,25 @@ class CommunityManager
     {
         $this->dataProvider->setClass(CommunityUser::class);
         $params=[];
-        $params['order[acceptedDate]'] = "asc";
+        $params['order[acceptedDate]'] = "desc";
         $params['status'] = 1;
         $params['perPage'] = 3;
         if ($id) {
             $params['id'] = $id;
         }
         $response = $this->dataProvider->getCollection($params);
+        return $response->getValue()->getMember();
+    }
+
+       /**
+     * Get one community
+     *
+     * @return Community|null
+     */
+    public function getCommunityUser(int $communityId, int $userId)
+    {   
+        $this->dataProvider->setClass(CommunityUser::class);
+        $response = $this->dataProvider->getCollection(['community.id'=>$communityId, 'user.id'=>$userId]);
         return $response->getValue()->getMember();
     }
 }

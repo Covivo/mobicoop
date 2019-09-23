@@ -181,12 +181,21 @@ community_show:
     requirements:
         id: '\d+'
 
-# display one community
+# join a community
 community_join:
     path:
         fr: /rejoindre-communaute/{id}
         en: /join-community/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::joinCommunity
+    requirements:
+        id: '\d+'
+
+# get a community user
+community_user:
+    path:
+        fr: /community-user/{id}
+        en: /community-user/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityUser
     requirements:
         id: '\d+'
 

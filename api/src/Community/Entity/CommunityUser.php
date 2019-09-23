@@ -60,7 +60,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *      },
  *      itemOperations={"get","put","delete"}
  * )
- * @ApiFilter(NumericFilter::class, properties={"community.id","user.id","status"})
+ * @ApiFilter(NumericFilter::class, properties={"user.id","community.id","status"})
  * @ApiFilter(OrderFilter::class, properties={"acceptedDate"}, arguments={"orderParameterName"="order"})
  */
 class CommunityUser

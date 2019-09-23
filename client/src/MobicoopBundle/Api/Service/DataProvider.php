@@ -354,9 +354,11 @@ class DataProvider
                 $value = $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true));
             }
             if ($clientResponse->getStatusCode() == 201) {
+                dump("voilà");
                 return new Response($clientResponse->getStatusCode(), $value);
             }
         } catch (ServerException $e) {
+            dump("la");
             return new Response($e->getCode(), $e->getMessage());
         }
         return new Response();

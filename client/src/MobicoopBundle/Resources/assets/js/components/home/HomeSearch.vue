@@ -59,6 +59,7 @@
       >
         <v-col
           cols="3"
+          offset="2"
         >
           <v-btn
             v-if="isMember"
@@ -74,6 +75,7 @@
           cols="3"
         >
           <v-btn
+
             :disabled="searchUnavailable"
             :loading="loading"
             color="success"

@@ -7,20 +7,16 @@
     {{ encore_entry_link_tags("#{assets_prefix ?? ''}community/showCommunity") }}
 {% endblock %}
 {% block main %}
-    {# @var community \Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community#}
-    {% set paths= [] %}
-
-    {% set defaultPreviewCommunity = 'https://picsum.photos/id/237/600/300' %}
-    {% set paths = paths|merge({'community_images':community.images.first |default(defaultPreviewCommunity)}) %}
 
         <community-display
                 :community="{{ community|json_encode }}" 
                 :users="{{ users|json_encode }}"
-                :paths="{{ paths|json_encode }}"
                 :geodata="{{ {'geocompleteuri':geoCompleteUri, 'searchroute':searchRoute}|json_encode }}"
                 :user="{{ app.user|json_encode }}"
                 :last-users= "{{ lastUsers|json_encode }}"
                 :is-member="{{ isMember|json_encode }}"
+                :is-logged="{{ isLogged|json_encode }}"
+                {# :cover-image="{{ coverImage|json_encode }}" #}
         ></community-display>
 
 {% endblock %}

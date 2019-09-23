@@ -140,6 +140,7 @@ class Community implements ResourceInterface, \JsonSerializable
     {
         if ($id) {
             $this->setId($id);
+            $this->setIri("/communities/".$id);
         }
         $this->images = new ArrayCollection();
         $this->proposals = new ArrayCollection();

@@ -31,6 +31,7 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Community\Form\CommunityForm;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller class for community related actions.
@@ -81,7 +82,7 @@ class CommunityController extends AbstractController
     /**
      * Show a community
      */
-    public function show($id, CommunityManager $communityManager, Request $request, UserManager $userManager)
+    public function show($id, CommunityManager $communityManager, UserManager $userManager)
     {
         //Variable who indicate if user is part of community
         $isMember = false;
@@ -91,6 +92,10 @@ class CommunityController extends AbstractController
         $users = [];
         // Last three community users
         $lastUsers = [];
+        $lastUsersFormated = [];
+        // indicate if a user is logged
+        $isLogged = false;
+        
 
         // retrive community;
         $community = $communityManager->getCommunity($id);
@@ -102,6 +107,9 @@ class CommunityController extends AbstractController
         // retrive logged user
         $this->denyAccessUnlessGranted('show', $community);
         $user = $userManager->getLoggedUser();
+        if ($user) {
+            $isLogged = true;
+        }
         $reponseofmanager= $this->handleManagerReturnValue($user);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
@@ -112,16 +120,28 @@ class CommunityController extends AbstractController
             foreach ($community->getCommunityUsers() as $communityUser) {
                 // get all community users ID
                 array_push($communityUsersId, $communityUser->getUser()->getId());
+                if ($communityUser->getStatus() == 1) {
                 // get all community Users
                 array_push($users, $communityUser->getUser());
+                }
             }
         }
+
+        // get the last 3 users and formate them to be used with vue
         $lastUsers = $communityManager->getLastUsers($id);
+        foreach ($lastUsers as $key => $commUser) {
+            $lastUsersFormated[$key]["name"]=ucfirst($commUser->getUser()->getGivenName())." ".ucfirst($commUser->getUser()->getFamilyName());
+            $lastUsersFormated[$key]["acceptedDate"]=$commUser->getAcceptedDate()->format('d/m/Y');
+                    }
      
         //test if the user logged is member of the community
         if (!is_null($user) && $user !=='' && in_array($user->getId(), $communityUsersId)) {
             $isMember = true;
         }
+
+        // to do when activeted
+        // get the cover image of the community
+        // $coverImage = $community->getImages()->getOne();
         
         return $this->render('@Mobicoop/community/showCommunity.html.twig', [
             'community' => $community,
@@ -129,8 +149,28 @@ class CommunityController extends AbstractController
             'isMember' => $isMember,
             'searchRoute' => "covoiturage/recherche",
             'users' => $users,
-            'lastUsers' => $lastUsers
+            'lastUsers' => $lastUsersFormated,
+            'isLogged' => $isLogged,
+            // 'coverImage' => $coverImage 
         ]);
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param [type] $id
+     * @param CommunityManager $communityManager
+     * @param UserManager $userManager
+     * @return void
+     */
+    public function communityUser(int $id, CommunityManager $communityManager, UserManager $userManager) {
+        
+        $communityUser = $communityManager->getCommunityUser($id, $userManager->getLoggedUser()->getId());
+        $reponseofmanager= $this->handleManagerReturnValue($communityUser);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
+        return $this->json($communityUser);
     }
 
 
@@ -145,19 +185,17 @@ class CommunityController extends AbstractController
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
-        $usersCommunity = array();
-
-        //test if the community has members
-        if (count($community->getCommunityUsers()) > 0) {
-            foreach ($community->getCommunityUsers() as $userInCommunity) {
-                $usersCommunity = [$userInCommunity->getUser()->getId()];
-            }
+        $communityUsersId = [];
+        foreach ($community->getCommunityUsers() as $communityUser) {
+            // get all community users ID
+            array_push($communityUsersId, $communityUser->getUser()->getId());
         }
-        //test if the user logged is member of the community
-        if (!is_null($user) && $user !=='' && !in_array($user->getId(), $usersCommunity)) {
+        //test if the user logged is already a member of the community
+        if ($user && $user !=='' && !in_array($user->getId(), $communityUsersId)) {
+           
             $communityUser = new CommunityUser();
-//        $this->denyAccessUnlessGranted('show', $community);
-            $communityUser->setCommunity($community);
+            
+            $communityUser->setCommunity(new Community($id));
             $communityUser->setUser($user);
             $communityUser->setCreatedDate(new \DateTime());
             $communityUser->setStatus(0);
@@ -168,7 +206,6 @@ class CommunityController extends AbstractController
                 return $reponseofmanager;
             }
         }
-
-        return $this->redirectToRoute('community_show', ['id' => $id]);
+        return new Response();
     }
 }

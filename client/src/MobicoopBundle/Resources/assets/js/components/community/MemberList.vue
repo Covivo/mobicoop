@@ -14,7 +14,6 @@
         <v-col cols="6">
           <div class="flex-grow-1" />
           <v-card
-            class="ma-3 pa-6"
             flat
           >
             <v-text-field

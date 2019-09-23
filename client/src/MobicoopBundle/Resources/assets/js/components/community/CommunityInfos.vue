@@ -5,7 +5,13 @@
       size="225"
     >
       <img
-        src="https://vuetifyjs.com/apple-touch-icon-180x180.png"
+        v-if="!coverImage"
+        src="/images/avatar.svg"
+        alt="avatar"
+      >
+      <img
+        v-else
+        src="coverImage.url"
         alt="avatar"
       >
     </v-avatar>
@@ -14,7 +20,7 @@
 <script>
 export default {
   props:{
-    paths: {
+    coverImage: {
       type: Object,
       default: null
     }
