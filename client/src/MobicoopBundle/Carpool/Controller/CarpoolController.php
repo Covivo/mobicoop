@@ -126,6 +126,9 @@ class CarpoolController extends AbstractController
      */
     public function contactForCarpool(Request $request, ProposalManager $proposalManager, UserManager $userManager)
     {
+        // The matched proposal
+        $matchedProposal = $proposalManager->getProposal($request->query->get('proposalId'));
+
         $data = [
             "proposalId" => (int)$request->query->get('proposalId'),
             "origin"=>[
@@ -144,7 +147,7 @@ class CarpoolController extends AbstractController
             "outwardDate" => Datetime::createFromFormat("Y-m-d\TH:i:s\Z", $request->query->get('date'))->format("Y-m-d"),
             "outwardTime" => Datetime::createFromFormat("Y-m-d\TH:i:s\Z", $request->query->get('date'))->format("H:i"),
             "seats" => 1,
-            "price" => (float)$request->query->get('priceKm'),
+            "price" => (float)$matchedProposal->getCriteria()->getPriceKm(),
             "regular" => ((int)$request->query->get('frequency')==1)?false:true
         ];
 
