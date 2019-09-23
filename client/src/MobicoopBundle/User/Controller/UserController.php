@@ -469,6 +469,8 @@ class UserController extends AbstractController
         $idMessageDefaultSelected = false;
 
         foreach ($threads["threads"] as $thread) {
+            $arrayThread = [];
+
             $arrayThread["idThreadMessage"] = $thread["id"];
             if (!isset($thread["user"]["id"])) {
                 // the user is the sender
@@ -498,7 +500,6 @@ class UserController extends AbstractController
                     $arrayThread["firstWayPoint"] = $thread["askHistory"]["ask"]["matching"]["waypoints"][0]["address"]["addressLocality"];
                     $arrayThread["lastWayPoint"] = $thread["askHistory"]["ask"]["matching"]["waypoints"][count($thread["askHistory"]["ask"]["matching"]["waypoints"])-1]["address"]["addressLocality"];
 
-                    
                     if ($thread["askHistory"]["ask"]["matching"]['criteria']["frequency"]==1) {
                         // Punctual, we show the from date
                         $fromDate = new DateTime($thread["askHistory"]["ask"]["matching"]['criteria']["fromDate"]);
@@ -554,6 +555,7 @@ class UserController extends AbstractController
             // Push on the right array
             (is_null($thread["askHistory"])) ? $threadsDirectMessagesForView[] = $arrayThread : $threadsCarpoolingMessagesForView[] = $arrayThread;
         }
+        
         return $this->render('@Mobicoop/user/messages.html.twig', [
             'threadsDirectMessagesForView' => $threadsDirectMessagesForView,
             'threadsCarpoolingMessagesForView' => $threadsCarpoolingMessagesForView,
