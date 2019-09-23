@@ -195,16 +195,12 @@ class ProposalManager
             foreach ($matchings as $matching) {
 
                 // If there is a already matched proposal we need to find the right matching and create the Ask
-                if($proposal->getMatchedProposal()!==null){
-
-                    if( $proposal->getMatchedProposal()->getId() === $matching->getProposalOffer()->getId() ||
+                if ($proposal->getMatchedProposal()!==null) {
+                    if ($proposal->getMatchedProposal()->getId() === $matching->getProposalOffer()->getId() ||
                         $proposal->getMatchedProposal()->getId() === $matching->getProposalRequest()->getId()
-                    ){
-
+                    ) {
                         $this->askManager->createAskFromMatchedProposal($proposal, $matching);
-                        
                     }
-
                 }
 
                 // dispatch en event
