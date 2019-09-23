@@ -34,6 +34,7 @@ use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManage
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller class for carpooling related actions.
@@ -129,6 +130,57 @@ class CarpoolController extends AbstractController
             DataProvider::RETURN_JSON
         ));
     }
+
+    /**
+     * Initiate contact from carpool results
+     */
+    public function contactForCarpool(Request $request, ProposalManager $proposalManager, UserManager $userManager)
+    {
+        // The matched proposal
+        $matchedProposal = $proposalManager->getProposal($request->query->get('proposalId'));
+
+        $data = [
+            "proposalId" => (int)$request->query->get('proposalId'),
+            "origin"=>[
+                "latitude" => (float)$request->query->get('origin_latitude'),
+                "longitude" => (float)$request->query->get('origin_longitude'),
+                "streetAddress" => $request->query->get('origin_streetAddress'),
+                "addressLocality" => $request->query->get('origin_addressLocality')
+            ],
+            "destination"=>[
+                "latitude" => (float)$request->query->get('destination_latitude'),
+                "longitude" => (float)$request->query->get('destination_longitude'),
+                "streetAddress" => $request->query->get('destination_streetAddress'),
+                "addressLocality" => $request->query->get('destination_addressLocality')
+            ],
+            "waypoints"=>[],
+            "outwardDate" => Datetime::createFromFormat("Y-m-d\TH:i:s\Z", $request->query->get('date'))->format("Y-m-d"),
+            "outwardTime" => Datetime::createFromFormat("Y-m-d\TH:i:s\Z", $request->query->get('date'))->format("H:i"),
+            "seats" => 1,
+            "price" => (float)$matchedProposal->getCriteria()->getPriceKm(),
+            "regular" => ((int)$request->query->get('frequency')==1)?false:true
+        ];
+
+        if ((bool)$request->query->get('driver') && (bool)$request->query->get('passenger')) {
+            $data["driver"] = true;
+            $data["passenger"] = true;
+        } elseif ((bool)$request->query->get('driver')) {
+            $data["driver"] = false;
+            $data["passenger"] = true;
+        } else {
+            $data["driver"] = true;
+            $data["passenger"] = false;
+        }
+
+        $proposal = $proposalManager->createProposalFromResult($data, $userManager->getLoggedUser());
+        if ($proposal!==null) {
+            return $this->json("ok");
+        } else {
+            return $this->json("error");
+        }
+    }
+
+
 
     /**
      * Provider rdex

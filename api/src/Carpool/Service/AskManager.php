@@ -30,6 +30,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Carpool\Event\AskPostedEvent;
 use App\Carpool\Event\AskUpdatedEvent;
 use App\Carpool\Entity\AskHistory;
+use App\Carpool\Entity\Proposal;
+use App\Carpool\Entity\Matching;
+use App\Communication\Entity\Message;
+use App\Communication\Entity\Recipient;
 
 /**
  * Ask manager service.
@@ -101,5 +105,48 @@ class AskManager
         $this->entityManager->persist($askHistory);
 
         return $askHistory;
+    }
+
+    /**
+     * Create an ask from already matched Proposal
+     * @param Proposal $proposal The new Proposal
+     * @param Matching $matching between those two proposals
+     */
+    public function createAskFromMatchedProposal(Proposal $proposal, Matching $matching)
+    {
+        $ask = new Ask();
+        $ask->setStatus(Ask::STATUS_INITIATED); // Initial state of an Ask
+        $ask->setType($proposal->getType());
+        $ask->setUser($proposal->getUser());
+        $ask->setMatching($matching);
+        $ask->setCriteria($proposal->getCriteria());
+        
+        // We are using the new proposal waypoints to create the Ask's waypoints
+        $waypoints = $proposal->getWaypoints();
+        foreach ($waypoints as $waypoint) {
+            $ask->addWaypoint($waypoint);
+        }
+
+        // Ask History
+        $askHistory = new AskHistory();
+        $askHistory->setStatus(1);
+        $askHistory->setType($ask->getType());
+        // We need an empty initial message however it would not appear in the mailbox
+        $message = new Message();
+        $message->setText("");
+        $message->setUser($proposal->getUser());
+
+        // I'm setting the right receipient
+        $recipient = new Recipient();
+        $recipient->setStatus(Recipient::STATUS_READ);
+        $recipient->setUser($proposal->getMatchedProposal()->getUser());
+        $message->addRecipient($recipient);
+
+        $askHistory->setMessage($message);
+
+
+        $ask->addAskHistory($askHistory);
+        
+        return $this->createAsk($ask);
     }
 }

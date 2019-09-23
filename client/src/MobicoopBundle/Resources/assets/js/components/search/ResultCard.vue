@@ -21,9 +21,17 @@
           <v-divider class="divider-width" />
         </v-row>
         <result-user-detailed-card 
+          :origin="origin"
+          :destination="destination"
+          :date="date"
+          :origin-latitude="originLatitude"
+          :origin-longitude="originLongitude"
+          :destination-latitude="destinationLatitude"
+          :destination-longitude="destinationLongitude"
           :carpool-results="carpoolResults"
           :matching-search-url="matchingSearchUrl"
           :matching="matching"
+          @snackbarEvt="evtSnackBar"
         />
       </v-card>
     </v-container>
@@ -88,6 +96,11 @@ export default {
       // this.matchings=[this.carpoolResults.matchingRequests].concat([this.carpoolResults.matchingOffers]);
       // this.matchings=this.carpoolResults.matchingRequests.concat(this.carpoolResults.matchingOffers);
       this.matchings=this.carpoolResults.matchingRequests
+    }
+  },
+  methods: {
+    evtSnackBar(data){
+      this.$emit('snackbarEvt',data);
     }
   }
 }

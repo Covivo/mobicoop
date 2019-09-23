@@ -110,6 +110,7 @@ class Message implements ResourceInterface
     {
         if ($id) {
             $this->setId($id);
+            $this->setIri("/messages/".$id);
         }
         $this->recipients = new ArrayCollection();
     }
@@ -201,7 +202,7 @@ class Message implements ResourceInterface
     {
         if (!$this->recipients->contains($recipient)) {
             $this->recipients[] = $recipient;
-            $recipient->setMessage($this);
+            //$recipient->setMessage($this);
         }
     }
     

@@ -96,6 +96,8 @@
             color="success"
             large
             dark
+            :loading="loading"
+            @click="dialog = true"
           >
             <span>
               Covoiturer
@@ -104,10 +106,41 @@
         </v-row>
       </v-list-item>
     </v-container>
+
+    <v-dialog
+      v-model="dialog"
+      persistent
+      max-width="290"
+    >
+      <v-card>
+        <v-card-title class="headline">
+          Contacter pour un covoiturage
+        </v-card-title>
+        <v-card-text>Etes-vous sur de vouloir contacter XXX pour un covoiturage ?</v-card-text>
+        <v-card-actions>
+          <div class="flex-grow-1" />
+          <v-btn
+            color="error"
+            text
+            @click="dialog = false"
+          >
+            Non
+          </v-btn>
+          <v-btn
+            color="success"
+            text
+            @click="dialog = false;contactForCarpool(matching.proposalOffer.id);"
+          >
+            Oui
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-content>
 </template>
 
 <script>
+import axios from "axios";
 import moment from "moment";
 import 'moment/locale/fr';
 export default {
@@ -152,12 +185,30 @@ export default {
     matching: {
       type: Object,
       default: null
+    },
+    seats: {
+      type: Number,
+      default:0
+    },
+    priceKm: {
+      type: Number,
+      default:0
+    },
+    driver: {
+      type: Boolean,
+      default:false
+    },
+    passenger: {
+      type: Boolean,
+      default:false
     }
   },
   data () {
     return {
       togglePhoneButton: false,
-      matchings: this.matching
+      matchings: this.matching,
+      dialog: false,
+      loading: false
     };
   },
   methods: {
@@ -166,7 +217,53 @@ export default {
     },
     formatedYear (){
       return moment().diff(moment(this.matching.proposalOffer.user.birthDate),'years')
-    } 
+    }, 
+    dateFormated(date) {
+      return moment(new Date(date)).utcOffset("+00:00").format()
+    }, 
+    contactForCarpool(proposalId){
+      this.loading = true;
+      axios.get(this.matchingSearchUrl+"/contactforcarpool", {
+        params:{
+          "proposalId":proposalId,
+          "origin_addressLocality": this.origin,
+          "origin_streetAddress": "", /** To do */
+          "destination_addressLocality": this.destination,
+          "destination_streetAddress": "", /** To do */
+          "origin_latitude": Number(this.originLatitude),
+          "origin_longitude": Number(this.originLongitude),
+          "destination_latitude": Number(this.destinationLatitude),
+          "destination_longitude": Number(this.destinationLongitude),
+          "date": this.dateFormated(this.date),
+          "priceKm": this.matching.criteria.priceKm,
+          "driver": this.matching.criteria.driver,
+          "passenger": this.matching.criteria.passenger,
+          "frequency": this.matching.criteria.frequency
+        }
+      })
+        .then((response) => {
+          if(response.data=="ok"){
+            //this.emitSnackbar('snackBar.success','success')
+            window.location = "/utilisateur/messages";
+          }
+          else{
+            this.emitSnackbar('snackBar.error','error')
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          this.emitSnackbar('snackBar.error','error')
+        })
+        .finally(() => {
+          this.loading = false;
+        })
+    },
+    emitSnackbar(text,color){
+      this.$emit('snackbarEvt',{
+        text:text,
+        color:color
+      });
+    }
   }
 }
 </script>

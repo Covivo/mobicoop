@@ -469,6 +469,8 @@ class UserController extends AbstractController
         $idMessageDefaultSelected = false;
 
         foreach ($threads["threads"] as $thread) {
+            $arrayThread = [];
+
             $arrayThread["idThreadMessage"] = $thread["id"];
             if (!isset($thread["user"]["id"])) {
                 // the user is the sender
@@ -498,7 +500,6 @@ class UserController extends AbstractController
                     $arrayThread["firstWayPoint"] = $thread["askHistory"]["ask"]["matching"]["waypoints"][0]["address"]["addressLocality"];
                     $arrayThread["lastWayPoint"] = $thread["askHistory"]["ask"]["matching"]["waypoints"][count($thread["askHistory"]["ask"]["matching"]["waypoints"])-1]["address"]["addressLocality"];
 
-                    
                     if ($thread["askHistory"]["ask"]["matching"]['criteria']["frequency"]==1) {
                         // Punctual, we show the from date
                         $fromDate = new DateTime($thread["askHistory"]["ask"]["matching"]['criteria']["fromDate"]);
@@ -536,11 +537,13 @@ class UserController extends AbstractController
                 // I need the send date of the last message of this thread
                 $completeThread = $internalMessageManager->getThread($thread["id"], DataProvider::RETURN_JSON);
                 if ($completeThread["messages"]!==null && count($completeThread["messages"])>0) {
-                    $lastMessageCreatedDate = new DateTime($completeThread["messages"][count($completeThread["messages"])-1]["createdDate"]);
-                    $arrayThread["lastMessageCreatedDate"] = $lastMessageCreatedDate->format("d M Y");
+                    //$lastMessageCreatedDate = new DateTime($completeThread["messages"][count($completeThread["messages"])-1]["createdDate"]);
+                    //$arrayThread["lastMessageCreatedDate"] = $lastMessageCreatedDate->format("d M Y");
+                    $arrayThread["lastMessageCreatedDate"] = $completeThread["messages"][count($completeThread["messages"])-1]["createdDate"];
                 } else {
-                    $lastMessageCreatedDate = new DateTime($completeThread["createdDate"]);
-                    $arrayThread["lastMessageCreatedDate"] = $lastMessageCreatedDate->format("d M Y");
+                    //$lastMessageCreatedDate = new DateTime($completeThread["createdDate"]);
+                    //$arrayThread["lastMessageCreatedDate"] = $lastMessageCreatedDate->format("d M Y");
+                    $arrayThread["lastMessageCreatedDate"] = $completeThread["createdDate"];
                 }
                 // If it's today i just show... today
                 $today = new DateTime(date("Y-m-d"));
@@ -552,6 +555,7 @@ class UserController extends AbstractController
             // Push on the right array
             (is_null($thread["askHistory"])) ? $threadsDirectMessagesForView[] = $arrayThread : $threadsCarpoolingMessagesForView[] = $arrayThread;
         }
+        
         return $this->render('@Mobicoop/user/messages.html.twig', [
             'threadsDirectMessagesForView' => $threadsDirectMessagesForView,
             'threadsCarpoolingMessagesForView' => $threadsCarpoolingMessagesForView,
@@ -635,10 +639,10 @@ class UserController extends AbstractController
 
             $messageToSend = $internalMessageManager->createInternalMessage(
                 $user,
-                $userManager->getUser($idRecipient),
+                $idRecipient,
                 "",
                 $request->request->get('text'),
-                $internalMessageManager->getMessage($idThreadMessage)
+                $idThreadMessage
             );
             $reponseofmanager= $this->handleManagerReturnValue($messageToSend);
             if (!empty($reponseofmanager)) {
@@ -662,9 +666,8 @@ class UserController extends AbstractController
                 $askHistory->setStatus($currentAskHistory->getStatus());
                 $askHistory->setType($currentAskHistory->getType());
 
-                print_r($askHistoryManager->createAskHistory($askHistory));
-                die;
-                
+                // print_r($askHistoryManager->createAskHistory($askHistory));
+                // die;
                 return new Response($askHistoryManager->createAskHistory($askHistory, DataProvider::RETURN_JSON));
             } else {
                 return new Response($internalMessageManager->sendInternalMessage($messageToSend, DataProvider::RETURN_JSON));

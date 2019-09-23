@@ -23,7 +23,9 @@
 
 namespace App\Carpool\Service;
 
+use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
+use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;
 use App\Carpool\Event\MatchingNewEvent;
@@ -60,6 +62,7 @@ class ProposalManager
     private $logger;
     private $eventDispatcher;
     private $communityManager;
+    private $askManager;
 
     /**
      * Constructor.
@@ -71,7 +74,7 @@ class ProposalManager
      * @param GeoRouter $geoRouter
      * @param ZoneManager $zoneManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, CommunityManager $communityManager, LoggerInterface $logger, UserRepository $userRepository, EventDispatcherInterface $dispatcher)
+    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, CommunityManager $communityManager, LoggerInterface $logger, UserRepository $userRepository, EventDispatcherInterface $dispatcher, AskManager $askManager)
     {
         $this->entityManager = $entityManager;
         $this->proposalMatcher = $proposalMatcher;
@@ -84,6 +87,7 @@ class ProposalManager
         $this->userRepository = $userRepository;
         $this->eventDispatcher = $dispatcher;
         $this->communityManager = $communityManager;
+        $this->askManager = $askManager;
     }
     
     /**
@@ -189,6 +193,16 @@ class ProposalManager
         while (($item = array_shift($matchingsRequest)) !== null && array_push($matchings, $item));
         if ($persist) {
             foreach ($matchings as $matching) {
+
+                // If there is a already matched proposal we need to find the right matching and create the Ask
+                if ($proposal->getMatchedProposal()!==null) {
+                    if ($proposal->getMatchedProposal()->getId() === $matching->getProposalOffer()->getId() ||
+                        $proposal->getMatchedProposal()->getId() === $matching->getProposalRequest()->getId()
+                    ) {
+                        $this->askManager->createAskFromMatchedProposal($proposal, $matching);
+                    }
+                }
+
                 // dispatch en event
                 // maybe send a unique event for all matchings ?
                 $event = new MatchingNewEvent($matching);

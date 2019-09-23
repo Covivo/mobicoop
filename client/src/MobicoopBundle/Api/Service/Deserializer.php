@@ -736,6 +736,10 @@ class Deserializer
                 $message->addRecipient(self::deserializeRecipient($recipient));
             }
         }
+        if (isset($data["message"]) && is_array($data["message"])) {
+            $message->setMessage(self::deserializeMessage($data["message"]));
+        }
+
         return $message;
     }
     
@@ -790,7 +794,7 @@ class Deserializer
             $recipient->setUser(self::deserializeUser($data["user"]));
         }
         if (isset($data["message"]) && is_array($data["message"])) {
-            $recipient->setUser(self::deserializeMessage($data["message"]));
+            $recipient->setMessage(self::deserializeMessage($data["message"]));
         }
         return $recipient;
     }

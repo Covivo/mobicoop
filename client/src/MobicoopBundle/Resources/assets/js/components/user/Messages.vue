@@ -78,58 +78,60 @@
               v-else
               value="tab-cm"
             >
-              <v-card
-                v-for="(threadCM, index) in threadsCM"
-                :key="index"
-                class="threads mx-auto mt-2"
-                :class="threadCM.selected ? 'primary' : ''"
-                @click="updateMessages(threadCM.idThreadMessage,threadCM.contactId)"
-              >
-                <v-card-title class="pa-0 ma-0">
-                  <v-container>
-                    <v-row
-                      align="start"
-                    >
-                      <v-col class="col-3 text-center ma-0 pa-0">
-                        <v-avatar>
-                          <v-icon class="display-2">
-                            mdi-account-circle
-                          </v-icon>
-                        </v-avatar>
-                      </v-col>
-                      <v-col class="col-6 ma-0 pa-0">
-                        <v-card-text class="pa-0">
-                          <span
-                            class="title font-weight-light secondary--text"
+              <v-container class="window-scroll">
+                <v-card
+                  v-for="(threadCM, index) in threadsCM"
+                  :key="index"
+                  class="threads mx-auto mt-2"
+                  :class="threadCM.selected ? 'primary' : ''"
+                  @click="updateMessages(threadCM.idThreadMessage,threadCM.contactId)"
+                >
+                  <v-card-title class="pa-0 ma-0">
+                    <v-container>
+                      <v-row
+                        align="start"
+                      >
+                        <v-col class="col-3 text-center ma-0 pa-0">
+                          <v-avatar>
+                            <v-icon class="display-2">
+                              mdi-account-circle
+                            </v-icon>
+                          </v-avatar>
+                        </v-col>
+                        <v-col class="col-6 ma-0 pa-0">
+                          <v-card-text class="pa-0">
+                            <span
+                              class="title font-weight-light secondary--text"
+                            >
+                              {{ threadCM.contactFirstName }} {{ threadCM.contactLastName.substr(0,1).toUpperCase()+"." }}</span><br>
+                            <span :class="threadCM.selected ? 'font-weight-bold' : ''">
+                              {{ threadCM.firstWayPoint }}
+                              <v-icon color="tertiairy">
+                                mdi-arrow-right
+                              </v-icon> {{ threadCM.lastWayPoint }}
+                            </span><br>
+                            <span
+                              v-if="!threadCM.dayChecked"
+                              class="font-italic"
+                            >{{ threadCM.fromDateReadable }} {{ $t("ui.infos.misc.at") }} {{ threadCM.fromTimeReadable }}</span>
+                            <span
+                              v-else
+                              class="font-italic"
+                            >{{ threadCM.dayChecked.join(", ") }}</span>
+                          </v-card-text>
+                        </v-col>
+                        <v-col class="col-3 ma-0 pa-0">
+                          <v-card-text
+                            class="pa-0 ma-0 text-right pr-2 font-italic"
                           >
-                            {{ threadCM.contactFirstName }} {{ threadCM.contactLastName.substr(0,1).toUpperCase()+"." }}</span><br>
-                          <span :class="threadCM.selected ? 'font-weight-bold' : ''">
-                            {{ threadCM.firstWayPoint }}
-                            <v-icon color="tertiairy">
-                              mdi-arrow-right
-                            </v-icon> {{ threadCM.lastWayPoint }}
-                          </span><br>
-                          <span
-                            v-if="!threadCM.dayChecked"
-                            class="font-italic"
-                          >{{ threadCM.fromDateReadable }} {{ $t("ui.infos.misc.at") }} {{ threadCM.fromTimeReadable }}</span>
-                          <span
-                            v-else
-                            class="font-italic"
-                          >{{ threadCM.dayChecked.join(", ") }}</span>
-                        </v-card-text>
-                      </v-col>
-                      <v-col class="col-3 ma-0 pa-0">
-                        <v-card-text
-                          class="pa-0 ma-0 text-right pr-2 font-italic"
-                        >
-                          {{ threadCM.lastMessageCreatedDate }}
-                        </v-card-text>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card-title>
-              </v-card>
+                            {{ formatDate(threadCM.lastMessageCreatedDate,"DD MMM YYYY") }}
+                          </v-card-text>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-title>
+                </v-card>
+              </v-container>
             </v-tab-item>
             <v-tab-item
               v-if="threadsDM.length==0"
@@ -141,20 +143,41 @@
               v-else
               value="tab-dm"
             >
-              <v-card
-                v-for="(thread, index) in threadsDM"
-                :key="index"
-                class="threads mx-auto mt-2"
-                :class="thread.selected ? 'primary' : ''"
-                @click="updateMessages(thread.idThreadMessage,thread.contactId,generateName(thread.contactFirstName,thread.contactLastName))"
-              >
-                <v-card-title>
-                  <v-icon>mdi-account-circle</v-icon>&nbsp;
-                  <span
-                    class="title font-weight-light"
-                  >{{ generateName(thread.contactFirstName,thread.contactLastName) }}</span>
-                </v-card-title>
-              </v-card>
+              <v-container class="window-scroll">
+                <v-card
+                  v-for="(thread, index) in threadsDM"
+                  :key="index"
+                  class="threads mx-auto mt-2"
+                  :class="thread.selected ? 'primary' : ''"
+                  @click="updateMessages(thread.idThreadMessage,thread.contactId,generateName(thread.contactFirstName,thread.contactLastName))"
+                >
+                  <v-card-title>
+                    <v-container>
+                      <v-row>
+                        <v-col class="col-3 text-center ma-0 pa-0">
+                          <v-avatar>
+                            <v-icon class="display-2">
+                              mdi-account-circle
+                            </v-icon>
+                          </v-avatar>
+                        </v-col>
+                        <v-col class="col-6 ma-0 pa-0">
+                          <span
+                            class="title font-weight-light"
+                          >{{ generateName(thread.contactFirstName,thread.contactLastName) }}</span>
+                        </v-col>
+                        <v-col class="col-3 ma-0 pa-0">
+                          <v-card-text
+                            class="pa-0 ma-0 text-right pr-2 font-italic"
+                          >
+                            {{ formatDate(thread.lastMessageCreatedDate,"DD MMM YYYY") }}
+                          </v-card-text>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-title>
+                </v-card>
+              </v-container>
             </v-tab-item>
           </v-tabs-items>
         </v-col>
@@ -165,45 +188,46 @@
         >
           <!-- Messages -->
 
-          <v-timeline v-if="(threadsDM.length>0 || threadsCM.length>0)">
-            <v-timeline-item
-              v-for="(item, i) in items"
-              :key="i"
-              :fil-dot="item.divider===false"
-              :hide-dot="item.divider===true"
-              :right="item.origin==='own'"
-              :left="item.origin!=='own'"
-              :idmessage="item.idMessage"
-              :class="(item.divider ? 'divider' : '')+' '+item.origin"
-            >
-              <template
-                v-if="item.divider===false"
-                v-slot:icon
+          <v-container class="window-scroll">
+            <v-timeline v-if="(threadsDM.length>0 || threadsCM.length>0)">
+              <v-timeline-item
+                v-for="(item, i) in items"
+                :key="i"
+                :fil-dot="item.divider===false"
+                :hide-dot="item.divider===true"
+                :right="item.origin==='own'"
+                :left="item.origin!=='own'"
+                :idmessage="item.idMessage"
+                :class="(item.divider ? 'divider' : '')+' '+item.origin"
               >
-                <v-avatar color="secondary">
-                  <v-icon>{{ item.icon }}</v-icon>
-                </v-avatar>
-              </template>
-              <template
-                v-if="item.divider===false"
-                v-slot:opposite
-              >
-                <span>{{ item.createdTimeReadable }}</span>
-              </template>
-              <v-card
-                v-if="item.divider===false"
-                class="elevation-2 font-weight-bold"
-                :class="(item.origin==='own')?'primary':''"
-              >
-                <v-card-text>{{ item.text }}</v-card-text>
-              </v-card>
-              <span
-                v-if="item.divider===true"
-                class="secondary--text font-weight-bold"
-              >{{ item.createdDateReadable }}</span>
-            </v-timeline-item>
-          </v-timeline>
-
+                <template
+                  v-if="item.divider===false"
+                  v-slot:icon
+                >
+                  <v-avatar color="secondary">
+                    <v-icon>{{ item.icon }}</v-icon>
+                  </v-avatar>
+                </template>
+                <template
+                  v-if="item.divider===false"
+                  v-slot:opposite
+                >
+                  <span>{{ item.createdTimeReadable }}</span>
+                </template>
+                <v-card
+                  v-if="item.divider===false"
+                  class="elevation-2 font-weight-bold"
+                  :class="(item.origin==='own')?'primary':''"
+                >
+                  <v-card-text>{{ item.text }}</v-card-text>
+                </v-card>
+                <span
+                  v-if="item.divider===true"
+                  class="secondary--text font-weight-bold"
+                >{{ item.createdDateReadable }}</span>
+              </v-timeline-item>
+            </v-timeline>
+          </v-container>
           <v-container
             v-if="(threadsDM.length>0 || threadsCM.length>0)"
             fluid
@@ -326,6 +350,14 @@
                 >
                   {{ $t("ui.button.askCarpool") }}
                 </v-btn>
+                <!-- Carpool Confirmed -->
+                <v-card
+                  v-else-if="currentAskHistory && currentAskHistory.ask.status==1 && askUser !== userid"
+                >
+                  <v-card-text>
+                    {{ $t("ui.infos.carpooling.carpoolNotAsked") }}
+                  </v-card-text>
+                </v-card>
 
                 <!-- Carpooling status -->
                 <!-- Carpool Asked -->
@@ -363,13 +395,6 @@
                   <v-container text-center>
                     <v-row>
                       <v-col class="col-12 col-lg-6">
-                        <!-- <v-btn
-                          color="success"
-                          rounded
-                          @click="updateCarpool(3)"
-                        >
-                          {{ $t("ui.button.accept") }} <v-icon>mdi-check</v-icon>
-                        </v-btn> -->
                         <m-btn
                           color="success"
                           @click.native="updateCarpool(3)"
@@ -536,6 +561,7 @@ export default {
       outwardDate: null,
       outwardTime: null,
       regular: false,
+      locale: this.$i18n.locale
     };
   },
   watch: {
@@ -559,22 +585,20 @@ export default {
         this.lastnamerecipientdefault
       )
     ) {
+
+      moment.locale(this.locale);
+
       this.threadsDM.forEach((thread, index) => {
         this.threadsDM[index].selected =
-          thread.idThreadMessage === parseInt(idMessage) ? true : false;
-        if(thread.lastMessageCreatedDate==="today"){
-          thread.lastMessageCreatedDate = this.$t("ui.date.today");
-        }
+        thread.idThreadMessage === parseInt(idMessage) ? true : false;
       });
       this.threadsCM.forEach((thread, index) => {
         this.threadsCM[index].selected =
-          thread.idThreadMessage === parseInt(idMessage) ? true : false;
-        if(thread.lastMessageCreatedDate==="today"){
-          thread.lastMessageCreatedDate = this.$t("ui.date.today");
-        }
+        thread.idThreadMessage === parseInt(idMessage) ? true : false;
         if(thread.dayChecked){
           thread.dayChecked.forEach((day, index)=>{
-            thread.dayChecked[index] = this.$t("ui.date."+day);
+            // You need the translation only on the page loading. After that... you can't translate what's already translated
+            if(this.$t("ui.date."+day)!=="ui.date."+day){thread.dayChecked[index] = this.$t("ui.date."+day)};
           });
         }
       });
@@ -589,23 +613,28 @@ export default {
         this.currentAskHistory = res.data.lastAskHistory;
         this.askUser = res.data.user.id;
 
-        // The date of the first message
-        let divider = {
-          divider: true,
-          createdDateReadable: res.data.createdDateReadable
-        };
-        this.addMessageToItems(divider);
+        // If empty message we don't add it
+        if(res.data.text !== ''){
+          moment(res.data.createdDate).format("ddd DD MMM YYYY");
 
-        let threadMessage = {
-          id: res.data.id,
-          user: res.data.user,
-          text: res.data.text,
-          createdDateReadable: res.data.createdDateReadable,
-          createdTimeReadable: res.data.createdTimeReadable,
-          divider: false
-        };
+          // The date of the first message
+          let divider = {
+            divider: true,
+            createdDateReadable: moment(res.data.createdDate).format("ddd DD MMM YYYY")
+          };
+          this.addMessageToItems(divider);
 
-        this.addMessageToItems(threadMessage);
+          let threadMessage = {
+            id: res.data.id,
+            user: res.data.user,
+            text: res.data.text,
+            createdDateReadable: moment(res.data.createdDate).format("ddd DD MMM YYYY"),
+            createdTimeReadable: moment(res.data.createdTime).format("HH:mm"),
+            divider: false
+          };
+
+          this.addMessageToItems(threadMessage);
+        }
 
         // The correspondant for the view
         this.currentcorrespondant = contactName;
@@ -613,15 +642,15 @@ export default {
         // Id of the current recipient
         this.idRecipient = idrecipient;
 
-        let currentDate = res.data.createdDateReadable;
+        let currentDate = moment(res.data.createdDate).format("DDMMYYYY");
         for (let message of messagesThread) {
           // If the date is different, push a divider
-          if (message.createdDateReadable !== currentDate) {
+          if (moment(message.createdDate).format("DDMMYYYY") !== currentDate) {
             let divider = {
               divider: true,
-              createdDateReadable: message.createdDateReadable
+              createdDateReadable: moment(message.createdDate).format("ddd DD MMM YYYY")
             };
-            currentDate = message.createdDateReadable;
+            currentDate = moment(message.createdDate).format("DDMMYYYY");
             this.addMessageToItems(divider);
           }
 
@@ -675,9 +704,11 @@ export default {
       this.outwardDate = moment(this.currentAskHistory.ask.criteria.fromDate).format('YYYY-MM-DD')
       this.outwardTime = moment(this.currentAskHistory.ask.criteria.fromTime).format('hh:mm')
       // build schedules of the regular carpool
+      let hours = new Array();
+      this.regular = false;
+      this.schedules.length = 0;
       if (this.currentAskHistory.ask.criteria.frequency == 2) {
         this.regular = true;
-        let hours = new Array();
         (hours[this.currentAskHistory.ask.criteria.monTime]===undefined) ? hours[this.currentAskHistory.ask.criteria.monTime] = ["mon"] : hours[this.currentAskHistory.ask.criteria.monTime].push("mon");
         (hours[this.currentAskHistory.ask.criteria.tueTime]===undefined) ? hours[this.currentAskHistory.ask.criteria.tueTime] = ["tue"] : hours[this.currentAskHistory.ask.criteria.tueTime].push("tue");
         (hours[this.currentAskHistory.ask.criteria.wedTime]===undefined) ? hours[this.currentAskHistory.ask.criteria.wedTime] = ["wed"] : hours[this.currentAskHistory.ask.criteria.wedTime].push("wed");
@@ -718,11 +749,7 @@ export default {
       axios.post("/utilisateur/messages/envoyer", messageToSend).then(res => {
         this.textToSend = "";
         this.spinner = false;
-        if (this.updateMessages(res.data.message) !== undefined) {
-          this.updateMessages(res.data.message.id);
-        } else {
-          this.updateMessages();
-        }
+        this.updateMessages(this.idThreadMessage);
       });
     },
     updateCarpool(status) {
@@ -761,6 +788,9 @@ export default {
     },
     generateName(firstname, lastname) {
       return firstname + " " + lastname.substr(0, 1).toUpperCase() + ".";
+    },
+    formatDate(date,format){
+      return moment(date).format(format);
     }
   }
 };
@@ -770,5 +800,9 @@ export default {
   .col{
     border-left: 2px solid white !important;
   }
+}
+.window-scroll{
+  max-height:600px;
+  overflow:auto;
 }
 </style>

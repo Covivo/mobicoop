@@ -1,5 +1,19 @@
 <template>
   <v-content>
+    <v-snackbar
+      v-model="snackbar"
+      top
+      @snackbarEvt="evtSnackBar()"
+    >
+      {{ $t(textSnack) }}
+      <v-btn
+        :color="this.colorSnack"
+        text
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>    
     <v-container
       fluid
     >
@@ -128,6 +142,11 @@
             :date="date"
             :carpool-results="results"
             :matching-search-url="matchingSearchUrl"
+            :origin-latitude="originLatitude"
+            :origin-longitude="originLongitude"
+            :destination-latitude="destinationLatitude"
+            :destination-longitude="destinationLongitude"
+            @snackbarEvt="evtSnackBar"
           />
 
           <!--card use vdivider for middle line-->
@@ -197,6 +216,9 @@ export default {
       // TODO : REMOVE WHEN START CODING FILTER COMPONENT
       chips: ['Horaire', 'Type d\'annonce', 'Civilité'],
       items: ['Communauté', 'Espace'],
+      snackbar:false,
+      textSnack:"",
+      colorSnack:""
     };
   },
   created() {
@@ -233,8 +255,12 @@ export default {
     },  
     displaydate(date){
       return moment (new Date(date)).utcOffset("+00:00").format('ddd D MMMM YYYY')
+    },
+    evtSnackBar(data){
+      this.textSnack = data.text;
+      this.colorSnack = data.color;
+      this.snackbar = true;
     }
-    //fill Results
   }
 };
 </script>
