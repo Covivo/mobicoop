@@ -6,7 +6,7 @@
 {% endblock %}
 {% block main %}
 
-    <occasional-results
+    <results
         {# we format origin and destination address #}
         origin = "{{ origin | replace({'_': " "}) }}"
         destination = "{{ destination | replace({'_': " "}) }}"
@@ -17,7 +17,7 @@
         {# We format date here so it does not have to be done in Vue #}
         date = "{{ date }}"
         matching-search-url = "{{ matching_search_url }}"
-        :user="{{app.user|json_encode}}"
+        :user="{{ app.user|json_encode }}"
     />
 
 

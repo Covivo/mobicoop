@@ -4,130 +4,134 @@
       fluid
     >
       <v-row>
-        <v-list-item>
-          <!--user avatar-->
-          <v-list-item-avatar
-            color="grey darken-3"
-            size="80"
-          >
-            <v-img
-              aspect-ratio="2"
-              src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortRound&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light"
-            />
-          </v-list-item-avatar>
-          <!--user data-->
-          <v-list-item-content>
-            <v-list-item-title class="font-weight-bold">
-              {{ matching.user.givenName }} {{ matching.user.familyName.substr(0,1).toUpperCase()+"." }}
-            </v-list-item-title>
-            <v-list-item-title>{{ formatedYear(matching.user.birthDate) }} ans </v-list-item-title>
-            <v-list-item-title
-              class="caption font-weight-light font-italic"
+        <v-col
+          cols="10"
+        >
+          <v-list-item>
+            <!--user avatar-->
+            <v-list-item-avatar
+              color="grey darken-3"
+              size="80"
+            >
+              <v-img
+                aspect-ratio="2"
+                src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortRound&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light"
+              />
+            </v-list-item-avatar>
+            <!--user data-->
+            <v-list-item-content>
+              <v-list-item-title class="font-weight-bold">
+                {{ matching.user.givenName }} {{ matching.user.familyName.substr(0,1).toUpperCase()+"." }}
+              </v-list-item-title>
+              <v-list-item-title>{{ formatedYear(matching.user.birthDate) }} ans </v-list-item-title>
+              <v-list-item-title
+                class="caption font-weight-light font-italic"
+              >
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <span v-on="on ">Annonce ouestgo.fr</span>
+                  </template>
+                  <span> {{ message }} </span>
+                </v-tooltip>
+              </v-list-item-title>
+            </v-list-item-content>
+            <!--user stars-->
+            <v-row
+              align="center"
+              justify="start"
             >
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
-                  <span v-on="on ">Annonce ouestgo.fr</span>
+                  <span
+                    class="yellow--text text--darken-2"
+                    v-on="on"
+                  >
+                    4.7
+                  </span>
+
+                  <v-icon
+                    :color="'yellow darken-2'"
+                    class="ml-1"
+                    v-on="on"
+                  >
+                    mdi-star
+                  </v-icon>
                 </template>
                 <span> {{ message }} </span>
               </v-tooltip>
-            </v-list-item-title>
-          </v-list-item-content>
-          <!--user stars-->
-          <v-row
-            align="center"
-            justify="start"
-          >
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <span
-                  class="yellow--text text--darken-2"
-                  v-on="on"
-                >
-                  4.7
-                </span>
+            </v-row>
 
-                <v-icon
-                  :color="'yellow darken-2'"
-                  class="ml-1"
-                  v-on="on"
-                >
-                  mdi-star
-                </v-icon>
-              </template>
-              <span> {{ message }} </span>
-            </v-tooltip>
-          </v-row>
-
-          <!--user phone and mail-->
-          <v-row
-            align="center"
-            justify="end"
-            class="min-width-no-flex"
-          >
-            <v-btn
-              color="success"
-              small
-              dark
-              depressed
-              rounded
-              :hidden="!togglePhoneButton"
-              height="40px"
-              @click="toggleButton"
+            <!--user phone and mail-->
+            <v-row
+              align="center"
+              justify="end"
+              class="min-width-no-flex"
             >
-              <v-icon>mdi-phone</v-icon>
-              <div
+              <v-btn
+                color="success"
+                small
+                dark
+                depressed
+                rounded
+                :hidden="!togglePhoneButton"
+                height="40px"
+                @click="toggleButton"
+              >
+                <v-icon>mdi-phone</v-icon>
+                <div
+                  class="ml-2"
+                >
+                  {{ matching.user.telephone }}
+                </div>
+              </v-btn>
+              <v-btn
+                color="success"
+                small
+                dark
+                depressed
+                fab
+                :hidden="togglePhoneButton"
+                @click="toggleButton"
+              >
+                <v-icon>
+                  mdi-phone
+                </v-icon>
+              </v-btn>
+
+              <v-btn
+                color="success"
+                small
+                dark
+                depressed
+                fab
                 class="ml-2"
               >
-                {{ matching.user.telephone }}
-              </div>
-            </v-btn>
-            <v-btn
-              color="success"
-              small
-              dark
-              depressed
-              fab
-              :hidden="togglePhoneButton"
-              @click="toggleButton"
+                <v-icon
+                  @click="buttonAlert(message,$event);"
+                >
+                  mdi-email
+                </v-icon>
+              </v-btn>
+            </v-row>
+            <!--book button-->
+            <v-row
+              align="center"
+              justify="end"
             >
-              <v-icon>
-                mdi-phone
-              </v-icon>
-            </v-btn>
-
-            <v-btn
-              color="success"
-              small
-              dark
-              depressed
-              fab
-              class="ml-2"
-            >
-              <v-icon
+              <v-btn
+                rounded
+                color="success"
+                large
+                dark
                 @click="buttonAlert(message,$event);"
               >
-                mdi-email
-              </v-icon>
-            </v-btn>
-          </v-row>
-          <!--book button-->
-          <v-row
-            align="center"
-            justify="end"
-          >
-            <v-btn
-              rounded
-              color="success"
-              large
-              dark
-              @click="buttonAlert(message,$event);"
-            >
-              <span>
-                Covoiturer
-              </span>
-            </v-btn>
-          </v-row>
-        </v-list-item>
+                <span>
+                  Covoiturer
+                </span>
+              </v-btn>
+            </v-row>
+          </v-list-item>
+        </v-col>
       </v-row>
     </v-container>
   </v-content>

@@ -4,11 +4,10 @@
       fluid
     >
       <!-- ponctual -->
-      <v-col
+      <v-row
         v-if="matching.criteria.frequency == 2"
-        cols="12"
       >
-        <v-row
+        <v-col
           justify="right"
         >
           <v-chip
@@ -53,8 +52,8 @@
           >
             D
           </v-chip>
-        </v-row>
-      </v-col>
+        </v-col>
+      </v-row>
       <v-list-item>
         <!-- Hour & Date -->
         <v-list-item-content
@@ -205,7 +204,7 @@ export default {
   data() {
     return {
       driver: this.matching.criteria.driver,
-      passenger: this.matching.criteria.passenger
+      passenger: this.matching.criteria.passenger,
     };
   },
   computed: {
@@ -217,6 +216,9 @@ export default {
     },
     computedDateFormated() {
       return moment(new Date(this.matching.criteria.fromDate)).utcOffset("+00:00").format("ddd DD/MM")
+    },
+    computedSchedules(){
+      this.schedules=this.matching.monTime
     }
   }
 }

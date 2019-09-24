@@ -4,7 +4,7 @@ import { Vue, vuetify, i18n } from '@js/config/carpool/simpleResults'
 
 import '@css/page/search/simpleResults.scss'
 
-import OccasionalResults from '@js/components/search/OccasionalResults'
+import Results from '@js/components/search/Results'
 import ResultCard from "../../components/search/ResultCard";
 
 import MHeader from '@js/components/base/MHeader'
@@ -15,7 +15,7 @@ new Vue({
   el: '#app',
   vuetify,
   components: {
-    OccasionalResults,
+    Results,
     ResultCard,
     MHeader,
     MFooter

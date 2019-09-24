@@ -110,7 +110,7 @@
             class="mt-8"
             no-gutters
           >
-            <!-- <h3> {{ results.matchingRequests.length }} annonces trouvée(s) </h3> -->
+            <!-- <h3> {{ results.carpoolResults.length }} annonces trouvée(s) </h3> -->
             <!-- trouvée | trouvées -->
           </v-row>
         </v-col>

@@ -16,12 +16,12 @@
               align="center"
               justify="left"
               dense
+              multi-line
             >
               <v-icon
                 color="primary"
                 size="75"
               >
-                >
                 mdi-car
               </v-icon>
               {{ matching.user.givenName }} propose
@@ -42,21 +42,21 @@
               justify="left"
               dense
             >
-              <v-icon
-                color="secondary"
-                size="75"
-              >
+              <v-tab>
+                <v-icon
+                  color="secondary"
+                  size="75"
                 >
-                mdi-walk 
-              </v-icon>
-              <v-icon
-                color="primary"
-                size="75"
-              >
+                  mdi-walk 
+                </v-icon>
+                <v-icon
+                  color="primary"
+                  size="75"
                 >
-                mdi-car
-              </v-icon>
-              peu  importe
+                  mdi-car
+                </v-icon>
+                peu  importe
+              </v-tab>
             </v-list-item>
           </v-col>
         </v-row>

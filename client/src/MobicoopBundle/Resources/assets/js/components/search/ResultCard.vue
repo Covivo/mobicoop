@@ -37,9 +37,9 @@
               :matching="matching.proposalOffer"
               :regular="regular"
             />
-            <v-col />
           </v-col>
         </v-row>
+        
         <!-- display result-journey-detailed card - proposal Request and proposalOffer in array(matchings) order-->
         <result-journey-detailed-card
           :origin-latitude="originLatitude"
