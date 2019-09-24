@@ -22,7 +22,7 @@
                 size="75"
               >
                 >
-                mdi-steering
+                mdi-car
               </v-icon>
               {{ matching.user.givenName }} propose
             </v-list-item>
@@ -47,14 +47,14 @@
                 size="75"
               >
                 >
-                mdi-account-supervisor 
+                mdi-walk 
               </v-icon>
               <v-icon
                 color="primary"
                 size="75"
               >
                 >
-                mdi-steering
+                mdi-car
               </v-icon>
               peu  importe
             </v-list-item>
@@ -78,7 +78,7 @@
                 size="75"
               >
                 >
-                mdi-account-supervisor 
+                mdi-walk 
               </v-icon>
               {{ matching.user.givenName }} cherche
             </v-list-item>

@@ -7,32 +7,39 @@
       <v-card
         flat
       >
-        <driver-passenger
-          :origin-latitude="originLatitude"
-          :origin-longitude="originLongitude"
-          :destination-latitude="destinationLatitude"
-          :destination-longitude="destinationLongitude"
-          :origin="origin"
-          :destination="destination"
-          :date="date"
-          :carpool-results="carpoolResults"
-          :matching-search-url="matchingSearchUrl"
-          :matching="matching.proposalRequest"
-          :regular="regular"
-        />
-        <driver-passenger
-          :origin-latitude="originLatitude"
-          :origin-longitude="originLongitude"
-          :destination-latitude="destinationLatitude"
-          :destination-longitude="destinationLongitude"
-          :origin="origin"
-          :destination="destination"
-          :date="date"
-          :carpool-results="carpoolResults"
-          :matching-search-url="matchingSearchUrl"
-          :matching="matching.proposalOffer"
-          :regular="regular"
-        />
+        <v-row>
+          <v-col
+            cols="2"
+          >
+            <driver-passenger
+              :origin-latitude="originLatitude"
+              :origin-longitude="originLongitude"
+              :destination-latitude="destinationLatitude"
+              :destination-longitude="destinationLongitude"
+              :origin="origin"
+              :destination="destination"
+              :date="date"
+              :carpool-results="carpoolResults"
+              :matching-search-url="matchingSearchUrl"
+              :matching="matching.proposalRequest"
+              :regular="regular"
+            />
+            <driver-passenger
+              :origin-latitude="originLatitude"
+              :origin-longitude="originLongitude"
+              :destination-latitude="destinationLatitude"
+              :destination-longitude="destinationLongitude"
+              :origin="origin"
+              :destination="destination"
+              :date="date"
+              :carpool-results="carpoolResults"
+              :matching-search-url="matchingSearchUrl"
+              :matching="matching.proposalOffer"
+              :regular="regular"
+            />
+            <v-col />
+          </v-col>
+        </v-row>
         <!-- display result-journey-detailed card - proposal Request and proposalOffer in array(matchings) order-->
         <result-journey-detailed-card
           :origin-latitude="originLatitude"
