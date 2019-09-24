@@ -37,6 +37,7 @@ use App\User\Entity\User;
  *
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
+ * @ORM\EntityListeners({"App\Communication\EntityListener\RecipientListener"})
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
