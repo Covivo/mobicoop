@@ -90,8 +90,6 @@ class InternalMessageManager
      */
     public function send(User $sender, array $recipients, string $text, ?string $title=null, ?Message $reply)
     {
-        echo "send";
-        die;
         $message = new Message();
         $message->setUser($sender);
         $message->setText($text);
