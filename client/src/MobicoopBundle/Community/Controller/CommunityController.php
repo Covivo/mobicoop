@@ -221,7 +221,7 @@ class CommunityController extends AbstractController
     {
         $proposals = $communityManager->getProposals($id);
         $points = [];
-        foreach($proposals as $proposal){
+        foreach ($proposals as $proposal) {
             foreach ($proposal["waypoints"] as $waypoint) {
                 $points[] = [
                     "title"=>$waypoint["address"]["displayLabel"],
@@ -231,5 +231,4 @@ class CommunityController extends AbstractController
         }
         return new Response(json_encode($points));
     }
-
 }
