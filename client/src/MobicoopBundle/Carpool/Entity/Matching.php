@@ -26,7 +26,6 @@ namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 
-
 /**
  * Carpooling : matching between an offer and a request.
  */

@@ -81,7 +81,6 @@ class CarpoolController extends AbstractController
      */
     // public function simpleSearchResults($origin, $destination, $origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date, ProposalManager $proposalManager)
     public function simpleSearchResults($origin, $destination, $origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date)
-
     {
         // $offers= $proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("Y-m-d\TH:i:s\Z", $date));
         // $reponseofmanager= $this->handleManagerReturnValue($offers);
