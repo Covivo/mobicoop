@@ -115,7 +115,7 @@ class CommunityController extends AbstractController
      * @return void
      */
     public function communityUser(int $id, CommunityManager $communityManager, UserManager $userManager)
-    {   
+    {
         if ($userManager->getLoggedUser()) {
             $communityUser = $communityManager->getCommunityUser($id, $userManager->getLoggedUser()->getId());
             $reponseofmanager= $this->handleManagerReturnValue($communityUser);
@@ -173,26 +173,26 @@ class CommunityController extends AbstractController
      */
     public function getCommunityLastUsers(int $id, CommunityManager $communityManager)
     {
-           // get the last 3 users and formate them to be used with vue
-           $lastUsers = $communityManager->getLastUsers($id);
-           foreach ($lastUsers as $key => $commUser) {
-               $lastUsersFormated[$key]["name"]=ucfirst($commUser->getUser()->getGivenName())." ".ucfirst($commUser->getUser()->getFamilyName());
-               $lastUsersFormated[$key]["acceptedDate"]=$commUser->getAcceptedDate()->format('d/m/Y');
-           }
-          return new Response(json_encode($lastUsersFormated));
+        // get the last 3 users and formate them to be used with vue
+        $lastUsers = $communityManager->getLastUsers($id);
+        foreach ($lastUsers as $key => $commUser) {
+            $lastUsersFormated[$key]["name"]=ucfirst($commUser->getUser()->getGivenName())." ".ucfirst($commUser->getUser()->getFamilyName());
+            $lastUsersFormated[$key]["acceptedDate"]=$commUser->getAcceptedDate()->format('d/m/Y');
+        }
+        return new Response(json_encode($lastUsersFormated));
     }
 
     public function getCommunityMemberList(int $id, CommunityManager $communityManager)
     {
-         // retrive community;
-         $community = $communityManager->getCommunity($id);
-         $reponseofmanager= $this->handleManagerReturnValue($community);
-         if (!empty($reponseofmanager)) {
-             return $reponseofmanager;
-         }
-         $users = [];
-         //test if the community has members
-         if (count($community->getCommunityUsers()) > 0) {
+        // retrive community;
+        $community = $communityManager->getCommunity($id);
+        $reponseofmanager= $this->handleManagerReturnValue($community);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
+        $users = [];
+        //test if the community has members
+        if (count($community->getCommunityUsers()) > 0) {
             foreach ($community->getCommunityUsers() as $communityUser) {
                 if ($communityUser->getStatus() == 1) {
                     // get all community Users
@@ -201,7 +201,6 @@ class CommunityController extends AbstractController
             }
         }
         dump($users);
-          return new Response(json_encode($users));
+        return new Response(json_encode($users));
     }
-
 }
