@@ -31,7 +31,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class RecipientListener
 {
-    
     private $eventDispatcher;
     
     public function __construct(EventDispatcherInterface $eventDispatcher)
