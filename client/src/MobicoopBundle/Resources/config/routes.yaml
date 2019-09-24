@@ -199,6 +199,25 @@ community_user:
     requirements:
         id: '\d+'
 
+# get the last community users
+community_last_users:
+    path:
+        fr: /community-last-users/{id}
+        en: /community-last-users/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityLastUsers
+    requirements:
+        id: '\d+'
+
+# get community members list
+community_member_list:
+    path:
+        fr: /community-member-list/{id}
+        en: /community-member-list/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityMemberList
+    requirements:
+        id: '\d+'        
+
+
 ##########################
 # editorial pages routes #
 ##########################

@@ -84,19 +84,6 @@ class CommunityController extends AbstractController
      */
     public function show($id, CommunityManager $communityManager, UserManager $userManager)
     {
-        //Variable who indicate if user is part of community
-        $isMember = false;
-        // All community users ID
-        $communityUsersId = [];
-        // All community users
-        $users = [];
-        // Last three community users
-        $lastUsers = [];
-        $lastUsersFormated = [];
-        // indicate if a user is logged
-        $isLogged = false;
-        
-
         // retrive community;
         $community = $communityManager->getCommunity($id);
         $reponseofmanager= $this->handleManagerReturnValue($community);
@@ -107,51 +94,15 @@ class CommunityController extends AbstractController
         // retrive logged user
         $this->denyAccessUnlessGranted('show', $community);
         $user = $userManager->getLoggedUser();
-        if ($user) {
-            $isLogged = true;
-        }
+        
         $reponseofmanager= $this->handleManagerReturnValue($user);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
-               
-        //test if the community has members
-        if (count($community->getCommunityUsers()) > 0) {
-            foreach ($community->getCommunityUsers() as $communityUser) {
-                // get all community users ID
-                array_push($communityUsersId, $communityUser->getUser()->getId());
-                if ($communityUser->getStatus() == 1) {
-                    // get all community Users
-                    array_push($users, $communityUser->getUser());
-                }
-            }
-        }
-
-        // get the last 3 users and formate them to be used with vue
-        $lastUsers = $communityManager->getLastUsers($id);
-        foreach ($lastUsers as $key => $commUser) {
-            $lastUsersFormated[$key]["name"]=ucfirst($commUser->getUser()->getGivenName())." ".ucfirst($commUser->getUser()->getFamilyName());
-            $lastUsersFormated[$key]["acceptedDate"]=$commUser->getAcceptedDate()->format('d/m/Y');
-        }
-     
-        //test if the user logged is member of the community
-        if (!is_null($user) && $user !=='' && in_array($user->getId(), $communityUsersId)) {
-            $isMember = true;
-        }
-
-        // to do when activeted
-        // get the cover image of the community
-        // $coverImage = $community->getImages()->getOne();
-        
         return $this->render('@Mobicoop/community/showCommunity.html.twig', [
             'community' => $community,
             'user' => $user,
-            'isMember' => $isMember,
             'searchRoute' => "covoiturage/recherche",
-            'users' => $users,
-            'lastUsers' => $lastUsersFormated,
-            'isLogged' => $isLogged,
-            // 'coverImage' => $coverImage
         ]);
     }
 
@@ -164,13 +115,17 @@ class CommunityController extends AbstractController
      * @return void
      */
     public function communityUser(int $id, CommunityManager $communityManager, UserManager $userManager)
-    {
-        $communityUser = $communityManager->getCommunityUser($id, $userManager->getLoggedUser()->getId());
-        $reponseofmanager= $this->handleManagerReturnValue($communityUser);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
+    {   
+        if ($userManager->getLoggedUser()) {
+            $communityUser = $communityManager->getCommunityUser($id, $userManager->getLoggedUser()->getId());
+            $reponseofmanager= $this->handleManagerReturnValue($communityUser);
+            if (!empty($reponseofmanager)) {
+                return $reponseofmanager;
+            }
+            return $this->json($communityUser);
         }
-        return $this->json($communityUser);
+        
+        return new Response;
     }
 
 
@@ -207,4 +162,46 @@ class CommunityController extends AbstractController
         }
         return new Response();
     }
+
+    /**
+     * Undocumented function
+     *
+     * @param [type] $id
+     * @param CommunityManager $communityManager
+     * @param UserManager $userManager
+     * @return void
+     */
+    public function getCommunityLastUsers(int $id, CommunityManager $communityManager)
+    {
+           // get the last 3 users and formate them to be used with vue
+           $lastUsers = $communityManager->getLastUsers($id);
+           foreach ($lastUsers as $key => $commUser) {
+               $lastUsersFormated[$key]["name"]=ucfirst($commUser->getUser()->getGivenName())." ".ucfirst($commUser->getUser()->getFamilyName());
+               $lastUsersFormated[$key]["acceptedDate"]=$commUser->getAcceptedDate()->format('d/m/Y');
+           }
+          return new Response(json_encode($lastUsersFormated));
+    }
+
+    public function getCommunityMemberList(int $id, CommunityManager $communityManager)
+    {
+         // retrive community;
+         $community = $communityManager->getCommunity($id);
+         $reponseofmanager= $this->handleManagerReturnValue($community);
+         if (!empty($reponseofmanager)) {
+             return $reponseofmanager;
+         }
+         $users = [];
+         //test if the community has members
+         if (count($community->getCommunityUsers()) > 0) {
+            foreach ($community->getCommunityUsers() as $communityUser) {
+                if ($communityUser->getStatus() == 1) {
+                    // get all community Users
+                    array_push($users, $communityUser->getUser());
+                }
+            }
+        }
+        dump($users);
+          return new Response(json_encode($users));
+    }
+
 }

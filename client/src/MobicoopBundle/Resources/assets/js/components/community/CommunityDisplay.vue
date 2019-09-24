@@ -4,10 +4,10 @@
 
     <v-snackbar
       v-model="snackbar"
-      :color="(this.errorUpdate)?'error':'warning'"
+      :color="(errorUpdate)?'error':'warning'"
       top
     >
-      {{ (this.errorUpdate)?this.textSnackError:this.textSnackOk }}
+      {{ (errorUpdate)?textSnackError:textSnackOk }}
       <v-btn
         color="white"
         text
@@ -19,38 +19,11 @@
 
     <v-container>
       <!-- Community : avatar, title and description -->
-      <v-row
-        align="center"
-        justify="center"
-      >
-        <v-col cols="2">
-          <community-infos
-            :cover-image="coverImage"
-          />
-        </v-col>
-      
-        <v-col
-          cols="4"
-        >
-          <v-card
-            flat
-            height="25vh"
-          >
-            <v-card-text>
-              <h3 class="headline">
-                {{ community['name'] }}
-              </h3>
-              <p class="body-1">
-                {{ community['description'] }}
-              </p>
-              <p class="body-2">
-                {{ community['fullDescription'] }}
-              </p>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
-          
+      <community-infos
+        :cover-image="coverImage"
+        :community="community"
+      />
+
       <!-- community buttons and map -->
       <v-row
         justify="center"
@@ -73,7 +46,7 @@
               </v-btn>
             </a>
           </div>
-          <div v-else-if="isMember">
+          <div v-else-if="isMember == true">
             <v-tooltip
               top
               color="info"
@@ -110,11 +83,10 @@
                   href="#"
                   v-on="on"
                 >
-               
                   <v-btn
                     color="success"
                     rounded
-                    :loading="loading"
+                    :loading="loading || (checkValidation && !isLogged) "
                     :disabled="!isLogged"
                     @click="joinCommunity"
                   >
@@ -133,6 +105,7 @@
             type-map="adSummary"
             :points="pointsToMap"
             :ways="directionWay"
+            :community="community"
           />
         </v-col>
       </v-row>
@@ -144,47 +117,19 @@
       >
         <v-col
           cols="4"
-          class="ml-5"
         >
-          <member-list :users="users" />
+          <community-member-list
+            :community="community"
+          />
         </v-col>
         <!-- last 3 users -->
         <v-col
           cols="2"
-          class="mt-3 ps-12"
         >
-          <v-toolbar
-            flat
-          >
-            <v-toolbar-title class="headline">
-              Ils nous ont rejoints
-            </v-toolbar-title>
-          </v-toolbar>
-          <v-card
-            flat
-            class="mx-6"
-          >
-            <v-list shaped>
-              <v-list-item-group>
-                <v-list-item
-                  v-for="(comUser, i) in lastUsers"
-                  :key="i"
-                >
-                  <v-list-item-avatar>
-                    <v-avatar color="tertiary">
-                      <v-icon light>
-                        mdi-account-circle
-                      </v-icon>
-                    </v-avatar>
-                  </v-list-item-avatar>
-                  <v-list-item-content>
-                    <v-list-item-title v-text="comUser.name" />
-                    <v-list-item-content v-text="comUser.acceptedDate" />
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </v-card>
+          <community-last-users
+            :last-users="lastUsers"
+            :community="community"
+          />
         </v-col>
       </v-row>
 
@@ -227,16 +172,17 @@ import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/community/CommunityDisplay.json";
 import TranslationsClient from "@clientTranslations/components/community/CommunityDisplay.json";
-import MemberList from "@components/community/MemberList";
+import CommunityMemberList from "@components/community/CommunityMemberList";
 import CommunityInfos from "@components/community/CommunityInfos";
 import HomeSearch from "@components/home/HomeSearch";
+import CommunityLastUsers from "@components/community/CommunityLastUsers";
 import MMap from "@components/base/MMap"
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components: {
-    MemberList, CommunityInfos, HomeSearch, MMap,
+    CommunityMemberList, CommunityInfos, HomeSearch, MMap, CommunityLastUsers
   },
   i18n: {
     messages: TranslationsMerged,
@@ -267,11 +213,6 @@ export default {
       type: Array,
       default: null
     },
-    isLogged: {
-      type: Boolean,
-      default: false
-    }
-    
   },
   data () {
     return {
@@ -293,7 +234,6 @@ export default {
         { text: 'Nom', value: 'familyName' },
         { text: 'Prenom', value: 'givenName' },
         { text: 'Telephone', value: 'telephone' },
-        { text: 'Status', value: 'status' }
       ],
       pointsToMap:[],
       directionWay:[],
@@ -302,13 +242,16 @@ export default {
       textSnackOk: "Votre demande d'adhésion est bien envoyée au référent. Vous serez informé par email.",
       textSnackError: "Une erreur est survenue veillez essayer à nouveau",
       errorUpdate: false,
-      isMember: false,
       isAccepted: false,
+      isMember: false,
+      checkValidation: false,
+      isLogged: false,
 
     }
   },
   mounted() {
     this.getCommunityUser();
+    this.checkIfUserLogged();
   },
   methods:{
     linkToCommunityJoin: function (item) {
@@ -321,6 +264,7 @@ export default {
       return '/community/show-widget/'+item.id;
     },
     getCommunityUser() {
+      this.checkValidation = true;
       axios 
         .get('/community-user/'+this.community.id, {
           headers:{
@@ -328,8 +272,11 @@ export default {
           }
         })
         .then(res => {
-          this.isMember = res.data !== null;
-          this.isAccepted = res.data.status == 1;
+          if (res.data !== "") {
+            this.isAccepted = res.data[0].status == 1;
+            this.isMember = true
+          }
+          this.checkValidation = false;
           
         });
     },
@@ -349,8 +296,11 @@ export default {
           document.location.reload(true);
           
         });
-      
-      return 1;
+    },
+    checkIfUserLogged() {
+      if (this.user !== null) {
+        this.isLogged = true;
+      }
     }
 
   }

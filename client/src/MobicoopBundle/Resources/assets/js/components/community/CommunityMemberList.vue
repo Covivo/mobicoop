@@ -8,7 +8,7 @@
       <v-row>
         <v-col cols="6">
           <p headline>
-            {{ $t('Liste des membres') }}
+            Liste des membres
           </p>
         </v-col>
         <v-col cols="6">
@@ -19,7 +19,7 @@
             <v-text-field
               v-model="search"
               hide-details
-              :label="$t('Rechercher')"
+              label="Rechercher"
               single-line
             />
           </v-card>
@@ -31,8 +31,8 @@
       :items="users"
       :search="search"
       :footer-props="{
-        'items-per-page-all-text': $t('Tous'),
-        'itemsPerPageText': $t('Nombre de lignes par page')
+        'items-per-page-all-text': 'Tous',
+        'itemsPerPageText': 'Nombre de lignes par page'
       }"
     >
       <template v-slot:item.action="{ item }">
@@ -53,7 +53,7 @@
 
 <script>
 
-import moment from "moment";
+import axios from "axios";
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/home/HomeSearch.json";
@@ -67,10 +67,10 @@ export default {
     sharedMessages: CommonTranslations
   },
   props:{
-    users: {
-      type: Array,
+    community: {
+      type: Object,
       default: null
-    }
+    },
   },
   data () {
     return {
@@ -81,65 +81,27 @@ export default {
         { text: 'Prenom', value: 'givenName' },
         // { text: 'Actions', value: 'action', sortable: false }
       ],
-      editedIndex: -1,
-      editedItem: {
-        id:'',
-        familyName: '',
-        givenName: '',
-        telephone: '+33',
-        status: 0,
-      },
-      defaultItem: {
-        familyName: '',
-        givenName: '',
-        telephone: '+33',
-        status: 0,
-      },
+      users: [],
     }
   },
-  computed: {
-    formTitle () {
-      return this.editedIndex === -1 ? 'Nouveau membre' : 'Edition de la fiche d\'un membre'
-    },
-  },
-
-  watch: {
-    dialog (val) {
-      val || this.close()
-    },
+  
+  mounted() {
+    this.getCommunityMemberList();
+    
   },
   methods: {
-    editItem (item) {
-      this.editedIndex = this.users.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.dialog = true
-    },
-
-    deleteItem (item) {
-      const index = this.users.indexOf(item)
-      confirm('Are you sure you want to delete this item?') && this.users.splice(index, 1)
-    },
-
-    contactItem: function (item) {
-      window.location.href = '/utilisateur/messages?to='+item.id
-    },
-
-    close () {
-      this.dialog = false
-      setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      }, 300)
-    },
-
-    save () {
-      if (this.editedIndex > -1) {
-        Object.assign(this.users[this.editedIndex], this.editedItem)
-      } else {
-        this.users.push(this.editedItem)
-      }
-      this.close()
-    },
+   
+    getCommunityMemberList () {
+      axios 
+        .get('/community-member-list/'+this.community.id, {
+          headers:{
+            'content-type': 'application/json'
+          }
+        })
+        .then(res => {
+          this.users = res.data;
+        });
+    }
   }
 }
 </script>

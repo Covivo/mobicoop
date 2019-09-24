@@ -84,6 +84,10 @@ export default {
     ways: {
       type: Array,
       default: function(){return [];}
+    },
+    community: {
+      type: Object,
+      default: null
     }
   },
   data() {
@@ -106,8 +110,6 @@ export default {
           bounds.push([pointForBound.latLng.lat,pointForBound.latLng.lng]);
         });
         this.$refs.mmap.mapObject.fitBounds(bounds);
-
-
       }, 100);
     }
   }

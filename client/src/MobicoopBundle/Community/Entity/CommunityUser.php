@@ -247,7 +247,8 @@ class CommunityUser implements ResourceInterface, \JsonSerializable
             'admin'         => $this->getAdmin(),
             'createdDate'   => $this->getCreatedDate(),
             'acceptedDate'  => $this->getAcceptedDate(),
-            'refusedDate'   => $this->getRefusedDate()
+            'refusedDate'   => $this->getRefusedDate(),
+            'status'        => $this->getStatus(),
             
         ];
     }

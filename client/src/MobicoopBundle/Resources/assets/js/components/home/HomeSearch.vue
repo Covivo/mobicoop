@@ -76,7 +76,7 @@
         >
           <v-btn
 
-            :disabled="searchUnavailable"
+            :disabled="searchUnavailable || !isMember"
             :loading="loading"
             color="success"
             rounded

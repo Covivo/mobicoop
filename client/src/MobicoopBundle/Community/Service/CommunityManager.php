@@ -120,13 +120,13 @@ class CommunityManager
      * @param community.id          $id                 Id of the community
      * @return array|null The events found or null if not found.
      */
-    public function getLastUsers(?int $id)
+    public function getLastUsers(int $id, int $limit=3, int $status=1)
     {
         $this->dataProvider->setClass(CommunityUser::class);
         $params=[];
         $params['order[acceptedDate]'] = "desc";
-        $params['status'] = 1;
-        $params['perPage'] = 3;
+        $params['status'] = $status;
+        $params['perPage'] = $limit;
         if ($id) {
             $params['id'] = $id;
         }
