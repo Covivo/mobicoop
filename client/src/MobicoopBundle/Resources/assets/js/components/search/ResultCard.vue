@@ -170,7 +170,8 @@ export default {
   watch: {
     carpoolResults(){
       // this.matchings.push(this.carpoolResults.matchingRequests,this.carpoolResults.matchingOffers);
-      this.matchings=this.carpoolResults.matchingOffers.concat(this.carpoolResults.matchingRequests);
+      //this.matchings=this.carpoolResults.matchingOffers.concat(this.carpoolResults.matchingRequests);
+      this.matchings=this.carpoolResults;
       // this.matchings=this.carpoolResults
     }
   }

@@ -216,9 +216,6 @@ export default {
     },
     computedDateFormated() {
       return moment(new Date(this.matching.criteria.fromDate)).utcOffset("+00:00").format("ddd DD/MM")
-    },
-    computedSchedules(){
-      this.schedules=this.matching.monTime
     }
   }
 }

@@ -62,6 +62,7 @@
           </v-btn>
         </v-col>
       </v-row>
+
       <!-- date row-->
       <v-row
         justify="center"
@@ -74,6 +75,7 @@
           {{ displaydate(date) }}
         </v-col>
       </v-row>
+
       <!--      filter row-->
       <v-row
         justify="center"
@@ -198,6 +200,10 @@ export default {
       type:Object,
       default: null
     },
+    regular: {
+      type: Boolean,
+      default: true
+    }
   },
   data : function() {
     return {
@@ -223,10 +229,9 @@ export default {
       }
     })
       .then((response) => {
-        console.log(response);
+        console.log(response.data);
         this.loading = false;
-        // console.error(response.data[0]);
-        return this.results = response.data[0];
+        this.results = response.data;
       })
       .catch((error) => {
         console.log(error);

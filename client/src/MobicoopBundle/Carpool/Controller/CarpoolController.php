@@ -116,15 +116,16 @@ class CarpoolController extends AbstractController
         $matchings = [];
         $proposalResult = null;
 
-        if ($matchingResults = $proposalManager->getMatchingsForSearch(
+        // we post to the special collection /proposals/search, that will return only one virtual proposal (with its matchings)
+        if ($proposalResults = $proposalManager->getMatchingsForSearch(
             $origin_latitude,
             $origin_longitude,
             $destination_latitude,
             $destination_longitude,
             $date
         )) {
-            if (is_array($matchingResults->getMember()) && count($matchingResults->getMember()) == 1) {
-                $proposalResult = $matchingResults->getMember()[0];
+            if (is_array($proposalResults->getMember()) && count($proposalResults->getMember()) == 1) {
+                $proposalResult = $proposalResults->getMember()[0];
             }
         }
         if ($proposalResult) {
@@ -140,7 +141,6 @@ class CarpoolController extends AbstractController
 
         return $this->json($matchings);
       
-
         // return $this->json($proposalManager->getMatchingsForSearch(
         //     $origin_latitude,
         //     $origin_longitude,
