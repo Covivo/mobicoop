@@ -4,6 +4,7 @@
             "primary": "#81F19A",
             "secondary": "#023D7F",
             "tertiary":"#c93b8f",
+            "backSpiner": "#eeeeee",
             "accent": "#c93b8f",
             "error": "#FF5252",
             "info": "#003a5d",

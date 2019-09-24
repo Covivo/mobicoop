@@ -7,7 +7,7 @@ import '@css/page/community/showCommunity.scss'
 // Vue components
 import MHeader from '@components/base/MHeader'
 import MFooter from '@components/base/MFooter'
-import CommunityDisplay from '@components/community/CommunityDisplay'
+import Community from '@components/community/Community'
 
 new Vue({
   el: '#app',
@@ -15,7 +15,7 @@ new Vue({
   i18n,
   components: {
     MHeader,
-    CommunityDisplay,
+    Community,
     MFooter
   }
 });

@@ -99,7 +99,7 @@ class CommunityController extends AbstractController
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
-        return $this->render('@Mobicoop/community/showCommunity.html.twig', [
+        return $this->render('@Mobicoop/community/community.html.twig', [
             'community' => $community,
             'user' => $user,
             'searchRoute' => "covoiturage/recherche",
@@ -182,6 +182,13 @@ class CommunityController extends AbstractController
         return new Response(json_encode($lastUsersFormated));
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param integer $id
+     * @param CommunityManager $communityManager
+     * @return void
+     */
     public function getCommunityMemberList(int $id, CommunityManager $communityManager)
     {
         // retrive community;
@@ -200,7 +207,29 @@ class CommunityController extends AbstractController
                 }
             }
         }
-        dump($users);
         return new Response(json_encode($users));
     }
+
+    /**
+     * Undocumented function
+     *
+     * @param integer $id
+     * @param CommunityManager $communityManager
+     * @return void
+     */
+    public function getCommunityProposals(int $id, CommunityManager $communityManager)
+    {
+        $proposals = $communityManager->getProposals($id);
+        $points = [];
+        foreach($proposals as $proposal){
+            foreach ($proposal["waypoints"] as $waypoint) {
+                $points[] = [
+                    "title"=>$waypoint["address"]["displayLabel"],
+                    "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
+                ];
+            }
+        }
+        return new Response(json_encode($points));
+    }
+
 }

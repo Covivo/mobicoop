@@ -217,6 +217,15 @@ community_member_list:
     requirements:
         id: '\d+'        
 
+# get all community proposals
+community_proposals:
+    path:
+        fr: /community-proposals/{id}
+        en: /community-proposals/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityProposals
+    requirements:
+        id: '\d+'         
+
 
 ##########################
 # editorial pages routes #

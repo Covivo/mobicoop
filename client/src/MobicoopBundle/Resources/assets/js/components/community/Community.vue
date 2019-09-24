@@ -99,13 +99,27 @@
           </div>
         </v-col>
     
-        <v-col cols="4">
+        <v-col
+          cols="4"
+        >
+          <v-card
+            v-show="loadingMap"
+            flat
+            align="center"
+            height="500"
+            color="backSpiner"
+          >
+            <v-progress-circular
+              size="497"
+              indeterminate
+              color="tertiary"
+            />
+          </v-card>
           <m-map
-            ref="mmapRoute"
-            type-map="adSummary"
+            v-show="!loadingMap"
+            ref="mmap"
+            type-map="community"
             :points="pointsToMap"
-            :ways="directionWay"
-            :community="community"
           />
         </v-col>
       </v-row>
@@ -127,7 +141,6 @@
           cols="2"
         >
           <community-last-users
-            :last-users="lastUsers"
             :community="community"
           />
         </v-col>
@@ -170,13 +183,14 @@
 import axios from "axios";
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/community/CommunityDisplay.json";
-import TranslationsClient from "@clientTranslations/components/community/CommunityDisplay.json";
+import Translations from "@translations/components/community/Community.json";
+import TranslationsClient from "@clientTranslations/components/community/Community.json";
 import CommunityMemberList from "@components/community/CommunityMemberList";
 import CommunityInfos from "@components/community/CommunityInfos";
 import HomeSearch from "@components/home/HomeSearch";
 import CommunityLastUsers from "@components/community/CommunityLastUsers";
 import MMap from "@components/base/MMap"
+import L from "leaflet";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -246,12 +260,14 @@ export default {
       isMember: false,
       checkValidation: false,
       isLogged: false,
+      loadingMap: false,
 
     }
   },
   mounted() {
     this.getCommunityUser();
     this.checkIfUserLogged();
+    this.getCommunityProposals();
   },
   methods:{
     linkToCommunityJoin: function (item) {
@@ -301,7 +317,45 @@ export default {
       if (this.user !== null) {
         this.isLogged = true;
       }
-    }
+    },
+    getCommunityProposals () {
+      this.loadingMap = true;
+      axios 
+       
+        .get('/community-proposals/'+this.community.id,
+          {
+            headers:{
+              'content-type': 'application/json'
+            }
+          })
+        .then(res => {
+          this.errorUpdate = res.data.state;
+          this.pointsToMap.length = 0;
+          res.data.forEach((waypoint, index) => {
+            this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+          });
+          this.loadingMap = false;
+          setTimeout(this.$refs.mmap.redrawMap(),600);
+          
+        });
+    },
+    buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
+      let point = {
+        title:title,
+        latLng:L.latLng(lat, lng),
+        icon: {}
+      }
+
+      if(pictoUrl!==""){
+        point.icon = {
+          url:pictoUrl,
+          size:size,
+          anchor:anchor
+        }
+      }
+        
+      return point;      
+    }     
 
   }
 }

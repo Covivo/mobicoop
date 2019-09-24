@@ -165,8 +165,8 @@ class Community
      * @var ArrayCollection|null The proposals in this community.
      *
      * @ORM\ManyToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="communities")
-     * @Groups({"read","write"})
      * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
      */
     private $proposals;
 

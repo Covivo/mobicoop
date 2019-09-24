@@ -23,6 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Community\Service;
 
+use App\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
@@ -144,5 +145,18 @@ class CommunityManager
         $this->dataProvider->setClass(CommunityUser::class);
         $response = $this->dataProvider->getCollection(['community.id'=>$communityId, 'user.id'=>$userId]);
         return $response->getValue()->getMember();
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param integer $id
+     * @return void
+     */
+    public function getProposals(int $id)
+    {
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
+        $proposals = $this->dataProvider->getSubCollection($id, "proposal", "proposals");
+        return $proposals->getValue();
     }
 }

@@ -85,10 +85,7 @@ export default {
       type: Array,
       default: function(){return [];}
     },
-    community: {
-      type: Object,
-      default: null
-    }
+    
   },
   data() {
     return {
@@ -111,7 +108,7 @@ export default {
         });
         this.$refs.mmap.mapObject.fitBounds(bounds);
       }, 100);
-    }
+    },
   }
 };
 </script>
