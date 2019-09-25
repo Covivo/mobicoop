@@ -1,16 +1,31 @@
 {
   "fr": {
-    "ui": {
-      "read": {
-        "more": "Lire la suite >>"
+    "buttons": {
+      "publish": {
+          "label": "Publier une annonce",
+          "route": "/covoiturage/annonce/poster/"
+      },
+      "search": {
+        "label": "Rechercher",
+        "route": ""
+      },
+      "join": {
+        "label": "Rejoindre la communauté",
+        "route": "/rejoindre-communaute/"
       }
-    }
-  },
-  "fr_FR": {
-    "ui": {
-      "read": {
-        "more": "Lire la suite >>"
+    },
+    "tooltips": {
+      "connected": "Vous devez être connecté",
+      "validation": "En attente de validation"
+    },
+    "snackbar": {
+      "joinCommunity": {
+        "textOk": "Votre demande d'adhésion est bien envoyée au référent. Vous serez informé par email.",
+        "textError": "Une erreur est survenue veillez essayer à nouveau"
       }
+    },
+    "title": {
+      "searchCarpool" : "Chercher un trajet dans la communauté"
     }
   }
 }
