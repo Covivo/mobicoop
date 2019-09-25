@@ -453,7 +453,8 @@
         </v-btn>
 
         <v-btn
-          v-if="((driver && step < 7) || (step<5)) && origin != null && destination != null && (passenger || driver) && (regular || outwardDate)"
+          v-if="step < 7"
+          :disabled="!validNext"
           rounded
           color="success"
           align-center
@@ -463,9 +464,9 @@
           {{ $t('stepper.buttons.next') }}
         </v-btn>
         <v-btn
-          v-if="valid"
+          v-if="step == 7 && valid"
+          :disabled="!valid || loading"
           :loading="loading"
-          :disabled="loading"
           rounded
           color="success"
           style="margin-left: 30px;"
@@ -474,6 +475,25 @@
         >
           {{ $t('stepper.buttons.publish_ad') }}
         </v-btn>
+
+        <v-tooltip
+          v-if="(step == 7 && !valid)"
+          bottom
+        >
+          <template v-slot:activator="{on}">
+            <div v-on="on">
+              <v-btn
+                disabled
+                rounded
+                style="margin-left: 30px;"
+                align-center
+              >
+                {{ $t('stepper.buttons.publish_ad') }}
+              </v-btn>
+            </div>
+          </template>
+          <span>{{ $t('stepper.buttons.notValid') }}</span>
+        </v-tooltip>
       </v-layout>
     </v-container>
   </v-content>
@@ -596,6 +616,8 @@ export default {
       return null;
     },
     valid() {
+      // For the publish button
+      
       // step validation
       if ((this.driver && this.step != 7) || (!this.driver && this.step != 5)) return false;
       // role validation
@@ -607,6 +629,19 @@ export default {
       // regular date validation
       if (this.regular && !this.schedules) return false;
       // validation ok
+      return true;
+    },
+    validNext() {
+      // For the next button
+
+      //((driver && step < 7) || (step<5)) && origin != null && destination != null && (passenger || driver) && (regular || outwardDate)
+
+      if(this.origin == null || this.destination == null) return false;
+      if(!this.passenger && !this.driver) return false;
+      if(!this.regular && !this.outwardDate) return false;
+      if(!this.driver && this.step>5) return false;
+      if(this.step>=7) return false;
+
       return true;
     },
     urlToCall() {
