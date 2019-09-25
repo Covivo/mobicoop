@@ -463,30 +463,21 @@
         >
           {{ $t('stepper.buttons.next') }}
         </v-btn>
-        <v-btn
-          v-if="step == 7 && valid"
-          :disabled="!valid || loading"
-          :loading="loading"
-          rounded
-          color="success"
-          style="margin-left: 30px;"
-          align-center
-          @click="postAd"
-        >
-          {{ $t('stepper.buttons.publish_ad') }}
-        </v-btn>
 
         <v-tooltip
-          v-if="(step == 7 && !valid)"
+          v-if="(step == 7)"
           bottom
         >
           <template v-slot:activator="{on}">
-            <div v-on="on">
+            <div v-on="(!valid)?on:{}">
               <v-btn
-                disabled
+                :disabled="!valid || loading"
+                :loading="loading"
                 rounded
+                color="success"
                 style="margin-left: 30px;"
                 align-center
+                @click="postAd"
               >
                 {{ $t('stepper.buttons.publish_ad') }}
               </v-btn>
