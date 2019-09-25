@@ -8,7 +8,7 @@
       <v-row>
         <v-col cols="6">
           <p headline>
-            Liste des membres
+            {{ $t('title') }}
           </p>
         </v-col>
         <v-col cols="6">
@@ -19,7 +19,7 @@
             <v-text-field
               v-model="search"
               hide-details
-              label="Rechercher"
+              :label="$t('table.search')"
               single-line
             />
           </v-card>
@@ -31,8 +31,8 @@
       :items="users"
       :search="search"
       :footer-props="{
-        'items-per-page-all-text': 'Tous',
-        'itemsPerPageText': 'Nombre de lignes par page'
+        'items-per-page-all-text': $t('table.all'),
+        'itemsPerPageText': $t('table.lineNumber')
       }"
     >
       <template v-slot:item.action="{ item }">
@@ -56,8 +56,8 @@
 import axios from "axios";
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/home/HomeSearch.json";
-import TranslationsClient from "@clientTranslations/components/home/HomeSearch.json";
+import Translations from "@translations/components/community/CommunityMemberList.json";
+import TranslationsClient from "@clientTranslations/components/community/CommunityMemberList.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -77,9 +77,8 @@ export default {
       search: '',
       dialog: false,
       headers: [
-        { text: 'Nom', value: 'familyName' },
-        { text: 'Prenom', value: 'givenName' },
-        // { text: 'Actions', value: 'action', sortable: false }
+        { text: this.$t('table.colTitle.familyName'), value: 'familyName' },
+        { text: this.$t('table.colTitle.givenName'), value: 'givenName' },
       ],
       users: [],
     }
@@ -87,7 +86,6 @@ export default {
   
   mounted() {
     this.getCommunityMemberList();
-    
   },
   methods: {
    

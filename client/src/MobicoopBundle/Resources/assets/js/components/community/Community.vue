@@ -36,13 +36,13 @@
           <div v-if="isMember && isAccepted">
             <a
               style="text-decoration:none;"
-              :href="'/covoiturage/annonce/poster/'+community.id"
+              :href="$t('buttons.publish.route')+community.id"
             >
               <v-btn
                 color="success"
                 rounded
               >
-                Publier une annonce
+                {{ $t('buttons.publish.label') }}
               </v-btn>
             </a>
           </div>
@@ -54,18 +54,19 @@
               <template v-slot:activator="{ on }">
                 <a
                   style="text-decoration:none;"
-                  href="/covoiturage/annonce/poster"
+                  :href="$t('buttons.publish.route')+community.id"
                   v-on="on"
                 >
                   <v-btn
                     color="success"
                     rounded
+                    disabled
                   >
-                    Publier une annonce
+                    {{ $t('buttons.publish.label') }}
                   </v-btn>
                 </a>
               </template>
-              <span>En attente de validation</span>
+              <span>{{ $t('tooltips.validation') }}</span>
             </v-tooltip>
           </div>
           <div
@@ -85,15 +86,15 @@
                   <v-btn
                     color="success"
                     rounded
-                    :loading="loading || (checkValidation && !isLogged) "
-                    :disabled="!isLogged"
+                    :loading="loading || (checkValidation && isLogged) "
+                    :disabled="!isLogged || checkValidation"
                     @click="joinCommunity"
                   >
-                    Rejoindre la communauté
+                    {{ $t('buttons.join.label') }}
                   </v-btn>
                 </a>
               </template>
-              <span>Vous devez être connecté</span>
+              <span>{{ $t('tooltips.connected') }}</span>
             </v-tooltip>
           </div>
         </v-col>
@@ -155,7 +156,7 @@
           class="mt-6"
         >
           <p class="headline">
-            Chercher un trajet dans la communauté
+            {{ $t('title.searchCarpool') }}
           </p>
         </v-col>
       </v-row>
@@ -252,8 +253,8 @@ export default {
       directionWay:[],
       loading: false,
       snackbar: false,
-      textSnackOk: "Votre demande d'adhésion est bien envoyée au référent. Vous serez informé par email.",
-      textSnackError: "Une erreur est survenue veillez essayer à nouveau",
+      textSnackOk: this.$t("snackbar.joinCommunity.textOk"),
+      textSnackError: this.$t("snackbar.joinCommunity.textError"),
       errorUpdate: false,
       isAccepted: false,
       isMember: false,
@@ -269,15 +270,6 @@ export default {
     this.getCommunityProposals();
   },
   methods:{
-    linkToCommunityJoin: function (item) {
-      return '/join-community/'+item.id;
-    },
-    linkToCommunityShow: function (item) {
-      return '/community/'+item.id;
-    },
-    linkToCommunityWidget: function (item) {
-      return '/community/show-widget/'+item.id;
-    },
     getCommunityUser() {
       this.checkValidation = true;
       axios 
@@ -298,7 +290,7 @@ export default {
     joinCommunity() {
       this.loading = true;
       axios 
-        .post('/rejoindre-communaute/'+this.community.id,
+        .post(this.$t('buttons.publish.route')+this.community.id,
           {
             headers:{
               'content-type': 'application/json'

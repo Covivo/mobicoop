@@ -182,7 +182,7 @@ community_show:
     requirements:
         id: '\d+'
 
-# join a community
+# join a community (called with ajax)
 community_join:
     path:
         fr: /rejoindre-communaute/{id}
@@ -191,7 +191,7 @@ community_join:
     requirements:
         id: '\d+'
 
-# get a community user
+# get a community user (called with ajax)
 community_user:
     path:
         fr: /community-user/{id}
@@ -200,7 +200,7 @@ community_user:
     requirements:
         id: '\d+'
 
-# get the last community users
+# get the last community users (called with ajax)
 community_last_users:
     path:
         fr: /community-last-users/{id}
@@ -209,7 +209,7 @@ community_last_users:
     requirements:
         id: '\d+'
 
-# get community members list
+# get community members list (called with ajax)
 community_member_list:
     path:
         fr: /community-member-list/{id}
@@ -218,7 +218,7 @@ community_member_list:
     requirements:
         id: '\d+'        
 
-# get all community proposals
+# get all community proposals (called with ajax)
 community_proposals:
     path:
         fr: /community-proposals/{id}
