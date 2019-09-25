@@ -80,23 +80,15 @@
           offset-xs3
           xs2
         >
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <!-- This div can be removes. It's only a wrapper for the tooltip on disabled button -->
-              <div v-on="on">
-                <v-btn
-                  v-show="!justsearch"
-                  disabled
-                  outlined
-                  rounded
-                  @click="publish"
-                >
-                  {{ $t('buttons.shareAnAd.label') }}
-                </v-btn>
-              </div>
-            </template>
-            <span>{{ $t('ui.infos.notAvailableYet') }}</span>
-          </v-tooltip>
+          <v-btn
+            v-show="!justsearch"
+            disabled
+            outlined
+            rounded
+            @click="publish"
+          >
+            {{ $t('buttons.shareAnAd.label') }}
+          </v-btn>
         </v-flex>
         <v-flex xs2>
           <v-btn
