@@ -34,6 +34,7 @@ use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManage
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
  * Controller class for carpooling related actions.
@@ -71,11 +72,35 @@ class CarpoolController extends AbstractController
         //get user's community
         $community = $communityManager->getCommunity($communityId);
 
+        if ($request->query->get('origin')) {
+            $initOrigin = new Address();
+            $initOrigin->setDisplayLabel($request->query->get('origin'));
+            $initOrigin->setLatitude($request->query->get('originLat'));
+            $initOrigin->setLongitude($request->query->get('originLon'));
+        }
+        if ($request->query->get('destination')) {
+            $initDestination = new Address();
+            $initDestination->setDisplayLabel($request->query->get('destination'));
+            $initDestination->setLatitude($request->query->get('destinationLat'));
+            $initDestination->setLongitude($request->query->get('destinationLon'));
+         }
+        if ($request->query->get('destination')) {
+            $initDestination = new Address();
+            $initDestination->setDisplayLabel($request->query->get('destination'));
+            $initDestination->setLatitude($request->query->get('destinationLat'));
+            $initDestination->setLongitude($request->query->get('destinationLon'));
+        }
+ 
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
             [
                 'communities'=>$communities,
                 'community'=>$community,
+                'initOrigin'=>(isset($initOrigin)) ? $initOrigin : null,
+                'initDestination'=>(isset($initDestination)) ? $initDestination : null,
+                'initRegular'=>(is_null($request->query->get('regular')) || $request->query->get('regular')==="1") ? true : false,
+                'initDate'=>($request->query->get('date')) ? $request->query->get('date') : null,
+                'initTime'=>($request->query->get('time')) ? $request->query->get('time') : null,
             ]
         );
     }

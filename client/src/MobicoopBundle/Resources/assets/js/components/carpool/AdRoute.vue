@@ -342,8 +342,8 @@ export default {
   },
   data() {
     return {
-      origin: null,
-      destination: null,
+      origin: this.initOrigin,
+      destination: this.initDestination,
       waypoints: [
         {
           visible: false,
@@ -376,6 +376,9 @@ export default {
       this.destination = this.initDestination;
       this.getRoute();
     }
+  },
+  mounted(){
+    this.getRoute();
   },
   methods: {
     originSelected: function(address) {

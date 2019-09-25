@@ -172,6 +172,7 @@
             :justsearch="false"
             :notitle="true"
             :is-member="isMember"
+            :community="community"
           />
         </v-col>
       </v-row>

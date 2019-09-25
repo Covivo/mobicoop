@@ -17,7 +17,8 @@
         },
         "buttons": {
             "shareAnAd": {
-                "label": "Publier une annonce"
+                "label": "Publier une annonce",
+                "route": "/covoiturage/annonce/poster/"
             },
             "search": {
                 "label": "Rechercher"

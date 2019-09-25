@@ -63,9 +63,10 @@
         >
           <v-btn
             v-if="isMember"
-            disabled
             outlined
+            :disabled="searchUnavailable || !logged"
             rounded
+            :loading="loading"
             @click="publish"
           >
             {{ $t('buttons.shareAnAd.label') }}
@@ -75,7 +76,6 @@
           cols="3"
         >
           <v-btn
-
             :disabled="searchUnavailable || !isMember"
             :loading="loading"
             color="success"
@@ -93,6 +93,7 @@
 <script>
 import moment from "moment";
 import {merge} from "lodash";
+import axios from "axios";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/home/HomeSearch.json";
 import TranslationsClient from "@clientTranslations/components/home/HomeSearch.json";
@@ -129,11 +130,16 @@ export default {
     isMember: {
       type: Boolean,
       default: true
+    },
+    community: {
+      type: Object,
+      default: null
     }
   },
   data() {
     return {
       loading: false,
+      logged: this.user != "" ? true : false,
       menu: false,
       regular: true,
       date: null,
@@ -185,8 +191,32 @@ export default {
     },
     publish: function () {
       this.loading = true;
-      console.error("publish !");
-    }
+      let params = [];
+      let communityId = (this.community) ? "/"+this.community.id : "";
+      if (this.origin) {
+        params.push("origin="+this.origin.displayedLabel);
+        params.push("originLat="+this.origin.latitude);
+        params.push("originLon="+this.origin.longitude);
+      }
+      if (this.destination) {    
+        params.push("destination="+this.destination.displayedLabel);
+        params.push("destinationLat="+this.destination.latitude);
+        params.push("destinationLon="+this.destination.longitude);
+      }
+      if (this.regular) {
+        params.push("regular=1");
+      }
+      else{
+        params.push("regular=0");
+      }
+      if (this.date) {
+        params.push("date="+this.date);
+      }
+      if (this.time) {
+        params.push("time="+this.time);
+      }
+      window.location.href = "/covoiturage/annonce/poster"+communityId+"?"+params.join("&");
+    },
   }
 };
 </script>

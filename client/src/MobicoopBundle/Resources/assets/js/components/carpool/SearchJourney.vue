@@ -232,14 +232,18 @@ export default {
     initDestination: {
       type: Object,
       default: null
+    },
+    initRegular: {
+      type: Boolean,
+      default: true
     }    
   },
   data() {
     return {
-      date: null,
+      date: this.initOutwardDate,
       outwardDateClicked: false,
       menu: false,
-      regular: true,
+      regular: this.initRegular,
       role: 3,
       passenger: true,
       driver: true,
@@ -251,8 +255,8 @@ export default {
       locale: this.$i18n.locale,
       origin: null,
       destination: null,
-      customInitOrigin: null,
-      customInitDestination: null,
+      customInitOrigin: (this.initOrigin)?this.initOrigin:null,
+      customInitDestination: (this.initDestination)?this.initDestination:null,
       valid: false
     };
   },

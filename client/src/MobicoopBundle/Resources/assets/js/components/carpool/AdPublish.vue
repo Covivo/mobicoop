@@ -125,7 +125,7 @@
                   :init-outward-date="outwardDate"
                   :init-origin="origin"
                   :init-destination="destination"
-                  :regular="true"
+                  :init-regular="regular"
                   @change="searchChanged"
                 />
               </v-stepper-content>
@@ -541,19 +541,41 @@ export default {
     community: {
       type: Object,
       default: null
-    }
+    },
+    initOrigin: {
+      type: Object,
+      default: null
+    },
+    initDestination: {
+      type: Object,
+      default: null
+    },
+    initRegular: {
+      type: Boolean,
+      default: true
+    },
+    initDate: {
+      type: String,
+      default: null
+    },
+    initTime: {
+      type: String,
+      default: null
+    },
+
+
   },
   data() {
     return {
       distance: 0, 
       duration: 0,
-      outwardDate: null,
-      outwardTime: null,
+      outwardDate: this.initDate,
+      outwardTime: this.initTime,
       returnDate: null,
       returnTime: null,
-      origin: null,
-      destination: null,
-      regular: true,
+      origin: this.initOrigin,
+      destination: this.initDestination,
+      regular: this.initRegular,
       step:1,
       driver: true,
       passenger: true,
