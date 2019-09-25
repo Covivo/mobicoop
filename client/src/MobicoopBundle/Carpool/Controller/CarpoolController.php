@@ -83,7 +83,7 @@ class CarpoolController extends AbstractController
             $initDestination->setDisplayLabel($request->query->get('destination'));
             $initDestination->setLatitude($request->query->get('destinationLat'));
             $initDestination->setLongitude($request->query->get('destinationLon'));
-         }
+        }
         if ($request->query->get('destination')) {
             $initDestination = new Address();
             $initDestination->setDisplayLabel($request->query->get('destination'));
