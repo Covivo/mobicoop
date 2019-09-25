@@ -2,11 +2,11 @@
 
 {% block title %}Résultats{% endblock %}
 {% block stylesheets %}
-    {{ encore_entry_link_tags("#{assets_prefix ?? ''}carpool/simpleResults") }}
+    {{ encore_entry_link_tags("#{assets_prefix ?? ''}carpool/results") }}
 {% endblock %}
 {% block main %}
 
-    <results
+    <matching
         {# we format origin and destination address #}
         origin = "{{ origin | replace({'_': " "}) }}"
         destination = "{{ destination | replace({'_': " "}) }}"
@@ -14,14 +14,15 @@
         origin-longitude = "{{ origin_longitude }}"
         destination-latitude = "{{ destination_latitude }}"
         destination-longitude = "{{ destination_longitude }}"
-        {# We format date here so it does not have to be done in Vue #}
         date = "{{ date }}"
-        matching-search-url = "{{ matching_search_url }}"
+        url = "{{ url }}"
         :user="{{ app.user|json_encode }}"
+        {{ regular ? 'regular' : '' }}
+        {{ showRegular ? 'show-regular' : '' }}
     />
 
 
 {% endblock %}
 {% block javascripts %}
-    {{ encore_entry_script_tags("#{assets_prefix ?? ''}carpool/simpleResults") }}
+    {{ encore_entry_script_tags("#{assets_prefix ?? ''}carpool/results") }}
 {% endblock %}

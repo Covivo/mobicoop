@@ -168,28 +168,14 @@ export default {
   computed: {
     // creation of the url to call
     urlToCall() {
-      return `${this.baseUrl}/${this.route}/${this.origin.addressLocality}/${this.destination.addressLocality}/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.dateFormated}/resultats`;
-      // return `${this.baseUrl}/${this.route}/Boulevard_d’Austrasie,_Nancy/Rue_d’Arcole,_Sanary-sur-Mer/48.6937223/6.1834097/49.1196964/6.1763552/${this.dateFormated}/resultats`;
-
-
+      return `${this.baseUrl}/${this.route}/${this.origin.addressLocality}/${this.destination.addressLocality}/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.dateFormated}/${this.regular ? '0' : '1'}/resultats`;
     },
     searchUnavailable() {
       return (!this.origin || !this.destination || this.loading == true)
     },
-    // computedDateFormat() {
-    //   moment.locale(this.locale);
-    //   return this.date
-    //     ? moment(new Date(this.date+":"+this.time+":00Z")).utcOffset("+00:00").format()
-    //     : moment(new Date()).utcOffset("+00:00").format();
-    // },
     dateFormated() {
-      // return !this.date
-      //   ? moment(new Date()).format("YYYYMMDDHHmmss")
-      //   : moment(this.date).format("YYYYMMDDHHmmss");
-      return moment(new Date(this.date+":"+this.time+":00Z")).utcOffset("+00:00").format() //@TODO: Uncomment true method
-      //TODO : see if we apply GMT or not
+      return moment(new Date(this.date+":"+this.time+":00Z")).utcOffset("+00:00").format()
     },
-
   },
   methods: {
     searchChanged: function (search) {
@@ -201,8 +187,6 @@ export default {
     search: function () {
       this.loading = true;
       this.regular,
-
-
       window.location.href = this.urlToCall;
     },
     publish: function () {

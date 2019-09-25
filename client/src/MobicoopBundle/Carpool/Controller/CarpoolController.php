@@ -79,15 +79,9 @@ class CarpoolController extends AbstractController
     /**
      * Simple search results.
      */
-    // public function simpleSearchResults($origin, $destination, $origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date, ProposalManager $proposalManager)
-    public function simpleSearchResults($origin, $destination, $origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date)
+    public function simpleSearchResults($origin, $destination, $origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date, $regular)
     {
-        // $offers= $proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("Y-m-d\TH:i:s\Z", $date));
-        // $reponseofmanager= $this->handleManagerReturnValue($offers);
-        // if (!empty($reponseofmanager)) {
-        //     return $reponseofmanager;
-        // }
-        return $this->render('@Mobicoop/search/simple_results.html.twig', [
+        return $this->render('@Mobicoop/carpool/results.html.twig', [
             'origin' => urldecode($origin),
             'destination' => urldecode($destination),
             'origin_latitude' => urldecode($origin_latitude),
@@ -95,8 +89,9 @@ class CarpoolController extends AbstractController
             'destination_latitude' => urldecode($destination_latitude),
             'destination_longitude' => urldecode($destination_longitude),
             'date' =>  $date,
-            // 'hydra' => $offers,
-            'matching_search_url' => "/matching/search/"
+            'regular' => $regular,
+            'showRegular' => true,
+            'url' => "/matching/search/"
         ]);
     }
 
@@ -109,7 +104,7 @@ class CarpoolController extends AbstractController
         $origin_longitude = $request->query->get('origin_longitude');
         $destination_latitude = $request->query->get('destination_latitude');
         $destination_longitude = $request->query->get('destination_longitude');
-        $date = \Datetime::createFromFormat("Y-m-d\TH:i:s\Z", $request->query->get('date'));
+        $date = \Datetime::createFromFormat("Y-m-d\TH:i:s.u\Z", $request->query->get('date'));
 
         // we have to merge matching proposals that concern both driver and passenger into a single matching
         $matchings = [];

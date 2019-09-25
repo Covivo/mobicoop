@@ -431,7 +431,7 @@ class Proposal implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
-    // If you want more info from user you just have to add it to the jsonSerialize function
+    // If you want more info from proposal you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
         return
@@ -440,7 +440,8 @@ class Proposal implements ResourceInterface, \JsonSerializable
             'proposalLinkedId'  => (int)$this->getProposalLinked(),
             'user'              => $this->getUser(),
             'criteria'          => $this->getCriteria(),
-            'type'              => $this->getType()
+            'type'              => $this->getType(),
+            'waypoints'         => $this->getWaypoints()
         ];
     }
 }
