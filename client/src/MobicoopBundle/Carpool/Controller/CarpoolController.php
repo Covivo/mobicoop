@@ -47,7 +47,7 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
-    public function post(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
+    public function post(int $communityId, ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
     {
         $proposal = new Proposal();
         $poster = $userManager->getLoggedUser();
@@ -67,11 +67,15 @@ class CarpoolController extends AbstractController
 
         // get the communities available for the user
         $communities = $communityManager->getAvailableUserCommunities($poster)->getMember();
+        
+        //get user's community
+        $community = $communityManager->getCommunity($communityId);
 
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
             [
-                'communities'=>$communities
+                'communities'=>$communities,
+                'community'=>$community,
             ]
         );
     }

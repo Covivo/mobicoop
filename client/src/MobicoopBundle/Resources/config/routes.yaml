@@ -108,9 +108,10 @@ logout:
 # post an ad
 carpool_ad_post:
     path:
-        fr: /covoiturage/annonce/poster
-        en: /carpool/ad/share
+        fr: /covoiturage/annonce/poster/{communityId}
+        en: /carpool/ad/share/{communityId}
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::post
+    defaults: { communityId: 0 }    
 
 # ad results
 carpool_ad_results:
@@ -224,9 +225,8 @@ community_proposals:
         en: /community-proposals/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityProposals
     requirements:
-        id: '\d+'         
-
-
+        id: '\d+'       
+        
 ##########################
 # editorial pages routes #
 ##########################

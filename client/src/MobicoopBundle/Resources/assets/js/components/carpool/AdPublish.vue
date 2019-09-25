@@ -151,6 +151,7 @@
                       :init-origin="origin"
                       :init-destination="destination"
                       :communities="communities"
+                      :community="community"
                       @change="routeChanged"
                     />
                   </v-col>
@@ -537,6 +538,10 @@ export default {
       type: Number,
       default: null
     },
+    community: {
+      type: Object,
+      default: null
+    }
   },
   data() {
     return {

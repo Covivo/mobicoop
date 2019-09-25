@@ -36,7 +36,7 @@
           <div v-if="isMember && isAccepted">
             <a
               style="text-decoration:none;"
-              href="/covoiturage/annonce/poster"
+              :href="'/covoiturage/annonce/poster/'+community.id"
             >
               <v-btn
                 color="success"
@@ -60,7 +60,6 @@
                   <v-btn
                     color="success"
                     rounded
-                    disabled
                   >
                     Publier une annonce
                   </v-btn>

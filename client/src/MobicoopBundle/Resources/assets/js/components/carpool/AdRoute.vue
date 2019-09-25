@@ -334,6 +334,10 @@ export default {
     initDestination: {
       type: Object,
       default: null
+    },
+    community: {
+      type: Object,
+      default: null
     }
   },
   data() {
@@ -360,7 +364,7 @@ export default {
       ],
       avoidMotorway: false,
       direction: null,
-      selectedCommunities: null
+      selectedCommunities: this.community ? [this.community.iri] : null,
     };
   },
   watch: {
