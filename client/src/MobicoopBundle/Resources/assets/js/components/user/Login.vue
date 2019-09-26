@@ -64,7 +64,8 @@
         </v-form>
         <v-card-text>
           <a
-            :href="urlforgottenpassword.value"
+            v-show="false"
+            :href="urlforgottenpassword"
           >
             Mot de passe oublié?
           </a>
