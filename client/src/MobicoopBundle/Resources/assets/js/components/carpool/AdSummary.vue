@@ -333,10 +333,10 @@
                   outlined
                   class="mx-auto"
                 >
-                  <v-card-title>
+                  <v-card-title v-if="user != null">
                     {{ user.givenName }} {{ user.familyName }}
                   </v-card-title>
-                  <v-card-text>
+                  <v-card-text v-if="user != null">
                     {{ user.telephone }}
                   </v-card-text>
                 </v-card>

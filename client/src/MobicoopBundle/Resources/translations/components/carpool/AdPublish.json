@@ -51,7 +51,8 @@
             "buttons": {
                 "next": "Suivant",
                 "previous": "Précédent",
-                "publish_ad": "Publier mon annonce"    
+                "publish_ad": "Publier mon annonce",
+                "notValid" : "Vous devez être loggué pour publier une annonce et avoir fournis toutes les informations du trajet"
             }
         }
     }

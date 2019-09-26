@@ -123,7 +123,7 @@ export default {
       }
     },
     treatErrorMessage(errorMessage) {
-      if (errorMessage === "Bad credentials.") {
+      if (errorMessage.value === "Bad credentials.") {
         this.errorDisplay = this.$t("errorCredentials");
         this.loading = false;
       }

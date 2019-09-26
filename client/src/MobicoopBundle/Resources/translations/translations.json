@@ -16,7 +16,8 @@
                 "infos": {
                     "misc": {
                         "at": "à"
-                    }
+                    },
+                    "notAvailableYet": "Cette fonction sera bientôt disponible"
                 },
                 "pages": {
                     "home": {

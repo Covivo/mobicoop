@@ -453,7 +453,8 @@
         </v-btn>
 
         <v-btn
-          v-if="((driver && step < 7) || (step<5)) && origin != null && destination != null && (passenger || driver) && (regular || outwardDate)"
+          v-if="step < 7"
+          :disabled="!validNext"
           rounded
           color="success"
           align-center
@@ -462,18 +463,28 @@
         >
           {{ $t('stepper.buttons.next') }}
         </v-btn>
-        <v-btn
-          v-if="valid"
-          :loading="loading"
-          :disabled="loading"
-          rounded
-          color="success"
-          style="margin-left: 30px;"
-          align-center
-          @click="postAd"
+
+        <v-tooltip
+          v-if="(step == 7)"
+          bottom
         >
-          {{ $t('stepper.buttons.publish_ad') }}
-        </v-btn>
+          <template v-slot:activator="{on}">
+            <div v-on="(!valid)?on:{}">
+              <v-btn
+                :disabled="!valid || loading"
+                :loading="loading"
+                rounded
+                color="success"
+                style="margin-left: 30px;"
+                align-center
+                @click="postAd"
+              >
+                {{ $t('stepper.buttons.publish_ad') }}
+              </v-btn>
+            </div>
+          </template>
+          <span>{{ $t('stepper.buttons.notValid') }}</span>
+        </v-tooltip>
       </v-layout>
     </v-container>
   </v-content>
@@ -569,6 +580,7 @@ export default {
       bike: false,
       backSeats: false,
       schedules: null,
+      returnTrip:null,
       route: null,
       price: null,
       pricePerKm: this.defaultPriceKm,
@@ -596,6 +608,8 @@ export default {
       return null;
     },
     valid() {
+      // For the publish button
+      
       // step validation
       if ((this.driver && this.step != 7) || (!this.driver && this.step != 5)) return false;
       // role validation
@@ -604,9 +618,31 @@ export default {
       if (this.distance<=0 || this.duration<=0 || !this.origin || !this.destination || !this.route) return false;
       // punctual date validation
       if (!this.regular && !(this.outwardDate && this.outwardTime)) return false;
+      // punctual roundtrip date validation
+      if (!this.regular && this.returnTrip && !(this.returnDate && this.returnTime)) return false;
       // regular date validation
       if (this.regular && !this.schedules) return false;
+      // regular schedules validation
+      if(this.step==2 && this.regular && (this.schedules==null || this.schedules.length==0)) return false;
       // validation ok
+      return true;
+    },
+    validNext() {
+      // For the next button
+      if(this.origin == null || this.destination == null) return false;
+      if(!this.passenger && !this.driver) return false;
+      if(!this.regular && !this.outwardDate) return false;
+      if(!this.driver && this.step>5) return false;
+      if(this.step>=7) return false;
+
+      // Specifics by steps
+      // Step 2 regular : you have to setup at least one schedule
+      if(this.step==2 && this.regular && (this.schedules==null || this.schedules.length==0)) return false;
+      // Step 2 punctual : you have to set the outward time
+      if(this.step==2 && !this.regular && !(this.outwardDate && this.outwardTime)) return false;
+      // Step 2 punctual, round-trip chosen : you have to set the outward date & time
+      if(this.step==2 && !this.regular && this.returnTrip && !(this.returnDate && this.returnTime)) return false;
+
       return true;
     },
     urlToCall() {
@@ -691,6 +727,7 @@ export default {
       this.returnDate = planification.returnDate;
       this.returnTime = planification.returnTime;
       this.schedules = planification.schedules;
+      this.returnTrip = planification.returnTrip;
     },
     routeChanged(route) {
       this.route = route;
