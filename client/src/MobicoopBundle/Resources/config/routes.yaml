@@ -126,8 +126,8 @@ carpool_ad_results:
 # simple search results
 carpool_results:
     path:
-        fr: /covoiturage/recherche/{origin}/{destination}/{origin_latitude}/{origin_longitude}/{destination_latitude}/{destination_longitude}/{date}/resultats
-        en: /carpool/search/{origin}/{destination}/{origin_latitude}/{origin_longitude}/{destination_latitude}/{destination_longitude}/{date}/results
+        fr: /covoiturage/recherche/{origin}/{destination}/{origin_latitude}/{origin_longitude}/{destination_latitude}/{destination_longitude}/{date}/{regular}/resultats
+        en: /carpool/search/{origin}/{destination}/{origin_latitude}/{origin_longitude}/{destination_latitude}/{destination_longitude}/{date}/{regular}/results
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::simpleSearchResults
     requirements:
         origin_latitude: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?).\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)'
@@ -139,7 +139,7 @@ matching_search:
     path:
         fr: /matching/search/
         en: /matching/search/
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::MatchingSearch
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::matchingSearch
 
 # contact
 contact_for_carpool_from_results:

@@ -165,7 +165,7 @@ class Criteria
      * @var \DateTimeInterface|null Mondays starting time (if regular).
      * @Assert\Time()
      *
-     * @Groups({"post","put"})
+     * @Groups({"post","put",})
      */
     private $monTime;
 

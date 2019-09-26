@@ -162,7 +162,7 @@ class Criteria
      * @var boolean|null The proposal is available on mondays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread","threads"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $monCheck;
 
@@ -170,7 +170,7 @@ class Criteria
      * @var boolean|null The proposal is available on tuesdays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread","threads"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $tueCheck;
 
@@ -178,7 +178,7 @@ class Criteria
      * @var boolean|null The proposal is available on wednesdays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread","threads"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $wedCheck;
 
@@ -186,7 +186,7 @@ class Criteria
      * @var boolean|null The proposal is available on thursdays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread","threads"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $thuCheck;
 
@@ -194,7 +194,7 @@ class Criteria
      * @var boolean|null The proposal is available on fridays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread","threads"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $friCheck;
 
@@ -202,7 +202,7 @@ class Criteria
      * @var boolean|null The proposal is available on saturdays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread","threads"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $satCheck;
 
@@ -210,7 +210,7 @@ class Criteria
      * @var boolean|null The proposal is available on sundays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread","threads"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $sunCheck;
 
@@ -219,7 +219,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $monTime;
 
@@ -246,7 +246,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $tueTime;
 
@@ -273,7 +273,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $wedTime;
 
@@ -300,7 +300,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $thuTime;
 
@@ -327,7 +327,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $friTime;
 
@@ -354,7 +354,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $satTime;
 
@@ -381,7 +381,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $sunTime;
 
@@ -552,7 +552,7 @@ class Criteria
      * @var Direction|null The direction used in the journey as a driver.
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
-     * @Groups({"read"})
+     * @Groups({"read","results"})
      */
     private $directionDriver;
     
@@ -560,7 +560,7 @@ class Criteria
      * @var Direction|null The direction used in the journey as a passenger.
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
-     * @Groups({"read","thread"})
+     * @Groups({"read","results","thread"})
      */
     private $directionPassenger;
     
