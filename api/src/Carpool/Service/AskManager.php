@@ -30,6 +30,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Carpool\Event\AskPostedEvent;
 use App\Carpool\Event\AskUpdatedEvent;
 use App\Carpool\Entity\AskHistory;
+use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Matching;
 use App\Communication\Entity\Message;
@@ -119,7 +120,10 @@ class AskManager
         $ask->setType($proposal->getType());
         $ask->setUser($proposal->getUser());
         $ask->setMatching($matching);
-        $ask->setCriteria($proposal->getCriteria());
+
+        $criteria = clone $proposal->getCriteria();
+
+        $ask->setCriteria($criteria);
         
         // We are using the new proposal waypoints to create the Ask's waypoints
         $waypoints = $proposal->getWaypoints();

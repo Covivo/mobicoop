@@ -1410,9 +1410,10 @@ class Criteria
     
     public function clone(Criteria $criteria)
     {
-        // for now we juste clone frequency, seats, fromDate, fromTime and toDate
+        // for now we just clone frequency, seats, fromDate, fromTime and toDate
         $this->setFrequency($criteria->getFrequency());
         $this->setSeats($criteria->getSeats());
+        $this->setPriceKm($criteria->getPriceKm());
         $this->setFromDate($criteria->getFromDate());
         $this->setFromTime($criteria->getFromTime());
         $this->setToDate($criteria->getToDate());
