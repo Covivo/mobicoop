@@ -39,6 +39,7 @@
             :matching="matching"
             :user="user"
             :regular="regular"
+            @carpool="carpool"
           />
         </v-col>
       </v-row>
@@ -139,6 +140,13 @@ export default {
       });
   },
   methods: {
+    carpool(params) {
+      this.$emit("carpool", {
+        proposal: params.proposal,
+        driver: params.driver,
+        passenger: params.passenger
+      });
+    }
   }
 };
 </script>

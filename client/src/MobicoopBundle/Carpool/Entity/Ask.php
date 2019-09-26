@@ -59,7 +59,7 @@ class Ask implements ResourceInterface
      * @var int The ask type (1 = one way trip; 2 = outward of a round trip; 3 = return of a round trip)).
      *
      * @Assert\NotBlank
-     * @Groups({"post","put"})
+     * @Groups({"post"})
      */
     private $type;
 
@@ -109,7 +109,7 @@ class Ask implements ResourceInterface
      * @var Waypoint[] The waypoints of the ask.
      *
      * @Assert\NotBlank
-     * @Groups({"post","put"})
+     * @Groups({"post"})
      */
     private $waypoints;
     

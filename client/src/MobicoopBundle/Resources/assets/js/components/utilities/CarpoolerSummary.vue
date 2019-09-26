@@ -4,12 +4,12 @@
       align="center"
       dense
     >
-      <!-- User identity -->
+      <!-- Carpooler identity -->
       <v-col
         cols="4"
       >
         <v-list-item>
-          <!--user avatar-->
+          <!--Carpooler avatar-->
           <v-list-item-avatar
             color="grey darken-3"
             size="50"
@@ -19,17 +19,17 @@
               src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortRound&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light"
             />
           </v-list-item-avatar>
-          <!--user data-->
+          <!--Carpooler data-->
           <v-list-item-content>
             <v-list-item-title class="font-weight-bold">
-              {{ user.givenName }} {{ user.familyName.substr(0,1).toUpperCase()+"." }}
+              {{ carpooler.givenName }} {{ carpooler.familyName.substr(0,1).toUpperCase()+"." }}
             </v-list-item-title>
             <v-list-item-title>{{ birthYear }} </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-col>
 
-      <!-- User rate -->
+      <!-- Carpooler rate -->
       <v-col
         cols="1"
       >
@@ -62,7 +62,7 @@
         </v-tooltip>
       </v-col>
 
-      <!-- User contact -->
+      <!-- Carpooler contact -->
       <v-col
         cols="4"
       >
@@ -82,7 +82,7 @@
             @click="toggleButton"
           >
             <v-icon>mdi-phone</v-icon>
-            {{ user.telephone }}
+            {{ carpooler.telephone }}
           </v-btn>
           <v-btn
             color="success"
@@ -125,7 +125,7 @@
           color="success"
           large
           dark
-          @click="buttonAlert(inDev,$event);"
+          @click="emitEvent"
         >
           <span>
             {{ $t('carpool') }}
@@ -150,11 +150,15 @@ export default {
     sharedMessages: CommonTranslations
   },
   props: {
-    proposalId: {
-      type: Number,
+    proposal: {
+      type: Object,
       default: null
     },
     user: {
+      type: Object,
+      default: null
+    },
+    carpooler: {
       type: Object,
       default: null
     },
@@ -168,7 +172,7 @@ export default {
   },
   computed: {
     birthYear (){
-      return moment().diff(moment([this.user.birthYear]),'years')+' '+this.$t("birthYears")
+      return moment().diff(moment([this.carpooler.birthYear]),'years')+' '+this.$t("birthYears")
     },
   },
   methods: {
@@ -178,6 +182,11 @@ export default {
     buttonAlert(msg, e) {
       alert(msg);
     },
+    emitEvent: function() {
+      this.$emit("carpool", {
+        proposal: this.proposal
+      });
+    }
   }
 };
 </script>
