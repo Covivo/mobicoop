@@ -70,7 +70,9 @@ class CarpoolController extends AbstractController
         $communities = $communityManager->getAvailableUserCommunities($poster)->getMember();
         
         //get user's community
-        if($communityId!==0) $community = $communityManager->getCommunity($communityId);
+        if ($communityId!==0) {
+            $community = $communityManager->getCommunity($communityId);
+        }
 
         if ($request->query->get('origin')) {
             $initOrigin = new Address();
