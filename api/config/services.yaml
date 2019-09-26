@@ -107,6 +107,10 @@ services:
         tags: 
             - { name: monolog.logger, channel: communication }
 
+    App\Communication\EntityListener\RecipientListener:
+        tags:
+            - { name: doctrine.orm.entity_listener, lazy: true }    # lazy set to true to avoid doctrine UnitOfWork error on insert
+
     # Community
     App\Community\Controller\:
         resource: '../src/Community/Controller'
