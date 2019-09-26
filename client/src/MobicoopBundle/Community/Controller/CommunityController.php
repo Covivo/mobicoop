@@ -223,7 +223,7 @@ class CommunityController extends AbstractController
     {
         $proposals = $communityManager->getProposals($id);
         $points = [];
-        if($proposals!==null){
+        if ($proposals!==null) {
             foreach ($proposals as $proposal) {
                 foreach ($proposal["waypoints"] as $waypoint) {
                     $points[] = [
