@@ -1,8 +1,9 @@
 <template>
-  <v-container>
+  <div>
     <v-row
       justify="center"
-      :align="type==1 ? 'center' : start"
+      :align="type==1 ? 'center' : 'start'"
+      dense
     >
       <!-- Origin -->
       <v-col
@@ -73,7 +74,7 @@
         </v-list-item>
       </v-col>
     </v-row>
-  </v-container>
+  </div>
 </template>
 
 <script>
@@ -142,6 +143,7 @@ export default {
       } else if (this.type == 2 && this.regular) {
         return this.origin.addressLocality
       }
+      return null;
     },
     destinationSecondLine() {
       if (this.type == 1 && this.regular) {
@@ -151,6 +153,7 @@ export default {
       } else if (this.type == 2 && this.regular) {
         return this.destination.addressLocality
       }
+      return null;
     },
   },
   methods: {

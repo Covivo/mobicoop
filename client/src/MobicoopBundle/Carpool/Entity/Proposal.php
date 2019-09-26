@@ -203,12 +203,12 @@ class Proposal implements ResourceInterface, \JsonSerializable
         return $this;
     }
     
-    public function getProposalLinked(): ?string
+    public function getProposalLinked(): ?self
     {
         return $this->proposalLinked;
     }
     
-    public function setProposalLinked(?string $proposalLinked): self
+    public function setProposalLinked(?Proposal $proposalLinked): self
     {
         $this->proposalLinked = $proposalLinked;
         
@@ -437,7 +437,7 @@ class Proposal implements ResourceInterface, \JsonSerializable
         return
         [
             'id'                => $this->getId(),
-            'proposalLinkedId'  => (int)$this->getProposalLinked(),
+            'proposalLinked'    => $this->getProposalLinked(),
             'user'              => $this->getUser(),
             'criteria'          => $this->getCriteria(),
             'type'              => $this->getType(),

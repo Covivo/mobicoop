@@ -267,6 +267,9 @@ class Deserializer
                 $proposal->addIndividualStop(self::deserializeIndividualStop($individualStop));
             }
         }
+        if (isset($data["proposalLinked"]) && is_array($data["proposalLinked"])) {
+            $proposal->setProposalLinked(self::deserializeProposal($data['proposalLinked']));
+        }
         //echo "<pre>" . print_r($proposal,true) . "</pre>";exit;
         return $proposal;
     }

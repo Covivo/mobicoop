@@ -131,10 +131,8 @@ export default {
       }
     })
       .then((response) => {
-        console.log(response.data);
         this.loading = false;
         this.matchings = response.data;
-        console.log(this.matchings.keys)
       })
       .catch((error) => {
         console.log(error);

@@ -168,7 +168,7 @@ export default {
   computed: {
     // creation of the url to call
     urlToCall() {
-      return `${this.baseUrl}/${this.route}/${this.origin.addressLocality}/${this.destination.addressLocality}/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.dateFormated}/${this.regular ? '0' : '1'}/resultats`;
+      return `${this.baseUrl}/${this.route}/${this.origin.addressLocality}/${this.destination.addressLocality}/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.dateFormated}/${this.regular ? '1' : '0'}/resultats`;
     },
     searchUnavailable() {
       return (!this.origin || !this.destination || this.loading == true)

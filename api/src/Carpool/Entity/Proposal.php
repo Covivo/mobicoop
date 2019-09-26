@@ -170,7 +170,7 @@ class Proposal
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Groups({"read","write"})
+     * @Groups({"read","results","write"})
      */
     private $proposalLinked;
     

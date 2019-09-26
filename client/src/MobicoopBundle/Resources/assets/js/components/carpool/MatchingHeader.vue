@@ -1,9 +1,9 @@
 <template>
-  <v-container fluid>
+  <div>
     <!--Route row-->
     <v-row
-      justify="center"
       align="center"
+      dense
     >
       <v-col
         cols="10"
@@ -19,6 +19,7 @@
       <!-- Modify icon -->
       <v-col
         cols="2"
+        class="text-right"
       >
         <v-btn
           color="primary"
@@ -37,18 +38,17 @@
 
     <!-- date row-->
     <v-row
-      justify="center"
-      align="center"
+      dense
     >
       <v-col
-        cols="12"
+        cols="5"
         align="left"
-        class="subtitle-1"
+        class="ml-4 mt-0 subtitle-1 font-weight-bold"
       >
         {{ computedDateFormat }}
       </v-col>
     </v-row>
-  </v-container>
+  </div>
 </template>
 
 <script>
@@ -100,13 +100,13 @@ export default {
     },
     computedOrigin() {
       return {
-        streetAddress: 'rue de la monnaie',
+        streetAddress: null,
         addressLocality: this.origin
       }
     },
     computedDestination() {
       return {
-        streetAddress: 'rue de la cheneau',
+        streetAddress: null,
         addressLocality: this.destination
       }
     },
