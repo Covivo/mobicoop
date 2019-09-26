@@ -175,6 +175,8 @@ class CommunityController extends AbstractController
     {
         // get the last 3 users and formate them to be used with vue
         $lastUsers = $communityManager->getLastUsers($id);
+        $lastUsersFormated = [];
+        dump($lastUsers);
         foreach ($lastUsers as $key => $commUser) {
             $lastUsersFormated[$key]["name"]=ucfirst($commUser->getUser()->getGivenName())." ".ucfirst($commUser->getUser()->getFamilyName());
             $lastUsersFormated[$key]["acceptedDate"]=$commUser->getAcceptedDate()->format('d/m/Y');
@@ -221,12 +223,14 @@ class CommunityController extends AbstractController
     {
         $proposals = $communityManager->getProposals($id);
         $points = [];
-        foreach ($proposals as $proposal) {
-            foreach ($proposal["waypoints"] as $waypoint) {
-                $points[] = [
-                    "title"=>$waypoint["address"]["displayLabel"],
-                    "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
-                ];
+        if($proposals!==null){
+            foreach ($proposals as $proposal) {
+                foreach ($proposal["waypoints"] as $waypoint) {
+                    $points[] = [
+                        "title"=>$waypoint["address"]["displayLabel"],
+                        "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
+                    ];
+                }
             }
         }
         return new Response(json_encode($points));

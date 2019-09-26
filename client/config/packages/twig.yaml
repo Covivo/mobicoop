@@ -17,3 +17,5 @@ twig:
         ageMax: '%env(USER_MAX_AGE)%'
         priceKm: '%env(CARPOOL_PRICE)%'
         marginTime: '%env(CARPOOL_MARGIN_TIME)%'
+        urlTiles: '%env(resolve:URL_TILES)%'
+        attributionCopyright: '%env(resolve:ATTRIBUTION_COPYRIGHTS)%'
