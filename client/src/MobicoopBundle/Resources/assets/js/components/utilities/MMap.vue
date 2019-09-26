@@ -54,7 +54,7 @@ export default {
     },
     urlTiles: {
       type: String,
-      default: ""
+      default: "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
     },
     providerKey: {
       // unused for the moment
@@ -63,7 +63,7 @@ export default {
     },
     attributionCopyright: {
       type: String,
-      default: ""
+      default: '{"OpenStreetMap":"http://osm.org/copyright"}'
     },
     centerDefault: {
       type: Array,
@@ -117,7 +117,9 @@ export default {
         this.points.forEach((pointForBound, index) => {
           bounds.push([pointForBound.latLng.lat,pointForBound.latLng.lng]);
         });
-        this.$refs.mmap.mapObject.fitBounds(bounds);
+        if(bounds.length>0){
+          this.$refs.mmap.mapObject.fitBounds(bounds);
+        }
       }, 100);
     },
   }

@@ -191,7 +191,7 @@ import CommunityMemberList from "@components/community/CommunityMemberList";
 import CommunityInfos from "@components/community/CommunityInfos";
 import HomeSearch from "@components/home/HomeSearch";
 import CommunityLastUsers from "@components/community/CommunityLastUsers";
-import MMap from "@components/base/MMap"
+import MMap from "@components/utilities/MMap"
 import L from "leaflet";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
