@@ -57,6 +57,6 @@ class AskHistoryRepository
         ->orderBy('ah.createdDate', 'DESC')
         ->setMaxResults(1);
         ;
-        return $query->getQuery()->getSingleResult();
+        return $query->getQuery()->getOneOrNullResult();
     }
 }

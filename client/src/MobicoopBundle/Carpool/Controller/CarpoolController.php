@@ -195,11 +195,11 @@ class CarpoolController extends AbstractController
                 "addressLocality" => $request->query->get('destination_addressLocality')
             ],
             "waypoints"=>[],
-            "outwardDate" => Datetime::createFromFormat("Y-m-d\TH:i:s\Z", $request->query->get('date'))->format("Y-m-d"),
-            "outwardTime" => Datetime::createFromFormat("Y-m-d\TH:i:s\Z", $request->query->get('date'))->format("H:i"),
+            "outwardDate" => Datetime::createFromFormat("Y-m-d\TH:i:s.u\Z", $request->query->get('date'))->format("Y-m-d"),
+            "outwardTime" => Datetime::createFromFormat("Y-m-d\TH:i:s.u\Z", $request->query->get('date'))->format("H:i"),
             "seats" => 1,
             "price" => (float)$matchedProposal->getCriteria()->getPriceKm(),
-            "regular" => ((int)$request->query->get('frequency')==1)?false:true
+            "regular" => $request->query->get('regular')==="false" ? false : true
         ];
 
         if ((bool)$request->query->get('driver') && (bool)$request->query->get('passenger')) {

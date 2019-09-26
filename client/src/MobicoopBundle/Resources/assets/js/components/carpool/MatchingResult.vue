@@ -55,7 +55,11 @@
 
           <!-- Carpooler detail -->
           <carpooler-summary 
-            :user="driver ? matching.proposalOffer.user : matching.proposalRequest.user"
+            :user="user"
+            :carpooler="driver ? matching.proposalOffer.user : matching.proposalRequest.user"
+            :proposal="driver ? matching.proposalOffer : matching.proposalRequest"
+            :matching="matching"
+            @carpool="carpool"
           />
         </v-col>
       </v-row>
@@ -113,6 +117,13 @@ export default {
     }
   },
   methods :{
+    carpool(params) {
+      this.$emit("carpool", {
+        proposal: params.proposal,
+        driver: this.driver,
+        passenger: this.passenger
+      });
+    }
   }
 };
 </script>

@@ -32,6 +32,7 @@
             :regular="regular"
             :show-regular="showRegular"
             :user="user"
+            @carpool="carpool"
           />
         </v-col>
       </v-row>
@@ -40,6 +41,8 @@
 </template>
 <script>
 
+import axios from "axios";
+import moment from "moment";
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/carpool/Matching.json";
@@ -110,7 +113,51 @@ export default {
       locale: this.$i18n.locale,
     };
   },
+  computed: {
+    isoDate() {
+      moment.locale(this.locale);
+      return this.date
+        ? moment(this.date).toISOString()
+        : "";
+    }
+  },
   methods :{
+    carpool(params) {
+      axios.get("/matching/search/contactforcarpool", {
+        params:{
+          "proposalId":params.proposal.id,
+          "origin_addressLocality": this.origin,
+          "origin_streetAddress": "", /** To do */
+          "destination_addressLocality": this.destination,
+          "destination_streetAddress": "", /** To do */
+          "origin_latitude": Number(this.originLatitude),
+          "origin_longitude": Number(this.originLongitude),
+          "destination_latitude": Number(this.destinationLatitude),
+          "destination_longitude": Number(this.destinationLongitude),
+          "date": this.isoDate,
+          "priceKm": params.proposal.criteria.priceKm,
+          "driver": params.driver,
+          "passenger": params.passenger,
+          "regular": this.regular
+        }
+      })
+        .then((response) => {
+          if(response.data=="ok"){
+            //this.emitSnackbar('snackBar.success','success')
+            window.location = "/utilisateur/messages";
+          }
+          else{
+            //this.emitSnackbar('snackBar.error','error')
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          //this.emitSnackbar('snackBar.error','error')
+        })
+        .finally(() => {
+          //this.loading = false;
+        })
+    },
     // TODO : REMOVE WHEN START CODING FILTER COMPONENT
     remove (item) {
       this.chips.splice(this.chips.indexOf(item), 1)
