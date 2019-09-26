@@ -1,0 +1,14 @@
+{
+  "fr": { 
+    "title": "Liste des membres",
+    "table": {
+        "search" : "Rechercher",
+        "lineNumber": "Nombre de lignes par page",
+        "all": "Tous",  
+        "colTitle": {
+            "familyName": "Nom",
+            "givenName": "Prénom"
+        }
+    }
+  }
+}

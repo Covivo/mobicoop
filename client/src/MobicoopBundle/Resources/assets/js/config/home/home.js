@@ -15,7 +15,7 @@ import Vuetify, {
   // content
   VSwitch, VMenu, VDatePicker, VTextField,  VTooltip, VCard, VCardTitle, VCardActions,
   // geocomplete
-  VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon, VForm, VSelect,
+  VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon, VForm, VSelect, VInput,
 } from 'vuetify/lib'
 
 Vue.use(Vuetify, {
@@ -29,7 +29,7 @@ Vue.use(Vuetify, {
     // content
     VSwitch, VMenu, VDatePicker, VTextField,  VTooltip, VCard, VCardTitle, VCardActions,
     // geocomplete
-    VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon, VForm, VSelect,
+    VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon, VForm, VSelect, VInput,
   }
 })
 Vue.use(VueI18n)

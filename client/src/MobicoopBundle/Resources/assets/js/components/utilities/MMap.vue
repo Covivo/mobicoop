@@ -84,7 +84,8 @@ export default {
     ways: {
       type: Array,
       default: function(){return [];}
-    }
+    },
+    
   },
   data() {
     return {
@@ -117,10 +118,8 @@ export default {
           bounds.push([pointForBound.latLng.lat,pointForBound.latLng.lng]);
         });
         this.$refs.mmap.mapObject.fitBounds(bounds);
-
-
       }, 100);
-    }
+    },
   }
 };
 </script>

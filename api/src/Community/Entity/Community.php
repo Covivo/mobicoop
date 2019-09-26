@@ -30,6 +30,7 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Image\Entity\Image;
 use App\User\Entity\User;
@@ -172,8 +173,8 @@ class Community
      * @var ArrayCollection|null The proposals in this community.
      *
      * @ORM\ManyToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="communities")
-     * @Groups({"read","write"})
      * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
      */
     private $proposals;
 

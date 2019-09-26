@@ -160,6 +160,7 @@
               We use a combination of error, error-messages and blur -->
               <template v-slot:activator="{ on }">
                 <v-text-field
+                  v-show="regular ? false : true"
                   :value="computedDateFormat"
                   clearable
                   :label="$t('outwardDate.label')"
@@ -232,14 +233,18 @@ export default {
     initDestination: {
       type: Object,
       default: null
+    },
+    initRegular: {
+      type: Boolean,
+      default: true
     }    
   },
   data() {
     return {
-      date: null,
+      date: this.initOutwardDate,
       outwardDateClicked: false,
       menu: false,
-      regular: true,
+      regular: this.initRegular,
       role: 3,
       passenger: true,
       driver: true,
@@ -249,10 +254,10 @@ export default {
       requiredErrorDestination: this.$t("destination.error"),
       requiredErrorOutwardDate: this.$t("outwardDate.error"),
       locale: this.$i18n.locale,
-      origin: null,
-      destination: null,
-      customInitOrigin: null,
-      customInitDestination: null,
+      origin: this.initOrigin,
+      destination: this.initDestination,
+      customInitOrigin: (this.initOrigin)?this.initOrigin:null,
+      customInitDestination: (this.initDestination)?this.initDestination:null,
       valid: false
     };
   },
@@ -293,11 +298,11 @@ export default {
       this.emitEvent();
     },
     swap: function() {
-      let tempOrigin = this.customInitOrigin;
-      this.origin = this.customInitDestination;
-      this.customInitOrigin = this.customInitDestination;
-      this.destination = tempOrigin;
-      this.customInitDestination = tempOrigin;
+      let destinationBuffer = this.destination;
+      this.destination = this.origin;
+      this.customInitDestination = this.origin;
+      this.origin = destinationBuffer
+      this.customInitOrigin = destinationBuffer
       this.emitEvent();
     },
     switched: function(){

@@ -35,6 +35,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Symfony\Component\HttpFoundation\Response;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
  * Controller class for carpooling related actions.
@@ -57,7 +58,7 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
-    public function post(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
+    public function post(int $communityId, ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
     {
         $proposal = new Proposal();
         $poster = $userManager->getLoggedUser();
@@ -77,12 +78,38 @@ class CarpoolController extends AbstractController
 
         // get the communities available for the user
         $communities = $communityManager->getAvailableUserCommunities($poster)->getMember();
+        
+        //get user's community
+        if ($communityId!==0) {
+            $community = $communityManager->getCommunity($communityId);
+        }
+
+        if ($request->query->get('origin')) {
+            $initOrigin = new Address();
+            $initOrigin->setDisplayLabel($request->query->get('origin'));
+            $initOrigin->setLatitude($request->query->get('originLat'));
+            $initOrigin->setLongitude($request->query->get('originLon'));
+            $initOrigin->setAddressLocality($request->query->get('originAddressLocality'));
+        }
+        if ($request->query->get('destination')) {
+            $initDestination = new Address();
+            $initDestination->setDisplayLabel($request->query->get('destination'));
+            $initDestination->setLatitude($request->query->get('destinationLat'));
+            $initDestination->setLongitude($request->query->get('destinationLon'));
+            $initDestination->setAddressLocality($request->query->get('destinationAddressLocality'));
+        }
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
             [
                 'communities'=>$communities,
                 'urlTiles'=>$this->urlTiles,
-                'attributionCopyright'=>$this->attributionCopyright
+                'attributionCopyright'=>$this->attributionCopyright,
+                'community'=>(isset($community))?$community:null,
+                'initOrigin'=>(isset($initOrigin)) ? $initOrigin : null,
+                'initDestination'=>(isset($initDestination)) ? $initDestination : null,
+                'initRegular'=>(is_null($request->query->get('regular')) || $request->query->get('regular')==="1") ? true : false,
+                'initDate'=>($request->query->get('date')) ? $request->query->get('date') : null,
+                'initTime'=>($request->query->get('time')) ? $request->query->get('time') : null,
             ]
         );
     }

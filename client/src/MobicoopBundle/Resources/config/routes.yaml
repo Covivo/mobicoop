@@ -108,9 +108,11 @@ logout:
 # post an ad
 carpool_ad_post:
     path:
-        fr: /covoiturage/annonce/poster
-        en: /carpool/ad/share
+        fr: /covoiturage/annonce/poster/{communityId}
+        en: /carpool/ad/share/{communityId}
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::post
+    defaults:
+        communityId: 0    
 
 # ad results
 carpool_ad_results:
@@ -189,7 +191,7 @@ community_show:
     requirements:
         id: '\d+'
 
-# display one community
+# join a community (called with ajax)
 community_join:
     path:
         fr: /rejoindre-communaute/{id}
@@ -198,6 +200,42 @@ community_join:
     requirements:
         id: '\d+'
 
+# get a community user (called with ajax)
+community_user:
+    path:
+        fr: /community-user/{id}
+        en: /community-user/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityUser
+    requirements:
+        id: '\d+'
+
+# get the last community users (called with ajax)
+community_last_users:
+    path:
+        fr: /community-last-users/{id}
+        en: /community-last-users/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityLastUsers
+    requirements:
+        id: '\d+'
+
+# get community members list (called with ajax)
+community_member_list:
+    path:
+        fr: /community-member-list/{id}
+        en: /community-member-list/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityMemberList
+    requirements:
+        id: '\d+'        
+
+# get all community proposals (called with ajax)
+community_proposals:
+    path:
+        fr: /community-proposals/{id}
+        en: /community-proposals/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityProposals
+    requirements:
+        id: '\d+'       
+        
 ##########################
 # editorial pages routes #
 ##########################

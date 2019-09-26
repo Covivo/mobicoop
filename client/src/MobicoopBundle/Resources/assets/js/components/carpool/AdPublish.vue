@@ -125,7 +125,7 @@
                   :init-outward-date="outwardDate"
                   :init-origin="origin"
                   :init-destination="destination"
-                  :regular="true"
+                  :init-regular="regular"
                   @change="searchChanged"
                 />
               </v-stepper-content>
@@ -134,6 +134,7 @@
               <v-stepper-content step="2">
                 <ad-planification 
                   :init-outward-date="outwardDate"
+                  :init-outward-time="outwardTime"
                   :regular="regular"
                   :default-margin-time="defaultMarginTime" 
                   @change="planificationChanged"
@@ -151,6 +152,7 @@
                       :init-origin="origin"
                       :init-destination="destination"
                       :communities="communities"
+                      :community="community"
                       @change="routeChanged"
                     />
                   </v-col>
@@ -413,6 +415,8 @@
                         :route="route"
                         :message="message"
                         :user="user"
+                        :origin="origin"
+                        :destination="destination"
                       />
                     </v-col>
                   </v-row>
@@ -559,19 +563,45 @@ export default {
     attributionCopyright:{
       type: String,
       default: ""
-    }
+    },
+    community: {
+      type: Object,
+      default: null
+    },
+    initOrigin: {
+      type: Object,
+      default: null
+    },
+    initDestination: {
+      type: Object,
+      default: null
+    },
+    initRegular: {
+      type: Boolean,
+      default: true
+    },
+    initDate: {
+      type: String,
+      default: null
+    },
+    initTime: {
+      type: String,
+      default: null
+    },
+
+
   },
   data() {
     return {
       distance: 0, 
       duration: 0,
-      outwardDate: null,
-      outwardTime: null,
+      outwardDate: this.initDate,
+      outwardTime: this.initTime,
       returnDate: null,
       returnTime: null,
-      origin: null,
-      destination: null,
-      regular: true,
+      origin: this.initOrigin,
+      destination: this.initDestination,
+      regular: this.initRegular,
       step:1,
       driver: true,
       passenger: true,
@@ -771,8 +801,10 @@ export default {
       })
         .then(function (response) {
           if (response.data && response.data.result && response.data.result.id) {
-            var urlRedirect = `${self.baseUrl}/`+self.resultsUrl.replace(/{id}/,response.data.result.id);
-            window.location.href = urlRedirect;
+            // uncomment when results page activeted
+            // var urlRedirect = `${self.baseUrl}/`+self.resultsUrl.replace(/{id}/,response.data.result.id);
+            // window.location.href = urlRedirect;
+            window.location.href = "/";
           }
           //console.log(response);
         })

@@ -16,6 +16,12 @@
     :default-margin-time="{{ marginTime }}"
     url-tiles="{{ urlTiles }}"
     attribution-copyright="{{ attributionCopyright }}"
+    :community="{{ community|json_encode }}"
+    :init-origin="{{ initOrigin|json_encode }}"
+    :init-destination="{{ initDestination|json_encode }}"
+    :init-regular="{{ initRegular|json_encode }}"
+    :init-date="{{ initDate|json_encode }}"
+    :init-time="{{ initTime|json_encode }}"
   />
 
 {% endblock %}

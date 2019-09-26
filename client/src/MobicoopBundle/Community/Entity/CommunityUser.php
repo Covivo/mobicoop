@@ -30,7 +30,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 /**
  * A user related to a community.
  */
-class CommunityUser implements ResourceInterface
+class CommunityUser implements ResourceInterface, \JsonSerializable
 {
     const STATUS_PENDING = 0;
     const STATUS_ACCEPTED = 1;
@@ -78,7 +78,7 @@ class CommunityUser implements ResourceInterface
 
     /**
     * @var \DateTimeInterface Creation date of the community user.
-    *
+    * @Groups({"post","put"})
     */
     private $createdDate;
 
@@ -90,13 +90,13 @@ class CommunityUser implements ResourceInterface
 
     /**
     * @var \DateTimeInterface Accepted date.
-    *
+    * @Groups({"post","put"})
     */
     private $acceptedDate;
 
     /**
     * @var \DateTimeInterface Refusal date.
-    *
+    * @Groups({"post","put"})
     */
     private $refusedDate;
 
@@ -253,5 +253,21 @@ class CommunityUser implements ResourceInterface
     public function setPassword(string $password)
     {
         $this->password = $password;
+    }
+    
+    public function jsonSerialize()
+    {
+        return
+        [
+            'id'            => $this->getId(),
+            'iri'           => $this->getIri(),
+            'user'          => $this->getUser(),
+            'admin'         => $this->getAdmin(),
+            'createdDate'   => $this->getCreatedDate(),
+            'acceptedDate'  => $this->getAcceptedDate(),
+            'refusedDate'   => $this->getRefusedDate(),
+            'status'        => $this->getStatus(),
+            
+        ];
     }
 }

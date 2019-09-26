@@ -147,6 +147,7 @@ class Community implements ResourceInterface, \JsonSerializable
     {
         if ($id) {
             $this->setId($id);
+            $this->setIri("/communities/".$id);
         }
         $this->images = new ArrayCollection();
         $this->proposals = new ArrayCollection();
@@ -388,11 +389,14 @@ class Community implements ResourceInterface, \JsonSerializable
     {
         return
         [
-            'id'            => $this->getId(),
-            'iri'           => $this->getIri(),
-            'name'          => $this->getName(),
-            'description'   => $this->getDescription(),
-            'images'        => $this->getImages()
+            'id'                => $this->getId(),
+            'iri'               => $this->getIri(),
+            'name'              => $this->getName(),
+            'description'       => $this->getDescription(),
+            'images'            => $this->getImages(),
+            'fullDescription'   => $this->getFullDescription(),
+            'proposalsHidden'   => $this->isProposalsHidden(),
+            'membersHidden'     => $this->isMembersHidden()
         ];
     }
 }
