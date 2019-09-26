@@ -10,7 +10,7 @@
 {% block main %}
             <login
                 :errormessage="{{ {'value': errorMessage}|json_encode(1) }}"
-                :urlforgottenpassword="{{ { 'value':path('user_password_forgot')}|json_encode }}">
+                :urlforgottenpassword="{{ "/utilisateur/mot-de-passe/oubli"|json_encode }}">
             </login>
 {% endblock %}
 
