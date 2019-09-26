@@ -1,6 +1,18 @@
 <template>
   <v-content>
     <v-container fluid />
+    <v-row 
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        md="8"
+        xl="6"
+        align="center"
+      >
+        <h1>{{ $t('title') }}</h1>
+      </v-col>
+    </v-row>
     <v-layout
       justify-center
       text-center
@@ -52,7 +64,8 @@
         </v-form>
         <v-card-text>
           <a
-            :href="urlforgottenpassword.value"
+            v-show="false"
+            :href="urlforgottenpassword"
           >
             Mot de passe oublié?
           </a>
@@ -111,7 +124,7 @@ export default {
       }
     },
     treatErrorMessage(errorMessage) {
-      if (errorMessage === "Bad credentials.") {
+      if (errorMessage.value === "Bad credentials.") {
         this.errorDisplay = this.$t("errorCredentials");
         this.loading = false;
       }

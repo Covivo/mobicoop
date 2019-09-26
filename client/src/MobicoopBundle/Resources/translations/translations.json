@@ -16,7 +16,8 @@
                 "infos": {
                     "misc": {
                         "at": "à"
-                    }
+                    },
+                    "notAvailableYet": "Cette fonction sera bientôt disponible"
                 },
                 "pages": {
                     "home": {
@@ -35,7 +36,8 @@
                     "date": {
                         "format": {
                             "fullDate": "ddd Do MMMM YYYY",
-                            "fullNumericDate": "YMMDDHHmmss"
+                            "fullNumericDate": "YMMDDHHmmss",
+                            "shortDate": "ddd DD/MM"
                         }
                     },
                     "time": {

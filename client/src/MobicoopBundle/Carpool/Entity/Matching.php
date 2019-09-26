@@ -29,7 +29,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Carpooling : matching between an offer and a request.
  */
-class Matching
+class Matching implements \JsonSerializable
 {
     /**
      * @var int The id of this matching.
@@ -154,7 +154,7 @@ class Matching
     /**
      * @return Collection|Waypoint[]
      */
-    public function getWaypoints(): Collection
+    public function getWaypoints()
     {
         return $this->waypoints;
     }
@@ -180,5 +180,18 @@ class Matching
         }
         
         return $this;
+    }
+
+    // If you want more info from matching you just have to add it to the jsonSerialize function
+    public function jsonSerialize()
+    {
+        return
+        [
+            'id'                => $this->getId(),
+            'proposalOffer'     => $this->getProposalOffer(),
+            'proposalRequest'   => $this->getProposalRequest(),
+            'criteria'          => $this->getCriteria(),
+            'waypoint'          => $this->getWaypoints()
+        ];
     }
 }

@@ -122,6 +122,14 @@ class Solidary
      */
     private $createdDate;
 
+    /**
+     * @var \DateTimeInterface Updated date of the solidary record.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups("read")
+     */
+    private $updatedDate;
+
     public function getId(): int
     {
         return $this->id;
@@ -211,6 +219,18 @@ class Solidary
         return $this;
     }
 
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
 
     /**
@@ -221,5 +241,15 @@ class Solidary
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
     }
 }

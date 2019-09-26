@@ -59,7 +59,7 @@ class Ask implements ResourceInterface
      * @var int The ask type (1 = one way trip; 2 = outward of a round trip; 3 = return of a round trip)).
      *
      * @Assert\NotBlank
-     * @Groups({"post","put"})
+     * @Groups({"post"})
      */
     private $type;
 
@@ -68,6 +68,12 @@ class Ask implements ResourceInterface
      * @Groups({"post"})
      */
     private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Updated date of the solicitation.
+     * @Groups("post")
+     */
+    private $updatedDate;
 
     /**
      * @var User The user that creates the ask.
@@ -103,7 +109,7 @@ class Ask implements ResourceInterface
      * @var Waypoint[] The waypoints of the ask.
      *
      * @Assert\NotBlank
-     * @Groups({"post","put"})
+     * @Groups({"post"})
      */
     private $waypoints;
     
@@ -164,6 +170,18 @@ class Ask implements ResourceInterface
     public function setCreatedDate(\DateTimeInterface $createdDate): self
     {
         $this->createdDate = $createdDate;
+
+        return $this;
+    }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
 
         return $this;
     }

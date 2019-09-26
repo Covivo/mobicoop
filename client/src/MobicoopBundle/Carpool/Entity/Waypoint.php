@@ -30,7 +30,7 @@ use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 /**
  * Carpooling : travel point for a journey.
  */
-class Waypoint
+class Waypoint implements \JsonSerializable
 {
     /**
      * @var int The id of this point.
@@ -171,5 +171,15 @@ class Waypoint
         $this->address = $address;
         
         return $this;
+    }
+
+    // If you want more info from waypoint you just have to add it to the jsonSerialize function
+    public function jsonSerialize()
+    {
+        return
+        [
+            'id'                => $this->getId(),
+            'address'           => $this->getAddress()
+        ];
     }
 }

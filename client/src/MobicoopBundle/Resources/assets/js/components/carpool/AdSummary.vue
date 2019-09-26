@@ -166,9 +166,9 @@
               </v-timeline>
             </v-row>
 
-            <!-- Days if regular -->
+            <!-- Days if regular and there is more than one schedule -->
             <v-row
-              v-if="regular"
+              v-if="regular && schedules!==null && schedules.length > 1"
               align="center"
               class="mt-2"
             >
@@ -333,10 +333,10 @@
                   outlined
                   class="mx-auto"
                 >
-                  <v-card-title>
+                  <v-card-title v-if="user != null">
                     {{ user.givenName }} {{ user.familyName }}
                   </v-card-title>
-                  <v-card-text>
+                  <v-card-text v-if="user != null">
                     {{ user.telephone }}
                   </v-card-text>
                 </v-card>

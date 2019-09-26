@@ -36,6 +36,7 @@ use App\PublicTransport\Entity\PTJourney;
  * Carpooling : criteria (restriction for an offer / selection for a request).
  *
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -161,7 +162,7 @@ class Criteria
      * @var boolean|null The proposal is available on mondays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread","threads"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $monCheck;
 
@@ -169,7 +170,7 @@ class Criteria
      * @var boolean|null The proposal is available on tuesdays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread","threads"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $tueCheck;
 
@@ -177,7 +178,7 @@ class Criteria
      * @var boolean|null The proposal is available on wednesdays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread","threads"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $wedCheck;
 
@@ -185,7 +186,7 @@ class Criteria
      * @var boolean|null The proposal is available on thursdays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread","threads"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $thuCheck;
 
@@ -193,7 +194,7 @@ class Criteria
      * @var boolean|null The proposal is available on fridays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread","threads"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $friCheck;
 
@@ -201,7 +202,7 @@ class Criteria
      * @var boolean|null The proposal is available on saturdays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread","threads"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $satCheck;
 
@@ -209,7 +210,7 @@ class Criteria
      * @var boolean|null The proposal is available on sundays (if regular).
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write","thread","threads"})
+     * @Groups({"read","results","write","thread","threads"})
      */
     private $sunCheck;
 
@@ -218,7 +219,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $monTime;
 
@@ -245,7 +246,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $tueTime;
 
@@ -272,7 +273,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $wedTime;
 
@@ -299,7 +300,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $thuTime;
 
@@ -326,7 +327,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $friTime;
 
@@ -353,7 +354,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $satTime;
 
@@ -380,7 +381,7 @@ class Criteria
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
-     * @Groups({"read","write","thread"})
+     * @Groups({"read","results","write","thread"})
      */
     private $sunTime;
 
@@ -551,7 +552,7 @@ class Criteria
      * @var Direction|null The direction used in the journey as a driver.
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
-     * @Groups({"read"})
+     * @Groups({"read","results"})
      */
     private $directionDriver;
     
@@ -559,7 +560,7 @@ class Criteria
      * @var Direction|null The direction used in the journey as a passenger.
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
-     * @Groups({"read","thread"})
+     * @Groups({"read","results","thread"})
      */
     private $directionPassenger;
     
@@ -578,6 +579,22 @@ class Criteria
      * @Groups({"read","write"})
      */
     private $proposal;
+
+    /**
+     * @var \DateTimeInterface Creation date.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read"})
+     */
+    private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Updated date.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read"})
+     */
+    private $updatedDate;
 
     public function __construct()
     {
@@ -1393,11 +1410,58 @@ class Criteria
     
     public function clone(Criteria $criteria)
     {
-        // for now we juste clone frequency, seats, fromDate, fromTime and toDate
+        // for now we just clone frequency, seats, fromDate, fromTime and toDate
         $this->setFrequency($criteria->getFrequency());
         $this->setSeats($criteria->getSeats());
+        $this->setPriceKm($criteria->getPriceKm());
         $this->setFromDate($criteria->getFromDate());
         $this->setFromTime($criteria->getFromTime());
         $this->setToDate($criteria->getToDate());
+    }
+
+    public function getCreatedDate(): ?\DateTimeInterface
+    {
+        return $this->createdDate;
+    }
+
+    public function setCreatedDate(\DateTimeInterface $createdDate): self
+    {
+        $this->createdDate = $createdDate;
+
+        return $this;
+    }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    // DOCTRINE EVENTS
+    
+    /**
+     * Creation date.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoCreatedDate()
+    {
+        $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
     }
 }

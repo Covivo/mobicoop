@@ -23,6 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Community\Service;
 
+use App\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
@@ -113,5 +114,49 @@ class CommunityManager
             return $response->getValue();
         }
         return null;
+    }
+
+    /**
+     * Get last accepted community users
+     * @param community.id          $id                 Id of the community
+     * @return array|null The events found or null if not found.
+     */
+    public function getLastUsers(int $id, int $limit=3, int $status=1)
+    {
+        $this->dataProvider->setClass(CommunityUser::class);
+        $params=[];
+        $params['order[acceptedDate]'] = "desc";
+        $params['status'] = $status;
+        $params['perPage'] = $limit;
+        if ($id) {
+            $params['id'] = $id;
+        }
+        $response = $this->dataProvider->getCollection($params);
+        return $response->getValue()->getMember();
+    }
+
+    /**
+     * Get one community
+     *
+     * @return Community|null
+     */
+    public function getCommunityUser(int $communityId, int $userId)
+    {
+        $this->dataProvider->setClass(CommunityUser::class);
+        $response = $this->dataProvider->getCollection(['community.id'=>$communityId, 'user.id'=>$userId]);
+        return $response->getValue()->getMember();
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param integer $id
+     * @return void
+     */
+    public function getProposals(int $id)
+    {
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
+        $proposals = $this->dataProvider->getSubCollection($id, "proposal", "proposals");
+        return $proposals->getValue();
     }
 }

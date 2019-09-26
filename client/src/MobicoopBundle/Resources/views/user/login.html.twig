@@ -8,27 +8,10 @@
 {% endblock %}
 
 {% block main %}
-
-<section class="hero is-primary">
-	<div class="hero-body">
-    	<div class="container">
-      		<h1 class="title">
-				{% trans from 'ui' %}user.login.h1{% endtrans %}
-      		</h1>
-    	</div>
-  	</div>
-</section>
-
-<section class="section">
-	<div class="container">
-		<div id="login">
             <login
                 :errormessage="{{ {'value': errorMessage}|json_encode(1) }}"
-                :urlforgottenpassword="{{ { 'value':path('user_password_forgot')}|json_encode }}">
+                :urlforgottenpassword="{{ "/utilisateur/mot-de-passe/oubli"|json_encode }}">
             </login>
-		</div>
-    </div>
-  </section>
 {% endblock %}
 
 {% block javascripts %}

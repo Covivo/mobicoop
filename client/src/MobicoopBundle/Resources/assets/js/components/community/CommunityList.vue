@@ -21,13 +21,14 @@
             cols="6"
           >
             <a :href="paths.community_create">
-              <button
+              <v-btn
                 data-v-06c1a31a=""
                 type="button"
-                class="v-btn v-btn--contained theme--light v-size--default primary"
-              ><span class="v-btn__content">
+                color="primary"
+                rounded
+              >
                 Créer une communauté
-              </span></button>
+              </v-btn>
             </a>
           </v-col>
           <v-col
@@ -59,11 +60,11 @@
           'itemsPerPageText': $t('Nombre de lignes par page')
         }"
       >
-        <template v-slot:default="props">
+        <template>
           <v-row>
             <v-col
-              v-for="item in props.items"
-              :key="item.name"
+              v-for="item in communities"
+              :key="item.index"
               cols="12"
               class="ma-3 pa-6"
               outlined
@@ -82,7 +83,18 @@
                     />
                   </v-col>
                   <v-col cols="6">
-                    <v-card-title><h4><a :href="linkToCommunityShow(item)">{{ item.name }}</a></h4></v-card-title>
+                    <v-card-title>
+                      <div v-if="item.membersHidden || item.proposalsHidden">
+                        <h4>
+                          {{ item.name }}
+                        </h4>
+                      </div>
+                      <div v-else>
+                        <h4>
+                          <a :href="linkToCommunityShow(item)">{{ item.name }}</a>
+                        </h4>
+                      </div>
+                    </v-card-title>
                     <v-divider />
                     <v-list dense>
                       <v-list-item>
@@ -97,33 +109,28 @@
                     class="text-center"
                   >
                     <div
-                      v-if="!item.isMembersHidden && !item.isProposalsHidden"
+                      v-if="!item.membersHidden && !item.proposalsHidden"
                       class="my-2"
                     >
-                      <a :href="linkToCommunityShow(item)">
+                      <a href="#">
                         <v-btn
                           color="primary"
+                          rounded
+                          @click="test"
                         >
                           Voir les annonces
                         </v-btn>
                       </a>
                     </div>
                     <div
-                      v-if="!item.isMembersHidden && !item.isProposalsHidden"
-                      class="my-2"
-                    >
-                      <a :href="linkToCommunityWidget(item)">
-                        <v-btn color="primary">
-                          Afficher le widget
-                        </v-btn>
-                      </a>
-                    </div>
-                    <div
-                      v-if="item.isMembersHidden || item.isProposalsHidden"
+                      v-if="!item.membersHidden && !item.proposalsHidden"
                       class="my-2"
                     >
                       <a :href="linkToCommunityJoin(item)">
-                        <v-btn color="primary">
+                        <v-btn
+                          color="primary"
+                          rounded
+                        >
                           Rejoindre la communauté
                         </v-btn>
                       </a>
@@ -141,7 +148,6 @@
 
 <script>
 
-import moment from "moment";
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/home/HomeSearch.json";
@@ -160,7 +166,7 @@ export default {
       default: null
     },
     paths: {
-      type: Array,
+      type: Object,
       default: null
     }
   },
@@ -182,21 +188,7 @@ export default {
       ]
     }
   },
-  computed: {
-    // creation of the url to call
-    urlToCall() {
-      return `${this.baseUrl}/${this.route}/${this.origin.addressLocality}/${this.destination.addressLocality}/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.computedDateFormat}/resultats`;
-    },
-    searchUnavailable() {
-      return (!this.origin || !this.destination || this.loading == true)
-    },
-    computedDateFormat() {
-      moment.locale(this.locale);
-      return this.date
-        ? moment(this.date).format(this.$t("ui.i18n.date.format.fullNumericDate"))
-        : moment(new Date()).format(this.$t("ui.i18n.date.format.fullNumericDate"));
-    }
-  },
+
   methods:{
     linkToCommunityJoin: function (item) {
       return '/join-community/'+item.id;
@@ -204,8 +196,9 @@ export default {
     linkToCommunityShow: function (item) {
       return '/community/'+item.id;
     },
-    linkToCommunityWidget: function (item) {
-      return '/community/show-widget/'+item.id;
+    test() {
+      console.error(this.communities)
+      return 1;
     }
   }
 }

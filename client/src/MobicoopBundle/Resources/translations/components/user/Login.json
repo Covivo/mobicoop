@@ -1,6 +1,7 @@
 {
     "fr":{
-        "errorCredentials":"Nom d'utilisateur ou Mot de passe incorrect."
+        "title":"Connexion",
+        "errorCredentials":"Nom d'utilisateur ou mot de passe incorrect."
     },
     "en":{
         "errorCredentials":"Bad username or password."

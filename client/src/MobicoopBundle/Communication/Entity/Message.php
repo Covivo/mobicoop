@@ -99,11 +99,18 @@ class Message implements ResourceInterface
      * @Groups({"put","post","get"})
      */
     private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Updated date of the message.
+     * @Groups({"put","post","get"})
+     */
+    private $updatedDate;
     
     public function __construct($id=null)
     {
         if ($id) {
             $this->setId($id);
+            $this->setIri("/messages/".$id);
         }
         $this->recipients = new ArrayCollection();
     }
@@ -195,7 +202,7 @@ class Message implements ResourceInterface
     {
         if (!$this->recipients->contains($recipient)) {
             $this->recipients[] = $recipient;
-            $recipient->setMessage($this);
+            //$recipient->setMessage($this);
         }
     }
     
@@ -220,5 +227,17 @@ class Message implements ResourceInterface
     public function setCreatedDate($createdDate)
     {
         $this->createdDate = $createdDate;
+    }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
     }
 }

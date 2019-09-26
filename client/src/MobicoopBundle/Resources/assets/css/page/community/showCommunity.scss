@@ -1,0 +1,14 @@
+@import '@css/app.scss';
+@import '@css/page/community/communities.scss';
+body {
+  .dataValid {
+    color: #014201;
+    margin-left: 10px;
+    font-weight: bold;
+  }
+  .dataInvalid {
+    color: #8B0000;
+    margin-left: 10px;
+    font-weight: bold;
+  }
+}

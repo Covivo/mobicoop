@@ -142,6 +142,13 @@ class Event
     * @ORM\Column(type="datetime")
     */
     private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Updated date of the event.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updatedDate;
     
     /**
      * @var User The creator of the event.
@@ -289,6 +296,18 @@ class Event
         
         return $this;
     }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
     
     public function getUser(): User
     {
@@ -352,5 +371,15 @@ class Event
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
     }
 }

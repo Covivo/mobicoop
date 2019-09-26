@@ -91,6 +91,13 @@ class Community implements ResourceInterface, \JsonSerializable
     * @Groups("post")
     */
     private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Updated date of the event.
+     *
+     * @Groups("post")
+     */
+    private $updatedDate;
     
     /**
      * @var User The creator of the community.
@@ -140,6 +147,7 @@ class Community implements ResourceInterface, \JsonSerializable
     {
         if ($id) {
             $this->setId($id);
+            $this->setIri("/communities/".$id);
         }
         $this->images = new ArrayCollection();
         $this->proposals = new ArrayCollection();
@@ -230,6 +238,18 @@ class Community implements ResourceInterface, \JsonSerializable
     {
         $this->createdDate = $createdDate;
         
+        return $this;
+    }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
         return $this;
     }
     
@@ -369,11 +389,14 @@ class Community implements ResourceInterface, \JsonSerializable
     {
         return
         [
-            'id'            => $this->getId(),
-            'iri'           => $this->getIri(),
-            'name'          => $this->getName(),
-            'description'   => $this->getDescription(),
-            'images'        => $this->getImages()
+            'id'                => $this->getId(),
+            'iri'               => $this->getIri(),
+            'name'              => $this->getName(),
+            'description'       => $this->getDescription(),
+            'images'            => $this->getImages(),
+            'fullDescription'   => $this->getFullDescription(),
+            'proposalsHidden'   => $this->isProposalsHidden(),
+            'membersHidden'     => $this->isMembersHidden()
         ];
     }
 }

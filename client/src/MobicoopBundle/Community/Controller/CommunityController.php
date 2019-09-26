@@ -31,6 +31,7 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Community\Form\CommunityForm;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller class for community related actions.
@@ -81,54 +82,50 @@ class CommunityController extends AbstractController
     /**
      * Show a community
      */
-    public function show($id, CommunityManager $communityManager, Request $request, UserManager $userManager)
+    public function show($id, CommunityManager $communityManager, UserManager $userManager)
     {
-        $communityUser = new CommunityUser();
+        // retrive community;
         $community = $communityManager->getCommunity($id);
         $reponseofmanager= $this->handleManagerReturnValue($community);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
+
+        // retrive logged user
         $this->denyAccessUnlessGranted('show', $community);
         $user = $userManager->getLoggedUser();
+        
         $reponseofmanager= $this->handleManagerReturnValue($user);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
-        $form = $this->createForm(CommunityUserForm::class, $communityUser);
-        $errorLoginSecured = false;
-        $communityUser->setCommunity($community);
-        $communityUser->setUser($user);
-        $communityUser->setCreatedDate(new \DateTime());
-        $communityUser->setStatus(0);
-        $form->handleRequest($request);
-        $isMember = false;
-        $usersCommunity = array();
-        //test if the community has members
-        if (count($community->getCommunityUsers()) > 0) {
-            foreach ($community->getCommunityUsers() as $userInCommunity) {
-                $usersCommunity = [$userInCommunity->getUser()->getId()];
-            }
-        }
-
-        //test if the user logged is member of the community
-        if (!is_null($user) && $user !=='' && in_array($user->getId(), $usersCommunity)) {
-            $isMember = true;
-        }
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($communityUser = $communityManager->joinCommunity($communityUser)) {
-                return $this->redirectToRoute('community_show', ['id' => $id]);
-            }
-            $errorLoginSecured = "La connexion a échoué";
-        }
-        return $this->render('@Mobicoop/community/showCommunity.html.twig', [
+        return $this->render('@Mobicoop/community/community.html.twig', [
             'community' => $community,
-            'formIdentification' => $form->createView(),
-            'communityUser' => $communityUser,
             'user' => $user,
-            'errorLoginSecured' => $errorLoginSecured,
-            'isMember' => $isMember
+            'searchRoute' => "covoiturage/recherche",
         ]);
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param [type] $id
+     * @param CommunityManager $communityManager
+     * @param UserManager $userManager
+     * @return void
+     */
+    public function communityUser(int $id, CommunityManager $communityManager, UserManager $userManager)
+    {
+        if ($userManager->getLoggedUser()) {
+            $communityUser = $communityManager->getCommunityUser($id, $userManager->getLoggedUser()->getId());
+            $reponseofmanager= $this->handleManagerReturnValue($communityUser);
+            if (!empty($reponseofmanager)) {
+                return $reponseofmanager;
+            }
+            return $this->json($communityUser);
+        }
+        
+        return new Response;
     }
 
 
@@ -143,19 +140,16 @@ class CommunityController extends AbstractController
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
-        $usersCommunity = array();
-
-        //test if the community has members
-        if (count($community->getCommunityUsers()) > 0) {
-            foreach ($community->getCommunityUsers() as $userInCommunity) {
-                $usersCommunity = [$userInCommunity->getUser()->getId()];
-            }
+        $communityUsersId = [];
+        foreach ($community->getCommunityUsers() as $communityUser) {
+            // get all community users ID
+            array_push($communityUsersId, $communityUser->getUser()->getId());
         }
-        //test if the user logged is member of the community
-        if (!is_null($user) && $user !=='' && !in_array($user->getId(), $usersCommunity)) {
+        //test if the user logged is already a member of the community
+        if ($user && $user !=='' && !in_array($user->getId(), $communityUsersId)) {
             $communityUser = new CommunityUser();
-//        $this->denyAccessUnlessGranted('show', $community);
-            $communityUser->setCommunity($community);
+            
+            $communityUser->setCommunity(new Community($id));
             $communityUser->setUser($user);
             $communityUser->setCreatedDate(new \DateTime());
             $communityUser->setStatus(0);
@@ -166,7 +160,79 @@ class CommunityController extends AbstractController
                 return $reponseofmanager;
             }
         }
+        return new Response();
+    }
 
-        return $this->redirectToRoute('community_show', ['id' => $id]);
+    /**
+     * Undocumented function
+     *
+     * @param [type] $id
+     * @param CommunityManager $communityManager
+     * @param UserManager $userManager
+     * @return void
+     */
+    public function getCommunityLastUsers(int $id, CommunityManager $communityManager)
+    {
+        // get the last 3 users and formate them to be used with vue
+        $lastUsers = $communityManager->getLastUsers($id);
+        $lastUsersFormated = [];
+        dump($lastUsers);
+        foreach ($lastUsers as $key => $commUser) {
+            $lastUsersFormated[$key]["name"]=ucfirst($commUser->getUser()->getGivenName())." ".ucfirst($commUser->getUser()->getFamilyName());
+            $lastUsersFormated[$key]["acceptedDate"]=$commUser->getAcceptedDate()->format('d/m/Y');
+        }
+        return new Response(json_encode($lastUsersFormated));
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param integer $id
+     * @param CommunityManager $communityManager
+     * @return void
+     */
+    public function getCommunityMemberList(int $id, CommunityManager $communityManager)
+    {
+        // retrive community;
+        $community = $communityManager->getCommunity($id);
+        $reponseofmanager= $this->handleManagerReturnValue($community);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
+        $users = [];
+        //test if the community has members
+        if (count($community->getCommunityUsers()) > 0) {
+            foreach ($community->getCommunityUsers() as $communityUser) {
+                if ($communityUser->getStatus() == 1) {
+                    // get all community Users
+                    array_push($users, $communityUser->getUser());
+                }
+            }
+        }
+        return new Response(json_encode($users));
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param integer $id
+     * @param CommunityManager $communityManager
+     * @return void
+     */
+    public function getCommunityProposals(int $id, CommunityManager $communityManager)
+    {
+        $proposals = $communityManager->getProposals($id);
+        $points = [];
+        if ($proposals!==null) {
+            foreach ($proposals as $proposal) {
+                foreach ($proposal["waypoints"] as $waypoint) {
+                    $points[] = [
+                        "title"=>$waypoint["address"]["displayLabel"],
+                        "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
+                    ];
+                }
+            }
+        }
+        return new Response(json_encode($points));
     }
 }

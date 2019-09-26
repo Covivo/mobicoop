@@ -85,6 +85,12 @@ class Mass implements ResourceInterface
     private $createdDate;
 
     /**
+     * @var \DateTimeInterface Updated date of the import.
+     *
+     */
+    private $updatedDate;
+
+    /**
      * @var User User that imports the file.
      */
     private $user;
@@ -167,7 +173,7 @@ class Mass implements ResourceInterface
         return $this->id;
     }
 
-    public function setId($id)
+    public function setId(int $id)
     {
         $this->id = $id;
     }
@@ -242,6 +248,18 @@ class Mass implements ResourceInterface
     public function setCreatedDate(\DateTimeInterface $createdDate): self
     {
         $this->createdDate = $createdDate;
+
+        return $this;
+    }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
 
         return $this;
     }

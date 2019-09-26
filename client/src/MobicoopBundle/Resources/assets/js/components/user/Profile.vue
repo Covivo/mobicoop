@@ -1,11 +1,23 @@
 <template>
   <v-content>
     <v-container fluid>
+      <v-row 
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          md="8"
+          xl="6"
+          align="center"
+        >
+          <h1>{{ $t('page.title') }}</h1>
+        </v-col>
+      </v-row>
       <v-layout
         justify-center
         text-center
       >
-        <v-flex xs10>
+        <v-flex xs8>
           <v-tabs
             slider-color="secondary"
             color="secondary"

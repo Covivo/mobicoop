@@ -30,6 +30,7 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Image\Entity\Image;
 use App\User\Entity\User;
@@ -138,6 +139,14 @@ class Community
     * @Groups("read")
     */
     private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Updated date of the community.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups("read")
+     */
+    private $updatedDate;
     
     /**
      * @var User The creator of the community.
@@ -164,8 +173,8 @@ class Community
      * @var ArrayCollection|null The proposals in this community.
      *
      * @ORM\ManyToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="communities")
-     * @Groups({"read","write"})
      * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
      */
     private $proposals;
 
@@ -271,6 +280,18 @@ class Community
     {
         $this->createdDate = $createdDate;
         
+        return $this;
+    }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
+
         return $this;
     }
     
@@ -404,5 +425,15 @@ class Community
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
     }
 }

@@ -74,6 +74,12 @@ class AskHistory implements ResourceInterface
     private $createdDate;
 
     /**
+     * @var \DateTimeInterface Updated date of the solicitation.
+     * @Groups({"put","post"})
+     */
+    private $updatedDate;
+
+    /**
      * @var Ask|null The linked ask.
      * @Groups({"put","post"})
      * @MaxDepth(1)
@@ -179,6 +185,18 @@ class AskHistory implements ResourceInterface
     public function setCreatedDate(\DateTimeInterface $createdDate): self
     {
         $this->createdDate = $createdDate;
+
+        return $this;
+    }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
 
         return $this;
     }

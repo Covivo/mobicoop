@@ -14,6 +14,7 @@
                 },
                 "infos": {
                     "carpooling": {
+                        "carpoolNotAsked": "Aucune proposition formelle",
                         "askAlreadySent": "Proposition de covoiturage envoyée",
                         "accepted": "Proposition de covoiturage acceptée",
                         "refused": "Proposition de covoiturage refusée",
@@ -34,10 +35,13 @@
                     "sunday": "Dim"
                 },
                 "pages": {
+                    "title": {
+                        "messages":"Messages"
+                    },
                     "messages": {
                         "label": {
                             "messages":"Messages",
-                            "context":"Annonces(s)",
+                            "context":"Annonce",
                             "ongoingasks":"Demandes en cours",
                             "directmessages":"Autres messages",
                             "nocarpoolmessages":"Aucun message de covoiturage",
@@ -69,6 +73,7 @@
             },
             "infos": {
                 "carpooling": {
+                    "carpoolNotAsked": "No formal ask",
                     "askAlreadySent": "Carpool proposal sent",
                     "accepted": "Carpool proposal accepted",
                     "refused": "Carpool proposal refused",
@@ -92,7 +97,7 @@
                 "messages": {
                     "label": {
                         "messages":"Messages",
-                        "context":"Carpool(s)",
+                        "context":"Carpool",
                         "ongoingasks":"Ongoing proposals",
                         "directmessages":"Other messages",
                         "nocarpoolmessages":"No carpool message",

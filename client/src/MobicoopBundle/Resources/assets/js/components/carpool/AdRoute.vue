@@ -334,12 +334,16 @@ export default {
     initDestination: {
       type: Object,
       default: null
+    },
+    community: {
+      type: Object,
+      default: null
     }
   },
   data() {
     return {
-      origin: null,
-      destination: null,
+      origin: this.initOrigin,
+      destination: this.initDestination,
       waypoints: [
         {
           visible: false,
@@ -360,7 +364,7 @@ export default {
       ],
       avoidMotorway: false,
       direction: null,
-      selectedCommunities: null
+      selectedCommunities: this.community ? [this.community.iri] : null,
     };
   },
   watch: {
@@ -372,6 +376,9 @@ export default {
       this.destination = this.initDestination;
       this.getRoute();
     }
+  },
+  mounted(){
+    this.getRoute();
   },
   methods: {
     originSelected: function(address) {

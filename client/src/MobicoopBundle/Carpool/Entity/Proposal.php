@@ -51,11 +51,13 @@ class Proposal implements ResourceInterface, \JsonSerializable
     
     /**
      * @var int The id of this proposal.
+     * @Groups({"post","put"})
      */
     private $id;
     
     /**
      * @var string|null The iri of this proposal.
+     * @Groups({"post","put"})
      */
     private $iri;
 
@@ -133,6 +135,12 @@ class Proposal implements ResourceInterface, \JsonSerializable
      */
     private $individualStops;
     
+    /**
+     * @var Proposal|null The proposal we know that already matched by this new proposal
+     * @Groups({"post","put"})
+     */
+    private $matchedProposal;
+
     public function __construct($id=null)
     {
         if ($id) {
@@ -202,12 +210,12 @@ class Proposal implements ResourceInterface, \JsonSerializable
         return $this;
     }
     
-    public function getProposalLinked(): ?string
+    public function getProposalLinked(): ?self
     {
         return $this->proposalLinked;
     }
     
-    public function setProposalLinked(?string $proposalLinked): self
+    public function setProposalLinked(?Proposal $proposalLinked): self
     {
         $this->proposalLinked = $proposalLinked;
         
@@ -430,13 +438,30 @@ class Proposal implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getMatchedProposal(): ?Proposal
+    {
+        return $this->matchedProposal;
+    }
+
+    public function setMatchedProposal(?Proposal $matchedProposal): self
+    {
+        $this->matchedProposal = $matchedProposal;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
         return
         [
             'id'                => $this->getId(),
-            'proposalLinkedId'  => (int)$this->getProposalLinked()
+            'matchedProposal'   => $this->getMatchedProposal(),
+            'proposalLinked'    => $this->getProposalLinked(),
+            'user'              => $this->getUser(),
+            'criteria'          => $this->getCriteria(),
+            'type'              => $this->getType(),
+            'waypoints'         => $this->getWaypoints()
         ];
     }
 }

@@ -1,5 +1,8 @@
 {
     "fr": {
+        "page": {
+            "title": "Mon profil"
+        },
         "tabs": {
             "myProfile": "Mon profil",
             "password": "Mot de passe",

@@ -108,9 +108,11 @@ logout:
 # post an ad
 carpool_ad_post:
     path:
-        fr: /covoiturage/annonce/poster
-        en: /carpool/ad/share
+        fr: /covoiturage/annonce/poster/{communityId}
+        en: /carpool/ad/share/{communityId}
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::post
+    defaults:
+        communityId: 0    
 
 # ad results
 carpool_ad_results:
@@ -124,8 +126,8 @@ carpool_ad_results:
 # simple search results
 carpool_results:
     path:
-        fr: /covoiturage/recherche/{origin}/{destination}/{origin_latitude}/{origin_longitude}/{destination_latitude}/{destination_longitude}/{date}/resultats
-        en: /carpool/search/{origin}/{destination}/{origin_latitude}/{origin_longitude}/{destination_latitude}/{destination_longitude}/{date}/results
+        fr: /covoiturage/recherche/{origin}/{destination}/{origin_latitude}/{origin_longitude}/{destination_latitude}/{destination_longitude}/{date}/{regular}/resultats
+        en: /carpool/search/{origin}/{destination}/{origin_latitude}/{origin_longitude}/{destination_latitude}/{destination_longitude}/{date}/{regular}/results
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::simpleSearchResults
     requirements:
         origin_latitude: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?).\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)'
@@ -137,7 +139,15 @@ matching_search:
     path:
         fr: /matching/search/
         en: /matching/search/
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::MatchingSearch
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::matchingSearch
+
+# contact
+contact_for_carpool_from_results:
+    path:
+        fr: /matching/search/contactforcarpool
+        en: /matching/search/contactforcarpool
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::contactForCarpool
+
 
 # rdex provider (called with ajax)
 rdex_provider:
@@ -181,7 +191,7 @@ community_show:
     requirements:
         id: '\d+'
 
-# display one community
+# join a community (called with ajax)
 community_join:
     path:
         fr: /rejoindre-communaute/{id}
@@ -190,6 +200,42 @@ community_join:
     requirements:
         id: '\d+'
 
+# get a community user (called with ajax)
+community_user:
+    path:
+        fr: /community-user/{id}
+        en: /community-user/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityUser
+    requirements:
+        id: '\d+'
+
+# get the last community users (called with ajax)
+community_last_users:
+    path:
+        fr: /community-last-users/{id}
+        en: /community-last-users/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityLastUsers
+    requirements:
+        id: '\d+'
+
+# get community members list (called with ajax)
+community_member_list:
+    path:
+        fr: /community-member-list/{id}
+        en: /community-member-list/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityMemberList
+    requirements:
+        id: '\d+'        
+
+# get all community proposals (called with ajax)
+community_proposals:
+    path:
+        fr: /community-proposals/{id}
+        en: /community-proposals/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityProposals
+    requirements:
+        id: '\d+'       
+        
 ##########################
 # editorial pages routes #
 ##########################

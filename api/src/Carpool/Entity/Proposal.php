@@ -137,7 +137,7 @@ class Proposal
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read","threads","thread"})
+     * @Groups({"read","results","threads","thread"})
      */
     private $id;
 
@@ -166,11 +166,19 @@ class Proposal
     private $createdDate;
 
     /**
+     * @var \DateTimeInterface Updated date of the proposal.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read","threads","thread"})
+     */
+    private $updatedDate;
+
+    /**
      * @var Proposal|null Linked proposal for a round trip (return or outward journey).
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Groups({"read","write"})
+     * @Groups({"read","results","write"})
      */
     private $proposalLinked;
     
@@ -267,6 +275,12 @@ class Proposal
      * @MaxDepth(1)
      */
     private $notifieds;
+
+    /**
+     * @var Proposal|null The proposal we know that already matched by this new proposal
+     * @Groups({"read","write"})
+     */
+    private $matchedProposal;
         
     public function __construct($id=null)
     {
@@ -332,6 +346,18 @@ class Proposal
     public function setCreatedDate(\DateTimeInterface $createdDate): self
     {
         $this->createdDate = $createdDate;
+
+        return $this;
+    }
+
+    public function getUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->updatedDate;
+    }
+
+    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+    {
+        $this->updatedDate = $updatedDate;
 
         return $this;
     }
@@ -579,6 +605,18 @@ class Proposal
         return $this;
     }
     
+    public function getMatchedProposal(): ?Proposal
+    {
+        return $this->matchedProposal;
+    }
+
+    public function setMatchedProposal(?Proposal $matchedProposal): self
+    {
+        $this->matchedProposal = $matchedProposal;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
     
     /**
@@ -589,5 +627,15 @@ class Proposal
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+    }
+
+    /**
+     * Update date.
+     *
+     * @ORM\PreUpdate
+     */
+    public function setAutoUpdatedDate()
+    {
+        $this->setUpdatedDate(new \Datetime());
     }
 }

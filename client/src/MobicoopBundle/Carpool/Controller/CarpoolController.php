@@ -34,6 +34,8 @@ use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManage
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
+use Symfony\Component\HttpFoundation\Response;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
  * Controller class for carpooling related actions.
@@ -47,7 +49,7 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
-    public function post(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
+    public function post(int $communityId, ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
     {
         $proposal = new Proposal();
         $poster = $userManager->getLoggedUser();
@@ -67,11 +69,36 @@ class CarpoolController extends AbstractController
 
         // get the communities available for the user
         $communities = $communityManager->getAvailableUserCommunities($poster)->getMember();
+        
+        //get user's community
+        if ($communityId!==0) {
+            $community = $communityManager->getCommunity($communityId);
+        }
 
+        if ($request->query->get('origin')) {
+            $initOrigin = new Address();
+            $initOrigin->setDisplayLabel($request->query->get('origin'));
+            $initOrigin->setLatitude($request->query->get('originLat'));
+            $initOrigin->setLongitude($request->query->get('originLon'));
+            $initOrigin->setAddressLocality($request->query->get('originAddressLocality'));
+        }
+        if ($request->query->get('destination')) {
+            $initDestination = new Address();
+            $initDestination->setDisplayLabel($request->query->get('destination'));
+            $initDestination->setLatitude($request->query->get('destinationLat'));
+            $initDestination->setLongitude($request->query->get('destinationLon'));
+            $initDestination->setAddressLocality($request->query->get('destinationAddressLocality'));
+        }
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
             [
-                'communities'=>$communities
+                'communities'=>$communities,
+                'community'=>(isset($community))?$community:null,
+                'initOrigin'=>(isset($initOrigin)) ? $initOrigin : null,
+                'initDestination'=>(isset($initDestination)) ? $initDestination : null,
+                'initRegular'=>(is_null($request->query->get('regular')) || $request->query->get('regular')==="1") ? true : false,
+                'initDate'=>($request->query->get('date')) ? $request->query->get('date') : null,
+                'initTime'=>($request->query->get('time')) ? $request->query->get('time') : null,
             ]
         );
     }
@@ -79,14 +106,9 @@ class CarpoolController extends AbstractController
     /**
      * Simple search results.
      */
-    public function simpleSearchResults($origin, $destination, $origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date, ProposalManager $proposalManager)
+    public function simpleSearchResults($origin, $destination, $origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date, $regular)
     {
-        // $offers= $proposalManager->getMatchingsForSearch($origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, \Datetime::createFromFormat("YmdHis", $date));
-        // $reponseofmanager= $this->handleManagerReturnValue($offers);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        return $this->render('@Mobicoop/search/simple_results.html.twig', [
+        return $this->render('@Mobicoop/carpool/results.html.twig', [
             'origin' => urldecode($origin),
             'destination' => urldecode($destination),
             'origin_latitude' => urldecode($origin_latitude),
@@ -94,31 +116,112 @@ class CarpoolController extends AbstractController
             'destination_latitude' => urldecode($destination_latitude),
             'destination_longitude' => urldecode($destination_longitude),
             'date' =>  $date,
-            // 'hydra' => $offers,
-            'MatchingSearchUrl' => "/matching/search"
+            'regular' => $regular,
+            'showRegular' => true,
+            'url' => "/matching/search/"
         ]);
     }
 
     /**
      * Matching Search
      */
-    public function MatchingSearch(Request $request, ProposalManager $proposalManager)
+    public function matchingSearch(Request $request, ProposalManager $proposalManager)
     {
         $origin_latitude = $request->query->get('origin_latitude');
         $origin_longitude = $request->query->get('origin_longitude');
         $destination_latitude = $request->query->get('destination_latitude');
         $destination_longitude = $request->query->get('destination_longitude');
-        $date = Datetime::createFromFormat("Y-m-d\TH:i:s\Z", $request->query->get('date'));
+        $date = \Datetime::createFromFormat("Y-m-d\TH:i:s.u\Z", $request->query->get('date'));
 
-        return $this->json($proposalManager->getMatchingsForSearch(
+        // we have to merge matching proposals that concern both driver and passenger into a single matching
+        $matchings = [];
+        $proposalResult = null;
+
+        // we post to the special collection /proposals/search, that will return only one virtual proposal (with its matchings)
+        if ($proposalResults = $proposalManager->getMatchingsForSearch(
             $origin_latitude,
             $origin_longitude,
             $destination_latitude,
             $destination_longitude,
-            $date,
-            DataProvider::RETURN_JSON
-        ));
+            $date
+        )) {
+            if (is_array($proposalResults->getMember()) && count($proposalResults->getMember()) == 1) {
+                $proposalResult = $proposalResults->getMember()[0];
+            }
+        }
+        if ($proposalResult) {
+            foreach ($proposalResult->getMatchingOffers() as $offer) {
+                $matchings[$offer->getProposalRequest()->getId()] = $offer;
+            }
+            foreach ($proposalResult->getMatchingRequests() as $request) {
+                if (!array_key_exists($request->getProposalOffer()->getId(), $matchings)) {
+                    $matchings[$request->getProposalOffer()->getId()] = $request;
+                }
+            }
+        }
+
+        return $this->json($matchings);
+      
+        // return $this->json($proposalManager->getMatchingsForSearch(
+        //     $origin_latitude,
+        //     $origin_longitude,
+        //     $destination_latitude,
+        //     $destination_longitude,
+        //     $date,
+        //     DataProvider::RETURN_JSON
+        // ));
     }
+
+    /**
+     * Initiate contact from carpool results
+     */
+    public function contactForCarpool(Request $request, ProposalManager $proposalManager, UserManager $userManager)
+    {
+        // The matched proposal
+        $matchedProposal = $proposalManager->getProposal($request->query->get('proposalId'));
+
+        $data = [
+            "proposalId" => (int)$request->query->get('proposalId'),
+            "origin"=>[
+                "latitude" => (float)$request->query->get('origin_latitude'),
+                "longitude" => (float)$request->query->get('origin_longitude'),
+                "streetAddress" => $request->query->get('origin_streetAddress'),
+                "addressLocality" => $request->query->get('origin_addressLocality')
+            ],
+            "destination"=>[
+                "latitude" => (float)$request->query->get('destination_latitude'),
+                "longitude" => (float)$request->query->get('destination_longitude'),
+                "streetAddress" => $request->query->get('destination_streetAddress'),
+                "addressLocality" => $request->query->get('destination_addressLocality')
+            ],
+            "waypoints"=>[],
+            "outwardDate" => Datetime::createFromFormat("Y-m-d\TH:i:s.u\Z", $request->query->get('date'))->format("Y-m-d"),
+            "outwardTime" => Datetime::createFromFormat("Y-m-d\TH:i:s.u\Z", $request->query->get('date'))->format("H:i"),
+            "seats" => 1,
+            "price" => (float)$matchedProposal->getCriteria()->getPriceKm(),
+            "regular" => $request->query->get('regular')==="false" ? false : true
+        ];
+
+        if ((bool)$request->query->get('driver') && (bool)$request->query->get('passenger')) {
+            $data["driver"] = true;
+            $data["passenger"] = true;
+        } elseif ((bool)$request->query->get('driver')) {
+            $data["driver"] = false;
+            $data["passenger"] = true;
+        } else {
+            $data["driver"] = true;
+            $data["passenger"] = false;
+        }
+
+        $proposal = $proposalManager->createProposalFromResult($data, $userManager->getLoggedUser());
+        if ($proposal!==null) {
+            return $this->json("ok");
+        } else {
+            return $this->json("error");
+        }
+    }
+
+
 
     /**
      * Provider rdex

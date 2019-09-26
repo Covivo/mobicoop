@@ -217,7 +217,7 @@ class Direction
         return $this;
     }
 
-    public function getDetail(): string
+    public function getDetail(): ?string
     {
         return $this->detail;
     }
@@ -229,7 +229,7 @@ class Direction
         return $this;
     }
     
-    public function getFormat(): string
+    public function getFormat(): ?string
     {
         return $this->format;
     }

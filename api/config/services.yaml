@@ -107,6 +107,10 @@ services:
         tags: 
             - { name: monolog.logger, channel: communication }
 
+    App\Communication\EntityListener\RecipientListener:
+        tags:
+            - { name: doctrine.orm.entity_listener, lazy: true }    # lazy set to true to avoid doctrine UnitOfWork error on insert
+
     # Community
     App\Community\Controller\:
         resource: '../src/Community/Controller'
@@ -155,6 +159,8 @@ services:
                 displayLocality: '%env(resolve:DISPLAY_LOCALITY)%'
                 displayPostalCode: '%env(resolve:DISPLAY_POSTALCODE)%'
                 displayStreetAddress: '%env(resolve:DISPLAY_STREETADDRESS)%'
+                displayVenue: '%env(resolve:DISPLAY_VENUE)%'
+                displayRelayPoint: '%env(resolve:DISPLAY_RELAY_POINT)%'
                 displaySeparator: '%env(resolve:DISPLAY_SEPARATOR)%'
     
     # Image
