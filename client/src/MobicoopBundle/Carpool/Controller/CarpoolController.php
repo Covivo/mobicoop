@@ -70,32 +70,27 @@ class CarpoolController extends AbstractController
         $communities = $communityManager->getAvailableUserCommunities($poster)->getMember();
         
         //get user's community
-        $community = $communityManager->getCommunity($communityId);
+        if($communityId!==0) $community = $communityManager->getCommunity($communityId);
 
         if ($request->query->get('origin')) {
             $initOrigin = new Address();
             $initOrigin->setDisplayLabel($request->query->get('origin'));
             $initOrigin->setLatitude($request->query->get('originLat'));
             $initOrigin->setLongitude($request->query->get('originLon'));
+            $initOrigin->setAddressLocality($request->query->get('originAddressLocality'));
         }
         if ($request->query->get('destination')) {
             $initDestination = new Address();
             $initDestination->setDisplayLabel($request->query->get('destination'));
             $initDestination->setLatitude($request->query->get('destinationLat'));
             $initDestination->setLongitude($request->query->get('destinationLon'));
+            $initDestination->setAddressLocality($request->query->get('destinationAddressLocality'));
         }
-        if ($request->query->get('destination')) {
-            $initDestination = new Address();
-            $initDestination->setDisplayLabel($request->query->get('destination'));
-            $initDestination->setLatitude($request->query->get('destinationLat'));
-            $initDestination->setLongitude($request->query->get('destinationLon'));
-        }
- 
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
             [
                 'communities'=>$communities,
-                'community'=>$community,
+                'community'=>(isset($community))?$community:null,
                 'initOrigin'=>(isset($initOrigin)) ? $initOrigin : null,
                 'initDestination'=>(isset($initDestination)) ? $initDestination : null,
                 'initRegular'=>(is_null($request->query->get('regular')) || $request->query->get('regular')==="1") ? true : false,

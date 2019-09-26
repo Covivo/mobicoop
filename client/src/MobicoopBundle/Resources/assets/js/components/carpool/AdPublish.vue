@@ -134,6 +134,7 @@
               <v-stepper-content step="2">
                 <ad-planification 
                   :init-outward-date="outwardDate"
+                  :init-outward-time="outwardTime"
                   :regular="regular"
                   :default-margin-time="defaultMarginTime" 
                   @change="planificationChanged"
@@ -412,6 +413,8 @@
                         :route="route"
                         :message="message"
                         :user="user"
+                        :origin="origin"
+                        :destination="destination"
                       />
                     </v-col>
                   </v-row>
@@ -749,10 +752,12 @@ export default {
       })
         .then(function (response) {
           if (response.data && response.data.result && response.data.result.id) {
-            var urlRedirect = `${self.baseUrl}/`+self.resultsUrl.replace(/{id}/,response.data.result.id);
-            window.location.href = urlRedirect;
+            // uncomment when results page activeted
+            // var urlRedirect = `${self.baseUrl}/`+self.resultsUrl.replace(/{id}/,response.data.result.id);
+            // window.location.href = urlRedirect;
+            window.location.href = "/";
           }
-          console.log(response);
+          // console.log(response);
         })
         .catch(function (error) {
           console.log(error);

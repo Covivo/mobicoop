@@ -485,6 +485,10 @@ export default {
       type: String,
       default: null
     },
+    initOutwardTime: {
+      type: String,
+      default: null
+    },
     defaultMarginTime: {
       type: Number,
       default: null
@@ -492,8 +496,8 @@ export default {
   },
   data() {
     return {
-      outwardDate: null,
-      outwardTime: null,
+      outwardDate: this.initOutwardDate,
+      outwardTime: this.initOutwardTime,
       returnDate: null,
       returnTime: null,
       menuOutwardDate: false,

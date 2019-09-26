@@ -43,6 +43,7 @@
           cols="6"
         >
           <v-select
+            v-show="regular ? false : true"
             v-model="time"
             :disabled="regular"
             :items="items"
@@ -197,11 +198,13 @@ export default {
         params.push("origin="+this.origin.displayedLabel);
         params.push("originLat="+this.origin.latitude);
         params.push("originLon="+this.origin.longitude);
+        params.push("originAddressLocality="+this.origin.addressLocality);
       }
       if (this.destination) {    
         params.push("destination="+this.destination.displayedLabel);
         params.push("destinationLat="+this.destination.latitude);
         params.push("destinationLon="+this.destination.longitude);
+        params.push("destinationAddressLocality="+this.destination.addressLocality);
       }
       if (this.regular) {
         params.push("regular=1");

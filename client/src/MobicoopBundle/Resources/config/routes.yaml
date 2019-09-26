@@ -111,7 +111,8 @@ carpool_ad_post:
         fr: /covoiturage/annonce/poster/{communityId}
         en: /carpool/ad/share/{communityId}
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::post
-    defaults: { communityId: 0 }    
+    defaults:
+        communityId: 0    
 
 # ad results
 carpool_ad_results:
