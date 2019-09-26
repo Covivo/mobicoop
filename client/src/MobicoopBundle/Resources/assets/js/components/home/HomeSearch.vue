@@ -76,15 +76,24 @@
         <v-col 
           cols="3"
         >
-          <v-btn
-            :disabled="searchUnavailable || !isMember"
-            :loading="loading"
-            color="success"
-            rounded
-            @click="search"
+          <v-tooltip
+            top
+            color="info"
           >
-            {{ $t('buttons.search.label') }}
-          </v-btn>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                :disabled="searchUnavailable"
+                :loading="loading"
+                color="success"
+                rounded
+                v-on="on"
+                @click="search"
+              >
+                {{ $t('buttons.search.label') }}
+              </v-btn>
+            </template>
+            <span>{{ $t('ui.infos.notAvailableYet') }}</span>
+          </v-tooltip>
         </v-col>
       </v-row>
     </v-container>
@@ -135,6 +144,11 @@ export default {
     community: {
       type: Object,
       default: null
+    },
+    // need to be removed when results search into community will be activated
+    temporaryTooltips: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

@@ -173,6 +173,7 @@
             :notitle="true"
             :is-member="isMember"
             :community="community"
+            :temporary-tooltips="true"
           />
         </v-col>
       </v-row>
@@ -280,7 +281,7 @@ export default {
           }
         })
         .then(res => {
-          if (res.data !== "") {
+          if (res.data.length > 0) {
             this.isAccepted = res.data[0].status == 1;
             this.isMember = true
           }
@@ -291,7 +292,7 @@ export default {
     joinCommunity() {
       this.loading = true;
       axios 
-        .post(this.$t('buttons.publish.route')+this.community.id,
+        .post(this.$t('buttons.join.route')+this.community.id,
           {
             headers:{
               'content-type': 'application/json'
@@ -301,8 +302,7 @@ export default {
           this.errorUpdate = res.data.state;
           this.snackbar = true;
           this.loading = false;
-          document.location.reload(true);
-          
+          this.isMember = true;
         });
     },
     checkIfUserLogged() {
