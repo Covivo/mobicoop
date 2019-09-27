@@ -64,8 +64,7 @@
         </v-form>
         <v-card-text>
           <a
-            v-show="false"
-            :href="urlforgottenpassword"
+            :href="$t('urlRecovery')"
           >
             Mot de passe oublié?
           </a>
@@ -91,10 +90,6 @@ export default {
       type: Object,
       default: null
     },
-    urlforgottenpassword: {
-      type: Object,
-      default: null
-    }
   },
   data() {
     return {
@@ -118,9 +113,8 @@ export default {
   },
   methods: {
     validate() {
-      this.loading = true;
       if (this.$refs.form.validate()) {
-        // Do something
+        this.loading = true;
       }
     },
     treatErrorMessage(errorMessage) {

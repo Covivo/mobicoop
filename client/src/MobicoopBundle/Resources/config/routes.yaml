@@ -77,9 +77,9 @@ user_password_update:
 # forgot password
 user_password_forgot:
     path:
-        fr: /utilisateur/mot-de-passe/oubli
-        en: /user/password/forgot
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordForgot
+        fr: /utilisateur/mot-de-passe/recuperation
+        en: /user/password/recovery
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordRecovery
 
 user_password_reset:
     path:

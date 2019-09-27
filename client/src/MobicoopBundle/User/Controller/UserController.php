@@ -281,7 +281,7 @@ class UserController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      * @throws Exception
      */
-    public function userPasswordForgot(UserManager $userManager, Request $request)
+    public function userPasswordRecovery(UserManager $userManager, Request $request)
     {
         $userRequest= new User();
         $form = $this->createFormBuilder($userRequest)
@@ -321,7 +321,7 @@ class UserController extends AbstractController
                 }
             }
         } else {
-            return $this->render('@Mobicoop/user/password.html.twig', [
+            return $this->render('@Mobicoop/user/passwordRecovery.html.twig', [
                 'form' => $form->createView(),
                 'user' => $user??$userRequest,
                 'error' => $error,
