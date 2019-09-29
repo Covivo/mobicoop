@@ -58,8 +58,14 @@ final class ProposalSimpleSearchCollectionDataProvider implements CollectionData
             $this->request->get("origin_longitude"),
             $this->request->get("destination_latitude"),
             $this->request->get("destination_longitude"),
+            $this->request->get("frequency"),
             \DateTime::createFromFormat(\DateTime::RFC3339, $this->request->get("date")),
-            $this->request->get("userId")
+            $this->request->get("useTime"),
+            $this->request->get("strictDate"),
+            $this->request->get("userId"),
+            $this->request->get("role"),
+            $this->request->get("useRegular"),
+            $this->request->get("type")
         )];
     }
 }

@@ -82,6 +82,11 @@ services:
             - { name: monolog.logger, channel: carpool }
 
     App\Carpool\Service\ProposalManager:
+        arguments:
+            $params:
+                defaultRole: '%env(resolve:CARPOOL_ROLE)%'
+                defaultType: '%env(resolve:CARPOOL_TYPE)%'
+                defaultUseRegular: '%env(resolve:CARPOOL_USE_REGULAR)%'
         tags:   
             - { name: monolog.logger, channel: carpool }
     

@@ -500,6 +500,14 @@ class Criteria
     private $priceKm;
 
     /**
+    * @var float|null The price for the whole journey (usually, the rounded (priceKm * distance)).
+    *
+    * @ORM\Column(type="decimal", precision=4, scale=2, nullable=true)
+    * @Groups({"read","results","write","thread"})
+    */
+    private $price;
+
+    /**
      * @var boolean Big luggage accepted / asked.
      *
      * @ORM\Column(type="boolean", nullable=true)
@@ -666,21 +674,6 @@ class Criteria
         return $this;
     }
 
-    public function getFromTime(): ?\DateTimeInterface
-    {
-        if ($this->fromTime) {
-            return \DateTime::createFromFormat('His', $this->fromTime->format('His'));
-        }
-        return null;
-    }
-
-    public function setFromTime(?\DateTimeInterface $fromTime): self
-    {
-        $this->fromTime = $fromTime;
-
-        return $this;
-    }
-
     public function getMarginDuration(): ?int
     {
         return $this->marginDuration;
@@ -731,6 +724,18 @@ class Criteria
     public function setStrictDate(bool $isStrictDate): self
     {
         $this->strictDate = $isStrictDate;
+        
+        return $this;
+    }
+
+    public function isStrictTime(): ?bool
+    {
+        return $this->strictTime;
+    }
+    
+    public function setStrictTime(bool $isStrictTime): self
+    {
+        $this->strictTime = $isStrictTime;
         
         return $this;
     }
@@ -1286,6 +1291,16 @@ class Criteria
     public function setPriceKm(?string $priceKm)
     {
         $this->priceKm = $priceKm;
+    }
+
+    public function getPrice(): ?string
+    {
+        return $this->price;
+    }
+    
+    public function setPrice(?string $price)
+    {
+        $this->price = $price;
     }
 
     public function hasLuggage(): ?bool

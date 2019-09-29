@@ -51,6 +51,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class ProposalManager
 {
+    const ROLE_DRIVER = 1;
+    const ROLE_PASSENGER = 2;
+    const ROLE_BOTH = 3;
+
     private $entityManager;
     private $proposalMatcher;
     private $proposalRepository;
@@ -63,6 +67,7 @@ class ProposalManager
     private $eventDispatcher;
     private $communityManager;
     private $askManager;
+    private $params;
 
     /**
      * Constructor.
@@ -74,7 +79,7 @@ class ProposalManager
      * @param GeoRouter $geoRouter
      * @param ZoneManager $zoneManager
      */
-    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, CommunityManager $communityManager, LoggerInterface $logger, UserRepository $userRepository, EventDispatcherInterface $dispatcher, AskManager $askManager)
+    public function __construct(EntityManagerInterface $entityManager, ProposalMatcher $proposalMatcher, ProposalRepository $proposalRepository, DirectionRepository $directionRepository, GeoRouter $geoRouter, ZoneManager $zoneManager, TerritoryManager $territoryManager, CommunityManager $communityManager, LoggerInterface $logger, UserRepository $userRepository, EventDispatcherInterface $dispatcher, AskManager $askManager, array $params)
     {
         $this->entityManager = $entityManager;
         $this->proposalMatcher = $proposalMatcher;
@@ -88,6 +93,7 @@ class ProposalManager
         $this->eventDispatcher = $dispatcher;
         $this->communityManager = $communityManager;
         $this->askManager = $askManager;
+        $this->params = $params;
     }
     
     /**
@@ -105,7 +111,6 @@ class ProposalManager
         
         // temporary initialisation, will be dumped when implementation of these fields will be done
         $proposal->getCriteria()->setAnyRouteAsPassenger(true);
-        $proposal->getCriteria()->setStrictDate(true);
         
         // calculation of the min and max times
         if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
@@ -229,7 +234,6 @@ class ProposalManager
     
     /**
      * Create a minimal proposal for a simple search.
-     * Only punctual and one way trip.
      *
      * @param float $originLatitude
      * @param float $originLongitude
@@ -237,6 +241,8 @@ class ProposalManager
      * @param float $destinationLongitude
      * @param \Datetime $date
      * @param int $userId
+     * @param bool $strictDate
+     * @param bool $strictTime
      * @return void
      */
     public function searchMatchings(
@@ -244,19 +250,26 @@ class ProposalManager
         float $originLongitude,
         float $destinationLatitude,
         float $destinationLongitude,
-        \Datetime $date,
-        ?int $userId = null
+        int $frequency,
+        ?\Datetime $date = null,
+        ?bool $useTime = null,
+        ?bool $strictDate = null,
+        ?int $userId = null,
+        ?int $role = null,
+        ?bool $useRegular = null,
+        ?int $type = null
     ) {
         // we create a new Proposal object with its Criteria and Waypoints
         $proposal = new Proposal();
-        $proposal->setType(Proposal::TYPE_ONE_WAY);
+        $proposal->setType($type ? ($type == Proposal::TYPE_ONE_WAY ? Proposal::TYPE_ONE_WAY : Proposal::TYPE_OUTWARD) : ($this->params["defaultType"] == Proposal::TYPE_ONE_WAY ? Proposal::TYPE_ONE_WAY : Proposal::TYPE_OUTWARD));
         $criteria = new Criteria();
-        $criteria->setDriver(true);
-        $criteria->setPassenger(true);
-        $criteria->setFromDate($date);
-        $criteria->setFromTime($date);
+        $criteria->setDriver($role ? ($role == self::ROLE_DRIVER || $role == self::ROLE_BOTH) : ($this->params['defaultRole'] == self::ROLE_DRIVER || $this->params['defaultRole'] == self::ROLE_BOTH));
+        $criteria->setPassenger($role ? ($role == self::ROLE_PASSENGER || $role == self::ROLE_BOTH) : ($this->params['defaultRole'] == self::ROLE_PASSENGER || $this->params['defaultRole'] == self::ROLE_BOTH));
+        if ($date) $criteria->setFromDate($date);
+        if ($date && $useTime) $criteria->setFromTime($date);
         $criteria->setMarginDuration(900);
-        $criteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
+        $criteria->setFrequency($frequency);
+        $criteria->setStrictDate(!!$strictDate);
         $proposal->setCriteria($criteria);
         
         if (!is_null($userId)) {
