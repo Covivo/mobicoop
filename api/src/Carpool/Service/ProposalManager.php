@@ -265,8 +265,12 @@ class ProposalManager
         $criteria = new Criteria();
         $criteria->setDriver($role ? ($role == self::ROLE_DRIVER || $role == self::ROLE_BOTH) : ($this->params['defaultRole'] == self::ROLE_DRIVER || $this->params['defaultRole'] == self::ROLE_BOTH));
         $criteria->setPassenger($role ? ($role == self::ROLE_PASSENGER || $role == self::ROLE_BOTH) : ($this->params['defaultRole'] == self::ROLE_PASSENGER || $this->params['defaultRole'] == self::ROLE_BOTH));
-        if ($date) $criteria->setFromDate($date);
-        if ($date && $useTime) $criteria->setFromTime($date);
+        if ($date) {
+            $criteria->setFromDate($date);
+        }
+        if ($date && $useTime) {
+            $criteria->setFromTime($date);
+        }
         $criteria->setMarginDuration(900);
         $criteria->setFrequency($frequency);
         $criteria->setStrictDate(!!$strictDate);
