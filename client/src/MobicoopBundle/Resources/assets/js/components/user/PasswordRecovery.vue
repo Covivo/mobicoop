@@ -28,12 +28,15 @@
         <v-row>
           <v-col class="col-12">
             <v-text-field
+              ref="email"
+              v-model="email"
               :rules="emailRules"
               :label="$t('inputs.email')"
               name="email"
               required
             />
             <v-text-field
+              v-model="phone"
               :label="$t('inputs.phone')"
               name="phone"
               required
@@ -54,6 +57,7 @@
   </v-content>
 </template>
 <script>
+import axios from "axios";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/PasswordRecovery.json";
 
@@ -68,6 +72,8 @@ export default {
     return {
       valid: true,
       loading:false,
+      email:null,
+      phone:null,
       emailRules: [
         v => /.+@.+/.test(v) || this.$t("messages.errors.emailValid")
       ],
@@ -77,8 +83,26 @@ export default {
     validate() {
       event.preventDefault();
       if (this.$refs.form.validate()) {
+        console.error(this.email);
         this.loading = true;
-        this.$refs.form.submit();
+        axios.post('/user/password/recovery/send',
+          {
+            email:this.email,
+            phone:this.phone,
+          },{
+            headers:{
+              'content-type': 'application/json'
+            }
+          })
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          })
+          .finally(function(){
+            this.loading = false;
+          });
       }
     },
     recovery(){

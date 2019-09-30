@@ -110,13 +110,13 @@ class UserManager
     }
 
     /**
-     * Search user by reset email
+     * Search user by email
      *
      * @param string $email
      *
      * @return User|null The user found or null if not found.
      */
-    public function findByEmail(string $email)
+    public function findByEmail(string $email, bool $sendEmailRecovery = false)
     {
         $response = $this->dataProvider->getCollection(['email' => $email]);
         if ($response->getCode() == 200) {
@@ -126,11 +126,47 @@ class UserManager
             if ($user->getTotalItems() == 0) {
                 return null;
             } else {
+                if($sendEmailRecovery) $this->sendEmailRecoveryPassword($user->getMember()["id"]);
+                
                 return current($user->getMember());
             }
         }
         return null;
     }
+
+    /**
+     * Search user by phone number
+     *
+     * @param string $getTelephone
+     *
+     * @return User|null The user found or null if not found.
+     */
+    public function findByPhone(string $getTelephone, bool $sendEmailRecovery = false)
+    {
+        $response = $this->dataProvider->getCollection(['email' => $getTelephone]);
+        if ($response->getCode() == 200) {
+            /** @var Hydra $user */
+            $user = $response->getValue();
+
+            if ($user->getTotalItems() == 0) {
+                return null;
+            } else {
+                if($sendEmailRecovery) $this->sendEmailRecoveryPassword($user->getMember()["id"]);
+
+                return current($user->getMember());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Send the recovery mail password
+     * @param User|array $user The user the send the password
+     */
+    public function sendEmailRecoveryPassword(int $idUsers){
+        $this->dataProvider->getSpecialItem($idUsers,"password_update_request");
+    }
+
 
     /**
      * Get masses of a user
@@ -301,21 +337,7 @@ class UserManager
         $response = $this->dataProvider->getSubCollection($user->getId(), 'thread', 'threads');
         return $response->getValue();
     }
-    public function findByPhone(string $getTelephone)
-    {
-        $response = $this->dataProvider->getCollection(['email' => $getTelephone]);
-        if ($response->getCode() == 200) {
-            /** @var Hydra $user */
-            $user = $response->getValue();
 
-            if ($user->getTotalItems() == 0) {
-                return null;
-            } else {
-                return current($user->getMember());
-            }
-        }
-        return null;
-    }
 
     /**
      * Update the user token.
@@ -336,7 +358,6 @@ class UserManager
      */
     public function flushUserToken(User $user, string $operation = null)
     {
-        dump($user, $operation);
         if (empty($operation)) {
             $operation='password_update';
         }
