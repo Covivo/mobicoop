@@ -62,9 +62,11 @@ final class ProposalSimpleSearchCollectionDataProvider implements CollectionData
             \DateTime::createFromFormat(\DateTime::RFC3339, $this->request->get("date")),
             $this->request->get("useTime"),
             $this->request->get("strictDate"),
+            $this->request->get("strictPunctual"),
+            $this->request->get("strictRegular"),
+            $this->request->get("marginTime"),
             $this->request->get("userId"),
             $this->request->get("role"),
-            $this->request->get("useRegular"),
             $this->request->get("type")
         )];
     }

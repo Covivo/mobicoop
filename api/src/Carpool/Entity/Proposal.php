@@ -126,6 +126,24 @@ use App\Communication\Entity\Notified;
  *                          "description" = "True to limit the search to the date, false to search even in the next days (only for punctual trip)"
  *                      },
  *                      {
+ *                          "name" = "strictPunctual",
+ *                          "in" = "query",
+ *                          "type" = "boolean",
+ *                          "description" = "True to search only in punctual trips for punctual search, false to search also in regular trips"
+ *                      },
+ *                      {
+ *                          "name" = "strictRegular",
+ *                          "in" = "query",
+ *                          "type" = "boolean",
+ *                          "description" = "True to search only in regular trips for regular search, false to search also in punctual trips"
+ *                      },
+ *                      {
+ *                          "name" = "marginTime",
+ *                          "in" = "query",
+ *                          "type" = "integer",
+ *                          "description" = "The margin time in seconds"
+ *                      },
+ *                      {
  *                          "name" = "userId",
  *                          "in" = "query",
  *                          "type" = "integer",
@@ -142,12 +160,6 @@ use App\Communication\Entity\Notified;
  *                          "in" = "query",
  *                          "type" = "integer",
  *                          "description" = "The type of the trip (1=one way, 2=return trip; default defined in env variable)"
- *                      },
- *                      {
- *                          "name" = "useRegular",
- *                          "in" = "query",
- *                          "type" = "boolean",
- *                          "description" = "True to search also in regular trip for punctual search (default defined in env variable)"
  *                      }
  *                  }
  *              }
@@ -177,7 +189,7 @@ class Proposal
     private $id;
 
     /**
-     * @var int The proposal type (1 = one way trip; 2 = outward of a round trip; 3 = return of a round trip)).
+     * @var int The proposal type (1 = one way trip; 2 = outward of a round trip; 3 = return of a round trip).
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")

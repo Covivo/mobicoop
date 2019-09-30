@@ -168,8 +168,21 @@ class ProposalMatcher
                 }
             }
         }
-        // we check if the pickup times match
-        $matchings = $this->checkPickUp($matchings);
+        // if we use times, we check if the pickup times match
+        if (
+            ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $proposal->getCriteria()->getFromTime()) ||
+            ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && (
+                ($proposal->getCriteria()->isMonCheck() && $proposal->getCriteria()->getMonTime()) ||
+                ($proposal->getCriteria()->isTueCheck() && $proposal->getCriteria()->getTueTime()) ||
+                ($proposal->getCriteria()->isWedCheck() && $proposal->getCriteria()->getWedTime()) ||
+                ($proposal->getCriteria()->isThuCheck() && $proposal->getCriteria()->getThuTime()) ||
+                ($proposal->getCriteria()->isFriCheck() && $proposal->getCriteria()->getFriTime()) ||
+                ($proposal->getCriteria()->isSatCheck() && $proposal->getCriteria()->getSatTime()) ||
+                ($proposal->getCriteria()->isSunCheck() && $proposal->getCriteria()->getSunTime())
+            ))
+        ) {
+            $matchings = $this->checkPickUp($matchings);
+        }
         
         // we complete the matchings with the waypoints and criteria (it's a match criteria so we consider it's for a driver)
         foreach ($matchings as $matching) {
