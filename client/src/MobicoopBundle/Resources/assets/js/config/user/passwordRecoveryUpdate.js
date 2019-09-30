@@ -13,7 +13,7 @@ import Vuetify, {
   // footer
   VFooter, VChip, VCardText,
   // content
-  VForm, VTextField, VCard, VCardActions
+  VForm, VTextField, VCard, VCardActions, VSnackbar, VIcon
 } from 'vuetify/lib'
 
 Vue.use(Vuetify, {
@@ -25,7 +25,7 @@ Vue.use(Vuetify, {
     // footer
     VFooter, VChip, VCardText,
     // content
-    VForm, VTextField, VCard, VCardActions
+    VForm, VTextField, VCard, VCardActions, VSnackbar, VIcon
   }
 })
 Vue.use(VueI18n)

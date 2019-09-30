@@ -87,6 +87,14 @@ get_user_password_for_recovery:
         en: /user/password/recovery/send
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getUserPasswordForRecovery
 
+user_update_password_reset:
+    path:
+        fr: /utilisateur/mot-de-passe/reset/update/{token}
+        en: /user/password/reset/update/{token}
+    requirements:
+        token: .*
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userUpdatePasswordReset
+
 user_password_reset:
     path:
         fr: /utilisateur/mot-de-passe/reset/{token}

@@ -302,14 +302,49 @@ class UserController extends AbstractController
     /**
      * Reset password
      */
-    public function userPasswordReset(UserManager $userManager, Request $request, string $token)
+    public function userPasswordReset(UserManager $userManager, string $token)
     {
         $user = $userManager->findByPwdToken($token);
 
         if (empty($user) || (time() - (int)$user->getPwdTokenDate()->getTimestamp()) > 86400) {
             return $this->redirectToRoute('user_password_forgot');
         } else {
-            return $this->render('@Mobicoop/user/passwordRecoveryUpdate.html.twig', []);
+
+                return $this->render('@Mobicoop/user/passwordRecoveryUpdate.html.twig',
+                    [
+                        "token" => $token,
+                    ]
+                );
+        }
+    }
+
+    /**
+     * Update the new Password after recovery
+     */
+    public function userUpdatePasswordReset(UserManager $userManager, Request $request, string $token){
+        
+        if($request->isMethod('POST')){
+            $data = json_decode($request->getContent(), true);
+            
+            $user = $userManager->findByPwdToken($token);
+
+            if(!empty($user)){
+                $user->setPassword($data["password"]);
+
+                if ($user = $userManager->updateUserPassword($user)) {
+                    // after successful update, we re-log the user
+                    $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                    $this->get('security.token_storage')->setToken($token);
+                    $this->get('session')->set('_security_main', serialize($token));
+                    $userManager->flushUserToken($user);
+                    return new Response(json_encode($user));
+                } else {
+                    return new Response(json_encode("error"));
+                }
+            }
+            else{
+                return new Response(json_encode("error"));
+            }
         }
     }
 

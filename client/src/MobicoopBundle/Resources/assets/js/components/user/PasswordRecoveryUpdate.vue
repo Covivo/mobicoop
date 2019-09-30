@@ -1,5 +1,14 @@
 <template>
   <v-content>
+    <v-snackbar
+      v-model="snackbar"
+      top
+    >
+      {{ snackbarText }}
+      <v-icon color="tertiary">
+        mdi-information-outline
+      </v-icon>
+    </v-snackbar>
     <v-container fluid />
     <v-row 
       justify="center"
@@ -18,7 +27,6 @@
       text-center
     >
       <v-form
-        id="formLogin"
         ref="form"
         v-model="valid"
         lazy-validation
@@ -69,6 +77,10 @@ export default {
     sharedMessages: CommonTranslations
   },
   props: {
+    token: {
+      type: String,
+      default: ""
+    }
   },
   data() {
     return {
@@ -86,30 +98,38 @@ export default {
         v =>
           (!!v && v) === this.pwd || this.$t("messages.errors.notIdentiquals")
       ],
+      snackbar:false,
+      snackbarText:""
     }
   },
   methods:{
     validate() {
       event.preventDefault();
       if (this.$refs.form.validate()) {
-        console.error(this.email);
-        //this.loading = true;
-        axios.post('/user/password/recovery/send',
+        this.loading = true;
+        
+        axios.post('/user/password/reset/update/'+this.token,
           {
-            password:this.pwd,
+            password:this.pwd
           },{
             headers:{
               'content-type': 'application/json'
             }
           })
-          .then(function (response) {
-            console.log(response);
+          .then(response => {
+            //console.log(response.data);
+            if(response.data.id !== undefined){
+              this.snackbarText = this.$t("snackBar.ok");
+            }
+            else{
+              this.snackbarText = this.$t("snackBar.error");
+            }
+            this.snackbar = true;
+            this.loading = false;
           })
           .catch(function (error) {
             console.log(error);
-          })
-          .finally(function(){
-            //this.loading = false;
+            this.snackbarText = this.$t("snackBar.error");
           });
       }
     },
