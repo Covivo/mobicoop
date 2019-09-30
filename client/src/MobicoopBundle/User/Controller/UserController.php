@@ -308,8 +308,7 @@ class UserController extends AbstractController
 
         if (empty($user) || (time() - (int)$user->getPwdTokenDate()->getTimestamp()) > 86400) {
             return $this->redirectToRoute('user_password_forgot');
-        }
-        else {
+        } else {
             return $this->render('@Mobicoop/user/passwordRecoveryUpdate.html.twig', []);
         }
     }
