@@ -309,8 +309,8 @@ class UserController extends AbstractController
         if (empty($user) || (time() - (int)$user->getPwdTokenDate()->getTimestamp()) > 86400) {
             return $this->redirectToRoute('user_password_forgot');
         } else {
-
-                return $this->render('@Mobicoop/user/passwordRecoveryUpdate.html.twig',
+            return $this->render(
+                    '@Mobicoop/user/passwordRecoveryUpdate.html.twig',
                     [
                         "token" => $token,
                     ]
@@ -321,14 +321,14 @@ class UserController extends AbstractController
     /**
      * Update the new Password after recovery
      */
-    public function userUpdatePasswordReset(UserManager $userManager, Request $request, string $token){
-        
-        if($request->isMethod('POST')){
+    public function userUpdatePasswordReset(UserManager $userManager, Request $request, string $token)
+    {
+        if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             
             $user = $userManager->findByPwdToken($token);
 
-            if(!empty($user)){
+            if (!empty($user)) {
                 $user->setPassword($data["password"]);
 
                 if ($user = $userManager->updateUserPassword($user)) {
@@ -341,8 +341,7 @@ class UserController extends AbstractController
                 } else {
                     return new Response(json_encode("error"));
                 }
-            }
-            else{
+            } else {
                 return new Response(json_encode("error"));
             }
         }
