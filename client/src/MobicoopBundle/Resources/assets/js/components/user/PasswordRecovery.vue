@@ -84,7 +84,7 @@ export default {
       event.preventDefault();
       if (this.$refs.form.validate()) {
         console.error(this.email);
-        this.loading = true;
+        //this.loading = true;
         axios.post('/user/password/recovery/send',
           {
             email:this.email,
@@ -101,7 +101,7 @@ export default {
             console.log(error);
           })
           .finally(function(){
-            this.loading = false;
+            //this.loading = false;
           });
       }
     },
