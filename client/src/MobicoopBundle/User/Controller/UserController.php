@@ -310,11 +310,11 @@ class UserController extends AbstractController
             return $this->redirectToRoute('user_password_forgot');
         } else {
             return $this->render(
-                    '@Mobicoop/user/passwordRecoveryUpdate.html.twig',
-                    [
+                '@Mobicoop/user/passwordRecoveryUpdate.html.twig',
+                [
                         "token" => $token,
                     ]
-                );
+            );
         }
     }
 
