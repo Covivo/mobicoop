@@ -286,18 +286,18 @@ class UserController extends AbstractController
      * @param UserManager $userManager The class managing the user.
      * @param Request $request The symfony request object.
      */
-    public function getUserPasswordForRecovery(UserManager $userManager, Request $request){
+    public function getUserPasswordForRecovery(UserManager $userManager, Request $request)
+    {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
 
             if (isset($data["email"]) && $data["email"]!==null) {
                 return new Response(json_encode($userManager->findByEmail($data["email"])));
-            } 
-            elseif(isset($data["phone"]) && $data["phone"]!==null) {
+            } elseif (isset($data["phone"]) && $data["phone"]!==null) {
                 return new Response(json_encode($userManager->findByEmail($data["email"])));
             }
             return new Response();
-        } 
+        }
     }
 
     /**

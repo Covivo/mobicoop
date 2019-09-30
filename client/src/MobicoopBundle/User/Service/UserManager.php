@@ -126,7 +126,9 @@ class UserManager
             if ($user->getTotalItems() == 0) {
                 return null;
             } else {
-                if($sendEmailRecovery) $this->sendEmailRecoveryPassword($user->getMember()["id"]);
+                if ($sendEmailRecovery) {
+                    $this->sendEmailRecoveryPassword($user->getMember()["id"]);
+                }
                 
                 return current($user->getMember());
             }
@@ -151,7 +153,9 @@ class UserManager
             if ($user->getTotalItems() == 0) {
                 return null;
             } else {
-                if($sendEmailRecovery) $this->sendEmailRecoveryPassword($user->getMember()["id"]);
+                if ($sendEmailRecovery) {
+                    $this->sendEmailRecoveryPassword($user->getMember()["id"]);
+                }
 
                 return current($user->getMember());
             }
@@ -163,8 +167,9 @@ class UserManager
      * Send the recovery mail password
      * @param User|array $user The user the send the password
      */
-    public function sendEmailRecoveryPassword(int $idUsers){
-        $this->dataProvider->getSpecialItem($idUsers,"password_update_request");
+    public function sendEmailRecoveryPassword(int $idUsers)
+    {
+        $this->dataProvider->getSpecialItem($idUsers, "password_update_request");
     }
 
 
