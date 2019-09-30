@@ -210,15 +210,14 @@ class Proposal implements ResourceInterface, \JsonSerializable
         return $this;
     }
     
-    public function getProposalLinked(): ?self
+    public function getProposalLinked() 
     {
         return $this->proposalLinked;
     }
     
-    public function setProposalLinked(?Proposal $proposalLinked): self
-    {
+    public function setProposalLinked($proposalLinked): ?self
+    {  
         $this->proposalLinked = $proposalLinked;
-        
         // set (or unset) the owning side of the relation if necessary
         // $newProposalLinked = $proposalLinked === null ? null : $this;
         // if ($newProposalLinked !== $proposalLinked->getProposalLinked()) {
