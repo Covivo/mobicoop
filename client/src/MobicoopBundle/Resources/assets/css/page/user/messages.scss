@@ -9,6 +9,21 @@ body {
       max-width: 100%;
     }
   }
+  #contextColumn {
+    .v-timeline-item {
+      &.waypoint {
+        .v-timeline-item__dot {
+          //box-shadow: none;
+          .v-timeline-item__inner-dot {
+            //background-color: #FFF;
+          }
+        }
+      }
+      .v-timeline-item__body {
+        padding-top: 8px;
+      }
+    }
+  }
   #messages {
     #messagesColumn {
       //background-color: #80F19A;
@@ -26,21 +41,6 @@ body {
             }
           }
         }
-      }
-    }
-  }
-  #contextColumn {
-    .v-timeline-item {
-      &.waypoint {
-        .v-timeline-item__dot {
-          //box-shadow: none;
-          .v-timeline-item__inner-dot {
-            //background-color: #FFF;
-          }
-        }
-      }
-      .v-timeline-item__body {
-        padding-top: 8px;
       }
     }
   }
