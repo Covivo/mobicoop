@@ -127,7 +127,7 @@ class UserManager
                 return null;
             } else {
                 if ($sendEmailRecovery) {
-                    $this->sendEmailRecoveryPassword($user->getMember()[0]->getId());
+                    $this->updateUserToken($user->getMember()[0]);
                 }
                 
                 return current($user->getMember());
@@ -154,7 +154,7 @@ class UserManager
                 return null;
             } else {
                 if ($sendEmailRecovery) {
-                    $this->sendEmailRecoveryPassword($user->getMember()[0]->getId());
+                    $this->updateUserToken($user->getMember()[0]);
                 }
 
                 return current($user->getMember());

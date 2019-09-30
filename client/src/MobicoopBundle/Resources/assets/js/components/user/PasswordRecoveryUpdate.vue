@@ -28,16 +28,20 @@
         <v-row>
           <v-col class="col-12">
             <v-text-field
-              ref="email"
-              v-model="email"
-              :rules="emailRules"
-              :label="$t('inputs.email')"
-              name="email"
+              v-model="pwd"
+              :rules="pwdRules"
+              :label="$t('inputs.pwd')"
+              name="pwd"
+              type="password"
+              required
             />
             <v-text-field
-              v-model="phone"
-              :label="$t('inputs.phone')"
-              name="phone"
+              v-model="pwdConfirm"
+              :rules="pwdConfirmRules"
+              :label="$t('inputs.pwdConfirm')"
+              name="pwdConfirm"
+              type="password"
+              required
             />
             <v-btn
               :loading="loading"
@@ -57,7 +61,7 @@
 <script>
 import axios from "axios";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/user/PasswordRecovery.json";
+import Translations from "@translations/components/user/PasswordRecoveryUpdate.json";
 
 export default {
   i18n: {
@@ -70,10 +74,17 @@ export default {
     return {
       valid: true,
       loading:false,
-      email:null,
-      phone:null,
-      emailRules: [
-        v => /.+@.+/.test(v) || this.$t("messages.errors.emailValid")
+      pwd:null,
+      pwdRules: [
+        v => !!v || this.$t("messages.errors.required"),
+        v =>
+          (!!v && v) === this.pwd || this.$t("messages.errors.notIdentiquals")
+      ],
+      pwdConfirm:null,
+      pwdConfirmRules: [
+        v => !!v || this.$t("form.errors.required"),
+        v =>
+          (!!v && v) === this.pwd || this.$t("messages.errors.notIdentiquals")
       ],
     }
   },
@@ -85,8 +96,7 @@ export default {
         //this.loading = true;
         axios.post('/user/password/recovery/send',
           {
-            email:this.email,
-            phone:this.phone,
+            password:this.pwd,
           },{
             headers:{
               'content-type': 'application/json'

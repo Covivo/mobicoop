@@ -277,8 +277,7 @@ class UserController extends AbstractController
      */
     public function userPasswordRecovery()
     {
-        return $this->render('@Mobicoop/user/passwordRecovery.html.twig', [
-            ]);
+        return $this->render('@Mobicoop/user/passwordRecovery.html.twig', []);
     }
 
     /**
@@ -306,51 +305,12 @@ class UserController extends AbstractController
     public function userPasswordReset(UserManager $userManager, Request $request, string $token)
     {
         $user = $userManager->findByPwdToken($token);
-        $reponseofmanager= $this->handleManagerReturnValue($user);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        $error = false;
 
         if (empty($user) || (time() - (int)$user->getPwdTokenDate()->getTimestamp()) > 86400) {
             return $this->redirectToRoute('user_password_forgot');
-        } else {
-            $form = $this->createFormBuilder($user)
-                ->add('password', RepeatedType::class, [
-                    'type' => PasswordType::class,
-                    'invalid_message' => 'The password fields must match.',
-                    'options' => ['attr' => ['class' => 'password-field']],
-                    'required' => true,
-                    'first_options'  => ['label' => 'Password'],
-                    'second_options' => ['label' => 'Repeat Password'],
-                ])
-                ->add('submit', SubmitType::class)
-                ->getForm();
-
-            $form->handleRequest($request);
-            if ($form->isSubmitted() && $form->isValid()) {
-                if ($user = $userManager->updateUserPassword($user)) {
-                    $reponseofmanager= $this->handleManagerReturnValue($user);
-                    if (!empty($reponseofmanager)) {
-                        return $reponseofmanager;
-                    }
-                    // after successful update, we re-log the user
-                    $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-                    $this->get('security.token_storage')->setToken($token);
-                    $this->get('session')->set('_security_main', serialize($token));
-                    $userManager->flushUserToken($user);
-                    return $this->redirectToRoute('user_profile_update');
-                } else {
-                    return $this->redirectToRoute('user_password_forgot');
-                }
-            } else {
-                return $this->render('@Mobicoop/user/password.html.twig', [
-                    'form' => $form->createView(),
-                    'user' => $user,
-                    'error' => $error,
-                    'waitParametersForMail' => true
-                ]);
-            }
+        }
+        else {
+            return $this->render('@Mobicoop/user/passwordRecoveryUpdate.html.twig', []);
         }
     }
 
