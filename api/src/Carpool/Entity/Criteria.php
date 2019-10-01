@@ -753,7 +753,7 @@ class Criteria
         return $this->strictDate;
     }
     
-    public function setStrictDate(bool $isStrictDate): self
+    public function setStrictDate(?bool $isStrictDate): self
     {
         $this->strictDate = $isStrictDate;
         
@@ -765,7 +765,7 @@ class Criteria
         return $this->strictPunctual;
     }
     
-    public function setStrictPunctual(bool $isStrictPunctual): self
+    public function setStrictPunctual(?bool $isStrictPunctual): self
     {
         $this->strictPunctual = $isStrictPunctual;
         
@@ -777,7 +777,7 @@ class Criteria
         return $this->strictRegular;
     }
     
-    public function setStrictRegular(bool $isStrictRegular): self
+    public function setStrictRegular(?bool $isStrictRegular): self
     {
         $this->strictRegular = $isStrictRegular;
         

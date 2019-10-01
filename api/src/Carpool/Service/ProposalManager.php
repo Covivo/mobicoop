@@ -95,6 +95,60 @@ class ProposalManager
         $this->askManager = $askManager;
         $this->params = $params;
     }
+
+    /**
+     * Prepare a proposal for persist.
+     * Used when posting a proposal to populate default values like proposal validity.
+     *
+     * @param Proposal $proposal
+     * @return void
+     */
+    public function prepareProposal(Proposal $proposal)
+    {
+        if (is_null($proposal->getCriteria()->getAnyRouteAsPassenger())) {
+            $proposal->getCriteria()->setAnyRouteAsPassenger($this->params['defaultAnyRouteAsPassenger']);
+        }
+        if (is_null($proposal->getCriteria()->isStrictDate())) {
+            $proposal->getCriteria()->setStrictDate($this->params['defaultStrictDate']);
+        }
+        if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+            if (is_null($proposal->getCriteria()->isStrictPunctual())) {
+                $proposal->getCriteria()->setStrictPunctual($this->params['defaultStrictPunctual']);
+            }
+            if (is_null($proposal->getCriteria()->getMarginDuration())) {
+                $proposal->setMarginDuration($this->params['defaultMarginTime']);
+            }
+        } else {
+            if (is_null($proposal->getCriteria()->isStrictRegular())) {
+                $proposal->getCriteria()->setStrictRegular($this->params['defaultStrictRegular']);
+            }
+            if (is_null($proposal->getCriteria()->getMonMarginDuration())) {
+                $proposal->getCriteria()->setMonMarginDuration($this->params['defaultMarginTime']);
+            }
+            if (is_null($proposal->getCriteria()->getTueMarginDuration())) {
+                $proposal->getCriteria()->setTueMarginDuration($this->params['defaultMarginTime']);
+            }
+            if (is_null($proposal->getCriteria()->getWedMarginDuration())) {
+                $proposal->getCriteria()->setWedMarginDuration($this->params['defaultMarginTime']);
+            }
+            if (is_null($proposal->getCriteria()->getThuMarginDuration())) {
+                $proposal->getCriteria()->setThuMarginDuration($this->params['defaultMarginTime']);
+            }
+            if (is_null($proposal->getCriteria()->getFriMarginDuration())) {
+                $proposal->getCriteria()->setFriMarginDuration($this->params['defaultMarginTime']);
+            }
+            if (is_null($proposal->getCriteria()->getSatMarginDuration())) {
+                $proposal->getCriteria()->setSatMarginDuration($this->params['defaultMarginTime']);
+            }
+            if (is_null($proposal->getCriteria()->getSunMarginDuration())) {
+                $proposal->getCriteria()->setSunMarginDuration($this->params['defaultMarginTime']);
+            }
+            $endDate = clone $proposal->getCriteria()->getFromDate();
+            $endDate->add(new \DateInterval('P' . $this->params['defaultRegularLifeTime'] . 'Y'));
+            $proposal->getCriteria()->setToDate($endDate);
+        }
+        return $this->createProposal($proposal);
+    }
     
     /**
      * Create a proposal.
@@ -108,12 +162,8 @@ class ProposalManager
     {
         $date = new \DateTime("UTC");
         $this->logger->info('Proposal creation | Start ' . $date->format("Ymd H:i:s.u"));
-        
-        // temporary initialisation, will be dumped when implementation of these fields will be done
-        $proposal->getCriteria()->setAnyRouteAsPassenger(true);
-        
+                
         // calculation of the min and max times
-        
         if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $proposal->getCriteria()->getFromTime()) {
             list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getFromTime(), $proposal->getCriteria()->getMarginDuration());
             $proposal->getCriteria()->setMinTime($minTime);
@@ -236,20 +286,22 @@ class ProposalManager
     /**
      * Create a proposal for a simple search.
      *
-     * @param float $originLatitude         The latitude of the origin point
-     * @param float $originLongitude        The longitude of the origin point
-     * @param float $destinationLatitude    The latitude of the destination point
-     * @param float $destinationLongitude   The longitude of the destination point
-     * @param integer $frequency            The frequency of the trip (1=punctual, 2=regular)
-     * @param \Datetime|null $date          The date and time of the trip
-     * @param boolean|null $useTime         True to use the time part of the date, false to ignore the time part
-     * @param boolean|null $strictDate      True to limit the search to the date, false to search even in the next days (only for punctual trip)
-     * @param boolean|null $strictPunctual  True to search only in punctual trips for punctual search, false to search also in regular trips 
-     * @param boolean|null $strictRegular   True to search only in regular trips for regular search, false to search also in punctual trips 
-     * @param integer|null $marginTime      The margin time in seconds
-     * @param integer|null $userId          The id of the user that makes the query
-     * @param integer|null $role            The role of the user that makes the query (1=driver, 2=passenger, 3=both)
-     * @param integer|null $type            The type of the trip (1=one way, 2=return trip)
+     * @param float $originLatitude             The latitude of the origin point
+     * @param float $originLongitude            The longitude of the origin point
+     * @param float $destinationLatitude        The latitude of the destination point
+     * @param float $destinationLongitude       The longitude of the destination point
+     * @param integer $frequency                The frequency of the trip (1=punctual, 2=regular)
+     * @param \Datetime|null $date              The date and time of the trip
+     * @param boolean|null $useTime             True to use the time part of the date, false to ignore the time part
+     * @param boolean|null $strictDate          True to limit the search to the date, false to search even in the next days (only for punctual trip)
+     * @param boolean|null $strictPunctual      True to search only in punctual trips for punctual search, false to search also in regular trips
+     * @param boolean|null $strictRegular       True to search only in regular trips for regular search, false to search also in punctual trips
+     * @param integer|null $marginTime          The margin time in seconds
+     * @param integer|null $regularLifeTime     The lifetime of a regular proposal in years
+     * @param integer|null $userId              The id of the user that makes the query
+     * @param integer|null $role                The role of the user that makes the query (1=driver, 2=passenger, 3=both)
+     * @param integer|null $type                The type of the trip (1=one way, 2=return trip)
+     * @param boolean|null $anyRouteAsPassenger True if the passenger accepts any route (not implemented yet)
      * @return void
      */
     public function searchMatchings(
@@ -264,9 +316,11 @@ class ProposalManager
         ?bool $strictPunctual = null,
         ?bool $strictRegular = null,
         ?int $marginTime = null,
+        ?int $regularLifeTime = null,
         ?int $userId = null,
         ?int $role = null,
-        ?int $type = null
+        ?int $type = null,
+        ?bool $anyRouteAsPassenger = null
     ) {
         // we create a new Proposal object with its Criteria and Waypoints
         $proposal = new Proposal();
@@ -277,12 +331,13 @@ class ProposalManager
         $criteria->setPassenger($role ? ($role == self::ROLE_PASSENGER || $role == self::ROLE_BOTH) : ($this->params['defaultRole'] == self::ROLE_PASSENGER || $this->params['defaultRole'] == self::ROLE_BOTH));
         if ($date) {
             $criteria->setFromDate($date);
-        }
-        if ($date && $useTime) {
-            $criteria->setFromTime($date);
+            if ((!is_null($useTime) && $useTime) || $this->params['defaultUseTime']) {
+                $criteria->setFromTime($date);    
+            }
         }
         $criteria->setMarginDuration($marginTime ? $marginTime : $this->params['defaultMarginTime']);
         $criteria->setFrequency($frequency);
+        $criteria->setAnyRouteAsPassenger($anyRouteAsPassenger ? true : (is_null($anyRouteAsPassenger ? $this->params['defaultAnyRouteAsPassenger'] : false)));
         if ($frequency == Criteria::FREQUENCY_REGULAR) {
             // for regular proposal we set every day as a possible carpooling day
             $criteria->setMonCheck(true);
@@ -299,8 +354,12 @@ class ProposalManager
             $criteria->setFriMarginDuration($criteria->getMonMarginDuration());
             $criteria->setSatMarginDuration($criteria->getMonMarginDuration());
             $criteria->setSunMarginDuration($criteria->getMonMarginDuration());
+            // we set the end date
+            $endDate = clone $date;
+            $endDate->add(new \DateInterval('P' . ($regularLifeTime ? $regularLifeTime : $this->params['defaultRegularLifeTime'] . 'Y')));
+            $criteria->setToDate($endDate);
         }
-        $criteria->setStrictDate(!!$strictDate);
+        $criteria->setStrictDate(!$strictDate ? true : (is_null($strictDate) ? $this->params['defaultStrictDate'] : false));
         $criteria->setStrictPunctual($strictPunctual ? true : (is_null($strictPunctual) ? $this->params['defaultStrictPunctual'] : false));
         $criteria->setStrictRegular($strictRegular ? true : (is_null($strictRegular) ? $this->params['defaultStrictRegular'] : false));
         $proposal->setCriteria($criteria);
@@ -329,6 +388,8 @@ class ProposalManager
         
         $proposal->addWaypoint($waypointOrigin);
         $proposal->addWaypoint($waypointDestination);
+
+        //echo "<pre>" . print_r($proposal,true) . "</pre>";exit;
 
         return $this->getMatchings($proposal);
     }

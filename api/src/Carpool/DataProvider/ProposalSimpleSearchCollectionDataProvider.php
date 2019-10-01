@@ -65,9 +65,11 @@ final class ProposalSimpleSearchCollectionDataProvider implements CollectionData
             $this->request->get("strictPunctual"),
             $this->request->get("strictRegular"),
             $this->request->get("marginTime"),
+            $this->request->get("regularLifeTime"),
             $this->request->get("userId"),
             $this->request->get("role"),
-            $this->request->get("type")
+            $this->request->get("type"),
+            $this->request->get("anyRouteAsPassenger")
         )];
     }
 }

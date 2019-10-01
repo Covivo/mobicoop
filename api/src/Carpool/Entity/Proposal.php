@@ -144,6 +144,12 @@ use App\Communication\Entity\Notified;
  *                          "description" = "The margin time in seconds"
  *                      },
  *                      {
+ *                          "name" = "regularLifeTime",
+ *                          "in" = "query",
+ *                          "type" = "integer",
+ *                          "description" = "The lifetime of a regular proposal in years (default defined in env variable)"
+ *                      },
+ *                      {
  *                          "name" = "userId",
  *                          "in" = "query",
  *                          "type" = "integer",
@@ -160,6 +166,12 @@ use App\Communication\Entity\Notified;
  *                          "in" = "query",
  *                          "type" = "integer",
  *                          "description" = "The type of the trip (1=one way, 2=return trip; default defined in env variable)"
+ *                      },
+ *                      {
+ *                          "name" = "anyRouteAsPassenger",
+ *                          "in" = "query",
+ *                          "type" = "boolean",
+ *                          "description" = "True if the passenger accepts any route (not implemented yet; default defined in env variable)"
  *                      }
  *                  }
  *              }

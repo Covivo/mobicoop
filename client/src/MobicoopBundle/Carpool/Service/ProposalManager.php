@@ -204,9 +204,9 @@ class ProposalManager
             // regular
             $criteria->setFrequency(Criteria::FREQUENCY_REGULAR);
             $criteria->setFromDate(new \Datetime());
-            $toDate = new \Datetime();
-            $toDate->add(new \DateInterval("P".Proposal::PROPOSAL_VALIDITY."Y"));
-            $criteria->setToDate($toDate);
+            // $toDate = new \Datetime();
+            // $toDate->add(new \DateInterval("P".Proposal::PROPOSAL_VALIDITY."Y"));
+            // $criteria->setToDate($toDate);
             foreach ($ad['schedules'] as $schedule) {
                 if ($schedule['outwardTime'] != '') {
                     if ($schedule['mon']) {
@@ -492,9 +492,9 @@ class ProposalManager
                 // regular
                 $criteriaReturn->setFrequency(Criteria::FREQUENCY_REGULAR);
                 $criteriaReturn->setFromDate(new \Datetime());
-                $toDateReturn = new \Datetime();
-                $toDateReturn->add(new \DateInterval("P".Proposal::PROPOSAL_VALIDITY."Y"));
-                $criteriaReturn->setToDate($toDateReturn);
+                // $toDateReturn = new \Datetime();
+                // $toDateReturn->add(new \DateInterval("P".Proposal::PROPOSAL_VALIDITY."Y"));
+                // $criteriaReturn->setToDate($toDateReturn);
                 foreach ($ad['schedules'] as $schedule) {
                     if (isset($schedule['returnTime']) && $schedule['returnTime'] != '') {
                         if ($schedule['mon']) {

@@ -41,8 +41,8 @@ class ProposalMatcher
 {
     // max default detour distance
     // TODO : should depend on the total distance : total distance => max detour allowed
-    private const MAX_DETOUR_DISTANCE_PERCENT = 40;
-    private const MAX_DETOUR_DURATION_PERCENT = 40;
+    private const MAX_DETOUR_DISTANCE_PERCENT = 33;
+    private const MAX_DETOUR_DURATION_PERCENT = 33;
 
     // minimum distance to check the common distance
     public const MIN_COMMON_DISTANCE_CHECK = 100;
@@ -82,10 +82,6 @@ class ProposalMatcher
         if (!$proposalsFound = $this->proposalRepository->findMatchingProposals($proposal, $excludeProposalUser)) {
             return [];
         }
-
-        // we check the communities
-        
-
 
         $matchings = [];
 
@@ -154,6 +150,7 @@ class ProposalMatcher
                 $candidate->setDirection($proposalToMatch->getCriteria()->getDirectionDriver());
                 $candidate->setMaxDetourDistance($proposalToMatch->getCriteria()->getMaxDetourDistance() ? $proposalToMatch->getCriteria()->getMaxDetourDistance() : ($proposalToMatch->getCriteria()->getDirectionDriver()->getDistance()*self::MAX_DETOUR_DISTANCE_PERCENT/100));
                 $candidate->setMaxDetourDuration($proposalToMatch->getCriteria()->getMaxDetourDuration() ? $proposalToMatch->getCriteria()->getMaxDetourDuration() : ($proposalToMatch->getCriteria()->getDirectionDriver()->getDuration()*self::MAX_DETOUR_DURATION_PERCENT/100));
+                //echo $proposalToMatch->getCriteria()->getDirectionDriver()->getDistance() . "/" . $candidate->getMaxDetourDistance() . " " . $proposalToMatch->getCriteria()->getDirectionDriver()->getDuration() . "/" . $candidate->getMaxDetourDuration() . "\n";
                 if ($matches = $this->geoMatcher->singleMatch($candidateProposal, [$candidate], false)) {
                     // many matches can be found for 2 candidates : if multiple routes satisfy the criteria
                     if (is_array($matches) && count($matches)>0) {
@@ -168,6 +165,7 @@ class ProposalMatcher
                 }
             }
         }
+        //exit;
         // if we use times, we check if the pickup times match
         if (
             ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $proposal->getCriteria()->getFromTime()) ||

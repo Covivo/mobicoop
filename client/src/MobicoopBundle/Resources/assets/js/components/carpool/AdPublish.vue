@@ -457,7 +457,7 @@
         </v-btn>
 
         <v-btn
-          v-if="step < 7"
+          v-if="validNext"
           :disabled="!validNext"
           rounded
           color="success"
@@ -469,7 +469,7 @@
         </v-btn>
 
         <v-tooltip
-          v-if="(step == 7)"
+          v-if="valid"
           bottom
         >
           <template v-slot:activator="{on}">
@@ -662,7 +662,7 @@ export default {
       if(this.origin == null || this.destination == null) return false;
       if(!this.passenger && !this.driver) return false;
       if(!this.regular && !this.outwardDate) return false;
-      if(!this.driver && this.step>5) return false;
+      if(!this.driver && this.step>4) return false;
       if(this.step>=7) return false;
 
       // Specifics by steps

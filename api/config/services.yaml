@@ -86,9 +86,13 @@ services:
             $params:
                 defaultRole: '%env(resolve:CARPOOL_ROLE)%'
                 defaultType: '%env(resolve:CARPOOL_TYPE)%'
+                defaultUseTime: '%env(resolve:CARPOOL_USE_TIME)%'
+                defaultStrictDate: '%env(resolve:CARPOOL_STRICT_DATE)%'
                 defaultStrictPunctual: '%env(resolve:CARPOOL_STRICT_PUNCTUAL)%'
                 defaultStrictRegular: '%env(resolve:CARPOOL_STRICT_REGULAR)%'
                 defaultMarginTime: '%env(resolve:CARPOOL_MARGIN_TIME)%'
+                defaultRegularLifeTime: '%env(resolve:CARPOOL_REGULAR_LIFETIME)%'
+                defaultAnyRouteAsPassenger: '%env(resolve:CARPOOL_ANY_ROUTE_PASSENGER)%'
         tags:   
             - { name: monolog.logger, channel: carpool }
     
