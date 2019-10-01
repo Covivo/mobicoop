@@ -157,6 +157,17 @@ class Community
      * @Groups({"read","write"})
      */
     private $user;
+
+    /**
+     * @var Address The address of the event.
+     *
+     * @Assert\NotBlank
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $address;
     
     /**
      * @var ArrayCollection|null The images of the community.
@@ -303,6 +314,18 @@ class Community
     public function setUser(User $user): self
     {
         $this->user = $user;
+        
+        return $this;
+    }
+
+    public function getAddress(): ?Address
+    {
+        return $this->address;
+    }
+    
+    public function setAddress(?Address $address): self
+    {
+        $this->address = $address;
         
         return $this;
     }

@@ -106,6 +106,14 @@ class Community implements ResourceInterface, \JsonSerializable
      * @Groups({"post","put"})
      */
     private $user;
+
+    /**
+     * @var Address The address of the event.
+     *
+     * @Groups({"post","put"})
+     * @Assert\NotBlank(groups={"create","update"})
+     */
+    private $address;
     
     /**
      * @var Image[]|null The images of the community.
@@ -261,6 +269,18 @@ class Community implements ResourceInterface, \JsonSerializable
     public function setUser(User $user): self
     {
         $this->user = $user;
+        
+        return $this;
+    }
+
+    public function getAddress(): ?Address
+    {
+        return $this->address;
+    }
+    
+    public function setAddress(?Address $address): self
+    {
+        $this->address = $address;
         
         return $this;
     }
