@@ -416,7 +416,8 @@ class Community implements ResourceInterface, \JsonSerializable
             'images'            => $this->getImages(),
             'fullDescription'   => $this->getFullDescription(),
             'proposalsHidden'   => $this->isProposalsHidden(),
-            'membersHidden'     => $this->isMembersHidden()
+            'membersHidden'     => $this->isMembersHidden(),
+            'address'           => $this->getAddress(),
         ];
     }
 }

@@ -1,47 +1,27 @@
 {
-  "fr_FR": {
-    "ui": {
-      "button": {
-        "submit": "Envoyer"
-      }
-    },
-    "models": {
-      "community": {
-        "name": {
-          "placeholder": "Nom"
-        },
-        "description": {
-          "placeholder": "Description"
-        },
-        "fullDescription": {
-          "placeholder": "Details"
-        },
-        "private": {
-          "placeholder": "Privé"
-        }
-      }
-    }
-  },
   "fr": {
-    "ui": {
-      "button": {
-        "submit": "Envoyer"
+    "buttons": { 
+      "create": {
+        "label": "Créer la communauté",
+        "route": "/creer/communaute"
       }
     },
-    "models": {
-      "community": {
-        "name": {
-          "placeholder": "Nom"
-        },
-        "description": {
-          "placeholder": "Description"
-        },
-        "fullDescription": {
-          "placeholder": "Details"
-        },
-        "private": {
-          "placeholder": "Privé"
-        }
+    "form": {
+      "name": {
+        "label": "Nom de la communauté"
+      },
+      "description": {
+        "label": "Description courte de la communauté"
+      },
+      "fullDescription": {
+        "label": "Description détaillée de la communauté"
+      },
+      "image": {
+        "label": "Avatar de la communauté",
+        "errorSize": "Votre image ne doit pas excéder 2MB"
+      },
+      "address": {
+        "label": "Adresse de la communauté"
       }
     }
   }

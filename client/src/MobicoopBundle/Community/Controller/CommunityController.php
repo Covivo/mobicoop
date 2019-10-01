@@ -31,7 +31,12 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Community\Form\CommunityForm;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
+use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
+
+use function GuzzleHttp\json_decode;
 
 /**
  * Controller class for community related actions.
@@ -54,27 +59,63 @@ class CommunityController extends AbstractController
     /**
      * Create a community
      */
-    public function create(CommunityManager $communityManager, UserManager $userManager, Request $request)
+    public function create(CommunityManager $communityManager, UserManager $userManager, Request $request, ImageManager $imageManager)
     {
         $community = new Community();
         $this->denyAccessUnlessGranted('create', $community);
-        $community->setUser($userManager->getLoggedUser());
-
-        $form = $this->createForm(CommunityForm::class, $community);
+        $user = $userManager->getLoggedUser();
+        $communityUser = new CommunityUser();
+        $address = new Address();
+        // $image = new Image();
+        
         $error = false;
-       
-        $form->handleRequest($request);
-        $error = false;
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($community = $communityManager->createCommunity($community)) {
-                return $this->redirectToRoute('community_list');
-            }
-            $error = true;
+
+
+        if ($request->isMethod('POST')) {
+            $data = $request->request;
+
+            // set the user as a user of the community
+            $communityUser->setUser($user);
+            $communityUser->setStatus(1);
+            $communityUser->setAdmin($user);
+            $communityUser->setCreatedDate(new \DateTime());
+            $communityUser->setAcceptedDate(new \DateTime());
+               
+            // set community address
+            $communityAddress=json_decode($data->get('address'));
+            dump($communityAddress);
+            dump($communityAddress->{'streetAddress'});
+            // $address->setAddressCountry($data->get('address')['addressCountry']);
+            // $address->setAddressLocality($data['address']['addressLocality']);
+            // $address->setCountryCode($data['address']['countryCode']);
+            // $address->setCounty($data['address']['county']);
+            // $address->setLatitude($data['address']['latitude']);
+            // $address->setLocalAdmin($data['address']['localAdmin']);
+            // $address->setLongitude($data['address']['longitude']);
+            // $address->setMacroCounty($data['address']['macroCounty']);
+            // $address->setMacroRegion($data['address']['macroRegion']);
+            // $address->setPostalCode($data['address']['postalCode']);
+            // $address->setRegion($data['address']['region']);
+            // $address->setStreet($data['address']['street']);
+            // $address->setHouseNumber($data['address']['houseNumber']);
+            // $address->setStreetAddress($data['address']['streetAddress']);
+            // $address->setSubLocality($data['address']['subLocality']);
+          
+            
+            // set community infos
+            $community->setUser($user);
+            $community->setName($data->get('name'));
+            $community->setDescription($data->get('description'));
+            $community->setFullDescription($data->get('fullDescription'));
+            $community->setUser($user);
+            // $community->setAddress(json_decode($data->get('communityAddress')));
+            $community->addCommunityUser($communityUser);
+            dump($community);
+            // $communityManager->createCommunity($community);
         }
 
         return $this->render('@Mobicoop/community/createCommunity.html.twig', [
-            'form' => $form->createView(),
             'error' => $error
         ]);
     }
@@ -166,7 +207,7 @@ class CommunityController extends AbstractController
     /**
      * Undocumented function
      *
-     * @param [type] $id
+     * @param int $id
      * @param CommunityManager $communityManager
      * @param UserManager $userManager
      * @return void

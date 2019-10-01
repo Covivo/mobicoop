@@ -1,95 +1,107 @@
 <template>
-  <div id="community_create_root">
-    <v-content>
-      <v-container
-        id="scroll-target"
-        style="max-height: 700px"
-        class="overflow-y-auto"
-        fluid
+  <v-content>
+    <v-container>
+      <v-row
+        justify="center"
+        align="center"
       >
-        <v-row
-          justify="center"
+        <v-col
+          cols="12"
           align="center"
         >
-          <v-col
-            cols="4"
-            align="center"
-          >
-            <!--STEP 1-->
-            <v-form
-              ref="step 1"
-              v-model="step1"
-            >
+          <v-row justify="center">
+            <v-col cols="3">
+              <v-file-input
+                v-model="avatar"
+                :rules="rules"
+                accept="image/png, image/jpeg, image/bmp"
+                :label="$t('form.image.label')"
+                prepend-icon="mdi-camera"
+              />
+            </v-col>
+            <v-col cols="3">
               <v-text-field
-                id="name"
-                v-model="form.name"
-                :rules="form.nameRules"
-                :label="$t('models.community.name.placeholder')+` *`"
-                name="fullDescription"
-                required
+                v-model="name"
+                :label="$t('form.name.label')"
               />
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col cols="6">
+              <v-text-field
+                v-model="description"
+                :label="$t('form.description.label')"
+              />
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col cols="6">
               <v-textarea
-                id="description"
-                v-model="form.description"
-                :rules="form.descriptionRules"
-                :label="$t('models.community.description.placeholder')+` *`"
-                name="description"
-                required
+                v-model="fullDescription"
+                :label="$t('form.fullDescription.label')"
+                rows="3"
+                auto-grow
+                clearable
+                row-height="24"
               />
-              <v-textarea
-                id="fullDescription"
-                v-model="form.fullDescription"
-                :rules="form.fullDescriptionRules"
-                :label="$t('models.community.fullDescription.placeholder')+` *`"
-                name="fullDescription"
-                required
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col cols="6">
+              <GeoComplete 
+                :url="geoSearchUrl"
+                :label="$t('form.address.label')"
+                @address-selected="addressSelected"
               />
-              <v-switch
-                v-model="form.private"
-                :label="$t('models.community.private.placeholder')"
-                name="private"
-                @keypress="isNumber(event)"
-              />
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col cols="6">
               <v-btn
-                ref="button"
-                class="my-13"
+                rounded
                 color="success"
-                :disabled="!step1"
-                @click="poster(form)"
+                :loading="loading"
+                @click="createCommunity"
               >
-                {{ $t('ui.button.submit') }}
+                {{ $t('buttons.create.label') }}
               </v-btn>
-            </v-form>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-content>
-  </div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-content>
 </template>
-
 <script>
 
-import moment from "moment";
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/community/CommunityCreate.json";
 import TranslationsClient from "@clientTranslations/components/community/CommunityCreate.json";
+import GeoComplete from "@components/utilities/GeoComplete";
 import axios from "axios";
 
 let TranslationsMerged = merge(Translations, TranslationsClient,CommonTranslations);
+
 export default {
-  name: "CommunityCreate",
   i18n: {
     messages: TranslationsMerged,
     sharedMessages: CommonTranslations
   },
+  components: {
+    GeoComplete
+  },
   props:{
     user: {
-      type: Array,
+      type: Object,
       default: null
     },
     community: {
       type: Array,
+      default: null
+    },
+    geoSearchUrl: {
+      type: String,
       default: null
     },
     sentToken: {
@@ -97,64 +109,49 @@ export default {
       default: null
     }
   },
-  data: function () {
+  data () {
     return {
-      //
-      event: null,
-
-      //step validators
-      step1: true,
-
-
-      //scrolling data
-      type: 'selector',
-      selected: null,
-      duration: 1000,
-      offset: 180,
-      easing: "easeOutQuad",
-      container: "scroll-target",
-
-      form:{
-        createToken: this.sentToken,
-        fullDescription: null,
-        fullDescriptionRules: [
-          v => !!v || this.$t("models.community.fullDescription.errors.required"),
-        ],
-        name: null,
-        nameRules: [
-          v => !!v || this.$t("models.community.name.errors.required"),
-        ],
-        description: null,
-        descriptionRules: [
-          v => !!v || this.$t("models.community.description.errors.required"),
-        ],
-        private: null
-      }
-    };
-  },
-  computed: {
-    // creation of the url to call
-    urlToCall() {
-      return `${this.baseUrl}/${this.route}/${this.origin.addressLocality}/${this.destination.addressLocality}/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.computedDateFormat}/resultats`;
-    },
-    searchUnavailable() {
-      return (!this.origin || !this.destination || this.loading == true)
-    },
-    computedDateFormat() {
-      moment.locale(this.locale);
-      return this.date
-        ? moment(this.date).format(this.$t("ui.i18n.date.format.fullNumericDate"))
-        : moment(new Date()).format(this.$t("ui.i18n.date.format.fullNumericDate"));
+      rules: [
+        value => !value || value.size < 2000000 || "La taille de votre image ne doit pas dépassr 2MB",
+      ],
+      communityAddress: null,
+      name: null,
+      description: null,
+      fullDescription: null,
+      avatar: null,
+      loading: false,
     }
   },
-  methods:{
-    poster: function(form){
-      axios.post("/creer/communaute",form)
-    }
+  methods: {
+    addressSelected: function(address) {
+      this.communityAddress = address;
+    },
+    createCommunity() {
+      this.loading = true;
+      let newCommunity = new FormData();
+      newCommunity.append("name", this.name);
+      newCommunity.append("description", this.description);
+      newCommunity.append("fullDescription", this.fullDescription);
+      newCommunity.append("avatar", this.avatar);
+      newCommunity.append("address", JSON.stringify(this.communityAddress));
+
+      axios 
+        .post(this.$t('buttons.create.route'), newCommunity, {
+          headers:{
+            'content-type': 'multipart/form-data'
+          }
+        })
+        .then(res => {
+          this.errorUpdate = res.data.state;
+          this.snackbar = true;
+          this.loading = false;
+          // window.location.href = "/communities";
+        });
+    },
   }
 }
 </script>
 
-<style scoped>
+<style>
 
 </style>
