@@ -6,12 +6,12 @@
       flat
     >
       <v-row>
-        <v-col cols="6">
+        <v-col cols="12">
           <p headline>
             {{ $t('title') }}
           </p>
         </v-col>
-        <v-col cols="6">
+        <v-col cols="12">
           <div class="flex-grow-1" />
           <v-card
             flat

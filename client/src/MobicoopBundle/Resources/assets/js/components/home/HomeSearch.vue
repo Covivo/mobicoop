@@ -104,7 +104,6 @@
 <script>
 import moment from "moment";
 import {merge} from "lodash";
-import axios from "axios";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/home/HomeSearch.json";
 import TranslationsClient from "@clientTranslations/components/home/HomeSearch.json";

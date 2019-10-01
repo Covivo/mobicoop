@@ -164,8 +164,8 @@
                       type-map="adSummary"
                       :points="pointsToMap"
                       :ways="directionWay"
-                      :url-tiles="this.urlTiles"
-                      :attribution-copyright="this.attributionCopyright"
+                      :url-tiles="urlTiles"
+                      :attribution-copyright="attributionCopyright"
                     />
                   </v-col>
                 </v-row>
@@ -427,8 +427,8 @@
                         type-map="adSummary"
                         :points="pointsToMap"
                         :ways="directionWay"
-                        :url-tiles="this.urlTiles"
-                        :attribution-copyright="this.attributionCopyright"
+                        :url-tiles="urlTiles"
+                        :attribution-copyright="attributionCopyright"
                       />
                     </v-col>
                   </v-row>
@@ -501,7 +501,6 @@ import Translations from "@translations/components/carpool/AdPublish.json";
 import TranslationsClient from "@clientTranslations/components/carpool/AdPublish.json";
 
 import axios from "axios";
-import moment from 'moment'
 import SearchJourney from "@components/carpool/SearchJourney";
 import AdPlanification from "@components/carpool/AdPlanification";
 import AdRoute from "@components/carpool/AdRoute";

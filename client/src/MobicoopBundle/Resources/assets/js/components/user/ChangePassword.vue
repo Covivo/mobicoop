@@ -2,10 +2,10 @@
   <v-content>
     <v-snackbar
       v-model="snackbar"
-      :color="(this.errorUpdate)?'error':'success'"
+      :color="(errorUpdate)?'error':'success'"
       top
     >
-      {{ (this.errorUpdate)?this.textSnackError:this.textSnackOk }}
+      {{ (errorUpdate)?textSnackError:textSnackOk }}
       <v-btn
         color="white"
         text
