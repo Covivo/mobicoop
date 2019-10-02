@@ -82,27 +82,40 @@ class CommunityController extends AbstractController
     /**
      * Show a community
      */
-    public function show($id, CommunityManager $communityManager, UserManager $userManager)
+    public function show($id, CommunityManager $communityManager, UserManager $userManager, Request $request)
     {
-        // retrive community;
+
+        // retreive community;
         $community = $communityManager->getCommunity($id);
-        $reponseofmanager= $this->handleManagerReturnValue($community);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
+
+        //$this->denyAccessUnlessGranted('show', $community);
+
+        // retreive logged user
+        $user = $userManager->getLoggedUser();
+
+        if ($request->isMethod('POST')) {
+            // If it's a post, we know that's a secured community credential
+            $communityUser = new CommunityUser();
+            $communityUser->setUser($user);
+            $communityUser->setCommunity($community);
+            $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED);
+
+            // the credentials
+            $communityUser->setLogin($request->request->get("credential1"));
+            $communityUser->setPassword($request->request->get("credential2"));
+            $communityUser = $communityManager->joinCommunity($communityUser);
+            ($communityUser===null) ? $error = true : $error = false;
+        }
+        else{
+            ($user!==null) ? $communityUser = $communityManager->getCommunityUser($id,$user->getId()) : $communityUser = null;
         }
 
-        // retrive logged user
-        $this->denyAccessUnlessGranted('show', $community);
-        $user = $userManager->getLoggedUser();
-        
-        $reponseofmanager= $this->handleManagerReturnValue($user);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
         return $this->render('@Mobicoop/community/community.html.twig', [
             'community' => $community,
             'user' => $user,
+            'communityUser' => (isset($communityUser) && $communityUser!==null)?$communityUser:null,
             'searchRoute' => "covoiturage/recherche",
+            'error' => (isset($error)) ? $error : false
         ]);
     }
 

@@ -23,7 +23,7 @@ Icon.Default.mergeOptions({
 
 import Vuetify, { 
   // general
-  VApp, VContainer, VFlex, VLayout, VContent, VSpacer,
+  VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VAlert,
   // header
   VToolbar, VToolbarTitle, VBtn, VImg,
   // footer
@@ -35,7 +35,7 @@ import Vuetify, {
 Vue.use(Vuetify, {
   components: {
     // general
-    VApp, VContainer, VFlex, VLayout, VContent, VSpacer,
+    VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VAlert,
     // header
     VToolbar, VToolbarTitle, VBtn, VImg,
     // footer
