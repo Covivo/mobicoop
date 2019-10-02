@@ -66,7 +66,7 @@
           <a
             :href="$t('urlRecovery')"
           >
-            Mot de passe oublié?
+            {{ $t('textRecovery') }}
           </a>
         </v-card-text>
       </v-flex>
