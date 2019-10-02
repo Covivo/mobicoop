@@ -158,8 +158,8 @@ class CommunityManager
      * @param Community $community
      * @return void
      */
-    public function exists(?string $name) {
-
+    public function exists(?string $name)
+    {
         if (is_null($name)) {
             return null;
         }

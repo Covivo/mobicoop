@@ -89,7 +89,7 @@ use App\Community\Controller\JoinAction;
  *                      }
  *                  }
  *              }
- *          }  
+ *          }
  *      },
  *      itemOperations={"get","put","delete"}
  * )
