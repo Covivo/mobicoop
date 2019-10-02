@@ -10,7 +10,7 @@
           color="primary"
           dark
         >
-          <v-toolbar-title> {{ $t('Communautés disponibles') }}</v-toolbar-title>
+          <v-toolbar-title> {{ $t('communitiesAvailable') }}</v-toolbar-title>
         </v-toolbar>
       </v-col>
     </v-row>
@@ -27,7 +27,7 @@
                 color="primary"
                 rounded
               >
-                Créer une communauté
+                {{ $t('createCommunity') }}
               </v-btn>
             </a>
           </v-col>
@@ -43,7 +43,7 @@
               <v-text-field
                 v-model="search"
                 hide-details
-                :label="$t('Rechercher')"
+                :label="$t('search')"
                 single-line
               />
             </v-card>
@@ -56,8 +56,8 @@
         :items-per-page.sync="itemsPerPage"
         :footer-props="{
           'items-per-page-options': itemsPerPageOptions,
-          'items-per-page-all-text': $t('Tous'),
-          'itemsPerPageText': $t('Nombre de lignes par page')
+          'items-per-page-all-text': $t('all'),
+          'itemsPerPageText': $t('linePerPage')
         }"
       >
         <template>
@@ -118,7 +118,7 @@
                           rounded
                           @click="test"
                         >
-                          Voir les annonces
+                          {{ $t('seeAds') }}
                         </v-btn>
                       </a>
                     </div>
@@ -131,7 +131,7 @@
                           color="primary"
                           rounded
                         >
-                          Rejoindre la communauté
+                          {{ $t('join') }}
                         </v-btn>
                       </a>
                     </div>
@@ -150,8 +150,8 @@
 
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/home/HomeSearch.json";
-import TranslationsClient from "@clientTranslations/components/home/HomeSearch.json";
+import Translations from "@translations/components/community/CommunityList.json";
+import TranslationsClient from "@clientTranslations/components/community/CommunityList.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
