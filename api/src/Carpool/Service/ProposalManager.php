@@ -103,7 +103,7 @@ class ProposalManager
      * @param Proposal $proposal
      * @return void
      */
-    public function prepareProposal(Proposal $proposal)
+    public function prepareProposal(Proposal $proposal): Proposal
     {
         if (is_null($proposal->getCriteria()->getAnyRouteAsPassenger())) {
             $proposal->getCriteria()->setAnyRouteAsPassenger($this->params['defaultAnyRouteAsPassenger']);
@@ -322,22 +322,33 @@ class ProposalManager
         ?int $type = null,
         ?bool $anyRouteAsPassenger = null
     ) {
+        // initialisation of the parameters
+        $useTime = !is_null($useTime) ? $useTime : $this->params['defaultUseTime'];
+        $strictDate = !is_null($strictDate) ? $strictDate : $this->params['defaultStrictDate'];
+        $strictPunctual = !is_null($strictPunctual) ? $strictPunctual : $this->params['defaultStrictPunctual'];
+        $strictRegular = !is_null($strictRegular) ? $strictRegular : $this->params['defaultStrictRegular'];
+        $marginTime = !is_null($marginTime) ? $marginTime : $this->params['defaultMarginTime'];
+        $regularLifeTime = !is_null($regularLifeTime) ? $regularLifeTime : $this->params['defaultRegularLifeTime'];
+        $role = !is_null($role) ? $role : $this->params['defaultRole'];
+        $type = !is_null($type) ? $type : $this->params['defaultType'];
+        $anyRouteAsPassenger = !is_null($anyRouteAsPassenger) ? $anyRouteAsPassenger : $this->params['defaultAnyRouteAsPassenger'];
+        
         // we create a new Proposal object with its Criteria and Waypoints
         $proposal = new Proposal();
         // we set the type, but for now we only treat the outward
-        $proposal->setType($type ? ($type == Proposal::TYPE_ONE_WAY ? Proposal::TYPE_ONE_WAY : Proposal::TYPE_OUTWARD) : ($this->params["defaultType"] == Proposal::TYPE_ONE_WAY ? Proposal::TYPE_ONE_WAY : Proposal::TYPE_OUTWARD));
+        $proposal->setType($type == Proposal::TYPE_ONE_WAY ? Proposal::TYPE_ONE_WAY : Proposal::TYPE_OUTWARD);
         $criteria = new Criteria();
-        $criteria->setDriver($role ? ($role == self::ROLE_DRIVER || $role == self::ROLE_BOTH) : ($this->params['defaultRole'] == self::ROLE_DRIVER || $this->params['defaultRole'] == self::ROLE_BOTH));
-        $criteria->setPassenger($role ? ($role == self::ROLE_PASSENGER || $role == self::ROLE_BOTH) : ($this->params['defaultRole'] == self::ROLE_PASSENGER || $this->params['defaultRole'] == self::ROLE_BOTH));
+        $criteria->setDriver($role == self::ROLE_DRIVER || $role == self::ROLE_BOTH);
+        $criteria->setPassenger($role == self::ROLE_PASSENGER || $role == self::ROLE_BOTH);
         if ($date) {
             $criteria->setFromDate($date);
-            if ((!is_null($useTime) && $useTime) || $this->params['defaultUseTime']) {
-                $criteria->setFromTime($date);    
+            if ($useTime) {
+                $criteria->setFromTime($date);
             }
         }
-        $criteria->setMarginDuration($marginTime ? $marginTime : $this->params['defaultMarginTime']);
+        $criteria->setMarginDuration($marginTime);
         $criteria->setFrequency($frequency);
-        $criteria->setAnyRouteAsPassenger($anyRouteAsPassenger ? true : (is_null($anyRouteAsPassenger ? $this->params['defaultAnyRouteAsPassenger'] : false)));
+        $criteria->setAnyRouteAsPassenger($anyRouteAsPassenger);
         if ($frequency == Criteria::FREQUENCY_REGULAR) {
             // for regular proposal we set every day as a possible carpooling day
             $criteria->setMonCheck(true);
@@ -347,21 +358,30 @@ class ProposalManager
             $criteria->setFriCheck(true);
             $criteria->setSatCheck(true);
             $criteria->setSunCheck(true);
-            $criteria->setMonMarginDuration($marginTime ? $marginTime : $this->params['defaultMarginTime']);
-            $criteria->setTueMarginDuration($criteria->getMonMarginDuration());
-            $criteria->setWedMarginDuration($criteria->getMonMarginDuration());
-            $criteria->setThuMarginDuration($criteria->getMonMarginDuration());
-            $criteria->setFriMarginDuration($criteria->getMonMarginDuration());
-            $criteria->setSatMarginDuration($criteria->getMonMarginDuration());
-            $criteria->setSunMarginDuration($criteria->getMonMarginDuration());
+            $criteria->setMonMarginDuration($marginTime);
+            $criteria->setTueMarginDuration($marginTime);
+            $criteria->setWedMarginDuration($marginTime);
+            $criteria->setThuMarginDuration($marginTime);
+            $criteria->setFriMarginDuration($marginTime);
+            $criteria->setSatMarginDuration($marginTime);
+            $criteria->setSunMarginDuration($marginTime);
+            if ($useTime) {
+                $criteria->setMonTime($date);
+                $criteria->setTueTime($date);
+                $criteria->setWedTime($date);
+                $criteria->setThuTime($date);
+                $criteria->setFriTime($date);
+                $criteria->setSatTime($date);
+                $criteria->setSunTime($date);
+            }
             // we set the end date
             $endDate = clone $date;
-            $endDate->add(new \DateInterval('P' . ($regularLifeTime ? $regularLifeTime : $this->params['defaultRegularLifeTime'] . 'Y')));
+            $endDate->add(new \DateInterval('P' . $regularLifeTime . 'Y'));
             $criteria->setToDate($endDate);
         }
-        $criteria->setStrictDate(!$strictDate ? true : (is_null($strictDate) ? $this->params['defaultStrictDate'] : false));
-        $criteria->setStrictPunctual($strictPunctual ? true : (is_null($strictPunctual) ? $this->params['defaultStrictPunctual'] : false));
-        $criteria->setStrictRegular($strictRegular ? true : (is_null($strictRegular) ? $this->params['defaultStrictRegular'] : false));
+        $criteria->setStrictDate($strictDate);
+        $criteria->setStrictPunctual($strictPunctual);
+        $criteria->setStrictRegular($strictRegular);
         $proposal->setCriteria($criteria);
         
         if (!is_null($userId)) {
@@ -388,8 +408,6 @@ class ProposalManager
         
         $proposal->addWaypoint($waypointOrigin);
         $proposal->addWaypoint($waypointDestination);
-
-        //echo "<pre>" . print_r($proposal,true) . "</pre>";exit;
 
         return $this->getMatchings($proposal);
     }

@@ -24,7 +24,6 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Controller;
 
 use DateTime;
-use Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,9 +31,9 @@ use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
-use Symfony\Component\HttpFoundation\Response;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
@@ -132,6 +131,12 @@ class CarpoolController extends AbstractController
         $destination_latitude = $request->query->get('destination_latitude');
         $destination_longitude = $request->query->get('destination_longitude');
         $date = \Datetime::createFromFormat("Y-m-d\TH:i:s.u\Z", $request->query->get('date'));
+        $frequency = $request->query->get('regular')=="true" ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL;
+        $strictDate = $request->query->get('strictDate');
+        $useTime = $request->query->get('useTime');
+        $strictPunctual = $request->query->get('strictPunctual');
+        $strictRegular = $request->query->get('strictRegular');
+        $role = $request->query->get('role',Criteria::ROLE_BOTH);
 
         // we have to merge matching proposals that concern both driver and passenger into a single matching
         $matchings = [];
@@ -143,7 +148,13 @@ class CarpoolController extends AbstractController
             $origin_longitude,
             $destination_latitude,
             $destination_longitude,
-            $date
+            $date,
+            $frequency,
+            $strictDate,
+            $useTime,
+            $strictPunctual,
+            $strictRegular,
+            $role
         )) {
             if (is_array($proposalResults->getMember()) && count($proposalResults->getMember()) == 1) {
                 $proposalResult = $proposalResults->getMember()[0];

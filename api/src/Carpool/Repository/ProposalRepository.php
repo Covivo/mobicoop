@@ -23,6 +23,7 @@
 
 namespace App\Carpool\Repository;
 
+use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Proposal;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Criteria;
@@ -60,6 +61,8 @@ class ProposalRepository
      * - similar dates
      * - similar times (~ passenger time is after driver time)
      * - similar basic geographical zones
+     * 
+     * TODO : We also limit to the drivers that have enough seats left in their car for the passenger's needs.
      *
      * It is a pre-filter, the idea is to limit the next step : the route calculations (that cannot be done directly in the model).
      * The fine time matching will be done during the route calculation process.
@@ -69,13 +72,14 @@ class ProposalRepository
      * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
      */
     public function findMatchingProposals(Proposal $proposal, bool $excludeProposalUser=true)
-    {   
+    {
         // the "master" proposal is simply called the "proposal"
         // the potential matching proposals are called the "candidates"
 
         // we search the matchings in the proposal entity
         $query = $this->repository->createQueryBuilder('p')
         ->select(['p','u'])
+        //->select(['p','u','p.id as proposalId','SUM(ac.seats) as nbSeats'])
         // we need the criteria (for the dates, number of seats...)
         ->join('p.criteria', 'c')
         // we will need the user informations
@@ -83,7 +87,9 @@ class ProposalRepository
         // we need the directions and the geographical zones
         ->leftJoin('c.directionDriver', 'dd')->leftJoin('dd.zones', 'zd')
         ->leftJoin('c.directionPassenger', 'dp')->leftJoin('dp.zones', 'zp')
-        // we need the communities
+        // we need the matchings and asks to check the available seats
+        //->leftJoin('p.matchingOffers', 'm')->leftjoin('m.asks', 'a')->leftJoin('a.criteria', 'ac')->addGroupBy('proposalId')
+        //we need the communities
         ->leftJoin('p.communities', 'co');
 
         // do we exclude the user itself ?
@@ -130,8 +136,15 @@ class ProposalRepository
             $query->setParameter('thinnessDriver', $this->getPrecision($proposal->getCriteria()->getDirectionPassenger()));
         }
 
+        // SEATS AVAILABLE
+        // $seatsDriverWhere = '(1=1)';
+        // if ($proposal->getCriteria()->isDriver()) {
+        //     $seatsDriverWhere = 'a.status = ' . Ask::STATUS_ACCEPTED;
+        // }
+
         // we search if the user can be passenger and/or driver
         if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
+            // $query->andWhere('((c.driver = 1 and ' . $zoneDriverWhere . ' and ' . $seatsDriverWhere . ') OR (c.passenger = 1 and ' . $zonePassengerWhere . '))');
             $query->andWhere('((c.driver = 1 and ' . $zoneDriverWhere . ') OR (c.passenger = 1 and ' . $zonePassengerWhere . '))');
         } elseif ($proposal->getCriteria()->isDriver()) {
             $query->andWhere('(c.passenger = 1 and ' . $zonePassengerWhere . ')');
@@ -374,14 +387,22 @@ class ProposalRepository
                 //          min             max
 
                 $setToDate = true;
-                $setMinTime = $setMaxTime = false;
-                $setMonMinTime = $setMonMaxTime = false;
-                $setTueMinTime = $setTueMaxTime = false;
-                $setWedMinTime = $setWedMaxTime = false;
-                $setThuMinTime = $setThuMaxTime = false;
-                $setFriMinTime = $setFriMaxTime = false;
-                $setSatMinTime = $setSatMaxTime = false;
-                $setSunMinTime = $setSunMaxTime = false;
+                $setMonMinTime = $setMonMaxTime = false;    // ---
+                $setTueMinTime = $setTueMaxTime = false;    //
+                $setWedMinTime = $setWedMaxTime = false;    //
+                $setThuMinTime = $setThuMaxTime = false;    // Flags for regular min/max times
+                $setFriMinTime = $setFriMaxTime = false;    //
+                $setSatMinTime = $setSatMaxTime = false;    //
+                $setSunMinTime = $setSunMaxTime = false;    // ---
+                $setMinTime = false;  // ---
+                $setMaxTime = false;  //
+                $setMonTime = false;  // 
+                $setTueTime = false;  //
+                $setWedTime = false;  // Flags for punctual min/max times
+                $setThuTime = false;  // 
+                $setFriTime = false;  //
+                $setSatTime = false;  //
+                $setSunTime = false;  // ---
                 $regularSunDay = $regularMonDay = $regularTueDay = $regularWedDay = $regularThuDay = $regularFriDay = $regularSatDay = "";
 
                 $days = "";         // used to check if a given punctual candidate day is matching
@@ -390,143 +411,178 @@ class ProposalRepository
                 $regularDay = "";
                 $regularTime = "";
                 if ($proposal->getCriteria()->isSunCheck()) {
-                    $regularSunDay = 'c.sunCheck = 1'; 
-                    $days .= "1,"; // used for punctual candidate                                         
+                    $regularSunDay = 'c.sunCheck = 1';
+                    $days .= "1,"; // used for punctual candidate
                     if ($proposal->getCriteria()->getSunTime()) {
-                        $minTime .= '(DAYOFWEEK(c.fromDate) = 1 and c.maxTime >= :sunMinTime) OR '; //
-                        $maxTime .= '(DAYOFWEEK(c.fromDate) = 1 and c.minTime <= :sunMaxTime) OR '; // used for punctual candidate
                         if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularSunDay .= ' and (
                                 (c.passenger = 1 and c.sunMaxTime >= :sunMinTime) or 
                                 (c.driver = 1 and c.sunMinTime <= :sunMaxTime)
                             )';
+                            $setSunMinTime = true;
+                            $setSunMaxTime = true;
                         } elseif ($proposal->getCriteria()->isDriver()) {
                             $regularSunDay .= ' and (c.passenger = 1 and c.sunMaxTime >= :sunMinTime)';
+                            $setSunMinTime = true;
                         } else {
                             $regularSunDay .= ' and (c.driver = 1 and c.sunMinTime <= :sunMaxTime)';
+                            $setSunMaxTime = true;
                         }
-                        $setSunMinTime = true;
-                        $setSunMaxTime = true;
+                        if (!$proposal->getCriteria()->isStrictRegular()) {
+                            $minTime .= '(DAYOFWEEK(c.fromDate) = 1 and c.maxTime >= :sunMinTime) OR '; //
+                            $maxTime .= '(DAYOFWEEK(c.fromDate) = 1 and c.minTime <= :sunMaxTime) OR '; // used for punctual candidate
+                            $setSunTime = true;
+                        }   
                     }
                 }
                 if ($proposal->getCriteria()->isMonCheck()) {
-                    $regularMonDay = 'c.monCheck = 1'; 
-                    $days .= "2,"; // used for punctual candidate               
+                    $regularMonDay = 'c.monCheck = 1';
+                    $days .= "2,"; // used for punctual candidate
                     if ($proposal->getCriteria()->getMonTime()) {
-                        $minTime .= '(DAYOFWEEK(c.fromDate) = 2 and c.maxTime >= :monMinTime) OR '; //
-                        $maxTime .= '(DAYOFWEEK(c.fromDate) = 2 and c.minTime <= :monMaxTime) OR '; // used for punctual candidate
                         if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularMonDay .= ' and (
                                 (c.passenger = 1 and c.monMaxTime >= :monMinTime) or 
                                 (c.driver = 1 and c.monMinTime <= :monMaxTime)
                             )';
+                            $setMonMinTime = true;
+                            $setMonMaxTime = true;
                         } elseif ($proposal->getCriteria()->isDriver()) {
                             $regularMonDay .= ' and (c.passenger = 1 and c.monMaxTime >= :monMinTime)';
+                            $setMonMinTime = true;
                         } else {
                             $regularMonDay .= ' and (c.driver = 1 and c.monMinTime <= :monMaxTime)';
+                            $setMonMaxTime = true;
                         }
-                        $setMonMinTime = true;
-                        $setMonMaxTime = true;
+                        if (!$proposal->getCriteria()->isStrictRegular()) {
+                            $minTime .= '(DAYOFWEEK(c.fromDate) = 2 and c.maxTime >= :monMinTime) OR '; //
+                            $maxTime .= '(DAYOFWEEK(c.fromDate) = 2 and c.minTime <= :monMaxTime) OR '; // used for punctual candidate
+                            $setMonTime = true;
+                        }   
                     }
                 }
                 if ($proposal->getCriteria()->isTueCheck()) {
                     $regularTueDay = 'c.tueCheck = 1';
                     $days .= "3,"; // used for punctual candidate
                     if ($proposal->getCriteria()->getTueTime()) {
-                        $minTime .= '(DAYOFWEEK(c.fromDate) = 3 and c.maxTime >= :tueMinTime) OR '; //
-                        $maxTime .= '(DAYOFWEEK(c.fromDate) = 3 and c.minTime <= :tueMaxTime) OR '; // used for punctual candidate
                         if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularTueDay .= ' and (
                                 (c.passenger = 1 and c.tueMaxTime >= :tueMinTime) or 
                                 (c.driver = 1 and c.tueMinTime <= :tueMaxTime)
                             )';
+                            $setTueMinTime = true;
+                            $setTueMaxTime = true;
                         } elseif ($proposal->getCriteria()->isDriver()) {
                             $regularTueDay .= ' and (c.passenger = 1 and c.tueMaxTime >= :tueMinTime)';
+                            $setTueMinTime = true;
                         } else {
                             $regularTueDay .= ' and (c.driver = 1 and c.tueMinTime <= :tueMaxTime)';
+                            $setTueMaxTime = true;
                         }
-                        $setTueMinTime = true;
-                        $setTueMaxTime = true;
+                        if (!$proposal->getCriteria()->isStrictRegular()) {
+                            $minTime .= '(DAYOFWEEK(c.fromDate) = 3 and c.maxTime >= :tueMinTime) OR '; //
+                            $maxTime .= '(DAYOFWEEK(c.fromDate) = 3 and c.minTime <= :tueMaxTime) OR '; // used for punctual candidate
+                            $setTueTime = true;
+                        }
                     }
                 }
                 if ($proposal->getCriteria()->isWedCheck()) {
                     $regularWedDay = 'c.wedCheck = 1';
                     $days .= "4,"; // used for punctual candidate
                     if ($proposal->getCriteria()->getWedTime()) {
-                        $minTime .= '(DAYOFWEEK(c.fromDate) = 4 and c.maxTime >= :wedMinTime) OR '; //
-                        $maxTime .= '(DAYOFWEEK(c.fromDate) = 4 and c.minTime <= :wedMaxTime) OR '; // used for punctual candidate
                         if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularWedDay .= ' and (
                                 (c.passenger = 1 and c.wedMaxTime >= :wedMinTime) or 
                                 (c.driver = 1 and c.wedMinTime <= :wedMaxTime)
                             )';
+                            $setWedMinTime = true;
+                            $setWedMaxTime = true;
                         } elseif ($proposal->getCriteria()->isDriver()) {
                             $regularWedDay .= ' and (c.passenger = 1 and c.wedMaxTime >= :wedMinTime)';
+                            $setWedMinTime = true;
                         } else {
                             $regularWedDay .= ' and (c.driver = 1 and c.wedMinTime <= :wedMaxTime)';
+                            $setWedMaxTime = true;
                         }
-                        $setWedMinTime = true;
-                        $setWedMaxTime = true;
+                        if (!$proposal->getCriteria()->isStrictRegular()) {
+                            $minTime .= '(DAYOFWEEK(c.fromDate) = 4 and c.maxTime >= :wedMinTime) OR '; //
+                            $maxTime .= '(DAYOFWEEK(c.fromDate) = 4 and c.minTime <= :wedMaxTime) OR '; // used for punctual candidate
+                            $setWedTime = true;
+                        }
                     }
                 }
                 if ($proposal->getCriteria()->isThuCheck()) {
                     $regularThuDay = 'c.thuCheck = 1';
                     $days .= "5,"; // used for punctual candidate
                     if ($proposal->getCriteria()->getThuTime()) {
-                        $minTime .= '(DAYOFWEEK(c.fromDate) = 5 and c.maxTime >= :thuMinTime) OR '; //
-                        $maxTime .= '(DAYOFWEEK(c.fromDate) = 5 and c.minTime <= :thuMaxTime) OR '; // used for punctual candidate
                         if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularThuDay .= ' and (
                                 (c.passenger = 1 and c.thuMaxTime >= :thuMinTime) or 
                                 (c.driver = 1 and c.thuMinTime <= :thuMaxTime)
                             )';
+                            $setThuMinTime = true;
+                            $setThuMaxTime = true;
                         } elseif ($proposal->getCriteria()->isDriver()) {
                             $regularThuDay .= ' and (c.passenger = 1 and c.thuMaxTime >= :thuMinTime)';
+                            $setThuMinTime = true;
                         } else {
                             $regularThuDay .= ' and (c.driver = 1 and c.thuMinTime <= :thuMaxTime)';
+                            $setThuMaxTime = true;
                         }
-                        $setThuMinTime = true;
-                        $setThuMaxTime = true;
+                        if (!$proposal->getCriteria()->isStrictRegular()) {
+                            $minTime .= '(DAYOFWEEK(c.fromDate) = 5 and c.maxTime >= :thuMinTime) OR '; //
+                            $maxTime .= '(DAYOFWEEK(c.fromDate) = 5 and c.minTime <= :thuMaxTime) OR '; // used for punctual candidate
+                            $setThuTime = true;
+                        }
                     }
                 }
                 if ($proposal->getCriteria()->isFriCheck()) {
                     $regularFriDay = 'c.friCheck = 1';
                     $days .= "6,"; // used for punctual candidate
                     if ($proposal->getCriteria()->getFriTime()) {
-                        $minTime .= '(DAYOFWEEK(c.fromDate) = 6 and c.maxTime >= :friMinTime) OR '; //
-                        $maxTime .= '(DAYOFWEEK(c.fromDate) = 6 and c.minTime <= :friMaxTime) OR '; // used for punctual candidate
                         if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularFriDay .= ' and (
                                 (c.passenger = 1 and c.friMaxTime >= :friMinTime) or 
                                 (c.driver = 1 and c.friMinTime <= :friMaxTime)
                             )';
+                            $setFriMinTime = true;
+                            $setFriMaxTime = true;
                         } elseif ($proposal->getCriteria()->isDriver()) {
                             $regularFriDay .= ' and (c.passenger = 1 and c.friMaxTime >= :friMinTime)';
+                            $setFriMinTime = true;
                         } else {
                             $regularFriDay .= ' and (c.driver = 1 and c.friMinTime <= :friMaxTime)';
+                            $setFriMaxTime = true;
                         }
-                        $setFriMinTime = true;
-                        $setFriMaxTime = true;
+                        if (!$proposal->getCriteria()->isStrictRegular()) {
+                            $minTime .= '(DAYOFWEEK(c.fromDate) = 6 and c.maxTime >= :friMinTime) OR '; //
+                            $maxTime .= '(DAYOFWEEK(c.fromDate) = 6 and c.minTime <= :friMaxTime) OR '; // used for punctual candidate
+                            $setFriTime = true;
+                        }
                     }
                 }
                 if ($proposal->getCriteria()->isSatCheck()) {
                     $regularSatDay = 'c.satCheck = 1';
                     $days .= "7,"; // used for punctual candidate
                     if ($proposal->getCriteria()->getSatTime()) {
-                        $minTime .= '(DAYOFWEEK(c.fromDate) = 7 and c.maxTime >= :satMinTime) OR '; //
-                        $maxTime .= '(DAYOFWEEK(c.fromDate) = 7 and c.minTime <= :satMaxTime) OR '; // used for punctual candidate
                         if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularSatDay .= ' and (
                                 (c.passenger = 1 and c.satMaxTime >= :satMinTime) or 
                                 (c.driver = 1 and c.satMinTime <= :satMaxTime)
                             )';
+                            $setSatMinTime = true;
+                            $setSatMaxTime = true;
                         } elseif ($proposal->getCriteria()->isDriver()) {
                             $regularSatDay .= ' and (c.passenger = 1 and c.satMaxTime >= :satMinTime)';
+                            $setSatMinTime = true;
                         } else {
                             $regularSatDay .= ' and (c.driver = 1 and c.satMinTime <= :satMaxTime)';
+                            $setSatMaxTime = true;
                         }
-                        $setSatMinTime = true;
-                        $setSatMaxTime = true;
+                        if (!$proposal->getCriteria()->isStrictRegular()) {
+                            $minTime .= '(DAYOFWEEK(c.fromDate) = 7 and c.maxTime >= :satMinTime) OR '; //
+                            $maxTime .= '(DAYOFWEEK(c.fromDate) = 7 and c.minTime <= :satMaxTime) OR '; // used for punctual candidate
+                            $setSatTime = true;
+                        }
                     }
                 }
 
@@ -547,6 +603,7 @@ class ProposalRepository
 
                 // 'where' part of punctual candidates
                 if (!$proposal->getCriteria()->isStrictRegular()) {
+                    // if the proposal is not strictly regualr, we include the punctual proposals
                     $punctualAndWhere = '(';
                     $punctualAndWhere .= 'c.frequency=' . Criteria::FREQUENCY_PUNCTUAL . ' and c.fromDate >= :fromDate and c.fromDate <= :toDate and DAYOFWEEK(c.fromDate) IN (' . $days . ')';
                     if ($proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
@@ -594,46 +651,46 @@ class ProposalRepository
                 // delete the last OR
                 $regularAndWhere = substr($regularAndWhere, 0, -4) . '))';
 
-                if ($setMonMinTime && $setMinTime) {
+                if ($setMonMinTime || ($setMinTime && $setMonTime)) {
                     $query->setParameter('monMinTime', $proposal->getCriteria()->getMonMinTime()->format('H:i'));
                 }
-                if ($setMonMaxTime && $setMaxTime) {
+                if ($setMonMaxTime || ($setMaxTime && $setMonTime)) {
                     $query->setParameter('monMaxTime', $proposal->getCriteria()->getMonMaxTime()->format('H:i'));
                 }
-                if ($setTueMinTime && $setMinTime) {
+                if ($setTueMinTime || ($setMinTime && $setTueTime)) {
                     $query->setParameter('tueMinTime', $proposal->getCriteria()->getTueMinTime()->format('H:i'));
                 }
-                if ($setTueMaxTime && $setMaxTime) {
+                if ($setTueMaxTime || ($setMaxTime && $setTueTime)) {
                     $query->setParameter('tueMaxTime', $proposal->getCriteria()->getTueMaxTime()->format('H:i'));
                 }
-                if ($setWedMinTime && $setMinTime) {
+                if ($setWedMinTime || ($setMinTime && $setWedTime)) {
                     $query->setParameter('wedMinTime', $proposal->getCriteria()->getWedMinTime()->format('H:i'));
                 }
-                if ($setWedMaxTime && $setMaxTime) {
+                if ($setWedMaxTime || ($setMaxTime && $setWedTime)) {
                     $query->setParameter('wedMaxTime', $proposal->getCriteria()->getWedMaxTime()->format('H:i'));
                 }
-                if ($setThuMinTime && $setMinTime) {
+                if ($setThuMinTime || ($setMinTime && $setThuTime)) {
                     $query->setParameter('thuMinTime', $proposal->getCriteria()->getThuMinTime()->format('H:i'));
                 }
-                if ($setThuMaxTime && $setMaxTime) {
+                if ($setThuMaxTime || ($setMaxTime && $setThuTime)) {
                     $query->setParameter('thuMaxTime', $proposal->getCriteria()->getThuMaxTime()->format('H:i'));
                 }
-                if ($setFriMinTime && $setMinTime) {
+                if ($setFriMinTime || ($setMinTime && $setFriTime)) {
                     $query->setParameter('friMinTime', $proposal->getCriteria()->getFriMinTime()->format('H:i'));
                 }
-                if ($setFriMaxTime && $setMaxTime) {
+                if ($setFriMaxTime || ($setMaxTime && $setFriTime)) {
                     $query->setParameter('friMaxTime', $proposal->getCriteria()->getFriMaxTime()->format('H:i'));
                 }
-                if ($setSatMinTime && $setMinTime) {
+                if ($setSatMinTime || ($setMinTime && $setSatTime)) {
                     $query->setParameter('satMinTime', $proposal->getCriteria()->getSatMinTime()->format('H:i'));
                 }
-                if ($setSatMaxTime && $setMaxTime) {
+                if ($setSatMaxTime || ($setMaxTime && $setSatTime)) {
                     $query->setParameter('satMaxTime', $proposal->getCriteria()->getSatMaxTime()->format('H:i'));
                 }
-                if ($setSunMinTime && $setMinTime) {
+                if ($setSunMinTime || ($setMinTime && $setSunTime)) {
                     $query->setParameter('sunMinTime', $proposal->getCriteria()->getSunMinTime()->format('H:i'));
                 }
-                if ($setSunMaxTime && $setMaxTime) {
+                if ($setSunMaxTime || ($setMaxTime && $setSunTime)) {
                     $query->setParameter('sunMaxTime', $proposal->getCriteria()->getSunMaxTime()->format('H:i'));
                 }
                 break;
@@ -652,6 +709,15 @@ class ProposalRepository
         if ($setToDate) {
             $query->setParameter('toDate', $proposal->getCriteria()->getToDate()->format('Y-m-d'));
         }
+
+        // var_dump($punctualAndWhere);
+        // var_dump($regularAndWhere);
+        // var_dump($query->getQuery()->getSql());
+        // foreach ($query->getQuery()->getParameters() as $parameter) {
+        //     echo $parameter->getName() . " ";
+        // }
+        // exit;
+        // var_dump(count($query->getQuery()->getParameters()));exit;
 
         // we launch the request and return the result
         return $query->getQuery()->getResult();

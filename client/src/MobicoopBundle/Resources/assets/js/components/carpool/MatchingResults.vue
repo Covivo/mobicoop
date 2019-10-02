@@ -128,7 +128,8 @@ export default {
         "origin_longitude": Number(this.originLongitude),
         "destination_latitude": Number(this.destinationLatitude),
         "destination_longitude": Number(this.destinationLongitude),
-        "date": this.isoDate
+        "date": this.isoDate,
+        "regular": this.regular 
       }
     })
       .then((response) => {

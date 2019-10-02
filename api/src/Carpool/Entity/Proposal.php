@@ -104,14 +104,14 @@ use App\Communication\Entity\Notified;
  *                          "in" = "query",
  *                          "required" = "true",
  *                          "type" = "integer",
- *                          "description" = "The frequency of the trip (1=punctual, 2=regular)"
+ *                          "description" = "The frequency of the trip (1=punctual, 2=regular; for regular trips)"
  *                      },
  *                      {
  *                          "name" = "date",
  *                          "in" = "query",
  *                          "type" = "string",
  *                          "format" = "date-time",
- *                          "description" = "The date and time of the trip (on RFC3339 format)"
+ *                          "description" = "The date and time of the trip for a punctual trip, the start date for regular trips (on RFC3339 format)"
  *                      },
  *                      {
  *                          "name" = "useTime",

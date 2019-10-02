@@ -119,9 +119,29 @@ class ProposalManager
      * @param float $destination_latitude   The destination latitude
      * @param float $destination_longitude  The destination longitude
      * @param \Datetime $date               The date and time in a Datetime object
+     * @param int $frequency                The frequency of the trip
+     * @param boolean|null $strictDate      Strict date
+     * @param boolean|null $useTime         Use the time part of the date
+     * @param boolean $strictPunctual       Strictly punctual
+     * @param boolean $strictRegular        Strictly regular
+     * @param integer $role                 Role (driver and/or passenger)
+     * @param $format                       Return format
      * @return array|null The matchings found or null if not found.
      */
-    public function getMatchingsForSearch(float $origin_latitude, float $origin_longitude, float $destination_latitude, float $destination_longitude, \Datetime $date, $format = null)
+    public function getMatchingsForSearch(
+        float $origin_latitude, 
+        float $origin_longitude, 
+        float $destination_latitude, 
+        float $destination_longitude, 
+        \Datetime $date, 
+        int $frequency, 
+        ?bool $strictDate = null,
+        ?bool $useTime = null,
+        bool $strictPunctual = null,
+        bool $strictRegular = null,
+        int $role = null,
+        $format = null
+        )
     {
         // we set the params
         $params = [
@@ -129,8 +149,14 @@ class ProposalManager
             "origin_longitude" => $origin_longitude,
             "destination_latitude" => $destination_latitude,
             "destination_longitude" => $destination_longitude,
-            "date" => $date->format('Y-m-d\TH:i:s\Z')
+            "date" => $date->format('Y-m-d\TH:i:s\Z'),
+            "frequency" => $frequency
         ];
+        if (!is_null($strictDate)) $params["strictDate"] = $strictDate;
+        if (!is_null($useTime)) $params["useTime"] = $useTime;
+        if (!is_null($strictPunctual)) $params["strictPunctual"] = $strictPunctual;
+        if (!is_null($strictRegular)) $params["strictRegular"] = $strictRegular;
+        if (!is_null($role)) $params["role"] = $role;
         if (is_null($format)) {
             $format = $this->dataProvider::RETURN_OBJECT;
         }
@@ -171,6 +197,7 @@ class ProposalManager
         $proposal = new Proposal();
         $criteria = new Criteria();
 
+        // we check if the ad is posted for another user (delegation)
         if (isset($ad['user'])) {
             $user = $this->userManager->getUser($ad['user']);
             $proposal->setUser($user);
@@ -178,10 +205,12 @@ class ProposalManager
         } else {
             $proposal->setUser($poster);
         }
+        // we set the type to one way, we'll check later if it's a return trip
         $proposal->setType(Proposal::TYPE_ONE_WAY);
         if (isset($ad['message'])) {
             $proposal->setComment($ad['message']);
         }
+        // communities
         if (isset($ad['communities'])) {
             foreach ($ad['communities'] as $community) {
                 $proposal->addCommunity($community);
@@ -189,7 +218,8 @@ class ProposalManager
         }
         $criteria->setDriver($ad['driver']);
         $criteria->setPassenger($ad['passenger']);
-        $criteria->setPriceKm($ad['price']);
+        $criteria->setPriceKm($ad['priceKm']);
+        $criteria->setPrice($ad['price']);
         $criteria->setSeats($ad['seats']);
         if (isset($ad['luggage'])) {
             $criteria->setLuggage($ad['luggage']);

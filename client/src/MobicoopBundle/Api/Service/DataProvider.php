@@ -342,7 +342,6 @@ class DataProvider
                 ]);
                 $value = json_decode((string) $clientResponse->getBody(), true);
             } elseif ($this->format == self::RETURN_JSON) {
-//                var_dump($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]));die;
                 $clientResponse = $this->client->post($this->resource, [
                         'headers' => ['accept' => 'application/json'],
                         RequestOptions::JSON => json_decode($this->serializer->serialize($object, self::SERIALIZER_ENCODER, ['groups'=>['post']]), true)

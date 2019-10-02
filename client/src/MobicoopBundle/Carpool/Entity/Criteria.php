@@ -41,6 +41,10 @@ class Criteria
             "punctual"=>self::FREQUENCY_PUNCTUAL,
             "regular"=>self::FREQUENCY_REGULAR
     ];
+
+    CONST ROLE_DRIVER = 1;
+    CONST ROLE_PASSENGER = 2;
+    CONST ROLE_BOTH = 3;
     
     /**
      * @var int The id of this criteria.
@@ -287,6 +291,12 @@ class Criteria
      * @Groups({"post","put"})
      */
     private $priceKm;
+
+    /**
+    * @var float|null The price for the whole journey (usually, the rounded (priceKm * distance)).
+    * @Groups({"post","put"})
+    */
+    private $price;
 
     /**
      * @var boolean|null Big luggage accepted / asked.
@@ -775,6 +785,16 @@ class Criteria
     public function setPriceKm(?string $priceKm)
     {
         $this->priceKm = $priceKm;
+    }
+
+    public function getPrice(): ?string
+    {
+        return $this->price;
+    }
+    
+    public function setPrice(?string $price)
+    {
+        $this->price = $price;
     }
 
     public function hasLuggage(): ?bool
