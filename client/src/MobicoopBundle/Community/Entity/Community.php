@@ -32,6 +32,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
  *  A community.
@@ -356,7 +357,7 @@ class Community implements ResourceInterface, \JsonSerializable
     {
         if (!$this->communityUsers->contains($communityUser)) {
             $this->communityUsers[] = $communityUser;
-            $communityUser->setCommunity($this);
+            //$communityUser->setCommunity($this);
         }
         
         return $this;

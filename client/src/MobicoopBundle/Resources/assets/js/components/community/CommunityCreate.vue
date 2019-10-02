@@ -27,7 +27,14 @@
             </v-col>
           </v-row>
           <v-row justify="center">
-            <v-col cols="6">
+            <v-col cols="3">
+              <GeoComplete 
+                :url="geoSearchUrl"
+                :label="$t('form.address.label')"
+                @address-selected="addressSelected"
+              />
+            </v-col>
+            <v-col cols="3">
               <v-text-field
                 v-model="description"
                 :label="$t('form.description.label')"
@@ -35,23 +42,35 @@
             </v-col>
           </v-row>
           <v-row justify="center">
-            <v-col cols="6">
+            <v-col
+              v-show="true"
+              cols="3"
+            >
+              <v-checkbox
+                v-model="membersHidden"
+                :label="$t('form.checkboxes.membersHidden')"
+                color="success"
+              />
+              <v-checkbox
+                v-model="proposalsHidden"
+                :label="$t('form.checkboxes.proposalsHidden')"
+                color="success"
+              />
+              <v-checkbox
+                v-model="privateCommunity"
+                :label="$t('form.checkboxes.privateCommunity')"
+                color="success"
+              />
+            </v-col>
+            <v-col cols="3">
               <v-textarea
                 v-model="fullDescription"
                 :label="$t('form.fullDescription.label')"
-                rows="3"
+                rows="7"
                 auto-grow
                 clearable
+                outlined
                 row-height="24"
-              />
-            </v-col>
-          </v-row>
-          <v-row justify="center">
-            <v-col cols="6">
-              <GeoComplete 
-                :url="geoSearchUrl"
-                :label="$t('form.address.label')"
-                @address-selected="addressSelected"
               />
             </v-col>
           </v-row>
@@ -120,6 +139,9 @@ export default {
       fullDescription: null,
       avatar: null,
       loading: false,
+      membersHidden: false,
+      proposalsHidden: false,
+      privateCommunity: false,
     }
   },
   methods: {
@@ -127,13 +149,16 @@ export default {
       this.communityAddress = address;
     },
     createCommunity() {
-      this.loading = true;
+      // this.loading = true;
       let newCommunity = new FormData();
       newCommunity.append("name", this.name);
       newCommunity.append("description", this.description);
       newCommunity.append("fullDescription", this.fullDescription);
       newCommunity.append("avatar", this.avatar);
       newCommunity.append("address", JSON.stringify(this.communityAddress));
+      newCommunity.append("proposalsHidden", this.proposalsHidden);
+      newCommunity.append("membersHidden", this.membersHidden);
+      newCommunity.append("privateCommunity", this.privateCommunity);
 
       axios 
         .post(this.$t('buttons.create.route'), newCommunity, {
@@ -145,7 +170,7 @@ export default {
           this.errorUpdate = res.data.state;
           this.snackbar = true;
           this.loading = false;
-          // window.location.href = "/communities";
+          // window.location.href = this.$t('redirect.route');
         });
     },
   }

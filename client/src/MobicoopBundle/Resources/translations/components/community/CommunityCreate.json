@@ -22,7 +22,20 @@
       },
       "address": {
         "label": "Adresse de la communauté"
+      },
+      "checkboxes": {
+        "membersHidden": "Cacher les membres de la communaité",
+        "proposalsHidden": "Cacher les trajets de la communauté",
+        "privateCommunity": "Cette communauté est privée"
       }
+    },
+    "redirect": {
+      "route": "/communautes"
+    }
+  },
+  "en": {
+    "redirect": {
+      "route": "/communities"
     }
   }
 }

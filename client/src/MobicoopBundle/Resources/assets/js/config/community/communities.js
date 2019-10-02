@@ -31,7 +31,7 @@ import Vuetify, {
   VTabsSlider,VDivider, VList, VListItem, VListItemContent,VForm,VAutocomplete, VMenu, VDatePicker, VTooltip, VSwitch,VListItemAvatar,
   VListItemTitle,VListItemSubtitle,VData,VDataFooter,VDataTableHeader,VDialog, VCardActions, VTextarea, VBadge, VItemGroup, VListItemGroup, VListItemIcon, VSelect, VAvatar, VSnackbar, VProgressCircular,
   // create form
-  VFileInput,
+  VFileInput, VCheckbox,
 } from 'vuetify/lib'
 
 Vue.use(Vuetify, {
@@ -47,7 +47,7 @@ Vue.use(Vuetify, {
     //Vue2Leaflet
     LMap, LTileLayer, LMarker, LTooltip, LIcon, LPolyline,
     // create form
-    VFileInput,
+    VFileInput, VCheckbox,
   }
 })
 Vue.use(VueI18n)

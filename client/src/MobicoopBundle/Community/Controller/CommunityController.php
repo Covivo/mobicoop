@@ -35,6 +35,7 @@ use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 
 use function GuzzleHttp\json_decode;
 
@@ -63,15 +64,13 @@ class CommunityController extends AbstractController
     {
         $community = new Community();
         $this->denyAccessUnlessGranted('create', $community);
-        $user = $userManager->getLoggedUser();
+        $user = new User($userManager->getLoggedUser()->getId());
         $communityUser = new CommunityUser();
         $address = new Address();
         // $image = new Image();
         
         $error = false;
-
-
-
+        
         if ($request->isMethod('POST')) {
             $data = $request->request;
 
@@ -83,36 +82,42 @@ class CommunityController extends AbstractController
             $communityUser->setAcceptedDate(new \DateTime());
                
             // set community address
-            $communityAddress=json_decode($data->get('address'));
+            $communityAddress=json_decode($data->get('address'), true);
             dump($communityAddress);
-            dump($communityAddress->{'streetAddress'});
-            // $address->setAddressCountry($data->get('address')['addressCountry']);
-            // $address->setAddressLocality($data['address']['addressLocality']);
-            // $address->setCountryCode($data['address']['countryCode']);
-            // $address->setCounty($data['address']['county']);
-            // $address->setLatitude($data['address']['latitude']);
-            // $address->setLocalAdmin($data['address']['localAdmin']);
-            // $address->setLongitude($data['address']['longitude']);
-            // $address->setMacroCounty($data['address']['macroCounty']);
-            // $address->setMacroRegion($data['address']['macroRegion']);
-            // $address->setPostalCode($data['address']['postalCode']);
-            // $address->setRegion($data['address']['region']);
-            // $address->setStreet($data['address']['street']);
-            // $address->setHouseNumber($data['address']['houseNumber']);
-            // $address->setStreetAddress($data['address']['streetAddress']);
-            // $address->setSubLocality($data['address']['subLocality']);
-          
-            
+            $address->setAddressCountry($communityAddress['addressCountry']);
+            $address->setAddressLocality($communityAddress['addressLocality']);
+            $address->setCountryCode($communityAddress['countryCode']);
+            $address->setCounty($communityAddress['county']);
+            $address->setLatitude($communityAddress['latitude']);
+            $address->setLocalAdmin($communityAddress['localAdmin']);
+            $address->setLongitude($communityAddress['longitude']);
+            $address->setMacroCounty($communityAddress['macroCounty']);
+            $address->setMacroRegion($communityAddress['macroRegion']);
+            $address->setPostalCode($communityAddress['postalCode']);
+            $address->setRegion($communityAddress['region']);
+            $address->setStreet($communityAddress['street']);
+            $address->setHouseNumber($communityAddress['houseNumber']);
+            $address->setStreetAddress($communityAddress['streetAddress']);
+            $address->setSubLocality($communityAddress['subLocality']);
+            $address->setDisplayLabel($communityAddress['displayLabel']);
+
+            dump($address);
             // set community infos
             $community->setUser($user);
             $community->setName($data->get('name'));
             $community->setDescription($data->get('description'));
             $community->setFullDescription($data->get('fullDescription'));
-            $community->setUser($user);
-            // $community->setAddress(json_decode($data->get('communityAddress')));
+            $community->setAddress($address);
             $community->addCommunityUser($communityUser);
-            dump($community);
+            $community->setMembersHidden($data->get('membersHidden'));
+            $community->setProposalsHidden($data->get('proposalsHidden'));
+            $community->setPrivate($data->get('privateCommunity'));
+
+            // create community
             // $communityManager->createCommunity($community);
+
+            return new Response(json_encode('tada'));
+            
         }
 
         return $this->render('@Mobicoop/community/createCommunity.html.twig', [
