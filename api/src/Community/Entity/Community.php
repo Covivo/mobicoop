@@ -73,7 +73,23 @@ use App\Community\Controller\JoinAction;
  *                      }
  *                  }
  *              }
- *          }
+ *          },
+ *          "exists"={
+ *              "method"="GET",
+ *              "path"="/communities/exists",
+ *              "normalization_context"={"groups"={"read"}},
+ *              "swagger_context" = {
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "name",
+ *                          "in" = "query",
+ *                          "type" = "string",
+ *                          "required" = "true",
+ *                          "description" = "The name of the community"
+ *                      }
+ *                  }
+ *              }
+ *          }  
  *      },
  *      itemOperations={"get","put","delete"}
  * )
