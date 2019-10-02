@@ -109,7 +109,7 @@
                     class="text-center"
                   >
                     <div
-                      v-if="!item.membersHidden && !item.proposalsHidden"
+                      v-if="!item.membersHidden && !item.proposalsHidden && !item.isSecured"
                       class="my-2"
                     >
                       <a href="#">
@@ -123,7 +123,7 @@
                       </a>
                     </div>
                     <div
-                      v-if="!item.membersHidden && !item.proposalsHidden"
+                      v-if="!item.membersHidden && !item.proposalsHidden && !item.isSecured"
                       class="my-2"
                     >
                       <a :href="linkToCommunityJoin(item)">

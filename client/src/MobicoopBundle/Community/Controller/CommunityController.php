@@ -45,6 +45,7 @@ class CommunityController extends AbstractController
      */
     public function list(CommunityManager $communityManager)
     {
+        dump($communityManager->getCommunities());
         $this->denyAccessUnlessGranted('list', new Community());
         return $this->render('@Mobicoop/community/communities.html.twig', [
             'communities' => $communityManager->getCommunities(),
@@ -105,9 +106,8 @@ class CommunityController extends AbstractController
             $communityUser->setPassword($request->request->get("credential2"));
             $communityUser = $communityManager->joinCommunity($communityUser);
             ($communityUser===null) ? $error = true : $error = false;
-        }
-        else{
-            ($user!==null) ? $communityUser = $communityManager->getCommunityUser($id,$user->getId()) : $communityUser = null;
+        } else {
+            ($user!==null) ? $communityUser = $communityManager->getCommunityUser($id, $user->getId()) : $communityUser = null;
         }
 
         return $this->render('@Mobicoop/community/community.html.twig', [
