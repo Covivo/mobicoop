@@ -642,7 +642,7 @@ class Deserializer
     }
 
     private function deserializeCommunity(array $data): ?Community
-    {   dump(5);
+    {
         $community = new Community();
         $community = self::autoSet($community, $data);
         if (isset($data["@id"])) {

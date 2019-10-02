@@ -117,7 +117,6 @@ class CommunityController extends AbstractController
             // $communityManager->createCommunity($community);
 
             return new Response(json_encode('tada'));
-            
         }
 
         return $this->render('@Mobicoop/community/createCommunity.html.twig', [
