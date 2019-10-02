@@ -42,6 +42,8 @@ user:
     messages:
         title: 'Messages'
         h1: 'Messages'
+    password_recovery:
+        title: 'Password recovery'
 carpool:
     ad_create:
         title: 'Post an ad'

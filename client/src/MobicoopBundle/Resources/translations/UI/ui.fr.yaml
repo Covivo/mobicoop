@@ -43,6 +43,8 @@ user:
     messages:
         title: 'Messages'
         h1: 'Messages'
+    password_recovery:
+        title: 'Récupération du mot de passe'
 carpool:
     ad_create:
         title: 'Publier une annonce'

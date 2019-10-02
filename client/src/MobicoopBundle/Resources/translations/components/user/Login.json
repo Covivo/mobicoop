@@ -1,9 +1,13 @@
 {
     "fr":{
         "title":"Connexion",
-        "errorCredentials":"Nom d'utilisateur ou mot de passe incorrect."
+        "errorCredentials":"Nom d'utilisateur ou mot de passe incorrect.",
+        "urlRecovery":"/utilisateur/mot-de-passe/recuperation",
+        "textRecovery":"Mot de passe oublié ?"
     },
     "en":{
-        "errorCredentials":"Bad username or password."
+        "title":"Connexion",
+        "errorCredentials":"Bad username or password.",
+        "urlRecovery":"Forgot password ?"
     }
 }

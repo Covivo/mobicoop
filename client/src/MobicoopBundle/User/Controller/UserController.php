@@ -273,113 +273,76 @@ class UserController extends AbstractController
 
 
     /**
-     * User password update.
-     * @param UserManager $userManager
-     *     The class managing the user.
-     * @param Request $request
-     *     The symfony request object.
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
-     * @throws Exception
+     * User password recovery page.
      */
-    public function userPasswordForgot(UserManager $userManager, Request $request)
+    public function userPasswordRecovery()
     {
-        $userRequest= new User();
-        $form = $this->createFormBuilder($userRequest)
-        ->add('email', EmailType::class, ['required'=> false])
-        ->add('telephone', TextType::class, ['required' => false])
-        ->add('submit', SubmitType::class)
-        ->getForm();
+        return $this->render('@Mobicoop/user/passwordRecovery.html.twig', []);
+    }
 
-        $form->handleRequest($request);
-        $error = false;
+    /**
+     * Get the password of a user if it exists
+     * @param UserManager $userManager The class managing the user.
+     * @param Request $request The symfony request object.
+     */
+    public function getUserPasswordForRecovery(UserManager $userManager, Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if (!empty($userRequest->getEmail())) {
-                /** @var User $user */
-                $user = $userManager->findByEmail($userRequest->getEmail());
-                $reponseofmanager= $this->handleManagerReturnValue($user);
-                if (!empty($reponseofmanager)) {
-                    return $reponseofmanager;
-                }
-            } else {
-                if (!empty($userRequest->getTelephone())) {
-                    $user = $userManager->findByPhone($userRequest->getTelephone());
-                } else {
-                    return $this->redirectToRoute('user_password_forgot');
-                }
+            if (isset($data["email"]) && $data["email"]!==null) {
+                return new Response(json_encode($userManager->findByEmail($data["email"], true)));
+            } elseif (isset($data["phone"]) && $data["phone"]!==null) {
+                return new Response(json_encode($userManager->findByPhone($data["phone"], true)));
             }
-            if (empty($user)) {
-                return $this->redirectToRoute('user_password_forgot');
-            } else {
-                $data= $userManager->updateUserToken($user);
-                $reponseofmanager= $this->handleManagerReturnValue($data);
-                if (!empty($reponseofmanager)) {
-                    return $reponseofmanager;
-                }
-                if (!empty($data)) {
-                    return $this->redirectToRoute('user_password_forgot');
-                }
-            }
-        } else {
-            return $this->render('@Mobicoop/user/password.html.twig', [
-                'form' => $form->createView(),
-                'user' => $user??$userRequest,
-                'error' => $error,
-                'waitParametersForMail' => true
-            ]);
+            return new Response();
         }
     }
 
     /**
      * Reset password
      */
-    public function userPasswordReset(UserManager $userManager, Request $request, string $token)
+    public function userPasswordReset(UserManager $userManager, string $token)
     {
         $user = $userManager->findByPwdToken($token);
-        $reponseofmanager= $this->handleManagerReturnValue($user);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        $error = false;
 
         if (empty($user) || (time() - (int)$user->getPwdTokenDate()->getTimestamp()) > 86400) {
             return $this->redirectToRoute('user_password_forgot');
         } else {
-            $form = $this->createFormBuilder($user)
-                ->add('password', RepeatedType::class, [
-                    'type' => PasswordType::class,
-                    'invalid_message' => 'The password fields must match.',
-                    'options' => ['attr' => ['class' => 'password-field']],
-                    'required' => true,
-                    'first_options'  => ['label' => 'Password'],
-                    'second_options' => ['label' => 'Repeat Password'],
-                ])
-                ->add('submit', SubmitType::class)
-                ->getForm();
+            return $this->render(
+                '@Mobicoop/user/passwordRecoveryUpdate.html.twig',
+                [
+                        "token" => $token,
+                    ]
+            );
+        }
+    }
 
-            $form->handleRequest($request);
-            if ($form->isSubmitted() && $form->isValid()) {
+    /**
+     * Update the new Password after recovery
+     */
+    public function userUpdatePasswordReset(UserManager $userManager, Request $request, string $token)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            
+            $user = $userManager->findByPwdToken($token);
+
+            if (!empty($user)) {
+                $user->setPassword($data["password"]);
+
                 if ($user = $userManager->updateUserPassword($user)) {
-                    $reponseofmanager= $this->handleManagerReturnValue($user);
-                    if (!empty($reponseofmanager)) {
-                        return $reponseofmanager;
-                    }
                     // after successful update, we re-log the user
                     $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                     $this->get('security.token_storage')->setToken($token);
                     $this->get('session')->set('_security_main', serialize($token));
                     $userManager->flushUserToken($user);
-                    return $this->redirectToRoute('user_profile_update');
+                    return new Response(json_encode($user));
                 } else {
-                    return $this->redirectToRoute('user_password_forgot');
+                    return new Response(json_encode("error"));
                 }
             } else {
-                return $this->render('@Mobicoop/user/password.html.twig', [
-                    'form' => $form->createView(),
-                    'user' => $user,
-                    'error' => $error,
-                    'waitParametersForMail' => true
-                ]);
+                return new Response(json_encode("error"));
             }
         }
     }
