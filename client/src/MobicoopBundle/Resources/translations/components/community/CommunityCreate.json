@@ -31,6 +31,9 @@
     },
     "redirect": {
       "route": "/communautes"
+    },
+    "error": {
+      "communityName": "Cette communauté existe déjà veuillez utiliser un autre nom"
     }
   },
   "en": {

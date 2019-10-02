@@ -1,5 +1,20 @@
 <template>
   <v-content>
+    <!--SnackBar-->
+    <v-snackbar
+      v-model="snackbar"
+      color="error"
+      top
+    >
+      {{ snackError }}
+      <v-btn
+        color="white"
+        text
+        @click="snackbar = false"
+      >
+        <v-icon>mdi-close-circle-outline</v-icon>
+      </v-btn>
+    </v-snackbar>
     <v-container>
       <v-row
         justify="center"
@@ -13,6 +28,7 @@
             <v-col cols="3">
               <v-file-input
                 v-model="avatar"
+                disabled
                 :rules="rules"
                 accept="image/png, image/jpeg, image/bmp"
                 :label="$t('form.image.label')"
@@ -142,6 +158,8 @@ export default {
       membersHidden: false,
       proposalsHidden: false,
       privateCommunity: false,
+      snackError: null,
+      snackbar: false,
     }
   },
   methods: {
@@ -149,7 +167,7 @@ export default {
       this.communityAddress = address;
     },
     createCommunity() {
-      // this.loading = true;
+      this.loading = true;
       let newCommunity = new FormData();
       newCommunity.append("name", this.name);
       newCommunity.append("description", this.description);
@@ -167,10 +185,13 @@ export default {
           }
         })
         .then(res => {
-          this.errorUpdate = res.data.state;
-          this.snackbar = true;
-          this.loading = false;
-          // window.location.href = this.$t('redirect.route');
+          console.error(res.data)
+          if (res.data == 'error') {
+            this.snackError = this.$t('error.communityName')
+            this.snackbar = true;
+            this.loading = false;
+          }
+          else window.location.href = this.$t('redirect.route');
         });
     },
   }

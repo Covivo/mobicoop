@@ -159,4 +159,19 @@ class CommunityManager
         $proposals = $this->dataProvider->getSubCollection($id, "proposal", "proposals");
         return $proposals->getValue();
     }
+
+    /**
+     * Undocumented function
+     *
+     * @param string $name
+     * @return void
+     */
+    public function checkNameAvailability(string $name)
+    {
+        $response = $this->dataProvider->getSpecialCollection('exists', ['name' => $name]);
+        if (count($response->getValue()->getMember()) == 0) {
+            return true;
+        }
+        return false;
+    }
 }

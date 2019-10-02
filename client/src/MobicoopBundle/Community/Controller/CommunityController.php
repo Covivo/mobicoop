@@ -69,58 +69,55 @@ class CommunityController extends AbstractController
         $address = new Address();
         // $image = new Image();
         
-        $error = false;
-        
         if ($request->isMethod('POST')) {
             $data = $request->request;
 
-            // set the user as a user of the community
-            $communityUser->setUser($user);
-            $communityUser->setStatus(1);
-            $communityUser->setAdmin($user);
-            $communityUser->setCreatedDate(new \DateTime());
-            $communityUser->setAcceptedDate(new \DateTime());
-               
-            // set community address
-            $communityAddress=json_decode($data->get('address'), true);
-            dump($communityAddress);
-            $address->setAddressCountry($communityAddress['addressCountry']);
-            $address->setAddressLocality($communityAddress['addressLocality']);
-            $address->setCountryCode($communityAddress['countryCode']);
-            $address->setCounty($communityAddress['county']);
-            $address->setLatitude($communityAddress['latitude']);
-            $address->setLocalAdmin($communityAddress['localAdmin']);
-            $address->setLongitude($communityAddress['longitude']);
-            $address->setMacroCounty($communityAddress['macroCounty']);
-            $address->setMacroRegion($communityAddress['macroRegion']);
-            $address->setPostalCode($communityAddress['postalCode']);
-            $address->setRegion($communityAddress['region']);
-            $address->setStreet($communityAddress['street']);
-            $address->setHouseNumber($communityAddress['houseNumber']);
-            $address->setStreetAddress($communityAddress['streetAddress']);
-            $address->setSubLocality($communityAddress['subLocality']);
-            $address->setDisplayLabel($communityAddress['displayLabel']);
+            // Check if the community name is available (if yes continue)
+            if ($communityManager->checkNameAvailability($data->get('name'))) {
 
-            dump($address);
-            // set community infos
-            $community->setUser($user);
-            $community->setName($data->get('name'));
-            $community->setDescription($data->get('description'));
-            $community->setFullDescription($data->get('fullDescription'));
-            $community->setAddress($address);
-            $community->addCommunityUser($communityUser);
-            $community->setMembersHidden($data->get('membersHidden'));
-            $community->setProposalsHidden($data->get('proposalsHidden'));
-            $community->setPrivate($data->get('privateCommunity'));
+                // set the user as a user of the community
+                $communityUser->setUser($user);
+                $communityUser->setStatus(1);
+                
+                // set community address
+                $communityAddress=json_decode($data->get('address'), true);
+                $address->setAddressCountry($communityAddress['addressCountry']);
+                $address->setAddressLocality($communityAddress['addressLocality']);
+                $address->setCountryCode($communityAddress['countryCode']);
+                $address->setCounty($communityAddress['county']);
+                $address->setLatitude($communityAddress['latitude']);
+                $address->setLocalAdmin($communityAddress['localAdmin']);
+                $address->setLongitude($communityAddress['longitude']);
+                $address->setMacroCounty($communityAddress['macroCounty']);
+                $address->setMacroRegion($communityAddress['macroRegion']);
+                $address->setPostalCode($communityAddress['postalCode']);
+                $address->setRegion($communityAddress['region']);
+                $address->setStreet($communityAddress['street']);
+                $address->setHouseNumber($communityAddress['houseNumber']);
+                $address->setStreetAddress($communityAddress['streetAddress']);
+                $address->setSubLocality($communityAddress['subLocality']);
+                $address->setDisplayLabel($communityAddress['displayLabel']);
 
-            // create community
-            // $communityManager->createCommunity($community);
+                // set community infos
+                $community->setUser($user);
+                $community->setName($data->get('name'));
+                $community->setDescription($data->get('description'));
+                $community->setFullDescription($data->get('fullDescription'));
+                $community->setAddress($address);
+                $community->addCommunityUser($communityUser);
+                $community->setMembersHidden(json_decode($data->get('membersHidden')));
+                $community->setProposalsHidden(json_decode($data->get('proposalsHidden')));
+                $community->setPrivate(json_decode($data->get('privateCommunity')));
 
-            return new Response(json_encode('tada'));
+                // create community
+                $communityManager->createCommunity($community);
+
+                return new Response();
+            }
+            // return error because name already exists
+            return new Response(json_encode("error"));
         }
-
         return $this->render('@Mobicoop/community/createCommunity.html.twig', [
-            'error' => $error
         ]);
     }
 
