@@ -138,7 +138,7 @@ class ImageManager
                 if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition())) {
                     return $fileName;
                 }
-                break;    
+                break;
             default:
                 break;
         }
