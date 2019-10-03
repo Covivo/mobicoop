@@ -36,6 +36,7 @@ use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use function GuzzleHttp\json_decode;
 
@@ -67,11 +68,9 @@ class CommunityController extends AbstractController
         $user = new User($userManager->getLoggedUser()->getId());
         $communityUser = new CommunityUser();
         $address = new Address();
-        // $image = new Image();
         
         if ($request->isMethod('POST')) {
             $data = $request->request;
-
             // Check if the community name is available (if yes continue)
             if ($communityManager->checkNameAvailability($data->get('name'))) {
 
@@ -107,15 +106,26 @@ class CommunityController extends AbstractController
                 $community->addCommunityUser($communityUser);
                 $community->setMembersHidden(json_decode($data->get('membersHidden')));
                 $community->setProposalsHidden(json_decode($data->get('proposalsHidden')));
-                $community->setPrivate(json_decode($data->get('privateCommunity')));
 
                 // create community
-                $communityManager->createCommunity($community);
+                if ($community = $communityManager->createCommunity($community)) {
 
-                return new Response();
+                    // Post avatar of the community
+                    $image = new Image();
+                    $image->setCommunityFile($request->files->get('avatar'));
+                    $image->setCommunityId($community->getId());
+                    $image->setName($community->getName());
+                    if ($image = $imageManager->createImage($image)) {
+                        return new Response();
+                    }
+                    // return error if image post didnt't work
+                    return new Response(json_encode('error.image'));
+                }
+                // return error if community post didn't work
+                return new Response(json_encode('error.community.create'));
             }
             // return error because name already exists
-            return new Response(json_encode("error"));
+            return new Response(json_encode('error.community.name'));
         }
         return $this->render('@Mobicoop/community/createCommunity.html.twig', [
         ]);
@@ -187,7 +197,7 @@ class CommunityController extends AbstractController
             // get all community users ID
             array_push($communityUsersId, $communityUser->getUser()->getId());
         }
-        //test if the user logged is already a member of the community
+        //test if the user logged is not already a member of the community
         if ($user && $user !=='' && !in_array($user->getId(), $communityUsersId)) {
             $communityUser = new CommunityUser();
             
@@ -206,7 +216,7 @@ class CommunityController extends AbstractController
     }
 
     /**
-     * Undocumented function
+     * Get last three users
      *
      * @param int $id
      * @param CommunityManager $communityManager
@@ -227,7 +237,7 @@ class CommunityController extends AbstractController
     }
 
     /**
-     * Undocumented function
+     * Get all users of a community
      *
      * @param integer $id
      * @param CommunityManager $communityManager
@@ -255,7 +265,7 @@ class CommunityController extends AbstractController
     }
 
     /**
-     * Undocumented function
+     * Get all proposals of a community
      *
      * @param integer $id
      * @param CommunityManager $communityManager

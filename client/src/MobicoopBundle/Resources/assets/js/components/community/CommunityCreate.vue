@@ -28,7 +28,6 @@
             <v-col cols="3">
               <v-file-input
                 v-model="avatar"
-                disabled
                 :rules="rules"
                 accept="image/png, image/jpeg, image/bmp"
                 :label="$t('form.image.label')"
@@ -72,17 +71,12 @@
                 :label="$t('form.checkboxes.proposalsHidden')"
                 color="success"
               />
-              <v-checkbox
-                v-model="privateCommunity"
-                :label="$t('form.checkboxes.privateCommunity')"
-                color="success"
-              />
             </v-col>
             <v-col cols="3">
               <v-textarea
                 v-model="fullDescription"
                 :label="$t('form.fullDescription.label')"
-                rows="7"
+                rows="5"
                 auto-grow
                 clearable
                 outlined
@@ -157,7 +151,6 @@ export default {
       loading: false,
       membersHidden: false,
       proposalsHidden: false,
-      privateCommunity: false,
       snackError: null,
       snackbar: false,
     }
@@ -167,7 +160,7 @@ export default {
       this.communityAddress = address;
     },
     createCommunity() {
-      this.loading = true;
+      // this.loading = true;
       let newCommunity = new FormData();
       newCommunity.append("name", this.name);
       newCommunity.append("description", this.description);
@@ -185,13 +178,12 @@ export default {
           }
         })
         .then(res => {
-          console.error(res.data)
-          if (res.data == 'error') {
-            this.snackError = this.$t('error.communityName')
+          if (res.data.includes('error')) {
+            this.snackError = this.$t(res.data)
             this.snackbar = true;
             this.loading = false;
           }
-          else window.location.href = this.$t('redirect.route');
+          // else window.location.href = this.$t('redirect.route');
         });
     },
   }

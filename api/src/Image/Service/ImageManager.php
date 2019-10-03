@@ -31,6 +31,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use App\Event\Repository\EventRepository;
+use App\Community\Repository\CommunityRepository;
 use App\Image\Repository\ImageRepository;
 use App\Image\Exception\OwnerNotFoundException;
 use App\Image\Exception\ImageException;
@@ -47,6 +48,7 @@ use ProxyManager\Exception\FileNotWritableException;
 class ImageManager
 {
     private $eventRepository;
+    private $communityRepository;
     private $imageRepository;
     private $fileManager;
     private $types;
@@ -59,15 +61,17 @@ class ImageManager
      * Constructor.
      *
      * @param EventRepository $eventRepository
+     * @param CommunityRepository $communityRepository
      * @param ImageRepository $imageRepository
      * @param FileManager $fileManager
      * @param ContainerInterface $container
      * @param LoggerInterface $logger
      * @param array $types
      */
-    public function __construct(EventRepository $eventRepository, ImageRepository $imageRepository, FileManager $fileManager, ContainerInterface $container, LoggerInterface $logger, array $types)
+    public function __construct(EventRepository $eventRepository, CommunityRepository $communityRepository, ImageRepository $imageRepository, FileManager $fileManager, ContainerInterface $container, LoggerInterface $logger, array $types)
     {
         $this->eventRepository = $eventRepository;
+        $this->communityRepository = $communityRepository;
         $this->imageRepository = $imageRepository;
         $this->fileManager = $fileManager;
         $this->types = $types;
@@ -88,6 +92,12 @@ class ImageManager
             return $this->eventRepository->find($image->getEventId());
         } elseif (!is_null($image->getEvent())) {
             // the image is an image for an event
+            return $this->eventRepository->find($image->getEvent()->getId());
+        } elseif (!is_null($image->getCommunityId())) {
+            // the image is an image for a community
+            return $this->eventRepository->find($image->getCommunityId());
+        } elseif (!is_null($image->getCommunity())) {
+            // the image is an image for a community
             return $this->eventRepository->find($image->getEvent()->getId());
         }
         throw new OwnerNotFoundException('The owner of this image cannot be found');

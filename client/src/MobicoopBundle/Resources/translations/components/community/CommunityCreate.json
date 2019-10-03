@@ -33,7 +33,11 @@
       "route": "/communautes"
     },
     "error": {
-      "communityName": "Cette communauté existe déjà veuillez utiliser un autre nom"
+      "community" : {
+        "name": "Cette communauté existe déjà veuillez utiliser un autre nom",
+        "create": "La création de la communauté a échoué"
+      },
+      "image": "L'image n'a pas été enregistrée"
     }
   },
   "en": {
