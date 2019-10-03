@@ -25,6 +25,7 @@ namespace App\Image\Service;
 
 use App\Image\Entity\Image;
 use App\Event\Entity\Event;
+use App\Community\Entity\Community;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\FileManager;
 use Psr\Log\LoggerInterface;
@@ -95,10 +96,10 @@ class ImageManager
             return $this->eventRepository->find($image->getEvent()->getId());
         } elseif (!is_null($image->getCommunityId())) {
             // the image is an image for a community
-            return $this->eventRepository->find($image->getCommunityId());
+            return $this->communityRepository->find($image->getCommunityId());
         } elseif (!is_null($image->getCommunity())) {
             // the image is an image for a community
-            return $this->eventRepository->find($image->getEvent()->getId());
+            return $this->communityRepository->find($image->getCommunity()->getId());
         }
         throw new OwnerNotFoundException('The owner of this image cannot be found');
     }
@@ -131,6 +132,13 @@ class ImageManager
                     return $fileName;
                 }
                 break;
+            case Community::class:
+                // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
+                // for now, for an event, the filename will be the sanitized name of the event and the position of the image in the set
+                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition())) {
+                    return $fileName;
+                }
+                break;    
             default:
                 break;
         }
