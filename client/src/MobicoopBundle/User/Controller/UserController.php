@@ -672,5 +672,4 @@ class UserController extends AbstractController
 
         return new Response(json_encode("Not a post"));
     }
-
 }
