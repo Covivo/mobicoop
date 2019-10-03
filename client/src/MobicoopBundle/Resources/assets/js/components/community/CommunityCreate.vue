@@ -16,6 +16,18 @@
       </v-btn>
     </v-snackbar>
     <v-container>
+      <v-row 
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          md="8"
+          xl="6"
+          align="center"
+        >
+          <h1>{{ $t('title') }}</h1>
+        </v-col>
+      </v-row>
       <v-row
         justify="center"
         align="center"
@@ -26,18 +38,32 @@
         >
           <v-row justify="center">
             <v-col cols="3">
-              <v-file-input
-                v-model="avatar"
-                :rules="rules"
-                accept="image/png, image/jpeg, image/bmp"
-                :label="$t('form.image.label')"
-                prepend-icon="mdi-camera"
-              />
-            </v-col>
-            <v-col cols="3">
               <v-text-field
                 v-model="name"
+                :rules="nameRules"
                 :label="$t('form.name.label')"
+              />
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col cols="3">
+              <v-text-field
+                v-model="description"
+                :label="$t('form.description.label')"
+              />
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col cols="3">
+              <v-textarea
+                v-model="fullDescription"
+                :rules="fullDescriptionRules"
+                :label="$t('form.fullDescription.label')"
+                rows="5"
+                auto-grow
+                clearable
+                outlined
+                row-height="24"
               />
             </v-col>
           </v-row>
@@ -49,38 +75,15 @@
                 @address-selected="addressSelected"
               />
             </v-col>
-            <v-col cols="3">
-              <v-text-field
-                v-model="description"
-                :label="$t('form.description.label')"
-              />
-            </v-col>
           </v-row>
           <v-row justify="center">
-            <v-col
-              v-show="true"
-              cols="3"
-            >
-              <v-checkbox
-                v-model="membersHidden"
-                :label="$t('form.checkboxes.membersHidden')"
-                color="success"
-              />
-              <v-checkbox
-                v-model="proposalsHidden"
-                :label="$t('form.checkboxes.proposalsHidden')"
-                color="success"
-              />
-            </v-col>
             <v-col cols="3">
-              <v-textarea
-                v-model="fullDescription"
-                :label="$t('form.fullDescription.label')"
-                rows="5"
-                auto-grow
-                clearable
-                outlined
-                row-height="24"
+              <v-file-input
+                v-model="avatar"
+                :rules="avatarRules"
+                accept="image/png, image/jpeg, image/bmp"
+                :label="$t('form.avatar.label')"
+                prepend-icon="mdi-inser-photo"
               />
             </v-col>
           </v-row>
@@ -140,17 +143,22 @@ export default {
   },
   data () {
     return {
-      rules: [
-        value => !value || value.size < 2000000 || "La taille de votre image ne doit pas dépassr 2MB",
+      avatarRules: [
+        v => !!v || this.$t("form.avatar.required"),
+        v => !v || v.size < 1000000 || this.$t("form.avatar.size"),
       ],
       communityAddress: null,
       name: null,
+      nameRules: [
+        v => !!v || this.$t("form.name.required"),
+      ],
       description: null,
       fullDescription: null,
+      fullDescriptionRules: [
+        v => !!v || this.$t("form.fullDescription.required"),
+      ],
       avatar: null,
       loading: false,
-      membersHidden: false,
-      proposalsHidden: false,
       snackError: null,
       snackbar: false,
     }
@@ -167,9 +175,6 @@ export default {
       newCommunity.append("fullDescription", this.fullDescription);
       newCommunity.append("avatar", this.avatar);
       newCommunity.append("address", JSON.stringify(this.communityAddress));
-      newCommunity.append("proposalsHidden", this.proposalsHidden);
-      newCommunity.append("membersHidden", this.membersHidden);
-      newCommunity.append("privateCommunity", this.privateCommunity);
 
       axios 
         .post(this.$t('buttons.create.route'), newCommunity, {

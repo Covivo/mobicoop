@@ -1,5 +1,6 @@
 {
   "fr": {
+    "title": "Créez votre communauté",
     "buttons": { 
       "create": {
         "label": "Créer la communauté",
@@ -8,25 +9,24 @@
     },
     "form": {
       "name": {
-        "label": "Nom de la communauté"
+        "label": "Nom de la communauté",
+        "required": "Le nom de la communauté est requis"
       },
       "description": {
         "label": "Description courte de la communauté"
       },
       "fullDescription": {
-        "label": "Description détaillée de la communauté"
+        "label": "Description détaillée de la communauté",
+        "required": "La description détaillée de la communauté est requise"
       },
-      "image": {
+      "avatar": {
         "label": "Avatar de la communauté",
-        "errorSize": "Votre image ne doit pas excéder 2MB"
+        "required": "L'avatar de la communauté est requis",
+        "size": "La taille maximale de l'avatar est de 1Mo"
       },
       "address": {
-        "label": "Adresse de la communauté"
-      },
-      "checkboxes": {
-        "membersHidden": "Cacher les membres de la communaité",
-        "proposalsHidden": "Cacher les trajets de la communauté",
-        "privateCommunity": "Cette communauté est privée"
+        "label": "Adresse de la communauté",
+        "required": "L'adesse de la communauté est requise"
       }
     },
     "redirect": {

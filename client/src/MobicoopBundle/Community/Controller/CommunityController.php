@@ -104,8 +104,6 @@ class CommunityController extends AbstractController
                 $community->setFullDescription($data->get('fullDescription'));
                 $community->setAddress($address);
                 $community->addCommunityUser($communityUser);
-                $community->setMembersHidden(json_decode($data->get('membersHidden')));
-                $community->setProposalsHidden(json_decode($data->get('proposalsHidden')));
 
                 // create community
                 if ($community = $communityManager->createCommunity($community)) {
