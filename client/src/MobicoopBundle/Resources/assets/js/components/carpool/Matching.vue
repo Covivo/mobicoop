@@ -15,6 +15,7 @@
             :origin="origin"
             :destination="destination"
             :date="date"
+            :time="time"
             :regular="regular"
           />
 
@@ -23,14 +24,11 @@
 
           <!-- Matching results -->
           <matching-results
-            :origin-latitude="originLatitude"
-            :origin-longitude="originLongitude"
-            :destination-latitude="destinationLatitude"
-            :destination-longitude="destinationLongitude"
+            :origin="origin"
+            :destination="destination"
             :date="date"
-            :url="url"
+            :time="time"
             :regular="regular"
-            :show-regular="showRegular"
             :user="user"
             @carpool="carpool"
           />
@@ -64,34 +62,18 @@ export default {
   },
   props: {
     origin: {
-      type: String,
+      type: Object,
       default: null
     },
     destination: {
-      type: String,
-      default: null
-    },
-    originLatitude: {
-      type: String,
-      default: null
-    },
-    originLongitude: {
-      type: String,
-      default: null
-    },
-    destinationLatitude: {
-      type: String,
-      default: null
-    },
-    destinationLongitude: {
-      type: String,
+      type: Object,
       default: null
     },
     date: {
       type: String,
       default: null
     },
-    url: {
+    time: {
       type: String,
       default: null
     },
@@ -102,10 +84,6 @@ export default {
     regular: {
       type: Boolean,
       default: false
-    },
-    showRegular: {
-      type: Boolean,
-      default: false
     }
   },
   data : function() {
@@ -113,28 +91,20 @@ export default {
       locale: this.$i18n.locale,
     };
   },
-  computed: {
-    isoDate() {
-      moment.locale(this.locale);
-      return this.date
-        ? moment(this.date).toISOString()
-        : "";
-    }
-  },
   methods :{
     carpool(params) {
-      axios.get("/matching/search/contactforcarpool", {
+      axios.get(this.$t("contactUrl"), {
         params:{
           "proposalId":params.proposal.id,
-          "origin_addressLocality": this.origin,
-          "origin_streetAddress": "", /** To do */
-          "destination_addressLocality": this.destination,
-          "destination_streetAddress": "", /** To do */
+          "origin_streetAddress": this.originStreetAddress,
+          "origin_addressLocality": this.originAddressLocality,
+          "destination_streetAddress": this.destinationStreetAddress,
+          "destination_addressLocality": this.destinationAddressLocality,
           "origin_latitude": Number(this.originLatitude),
           "origin_longitude": Number(this.originLongitude),
           "destination_latitude": Number(this.destinationLatitude),
           "destination_longitude": Number(this.destinationLongitude),
-          "date": this.isoDate,
+          "date": this.date,
           "priceKm": params.proposal.criteria.priceKm,
           "driver": params.driver,
           "passenger": params.passenger,

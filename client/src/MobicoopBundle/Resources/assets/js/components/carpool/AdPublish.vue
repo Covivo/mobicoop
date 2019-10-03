@@ -621,7 +621,13 @@ export default {
       selectedCommunities: null,
       pointsToMap:[],
       directionWay:[],
-      bbox:null
+      bbox:null,
+      regularLifeTime: null,    // not used yet
+      strictDate: null,         // not used yet
+      strictRegular: null,      // not used yet
+      strictPunctual: null,     // not used yet
+      useTime: null,            // not used yet
+      anyRouteAsPassenger: null // not used yet
     }
   },
   computed: {
@@ -793,6 +799,14 @@ export default {
       if (this.price) postObject.price = this.price;
       if (this.pricePerKm) postObject.priceKm = this.pricePerKm;
       if (this.message) postObject.message = this.message;
+      // the following parameters are not used yet but we keep them here for possible future use
+      if (this.regularLifetime) postObject.regularLifetime = this.regularLifetime;
+      if (this.strictDate) postObject.strictDate = this.strictDate;
+      if (this.strictRegular) postObject.strictRegular = this.strictRegular;
+      if (this.strictPunctual) postObject.strictPunctual = this.strictPunctual;
+      if (this.useTime) postObject.useTime = this.useTime;
+      if (this.anyRouteAsPassenger) postObject.anyRouteAsPassenger = this.anyRouteAsPassenger;
+
       this.loading = true;
       var self = this;
       axios.post(this.urlToCall,postObject,{
@@ -802,7 +816,7 @@ export default {
       })
         .then(function (response) {
           if (response.data && response.data.result && response.data.result.id) {
-            // uncomment when results page activeted
+            // uncomment when results page activated
             // var urlRedirect = `${self.baseUrl}/`+self.resultsUrl.replace(/{id}/,response.data.result.id);
             // window.location.href = urlRedirect;
             window.location.href = "/";

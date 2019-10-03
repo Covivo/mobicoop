@@ -42,9 +42,9 @@ class Criteria
             "regular"=>self::FREQUENCY_REGULAR
     ];
 
-    CONST ROLE_DRIVER = 1;
-    CONST ROLE_PASSENGER = 2;
-    CONST ROLE_BOTH = 3;
+    const ROLE_DRIVER = 1;
+    const ROLE_PASSENGER = 2;
+    const ROLE_BOTH = 3;
     
     /**
      * @var int The id of this criteria.

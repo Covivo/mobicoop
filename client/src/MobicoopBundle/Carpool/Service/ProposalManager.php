@@ -120,6 +120,7 @@ class ProposalManager
      * @param float $destination_longitude  The destination longitude
      * @param \Datetime $date               The date and time in a Datetime object
      * @param int $frequency                The frequency of the trip
+     * @param integer $regularLifeTime      The lifetime of a regular trip in years
      * @param boolean|null $strictDate      Strict date
      * @param boolean|null $useTime         Use the time part of the date
      * @param boolean $strictPunctual       Strictly punctual
@@ -129,20 +130,20 @@ class ProposalManager
      * @return array|null The matchings found or null if not found.
      */
     public function getMatchingsForSearch(
-        float $origin_latitude, 
-        float $origin_longitude, 
-        float $destination_latitude, 
-        float $destination_longitude, 
-        \Datetime $date, 
-        int $frequency, 
+        float $origin_latitude,
+        float $origin_longitude,
+        float $destination_latitude,
+        float $destination_longitude,
+        \Datetime $date,
+        int $frequency,
+        ?int $regularLifeTime = null,
         ?bool $strictDate = null,
         ?bool $useTime = null,
-        bool $strictPunctual = null,
-        bool $strictRegular = null,
-        int $role = null,
+        ?bool $strictPunctual = null,
+        ?bool $strictRegular = null,
+        ?int $role = null,
         $format = null
-        )
-    {
+    ) {
         // we set the params
         $params = [
             "origin_latitude" => $origin_latitude,
@@ -152,11 +153,24 @@ class ProposalManager
             "date" => $date->format('Y-m-d\TH:i:s\Z'),
             "frequency" => $frequency
         ];
-        if (!is_null($strictDate)) $params["strictDate"] = $strictDate;
-        if (!is_null($useTime)) $params["useTime"] = $useTime;
-        if (!is_null($strictPunctual)) $params["strictPunctual"] = $strictPunctual;
-        if (!is_null($strictRegular)) $params["strictRegular"] = $strictRegular;
-        if (!is_null($role)) $params["role"] = $role;
+        if (!is_null($regularLifeTime)) {
+            $params["regularLifeTime"] = $regularLifeTime;
+        }
+        if (!is_null($strictDate)) {
+            $params["strictDate"] = $strictDate;
+        }
+        if (!is_null($useTime)) {
+            $params["useTime"] = $useTime;
+        }
+        if (!is_null($strictPunctual)) {
+            $params["strictPunctual"] = $strictPunctual;
+        }
+        if (!is_null($strictRegular)) {
+            $params["strictRegular"] = $strictRegular;
+        }
+        if (!is_null($role)) {
+            $params["role"] = $role;
+        }
         if (is_null($format)) {
             $format = $this->dataProvider::RETURN_OBJECT;
         }

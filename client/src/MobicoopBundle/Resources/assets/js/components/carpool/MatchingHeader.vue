@@ -70,14 +70,18 @@ export default {
   },
   props: {
     origin: {
-      type: String,
+      type: Object,
       default: null
     },
     destination: {
-      type: String,
+      type: Object,
       default: null
     },
     date: {
+      type: String,
+      default: null
+    },
+    time: {
       type: String,
       default: null
     },
@@ -100,14 +104,14 @@ export default {
     },
     computedOrigin() {
       return {
-        streetAddress: null,
-        addressLocality: this.origin
+        streetAddress: this.origin.streetAddress,
+        addressLocality: this.origin.addressLocality
       }
     },
     computedDestination() {
       return {
-        streetAddress: null,
-        addressLocality: this.destination
+        streetAddress: this.destination.streetAddress,
+        addressLocality: this.destination.addressLocality
       }
     },
   },

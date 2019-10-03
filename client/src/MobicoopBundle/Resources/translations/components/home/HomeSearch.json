@@ -23,7 +23,8 @@
             "search": {
                 "label": "Rechercher"
             }
-        }
+        },
+        "searchRoute": "covoiturage/recherche"
     },
     "en": {
         "title": "Mobicoop",
@@ -48,8 +49,8 @@
             "search": {
                 "label": "Search"
             }
-        }
-        
+        },
+        "searchRoute": "carpool/search"
     }
     
 }

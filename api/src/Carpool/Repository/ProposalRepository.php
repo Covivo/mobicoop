@@ -61,7 +61,7 @@ class ProposalRepository
      * - similar dates
      * - similar times (~ passenger time is after driver time)
      * - similar basic geographical zones
-     * 
+     *
      * TODO : We also limit to the drivers that have enough seats left in their car for the passenger's needs.
      *
      * It is a pre-filter, the idea is to limit the next step : the route calculations (that cannot be done directly in the model).
@@ -396,10 +396,10 @@ class ProposalRepository
                 $setSunMinTime = $setSunMaxTime = false;    // ---
                 $setMinTime = false;  // ---
                 $setMaxTime = false;  //
-                $setMonTime = false;  // 
+                $setMonTime = false;  //
                 $setTueTime = false;  //
                 $setWedTime = false;  // Flags for punctual min/max times
-                $setThuTime = false;  // 
+                $setThuTime = false;  //
                 $setFriTime = false;  //
                 $setSatTime = false;  //
                 $setSunTime = false;  // ---
@@ -432,7 +432,7 @@ class ProposalRepository
                             $minTime .= '(DAYOFWEEK(c.fromDate) = 1 and c.maxTime >= :sunMinTime) OR '; //
                             $maxTime .= '(DAYOFWEEK(c.fromDate) = 1 and c.minTime <= :sunMaxTime) OR '; // used for punctual candidate
                             $setSunTime = true;
-                        }   
+                        }
                     }
                 }
                 if ($proposal->getCriteria()->isMonCheck()) {
@@ -457,7 +457,7 @@ class ProposalRepository
                             $minTime .= '(DAYOFWEEK(c.fromDate) = 2 and c.maxTime >= :monMinTime) OR '; //
                             $maxTime .= '(DAYOFWEEK(c.fromDate) = 2 and c.minTime <= :monMaxTime) OR '; // used for punctual candidate
                             $setMonTime = true;
-                        }   
+                        }
                     }
                 }
                 if ($proposal->getCriteria()->isTueCheck()) {

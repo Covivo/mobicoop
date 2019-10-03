@@ -66,27 +66,19 @@ export default {
     sharedMessages: CommonTranslations
   },
   props: {
-    originLatitude: {
-      type: String,
+    origin: {
+      type: Object,
       default: null
     },
-    originLongitude: {
-      type: String,
-      default: null
-    },
-    destinationLatitude: {
-      type: String,
-      default: null
-    },
-    destinationLongitude: {
-      type: String,
+    destination: {
+      type: Object,
       default: null
     },
     date: {
       type: String,
       default: null
     },
-    url: {
+    time: {
       type: String,
       default: null
     },
@@ -95,10 +87,6 @@ export default {
       default: null
     },
     regular: {
-      type: Boolean,
-      default: false
-    },
-    showRegular: {
       type: Boolean,
       default: false
     }
@@ -110,25 +98,20 @@ export default {
     };
   },
   computed: {
-    isoDate() {
-      moment.locale(this.locale);
-      return this.date
-        ? moment(this.date).toISOString()
-        : "";
-    },
     numberOfMatchings() {
       return this.matchings ? Object.keys(this.matchings).length : 0 // ES5+
     }
   },
   created() {
     this.loading = true;
-    axios.get(this.url, {
+    axios.get(this.$t("matchingUrl"), {
       params: {
-        "origin_latitude": Number(this.originLatitude),
-        "origin_longitude": Number(this.originLongitude),
-        "destination_latitude": Number(this.destinationLatitude),
-        "destination_longitude": Number(this.destinationLongitude),
-        "date": this.isoDate,
+        "origin_latitude": Number(this.origin.latitude),
+        "origin_longitude": Number(this.origin.longitude),
+        "destination_latitude": Number(this.destination.latitude),
+        "destination_longitude": Number(this.destination.longitude),
+        "date": this.date,
+        "time": this.time,
         "regular": this.regular 
       }
     })

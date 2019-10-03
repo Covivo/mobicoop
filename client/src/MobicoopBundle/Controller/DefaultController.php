@@ -34,8 +34,6 @@ class DefaultController extends AbstractController
 {
     /**
      * HomePage
-     * @Route("/", name="home")
-     *
      */
     public function index()
     {
@@ -43,12 +41,10 @@ class DefaultController extends AbstractController
             '@Mobicoop/default/index.html.twig',
             [
                 'baseUri' => $_ENV['API_URI'],
-                'searchRoute' => 'covoiturage/recherche',
-                'metaDescription' => 'Homepage of Mobicoop'
+                'metaDescription' => 'Mobicoop'
             ]
         );
     }
-
 
     /**
      * Error Page.

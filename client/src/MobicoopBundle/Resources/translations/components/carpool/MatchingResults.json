@@ -1,8 +1,10 @@
 {
   "fr":{
+    "matchingUrl": "/covoiturage/recherche/matching",
     "matchingNumber": "Recherche en cours... | {number} annonce en covoiturage trouvée | {number} annonces en covoiturage trouvées"
   },
   "en":{
-
+    "matchingUrl": "/carpool/search/matching",
+    "matchingNumber": "Searching... | {number} carpooling ad found | {number} carpooling ads found"
   }
 }

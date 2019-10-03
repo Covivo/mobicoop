@@ -40,21 +40,11 @@ use Symfony\Component\HttpFoundation\Response;
 class CommunityController extends AbstractController
 {
     use HydraControllerTrait;
-    /**
-     * Get all communities.
-     */
-    public function list(CommunityManager $communityManager)
-    {
-        $this->denyAccessUnlessGranted('list', new Community());
-        return $this->render('@Mobicoop/community/communities.html.twig', [
-            'communities' => $communityManager->getCommunities(),
-        ]);
-    }
 
     /**
      * Create a community
      */
-    public function create(CommunityManager $communityManager, UserManager $userManager, Request $request)
+    public function communityCreate(CommunityManager $communityManager, UserManager $userManager, Request $request)
     {
         $community = new Community();
         $this->denyAccessUnlessGranted('create', $community);
@@ -80,9 +70,20 @@ class CommunityController extends AbstractController
     }
 
     /**
+     * Get all communities.
+     */
+    public function communityList(CommunityManager $communityManager)
+    {
+        $this->denyAccessUnlessGranted('list', new Community());
+        return $this->render('@Mobicoop/community/communities.html.twig', [
+            'communities' => $communityManager->getCommunities(),
+        ]);
+    }
+
+    /**
      * Show a community
      */
-    public function show($id, CommunityManager $communityManager, UserManager $userManager)
+    public function communityShow($id, CommunityManager $communityManager, UserManager $userManager)
     {
         // retrive community;
         $community = $communityManager->getCommunity($id);
@@ -107,32 +108,9 @@ class CommunityController extends AbstractController
     }
 
     /**
-     * Undocumented function
-     *
-     * @param [type] $id
-     * @param CommunityManager $communityManager
-     * @param UserManager $userManager
-     * @return void
-     */
-    public function communityUser(int $id, CommunityManager $communityManager, UserManager $userManager)
-    {
-        if ($userManager->getLoggedUser()) {
-            $communityUser = $communityManager->getCommunityUser($id, $userManager->getLoggedUser()->getId());
-            $reponseofmanager= $this->handleManagerReturnValue($communityUser);
-            if (!empty($reponseofmanager)) {
-                return $reponseofmanager;
-            }
-            return $this->json($communityUser);
-        }
-        
-        return new Response;
-    }
-
-
-    /**
      * Join a community
      */
-    public function joinCommunity($id, CommunityManager $communityManager, UserManager $userManager)
+    public function communityJoin($id, CommunityManager $communityManager, UserManager $userManager)
     {
         $community = $communityManager->getCommunity($id);
         $user = $userManager->getLoggedUser();
@@ -171,12 +149,33 @@ class CommunityController extends AbstractController
      * @param UserManager $userManager
      * @return void
      */
-    public function getCommunityLastUsers(int $id, CommunityManager $communityManager)
+    public function communityUser(int $id, CommunityManager $communityManager, UserManager $userManager)
+    {
+        if ($userManager->getLoggedUser()) {
+            $communityUser = $communityManager->getCommunityUser($id, $userManager->getLoggedUser()->getId());
+            $reponseofmanager= $this->handleManagerReturnValue($communityUser);
+            if (!empty($reponseofmanager)) {
+                return $reponseofmanager;
+            }
+            return $this->json($communityUser);
+        }
+        
+        return new Response;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param [type] $id
+     * @param CommunityManager $communityManager
+     * @param UserManager $userManager
+     * @return void
+     */
+    public function communityLastUsers(int $id, CommunityManager $communityManager)
     {
         // get the last 3 users and formate them to be used with vue
         $lastUsers = $communityManager->getLastUsers($id);
         $lastUsersFormated = [];
-        dump($lastUsers);
         foreach ($lastUsers as $key => $commUser) {
             $lastUsersFormated[$key]["name"]=ucfirst($commUser->getUser()->getGivenName())." ".ucfirst($commUser->getUser()->getFamilyName());
             $lastUsersFormated[$key]["acceptedDate"]=$commUser->getAcceptedDate()->format('d/m/Y');
@@ -191,7 +190,7 @@ class CommunityController extends AbstractController
      * @param CommunityManager $communityManager
      * @return void
      */
-    public function getCommunityMemberList(int $id, CommunityManager $communityManager)
+    public function communityMemberList(int $id, CommunityManager $communityManager)
     {
         // retrive community;
         $community = $communityManager->getCommunity($id);
@@ -219,7 +218,7 @@ class CommunityController extends AbstractController
      * @param CommunityManager $communityManager
      * @return void
      */
-    public function getCommunityProposals(int $id, CommunityManager $communityManager)
+    public function communityProposals(int $id, CommunityManager $communityManager)
     {
         $proposals = $communityManager->getProposals($id);
         $points = [];

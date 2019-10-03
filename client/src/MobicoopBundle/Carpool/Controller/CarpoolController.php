@@ -48,7 +48,7 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
-    public function post(int $communityId, ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
+    public function carpoolAdPost(int $communityId=null, ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
     {
         $proposal = new Proposal();
         $poster = $userManager->getLoggedUser();
@@ -64,13 +64,12 @@ class CarpoolController extends AbstractController
         }
 
         $this->denyAccessUnlessGranted('create_ad', $proposal);
-        // todo : add a csrf token
 
         // get the communities available for the user
         $communities = $communityManager->getAvailableUserCommunities($poster)->getMember();
         
         //get user's community
-        if ($communityId!==0) {
+        if (!is_null($communityId)) {
             $community = $communityManager->getCommunity($communityId);
         }
 
@@ -104,39 +103,38 @@ class CarpoolController extends AbstractController
 
     /**
      * Simple search results.
+     * (POST)
      */
-    public function simpleSearchResults($origin, $destination, $origin_latitude, $origin_longitude, $destination_latitude, $destination_longitude, $date, $regular)
+    public function carpoolSearchResult(Request $request)
     {
         return $this->render('@Mobicoop/carpool/results.html.twig', [
-            'origin' => urldecode($origin),
-            'destination' => urldecode($destination),
-            'origin_latitude' => urldecode($origin_latitude),
-            'origin_longitude' => urldecode($origin_longitude),
-            'destination_latitude' => urldecode($destination_latitude),
-            'destination_longitude' => urldecode($destination_longitude),
-            'date' =>  $date,
-            'regular' => $regular,
-            'showRegular' => true,
-            'url' => "/matching/search/"
+            'origin' => $request->request->get('origin'),
+            'destination' => $request->request->get('destination'),
+            'date' =>  $request->request->get('date'),
+            'time' =>  $request->request->get('time'),
+            'regular' => $request->request->get('regular')
         ]);
     }
 
     /**
      * Matching Search
+     * AJAX
      */
-    public function matchingSearch(Request $request, ProposalManager $proposalManager)
+    public function carpoolSearchMatching(Request $request, ProposalManager $proposalManager)
     {
         $origin_latitude = $request->query->get('origin_latitude');
         $origin_longitude = $request->query->get('origin_longitude');
         $destination_latitude = $request->query->get('destination_latitude');
         $destination_longitude = $request->query->get('destination_longitude');
-        $date = \Datetime::createFromFormat("Y-m-d\TH:i:s.u\Z", $request->query->get('date'));
+        $date = \Datetime::createFromFormat("Y-m-d", $request->query->get('date'));
+        $time = \Datetime::createFromFormat("H:i", $request->query->get('time'));
         $frequency = $request->query->get('regular')=="true" ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL;
+        $regularLifeTime = $request->query->get('regularLifeTime');
         $strictDate = $request->query->get('strictDate');
         $useTime = $request->query->get('useTime');
         $strictPunctual = $request->query->get('strictPunctual');
         $strictRegular = $request->query->get('strictRegular');
-        $role = $request->query->get('role',Criteria::ROLE_BOTH);
+        $role = $request->query->get('role', Criteria::ROLE_BOTH);
 
         // we have to merge matching proposals that concern both driver and passenger into a single matching
         $matchings = [];
@@ -150,6 +148,7 @@ class CarpoolController extends AbstractController
             $destination_longitude,
             $date,
             $frequency,
+            $regularLifeTime,
             $strictDate,
             $useTime,
             $strictPunctual,
@@ -172,21 +171,12 @@ class CarpoolController extends AbstractController
         }
 
         return $this->json($matchings);
-      
-        // return $this->json($proposalManager->getMatchingsForSearch(
-        //     $origin_latitude,
-        //     $origin_longitude,
-        //     $destination_latitude,
-        //     $destination_longitude,
-        //     $date,
-        //     DataProvider::RETURN_JSON
-        // ));
     }
 
     /**
      * Initiate contact from carpool results
      */
-    public function contactForCarpool(Request $request, ProposalManager $proposalManager, UserManager $userManager)
+    public function carpoolContact(Request $request, ProposalManager $proposalManager, UserManager $userManager)
     {
         // The matched proposal
         $matchedProposal = $proposalManager->getProposal($request->query->get('proposalId'));
@@ -258,19 +248,5 @@ class CarpoolController extends AbstractController
         ];
         return $this->json($externalJourneyManager->getExternalJourney($params, DataProvider::RETURN_JSON));
     }
-    /**
-     * Results of a carpooling ad.
-     */
-    public function postResults($id, ProposalManager $proposalManager)
-    {
-        $proposal = $proposalManager->getProposal($id);
-        $reponseofmanager= $this->handleManagerReturnValue($proposal);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        $this->denyAccessUnlessGranted('results', $proposal);
-        return $this->render('@Mobicoop/proposal/ad_results.html.twig', [
-            'proposal' => $proposal
-        ]);
-    }
+
 }
