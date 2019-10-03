@@ -160,7 +160,7 @@ export default {
       this.communityAddress = address;
     },
     createCommunity() {
-      // this.loading = true;
+      this.loading = true;
       let newCommunity = new FormData();
       newCommunity.append("name", this.name);
       newCommunity.append("description", this.description);
@@ -183,7 +183,7 @@ export default {
             this.snackbar = true;
             this.loading = false;
           }
-          // else window.location.href = this.$t('redirect.route');
+          else window.location.href = this.$t('redirect.route');
         });
     },
   }

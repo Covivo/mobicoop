@@ -20,7 +20,6 @@
     <v-container>
       <!-- Community : avatar, title and description -->
       <community-infos
-        :cover-image="coverImage"
         :community="community"
       />
 
@@ -221,10 +220,6 @@ export default {
       type: Object,
       default: null
     },
-    coverImage:{
-      type: Object,
-      default: null
-    },
     lastUsers: {
       type: Array,
       default: null
@@ -270,7 +265,6 @@ export default {
     this.getCommunityUser();
     this.checkIfUserLogged();
     this.getCommunityProposals();
-    this.getCommunityAddress();
   },
   methods:{
     getCommunityUser() {
