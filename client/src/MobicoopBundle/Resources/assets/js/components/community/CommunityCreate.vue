@@ -83,7 +83,7 @@
                 :rules="avatarRules"
                 accept="image/png, image/jpeg, image/bmp"
                 :label="$t('form.avatar.label')"
-                prepend-icon="mdi-inser-photo"
+                prepend-icon="mdi-image"
               />
             </v-col>
           </v-row>
