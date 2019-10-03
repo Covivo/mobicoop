@@ -359,6 +359,8 @@ class DataProvider
             }
         } catch (ServerException $e) {
             return new Response($e->getCode(), $e->getMessage());
+        } catch (ClientException $e) {
+            return new Response($e->getCode(), $e->getMessage());
         }
         return new Response();
     }

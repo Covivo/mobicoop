@@ -8,6 +8,7 @@ import '@css/page/community/community.scss'
 import MHeader from '@components/base/MHeader'
 import MFooter from '@components/base/MFooter'
 import Community from '@components/community/Community'
+import CommunitySecuredSignIn from '@components/community/CommunitySecuredSignIn'
 
 new Vue({
   el: '#app',
@@ -16,6 +17,7 @@ new Vue({
   components: {
     MHeader,
     Community,
+    CommunitySecuredSignIn,
     MFooter
   }
 });
