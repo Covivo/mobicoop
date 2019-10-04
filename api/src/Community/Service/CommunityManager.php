@@ -151,4 +151,18 @@ class CommunityManager
         }
         return false;
     }
+
+    /**
+     * Check if a community already exists with this name
+     *
+     * @param Community $community
+     * @return void
+     */
+    public function exists(?string $name)
+    {
+        if (is_null($name)) {
+            return null;
+        }
+        return $this->communityRepository->findBy(['name'=>$name]);
+    }
 }

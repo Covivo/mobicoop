@@ -22,7 +22,6 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Community\Controller;
 
-use Mobicoop\Bundle\MobicoopBundle\Community\Form\CommunityUserForm;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,8 +29,12 @@ use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
-use Mobicoop\Bundle\MobicoopBundle\Community\Form\CommunityForm;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
+use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Controller class for community related actions.
@@ -55,28 +58,71 @@ class CommunityController extends AbstractController
     /**
      * Create a community
      */
-    public function create(CommunityManager $communityManager, UserManager $userManager, Request $request)
+    public function create(CommunityManager $communityManager, UserManager $userManager, Request $request, ImageManager $imageManager)
     {
         $community = new Community();
         $this->denyAccessUnlessGranted('create', $community);
-        $community->setUser($userManager->getLoggedUser());
+        $user = new User($userManager->getLoggedUser()->getId());
+        $communityUser = new CommunityUser();
+        $address = new Address();
+        
+        if ($request->isMethod('POST')) {
+            $data = $request->request;
+            // Check if the community name is available (if yes continue)
+            if ($communityManager->checkNameAvailability($data->get('name'))) {
 
-        $form = $this->createForm(CommunityForm::class, $community);
-        $error = false;
-       
-        $form->handleRequest($request);
-        $error = false;
+                // set the user as a user of the community
+                $communityUser->setUser($user);
+                $communityUser->setStatus(1);
+                
+                // set community address
+                $communityAddress=json_decode($data->get('address'), true);
+                $address->setAddressCountry($communityAddress['addressCountry']);
+                $address->setAddressLocality($communityAddress['addressLocality']);
+                $address->setCountryCode($communityAddress['countryCode']);
+                $address->setCounty($communityAddress['county']);
+                $address->setLatitude($communityAddress['latitude']);
+                $address->setLocalAdmin($communityAddress['localAdmin']);
+                $address->setLongitude($communityAddress['longitude']);
+                $address->setMacroCounty($communityAddress['macroCounty']);
+                $address->setMacroRegion($communityAddress['macroRegion']);
+                $address->setPostalCode($communityAddress['postalCode']);
+                $address->setRegion($communityAddress['region']);
+                $address->setStreet($communityAddress['street']);
+                $address->setHouseNumber($communityAddress['houseNumber']);
+                $address->setStreetAddress($communityAddress['streetAddress']);
+                $address->setSubLocality($communityAddress['subLocality']);
+                $address->setDisplayLabel($communityAddress['displayLabel']);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($community = $communityManager->createCommunity($community)) {
-                return $this->redirectToRoute('community_list');
+                // set community infos
+                $community->setUser($user);
+                $community->setName($data->get('name'));
+                $community->setDescription($data->get('description'));
+                $community->setFullDescription($data->get('fullDescription'));
+                $community->setAddress($address);
+                $community->addCommunityUser($communityUser);
+
+                // create community
+                if ($community = $communityManager->createCommunity($community)) {
+
+                    // Post avatar of the community
+                    $image = new Image();
+                    $image->setCommunityFile($request->files->get('avatar'));
+                    $image->setCommunityId($community->getId());
+                    $image->setName($community->getName());
+                    if ($image = $imageManager->createImage($image)) {
+                        return new Response();
+                    }
+                    // return error if image post didnt't work
+                    return new Response(json_encode('error.image'));
+                }
+                // return error if community post didn't work
+                return new Response(json_encode('error.community.create'));
             }
-            $error = true;
+            // return error because name already exists
+            return new Response(json_encode('error.community.name'));
         }
-
         return $this->render('@Mobicoop/community/createCommunity.html.twig', [
-            'form' => $form->createView(),
-            'error' => $error
         ]);
     }
 
@@ -158,7 +204,7 @@ class CommunityController extends AbstractController
             // get all community users ID
             array_push($communityUsersId, $communityUser->getUser()->getId());
         }
-        //test if the user logged is already a member of the community
+        //test if the user logged is not already a member of the community
         if ($user && $user !=='' && !in_array($user->getId(), $communityUsersId)) {
             $communityUser = new CommunityUser();
             
@@ -177,9 +223,9 @@ class CommunityController extends AbstractController
     }
 
     /**
-     * Undocumented function
+     * Get last three users
      *
-     * @param [type] $id
+     * @param int $id
      * @param CommunityManager $communityManager
      * @param UserManager $userManager
      * @return void
@@ -198,7 +244,7 @@ class CommunityController extends AbstractController
     }
 
     /**
-     * Undocumented function
+     * Get all users of a community
      *
      * @param integer $id
      * @param CommunityManager $communityManager
@@ -226,7 +272,7 @@ class CommunityController extends AbstractController
     }
 
     /**
-     * Undocumented function
+     * Get all proposals of a community
      *
      * @param integer $id
      * @param CommunityManager $communityManager

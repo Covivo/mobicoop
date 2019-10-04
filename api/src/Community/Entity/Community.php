@@ -34,6 +34,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Image\Entity\Image;
 use App\User\Entity\User;
+use App\Geography\Entity\Address;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -69,6 +70,22 @@ use App\Community\Controller\JoinAction;
  *                          "type" = "number",
  *                          "format" = "integer",
  *                          "description" = "The id of the user for which we want the communities"
+ *                      }
+ *                  }
+ *              }
+ *          },
+ *          "exists"={
+ *              "method"="GET",
+ *              "path"="/communities/exists",
+ *              "normalization_context"={"groups"={"read"}},
+ *              "swagger_context" = {
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "name",
+ *                          "in" = "query",
+ *                          "type" = "string",
+ *                          "required" = "true",
+ *                          "description" = "The name of the community"
  *                      }
  *                  }
  *              }
@@ -133,7 +150,7 @@ class Community
     private $fullDescription;
     
     /**
-    * @var \DateTimeInterface Creation date of the event.
+    * @var \DateTimeInterface Creation date of the community.
     *
     * @ORM\Column(type="datetime")
     * @Groups("read")
@@ -157,6 +174,17 @@ class Community
      * @Groups({"read","write"})
      */
     private $user;
+
+    /**
+     * @var Address The address of the community.
+     *
+     * @Assert\NotBlank
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $address;
     
     /**
      * @var ArrayCollection|null The images of the community.
@@ -303,6 +331,18 @@ class Community
     public function setUser(User $user): self
     {
         $this->user = $user;
+        
+        return $this;
+    }
+
+    public function getAddress(): ?Address
+    {
+        return $this->address;
+    }
+    
+    public function setAddress(?Address $address): self
+    {
+        $this->address = $address;
         
         return $this;
     }

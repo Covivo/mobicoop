@@ -651,6 +651,9 @@ class Deserializer
         if (isset($data["user"])) {
             $community->setUser(self::deserializeUser($data["user"]));
         }
+        if (isset($data["address"])) {
+            $community->setAddress(self::deserializeAddress($data['address']));
+        }
         if (isset($data["images"])) {
             foreach ($data["images"] as $image) {
                 $community->addImage(self::deserializeImage($image));

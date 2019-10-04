@@ -18,7 +18,15 @@
     </v-snackbar>
 
     <v-container>
-      <v-row 
+      <!-- Community : avatar, title and description -->
+      <community-infos
+        :community="community"
+        :url-alt-avatar="urlAltAvatar"
+        :avatar-version="avatarVersion"
+      />
+
+      <!-- community buttons and map -->
+      <v-row
         justify="center"
       >
         <v-col
@@ -227,14 +235,18 @@ export default {
       type: Object,
       default: null
     },
-    coverImage:{
-      type: Object,
-      default: null
-    },
     lastUsers: {
       type: Array,
       default: null
     },
+    avatarVersion: {
+      type: String,
+      default: null
+    },
+    urlAltAvatar: {
+      type: String,
+      default: null
+    }
   },
   data () {
     return {
@@ -329,6 +341,11 @@ export default {
         .then(res => {
           this.errorUpdate = res.data.state;
           this.pointsToMap.length = 0;
+          // add the community address to display on the map
+          if (this.community.address) {
+            this.pointsToMap.push(this.buildPoint(this.community.address.latitude,this.community.address.longitude,this.community.name));
+          }
+          // add all the waypoints of the community to display on the map
           res.data.forEach((waypoint, index) => {
             this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
           });
@@ -337,6 +354,7 @@ export default {
           
         });
     },
+   
     buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
       let point = {
         title:title,

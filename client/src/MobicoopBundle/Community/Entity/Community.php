@@ -32,6 +32,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
  *  A community.
@@ -86,14 +87,14 @@ class Community implements ResourceInterface, \JsonSerializable
     private $fullDescription;
     
     /**
-    * @var \DateTimeInterface Creation date of the event.
+    * @var \DateTimeInterface Creation date of the community.
     *
     * @Groups("post")
     */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the event.
+     * @var \DateTimeInterface Updated date of the community.
      *
      * @Groups("post")
      */
@@ -106,6 +107,14 @@ class Community implements ResourceInterface, \JsonSerializable
      * @Groups({"post","put"})
      */
     private $user;
+
+    /**
+     * @var Address The address of the community.
+     *
+     * @Groups({"post","put"})
+     * @Assert\NotBlank(groups={"create","update"})
+     */
+    private $address;
     
     /**
      * @var Image[]|null The images of the community.
@@ -264,14 +273,26 @@ class Community implements ResourceInterface, \JsonSerializable
         
         return $this;
     }
+
+    public function getAddress(): ?Address
+    {
+        return $this->address;
+    }
+    
+    public function setAddress(?Address $address): self
+    {
+        $this->address = $address;
+        
+        return $this;
+    }
     
     /**
      *
      * @return Collection|Image[]
      */
-    public function getImages(): Collection
+    public function getImages()
     {
-        return $this->images;
+        return $this->images->getValues();
     }
     
     public function addImage(Image $image): self
@@ -336,7 +357,7 @@ class Community implements ResourceInterface, \JsonSerializable
     {
         if (!$this->communityUsers->contains($communityUser)) {
             $this->communityUsers[] = $communityUser;
-            $communityUser->setCommunity($this);
+            //$communityUser->setCommunity($this);
         }
         
         return $this;
@@ -397,6 +418,7 @@ class Community implements ResourceInterface, \JsonSerializable
             'fullDescription'   => $this->getFullDescription(),
             'proposalsHidden'   => $this->isProposalsHidden(),
             'membersHidden'     => $this->isMembersHidden(),
+            'address'           => $this->getAddress(),
             'isSecured'         => $this->isSecured()
         ];
     }

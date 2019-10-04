@@ -33,10 +33,11 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 /**
  * An image.
  */
-class Image implements ResourceInterface
+class Image implements ResourceInterface, \JsonSerializable
 {
     /**
      * @var int The id of this image.
+     *
      */
     private $id;
     
@@ -149,6 +150,7 @@ class Image implements ResourceInterface
     
     /**
      * @var array|null The versions of with the image.
+     *
      */
     private $versions;
     
@@ -444,5 +446,16 @@ class Image implements ResourceInterface
     public function setCommunityId($communityId)
     {
         $this->communityId = $communityId;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+        [
+            'id'                => $this->getId(),
+            'iri'               => $this->getIri(),
+            'name'              => $this->getName(),
+            'versions'          => $this->getVersions(),
+        ];
     }
 }

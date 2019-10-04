@@ -1,160 +1,200 @@
 <template>
-  <div id="community_create_root">
-    <v-content>
-      <v-container
-        id="scroll-target"
-        style="max-height: 700px"
-        class="overflow-y-auto"
-        fluid
+  <v-content>
+    <!--SnackBar-->
+    <v-snackbar
+      v-model="snackbar"
+      color="error"
+      top
+    >
+      {{ snackError }}
+      <v-btn
+        color="white"
+        text
+        @click="snackbar = false"
       >
-        <v-row
-          justify="center"
+        <v-icon>mdi-close-circle-outline</v-icon>
+      </v-btn>
+    </v-snackbar>
+    <v-container>
+      <v-row 
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          md="8"
+          xl="6"
           align="center"
         >
-          <v-col
-            cols="4"
-            align="center"
-          >
-            <!--STEP 1-->
-            <v-form
-              ref="step 1"
-              v-model="step1"
-            >
+          <h1>{{ $t('title') }}</h1>
+        </v-col>
+      </v-row>
+      <v-row
+        justify="center"
+        align="center"
+      >
+        <v-col
+          cols="12"
+          align="center"
+        >
+          <v-row justify="center">
+            <v-col cols="3">
               <v-text-field
-                id="name"
-                v-model="form.name"
-                :rules="form.nameRules"
-                :label="$t('models.community.name.placeholder')+` *`"
-                name="fullDescription"
-                required
+                v-model="name"
+                :rules="nameRules"
+                :label="$t('form.name.label')"
               />
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col cols="3">
+              <v-text-field
+                v-model="description"
+                :label="$t('form.description.label')"
+              />
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col cols="3">
               <v-textarea
-                id="description"
-                v-model="form.description"
-                :rules="form.descriptionRules"
-                :label="$t('models.community.description.placeholder')+` *`"
-                name="description"
-                required
+                v-model="fullDescription"
+                :rules="fullDescriptionRules"
+                :label="$t('form.fullDescription.label')"
+                rows="5"
+                auto-grow
+                clearable
+                outlined
+                row-height="24"
               />
-              <v-textarea
-                id="fullDescription"
-                v-model="form.fullDescription"
-                :rules="form.fullDescriptionRules"
-                :label="$t('models.community.fullDescription.placeholder')+` *`"
-                name="fullDescription"
-                required
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col cols="3">
+              <GeoComplete 
+                :url="geoSearchUrl"
+                :label="$t('form.address.label')"
+                @address-selected="addressSelected"
               />
-              <v-switch
-                v-model="form.private"
-                :label="$t('models.community.private.placeholder')"
-                name="private"
-                @keypress="isNumber(event)"
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col cols="3">
+              <v-file-input
+                v-model="avatar"
+                :rules="avatarRules"
+                accept="image/png, image/jpeg, image/bmp"
+                :label="$t('form.avatar.label')"
+                prepend-icon="mdi-image"
               />
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col cols="6">
               <v-btn
-                ref="button"
-                class="my-13"
+                rounded
                 color="success"
-                :disabled="!step1"
-                @click="poster(form)"
+                :loading="loading"
+                @click="createCommunity"
               >
-                {{ $t('ui.button.submit') }}
+                {{ $t('buttons.create.label') }}
               </v-btn>
-            </v-form>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-content>
-  </div>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-content>
 </template>
-
 <script>
 
-import moment from "moment";
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/community/CommunityCreate.json";
 import TranslationsClient from "@clientTranslations/components/community/CommunityCreate.json";
+import GeoComplete from "@components/utilities/GeoComplete";
 import axios from "axios";
 
 let TranslationsMerged = merge(Translations, TranslationsClient,CommonTranslations);
+
 export default {
-  name: "CommunityCreate",
   i18n: {
     messages: TranslationsMerged,
     sharedMessages: CommonTranslations
   },
+  components: {
+    GeoComplete
+  },
   props:{
     user: {
-      type: Array,
+      type: Object,
       default: null
     },
     community: {
       type: Array,
       default: null
     },
-    sentToken: {
+    geoSearchUrl: {
+      type: String,
+      default: null
+    },
+    avatarSize: {
       type: String,
       default: null
     }
   },
-  data: function () {
+  data () {
     return {
-      //
-      event: null,
-
-      //step validators
-      step1: true,
-
-
-      //scrolling data
-      type: 'selector',
-      selected: null,
-      duration: 1000,
-      offset: 180,
-      easing: "easeOutQuad",
-      container: "scroll-target",
-
-      form:{
-        createToken: this.sentToken,
-        fullDescription: null,
-        fullDescriptionRules: [
-          v => !!v || this.$t("models.community.fullDescription.errors.required"),
-        ],
-        name: null,
-        nameRules: [
-          v => !!v || this.$t("models.community.name.errors.required"),
-        ],
-        description: null,
-        descriptionRules: [
-          v => !!v || this.$t("models.community.description.errors.required"),
-        ],
-        private: null
-      }
-    };
-  },
-  computed: {
-    // creation of the url to call
-    urlToCall() {
-      return `${this.baseUrl}/${this.route}/${this.origin.addressLocality}/${this.destination.addressLocality}/${this.origin.latitude}/${this.origin.longitude}/${this.destination.latitude}/${this.destination.longitude}/${this.computedDateFormat}/resultats`;
-    },
-    searchUnavailable() {
-      return (!this.origin || !this.destination || this.loading == true)
-    },
-    computedDateFormat() {
-      moment.locale(this.locale);
-      return this.date
-        ? moment(this.date).format(this.$t("ui.i18n.date.format.fullNumericDate"))
-        : moment(new Date()).format(this.$t("ui.i18n.date.format.fullNumericDate"));
+      avatarRules: [
+        v => !!v || this.$t("form.avatar.required"),
+        v => !v || v.size < this.avatarSize || this.$t("form.avatar.size")+" (Max "+(this.avatarSize/1000000)+"MB)"
+      ],
+      communityAddress: null,
+      name: null,
+      nameRules: [
+        v => !!v || this.$t("form.name.required"),
+      ],
+      description: null,
+      fullDescription: null,
+      fullDescriptionRules: [
+        v => !!v || this.$t("form.fullDescription.required"),
+      ],
+      avatar: null,
+      loading: false,
+      snackError: null,
+      snackbar: false,
     }
   },
-  methods:{
-    poster: function(form){
-      axios.post("/creer/communaute",form)
-    }
+  methods: {
+    addressSelected: function(address) {
+      this.communityAddress = address;
+    },
+    createCommunity() {
+      this.loading = true;
+      let newCommunity = new FormData();
+      newCommunity.append("name", this.name);
+      newCommunity.append("description", this.description);
+      newCommunity.append("fullDescription", this.fullDescription);
+      newCommunity.append("avatar", this.avatar);
+      newCommunity.append("address", JSON.stringify(this.communityAddress));
+
+      axios 
+        .post(this.$t('buttons.create.route'), newCommunity, {
+          headers:{
+            'content-type': 'multipart/form-data'
+          }
+        })
+        .then(res => {
+          if (res.data.includes('error')) {
+            this.snackError = this.$t(res.data)
+            this.snackbar = true;
+            this.loading = false;
+          }
+          else window.location.href = this.$t('redirect.route');
+        });
+    },
   }
 }
 </script>
 
-<style scoped>
+<style>
 
 </style>

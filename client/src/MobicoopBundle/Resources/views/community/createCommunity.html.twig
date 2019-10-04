@@ -8,16 +8,13 @@
 {% endblock %}
 {% block main %}
 
-<div class="layout justify-center"
-     outlined
-     tile>
-    <div class="flex xs10">
+
     <community-create
 			:user="{{ app.user|json_encode }}"
-            :sent-token="{{ csrf_token('communities-post') }}">
+            geo-search-url="{{ geoCompleteUri }}" 
+            avatar-size="{{ communityAvatarSize }}">
     </community-create>
-    </div>
-    <div>
+   
 {% endblock %}
 {% block javascripts %}
     {{ encore_entry_script_tags("#{assets_prefix ?? ''}community/createCommunity") }}
