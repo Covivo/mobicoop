@@ -6,7 +6,7 @@
     >
       <!-- Time -->
       <v-col
-        v-if="!regular"
+        v-if="proposal.criteria.frequency==1 || !regular"
         cols="3"
       >
         <v-list-item two-line>
@@ -74,7 +74,7 @@ export default {
       type: Boolean,
       default: false
     },
-    proposal: {
+    matching: {
       type: Object,
       default: null
     },
@@ -85,11 +85,12 @@ export default {
     regular: {
       type: Boolean,
       default: false
-    },
+    }
   },
   data() {
     return {
       locale: this.$i18n.locale,
+      proposal: this.driver ? this.matching.proposalOffer : this.matching.proposalRequest
     };
   },
   computed: {
@@ -106,23 +107,44 @@ export default {
       }
     },
     computedTime() {
-      if (!this.regular) {
+      if (this.proposal.criteria.frequency == 2) {
+        // we have to search the week day and display the time
+        const dayOfWeek = moment.utc(this.date).format('d');
+        switch (dayOfWeek) {
+        case '0' : 
+          return moment.utc(this.proposal.criteria.sunTime).format(this.$t("ui.i18n.time.format.hourMinute"));
+        case '1' : 
+          return moment.utc(this.proposal.criteria.monTime).format(this.$t("ui.i18n.time.format.hourMinute"));
+        case '2' : 
+          return moment.utc(this.proposal.criteria.tueTime).format(this.$t("ui.i18n.time.format.hourMinute"));
+        case '3' : 
+          return moment.utc(this.proposal.criteria.wedTime).format(this.$t("ui.i18n.time.format.hourMinute"));
+        case '4' : 
+          return moment.utc(this.proposal.criteria.thuTime).format(this.$t("ui.i18n.time.format.hourMinute"));
+        case '5' : 
+          return moment.utc(this.proposal.criteria.friTime).format(this.$t("ui.i18n.time.format.hourMinute"));
+        case '6' : 
+          return moment.utc(this.proposal.criteria.satTime).format(this.$t("ui.i18n.time.format.hourMinute"));
+        default:
+          return '';
+        }
+      } else {
         return this.proposal.criteria.fromTime
           ? moment.utc(this.proposal.criteria.fromTime).format(this.$t("ui.i18n.time.format.hourMinute"))
           : ""; 
       }
-      return "";
+      
     },
     computedDate() {
-      if (!this.regular) {
-        return this.proposal.criteria.fromDate
-          ? moment.utc(this.proposal.criteria.fromDate).format(this.$t("ui.i18n.date.format.shortDate"))
-          : ""; 
+      if (this.proposal.criteria.frequency == 2) {
+        return moment.utc(this.matching.criteria.fromDate).format(this.$t("ui.i18n.date.format.shortDate"))
       }
-      return "";
+      return this.proposal.criteria.fromDate
+        ? moment.utc(this.proposal.criteria.fromDate).format(this.$t("ui.i18n.date.format.shortDate"))
+        : ""; 
     },
     computedPrice() {
-      return this.driver ? this.proposal.criteria.price : null
+      return this.driver ? Math.round((this.matching.proposalOffer.criteria.priceKm*this.matching.proposalRequest.criteria.directionPassenger.distance/1000)*100)/100 : null
     }
   },
   methods: {

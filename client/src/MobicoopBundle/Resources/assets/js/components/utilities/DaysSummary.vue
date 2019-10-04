@@ -16,7 +16,7 @@
           <v-col
             cols="auto"
           >
-            {{ $t('outward') }}
+            {{ proposal.type == 3 ? $t('return') : $t('outward') }}
           </v-col>
           <v-col
             cols="auto"
@@ -47,7 +47,7 @@
           <v-col
             cols="auto"
           >
-            {{ $t('return') }}
+            {{ proposal.type == 3 ? $t('outward') : $t('return') }}
           </v-col>
           <v-col
             cols="auto"

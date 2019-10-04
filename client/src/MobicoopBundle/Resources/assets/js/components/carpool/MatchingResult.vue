@@ -36,19 +36,20 @@
         >
           <!-- Regular : summary of days -->
           <days-summary
-            v-if="regular"
+            v-if="showRegularSummary"
             :proposal="driver ? matching.proposalOffer : matching.proposalRequest"
           />
 
-          <v-divider v-if="regular" /> 
+          <v-divider v-if="showRegularSummary" /> 
 
           <!-- Journey summary : date, time, summary of route, seats, price -->
           <journey-summary 
             :driver="driver"
             :passenger="passenger"
-            :proposal="driver ? matching.proposalOffer : matching.proposalRequest"
+            :matching="matching"
             :regular="regular"
             :user="user"
+            :date="matching.criteria.fromDate"
           />
 
           <v-divider /> 
@@ -107,6 +108,9 @@ export default {
     }
   },
   computed: {
+    showRegularSummary() {
+      return ((this.driver && this.matching.proposalOffer.criteria.frequency == 2) || (this.passenger && this.matching.proposalRequest.criteria.frequency == 2));
+    },
     driver() {
       // a user is driver if he is the owner of the proposalOffer
       return this.matching.proposalOffer.user ? true : false
