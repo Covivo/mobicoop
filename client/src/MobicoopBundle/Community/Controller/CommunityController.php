@@ -22,7 +22,6 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Community\Controller;
 
-use Mobicoop\Bundle\MobicoopBundle\Community\Form\CommunityUserForm;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,15 +29,12 @@ use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
-use Mobicoop\Bundle\MobicoopBundle\Community\Form\CommunityForm;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-
-use function GuzzleHttp\json_decode;
 
 /**
  * Controller class for community related actions.

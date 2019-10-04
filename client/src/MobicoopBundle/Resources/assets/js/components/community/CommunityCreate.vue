@@ -136,7 +136,7 @@ export default {
       type: String,
       default: null
     },
-    sentToken: {
+    avatarSize: {
       type: String,
       default: null
     }
@@ -145,7 +145,7 @@ export default {
     return {
       avatarRules: [
         v => !!v || this.$t("form.avatar.required"),
-        v => !v || v.size < 1000000 || this.$t("form.avatar.size"),
+        v => !v || v.size < this.avatarSize || this.$t("form.avatar.size")+" (Max "+(this.avatarSize/1000000)+"MB)"
       ],
       communityAddress: null,
       name: null,

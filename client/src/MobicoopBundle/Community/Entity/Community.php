@@ -87,14 +87,14 @@ class Community implements ResourceInterface, \JsonSerializable
     private $fullDescription;
     
     /**
-    * @var \DateTimeInterface Creation date of the event.
+    * @var \DateTimeInterface Creation date of the community.
     *
     * @Groups("post")
     */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the event.
+     * @var \DateTimeInterface Updated date of the community.
      *
      * @Groups("post")
      */
@@ -109,7 +109,7 @@ class Community implements ResourceInterface, \JsonSerializable
     private $user;
 
     /**
-     * @var Address The address of the event.
+     * @var Address The address of the community.
      *
      * @Groups({"post","put"})
      * @Assert\NotBlank(groups={"create","update"})

@@ -22,7 +22,7 @@
       "avatar": {
         "label": "Avatar de la communauté",
         "required": "L'avatar de la communauté est requis",
-        "size": "La taille maximale de l'avatar est de 1Mo"
+        "size": "Vous avez dépassé a taille maximale de l'avatar"
       },
       "address": {
         "label": "Adresse de la communauté",

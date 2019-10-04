@@ -21,6 +21,8 @@
       <!-- Community : avatar, title and description -->
       <community-infos
         :community="community"
+        :url-alt-avatar="urlAltAvatar"
+        :avatar-version="avatarVersion"
       />
 
       <!-- community buttons and map -->
@@ -224,6 +226,14 @@ export default {
       type: Array,
       default: null
     },
+    avatarVersion: {
+      type: String,
+      default: null
+    },
+    urlAltAvatar: {
+      type: String,
+      default: null
+    }
   },
   data () {
     return {

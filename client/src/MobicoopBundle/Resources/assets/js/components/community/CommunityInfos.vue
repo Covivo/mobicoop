@@ -9,13 +9,13 @@
         size="225"
       >
         <img
-          v-if="community.images"
-          :src="community.images[0].versions.square_800"
+          v-if="community.images[0]"
+          :src="community['images'][0]['versions'][avatarVersion]"
           alt="avatar"
         >
         <img
           v-else
-          src="/images/avatar.svg"
+          :src="urlAltAvatar"
           alt="avatar"
         >
       </v-avatar>
@@ -49,7 +49,15 @@ export default {
     community: {
       type: Object,
       default: null
+    },
+    urlAltAvatar: {
+      type: String,
+      default: null
+    },
+    avatarVersion: {
+      type: String,
+      default: null
     }
-  },
+  }
 }
 </script>

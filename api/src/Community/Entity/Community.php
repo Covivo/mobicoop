@@ -150,7 +150,7 @@ class Community
     private $fullDescription;
     
     /**
-    * @var \DateTimeInterface Creation date of the event.
+    * @var \DateTimeInterface Creation date of the community.
     *
     * @ORM\Column(type="datetime")
     * @Groups("read")
@@ -176,7 +176,7 @@ class Community
     private $user;
 
     /**
-     * @var Address The address of the event.
+     * @var Address The address of the community.
      *
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)

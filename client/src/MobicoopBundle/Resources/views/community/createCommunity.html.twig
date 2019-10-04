@@ -12,7 +12,7 @@
     <community-create
 			:user="{{ app.user|json_encode }}"
             geo-search-url="{{ geoCompleteUri }}" 
-            {# :sent-token="{{ csrf_token('communities-post') }}" #}>
+            avatar-size="{{ communityAvatarSize }}">
     </community-create>
    
 {% endblock %}
