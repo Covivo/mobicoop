@@ -7,14 +7,21 @@
     {{ encore_entry_link_tags("#{assets_prefix ?? ''}community/community") }}
 {% endblock %}
 {% block main %}
-
-        <community
-                :community="{{ community|json_encode }}" 
-                :geodata="{{ {'geocompleteuri':geoCompleteUri, 'searchroute':searchRoute}|json_encode }}"
-                :user="{{ app.user|json_encode }}"
-                url-alt-avatar="{{ urlAltCommunityAvatar }}"
-                avatar-version="{{ communityAvatarVersion }}"
-        ></community>
+{% if community.secured and communityUser == null %}
+    <community-secured-sign-in
+        :community-id="{{community.id}}"
+        :user-id="{{(user is not null) ? user.id : 'null'}}"
+        :error="{{ error|json_encode }}"
+    ></community-secured-sign-in>
+{% else %}
+    <community
+        :community="{{ community|json_encode }}" 
+        :geodata="{{ {'geocompleteuri':geoCompleteUri, 'searchroute':searchRoute}|json_encode }}"
+        :user="{{ app.user|json_encode }}"
+        url-alt-avatar="{{ urlAltCommunityAvatar }}"
+        avatar-version="{{ communityAvatarVersion }}"
+    ></community>
+{% endif %}
 
 {% endblock %}
 {% block javascripts %}

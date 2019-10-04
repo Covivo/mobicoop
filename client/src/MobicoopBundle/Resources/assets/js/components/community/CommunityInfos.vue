@@ -3,7 +3,7 @@
     align="center"
     justify="center"
   >
-    <v-col cols="2">
+    <v-col cols="4">
       <v-avatar
         color="grey lighten-3"
         size="225"
@@ -22,7 +22,7 @@
     </v-col>
       
     <v-col
-      cols="4"
+      cols="8"
     >
       <v-card
         flat

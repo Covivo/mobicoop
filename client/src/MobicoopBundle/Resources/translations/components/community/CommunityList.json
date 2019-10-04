@@ -1,0 +1,20 @@
+{
+  "fr": {
+    "communitiesAvailable":"Communautés disponibles",
+    "createCommunity":"Créer une communauté",
+    "search":"Rechercher",
+    "all":"Tous",
+    "linePerPage":"Nombre de lignes par page",
+    "seeAds":"Voir les annonces",
+    "join":"Rejoindre la communauté"
+  },
+  "en": {
+    "communitiesAvailable":"Communities available",
+    "createCommunity":"Create a community",
+    "search":"Search",
+    "all":"All",
+    "linePerPage":"Nomber of line per page",
+    "seeAds":"See the ads",
+    "join":"Join the community"
+  }
+}

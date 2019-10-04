@@ -419,6 +419,7 @@ class Community implements ResourceInterface, \JsonSerializable
             'proposalsHidden'   => $this->isProposalsHidden(),
             'membersHidden'     => $this->isMembersHidden(),
             'address'           => $this->getAddress(),
+            'isSecured'         => $this->isSecured()
         ];
     }
 }
