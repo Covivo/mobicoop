@@ -315,6 +315,14 @@ class User implements UserInterface, EquatableInterface
     private $validatedDate;
 
     /**
+     * @var string|null Token for account validation by email
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $validatedDateToken;
+
+    /**
      * @var \DateTimeInterface Updated date of the user.
      *
      * @ORM\Column(type="datetime", nullable=true)
@@ -1286,6 +1294,17 @@ class User implements UserInterface, EquatableInterface
     {
         $this->validatedDate = $validatedDate;
 
+        return $this;
+    }
+
+    public function getValidatedDateToken(): ?string
+    {
+        return $this->validatedDateToken;
+    }
+
+    public function setValidatedDateToken(?string $validatedDateToken): self
+    {
+        $this->validatedDateToken = $validatedDateToken;
         return $this;
     }
 
