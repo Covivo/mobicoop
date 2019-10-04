@@ -106,25 +106,23 @@ export default {
       }
     },
     computedTime() {
-      moment.locale(this.locale);
       if (!this.regular) {
         return this.proposal.criteria.fromTime
-          ? moment(this.proposal.criteria.fromTime).format(this.$t("ui.i18n.time.format.hourMinute"))
+          ? moment.utc(this.proposal.criteria.fromTime).format(this.$t("ui.i18n.time.format.hourMinute"))
           : ""; 
       }
       return "";
     },
     computedDate() {
-      moment.locale(this.locale);
       if (!this.regular) {
         return this.proposal.criteria.fromDate
-          ? moment(this.proposal.criteria.fromDate).format(this.$t("ui.i18n.date.format.shortDate"))
+          ? moment.utc(this.proposal.criteria.fromDate).format(this.$t("ui.i18n.date.format.shortDate"))
           : ""; 
       }
       return "";
     },
     computedPrice() {
-      return this.driver ? Math.round((this.proposal.criteria.priceKm*this.proposal.criteria.directionDriver.distance/1000)*100)/100 : null
+      return this.driver ? this.proposal.criteria.price : null
     }
   },
   methods: {

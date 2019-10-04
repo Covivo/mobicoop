@@ -87,7 +87,6 @@
           <v-btn
             color="success"
             small
-            dark
             depressed
             fab
             :hidden="phoneButtonToggled"
@@ -99,9 +98,9 @@
           </v-btn>
 
           <v-btn
+            :disabled="!contactAvailable"
             color="success"
             small
-            dark
             depressed
             fab
             class="ml-2"
@@ -121,10 +120,10 @@
         class="text-right"
       >
         <v-btn
+          :disabled="!contactAvailable"
           rounded
           color="success"
           large
-          dark
           @click="emitEvent"
         >
           <span>
@@ -174,6 +173,9 @@ export default {
     birthYear (){
       return moment().diff(moment([this.carpooler.birthYear]),'years')+' '+this.$t("birthYears")
     },
+    contactAvailable () {
+      return this.user ? this.user.id != this.carpooler.id : true;
+    }
   },
   methods: {
     toggleButton: function(){

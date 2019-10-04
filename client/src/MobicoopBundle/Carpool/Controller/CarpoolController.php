@@ -105,14 +105,15 @@ class CarpoolController extends AbstractController
      * Simple search results.
      * (POST)
      */
-    public function carpoolSearchResult(Request $request)
+    public function carpoolSearchResult(Request $request, UserManager $userManager)
     {
         return $this->render('@Mobicoop/carpool/results.html.twig', [
             'origin' => $request->request->get('origin'),
             'destination' => $request->request->get('destination'),
             'date' =>  $request->request->get('date'),
             'time' =>  $request->request->get('time'),
-            'regular' => $request->request->get('regular')
+            'regular' => $request->request->get('regular'),
+            'user' => $userManager->getLoggedUser()
         ]);
     }
 
@@ -126,7 +127,11 @@ class CarpoolController extends AbstractController
         $origin_longitude = $request->query->get('origin_longitude');
         $destination_latitude = $request->query->get('destination_latitude');
         $destination_longitude = $request->query->get('destination_longitude');
-        $date = \Datetime::createFromFormat("Y-m-d", $request->query->get('date'));
+        if ($request->query->get('date')) {
+            $date = \Datetime::createFromFormat("Y-m-d", $request->query->get('date'));
+        } else {
+            $date = new \DateTime();
+        }
         $time = \Datetime::createFromFormat("H:i", $request->query->get('time'));
         $frequency = $request->query->get('regular')=="true" ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL;
         $regularLifeTime = $request->query->get('regularLifeTime');
@@ -135,6 +140,7 @@ class CarpoolController extends AbstractController
         $strictPunctual = $request->query->get('strictPunctual');
         $strictRegular = $request->query->get('strictRegular');
         $role = $request->query->get('role', Criteria::ROLE_BOTH);
+        $userId = $request->query->get('userId');
 
         // we have to merge matching proposals that concern both driver and passenger into a single matching
         $matchings = [];
@@ -153,7 +159,8 @@ class CarpoolController extends AbstractController
             $useTime,
             $strictPunctual,
             $strictRegular,
-            $role
+            $role,
+            $userId
         )) {
             if (is_array($proposalResults->getMember()) && count($proposalResults->getMember()) == 1) {
                 $proposalResult = $proposalResults->getMember()[0];

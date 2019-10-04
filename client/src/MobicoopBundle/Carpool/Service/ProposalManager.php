@@ -126,6 +126,7 @@ class ProposalManager
      * @param boolean $strictPunctual       Strictly punctual
      * @param boolean $strictRegular        Strictly regular
      * @param integer $role                 Role (driver and/or passenger)
+     * @param integer $userId               User id of the requester (to exclude its own results)
      * @param $format                       Return format
      * @return array|null The matchings found or null if not found.
      */
@@ -142,6 +143,7 @@ class ProposalManager
         ?bool $strictPunctual = null,
         ?bool $strictRegular = null,
         ?int $role = null,
+        ?int $userId = null,
         $format = null
     ) {
         // we set the params
@@ -170,6 +172,9 @@ class ProposalManager
         }
         if (!is_null($role)) {
             $params["role"] = $role;
+        }
+        if (!is_null($userId)) {
+            $params["userId"] = $userId;
         }
         if (is_null($format)) {
             $format = $this->dataProvider::RETURN_OBJECT;

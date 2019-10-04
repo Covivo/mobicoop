@@ -112,7 +112,8 @@ export default {
         "destination_longitude": Number(this.destination.longitude),
         "date": this.date,
         "time": this.time,
-        "regular": this.regular 
+        "regular": this.regular,
+        "userId": this.user ? this.user.id : null
       }
     })
       .then((response) => {

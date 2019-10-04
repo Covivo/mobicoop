@@ -29,6 +29,7 @@
             :geo-search-url="geoSearchUrl"
             :user="user"
             :init-regular="dataRegular"
+            :punctual-date-optional="punctualDateOptional"
             @change="searchChanged"
           />
         </v-col>
@@ -48,33 +49,24 @@
             outlined
             :disabled="searchUnavailable || !logged"
             rounded
-            :loading="loading"
+            :loading="loadingPublish"
             @click="publish"
           >
-            {{ $t('buttons.shareAnAd.label') }}
+            {{ $t('buttons.publish.label') }}
           </v-btn>
         </v-col>
         <v-col 
           cols="3"
         >
-          <v-tooltip
-            top
-            color="info"
+          <v-btn
+            :disabled="searchUnavailable"
+            :loading="loadingSearch"
+            color="success"
+            rounded
+            @click="search"
           >
-            <template v-slot:activator="{ on }">
-              <v-btn
-                :disabled="searchUnavailable"
-                :loading="loading"
-                color="success"
-                rounded
-                v-on="on"
-                @click="search"
-              >
-                {{ $t('buttons.search.label') }}
-              </v-btn>
-            </template>
-            <span>{{ $t('ui.infos.notAvailableYet') }}</span>
-          </v-tooltip>
+            {{ $t('buttons.search.label') }}
+          </v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -112,12 +104,17 @@ export default {
     regular: {
       type: Boolean,
       default: false
+    }, 
+    punctualDateOptional: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      loading: false,
-      logged: this.user != "" ? true : false,
+      loadingSearch: false,
+      loadingPublish: false,
+      logged: this.user ? true : false,
       dataRegular: this.regular,
       date: null,
       time: null,
@@ -128,7 +125,7 @@ export default {
   },
   computed: {
     searchUnavailable() {
-      return (!this.origin || !this.destination || (!this.dataRegular && !this.date) || this.loading == true)
+      return (!this.origin || !this.destination || (!this.dataRegular && !this.date && !this.punctualDateOptional) || this.loadingSearch || this.loadingPublish)
     },
     dateFormated() {
       moment.locale(this.locale);
@@ -163,7 +160,7 @@ export default {
       this.date = search.date;
     },
     search: function () {
-      this.loading = true;
+      this.loadingSearch = true;
       let params = {
         origin: JSON.stringify(this.origin),
         destination: JSON.stringify(this.destination),
@@ -171,10 +168,10 @@ export default {
         date:this.date?this.date:null,
         time:this.time?this.time:null
       };
-      this.post(`${this.$t("searchRoute")}`, params);
+      this.post(`${this.$t("buttons.search.route")}`, params);
     },
     publish: function () {
-      this.loading = true;
+      this.loadingPublish = true;
       let params = [];
       let communityId = (this.community) ? "/"+this.community.id : "";
       if (this.origin) {

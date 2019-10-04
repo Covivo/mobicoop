@@ -14,6 +14,8 @@
         geo-search-url="{{ geoCompleteUri }}" 
         :user="{{app.user|json_encode}}"
         {{ searchRegular ? 'regular' : '' }}
+        {{ searchPunctualDate ? 'punctual-date-optional' : '' }}
+        
     />
 
     <div class="container text-xs-center grid-list-md">

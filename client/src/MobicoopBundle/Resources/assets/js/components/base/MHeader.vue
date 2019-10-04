@@ -55,6 +55,7 @@
       </div>
       <v-btn
         rounded
+        :disabled="!user"
         :href="$t('buttons.shareAnAd.route')"
       >
         {{ $t('buttons.shareAnAd.label') }}

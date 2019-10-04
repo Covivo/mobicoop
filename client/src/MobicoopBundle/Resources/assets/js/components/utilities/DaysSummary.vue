@@ -228,8 +228,8 @@ export default {
       moment.locale(this.locale);
       if (this.monActive) {
         return {
-          outward: this.proposal.criteria.monTime ? moment(this.proposal.criteria.monTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null,
-          return: this.proposal.proposalLinked ? (this.proposal.proposalLinked.criteria.monTime ? moment(this.proposal.proposalLinked.criteria.monTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null) : null
+          outward: this.proposal.criteria.monTime ? moment.utc(this.proposal.criteria.monTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null,
+          return: this.proposal.proposalLinked ? (this.proposal.proposalLinked.criteria.monTime ? moment.utc(this.proposal.proposalLinked.criteria.monTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null) : null
         }
       }
       return null;
@@ -238,8 +238,8 @@ export default {
       moment.locale(this.locale);
       if (this.tueActive) {
         return {
-          outward: this.proposal.criteria.tueTime ? moment(this.proposal.criteria.tueTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null,
-          return: this.proposal.proposalLinked ? (this.proposal.proposalLinked.criteria.tueTime ? moment(this.proposal.proposalLinked.criteria.tueTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null) :null
+          outward: this.proposal.criteria.tueTime ? moment.utc(this.proposal.criteria.tueTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null,
+          return: this.proposal.proposalLinked ? (this.proposal.proposalLinked.criteria.tueTime ? moment.utc(this.proposal.proposalLinked.criteria.tueTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null) :null
         }
       }
       return null;
@@ -248,8 +248,8 @@ export default {
       moment.locale(this.locale);
       if (this.wedActive) {
         return {
-          outward: this.proposal.criteria.wedTime ? moment(this.proposal.criteria.wedTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null,
-          return: this.proposal.proposalLinked ? (this.proposal.proposalLinked.criteria.wedTime ? moment(this.proposal.proposalLinked.criteria.wedTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null) : null
+          outward: this.proposal.criteria.wedTime ? moment.utc(this.proposal.criteria.wedTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null,
+          return: this.proposal.proposalLinked ? (this.proposal.proposalLinked.criteria.wedTime ? moment.utc(this.proposal.proposalLinked.criteria.wedTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null) : null
         }
       }
       return null;
@@ -258,8 +258,8 @@ export default {
       moment.locale(this.locale);
       if (this.thuActive) {
         return {
-          outward: this.proposal.criteria.thuTime ? moment(this.proposal.criteria.thuTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null,
-          return: this.proposal.proposalLinked ? (this.proposal.proposalLinked.criteria.thuTime ? moment(this.proposal.proposalLinked.criteria.thuTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null) : null
+          outward: this.proposal.criteria.thuTime ? moment.utc(this.proposal.criteria.thuTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null,
+          return: this.proposal.proposalLinked ? (this.proposal.proposalLinked.criteria.thuTime ? moment.utc(this.proposal.proposalLinked.criteria.thuTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null) : null
         }
       }
       return null;
@@ -268,8 +268,8 @@ export default {
       moment.locale(this.locale);
       if (this.friActive) {
         return {
-          outward: this.proposal.criteria.friTime ? moment(this.proposal.criteria.friTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null,
-          return: this.proposal.proposalLinked ? (this.proposal.proposalLinked.criteria.friTime ? moment(this.proposal.proposalLinked.criteria.friTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null) : null
+          outward: this.proposal.criteria.friTime ? moment.utc(this.proposal.criteria.friTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null,
+          return: this.proposal.proposalLinked ? (this.proposal.proposalLinked.criteria.friTime ? moment.utc(this.proposal.proposalLinked.criteria.friTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null) : null
         }
       }
       return null;
@@ -278,8 +278,8 @@ export default {
       moment.locale(this.locale);
       if (this.satActive) {
         return {
-          outward: this.proposal.criteria.satTime ? moment(this.proposal.criteria.satTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null,
-          return: this.proposal.proposalLinked ? (this.proposal.proposalLinked.criteria.satTime ? moment(this.proposal.proposalLinked.criteria.satTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null) : null
+          outward: this.proposal.criteria.satTime ? moment.utc(this.proposal.criteria.satTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null,
+          return: this.proposal.proposalLinked ? (this.proposal.proposalLinked.criteria.satTime ? moment.utc(this.proposal.proposalLinked.criteria.satTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null) : null
         }
       }
       return null;
@@ -288,8 +288,8 @@ export default {
       moment.locale(this.locale);
       if (this.sunActive) {
         return {
-          outward: this.proposal.criteria.sunTime ? moment(this.proposal.criteria.sunTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null,
-          return: this.proposal.proposalLinked ? (this.proposal.proposalLinked.criteria.sunTime ? moment(this.proposal.proposalLinked.criteria.sunTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null) : null
+          outward: this.proposal.criteria.sunTime ? moment.utc(this.proposal.criteria.sunTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null,
+          return: this.proposal.proposalLinked ? (this.proposal.proposalLinked.criteria.sunTime ? moment.utc(this.proposal.proposalLinked.criteria.sunTime).format(this.$t("ui.i18n.time.format.hourMinute")) : null) : null
         }
       }
       return null;
@@ -335,7 +335,7 @@ export default {
   methods: {
     formatTime(time) {
       moment.locale(this.locale);
-      return moment(moment(new Date()).format('Y-MM-DD')+' '+time).format(this.$t("ui.i18n.time.format.hourMinute"));
+      return moment.utc(moment(new Date()).format('Y-MM-DD')+' '+time).format(this.$t("ui.i18n.time.format.hourMinute"));
     }
   }
 };

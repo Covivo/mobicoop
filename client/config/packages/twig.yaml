@@ -15,6 +15,7 @@ twig:
         priceKm: '%env(CARPOOL_PRICE)%'
         marginTime: '%env(CARPOOL_MARGIN_TIME)%'
         searchRegular: '%env(bool:CARPOOL_SEARCH_REGULAR)%'
+        searchPunctualDate: '%env(bool:CARPOOL_PUNCTUAL_DATE_OPTIONAL)%'
         adRegular: '%env(bool:CARPOOL_AD_REGULAR)%'
         urlTiles: '%env(resolve:URL_TILES)%'
         attributionCopyright: '%env(resolve:ATTRIBUTION_COPYRIGHTS)%'
