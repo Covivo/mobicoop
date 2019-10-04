@@ -18,13 +18,6 @@
     </v-snackbar>
 
     <v-container>
-      <!-- Community : avatar, title and description -->
-      <community-infos
-        :community="community"
-        :url-alt-avatar="urlAltAvatar"
-        :avatar-version="avatarVersion"
-      />
-
       <!-- community buttons and map -->
       <v-row
         justify="center"
@@ -37,10 +30,10 @@
         >
           <!-- Community : avatar, title and description -->
           <community-infos
-            :cover-image="coverImage"
             :community="community"
+            :url-alt-avatar="urlAltAvatar"
+            :avatar-version="avatarVersion"
           />
-
           <!-- community buttons and map -->
           <v-row
             align="center"
