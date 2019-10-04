@@ -63,6 +63,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use function GuzzleHttp\json_encode;
 use function MongoDB\BSON\fromJSON;
 use function MongoDB\BSON\toJSON;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * Controller class for user related actions.
@@ -73,6 +74,17 @@ use function MongoDB\BSON\toJSON;
 class UserController extends AbstractController
 {
     use HydraControllerTrait;
+
+    private $encoder;
+
+    /**
+     * Constructor
+     * @param UserPasswordEncoderInterface $encoder
+     */
+    public function __construct(UserPasswordEncoderInterface $encoder){
+        $this->encoder = $encoder;
+    }
+
     /**
      * User login.
      */
@@ -136,8 +148,13 @@ class UserController extends AbstractController
             $user->setGender($data['gender']);
             $user->setBirthYear($data['birthYear']);
 
+            // Create token to valid inscription
+            $datetime = new DateTime();
+            $time = $datetime->getTimestamp();
+            $pwdToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+            $user->setValidatedDateToken($pwdToken);
             // create user in database
-            $data= $userManager->createUser($user);
+            $data = $userManager->createUser($user);
             $reponseofmanager= $this->handleManagerReturnValue($data);
             if (!empty($reponseofmanager)) {
                 return $reponseofmanager;
