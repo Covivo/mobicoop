@@ -153,7 +153,7 @@ class UserController extends AbstractController
             $datetime = new DateTime();
             $time = $datetime->getTimestamp();
             // For safety, we strip the slashes because this token can be passed in url
-            $pwdToken = str_replace("/","",$this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt()));
+            $pwdToken = str_replace("/", "", $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt()));
             $user->setValidatedDateToken($pwdToken);
             // create user in database
             $data = $userManager->createUser($user);
