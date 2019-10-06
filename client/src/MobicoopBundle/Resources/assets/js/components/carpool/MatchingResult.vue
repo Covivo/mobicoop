@@ -95,6 +95,10 @@ export default {
       type:Object,
       default: null
     },
+    date: {
+      type: String,
+      default: null
+    },
     regular: {
       type: Boolean,
       default: false
@@ -130,8 +134,29 @@ export default {
         proposal: params.proposal,
         // warning : we set below the roles of the requester, so the opposite ones of the current carpooler !
         driver: this.passenger,
-        passenger: this.driver
+        passenger: this.driver,
+        // we send the date of the carpool
+        date: this.getCarpoolDate(),
+        // we send the time of the carpool
+        time: this.getCarpoolTime()
       });
+    },
+    // this methods gives the date of the carpool
+    getCarpoolDate() {
+      // if the search is regular, it's the selected date
+      if (this.regular) return this.date;
+      // if the search is punctual
+      if (params.proposal.criteria.frequency == 1) {
+        // it's the date of the matching proposal if the matching proposal is punctual
+        return params.proposal.criteria.fromDate;
+      } 
+      // TODO : it's the date of the first matching date if it's a regular matching proposal
+      // for now we return the selected date...
+      return this.date;
+    },
+    // this methods gives the time of the carpool
+    getCarpoolTime() {
+      return null;
     }
   }
 };

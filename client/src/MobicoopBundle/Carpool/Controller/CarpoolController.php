@@ -175,7 +175,7 @@ class CarpoolController extends AbstractController
             // we search the matchings as a request
             foreach ($proposalResult->getMatchingRequests() as $request) {
                 //if (!array_key_exists($request->getProposalOffer()->getId(), $matchings)) {
-                    $matchings[$request->getProposalOffer()->getId()]['offer'] = $request;
+                $matchings[$request->getProposalOffer()->getId()]['offer'] = $request;
                 //}
             }
         }

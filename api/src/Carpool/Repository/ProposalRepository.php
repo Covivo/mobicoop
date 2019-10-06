@@ -92,8 +92,8 @@ class ProposalRepository
         //we need the communities
         ->leftJoin('p.communities', 'co');
 
-        // do we exclude the user itself ?
-        if ($excludeProposalUser) {
+        // do we exclude the user itself if the proposal isn't anonymous ?
+        if ($excludeProposalUser && $proposal->getUser()) {
             $query->andWhere('p.user != :userProposal')
             ->setParameter('userProposal', $proposal->getUser());
         }
@@ -714,10 +714,10 @@ class ProposalRepository
         // var_dump($regularAndWhere);
         // var_dump($query->getQuery()->getSql());
         // foreach ($query->getQuery()->getParameters() as $parameter) {
-        //     echo $parameter->getName() . " ";
+        //     echo $parameter->getName();
         // }
         // exit;
-        // var_dump(count($query->getQuery()->getParameters()));exit;
+        //var_dump(count($query->getQuery()->getParameters()));exit;
 
         // we launch the request and return the result
         return $query->getQuery()->getResult();

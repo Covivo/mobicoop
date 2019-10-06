@@ -48,6 +48,7 @@
             :matching="matching"
             :user="user"
             :regular="regular"
+            :date="date"
             @carpool="carpool"
           />
         </v-col>
