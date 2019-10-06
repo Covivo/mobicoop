@@ -178,17 +178,16 @@ class UserController extends AbstractController
             dump("ok");
             // We need to check if the token exists
             $userFound = $userManager->findByValidationDateToken($token);
-            if(!empty($userFound)){
+            if (!empty($userFound)) {
                 dump("userfound");
-                if($userFound->getValidatedDate()!==null){
+                if ($userFound->getValidatedDate()!==null) {
                     dump("already validated");
                     $error = "alreadyValidated";
-                }
-                else{
+                } else {
                     dump("not validated yet");
                     $userFound->setValidatedDate(new \Datetime()); // TO DO : Correct timezone
                     $userFound = $userManager->updateUser($userFound);
-                    if(!$userFound){
+                    if (!$userFound) {
                         $error = "updateError";
                     }
                 }
