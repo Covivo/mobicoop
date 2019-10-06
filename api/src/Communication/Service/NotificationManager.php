@@ -149,6 +149,10 @@ class NotificationManager
                     $titleContext = [];
                     $bodyContext = [];
                     break;
+                case User::class:
+                    $titleContext = [];
+                    $bodyContext = ['user'=>$recipient];
+                    break;
             }
         } else {
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
