@@ -43,6 +43,12 @@
         align="center"
       >
         <v-col class="col-4">
+          <v-alert
+            v-if="this.error!==''"
+            type="error"
+          >
+            {{ $t(this.error) }}
+          </v-alert>
           <v-form
             id="formLoginValidation"
             ref="form"

@@ -4,13 +4,19 @@
         "token":"Votre code de vérification",
         "urlPost":"/utilisateur/inscription/validation/",
         "tokenRequired":"Votre code de vérification est obligatoire",
-        "validate":"Confirmer votre inscription"
+        "validate":"Confirmer votre inscription",
+        "alreadyValidated":"Votre compte a déjà été confirmé",
+        "updateError":"Il y a eu un problème technique",
+        "unknown":"Ce code n'est pas reconnu"
     },
     "en":{
         "title":"Email validation",   
         "token":"Your validation code",
         "urlPost":"/user/signup/validation/",
         "tokenRequired":"Your validation code is required",
-        "validate":"Sign up validation"
+        "validate":"Sign up validation",
+        "alreadyValidated":"Your accunt has already been validated",
+        "updateError":"There has been a technical difficulty",
+        "unknown":"This code is unknown"
     }
 }

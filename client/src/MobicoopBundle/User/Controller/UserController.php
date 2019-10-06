@@ -175,22 +175,28 @@ class UserController extends AbstractController
     {
         $error = "";
         if ($request->isMethod('POST') && $token !== "") {
-            dump("ok");
             // We need to check if the token exists
             $userFound = $userManager->findByValidationDateToken($token);
             if (!empty($userFound)) {
-                dump("userfound");
                 if ($userFound->getValidatedDate()!==null) {
-                    dump("already validated");
                     $error = "alreadyValidated";
                 } else {
-                    dump("not validated yet");
                     $userFound->setValidatedDate(new \Datetime()); // TO DO : Correct timezone
                     $userFound = $userManager->updateUser($userFound);
                     if (!$userFound) {
                         $error = "updateError";
                     }
+                    else{
+                        // Auto login and redirect
+                        $token = new UsernamePasswordToken($userFound, null, 'main', $userFound->getRoles());
+                        $this->get('security.token_storage')->setToken($token);
+                        $this->get('session')->set('_security_main', serialize($token));
+                        return $this->redirectToRoute('home');
+                    }
                 }
+            }
+            else{
+                $error = "unknown";
             }
         }
         return $this->render('@Mobicoop/user/signupValidation.html.twig', ['urlToken'=>$token, 'error'=>$error]);
