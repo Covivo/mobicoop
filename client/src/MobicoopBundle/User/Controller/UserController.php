@@ -185,8 +185,7 @@ class UserController extends AbstractController
                     $userFound = $userManager->updateUser($userFound);
                     if (!$userFound) {
                         $error = "updateError";
-                    }
-                    else{
+                    } else {
                         // Auto login and redirect
                         $token = new UsernamePasswordToken($userFound, null, 'main', $userFound->getRoles());
                         $this->get('security.token_storage')->setToken($token);
@@ -194,8 +193,7 @@ class UserController extends AbstractController
                         return $this->redirectToRoute('home');
                     }
                 }
-            }
-            else{
+            } else {
                 $error = "unknown";
             }
         }
