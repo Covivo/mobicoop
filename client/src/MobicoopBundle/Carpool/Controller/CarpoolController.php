@@ -31,6 +31,7 @@ use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
 use Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\ExternalJourneyManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
@@ -119,7 +120,7 @@ class CarpoolController extends AbstractController
 
     /**
      * Matching Search
-     * AJAX
+     * (AJAX)
      */
     public function carpoolSearchMatching(Request $request, ProposalManager $proposalManager)
     {
@@ -132,7 +133,7 @@ class CarpoolController extends AbstractController
         } else {
             $date = new \DateTime();
         }
-        $time = \Datetime::createFromFormat("H:i", $request->query->get('time'));
+        //$time = \Datetime::createFromFormat("H:i", $request->query->get('time'));
         $frequency = $request->query->get('regular')=="true" ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL;
         $regularLifeTime = $request->query->get('regularLifeTime');
         $strictDate = $request->query->get('strictDate');
@@ -167,13 +168,15 @@ class CarpoolController extends AbstractController
             }
         }
         if ($proposalResult) {
+            // we search the matchings as an offer
             foreach ($proposalResult->getMatchingOffers() as $offer) {
-                $matchings[$offer->getProposalRequest()->getId()] = $offer;
+                $matchings[$offer->getProposalRequest()->getId()]['request'] = $offer;
             }
+            // we search the matchings as a request
             foreach ($proposalResult->getMatchingRequests() as $request) {
-                if (!array_key_exists($request->getProposalOffer()->getId(), $matchings)) {
-                    $matchings[$request->getProposalOffer()->getId()] = $request;
-                }
+                //if (!array_key_exists($request->getProposalOffer()->getId(), $matchings)) {
+                    $matchings[$request->getProposalOffer()->getId()]['offer'] = $request;
+                //}
             }
         }
 
@@ -182,44 +185,24 @@ class CarpoolController extends AbstractController
 
     /**
      * Initiate contact from carpool results
+     * POST
      */
     public function carpoolContact(Request $request, ProposalManager $proposalManager, UserManager $userManager)
     {
-        // The matched proposal
-        $matchedProposal = $proposalManager->getProposal($request->query->get('proposalId'));
-
+        $params = json_decode($request->getContent(), true);
         $data = [
-            "proposalId" => (int)$request->query->get('proposalId'),
-            "origin"=>[
-                "latitude" => (float)$request->query->get('origin_latitude'),
-                "longitude" => (float)$request->query->get('origin_longitude'),
-                "streetAddress" => $request->query->get('origin_streetAddress'),
-                "addressLocality" => $request->query->get('origin_addressLocality')
-            ],
-            "destination"=>[
-                "latitude" => (float)$request->query->get('destination_latitude'),
-                "longitude" => (float)$request->query->get('destination_longitude'),
-                "streetAddress" => $request->query->get('destination_streetAddress'),
-                "addressLocality" => $request->query->get('destination_addressLocality')
-            ],
-            "waypoints"=>[],
-            "outwardDate" => Datetime::createFromFormat("Y-m-d\TH:i:s.u\Z", $request->query->get('date'))->format("Y-m-d"),
-            "outwardTime" => Datetime::createFromFormat("Y-m-d\TH:i:s.u\Z", $request->query->get('date'))->format("H:i"),
+            "proposalId" => $params['proposalId'],
+            "origin"=>$params['origin'],
+            "destination"=>$params['destination'],
+            "outwardDate" => $params['date'] ? $params['date'] : (new \Datetime())->format('Y-m-d'),
+            "outwardTime" => $params['time'],
             "seats" => 1,
-            "price" => (float)$matchedProposal->getCriteria()->getPriceKm(),
-            "regular" => $request->query->get('regular')==="false" ? false : true
+            "driver" => $params['driver'],
+            "passenger" => $params['passenger'],
+            "priceKm" => $params['priceKm'],
+            "regular" => $params['regular'],
+            "waypoints" => []
         ];
-
-        if ((bool)$request->query->get('driver') && (bool)$request->query->get('passenger')) {
-            $data["driver"] = true;
-            $data["passenger"] = true;
-        } elseif ((bool)$request->query->get('driver')) {
-            $data["driver"] = false;
-            $data["passenger"] = true;
-        } else {
-            $data["driver"] = true;
-            $data["passenger"] = false;
-        }
 
         $proposal = $proposalManager->createProposalFromResult($data, $userManager->getLoggedUser());
         if ($proposal!==null) {

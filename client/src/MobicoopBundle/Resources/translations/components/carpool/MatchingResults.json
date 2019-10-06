@@ -1,10 +1,12 @@
 {
   "fr":{
     "matchingUrl": "/covoiturage/recherche/matching",
-    "matchingNumber": "Recherche en cours... | {number} annonce en covoiturage trouvée | {number} annonces en covoiturage trouvées"
+    "search": "Recherche en cours...",
+    "matchingNumber": "Aucune annonce en covoiturage trouvée... | {number} annonce en covoiturage trouvée | {number} annonces en covoiturage trouvées"
   },
   "en":{
     "matchingUrl": "/carpool/search/matching",
-    "matchingNumber": "Searching... | {number} carpooling ad found | {number} carpooling ads found"
+    "search": "Searching...",
+    "matchingNumber": "No carpooling ad found... | {number} carpooling ad found | {number} carpooling ads found"
   }
 }

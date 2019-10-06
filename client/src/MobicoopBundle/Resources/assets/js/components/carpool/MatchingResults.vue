@@ -17,10 +17,19 @@
         align="center"
       >
         <v-col
+          v-if="!loading"
           cols="12"
           align="left"
         >
           {{ $tc('matchingNumber', numberOfMatchings, { number: numberOfMatchings }) }}
+        </v-col>
+
+        <v-col
+          v-else
+          cols="12"
+          align="left"
+        >
+          {{ $t('search') }}
         </v-col>
       </v-row>
 
@@ -49,7 +58,6 @@
 
 <script>
 import axios from "axios";
-import moment from "moment";
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/carpool/MatchingResults.json";

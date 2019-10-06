@@ -280,7 +280,7 @@ class ProposalManager
      */
     public function getMatchings(Proposal $proposal)
     {
-        return $this->createProposal($proposal, false, false);
+        return $this->createProposal($proposal, false, true);
     }
     
     /**

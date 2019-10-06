@@ -37,19 +37,17 @@
           <!-- Regular : summary of days -->
           <days-summary
             v-if="showRegularSummary"
-            :proposal="driver ? matching.proposalOffer : matching.proposalRequest"
+            :proposal="driver ? matching.offer.proposalOffer : matching.request.proposalRequest"
           />
 
           <v-divider v-if="showRegularSummary" /> 
 
           <!-- Journey summary : date, time, summary of route, seats, price -->
           <journey-summary 
-            :driver="driver"
-            :passenger="passenger"
             :matching="matching"
             :regular="regular"
             :user="user"
-            :date="matching.criteria.fromDate"
+            :date="driver ? matching.offer.criteria.fromDate : matching.request.criteria.fromDate"
           />
 
           <v-divider /> 
@@ -57,8 +55,8 @@
           <!-- Carpooler detail -->
           <carpooler-summary 
             :user="user"
-            :carpooler="driver ? matching.proposalOffer.user : matching.proposalRequest.user"
-            :proposal="driver ? matching.proposalOffer : matching.proposalRequest"
+            :carpooler="driver ? matching.offer.proposalOffer.user : matching.request.proposalRequest.user"
+            :proposal="driver ? matching.offer.proposalOffer : matching.request.proposalRequest"
             :matching="matching"
             @carpool="carpool"
           />
@@ -109,23 +107,30 @@ export default {
   },
   computed: {
     showRegularSummary() {
-      return ((this.driver && this.matching.proposalOffer.criteria.frequency == 2) || (this.passenger && this.matching.proposalRequest.criteria.frequency == 2));
+      if (this.driver) {
+        if (this.matching.offer.proposalOffer.criteria.frequency == 2) return true;
+      }
+      if (this.passenger) {
+        if (this.matching.request.proposalRequest.criteria.frequency == 2) return true;
+      }
+      return false;
     },
     driver() {
-      // a user is driver if he is the owner of the proposalOffer
-      return this.matching.proposalOffer.user ? true : false
+      // the matching user is driver if he has an offer
+      return this.matching.offer ? true : false
     },
     passenger() {
-      // a user is passenger if he is the owner of the proposalRequest or if he is also passenger for his proposalOffer
-      return (this.matching.proposalRequest.user || this.matching.proposalOffer.criteria.passenger) ? true : false
+      // the matching user is driver if he has a request
+      return this.matching.request ? true : false
     }
   },
   methods :{
     carpool(params) {
       this.$emit("carpool", {
         proposal: params.proposal,
-        driver: this.driver,
-        passenger: this.passenger
+        // warning : we set below the roles of the requester, so the opposite ones of the current carpooler !
+        driver: this.passenger,
+        passenger: this.driver
       });
     }
   }

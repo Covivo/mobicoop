@@ -66,14 +66,6 @@ export default {
     sharedMessages: CommonTranslations
   },
   props: {
-    driver: {
-      type: Boolean,
-      default: false
-    },
-    passenger: {
-      type: Boolean,
-      default: false
-    },
     matching: {
       type: Object,
       default: null
@@ -85,15 +77,27 @@ export default {
     regular: {
       type: Boolean,
       default: false
+    },
+    date: {
+      type: String,
+      default: null
     }
   },
   data() {
     return {
       locale: this.$i18n.locale,
-      proposal: this.driver ? this.matching.proposalOffer : this.matching.proposalRequest
+      proposal: this.matching.offer ? this.matching.offer.proposalOffer : this.matching.request.proposalRequest
     };
   },
   computed: {
+    driver() {
+      // the matching user is driver if he has an offer
+      return this.matching.offer ? true : false
+    },
+    passenger() {
+      // the matching user is driver if he has a request
+      return this.matching.request ? true : false
+    },
     computedOrigin() {
       return {
         streetAddress: this.proposal.waypoints[0].address.streetAddress,
@@ -137,14 +141,14 @@ export default {
     },
     computedDate() {
       if (this.proposal.criteria.frequency == 2) {
-        return moment.utc(this.matching.criteria.fromDate).format(this.$t("ui.i18n.date.format.shortDate"))
+        return moment.utc(this.driver ? this.matching.offer.criteria.fromDate : this.matching.request.criteria.fromDate).format(this.$t("ui.i18n.date.format.shortDate"))
       }
       return this.proposal.criteria.fromDate
         ? moment.utc(this.proposal.criteria.fromDate).format(this.$t("ui.i18n.date.format.shortDate"))
         : ""; 
     },
     computedPrice() {
-      return this.driver ? Math.round((this.matching.proposalOffer.criteria.priceKm*this.matching.proposalRequest.criteria.directionPassenger.distance/1000)*100)/100 : null
+      return this.driver ? Math.round((this.matching.offer.proposalOffer.criteria.priceKm*this.matching.offer.proposalRequest.criteria.directionPassenger.distance/1000)*100)/100 : null
     }
   },
   methods: {

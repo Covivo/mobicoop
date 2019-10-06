@@ -93,22 +93,20 @@ export default {
   },
   methods :{
     carpool(params) {
-      axios.get(this.$t("contactUrl"), {
-        params:{
-          "proposalId":params.proposal.id,
-          "origin_streetAddress": this.originStreetAddress,
-          "origin_addressLocality": this.originAddressLocality,
-          "destination_streetAddress": this.destinationStreetAddress,
-          "destination_addressLocality": this.destinationAddressLocality,
-          "origin_latitude": Number(this.originLatitude),
-          "origin_longitude": Number(this.originLongitude),
-          "destination_latitude": Number(this.destinationLatitude),
-          "destination_longitude": Number(this.destinationLongitude),
-          "date": this.date,
-          "priceKm": params.proposal.criteria.priceKm,
-          "driver": params.driver,
-          "passenger": params.passenger,
-          "regular": this.regular
+      axios.post(this.$t("contactUrl"), {
+        "proposalId":params.proposal.id,
+        "origin": this.origin,
+        "destination": this.destination,
+        "date": this.date ? this.date : moment(new Date()).format('Y-M-DD'),
+        "time": this.time ? this.time : null,
+        "priceKm": params.proposal.criteria.priceKm,
+        "driver": params.driver,
+        "passenger": params.passenger,
+        "regular": this.regular
+      },
+      {
+        headers:{
+          'content-type': 'application/json'
         }
       })
         .then((response) => {

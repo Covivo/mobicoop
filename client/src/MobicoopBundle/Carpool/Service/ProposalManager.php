@@ -212,7 +212,6 @@ class ProposalManager
     public function createProposalFromAd(array $ad, User $poster, $persist = true)
     {
         // todo : create a validation method for $ad
-        //var_dump($ad);die;
         $proposal = new Proposal();
         $criteria = new Criteria();
 
@@ -238,8 +237,10 @@ class ProposalManager
         $criteria->setDriver($ad['driver']);
         $criteria->setPassenger($ad['passenger']);
         $criteria->setPriceKm($ad['priceKm']);
-        $criteria->setPrice($ad['price']);
         $criteria->setSeats($ad['seats']);
+        if (isset($ad['price'])) {
+            $criteria->setPrice($ad['price']);
+        }
         if (isset($ad['luggage'])) {
             $criteria->setLuggage($ad['luggage']);
         }
@@ -302,7 +303,7 @@ class ProposalManager
             // punctual
             $criteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
             $criteria->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad['outwardDate']));
-            $criteria->setFromTime(\DateTime::createFromFormat('H:i', $ad['outwardTime']));
+            $criteria->setFromTime($ad['outwardTime'] ? \DateTime::createFromFormat('H:i', $ad['outwardTime']): null);
             $criteria->setMarginDuration($this->marginTime);
             if (isset($ad['returnDate']) && $ad['returnDate'] != '' && isset($ad['returnTime']) && $ad['returnTime'] != '') {
                 $proposal->setType(Proposal::TYPE_OUTWARD);
@@ -501,7 +502,7 @@ class ProposalManager
         $proposal->setCriteria($criteria);
 
         if (isset($ad['proposalId'])) {
-            // There id a proposal we know that is a match
+            // There' a proposalId : we know that is a match
             $proposal->setMatchedProposal(new Proposal($ad['proposalId']));
         }
 

@@ -135,21 +135,13 @@ carpool_ad_result:
     requirements:
         id: '\d+'
 
-# search results
+# search results (POST)
 carpool_search_result:
     methods: [POST]
     path:
         fr: /covoiturage/recherche
         en: /carpool/search
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResult
-    requirements:
-        origin: .+
-        destination: .+
-        origin_latitude: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?).\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)'
-        origin_longitude: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?).\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)'
-        destination_latitude: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?).\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)'
-        destination_longitude: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?).\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)'
-        regular: '[01]+'
 
 # search matching (AJAX)
 carpool_search_matching:
@@ -158,8 +150,9 @@ carpool_search_matching:
         en: /carpool/search/matching
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchMatching
 
-# carpool contact
+# carpool contact (POST)
 carpool_contact:
+    methods: [POST]
     path:
         fr: /covoiturage/contact
         en: /carpool/contact
