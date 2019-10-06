@@ -1,0 +1,16 @@
+{
+    "fr":{
+        "title":"Vérification de votre email",
+        "token":"Votre code de vérification",
+        "urlPost":"/utilisateur/inscription/validation/",
+        "tokenRequired":"Votre code de vérification est obligatoire",
+        "validate":"Confirmer votre inscription"
+    },
+    "en":{
+        "title":"Email validation",   
+        "token":"Your validation code",
+        "urlPost":"/user/signup/validation/",
+        "tokenRequired":"Your validation code is required",
+        "validate":"Sign up validation"
+    }
+}

@@ -152,7 +152,8 @@ class UserController extends AbstractController
             // Create token to valid inscription
             $datetime = new DateTime();
             $time = $datetime->getTimestamp();
-            $pwdToken = $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt());
+            // For safety, we strip the slashes because this token can be passed in url
+            $pwdToken = stripslashes($this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt()));
             $user->setValidatedDateToken($pwdToken);
             // create user in database
             $data = $userManager->createUser($user);
@@ -165,6 +166,35 @@ class UserController extends AbstractController
         return $this->render('@Mobicoop/user/signup.html.twig', [
                 'error' => $error
             ]);
+    }
+
+    /**
+     * User registration email validation
+     */
+    public function userSignUpValidation($token, UserManager $userManager, Request $request)
+    {
+        $error = "";
+        if ($request->isMethod('POST') && $token !== "") {
+            dump("ok");
+            // We need to check if the token exists
+            $userFound = $userManager->findByValidationDateToken($token);
+            if(!empty($userFound)){
+                dump("userfound");
+                if($userFound->getValidatedDate()!==null){
+                    dump("already validated");
+                    $error = "alreadyValidated";
+                }
+                else{
+                    dump("not validated yet");
+                    $userFound->setValidatedDate(new \Datetime()); // TO DO : Correct timezone
+                    $userFound = $userManager->updateUser($userFound);
+                    if(!$userFound){
+                        $error = "updateError";
+                    }
+                }
+            }
+        }
+        return $this->render('@Mobicoop/user/signupValidation.html.twig', ['urlToken'=>$token, 'error'=>$error]);
     }
 
     /**

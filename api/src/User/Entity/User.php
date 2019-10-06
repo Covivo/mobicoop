@@ -65,6 +65,7 @@ use App\User\Filter\HomeAddressWaypointTerritoryFilter;
 use App\User\Filter\LoginFilter;
 use App\User\Filter\PwdTokenFilter;
 use App\User\Filter\SolidaryFilter;
+use App\User\Filter\ValidatedDateTokenFilter;
 use App\Communication\Entity\Notified;
 use App\Action\Entity\Log;
 use App\Solidary\Entity\Solidary;
@@ -152,6 +153,7 @@ use App\Solidary\Entity\Solidary;
  * @ApiFilter(WaypointTerritoryFilter::class, properties={"waypointTerritory"})
  * @ApiFilter(LoginFilter::class, properties={"login"})
  * @ApiFilter(PwdTokenFilter::class, properties={"pwdToken"})
+ * @ApiFilter(ValidatedDateTokenFilter::class, properties={"validatedDateToken"})
  * @ApiFilter(SolidaryFilter::class, properties={"solidary"})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate"}, arguments={"orderParameterName"="order"})
  */
