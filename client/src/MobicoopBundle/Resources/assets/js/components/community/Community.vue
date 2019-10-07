@@ -42,7 +42,7 @@
               cols="4"
               class="text-center"
             >
-              <div v-if="isMember && isAccepted">
+              <div v-if="isAccepted">
                 <a
                   style="text-decoration:none;"
                   :href="$t('buttons.publish.route')+community.id"
@@ -55,7 +55,7 @@
                   </v-btn>
                 </a>
               </div>
-              <div v-else-if="isMember == true">
+              <div v-else-if="askToJoin == true">
                 <v-tooltip
                   top
                   color="info"
@@ -141,6 +141,7 @@
               cols="8"
             >
               <community-member-list
+                ref="memberList"
                 :community="community"
               />
             </v-col>
@@ -149,6 +150,7 @@
               cols="4"
             >
               <community-last-users
+                ref="lastUsers"
                 :community="community"
               />
             </v-col>
@@ -179,7 +181,7 @@
           :user="user"
           :justsearch="false"
           :notitle="true"
-          :is-member="isMember"
+          :is-member="askToJoin"
           :community="community"
           :temporary-tooltips="true"
         />
@@ -270,7 +272,7 @@ export default {
       textSnackError: this.$t("snackbar.joinCommunity.textError"),
       errorUpdate: false,
       isAccepted: false,
-      isMember: false,
+      askToJoin: false,
       checkValidation: false,
       isLogged: false,
       loadingMap: false,
@@ -294,7 +296,7 @@ export default {
         .then(res => {
           if (res.data.length > 0) {
             this.isAccepted = res.data[0].status == 1;
-            this.isMember = true
+            this.askToJoin = true
           }
           this.checkValidation = false;
           
@@ -311,9 +313,12 @@ export default {
           })
         .then(res => {
           this.errorUpdate = res.data.state;
+          this.askToJoin = true;
           this.snackbar = true;
+          this.$refs.memberList.getCommunityMemberList();
+          this.$refs.lastUsers.getCommunityLastUsers();
+          this.getCommunityUser();
           this.loading = false;
-          this.isMember = true;
         });
     },
     checkIfUserLogged() {

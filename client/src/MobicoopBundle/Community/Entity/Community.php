@@ -72,11 +72,11 @@ class Community implements ResourceInterface, \JsonSerializable
      */
     private $proposalsHidden;
 
-     /**
-     * @var boolean|null A new member is automaticaly accepted.
-     *
-     * @Groups({"post","put"})
-     */
+    /**
+    * @var boolean|null A new member is automaticaly accepted.
+    *
+    * @Groups({"post","put"})
+    */
     private $autoValidation;
     
     /**
