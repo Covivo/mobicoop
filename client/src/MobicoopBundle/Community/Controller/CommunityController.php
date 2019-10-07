@@ -47,7 +47,7 @@ class CommunityController extends AbstractController
      * Get all communities.
      */
     public function list(CommunityManager $communityManager)
-    {
+    {   
         $this->denyAccessUnlessGranted('list', new Community());
         return $this->render('@Mobicoop/community/communities.html.twig', [
             'communities' => $communityManager->getCommunities(),
@@ -100,7 +100,15 @@ class CommunityController extends AbstractController
                 $community->setFullDescription($data->get('fullDescription'));
                 $community->setAddress($address);
                 $community->addCommunityUser($communityUser);
-                $community->setValidationType(0);
+
+                // check type of validation
+                if ($data->get('domain') != 'null') {
+                    $community->setValidationType(2);
+                    $community->setDomain($data->get('domain'));
+                }
+                else {
+                    $community->setValidationType(0);
+                }    
 
                 // create community
                 if ($community = $communityManager->createCommunity($community)) {

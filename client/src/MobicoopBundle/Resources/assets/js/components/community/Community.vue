@@ -42,7 +42,31 @@
               cols="4"
               class="text-center"
             >
-              <div v-if="isAccepted">
+              <!-- button if domain validation -->
+              <div
+                v-if="domain == false"
+              >
+                <v-tooltip
+                  top
+                  color="info"
+                >
+                  <template v-slot:activator="{ on }">
+                    <div
+                      v-on="on"
+                    >
+                      <v-btn
+                        rounded
+                        disabled
+                      >
+                        {{ $t('buttons.join.label') }}
+                      </v-btn>
+                    </div>
+                  </template>
+                  <span>{{ $t('tooltips.domain')+" "+community.domain }}</span>
+                </v-tooltip>
+              </div>
+              <!-- button if member is accepted -->
+              <div v-else-if="isAccepted">
                 <a
                   style="text-decoration:none;"
                   :href="$t('buttons.publish.route')+community.id"
@@ -55,6 +79,7 @@
                   </v-btn>
                 </a>
               </div>
+              <!-- button if user ask to join community but is not accepted yet -->
               <div v-else-if="askToJoin == true">
                 <v-tooltip
                   top
@@ -78,6 +103,7 @@
                   <span>{{ $t('tooltips.validation') }}</span>
                 </v-tooltip>
               </div>
+              <!-- button is user is not a member -->
               <div
                 v-else
               >
@@ -276,6 +302,7 @@ export default {
       checkValidation: false,
       isLogged: false,
       loadingMap: false,
+      domain: true,
 
     }
   },
@@ -283,6 +310,7 @@ export default {
     this.getCommunityUser();
     this.checkIfUserLogged();
     this.getCommunityProposals();
+    this.checkDomain();
   },
   methods:{
     getCommunityUser() {
@@ -324,6 +352,14 @@ export default {
     checkIfUserLogged() {
       if (this.user !== null) {
         this.isLogged = true;
+      }
+    },
+    checkDomain() {
+      if (this.community.validationType == 2) {
+        let mailDomain = (this.user.email.split("@"))[1];
+        if (!(this.community.domain.includes(mailDomain))) {
+          return this.domain = false;
+        }   
       }
     },
     getCommunityProposals () {

@@ -16,7 +16,8 @@
     },
     "tooltips": {
       "connected": "Vous devez être connecté",
-      "validation": "En attente de validation"
+      "validation": "En attente de validation",
+      "domain": "Votre adresse email doit faire partie du domaine:"
     },
     "snackbar": {
       "joinCommunity": {
