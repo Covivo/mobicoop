@@ -409,7 +409,54 @@ class UserController extends AbstractController
     }
 
     /**
+     * User mailbox
+     */
+    public function mailBox(UserManager $userManager, InternalMessageManager $internalMessageManager){
+        $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('messages', $user);
+
+        return $this->render('@Mobicoop/user/messages.html.twig', ["idUser"=>$user->getId()]);
+    }
+
+    /*************** NEW VERSION */
+    /**
+     * Get direct messages threads
+     */
+    public function getThreadsDirectMessages(UserManager $userManager, InternalMessageManager $internalMessageManager){
+        $user = $userManager->getLoggedUser();
+        $threads = $userManager->getThreadsDirecMessages($user);
+        
+        $messages = [];
+        foreach($threads['threads'] as $thread){
+            $currentMessage = [];
+            // To Do : We support only one recipient at this time...
+            $messages[] = [
+                'idMessage' => $thread["id"],
+                'givenName' => (is_array($thread['user'])) ? $thread['user']['givenName'] : $thread['recipients'][0]['user']['givenName'],
+                'familyName' => (is_array($thread['user'])) ? $thread['user']['familyName'] : $thread['recipients'][0]['user']['familyName'],
+                'date' => (empty($thread['lastMessage'])) ? $thread['createdDate'] : $thread['lastMessage']['createdDate'],
+                'selected' => false
+            ];
+        }
+        return new Response(json_encode($messages));
+    }
+
+    /**
+     * Get direct messages threads
+     */
+    public function getCompleteThreadMessage($idMessage, UserManager $userManager, InternalMessageManager $internalMessageManager){
+        $user = $userManager->getLoggedUser();
+
+        $completeThread = $internalMessageManager->getThread($idMessage, DataProvider::RETURN_JSON);
+        
+        return new Response(json_encode($completeThread));
+    }
+
+    /*************** END NEW VERSION */
+
+    /**
      * User messages.
+     * OLD Controller
      */
     public function userMessages(UserManager $userManager, InternalMessageManager $internalMessageManager)
     {

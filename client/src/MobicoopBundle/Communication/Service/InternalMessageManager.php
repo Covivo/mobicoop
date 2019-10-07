@@ -73,7 +73,7 @@ class InternalMessageManager
         if ($format!==null) {
             $this->dataProvider->setFormat($format);
         }
-        $response = $this->dataProvider->getSubCollection($id, Message::class, "thread");
+        $response = $this->dataProvider->getSpecialCollection("completeThread", ["idMessage"=>$id]);
 
         return $response->getValue();
 

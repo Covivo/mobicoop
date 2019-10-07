@@ -33,6 +33,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\User\Entity\User;
 use App\Carpool\Entity\AskHistory;
+use App\Carpool\DataProvider\ThreadCollectionDataProvider;
 
 /**
  * A message sent from a user to other users.
@@ -47,17 +48,16 @@ use App\Carpool\Entity\AskHistory;
  *      },
  *      collectionOperations={
  *          "get",
- *          "post"
- *      },
- *      itemOperations={"get","put","delete",
- *          "completeThread"={
+ *          "post",
+  *          "completeThread"={
  *              "method"="GET",
- *              "path"="/messages/{id}/thread",
+ *              "path"="/messages/completeThread",
  *              "normalization_context"={"groups"={"thread"}},
  *           }
- *      }
+ *      },
+ *      itemOperations={"get","put","delete"}
  * )
- * @ApiFilter(OrderFilter::class, properties={"id", "title"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "title", "createdDate"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"title":"partial"})
  */
 class Message
@@ -131,10 +131,18 @@ class Message
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Message", mappedBy="message", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"createdDate" = "ASC"})
-     * @Groups("thread")
+     * @Groups({"thread"})
      * @MaxDepth(1)
      */
     private $messages;
+
+    /**
+    * @var Message|null The last message of a thread
+    *
+    * @Groups({"read","threads"})
+    * @MaxDepth(1)
+    */
+   private $lastMessage;
 
     /**
      * @var \DateTimeInterface Creation date of the message.
@@ -282,6 +290,18 @@ class Message
             }
         }
         
+        return $this;
+    }
+
+    public function getLastMessage(): ?self
+    {
+        return (count($this->messages)>0) ? $this->messages[count($this->messages)-1] : null;
+    }
+
+    public function setLastMessage(?self $lastMessage): self
+    {
+        $this->lastMessage = $lastMessage;
+
         return $this;
     }
 

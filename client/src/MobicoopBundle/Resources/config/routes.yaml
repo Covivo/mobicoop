@@ -31,11 +31,29 @@ user_proposals:
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProposals
 
 # messages
-user_messages:
+# user_messages:
+#     path:
+#         fr: /utilisateur/messages
+#         en: /user/messages
+#     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessages
+user_mailbox:
     path:
         fr: /utilisateur/messages
         en: /user/messages
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessages
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::mailBox
+
+user_get_direct_messages:
+    path:
+        fr: /utilisateur/messages/getDirectMessages
+        en: /user/messages/getDirectMessages
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getThreadsDirectMessages
+
+user_get_complete_thread_message:
+    path:
+        fr: /utilisateur/messages/getCompleteThread/{idMessage}
+        en: /user/messages/getCompleteThread/{idMessage}
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getCompleteThreadMessage
+    
 
 # send an internal message
 send_user_message:

@@ -116,4 +116,14 @@ class InternalMessageManager
             $this->eventDispatcher->dispatch(InternalMessageReceivedEvent::NAME, $event);
         }
     }
+
+    /**
+     * Get a complete message
+     */
+    public function getCompleteThread($idMessage){
+        
+        $message = $this->messageRepository->find($idMessage);
+
+        return  array_merge([$message], $message->getMessages());
+    }
 }

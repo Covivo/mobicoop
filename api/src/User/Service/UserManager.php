@@ -147,7 +147,23 @@ class UserManager
         }
         return [];
     }
- 
+
+    public function getThreadsDirectMessages(User $user): array
+    {
+        if ($threads = $this->messageRepository->findThreadsDirectMessages($user)) {
+            return $threads;
+        }
+        return [];
+    }    
+
+    public function getThreadsCarpoolMessages(User $user): array
+    {
+        if ($threads = $this->messageRepository->findThreadsCarpoolMessages($user)) {
+            return $threads;
+        }
+        return [];
+    }    
+    
     /**
        * User password change request.
        *
