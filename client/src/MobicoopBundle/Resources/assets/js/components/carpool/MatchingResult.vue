@@ -132,17 +132,17 @@ export default {
     carpool(params) {
       this.$emit("carpool", {
         proposal: params.proposal,
-        // warning : we set below the roles of the requester, so the opposite ones of the current carpooler !
+        // warning : we set below the possible roles of the requester, so the opposite ones of the current carpooler !
         driver: this.passenger,
         passenger: this.driver,
         // we send the date of the carpool
-        date: this.getCarpoolDate(),
+        date: this.getCarpoolDate(params),
         // we send the time of the carpool
-        time: this.getCarpoolTime()
+        time: this.getCarpoolTime(params)
       });
     },
     // this methods gives the date of the carpool
-    getCarpoolDate() {
+    getCarpoolDate(params) {
       // if the search is regular, it's the selected date
       if (this.regular) return this.date;
       // if the search is punctual
@@ -155,8 +155,17 @@ export default {
       return this.date;
     },
     // this methods gives the time of the carpool
-    getCarpoolTime() {
-      return null;
+    getCarpoolTime(params) {
+      // if the search is regular, the time is null
+      if (this.regular) return null;
+      // if the search is punctual
+      if (this.passenger) {
+        // here the requester is the driver, the current carpooler is passenger
+        // the time is the time of the current carpooler start
+      }
+      if (this.driver) {
+        // we have to return the time 
+      }
     }
   }
 };

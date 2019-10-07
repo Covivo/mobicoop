@@ -93,38 +93,49 @@ export default {
   },
   methods :{
     carpool(params) {
-      axios.post(this.$t("contactUrl"), {
+      console.log({
         "proposalId":params.proposal.id,
         "origin": this.origin,
         "destination": this.destination,
-        "date": this.date ? this.date : moment(new Date()).format('Y-M-DD'),
-        "time": this.time ? this.time : null,
+        "date": params.date,
+        "time": params.time,
         "priceKm": params.proposal.criteria.priceKm,
         "driver": params.driver,
         "passenger": params.passenger,
         "regular": this.regular
-      },
-      {
-        headers:{
-          'content-type': 'application/json'
-        }
-      })
-        .then((response) => {
-          if(response.data=="ok"){
-            //this.emitSnackbar('snackBar.success','success')
-            window.location = "/utilisateur/messages";
-          }
-          else{
-            //this.emitSnackbar('snackBar.error','error')
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          //this.emitSnackbar('snackBar.error','error')
-        })
-        .finally(() => {
-          //this.loading = false;
-        })
+      });
+      // axios.post(this.$t("contactUrl"), {
+      //   "proposalId":params.proposal.id,
+      //   "origin": this.origin,
+      //   "destination": this.destination,
+      //   "date": params.date,
+      //   "time": params.time,
+      //   "priceKm": params.proposal.criteria.priceKm,
+      //   "driver": params.driver,
+      //   "passenger": params.passenger,
+      //   "regular": this.regular
+      // },
+      // {
+      //   headers:{
+      //     'content-type': 'application/json'
+      //   }
+      // })
+      //   .then((response) => {
+      //     if(response.data=="ok"){
+      //       //this.emitSnackbar('snackBar.success','success')
+      //       window.location = "/utilisateur/messages";
+      //     }
+      //     else{
+      //       //this.emitSnackbar('snackBar.error','error')
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //     //this.emitSnackbar('snackBar.error','error')
+      //   })
+      //   .finally(() => {
+      //     //this.loading = false;
+      //   })
     },
     // TODO : REMOVE WHEN START CODING FILTER COMPONENT
     remove (item) {

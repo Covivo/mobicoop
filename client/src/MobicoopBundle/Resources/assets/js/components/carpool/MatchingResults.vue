@@ -138,7 +138,9 @@ export default {
       this.$emit("carpool", {
         proposal: params.proposal,
         driver: params.driver,
-        passenger: params.passenger
+        passenger: params.passenger,
+        date: params.date,
+        time: params.time
       });
     }
   }
