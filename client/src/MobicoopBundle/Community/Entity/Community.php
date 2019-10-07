@@ -254,7 +254,7 @@ class Community implements ResourceInterface, \JsonSerializable
     public function setDomain(string $domain)
     {
         $this->domain = $domain;
-    }   
+    }
     
     public function getDescription(): ?string
     {
