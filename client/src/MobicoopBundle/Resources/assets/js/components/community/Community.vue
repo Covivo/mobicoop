@@ -47,7 +47,7 @@
                 v-if="domain == false"
               >
                 <v-tooltip
-                  top
+                  left
                   color="info"
                 >
                   <template v-slot:activator="{ on }">
