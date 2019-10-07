@@ -142,7 +142,7 @@ class Message
     * @Groups({"read","threads"})
     * @MaxDepth(1)
     */
-   private $lastMessage;
+    private $lastMessage;
 
     /**
      * @var \DateTimeInterface Creation date of the message.

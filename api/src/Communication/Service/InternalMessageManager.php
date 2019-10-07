@@ -120,8 +120,8 @@ class InternalMessageManager
     /**
      * Get a complete message
      */
-    public function getCompleteThread($idMessage){
-        
+    public function getCompleteThread($idMessage)
+    {
         $message = $this->messageRepository->find($idMessage);
 
         return  array_merge([$message], $message->getMessages());

@@ -411,7 +411,8 @@ class UserController extends AbstractController
     /**
      * User mailbox
      */
-    public function mailBox(UserManager $userManager, InternalMessageManager $internalMessageManager){
+    public function mailBox(UserManager $userManager, InternalMessageManager $internalMessageManager)
+    {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
 
@@ -422,12 +423,13 @@ class UserController extends AbstractController
     /**
      * Get direct messages threads
      */
-    public function getThreadsDirectMessages(UserManager $userManager, InternalMessageManager $internalMessageManager){
+    public function getThreadsDirectMessages(UserManager $userManager, InternalMessageManager $internalMessageManager)
+    {
         $user = $userManager->getLoggedUser();
         $threads = $userManager->getThreadsDirecMessages($user);
         
         $messages = [];
-        foreach($threads['threads'] as $thread){
+        foreach ($threads['threads'] as $thread) {
             $currentMessage = [];
             // To Do : We support only one recipient at this time...
             $messages[] = [
@@ -444,7 +446,8 @@ class UserController extends AbstractController
     /**
      * Get direct messages threads
      */
-    public function getCompleteThreadMessage($idMessage, UserManager $userManager, InternalMessageManager $internalMessageManager){
+    public function getCompleteThreadMessage($idMessage, UserManager $userManager, InternalMessageManager $internalMessageManager)
+    {
         $user = $userManager->getLoggedUser();
 
         $completeThread = $internalMessageManager->getThread($idMessage, DataProvider::RETURN_JSON);

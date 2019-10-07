@@ -154,7 +154,7 @@ class UserManager
             return $threads;
         }
         return [];
-    }    
+    }
 
     public function getThreadsCarpoolMessages(User $user): array
     {
@@ -162,7 +162,7 @@ class UserManager
             return $threads;
         }
         return [];
-    }    
+    }
     
     /**
        * User password change request.

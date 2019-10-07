@@ -77,5 +77,5 @@ class MessageRepository
         ->setParameter('user', $user);
 
         return $query->getQuery()->getResult();
-    }    
+    }
 }
