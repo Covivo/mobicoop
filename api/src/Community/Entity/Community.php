@@ -132,6 +132,14 @@ class Community
      * @Groups({"read","write"})
      */
     private $proposalsHidden;
+
+    /**
+     * @var boolean|null Proposals are only visible by the members of the community.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $autoValidation;
     
     /**
      * @var string The short description of the community.
@@ -275,6 +283,18 @@ class Community
     public function setProposalsHidden(?bool $isProposalsHidden): self
     {
         $this->proposalsHidden = $isProposalsHidden ? true : false;
+        
+        return $this;
+    }
+
+    public function isAutoValidation(): ?bool
+    {
+        return $this->autoValidation ? true : false;
+    }
+    
+    public function setAutoValidation(?bool $isAutoValidation): self
+    {
+        $this->autoValidation = $isAutoValidation ? true : false;
         
         return $this;
     }
