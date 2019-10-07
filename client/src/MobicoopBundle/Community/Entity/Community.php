@@ -71,6 +71,13 @@ class Community implements ResourceInterface, \JsonSerializable
      * @Groups({"post","put"})
      */
     private $proposalsHidden;
+
+     /**
+     * @var boolean|null A new member is automaticaly accepted.
+     *
+     * @Groups({"post","put"})
+     */
+    private $autoValidation;
     
     /**
      * @var string The short description of the community.
@@ -214,6 +221,18 @@ class Community implements ResourceInterface, \JsonSerializable
     public function setProposalsHidden(?bool $isProposalsHidden): self
     {
         $this->proposalsHidden = $isProposalsHidden ? true : false;
+        
+        return $this;
+    }
+
+    public function isAutoValidation(): ?bool
+    {
+        return $this->autoValidation ? true : false;
+    }
+    
+    public function setAutoValidation(?bool $isAutoValidation): self
+    {
+        $this->autoValidation = $isAutoValidation ? true : false;
         
         return $this;
     }
@@ -419,7 +438,8 @@ class Community implements ResourceInterface, \JsonSerializable
             'proposalsHidden'   => $this->isProposalsHidden(),
             'membersHidden'     => $this->isMembersHidden(),
             'address'           => $this->getAddress(),
-            'isSecured'         => $this->isSecured()
+            'isSecured'         => $this->isSecured(),
+            'autoValidation'    => $this->isAutoValidation()
         ];
     }
 }

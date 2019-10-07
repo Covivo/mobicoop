@@ -134,7 +134,7 @@ class Community
     private $proposalsHidden;
 
     /**
-     * @var boolean|null Proposals are only visible by the members of the community.
+     * @var boolean|null A new member is automaticaly accepted.
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
