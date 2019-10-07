@@ -39,6 +39,10 @@ use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
  */
 class Community implements ResourceInterface, \JsonSerializable
 {
+    const AUTO_VALIDATION = 0;
+    const MANUAL_VALIDATION = 1;
+    const DOMAIN_VALIDATION = 2;
+
     /**
      * @var int The id of this community.
      */
@@ -72,12 +76,12 @@ class Community implements ResourceInterface, \JsonSerializable
      */
     private $proposalsHidden;
 
-    /**
-    * @var boolean|null A new member is automaticaly accepted.
-    *
-    * @Groups({"post","put"})
-    */
-    private $autoValidation;
+  /**
+     * @var int The type of validation (automatic/manual/domain).
+     *
+     * @Groups({"post","put"})
+     */
+    private $validationType;
     
     /**
      * @var string The short description of the community.
@@ -225,16 +229,14 @@ class Community implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
-    public function isAutoValidation(): ?bool
+    public function getValidationType()
     {
-        return $this->autoValidation ? true : false;
+        return $this->validationType;
     }
     
-    public function setAutoValidation(?bool $isAutoValidation): self
+    public function setValidationType(?int $validationType)
     {
-        $this->autoValidation = $isAutoValidation ? true : false;
-        
-        return $this;
+        $this->validationType = $validationType;
     }
     
     public function getDescription(): ?string
@@ -439,7 +441,7 @@ class Community implements ResourceInterface, \JsonSerializable
             'membersHidden'     => $this->isMembersHidden(),
             'address'           => $this->getAddress(),
             'isSecured'         => $this->isSecured(),
-            'autoValidation'    => $this->isAutoValidation()
+            'validationType'    => $this->getValidationType()
         ];
     }
 }

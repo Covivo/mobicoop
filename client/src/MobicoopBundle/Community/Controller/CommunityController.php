@@ -100,7 +100,7 @@ class CommunityController extends AbstractController
                 $community->setFullDescription($data->get('fullDescription'));
                 $community->setAddress($address);
                 $community->addCommunityUser($communityUser);
-                $community->setAutoValidation(true);
+                $community->setValidationType(0);
 
                 // create community
                 if ($community = $communityManager->createCommunity($community)) {
@@ -207,7 +207,7 @@ class CommunityController extends AbstractController
         //test if the user logged is not already a member of the community
         if ($user && $user !=='' && !in_array($user->getId(), $communityUsersId)) {
             $communityUser = new CommunityUser();
-            if ($community->isAutoValidation()) {
+            if ($community->getValidationType() == 0) {
                 $communityUser->setCommunity(new Community($id));
                 $communityUser->setUser($user);
                 $communityUser->setStatus(1);
