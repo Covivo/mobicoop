@@ -76,12 +76,19 @@ class Community implements ResourceInterface, \JsonSerializable
      */
     private $proposalsHidden;
 
-  /**
-     * @var int The type of validation (automatic/manual/domain).
+    /**
+       * @var int The type of validation (automatic/manual/domain).
+       *
+       * @Groups({"post","put"})
+       */
+    private $validationType;
+
+    /**
+     * @var string The domain of the community.
      *
      * @Groups({"post","put"})
      */
-    private $validationType;
+    private $domain;
     
     /**
      * @var string The short description of the community.
@@ -238,6 +245,16 @@ class Community implements ResourceInterface, \JsonSerializable
     {
         $this->validationType = $validationType;
     }
+
+    public function getDomain(): ?string
+    {
+        return $this->domain;
+    }
+    
+    public function setDomain(string $domain)
+    {
+        $this->domain = $domain;
+    }   
     
     public function getDescription(): ?string
     {
@@ -441,7 +458,8 @@ class Community implements ResourceInterface, \JsonSerializable
             'membersHidden'     => $this->isMembersHidden(),
             'address'           => $this->getAddress(),
             'isSecured'         => $this->isSecured(),
-            'validationType'    => $this->getValidationType()
+            'validationType'    => $this->getValidationType(),
+            'domain'            => $this->getDomain(),
         ];
     }
 }
