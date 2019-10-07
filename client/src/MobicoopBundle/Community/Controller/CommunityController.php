@@ -211,8 +211,7 @@ class CommunityController extends AbstractController
                 $communityUser->setCommunity(new Community($id));
                 $communityUser->setUser($user);
                 $communityUser->setStatus(1);
-            }
-            else {
+            } else {
                 $communityUser->setCommunity(new Community($id));
                 $communityUser->setUser($user);
                 $communityUser->setStatus(0);
