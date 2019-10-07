@@ -146,7 +146,7 @@ class Community
     private $validationType;
 
     /**
-     * @var string The domain of the community.
+     * @var string|null The domain of the community.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"read","write"})
@@ -309,7 +309,7 @@ class Community
         $this->validationType = $validationType;
     }
 
-    public function getDomain(): string
+    public function getDomain(): ?string
     {
         return $this->domain;
     }

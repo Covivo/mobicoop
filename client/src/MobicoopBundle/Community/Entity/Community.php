@@ -84,7 +84,7 @@ class Community implements ResourceInterface, \JsonSerializable
     private $validationType;
 
     /**
-     * @var string The domain of the community.
+     * @var string|null The domain of the community.
      *
      * @Groups({"post","put"})
      */
