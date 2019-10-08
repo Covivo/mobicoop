@@ -314,7 +314,7 @@ class Community
         return $this->domain;
     }
     
-    public function setDomain(string $domain)
+    public function setDomain(?string $domain)
     {
         $this->domain = $domain;
     }
