@@ -24,6 +24,10 @@
             "logOut": {
                 "label": "Déconnexion",
                 "route": "/user/logout"
+            },
+            "accessibility": {
+                "label": "Accessibilité",
+                "route": "/user/logout"
             }
         }
     },
@@ -51,6 +55,10 @@
             },
             "logOut": {
                 "label": "Logout",
+                "route": "/user/logout"
+            },
+            "accessibility": {
+                "label": "Accessibility",
                 "route": "/user/logout"
             }
         }

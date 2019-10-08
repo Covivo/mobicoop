@@ -14,6 +14,13 @@
         </a>
       </v-toolbar-title>
       <v-spacer />
+      <v-btn
+        text
+        rounded
+        :href="$t('buttons.messages.route')"
+      >
+        {{ $t('buttons.accessibility.label') }}
+      </v-btn>
       <div v-if="user">
         <v-btn
           text
