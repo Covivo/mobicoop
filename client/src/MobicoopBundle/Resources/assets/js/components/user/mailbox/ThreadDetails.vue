@@ -17,7 +17,7 @@
             v-slot:icon
           >
             <v-avatar color="secondary">
-              <v-icon>{{ item.icon }}</v-icon>
+              <v-icon>mdi-account-circle</v-icon>
             </v-avatar>
           </template>
           <template
@@ -40,39 +40,6 @@
         </v-timeline-item>
       </v-timeline>
     </v-container>
-    <v-container>
-      <v-row>
-        <v-col class="col-9">
-          <v-textarea
-            v-model="textToSend"
-            name="typedMessage"
-            filled
-            :label="$t('ui.form.enterMessage')"
-            auto-grow
-            rows="2"
-            background-color="#FFFFFF"
-            value
-          />
-        </v-col>
-        <v-col
-          class="col-3"
-          align-self-center
-        >
-          <div class="text-xs-center">
-            <v-btn
-              id="validSendMessage"
-              class="mx-2 black--text font-weight-bold"
-              fab
-              rounded
-              color="primary"
-              @click="sendInternalMessage()"
-            >
-              <v-icon>mdi-send</v-icon>
-            </v-btn>
-          </div>
-        </v-col>
-      </v-row>
-    </v-container>
   </v-content>
 </template>
 <script>
@@ -93,6 +60,14 @@ export default {
     },
     idUser:{
       type: Number,
+      default:null
+    },
+    iconUser:{ // Not used for now
+      type: String,
+      default:null
+    },
+    iconCorrespondant:{ // Not used for now
+      type: String,
       default:null
     }
   },
@@ -140,9 +115,6 @@ export default {
     },
     createdTime(date){
       return moment(date).format("HH:mm");
-    },
-    sendInternalMessage(){
-          
     }
   }
 }

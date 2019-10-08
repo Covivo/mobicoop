@@ -151,15 +151,45 @@ class UserManager
     public function getThreadsDirectMessages(User $user): array
     {
         if ($threads = $this->messageRepository->findThreadsDirectMessages($user)) {
-            return $threads;
+
+            $messages = [];
+            foreach ($threads as $thread) {
+
+                $currentMessage = [];
+                // To Do : We support only one recipient at this time...
+                $messages[] = [
+                    'idMessage' => $thread->getId(),
+                    'givenName' => ($user->getId() === $thread->getUser('user')->getId()) ? $thread->getRecipients()[0]->getUser('user')->getGivenName() : $thread->getUser('user')->getGivenName(),
+                    'familyName' => ($user->getId() === $thread->getUser('user')->getId()) ? $thread->getRecipients()[0]->getUser('user')->getFamilyName() : $thread->getUser('user')->getFamilyName(),
+                    'date' => ($thread->getLastMessage()===null) ? $thread->getCreatedDate() : $thread->getLastMessage()->getCreatedDate(),
+                    'selected' => false
+                ];
+            }
+
+            return $messages;
         }
         return [];
     }
 
     public function getThreadsCarpoolMessages(User $user): array
     {
-        if ($threads = $this->messageRepository->findThreadsCarpoolMessages($user)) {
-            return $threads;
+        if ($threads = $this->messageRepository->findThreadsDirectMessages($user)) {
+
+            $messages = [];
+            foreach ($threads as $thread) {
+
+                $currentMessage = [];
+                // To Do : We support only one recipient at this time...
+                $messages[] = [
+                    'idMessage' => $thread->getId(),
+                    'givenName' => ($user->getId() === $thread->getUser('user')->getId()) ? $thread->getRecipients()[0]->getUser('user')->getGivenName() : $thread->getUser('user')->getGivenName(),
+                    'familyName' => ($user->getId() === $thread->getUser('user')->getId()) ? $thread->getRecipients()[0]->getUser('user')->getFamilyName() : $thread->getUser('user')->getFamilyName(),
+                    'date' => ($thread->getLastMessage()===null) ? $thread->getCreatedDate() : $thread->getLastMessage()->getCreatedDate(),
+                    'selected' => false
+                ];
+            }
+
+            return $messages;
         }
         return [];
     }

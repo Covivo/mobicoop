@@ -29,8 +29,8 @@ export default {
   mounted(){
     axios.get("/user/messages/getDirectMessages")
       .then(response => {
-        //console.error(response.data);
-        this.messages = response.data;
+        //console.error(response.data.threads);
+        this.messages = response.data.threads;
       })
       .catch(function (error) {
         console.log(error);

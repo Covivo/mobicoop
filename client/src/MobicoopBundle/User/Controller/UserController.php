@@ -427,31 +427,15 @@ class UserController extends AbstractController
     {
         $user = $userManager->getLoggedUser();
         $threads = $userManager->getThreadsDirecMessages($user);
-        
-        $messages = [];
-        foreach ($threads['threads'] as $thread) {
-            $currentMessage = [];
-            // To Do : We support only one recipient at this time...
-            $messages[] = [
-                'idMessage' => $thread["id"],
-                'givenName' => (is_array($thread['user'])) ? $thread['user']['givenName'] : $thread['recipients'][0]['user']['givenName'],
-                'familyName' => (is_array($thread['user'])) ? $thread['user']['familyName'] : $thread['recipients'][0]['user']['familyName'],
-                'date' => (empty($thread['lastMessage'])) ? $thread['createdDate'] : $thread['lastMessage']['createdDate'],
-                'selected' => false
-            ];
-        }
-        return new Response(json_encode($messages));
+        return new Response(json_encode($threads));
     }
 
     /**
      * Get direct messages threads
      */
-    public function getCompleteThreadMessage($idMessage, UserManager $userManager, InternalMessageManager $internalMessageManager)
+    public function getCompleteThreadMessage($idMessage, InternalMessageManager $internalMessageManager)
     {
-        $user = $userManager->getLoggedUser();
-
         $completeThread = $internalMessageManager->getThread($idMessage, DataProvider::RETURN_JSON);
-        
         return new Response(json_encode($completeThread));
     }
 
