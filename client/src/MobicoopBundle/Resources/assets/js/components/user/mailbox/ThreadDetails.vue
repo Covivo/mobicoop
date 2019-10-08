@@ -74,7 +74,8 @@ export default {
   data(){
     return{
       textToSend:"",
-      items:[]
+      items:[],
+      currentAskHistory:null
     }
   },
   watch:{
@@ -102,12 +103,13 @@ export default {
             if(this.idUser==item.user.id){
               item.origin = "own";
             }
-
-
-
             this.items.push(item);
 
+            // Update the current AskHistory
+            this.currentAskHistory = item.askHistory;
+
           });
+
         })
         .catch(function (error) {
           console.log(error);
@@ -115,6 +117,9 @@ export default {
     },
     createdTime(date){
       return moment(date).format("HH:mm");
+    },
+    emit(){
+      this.$emit("updateAskHistory",{currentAskHistory:this.currentAskHistory});
     }
   }
 }

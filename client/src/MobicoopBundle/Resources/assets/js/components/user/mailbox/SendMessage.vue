@@ -25,7 +25,7 @@
               fab
               rounded
               color="primary"
-              @click="sendInternalMessage()"
+              @click="emit()"
             >
               <v-icon>mdi-send</v-icon>
             </v-btn>
@@ -36,7 +36,6 @@
   </v-content>
 </template>
 <script>
-import axios from "axios";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/mailbox/SendMessage.json";
 
@@ -54,10 +53,6 @@ export default {
       type: Number,
       default: null
     },
-    idAskHistory: {
-      type: Number,
-      default: null
-    }
   },
   data(){
     return{
@@ -67,20 +62,14 @@ export default {
   mounted(){
   },
   methods:{
-    sendInternalMessage(){
-      let messageToSend = {
-        idThreadMessage: this.idThreadMessage,
-        text: this.textToSend,
-        idRecipient: this.idRecipient,
-        idAskHistory: (this.idAskHistory !== null) ? this.idAskHistory : null
-      };
-      axios.post("/utilisateur/messages/envoyer", messageToSend).then(res => {
-        this.emit(res.data);
-        this.textToSend = "";
-      });
-    },
     emit(message){
-      this.$emit("updateThreadDetails",{idThreadMessage:this.idThreadMessage});
+      this.$emit("sendInternalMessage",
+        {
+          idThreadMessage:this.idThreadMessage,
+          idRecipient:this.idRecipient,
+          textToSend:this.textToSend
+        });
+      this.textToSend = "";
     }
   }
 }

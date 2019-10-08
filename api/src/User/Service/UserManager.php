@@ -172,7 +172,7 @@ class UserManager
 
     public function getThreadsCarpoolMessages(User $user): array
     {
-        if ($threads = $this->messageRepository->findThreadsDirectMessages($user)) {
+        if ($threads = $this->messageRepository->findThreadsCarpoolMessages($user)) {
             $messages = [];
             foreach ($threads as $thread) {
                 $currentMessage = [];

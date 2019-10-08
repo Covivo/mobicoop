@@ -81,6 +81,7 @@
                 ref="threadDetails"
                 :id-message="this.idMessage"
                 :id-user="this.idUser"
+                @updateAskHistory="updateAskHistory"
               />
             </v-col>
           </v-row>
@@ -89,7 +90,7 @@
               <send-message 
                 :id-thread-message="this.idMessage"
                 :id-recipient="this.idRecipient"
-                @updateThreadDetails="updateThreadDetails"
+                @sendInternalMessage="sendInternalMessage"
               />
             </v-col>
           </v-row>
@@ -105,7 +106,7 @@
   </v-content>
 </template>
 <script>
-
+import axios from "axios";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/mailbox/Messages.json";
 import MailBoxHeader from '@components/user/mailbox/MailBoxHeader'
@@ -138,7 +139,8 @@ export default {
     return {
       modelTabs:"tab-cm",
       idMessage:null,
-      idRecipient:null
+      idRecipient:null,
+      currentAskHistory:null
     };
   },
   watch: {
@@ -150,9 +152,22 @@ export default {
       this.idMessage = data.idMessage;
       this.idRecipient = data.idRecipient;
     },
-    updateThreadDetails(data){
-      this.idMessage = data.idThreadMessage;
-      this.$refs.threadDetails.getCompleteThread();
+    sendInternalMessage(data){
+      let messageToSend = {
+        idThreadMessage: data.idThreadMessage,
+        text: data.textToSend,
+        idRecipient: data.idRecipient,
+        idAskHistory: this.currentAskHistory
+      };
+      console.error(messageToSend);
+      // axios.post("/utilisateur/messages/envoyer", messageToSend).then(res => {
+      //   this.idMessage = data.idThreadMessage;
+      //   // Update the thread details
+      //   this.$refs.threadDetails.getCompleteThread();
+      // });
+    },
+    updateAskHistory(data){
+      this.currentAskHistory = data.currentAskHistory;
     }
   }
 };
