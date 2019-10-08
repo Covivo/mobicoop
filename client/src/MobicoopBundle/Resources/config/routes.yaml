@@ -1,3 +1,21 @@
+################
+# route naming #
+################
+
+# domain_subdomain_action ; underscore accepted only for action, no plural
+# exceptions : for common routes like home, login, logout, signup...
+
+
+##################
+# default routes #
+##################
+home:
+    path:
+        fr: /
+        en: /
+    controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::index
+
+
 ###############
 # user routes #
 ###############
@@ -9,6 +27,10 @@ user_login:
         en: /user/login
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::login
 
+# logout
+user_logout:
+    path: /user/logout
+
 # sign up
 user_sign_up:
     path:
@@ -16,7 +38,6 @@ user_sign_up:
         en: /user/signup
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUp
 
-# sign up
 user_sign_up_validation:
     path:
         fr: /utilisateur/inscription/validation/{token}
@@ -24,50 +45,6 @@ user_sign_up_validation:
     defaults:
         token: ""   
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidation
-
-    # create proposal
-user_proposal_create:
-    path:
-        fr: /utilisateur/annonce/partager
-        en: /user/proposal/create
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProposalCreate
-
-# proposals
-user_proposals:
-    path:
-        fr: /utilisateur/annonces
-        en: /user/ads
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProposals
-
-# messages
-user_messages:
-    path:
-        fr: /utilisateur/messages
-        en: /user/messages
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessages
-
-# send an internal message
-send_user_message:
-    path:
-        fr: /utilisateur/messages/envoyer
-        en: /user/messages/send
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::sendInternalMessage
-
-# get a message thread
-user_message_thread:
-    path:
-        fr: /utilisateur/messages/{idFirstMessage}
-        en: /user/messages/{idFirstMessage}
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getThread
-    requirements:
-        idFirstMessage: '\d+'
-
-# Update an Ask from messages
-user_message_update_ask:
-    path:
-        fr: /utilisateur/messages/updateAsk
-        en: /user/messages/updateAsk
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::updateAsk
 
 # profile update
 user_profile_update:
@@ -83,18 +60,18 @@ user_password_update:
         en: /user/password/update
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordUpdate
 
-# forgot password
+# password forgotten : ask for a new password
 user_password_forgot:
     path:
         fr: /utilisateur/mot-de-passe/recuperation
         en: /user/password/recovery
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordRecovery
 
-get_user_password_for_recovery:
+user_password_for_recovery:
     path:
         fr: /utilisateur/mot-de-passe/recuperation/envoi
         en: /user/password/recovery/send
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getUserPasswordForRecovery
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordForRecovery
 
 user_update_password_reset:
     path:
@@ -104,6 +81,7 @@ user_update_password_reset:
         token: .*
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userUpdatePasswordReset
 
+# password forgotten : reset the password
 user_password_reset:
     path:
         fr: /utilisateur/mot-de-passe/reset/{token}
@@ -112,18 +90,44 @@ user_password_reset:
         token: .*
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordReset
 
-# profile delete
-user_profile_delete:
+# proposal list
+user_proposal_list:
     path:
-        fr: /utilisateur/profil/supprimer
-        en: /user/profile/delete
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileDelete
+        fr: /utilisateur/annonces
+        en: /user/ads
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProposalList
+
+# messages
+user_message_list:
+    path:
+        fr: /utilisateur/messages
+        en: /user/messages
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageList
+
+# send an internal message
+user_message_send:
+    path:
+        fr: /utilisateur/messages/envoyer
+        en: /user/messages/send
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageSend
+
+# get a message thread
+user_message_thread:
+    path:
+        fr: /utilisateur/messages/{idFirstMessage}
+        en: /user/messages/{idFirstMessage}
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageThread
+    requirements:
+        idFirstMessage: '\d+'
+
+# update an Ask from messages
+user_message_update_ask:
+    path:
+        fr: /utilisateur/messages/updateAsk
+        en: /user/messages/updateAsk
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageUpdateAsk
 
 
-# logout
-logout:
-    path: /user/logout
-    
 ##################
 # carpool routes #
 ##################
@@ -131,55 +135,59 @@ logout:
 # post an ad
 carpool_ad_post:
     path:
-        fr: /covoiturage/annonce/poster/{communityId}
-        en: /carpool/ad/share/{communityId}
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::post
-    defaults:
-        communityId: 0    
+        fr: /covoiturage/annonce/poster
+        en: /carpool/ad/share
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPost
 
-# ad results
-carpool_ad_results:
+# post an ad in a community
+carpool_ad_post_community:
+    path:
+        fr: /communaute/{communityId}/annonce/poster
+        en: /community/{communityId}/ad/share
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPost
+    requirements:
+        communityId: '\d+'
+
+# ad results 
+carpool_ad_result:
     path:
         fr: /covoiturage/annonce/{id}/resultats
         en: /carpool/ad/{id}/results
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::postResults
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdResult
     requirements:
         id: '\d+'
 
-# simple search results
-carpool_results:
+# search results (POST)
+carpool_search_result:
+    methods: [POST]
     path:
-        fr: /covoiturage/recherche/{origin}/{destination}/{origin_latitude}/{origin_longitude}/{destination_latitude}/{destination_longitude}/{date}/{regular}/resultats
-        en: /carpool/search/{origin}/{destination}/{origin_latitude}/{origin_longitude}/{destination_latitude}/{destination_longitude}/{date}/{regular}/results
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::simpleSearchResults
-    requirements:
-        origin_latitude: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?).\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)'
-        origin_longitude: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?).\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)'
-        destination_latitude: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?).\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)'
-        destination_longitude: '^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?).\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)'
+        fr: /covoiturage/recherche
+        en: /carpool/search
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResult
 
-matching_search:
+# search matching (AJAX)
+carpool_search_matching:
     path:
-        fr: /matching/search/
-        en: /matching/search/
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::matchingSearch
+        fr: /covoiturage/recherche/matching
+        en: /carpool/search/matching
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchMatching
 
-# contact
-contact_for_carpool_from_results:
+# carpool contact (POST)
+carpool_contact:
+    methods: [POST]
     path:
-        fr: /matching/search/contactforcarpool
-        en: /matching/search/contactforcarpool
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::contactForCarpool
+        fr: /covoiturage/contact
+        en: /carpool/contact
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolContact
 
-
-# rdex provider (called with ajax)
+# rdex provider (AJAX)
 rdex_provider:
     path:
         fr: /provider/rdex/ 
         en: /provider/rdex/
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexProvider  
     
-# rdex journey (called with ajax)
+# rdex journey (AJAX)
 rdex_journey:
     path:
         fr: /journey/rdex
@@ -194,36 +202,36 @@ rdex_journey:
 # create community
 community_create:
     path:
-        fr: /creer/communaute
-        en: /create/community
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::create
+        fr: /communaute/creer
+        en: /community/create
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityCreate
          
 # display communities
 community_list:
     path:
         fr: /communautes
-        en: /communities
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::list  
+        en: /community
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityList  
 
 # display one community
 community_show:
     path:
         fr: /communaute/{id}
         en: /community/{id}
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::show  
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityShow  
     requirements:
         id: '\d+'
 
-# join a community (called with ajax)
+# join a community (AJAX)
 community_join:
     path:
-        fr: /rejoindre-communaute/{id}
-        en: /join-community/{id}
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::joinCommunity
+        fr: /communaute/{id}/rejoindre
+        en: /community/{id}/join
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityJoin
     requirements:
         id: '\d+'
 
-# get a community user (called with ajax)
+# get a community user (AJAX)
 community_user:
     path:
         fr: /community-user/{id}
@@ -232,30 +240,30 @@ community_user:
     requirements:
         id: '\d+'
 
-# get the last community users (called with ajax)
+# get the last community users (AJAX)
 community_last_users:
     path:
         fr: /community-last-users/{id}
         en: /community-last-users/{id}
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityLastUsers
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityLastUsers
     requirements:
         id: '\d+'
 
-# get community members list (called with ajax)
+# get community members list (AJAX)
 community_member_list:
     path:
         fr: /community-member-list/{id}
         en: /community-member-list/{id}
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityMemberList
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityMemberList
     requirements:
         id: '\d+'        
 
-# get all community proposals (called with ajax)
+# get all community proposals (AJAX)
 community_proposals:
     path:
         fr: /community-proposals/{id}
         en: /community-proposals/{id}
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityProposals
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityProposals
     requirements:
         id: '\d+'       
         
