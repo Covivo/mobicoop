@@ -87,7 +87,7 @@
           </v-row>
           <v-row>
             <v-col cols="12">
-              <send-message 
+              <type-text
                 :id-thread-message="this.idMessage"
                 :id-recipient="this.idRecipient"
                 @sendInternalMessage="sendInternalMessage"
@@ -114,7 +114,7 @@ import ThreadsDirect from '@components/user/mailbox/ThreadsDirect'
 import ThreadsCarpool from '@components/user/mailbox/ThreadsCarpool'
 import ThreadDetails from '@components/user/mailbox/ThreadDetails'
 import ThreadActions from '@components/user/mailbox/ThreadActions'
-import SendMessage from '@components/user/mailbox/SendMessage'
+import TypeText from '@components/user/mailbox/TypeText'
 
 export default {
   i18n: {
@@ -127,7 +127,7 @@ export default {
     ThreadsCarpool,
     ThreadDetails,
     ThreadActions,
-    SendMessage
+    TypeText
   },
   props: {
     idUser:{
