@@ -7,8 +7,10 @@
       :family-name="message.familyName"
       :date="message.date"
       :id-message="message.idMessage"
+      :id-recipient="message.idRecipient"
       :selected-default="message.selected"
       @idMessageForTimeLine="emit"
+      @toggleSelected="refreshSelected"
     />
   </v-content>
 </template>
@@ -39,6 +41,16 @@ export default {
   methods:{
     emit(data){
       this.$emit("idMessageForTimeLine",data);
+    },
+    refreshSelected(data){
+      this.messages.forEach((item, index) => {
+        if(item.idMessage == data.idMessage){
+          item.selected = true;
+        }
+        else{
+          item.selected = false;
+        }
+      })
     }
   }
 }

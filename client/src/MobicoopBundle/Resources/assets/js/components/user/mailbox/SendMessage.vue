@@ -7,7 +7,7 @@
             v-model="textToSend"
             name="typedMessage"
             filled
-            :label="$t('ui.form.enterMessage')"
+            :label="$t('enterMessage')"
             auto-grow
             rows="2"
             background-color="#FFFFFF"
@@ -36,18 +36,51 @@
   </v-content>
 </template>
 <script>
-//import axios from "axios";
+import axios from "axios";
+import CommonTranslations from "@translations/translations.json";
+import Translations from "@translations/components/user/mailbox/SendMessage.json";
+
 export default {
+  i18n: {
+    messages: Translations,
+    sharedMessages: CommonTranslations
+  },
   props: {
+    idThreadMessage: {
+      type: Number,
+      default: null
+    },
+    idRecipient: {
+      type: Number,
+      default: null
+    },
+    idAskHistory: {
+      type: Number,
+      default: null
+    }
   },
   data(){
     return{
+      textToSend:""
     }
   },
   mounted(){
   },
   methods:{
     sendInternalMessage(){
+      let messageToSend = {
+        idThreadMessage: this.idThreadMessage,
+        text: this.textToSend,
+        idRecipient: this.idRecipient,
+        idAskHistory: (this.idAskHistory !== null) ? this.idAskHistory : null
+      };
+      axios.post("/utilisateur/messages/envoyer", messageToSend).then(res => {
+        this.emit(res.data);
+        this.textToSend = "";
+      });
+    },
+    emit(message){
+      this.$emit("updateThreadDetails",{idThreadMessage:this.idThreadMessage});
     }
   }
 }

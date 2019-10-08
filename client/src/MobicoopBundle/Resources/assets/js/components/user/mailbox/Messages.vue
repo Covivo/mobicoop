@@ -75,10 +75,24 @@
           id="messagesColumn"
           class="col-5"
         >
-          <thread-details
-            :id-message="this.idMessage"
-            :id-user="this.idUser"
-          />
+          <v-row>
+            <v-col cols="12">
+              <thread-details
+                ref="threadDetails"
+                :id-message="this.idMessage"
+                :id-user="this.idUser"
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12">
+              <send-message 
+                :id-thread-message="this.idMessage"
+                :id-recipient="this.idRecipient"
+                @updateThreadDetails="updateThreadDetails"
+              />
+            </v-col>
+          </v-row>
         </v-col>
         <v-col
           id="contextColumn"
@@ -99,6 +113,7 @@ import ThreadsDirect from '@components/user/mailbox/ThreadsDirect'
 import ThreadsCarpool from '@components/user/mailbox/ThreadsCarpool'
 import ThreadDetails from '@components/user/mailbox/ThreadDetails'
 import ThreadActions from '@components/user/mailbox/ThreadActions'
+import SendMessage from '@components/user/mailbox/SendMessage'
 
 export default {
   i18n: {
@@ -110,7 +125,8 @@ export default {
     ThreadsDirect,
     ThreadsCarpool,
     ThreadDetails,
-    ThreadActions
+    ThreadActions,
+    SendMessage
   },
   props: {
     idUser:{
@@ -121,7 +137,8 @@ export default {
   data() {
     return {
       modelTabs:"tab-cm",
-      idMessage:null
+      idMessage:null,
+      idRecipient:null
     };
   },
   watch: {
@@ -131,6 +148,11 @@ export default {
   methods: {
     updateDetails(data){
       this.idMessage = data.idMessage;
+      this.idRecipient = data.idRecipient;
+    },
+    updateThreadDetails(data){
+      this.idMessage = data.idThreadMessage;
+      this.$refs.threadDetails.getCompleteThread();
     }
   }
 };

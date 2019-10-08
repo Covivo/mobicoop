@@ -65,6 +65,10 @@ export default {
       type: Number,
       default: null
     },
+    idRecipient: {
+      type: Number,
+      default: null
+    },
     selectedDefault: {
       type: Boolean,
       default: false
@@ -83,16 +87,26 @@ export default {
       return this.givenName + " " + this.familyName.substr(0, 1).toUpperCase() + ".";
     },
   },
+  watch: {
+    selectedDefault(){
+      this.selected = this.selectedDefault;
+    }
+  },
   methods: {
     click(){
-      this.toggleSelected();
       this.emit();
     },
     toggleSelected(){
       this.selected = !this.selected;
     },
     emit(){
-      this.$emit("idMessageForTimeLine",{idMessage:this.idMessage});
+      this.$emit("toggleSelected",{idMessage:this.idMessage});
+      this.$emit("idMessageForTimeLine",
+        {
+          idMessage:this.idMessage,
+          idRecipient:this.idRecipient
+        }
+      );
     }
   }
 }

@@ -66,7 +66,7 @@ export default {
       type: String,
       default:null
     },
-    iconCorrespondant:{ // Not used for now
+    iconRecipient:{ // Not used for now
       type: String,
       default:null
     }

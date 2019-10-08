@@ -567,6 +567,7 @@ class UserController extends AbstractController
     /**
      * Get a complete thread from a first message
      * Ajax Request
+     * OLD Controller
      */
     public function getThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager, AskManager $askManager)
     {
@@ -631,14 +632,17 @@ class UserController extends AbstractController
         $this->denyAccessUnlessGranted('messages', $user);
 
         if ($request->isMethod('POST')) {
-            $idThreadMessage = $request->request->get('idThreadMessage');
-            $idRecipient = $request->request->get('idRecipient');
+            $data = json_decode($request->getContent(), true);
+            $idThreadMessage = $data['idThreadMessage'];
+            $text = $data['text'];
+            $idRecipient = $data['idRecipient'];
+            $idAskHistory = $data['idAskHistory'];
 
             $messageToSend = $internalMessageManager->createInternalMessage(
                 $user,
                 $idRecipient,
                 "",
-                $request->request->get('text'),
+                $text,
                 $idThreadMessage
             );
             $reponseofmanager= $this->handleManagerReturnValue($messageToSend);
@@ -647,10 +651,10 @@ class UserController extends AbstractController
             }
 
             // If there is an AskHistory i will post an AskHistory with the message within. If not, i only send a Message.
-            if (trim($request->request->get('idAskHistory'))!=="") {
+            if ($idAskHistory!==null) {
                 
                 // Get the current AskHistory
-                $currentAskHistory = $askHistoryManager->getAskHistory($request->request->get('idAskHistory'));
+                $currentAskHistory = $askHistoryManager->getAskHistory($idAskHistory);
                 $reponseofmanager= $this->handleManagerReturnValue($currentAskHistory);
                 if (!empty($reponseofmanager)) {
                     return $reponseofmanager;
