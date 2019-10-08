@@ -49,6 +49,7 @@
             <v-col cols="3">
               <v-text-field
                 v-model="description"
+                :rules="descriptionRules"
                 :label="$t('form.description.label')"
               />
             </v-col>
@@ -73,6 +74,14 @@
                 :url="geoSearchUrl"
                 :label="$t('form.address.label')"
                 @address-selected="addressSelected"
+              />
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col cols="3">
+              <v-text-field
+                v-model="domain"
+                :label="$t('form.domain.label')"
               />
             </v-col>
           </v-row>
@@ -153,6 +162,9 @@ export default {
         v => !!v || this.$t("form.name.required"),
       ],
       description: null,
+      descriptionRules: [
+        v => !!v || this.$t("form.description.required"),
+      ],
       fullDescription: null,
       fullDescriptionRules: [
         v => !!v || this.$t("form.fullDescription.required"),
@@ -161,6 +173,7 @@ export default {
       loading: false,
       snackError: null,
       snackbar: false,
+      domain: null,
     }
   },
   methods: {
@@ -175,6 +188,7 @@ export default {
       newCommunity.append("fullDescription", this.fullDescription);
       newCommunity.append("avatar", this.avatar);
       newCommunity.append("address", JSON.stringify(this.communityAddress));
+      if (this.domain) newCommunity.append("domain", this.domain);
 
       axios 
         .post(this.$t('buttons.create.route'), newCommunity, {

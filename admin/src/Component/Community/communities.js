@@ -19,6 +19,11 @@ const statusChoices = [
     { id: 1, name: 'Accepté' },
     { id: 2, name: 'Refusé' },
 ];
+const validationChoices = [
+    { id: 0, name: 'Validation automatique' },
+    { id: 1, name: 'Validation manuelle' },
+    { id: 2, name: 'Validation par le domaine' },
+];
 
 // List
 const CommunityFilter = (props) => (
@@ -38,6 +43,8 @@ export const CommunityList = (props) => (
             <BooleanField source="proposalsHidden" label="Annonces masquées" sortable={false} />
             <TextField source="description" label="Description"/>
             <DateField source="createdDate" label="Date de création"/>
+            <SelectField source="validationType" label="Type de validation" choices={validationChoices} />
+            <TextField source="domain" label="Nom de domaine"/>
             <ShowButton />
             <EditButton />
         </Datagrid>
@@ -65,6 +72,8 @@ export const CommunityShow = (props) => (
                 <TextField source="name" label="Nom"/>
                 <BooleanField source="membersHidden" label="Membres masqués" />
                 <BooleanField source="proposalsHidden" label="Annonces masquées" />
+                <SelectField source="validationType" label="Type de validation" choices={validationChoices} />
+                <TextField source="domain" label="Nom de domaine"/>
                 <TextField source="description" label="Description"/>
                 <RichTextField source="fullDescription" label="Description complète"/>
                 <DateField source="createdDate" label="Date de création"/>
@@ -100,8 +109,11 @@ export const CommunityCreate = (props) => (
             <TextInput source="name" label="Nom" validate={required()}/>
             <BooleanInput source="membersHidden" label="Membres masqués" />
             <BooleanInput source="proposalsHidden" label="Annonces masquées" />
+            <SelectInput source="validationType" label="Type de validation"choices={validationChoices}/>
+            <TextInput source="domain" label="Nom de domaine" />
             <TextInput source="description" label="Description" validate={required()}/>
             <RichTextInput source="fullDescription" label="Description complète" validate={required()}/>
+            
         </SimpleForm>
     </Create>
 );
@@ -117,6 +129,8 @@ export const CommunityEdit = (props) => (
             <TextInput source="name" label="Nom" validate={required()}/>
             <BooleanInput source="membersHidden" label="Membres masqués"  />
             <BooleanInput source="proposalsHidden" label="Annonces masquées" />
+            <SelectInput source="validationType" label="Type de validation"choices={validationChoices}/>
+            <TextInput source="domain" label="Nom de domaine" />
             <TextInput source="description" label="Description" validate={required()}/>
             <RichTextInput source="fullDescription" label="Description complète" validate={required()} />
             <DateInput disabled source="createdDate" label="Date de création"/>

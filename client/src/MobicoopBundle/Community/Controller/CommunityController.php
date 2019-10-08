@@ -48,7 +48,6 @@ class CommunityController extends AbstractController
      */
     public function list(CommunityManager $communityManager)
     {
-        dump($communityManager->getCommunities());
         $this->denyAccessUnlessGranted('list', new Community());
         return $this->render('@Mobicoop/community/communities.html.twig', [
             'communities' => $communityManager->getCommunities(),
@@ -73,7 +72,6 @@ class CommunityController extends AbstractController
 
                 // set the user as a user of the community
                 $communityUser->setUser($user);
-                $communityUser->setStatus(1);
                 
                 // set community address
                 $communityAddress=json_decode($data->get('address'), true);
@@ -101,7 +99,9 @@ class CommunityController extends AbstractController
                 $community->setFullDescription($data->get('fullDescription'));
                 $community->setAddress($address);
                 $community->addCommunityUser($communityUser);
+                $community->setDomain($data->get('domain'));
 
+                
                 // create community
                 if ($community = $communityManager->createCommunity($community)) {
 
@@ -207,12 +207,8 @@ class CommunityController extends AbstractController
         //test if the user logged is not already a member of the community
         if ($user && $user !=='' && !in_array($user->getId(), $communityUsersId)) {
             $communityUser = new CommunityUser();
-            
-            $communityUser->setCommunity(new Community($id));
+            $communityUser->setCommunity($community);
             $communityUser->setUser($user);
-            $communityUser->setCreatedDate(new \DateTime());
-            $communityUser->setStatus(0);
-
             $data=$communityManager->joinCommunity($communityUser);
             $reponseofmanager= $this->handleManagerReturnValue($data);
             if (!empty($reponseofmanager)) {
@@ -235,7 +231,6 @@ class CommunityController extends AbstractController
         // get the last 3 users and formate them to be used with vue
         $lastUsers = $communityManager->getLastUsers($id);
         $lastUsersFormated = [];
-        dump($lastUsers);
         foreach ($lastUsers as $key => $commUser) {
             $lastUsersFormated[$key]["name"]=ucfirst($commUser->getUser()->getGivenName())." ".ucfirst($commUser->getUser()->getFamilyName());
             $lastUsersFormated[$key]["acceptedDate"]=$commUser->getAcceptedDate()->format('d/m/Y');

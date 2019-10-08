@@ -39,6 +39,10 @@ use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
  */
 class Community implements ResourceInterface, \JsonSerializable
 {
+    const AUTO_VALIDATION = 0;
+    const MANUAL_VALIDATION = 1;
+    const DOMAIN_VALIDATION = 2;
+
     /**
      * @var int The id of this community.
      */
@@ -71,6 +75,20 @@ class Community implements ResourceInterface, \JsonSerializable
      * @Groups({"post","put"})
      */
     private $proposalsHidden;
+
+    /**
+       * @var int The type of validation (automatic/manual/domain).
+       *
+       * @Groups({"post","put"})
+       */
+    private $validationType;
+
+    /**
+     * @var string|null The domain of the community.
+     *
+     * @Groups({"post","put"})
+     */
+    private $domain;
     
     /**
      * @var string The short description of the community.
@@ -216,6 +234,26 @@ class Community implements ResourceInterface, \JsonSerializable
         $this->proposalsHidden = $isProposalsHidden ? true : false;
         
         return $this;
+    }
+
+    public function getValidationType()
+    {
+        return $this->validationType;
+    }
+    
+    public function setValidationType(?int $validationType)
+    {
+        $this->validationType = $validationType;
+    }
+
+    public function getDomain(): ?string
+    {
+        return $this->domain;
+    }
+    
+    public function setDomain(?string $domain)
+    {
+        $this->domain = $domain;
     }
     
     public function getDescription(): ?string
@@ -419,7 +457,9 @@ class Community implements ResourceInterface, \JsonSerializable
             'proposalsHidden'   => $this->isProposalsHidden(),
             'membersHidden'     => $this->isMembersHidden(),
             'address'           => $this->getAddress(),
-            'isSecured'         => $this->isSecured()
+            'isSecured'         => $this->isSecured(),
+            'validationType'    => $this->getValidationType(),
+            'domain'            => $this->getDomain(),
         ];
     }
 }

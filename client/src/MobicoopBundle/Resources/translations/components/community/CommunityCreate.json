@@ -13,7 +13,8 @@
         "required": "Le nom de la communauté est requis"
       },
       "description": {
-        "label": "Description courte de la communauté"
+        "label": "Description courte de la communauté",
+        "required": "La courte description de la communauté est requise"
       },
       "fullDescription": {
         "label": "Description détaillée de la communauté",
@@ -27,6 +28,9 @@
       "address": {
         "label": "Adresse de la communauté",
         "required": "L'adesse de la communauté est requise"
+      },
+      "domain": {
+        "label": "Restriction du domaine"
       }
     },
     "redirect": {

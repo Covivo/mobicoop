@@ -74,6 +74,16 @@
                 <v-row>
                   <v-col cols="3">
                     <v-img
+                      v-if="item['images'][0]"
+                      :src="item['images'][0]['versions']['square_250']"
+                      lazy-src="https://picsum.photos/id/11/10/6"
+                      aspect-ratio="1"
+                      class="grey lighten-2"
+                      max-width="200"
+                      max-height="150"
+                    />
+                    <v-img
+                      v-else
                       src="https://picsum.photos/id/11/500/300"
                       lazy-src="https://picsum.photos/id/11/10/6"
                       aspect-ratio="1"
@@ -85,9 +95,17 @@
                   <v-col cols="6">
                     <v-card-title>
                       <div v-if="item.membersHidden || item.proposalsHidden">
-                        <h4>
-                          {{ item.name }}
-                        </h4>
+                        <v-tooltip
+                          top
+                          color="info"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <h4 v-on="on">
+                              {{ item.name }}
+                            </h4>
+                          </template>
+                          <span>{{ $t('protected') }}</span>
+                        </v-tooltip>
                       </div>
                       <div v-else>
                         <h4>
@@ -112,28 +130,50 @@
                       v-if="!item.membersHidden && !item.proposalsHidden && !item.isSecured"
                       class="my-2"
                     >
-                      <a href="#">
-                        <v-btn
-                          color="primary"
-                          rounded
-                          @click="test"
-                        >
-                          {{ $t('seeAds') }}
-                        </v-btn>
-                      </a>
+                      <v-tooltip
+                        left
+                        color="info"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <div
+                            v-on="on"
+                          >
+                            <v-btn
+                              color="primary"
+                              rounded
+                              disabled
+                              @click="test"
+                            >
+                              {{ $t('seeAds') }}
+                            </v-btn>
+                          </div>
+                        </template>
+                        <span>{{ $t('ui.infos.notAvailableYet') }}</span>
+                      </v-tooltip>
                     </div>
                     <div
                       v-if="!item.membersHidden && !item.proposalsHidden && !item.isSecured"
                       class="my-2"
                     >
-                      <a :href="linkToCommunityJoin(item)">
-                        <v-btn
-                          color="primary"
-                          rounded
-                        >
-                          {{ $t('join') }}
-                        </v-btn>
-                      </a>
+                      <v-tooltip
+                        left
+                        color="info"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <div
+                            v-on="on"
+                          >
+                            <v-btn
+                              color="primary"
+                              rounded
+                              disabled
+                            >
+                              {{ $t('join') }}
+                            </v-btn>
+                          </div>
+                        </template>
+                        <span>{{ $t('ui.infos.notAvailableYet') }}</span>
+                      </v-tooltip>
                     </div>
                   </v-col>
                 </v-row>
