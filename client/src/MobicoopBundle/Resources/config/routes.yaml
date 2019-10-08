@@ -48,6 +48,12 @@ user_get_direct_messages:
         en: /user/messages/getDirectMessages
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getThreadsDirectMessages
 
+user_get_carpool_messages:
+    path:
+        fr: /utilisateur/messages/getCarpoolMessages
+        en: /user/messages/getCarpoolMessages
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getThreadsCarpoolMessages
+
 user_get_complete_thread_message:
     path:
         fr: /utilisateur/messages/getCompleteThread/{idMessage}

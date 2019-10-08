@@ -10,7 +10,7 @@
       :id-recipient="message.idRecipient"
       :selected-default="message.selected"
       @idMessageForTimeLine="emit"
-      @toggleSelected="refreshSelected"
+      @toggleSelected="emitToggle"
     />
   </v-content>
 </template>
@@ -42,9 +42,12 @@ export default {
     emit(data){
       this.$emit("idMessageForTimeLine",data);
     },
-    refreshSelected(data){
+    emitToggle(data){
+      this.$emit("toggleSelected",data);
+    },
+    refreshSelected(idMessage){
       this.messages.forEach((item, index) => {
-        if(item.idMessage == data.idMessage){
+        if(item.idMessage == idMessage){
           item.selected = true;
         }
         else{

@@ -1,24 +1,176 @@
 <template>
   <v-content>
-    <v-row
-      align="start"
-    >
-      <v-col class="col-3 text-center ma-0 pa-0">
-        <v-avatar>
-          <v-icon class="display-2">
-            mdi-account-circle
-          </v-icon>
-        </v-avatar>
-      </v-col>
-      <v-col />
-    </v-row>
+    <v-container class="window-scroll">
+      <v-card
+        class="mx-auto mt-2"
+        :class="selected ? 'primary' : ''"
+        @click="click()"
+      >
+        <v-card-title class="pa-0 ma-0">
+          <v-row>
+            <v-col class="col-3 text-center ma-0 pa-0">
+              <v-avatar>
+                <!-- For now, we are not supporting the avatar. We show an icon instead -->
+                <v-icon class="display-2">
+                  mdi-account-circle
+                </v-icon>
+              </v-avatar>
+            </v-col>
+            <v-col class="col-9 ma-0 pa-0">
+              <v-row
+                align="start"
+              >
+                <v-col class="col-5 ma-0 pa-0">
+                  <v-card-text class="pa-0">
+                    <span
+                      class="title font-weight-light secondary--text"
+                    >
+                      {{ name }}
+                    </span>
+                  </v-card-text>
+                </v-col>
+                <v-col class="col-4 ma-0 pa-0">
+                  <v-card-text
+                    class="pa-0 ma-0 text-right pr-2 font-italic"
+                  >
+                    {{ formateDate }}
+                  </v-card-text>
+                </v-col>
+              </v-row>
 
-    <v-row>
-      <v-col class="col-12" />
-    </v-row>
+              <v-row>
+                <v-col class="col-12">
+                  <span
+                    class="title font-weight-light secondary--text"
+                  >
+                    {{ origin }}        
+                    <v-icon color="tertiairy">
+                      mdi-arrow-right
+                    </v-icon>
+                    {{ destination }}
+                  </span>
+                  <br>
+                  <span
+                    v-if="criteria.frequency==1"
+                    class="font-italic"
+                  >{{ formateFromDate }} {{ $t("ui.infos.misc.at") }} {{ formateFromTime }}</span>
+                  <span
+                    v-else
+                    class="font-italic"
+                  >toc toc toc</span>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-card-title>
+      </v-card>
+    </v-container>
   </v-content>
 </template>
 <script>
+import moment from "moment";
+import CommonTranslations from "@translations/translations.json";
+import Translations from "@translations/components/user/mailbox/ThreadCarpool.json";
+
 export default {
+  i18n: {
+    messages: Translations,
+    sharedMessages: CommonTranslations
+  },
+  props: {
+    avatar: {
+      type:String,
+      default:null
+    },
+    givenName: {
+      type: String,
+      default:""
+    },
+    familyName: {
+      type: String,
+      default:""
+    },
+    date: {
+      type: String,
+      default: null
+    },
+    origin: {
+      type: String,
+      default: null
+    },
+    destination: {
+      type: String,
+      default: null
+    },
+    criteria: {
+      type: Object,
+      default: null
+    },
+    fromDate: {
+      type: String,
+      default: null
+    },
+    fromTime: {
+      type: String,
+      default: null
+    },
+    idMessage: {
+      type: Number,
+      default: null
+    },
+    idRecipient: {
+      type: Number,
+      default: null
+    },
+    selectedDefault: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data() {
+    return {
+      selected: this.selectedDefault,
+      locale: this.$i18n.locale
+    }
+  },
+  computed: {
+    formateDate(){
+      moment.locale(this.locale);
+      return moment(this.date).format("ddd DD MMM YYYY");
+    },
+    formateFromDate(){
+      moment.locale(this.locale);
+      return moment(this.criteria.fromDate).format("ddd DD MMM YYYY");
+    },
+    formateFromTime(){
+      moment.locale(this.locale);
+      return moment(this.criteria.fromTime).format("HH")+"h"+moment(this.criteria.fromTime).format("mm");
+    },
+    name() {
+      return this.givenName + " " + this.familyName.substr(0, 1).toUpperCase() + ".";
+    },
+  },
+  watch: {
+    selectedDefault(){
+      this.selected = this.selectedDefault;
+    }
+  },
+  methods: {
+    click(){
+      this.emit();
+    },
+    toggleSelected(){
+      this.selected = !this.selected;
+    },
+    emit(){
+      this.$emit("toggleSelected",{idMessage:this.idMessage});
+      this.$emit("idMessageForTimeLine",
+        {
+          idMessage:this.idMessage,
+          idRecipient:this.idRecipient
+        }
+      );
+    }
+  }
 }
 </script>

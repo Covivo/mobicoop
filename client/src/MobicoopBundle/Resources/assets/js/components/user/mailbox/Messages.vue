@@ -64,10 +64,18 @@
           </v-tabs>          
           <v-tabs-items v-model="modelTabs">
             <v-tab-item value="tab-cm">
-              <threads-carpool />
+              <threads-carpool
+                ref="threadsCarpool"
+                @idMessageForTimeLine="updateDetails"
+                @toggleSelected="refreshSelected"
+              />
             </v-tab-item>
             <v-tab-item value="tab-dm">
-              <threads-direct @idMessageForTimeLine="updateDetails" />
+              <threads-direct
+                ref="threadsDirect"
+                @idMessageForTimeLine="updateDetails"
+                @toggleSelected="refreshSelected"
+              />
             </v-tab-item>
           </v-tabs-items>
         </v-col>
@@ -159,15 +167,18 @@ export default {
         idRecipient: data.idRecipient,
         idAskHistory: this.currentAskHistory
       };
-      console.error(messageToSend);
-      // axios.post("/utilisateur/messages/envoyer", messageToSend).then(res => {
-      //   this.idMessage = data.idThreadMessage;
-      //   // Update the thread details
-      //   this.$refs.threadDetails.getCompleteThread();
-      // });
+      axios.post("/utilisateur/messages/envoyer", messageToSend).then(res => {
+        this.idMessage = data.idThreadMessage;
+        // Update the thread details
+        this.$refs.threadDetails.getCompleteThread();
+      });
     },
     updateAskHistory(data){
       this.currentAskHistory = data.currentAskHistory;
+    },
+    refreshSelected(data){
+      if(this.$refs.threadsDirect !== undefined){this.$refs.threadsDirect.refreshSelected(data.idMessage);}
+      if(this.$refs.threadsCarpool !== undefined){this.$refs.threadsCarpool.refreshSelected(data.idMessage)};
     }
   }
 };

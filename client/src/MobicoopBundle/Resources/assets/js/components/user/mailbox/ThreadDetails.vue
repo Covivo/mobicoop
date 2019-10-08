@@ -75,7 +75,8 @@ export default {
     return{
       textToSend:"",
       items:[],
-      currentAskHistory:null
+      currentAskHistory:null,
+      locale: this.$i18n.locale
     }
   },
   watch:{
@@ -89,6 +90,7 @@ export default {
         .then(response => {
           this.items.length = 0;  
 
+          moment.locale(this.locale);
           let firstItem = {
             divider: true,
             createdDate: moment(response.data[0].createdDate).format("ddd DD MMM YYYY")

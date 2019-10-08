@@ -426,7 +426,17 @@ class UserController extends AbstractController
     public function getThreadsDirectMessages(UserManager $userManager, InternalMessageManager $internalMessageManager)
     {
         $user = $userManager->getLoggedUser();
-        $threads = $userManager->getThreadsDirecMessages($user);
+        $threads = $userManager->getThreadsDirectMessages($user);
+        return new Response(json_encode($threads));
+    }
+
+    /**
+     * Get carpool messages threads
+     */
+    public function getThreadsCarpoolMessages(UserManager $userManager, InternalMessageManager $internalMessageManager)
+    {
+        $user = $userManager->getLoggedUser();
+        $threads = $userManager->getThreadsCarpoolMessages($user);
         return new Response(json_encode($threads));
     }
 

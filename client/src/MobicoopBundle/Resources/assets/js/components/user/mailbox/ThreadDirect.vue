@@ -1,43 +1,43 @@
 <template>
   <v-content>
-    <v-card
-      class="mx-auto mt-2"
-      :class="selected ? 'primary' : ''"
-      @click="click()"
-    >
-      <v-row
-        align="start"
+    <v-container class="window-scroll">
+      <v-card
+        class="mx-auto mt-2"
+        :class="selected ? 'primary' : ''"
+        @click="click()"
       >
-        <v-col class="col-3 text-center ma-0 pa-0">
-          <v-avatar>
-            <!-- For now, we are not supporting the avatar. We show an icon instead -->
-            <v-icon class="display-2">
-              mdi-account-circle
-            </v-icon>
-          </v-avatar>
-        </v-col>
-        <v-col class="col-5 ma-0 pa-0">
-          <v-card-text class="pa-0">
-            <span
-              class="title font-weight-light secondary--text"
-            >
-              {{ name }}
-            </span>
-          </v-card-text>
-        </v-col>
-        <v-col class="col-4 ma-0 pa-0">
-          <v-card-text
-            class="pa-0 ma-0 text-right pr-2 font-italic"
+        <v-card-title class="pa-0 ma-0">
+          <v-row
+            align="start"
           >
-            {{ formateDate }}
-          </v-card-text>
-        </v-col>
-      </v-row>
-
-      <v-row>
-        <v-col class="col-12" />
-      </v-row>
-    </v-card>
+            <v-col class="col-3 text-center ma-0 pa-0">
+              <v-avatar>
+                <!-- For now, we are not supporting the avatar. We show an icon instead -->
+                <v-icon class="display-2">
+                  mdi-account-circle
+                </v-icon>
+              </v-avatar>
+            </v-col>
+            <v-col class="col-5 ma-0 pa-0">
+              <v-card-text class="pa-0">
+                <span
+                  class="title font-weight-light secondary--text"
+                >
+                  {{ name }}
+                </span>
+              </v-card-text>
+            </v-col>
+            <v-col class="col-4 ma-0 pa-0">
+              <v-card-text
+                class="pa-0 ma-0 text-right pr-2 font-italic"
+              >
+                {{ formateDate }}
+              </v-card-text>
+            </v-col>
+          </v-row>
+        </v-card-title>
+      </v-card>
+    </v-container>
   </v-content>
 </template>
 <script>

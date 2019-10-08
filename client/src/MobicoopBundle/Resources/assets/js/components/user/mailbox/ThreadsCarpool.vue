@@ -3,6 +3,17 @@
     <thread-carpool
       v-for="(message, index) in messages"
       :key="index"
+      :given-name="message.givenName"
+      :family-name="message.familyName"
+      :date="message.date"
+      :id-message="message.idMessage"
+      :id-recipient="message.idRecipient"
+      :selected-default="message.selected"
+      :origin="message.carpoolInfos.origin"
+      :destination="message.carpoolInfos.destination"
+      :criteria="message.carpoolInfos.criteria"
+      @idMessageForTimeLine="emit"
+      @toggleSelected="emitToggle"
     />
   </v-content>
 </template>
@@ -21,6 +32,32 @@ export default {
     }
   },
   mounted(){
+    axios.get("/user/messages/getCarpoolMessages")
+      .then(response => {
+        //console.error(response.data.threads);
+        this.messages = response.data.threads;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });    
+  },
+  methods:{
+    emit(data){
+      this.$emit("idMessageForTimeLine",data);
+    },
+    emitToggle(data){
+      this.$emit("toggleSelected",data);
+    },
+    refreshSelected(idMessage){
+      this.messages.forEach((item, index) => {
+        if(item.idMessage == idMessage){
+          item.selected = true;
+        }
+        else{
+          item.selected = false;
+        }
+      })
+    }
   }
 }
 </script>

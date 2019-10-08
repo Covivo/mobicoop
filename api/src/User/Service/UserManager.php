@@ -148,14 +148,32 @@ class UserManager
         return [];
     }
 
-    public function getThreadsDirectMessages(User $user): array
-    {
-        if ($threads = $this->messageRepository->findThreadsDirectMessages($user)) {
+    
+    /**
+     * Build messages threads considering the type (Direct or Carpool)
+     * @param User $user    The User involved
+     * @param String $type  Type of messages Direct or Carpool
+     */
+    public function getThreadsMessages(User $user, $type="Direct"): array{
+        $threads = [];
+        if($type=="Direct"){
+            $threads = $this->messageRepository->findThreadsDirectMessages($user);
+        }
+        elseif($type=="Carpool"){
+            $threads = $this->messageRepository->findThreadsCarpoolMessages($user);
+        }
+        else{
+            return [];
+        }
+        
+        if(!$threads){
+            return [];
+        }
+        else{
             $messages = [];
             foreach ($threads as $thread) {
-                $currentMessage = [];
                 // To Do : We support only one recipient at this time...
-                $messages[] = [
+                $currentMessage = [
                     'idMessage' => $thread->getId(),
                     'idRecipient' => ($user->getId() === $thread->getUser('user')->getId()) ? $thread->getRecipients()[0]->getUser('user')->getId() : $thread->getUser('user')->getId(),
                     'givenName' => ($user->getId() === $thread->getUser('user')->getId()) ? $thread->getRecipients()[0]->getUser('user')->getGivenName() : $thread->getUser('user')->getGivenName(),
@@ -163,33 +181,43 @@ class UserManager
                     'date' => ($thread->getLastMessage()===null) ? $thread->getCreatedDate() : $thread->getLastMessage()->getCreatedDate(),
                     'selected' => false
                 ];
-            }
 
+                if($type=="Carpool"){
+                    $waypoints = $thread->getAskHistory()->getAsk()->getMatching()->getWaypoints();
+                    $criteria = $thread->getAskHistory()->getAsk()->getMatching()->getCriteria();
+                    $currentMessage["carpoolInfos"] = [
+                        "askHistoryId" => $thread->getAskHistory()->getId(),
+                        "origin" => $waypoints[0]->getAddress()->getAddressLocality(),
+                        "destination" => $waypoints[count($waypoints)-1]->getAddress()->getAddressLocality(),
+                        "criteria" => [
+                            "frequency" => $criteria->getFrequency(), 
+                            "fromDate" => $criteria->getFromDate(),
+                            "fromTime" => $criteria->getFromTime(),
+                            "monCheck" => $criteria->isMonCheck(),
+                            "tueCheck" => $criteria->isTueCheck(),
+                            "wedCheck" => $criteria->isWedCheck(),
+                            "thuCheck" => $criteria->isThuCheck(),
+                            "friCheck" => $criteria->isFriCheck(),
+                            "satCheck" => $criteria->isSatCheck(),
+                            "sunCheck" => $criteria->isSunCheck()
+                        ]
+                    ];
+                }
+
+                $messages[] = $currentMessage;
+            }
             return $messages;
         }
-        return [];
+    }
+    
+    public function getThreadsDirectMessages(User $user): array
+    {
+        return $this->getThreadsMessages($user,"Direct");
     }
 
     public function getThreadsCarpoolMessages(User $user): array
     {
-        if ($threads = $this->messageRepository->findThreadsCarpoolMessages($user)) {
-            $messages = [];
-            foreach ($threads as $thread) {
-                $currentMessage = [];
-                // To Do : We support only one recipient at this time...
-                $messages[] = [
-                    'idMessage' => $thread->getId(),
-                    'idRecipient' => ($user->getId() === $thread->getUser('user')->getId()) ? $thread->getRecipients()[0]->getUser('user')->getId() : $thread->getUser('user')->getId(),
-                    'givenName' => ($user->getId() === $thread->getUser('user')->getId()) ? $thread->getRecipients()[0]->getUser('user')->getGivenName() : $thread->getUser('user')->getGivenName(),
-                    'familyName' => ($user->getId() === $thread->getUser('user')->getId()) ? $thread->getRecipients()[0]->getUser('user')->getFamilyName() : $thread->getUser('user')->getFamilyName(),
-                    'date' => ($thread->getLastMessage()===null) ? $thread->getCreatedDate() : $thread->getLastMessage()->getCreatedDate(),
-                    'selected' => false
-                ];
-            }
-
-            return $messages;
-        }
-        return [];
+        return $this->getThreadsMessages($user,"Carpool");
     }
     
     /**
