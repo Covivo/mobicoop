@@ -151,10 +151,8 @@ class UserManager
     public function getThreadsDirectMessages(User $user): array
     {
         if ($threads = $this->messageRepository->findThreadsDirectMessages($user)) {
-
             $messages = [];
             foreach ($threads as $thread) {
-
                 $currentMessage = [];
                 // To Do : We support only one recipient at this time...
                 $messages[] = [
@@ -174,10 +172,8 @@ class UserManager
     public function getThreadsCarpoolMessages(User $user): array
     {
         if ($threads = $this->messageRepository->findThreadsDirectMessages($user)) {
-
             $messages = [];
             foreach ($threads as $thread) {
-
                 $currentMessage = [];
                 // To Do : We support only one recipient at this time...
                 $messages[] = [
