@@ -170,6 +170,7 @@ class ProposalRepository
                 //   (@todo limit automatically the search to the x next days if toDate is not defined ?)
                 // - regular candidates, we limit the search :
                 //   - to the week day of the proposal
+                //   - if the date of the proposal is before the endDate of the regular candidates
 
                 // times :
                 // if we use times, we limit the search to the passengers that have their max starting time after the min starting time of the driver :
@@ -354,7 +355,11 @@ class ProposalRepository
                                     }
                                     break;
                     }
-                    $regularAndWhere = '(c.frequency=' . Criteria::FREQUENCY_REGULAR . ' and c.fromDate <= :fromDate and c.toDate >= :fromDate' . $regularDay . $regularTime . ')';
+                    $regularAndWhere = '(c.frequency=' . Criteria::FREQUENCY_REGULAR . ' and ';
+                    if ($proposal->getCriteria()->isStrictDate()) {
+                        $regularAndWhere .= 'c.fromDate <= :fromDate and ';
+                    }
+                    $regularAndWhere .= 'c.toDate >= :fromDate' . $regularDay . $regularTime . ')';
                 }
 
                 if ($setMinTime) {

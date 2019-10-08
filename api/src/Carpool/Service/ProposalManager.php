@@ -164,6 +164,7 @@ class ProposalManager
         $this->logger->info('Proposal creation | Start ' . $date->format("Ymd H:i:s.u"));
                 
         // calculation of the min and max times
+        // we calculate the min and max times only if the time is set (it could be not set for a simple search)
         if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $proposal->getCriteria()->getFromTime()) {
             list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getFromTime(), $proposal->getCriteria()->getMarginDuration());
             $proposal->getCriteria()->setMinTime($minTime);
@@ -212,6 +213,10 @@ class ProposalManager
             $addresses[] = $waypoint->getAddress();
         }
         if ($routes = $this->geoRouter->getRoutes($addresses)) {
+            // for now we only keep the first route !
+            // if we ever want alternative routes we should pass the route as parameter of this method
+            // (problem : the route has no id, we should pass the whole route to check which route is chosen by the user...
+            //      => we would have to think of a way to simplify...)
             $direction = $routes[0];
             // creation of the crossed zones
             $direction = $this->zoneManager->createZonesForDirection($direction);
@@ -232,11 +237,6 @@ class ProposalManager
             // TODO : here we should remove the previously matched proposal if they already exist
             $this->entityManager->persist($proposal);
             $this->logger->info('Proposal creation | End persist ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
-            // if the proposal is related to communities, we register the user to the communities
-            foreach ($proposal->getCommunities() as $community) {
-                $this->communityManager->registerUserInCommunity($community, $proposal->getUser());
-            }
         }
         
         $end = new \DateTime("UTC");

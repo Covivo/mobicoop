@@ -40,7 +40,6 @@
 <script>
 
 import axios from "axios";
-import moment from "moment";
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/carpool/Matching.json";
