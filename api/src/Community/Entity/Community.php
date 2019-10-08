@@ -507,6 +507,21 @@ class Community
         $this->setCreatedDate(new \Datetime());
     }
 
+      
+    /**
+     * Validation type.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoValidationType()
+    {
+        if ($this->getDomain()) {
+            $this->setValidationType(SELF::DOMAIN_VALIDATION);
+        } else {
+            $this->setValidationType(SELF::AUTO_VALIDATION);
+        }
+    }
+
     /**
      * Update date.
      *
@@ -516,4 +531,5 @@ class Community
     {
         $this->setUpdatedDate(new \Datetime());
     }
+
 }

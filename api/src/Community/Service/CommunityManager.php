@@ -93,6 +93,14 @@ class CommunityManager
                 }
             }
         }
+        if (!$authorized) {
+            return false;
+        }
+        // check validation domain
+        if ($community->getValidationType() == Community::DOMAIN_VALIDATION && 
+        ($community->getDomain() != (explode("@",$communityUser->getEmail()))[1])) {
+            $authorized = false;
+        }
         return $authorized;
     }
 

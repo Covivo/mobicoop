@@ -188,7 +188,7 @@ export default {
       newCommunity.append("fullDescription", this.fullDescription);
       newCommunity.append("avatar", this.avatar);
       newCommunity.append("address", JSON.stringify(this.communityAddress));
-      newCommunity.append("domain", this.domain);
+      if (this.domain) newCommunity.append("domain", this.domain);
 
       axios 
         .post(this.$t('buttons.create.route'), newCommunity, {

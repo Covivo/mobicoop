@@ -72,7 +72,6 @@ class CommunityController extends AbstractController
 
                 // set the user as a user of the community
                 $communityUser->setUser($user);
-                $communityUser->setStatus(1);
                 
                 // set community address
                 $communityAddress=json_decode($data->get('address'), true);
@@ -100,15 +99,9 @@ class CommunityController extends AbstractController
                 $community->setFullDescription($data->get('fullDescription'));
                 $community->setAddress($address);
                 $community->addCommunityUser($communityUser);
+                $community->setDomain($data->get('domain'));
 
-                // check type of validation
-                if ($data->get('domain') != 'null') {
-                    $community->setValidationType(2);
-                    $community->setDomain($data->get('domain'));
-                } else {
-                    $community->setValidationType(0);
-                }
-
+                
                 // create community
                 if ($community = $communityManager->createCommunity($community)) {
 
@@ -214,16 +207,8 @@ class CommunityController extends AbstractController
         //test if the user logged is not already a member of the community
         if ($user && $user !=='' && !in_array($user->getId(), $communityUsersId)) {
             $communityUser = new CommunityUser();
-            if ($community->getValidationType() == 0) {
-                $communityUser->setCommunity(new Community($id));
-                $communityUser->setUser($user);
-                $communityUser->setStatus(1);
-            } else {
-                $communityUser->setCommunity(new Community($id));
-                $communityUser->setUser($user);
-                $communityUser->setStatus(0);
-            }
-
+            $communityUser->setCommunity($community);
+            $communityUser->setUser($user);
             $data=$communityManager->joinCommunity($communityUser);
             $reponseofmanager= $this->handleManagerReturnValue($data);
             if (!empty($reponseofmanager)) {
