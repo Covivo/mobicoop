@@ -313,7 +313,7 @@ class CommunityUser
      * @ORM\PrePersist
      */
     public function setAutoStatus()
-    {   
+    {
         if ($this->getUser()->getId() == $this->getCommunity()->getUser()->getId()) {
             $this->setStatus(self::STATUS_ACCEPTED);
         } elseif ($this->getCommunity()->getValidationType() == Community::AUTO_VALIDATION) {

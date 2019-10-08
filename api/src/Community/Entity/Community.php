@@ -531,5 +531,4 @@ class Community
     {
         $this->setUpdatedDate(new \Datetime());
     }
-
 }
