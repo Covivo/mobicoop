@@ -63,6 +63,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use function GuzzleHttp\json_encode;
 use function MongoDB\BSON\fromJSON;
 use function MongoDB\BSON\toJSON;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * Controller class for user related actions.
@@ -73,6 +74,18 @@ use function MongoDB\BSON\toJSON;
 class UserController extends AbstractController
 {
     use HydraControllerTrait;
+
+    private $encoder;
+
+    /**
+     * Constructor
+     * @param UserPasswordEncoderInterface $encoder
+     */
+    public function __construct(UserPasswordEncoderInterface $encoder)
+    {
+        $this->encoder = $encoder;
+    }
+
     /**
      * User login.
      */
@@ -136,8 +149,14 @@ class UserController extends AbstractController
             $user->setGender($data['gender']);
             $user->setBirthYear($data['birthYear']);
 
+            // Create token to valid inscription
+            $datetime = new DateTime();
+            $time = $datetime->getTimestamp();
+            // For safety, we strip the slashes because this token can be passed in url
+            $pwdToken = str_replace("/", "", $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt()));
+            $user->setValidatedDateToken($pwdToken);
             // create user in database
-            $data= $userManager->createUser($user);
+            $data = $userManager->createUser($user);
             $reponseofmanager= $this->handleManagerReturnValue($data);
             if (!empty($reponseofmanager)) {
                 return $reponseofmanager;
@@ -147,6 +166,38 @@ class UserController extends AbstractController
         return $this->render('@Mobicoop/user/signup.html.twig', [
                 'error' => $error
             ]);
+    }
+
+    /**
+     * User registration email validation
+     */
+    public function userSignUpValidation($token, UserManager $userManager, Request $request)
+    {
+        $error = "";
+        if ($request->isMethod('POST') && $token !== "") {
+            // We need to check if the token exists
+            $userFound = $userManager->findByValidationDateToken($token);
+            if (!empty($userFound)) {
+                if ($userFound->getValidatedDate()!==null) {
+                    $error = "alreadyValidated";
+                } else {
+                    $userFound->setValidatedDate(new \Datetime()); // TO DO : Correct timezone
+                    $userFound = $userManager->updateUser($userFound);
+                    if (!$userFound) {
+                        $error = "updateError";
+                    } else {
+                        // Auto login and redirect
+                        $token = new UsernamePasswordToken($userFound, null, 'main', $userFound->getRoles());
+                        $this->get('security.token_storage')->setToken($token);
+                        $this->get('session')->set('_security_main', serialize($token));
+                        return $this->redirectToRoute('home');
+                    }
+                }
+            } else {
+                $error = "unknown";
+            }
+        }
+        return $this->render('@Mobicoop/user/signupValidation.html.twig', ['urlToken'=>$token, 'error'=>$error]);
     }
 
     /**

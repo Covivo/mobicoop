@@ -16,7 +16,16 @@ user_sign_up:
         en: /user/signup
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUp
 
-# create proposal
+# sign up
+user_sign_up_validation:
+    path:
+        fr: /utilisateur/inscription/validation/{token}
+        en: /user/signup/validation/{token}
+    defaults:
+        token: ""   
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidation
+
+    # create proposal
 user_proposal_create:
     path:
         fr: /utilisateur/annonce/partager

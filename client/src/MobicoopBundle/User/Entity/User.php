@@ -159,6 +159,20 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      * @Groups({"post","put"})
      */
     private $anyRouteAsPassenger;
+
+    /**
+     * @var \DateTimeInterface Validation date of the user.
+     *
+     * @Groups({"post","put"})
+     */
+    private $validatedDate;
+
+    /**
+     * @var string|null Token for account validation by email
+     *
+     * @Groups({"post","put"})
+     */
+    private $validatedDateToken;
     
     /**
      * @var boolean The user accepts any transportation mode.
@@ -416,7 +430,30 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         
         return $this;
     }
+
+    public function getValidatedDate(): ?\DateTimeInterface
+    {
+        return $this->validatedDate;
+    }
+
+    public function setValidatedDate(\DateTimeInterface $validatedDate): self
+    {
+        $this->validatedDate = $validatedDate;
+
+        return $this;
+    }
     
+    public function getValidatedDateToken(): ?string
+    {
+        return $this->validatedDateToken;
+    }
+
+    public function setValidatedDateToken(?string $validatedDateToken): self
+    {
+        $this->validatedDateToken = $validatedDateToken;
+        return $this;
+    }
+
     public function getMultiTransportMode(): bool
     {
         return !is_null($this->multiTransportMode) ? $this->multiTransportMode : false;
