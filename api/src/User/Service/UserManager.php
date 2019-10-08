@@ -154,22 +154,20 @@ class UserManager
      * @param User $user    The User involved
      * @param String $type  Type of messages Direct or Carpool
      */
-    public function getThreadsMessages(User $user, $type="Direct"): array{
+    public function getThreadsMessages(User $user, $type="Direct"): array
+    {
         $threads = [];
-        if($type=="Direct"){
+        if ($type=="Direct") {
             $threads = $this->messageRepository->findThreadsDirectMessages($user);
-        }
-        elseif($type=="Carpool"){
+        } elseif ($type=="Carpool") {
             $threads = $this->messageRepository->findThreadsCarpoolMessages($user);
-        }
-        else{
+        } else {
             return [];
         }
         
-        if(!$threads){
+        if (!$threads) {
             return [];
-        }
-        else{
+        } else {
             $messages = [];
             foreach ($threads as $thread) {
                 // To Do : We support only one recipient at this time...
@@ -182,7 +180,7 @@ class UserManager
                     'selected' => false
                 ];
 
-                if($type=="Carpool"){
+                if ($type=="Carpool") {
                     $waypoints = $thread->getAskHistory()->getAsk()->getMatching()->getWaypoints();
                     $criteria = $thread->getAskHistory()->getAsk()->getMatching()->getCriteria();
                     $currentMessage["carpoolInfos"] = [
@@ -190,7 +188,7 @@ class UserManager
                         "origin" => $waypoints[0]->getAddress()->getAddressLocality(),
                         "destination" => $waypoints[count($waypoints)-1]->getAddress()->getAddressLocality(),
                         "criteria" => [
-                            "frequency" => $criteria->getFrequency(), 
+                            "frequency" => $criteria->getFrequency(),
                             "fromDate" => $criteria->getFromDate(),
                             "fromTime" => $criteria->getFromTime(),
                             "monCheck" => $criteria->isMonCheck(),
@@ -212,12 +210,12 @@ class UserManager
     
     public function getThreadsDirectMessages(User $user): array
     {
-        return $this->getThreadsMessages($user,"Direct");
+        return $this->getThreadsMessages($user, "Direct");
     }
 
     public function getThreadsCarpoolMessages(User $user): array
     {
-        return $this->getThreadsMessages($user,"Carpool");
+        return $this->getThreadsMessages($user, "Carpool");
     }
     
     /**
