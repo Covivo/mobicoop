@@ -9,7 +9,12 @@
         xl="6"
         align="center"
       >
-        <h1>{{ $t('title') }}</h1>
+        <h1 v-if="communityName === null">
+          {{ $t('title') }}
+        </h1>
+        <h1 v-else>
+          {{ $t('titleWithName') }} "{{ communityName }}"
+        </h1>
       </v-col>
     </v-row>
     <v-row justify="center">
@@ -46,7 +51,10 @@
 
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <div v-on="(userId === null) ? on : {}">
+              <div
+                class="text-center"
+                v-on="(userId === null) ? on : {}"
+              >
                 <v-btn
                   :disabled="!valid || userId === null"
                   color="success"
@@ -80,6 +88,10 @@ export default {
   props:{
     communityId: {
       type: Number,
+      default: null
+    },
+    communityName: {
+      type: String,
       default: null
     },
     userId:{
