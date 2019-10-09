@@ -1,7 +1,10 @@
 <template>
   <v-content>
     <v-container class="window-scroll">
-      <v-timeline v-if="items.length>0">
+      <v-timeline
+        v-if="items.length>0"
+        :hidden="this.loading"
+      >
         <v-timeline-item
           v-for="(item, i) in this.items"
           :key="i"
@@ -10,7 +13,7 @@
           :right="item.origin==='own'"
           :left="item.origin!=='own'"
           :idmessage="item.idMessage"
-          :class="(item.divider ? 'divider' : '')+' '+item.origin"
+          :class="(item.divider ? 'divider' : '')+' '+(item.origin ? item.origin : '')"
         >     
           <template
             v-if="item.divider===false"
@@ -39,11 +42,21 @@
           >{{ item.createdDate }}</span>
         </v-timeline-item>
       </v-timeline>
-      <v-card v-else>
-        <v-card-text class="font-italic subtitle-1">
+      <v-card v-else-if="!this.loading">
+        <v-card-text
+          class="font-italic subtitle-1"
+        >
           {{ $t('notThreadSelected') }}
         </v-card-text>
       </v-card>
+      <v-skeleton-loader
+        ref="skeleton"
+        :boilerplate="boilerplate"
+        :type="type"
+        :tile="tile"
+        class="mx-auto"
+        :hidden="!this.loading"
+      />       
     </v-container>
   </v-content>
 </template>
@@ -81,7 +94,12 @@ export default {
       textToSend:"",
       items:[],
       currentAskHistory:null,
-      locale: this.$i18n.locale
+      locale: this.$i18n.locale,
+      boilerplate: false,
+      tile: false,
+      type: 'article',
+      types: [],
+      loading: false   
     }
   },
   watch:{
@@ -91,8 +109,10 @@ export default {
   },
   methods: {
     getCompleteThread(){
+      this.loading = true;
       axios.get("/user/messages/getCompleteThread/"+this.idMessage)
         .then(response => {
+          this.loading = false;
           this.items.length = 0;  
 
           moment.locale(this.locale);
@@ -110,10 +130,10 @@ export default {
             if (moment(item.createdDate).format("DDMMYYYY") !== currentDate) {
               let divider = {
                 divider: true,
-                createdDateReadable: moment(item.createdDate).format("ddd DD MMM YYYY")
+                createdDate: moment(item.createdDate).format("ddd DD MMM YYYY")
               };
               currentDate = moment(item.createdDate).format("DDMMYYYY");
-              this.addMessageToItems(divider);
+              this.items.push(divider);
             }
 
             // Set the origin (for display purpose)
@@ -142,7 +162,7 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 .window-scroll{
   max-height:600px;
   overflow:auto;

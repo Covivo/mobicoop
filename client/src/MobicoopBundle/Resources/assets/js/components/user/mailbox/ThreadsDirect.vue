@@ -12,6 +12,14 @@
       @idMessageForTimeLine="emit"
       @toggleSelected="emitToggle"
     />
+    <v-skeleton-loader
+      ref="skeleton"
+      :boilerplate="boilerplate"
+      :type="type"
+      :tile="tile"
+      class="mx-auto"
+      :hidden="this.SkeletonHidden"
+    />    
   </v-content>
 </template>
 <script>
@@ -25,13 +33,20 @@ export default {
   },
   data(){
     return{
-      messages:[]
+      messages:[],
+      boilerplate: false,
+      tile: false,
+      type: 'list-item-avatar-three-line',
+      types: [],
+      SkeletonHidden: false   
     }
   },
   mounted(){
+    this.SkeletonHidden = false;
     axios.get("/user/messages/getDirectMessages")
       .then(response => {
         //console.error(response.data.threads);
+        this.SkeletonHidden = true;
         this.messages = response.data.threads;
       })
       .catch(function (error) {
