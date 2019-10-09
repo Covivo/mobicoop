@@ -10,6 +10,7 @@
 {% if community.secured and communityUser == null %}
     <community-secured-sign-in
         :community-id="{{community.id}}"
+        community-name="{{community.name}}"
         :user-id="{{(user is not null) ? user.id : 'null'}}"
         :error="{{ error|json_encode }}"
     ></community-secured-sign-in>
