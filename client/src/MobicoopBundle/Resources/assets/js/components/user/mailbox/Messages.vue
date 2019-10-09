@@ -17,7 +17,7 @@
           <h1>{{ $t('ui.pages.title.messages') }}</h1>
         </v-col>
       </v-row>
-      <v-row>
+      <v-row id="headGridMessages">
         <v-col class="col-4 pt-5 pb-4 pl-2 secondary white--text font-weight-bold headline">
           <mail-box-header>{{ $t("ui.pages.messages.label.messages") }}</mail-box-header>
         </v-col>
@@ -36,30 +36,34 @@
       </v-row>
       <v-row>
         <v-col
-          id="threadColumn"
-          class="col-4"
+          class="col-3"
         >
           <v-tabs
             v-model="modelTabs"
             slider-color="secondary"
             color="secondary"
+            class="pa-0"
             grow
           >
             <v-tab
               :key="0"
-              ripple
               href="#tab-cm"
-              class="ml-0"
+              class="ma-0"
+              ripple
             >
-              {{ $t("ui.pages.messages.label.ongoingasks") }}
+              <v-icon class="display-1">
+                mdi-car
+              </v-icon>
             </v-tab>
             <v-tab
               :key="1"
-              ripple
               href="#tab-dm"
-              class="ml-0"
+              class="ma-0"
+              ripple
             >
-              {{ $t("ui.pages.messages.label.directmessages") }}
+              <v-icon class="display-1">
+                mdi-chat
+              </v-icon>
             </v-tab>
           </v-tabs>          
           <v-tabs-items v-model="modelTabs">
@@ -80,7 +84,6 @@
           </v-tabs-items>
         </v-col>
         <v-col
-          id="messagesColumn"
           class="col-5"
         >
           <v-row>
@@ -108,10 +111,12 @@
           </v-row>
         </v-col>
         <v-col
-          id="contextColumn"
-          class="col-3"
+          class="col-4"
         >
-          <thread-actions />
+          <thread-actions
+            :id-ask-history="this.currentIdAskHistory"
+            :recipient-name="this.recipientName"
+          />
         </v-col>
       </v-row>
     </v-container>
@@ -191,3 +196,12 @@ export default {
   }
 };
 </script>
+<style lang="scss">
+.v-content__wrap{
+  #headGridMessages{
+    .col{
+      border-left: 2px solid white !important;
+    }
+  }
+}
+</style>

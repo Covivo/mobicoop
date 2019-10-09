@@ -1,11 +1,8 @@
 {
     "fr": {
-        "ui": {
-            "form": {
-                
-            }
-        }
+        "notLinkedToACarpool":"Ce fil de discussion n'est pas lié à un covoiturage"
      },
     "en": {
+        "notLinkedToACarpool":"There is no carpool linked to this thread"
     }
 }
