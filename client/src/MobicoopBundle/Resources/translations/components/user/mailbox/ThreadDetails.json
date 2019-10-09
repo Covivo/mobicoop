@@ -1,11 +1,8 @@
 {
     "fr": {
-        "ui": {
-            "form": {
-                
-            }
-        }
+        "notThreadSelected":"Aucun fil selectionné"
      },
     "en": {
+        "notThreadSelected":"No thread selected"
     }
 }

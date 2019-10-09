@@ -56,7 +56,7 @@
                 <span
                   v-else
                   class="font-italic"
-                >toc toc toc</span>
+                >{{ regularCarpoolDays }}</span>
               </v-col>
             </v-row>
           </v-col>
@@ -143,6 +143,17 @@ export default {
     formateFromTime(){
       moment.locale(this.locale);
       return moment(this.criteria.fromTime).format("HH")+"h"+moment(this.criteria.fromTime).format("mm");
+    },
+    regularCarpoolDays(){
+      let carpoolDays = [];
+      if(this.criteria.monCheck!==null){carpoolDays.push(this.$t('Mon'));}
+      if(this.criteria.tueCheck!==null){carpoolDays.push(this.$t('Tue'));}
+      if(this.criteria.wedCheck!==null){carpoolDays.push(this.$t('Wed'));}
+      if(this.criteria.thuCheck!==null){carpoolDays.push(this.$t('Thu'));}
+      if(this.criteria.friCheck!==null){carpoolDays.push(this.$t('Fri'));}
+      if(this.criteria.satCheck!==null){carpoolDays.push(this.$t('Sat'));}
+      if(this.criteria.sunCheck!==null){carpoolDays.push(this.$t('Sun'));}
+      return carpoolDays.join(", ");
     },
     name() {
       return this.givenName + " " + this.familyName.substr(0, 1).toUpperCase() + ".";

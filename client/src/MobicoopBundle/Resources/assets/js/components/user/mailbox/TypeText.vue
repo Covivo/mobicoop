@@ -25,6 +25,7 @@
               fab
               rounded
               color="primary"
+              :disabled="this.textToSend===''"
               @click="emit()"
             >
               <v-icon>mdi-send</v-icon>

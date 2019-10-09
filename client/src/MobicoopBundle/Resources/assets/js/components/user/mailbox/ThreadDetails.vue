@@ -41,7 +41,7 @@
       </v-timeline>
       <v-card v-else>
         <v-card-text class="font-italic subtitle-1">
-          Aucun fil selectionné
+          {{ $t('notThreadSelected') }}
         </v-card-text>
       </v-card>
     </v-container>

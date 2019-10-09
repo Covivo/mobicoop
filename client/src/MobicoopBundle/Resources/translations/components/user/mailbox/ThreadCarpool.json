@@ -1,8 +1,22 @@
 {
     "fr": {
-        "at":"à"
+        "at":"à",
+        "Mon":"Lun",
+        "Tue":"Mar",
+        "Wed":"Mer",
+        "Thu":"Jeu",
+        "Fri":"Ven",
+        "Sat":"Sam",
+        "Sun":"Dim"
      },
     "en": {
-        "at":"at"
+        "at":"at",
+        "Mon":"Mon",
+        "Tue":"Tue",
+        "Wed":"Wed",
+        "Thu":"Thu",
+        "Fri":"Fri",
+        "Sat":"Sat",
+        "Sun":"Sun"
     }
 }
