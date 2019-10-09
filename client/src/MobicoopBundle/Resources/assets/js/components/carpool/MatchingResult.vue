@@ -130,74 +130,12 @@ export default {
     }
   },
   methods :{
-    carpool(params) {
+    carpool() {
       this.$emit("carpool", {
-        proposal: params.proposal,
-        // warning : we set below the possible roles of the requester, so the opposite ones of the current carpooler !
-        driver: this.passenger,
-        passenger: this.driver,
-        // we send the date of the carpool
-        date: this.getCarpoolDate(params),
-        // we send the time of the carpool
-        time: this.getCarpoolTime(params)
+        matching: this.matching
       });
     },
-    // this methods gives the date of the carpool
-    getCarpoolDate(params) {
-      // if the search is regular, it's the selected date
-      if (this.regular) return this.date;
-      // if the search is punctual
-      if (params.proposal.criteria.frequency == 1) {
-        // it's the date of the matching proposal if the matching proposal is punctual
-        return params.proposal.criteria.fromDate;
-      } 
-      // TODO : it's the date of the first matching date if it's a regular matching proposal
-      // for now we return the selected date...
-      return this.date;
-    },
-    // this methods gives the time of the carpool
-    getCarpoolTime(params) {
-      // if the search is regular, the time is null
-      if (this.regular) return null;
-      // the search is punctual
-      if (this.driver && !this.passenger) {
-        // if the requester is passenger only, we have to set its departure time as the pickup time 
-        // the 'order' field is an array containing the ordered waypoints of the whole route (ACDB)
-        return this.getPickUpTime(1,params.proposal.criteria.fromTime,this.matching.offer.filters.order);
-      } else if (this.passenger && !this.driver) {
-        // if the requester is driver only, 
-        // we set its departure time to the time where the pickup time of the current carpooler matches the carpooler departure time
-        // the 'order' field is an array containing the ordered waypoints of the whole route (ACDB)
-        return this.getPickUpTime(2,params.proposal.criteria.fromTime,this.matching.request.filters.order);
-      } else {
-        // if the requester can be driver or passenger, we choose a departure time that could satisfy both roles 
-        // the 'order' field is an array containing the ordered waypoints of the whole route (ACDB)
-        return this.getPickUpTime(3,params.proposal.criteria.fromTime,this.matching.offer.filters.order);
-      }
-    },
-    getPickUpTime(role,time,waypoints) {
-      // we search the pickup point
-      // the driver is the candidate 1 in the waypoints
-      // the passenger is the candidate 2 in the waypoints
-      // => the pickup is in position 0 for the candidate 2
-      // => if the role is 1 (the carpooler is driver = candidate 1) the pickup time is the carpooler time + the duration till the pickup of the requester
-      // => if the role is 2 (the carpooler is passenger = candidate 2) the pickup time is the carpooler time - the duration till the pickup of the carpooler
-      // => if the role is 3 (the carpooler can be driver or passenger, we use the driver role for calculation = candidate 1) 
-      //    the pickup time is the carpooler time - half the duration till the pickup of the requester
-      //    (arbitrary evaluation that could satisfy both roles, as the carpooler is the first who have posted we try to satisfy him first !)
-      for (let waypoint of waypoints) {
-        if (waypoint.candidate == 2 && waypoint.position == '0') {
-          if (role == 1) {
-            return moment.utc(time).add(waypoint.duration,'seconds').format(this.$t("ui.i18n.time.format.hourMinute"));
-          } else if (role == 2) {
-            return moment.utc(time).subtract(waypoint.duration,'seconds').format(this.$t("ui.i18n.time.format.hourMinute"));
-          } else {
-            return moment.utc(time).subtract((waypoint.duration)/2,'seconds').format(this.$t("ui.i18n.time.format.hourMinute"));
-          }
-        }
-      }
-      return null;
-    },
+    
   }
 };
 </script>

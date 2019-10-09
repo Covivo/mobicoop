@@ -82,7 +82,7 @@ class ProposalMatcher
         if (!$proposalsFound = $this->proposalRepository->findMatchingProposals($proposal, $excludeProposalUser)) {
             return [];
         }
-
+        
         $matchings = [];
 
         // we filter with geomatcher

@@ -194,14 +194,16 @@ class GeoMatcher
      */
     private function match(Candidate $candidate1, Candidate $candidate2): ?array
     {
-        $result = null;
+        $result = [];
         
         $pointsArray = $this->generatePointsArray($candidate1, $candidate2);
 
         // for each possible route, we check if it's acceptable
         foreach ($pointsArray as $points) {
             if ($routes = $this->geoRouter->getRoutes(array_values($points), true)) {
-                $result = $this->checkMatch($candidate1, $candidate2, $routes, $points);
+                if ($match = $this->checkMatch($candidate1, $candidate2, $routes, $points)) {
+                    $result[] = $match;
+                }
             }
         }
         return $result;
@@ -255,7 +257,7 @@ class GeoMatcher
         if ($detourDistance && $detourDuration && $commonDistance) {
             // we add the zones to the direction
             $direction = $this->zoneManager->createZonesForDirection($routes[0]);
-            $result[] = [
+            $result = [
                 'order' => is_array($points) ? $this->generateOrder($points, $routes[0]->getDurations()) : null,
                 'originalDistance' => $candidate1->getDirection()->getDistance(),
                 'acceptedDetourDistance' => $candidate1->getMaxDetourDistance(),

@@ -136,11 +136,7 @@ export default {
   methods: {
     carpool(params) {
       this.$emit("carpool", {
-        proposal: params.proposal,
-        driver: params.driver,
-        passenger: params.passenger,
-        date: params.date,
-        time: params.time
+        matching: params.matching
       });
     }
   }
