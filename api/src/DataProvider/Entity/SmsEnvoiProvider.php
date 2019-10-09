@@ -26,7 +26,7 @@ namespace App\DataProvider\Entity;
 use App\DataProvider\Service\DataProvider;
 use App\Communication\Entity\Sms;
 
-class SmsEnvoiProvider 
+class SmsEnvoiProvider
 {
     private const URI = "https://api.smsenvoi.com/";
     private const COLLECTION_RESSOURCE_SMS = "API/v1.0/REST/sms";
@@ -50,7 +50,5 @@ class SmsEnvoiProvider
         $params['Access_token'] = "ACCESS_TOKEN}";
         
         $dataProvider->postCollection($params);
-
     }
-
 }

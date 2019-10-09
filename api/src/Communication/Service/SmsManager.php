@@ -63,7 +63,6 @@ class SmsManager
      */
     public function send(Sms $sms, $template, $context=[])
     {
-
         $sms->setMessage(
             $this->templating->render(
                 $this->templatePath.$template.'.html.twig',
@@ -77,7 +76,7 @@ class SmsManager
 
         // to do send sms via smsEnvoi
         
-        $this->logger->info('on est ici');   
+        $this->logger->info('on est ici');
         
 
         return;
