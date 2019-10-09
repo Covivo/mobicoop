@@ -26,6 +26,7 @@
               rounded
               color="primary"
               :disabled="this.textToSend===''"
+              :loading="this.loading"
               @click="emit()"
             >
               <v-icon>mdi-send</v-icon>
@@ -57,7 +58,8 @@ export default {
   },
   data(){
     return{
-      textToSend:""
+      textToSend:"",
+      loading: false
     }
   },
   mounted(){
@@ -71,6 +73,9 @@ export default {
           textToSend:this.textToSend
         });
       this.textToSend = "";
+    },
+    updateLoading(val){
+      this.loading = val;
     }
   }
 }

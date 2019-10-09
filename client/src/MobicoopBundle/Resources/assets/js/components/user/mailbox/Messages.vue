@@ -99,6 +99,7 @@
               cols="12"
             >
               <type-text
+                ref="typeText"
                 :id-thread-message="this.idMessage"
                 :id-recipient="this.idRecipient"
                 @sendInternalMessage="sendInternalMessage"
@@ -151,7 +152,7 @@ export default {
       modelTabs:"tab-cm",
       idMessage:null,
       idRecipient:null,
-      currentAskHistory:null,
+      currentIdAskHistory:null,
       recipientName:""
     };
   },
@@ -166,20 +167,22 @@ export default {
       this.recipientName = data.name;
     },
     sendInternalMessage(data){
+      this.$refs.typeText.updateLoading(true);
       let messageToSend = {
         idThreadMessage: data.idThreadMessage,
         text: data.textToSend,
         idRecipient: data.idRecipient,
-        idAskHistory: this.currentAskHistory
+        idAskHistory: this.currentIdAskHistory
       };
       axios.post("/utilisateur/messages/envoyer", messageToSend).then(res => {
         this.idMessage = data.idThreadMessage;
         // Update the thread details
         this.$refs.threadDetails.getCompleteThread();
+        this.$refs.typeText.updateLoading(false);
       });
     },
     updateAskHistory(data){
-      this.currentAskHistory = data.currentAskHistory;
+      this.currentIdAskHistory = data.currentAskHistory;
     },
     refreshSelected(data){
       if(this.$refs.threadsDirect !== undefined){this.$refs.threadsDirect.refreshSelected(data.idMessage);}

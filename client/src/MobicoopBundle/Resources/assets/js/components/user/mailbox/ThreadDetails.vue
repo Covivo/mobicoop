@@ -144,8 +144,8 @@ export default {
             this.items.push(item);
 
             // Update the current AskHistory
-            this.currentAskHistory = item.askHistory;
-
+            this.currentAskHistory = item.askHistory.id;
+            this.emit();
           });
 
         })
