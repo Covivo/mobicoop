@@ -94,7 +94,10 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="12">
+            <v-col
+              v-if="this.idMessage"
+              cols="12"
+            >
               <type-text
                 :id-thread-message="this.idMessage"
                 :id-recipient="this.idRecipient"

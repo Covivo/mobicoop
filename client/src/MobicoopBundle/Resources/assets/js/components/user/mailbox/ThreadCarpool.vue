@@ -2,67 +2,65 @@
   <v-content>
     <v-container class="window-scroll">
       <v-card
-        class="mx-auto mt-2"
+        class="mx-auto mt-2 pt-1 pb-1"
         :class="selected ? 'primary' : ''"
         @click="click()"
       >
-        <v-card-title class="pa-0 ma-0">
-          <v-row>
-            <v-col class="col-3 text-center ma-0 pa-0">
-              <v-avatar>
-                <!-- For now, we are not supporting the avatar. We show an icon instead -->
-                <v-icon class="display-2">
-                  mdi-account-circle
-                </v-icon>
-              </v-avatar>
-            </v-col>
-            <v-col class="col-9 ma-0 pa-0">
-              <v-row
-                align="start"
-              >
-                <v-col class="col-5 ma-0 pa-0">
-                  <v-card-text class="pa-0">
-                    <span
-                      class="title font-weight-light secondary--text"
-                    >
-                      {{ name }}
-                    </span>
-                  </v-card-text>
-                </v-col>
-                <v-col class="col-4 ma-0 pa-0">
-                  <v-card-text
-                    class="pa-0 ma-0 text-right pr-2 font-italic"
-                  >
-                    {{ formateDate }}
-                  </v-card-text>
-                </v-col>
-              </v-row>
-
-              <v-row>
-                <v-col class="col-12">
+        <v-row>
+          <v-col class="col-3 text-center ma-0 pa-0">
+            <v-avatar>
+              <!-- For now, we are not supporting the avatar. We show an icon instead -->
+              <v-icon class="display-2">
+                mdi-account-circle
+              </v-icon>
+            </v-avatar>
+          </v-col>
+          <v-col class="col-8 ma-0 pa-0">
+            <v-row
+              align="start"
+            >
+              <v-col class="col-7 ma-0 pa-0">
+                <v-card-text class="pa-0">
                   <span
                     class="title font-weight-light secondary--text"
                   >
-                    {{ origin }}        
-                    <v-icon color="tertiairy">
-                      mdi-arrow-right
-                    </v-icon>
-                    {{ destination }}
+                    {{ name }}
                   </span>
-                  <br>
-                  <span
-                    v-if="criteria.frequency==1"
-                    class="font-italic"
-                  >{{ formateFromDate }} {{ $t("ui.infos.misc.at") }} {{ formateFromTime }}</span>
-                  <span
-                    v-else
-                    class="font-italic"
-                  >toc toc toc</span>
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
-        </v-card-title>
+                </v-card-text>
+              </v-col>
+              <v-col class="col-5 ma-0 pa-0">
+                <v-card-text
+                  class="pa-0 ma-0 text-right pr-2 font-italic"
+                >
+                  {{ formateDate }}
+                </v-card-text>
+              </v-col>
+            </v-row>
+
+            <v-row>
+              <v-col class="col-8 text-left pa-0 ma-0">
+                <span
+                  class="font-weight-light"
+                >
+                  {{ origin }}        
+                  <v-icon color="tertiairy">
+                    mdi-arrow-right
+                  </v-icon>
+                  {{ destination }}
+                </span>
+                <br>
+                <span
+                  v-if="criteria.frequency==1"
+                  class="font-italic"
+                >{{ formateFromDate }} {{ $t("ui.infos.misc.at") }} {{ formateFromTime }}</span>
+                <span
+                  v-else
+                  class="font-italic"
+                >toc toc toc</span>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
       </v-card>
     </v-container>
   </v-content>
@@ -174,3 +172,9 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.window-scroll{
+  max-height:600px;
+  overflow:auto;
+}
+</style>

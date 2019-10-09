@@ -39,6 +39,11 @@
           >{{ item.createdDate }}</span>
         </v-timeline-item>
       </v-timeline>
+      <v-card v-else>
+        <v-card-text class="font-italic subtitle-1">
+          Aucun fil selectionné
+        </v-card-text>
+      </v-card>
     </v-container>
   </v-content>
 </template>
@@ -126,3 +131,9 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.window-scroll{
+  max-height:600px;
+  overflow:auto;
+}
+</style>
