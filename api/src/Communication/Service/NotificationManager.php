@@ -107,7 +107,7 @@ class NotificationManager
                     case Medium::MEDIUM_SMS:
                         $this->notifyBySMS($notification, $recipient, $object);
                         $this->createNotified($notification, $recipient, $object);
-                        $this->logger->info("Sms notification for  $action / " . $recipient->getTelephone());
+                        $this->logger->info("Sms notification for  $action / " . $recipient->getEmail());
                         break;
                     case Medium::MEDIUM_PUSH:
                         // todo : call the dedicated service to send the push with the notification template
@@ -203,9 +203,9 @@ class NotificationManager
         } else {
             $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
         }
-        
+       
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
-        $this->SmsManager->send($sms, $notification->getTemplateBody() ? $this->smsTemplatePath . $notification->getTemplateBody() : $this->smsTemplatePath . $notification->getAction()->getName(), $bodyContext, $recipient->getLanguage());
+        $this->smsManager->send($sms, $notification->getTemplateBody() ? $this->smsTemplatePath . $notification->getTemplateBody() : $this->smsTemplatePath . $notification->getAction()->getName(), $bodyContext);
     }
 
 

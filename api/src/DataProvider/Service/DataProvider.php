@@ -101,4 +101,24 @@ class DataProvider
         }
         return new Response();
     }
+
+    /**
+    * Get collection operation
+    *
+    * @param mixed|null    $params         An array or string of parameters
+    *
+    * @return Response The response of the operation.
+    */
+    public function postCollection($params=null): Response
+    {
+        try {
+            $clientResponse = $this->client->post($this->resource, ['query'=>$params]);
+            if ($clientResponse->getStatusCode() == 200) {
+                return new Response($clientResponse->getStatusCode(), $clientResponse->getBody());
+            }
+        } catch (TransferException $e) {
+            return new Response($e->getCode());
+        }
+        return new Response();
+    }
 }

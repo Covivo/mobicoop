@@ -24,11 +24,11 @@
 namespace App\Communication\Service;
 
 use App\Communication\Entity\Sms;
+use App\DataProvider\Entity\SmsEnvoiProvider;
 use Psr\Log\LoggerInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Email sending service via Swift_Mailer
+ * Sms sending service via SmsEnvoi
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
@@ -37,21 +37,21 @@ class SmsManager
     private $templating;
     private $templatePath;
     private $logger;
-    private $translator;
- 
+  
     /**
-       * SmsManager constructor.
-       * @param \Twig_Environment $templating
-       * @param LoggerInterface $logger
-       * @param TranslatorInterface $translator
-       * @param string $templatePath
-       */
-    public function __construct(\Twig_Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $templatePath)
+     * SmsManager constructor.
+     *
+     * @param \Twig_Environment $templating
+     * @param LoggerInterface $logger
+     * @param SmsEnvoiProvider $smsEnvoiProvider
+     * @param string $templatePath
+     */
+    public function __construct(\Twig_Environment $templating, LoggerInterface $logger, SmsEnvoiProvider $smsEnvoiProvider, string $templatePath)
     {
         $this->templating = $templating;
         $this->templatePath = $templatePath;
         $this->logger = $logger;
-        $this->translator= $translator;
+        $this->smsEnvoiProvider= $smsEnvoiProvider;
     }
 
     /**
@@ -61,15 +61,10 @@ class SmsManager
      * @param array $context optional array of parameters that can be included in the template
      * @return string
      */
-    public function send(Sms $sms, $template, $context=[], $lang='fr_FR')
+    public function send(Sms $sms, $template, $context=[])
     {
-        $failures = "";
 
-        $sessionLocale= $this->translator->getLocale();
-        $this->translator->setLocale($lang);
-        $message = new Sms;
-        $message->setRecipientTelephone($sms->getRecipientTelephone());
-        $message->setMessage(
+        $sms->setMessage(
             $this->templating->render(
                 $this->templatePath.$template.'.html.twig',
                 array(
@@ -79,8 +74,12 @@ class SmsManager
             ),
             'text/html'
         );
-        $this->translator->setLocale($sessionLocale);
 
-        return $failures;
+        // to do send sms via smsEnvoi
+        
+        $this->logger->info('on est ici');   
+        
+
+        return;
     }
 }

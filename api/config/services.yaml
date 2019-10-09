@@ -114,6 +114,12 @@ services:
         tags: 
             - { name: monolog.logger, channel: communication }
 
+    App\Communication\Service\SmsManager:
+        arguments:
+            $templatePath: '%env(resolve:COMMUNICATION_TEMPLATE_SMS_PATH)%'
+        tags: 
+            - { name: monolog.logger, channel: communication }        
+
     App\Communication\Service\InternalMessageManager:
         tags: 
             - { name: monolog.logger, channel: communication }
