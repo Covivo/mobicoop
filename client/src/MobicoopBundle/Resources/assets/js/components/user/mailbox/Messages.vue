@@ -25,7 +25,7 @@
           text-xs-left
           class="col-5 pt-5 pb-4 pl-2 secondary white--text font-weight-bold headline"
         >
-          <mail-box-header />
+          <mail-box-header>{{ this.recipientName }}</mail-box-header>
         </v-col>
         <v-col
           text-xs-left
@@ -151,7 +151,8 @@ export default {
       modelTabs:"tab-cm",
       idMessage:null,
       idRecipient:null,
-      currentAskHistory:null
+      currentAskHistory:null,
+      recipientName:""
     };
   },
   watch: {
@@ -162,6 +163,7 @@ export default {
     updateDetails(data){
       this.idMessage = data.idMessage;
       this.idRecipient = data.idRecipient;
+      this.recipientName = data.name;
     },
     sendInternalMessage(data){
       let messageToSend = {

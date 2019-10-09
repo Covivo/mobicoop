@@ -176,7 +176,8 @@ export default {
       this.$emit("idMessageForTimeLine",
         {
           idMessage:this.idMessage,
-          idRecipient:this.idRecipient
+          idRecipient:this.idRecipient,
+          name:this.name
         }
       );
     }
