@@ -3,26 +3,26 @@
     align="center"
     justify="center"
   >
-    <v-col cols="2">
+    <v-col cols="4">
       <v-avatar
         color="grey lighten-3"
         size="225"
       >
         <img
-          v-if="!coverImage"
-          src="/images/avatar.svg"
+          v-if="community.images[0]"
+          :src="community['images'][0]['versions'][avatarVersion]"
           alt="avatar"
         >
         <img
           v-else
-          src="coverImage.url"
+          :src="urlAltAvatar"
           alt="avatar"
         >
       </v-avatar>
     </v-col>
       
     <v-col
-      cols="4"
+      cols="8"
     >
       <v-card
         flat
@@ -30,13 +30,13 @@
       >
         <v-card-text>
           <h3 class="headline">
-            {{ community['name'] }}
+            {{ community.name }}
           </h3>
           <p class="body-1">
-            {{ community['description'] }}
+            {{ community.description }}
           </p>
           <p class="body-2">
-            {{ community['fullDescription'] }}
+            {{ community.fullDescription }}
           </p>
         </v-card-text>
       </v-card>
@@ -46,14 +46,18 @@
 <script>
 export default {
   props:{
-    coverImage: {
-      type: Object,
-      default: null
-    },
     community: {
       type: Object,
       default: null
+    },
+    urlAltAvatar: {
+      type: String,
+      default: null
+    },
+    avatarVersion: {
+      type: String,
+      default: null
     }
-  },
+  }
 }
 </script>

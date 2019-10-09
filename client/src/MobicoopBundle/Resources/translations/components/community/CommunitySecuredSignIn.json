@@ -1,0 +1,28 @@
+{
+  "fr": {
+    "title":"Rejoindre une commmunauté sécurisée",
+    "titleWithName":"Rejoindre la commmunauté",
+    "credential1":"1er identifiant",
+    "credential2":"2nd identifiant",
+    "urlSignIn":"/communaute/",
+    "join":"Rejoindre la communauté",
+    "errors":{
+      "required":"Ce champs est obligatoire",
+      "badCredentials":"Identifiants incorrects",
+      "notLogged":"Vous devez être connecté"
+    }
+  },
+  "en": {
+    "title":"Join a secured community",
+    "titleWithName":"Join this community :",
+    "credential1":"First credential",
+    "credential2":"Second credential",
+    "urlSignIn":"/communauty/",
+    "join":"Join the community",
+    "errors":{
+      "required":"This field is required",
+      "badCredentials":"Bad credentials",
+      "notLogged":"You have to be logged"
+    }
+  }
+}

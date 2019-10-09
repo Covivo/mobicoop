@@ -191,7 +191,8 @@ class Matching implements \JsonSerializable
             'proposalOffer'     => $this->getProposalOffer(),
             'proposalRequest'   => $this->getProposalRequest(),
             'criteria'          => $this->getCriteria(),
-            'waypoint'          => $this->getWaypoints()
+            'waypoint'          => $this->getWaypoints(),
+            'filters'           => $this->getFilters()
         ];
     }
 }

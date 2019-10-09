@@ -1,11 +1,13 @@
 {
   "fr":{
+    "contactUrl": "/covoiturage/contact",
     "snackBar": {
       "success": "La prise de contact a bien été envoyée",
       "error": "Suite à un problème technique la prise de contact n'a pas pu être envoyée"
     }
   },
   "en":{
+    "contactUrl": "/carpool/contact",
     "snackBar": {
       "success": "Contact has been successfuly established",
       "error": "Due to a technical difficuly, the contact hasn't been established"

@@ -2,12 +2,13 @@
 
 import { Vue, vuetify, i18n } from '@js/config/community/communities'
 
-import '@css/page/community/showCommunity.scss'
+import '@css/page/community/community.scss'
 
 // Vue components
 import MHeader from '@components/base/MHeader'
 import MFooter from '@components/base/MFooter'
 import Community from '@components/community/Community'
+import CommunitySecuredSignIn from '@components/community/CommunitySecuredSignIn'
 
 new Vue({
   el: '#app',
@@ -16,6 +17,7 @@ new Vue({
   components: {
     MHeader,
     Community,
+    CommunitySecuredSignIn,
     MFooter
   }
 });

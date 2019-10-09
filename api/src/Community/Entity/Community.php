@@ -34,6 +34,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Image\Entity\Image;
 use App\User\Entity\User;
+use App\Geography\Entity\Address;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -72,6 +73,22 @@ use App\Community\Controller\JoinAction;
  *                      }
  *                  }
  *              }
+ *          },
+ *          "exists"={
+ *              "method"="GET",
+ *              "path"="/communities/exists",
+ *              "normalization_context"={"groups"={"read"}},
+ *              "swagger_context" = {
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "name",
+ *                          "in" = "query",
+ *                          "type" = "string",
+ *                          "required" = "true",
+ *                          "description" = "The name of the community"
+ *                      }
+ *                  }
+ *              }
  *          }
  *      },
  *      itemOperations={"get","put","delete"}
@@ -81,6 +98,10 @@ use App\Community\Controller\JoinAction;
  */
 class Community
 {
+    const AUTO_VALIDATION = 0;
+    const MANUAL_VALIDATION = 1;
+    const DOMAIN_VALIDATION = 2;
+
     /**
      * @var int The id of this community.
      *
@@ -115,6 +136,22 @@ class Community
      * @Groups({"read","write"})
      */
     private $proposalsHidden;
+
+    /**
+     * @var int|null The type of validation (automatic/manual/domain).
+     *
+     * @ORM\Column(type="smallint")
+     * @Groups({"read","write"})
+     */
+    private $validationType;
+
+    /**
+     * @var string|null The domain of the community.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $domain;
     
     /**
      * @var string The short description of the community.
@@ -133,7 +170,7 @@ class Community
     private $fullDescription;
     
     /**
-    * @var \DateTimeInterface Creation date of the event.
+    * @var \DateTimeInterface Creation date of the community.
     *
     * @ORM\Column(type="datetime")
     * @Groups("read")
@@ -157,6 +194,17 @@ class Community
      * @Groups({"read","write"})
      */
     private $user;
+
+    /**
+     * @var Address The address of the community.
+     *
+     * @Assert\NotBlank
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $address;
     
     /**
      * @var ArrayCollection|null The images of the community.
@@ -250,6 +298,26 @@ class Community
         
         return $this;
     }
+
+    public function getValidationType(): ?int
+    {
+        return $this->validationType;
+    }
+    
+    public function setValidationType(?int $validationType)
+    {
+        $this->validationType = $validationType;
+    }
+
+    public function getDomain(): ?string
+    {
+        return $this->domain;
+    }
+    
+    public function setDomain(?string $domain)
+    {
+        $this->domain = $domain;
+    }
     
     public function getDescription(): string
     {
@@ -303,6 +371,18 @@ class Community
     public function setUser(User $user): self
     {
         $this->user = $user;
+        
+        return $this;
+    }
+
+    public function getAddress(): ?Address
+    {
+        return $this->address;
+    }
+    
+    public function setAddress(?Address $address): self
+    {
+        $this->address = $address;
         
         return $this;
     }
@@ -425,6 +505,21 @@ class Community
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+    }
+
+      
+    /**
+     * Validation type.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoValidationType()
+    {
+        if ($this->getDomain()) {
+            $this->setValidationType(SELF::DOMAIN_VALIDATION);
+        } else {
+            $this->setValidationType(SELF::AUTO_VALIDATION);
+        }
     }
 
     /**

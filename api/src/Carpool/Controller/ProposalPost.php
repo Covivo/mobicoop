@@ -54,7 +54,7 @@ class ProposalPost
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad proposal id is provided"));
         }
-        $data = $this->proposalManager->createProposal($data);
+        $data = $this->proposalManager->prepareProposal($data);
         return $data;
     }
 }

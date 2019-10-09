@@ -10,7 +10,7 @@
           color="primary"
           dark
         >
-          <v-toolbar-title> {{ $t('Communautés disponibles') }}</v-toolbar-title>
+          <v-toolbar-title> {{ $t('communitiesAvailable') }}</v-toolbar-title>
         </v-toolbar>
       </v-col>
     </v-row>
@@ -27,7 +27,7 @@
                 color="primary"
                 rounded
               >
-                Créer une communauté
+                {{ $t('createCommunity') }}
               </v-btn>
             </a>
           </v-col>
@@ -43,7 +43,7 @@
               <v-text-field
                 v-model="search"
                 hide-details
-                :label="$t('Rechercher')"
+                :label="$t('search')"
                 single-line
               />
             </v-card>
@@ -56,8 +56,8 @@
         :items-per-page.sync="itemsPerPage"
         :footer-props="{
           'items-per-page-options': itemsPerPageOptions,
-          'items-per-page-all-text': $t('Tous'),
-          'itemsPerPageText': $t('Nombre de lignes par page')
+          'items-per-page-all-text': $t('all'),
+          'itemsPerPageText': $t('linePerPage')
         }"
       >
         <template>
@@ -74,6 +74,16 @@
                 <v-row>
                   <v-col cols="3">
                     <v-img
+                      v-if="item['images'][0]"
+                      :src="item['images'][0]['versions']['square_250']"
+                      lazy-src="https://picsum.photos/id/11/10/6"
+                      aspect-ratio="1"
+                      class="grey lighten-2"
+                      max-width="200"
+                      max-height="150"
+                    />
+                    <v-img
+                      v-else
                       src="https://picsum.photos/id/11/500/300"
                       lazy-src="https://picsum.photos/id/11/10/6"
                       aspect-ratio="1"
@@ -85,9 +95,17 @@
                   <v-col cols="6">
                     <v-card-title>
                       <div v-if="item.membersHidden || item.proposalsHidden">
-                        <h4>
-                          {{ item.name }}
-                        </h4>
+                        <v-tooltip
+                          top
+                          color="info"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <h4 v-on="on">
+                              {{ item.name }}
+                            </h4>
+                          </template>
+                          <span>{{ $t('protected') }}</span>
+                        </v-tooltip>
                       </div>
                       <div v-else>
                         <h4>
@@ -109,31 +127,53 @@
                     class="text-center"
                   >
                     <div
-                      v-if="!item.membersHidden && !item.proposalsHidden"
+                      v-if="!item.membersHidden && !item.proposalsHidden && !item.isSecured"
                       class="my-2"
                     >
-                      <a href="#">
-                        <v-btn
-                          color="primary"
-                          rounded
-                          @click="test"
-                        >
-                          Voir les annonces
-                        </v-btn>
-                      </a>
+                      <v-tooltip
+                        left
+                        color="info"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <div
+                            v-on="on"
+                          >
+                            <v-btn
+                              color="primary"
+                              rounded
+                              disabled
+                              @click="test"
+                            >
+                              {{ $t('seeAds') }}
+                            </v-btn>
+                          </div>
+                        </template>
+                        <span>{{ $t('ui.infos.notAvailableYet') }}</span>
+                      </v-tooltip>
                     </div>
                     <div
-                      v-if="!item.membersHidden && !item.proposalsHidden"
+                      v-if="!item.membersHidden && !item.proposalsHidden && !item.isSecured"
                       class="my-2"
                     >
-                      <a :href="linkToCommunityJoin(item)">
-                        <v-btn
-                          color="primary"
-                          rounded
-                        >
-                          Rejoindre la communauté
-                        </v-btn>
-                      </a>
+                      <v-tooltip
+                        left
+                        color="info"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <div
+                            v-on="on"
+                          >
+                            <v-btn
+                              color="primary"
+                              rounded
+                              disabled
+                            >
+                              {{ $t('join') }}
+                            </v-btn>
+                          </div>
+                        </template>
+                        <span>{{ $t('ui.infos.notAvailableYet') }}</span>
+                      </v-tooltip>
                     </div>
                   </v-col>
                 </v-row>
@@ -150,8 +190,8 @@
 
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/home/HomeSearch.json";
-import TranslationsClient from "@clientTranslations/components/home/HomeSearch.json";
+import Translations from "@translations/components/community/CommunityList.json";
+import TranslationsClient from "@clientTranslations/components/community/CommunityList.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 

@@ -24,7 +24,7 @@
             <v-list-item-title class="font-weight-bold">
               {{ carpooler.givenName }} {{ carpooler.familyName.substr(0,1).toUpperCase()+"." }}
             </v-list-item-title>
-            <v-list-item-title>{{ birthYear }} </v-list-item-title>
+            <v-list-item-title>{{ age }} </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-col>
@@ -87,7 +87,6 @@
           <v-btn
             color="success"
             small
-            dark
             depressed
             fab
             :hidden="phoneButtonToggled"
@@ -99,9 +98,9 @@
           </v-btn>
 
           <v-btn
+            :disabled="!contactAvailable"
             color="success"
             small
-            dark
             depressed
             fab
             class="ml-2"
@@ -121,10 +120,10 @@
         class="text-right"
       >
         <v-btn
+          :disabled="!contactAvailable"
           rounded
           color="success"
           large
-          dark
           @click="emitEvent"
         >
           <span>
@@ -171,9 +170,12 @@ export default {
     };
   },
   computed: {
-    birthYear (){
+    age (){
       return moment().diff(moment([this.carpooler.birthYear]),'years')+' '+this.$t("birthYears")
     },
+    contactAvailable () {
+      return this.user ? this.user.id != this.carpooler.id : false;
+    }
   },
   methods: {
     toggleButton: function(){

@@ -145,10 +145,26 @@ class Criteria
     /**
      * @var boolean For punctual proposals, the user accepts only matchings for the defined date (no ranges).
      *
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","results","write","thread"})
      */
     private $strictDate;
+
+    /**
+     * @var boolean For punctual proposals, the user accepts only matchings with punctual trips (no regular trips).
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","results","write","thread"})
+     */
+    private $strictPunctual;
+
+    /**
+     * @var boolean For regular proposals, the user accepts only matchings with regular trips (no punctual trips).
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","results","write","thread"})
+     */
+    private $strictRegular;
 
     /**
      * @var \DateTimeInterface|null The end date if regular proposal, the last accepted date if punctual.
@@ -500,6 +516,14 @@ class Criteria
     private $priceKm;
 
     /**
+    * @var float|null The price for the whole journey (usually, the rounded (priceKm * distance)).
+    *
+    * @ORM\Column(type="decimal", precision=4, scale=2, nullable=true)
+    * @Groups({"read","results","write","thread"})
+    */
+    private $price;
+
+    /**
      * @var boolean Big luggage accepted / asked.
      *
      * @ORM\Column(type="boolean", nullable=true)
@@ -681,6 +705,7 @@ class Criteria
         return $this;
     }
 
+
     public function getMarginDuration(): ?int
     {
         return $this->marginDuration;
@@ -728,9 +753,33 @@ class Criteria
         return $this->strictDate;
     }
     
-    public function setStrictDate(bool $isStrictDate): self
+    public function setStrictDate(?bool $isStrictDate): self
     {
         $this->strictDate = $isStrictDate;
+        
+        return $this;
+    }
+
+    public function isStrictPunctual(): ?bool
+    {
+        return $this->strictPunctual;
+    }
+    
+    public function setStrictPunctual(?bool $isStrictPunctual): self
+    {
+        $this->strictPunctual = $isStrictPunctual;
+        
+        return $this;
+    }
+
+    public function isStrictRegular(): ?bool
+    {
+        return $this->strictRegular;
+    }
+    
+    public function setStrictRegular(?bool $isStrictRegular): self
+    {
+        $this->strictRegular = $isStrictRegular;
         
         return $this;
     }
@@ -1286,6 +1335,16 @@ class Criteria
     public function setPriceKm(?string $priceKm)
     {
         $this->priceKm = $priceKm;
+    }
+
+    public function getPrice(): ?string
+    {
+        return $this->price;
+    }
+    
+    public function setPrice(?string $price)
+    {
+        $this->price = $price;
     }
 
     public function hasLuggage(): ?bool

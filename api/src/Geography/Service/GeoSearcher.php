@@ -121,6 +121,7 @@ class GeoSearcher
         
         // 3 - sig addresses
         $geoResults = $this->geocoder->geocodeQuery(GeocodeQuery::create($input))->all();
+        // var_dump($geoResults);exit;
         foreach ($geoResults as $geoResult) {
             // ?? todo : exclude all results that doesn't include any input word at all
             $address = new Address();

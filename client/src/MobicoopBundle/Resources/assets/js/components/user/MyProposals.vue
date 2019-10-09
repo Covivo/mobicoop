@@ -17,7 +17,6 @@
   </v-content>
 </template>
 <script>
-import axios from 'axios';
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/Profile.json";

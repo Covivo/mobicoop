@@ -314,9 +314,14 @@ class CommunityUser
      */
     public function setAutoStatus()
     {
-        if (is_null($this->getStatus())) {
+        if ($this->getUser()->getId() == $this->getCommunity()->getUser()->getId()) {
+            $this->setStatus(self::STATUS_ACCEPTED);
+        } elseif ($this->getCommunity()->getValidationType() == Community::AUTO_VALIDATION) {
+            $this->setStatus(self::STATUS_ACCEPTED);
+        } else {
             $this->setStatus(self::STATUS_PENDING);
         }
+        $this->setAutoAcceptedOrRefusedDate();
     }
 
     /**

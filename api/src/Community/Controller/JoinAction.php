@@ -49,6 +49,6 @@ final class JoinAction
         if ($this->communityManager->canJoin($data)) {
             return $data;
         }
-        return new Response('Unauthorized', 200);
+        return new Response('Unauthorized', 403);
     }
 }

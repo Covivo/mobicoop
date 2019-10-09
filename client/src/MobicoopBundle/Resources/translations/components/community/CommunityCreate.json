@@ -1,48 +1,52 @@
 {
-  "fr_FR": {
-    "ui": {
-      "button": {
-        "submit": "Envoyer"
+  "fr": {
+    "title": "Créez votre communauté",
+    "buttons": { 
+      "create": {
+        "label": "Créer la communauté",
+        "route": "/creer/communaute"
       }
     },
-    "models": {
-      "community": {
-        "name": {
-          "placeholder": "Nom"
-        },
-        "description": {
-          "placeholder": "Description"
-        },
-        "fullDescription": {
-          "placeholder": "Details"
-        },
-        "private": {
-          "placeholder": "Privé"
-        }
+    "form": {
+      "name": {
+        "label": "Nom de la communauté",
+        "required": "Le nom de la communauté est requis"
+      },
+      "description": {
+        "label": "Description courte de la communauté",
+        "required": "La courte description de la communauté est requise"
+      },
+      "fullDescription": {
+        "label": "Description détaillée de la communauté",
+        "required": "La description détaillée de la communauté est requise"
+      },
+      "avatar": {
+        "label": "Avatar de la communauté",
+        "required": "L'avatar de la communauté est requis",
+        "size": "Vous avez dépassé a taille maximale de l'avatar"
+      },
+      "address": {
+        "label": "Adresse de la communauté",
+        "required": "L'adesse de la communauté est requise"
+      },
+      "domain": {
+        "label": "Restriction du domaine"
       }
+    },
+    "redirect": {
+      "route": "/communautes"
+    },
+    "error": {
+      "community" : {
+        "name": "Cette communauté existe déjà veuillez utiliser un autre nom",
+        "create": "La création de la communauté a échoué"
+      },
+      "image": "L'image n'a pas été enregistrée"
     }
   },
-  "fr": {
-    "ui": {
-      "button": {
-        "submit": "Envoyer"
-      }
-    },
-    "models": {
-      "community": {
-        "name": {
-          "placeholder": "Nom"
-        },
-        "description": {
-          "placeholder": "Description"
-        },
-        "fullDescription": {
-          "placeholder": "Details"
-        },
-        "private": {
-          "placeholder": "Privé"
-        }
-      }
+  "en": {
+    "redirect": {
+      "route": "/communities"
     }
   }
 }

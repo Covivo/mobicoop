@@ -164,8 +164,8 @@
                       type-map="adSummary"
                       :points="pointsToMap"
                       :ways="directionWay"
-                      :url-tiles="this.urlTiles"
-                      :attribution-copyright="this.attributionCopyright"
+                      :url-tiles="urlTiles"
+                      :attribution-copyright="attributionCopyright"
                     />
                   </v-col>
                 </v-row>
@@ -427,8 +427,8 @@
                         type-map="adSummary"
                         :points="pointsToMap"
                         :ways="directionWay"
-                        :url-tiles="this.urlTiles"
-                        :attribution-copyright="this.attributionCopyright"
+                        :url-tiles="urlTiles"
+                        :attribution-copyright="attributionCopyright"
                       />
                     </v-col>
                   </v-row>
@@ -457,7 +457,7 @@
         </v-btn>
 
         <v-btn
-          v-if="step < 7"
+          v-if="validNext"
           :disabled="!validNext"
           rounded
           color="success"
@@ -469,7 +469,7 @@
         </v-btn>
 
         <v-tooltip
-          v-if="(step == 7)"
+          v-if="valid"
           bottom
         >
           <template v-slot:activator="{on}">
@@ -501,7 +501,6 @@ import Translations from "@translations/components/carpool/AdPublish.json";
 import TranslationsClient from "@clientTranslations/components/carpool/AdPublish.json";
 
 import axios from "axios";
-import moment from 'moment'
 import SearchJourney from "@components/carpool/SearchJourney";
 import AdPlanification from "@components/carpool/AdPlanification";
 import AdRoute from "@components/carpool/AdRoute";
@@ -621,7 +620,13 @@ export default {
       selectedCommunities: null,
       pointsToMap:[],
       directionWay:[],
-      bbox:null
+      bbox:null,
+      regularLifeTime: null,    // not used yet
+      strictDate: null,         // not used yet
+      strictRegular: null,      // not used yet
+      strictPunctual: null,     // not used yet
+      useTime: null,            // not used yet
+      anyRouteAsPassenger: null // not used yet
     }
   },
   computed: {
@@ -662,7 +667,7 @@ export default {
       if(this.origin == null || this.destination == null) return false;
       if(!this.passenger && !this.driver) return false;
       if(!this.regular && !this.outwardDate) return false;
-      if(!this.driver && this.step>5) return false;
+      if(!this.driver && this.step>4) return false;
       if(this.step>=7) return false;
 
       // Specifics by steps
@@ -790,8 +795,17 @@ export default {
       if (this.luggage) postObject.luggage = this.luggage;
       if (this.bike) postObject.bike = this.bike;
       if (this.backSeats) postObject.backSeats = this.backSeats;
-      if (this.price) postObject.price = this.pricePerKm;
+      if (this.price) postObject.price = this.price;
+      if (this.pricePerKm) postObject.priceKm = this.pricePerKm;
       if (this.message) postObject.message = this.message;
+      // the following parameters are not used yet but we keep them here for possible future use
+      if (this.regularLifetime) postObject.regularLifetime = this.regularLifetime;
+      if (this.strictDate) postObject.strictDate = this.strictDate;
+      if (this.strictRegular) postObject.strictRegular = this.strictRegular;
+      if (this.strictPunctual) postObject.strictPunctual = this.strictPunctual;
+      if (this.useTime) postObject.useTime = this.useTime;
+      if (this.anyRouteAsPassenger) postObject.anyRouteAsPassenger = this.anyRouteAsPassenger;
+
       this.loading = true;
       var self = this;
       axios.post(this.urlToCall,postObject,{
@@ -801,7 +815,7 @@ export default {
       })
         .then(function (response) {
           if (response.data && response.data.result && response.data.result.id) {
-            // uncomment when results page activeted
+            // uncomment when results page activated
             // var urlRedirect = `${self.baseUrl}/`+self.resultsUrl.replace(/{id}/,response.data.result.id);
             // window.location.href = urlRedirect;
             window.location.href = "/";

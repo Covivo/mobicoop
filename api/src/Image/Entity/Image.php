@@ -695,6 +695,7 @@ class Image
     {
         $this->setEventFile(null);
         $this->setUserFile(null);
+        $this->setCommunityFile(null);
         $this->setRelayPointFile(null);
         $this->setRelayPointTypeFile(null);
     }

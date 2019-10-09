@@ -23,19 +23,21 @@ Icon.Default.mergeOptions({
 
 import Vuetify, { 
   // general
-  VApp, VContainer, VFlex, VLayout, VContent, VSpacer,
+  VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VAlert,
   // header
   VToolbar, VToolbarTitle, VBtn, VImg,
   // footer
   VFooter, VCardText, VDataTable, VChip, VTextField, VRow, VCol, VCard, VIcon,VCardTitle, VDataIterator,VTab, VTabs,VTabItem, VTabsItems,
   VTabsSlider,VDivider, VList, VListItem, VListItemContent,VForm,VAutocomplete, VMenu, VDatePicker, VTooltip, VSwitch,VListItemAvatar,
   VListItemTitle,VListItemSubtitle,VData,VDataFooter,VDataTableHeader,VDialog, VCardActions, VTextarea, VBadge, VItemGroup, VListItemGroup, VListItemIcon, VSelect, VAvatar, VSnackbar, VProgressCircular,
+  // create form
+  VFileInput, VCheckbox,
 } from 'vuetify/lib'
 
 Vue.use(Vuetify, {
   components: {
     // general
-    VApp, VContainer, VFlex, VLayout, VContent, VSpacer,
+    VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VAlert,
     // header
     VToolbar, VToolbarTitle, VBtn, VImg,
     // footer
@@ -43,7 +45,9 @@ Vue.use(Vuetify, {
     VTabsSlider,VDivider, VList, VListItem, VListItemContent,VForm, VAutocomplete, VMenu, VDatePicker, VTooltip, VSwitch, VListItemAvatar,
     VListItemTitle,VListItemSubtitle,VData,VDataFooter,VDataTableHeader,VDialog, VCardActions, VTextarea, VBadge, VItemGroup, VListItemGroup, VListItemIcon, VSelect, VAvatar,VSnackbar, VProgressCircular,
     //Vue2Leaflet
-    LMap, LTileLayer, LMarker, LTooltip, LIcon, LPolyline
+    LMap, LTileLayer, LMarker, LTooltip, LIcon, LPolyline,
+    // create form
+    VFileInput, VCheckbox,
   }
 })
 Vue.use(VueI18n)

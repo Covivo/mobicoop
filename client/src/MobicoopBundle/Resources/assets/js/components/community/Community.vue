@@ -18,134 +18,171 @@
     </v-snackbar>
 
     <v-container>
-      <!-- Community : avatar, title and description -->
-      <community-infos
-        :cover-image="coverImage"
-        :community="community"
-      />
-
       <!-- community buttons and map -->
       <v-row
         justify="center"
-        align="center"
       >
         <v-col
-          cols="2"
-          class="text-center"
+          cols="12"
+          md="8"
+          xl="6"
+          align="center"
         >
-          <div v-if="isMember && isAccepted">
-            <a
-              style="text-decoration:none;"
-              :href="$t('buttons.publish.route')+community.id"
+          <!-- Community : avatar, title and description -->
+          <community-infos
+            :community="community"
+            :url-alt-avatar="urlAltAvatar"
+            :avatar-version="avatarVersion"
+          />
+          <!-- community buttons and map -->
+          <v-row
+            align="center"
+          >
+            <v-col
+              cols="4"
+              class="text-center"
             >
-              <v-btn
-                color="success"
-                rounded
+              <!-- button if domain validation -->
+              <div
+                v-if="domain == false"
               >
-                {{ $t('buttons.publish.label') }}
-              </v-btn>
-            </a>
-          </div>
-          <div v-else-if="isMember == true">
-            <v-tooltip
-              top
-              color="info"
-            >
-              <template v-slot:activator="{ on }">
+                <v-tooltip
+                  left
+                  color="info"
+                >
+                  <template v-slot:activator="{ on }">
+                    <div
+                      v-on="on"
+                    >
+                      <v-btn
+                        rounded
+                        disabled
+                      >
+                        {{ $t('buttons.join.label') }}
+                      </v-btn>
+                    </div>
+                  </template>
+                  <span>{{ $t('tooltips.domain')+" "+community.domain }}</span>
+                </v-tooltip>
+              </div>
+              <!-- button if member is accepted -->
+              <div v-else-if="isAccepted">
                 <a
                   style="text-decoration:none;"
                   :href="$t('buttons.publish.route')+community.id"
-                  v-on="on"
                 >
                   <v-btn
                     color="success"
                     rounded
-                    disabled
                   >
                     {{ $t('buttons.publish.label') }}
                   </v-btn>
                 </a>
-              </template>
-              <span>{{ $t('tooltips.validation') }}</span>
-            </v-tooltip>
-          </div>
-          <div
-            v-else
-          >
-            <v-tooltip
-              top
-              color="info"
-              :disabled="isLogged"
-            >
-              <template v-slot:activator="{ on }">
-                <a
-                  style="text-decoration:none;"
-                  href="#"
-                  v-on="on"
+              </div>
+              <!-- button if user ask to join community but is not accepted yet -->
+              <div v-else-if="askToJoin == true">
+                <v-tooltip
+                  top
+                  color="info"
                 >
-                  <v-btn
-                    color="success"
-                    rounded
-                    :loading="loading || (checkValidation && isLogged) "
-                    :disabled="!isLogged || checkValidation"
-                    @click="joinCommunity"
-                  >
-                    {{ $t('buttons.join.label') }}
-                  </v-btn>
-                </a>
-              </template>
-              <span>{{ $t('tooltips.connected') }}</span>
-            </v-tooltip>
-          </div>
-        </v-col>
-    
-        <v-col
-          cols="4"
-        >
-          <v-card
-            v-show="loadingMap"
-            flat
-            align="center"
-            height="500"
-            color="backSpiner"
+                  <template v-slot:activator="{ on }">
+                    <a
+                      style="text-decoration:none;"
+                      :href="$t('buttons.publish.route')+community.id"
+                      v-on="on"
+                    >
+                      <v-btn
+                        color="success"
+                        rounded
+                        disabled
+                      >
+                        {{ $t('buttons.publish.label') }}
+                      </v-btn>
+                    </a>
+                  </template>
+                  <span>{{ $t('tooltips.validation') }}</span>
+                </v-tooltip>
+              </div>
+              <!-- button is user is not a member -->
+              <div
+                v-else
+              >
+                <v-tooltip
+                  top
+                  color="info"
+                  :disabled="isLogged"
+                >
+                  <template v-slot:activator="{ on }">
+                    <a
+                      style="text-decoration:none;"
+                      href="#"
+                      v-on="on"
+                    >
+                      <v-btn
+                        color="success"
+                        rounded
+                        :loading="loading || (checkValidation && isLogged) "
+                        :disabled="!isLogged || checkValidation"
+                        @click="joinCommunity"
+                      >
+                        {{ $t('buttons.join.label') }}
+                      </v-btn>
+                    </a>
+                  </template>
+                  <span>{{ $t('tooltips.connected') }}</span>
+                </v-tooltip>
+              </div>
+            </v-col>
+            <!-- map -->
+            <v-col
+              cols="8"
+            >
+              <v-card
+                v-show="loadingMap"
+                flat
+                align="center"
+                height="500"
+                color="backSpiner"
+              >
+                <v-progress-circular
+                  size="497"
+                  indeterminate
+                  color="tertiary"
+                />
+              </v-card>
+              <m-map
+                v-show="!loadingMap"
+                ref="mmap"
+                type-map="community"
+                :points="pointsToMap"
+              />
+            </v-col>
+          </v-row>
+
+          <!-- community members list + last 3 users -->
+          <v-row 
+            align="start"
           >
-            <v-progress-circular
-              size="497"
-              indeterminate
-              color="tertiary"
-            />
-          </v-card>
-          <m-map
-            v-show="!loadingMap"
-            ref="mmap"
-            type-map="community"
-            :points="pointsToMap"
-          />
+            <v-col
+              cols="8"
+            >
+              <community-member-list
+                ref="memberList"
+                :community="community"
+              />
+            </v-col>
+            <!-- last 3 users -->
+            <v-col
+              cols="4"
+            >
+              <community-last-users
+                ref="lastUsers"
+                :community="community"
+              />
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
-
-      <!-- community members list + last 3 users -->
-      <v-row 
-        align="start"
-        justify="center"
-      >
-        <v-col
-          cols="4"
-        >
-          <community-member-list
-            :community="community"
-          />
-        </v-col>
-        <!-- last 3 users -->
-        <v-col
-          cols="2"
-        >
-          <community-last-users
-            :community="community"
-          />
-        </v-col>
-      </v-row>
-
       <!-- search journey -->
       <v-row
         justify="center"
@@ -164,18 +201,16 @@
         align="center"
         justify="center"
       >
-        <v-col>
-          <home-search
-            :geo-search-url="geodata.geocompleteuri"
-            :route="geodata.searchroute"
-            :user="user"
-            :justsearch="false"
-            :notitle="true"
-            :is-member="isMember"
-            :community="community"
-            :temporary-tooltips="true"
-          />
-        </v-col>
+        <home-search
+          :geo-search-url="geodata.geocompleteuri"
+          :route="geodata.searchroute"
+          :user="user"
+          :justsearch="false"
+          :notitle="true"
+          :is-member="askToJoin"
+          :community="community"
+          :temporary-tooltips="true"
+        />
       </v-row>
     </v-container>
   </v-content>
@@ -221,14 +256,18 @@ export default {
       type: Object,
       default: null
     },
-    coverImage:{
-      type: Object,
-      default: null
-    },
     lastUsers: {
       type: Array,
       default: null
     },
+    avatarVersion: {
+      type: String,
+      default: null
+    },
+    urlAltAvatar: {
+      type: String,
+      default: null
+    }
   },
   data () {
     return {
@@ -259,10 +298,11 @@ export default {
       textSnackError: this.$t("snackbar.joinCommunity.textError"),
       errorUpdate: false,
       isAccepted: false,
-      isMember: false,
+      askToJoin: false,
       checkValidation: false,
       isLogged: false,
       loadingMap: false,
+      domain: true,
 
     }
   },
@@ -270,6 +310,7 @@ export default {
     this.getCommunityUser();
     this.checkIfUserLogged();
     this.getCommunityProposals();
+    this.checkDomain();
   },
   methods:{
     getCommunityUser() {
@@ -283,7 +324,7 @@ export default {
         .then(res => {
           if (res.data.length > 0) {
             this.isAccepted = res.data[0].status == 1;
-            this.isMember = true
+            this.askToJoin = true
           }
           this.checkValidation = false;
           
@@ -300,14 +341,25 @@ export default {
           })
         .then(res => {
           this.errorUpdate = res.data.state;
+          this.askToJoin = true;
           this.snackbar = true;
+          this.$refs.memberList.getCommunityMemberList();
+          this.$refs.lastUsers.getCommunityLastUsers();
+          this.getCommunityUser();
           this.loading = false;
-          this.isMember = true;
         });
     },
     checkIfUserLogged() {
       if (this.user !== null) {
         this.isLogged = true;
+      }
+    },
+    checkDomain() {
+      if (this.community.validationType == 2) {
+        let mailDomain = (this.user.email.split("@"))[1];
+        if (!(this.community.domain.includes(mailDomain))) {
+          return this.domain = false;
+        }   
       }
     },
     getCommunityProposals () {
@@ -323,6 +375,11 @@ export default {
         .then(res => {
           this.errorUpdate = res.data.state;
           this.pointsToMap.length = 0;
+          // add the community address to display on the map
+          if (this.community.address) {
+            this.pointsToMap.push(this.buildPoint(this.community.address.latitude,this.community.address.longitude,this.community.name));
+          }
+          // add all the waypoints of the community to display on the map
           res.data.forEach((waypoint, index) => {
             this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
           });
@@ -331,6 +388,7 @@ export default {
           
         });
     },
+   
     buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[]){
       let point = {
         title:title,

@@ -1,16 +1,15 @@
 <template>
-  <v-card
-    flat
-    class="mx-6"
-  >
-    <v-card-title class="headline">
+  <div>
+    <p
+      class="headline justify-center mt-6"
+    >
       {{ $t('title') }}
-    </v-card-title>
+    </p>
     <v-list
       v-if="!loading"
       shaped
     >
-      <v-list-item-group>
+      <v-list-item-group class="text-end">
         <v-list-item
           v-for="(comUser, i) in lastUsers"
           :key="i"
@@ -23,7 +22,7 @@
             </v-avatar>
           </v-list-item-avatar>
           <v-list-item-content>
-            <v-list-item-title v-text="comUser.name" />
+            <v-list-item-content v-text="comUser.name" />
             <v-list-item-content v-text="comUser.acceptedDate" />
           </v-list-item-content>
         </v-list-item>
@@ -39,7 +38,7 @@
         color="tertiary"
       />
     </div>
-  </v-card>
+  </div>
 </template>
 <script>
 

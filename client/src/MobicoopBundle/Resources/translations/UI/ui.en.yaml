@@ -18,6 +18,8 @@ user:
     signup:
         title: 'Sign up'
         h1: 'Sign up'
+    signupValidation:
+        title: 'Email validation'
     login:
         title: 'Login'
         h1: 'Login'
@@ -42,6 +44,8 @@ user:
     messages:
         title: 'Messages'
         h1: 'Messages'
+    password_recovery:
+        title: 'Password recovery'
 carpool:
     ad_create:
         title: 'Post an ad'

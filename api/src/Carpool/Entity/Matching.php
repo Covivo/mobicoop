@@ -139,7 +139,7 @@ class Matching
 
     /**
      * @var array The filters returned to the user. The user can then filter and sort the results.
-     * @Groups({"read","write"})
+     * @Groups({"read","write","results"})
      */
     private $filters;
 

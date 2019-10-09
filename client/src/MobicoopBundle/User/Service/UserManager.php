@@ -110,15 +110,15 @@ class UserManager
     }
 
     /**
-     * Search user by reset email
+     * Search user by validation date token
      *
-     * @param string $email
+     * @param string $token
      *
      * @return User|null The user found or null if not found.
      */
-    public function findByEmail(string $email)
+    public function findByValidationDateToken(string $token)
     {
-        $response = $this->dataProvider->getCollection(['email' => $email]);
+        $response = $this->dataProvider->getCollection(['validatedDateToken' => $token]);
         if ($response->getCode() == 200) {
             /** @var Hydra $user */
             $user = $response->getValue();
@@ -131,6 +131,70 @@ class UserManager
         }
         return null;
     }
+
+    /**
+     * Search user by email
+     *
+     * @param string $email
+     *
+     * @return User|null The user found or null if not found.
+     */
+    public function findByEmail(string $email, bool $sendEmailRecovery = false)
+    {
+        $response = $this->dataProvider->getCollection(['email' => $email]);
+        if ($response->getCode() == 200) {
+            /** @var Hydra $user */
+            $user = $response->getValue();
+
+            if ($user->getTotalItems() == 0) {
+                return null;
+            } else {
+                if ($sendEmailRecovery) {
+                    $this->updateUserToken($user->getMember()[0]);
+                }
+                
+                return current($user->getMember());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Search user by phone number
+     *
+     * @param string $getTelephone
+     *
+     * @return User|null The user found or null if not found.
+     */
+    public function findByPhone(string $getTelephone, bool $sendEmailRecovery = false)
+    {
+        $response = $this->dataProvider->getCollection(['email' => $getTelephone]);
+        if ($response->getCode() == 200) {
+            /** @var Hydra $user */
+            $user = $response->getValue();
+
+            if ($user->getTotalItems() == 0) {
+                return null;
+            } else {
+                if ($sendEmailRecovery) {
+                    $this->updateUserToken($user->getMember()[0]);
+                }
+
+                return current($user->getMember());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Send the recovery mail password
+     * @param int $userId The user id that requested the password change
+     */
+    public function sendEmailRecoveryPassword(int $userId)
+    {
+        return $this->dataProvider->getSpecialItem($userId, "password_update_request");
+    }
+
 
     /**
      * Get masses of a user
@@ -195,10 +259,10 @@ class UserManager
         // encoding of the password
         $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
 
+        $this->logger->info('User Creation | Start');
         $response = $this->dataProvider->post($user);
         if ($response->getCode() == 201) {
-            $this->logger->info('User Creation | Start');
-            return $response->getValue();
+            $this->logger->info('User Creation | Ok');
         }
         $this->logger->error('User Creation | Fail');
         return null;
@@ -301,21 +365,7 @@ class UserManager
         $response = $this->dataProvider->getSubCollection($user->getId(), 'thread', 'threads');
         return $response->getValue();
     }
-    public function findByPhone(string $getTelephone)
-    {
-        $response = $this->dataProvider->getCollection(['email' => $getTelephone]);
-        if ($response->getCode() == 200) {
-            /** @var Hydra $user */
-            $user = $response->getValue();
 
-            if ($user->getTotalItems() == 0) {
-                return null;
-            } else {
-                return current($user->getMember());
-            }
-        }
-        return null;
-    }
 
     /**
      * Update the user token.
@@ -336,7 +386,6 @@ class UserManager
      */
     public function flushUserToken(User $user, string $operation = null)
     {
-        dump($user, $operation);
         if (empty($operation)) {
             $operation='password_update';
         }
