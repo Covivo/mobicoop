@@ -102,8 +102,19 @@ export default {
           }
           this.items.push(firstItem);
 
+          let currentDate = moment(response.data[0].createdDate).format("DDMMYYYY");
           response.data.forEach((item, index) => {
             item.divider = false;
+
+            // If the date is different, push a divider
+            if (moment(item.createdDate).format("DDMMYYYY") !== currentDate) {
+              let divider = {
+                divider: true,
+                createdDateReadable: moment(item.createdDate).format("ddd DD MMM YYYY")
+              };
+              currentDate = moment(item.createdDate).format("DDMMYYYY");
+              this.addMessageToItems(divider);
+            }
 
             // Set the origin (for display purpose)
             item.origin = ""
