@@ -10,7 +10,8 @@ import {
     email,
     TextField, EmailField, DateField, 
     ShowButton, EditButton,
-    Filter
+    Filter,
+    Button, Link, ReferenceArrayField, BooleanField, FunctionField, DeleteButton
 } from 'react-admin';
 
 const genderChoices = [
@@ -100,6 +101,18 @@ export const UserCreate = (props) => (
 );
 
 // Edit
+const AddNewAddressButton = ({ record }) => (
+    <Button
+        component={Link}
+        to={{
+            pathname: `/addresses/create`,
+            search: `?user=${record.id}`
+        }}
+        label="Ajouter une adresse"
+    >
+    </Button>
+);
+
 export const UserEdit = (props) => (
     <Edit {...props} title="Utilisateurs > éditer">
         <TabbedForm>
@@ -116,7 +129,19 @@ export const UserEdit = (props) => (
 
             </FormTab>
             <FormTab label="Adresses">
-
+                <ReferenceArrayField source="addresses" reference="addresses" addLabel={false}>
+                    <Datagrid>
+                        <BooleanField source="home" label="Domicile" />
+                        <TextField source="name" label="Nom" />
+                        <FunctionField label="Address" render={address => ((address.houseNumber && address.street) ? (address.houseNumber+ ' '+address.street) : address.streetAddress)} />
+                        <TextField source="postalCode" label="Code postal" />
+                        <TextField source="addressLocality" label="Ville" />
+                        <TextField source="addressCountry" label="Pays" />
+                        <EditButton />
+                        <DeleteButton />
+                    </Datagrid>
+                </ReferenceArrayField>
+                <AddNewAddressButton />
             </FormTab>
         </TabbedForm>
     </Edit>

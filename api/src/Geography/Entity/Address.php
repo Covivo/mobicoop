@@ -515,7 +515,7 @@ class Address
         return $this->home;
     }
     
-    public function setHome(bool $isHome): self
+    public function setHome(?bool $isHome): self
     {
         $this->home = $isHome;
         

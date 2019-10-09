@@ -12,6 +12,7 @@ import {
     ShowButton, EditButton,
 } from 'react-admin';
 import RichTextInput from 'ra-input-rich-text';
+import GeocompleteInput from '../Utilities/geocomplete';
 
 const userOptionRenderer = choice => `${choice.givenName} ${choice.familyName}`;
 const userId = `/users/${localStorage.getItem('id')}`;
@@ -117,6 +118,7 @@ export const RelayPointCreate = (props) => (
                 <RichTextInput source="fullDescription" label="Description complète" validate={required()}/>
             </FormTab>
             <FormTab label="Adresse">
+                <GeocompleteInput source="address" />
                 <TextInput source="address.streetAddress" label="Rue" />
                 <TextInput source="address.postalCode" label="Code postal" />
                 <TextInput source="address.addressLocality" label="Ville" />

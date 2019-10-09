@@ -30,6 +30,7 @@ import { ParagraphCreate, ParagraphEdit } from './Component/Article/paragraphs';
 import { TerritoryList, TerritoryShow, TerritoryCreate, TerritoryEdit } from './Component/Territory/territories';
 import { RoleList, RoleShow, RoleCreate, RoleEdit } from './Component/Right/roles';
 import { RightList, RightShow, RightCreate, RightEdit } from './Component/Right/rights';
+import { AddressEdit } from './Component/Address/addresses';
 
 require('dotenv').config();
 
@@ -135,7 +136,7 @@ export default class extends Component {
                   isAuthorized("article_manage")      ? <Resource name="paragraphs" create={ ParagraphCreate} edit={ ParagraphEdit} /> : null,
                   isAuthorized("territory_manage")    ? <Resource name="territories" list={ TerritoryList} show={ TerritoryShow} create={ TerritoryCreate} edit={ TerritoryEdit} title="Territoires" options={{ label: 'Territoires' }} icon={MapIcon} /> : null,
                   <Resource name="geo_search" />,
-                  <Resource name="addresses" />,
+                  <Resource name="addresses" edit={ AddressEdit} title="Adresses" options={{ label: 'Adresses' }} icon={MapIcon} />,
                   isAuthorized("permission_manage")   ? <Resource name="roles" list={ RoleList } show={ RoleShow} create={ RoleCreate} edit={ RoleEdit} title="Rôles" options={{ label: 'Rôles' }} icon={SupervisorAccountIcon} /> : null,
                   isAuthorized("permission_manage")   ? <Resource name="rights" list={ RightList } show={ RightShow} create={ RightCreate} edit={ RightEdit} title="Droits" options={{ label: 'Droits' }} icon={LockIcon} /> : null
                 ];
