@@ -30,12 +30,7 @@ user_proposals:
         en: /user/ads
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProposals
 
-# messages
-# user_messages:
-#     path:
-#         fr: /utilisateur/messages
-#         en: /user/messages
-#     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessages
+# mailbox
 user_mailbox:
     path:
         fr: /utilisateur/messages
