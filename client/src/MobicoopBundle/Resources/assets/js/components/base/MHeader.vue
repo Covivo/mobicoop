@@ -6,14 +6,15 @@
     >
       <v-toolbar-title>
         <a href="/">
-          <v-img
+          <img
             class="logo"
             src="/images/logo.png"
             alt="Mobicoop"
-          />
+          >
         </a>
       </v-toolbar-title>
       <v-spacer />
+      <accessibility />
       <div v-if="user">
         <v-btn
           text
@@ -68,12 +69,16 @@
 import { merge } from "lodash";
 import Translations from "@translations/components/base/MHeader.json";
 import TranslationsClient from "@clientTranslations/components/base/MHeader.json";
+import Accessibility from "../utilities/Accessibility";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   i18n: {
     messages: TranslationsMerged
+  },
+  components: {
+    Accessibility
   },
   props: {
     user: {

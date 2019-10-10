@@ -5,6 +5,7 @@ import VueI18n from 'vue-i18n'
 import colorTheme from '@themes/mobicoop.json'
 import '@mdi/font/css/materialdesignicons.css'
 
+
 import Vuetify, { 
   // general
   VApp, VContainer, VFlex, VLayout, VContent, VRow, VCol, VSpacer,
