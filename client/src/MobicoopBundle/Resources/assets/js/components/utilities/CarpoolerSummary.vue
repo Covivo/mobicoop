@@ -185,9 +185,7 @@ export default {
       alert(msg);
     },
     emitEvent: function() {
-      this.$emit("carpool", {
-        proposal: this.proposal
-      });
+      this.$emit("carpool");
     }
   }
 };

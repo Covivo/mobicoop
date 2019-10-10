@@ -106,8 +106,8 @@ export default {
     },
     computedDestination() {
       return {
-        streetAddress: this.proposal.waypoints[1].address.streetAddress,
-        addressLocality: this.proposal.waypoints[1].address.addressLocality,
+        streetAddress: this.proposal.waypoints[this.proposal.waypoints.length-1].address.streetAddress,
+        addressLocality: this.proposal.waypoints[this.proposal.waypoints.length-1].address.addressLocality,
       }
     },
     computedTime() {

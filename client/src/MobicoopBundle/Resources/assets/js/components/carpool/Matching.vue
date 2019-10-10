@@ -35,6 +35,21 @@
         </v-col>
       </v-row>
     </v-container>
+
+    <!-- carpool dialog -->
+    <v-dialog
+      v-model="carpoolDialog"
+      max-width="800"
+    >
+      <matching-journey 
+        :origin="origin"
+        :destination="destination"
+        :user="user"
+        :date="date"
+        :regular="regular"
+        :matching="matching"
+      />
+    </v-dialog>
   </v-content>
 </template>
 <script>
@@ -47,13 +62,15 @@ import TranslationsClient from "@clientTranslations/components/carpool/Matching.
 import MatchingHeader from "./MatchingHeader";
 import MatchingFilter from "./MatchingFilter";
 import MatchingResults from "./MatchingResults";
+import MatchingJourney from "./MatchingJourney";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   components: {
     MatchingHeader,
     MatchingFilter,
-    MatchingResults
+    MatchingResults,
+    MatchingJourney
   },
   i18n: {
     messages: TranslationsMerged,
@@ -88,21 +105,17 @@ export default {
   data : function() {
     return {
       locale: this.$i18n.locale,
+      carpoolDialog: false,
+      matching: null
     };
   },
   methods :{
     carpool(params) {
-      console.log({
-        "proposalId":params.proposal.id,
-        "origin": this.origin,
-        "destination": this.destination,
-        "date": params.date,
-        "time": params.time,
-        "priceKm": params.proposal.criteria.priceKm,
-        "driver": params.driver,
-        "passenger": params.passenger,
-        "regular": this.regular
-      });
+      this.matching = params.matching;
+      
+      // open the dialog
+      this.carpoolDialog = true;
+
       // axios.post(this.$t("contactUrl"), {
       //   "proposalId":params.proposal.id,
       //   "origin": this.origin,
