@@ -69,7 +69,7 @@
               <div v-else-if="isAccepted">
                 <a
                   style="text-decoration:none;"
-                  :href="$t('buttons.publish.route')+community.id"
+                  :href="$t('buttons.publish.route', {communityId: community.id})"
                 >
                   <v-btn
                     color="success"
@@ -88,7 +88,7 @@
                   <template v-slot:activator="{ on }">
                     <a
                       style="text-decoration:none;"
-                      :href="$t('buttons.publish.route')+community.id"
+                      :href="$t('buttons.publish.route', {communityId: community.id})"
                       v-on="on"
                     >
                       <v-btn
