@@ -1,0 +1,8 @@
+{
+    "fr": {
+        "urlGet":"/utilisateur/messages/getDirectMessages"
+    },
+    "en": {
+        "urlGet":"/user/messages/getDirectMessages"
+    }
+}

@@ -1,0 +1,8 @@
+{
+    "fr": {
+        "urlGet":"/utilisateur/messages/getCarpoolMessages"
+    },
+    "en": {
+        "urlGet":"/user/messages/getCarpoolMessages"
+    }
+}

@@ -40,7 +40,7 @@ user:
         h1: 'Delete my account'
         text: 'Are you sure you want to delete your account ?'
     messages:
-        title: 'Messages'
+        title: 'Mailbox'
         h1: 'Messages'
     password_recovery:
         title: 'Password recovery'

@@ -110,7 +110,7 @@ export default {
   methods: {
     getCompleteThread(){
       this.loading = true;
-      axios.get("/user/messages/getCompleteThread/"+this.idMessage)
+      axios.get(this.$t("urlCompleteThread",{idMessage:this.idMessage}))
         .then(response => {
           this.loading = false;
           this.items.length = 0;  

@@ -14,7 +14,7 @@
           xl="6"
           align="center"
         >
-          <h1>{{ $t('ui.pages.title.messages') }}</h1>
+          <h1>{{ $t('title') }}</h1>
         </v-col>
       </v-row>
       <v-row id="headGridMessages">

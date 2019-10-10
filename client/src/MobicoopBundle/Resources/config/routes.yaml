@@ -51,8 +51,8 @@ user_get_carpool_messages:
 
 user_get_complete_thread_message:
     path:
-        fr: /utilisateur/messages/getCompleteThread/{idMessage}
-        en: /user/messages/getCompleteThread/{idMessage}
+        fr: /utilisateur/messages/{idMessage}/getCompleteThread
+        en: /user/messages/{idMessage}/getCompleteThread
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getCompleteThreadMessage
     
 

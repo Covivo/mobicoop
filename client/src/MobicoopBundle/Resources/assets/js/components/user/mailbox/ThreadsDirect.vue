@@ -24,8 +24,14 @@
 </template>
 <script>
 import axios from "axios";
+import CommonTranslations from "@translations/translations.json";
+import Translations from "@translations/components/user/mailbox/ThreadsDirect.json";
 import ThreadDirect from '@components/user/mailbox/ThreadDirect'
 export default {
+  i18n: {
+    messages: Translations,
+    sharedMessages: CommonTranslations
+  },
   components:{
     ThreadDirect
   },
@@ -43,7 +49,7 @@ export default {
   },
   mounted(){
     this.SkeletonHidden = false;
-    axios.get("/user/messages/getDirectMessages")
+    axios.get(this.$t("urlGet"))
       .then(response => {
         //console.error(response.data.threads);
         this.SkeletonHidden = true;
