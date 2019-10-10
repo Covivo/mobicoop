@@ -423,7 +423,7 @@ class UserController extends AbstractController
     /**
      * Get direct messages threads
      */
-    public function getThreadsDirectMessages(UserManager $userManager, InternalMessageManager $internalMessageManager)
+    public function userMessageDirectThreadsList(UserManager $userManager, InternalMessageManager $internalMessageManager)
     {
         $user = $userManager->getLoggedUser();
         $threads = $userManager->getThreadsDirectMessages($user);
@@ -433,7 +433,7 @@ class UserController extends AbstractController
     /**
      * Get carpool messages threads
      */
-    public function getThreadsCarpoolMessages(UserManager $userManager, InternalMessageManager $internalMessageManager)
+    public function userMessageCarpoolThreadsList(UserManager $userManager, InternalMessageManager $internalMessageManager)
     {
         $user = $userManager->getLoggedUser();
         $threads = $userManager->getThreadsCarpoolMessages($user);
@@ -443,7 +443,7 @@ class UserController extends AbstractController
     /**
      * Get direct messages threads
      */
-    public function getCompleteThreadMessage($idMessage, InternalMessageManager $internalMessageManager)
+    public function userMessageThread($idMessage, InternalMessageManager $internalMessageManager)
     {
         $completeThread = $internalMessageManager->getThread($idMessage, DataProvider::RETURN_JSON);
         return new Response(json_encode($completeThread));

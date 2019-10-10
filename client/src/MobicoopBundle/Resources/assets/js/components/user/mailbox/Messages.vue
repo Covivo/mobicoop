@@ -18,7 +18,7 @@
         </v-col>
       </v-row>
       <v-row id="headGridMessages">
-        <v-col class="col-4 pt-5 pb-4 pl-2 secondary white--text font-weight-bold headline">
+        <v-col class="col-3 pt-5 pb-4 pl-2 secondary white--text font-weight-bold headline">
           <mail-box-header>{{ $t("headers.messages") }}</mail-box-header>
         </v-col>
         <v-col
@@ -29,7 +29,7 @@
         </v-col>
         <v-col
           text-xs-left
-          class="col-3 pt-5 pb-4 pl-2 mr-0 secondary white--text font-weight-bold headline"
+          class="col-4 pt-5 pb-4 pl-2 mr-0 secondary white--text font-weight-bold headline"
         >
           <mail-box-header>{{ $t("headers.context") }}</mail-box-header>
         </v-col>

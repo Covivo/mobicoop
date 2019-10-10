@@ -1,8 +1,8 @@
 {
     "fr": {
-        "urlGet":"/utilisateur/messages/getCarpoolMessages"
+        "urlGet":"/utilisateur/messages/covoiturage"
     },
     "en": {
-        "urlGet":"/user/messages/getCarpoolMessages"
+        "urlGet":"/user/messages/carpool"
     }
 }
