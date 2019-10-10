@@ -441,7 +441,6 @@ class GeoMatcher
         }
         return $order;
     }
-
 }
 
 // Class used temporarily to generate path combinations

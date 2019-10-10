@@ -126,18 +126,18 @@ class ProposalMatcher
                 $candidate->setMaxDetourDuration($proposalToMatch->getCriteria()->getMaxDetourDuration() ? $proposalToMatch->getCriteria()->getMaxDetourDuration() : ($proposalToMatch->getCriteria()->getDirectionPassenger()->getDuration()*self::MAX_DETOUR_DURATION_PERCENT/100));
                 if ($matches = $this->geoMatcher->singleMatch($candidateProposal, [$candidate], true)) {
                     // many matches can be found for 2 candidates : if multiple routes satisfy the criteria
-                    if (is_array($matches) && count($matches)>0) {  
+                    if (is_array($matches) && count($matches)>0) {
                         switch (self::MULTI_MATCHES_FOR_SAME_CANDIDATES) {
-                            case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST :
-                                usort($matches, self::build_sorter('newDuration')); 
+                            case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST:
+                                usort($matches, self::build_sorter('newDuration'));
                                 $matching = new Matching();
                                 $matching->setProposalOffer($proposal);
                                 $matching->setProposalRequest($proposalToMatch);
                                 $matching->setFilters($matches[0]);
                                 $matchings[] = $matching;
                                 break;
-                            case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST :
-                                usort($matches, self::build_sorter('newDistance')); 
+                            case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST:
+                                usort($matches, self::build_sorter('newDistance'));
                                 $matching = new Matching();
                                 $matching->setProposalOffer($proposal);
                                 $matching->setProposalRequest($proposalToMatch);
@@ -184,16 +184,16 @@ class ProposalMatcher
                     // many matches can be found for 2 candidates : if multiple routes satisfy the criteria
                     if (is_array($matches) && count($matches)>0) {
                         switch (self::MULTI_MATCHES_FOR_SAME_CANDIDATES) {
-                            case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST :
-                                usort($matches, self::build_sorter('newDuration')); 
+                            case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST:
+                                usort($matches, self::build_sorter('newDuration'));
                                 $matching = new Matching();
                                 $matching->setProposalOffer($proposalToMatch);
                                 $matching->setProposalRequest($proposal);
                                 $matching->setFilters($matches[0]);
                                 $matchings[] = $matching;
                                 break;
-                            case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST :
-                                usort($matches, self::build_sorter('newDistance')); 
+                            case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST:
+                                usort($matches, self::build_sorter('newDistance'));
                                 $matching = new Matching();
                                 $matching->setProposalOffer($proposalToMatch);
                                 $matching->setProposalRequest($proposal);
@@ -383,7 +383,8 @@ class ProposalMatcher
     /**
      * Callback function for array sort
      */
-    private static function build_sorter($key) {
+    private static function build_sorter($key)
+    {
         return function ($a, $b) use ($key) {
             if ($a[$key] == $b[$key]) {
                 return 0;
