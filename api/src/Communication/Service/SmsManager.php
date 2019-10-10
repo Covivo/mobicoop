@@ -54,7 +54,7 @@ class SmsManager
         $this->logger = $logger;
 
         switch ($smsProvider) {
-            case 'smsEnvoi':  $this->smsProvider = new SmsEnvoiProvider($username, $password, $sender );break;
+            case 'smsEnvoi':  $this->smsProvider = new SmsEnvoiProvider($username, $password, $sender);break;
             default:  $this->smsProvider = new SmsEnvoiProvider($username, $password, $sender);break;
         }
     }
