@@ -14,13 +14,7 @@
         </a>
       </v-toolbar-title>
       <v-spacer />
-      <v-btn
-        text
-        rounded
-        :href="$t('buttons.messages.route')"
-      >
-        {{ $t('buttons.accessibility.label') }}
-      </v-btn>
+      <accessibility />
       <div v-if="user">
         <v-btn
           text
@@ -75,12 +69,16 @@
 import { merge } from "lodash";
 import Translations from "@translations/components/base/MHeader.json";
 import TranslationsClient from "@clientTranslations/components/base/MHeader.json";
+import Accessibility from "../utilities/Accessibility";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   i18n: {
     messages: TranslationsMerged
+  },
+  components: {
+    Accessibility
   },
   props: {
     user: {
