@@ -4,6 +4,7 @@
         "carpool": "Covoiturer"
     },
     "en": {
-        
+        "birthYears": "years",
+        "carpool": "Carpool"
     }
 }

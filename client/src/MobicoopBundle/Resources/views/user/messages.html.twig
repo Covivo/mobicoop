@@ -8,16 +8,7 @@
 {% endblock %}
 
 {% block main %}
-    		<Messages 
-				:threadsdirectmessagesforview="{{ threadsDirectMessagesForView|json_encode }}"
-				:threadscarpoolingmessagesforview="{{ threadsCarpoolingMessagesForView|json_encode }}"
-				userid="{{ userId }}"
-				idmessagedefault="{{ idMessageDefault }}"
-				idrecipientdefault="{{ idRecipientDefault }}"
-				firstnamerecipientdefault="{{ firstNameRecipientDefault }}"
-				lastNameRecipientDefault="{{ lastNameRecipientDefault }}"
-				:user="{{app.user|json_encode}}"
-			></Messages>
+    <Messages :id-user="{{ idUser }}"/>
 {% endblock %}
 
 {% block javascripts %}

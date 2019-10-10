@@ -525,8 +525,11 @@ class ProposalManager
             $criteriaReturn = new Criteria();
             $criteriaReturn->setDriver($ad['driver']);
             $criteriaReturn->setPassenger($ad['passenger']);
-            $criteriaReturn->setPriceKm($ad['price']);
+            $criteriaReturn->setPriceKm($ad['priceKm']);
             $criteriaReturn->setSeats($ad['seats']);
+            if (isset($ad['price'])) {
+                $criteriaReturn->setPrice($ad['price']);
+            }
             if (isset($ad['luggage'])) {
                 $criteriaReturn->setLuggage($ad['luggage']);
             }

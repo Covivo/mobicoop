@@ -49,6 +49,15 @@ class ProposalMatcher
     // minimum common distance accepted
     public const MIN_COMMON_DISTANCE_PERCENT = 30;
 
+    // behaviour in case of multiple matches for the same candidates
+    // 1 = keep fastest route
+    // 2 = keep shortest route
+    // 3 = keep all routes
+    public const MULTI_MATCHES_FOR_SAME_CANDIDATES = self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST;
+    public const MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST = 1;
+    public const MULTI_MATCHES_FOR_SAME_CANDIDATES_SHORTEST = 2;
+    public const MULTI_MATCHES_FOR_SAME_CANDIDATES_ALL = 3;
+
     private $entityManager;
     private $proposalRepository;
     private $geoMatcher;
@@ -82,7 +91,7 @@ class ProposalMatcher
         if (!$proposalsFound = $this->proposalRepository->findMatchingProposals($proposal, $excludeProposalUser)) {
             return [];
         }
-
+        
         $matchings = [];
 
         // we filter with geomatcher
@@ -118,12 +127,32 @@ class ProposalMatcher
                 if ($matches = $this->geoMatcher->singleMatch($candidateProposal, [$candidate], true)) {
                     // many matches can be found for 2 candidates : if multiple routes satisfy the criteria
                     if (is_array($matches) && count($matches)>0) {
-                        foreach ($matches as $match) {
-                            $matching = new Matching();
-                            $matching->setProposalOffer($proposal);
-                            $matching->setProposalRequest($proposalToMatch);
-                            $matching->setFilters($match);
-                            $matchings[] = $matching;
+                        switch (self::MULTI_MATCHES_FOR_SAME_CANDIDATES) {
+                            case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST:
+                                usort($matches, self::build_sorter('newDuration'));
+                                $matching = new Matching();
+                                $matching->setProposalOffer($proposal);
+                                $matching->setProposalRequest($proposalToMatch);
+                                $matching->setFilters($matches[0]);
+                                $matchings[] = $matching;
+                                break;
+                            case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST:
+                                usort($matches, self::build_sorter('newDistance'));
+                                $matching = new Matching();
+                                $matching->setProposalOffer($proposal);
+                                $matching->setProposalRequest($proposalToMatch);
+                                $matching->setFilters($matches[0]);
+                                $matchings[] = $matching;
+                                break;
+                            default:
+                                foreach ($matches as $match) {
+                                    $matching = new Matching();
+                                    $matching->setProposalOffer($proposal);
+                                    $matching->setProposalRequest($proposalToMatch);
+                                    $matching->setFilters($match);
+                                    $matchings[] = $matching;
+                                }
+                                break;
                         }
                     }
                 }
@@ -154,12 +183,32 @@ class ProposalMatcher
                 if ($matches = $this->geoMatcher->singleMatch($candidateProposal, [$candidate], false)) {
                     // many matches can be found for 2 candidates : if multiple routes satisfy the criteria
                     if (is_array($matches) && count($matches)>0) {
-                        foreach ($matches as $match) {
-                            $matching = new Matching();
-                            $matching->setProposalOffer($proposalToMatch);
-                            $matching->setProposalRequest($proposal);
-                            $matching->setFilters($match);
-                            $matchings[] = $matching;
+                        switch (self::MULTI_MATCHES_FOR_SAME_CANDIDATES) {
+                            case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST:
+                                usort($matches, self::build_sorter('newDuration'));
+                                $matching = new Matching();
+                                $matching->setProposalOffer($proposalToMatch);
+                                $matching->setProposalRequest($proposal);
+                                $matching->setFilters($matches[0]);
+                                $matchings[] = $matching;
+                                break;
+                            case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST:
+                                usort($matches, self::build_sorter('newDistance'));
+                                $matching = new Matching();
+                                $matching->setProposalOffer($proposalToMatch);
+                                $matching->setProposalRequest($proposal);
+                                $matching->setFilters($matches[0]);
+                                $matchings[] = $matching;
+                                break;
+                            default:
+                                foreach ($matches as $match) {
+                                    $matching = new Matching();
+                                    $matching->setProposalOffer($proposalToMatch);
+                                    $matching->setProposalRequest($proposal);
+                                    $matching->setFilters($match);
+                                    $matchings[] = $matching;
+                                }
+                                break;
                         }
                     }
                 }
@@ -329,6 +378,19 @@ class ProposalMatcher
             $matching->setFilters($filters);
         }
         return $matchings;
+    }
+
+    /**
+     * Callback function for array sort
+     */
+    private static function build_sorter($key)
+    {
+        return function ($a, $b) use ($key) {
+            if ($a[$key] == $b[$key]) {
+                return 0;
+            }
+            return ($a[$key] < $b[$key]) ? -1 : 1;
+        };
     }
 
     /**

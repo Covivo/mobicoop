@@ -43,7 +43,7 @@ user:
         h1: 'Supprimer mon compte'
         text: 'Etes-vous sûr de vouloir supprimer votre compte ?'
     messages:
-        title: 'Messages'
+        title: 'Messagerie'
         h1: 'Messages'
     password_recovery:
         title: 'Récupération du mot de passe'
