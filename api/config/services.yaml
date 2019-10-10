@@ -117,7 +117,7 @@ services:
     App\Communication\Service\SmsManager:
         arguments:
             $templatePath: '%env(resolve:COMMUNICATION_TEMPLATE_SMS_PATH)%'
-            $smsProvider: '%env(resolve:=SMS_PROVIDER)%'
+            $smsProvider: '%env(resolve:SMS_PROVIDER)%'
             $username: '%env(resolve:SMS_USERNAME)%'
             $password: '%env(resolve:SMS_PASSWORD)%'
             $sender: '%env(resolve:SMS_SENDER)%'
