@@ -55,6 +55,7 @@
           <v-col
             cols="5"
           >
+            <v-row>{{ labelOrigin }}</v-row>
             <GeoComplete
               :url="geoSearchUrl"
               :label="labelOrigin"
@@ -87,6 +88,7 @@
           <v-col 
             cols="5"
           >
+            <v-row>{{ labelDestination }}</v-row>
             <GeoComplete
               :url="geoSearchUrl"
               :label="labelDestination"

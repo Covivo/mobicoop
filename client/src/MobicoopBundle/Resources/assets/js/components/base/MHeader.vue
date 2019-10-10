@@ -6,11 +6,11 @@
     >
       <v-toolbar-title>
         <a href="/">
-          <v-img
+          <img
             class="logo"
             src="/images/logo.png"
             alt="Mobicoop"
-          />
+          >
         </a>
       </v-toolbar-title>
       <v-spacer />
