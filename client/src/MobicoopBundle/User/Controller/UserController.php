@@ -590,7 +590,7 @@ class UserController extends AbstractController
      * Ajax Request
      * OLD Controller
      */
-    public function userMessageThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager, AskManager $askManager)
+    public function userMessageThreadOld(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager, AskManager $askManager)
     {
         $user = $userManager->getLoggedUser();
         $reponseofmanager= $this->handleManagerReturnValue($user);
