@@ -1,0 +1,18 @@
+{
+    "fr": {
+        "title":"Messagerie",
+        "headers": {
+            "messages":"Messages",
+            "context":"Annonce"
+        },
+        "urlSend":"/utilisateur/messages/envoyer"
+    },
+    "en": {
+        "title":"Mailbox",
+        "headers": {
+            "messages":"Messages",
+            "context":"Ad"
+        },
+        "urlSend":"/user/messages/send"
+    }
+}

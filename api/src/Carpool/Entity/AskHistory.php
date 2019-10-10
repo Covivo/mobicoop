@@ -65,7 +65,7 @@ class AskHistory implements MessagerInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"read","thread"})
      */
     private $id;
 

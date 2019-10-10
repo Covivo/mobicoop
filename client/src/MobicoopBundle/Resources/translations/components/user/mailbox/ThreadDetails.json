@@ -1,0 +1,10 @@
+{
+    "fr": {
+        "notThreadSelected":"Aucun fil selectionné",
+        "urlCompleteThread":"/utilisateur/messages/{idMessage}/fil"
+     },
+    "en": {
+        "notThreadSelected":"No thread selected",
+        "urlCompleteThread":"user/messages/{idMessage}/thread"
+    }
+}
