@@ -11,7 +11,7 @@
       },
       "join": {
         "label": "Rejoindre la communauté",
-        "route": "/rejoindre-communaute/"
+        "route": "/communaute/{id}/rejoindre"
       }
     },
     "tooltips": {

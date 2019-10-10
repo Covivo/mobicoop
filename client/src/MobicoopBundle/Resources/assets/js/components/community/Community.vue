@@ -333,7 +333,7 @@ export default {
     joinCommunity() {
       this.loading = true;
       axios 
-        .post(this.$t('buttons.join.route')+this.community.id,
+        .post(this.$t('buttons.join.route',{id:this.community.id}),
           {
             headers:{
               'content-type': 'application/json'
