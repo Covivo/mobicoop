@@ -100,19 +100,78 @@ use App\Communication\Entity\Notified;
  *                          "description" = "The longitude of the destination point"
  *                      },
  *                      {
- *                          "name" = "date",
+ *                          "name" = "frequency",
  *                          "in" = "query",
  *                          "required" = "true",
+ *                          "type" = "integer",
+ *                          "description" = "The frequency of the trip (1=punctual, 2=regular; for regular trips)"
+ *                      },
+ *                      {
+ *                          "name" = "date",
+ *                          "in" = "query",
  *                          "type" = "string",
  *                          "format" = "date-time",
- *                          "description" = "The date of the trip (on RFC3339 format)"
+ *                          "description" = "The date and time of the trip for a punctual trip, the start date for regular trips (on RFC3339 format)"
+ *                      },
+ *                      {
+ *                          "name" = "useTime",
+ *                          "in" = "query",
+ *                          "type" = "boolean",
+ *                          "description" = "True to use the time part of the date, false to ignore the time part"
+ *                      },
+ *                      {
+ *                          "name" = "strictDate",
+ *                          "in" = "query",
+ *                          "type" = "boolean",
+ *                          "description" = "True to limit the search to the date, false to search even in the next days (only for punctual trip)"
+ *                      },
+ *                      {
+ *                          "name" = "strictPunctual",
+ *                          "in" = "query",
+ *                          "type" = "boolean",
+ *                          "description" = "True to search only in punctual trips for punctual search, false to search also in regular trips"
+ *                      },
+ *                      {
+ *                          "name" = "strictRegular",
+ *                          "in" = "query",
+ *                          "type" = "boolean",
+ *                          "description" = "True to search only in regular trips for regular search, false to search also in punctual trips"
+ *                      },
+ *                      {
+ *                          "name" = "marginTime",
+ *                          "in" = "query",
+ *                          "type" = "integer",
+ *                          "description" = "The margin time in seconds"
+ *                      },
+ *                      {
+ *                          "name" = "regularLifeTime",
+ *                          "in" = "query",
+ *                          "type" = "integer",
+ *                          "description" = "The lifetime of a regular proposal in years (default defined in env variable)"
  *                      },
  *                      {
  *                          "name" = "userId",
  *                          "in" = "query",
- *                          "type" = "number",
- *                          "format" = "integer",
+ *                          "type" = "integer",
  *                          "description" = "The id of the user that makes the query"
+ *                      },
+ *                      {
+ *                          "name" = "role",
+ *                          "in" = "query",
+ *                          "type" = "integer",
+ *                          "description" = "The role of the user that makes the query (1=driver, 2=passenger, 3=both; default defined in env variable)"
+ *                      },
+ *                      {
+ *                          "name" = "type",
+ *                          "in" = "query",
+ *                          "type" = "integer",
+ *                          "description" = "The type of the trip (1=one way, 2=return trip; default defined in env variable)"
+ *                      },
+ *                      {
+ *                          "name" = "anyRouteAsPassenger",
+ *                          "in" = "query",
+ *                          "type" = "boolean",
+ *                          "description" = "True if the passenger accepts any route (not implemented yet; default defined in env variable)"
  *                      }
  *                  }
  *              }
@@ -142,7 +201,7 @@ class Proposal
     private $id;
 
     /**
-     * @var int The proposal type (1 = one way trip; 2 = outward of a round trip; 3 = return of a round trip)).
+     * @var int The proposal type (1 = one way trip; 2 = outward of a round trip; 3 = return of a round trip).
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")

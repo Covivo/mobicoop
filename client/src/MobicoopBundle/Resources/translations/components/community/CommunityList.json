@@ -6,7 +6,8 @@
     "all":"Tous",
     "linePerPage":"Nombre de lignes par page",
     "seeAds":"Voir les annonces",
-    "join":"Rejoindre la communauté"
+    "join":"Rejoindre la communauté",
+    "protected": "Cette communauté n'est visible que par ses membres"
   },
   "en": {
     "communitiesAvailable":"Communities available",

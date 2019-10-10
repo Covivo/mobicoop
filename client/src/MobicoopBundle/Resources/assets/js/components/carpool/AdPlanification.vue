@@ -636,7 +636,7 @@ export default {
       });
     },
     infoMarginTime() {
-      return this.$t("toolTips.partOne")+this.marginTime/60+ ' min'+this.$t("toolTips.partTwo")
+      return this.$t("marginTooltip",{margin: this.marginTime/60})
     }
   },
   watch: {

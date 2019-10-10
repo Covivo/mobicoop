@@ -7,18 +7,12 @@
 {% block main %}
 
     <matching
-        {# we format origin and destination address #}
-        origin = "{{ origin | replace({'_': " "}) }}"
-        destination = "{{ destination | replace({'_': " "}) }}"
-        origin-latitude = "{{ origin_latitude }}"
-        origin-longitude = "{{ origin_longitude }}"
-        destination-latitude = "{{ destination_latitude }}"
-        destination-longitude = "{{ destination_longitude }}"
+        :origin = "{{ origin }}"
+        :destination = "{{ destination }}"
         date = "{{ date }}"
-        url = "{{ url }}"
+        time = "{{ time }}"
         :user="{{ app.user|json_encode }}"
         {{ regular ? 'regular' : '' }}
-        {{ showRegular ? 'show-regular' : '' }}
     />
 
 

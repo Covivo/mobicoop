@@ -98,6 +98,10 @@ use App\Community\Controller\JoinAction;
  */
 class Community
 {
+    const AUTO_VALIDATION = 0;
+    const MANUAL_VALIDATION = 1;
+    const DOMAIN_VALIDATION = 2;
+
     /**
      * @var int The id of this community.
      *
@@ -132,6 +136,22 @@ class Community
      * @Groups({"read","write"})
      */
     private $proposalsHidden;
+
+    /**
+     * @var int|null The type of validation (automatic/manual/domain).
+     *
+     * @ORM\Column(type="smallint")
+     * @Groups({"read","write"})
+     */
+    private $validationType;
+
+    /**
+     * @var string|null The domain of the community.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $domain;
     
     /**
      * @var string The short description of the community.
@@ -277,6 +297,26 @@ class Community
         $this->proposalsHidden = $isProposalsHidden ? true : false;
         
         return $this;
+    }
+
+    public function getValidationType(): ?int
+    {
+        return $this->validationType;
+    }
+    
+    public function setValidationType(?int $validationType)
+    {
+        $this->validationType = $validationType;
+    }
+
+    public function getDomain(): ?string
+    {
+        return $this->domain;
+    }
+    
+    public function setDomain(?string $domain)
+    {
+        $this->domain = $domain;
     }
     
     public function getDescription(): string
@@ -465,6 +505,21 @@ class Community
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \Datetime());
+    }
+
+      
+    /**
+     * Validation type.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoValidationType()
+    {
+        if ($this->getDomain()) {
+            $this->setValidationType(SELF::DOMAIN_VALIDATION);
+        } else {
+            $this->setValidationType(SELF::AUTO_VALIDATION);
+        }
     }
 
     /**

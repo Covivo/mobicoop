@@ -110,6 +110,29 @@ class UserManager
     }
 
     /**
+     * Search user by validation date token
+     *
+     * @param string $token
+     *
+     * @return User|null The user found or null if not found.
+     */
+    public function findByValidationDateToken(string $token)
+    {
+        $response = $this->dataProvider->getCollection(['validatedDateToken' => $token]);
+        if ($response->getCode() == 200) {
+            /** @var Hydra $user */
+            $user = $response->getValue();
+
+            if ($user->getTotalItems() == 0) {
+                return null;
+            } else {
+                return current($user->getMember());
+            }
+        }
+        return null;
+    }
+
+    /**
      * Search user by email
      *
      * @param string $email
@@ -236,10 +259,10 @@ class UserManager
         // encoding of the password
         $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
 
+        $this->logger->info('User Creation | Start');
         $response = $this->dataProvider->post($user);
         if ($response->getCode() == 201) {
-            $this->logger->info('User Creation | Start');
-            return $response->getValue();
+            $this->logger->info('User Creation | Ok');
         }
         $this->logger->error('User Creation | Fail');
         return null;

@@ -43,22 +43,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class CommunityController extends AbstractController
 {
     use HydraControllerTrait;
-    /**
-     * Get all communities.
-     */
-    public function list(CommunityManager $communityManager)
-    {
-        dump($communityManager->getCommunities());
-        $this->denyAccessUnlessGranted('list', new Community());
-        return $this->render('@Mobicoop/community/communities.html.twig', [
-            'communities' => $communityManager->getCommunities(),
-        ]);
-    }
 
     /**
      * Create a community
      */
-    public function create(CommunityManager $communityManager, UserManager $userManager, Request $request, ImageManager $imageManager)
+    public function communityCreate(CommunityManager $communityManager, UserManager $userManager, Request $request, ImageManager $imageManager)
     {
         $community = new Community();
         $this->denyAccessUnlessGranted('create', $community);
@@ -73,7 +62,6 @@ class CommunityController extends AbstractController
 
                 // set the user as a user of the community
                 $communityUser->setUser($user);
-                $communityUser->setStatus(1);
                 
                 // set community address
                 $communityAddress=json_decode($data->get('address'), true);
@@ -101,7 +89,9 @@ class CommunityController extends AbstractController
                 $community->setFullDescription($data->get('fullDescription'));
                 $community->setAddress($address);
                 $community->addCommunityUser($communityUser);
+                $community->setDomain($data->get('domain'));
 
+                
                 // create community
                 if ($community = $communityManager->createCommunity($community)) {
 
@@ -127,9 +117,20 @@ class CommunityController extends AbstractController
     }
 
     /**
+     * Get all communities.
+     */
+    public function communityList(CommunityManager $communityManager)
+    {
+        $this->denyAccessUnlessGranted('list', new Community());
+        return $this->render('@Mobicoop/community/communities.html.twig', [
+            'communities' => $communityManager->getCommunities(),
+        ]);
+    }
+
+    /**
      * Show a community
      */
-    public function show($id, CommunityManager $communityManager, UserManager $userManager, Request $request)
+    public function communityShow($id, CommunityManager $communityManager, UserManager $userManager, Request $request)
     {
 
         // retreive community;
@@ -166,9 +167,39 @@ class CommunityController extends AbstractController
     }
 
     /**
-     * Undocumented function
+     * Join a community
+     */
+    public function communityJoin($id, CommunityManager $communityManager, UserManager $userManager)
+    {
+        $community = $communityManager->getCommunity($id);
+        $user = $userManager->getLoggedUser();
+        $reponseofmanager= $this->handleManagerReturnValue($user);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
+        $communityUsersId = [];
+        foreach ($community->getCommunityUsers() as $communityUser) {
+            // get all community users ID
+            array_push($communityUsersId, $communityUser->getUser()->getId());
+        }
+        //test if the user logged is not already a member of the community
+        if ($user && $user !=='' && !in_array($user->getId(), $communityUsersId)) {
+            $communityUser = new CommunityUser();
+            $communityUser->setCommunity($community);
+            $communityUser->setUser($user);
+            $data=$communityManager->joinCommunity($communityUser);
+            $reponseofmanager= $this->handleManagerReturnValue($data);
+            if (!empty($reponseofmanager)) {
+                return $reponseofmanager;
+            }
+        }
+        return new Response();
+    }
+
+    /**
+     * Get last three users
      *
-     * @param [type] $id
+     * @param int $id
      * @param CommunityManager $communityManager
      * @param UserManager $userManager
      * @return void
@@ -187,55 +218,19 @@ class CommunityController extends AbstractController
         return new Response;
     }
 
-
     /**
-     * Join a community
-     */
-    public function joinCommunity($id, CommunityManager $communityManager, UserManager $userManager)
-    {
-        $community = $communityManager->getCommunity($id);
-        $user = $userManager->getLoggedUser();
-        $reponseofmanager= $this->handleManagerReturnValue($user);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        $communityUsersId = [];
-        foreach ($community->getCommunityUsers() as $communityUser) {
-            // get all community users ID
-            array_push($communityUsersId, $communityUser->getUser()->getId());
-        }
-        //test if the user logged is not already a member of the community
-        if ($user && $user !=='' && !in_array($user->getId(), $communityUsersId)) {
-            $communityUser = new CommunityUser();
-            
-            $communityUser->setCommunity(new Community($id));
-            $communityUser->setUser($user);
-            $communityUser->setCreatedDate(new \DateTime());
-            $communityUser->setStatus(0);
-
-            $data=$communityManager->joinCommunity($communityUser);
-            $reponseofmanager= $this->handleManagerReturnValue($data);
-            if (!empty($reponseofmanager)) {
-                return $reponseofmanager;
-            }
-        }
-        return new Response();
-    }
-
-    /**
-     * Get last three users
+     * Undocumented function
      *
-     * @param int $id
+     * @param [type] $id
      * @param CommunityManager $communityManager
      * @param UserManager $userManager
      * @return void
      */
-    public function getCommunityLastUsers(int $id, CommunityManager $communityManager)
+    public function communityLastUsers(int $id, CommunityManager $communityManager)
     {
         // get the last 3 users and formate them to be used with vue
         $lastUsers = $communityManager->getLastUsers($id);
         $lastUsersFormated = [];
-        dump($lastUsers);
         foreach ($lastUsers as $key => $commUser) {
             $lastUsersFormated[$key]["name"]=ucfirst($commUser->getUser()->getGivenName())." ".ucfirst($commUser->getUser()->getFamilyName());
             $lastUsersFormated[$key]["acceptedDate"]=$commUser->getAcceptedDate()->format('d/m/Y');
@@ -250,7 +245,7 @@ class CommunityController extends AbstractController
      * @param CommunityManager $communityManager
      * @return void
      */
-    public function getCommunityMemberList(int $id, CommunityManager $communityManager)
+    public function communityMemberList(int $id, CommunityManager $communityManager)
     {
         // retrive community;
         $community = $communityManager->getCommunity($id);
@@ -278,7 +273,7 @@ class CommunityController extends AbstractController
      * @param CommunityManager $communityManager
      * @return void
      */
-    public function getCommunityProposals(int $id, CommunityManager $communityManager)
+    public function communityProposals(int $id, CommunityManager $communityManager)
     {
         $proposals = $communityManager->getProposals($id);
         $points = [];

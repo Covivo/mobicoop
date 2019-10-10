@@ -2,9 +2,9 @@
 {% block body %}
     {{ "Votre inscription au service"|trans }}  {{api_env('CLIENT_NAME')}}  {{ "est bien prise en compte"|trans }}.
 
-    {{ "Veuillez cliquer sur ce lien pour confirmer votre email"|trans}}!
-    {{ api_env('CLIENT_URL') ~ api_env('CLIENT_EMAIL_CONFIRM_URI')|replace({':token': context.user.pwdToken})}}
+    {{ "Veuillez cliquer sur ce lien pour confirmer votre email"|trans}}
+    {{ api_env('CLIENT_URL') }}{{ "urlEmailValidation"|trans }}{{ context.user.validatedDateToken }}
 
     {{ "Ou utilisez le code de validation directement sur le site"|trans }} :
-    {{ context.user.pwdToken }}
+    {{ context.user.validatedDateToken }}
 {% endblock %}

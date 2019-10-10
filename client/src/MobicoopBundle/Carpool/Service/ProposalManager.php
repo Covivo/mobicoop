@@ -119,18 +119,63 @@ class ProposalManager
      * @param float $destination_latitude   The destination latitude
      * @param float $destination_longitude  The destination longitude
      * @param \Datetime $date               The date and time in a Datetime object
+     * @param int $frequency                The frequency of the trip
+     * @param integer $regularLifeTime      The lifetime of a regular trip in years
+     * @param boolean|null $strictDate      Strict date
+     * @param boolean|null $useTime         Use the time part of the date
+     * @param boolean $strictPunctual       Strictly punctual
+     * @param boolean $strictRegular        Strictly regular
+     * @param integer $role                 Role (driver and/or passenger)
+     * @param integer $userId               User id of the requester (to exclude its own results)
+     * @param $format                       Return format
      * @return array|null The matchings found or null if not found.
      */
-    public function getMatchingsForSearch(float $origin_latitude, float $origin_longitude, float $destination_latitude, float $destination_longitude, \Datetime $date, $format = null)
-    {
+    public function getMatchingsForSearch(
+        float $origin_latitude,
+        float $origin_longitude,
+        float $destination_latitude,
+        float $destination_longitude,
+        \Datetime $date,
+        int $frequency,
+        ?int $regularLifeTime = null,
+        ?bool $strictDate = null,
+        ?bool $useTime = null,
+        ?bool $strictPunctual = null,
+        ?bool $strictRegular = null,
+        ?int $role = null,
+        ?int $userId = null,
+        $format = null
+    ) {
         // we set the params
         $params = [
             "origin_latitude" => $origin_latitude,
             "origin_longitude" => $origin_longitude,
             "destination_latitude" => $destination_latitude,
             "destination_longitude" => $destination_longitude,
-            "date" => $date->format('Y-m-d\TH:i:s\Z')
+            "date" => $date->format('Y-m-d\TH:i:s\Z'),
+            "frequency" => $frequency
         ];
+        if (!is_null($regularLifeTime)) {
+            $params["regularLifeTime"] = $regularLifeTime;
+        }
+        if (!is_null($strictDate)) {
+            $params["strictDate"] = $strictDate;
+        }
+        if (!is_null($useTime)) {
+            $params["useTime"] = $useTime;
+        }
+        if (!is_null($strictPunctual)) {
+            $params["strictPunctual"] = $strictPunctual;
+        }
+        if (!is_null($strictRegular)) {
+            $params["strictRegular"] = $strictRegular;
+        }
+        if (!is_null($role)) {
+            $params["role"] = $role;
+        }
+        if (!is_null($userId)) {
+            $params["userId"] = $userId;
+        }
         if (is_null($format)) {
             $format = $this->dataProvider::RETURN_OBJECT;
         }
@@ -167,10 +212,10 @@ class ProposalManager
     public function createProposalFromAd(array $ad, User $poster, $persist = true)
     {
         // todo : create a validation method for $ad
-        //var_dump($ad);die;
         $proposal = new Proposal();
         $criteria = new Criteria();
 
+        // we check if the ad is posted for another user (delegation)
         if (isset($ad['user'])) {
             $user = $this->userManager->getUser($ad['user']);
             $proposal->setUser($user);
@@ -178,10 +223,12 @@ class ProposalManager
         } else {
             $proposal->setUser($poster);
         }
+        // we set the type to one way, we'll check later if it's a return trip
         $proposal->setType(Proposal::TYPE_ONE_WAY);
         if (isset($ad['message'])) {
             $proposal->setComment($ad['message']);
         }
+        // communities
         if (isset($ad['communities'])) {
             foreach ($ad['communities'] as $community) {
                 $proposal->addCommunity($community);
@@ -189,8 +236,11 @@ class ProposalManager
         }
         $criteria->setDriver($ad['driver']);
         $criteria->setPassenger($ad['passenger']);
-        $criteria->setPriceKm($ad['price']);
+        $criteria->setPriceKm($ad['priceKm']);
         $criteria->setSeats($ad['seats']);
+        if (isset($ad['price'])) {
+            $criteria->setPrice($ad['price']);
+        }
         if (isset($ad['luggage'])) {
             $criteria->setLuggage($ad['luggage']);
         }
@@ -204,9 +254,9 @@ class ProposalManager
             // regular
             $criteria->setFrequency(Criteria::FREQUENCY_REGULAR);
             $criteria->setFromDate(new \Datetime());
-            $toDate = new \Datetime();
-            $toDate->add(new \DateInterval("P".Proposal::PROPOSAL_VALIDITY."Y"));
-            $criteria->setToDate($toDate);
+            // $toDate = new \Datetime();
+            // $toDate->add(new \DateInterval("P".Proposal::PROPOSAL_VALIDITY."Y"));
+            // $criteria->setToDate($toDate);
             foreach ($ad['schedules'] as $schedule) {
                 if ($schedule['outwardTime'] != '') {
                     if ($schedule['mon']) {
@@ -253,7 +303,7 @@ class ProposalManager
             // punctual
             $criteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
             $criteria->setFromDate(\DateTime::createFromFormat('Y-m-d', $ad['outwardDate']));
-            $criteria->setFromTime(\DateTime::createFromFormat('H:i', $ad['outwardTime']));
+            $criteria->setFromTime($ad['outwardTime'] ? \DateTime::createFromFormat('H:i', $ad['outwardTime']): null);
             $criteria->setMarginDuration($this->marginTime);
             if (isset($ad['returnDate']) && $ad['returnDate'] != '' && isset($ad['returnTime']) && $ad['returnTime'] != '') {
                 $proposal->setType(Proposal::TYPE_OUTWARD);
@@ -452,7 +502,7 @@ class ProposalManager
         $proposal->setCriteria($criteria);
 
         if (isset($ad['proposalId'])) {
-            // There id a proposal we know that is a match
+            // There' a proposalId : we know that is a match
             $proposal->setMatchedProposal(new Proposal($ad['proposalId']));
         }
 
@@ -492,9 +542,9 @@ class ProposalManager
                 // regular
                 $criteriaReturn->setFrequency(Criteria::FREQUENCY_REGULAR);
                 $criteriaReturn->setFromDate(new \Datetime());
-                $toDateReturn = new \Datetime();
-                $toDateReturn->add(new \DateInterval("P".Proposal::PROPOSAL_VALIDITY."Y"));
-                $criteriaReturn->setToDate($toDateReturn);
+                // $toDateReturn = new \Datetime();
+                // $toDateReturn->add(new \DateInterval("P".Proposal::PROPOSAL_VALIDITY."Y"));
+                // $criteriaReturn->setToDate($toDateReturn);
                 foreach ($ad['schedules'] as $schedule) {
                     if (isset($schedule['returnTime']) && $schedule['returnTime'] != '') {
                         if ($schedule['mon']) {

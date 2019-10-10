@@ -42,10 +42,34 @@
               cols="4"
               class="text-center"
             >
-              <div v-if="isMember && isAccepted">
+              <!-- button if domain validation -->
+              <div
+                v-if="domain == false"
+              >
+                <v-tooltip
+                  left
+                  color="info"
+                >
+                  <template v-slot:activator="{ on }">
+                    <div
+                      v-on="on"
+                    >
+                      <v-btn
+                        rounded
+                        disabled
+                      >
+                        {{ $t('buttons.join.label') }}
+                      </v-btn>
+                    </div>
+                  </template>
+                  <span>{{ $t('tooltips.domain')+" "+community.domain }}</span>
+                </v-tooltip>
+              </div>
+              <!-- button if member is accepted -->
+              <div v-else-if="isAccepted">
                 <a
                   style="text-decoration:none;"
-                  :href="$t('buttons.publish.route')+community.id"
+                  :href="$t('buttons.publish.route', {communityId: community.id})"
                 >
                   <v-btn
                     color="success"
@@ -55,7 +79,8 @@
                   </v-btn>
                 </a>
               </div>
-              <div v-else-if="isMember == true">
+              <!-- button if user ask to join community but is not accepted yet -->
+              <div v-else-if="askToJoin == true">
                 <v-tooltip
                   top
                   color="info"
@@ -63,7 +88,7 @@
                   <template v-slot:activator="{ on }">
                     <a
                       style="text-decoration:none;"
-                      :href="$t('buttons.publish.route')+community.id"
+                      :href="$t('buttons.publish.route', {communityId: community.id})"
                       v-on="on"
                     >
                       <v-btn
@@ -78,6 +103,7 @@
                   <span>{{ $t('tooltips.validation') }}</span>
                 </v-tooltip>
               </div>
+              <!-- button is user is not a member -->
               <div
                 v-else
               >
@@ -141,6 +167,7 @@
               cols="8"
             >
               <community-member-list
+                ref="memberList"
                 :community="community"
               />
             </v-col>
@@ -149,6 +176,7 @@
               cols="4"
             >
               <community-last-users
+                ref="lastUsers"
                 :community="community"
               />
             </v-col>
@@ -179,7 +207,7 @@
           :user="user"
           :justsearch="false"
           :notitle="true"
-          :is-member="isMember"
+          :is-member="askToJoin"
           :community="community"
           :temporary-tooltips="true"
         />
@@ -270,10 +298,11 @@ export default {
       textSnackError: this.$t("snackbar.joinCommunity.textError"),
       errorUpdate: false,
       isAccepted: false,
-      isMember: false,
+      askToJoin: false,
       checkValidation: false,
       isLogged: false,
       loadingMap: false,
+      domain: true,
 
     }
   },
@@ -281,6 +310,7 @@ export default {
     this.getCommunityUser();
     this.checkIfUserLogged();
     this.getCommunityProposals();
+    this.checkDomain();
   },
   methods:{
     getCommunityUser() {
@@ -294,7 +324,7 @@ export default {
         .then(res => {
           if (res.data.length > 0) {
             this.isAccepted = res.data[0].status == 1;
-            this.isMember = true
+            this.askToJoin = true
           }
           this.checkValidation = false;
           
@@ -303,7 +333,7 @@ export default {
     joinCommunity() {
       this.loading = true;
       axios 
-        .post(this.$t('buttons.join.route')+this.community.id,
+        .post(this.$t('buttons.join.route',{id:this.community.id}),
           {
             headers:{
               'content-type': 'application/json'
@@ -311,14 +341,25 @@ export default {
           })
         .then(res => {
           this.errorUpdate = res.data.state;
+          this.askToJoin = true;
           this.snackbar = true;
+          this.$refs.memberList.getCommunityMemberList();
+          this.$refs.lastUsers.getCommunityLastUsers();
+          this.getCommunityUser();
           this.loading = false;
-          this.isMember = true;
         });
     },
     checkIfUserLogged() {
       if (this.user !== null) {
         this.isLogged = true;
+      }
+    },
+    checkDomain() {
+      if (this.community.validationType == 2) {
+        let mailDomain = (this.user.email.split("@"))[1];
+        if (!(this.community.domain.includes(mailDomain))) {
+          return this.domain = false;
+        }   
       }
     },
     getCommunityProposals () {

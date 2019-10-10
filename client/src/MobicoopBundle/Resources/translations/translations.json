@@ -37,7 +37,8 @@
                         "format": {
                             "fullDate": "ddd Do MMMM YYYY",
                             "fullNumericDate": "YMMDDHHmmss",
-                            "shortDate": "ddd DD/MM"
+                            "shortDate": "ddd DD/MM",
+                            "urlDate": "YMMDD"
                         }
                     },
                     "time": {

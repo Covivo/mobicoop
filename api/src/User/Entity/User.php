@@ -67,6 +67,7 @@ use App\User\Filter\HomeAddressWaypointTerritoryFilter;
 use App\User\Filter\LoginFilter;
 use App\User\Filter\PwdTokenFilter;
 use App\User\Filter\SolidaryFilter;
+use App\User\Filter\ValidatedDateTokenFilter;
 use App\Communication\Entity\Notified;
 use App\Action\Entity\Log;
 use App\Solidary\Entity\Solidary;
@@ -166,8 +167,9 @@ use App\Solidary\Entity\Solidary;
  * @ApiFilter(WaypointTerritoryFilter::class, properties={"waypointTerritory"})
  * @ApiFilter(LoginFilter::class, properties={"login"})
  * @ApiFilter(PwdTokenFilter::class, properties={"pwdToken"})
+ * @ApiFilter(ValidatedDateTokenFilter::class, properties={"validatedDateToken"})
  * @ApiFilter(SolidaryFilter::class, properties={"solidary"})
- * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate", "createdDate"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
 {
@@ -194,7 +196,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read", "threads", "thread"})
+     * @Groups({"read","results","threads", "thread"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -319,6 +321,22 @@ class User implements UserInterface, EquatableInterface
      * @Groups("read")
      */
     private $createdDate;
+
+    /**
+     * @var \DateTimeInterface Validation date of the user.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $validatedDate;
+
+    /**
+     * @var string|null Token for account validation by email
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $validatedDateToken;
 
     /**
      * @var \DateTimeInterface Updated date of the user.
@@ -1280,6 +1298,29 @@ class User implements UserInterface, EquatableInterface
     {
         $this->updatedDate = $updatedDate;
 
+        return $this;
+    }
+
+    public function getValidatedDate(): ?\DateTimeInterface
+    {
+        return $this->validatedDate;
+    }
+
+    public function setValidatedDate(\DateTimeInterface $validatedDate): self
+    {
+        $this->validatedDate = $validatedDate;
+
+        return $this;
+    }
+
+    public function getValidatedDateToken(): ?string
+    {
+        return $this->validatedDateToken;
+    }
+
+    public function setValidatedDateToken(?string $validatedDateToken): self
+    {
+        $this->validatedDateToken = $validatedDateToken;
         return $this;
     }
 

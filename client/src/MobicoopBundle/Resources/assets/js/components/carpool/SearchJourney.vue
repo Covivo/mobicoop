@@ -237,6 +237,10 @@ export default {
     initRegular: {
       type: Boolean,
       default: true
+    }, 
+    punctualDateOptional: {
+      type: Boolean,
+      default: false
     }    
   },
   data() {
@@ -269,7 +273,7 @@ export default {
         : null;
     },
     checkOutwardDate() {
-      if (this.outwardDateClicked && !this.regular && !this.date) {
+      if (this.outwardDateClicked && !this.regular && !this.date && !this.punctualDateOptional) {
         return this.requiredErrorOutwardDate;
       }
       return null;

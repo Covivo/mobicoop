@@ -19,6 +19,8 @@ user:
     signup:
         title: 'Inscription'
         h1: 'Inscription'
+    signupValidation:
+        title: 'Vérification de votre email'
     login:
         title: 'Connexion'
         h1: 'Connexion'

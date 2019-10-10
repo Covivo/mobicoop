@@ -23,7 +23,6 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Controller;
 
-use App\Communication\Entity\Email;
 use Herrera\Json\Exception\Exception;
 use Http\Client\Exception\HttpException;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
@@ -39,13 +38,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Mobicoop\Bundle\MobicoopBundle\User\Form\UserForm;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Form\ProposalForm;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\Form\Login;
-use Mobicoop\Bundle\MobicoopBundle\User\Form\UserLoginForm;
-use Mobicoop\Bundle\MobicoopBundle\User\Form\UserDeleteForm;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Service\AddressManager;
@@ -53,16 +46,11 @@ use Symfony\Component\HttpFoundation\Response;
 use DateTime;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
-use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
-use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Recipient;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskHistoryManager;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use function GuzzleHttp\json_encode;
-use function MongoDB\BSON\fromJSON;
-use function MongoDB\BSON\toJSON;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * Controller class for user related actions.
@@ -73,6 +61,22 @@ use function MongoDB\BSON\toJSON;
 class UserController extends AbstractController
 {
     use HydraControllerTrait;
+
+    private $encoder;
+
+    /**
+     * Constructor
+     * @param UserPasswordEncoderInterface $encoder
+     */
+    public function __construct(UserPasswordEncoderInterface $encoder)
+    {
+        $this->encoder = $encoder;
+    }
+
+    /***********
+     * PROFILE *
+     ***********/
+
     /**
      * User login.
      */
@@ -86,7 +90,6 @@ class UserController extends AbstractController
         if (!is_null($error)) {
             $errorMessage = $error->getMessage();
         }
-        
 
         return $this->render('@Mobicoop/user/login.html.twig', [
             "errorMessage"=>$errorMessage
@@ -136,8 +139,14 @@ class UserController extends AbstractController
             $user->setGender($data['gender']);
             $user->setBirthYear($data['birthYear']);
 
+            // Create token to valid inscription
+            $datetime = new DateTime();
+            $time = $datetime->getTimestamp();
+            // For safety, we strip the slashes because this token can be passed in url
+            $pwdToken = str_replace("/", "", $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt()));
+            $user->setValidatedDateToken($pwdToken);
             // create user in database
-            $data= $userManager->createUser($user);
+            $data = $userManager->createUser($user);
             $reponseofmanager= $this->handleManagerReturnValue($data);
             if (!empty($reponseofmanager)) {
                 return $reponseofmanager;
@@ -147,6 +156,38 @@ class UserController extends AbstractController
         return $this->render('@Mobicoop/user/signup.html.twig', [
                 'error' => $error
             ]);
+    }
+
+    /**
+     * User registration email validation
+     */
+    public function userSignUpValidation($token, UserManager $userManager, Request $request)
+    {
+        $error = "";
+        if ($request->isMethod('POST') && $token !== "") {
+            // We need to check if the token exists
+            $userFound = $userManager->findByValidationDateToken($token);
+            if (!empty($userFound)) {
+                if ($userFound->getValidatedDate()!==null) {
+                    $error = "alreadyValidated";
+                } else {
+                    $userFound->setValidatedDate(new \Datetime()); // TO DO : Correct timezone
+                    $userFound = $userManager->updateUser($userFound);
+                    if (!$userFound) {
+                        $error = "updateError";
+                    } else {
+                        // Auto login and redirect
+                        $token = new UsernamePasswordToken($userFound, null, 'main', $userFound->getRoles());
+                        $this->get('security.token_storage')->setToken($token);
+                        $this->get('session')->set('_security_main', serialize($token));
+                        return $this->redirectToRoute('home');
+                    }
+                }
+            } else {
+                $error = "unknown";
+            }
+        }
+        return $this->render('@Mobicoop/user/signupValidation.html.twig', ['urlToken'=>$token, 'error'=>$error]);
     }
 
     /**
@@ -193,8 +234,8 @@ class UserController extends AbstractController
             if (is_null($homeAddress->getId()) && !empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) {
                 $user->addAddress($homeAddress);
             } elseif (!empty($homeAddress->getLongitude() && !empty($homeAddress->getLatitude()))) {
-                $data= $addressManager->updateAddress($homeAddress);
-                $reponseofmanager= $this->handleManagerReturnValue($data);
+                $addressData = $addressManager->updateAddress($homeAddress);
+                $reponseofmanager= $this->handleManagerReturnValue($addressData);
                 if (!empty($reponseofmanager)) {
                     return $reponseofmanager;
                 }
@@ -271,7 +312,6 @@ class UserController extends AbstractController
         return new Response(json_encode($error));
     }
 
-
     /**
      * User password recovery page.
      */
@@ -285,7 +325,7 @@ class UserController extends AbstractController
      * @param UserManager $userManager The class managing the user.
      * @param Request $request The symfony request object.
      */
-    public function getUserPasswordForRecovery(UserManager $userManager, Request $request)
+    public function userPasswordForRecovery(UserManager $userManager, Request $request)
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
@@ -347,49 +387,15 @@ class UserController extends AbstractController
         }
     }
 
-    /**
-     * Delete the current user.
-     */
-    public function userProfileDelete(UserManager $userManager, Request $request)
-    {
-        $user = $userManager->getLoggedUser();
-        $reponseofmanager= $this->handleManagerReturnValue($user);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        $this->denyAccessUnlessGranted('delete', $user);
 
-        $form = $this->createForm(
-            UserDeleteForm::class,
-            $user,
-            ['validation_groups'=>['delete']]
-        );
-
-        $form->handleRequest($request);
-        $error = false;
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($data=$userManager->deleteUser($user->getId())) {
-                $reponseofmanager= $this->handleManagerReturnValue($data);
-                if (!empty($reponseofmanager)) {
-                    return $reponseofmanager;
-                }
-                return $this->redirectToRoute('home');
-            }
-            $error = true;
-        }
-
-        return $this->render('@Mobicoop/user/delete.html.twig', [
-            'form' => $form->createView(),
-            'user' => $user,
-            'error' => $error
-        ]);
-    }
+    /*************
+     * PROPOSALS *
+     *************/
 
     /**
      * Retrieve all proposals for the current user.
      */
-    public function userProposals(UserManager $userManager, ProposalManager $proposalManager)
+    public function userProposalList(UserManager $userManager, ProposalManager $proposalManager)
     {
         $user = $userManager->getLoggedUser();
         $reponseofmanager= $this->handleManagerReturnValue($user);
@@ -407,6 +413,11 @@ class UserController extends AbstractController
             'hydra' => $data
         ]);
     }
+
+
+    /*************
+     * MESSAGES  *
+     *************/
 
     /**
      * User mailbox
@@ -455,7 +466,7 @@ class UserController extends AbstractController
      * User messages.
      * OLD Controller
      */
-    public function userMessages(UserManager $userManager, InternalMessageManager $internalMessageManager)
+    public function userMessageList(UserManager $userManager, InternalMessageManager $internalMessageManager)
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
@@ -579,7 +590,7 @@ class UserController extends AbstractController
      * Ajax Request
      * OLD Controller
      */
-    public function getThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager, AskManager $askManager)
+    public function userMessageThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager, AskManager $askManager)
     {
         $user = $userManager->getLoggedUser();
         $reponseofmanager= $this->handleManagerReturnValue($user);
@@ -632,7 +643,7 @@ class UserController extends AbstractController
      * Send an internal message to another user
      * Ajax Request
      */
-    public function sendInternalMessage(UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request, AskHistoryManager $askHistoryManager)
+    public function userMessageSend(UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request, AskHistoryManager $askHistoryManager)
     {
         $user = $userManager->getLoggedUser();
         $reponseofmanager= $this->handleManagerReturnValue($user);
@@ -691,7 +702,7 @@ class UserController extends AbstractController
      * Update and ask
      * Ajax Request
      */
-    public function updateAsk(Request $request, AskManager $askManager)
+    public function userMessageUpdateAsk(Request $request, AskManager $askManager)
     {
         if ($request->isMethod('POST')) {
             $idAsk = $request->request->get('idAsk');
@@ -728,126 +739,4 @@ class UserController extends AbstractController
 
         return new Response(json_encode("Not a post"));
     }
-
-
-
-    // ADMIN
-
-    /**
-     * Retrieve a user.
-     *
-     * @Route("/user/{id}", name="user", requirements={"id"="\d+"})
-     *
-     */
-    // public function user($id, UserManager $userManager)
-    // {
-    //     return $this->render('@Mobicoop/user/detail.html.twig', [
-    //         'user' => $userManager->getUser($id)
-    //     ]);
-    // }
-
-    /**
-     * Retrieve all users.
-     *
-     * @Route("/users", name="users")
-     *
-     */
-    // public function users(UserManager $userManager)
-    // {
-    //     return $this->render('@Mobicoop/user/index.html.twig', [
-    //         'hydra' => $userManager->getUsers()
-    //     ]);
-    // }
-
-    /**
-     * Delete a user.
-     *
-     * @Route("/user/{id}/delete", name="user_delete", requirements={"id"="\d+"})
-     *
-     */
-    // public function userDelete($id, UserManager $userManager)
-    // {
-    //     if ($userManager->deleteUser($id)) {
-    //         return $this->redirectToRoute('users');
-    //     } else {
-    //         return $this->render('@Mobicoop/user/index.html.twig', [
-    //                 'hydra' => $userManager->getUsers(),
-    //                 'error' => 'An error occured'
-    //         ]);
-    //     }
-    // }
-    
-    /**
-     * Retrieve all matchings for a proposal.
-     *
-     * @Route("/user/{id}/proposal/{idProposal}/matchings", name="user_proposal_matchings", requirements={"id"="\d+","idProposal"="\d+"})
-     *
-     */
-    // public function userProposalMatchings($id, $idProposal, ProposalManager $proposalManager)
-    // {
-    //     $user = new User($id);
-    //     $proposal = $proposalManager->getProposal($idProposal);
-    //     return $this->render('@Mobicoop/proposal/matchings.html.twig', [
-    //         'user' => $user,
-    //         'proposal' => $proposal,
-    //         'hydra' => $proposalManager->getMatchings($proposal)
-    //     ]);
-    // }
-
-    /**
-     * Delete a proposal of a user.
-     *
-     * @Route("/user/{id}/proposal/{idProposal}/delete", name="user_proposal_delete", requirements={"id"="\d+","idProposal"="\d+"})
-     *
-     */
-    // public function userProposalDelete($id, $idProposal, ProposalManager $proposalManager)
-    // {
-    //     if ($proposalManager->deleteProposal($idProposal)) {
-    //         return $this->redirectToRoute('user_proposals', ['id'=>$id]);
-    //     } else {
-    //         $user = new User($id);
-    //         return $this->render('@Mobicoop/proposal/index.html.twig', [
-    //             'user' => $user,
-    //             'hydra' => $proposalManager->getProposals($user),
-    //             'error' => 'An error occured'
-    //         ]);
-    //     }
-    // }
-
-
-
-
-
-    /**
-     * Create a proposal for a user.
-     */
-    // public function userProposalCreate($id=null, ProposalManager $proposalManager, Request $request)
-    // {
-    //     $proposal = new Proposal();
-    //     if ($id) {
-    //         $proposal->setUser(new User($id));
-    //     } else {
-    //         $proposal->setUser(new User());
-    //     }
-
-    //     $form = $this->createForm(ProposalForm::class, $proposal);
-    //     $form->handleRequest($request);
-    //     $error = false;
-
-    //     if ($form->isSubmitted() && $form->isValid()) {
-    //         // for now we add the starting end ending points,
-    //         // in the future we will need to have dynamic fields
-    //         $proposal->addPoint($proposal->getStart());
-    //         $proposal->addPoint($proposal->getDestination());
-    //         if ($proposal = $proposalManager->createProposal($proposal)) {
-    //             return $this->redirectToRoute('user_proposal_matchings', ['id'=>$id,'idProposal'=>$proposal->getId()]);
-    //         }
-    //         $error = true;
-    //     }
-
-    //     return $this->render('@Mobicoop/proposal/create.html.twig', [
-    //         'form' => $form->createView(),
-    //         'error' => $error
-    //     ]);
-    // }
 }

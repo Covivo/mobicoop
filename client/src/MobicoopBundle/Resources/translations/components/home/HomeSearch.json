@@ -16,12 +16,13 @@
             "label": "Date de départ"
         },
         "buttons": {
-            "shareAnAd": {
+            "publish": {
                 "label": "Publier une annonce",
-                "route": "/covoiturage/annonce/poster/"
+                "route": "covoiturage/annonce/poster"
             },
             "search": {
-                "label": "Rechercher"
+                "label": "Rechercher",
+                "route": "covoiturage/recherche"
             }
         }
     },
@@ -42,14 +43,15 @@
             "label": "Departure date"
         },
         "buttons": {
-            "shareAnAd": {
-                "label": "Share an ad"
+            "publish": {
+                "label": "Publish",
+                "route": "/carpool/ad/publish"
             },
             "search": {
-                "label": "Search"
+                "label": "Search",
+                "route": "carpool/search"
             }
         }
-        
     }
     
 }
