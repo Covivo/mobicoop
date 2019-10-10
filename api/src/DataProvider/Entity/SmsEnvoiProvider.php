@@ -36,12 +36,14 @@ class SmsEnvoiProvider implements ProviderInterface
     private $collection;
     private $username;
     private $password;
+    private $sender;
 
-    public function __construct(string $username, string $password)
+    public function __construct(string $username, string $password, string $sender)
     {
         $this->collection = [];
         $this->username=$username;
         $this->password=$password;
+        $this->sender=$sender;
     }
 
     /**
@@ -64,7 +66,7 @@ class SmsEnvoiProvider implements ProviderInterface
                 "recipient"=> [
                     $sms->getRecipientTelephone()
                 ],
-                "sender"=> "Mobicoop"
+                "sender"=> $this->sender
             ];
             $dataProvider->postCollection($body, $headers);
         }

@@ -4,7 +4,7 @@
     "buttons": { 
       "create": {
         "label": "Créer la communauté",
-        "route": "/creer/communaute"
+        "route": "/communaute/creer"
       }
     },
     "form": {

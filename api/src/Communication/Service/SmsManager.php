@@ -47,15 +47,15 @@ class SmsManager
      * @param SmsProvider $smsProvider
      * @param string $templatePath
      */
-    public function __construct(\Twig_Environment $templating, LoggerInterface $logger, string $templatePath, string $smsProvider, string $username, string $password)
+    public function __construct(\Twig_Environment $templating, LoggerInterface $logger, string $templatePath, string $smsProvider, string $username, string $password, string $sender)
     {
         $this->templating = $templating;
         $this->templatePath = $templatePath;
         $this->logger = $logger;
 
         switch ($smsProvider) {
-            case 'smsEnvoi':  $this->smsProvider = new SmsEnvoiProvider($username, $password);break;
-            default:  $this->smsProvider = new SmsEnvoiProvider($username, $password);break;
+            case 'smsEnvoi':  $this->smsProvider = new SmsEnvoiProvider($username, $password, $sender );break;
+            default:  $this->smsProvider = new SmsEnvoiProvider($username, $password, $sender);break;
         }
     }
 
