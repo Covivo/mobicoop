@@ -145,7 +145,7 @@
                 color="backSpiner"
               >
                 <v-progress-circular
-                  size="497"
+                  size="250"
                   indeterminate
                   color="tertiary"
                 />
