@@ -1,5 +1,5 @@
-/*    
-@licstart  The following is the entire license notice for the 
+/*
+@licstart  The following is the entire license notice for the
 JavaScript code in this page.
 
 Copyright (C) 2018  Access42
@@ -16,7 +16,7 @@ As additional permission under GNU GPL version 3 section 7, you
 may distribute non-source (e.g., minimized or compacted) forms of
 that code without the copy of the GNU GPL normally required by
 section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.   
+through which recipients can access the Corresponding Source.
 
 
 @licend  The above is the entire license notice
@@ -25,8 +25,13 @@ for the JavaScript code in this page.
 /*** AccessConfig **/
 
 var AccessConfig = (function() {
-		
+
   'use strict '
+  let userPrefix=''
+  let i =''
+  let j =''
+  let len =''
+  let lenx =''
 
   /*** Configuration **/
   var config = {
@@ -34,12 +39,12 @@ var AccessConfig = (function() {
       //id to catch in the html
       id:'accessconfig',
     },
-		
-    /**	
-		General Setting 
-		useExtendContrast : true for three choices (default, inverted, enforced), false for two choices (default, inverted)
-		**/
-		
+
+    /**
+     General Setting
+     useExtendContrast : true for three choices (default, inverted, enforced), false for two choices (default, inverted)
+     **/
+
     Setting: {
       useExtendContrast: true
     },
@@ -50,10 +55,10 @@ var AccessConfig = (function() {
       classSetting: 'overlay'
     },
 
-    /** 
-		Modal button and window container 
-		**/
-		
+    /**
+     Modal button and window container
+     **/
+
     ModalButton: {
       id: 'button'
     },
@@ -65,7 +70,7 @@ var AccessConfig = (function() {
       },
       titleId: 'title',
       titleClass: 'title',
-    }, 
+    },
     CloseButton: {
       id: 'close',
       classSetting: 'close',
@@ -76,19 +81,19 @@ var AccessConfig = (function() {
       hiddenTextClass: 'sr-only'
     },
 
-    /** 
-		Inline content container 
-		**/
+    /**
+     Inline content container
+     **/
 
     InlineContentContainer: {
       id: 'inline-c'
     },
 
-    /** 
-		Parameters checkboxes
-		lang is based on html lang declaration, first entry is the default when html lang is unknow
-		**/
-		
+    /**
+     Parameters checkboxes
+     lang is based on html lang declaration, first entry is the default when html lang is unknow
+     **/
+
     FormFieldsetContent: {
       classSetting: 'content'
     },
@@ -102,10 +107,10 @@ var AccessConfig = (function() {
       classSetting: 'radio'
     },
 
-    /** Contrast 
-		value : className of the dedicated className style
-		Important ! : value and id must be identical
-		**/
+    /** Contrast
+     value : className of the dedicated className style
+     Important ! : value and id must be identical
+     **/
 
     ContrastFieldset: {
       //caution : don't change
@@ -115,7 +120,7 @@ var AccessConfig = (function() {
       lang: {
         en: 'Contrast',
         fr: 'Contrastes'
-      }	
+      }
     },
     DefaultContrastCheckbox: {
       id: 'default-contrast',
@@ -148,13 +153,13 @@ var AccessConfig = (function() {
       lang: {
         en: 'Reverse',
         fr: 'Inverser'
-      }		
+      }
     },
-		
-    /** 
-		Dyslexia font 
-		**/
-		
+
+    /**
+     Dyslexia font
+     **/
+
     DyslexiaFieldset: {
       //caution : don't change
       id: 'font'
@@ -164,7 +169,7 @@ var AccessConfig = (function() {
       lang: {
         en: 'Font (dyslexia)',
         fr: 'Police (dyslexie)'
-      }		
+      }
     },
     DefaultFontCheckbox:{
       id: 'default-font',
@@ -175,7 +180,7 @@ var AccessConfig = (function() {
       lang: {
         en: 'Default',
         fr: 'Défaut'
-      }		
+      }
     },
     DyslexiaFontCheckbox:{
       id: 'dys-font',
@@ -186,13 +191,13 @@ var AccessConfig = (function() {
       lang: {
         en: 'Adapt',
         fr: 'Adapter'
-      }		
+      }
     },
 
-    /** 
-		Line spacing 
-		**/
-		
+    /**
+     Line spacing
+     **/
+
     LineSpacingFieldset: {
       //caution : don't change
       id: 'line-spacing'
@@ -202,7 +207,7 @@ var AccessConfig = (function() {
       lang: {
         en: 'Line spacing',
         fr: 'Interlignage'
-      }		
+      }
     },
     DefaultLineSpacingCheckbox:{
       id: 'default-spacing',
@@ -213,7 +218,7 @@ var AccessConfig = (function() {
       lang: {
         en: 'Default',
         fr: 'Défaut'
-      }		
+      }
     },
     DyslexiaLineSpacingCheckbox:{
       id: 'dys-spacing',
@@ -224,12 +229,12 @@ var AccessConfig = (function() {
       lang: {
         en: 'Increase',
         fr: 'Augmenter'
-      }		
+      }
     },
-	
-    /** 
-		Justification 
-		**/
+
+    /**
+     Justification
+     **/
 
     JustificationFieldset: {
       //caution : don't change
@@ -240,7 +245,7 @@ var AccessConfig = (function() {
       lang: {
         en: 'Justification',
         fr: 'Justification'
-      }		
+      }
     },
     DefaultJustificationCheckbox:{
       id: 'default-justification',
@@ -251,7 +256,7 @@ var AccessConfig = (function() {
       lang: {
         en: 'Default',
         fr: 'Défaut'
-      }		
+      }
     },
     DyslexiaJustificationCheckbox:{
       id: 'cancel-justification',
@@ -262,13 +267,13 @@ var AccessConfig = (function() {
       lang: {
         en: 'Remove',
         fr: 'Supprimer'
-      }		
+      }
     },
-		
-    /** 
-		Image replacement 
-		**/
-		
+
+    /**
+     Image replacement
+     **/
+
     ImageReplacementFieldset: {
       //caution : don't change
       id: 'image'
@@ -284,7 +289,7 @@ var AccessConfig = (function() {
       lang: {
         en: 'Images',
         fr: 'Images'
-      }		
+      }
     },
     DefaultImageReplacementCheckbox:{
       id: 'default-img',
@@ -295,7 +300,7 @@ var AccessConfig = (function() {
       lang: {
         en: 'Default',
         fr: 'Défaut'
-      }		
+      }
     },
     ImageReplacementCheckbox:{
       id: 'text-img',
@@ -306,8 +311,8 @@ var AccessConfig = (function() {
       lang: {
         en: 'Replace with text',
         fr: 'Remplacer par du texte'
-      }		
-    },	
+      }
+    },
   }
   //global
   var global = {
@@ -337,10 +342,10 @@ var AccessConfig = (function() {
         /** If user set data-accessconfig-param.Modal to true, then create a button to launch the modal **/
         var modalButton = document.createElement( 'button' );
         modalButton.setAttribute( 'id', userPrefix+'-'+config.ModalButton.id );
-        modalButton.setAttribute( 'data-accessconfig-button','true' ); 
+        modalButton.setAttribute( 'data-accessconfig-button','true' );
 
-        var modalButtonText = document.querySelector( '[data-accessconfig-buttonname]' );		
-        var modalButtonText = document.createTextNode(modalButtonText.getAttribute( 'data-accessconfig-buttonname' ));
+        var modalButtonText = document.querySelector( '[data-accessconfig-buttonname]' );
+        modalButtonText = document.createTextNode(modalButtonText.getAttribute( 'data-accessconfig-buttonname' ));
         modalButton.appendChild(modalButtonText);
 
         var setup = document.getElementById(config.Setup.id);
@@ -406,26 +411,26 @@ var AccessConfig = (function() {
     var div = $create({tagName:'div', id:userPrefix, class:userPrefix});
 
     var fieldsetContent = $create( {tagName:'div', class:userPrefix+'-'+config.FormFieldsetContent.classSetting});
-		
+
     // set modale
-    if( global.userParams.Modal == true || global.userParams.Modal === undefined) {			
+    if( global.userParams.Modal == true || global.userParams.Modal === undefined) {
       //modale
       div.setAttribute( 'role', 'dialog' );
       div.setAttribute( 'aria-labelledby', userPrefix+'-'+config.ModalContainer.titleId );
       div.setAttribute( 'tabindex', '-1' );
-      global.userParams.ContainerClass ? div.classList.add( userPrefix+'-'+global.userParams.ContainerClass ) : 
-										   div.classList.add( userPrefix+'-'+config.ModalContainer.classSetting );
+      global.userParams.ContainerClass ? div.classList.add( userPrefix+'-'+global.userParams.ContainerClass ) :
+        div.classList.add( userPrefix+'-'+config.ModalContainer.classSetting );
       //title
       var titleWindow = $create({tagName:'h1', id:userPrefix+'-'+config.ModalContainer.titleId});
-      global.userParams.ModalTitle ? titleWindow.classList.add( userPrefix+global.userParams.ModalTitle ) : 
-										   titleWindow.classList.add( userPrefix+'-'+config.ModalContainer.titleClass );
+      global.userParams.ModalTitle ? titleWindow.classList.add( userPrefix+global.userParams.ModalTitle ) :
+        titleWindow.classList.add( userPrefix+'-'+config.ModalContainer.titleClass );
       var titleTxt = document.createTextNode( config.ModalContainer.titleLang[ langRef ]);
       titleWindow.appendChild( titleTxt );
       div.appendChild( titleWindow );
       //Close button
       var CClose = $create({tagName:'button', type:'button',id:userPrefix+'-'+config.CloseButton.id});
       global.userParams.ModalCloseButton ? CClose.classList.add( userPrefix+global.userParams.ModalCloseButton ) :
-												 CClose.classList.add( userPrefix+'-'+config.CloseButton.classSetting );
+        CClose.classList.add( userPrefix+'-'+config.CloseButton.classSetting );
       var SpanHidden = $create({tagName:'span', class:config.CloseButton.hiddenTextClass});
       var CloseTxt = document.createTextNode( config.CloseButton.lang[ langRef ]);
       SpanHidden.appendChild( CloseTxt );
@@ -434,7 +439,7 @@ var AccessConfig = (function() {
       div.appendChild(fieldsetContent);
     }
     else {
-      //Inline form 
+      //Inline form
       var setupdiv = document.getElementById( config.Setup.id );
       setupdiv.appendChild(div);
       div.classList.add( userPrefix+'accessconfig-inline');
@@ -442,8 +447,8 @@ var AccessConfig = (function() {
     }
 
     /**
-		Contrast features
-		**/
+     Contrast features
+     **/
 
     if(global.userParams.Contrast != false){
 
@@ -463,18 +468,18 @@ var AccessConfig = (function() {
 
       /**Alterntative option 1 : higher contrast**/
       if( config.Setting.useExtendContrast ) {
-        var CInput = $create({tagName:'input', type:'radio', id:userPrefix+'-'+config.HighContrastCheckbox.id , value:userPrefix+'-'+config.HighContrastCheckbox.value, name:userPrefix+'-'+config.HighContrastCheckbox.groupName});
-        var CLabel = $create({tagName:'label', for:userPrefix+'-'+config.HighContrastCheckbox.id});
-        var defaultCText = document.createTextNode ( config.HighContrastCheckbox.lang[ langRef ] );
+        CInput = $create({tagName:'input', type:'radio', id:userPrefix+'-'+config.HighContrastCheckbox.id , value:userPrefix+'-'+config.HighContrastCheckbox.value, name:userPrefix+'-'+config.HighContrastCheckbox.groupName});
+        CLabel = $create({tagName:'label', for:userPrefix+'-'+config.HighContrastCheckbox.id});
+        defaultCText = document.createTextNode ( config.HighContrastCheckbox.lang[ langRef ] );
         CLabel.appendChild( defaultCText );
         fieldset.appendChild( CInput );
         fieldset.appendChild( CLabel );
       }
 
       /**Alterntative option 2 : inverted contrast**/
-      var CInput = $create({tagName:'input', type:'radio', id:userPrefix+'-'+config.InvertContrastCheckbox.id, value:userPrefix+'-'+config.InvertContrastCheckbox.value, name:userPrefix+'-'+config.InvertContrastCheckbox.groupName});
-      var CLabel = $create({tagName:'label', for:userPrefix+'-'+config.InvertContrastCheckbox.id});
-      var defaultCText = document.createTextNode ( config.InvertContrastCheckbox.lang[ langRef ] );
+      CInput = $create({tagName:'input', type:'radio', id:userPrefix+'-'+config.InvertContrastCheckbox.id, value:userPrefix+'-'+config.InvertContrastCheckbox.value, name:userPrefix+'-'+config.InvertContrastCheckbox.groupName});
+      CLabel = $create({tagName:'label', for:userPrefix+'-'+config.InvertContrastCheckbox.id});
+      defaultCText = document.createTextNode ( config.InvertContrastCheckbox.lang[ langRef ] );
       CLabel.appendChild( defaultCText );
       fieldset.appendChild( CInput );
       fieldset.appendChild( CLabel );
@@ -482,28 +487,28 @@ var AccessConfig = (function() {
     }
 
     /**
-		Font feature
-		**/
+     Font feature
+     **/
 
     if(global.userParams.Font != false){
-      var fieldset = $create({tagName:'fieldset', id:userPrefix+'-'+config.DyslexiaFieldset.id});
-      var legend = document.createElement( 'legend' );
-      var legendText = document.createTextNode( config.DyslexiaLegend.lang[ langRef ] );
+      fieldset = $create({tagName:'fieldset', id:userPrefix+'-'+config.DyslexiaFieldset.id});
+      legend = document.createElement( 'legend' );
+      legendText = document.createTextNode( config.DyslexiaLegend.lang[ langRef ] );
       legend.appendChild( legendText );
       fieldset.appendChild( legend );
 
       /**Default option**/
-      var CInput = $create({tagName:'input', type:'radio', checked:'checked', id:userPrefix+'-'+config.DefaultFontCheckbox.id, value:userPrefix+'-'+config.DefaultFontCheckbox.value, name:userPrefix+'-'+config.DefaultFontCheckbox.groupName});
-      var CLabel = $create({tagName:'label', for:userPrefix+'-'+config.DefaultFontCheckbox.id});
-      var defaultCText = document.createTextNode ( config.DefaultFontCheckbox.lang[ langRef ] );
+      CInput = $create({tagName:'input', type:'radio', checked:'checked', id:userPrefix+'-'+config.DefaultFontCheckbox.id, value:userPrefix+'-'+config.DefaultFontCheckbox.value, name:userPrefix+'-'+config.DefaultFontCheckbox.groupName});
+      CLabel = $create({tagName:'label', for:userPrefix+'-'+config.DefaultFontCheckbox.id});
+      defaultCText = document.createTextNode ( config.DefaultFontCheckbox.lang[ langRef ] );
       CLabel.appendChild( defaultCText );
       fieldset.appendChild( CInput );
       fieldset.appendChild( CLabel );
-			
+
       /**Alternative option : alternative font OpenDyslexic**/
-      var CInput = $create({tagName:'input', type:'radio', id:userPrefix+'-'+config.DyslexiaFontCheckbox.id, value:userPrefix+'-'+config.DyslexiaFontCheckbox.value, name:userPrefix+'-'+config.DyslexiaFontCheckbox.groupName});
-      var CLabel = $create({tagName:'label', for:userPrefix+'-'+config.DyslexiaFontCheckbox.id});
-      var defaultCText = document.createTextNode ( config.DyslexiaFontCheckbox.lang[ langRef ] );
+      CInput = $create({tagName:'input', type:'radio', id:userPrefix+'-'+config.DyslexiaFontCheckbox.id, value:userPrefix+'-'+config.DyslexiaFontCheckbox.value, name:userPrefix+'-'+config.DyslexiaFontCheckbox.groupName});
+      CLabel = $create({tagName:'label', for:userPrefix+'-'+config.DyslexiaFontCheckbox.id});
+      defaultCText = document.createTextNode ( config.DyslexiaFontCheckbox.lang[ langRef ] );
       CLabel.appendChild( defaultCText );
       fieldset.appendChild( CInput );
       fieldset.appendChild( CLabel );
@@ -511,28 +516,28 @@ var AccessConfig = (function() {
     }
 
     /**
-		Line spacing feature
-		**/
+     Line spacing feature
+     **/
 
     if(global.userParams.LineSpacing != false){
-      var fieldset = $create({tagName:'fieldset', id:userPrefix+'-'+config.LineSpacingFieldset.id});
-      var legend = document.createElement( 'legend' );
-      var legendText = document.createTextNode( config.LineSpacingLegend.lang[ langRef ] );
+      fieldset = $create({tagName:'fieldset', id:userPrefix+'-'+config.LineSpacingFieldset.id});
+      legend = document.createElement( 'legend' );
+      legendText = document.createTextNode( config.LineSpacingLegend.lang[ langRef ] );
       legend.appendChild( legendText );
       fieldset.appendChild( legend );
 
       /**Default option**/
-      var CInput = $create({tagName:'input', type:'radio',checked:'checked', id:userPrefix+'-'+config.DefaultLineSpacingCheckbox.id, value:userPrefix+'-'+config.DefaultLineSpacingCheckbox.value, name:userPrefix+'-'+config.DefaultLineSpacingCheckbox.groupName});
-      var CLabel = $create({tagName:'label', for:userPrefix+'-'+config.DefaultLineSpacingCheckbox.id});
-      var defaultCText = document.createTextNode ( config.DefaultLineSpacingCheckbox.lang[ langRef ] );
+      CInput = $create({tagName:'input', type:'radio',checked:'checked', id:userPrefix+'-'+config.DefaultLineSpacingCheckbox.id, value:userPrefix+'-'+config.DefaultLineSpacingCheckbox.value, name:userPrefix+'-'+config.DefaultLineSpacingCheckbox.groupName});
+      CLabel = $create({tagName:'label', for:userPrefix+'-'+config.DefaultLineSpacingCheckbox.id});
+      defaultCText = document.createTextNode ( config.DefaultLineSpacingCheckbox.lang[ langRef ] );
       CLabel.appendChild( defaultCText );
       fieldset.appendChild( CInput );
       fieldset.appendChild( CLabel );
 
       /**Alternative option : line spacing increase**/
-      var CInput = $create({tagName:'input', type:'radio',id:userPrefix+'-'+config.DyslexiaLineSpacingCheckbox.id, value:userPrefix+'-'+config.DyslexiaLineSpacingCheckbox.value, name:userPrefix+'-'+config.DyslexiaLineSpacingCheckbox.groupName});
-      var CLabel = $create({tagName:'label', for:userPrefix+'-'+config.DyslexiaLineSpacingCheckbox.id});
-      var defaultCText = document.createTextNode ( config.DyslexiaLineSpacingCheckbox.lang[ langRef ] );
+      CInput = $create({tagName:'input', type:'radio',id:userPrefix+'-'+config.DyslexiaLineSpacingCheckbox.id, value:userPrefix+'-'+config.DyslexiaLineSpacingCheckbox.value, name:userPrefix+'-'+config.DyslexiaLineSpacingCheckbox.groupName});
+      CLabel = $create({tagName:'label', for:userPrefix+'-'+config.DyslexiaLineSpacingCheckbox.id});
+      defaultCText = document.createTextNode ( config.DyslexiaLineSpacingCheckbox.lang[ langRef ] );
       CLabel.appendChild( defaultCText );
       fieldset.appendChild( CInput );
       fieldset.appendChild( CLabel );
@@ -540,28 +545,28 @@ var AccessConfig = (function() {
     }
 
     /**
-		Justification feature
-		**/
+     Justification feature
+     **/
 
     if(global.userParams.Justification != false){
-      var fieldset = $create({tagName:'fieldset', id:userPrefix+'-'+config.JustificationFieldset.id});
-      var legend = document.createElement( 'legend' );
-      var legendText = document.createTextNode( config.JustificationLegend.lang[ langRef ] );
+      fieldset = $create({tagName:'fieldset', id:userPrefix+'-'+config.JustificationFieldset.id});
+      legend = document.createElement( 'legend' );
+      legendText = document.createTextNode( config.JustificationLegend.lang[ langRef ] );
       legend.appendChild( legendText );
       fieldset.appendChild( legend );
 
       /**Default option**/
-      var CInput = $create({tagName:'input', type:'radio',checked:'checked', id:userPrefix+'-'+config.DefaultJustificationCheckbox.id, value:userPrefix+'-'+config.DefaultJustificationCheckbox.value, name:userPrefix+'-'+config.DefaultJustificationCheckbox.groupName});
-      var CLabel = $create({tagName:'label', for:userPrefix+'-'+config.DefaultJustificationCheckbox.id});
-      var defaultCText = document.createTextNode ( config.DefaultJustificationCheckbox.lang[ langRef ] );
+      CInput = $create({tagName:'input', type:'radio',checked:'checked', id:userPrefix+'-'+config.DefaultJustificationCheckbox.id, value:userPrefix+'-'+config.DefaultJustificationCheckbox.value, name:userPrefix+'-'+config.DefaultJustificationCheckbox.groupName});
+      CLabel = $create({tagName:'label', for:userPrefix+'-'+config.DefaultJustificationCheckbox.id});
+      defaultCText = document.createTextNode ( config.DefaultJustificationCheckbox.lang[ langRef ] );
       CLabel.appendChild( defaultCText );
       fieldset.appendChild( CInput );
       fieldset.appendChild( CLabel );
 
       /**Alternative option : kill justification**/
-      var CInput = $create({tagName:'input', type:'radio',id:userPrefix+'-'+config.DyslexiaJustificationCheckbox.id, value:userPrefix+'-'+config.DyslexiaJustificationCheckbox.value, name:userPrefix+'-'+config.DyslexiaJustificationCheckbox.groupName});
-      var CLabel = $create({tagName:'label', for:userPrefix+'-'+config.DyslexiaJustificationCheckbox.id});
-      var defaultCText = document.createTextNode ( config.DyslexiaJustificationCheckbox.lang[ langRef ] );
+      CInput = $create({tagName:'input', type:'radio',id:userPrefix+'-'+config.DyslexiaJustificationCheckbox.id, value:userPrefix+'-'+config.DyslexiaJustificationCheckbox.value, name:userPrefix+'-'+config.DyslexiaJustificationCheckbox.groupName});
+      CLabel = $create({tagName:'label', for:userPrefix+'-'+config.DyslexiaJustificationCheckbox.id});
+      defaultCText = document.createTextNode ( config.DyslexiaJustificationCheckbox.lang[ langRef ] );
       CLabel.appendChild( defaultCText );
       fieldset.appendChild( CInput );
       fieldset.appendChild( CLabel );
@@ -569,28 +574,28 @@ var AccessConfig = (function() {
     }
 
     /**
-		Image replacement feature
-		**/
+     Image replacement feature
+     **/
 
     if(global.userParams.ImageReplacement != false){
-      var fieldset = $create({tagName:'fieldset', id:userPrefix+'-'+config.ImageReplacementFieldset.id});
-      var legend = document.createElement( 'legend' );
-      var legendText = document.createTextNode( config.ImageReplacementLegend.lang[ langRef ] );
+      fieldset = $create({tagName:'fieldset', id:userPrefix+'-'+config.ImageReplacementFieldset.id});
+      legend = document.createElement( 'legend' );
+      legendText = document.createTextNode( config.ImageReplacementLegend.lang[ langRef ] );
       legend.appendChild( legendText );
       fieldset.appendChild( legend );
 
       /**Default option**/
-      var CInput = $create({tagName:'input', type:'radio',checked:'checked', id:userPrefix+'-'+config.DefaultImageReplacementCheckbox.id, value:userPrefix+'-'+config.DefaultImageReplacementCheckbox.value, name:userPrefix+'-'+config.DefaultImageReplacementCheckbox.groupName});
-      var CLabel = $create({tagName:'label', for:userPrefix+'-'+config.DefaultImageReplacementCheckbox.id});
-      var defaultCText = document.createTextNode ( config.DefaultImageReplacementCheckbox.lang[ langRef ] );
+      CInput = $create({tagName:'input', type:'radio',checked:'checked', id:userPrefix+'-'+config.DefaultImageReplacementCheckbox.id, value:userPrefix+'-'+config.DefaultImageReplacementCheckbox.value, name:userPrefix+'-'+config.DefaultImageReplacementCheckbox.groupName});
+      CLabel = $create({tagName:'label', for:userPrefix+'-'+config.DefaultImageReplacementCheckbox.id});
+      defaultCText = document.createTextNode ( config.DefaultImageReplacementCheckbox.lang[ langRef ] );
       CLabel.appendChild( defaultCText );
       fieldset.appendChild( CInput );
       fieldset.appendChild( CLabel );
 
       /**Alternative option : Image replacement**/
-      var CInput = $create({tagName:'input', type:'radio', id:userPrefix+'-'+config.ImageReplacementCheckbox.id, value:userPrefix+'-'+config.ImageReplacementCheckbox.value, name:userPrefix+'-'+config.ImageReplacementCheckbox.groupName});
-      var CLabel = $create({tagName:'label', for:userPrefix+'-'+config.ImageReplacementCheckbox.id});
-      var defaultCText = document.createTextNode ( config.ImageReplacementCheckbox.lang[ langRef ] );
+      CInput = $create({tagName:'input', type:'radio', id:userPrefix+'-'+config.ImageReplacementCheckbox.id, value:userPrefix+'-'+config.ImageReplacementCheckbox.value, name:userPrefix+'-'+config.ImageReplacementCheckbox.groupName});
+      CLabel = $create({tagName:'label', for:userPrefix+'-'+config.ImageReplacementCheckbox.id});
+      defaultCText = document.createTextNode ( config.ImageReplacementCheckbox.lang[ langRef ] );
       CLabel.appendChild( defaultCText );
       fieldset.appendChild( CInput );
       fieldset.appendChild( CLabel );
@@ -598,22 +603,24 @@ var AccessConfig = (function() {
     }
 
     /**Set generic class attributes on fieldset, legend and radio**/
-
+    let allFieldset=''
     allFieldset = div.querySelectorAll( 'fieldset' );
     for (i = 0, len = allFieldset.length; i < len; i++ ){
-      global.userParams.FormFieldset ? allFieldset[i].classList.add( userPrefix+global.userParams.FormFieldset ) : 
-											 allFieldset[i].classList.add( userPrefix+'-'+config.FormFieldset.classSetting );
+      global.userParams.FormFieldset ? allFieldset[i].classList.add( userPrefix+global.userParams.FormFieldset ) :
+        allFieldset[i].classList.add( userPrefix+'-'+config.FormFieldset.classSetting );
     }
 
+    let allLegend=''
     allLegend = div.querySelectorAll( 'legend' );
     for (i = 0, len = allLegend.length; i < len; i++ ){
-      global.userParams.FormFieldsetLegend ? 	allLegend[i].classList.add( userPrefix+global.userParams.FormFieldsetLegend ) : 
+      global.userParams.FormFieldsetLegend ? 	allLegend[i].classList.add( userPrefix+global.userParams.FormFieldsetLegend ) :
         allLegend[i].classList.add( userPrefix+'-'+config.LegendFieldset.classSetting );
     }
 
+    let allRadio=''
     allRadio = div.querySelectorAll( 'input[type="radio"]' );
     for (i = 0, len = allRadio.length; i < len; i++ ){
-      global.userParams.FormRadio ? 	allRadio[i].classList.add( userPrefix+global.userParams.FormRadio ) : 
+      global.userParams.FormRadio ? 	allRadio[i].classList.add( userPrefix+global.userParams.FormRadio ) :
         allRadio[i].classList.add( userPrefix+'-'+config.FormRadio.classSetting );
     }
 
@@ -633,7 +640,7 @@ var AccessConfig = (function() {
       return lang.substring( 0, ndx );
     }
     else {
-		 return 'en';
+      return 'en';
     }
   }
 
@@ -678,22 +685,22 @@ var AccessConfig = (function() {
       if( value === userPrefix+'-'+config.DefaultImageReplacementCheckbox.value){
         replaceImgSpan();
       }
-      body.classList.remove( value );	
-			
+      body.classList.remove( value );
+
     }
     var newClass = obj.getAttribute( 'value' );
     obj.setAttribute( 'checked', 'checked' );
-    var value = obj.getAttribute( 'value' );
+    value = obj.getAttribute( 'value' );
     if( value === userPrefix+'-'+config.ImageReplacementCheckbox.value){
       replaceImg();
-    }	
+    }
     body.classList.add( newClass );
     createCookie(global.cookieName, newClass,'180');
   }
 
   /**
-	Image replacement helpers
-	**/
+   Image replacement helpers
+   **/
 
   function setImgtab(){
     global.imgSpan = new Array;
@@ -722,13 +729,13 @@ var AccessConfig = (function() {
       if( global.imgSpan[j].parentNode ){
         var parent = global.imgSpan[j].parentNode;
         global.imgSpan[j] = parent.replaceChild( global.imgTab[j], global.imgSpan[j] );
-      }		
+      }
     }
   }
 
   /**
-	Modal manager
-	**/
+   Modal manager
+   **/
 
   function dialog( returnTo ) {
     //on ajoute une classe au body
@@ -788,16 +795,16 @@ var AccessConfig = (function() {
     }
   }
 
-  /** 
-		Cookies 
-	**/
+  /**
+   Cookies
+   **/
   function createCookie( name, value, days ) {
     if ( days ) {
       var datetime = new Date();
       datetime.setTime( datetime.getTime() + ( days * 24 * 60 * 60 * 1000 ) );
       var expires = "; expires=" + datetime.toGMTString();
     }
-    else var expires = "";
+    else expires = "";
     document.cookie = name + "=" + value + expires + "; path=/";
   }
   function readCookie( name ) {
@@ -815,7 +822,7 @@ var AccessConfig = (function() {
   }
 } )();
 
-//Polyfill pour la méthode remove non disponible dans InternetExplorer 
+//Polyfill pour la méthode remove non disponible dans InternetExplorer
 //Credit : https://github.com/jserz/js_piece/blob/master/DOM/ChildNode/remove()/remove().md
 
 (function (arr) {
