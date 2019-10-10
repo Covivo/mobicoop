@@ -57,28 +57,28 @@ class DataProvider
         $this->resource = $resource;
     }
 
-    public function setResource($resource){
+    public function setResource($resource)
+    {
         $this->resource = $resource;
     }
 
-     /**
-     * Get item operation
-     *
-     * @param int       $id         The id of the item
-     *
-     * @return Response The response of the operation.
-     */
+    /**
+    * Get item operation
+    *
+    * @param int       $id         The id of the item
+    *
+    * @return Response The response of the operation.
+    */
     public function getItem(array $params): Response
     {
         $clientResponse="";
         try {
             $clientResponse = $this->client->get($this->resource."?".http_build_query($params));
-            return new Response($clientResponse->getStatusCode(),$clientResponse->getBody()->getContents());
-        }
-        catch (TransferException $e) {
+            return new Response($clientResponse->getStatusCode(), $clientResponse->getBody()->getContents());
+        } catch (TransferException $e) {
             return new Response($e->getCode());
         }
-        return new Response();  
+        return new Response();
     }
     
     /**
@@ -146,7 +146,6 @@ class DataProvider
             }
             if ($body) {
                 $options[RequestOptions::JSON]=$body;
-
             }
             $clientResponse = $this->client->post($this->resource, $options);
             if ($clientResponse->getStatusCode() == 200) {

@@ -42,7 +42,6 @@ class SmsEnvoiProvider implements ProviderInterface
         $this->collection = [];
         $this->username=$username;
         $this->password=$password;
-
     }
 
     /**
@@ -53,18 +52,18 @@ class SmsEnvoiProvider implements ProviderInterface
         // call api to authentication
         $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESSOURCE_AUTH);
         $response = $dataProvider->getItem(['username'=>$this->username, 'password'=>$this->password]);
-        if($response->getCode()==200){
+        if ($response->getCode()==200) {
             $dataProvider->setResource(self::COLLECTION_RESSOURCE_SMS);
 
             $headers=[];
-            $headers['user_key'] = explode(";",$response->getValue())[0];
-            $headers['Session_key'] = explode(";",$response->getValue())[1];
+            $headers['user_key'] = explode(";", $response->getValue())[0];
+            $headers['Session_key'] = explode(";", $response->getValue())[1];
             $body=[
-                "message_type"=> "PRM", 
-                "message"=> $sms->getMessage(), 
+                "message_type"=> "PRM",
+                "message"=> $sms->getMessage(),
                 "recipient"=> [
                     $sms->getRecipientTelephone()
-                ], 
+                ],
                 "sender"=> "Mobicoop"
             ];
             $dataProvider->postCollection($body, $headers);
@@ -79,16 +78,16 @@ class SmsEnvoiProvider implements ProviderInterface
     {
     }
 
-     /**
-     * {@inheritdoc}
-     */
+    /**
+    * {@inheritdoc}
+    */
     public function getItem(string $class, string $apikey, array $params)
     {
     }
 
-     /**
-     * {@inheritdoc}
-     */
+    /**
+    * {@inheritdoc}
+    */
     public function deserialize(string $class, array $data)
     {
         $this->logger->info("SMS Envoi API return");
