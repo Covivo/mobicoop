@@ -29,6 +29,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
 use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\RequestOptions;
 
 /**
  * Data provider service.
@@ -54,6 +55,30 @@ class DataProvider
                 'base_uri' => $uri
         ]);
         $this->resource = $resource;
+    }
+
+    public function setResource($resource){
+        $this->resource = $resource;
+    }
+
+     /**
+     * Get item operation
+     *
+     * @param int       $id         The id of the item
+     *
+     * @return Response The response of the operation.
+     */
+    public function getItem(array $params): Response
+    {
+        $clientResponse="";
+        try {
+            $clientResponse = $this->client->get($this->resource."?".http_build_query($params));
+            return new Response($clientResponse->getStatusCode(),$clientResponse->getBody()->getContents());
+        }
+        catch (TransferException $e) {
+            return new Response($e->getCode());
+        }
+        return new Response();  
     }
     
     /**
@@ -109,10 +134,21 @@ class DataProvider
     *
     * @return Response The response of the operation.
     */
-    public function postCollection($params=null): Response
+    public function postCollection($body=null, $headers=null, $params=null): Response
     {
         try {
-            $clientResponse = $this->client->post($this->resource, ['query'=>$params]);
+            $options=[];
+            if ($params) {
+                $options['query']=$params;
+            }
+            if ($headers) {
+                $options['headers']=$headers;
+            }
+            if ($body) {
+                $options[RequestOptions::JSON]=$body;
+
+            }
+            $clientResponse = $this->client->post($this->resource, $options);
             if ($clientResponse->getStatusCode() == 200) {
                 return new Response($clientResponse->getStatusCode(), $clientResponse->getBody());
             }

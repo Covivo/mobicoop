@@ -23,32 +23,74 @@
 
 namespace App\DataProvider\Entity;
 
+use App\DataProvider\Interfaces\ProviderInterface;
 use App\DataProvider\Service\DataProvider;
 use App\Communication\Entity\Sms;
 
-class SmsEnvoiProvider
+class SmsEnvoiProvider implements ProviderInterface
 {
-    private const URI = "https://api.smsenvoi.com/";
-    private const COLLECTION_RESSOURCE_SMS = "API/v1.0/REST/sms";
+    private const URI ="https://api.smsenvoi.com/";
+    private const COLLECTION_RESSOURCE_SMS ="API/v1.0/REST/sms";
+    private const COLLECTION_RESSOURCE_AUTH ="API/v1.0/REST/login";
    
     private $collection;
+    private $username;
+    private $password;
 
-    public function __construct()
+    public function __construct(string $username, string $password)
     {
         $this->collection = [];
+        $this->username=$username;
+        $this->password=$password;
+
     }
 
     /**
      * {@inheritdoc}
      */
-    public function postCollection(array $params)
+    public function postCollection(Sms $sms)
     {
-        $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESSOURCE_SMS);
-        $dataProvider->setClass(Sms::class);
-        $params=[];
-        $params['user_key'] = "USER_KEY";
-        $params['Access_token'] = "ACCESS_TOKEN}";
-        
-        $dataProvider->postCollection($params);
+        // call api to authentication
+        $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESSOURCE_AUTH);
+        $response = $dataProvider->getItem(['username'=>$this->username, 'password'=>$this->password]);
+        if($response->getCode()==200){
+            $dataProvider->setResource(self::COLLECTION_RESSOURCE_SMS);
+
+            $headers=[];
+            $headers['user_key'] = explode(";",$response->getValue())[0];
+            $headers['Session_key'] = explode(";",$response->getValue())[1];
+            $body=[
+                "message_type"=> "PRM", 
+                "message"=> $sms->getMessage(), 
+                "recipient"=> [
+                    $sms->getRecipientTelephone()
+                ], 
+                "sender"=> "Mobicoop"
+            ];
+            $dataProvider->postCollection($body, $headers);
+        }
+        return new Response();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCollection(string $class, string $apikey, array $params)
+    {
+    }
+
+     /**
+     * {@inheritdoc}
+     */
+    public function getItem(string $class, string $apikey, array $params)
+    {
+    }
+
+     /**
+     * {@inheritdoc}
+     */
+    public function deserialize(string $class, array $data)
+    {
+        $this->logger->info("SMS Envoi API return");
     }
 }

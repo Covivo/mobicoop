@@ -37,14 +37,14 @@ class Sms
     private $recipientTelephone;
 
     /**
-     * @var string message body of the email
+     * @var string message body of the telephone
      * @Assert\NotBlank
      */
     private $message;
 
     public function getRecipientTelephone(): string
     {
-        return $this->recipientEmail;
+        return $this->recipientTelephone;
     }
 
     public function setRecipientTelephone(string $recipientTelephone): self

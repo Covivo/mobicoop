@@ -37,21 +37,26 @@ class SmsManager
     private $templating;
     private $templatePath;
     private $logger;
+    private $smsProvider;
   
     /**
      * SmsManager constructor.
      *
      * @param \Twig_Environment $templating
      * @param LoggerInterface $logger
-     * @param SmsEnvoiProvider $smsEnvoiProvider
+     * @param SmsProvider $smsProvider
      * @param string $templatePath
      */
-    public function __construct(\Twig_Environment $templating, LoggerInterface $logger, SmsEnvoiProvider $smsEnvoiProvider, string $templatePath)
+    public function __construct(\Twig_Environment $templating, LoggerInterface $logger, string $templatePath, string $smsProvider, string $username, string $password)
     {
         $this->templating = $templating;
         $this->templatePath = $templatePath;
         $this->logger = $logger;
-        $this->smsEnvoiProvider= $smsEnvoiProvider;
+
+        switch($smsProvider) {
+            case 'smsEnvoi':  $this->smsProvider = new SmsEnvoiProvider($username, $password);break;
+            default:  $this->smsProvider = new SmsEnvoiProvider($username, $password);break;
+        }
     }
 
     /**
@@ -73,11 +78,8 @@ class SmsManager
             ),
             'text/html'
         );
-
         // to do send sms via smsEnvoi
-        
-        $this->logger->info('on est ici');
-        
+        $this->smsProvider->postCollection($sms);
 
         return;
     }

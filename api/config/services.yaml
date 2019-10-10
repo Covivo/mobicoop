@@ -117,8 +117,11 @@ services:
     App\Communication\Service\SmsManager:
         arguments:
             $templatePath: '%env(resolve:COMMUNICATION_TEMPLATE_SMS_PATH)%'
+            $smsProvider: '%env(resolve:PROVIDER_SMS)%'
+            $username: '%env(resolve:USERNAME_SMS)%'
+            $password: '%env(resolve:PASSWORD_SMS)%'
         tags: 
-            - { name: monolog.logger, channel: communication }        
+            - { name: monolog.logger, channel: communication }
 
     App\Communication\Service\InternalMessageManager:
         tags: 
