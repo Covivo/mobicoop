@@ -426,11 +426,13 @@ class GeoMatcher
     {
         $order = [];
         $i = 0;
+        $curDuration = 0;
         foreach ($points as $key=>$point) {
+            $curDuration = isset($durations[$i]['duration']) ? $durations[$i]['duration'] : $curDuration;
             $order[] = [
                 'candidate'         => (substr($key, 0, 1) == 'A') ? 1 : 2,
                 'position'          => substr($key, 1),
-                'duration'          => isset($durations[$i]) ? $durations[$i]['duration'] : null,
+                'duration'          => isset($durations[$i]) ? $durations[$i]['duration'] : $curDuration,
                 'approx_duration'   => isset($durations[$i]) ? $durations[$i]['approx_duration'] : null,    // approx_duration : if the duration to the waypoint isn't strictly returned by the SIG
                 'approx_point'      => isset($durations[$i]) ? $durations[$i]['approx_point'] : null,       // approx_point : if the position of the waypoint isn't strictly returned by the SIG
                 'address'           => $point

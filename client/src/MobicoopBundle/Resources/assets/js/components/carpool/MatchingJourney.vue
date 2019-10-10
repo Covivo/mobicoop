@@ -46,21 +46,74 @@
 
       <!-- Route / carpooler -->
       <v-row
-        align="center"
+        align="start"
         dense
       > 
+        <!-- Route -->
         <v-col
           cols="8"
         >
           <v-journey
-            :time="time"
+            :time="computedTime"
             :waypoints="waypoints"
           />
         </v-col>
+
+        <!-- Carpooler -->
         <v-col
           cols="4"
         >
-          Carpooler
+          <v-card>
+            <!-- Avatar -->
+            <v-img
+              aspect-ratio="2"
+              src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortRound&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light"
+            />
+            <v-card-title>
+              <v-row
+                dense
+              >
+                <v-col
+                  class="text-center"
+                >
+                  {{ proposal.user.givenName }} {{ proposal.user.familyName.substr(0,1).toUpperCase()+"." }}
+                </v-col>
+              </v-row>
+            </v-card-title>
+            <v-card-text>
+              <v-row
+                dense
+              >
+                <v-col
+                  cols="12"
+                  class="text-center"
+                >
+                  {{ age }}
+                </v-col>
+                <v-col
+                  cols="12"
+                  class="text-center"
+                >
+                  {{ proposal.user.telephone }}
+                </v-col>
+                
+                <v-col  
+                  cols="12"
+                  class="text-center"
+                >
+                  <v-btn
+                    color="primary"
+                    @click="carpoolDialog = false"
+                  >
+                    <v-icon>
+                      mdi-email
+                    </v-icon>
+                    {{ $t('contact') }}
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
         </v-col>
       </v-row>
     </v-card-text>
@@ -146,11 +199,13 @@ export default {
       lMatching: this.matching,
       lDate: this.date,
       lUser: this.user,
-      lRegular: this.regular,
-      time: "08:00"
+      lRegular: this.regular
     }
   },
   computed: {
+    age (){
+      return moment().diff(moment([this.proposal.user.birthYear]),'years')+' '+this.$t("birthYears")
+    },
     driver() {
       // the matching user is driver if he has an offer
       return this.lMatching.offer ? true : false
@@ -169,6 +224,34 @@ export default {
     },
     computedPrice() {
       return this.driver ? Math.round((this.lMatching.offer.proposalOffer.criteria.priceKm*this.lMatching.offer.proposalRequest.criteria.directionPassenger.distance/1000)*100)/100 : null
+    },
+    computedTime() {
+      if (this.proposal.criteria.frequency == 2) {
+        // we have to search the week day and display the time
+        const dayOfWeek = moment.utc(this.proposal.criteria.fromDate).format('d');
+        switch (dayOfWeek) {
+        case '0' : 
+          return moment.utc(this.proposal.criteria.sunTime).format(this.$t("ui.i18n.time.format.hourMinute"));
+        case '1' : 
+          return moment.utc(this.proposal.criteria.monTime).format(this.$t("ui.i18n.time.format.hourMinute"));
+        case '2' : 
+          return moment.utc(this.proposal.criteria.tueTime).format(this.$t("ui.i18n.time.format.hourMinute"));
+        case '3' : 
+          return moment.utc(this.proposal.criteria.wedTime).format(this.$t("ui.i18n.time.format.hourMinute"));
+        case '4' : 
+          return moment.utc(this.proposal.criteria.thuTime).format(this.$t("ui.i18n.time.format.hourMinute"));
+        case '5' : 
+          return moment.utc(this.proposal.criteria.friTime).format(this.$t("ui.i18n.time.format.hourMinute"));
+        case '6' : 
+          return moment.utc(this.proposal.criteria.satTime).format(this.$t("ui.i18n.time.format.hourMinute"));
+        default:
+          return '';
+        }
+      } else {
+        return this.proposal.criteria.fromTime
+          ? moment.utc(this.proposal.criteria.fromTime).format(this.$t("ui.i18n.time.format.hourMinute"))
+          : ""; 
+      }
     },
     proposal() {
       return this.lMatching.offer ? this.lMatching.offer.proposalOffer : this.lMatching.request.proposalRequest;

@@ -16,7 +16,7 @@
         <v-col 
           cols="10"
         >
-          {{ waypoint.address.addressLocality }} {{ waypoint.address.streetAddress ? ' - ' + waypoint.address.streetAddress : null }}
+          <strong>{{ waypoint.address.addressLocality }}</strong> {{ waypoint.address.venue ? ' - ' + waypoint.address.venue : waypoint.address.streetAddress ? ' - ' + waypoint.address.streetAddress : null }}
         </v-col>
       </v-row>
     </v-timeline-item>
