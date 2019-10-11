@@ -36,6 +36,7 @@ use App\User\Entity\User;
 use CrEOF\Spatial\PHP\Types\Geometry\Point;
 use App\Geography\Controller\AddressSearch;
 use App\RelayPoint\Entity\RelayPoint;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * A postal address (including textual informations and / or geometric coordinates).
@@ -262,7 +263,7 @@ class Address
     private $home;
 
     /**
-     * @var string|null Label for display
+     * @var array|null Label for display
      *
      * @Groups({"read","pt"})
      */
@@ -296,6 +297,7 @@ class Address
         if ($id) {
             $this->id = $id;
         }
+        $this->displayLabel = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -522,12 +524,12 @@ class Address
         return $this;
     }
 
-    public function getDisplayLabel(): ?string
+    public function getDisplayLabel(): ?array
     {
         return $this->displayLabel;
     }
 
-    public function setDisplayLabel(?string $displayLabel)
+    public function setDisplayLabel(?array $displayLabel)
     {
         $this->displayLabel = $displayLabel;
     }
