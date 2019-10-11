@@ -214,7 +214,7 @@ class MassImportManager
         $geocodedDestinations = [];
         $this->logger->info('Mass analyze | Geocode destinations start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         foreach ($destinations as $key => $destination) {
-            $address = trim($destination['houseNumber'] . " " . $destination['street'] . " " . $destination['postalCode'] . " " . $destination['addressLocality'] . " " . $destination['addressCountry']);
+            $address = trim($destination['houseNumber'] . " " . $destination['street'] . ", " . $destination['postalCode'] . " " . $destination['addressLocality'] . " " . $destination['addressCountry']);
             if ($addresses = $this->geoSearcher->geoCode($address)) {
                 if (count($addresses) > 0) {
                     // we use the first result as best result
