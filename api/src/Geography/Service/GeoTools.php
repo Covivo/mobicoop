@@ -145,7 +145,7 @@ class GeoTools
     public function getDisplayLabel(Address $address): array
     {
         // Determine the more logical display label considering the params
-        // We return an array like this : 
+        // We return an array like this :
         // [
         //     // first line
         //     0 => [
