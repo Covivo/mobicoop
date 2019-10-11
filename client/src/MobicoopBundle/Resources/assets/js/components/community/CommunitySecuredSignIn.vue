@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-row 
+    <v-row
       justify="center"
     >
       <v-col
@@ -30,7 +30,7 @@
           ref="form"
           v-model="valid"
           lazy-validation
-          :action="$t('urlSignIn')+this.communityId"
+          :action="$t('urlSignIn')+communityId"
           method="POST"
         >
           <v-text-field
@@ -67,7 +67,7 @@
               </div>
             </template>
             <span>{{ $t("errors.notLogged") }}</span>
-          </v-tooltip>          
+          </v-tooltip>
         </v-form>
       </v-col>
     </v-row>

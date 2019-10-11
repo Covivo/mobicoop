@@ -3,10 +3,10 @@
     <v-container class="window-scroll">
       <v-timeline
         v-if="items.length>0"
-        :hidden="this.loading"
+        :hidden="loading"
       >
         <v-timeline-item
-          v-for="(item, i) in this.items"
+          v-for="(item, i) in items"
           :key="i"
           :fil-dot="item.divider===false"
           :hide-dot="item.divider===true"
@@ -14,7 +14,7 @@
           :left="item.origin!=='own'"
           :idmessage="item.idMessage"
           :class="(item.divider ? 'divider' : '')+' '+(item.origin ? item.origin : '')"
-        >     
+        >
           <template
             v-if="item.divider===false"
             v-slot:icon
@@ -42,7 +42,7 @@
           >{{ item.createdDate }}</span>
         </v-timeline-item>
       </v-timeline>
-      <v-card v-else-if="!this.loading">
+      <v-card v-else-if="!loading">
         <v-card-text
           class="font-italic subtitle-1"
         >
@@ -55,8 +55,8 @@
         :type="type"
         :tile="tile"
         class="mx-auto"
-        :hidden="!this.loading"
-      />       
+        :hidden="!loading"
+      />
     </v-container>
   </v-content>
 </template>
@@ -99,7 +99,7 @@ export default {
       tile: false,
       type: 'article',
       types: [],
-      loading: false   
+      loading: false
     }
   },
   watch:{
@@ -113,7 +113,7 @@ export default {
       axios.get(this.$t("urlCompleteThread",{idMessage:this.idMessage}))
         .then(response => {
           this.loading = false;
-          this.items.length = 0;  
+          this.items.length = 0;
 
           moment.locale(this.locale);
           let firstItem = {
@@ -151,7 +151,7 @@ export default {
         })
         .catch(function (error) {
           console.log(error);
-        }); 
+        });
     },
     createdTime(date){
       return moment(date).format("HH:mm");

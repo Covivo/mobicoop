@@ -19,7 +19,7 @@ Encore
   .setPublicPath('/build')
   .addEntry('bundle_app', './src/MobicoopBundle/Resources/assets/js/app.js')
   // ⚙️ UNCOMMENT below if you are client platform ⚙️ //
-  // .addEntry('app', './assets/js/app.js')  
+  // .addEntry('app', './assets/js/app.js')
   .splitEntryChunks()
   .enableVersioning(Encore.isProduction())
   .enableVueLoader()
@@ -45,8 +45,8 @@ Encore
       }
     ]
   })
-  .setManifestKeyPrefix('/build')
-  .enablePostCssLoader()
+  .setManifestKeyPrefix('build')
+  .enablePostCssLoader();
 
 // for Dev we do not add some plugin & loader
 if (!Encore.isProduction()) {

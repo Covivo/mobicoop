@@ -26,7 +26,7 @@
       class="overflow-y-auto"
       fluid
     >
-      <v-row 
+      <v-row
         justify="center"
       >
         <v-col
@@ -44,17 +44,17 @@
       >
         <v-col class="col-4">
           <v-alert
-            v-if="this.error!==''"
+            v-if="error!==''"
             type="error"
           >
-            {{ $t(this.error) }}
+            {{ $t(error) }}
           </v-alert>
           <v-form
             id="formLoginValidation"
             ref="form"
             v-model="valid"
             lazy-validation
-            :action="$t('urlPost')+(this.token)"
+            :action="$t('urlPost')+(token)"
             method="POST"
           >
             <v-text-field
@@ -121,8 +121,8 @@ export default {
       if (this.$refs.form.validate()) {
         document.getElementById("formLoginValidation").submit();
       }
-    }  
-    
+    }
+
   }
 
 };
