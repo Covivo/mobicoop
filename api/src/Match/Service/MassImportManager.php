@@ -244,7 +244,7 @@ class MassImportManager
             // no gps points
             $address = trim(
                 $massPerson->getPersonalAddress()->getHouseNumber() . " " .
-                $massPerson->getPersonalAddress()->getStreet() . " " .
+                $massPerson->getPersonalAddress()->getStreet() . ", " .
                 $massPerson->getPersonalAddress()->getPostalCode() . " " .
                 $massPerson->getPersonalAddress()->getAddressLocality() . " " .
                 $massPerson->getPersonalAddress()->getAddressCountry()
@@ -314,14 +314,14 @@ class MassImportManager
             } else {
                 $origin = trim(
                     $massPerson->getPersonalAddress()->getHouseNumber() . " " .
-                    $massPerson->getPersonalAddress()->getStreet() . " " .
+                    $massPerson->getPersonalAddress()->getStreet() . ", " .
                     $massPerson->getPersonalAddress()->getPostalCode() . " " .
                     $massPerson->getPersonalAddress()->getAddressLocality() . " " .
                     $massPerson->getPersonalAddress()->getAddressCountry()
                 );
                 $destination = trim(
                     $massPerson->getWorkAddress()->getHouseNumber() . " " .
-                    $massPerson->getWorkAddress()->getStreet() . " " .
+                    $massPerson->getWorkAddress()->getStreet() . ", " .
                     $massPerson->getWorkAddress()->getPostalCode() . " " .
                     $massPerson->getWorkAddress()->getAddressLocality() . " " .
                     $massPerson->getWorkAddress()->getAddressCountry()
