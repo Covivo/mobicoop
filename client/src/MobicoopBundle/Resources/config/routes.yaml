@@ -154,15 +154,22 @@ user_message_update_ask:
 carpool_ad_post:
     path:
         fr: /covoiturage/annonce/poster
-        en: /carpool/ad/share
+        en: /carpool/ad/post
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPost
+
+# post an ad from a search 
+carpool_ad_post_search:
+    path:
+        fr: /covoiturage/recherche/poster
+        en: /carpool/search/post
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPostFromSearch
 
 # post an ad in a community
 carpool_ad_post_community:
     path:
         fr: /communaute/{communityId}/annonce/poster
         en: /community/{communityId}/ad/share
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPost
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPostFromSearch
     requirements:
         communityId: '\d+'
 

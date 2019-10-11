@@ -18,7 +18,7 @@
         "buttons": {
             "publish": {
                 "label": "Publier une annonce",
-                "route": "covoiturage/annonce/poster"
+                "route": "covoiturage/recherche/poster"
             },
             "search": {
                 "label": "Rechercher",
@@ -45,7 +45,7 @@
         "buttons": {
             "publish": {
                 "label": "Publish",
-                "route": "/carpool/ad/publish"
+                "route": "/carpool/search/publish"
             },
             "search": {
                 "label": "Search",

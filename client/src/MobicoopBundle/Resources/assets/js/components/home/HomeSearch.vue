@@ -107,6 +107,11 @@ export default {
     punctualDateOptional: {
       type: Boolean,
       default: false
+    },
+    // params to add to the publish and search routes
+    params: {
+      type: Object,
+      default: null
     }
   },
   data() {
@@ -145,7 +150,6 @@ export default {
           hiddenField.type = 'hidden';
           hiddenField.name = key;
           hiddenField.value = params[key];
-
           form.appendChild(hiddenField);
         }
       }
@@ -160,41 +164,27 @@ export default {
     },
     search: function () {
       this.loadingSearch = true;
-      let params = {
+      let lParams = {
         origin: JSON.stringify(this.origin),
         destination: JSON.stringify(this.destination),
         regular:this.dataRegular?'1':'0',
         date:this.date?this.date:null,
-        time:this.time?this.time:null
+        time:this.time?this.time:null,
+        ...this.params
       };
-      this.post(`${this.$t("buttons.search.route")}`, params);
+      this.post(`${this.$t("buttons.search.route")}`, lParams);
     },
     publish: function () {
       this.loadingPublish = true;
-      let params = [];
-      let communityId = (this.community) ? "/"+this.community.id : "";
-      if (this.origin) {
-        params.push("origin="+this.origin.displayedLabel);
-        params.push("originLat="+this.origin.latitude);
-        params.push("originLon="+this.origin.longitude);
-        params.push("originAddressLocality="+this.origin.addressLocality);
-      }
-      if (this.destination) {    
-        params.push("destination="+this.destination.displayedLabel);
-        params.push("destinationLat="+this.destination.latitude);
-        params.push("destinationLon="+this.destination.longitude);
-        params.push("destinationAddressLocality="+this.destination.addressLocality);
-      }
-      if (this.dataRegular) {
-        params.push("regular=1");
-      }
-      else{
-        params.push("regular=0");
-      }
-      if (this.date) {
-        params.push("date="+this.date);
-      }
-      window.location.href = "/covoiturage/annonce/poster"+communityId+"?"+params.join("&");
+      let lParams = {
+        origin: JSON.stringify(this.origin),
+        destination: JSON.stringify(this.destination),
+        regular:this.dataRegular?'1':'0',
+        date:this.date?this.date:null,
+        time:this.time?this.time:null,
+        ...this.params
+      };
+      this.post(`${this.$t("buttons.publish.route")}`, lParams);
     },
   }
 };
