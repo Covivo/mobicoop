@@ -402,7 +402,7 @@ class Address implements ResourceInterface, \JsonSerializable
         $this->home = $isHome ? $isHome : false;
     }
 
-    public function getDisplayLabel(): ?array
+    public function getDisplayLabel()
     {
         return $this->displayLabel;
     }
