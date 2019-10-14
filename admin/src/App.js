@@ -9,7 +9,6 @@ import authProvider from './authProvider';
 
 import { createMuiTheme } from '@material-ui/core/styles';
 
-import PersonIcon from '@material-ui/icons/Person';
 import PeopleIcon from '@material-ui/icons/People';
 import LocalParkingIcon from '@material-ui/icons/LocalParking';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
@@ -19,7 +18,7 @@ import MapIcon from '@material-ui/icons/Map';
 
 import frenchMessages from 'ra-language-french';
 
-import { UserList, UserShow, UserCreate, UserEdit } from './Component/User/users';
+import users from './Component/users/index';
 import { CommunityList, CommunityShow, CommunityCreate, CommunityEdit } from './Component/Community/communities';
 import { CommunityUserCreate, CommunityUserEdit } from './Component/Community/community_users';
 import { RelayPointList, RelayPointShow, RelayPointCreate, RelayPointEdit } from './Component/RelayPoint/relaypoints';
@@ -126,7 +125,7 @@ export default class extends Component {
           >      
             {permissions => {
                 return  [          
-                  isAuthorized("user_manage")         ? <Resource name="users" list={ UserList } show={ UserShow } create={ UserCreate } edit={ UserEdit } title="Utilisateurs" options={{ label: 'Utilisateurs' }} icon={PersonIcon} /> : null,
+                  isAuthorized("user_manage")         ? <Resource name={'users'} {...users}  /> : null,
                   isAuthorized("community_manage")    ? <Resource name="communities" list={ CommunityList } show={ CommunityShow } create={ CommunityCreate } edit={ CommunityEdit } title="Communautés" options={{ label: 'Communautés' }} icon={PeopleIcon} /> : null,
                   isAuthorized("relay_point_manage")  ? <Resource name="relay_points" list={ RelayPointList } show={ RelayPointShow} create={ RelayPointCreate} edit={ RelayPointEdit} title="Points relais" options={{ label: 'Points relais' }} icon={LocalParkingIcon} /> : null,
                   isAuthorized("relay_point_manage")  ? <Resource name="relay_point_types" list={ RelayPointTypeList } show={ RelayPointTypeShow} create={ RelayPointTypeCreate} edit={ RelayPointTypeEdit} title="Types de points relais" options={{ label: 'Types de points relais' }} icon={LocalParkingIcon} /> : null,
