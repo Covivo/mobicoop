@@ -18,8 +18,8 @@
       :type="type"
       :tile="tile"
       class="mx-auto"
-      :hidden="this.SkeletonHidden"
-    />    
+      :hidden="SkeletonHidden"
+    />
   </v-content>
 </template>
 <script>
@@ -44,7 +44,7 @@ export default {
       tile: false,
       type: 'list-item-avatar-three-line',
       types: [],
-      SkeletonHidden: false   
+      SkeletonHidden: false
     }
   },
   mounted(){
@@ -57,7 +57,7 @@ export default {
       })
       .catch(function (error) {
         console.log(error);
-      });    
+      });
   },
   methods:{
     emit(data){

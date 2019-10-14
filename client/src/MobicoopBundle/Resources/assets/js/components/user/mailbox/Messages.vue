@@ -5,7 +5,7 @@
       grid-list-md
       fluid
     >
-      <v-row 
+      <v-row
         justify="center"
       >
         <v-col
@@ -25,7 +25,7 @@
           text-xs-left
           class="col-5 pt-5 pb-4 pl-2 secondary white--text font-weight-bold headline"
         >
-          <mail-box-header>{{ this.recipientName }}</mail-box-header>
+          <mail-box-header>{{ recipientName }}</mail-box-header>
         </v-col>
         <v-col
           text-xs-left
@@ -65,7 +65,7 @@
                 mdi-chat
               </v-icon>
             </v-tab>
-          </v-tabs>          
+          </v-tabs>
           <v-tabs-items v-model="modelTabs">
             <v-tab-item value="tab-cm">
               <threads-carpool
@@ -90,21 +90,21 @@
             <v-col cols="12">
               <thread-details
                 ref="threadDetails"
-                :id-message="this.idMessage"
-                :id-user="this.idUser"
+                :id-message="idMessage"
+                :id-user="idUser"
                 @updateAskHistory="updateAskHistory"
               />
             </v-col>
           </v-row>
           <v-row>
             <v-col
-              v-if="this.idMessage"
+              v-if="idMessage"
               cols="12"
             >
               <type-text
                 ref="typeText"
-                :id-thread-message="this.idMessage"
-                :id-recipient="this.idRecipient"
+                :id-thread-message="idMessage"
+                :id-recipient="idRecipient"
                 @sendInternalMessage="sendInternalMessage"
               />
             </v-col>
@@ -114,8 +114,8 @@
           class="col-4"
         >
           <thread-actions
-            :id-ask-history="this.currentIdAskHistory"
-            :recipient-name="this.recipientName"
+            :id-ask-history="currentIdAskHistory"
+            :recipient-name="recipientName"
           />
         </v-col>
       </v-row>

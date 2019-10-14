@@ -40,20 +40,20 @@
             :proposal="driver ? matching.offer.proposalOffer : matching.request.proposalRequest"
           />
 
-          <v-divider v-if="showRegularSummary" /> 
+          <v-divider v-if="showRegularSummary" />
 
           <!-- Journey summary : date, time, summary of route, seats, price -->
-          <journey-summary 
+          <journey-summary
             :matching="matching"
             :regular="regular"
             :user="user"
             :date="driver ? matching.offer.criteria.fromDate : matching.request.criteria.fromDate"
           />
 
-          <v-divider /> 
+          <v-divider />
 
           <!-- Carpooler detail -->
-          <carpooler-summary 
+          <carpooler-summary
             :user="user"
             :carpooler="driver ? matching.offer.proposalOffer.user : matching.request.proposalRequest.user"
             :proposal="driver ? matching.offer.proposalOffer : matching.request.proposalRequest"
@@ -68,7 +68,7 @@
 
 <script>
 import { merge } from "lodash";
-import moment from "moment";
+// import moment from "moment";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/carpool/MatchingResult.json";
 import TranslationsClient from "@clientTranslations/components/carpool/MatchingResult.json";
@@ -135,7 +135,7 @@ export default {
         matching: this.matching
       });
     },
-    
+
   }
 };
 </script>
