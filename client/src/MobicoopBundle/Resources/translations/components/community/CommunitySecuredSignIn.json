@@ -1,6 +1,7 @@
 {
   "fr": {
     "title":"Rejoindre une commmunauté sécurisée",
+    "titleWithName":"Rejoindre la commmunauté",
     "credential1":"1er identifiant",
     "credential2":"2nd identifiant",
     "urlSignIn":"/communaute/",
@@ -13,6 +14,7 @@
   },
   "en": {
     "title":"Join a secured community",
+    "titleWithName":"Join this community :",
     "credential1":"First credential",
     "credential2":"Second credential",
     "urlSignIn":"/communauty/",

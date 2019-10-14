@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-row 
+    <v-row
       justify="center"
     >
       <v-col
@@ -9,7 +9,12 @@
         xl="6"
         align="center"
       >
-        <h1>{{ $t('title') }}</h1>
+        <h1 v-if="communityName === null">
+          {{ $t('title') }}
+        </h1>
+        <h1 v-else>
+          {{ $t('titleWithName') }} "{{ communityName }}"
+        </h1>
       </v-col>
     </v-row>
     <v-row justify="center">
@@ -25,7 +30,7 @@
           ref="form"
           v-model="valid"
           lazy-validation
-          :action="$t('urlSignIn')+this.communityId"
+          :action="$t('urlSignIn')+communityId"
           method="POST"
         >
           <v-text-field
@@ -46,7 +51,10 @@
 
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <div v-on="(userId === null) ? on : {}">
+              <div
+                class="text-center"
+                v-on="(userId === null) ? on : {}"
+              >
                 <v-btn
                   :disabled="!valid || userId === null"
                   color="success"
@@ -59,7 +67,7 @@
               </div>
             </template>
             <span>{{ $t("errors.notLogged") }}</span>
-          </v-tooltip>          
+          </v-tooltip>
         </v-form>
       </v-col>
     </v-row>
@@ -80,6 +88,10 @@ export default {
   props:{
     communityId: {
       type: Number,
+      default: null
+    },
+    communityName: {
+      type: String,
       default: null
     },
     userId:{

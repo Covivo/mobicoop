@@ -1,0 +1,8 @@
+{
+    "fr": {
+        "urlGet":"/utilisateur/messages/covoiturage"
+    },
+    "en": {
+        "urlGet":"/user/messages/carpool"
+    }
+}

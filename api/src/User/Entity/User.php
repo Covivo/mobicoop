@@ -53,6 +53,8 @@ use App\User\Controller\UserRegistration;
 use App\User\Controller\UserPermissions;
 use App\User\Controller\UserLogin;
 use App\User\Controller\UserThreads;
+use App\User\Controller\UserThreadsDirectMessages;
+use App\User\Controller\UserThreadsCarpoolMessages;
 use App\User\Controller\UserUpdatePassword;
 use App\User\Controller\UserUpdate;
 use App\User\Filter\HomeAddressTerritoryFilter;
@@ -133,6 +135,18 @@ use App\Solidary\Entity\Solidary;
  *              "normalization_context"={"groups"={"threads"}},
  *              "controller"=UserThreads::class,
  *              "path"="/users/{id}/threads"
+ *          },
+ *          "threadsDirectMessages"={
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"threads"}},
+ *              "controller"=UserThreadsDirectMessages::class,
+ *              "path"="/users/{id}/threadsDirectMessages"
+ *          },
+ *          "threadsCarpoolMessages"={
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"threads"}},
+ *              "controller"=UserThreadsCarpoolMessages::class,
+ *              "path"="/users/{id}/threadsCarpoolMessages"
  *          },
  *          "put"={
  *              "method"="PUT",

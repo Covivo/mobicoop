@@ -366,6 +366,33 @@ class UserManager
         return $response->getValue();
     }
 
+    /**
+     * Get the threads of direct messages of a user
+     *
+     * @param User $user The user
+     *
+     * @return array The messages.
+     */
+    public function getThreadsDirectMessages(User $user)
+    {
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSubCollection($user->getId(), 'thread', 'threadsDirectMessages');
+        return $response->getValue();
+    }
+
+    /**
+     * Get the threads of direct messages of a user
+     *
+     * @param User $user The user
+     *
+     * @return array The messages.
+     */
+    public function getThreadsCarpoolMessages(User $user)
+    {
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSubCollection($user->getId(), 'thread', 'threadsCarpoolMessages');
+        return $response->getValue();
+    }
 
     /**
      * Update the user token.

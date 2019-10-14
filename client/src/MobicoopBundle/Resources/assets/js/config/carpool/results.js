@@ -23,7 +23,7 @@
 
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
-import colorTheme from '@themes/mobicoop.json'
+import colorTheme from '@themes/mobicoop.js'
 import '@mdi/font/css/materialdesignicons.css'
 
 import Vuetify, {
@@ -34,7 +34,7 @@ import Vuetify, {
   // footer
   VFooter, VChip, VCardText,
   // content
-  VForm, VTextField, VCheckbox, VSelect, VOverlay, VProgressCircular, VCombobox, VCard, VCardTitle, VDivider, VCardActions, VDialog, VSnackbar, VTooltip,
+  VForm, VTextField, VCheckbox, VSelect, VOverlay, VProgressCircular, VCombobox, VCard, VCardTitle, VDivider, VCardActions, VDialog, VSnackbar, VTooltip, VTimeline, VTimelineItem,
   // geocomplete
   VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon
 } from 'vuetify/lib'
@@ -48,7 +48,7 @@ Vue.use(Vuetify, {
     // footer
     VFooter, VChip, VCardText,
     // content
-    VForm, VTextField, VCheckbox, VSelect, VOverlay, VProgressCircular, VCombobox, VCard, VCardTitle, VDivider, VCardActions, VDialog, VSnackbar, VTooltip,
+    VForm, VTextField, VCheckbox, VSelect, VOverlay, VProgressCircular, VCombobox, VCard, VCardTitle, VDivider, VCardActions, VDialog, VSnackbar, VTooltip, VTimeline, VTimelineItem,
     // geocomplete
     VAutocomplete, VList, VListItem, VListItemTitle, VListItemSubtitle, VListItemAvatar, VListItemContent, VIcon
   }

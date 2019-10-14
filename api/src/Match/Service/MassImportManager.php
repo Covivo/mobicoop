@@ -214,7 +214,7 @@ class MassImportManager
         $geocodedDestinations = [];
         $this->logger->info('Mass analyze | Geocode destinations start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         foreach ($destinations as $key => $destination) {
-            $address = trim($destination['houseNumber'] . " " . $destination['street'] . " " . $destination['postalCode'] . " " . $destination['addressLocality'] . " " . $destination['addressCountry']);
+            $address = trim($destination['houseNumber'] . " " . $destination['street'] . ", " . $destination['postalCode'] . " " . $destination['addressLocality'] . " " . $destination['addressCountry']);
             if ($addresses = $this->geoSearcher->geoCode($address)) {
                 if (count($addresses) > 0) {
                     // we use the first result as best result
@@ -244,7 +244,7 @@ class MassImportManager
             // no gps points
             $address = trim(
                 $massPerson->getPersonalAddress()->getHouseNumber() . " " .
-                $massPerson->getPersonalAddress()->getStreet() . " " .
+                $massPerson->getPersonalAddress()->getStreet() . ", " .
                 $massPerson->getPersonalAddress()->getPostalCode() . " " .
                 $massPerson->getPersonalAddress()->getAddressLocality() . " " .
                 $massPerson->getPersonalAddress()->getAddressCountry()
@@ -314,14 +314,14 @@ class MassImportManager
             } else {
                 $origin = trim(
                     $massPerson->getPersonalAddress()->getHouseNumber() . " " .
-                    $massPerson->getPersonalAddress()->getStreet() . " " .
+                    $massPerson->getPersonalAddress()->getStreet() . ", " .
                     $massPerson->getPersonalAddress()->getPostalCode() . " " .
                     $massPerson->getPersonalAddress()->getAddressLocality() . " " .
                     $massPerson->getPersonalAddress()->getAddressCountry()
                 );
                 $destination = trim(
                     $massPerson->getWorkAddress()->getHouseNumber() . " " .
-                    $massPerson->getWorkAddress()->getStreet() . " " .
+                    $massPerson->getWorkAddress()->getStreet() . ", " .
                     $massPerson->getWorkAddress()->getPostalCode() . " " .
                     $massPerson->getWorkAddress()->getAddressLocality() . " " .
                     $massPerson->getWorkAddress()->getAddressCountry()

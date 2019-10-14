@@ -420,7 +420,51 @@ class UserController extends AbstractController
      *************/
 
     /**
+     * User mailbox
+     */
+    public function mailBox(UserManager $userManager, InternalMessageManager $internalMessageManager)
+    {
+        $user = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('messages', $user);
+
+        return $this->render('@Mobicoop/user/messages.html.twig', ["idUser"=>$user->getId()]);
+    }
+
+    /*************** NEW VERSION */
+    /**
+     * Get direct messages threads
+     */
+    public function userMessageDirectThreadsList(UserManager $userManager, InternalMessageManager $internalMessageManager)
+    {
+        $user = $userManager->getLoggedUser();
+        $threads = $userManager->getThreadsDirectMessages($user);
+        return new Response(json_encode($threads));
+    }
+
+    /**
+     * Get carpool messages threads
+     */
+    public function userMessageCarpoolThreadsList(UserManager $userManager, InternalMessageManager $internalMessageManager)
+    {
+        $user = $userManager->getLoggedUser();
+        $threads = $userManager->getThreadsCarpoolMessages($user);
+        return new Response(json_encode($threads));
+    }
+
+    /**
+     * Get direct messages threads
+     */
+    public function userMessageThread($idMessage, InternalMessageManager $internalMessageManager)
+    {
+        $completeThread = $internalMessageManager->getThread($idMessage, DataProvider::RETURN_JSON);
+        return new Response(json_encode($completeThread));
+    }
+
+    /*************** END NEW VERSION */
+
+    /**
      * User messages.
+     * OLD Controller
      */
     public function userMessageList(UserManager $userManager, InternalMessageManager $internalMessageManager)
     {
@@ -544,8 +588,9 @@ class UserController extends AbstractController
     /**
      * Get a complete thread from a first message
      * Ajax Request
+     * OLD Controller
      */
-    public function userMessageThread(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager, AskManager $askManager)
+    public function userMessageThreadOld(int $idFirstMessage, UserManager $userManager, InternalMessageManager $internalMessageManager, AskManager $askManager)
     {
         $user = $userManager->getLoggedUser();
         $reponseofmanager= $this->handleManagerReturnValue($user);
@@ -608,14 +653,17 @@ class UserController extends AbstractController
         $this->denyAccessUnlessGranted('messages', $user);
 
         if ($request->isMethod('POST')) {
-            $idThreadMessage = $request->request->get('idThreadMessage');
-            $idRecipient = $request->request->get('idRecipient');
+            $data = json_decode($request->getContent(), true);
+            $idThreadMessage = $data['idThreadMessage'];
+            $text = $data['text'];
+            $idRecipient = $data['idRecipient'];
+            $idAskHistory = $data['idAskHistory'];
 
             $messageToSend = $internalMessageManager->createInternalMessage(
                 $user,
                 $idRecipient,
                 "",
-                $request->request->get('text'),
+                $text,
                 $idThreadMessage
             );
             $reponseofmanager= $this->handleManagerReturnValue($messageToSend);
@@ -624,10 +672,10 @@ class UserController extends AbstractController
             }
 
             // If there is an AskHistory i will post an AskHistory with the message within. If not, i only send a Message.
-            if (trim($request->request->get('idAskHistory'))!=="") {
+            if ($idAskHistory!==null) {
                 
                 // Get the current AskHistory
-                $currentAskHistory = $askHistoryManager->getAskHistory($request->request->get('idAskHistory'));
+                $currentAskHistory = $askHistoryManager->getAskHistory($idAskHistory);
                 $reponseofmanager= $this->handleManagerReturnValue($currentAskHistory);
                 if (!empty($reponseofmanager)) {
                     return $reponseofmanager;

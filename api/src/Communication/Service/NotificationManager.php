@@ -32,6 +32,7 @@ use App\Communication\Entity\Notified;
 use App\Communication\Entity\Notification;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Communication\Entity\Email;
+use App\Communication\Entity\Sms;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Matching;
 use App\Communication\Entity\Recipient;
@@ -47,6 +48,7 @@ class NotificationManager
     private $entityManager;
     private $internalMessageManager;
     private $emailManager;
+    private $smsManager;
     private $templating;
     private $emailTemplatePath;
     private $emailTitleTemplatePath;
@@ -55,11 +57,12 @@ class NotificationManager
     private $notificationRepository;
     private $enabled;
 
-    public function __construct(EntityManagerInterface $entityManager, \Twig_Environment $templating, InternalMessageManager $internalMessageManager, EmailManager $emailManager, LoggerInterface $logger, NotificationRepository $notificationRepository, string $emailTemplatePath, string $emailTitleTemplatePath, string $smsTemplatePath, bool $enabled)
+    public function __construct(EntityManagerInterface $entityManager, \Twig_Environment $templating, InternalMessageManager $internalMessageManager, EmailManager $emailManager, SmsManager $smsManager, LoggerInterface $logger, NotificationRepository $notificationRepository, string $emailTemplatePath, string $emailTitleTemplatePath, string $smsTemplatePath, bool $enabled)
     {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
         $this->emailManager = $emailManager;
+        $this->smsManager = $smsManager;
         $this->logger = $logger;
         $this->notificationRepository = $notificationRepository;
         $this->emailTemplatePath = $emailTemplatePath;
@@ -102,7 +105,7 @@ class NotificationManager
                         $this->logger->info("Email notification for $action / " . $recipient->getEmail());
                         break;
                     case Medium::MEDIUM_SMS:
-                        // todo : call the dedicated service to send the sms with the notification template
+                        $this->notifyBySMS($notification, $recipient, $object);
                         $this->createNotified($notification, $recipient, $object);
                         $this->logger->info("Sms notification for  $action / " . $recipient->getEmail());
                         break;
@@ -167,6 +170,44 @@ class NotificationManager
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext, $recipient->getLanguage());
     }
+
+    /**
+     * Notify a user by sms.
+     * Different variables can be passed to the notification body and title depending on the object linked to the notification.
+     *
+     * @param Notification  $notification
+     * @param User          $recipient
+     * @param object|null   $object
+     * @return void
+     */
+    private function notifyBySms(Notification $notification, User $recipient, ?object $object = null)
+    {
+        $sms = new Sms();
+        $sms->setRecipientTelephone($recipient->getTelephone());
+        $bodyContext = [];
+        if ($object) {
+            switch (get_class($object)) {
+                case Proposal::class:
+                    $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
+                    break;
+                case Matching::class:
+                    $bodyContext = ['user'=>$recipient, 'notification'=> $notification, 'matching'=> $object];
+                    break;
+                case AskHistory::class:
+                    $bodyContext = ['user'=>$recipient];
+                    break;
+                case Recipient::class:
+                    $bodyContext = [];
+                    break;
+            }
+        } else {
+            $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
+        }
+       
+        // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
+        $this->smsManager->send($sms, $notification->getTemplateBody() ? $this->smsTemplatePath . $notification->getTemplateBody() : $this->smsTemplatePath . $notification->getAction()->getName(), $bodyContext);
+    }
+
 
     /**
      * Create a notified object.

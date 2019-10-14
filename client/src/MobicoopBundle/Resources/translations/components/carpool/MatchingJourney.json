@@ -1,0 +1,20 @@
+{
+  "fr": {
+    "detailTitle": "Détail du trajet",
+    "places": "{seats} place | {seats} places",
+    "carpool": "Covoiturer",
+    "carpoolAsDriver": "Covoiturer comme conducteur",
+    "carpoolAsPassenger": "Covoiturer comme passager",
+    "birthYears": "ans",
+    "contact": "Contacter"
+  },
+  "en": {
+    "detailTitle": "Journey detail",
+    "places": "{seats} seat | {seats} seats",
+    "carpool": "Carpool",
+    "carpoolAsDriver": "Carpool as driver",
+    "carpoolAsPassenger": "Carpool as passenger",
+    "birthYears": "years",
+    "contact": "Contacter"
+  }
+}

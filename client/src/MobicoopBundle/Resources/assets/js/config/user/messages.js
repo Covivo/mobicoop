@@ -2,10 +2,10 @@
 
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
-import colorTheme from '@themes/mobicoop.json'
+import colorTheme from '@themes/mobicoop.js'
 import '@mdi/font/css/materialdesignicons.css'
 
-import Vuetify, { 
+import Vuetify, {
   // general
   VApp, VContainer, VContent, VFlex, VLayout, VSpacer, VRow, VCol, VWindow,
   // header
@@ -14,7 +14,7 @@ import Vuetify, {
   VFooter, VChip, VCardText,
   // content
   // messages
-  VTabs, VTab, VTabItem, VTabsItems, VTimeline, VTimelineItem, VTextarea, VIcon, VCard, VCardTitle, VDialog, VProgressLinear, VAvatar, VDivider, VCardActions, VTooltip
+  VTabs, VTab, VTabItem, VTabsItems, VTimeline, VTimelineItem, VTextarea, VIcon, VCard, VCardTitle, VDialog, VProgressLinear, VAvatar, VDivider, VCardActions, VTooltip, VSkeletonLoader
 } from 'vuetify/lib'
 
 Vue.use(Vuetify, {
@@ -27,7 +27,7 @@ Vue.use(Vuetify, {
     VFooter, VChip, VCardText,
     // content
     // messages
-    VTabs, VTab, VTabItem, VTabsItems, VTimeline, VTimelineItem, VTextarea, VIcon, VCard, VCardTitle, VDialog, VProgressLinear, VAvatar, VDivider, VCardActions, VTooltip
+    VTabs, VTab, VTabItem, VTabsItems, VTimeline, VTimelineItem, VTextarea, VIcon, VCard, VCardTitle, VDialog, VProgressLinear, VAvatar, VDivider, VCardActions, VTooltip, VSkeletonLoader
   }
 })
 Vue.use(VueI18n)

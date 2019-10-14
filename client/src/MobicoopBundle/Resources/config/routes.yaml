@@ -102,7 +102,25 @@ user_message_list:
     path:
         fr: /utilisateur/messages
         en: /user/messages
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageList
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::mailBox
+
+user_message_direct_threads_list:
+    path:
+        fr: /utilisateur/messages/direct
+        en: /user/messages/direct
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageDirectThreadsList
+
+user_message_carpool_threads_list:
+    path:
+        fr: /utilisateur/messages/covoiturage
+        en: /user/messages/carpool
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageCarpoolThreadsList
+
+user_message_complete_thread:
+    path:
+        fr: /utilisateur/messages/{idMessage}/fil
+        en: /user/messages/{idMessage}/thread
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageThread
 
 # send an internal message
 user_message_send:
@@ -136,15 +154,22 @@ user_message_update_ask:
 carpool_ad_post:
     path:
         fr: /covoiturage/annonce/poster
-        en: /carpool/ad/share
+        en: /carpool/ad/post
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPost
+
+# post an ad from a search 
+carpool_ad_post_search:
+    path:
+        fr: /covoiturage/recherche/poster
+        en: /carpool/search/post
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPostFromSearch
 
 # post an ad in a community
 carpool_ad_post_community:
     path:
         fr: /communaute/{communityId}/annonce/poster
         en: /community/{communityId}/ad/share
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPost
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPostFromSearch
     requirements:
         communityId: '\d+'
 
@@ -296,7 +321,7 @@ news:
 # geography routes #
 ####################
 
-# geourouter route
+# georouter route
 georouter:
     path:
         fr: /georoute
