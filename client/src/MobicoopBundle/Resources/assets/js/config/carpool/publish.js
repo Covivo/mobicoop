@@ -2,9 +2,9 @@
 
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
-import colorTheme from '@themes/mobicoop.json'
+import colorTheme from '@themes/mobicoop.js'
 import '@mdi/font/css/materialdesignicons.css'
-import {LMap, LTileLayer, LMarker, LTooltip, LIcon, LPolyline} from 'vue2-leaflet' 
+import {LMap, LTileLayer, LMarker, LTooltip, LIcon, LPolyline} from 'vue2-leaflet'
 
 import { Icon }  from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -23,7 +23,7 @@ Icon.Default.mergeOptions({
 
 
 
-import Vuetify, { 
+import Vuetify, {
   // general
   VApp, VContainer, VFlex, VLayout, VContent, VRow, VCol, VSpacer,
   // header
