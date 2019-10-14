@@ -1,10 +1,9 @@
 import React from 'react';
 import { 
-    Create, Edit,
+    Create,
     SimpleForm, 
     required,
-    ReferenceInput, SelectInput, NumberInput,
-    ReferenceField, TextField
+    ReferenceInput, SelectInput, NumberInput
 } from 'react-admin';
 import RichTextInput from 'ra-input-rich-text';
 import { parse } from "query-string";
@@ -14,7 +13,6 @@ const statusChoices = [
     { id: 1, name: 'En ligne' },
 ];
 
-// Create
 export const ParagraphCreate = (props) => {
     const { section: section_string } = parse(props.location.search);
     const section = section_string ? parseInt(section_string, 10) : '';
@@ -35,26 +33,5 @@ export const ParagraphCreate = (props) => {
             <NumberInput source="position" label="Position" />
         </SimpleForm>
     </Create>
-    );
-}
-
-// Edit
-export const ParagraphEdit = (props) => {
-    
-    const redirect = `/sections/`;
-
-    return (
-    <Edit { ...props } title="Articles > éditer un paragraphe">
-        <SimpleForm
-            redirect={redirect}
-        >
-            <ReferenceField source="section" label="Section" reference="sections" linkType="" >
-                <TextField source="title"/>
-            </ReferenceField>
-            <SelectInput source="status" label="Statut" choices={statusChoices} />
-            <RichTextInput source="text" label="Texte" validate={required()} />
-            <NumberInput source="position" label="Position" />
-        </SimpleForm>
-    </Edit>
     );
 }

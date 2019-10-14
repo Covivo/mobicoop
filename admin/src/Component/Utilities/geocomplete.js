@@ -36,7 +36,7 @@ const GeocompleteInput = props => {
 
     const [input, setInput] = useState('');
     const [suggestions, setSuggestions] = useState([]);
-    const debouncedInput = useDebounce(input, 150);
+    const debouncedInput = useDebounce(input, 500);
 
     useEffect(() => {
         if (debouncedInput) {
@@ -148,7 +148,7 @@ const GeocompleteInput = props => {
     );
 };
 
-const debouncedFetchSuggestions = AwesomeDebouncePromise(fetchSuggestions, 150);
+const debouncedFetchSuggestions = AwesomeDebouncePromise(fetchSuggestions, 500);
 class GeocompleteInputWithoutHook extends React.Component {
     state = {
         input: '',
@@ -164,8 +164,8 @@ class GeocompleteInputWithoutHook extends React.Component {
                     .filter(
                         element =>
                             element &&
-                            element.displayLabel &&
-                            element.displayLabel.trim().length > 0,
+                            element.displayLabel[0] &&
+                            element.displayLabel[0].trim().length > 0
                     )
                     .slice(0, 5),
             });
@@ -186,10 +186,10 @@ class GeocompleteInputWithoutHook extends React.Component {
                             }}
                             onSelect={(selectedItem, stateAndHelpers) => {
                                 const address = this.state.suggestions.find(
-                                    element => element.displayLabel === selectedItem,
+                                    element => `${element.displayLabel[0]} - ${element.displayLabel[1]}` === selectedItem,
                                 );
                                 if (address) {
-                                    console.log(this.props);
+                                    // console.log(this.props);
                                     // dispatch here the fields you want to store in the react-admin model
                                     dispatch(change(REDUX_FORM_NAME, this.props.source+'.streetAddress', address.streetAddress));
                                     dispatch(change(REDUX_FORM_NAME, this.props.source+'.postalCode', address.postalCode));
@@ -225,7 +225,7 @@ class GeocompleteInputWithoutHook extends React.Component {
                                         label={this.props.label}
                                         className={classes.input}
                                         value={this.props.value}
-                                        isRequired={this.props}
+                                        isrequired={this.props.isRequired}
                                         InputProps={{
                                             ...getInputProps({
                                                 placeholder: this.props.placeholder
@@ -239,21 +239,21 @@ class GeocompleteInputWithoutHook extends React.Component {
                                             {this.state.suggestions.map((suggestion, index) => (
                                                 <MenuItem
                                                     {...getItemProps({
-                                                        item: suggestion.displayLabel,
+                                                        item: `${suggestion.displayLabel[0]} - ${suggestion.displayLabel[1]}`,
                                                     })}
-                                                    key={suggestion.displayLabel}
+                                                    key={`${suggestion.displayLabel[0]} - ${suggestion.displayLabel[1]}`}
                                                     selected={highlightedIndex === index}
                                                     component="div"
                                                     style={{
                                                         fontWeight: isSelected(
                                                             selectedItem,
-                                                            suggestion.displayLabel,
+                                                            `${suggestion.displayLabel[0]} - ${suggestion.displayLabel[1]}`,
                                                         )
                                                             ? 500
                                                             : 400,
                                                     }}
                                                 >
-                                                    {suggestion.displayLabel}
+                                                    {`${suggestion.displayLabel[0]} - ${suggestion.displayLabel[1]}`}
                                                 </MenuItem>
                                             ))}
                                         </Paper>

@@ -140,19 +140,36 @@ class GeoTools
      * Return logical display label depending on env
      *
      * @param Address $address
-     * @return string
+     * @return array
      */
-    public function getDisplayLabel(Address $address): string
+    public function getDisplayLabel(Address $address): array
     {
         // Determine the more logical display label considering the params
-        $displayLabelTab = [];
+        // We return an array like this :
+        // [
+        //     // first line
+        //     0 => [
+        //         "aaa",
+        //         "bbb",
+        //         "ccc"
+        //     ],
+        //     // second line
+        //     1 => [
+        //         'xxx',
+        //         'yyy',
+        //         'zzz'
+        //     ]
+        // ]
+        $displayLabelTab = [0=>[],1=>[]];
 
         // The following parameters are in your env or local env
         
+        // FIRST LINE
+
         // venue
         if (isset($this->params['displayVenue']) && trim($this->params['displayVenue'])==="true") {
             if (trim($address->getVenue())!=="") {
-                $displayLabelTab[] = $address->getVenue();
+                $displayLabelTab[0][] = $address->getVenue();
             }
         }
 
@@ -160,7 +177,7 @@ class GeoTools
         if (isset($this->params['displayRelayPoint']) && trim($this->params['displayRelayPoint'])==="true") {
             if ($relayPoint = $address->getRelayPoint()) {
                 if (trim($relayPoint->getName())!=="") {
-                    $displayLabelTab[] = $relayPoint->getName();
+                    $displayLabelTab[0][] = $relayPoint->getName();
                 }
             }
         }
@@ -168,42 +185,44 @@ class GeoTools
         // street address
         if (isset($this->params['displayStreetAddress']) && trim($this->params['displayStreetAddress'])==="true") {
             if (trim($address->getStreetAddress())!=="") {
-                $displayLabelTab[] = $address->getStreetAddress();
+                $displayLabelTab[0][] = $address->getStreetAddress();
             }
         }
 
         // postal code
-        if (isset($this->params['displayLocality']) && trim($this->params['displayLocality'])==="true") {
-            if (trim($address->getAddressLocality())!=="") {
-                $displayLabelTab[] = $address->getAddressLocality();
+        if (isset($this->params['displayPostalCode']) && trim($this->params['displayPostalCode'])==="true") {
+            if (trim($address->getPostalCode())!=="") {
+                $displayLabelTab[0][] = $address->getPostalCode();
             }
         }
 
         // locality
-        if (isset($this->params['displayPostalCode']) && trim($this->params['displayPostalCode'])==="true") {
-            if (trim($address->getPostalCode())!=="") {
-                $displayLabelTab[] = $address->getPostalCode();
+        if (isset($this->params['displayLocality']) && trim($this->params['displayLocality'])==="true") {
+            if (trim($address->getAddressLocality())!=="") {
+                $displayLabelTab[0][] = $address->getAddressLocality();
             }
         }
+
+        // SECOND LINE
 
         // subregion
         if (isset($this->params['displaySubRegion']) && trim($this->params['displaySubRegion'])==="true") {
             if (trim($address->getRegion())!=="") {
-                $displayLabelTab[] = $address->getRegion();
+                $displayLabelTab[1][] = $address->getRegion();
             }
         }
 
         // region
         if (isset($this->params['displayRegion']) && trim($this->params['displayRegion'])==="true") {
             if (trim($address->getMacroRegion())!=="") {
-                $displayLabelTab[] = $address->getMacroRegion();
+                $displayLabelTab[1][] = $address->getMacroRegion();
             }
         }
 
         // country
         if (isset($this->params['displayCountry']) && trim($this->params['displayCountry'])==="true") {
             if (trim($address->getAddressCountry())!=="") {
-                $displayLabelTab[] = $address->getAddressCountry();
+                $displayLabelTab[1][] = $address->getAddressCountry();
             }
         }
 
@@ -212,7 +231,8 @@ class GeoTools
         if (isset($this->params['displaySeparator'])) {
             $displaySeparator = $this->params['displaySeparator'];
         }
-
-        return implode($displaySeparator, $displayLabelTab);
+        
+        return [implode($displaySeparator, $displayLabelTab[0]),implode($displaySeparator, $displayLabelTab[1])];
     }
+
 }

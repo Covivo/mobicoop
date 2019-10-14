@@ -38,6 +38,7 @@ use App\Community\Entity\Community;
 use App\Geography\Entity\Address;
 use App\RelayPoint\Entity\RelayPointType;
 use App\Image\Entity\Image;
+use App\RelayPoint\Controller\RelayPointUpdate;
 
 /**
  * A relay point.
@@ -50,7 +51,15 @@ use App\Image\Entity\Image;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
+ *      itemOperations={
+ *          "get",
+ *          "put"={
+ *              "method"="PUT",
+ *              "path"="/relay_points/{id}",
+ *              "controller"=RelayPointUpdate::class,
+ *          },
+ *          "delete"
+ *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial","status":"exact"})
@@ -193,6 +202,14 @@ class RelayPoint
      * @MaxDepth(1)
      */
     private $address;
+
+    /**
+     * @var Address The new address of the relay point.
+     * Used for administration purpose.
+     *
+     * @Groups({"read","write"})
+     */
+    private $newAddress;
 
     /**
      * @var User The creator of the relay point.
@@ -382,6 +399,18 @@ class RelayPoint
     {
         $this->address = $address;
 
+        return $this;
+    }
+
+    public function getNewAddress(): ?Address
+    {
+        return $this->newAddress;
+    }
+    
+    public function setNewAddress(?Address $newAddress): self
+    {
+        $this->newAddress = $newAddress;
+        
         return $this;
     }
 

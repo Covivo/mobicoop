@@ -99,13 +99,13 @@ use App\Solidary\Entity\Solidary;
  *          "get"={
  *              "normalization_context"={"groups"={"read"}},
  *          },
- *         "password_update"={
+ *          "password_update"={
  *              "method"="PUT",
  *              "path"="/users/{id}/password_update",
  *              "controller"=UserUpdatePassword::class,
  *              "defaults"={"name"="reply"}
  *          },
- *        "password_update_request"={
+ *          "password_update_request"={
  *              "method"="PUT",
  *              "path"="/users/{id}/password_update_request",
  *              "controller"=UserUpdatePassword::class,
@@ -125,7 +125,7 @@ use App\Solidary\Entity\Solidary;
  *                          "format" = "integer",
  *                          "description" = "The territory id"
  *                      },
- *                   }
+ *                  }
  *              }
  *          },
  *          "threads"={
