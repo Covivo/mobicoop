@@ -1,0 +1,16 @@
+{% extends '@Mobicoop/base.html.twig' %}
+
+{% block title %}
+    {% trans from 'ui' %}contact.title{% endtrans %}
+{% endblock %}
+{% block stylesheets %}
+    {{ encore_entry_link_tags("#{assets_prefix ?? ''}contact/contact") }}
+{% endblock %}
+
+{% block main %}
+    <contact></contact>
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags("#{assets_prefix ?? ''}contact/contact") }}
+{% endblock %}
