@@ -1,0 +1,36 @@
+{
+  "fr": {
+    "lastName": {
+      "label": "Votre nom",
+      "placeholder": "Votre nom"
+    },
+    "firstName": {
+      "label": "Votre prénom",
+      "placeholder": "Votre prénom"
+    },
+    "email": {
+      "label": "Votre email",
+      "placeholder": "Votre email",
+      "errors": {
+        "required": "L'adresse email est requise",
+        "valid": "L'adresse email doit être valide"
+      }
+    },
+    "demand": {
+      "label": "Votre demande",
+      "placeholder": "Votre demande",
+      "items": [
+        "Renseignement",
+        "Problème technique",
+        "Partenariat"
+      ]
+    },
+    "message": {
+      "label": "Votre message",
+      "placeholder": "Votre message",
+      "errors": {
+        "required": "Le message est requis"
+      }
+    }
+  }
+}
