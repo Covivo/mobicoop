@@ -43,7 +43,7 @@ user_sign_up_validation:
         fr: /utilisateur/inscription/validation/{token}
         en: /user/signup/validation/{token}
     defaults:
-        token: ""   
+        token: ""
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidation
 
 # profile update
@@ -157,14 +157,14 @@ carpool_ad_post:
         en: /carpool/ad/post/{first?}
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPost
 
-# post an ad from a search 
+# post an ad from a search
 carpool_ad_post_search:
     path:
         fr: /covoiturage/recherche/poster
         en: /carpool/search/post
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPostFromSearch
 
-# ad results 
+# ad results
 carpool_ad_result:
     path:
         fr: /covoiturage/annonce/{id}/resultats
@@ -199,16 +199,16 @@ carpool_contact:
 # rdex provider (AJAX)
 rdex_provider:
     path:
-        fr: /provider/rdex/ 
+        fr: /provider/rdex/
         en: /provider/rdex/
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexProvider  
-    
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexProvider
+
 # rdex journey (AJAX)
 rdex_journey:
     path:
         fr: /journey/rdex
         en: /journey/rdex
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexJourney    
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::rdexJourney
 
 
 ####################
@@ -221,20 +221,20 @@ community_create:
         fr: /communaute/creer
         en: /community/create
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityCreate
-         
+
 # display communities
 community_list:
     path:
         fr: /communautes
         en: /community
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityList  
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityList
 
 # display one community
 community_show:
     path:
         fr: /communaute/{id}
         en: /community/{id}
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityShow  
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityShow
     requirements:
         id: '\d+'
 
@@ -272,7 +272,7 @@ community_member_list:
         en: /community-member-list/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityMemberList
     requirements:
-        id: '\d+'        
+        id: '\d+'
 
 # get all community proposals (AJAX)
 community_proposals:
@@ -281,8 +281,7 @@ community_proposals:
         en: /community-proposals/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityProposals
     requirements:
-        id: '\d+'    
-
+        id: '\d+'
 # get all available communities for the logged user (AJAX)
 community_user_available:
     path:
@@ -290,8 +289,7 @@ community_user_available:
         en: /communities/user/{userId}
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityUserAvailable
     requirements:
-        userId: '\d+' 
-
+        userId: '\d+'
 ##########################
 # editorial pages routes #
 ##########################
@@ -309,7 +307,7 @@ cgu:
         fr: /cgu
         en: /cgu
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCgu
-        
+
 # display news page
 news:
     path:
@@ -327,3 +325,14 @@ georouter:
         fr: /georoute
         en: /georoute
     controller: Mobicoop\Bundle\MobicoopBundle\Geography\Controller\GeoRouterController::geoRoute
+
+####################
+# contact routes #
+####################
+
+# display contact page
+contact:
+    path:
+        fr: /contact
+        en: /contact
+    controller: Mobicoop\Bundle\MobicoopBundle\Contact\Controller\ContactController:showContact
