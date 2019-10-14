@@ -6,6 +6,9 @@ import { ArticleCreate } from './ArticleCreate';
 import { ArticleEdit } from './ArticleEdit';
 
 export default {
+    options: {
+        label: 'Articles'
+    },
     list: ArticleList,
     show: ArticleShow,
     create: ArticleCreate,

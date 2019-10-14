@@ -6,6 +6,9 @@ import { UserCreate } from './UserCreate';
 import { UserEdit } from './UserEdit';
 
 export default {
+    options: {
+        label: 'Utilisateurs'
+    },
     list: UserList,
     show: UserShow,
     create: UserCreate,

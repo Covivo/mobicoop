@@ -120,7 +120,7 @@ export default class extends Component {
           >      
             {permissions => {
                 return  [          
-                  isAuthorized("user_manage")         ? <Resource name={'users'} {...users}  /> : null,
+                  isAuthorized("user_manage")         ? <Resource name={'users'} {...users} /> : null,
                   isAuthorized("article_manage")      ? <Resource name={'articles'} {...articles} /> : null,
                   isAuthorized("article_manage")      ? <Resource name={'sections'} {...sections} /> : null,
                   isAuthorized("article_manage")      ? <Resource name={'paragraphs'} {...paragraphs} /> : null,

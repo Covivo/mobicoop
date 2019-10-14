@@ -6,6 +6,9 @@ import { RelayPointTypeCreate } from './RelayPointTypeCreate';
 import { RelayPointTypeEdit } from './RelayPointTypeEdit';
 
 export default {
+    options: {
+        label: 'Types de points relais'
+    },
     list: RelayPointTypeList,
     show: RelayPointTypeShow,
     create: RelayPointTypeCreate,

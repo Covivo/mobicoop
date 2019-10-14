@@ -6,6 +6,9 @@ import { CommunityCreate } from './CommunityCreate';
 import { CommunityEdit } from './CommunityEdit';
 
 export default {
+    options: {
+        label: 'Communautés'
+    },
     list: CommunityList,
     show: CommunityShow,
     create: CommunityCreate,

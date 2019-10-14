@@ -6,6 +6,9 @@ import { RoleCreate } from './RoleCreate';
 import { RoleEdit } from './RoleEdit';
 
 export default {
+    options: {
+        label: 'Rôles'
+    },
     list: RoleList,
     show: RoleShow,
     create: RoleCreate,

@@ -6,6 +6,9 @@ import { RightCreate } from './RightCreate';
 import { RightEdit } from './RightEdit';
 
 export default {
+    options: {
+        label: 'Droits'
+    },
     list: RightList,
     show: RightShow,
     create: RightCreate,

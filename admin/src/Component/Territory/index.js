@@ -6,6 +6,9 @@ import { TerritoryCreate } from './TerritoryCreate';
 import { TerritoryEdit } from './TerritoryEdit';
 
 export default {
+    options: {
+        label: 'Territoires'
+    },
     list: TerritoryList,
     show: TerritoryShow,
     create: TerritoryCreate,
