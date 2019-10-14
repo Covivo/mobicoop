@@ -1,20 +1,36 @@
 <template>
   <v-content>
-    <p>salut</p>
+    <v-container>
+      <v-row
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          md="8"
+          xl="6"
+          align="center"
+        >
+          <h1>{{ $t('title') }}</h1>
+        </v-col>
+      </v-row>
+      <contact-form />
+    </v-container>
   </v-content>
 </template>
 
 <script>
 import {merge} from "lodash";
-import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/home/HomeSearch.json";
-import TranslationsClient from "@clientTranslations/components/home/HomeSearch.json";
+import Translations from "@translations/components/contact/Contact.json";
+import TranslationsClient from "@clientTranslations/components/contact/Contact.json";
+import ContactForm from "@components/contact/ContactForm.vue"
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
-    messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
+    messages: TranslationsMerged
+  },
+  components: {
+    ContactForm
   },
   data () {
     return {
