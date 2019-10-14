@@ -13,7 +13,9 @@
           <h1>{{ $t('title') }}</h1>
         </v-col>
       </v-row>
-      <contact-form />
+      <contact-form
+        :user="user"
+      />
     </v-container>
   </v-content>
 </template>
@@ -31,6 +33,12 @@ export default {
   },
   components: {
     ContactForm
+  },
+  props: {
+    user: {
+      type: Object,
+      default: null
+    }
   },
   data () {
     return {

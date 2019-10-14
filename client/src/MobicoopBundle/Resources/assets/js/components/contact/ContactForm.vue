@@ -17,7 +17,7 @@
                   cols="12"
                 >
                   <v-text-field
-                    v-model="form.lastName"
+                    v-model="form.familyName"
                     :label="$t('lastName.placeholder')"
                   />
                 </v-col>
@@ -26,7 +26,7 @@
                   cols="12"
                 >
                   <v-text-field
-                    v-model="form.firstName"
+                    v-model="form.givenName"
                     :label="$t('firstName.placeholder')"
                   />
                 </v-col>
@@ -70,7 +70,6 @@
 </template>
 
 <script>
-import CommonTranslations from "@translations/translations.json";
 import {merge} from "lodash";
 import Translations from "@translations/components/contact/ContactForm.json";
 import TranslationsClient from "@clientTranslations/components/contact/ContactForm.json";
@@ -78,20 +77,25 @@ import TranslationsClient from "@clientTranslations/components/contact/ContactFo
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
-    sharedMessages: CommonTranslations,
     messages: TranslationsMerged
+  },
+  props: {
+    user: {
+      type: Object,
+      default: null
+    }
   },
   data () {
     return {
       valid: true,
       form:{
-        email: null,
+        email: this.user && this.user.email ? this.user.email : null,
         emailRules: [
           v => !!v || this.$t("email.errors.required"),
           v => /.+@.+/.test(v) || this.$t("email.errors.valid")
         ],
-        firstName: null,
-        lastName: null,
+        familyName: this.user && this.user.familyName ? this.user.familyName : null,
+        givenName: this.user && this.user.givenName ? this.user.givenName : null,
         demandItems: this.$t("demand.items"),
         demand: null,
         message: null,
