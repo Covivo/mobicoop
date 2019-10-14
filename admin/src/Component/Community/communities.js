@@ -11,6 +11,7 @@ import {
     Filter
 } from 'react-admin';
 import RichTextInput from 'ra-input-rich-text';
+import GeocompleteInput from '../Utilities/geocomplete';
 
 const userOptionRenderer = choice => `${choice.givenName} ${choice.familyName}`;
 const userId = `/users/${localStorage.getItem('id')}`;
@@ -70,6 +71,9 @@ export const CommunityShow = (props) => (
             <Tab label="Détails">
                 <TextField source="originId" label="ID"/>
                 <TextField source="name" label="Nom"/>
+                <ReferenceField source="address" label="Adresse" reference="addresses" linkType="">
+                    <TextField source="displayLabel" />
+                </ReferenceField>
                 <BooleanField source="membersHidden" label="Membres masqués" />
                 <BooleanField source="proposalsHidden" label="Annonces masquées" />
                 <SelectField source="validationType" label="Type de validation" choices={validationChoices} />
@@ -106,6 +110,7 @@ export const CommunityCreate = (props) => (
             <ReferenceInput source="user" label="Créateur" reference="users" defaultValue={userId}>
                 <SelectInput optionText={userOptionRenderer}/>
             </ReferenceInput>
+            <GeocompleteInput source="address" label="Adresse" validate={required()}/>
             <TextInput source="name" label="Nom" validate={required()}/>
             <BooleanInput source="membersHidden" label="Membres masqués" />
             <BooleanInput source="proposalsHidden" label="Annonces masquées" />
@@ -126,6 +131,10 @@ export const CommunityEdit = (props) => (
             <ReferenceInput source="user" label="Créateur" reference="users">
                 <SelectInput optionText={userOptionRenderer} />
             </ReferenceInput>
+            <ReferenceField source="address" label="Adresse actuelle" reference="addresses" linkType="">
+                <TextField source="displayLabel" />
+            </ReferenceField>
+            <GeocompleteInput source="address" label="Nouvelle addresse" validate={required()}/>
             <TextInput source="name" label="Nom" validate={required()}/>
             <BooleanInput source="membersHidden" label="Membres masqués"  />
             <BooleanInput source="proposalsHidden" label="Annonces masquées" />

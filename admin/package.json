@@ -5,10 +5,12 @@
   "dependencies": {
     "@api-platform/admin": "^0.6.3",
     "ajv": "^6.0.0",
+    "awesome-debounce-promise": "^2.1.0",
     "babel-eslint": "^9.0.0",
     "bcryptjs": "^2.4.3",
     "caniuse-lite": "1.0.30000974",
     "dotenv": "^6.1.0",
+    "downshift": "^3.3.4",
     "jwt-decode": "^2.2.0",
     "ra-input-rich-text": "^2.8.6",
     "ra-language-french": "^2.8.5",

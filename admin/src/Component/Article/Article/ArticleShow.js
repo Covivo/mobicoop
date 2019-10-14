@@ -1,13 +1,11 @@
 import React from 'react';
 import { 
-    Create, Edit, List, Show, 
+    Show, 
     Tab, TabbedShowLayout, 
     Link, 
     Datagrid,
-    SimpleForm, required, 
-    DisabledInput, TextInput, SelectInput,
     Button, ShowButton, EditButton, DeleteButton,
-    TextField, ReferenceArrayField, ReferenceManyField, ChipField, SingleFieldList, SelectField
+    TextField, ReferenceArrayField, SelectField
 } from 'react-admin';
 
 const statusChoices = [
@@ -15,25 +13,6 @@ const statusChoices = [
     { id: 1, name: 'En ligne' },
 ];
 
-// List
-export const ArticleList = (props) => (
-    <List {...props} title="Articles > liste" perPage={ 25 } sort={{ field: 'originId', order: 'ASC' }}>
-        <Datagrid>
-            <TextField source="originId" label="ID" sortBy="id"/>
-            <TextField source="title" label="Titre"/>
-            <SelectField source="status" label="Status" choices={statusChoices} />
-            <ReferenceManyField label="Sections" reference="sections" target="article" sortable={false}>
-                <SingleFieldList linkType="show">
-                    <ChipField source="title" />
-                </SingleFieldList>
-            </ReferenceManyField>
-            <ShowButton />
-            <EditButton />
-        </Datagrid>
-    </List>
-);
-
-// Show
 const AddSectionButton = ({ record }) => (
     <Button
         component={Link}
@@ -70,25 +49,4 @@ export const ArticleShow = (props) => (
             </Tab>
         </TabbedShowLayout>
     </Show>
-);
-
-// Create
-export const ArticleCreate = (props) => (
-    <Create { ...props } title="Articles > ajouter">
-        <SimpleForm>
-            <TextInput source="title" label="Titre" />
-            <SelectInput source="status" label="Status" choices={statusChoices} defaultValue={0} validate={required()}/>
-        </SimpleForm>
-    </Create>
-);
-
-// Edit
-export const ArticleEdit = (props) => (
-    <Edit {...props } title="Articles > éditer">
-        <SimpleForm>
-            <DisabledInput source="originId" label="ID"/>
-            <TextInput source="title" label="Titre" />
-            <SelectInput source="status" label="Status" choices={statusChoices} validate={required()}/>
-        </SimpleForm>
-    </Edit>
 );
