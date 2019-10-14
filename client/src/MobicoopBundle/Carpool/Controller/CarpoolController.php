@@ -49,7 +49,7 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
-    public function carpoolAdPost(int $communityId=null, ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
+    public function carpoolAdPost(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
     {
         $proposal = new Proposal();
         $poster = $userManager->getLoggedUser();
@@ -69,38 +69,53 @@ class CarpoolController extends AbstractController
         // get the communities available for the user
         $communities = $communityManager->getAvailableUserCommunities($poster)->getMember();
         
+        return $this->render(
+            '@Mobicoop/carpool/publish.html.twig',
+            [
+                'communities'=>$communities,
+                'community'=>null,
+                'origin'=>null,
+                'destination'=>null,
+                'regular'=>null,
+                'date'=>null,
+                'time'=>null
+            ]
+        );
+    }
+
+    /**
+     * Create a carpooling ad from a search component (home, community...)
+     * (POST)
+     */
+    public function carpoolAdPostFromSearch(UserManager $userManager, Request $request, CommunityManager $communityManager)
+    {
+        $proposal = new Proposal();
+        $poster = $userManager->getLoggedUser();
+
+        $this->denyAccessUnlessGranted('create_ad', $proposal);
+
+        // get the communities available for the user
+        $communities = $communityManager->getAvailableUserCommunities($poster)->getMember();
+        
         //get user's community
-        if (!is_null($communityId)) {
-            $community = $communityManager->getCommunity($communityId);
+        if (!is_null($request->request->get('community'))) {
+            $community = $communityManager->getCommunity($request->request->get('community'));
         }
 
-        if ($request->query->get('origin')) {
-            $initOrigin = new Address();
-            $initOrigin->setDisplayLabel($request->query->get('origin'));
-            $initOrigin->setLatitude($request->query->get('originLat'));
-            $initOrigin->setLongitude($request->query->get('originLon'));
-            $initOrigin->setAddressLocality($request->query->get('originAddressLocality'));
-        }
-        if ($request->query->get('destination')) {
-            $initDestination = new Address();
-            $initDestination->setDisplayLabel($request->query->get('destination'));
-            $initDestination->setLatitude($request->query->get('destinationLat'));
-            $initDestination->setLongitude($request->query->get('destinationLon'));
-            $initDestination->setAddressLocality($request->query->get('destinationAddressLocality'));
-        }
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
             [
                 'communities'=>$communities,
                 'community'=>(isset($community))?$community:null,
-                'initOrigin'=>(isset($initOrigin)) ? $initOrigin : null,
-                'initDestination'=>(isset($initDestination)) ? $initDestination : null,
-                'initRegular'=>(is_null($request->query->get('regular')) || $request->query->get('regular')==="1") ? true : false,
-                'initDate'=>($request->query->get('date')) ? $request->query->get('date') : null,
-                'initTime'=>($request->query->get('time')) ? $request->query->get('time') : null,
+                'origin'=>$request->request->get('origin'),
+                'destination'=>$request->request->get('destination'),
+                'regular'=>$request->request->get('regular'),
+                'date'=>$request->request->get('date'),
+                'time'=>$request->request->get('time')
             ]
         );
     }
+
 
     /**
      * Simple search results.

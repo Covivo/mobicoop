@@ -116,6 +116,7 @@ class Community
     /**
      * @var string The name of the community.
      *
+     * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
      * @Groups({"read","write"})
      */

@@ -12,16 +12,16 @@
     geo-search-url="{{ geoCompleteUri }}" 
     :user="{{app.user|json_encode}}" 
     :default-price-km="{{ priceKm }}"
-    :communities="{{ communities|json_encode }}"
     :default-margin-time="{{ marginTime }}"
     :url-tiles="{{ urlTiles|json_encode }}"
     :attribution-copyright="{{ attributionCopyright|json_encode }}"
+    :communities="{{ communities|json_encode }}"
     :community="{{ community|json_encode }}"
-    :init-origin="{{ initOrigin|json_encode }}"
-    :init-destination="{{ initDestination|json_encode }}"
-    :init-regular="{{ initRegular|json_encode }}"
-    :init-date="{{ initDate|json_encode }}"
-    :init-time="{{ initTime|json_encode }}"
+    :init-origin = "{{ origin ? origin : origin|json_encode }}"
+    :init-destination = "{{ destination ? destination : destination|json_encode }}"
+    init-date = "{{ date }}"
+    init-time = "{{ time }}"
+    :init-regular = "{{ regular ? 'true' : 'false' }}"
   />
 
 {% endblock %}
