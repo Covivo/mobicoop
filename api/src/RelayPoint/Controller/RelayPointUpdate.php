@@ -30,7 +30,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class RelayPointUpdate
 {
     use TranslatorTrait;
-    private $relayPointManager; 
+    private $relayPointManager;
     private $request;
  
     public function __construct(RequestStack $requestStack, RelayPointManager $relayPointManager)

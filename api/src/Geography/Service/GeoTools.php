@@ -234,5 +234,4 @@ class GeoTools
         
         return [implode($displaySeparator, $displayLabelTab[0]),implode($displaySeparator, $displayLabelTab[1])];
     }
-
 }

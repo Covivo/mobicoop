@@ -30,7 +30,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class CommunityUpdate
 {
     use TranslatorTrait;
-    private $communityManager; 
+    private $communityManager;
     private $request;
  
     public function __construct(RequestStack $requestStack, CommunityManager $communityManager)
