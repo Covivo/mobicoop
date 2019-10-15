@@ -43,9 +43,9 @@
       >
         <v-col class="col-4">
           <v-alert type="info">
-            {{ $t("almostDone") }}<br>
-            {{ $t("validationMailSend") }}<br>
-            {{ $t("canValid") }} <strong>{{ $t("byClicking") }}</strong> {{ $t("insideMail") }} <strong>{{ $t("copyPasteCode") }}</strong> {{ $t("underThis") }}.
+            <p>{{ $t("almostDone") }}</p>
+            <p>{{ $t("validationMailSend") }}</p>
+            <p v-html="$t('canValid')" />
           </v-alert>
         </v-col>
       </v-row>
