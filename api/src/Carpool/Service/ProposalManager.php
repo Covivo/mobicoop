@@ -302,6 +302,7 @@ class ProposalManager
      * @param integer|null $role                The role of the user that makes the query (1=driver, 2=passenger, 3=both)
      * @param integer|null $type                The type of the trip (1=one way, 2=return trip)
      * @param boolean|null $anyRouteAsPassenger True if the passenger accepts any route (not implemented yet)
+     * @param integer|null $communityId         The id of the community to search in
      * @return void
      */
     public function searchMatchings(
@@ -320,7 +321,8 @@ class ProposalManager
         ?int $userId = null,
         ?int $role = null,
         ?int $type = null,
-        ?bool $anyRouteAsPassenger = null
+        ?bool $anyRouteAsPassenger = null,
+        ?int $communityId = null
     ) {
         // initialisation of the parameters
         $useTime = !is_null($useTime) ? $useTime : $this->params['defaultUseTime'];
@@ -408,6 +410,16 @@ class ProposalManager
         
         $proposal->addWaypoint($waypointOrigin);
         $proposal->addWaypoint($waypointDestination);
+
+        // community
+        if ($communityId && $userId) {
+            // we check if the user is member of the community
+            if ($this->communityManager->isRegistered($communityId, $userId)) {
+                if ($community = $this->communityManager->get($communityId)) {
+                    $proposal->addCommunity($community);
+                }
+            }
+        }
 
         return $this->getMatchings($proposal);
     }
