@@ -164,15 +164,6 @@ carpool_ad_post_search:
         en: /carpool/search/post
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPostFromSearch
 
-# post an ad in a community
-carpool_ad_post_community:
-    path:
-        fr: /communaute/{communityId}/annonce/poster
-        en: /community/{communityId}/ad/share
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPostFromSearch
-    requirements:
-        communityId: '\d+'
-
 # ad results 
 carpool_ad_result:
     path:

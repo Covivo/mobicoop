@@ -234,7 +234,7 @@ export default {
       return '/join-community/'+item.id;
     },
     linkToCommunityShow: function (item) {
-      return '/community/'+item.id;
+      return this.$t('routes.community')+item.id;
     },
     test() {
       console.error(this.communities)

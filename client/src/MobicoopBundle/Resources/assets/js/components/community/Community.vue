@@ -67,17 +67,13 @@
               </div>
               <!-- button if member is accepted -->
               <div v-else-if="isAccepted">
-                <a
-                  style="text-decoration:none;"
-                  :href="$t('buttons.publish.route', {communityId: community.id})"
+                <v-btn
+                  color="success"
+                  rounded
+                  @click="publish"
                 >
-                  <v-btn
-                    color="success"
-                    rounded
-                  >
-                    {{ $t('buttons.publish.label') }}
-                  </v-btn>
-                </a>
+                  {{ $t('buttons.publish.label') }}
+                </v-btn>
               </div>
               <!-- button if user ask to join community but is not accepted yet -->
               <div v-else-if="askToJoin == true">
@@ -276,13 +272,6 @@ export default {
   },
   data () {
     return {
-      statistics: [
-        { text: 'Inscrits', number: 0 },
-        { text: 'Offres de covoiturage', number: 0 },
-        { text: 'Mise en relation', number: 0 },
-        { text: 'Km covoiturés', number: 0 },
-        { text: 'kg de CO2 consommés', number: 0 },
-      ],
       search: '',
       headers: [
         {
@@ -319,6 +308,23 @@ export default {
     this.checkDomain();
   },
   methods:{
+    post: function (path, params, method='post') {
+      const form = document.createElement('form');
+      form.method = method;
+      form.action = window.location.origin+'/'+path;
+
+      for (const key in params) {
+        if (params.hasOwnProperty(key)) {
+          const hiddenField = document.createElement('input');
+          hiddenField.type = 'hidden';
+          hiddenField.name = key;
+          hiddenField.value = params[key];
+          form.appendChild(hiddenField);
+        }
+      }
+      document.body.appendChild(form);
+      form.submit();
+    },
     getCommunityUser() {
       this.checkValidation = true;
       axios 
@@ -367,6 +373,17 @@ export default {
           return this.domain = false;
         }   
       }
+    },
+    publish() {
+      let lParams = {
+        origin: null,
+        destination: null,
+        regular: null,
+        date: null,
+        time: null,
+        ...this.params
+      };
+      this.post(`${this.$t("buttons.publish.route")}`, lParams);
     },
     getCommunityProposals () {
       this.loadingMap = true;
