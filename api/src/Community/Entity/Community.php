@@ -41,7 +41,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use App\Carpool\Entity\Proposal;
 use App\Community\Controller\JoinAction;
-use App\Community\Controller\CommunityUpdate;
 
 /**
  * A community : a group of users sharing common interests.
@@ -94,11 +93,7 @@ use App\Community\Controller\CommunityUpdate;
  *      },
  *      itemOperations={
  *          "get",
- *          "put"={
- *              "method"="PUT",
- *              "path"="/communities/{id}",
- *              "controller"=CommunityUpdate::class,
- *          },
+ *          "put",
  *          "delete"
  *      }
  * )
@@ -215,14 +210,6 @@ class Community
      * @MaxDepth(1)
      */
     private $address;
-
-    /**
-     * @var Address The new address of the community.
-     * Used for administration purpose.
-     *
-     * @Groups({"read","write"})
-     */
-    private $newAddress;
     
     /**
      * @var ArrayCollection|null The images of the community.
@@ -401,18 +388,6 @@ class Community
     public function setAddress(?Address $address): self
     {
         $this->address = $address;
-        
-        return $this;
-    }
-
-    public function getNewAddress(): ?Address
-    {
-        return $this->newAddress;
-    }
-    
-    public function setNewAddress(?Address $newAddress): self
-    {
-        $this->newAddress = $newAddress;
         
         return $this;
     }
