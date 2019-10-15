@@ -157,6 +157,7 @@ class Community
     /**
      * @var string The short description of the community.
      *
+     * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
      * @Groups({"read","write"})
      */
@@ -165,6 +166,7 @@ class Community
     /**
      * @var string The full description of the community.
      *
+     * @Assert\NotBlank
      * @ORM\Column(type="text")
      * @Groups({"read","write"})
      */
