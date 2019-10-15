@@ -7,7 +7,14 @@
         "validate":"Confirmer votre inscription",
         "alreadyValidated":"Votre compte a déjà été confirmé",
         "updateError":"Il y a eu un problème technique",
-        "unknown":"Ce code n'est pas reconnu"
+        "unknown":"Ce code n'est pas reconnu",
+        "almostDone":"L'inscription est presque finie.",
+        "validationMailSend":"Un email de validation a été envoyé.",
+        "canValid":"Vous pouvez maintenant valider votre compte",
+        "byClicking":"en cliquant sur le lien de validation",
+        "insideMail":"contenu dans l'email ou bien",
+        "copyPasteCode":"copier-coller le code directement",
+        "underThis":"ci-dessous"
     },
     "en":{
         "title":"Email validation",   
@@ -17,6 +24,13 @@
         "validate":"Sign up validation",
         "alreadyValidated":"Your accunt has already been validated",
         "updateError":"There has been a technical difficulty",
-        "unknown":"This code is unknown"
+        "unknown":"This code is unknown",
+        "almostDone":"The sign up is almost done",
+        "validationMailSend":"A validation email has been sent",
+        "canValid":"Now, you can",
+        "byClicking":"click the validation link",
+        "insideMail":"in the email or",
+        "copyPasteCode":"paste the code directly",
+        "underThis":"under this"
     }
 }

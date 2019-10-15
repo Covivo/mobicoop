@@ -40,9 +40,20 @@
       </v-row>
       <v-row
         justify="center"
-        align="center"
       >
         <v-col class="col-4">
+          <v-alert type="info">
+            {{ $t("almostDone") }}<br>
+            {{ $t("validationMailSend") }}<br>
+            {{ $t("canValid") }} <strong>{{ $t("byClicking") }}</strong> {{ $t("insideMail") }} <strong>{{ $t("copyPasteCode") }}</strong> {{ $t("underThis") }}.
+          </v-alert>
+        </v-col>
+      </v-row>
+      <v-row
+        justify="center"
+        align="center"
+      >
+        <v-col class="col-4 text-center">
           <v-alert
             v-if="error!==''"
             type="error"

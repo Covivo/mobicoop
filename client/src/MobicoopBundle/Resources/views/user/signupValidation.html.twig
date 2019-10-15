@@ -3,6 +3,9 @@
 {% block title %}
   {% trans from 'ui' %}user.signupValidation.title{% endtrans %}
 {% endblock %}
+{% block stylesheets %}
+  {{ encore_entry_link_tags("#{assets_prefix ?? ''}user/signup") }}
+{% endblock %}
 {% block main %}
 
 <Signup-validation 
