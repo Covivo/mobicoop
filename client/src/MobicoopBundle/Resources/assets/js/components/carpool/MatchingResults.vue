@@ -98,6 +98,10 @@ export default {
     regular: {
       type: Boolean,
       default: false
+    },
+    communityId: {
+      type: Number,
+      default: null
     }
   },
   data : function() {
@@ -122,7 +126,8 @@ export default {
         "date": this.date,
         "time": this.time,
         "regular": this.regular,
-        "userId": this.user ? this.user.id : null
+        "userId": this.user ? this.user.id : null,
+        "communityId": this.community.id
       }
     })
       .then((response) => {

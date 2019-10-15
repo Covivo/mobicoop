@@ -30,6 +30,7 @@
             :time="time"
             :regular="regular"
             :user="user"
+            :community-id="communityId"
             @carpool="carpool"
           />
         </v-col>
@@ -100,6 +101,10 @@ export default {
     regular: {
       type: Boolean,
       default: false
+    },
+    communityId: {
+      type: Number,
+      default: null
     }
   },
   data : function() {

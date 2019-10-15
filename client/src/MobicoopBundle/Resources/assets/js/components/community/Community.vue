@@ -203,13 +203,10 @@
       >
         <home-search
           :geo-search-url="geodata.geocompleteuri"
-          :route="geodata.searchroute"
           :user="user"
-          :justsearch="false"
-          :notitle="true"
-          :is-member="askToJoin"
-          :community="community"
-          :temporary-tooltips="true"
+          :params="params"
+          :punctual-date-optional="punctualDateOptional"
+          :regular="regular"
         />
       </v-row>
     </v-container>
@@ -267,7 +264,15 @@ export default {
     urlAltAvatar: {
       type: String,
       default: null
-    }
+    },
+    regular: {
+      type: Boolean,
+      default: false
+    }, 
+    punctualDateOptional: {
+      type: Boolean,
+      default: false
+    },
   },
   data () {
     return {
@@ -303,6 +308,7 @@ export default {
       isLogged: false,
       loadingMap: false,
       domain: true,
+      params: { 'communityId' : this.community.id },
 
     }
   },

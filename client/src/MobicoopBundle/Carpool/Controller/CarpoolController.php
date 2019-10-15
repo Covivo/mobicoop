@@ -129,6 +129,7 @@ class CarpoolController extends AbstractController
             'date' =>  $request->request->get('date'),
             'time' =>  $request->request->get('time'),
             'regular' => $request->request->get('regular'),
+            'communityId' => $request->request->get('communityId'),
             'user' => $userManager->getLoggedUser()
         ]);
     }
@@ -157,6 +158,7 @@ class CarpoolController extends AbstractController
         $strictRegular = $request->query->get('strictRegular');
         $role = $request->query->get('role', Criteria::ROLE_BOTH);
         $userId = $request->query->get('userId');
+        $communityId = $request->query->get('communityId');
 
         // we have to merge matching proposals that concern both driver and passenger into a single matching
         $matchings = [];
@@ -176,7 +178,8 @@ class CarpoolController extends AbstractController
             $strictPunctual,
             $strictRegular,
             $role,
-            $userId
+            $userId,
+            $communityId
         )) {
             if (is_array($proposalResults->getMember()) && count($proposalResults->getMember()) == 1) {
                 $proposalResult = $proposalResults->getMember()[0];
