@@ -32,7 +32,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ContactController extends AbstractController
 {
-
     use HydraControllerTrait;
 
     /**
@@ -75,8 +74,8 @@ class ContactController extends AbstractController
             $contact->setDatetime(new DateTime());
 
             if (count($errors) > 0) {
-
-                return new JsonResponse([
+                return new JsonResponse(
+                    [
                     "errors" => $errors
                 ],
                     \Symfony\Component\HttpFoundation\Response::HTTP_UNPROCESSABLE_ENTITY
@@ -84,7 +83,8 @@ class ContactController extends AbstractController
             }
 
             // todo: add service for contact message handling
-            return new JsonResponse([
+            return new JsonResponse(
+                [
                 "message" => "OK"
             ],
                 \Symfony\Component\HttpFoundation\Response::HTTP_ACCEPTED
@@ -92,7 +92,8 @@ class ContactController extends AbstractController
         }
 
         // todo: custom error and ok messages
-        return new JsonResponse([
+        return new JsonResponse(
+            [
             "message" => "Erreur"
         ],
             \Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN

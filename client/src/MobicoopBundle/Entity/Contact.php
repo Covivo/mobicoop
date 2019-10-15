@@ -203,5 +203,4 @@ class Contact implements ResourceInterface
         $this->datetime = $datetime;
         return $this;
     }
-
 }
