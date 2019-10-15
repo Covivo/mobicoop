@@ -1,5 +1,8 @@
 {
   "fr": {
+    "routes": {
+      "community": "/communaute/"
+    },
     "communitiesAvailable":"Communautés disponibles",
     "createCommunity":"Créer une communauté",
     "search":"Rechercher",
