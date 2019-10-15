@@ -35,7 +35,7 @@ import Vuetify, {
   // ad publish
   VStepper, VStepperHeader, VStepperStep, VDivider, VStepperItems, VStepperContent, VCheckbox, VSelect, VTextarea, VCard, VCardTitle, VRadioGroup, VRadio, VTimeline, VTimelineItem,
   // content
-  VSwitch, VMenu, VDatePicker, VTimePicker, VTextField,  VTooltip
+  VSwitch, VMenu, VDatePicker, VTimePicker, VTextField,  VTooltip, VAlert
 } from 'vuetify/lib'
 
 Vue.use(Vuetify, {
@@ -51,7 +51,7 @@ Vue.use(Vuetify, {
     // ad publish
     VStepper, VStepperHeader, VStepperStep, VDivider, VStepperItems, VStepperContent, VCheckbox, VSelect, VTextarea, VCard, VCardTitle, VRadioGroup, VRadio, VTimeline, VTimelineItem,
     // content
-    VSwitch, VMenu, VDatePicker, VTimePicker, VTextField,  VTooltip,
+    VSwitch, VMenu, VDatePicker, VTimePicker, VTextField,  VTooltip, VAlert,
     //Vue2Leaflet
     LMap, LTileLayer, LMarker, LTooltip, LIcon, LPolyline
   }
