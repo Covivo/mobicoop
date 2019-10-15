@@ -138,4 +138,26 @@ class CommunityRepository
         }
         return false;
     }
+
+    /**
+     * Find if a user is registered in a given community (using id's)
+     *
+     * @param int $communityId
+     * @param int $userId
+     *
+     * @return void
+     */
+    public function isRegisteredById(int $communityId, int $userId)
+    {
+        $result = $this->repository->createQueryBuilder('c')
+        ->join('c.communityUsers', 'cu')
+        ->where('cu.user = :user and cu.community = :community')
+        ->setParameter('user', $userId)
+        ->setParameter('community', $communityId)
+        ->getQuery()->getResult();
+        if ($result) {
+            return true;
+        }
+        return false;
+    }
 }
