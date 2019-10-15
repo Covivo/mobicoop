@@ -414,7 +414,7 @@ class ProposalManager
         // community
         if ($communityId && $userId) {
             // we check if the user is member of the community
-            if ($this->communityManager->isRegistered($communityId,$userId)) {
+            if ($this->communityManager->isRegistered($communityId, $userId)) {
                 if ($community = $this->communityManager->get($communityId)) {
                     $proposal->addCommunity($community);
                 }

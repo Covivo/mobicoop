@@ -117,7 +117,7 @@ class ProposalRepository
 
         // here we filter to the given proposal communities
         if ($proposal->getCommunities()) {
-            $communities = array_map($fCommunities,$proposal->getCommunities());
+            $communities = array_map($fCommunities, $proposal->getCommunities());
             if (is_array($communities) && count($communities)>0) {
                 // we finally implode this array for filtering
                 $query->andWhere("co.id IN (" . implode(',', $communities) . ")");

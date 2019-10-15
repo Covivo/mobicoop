@@ -182,7 +182,7 @@ class CommunityManager
      */
     public function isRegistered(int $communityId, int $userId)
     {
-        return $this->communityRepository->isRegisteredById($communityId,$userId);
+        return $this->communityRepository->isRegisteredById($communityId, $userId);
     }
 
     /**
