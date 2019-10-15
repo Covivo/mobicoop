@@ -68,7 +68,6 @@ class CarpoolController extends AbstractController
 
         // get the communities available for the user
         $communities = $communityManager->getAvailableUserCommunities($poster)->getMember();
-        
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
             [
@@ -78,7 +77,8 @@ class CarpoolController extends AbstractController
                 'destination'=>null,
                 'regular'=>null,
                 'date'=>null,
-                'time'=>null
+                'time'=>null,
+                'firstAd' => ($request->attributes->get('_route')=='carpool_ad_first')
             ]
         );
     }

@@ -157,6 +157,12 @@ carpool_ad_post:
         en: /carpool/ad/post
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPost
 
+carpool_ad_first:
+    path:
+        fr: /covoiturage/annonce/premiere
+        en: /carpool/ad/first
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPost
+
 # post an ad from a search 
 carpool_ad_post_search:
     path:
