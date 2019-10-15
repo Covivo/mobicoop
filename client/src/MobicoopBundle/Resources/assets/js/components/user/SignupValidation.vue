@@ -40,9 +40,20 @@
       </v-row>
       <v-row
         justify="center"
-        align="center"
       >
         <v-col class="col-4">
+          <v-alert type="info">
+            <p>{{ $t("almostDone") }}</p>
+            <p>{{ $t("validationMailSend") }}</p>
+            <p v-html="$t('canValid')" />
+          </v-alert>
+        </v-col>
+      </v-row>
+      <v-row
+        justify="center"
+        align="center"
+      >
+        <v-col class="col-4 text-center">
           <v-alert
             v-if="error!==''"
             type="error"
