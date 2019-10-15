@@ -21,7 +21,9 @@
           </h3>
         </v-col>
       </v-row>
-
+      <v-alert type="info">
+        blah blah
+      </v-alert>
       <!-- Stepper -->
       <v-row 
         justify="center"
@@ -587,7 +589,10 @@ export default {
       type: String,
       default: null
     },
-
+    firstPublish: {
+      type: Boolean,
+      default: true
+    }
 
   },
   data() {
