@@ -31,6 +31,11 @@
       "errors": {
         "required": "Le message est requis"
       }
+    },
+    "ui": {
+      "button": {
+        "send": "Envoyer"
+      }
     }
   }
 }

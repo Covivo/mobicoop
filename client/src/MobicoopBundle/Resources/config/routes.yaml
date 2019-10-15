@@ -335,4 +335,10 @@ contact:
     path:
         fr: /contact
         en: /contact
-    controller: Mobicoop\Bundle\MobicoopBundle\Contact\Controller\ContactController:showContact
+    controller: Mobicoop\Bundle\MobicoopBundle\Controller\ContactController:showContact
+
+contact_send:
+    path:
+        fr: /contact/send
+        en: /contact/send
+    controller: Mobicoop\Bundle\MobicoopBundle\Controller\ContactController:sendContact
