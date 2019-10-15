@@ -173,20 +173,4 @@ class CommunityManager
         }
         return $this->communityRepository->findBy(['name'=>$name]);
     }
-
-    /**
-     * Update a community
-     *
-     * @param Community $community
-     * @return Community
-     */
-    public function updateCommunity(Community $community): Community
-    {
-        if (!is_null($community->getNewAddress())) {
-            $community->setAddress($community->getNewAddress());
-        }
-        $this->entityManager->persist($community);
-        $this->entityManager->flush();
-        return $community;
-    }
 }

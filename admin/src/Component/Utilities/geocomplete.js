@@ -73,6 +73,8 @@ const GeocompleteInput = props => {
                             );
                             if (address) {
                                 // dispatch here the fields you want to store in the react-admin model
+                                // first, we clear the current address to avoid sending unwanted additional parameters
+                                dispatch(change(REDUX_FORM_NAME, this.props.source, null));
                                 dispatch(change(REDUX_FORM_NAME, 'address.streetAddress', address.streetAddress));
                                 dispatch(change(REDUX_FORM_NAME, 'address.postalCode', address.postalCode));
                                 dispatch(change(REDUX_FORM_NAME, 'address.addressLocality', address.addressLocality));
@@ -189,8 +191,10 @@ class GeocompleteInputWithoutHook extends React.Component {
                                     element => `${element.displayLabel[0]} - ${element.displayLabel[1]}` === selectedItem,
                                 );
                                 if (address) {
-                                    // console.log(this.props);
+                                    //console.log(this.props.source.addressLocality);
                                     // dispatch here the fields you want to store in the react-admin model
+                                    // first, we clear the current address to avoid sending unwanted additional parameters
+                                    dispatch(change(REDUX_FORM_NAME, this.props.source, null));
                                     dispatch(change(REDUX_FORM_NAME, this.props.source+'.streetAddress', address.streetAddress));
                                     dispatch(change(REDUX_FORM_NAME, this.props.source+'.postalCode', address.postalCode));
                                     dispatch(change(REDUX_FORM_NAME, this.props.source+'.addressLocality', address.addressLocality));

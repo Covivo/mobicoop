@@ -30,7 +30,7 @@ export const RelayPointEdit = (props) => (
                 <ReferenceField source="address" label="Adresse actuelle" reference="addresses" linkType="">
                     <FunctionField render={addressRenderer} />
                 </ReferenceField>
-                <GeocompleteInput source="newAddress" label="Nouvelle addresse" validate={required()}/>
+                <GeocompleteInput source="address" label="Nouvelle addresse" validate={required()}/>
                 <SelectInput source="status" label="Status" choices={statusChoices} defaultValue={1} />
                 <ReferenceArrayInput source="relayPointTypes" label="Types" reference="relay_point_types">
                     <SelectArrayInput optionText="name" />

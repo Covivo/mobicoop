@@ -218,11 +218,6 @@ services:
     App\Rdex\Controller\:
         resource: '../src/Rdex/Controller'
         tags: ['controller.service_arguments']
-
-    # Relay points
-    App\RelayPoint\Controller\:
-        resource: '../src/RelayPoint/Controller'
-        tags: ['controller.service_arguments']
     
     # Right
     App\Right\Controller\:

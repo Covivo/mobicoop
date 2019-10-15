@@ -26,7 +26,7 @@ export const CommunityEdit = (props) => (
             <ReferenceField source="address" label="Adresse actuelle" reference="addresses" linkType="">
                 <FunctionField render={addressRenderer} />
             </ReferenceField>
-            <GeocompleteInput source="newAddress" label="Nouvelle addresse" validate={required()}/>
+            <GeocompleteInput source="address" label="Nouvelle addresse" validate={required()}/>
             <TextInput source="name" label="Nom" validate={required()}/>
             <BooleanInput source="membersHidden" label="Membres masqués"  />
             <BooleanInput source="proposalsHidden" label="Annonces masquées" />
