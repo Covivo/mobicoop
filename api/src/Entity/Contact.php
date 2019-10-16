@@ -21,77 +21,91 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Entity;
+namespace App\Entity;
 
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
+use App\Controller\ContactMessage;
+
 
 /**
  * A contact message.
+ *
+ * @ApiResource(
+ *     attributes={
+ *          "force_eager"=false,
+ *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "denormalization_context"={"groups"={"write"}},
+ *     },
+ *     collectionOperations={
+ *          "post"={
+ *              "method"="POST",
+ *              "path"="/contacts",
+ *              "controller"=ContactMessage::class,
+ *          },
+ *      },
+ * )
  */
-class Contact implements ResourceInterface
+class Contact
 {
+    const DEFAULT_ID = 999999999999;
+
     /**
      * @var int The id of this contact.
-     * @Groups({"post"})
+     * @ApiProperty(identifier=true)
+     * @Groups({"read"})
      */
     private $id;
 
     /**
-     * @var string|null The iri of this contact.
-     *
-     * @Groups({"post"})
-     */
-    private $iri;
-
-    /**
      * @var string|null The first name of the contacting person.
-     *
-     * @Groups({"post"})
+     * @Groups({"write"})
      */
     private $givenName;
 
     /**
      * @var string|null The family name of the contacting person.
-     *
-     * @Groups({"post"})
+     * @Groups({"write"})
      */
     private $familyName;
 
     /**
      * @var string The email of the contacting person.
      *
-     * @Groups({"post"})
-     *
      * @Assert\NotBlank()
      * @Assert\Email()
+     * @Groups({"write"})
      */
     private $email;
 
     /**
      * @var string|null The demand of the contacting person.
-     *
-     * @Groups({"post"})
+     * @Groups({"write"})
      */
     private $demand;
 
     /**
      * @var string The message from the contacting person.
      *
-     * @Groups({"post"})
-     *
      * @Assert\NotBlank()
+     * @Groups({"write"})
      */
     private $message;
 
     /**
      * @var \DateTime The date when the message is sent.
+     * @Groups({"write"})
      */
     private $datetime;
 
-    public function __construct()
+    public function __construct($id = null)
     {
+        $this->id = self::DEFAULT_ID;
+        if ($id) {
+            $this->id = $id;
+        }
     }
 
     public function getId(): ?int
@@ -102,16 +116,6 @@ class Contact implements ResourceInterface
     public function setId(int $id)
     {
         $this->id = $id;
-    }
-
-    public function getIri()
-    {
-        return $this->iri;
-    }
-
-    public function setIri($iri)
-    {
-        $this->iri = $iri;
     }
 
     /**

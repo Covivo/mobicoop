@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,32 +21,42 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Service;
+namespace App\Controller;
 
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Contact;
+use App\Entity\Contact;
+use App\Service\ContactManager;
+use App\TranslatorTrait;
 
 /**
- * Contact management service.
+ * Controller class for contact message.
+ *
  */
-class ContactManager
+class ContactMessage
 {
-    private $dataProvider;
+    use TranslatorTrait;
 
     /**
-     * ContactManager constructor.
-     * @param DataProvider $dataProvider
-     * @throws \ReflectionException
+     * @var ContactManager
      */
-    public function __construct(DataProvider $dataProvider)
+    private $contactManager;
+
+    public function __construct(ContactManager $contactManager)
     {
-        $this->dataProvider = $dataProvider;
-        $this->dataProvider->setClass(Contact::class);
+        $this->contactManager = $contactManager;
     }
 
-    public function sendContactEmail(Contact $contact)
+    /**
+     * This method is invoked when a new contact is posted.
+     *
+     * @param Contact $data
+     * @return Contact
+     */
+    public function __invoke(Contact $data): Contact
     {
-        $response = $this->dataProvider->post($contact);
-        return $response->getValue();
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad contact"));
+        }
+        $data = $this->contactManager->sendContactMail($data);
+        return $data;
     }
 }

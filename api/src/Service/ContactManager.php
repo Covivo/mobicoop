@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,32 +21,48 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Contact;
+namespace App\Service;
 
-/**
- * Contact management service.
- */
+
+use App\Event\ContactEmailEvent;
+use App\Entity\Contact;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 class ContactManager
 {
-    private $dataProvider;
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     /**
      * ContactManager constructor.
-     * @param DataProvider $dataProvider
-     * @throws \ReflectionException
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param LoggerInterface $logger
      */
-    public function __construct(DataProvider $dataProvider)
+    public function __construct(EventDispatcherInterface $eventDispatcher, LoggerInterface $logger)
     {
-        $this->dataProvider = $dataProvider;
-        $this->dataProvider->setClass(Contact::class);
+        $this->eventDispatcher = $eventDispatcher;
+        $this->logger = $logger;
     }
 
-    public function sendContactEmail(Contact $contact)
+    /**
+     * Send email event for contact message
+     *
+     * @param Contact $contact
+     * @return Contact
+     */
+    public function sendContactMail(Contact $contact)
     {
-        $response = $this->dataProvider->post($contact);
-        return $response->getValue();
+        $event = new ContactEmailEvent($contact);
+        $this->eventDispatcher->dispatch(ContactEmailEvent::NAME, $event);
+        return $contact;
     }
+
 }

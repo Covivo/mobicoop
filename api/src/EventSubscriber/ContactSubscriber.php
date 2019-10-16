@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,32 +21,38 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Service;
+namespace App\EventSubscriber;
 
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Contact;
+use App\Event\ContactEmailEvent;
+use App\Communication\Service\NotificationManager;
+use App\TranslatorTrait;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-/**
- * Contact management service.
- */
-class ContactManager
+class ContactSubscriber implements EventSubscriberInterface
 {
-    private $dataProvider;
+    use TranslatorTrait;
+
+    private $notificationManager;
+
+    public function __construct(NotificationManager $notificationManager)
+    {
+        $this->notificationManager = $notificationManager;
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            ContactEmailEvent::NAME => 'onContactSent'
+        ];
+    }
 
     /**
-     * ContactManager constructor.
-     * @param DataProvider $dataProvider
-     * @throws \ReflectionException
+     * Executed when a contact message is sent
      */
-    public function __construct(DataProvider $dataProvider)
+    public function onContactSent(ContactEmailEvent $event)
     {
-        $this->dataProvider = $dataProvider;
-        $this->dataProvider->setClass(Contact::class);
+        $contact = $event->getContact();
+        // todo: send mail
     }
 
-    public function sendContactEmail(Contact $contact)
-    {
-        $response = $this->dataProvider->post($contact);
-        return $response->getValue();
-    }
 }

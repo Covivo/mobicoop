@@ -24,8 +24,11 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 
 use DateTime;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Response;
 use Mobicoop\Bundle\MobicoopBundle\Entity\Contact;
+use Mobicoop\Bundle\MobicoopBundle\Service\ContactManager;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
+use phpDocumentor\Parser\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,9 +52,9 @@ class ContactController extends AbstractController
      *
      * Handle post request from contact form
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @param ContactManager $contactManager
      */
-    public function sendContact(Request $request)
+    public function sendContact(Request $request, ContactManager $contactManager)
     {
         $contact = new Contact();
 
@@ -82,13 +85,23 @@ class ContactController extends AbstractController
                 );
             }
 
-            // todo: add service for contact message handling
-            return new JsonResponse(
-                [
-                "message" => "OK"
-            ],
-                \Symfony\Component\HttpFoundation\Response::HTTP_ACCEPTED
-            );
+            if ($response = $contactManager->sendContactEmail($contact)) {
+
+//                return new JsonResponse(
+//                    [
+//                        "message" => "OK"
+//                    ],
+//                    \Symfony\Component\HttpFoundation\Response::HTTP_ACCEPTED
+//                );
+            }
+            $reponseofmanager = $this->handleManagerReturnValue($response);
+            if (!empty($reponseofmanager)) {
+                return $reponseofmanager;
+            }
+//            return new Response();
+            return new JsonResponse($response);die;
+
+
         }
 
         // todo: custom error and ok messages

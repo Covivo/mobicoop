@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,32 +21,27 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Service;
+namespace App\Event;
 
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Contact;
+use App\Entity\Contact;
+use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Contact management service.
+ * Event sent when a contact message is sent.
  */
-class ContactManager
+class ContactEmailEvent extends Event
 {
-    private $dataProvider;
+    public const NAME = 'contact_email_posted';
 
-    /**
-     * ContactManager constructor.
-     * @param DataProvider $dataProvider
-     * @throws \ReflectionException
-     */
-    public function __construct(DataProvider $dataProvider)
+    protected $contact;
+
+    public function __construct(Contact $contact)
     {
-        $this->dataProvider = $dataProvider;
-        $this->dataProvider->setClass(Contact::class);
+        $this->contact = $contact;
     }
 
-    public function sendContactEmail(Contact $contact)
+    public function getContact()
     {
-        $response = $this->dataProvider->post($contact);
-        return $response->getValue();
+        return $this->contact;
     }
 }
