@@ -1,4 +1,6 @@
 import React from 'react';
+import isAuthorized from '../Utilities/authorization';
+
 //import bcrypt from 'bcryptjs';
 
 import { 
@@ -35,7 +37,9 @@ export const UserList = (props) => (
             <EmailField source="email" label="Email" />
             <DateField source="createdDate" label="Date de création"/>
             <ShowButton />
-            <EditButton />
+            {isAuthorized("user_update") && 
+                <EditButton />
+            }
         </Datagrid>
     </List>
 );

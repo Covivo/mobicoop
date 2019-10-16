@@ -26,6 +26,8 @@ import rights from './Component/Right/Right/index';
 import territories from './Component/Territory/index';
 import { AddressEdit } from './Component/Address/addresses';
 
+import isAuthorized from './Component/Utilities/authorization';
+
 require('dotenv').config();
 
 const MyLoginPage = () => <Login backgroundImage={process.env.REACT_APP_THEME_BACKGROUND} />;
@@ -55,13 +57,6 @@ const messages = {
   fr: frenchMessages,
 }
 const i18nProvider = locale => messages[locale];
-
-// function to search for a given permission
-// todo : refactor with authProvider function
-function isAuthorized(action) {
-  let permissions = JSON.parse(localStorage.getItem('permissions'));
-  return permissions.hasOwnProperty(action);
-}
 
 const entrypoint = process.env.REACT_APP_API;
 
@@ -128,8 +123,8 @@ export default class extends Component {
                   isAuthorized("community_manage")    ? <Resource name={'community_users'} {...community_users} /> : null,
                   isAuthorized("relay_point_manage")  ? <Resource name={'relay_points'} {...relay_points} /> : null,
                   isAuthorized("relay_point_manage")  ? <Resource name={'relay_point_types'} {...relay_point_types} /> : null,
-                  !isAuthorized("permission_manage")  ? <Resource name={'roles'} {...roles} /> : null,
-                  !isAuthorized("permission_manage")  ? <Resource name={'rights'} {...rights} /> : null,
+                  isAuthorized("permission_manage")   ? <Resource name={'roles'} {...roles} /> : null,
+                  isAuthorized("permission_manage")   ? <Resource name={'rights'} {...rights} /> : null,
                   isAuthorized("territory_manage")    ? <Resource name={'territories'} {...territories} /> : null,
                   <Resource name="geo_search" />,
                   <Resource name="addresses" edit={ AddressEdit} title="Adresses" options={{ label: 'Adresses' }} icon={MapIcon} />,

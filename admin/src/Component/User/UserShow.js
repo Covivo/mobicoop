@@ -1,4 +1,6 @@
 import React from 'react';
+import isAuthorized from '../Utilities/authorization';
+
 //import bcrypt from 'bcryptjs';
 
 import { 
@@ -25,6 +27,10 @@ export const UserShow = (props) => (
             <Tab label="Adresses">
 
             </Tab>
+            {isAuthorized("permission_manage") && 
+            <Tab label="Droits">
+                
+            </Tab>}
         </TabbedShowLayout>
     </Show>
 );
