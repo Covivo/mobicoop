@@ -3,7 +3,7 @@
     "buttons": {
       "publish": {
           "label": "Publier une annonce",
-          "route": "/communaute/{communityId}/annonce/poster"
+          "route": "covoiturage/recherche/poster"
       },
       "search": {
         "label": "Rechercher",

@@ -289,4 +289,21 @@ class CommunityController extends AbstractController
         }
         return new Response(json_encode($points));
     }
+
+    /**
+     * Get available communities for the logged user
+     *
+     * @param UserManager $userManager
+     * @param CommunityManager $communityManager
+     * @return void
+     */
+    public function communityUserAvailable(int $userId, UserManager $userManager, CommunityManager $communityManager)
+    {
+        if ($user = $userManager->getUser($userId)) {
+            $communities = $communityManager->getAvailableUserCommunities($user)->getMember();
+            return new Response(json_encode($communities));
+        };
+
+        return new Response();
+    }
 }

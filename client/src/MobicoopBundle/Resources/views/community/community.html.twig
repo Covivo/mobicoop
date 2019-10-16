@@ -21,6 +21,8 @@
         :user="{{ app.user|json_encode }}"
         url-alt-avatar="{{ urlAltCommunityAvatar }}"
         avatar-version="{{ communityAvatarVersion }}"
+        {{ searchRegular ? 'regular' : '' }}
+        {{ searchPunctualDate ? 'punctual-date-optional' : '' }}
     ></community>
 {% endif %}
 

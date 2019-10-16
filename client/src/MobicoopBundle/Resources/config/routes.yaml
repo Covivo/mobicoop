@@ -164,15 +164,6 @@ carpool_ad_post_search:
         en: /carpool/search/post
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPostFromSearch
 
-# post an ad in a community
-carpool_ad_post_community:
-    path:
-        fr: /communaute/{communityId}/annonce/poster
-        en: /community/{communityId}/ad/share
-    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPostFromSearch
-    requirements:
-        communityId: '\d+'
-
 # ad results 
 carpool_ad_result:
     path:
@@ -290,8 +281,17 @@ community_proposals:
         en: /community-proposals/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityProposals
     requirements:
-        id: '\d+'       
-        
+        id: '\d+'    
+
+# get all available communities for the logged user (AJAX)
+community_user_available:
+    path:
+        fr: /communautes/utilisateur/{userId}
+        en: /communities/user/{userId}
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityUserAvailable
+    requirements:
+        userId: '\d+' 
+
 ##########################
 # editorial pages routes #
 ##########################

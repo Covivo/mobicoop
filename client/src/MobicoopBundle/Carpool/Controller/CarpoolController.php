@@ -66,13 +66,10 @@ class CarpoolController extends AbstractController
 
         $this->denyAccessUnlessGranted('create_ad', $proposal);
 
-        // get the communities available for the user
-        $communities = $communityManager->getAvailableUserCommunities($poster)->getMember();
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
             [
-                'communities'=>$communities,
-                'community'=>null,
+                'communityIds'=>null,
                 'origin'=>null,
                 'destination'=>null,
                 'regular'=>null,
@@ -87,26 +84,16 @@ class CarpoolController extends AbstractController
      * Create a carpooling ad from a search component (home, community...)
      * (POST)
      */
-    public function carpoolAdPostFromSearch(UserManager $userManager, Request $request, CommunityManager $communityManager)
+    public function carpoolAdPostFromSearch(Request $request)
     {
         $proposal = new Proposal();
-        $poster = $userManager->getLoggedUser();
 
         $this->denyAccessUnlessGranted('create_ad', $proposal);
-
-        // get the communities available for the user
-        $communities = $communityManager->getAvailableUserCommunities($poster)->getMember();
         
-        //get user's community
-        if (!is_null($request->request->get('community'))) {
-            $community = $communityManager->getCommunity($request->request->get('community'));
-        }
-
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
             [
-                'communities'=>$communities,
-                'community'=>(isset($community))?$community:null,
+                'communityIds'=>$request->request->get('communityId') ? [(int)$request->request->get('communityId')] : null,
                 'origin'=>$request->request->get('origin'),
                 'destination'=>$request->request->get('destination'),
                 'regular'=>$request->request->get('regular'),
@@ -129,6 +116,7 @@ class CarpoolController extends AbstractController
             'date' =>  $request->request->get('date'),
             'time' =>  $request->request->get('time'),
             'regular' => $request->request->get('regular'),
+            'communityId' => $request->request->get('communityId'),
             'user' => $userManager->getLoggedUser()
         ]);
     }
@@ -157,6 +145,7 @@ class CarpoolController extends AbstractController
         $strictRegular = $request->query->get('strictRegular');
         $role = $request->query->get('role', Criteria::ROLE_BOTH);
         $userId = $request->query->get('userId');
+        $communityId = $request->query->get('communityId');
 
         // we have to merge matching proposals that concern both driver and passenger into a single matching
         $matchings = [];
@@ -176,7 +165,8 @@ class CarpoolController extends AbstractController
             $strictPunctual,
             $strictRegular,
             $role,
-            $userId
+            $userId,
+            $communityId
         )) {
             if (is_array($proposalResults->getMember()) && count($proposalResults->getMember()) == 1) {
                 $proposalResult = $proposalResults->getMember()[0];

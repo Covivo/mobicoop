@@ -127,6 +127,7 @@ class ProposalManager
      * @param boolean $strictRegular        Strictly regular
      * @param integer $role                 Role (driver and/or passenger)
      * @param integer $userId               User id of the requester (to exclude its own results)
+     * @param integer $communityId          Community id of the requester (to get only results from that community)
      * @param $format                       Return format
      * @return array|null The matchings found or null if not found.
      */
@@ -144,6 +145,7 @@ class ProposalManager
         ?bool $strictRegular = null,
         ?int $role = null,
         ?int $userId = null,
+        ?int $communityId = null,
         $format = null
     ) {
         // we set the params
@@ -175,6 +177,9 @@ class ProposalManager
         }
         if (!is_null($userId)) {
             $params["userId"] = $userId;
+        }
+        if (!is_null($communityId)) {
+            $params["communityId"] = $communityId;
         }
         if (is_null($format)) {
             $format = $this->dataProvider::RETURN_OBJECT;
