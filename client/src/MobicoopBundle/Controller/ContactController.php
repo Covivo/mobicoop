@@ -78,37 +78,26 @@ class ContactController extends AbstractController
 
             if (count($errors) > 0) {
                 return new JsonResponse(
-                    [
-                    "errors" => $errors
-                ],
+                    ["errors" => $errors],
                     \Symfony\Component\HttpFoundation\Response::HTTP_UNPROCESSABLE_ENTITY
                 );
             }
 
             if ($response = $contactManager->sendContactEmail($contact)) {
-
-//                return new JsonResponse(
-//                    [
-//                        "message" => "OK"
-//                    ],
-//                    \Symfony\Component\HttpFoundation\Response::HTTP_ACCEPTED
-//                );
+                return new JsonResponse(
+                    ["message" => "success"],
+                    \Symfony\Component\HttpFoundation\Response::HTTP_ACCEPTED
+                );
             }
-            $reponseofmanager = $this->handleManagerReturnValue($response);
-            if (!empty($reponseofmanager)) {
-                return $reponseofmanager;
-            }
-//            return new Response();
-            return new JsonResponse($response);die;
-
-
+            return new JsonResponse(
+                ["message" => "error.contact.post"],
+                \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
+            );
         }
 
         // todo: custom error and ok messages
         return new JsonResponse(
-            [
-            "message" => "Erreur"
-        ],
+            ["message" => "error"],
             \Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN
         );
     }

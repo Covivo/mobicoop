@@ -54,5 +54,4 @@ class ContactSubscriber implements EventSubscriberInterface
         $contact = $event->getContact();
         // todo: send mail
     }
-
 }

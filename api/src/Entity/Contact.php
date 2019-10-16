@@ -29,7 +29,6 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\ContactMessage;
 
-
 /**
  * A contact message.
  *

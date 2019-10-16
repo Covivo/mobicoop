@@ -24,7 +24,6 @@
 
 namespace App\Service;
 
-
 use App\Event\ContactEmailEvent;
 use App\Entity\Contact;
 use Psr\Log\LoggerInterface;
@@ -64,5 +63,4 @@ class ContactManager
         $this->eventDispatcher->dispatch(ContactEmailEvent::NAME, $event);
         return $contact;
     }
-
 }
