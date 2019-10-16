@@ -1,8 +1,8 @@
-{% extends 'base.html.twig' %}
+{% extends '/email/notification/base.html.twig' %}
 {% block body %}
     @PrenomOuPseudoExpediteur {{ "vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous."|trans }}
 
-    {{ "Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de"|trans }} {{ api_env('CLIENT_NAME') }} {{ "en cliquant ici"|trans}} @URLdelapagedemessageriecorrespondante.
+    {{ "Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de"|trans }} {{ api_env('EMAILS_PLATFORM_NAME') }} {{ "en cliquant ici"|trans}} @URLdelapagedemessageriecorrespondante.
 
     {{ "Trajet occasionelle Distance covoiturée"|trans}} @DistancePassager km
     {{ "Détour conducteur"| trans}} @TempsDetourMinutes / @DistanceDetour km

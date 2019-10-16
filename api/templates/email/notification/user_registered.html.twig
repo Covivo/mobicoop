@@ -1,10 +1,6 @@
-{% extends 'base.html.twig' %}
+{% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    {{ "Votre inscription au service"|trans }}  {{api_env('CLIENT_NAME')}}  {{ "est bien prise en compte"|trans }}.
-
-    {{ "Veuillez cliquer sur ce lien pour confirmer votre email"|trans}}
-    {{ api_env('CLIENT_URL') }}{{ "urlEmailValidation"|trans }}{{ context.user.validatedDateToken }}
-
-    {{ "Ou utilisez le code de validation directement sur le site"|trans }} :
-    {{ context.user.validatedDateToken }}
+    <p>{{ "Votre inscription au service"|trans }}  {{api_env('EMAILS_PLATFORM_NAME')}}  {{ "est bien prise en compte"|trans }}.</p>
+    <p>{{ "Veuillez cliquer sur ce lien pour confirmer votre email"|trans}} : <a href="{{ api_env('EMAILS_PLATFORM_URL') }}{{ "urlEmailValidation"|trans }}{{ context.user.validatedDateToken }}" title="">{{ api_env('EMAILS_PLATFORM_URL') }}{{ "urlEmailValidation"|trans }}{{ context.user.validatedDateToken }}</a></p>
+    <p>{{ "Ou utilisez le code de validation directement sur le site"|trans }} : {{ context.user.validatedDateToken }}</p>
 {% endblock %}
