@@ -79,7 +79,7 @@ import {merge} from "lodash";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/home/HomeSearch.json";
 import TranslationsClient from "@clientTranslations/components/home/HomeSearch.json";
-import SearchJourney from "@components/carpool/SearchJourney";
+import SearchJourney from "@components/carpool/search/SearchJourney";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 

@@ -52,9 +52,9 @@
 import { merge } from "lodash";
 import moment from "moment";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/utilities/JourneySummary.json";
-import TranslationsClient from "@clientTranslations/components/utilities/JourneySummary.json";
-import RouteSummary from "../utilities/RouteSummary"
+import Translations from "@translations/components/carpool/utilities/JourneySummary.json";
+import TranslationsClient from "@clientTranslations/components/carpool/utilities/JourneySummary.json";
+import RouteSummary from "@components/carpool/utilities/RouteSummary"
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {

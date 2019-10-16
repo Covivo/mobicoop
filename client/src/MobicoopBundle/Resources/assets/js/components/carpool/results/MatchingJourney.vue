@@ -13,7 +13,7 @@
         <!-- Date -->
         <v-col
           v-if="!lRegular"
-          cols="4"
+          cols="5"
           class="title text-center"
         >
           {{ computedDate }}
@@ -21,15 +21,23 @@
 
         <v-col
           v-else
-          cols="4"
+          cols="5"
           class="title text-center"
         >
-          TODO
+          <regular-days-summary 
+            :mon-active="monActive"
+            :tue-active="tueActive"
+            :wed-active="wedActive"
+            :thu-active="thuActive"
+            :fri-active="friActive"
+            :sat-active="satActive"
+            :sun-active="sunActive"
+          />
         </v-col>
 
         <!-- Seats -->
         <v-col
-          cols="4"
+          cols="3"
           class="title text-center"
         >
           {{ $tc('places', proposal.criteria.seats, { seats: proposal.criteria.seats }) }}
@@ -46,17 +54,35 @@
 
       <!-- Route / carpooler -->
       <v-row
-        align="start"
+        align="center"
         dense
       > 
         <!-- Route -->
         <v-col
           cols="8"
         >
-          <v-journey
-            :time="computedTime"
-            :waypoints="waypoints"
-          />
+          <v-row>
+            <v-col>
+              <v-journey
+                :time="computedTime"
+                :waypoints="waypoints"
+              />
+            </v-col>
+          </v-row>
+          <v-row 
+            v-if="proposal.comment"
+          >
+            <v-col>
+              <v-card
+                outlined
+                class="mx-auto"
+              > 
+                <v-card-text class="pre-formatted">
+                  {{ proposal.comment }}
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
         </v-col>
 
         <!-- Carpooler -->
@@ -152,14 +178,16 @@
 import { merge } from "lodash";
 import moment from "moment";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/carpool/MatchingJourney.json";
-import TranslationsClient from "@clientTranslations/components/carpool/MatchingJourney.json";
-import VJourney from "../utilities/VJourney";
+import Translations from "@translations/components/carpool/results/MatchingJourney.json";
+import TranslationsClient from "@clientTranslations/components/carpool/results/MatchingJourney.json";
+import VJourney from "@components/carpool/utilities/VJourney";
+import RegularDaysSummary from "@components/carpool/utilities/RegularDaysSummary";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   components: {
-    VJourney
+    VJourney,
+    RegularDaysSummary
   },
   i18n: {
     messages: TranslationsMerged,
@@ -216,7 +244,12 @@ export default {
     },
     computedDate() {
       if (this.lRegular) {
+        // regular search => fromDate
         return moment.utc(this.driver ? this.lMatching.offer.criteria.fromDate : this.lMatching.request.criteria.fromDate).format(this.$t("ui.i18n.date.format.fullDate"))
+      }
+      if (this.proposal.criteria.frequency == 2) {
+        // punctual search && regular result
+        return moment.utc(this.date).format(this.$t("ui.i18n.date.format.fullDate"))        
       }
       return this.proposal.criteria.fromDate
         ? moment.utc(this.proposal.criteria.fromDate).format(this.$t("ui.i18n.date.format.fullDate"))
@@ -227,6 +260,9 @@ export default {
     },
     computedTime() {
       if (this.proposal.criteria.frequency == 2) {
+        if (this.lRegular) {
+          return null;
+        }
         // we have to search the week day and display the time
         const dayOfWeek = moment.utc(this.proposal.criteria.fromDate).format('d');
         switch (dayOfWeek) {
@@ -258,7 +294,28 @@ export default {
     }, 
     waypoints() {
       return this.computeWaypoints();
-    }
+    },
+    monActive() {
+      return (this.proposal.criteria.monCheck || (this.proposal.proposalLinked && this.proposal.proposalLinked.criteria.moncheck));
+    },
+    tueActive() {
+      return  (this.proposal.criteria.tueCheck || (this.proposal.proposalLinked && this.proposal.proposalLinked.criteria.tueCheck));
+    },
+    wedActive() {
+      return  (this.proposal.criteria.wedCheck || (this.proposal.proposalLinked && this.proposal.proposalLinked.criteria.wedCheck));
+    },
+    thuActive() {
+      return  (this.proposal.criteria.thuCheck || (this.proposal.proposalLinked && this.proposal.proposalLinked.criteria.thuCheck));
+    },
+    friActive() {
+      return  (this.proposal.criteria.friCheck || (this.proposal.proposalLinked && this.proposal.proposalLinked.criteria.friCheck));
+    },
+    satActive() {
+      return  (this.proposal.criteria.satCheck || (this.proposal.proposalLinked && this.proposal.proposalLinked.criteria.satCheck));
+    },
+    sunActive() {
+      return  (this.proposal.criteria.sunCheck || (this.proposal.proposalLinked && this.proposal.proposalLinked.criteria.sunCheck));
+    },
   },
   watch: {
     origin(val) {
@@ -300,6 +357,10 @@ export default {
       });
       return waypoints;
     },
+
+
+    /* the following is not used for now but is to keep for further use !!! 
+
     // this methods gives the date of the carpool
     getCarpoolDate(params) {
       // if the search is regular, it's the selected date
@@ -356,6 +417,8 @@ export default {
       }
       return null;
     },
+    */
+
   }
 };
 </script>

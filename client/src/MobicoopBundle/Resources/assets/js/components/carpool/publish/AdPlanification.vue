@@ -464,8 +464,8 @@
 import moment from "moment";
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/carpool/AdPlanification.json";
-import TranslationsClient from "@clientTranslations/components/carpool/AdPlanification.json";
+import Translations from "@translations/components/carpool/publish/AdPlanification.json";
+import TranslationsClient from "@clientTranslations/components/carpool/publish/AdPlanification.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 

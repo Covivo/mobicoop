@@ -35,7 +35,7 @@
           cols="10"
         >
           <!-- Regular : summary of days -->
-          <days-summary
+          <regular-planning-summary
             v-if="showRegularSummary"
             :proposal="driver ? matching.offer.proposalOffer : matching.request.proposalRequest"
           />
@@ -70,16 +70,16 @@
 import { merge } from "lodash";
 // import moment from "moment";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/carpool/MatchingResult.json";
-import TranslationsClient from "@clientTranslations/components/carpool/MatchingResult.json";
-import DaysSummary from "../utilities/DaysSummary"
-import JourneySummary from "../utilities/JourneySummary"
-import CarpoolerSummary from "../utilities/CarpoolerSummary"
+import Translations from "@translations/components/carpool/results/MatchingResult.json";
+import TranslationsClient from "@clientTranslations/components/carpool/results/MatchingResult.json";
+import RegularPlanningSummary from "@components/carpool/utilities/RegularPlanningSummary"
+import JourneySummary from "@components/carpool/utilities/JourneySummary"
+import CarpoolerSummary from "@components/carpool/utilities/CarpoolerSummary"
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   components: {
-    DaysSummary,
+    RegularPlanningSummary,
     JourneySummary,
     CarpoolerSummary
   },
@@ -104,6 +104,12 @@ export default {
       type: Boolean,
       default: false
     },
+    // show regular journeys results as regular journeys in case of punctual search
+    // if not, the regular journey will be displayed as a punctual journey
+    distinguishRegular: {
+      type: Boolean,
+      default: false
+    }
   },
   data : function() {
     return {
@@ -112,6 +118,7 @@ export default {
   },
   computed: {
     showRegularSummary() {
+      if (!this.regular && !this.distinguishRegular) return false;
       if (this.driver) {
         if (this.matching.offer.proposalOffer.criteria.frequency == 2) return true;
       }

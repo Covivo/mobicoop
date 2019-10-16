@@ -48,6 +48,7 @@
             :matching="matching"
             :user="user"
             :regular="regular"
+            :distinguish-regular="distinguishRegular"
             :date="date"
             @carpool="carpool"
           />
@@ -61,9 +62,9 @@
 import axios from "axios";
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/carpool/MatchingResults.json";
-import TranslationsClient from "@clientTranslations/components/carpool/MatchingResults.json";
-import MatchingResult from "./MatchingResult";
+import Translations from "@translations/components/carpool/results/MatchingResults.json";
+import TranslationsClient from "@clientTranslations/components/carpool/results/MatchingResults.json";
+import MatchingResult from "@components/carpool/results/MatchingResult";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
@@ -102,6 +103,10 @@ export default {
     communityId: {
       type: Number,
       default: null
+    },
+    distinguishRegular: {
+      type: Boolean,
+      default: false
     }
   },
   data : function() {
