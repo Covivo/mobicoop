@@ -21,27 +21,37 @@
  *    LICENSE
  **************************/
 
-namespace App\Event;
+namespace App\Communication\EventSubscriber;
 
-use App\Entity\Contact;
-use Symfony\Component\EventDispatcher\Event;
+use App\Communication\Event\ContactEmailEvent;
+use App\Communication\Service\NotificationManager;
+use App\TranslatorTrait;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-/**
- * Event sent when a contact message is sent.
- */
-class ContactEmailEvent extends Event
+class ContactSubscriber implements EventSubscriberInterface
 {
-    public const NAME = 'contact_email_posted';
+    use TranslatorTrait;
 
-    protected $contact;
+    private $notificationManager;
 
-    public function __construct(Contact $contact)
+    public function __construct(NotificationManager $notificationManager)
     {
-        $this->contact = $contact;
+        $this->notificationManager = $notificationManager;
     }
 
-    public function getContact()
+    public static function getSubscribedEvents()
     {
-        return $this->contact;
+        return [
+            ContactEmailEvent::NAME => 'onContactSent'
+        ];
+    }
+
+    /**
+     * Executed when a contact message is sent
+     */
+    public function onContactSent(ContactEmailEvent $event)
+    {
+        $contact = $event->getContact();
+        // todo: send mail
     }
 }

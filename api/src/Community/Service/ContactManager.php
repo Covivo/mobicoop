@@ -22,10 +22,10 @@
  **************************/
 
 
-namespace App\Service;
+namespace App\Communication\Service;
 
-use App\Event\ContactEmailEvent;
-use App\Entity\Contact;
+use App\Communication\Event\ContactEmailEvent;
+use App\Communication\Entity\Contact;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 

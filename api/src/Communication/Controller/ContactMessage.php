@@ -21,37 +21,42 @@
  *    LICENSE
  **************************/
 
-namespace App\EventSubscriber;
+namespace App\Communication\Controller;
 
-use App\Event\ContactEmailEvent;
-use App\Communication\Service\NotificationManager;
+use App\Communication\Entity\Contact;
+use App\Communication\Service\ContactManager;
 use App\TranslatorTrait;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class ContactSubscriber implements EventSubscriberInterface
+/**
+ * Controller class for contact message.
+ *
+ */
+class ContactMessage
 {
     use TranslatorTrait;
 
-    private $notificationManager;
+    /**
+     * @var ContactManager
+     */
+    private $contactManager;
 
-    public function __construct(NotificationManager $notificationManager)
+    public function __construct(ContactManager $contactManager)
     {
-        $this->notificationManager = $notificationManager;
-    }
-
-    public static function getSubscribedEvents()
-    {
-        return [
-            ContactEmailEvent::NAME => 'onContactSent'
-        ];
+        $this->contactManager = $contactManager;
     }
 
     /**
-     * Executed when a contact message is sent
+     * This method is invoked when a new contact is posted.
+     *
+     * @param Contact $data
+     * @return Contact
      */
-    public function onContactSent(ContactEmailEvent $event)
+    public function __invoke(Contact $data): Contact
     {
-        $contact = $event->getContact();
-        // todo: send mail
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad contact"));
+        }
+        $data = $this->contactManager->sendContactMail($data);
+        return $data;
     }
 }

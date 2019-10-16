@@ -21,14 +21,12 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\Communication\Controller;
 
 use DateTime;
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\Response;
-use Mobicoop\Bundle\MobicoopBundle\Entity\Contact;
-use Mobicoop\Bundle\MobicoopBundle\Service\ContactManager;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Contact;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Service\ContactManager;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
-use phpDocumentor\Parser\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,6 +51,8 @@ class ContactController extends AbstractController
      * Handle post request from contact form
      *
      * @param ContactManager $contactManager
+     *
+     * @return JsonResponse
      */
     public function sendContact(Request $request, ContactManager $contactManager)
     {

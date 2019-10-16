@@ -23,7 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Api\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Entity\Contact;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Contact;
 use TypeError;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
