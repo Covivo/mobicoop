@@ -139,6 +139,7 @@ services:
     App\Communication\EventSubscriber\ContactSubscriber:
         arguments:
             $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
+            $contactEmailAddress: '%env(resolve:MAILER_CONTACT)%'
 
     # Community
     App\Community\Controller\:

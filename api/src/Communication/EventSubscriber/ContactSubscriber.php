@@ -53,12 +53,17 @@ class ContactSubscriber implements EventSubscriberInterface
      * @var string
      */
     private $emailTemplatePath;
+    /**
+     * @var string
+     */
+    private $contactEmailAddress;
 
-    public function __construct(NotificationManager $notificationManager, EmailManager $emailManager, string $emailTemplatePath)
+    public function __construct(NotificationManager $notificationManager, EmailManager $emailManager, string $emailTemplatePath, string $contactEmailAddress)
     {
         $this->notificationManager = $notificationManager;
         $this->emailManager = $emailManager;
         $this->emailTemplatePath = $emailTemplatePath;
+        $this->contactEmailAddress = $contactEmailAddress;
     }
 
     public static function getSubscribedEvents()
@@ -79,12 +84,11 @@ class ContactSubscriber implements EventSubscriberInterface
 
         $email = new Email();
 
-        // Je récupère le mail du destinataire
-        $email->setRecipientEmail($contact->getEmail());
+        $email->setRecipientEmail($this->contactEmailAddress);
         $email->setSenderEmail($contact->getEmail());
-
+        $email->setReturnEmail($contact->getEmail());
         $email->setObject("Nouvelle demande de contact");
-//        $email->setMessage("Test");
+
         $this->emailManager->send($email, $this->emailTemplatePath . 'contact_email_posted', ['contact' => $contact]);
     }
 }
