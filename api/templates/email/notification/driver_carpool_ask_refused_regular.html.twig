@@ -1,5 +1,5 @@
 
-{% extends 'base.html.twig' %}
+{% extends '/email/notification/base.html.twig' %}
 {% block body %}
 @PrenomOuPseudoPassager {{ "ne pourra pas covoiturer avec vous vers"|trans }} @AdresseDepose {{ "les jours suivants"|trans }} :
  @Jours {{ "du"|trans }} du  @DateDebut {{ "au"|trans }} @DateFin

@@ -1,78 +1,81 @@
-'ne pourra pas covoiturer avec vous vers': '__ne pourra pas covoiturer avec vous vers'
-'les jours suivants': '__les jours suivants'
-du: __du
-au: __au
-'Voici son message': '__Voici son message'
-'Pensez à renouveler votre annonce de covoiturage': '__Pensez à renouveler votre annonce de covoiturage'
-'Nouvelle(s) annonce(s) de covoiturage': '__Nouvelle(s) annonce(s) de covoiturage'
-'Modification de votre profil': '__Modification de votre profil'
-'Confirmation de re-initialisation de mot de passe': '__Confirmation de re-initialisation de mot de passe'
-'Demande de covoiturage': '__Demande de covoiturage'
-'Proposition de covoiturage déclinée': '__Proposition de covoiturage déclinée'
-'Votre inscription': '__Votre inscription'
-'Récapitulatif covoiturage': '__Récapitulatif covoiturage'
-'vous contacte': '__vous contacte'
-'Avis de re-initialisation de mot de passe': '__Avis de re-initialisation de mot de passe'
-'Une nouvelle annonce de covoiturage correspondant à votre trajet': '__Une nouvelle annonce de covoiturage correspondant à votre trajet'
-'vient d''être publiée.': '__vient d''être publiée.'
-'Rendez-vous dans': '__Rendez-vous dans'
-'Mes annonces': '__Mes annonces'
-'pour consulter les annonces correspondantes et prendre contact': '__pour consulter les annonces correspondantes et prendre contact'
-'ne pourra pas covoiturer avec vous pour le trajet du': '__ne pourra pas covoiturer avec vous pour le trajet du'
-'en direction de': '__en direction de'
-'Voici son message :': '__Voici son message :'
-'Attention dans quelques jours vos trajets enregistrés ne seront plus valables sur votre profil et ne seront donc plus visibles par les autres covoitureurs.': '__Attention dans quelques jours vos trajets enregistrés ne seront plus valables sur votre profil et ne seront donc plus visibles par les autres covoitureurs.'
-'Vous êtes maintenant plus de': '__Vous êtes maintenant plus de'
-'à utiliser le service ! Partagez vos trajets et trouvez votre bonheur !': '__à utiliser le service ! Partagez vos trajets et trouvez votre bonheur !'
-'Voici le récapitulatif de vos covoiturages.': '__Voici le récapitulatif de vos covoiturages.'
-'Le numéro de téléphone de': '__Le numéro de téléphone de'
-'est le': '__est le'
-'Trajet régulier Distance covoiturée': '__Trajet régulier Distance covoiturée'
-'Détour conducteur': '__Détour conducteur'
-'Prise en charge à': '__Prise en charge à'
-'Dépose à': '__Dépose à'
-'Heures de RDV': '__Heures de RDV'
-Lundi: __Lundi
-Mardi: __Mardi
-Mercredi: __Mercredi
-Jeudi: __Jeudi
-Vendredi: __Vendredi
-Samedi: __Samedi
-Dimanche: __Dimanche
-Le: __Le
-Du: __Du
-'Commentaire du passager': '__Commentaire du passager'
-'ContacterPlaces réservées': '__ContacterPlaces réservées'
-'Prix indicatif': '__Prix indicatif'
-'vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous.': '__vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous.'
-'Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de': '__Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de'
-'en cliquant ici': '__en cliquant ici'
-'Trajet occasionelle Distance covoiturée': '__Trajet occasionelle Distance covoiturée'
-'La modification suivante de votre profil est confirmée': '__La modification suivante de votre profil est confirmée'
-'Vous pouvez répondre à ce message via la messagerie de': '__Vous pouvez répondre à ce message via la messagerie de'
-'Si ce mail comporte un message ne respectant pas la charte, n''hésitez pas à nous contacter.': '__Si ce mail comporte un message ne respectant pas la charte, n''hésitez pas à nous contacter.'
-"Une\n                                                                        question ?": "__Une\n                                                                        question ?"
-'Formulaire de contact': '__Formulaire de contact'
-'Foire Aux Questions': '__Foire Aux Questions'
-Cliquez-ici: __Cliquez-ici
-'pour gérer vos alertes email.': '__pour gérer vos alertes email.'
-'Covoiturage en attente de validation': '__Covoiturage en attente de validation'
-'Nous sommes content de vous rendre service.': '__Nous sommes content de vous rendre service.'
-'Nous vous notifions par ce message que votre annonce a été posté avec succes!': '__Nous vous notifions par ce message que votre annonce a été posté avec succes!'
-Merci: __Merci
-'Vous avez demandé un nouveau mot de passe.': '__Vous avez demandé un nouveau mot de passe.'
-'Veuillez cliquer sur ce lien pour changer votre mot de passe :': '__Veuillez cliquer sur ce lien pour changer votre mot de passe :'
-Merci!: __Merci!
-'Votre mot de passe': '__Votre mot de passe'
-'a bien été changé.': '__a bien été changé.'
-'Merci d’utiliser': '__Merci d’utiliser'
-'Votre inscription au service': '__Votre inscription au service'
-'est bien prise en compte': '__est bien prise en compte'
-'Veuillez cliquer sur ce lien pour confirmer votre email': '__Veuillez cliquer sur ce lien pour confirmer votre email'
-'Ou utilisez le code de validation directement sur le site': '__Ou utilisez le code de validation directement sur le site'
-'Vous avez un message': '__Vous avez un message'
-Bonjour: __Bonjour
-'A très bientôt sur': '__A très bientôt sur'
+'ne pourra pas covoiturer avec vous vers': 'ne pourra pas covoiturer avec vous vers'
+'les jours suivants': 'les jours suivants'
+du: du
+au: au
+'Voici son message': 'Voici son message'
+'Pensez à renouveler votre annonce de covoiturage': 'Pensez à renouveler votre annonce de covoiturage'
+'Nouvelle(s) annonce(s) de covoiturage': 'Nouvelle(s) annonce(s) de covoiturage'
+'Modification de votre profil': 'Modification de votre profil'
+'Confirmation de re-initialisation de mot de passe': 'Confirmation de re-initialisation de mot de passe'
+'Demande de covoiturage': 'Demande de covoiturage'
+'Proposition de covoiturage déclinée': 'Proposition de covoiturage déclinée'
+'Votre inscription': 'Votre inscription'
+'Récapitulatif covoiturage': 'Récapitulatif covoiturage'
+'vous contacte': 'vous contacte'
+'Avis de re-initialisation de mot de passe': 'Avis de re-initialisation de mot de passe'
+'Une nouvelle annonce de covoiturage correspondant à votre trajet': 'Une nouvelle annonce de covoiturage correspondant à votre trajet'
+'vient d''être publiée.': 'vient d''être publiée.'
+'Rendez-vous dans': 'Rendez-vous dans'
+'Mes annonces': 'Mes annonces'
+'pour consulter les annonces correspondantes et prendre contact': 'pour consulter les annonces correspondantes et prendre contact'
+'ne pourra pas covoiturer avec vous pour le trajet du': 'ne pourra pas covoiturer avec vous pour le trajet du'
+'en direction de': 'en direction de'
+'Voici son message :': 'Voici son message :'
+'Attention dans quelques jours vos trajets enregistrés ne seront plus valables sur votre profil et ne seront donc plus visibles par les autres covoitureurs.': 'Attention dans quelques jours vos trajets enregistrés ne seront plus valables sur votre profil et ne seront donc plus visibles par les autres covoitureurs.'
+'Vous êtes maintenant plus de': 'Vous êtes maintenant plus de'
+'à utiliser le service ! Partagez vos trajets et trouvez votre bonheur !': 'à utiliser le service ! Partagez vos trajets et trouvez votre bonheur !'
+'Voici le récapitulatif de vos covoiturages.': 'Voici le récapitulatif de vos covoiturages.'
+'Le numéro de téléphone de': 'Le numéro de téléphone de'
+'est le': 'est le'
+'Trajet régulier Distance covoiturée': 'Trajet régulier Distance covoiturée'
+'Détour conducteur': 'Détour conducteur'
+'Prise en charge à': 'Prise en charge à'
+'Dépose à': 'Dépose à'
+'Heures de RDV': 'Heures de RDV'
+Lundi: Lundi
+Mardi: Mardi
+Mercredi: Mercredi
+Jeudi: Jeudi
+Vendredi: Vendredi
+Samedi: Samedi
+Dimanche: Dimanche
+Le: Le
+Du: Du
+'Commentaire du passager': 'Commentaire du passager'
+'ContacterPlaces réservées': 'ContacterPlaces réservées'
+'Prix indicatif': 'Prix indicatif'
+'vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous.': 'vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous.'
+'Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de': 'Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de'
+'en cliquant ici': 'en cliquant ici'
+urlMailBox: 'utilisateur/messages'
+'Trajet occasionelle Distance covoiturée': 'Trajet occasionelle Distance covoiturée'
+'La modification suivante de votre profil est confirmée': 'La modification suivante de votre profil est confirmée'
+'Vous pouvez répondre à ce message via la messagerie de': 'Vous pouvez répondre à ce message via la messagerie de'
+'Si ce mail comporte un message ne respectant pas la charte, n''hésitez pas à nous contacter.': 'Si ce mail comporte un message ne respectant pas la charte, n''hésitez pas à nous contacter.'
+"Une\n                                                                        question ?": "Une\n                                                                        question ?"
+'Formulaire de contact': 'Formulaire de contact'
+'Foire Aux Questions': 'Foire Aux Questions'
+Cliquez-ici: Cliquez-ici
+'pour gérer vos alertes email.': 'pour gérer vos alertes email.'
+'Covoiturage en attente de validation': 'Covoiturage en attente de validation'
+'Nous sommes content de vous rendre service.': 'Nous sommes content de vous rendre service.'
+'Nous vous notifions par ce message que votre annonce a été posté avec succes!': 'Nous vous notifions par ce message que votre annonce a été posté avec succes!'
+Merci: Merci
+'Vous avez demandé un nouveau mot de passe.': 'Vous avez demandé un nouveau mot de passe.'
+'Veuillez cliquer sur ce lien pour changer votre mot de passe :': 'Veuillez cliquer sur ce lien pour changer votre mot de passe :'
+'Lien de changement de mot de passe': 'Lien de changement de mot de passe'
+urlUpdatePassword: 'utilisateur/mot-de-passe/reset/update/'
+Merci!: Merci!
+'Votre mot de passe': 'Votre mot de passe'
+'a bien été changé.': 'a bien été changé.'
+'Merci d’utiliser': 'Merci d’utiliser'
+'Votre inscription au service': 'Votre inscription au service'
+'est bien prise en compte': 'est bien prise en compte'
+'Veuillez cliquer sur ce lien pour confirmer votre email': 'Veuillez cliquer sur ce lien pour confirmer votre email'
+'Ou utilisez le code de validation directement sur le site': 'Ou utilisez le code de validation directement sur le site'
+'Vous avez un message': 'Vous avez un message'
+Bonjour: Bonjour
+'A très bientôt sur': 'A très bientôt sur'
 The requested page couldn't be located:
   Checkout for any URL misspelling or: 'messages'
 urlEmailValidation: 'utilisateur/inscription/validation/'
