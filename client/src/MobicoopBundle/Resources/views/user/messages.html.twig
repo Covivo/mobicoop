@@ -8,7 +8,17 @@
 {% endblock %}
 
 {% block main %}
-    <Messages :id-user="{{ idUser }}"/>
+    {% if idRecipientDirect %}
+      <Messages 
+        :id-user="{{ idUser }}"
+        :new-id-recipient-direct="{{ idRecipientDirect }}"
+      />
+    {% else %}
+      <Messages 
+        :id-user="{{ idUser }}"
+        :new-id-recipient-carpool="{{ idRecipientCarpool }}"
+      />
+    {% endif %}
 {% endblock %}
 
 {% block javascripts %}

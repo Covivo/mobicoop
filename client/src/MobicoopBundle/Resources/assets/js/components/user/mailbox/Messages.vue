@@ -70,6 +70,7 @@
             <v-tab-item value="tab-cm">
               <threads-carpool
                 ref="threadsCarpool"
+                :id-recipient="newIdRecipientCarpool"
                 @idMessageForTimeLine="updateDetails"
                 @toggleSelected="refreshSelected"
               />
@@ -77,6 +78,7 @@
             <v-tab-item value="tab-dm">
               <threads-direct
                 ref="threadsDirect"
+                :id-recipient="newIdRecipientDirect"
                 @idMessageForTimeLine="updateDetails"
                 @toggleSelected="refreshSelected"
               />
@@ -150,7 +152,15 @@ export default {
     idUser:{
       type: Number,
       default:null
-    }
+    },
+    newIdRecipientDirect:{
+      type:Number,
+      default:null
+    },
+    newIdRecipientCarpool:{
+      type:Number,
+      default:null
+    },
   },
   data() {
     return {
@@ -180,10 +190,14 @@ export default {
         idAskHistory: this.currentIdAskHistory
       };
       axios.post(this.$t("urlSend"), messageToSend).then(res => {
-        this.idMessage = data.idThreadMessage;
+        //console.error(res);
+        this.idMessage = (data.idThreadMessage!==-1) ? data.idThreadMessage : res.data.id ;
         // Update the thread details
         this.$refs.threadDetails.getCompleteThread();
         this.$refs.typeText.updateLoading(false);
+        // Update the threads list
+        (res.data.askHistory) ? this.$refs.threadsCarpool.getThreads(this.idMessage) : this.$refs.threadsDirect.getThreads(this.idMessage)
+        this.refreshSelected({'idMessage':this.idMessage});
       });
     },
     updateAskHistory(data){

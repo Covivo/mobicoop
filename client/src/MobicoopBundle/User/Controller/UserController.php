@@ -424,12 +424,15 @@ class UserController extends AbstractController
     /**
      * User mailbox
      */
-    public function mailBox(UserManager $userManager, InternalMessageManager $internalMessageManager)
+    public function mailBox(UserManager $userManager, InternalMessageManager $internalMessageManager, ?int $idRecipientDirect, ?int $idRecipientCarpool)
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
-
-        return $this->render('@Mobicoop/user/messages.html.twig', ["idUser"=>$user->getId()]);
+        return $this->render('@Mobicoop/user/messages.html.twig', [
+            "idUser"=>$user->getId(),
+            "idRecipientDirect" => $idRecipientDirect,
+            "idRecipientCarpool" => $idRecipientCarpool
+        ]);
     }
 
     /*************** NEW VERSION */
@@ -656,7 +659,7 @@ class UserController extends AbstractController
 
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            $idThreadMessage = $data['idThreadMessage'];
+            $idThreadMessage = ($data['idThreadMessage']==-1) ? null : $data['idThreadMessage'];
             $text = $data['text'];
             $idRecipient = $data['idRecipient'];
             $idAskHistory = $data['idAskHistory'];

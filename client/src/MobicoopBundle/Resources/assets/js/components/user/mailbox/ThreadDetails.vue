@@ -109,49 +109,53 @@ export default {
   },
   methods: {
     getCompleteThread(){
-      this.loading = true;
-      axios.get(this.$t("urlCompleteThread",{idMessage:this.idMessage}))
-        .then(response => {
-          this.loading = false;
-          this.items.length = 0;
+      this.items = [];
+      // if idMessage = -1 it means that is a "virtuel" thread. When you initiate a contact without previous message
+      if(this.idMessage!==-1){
+        this.loading = true;
+        axios.get(this.$t("urlCompleteThread",{idMessage:this.idMessage}))
+          .then(response => {
+            this.loading = false;
+            this.items.length = 0;
 
-          moment.locale(this.locale);
-          let firstItem = {
-            divider: true,
-            createdDate: moment(response.data[0].createdDate).format("ddd DD MMM YYYY")
-          }
-          this.items.push(firstItem);
-
-          let currentDate = moment(response.data[0].createdDate).format("DDMMYYYY");
-          response.data.forEach((item, index) => {
-            item.divider = false;
-
-            // If the date is different, push a divider
-            if (moment(item.createdDate).format("DDMMYYYY") !== currentDate) {
-              let divider = {
-                divider: true,
-                createdDate: moment(item.createdDate).format("ddd DD MMM YYYY")
-              };
-              currentDate = moment(item.createdDate).format("DDMMYYYY");
-              this.items.push(divider);
+            moment.locale(this.locale);
+            let firstItem = {
+              divider: true,
+              createdDate: moment(response.data[0].createdDate).format("ddd DD MMM YYYY")
             }
+            this.items.push(firstItem);
 
-            // Set the origin (for display purpose)
-            item.origin = ""
-            if(this.idUser==item.user.id){
-              item.origin = "own";
-            }
-            this.items.push(item);
+            let currentDate = moment(response.data[0].createdDate).format("DDMMYYYY");
+            response.data.forEach((item, index) => {
+              item.divider = false;
 
-            // Update the current AskHistory
-            if(item.askHistory){this.currentAskHistory = item.askHistory.id}else{this.currentAskHistory=null};
-            this.emit();
+              // If the date is different, push a divider
+              if (moment(item.createdDate).format("DDMMYYYY") !== currentDate) {
+                let divider = {
+                  divider: true,
+                  createdDate: moment(item.createdDate).format("ddd DD MMM YYYY")
+                };
+                currentDate = moment(item.createdDate).format("DDMMYYYY");
+                this.items.push(divider);
+              }
+
+              // Set the origin (for display purpose)
+              item.origin = ""
+              if(this.idUser==item.user.id){
+                item.origin = "own";
+              }
+              this.items.push(item);
+
+              // Update the current AskHistory
+              if(item.askHistory){this.currentAskHistory = item.askHistory.id}else{this.currentAskHistory=null};
+              this.emit();
+            });
+
+          })
+          .catch(function (error) {
+            console.log(error);
           });
-
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      }
     },
     createdTime(date){
       return moment(date).format("HH:mm");

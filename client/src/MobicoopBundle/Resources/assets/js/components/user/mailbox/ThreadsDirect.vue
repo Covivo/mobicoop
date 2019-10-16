@@ -24,6 +24,7 @@
 </template>
 <script>
 import axios from "axios";
+import moment from "moment";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/mailbox/ThreadsDirect.json";
 import ThreadDirect from '@components/user/mailbox/ThreadDirect'
@@ -36,6 +37,10 @@ export default {
     ThreadDirect
   },
   props: {
+    idRecipient:{
+      type:Number,
+      default:null
+    },
   },
   data(){
     return{
@@ -48,16 +53,7 @@ export default {
     }
   },
   mounted(){
-    this.SkeletonHidden = false;
-    axios.get(this.$t("urlGet"))
-      .then(response => {
-        //console.error(response.data.threads);
-        this.SkeletonHidden = true;
-        this.messages = response.data.threads;
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    this.getThreads();
   },
   methods:{
     emit(data){
@@ -69,12 +65,35 @@ export default {
     refreshSelected(idMessage){
       this.messages.forEach((item, index) => {
         if(item.idMessage == idMessage){
-          item.selected = true;
+          this.$set(item, 'selected', true);
         }
         else{
-          item.selected = false;
+          this.$set(item, 'selected', false);
         }
       })
+    },
+    getThreads(idMessageSelected=null){
+      this.SkeletonHidden = false;
+      axios.get(this.$t("urlGet"))
+        .then(response => {
+          //console.error(response.data.threads);
+          this.SkeletonHidden = true;
+          this.messages = response.data.threads;
+          // I'm pushing the new "virtual" thread
+          // if(this.newThead){
+          //   response.data.threads.push({
+          //     date:moment().format(),
+          //     familyName:this.newThead.familyName,
+          //     givenName:this.newThead.givenName,
+          //     idMessage:-1,
+          //     idRecipient:this.newThead.idRecipient
+          //   });
+          // }
+          this.refreshSelected(idMessageSelected);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     }
   }
 }
