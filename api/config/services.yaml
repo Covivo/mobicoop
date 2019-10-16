@@ -78,7 +78,7 @@ services:
         #tags: [ 'api_platform.filter' ]
 
     App\Carpool\Service\AskManager:
-        tags:   
+        tags:
             - { name: monolog.logger, channel: carpool }
 
     App\Carpool\Service\ProposalManager:
@@ -93,25 +93,29 @@ services:
                 defaultMarginTime: '%env(int:CARPOOL_MARGIN_TIME)%'
                 defaultRegularLifeTime: '%env(int:CARPOOL_REGULAR_LIFETIME)%'
                 defaultAnyRouteAsPassenger: '%env(bool:CARPOOL_ANY_ROUTE_PASSENGER)%'
-        tags:   
+        tags:
             - { name: monolog.logger, channel: carpool }
-    
+
     # Communication
+    App\Communication\Controller\:
+        resource: '../src/Communication/Controller'
+        tags: ['controller.service_arguments']
+
     App\Communication\Service\NotificationManager:
         arguments:
             $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
             $emailTitleTemplatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%/%env(resolve:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%'
             $smsTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_SMS_PATH)%'
             $enabled: '%env(bool:resolve:NOTIFICATION_ENABLED)%'
-        tags: 
+        tags:
             - { name: monolog.logger, channel: notification }
-    
+
     App\Communication\Service\EmailManager:
         arguments:
             $emailSender: '%env(resolve:MAILER_SENDER)%'
             $emailReplyTo: '%env(resolve:MAILER_REPLYTO)%'
             $templatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%'
-        tags: 
+        tags:
             - { name: monolog.logger, channel: communication }
 
     App\Communication\Service\SmsManager:
@@ -121,16 +125,20 @@ services:
             $username: '%env(resolve:SMS_USERNAME)%'
             $password: '%env(resolve:SMS_PASSWORD)%'
             $sender: '%env(resolve:SMS_SENDER)%'
-        tags: 
+        tags:
             - { name: monolog.logger, channel: communication }
 
     App\Communication\Service\InternalMessageManager:
-        tags: 
+        tags:
             - { name: monolog.logger, channel: communication }
 
     App\Communication\EntityListener\RecipientListener:
         tags:
             - { name: doctrine.orm.entity_listener, lazy: true }    # lazy set to true to avoid doctrine UnitOfWork error on insert
+
+    App\Communication\EventSubscriber\ContactSubscriber:
+        arguments:
+            $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
 
     # Community
     App\Community\Controller\:
@@ -140,13 +148,13 @@ services:
     App\Community\Service\CommunityManager:
         arguments:
             $securityPath: '%env(resolve:COMMUNITY_SECURITY_PATH)%'
-        tags: 
+        tags:
             - { name: monolog.logger, channel: community }
-    
+
     # Data Provider
     App\DataProvider\Entity\GeoRouterProvider:
-        tags: 
-            - { name: monolog.logger, channel: georouter }    
+        tags:
+            - { name: monolog.logger, channel: georouter }
 
     # External Journey
     App\ExternalJourney\Service\ExternalJourneyManager:
@@ -168,7 +176,7 @@ services:
             $uri: '%env(resolve:SIG_GEOROUTER_URI)%'
             $batchScriptPath: '%env(resolve:MOBIMATCH_BATCH_SCRIPT_PATH)%'
             $batchTemp: '%env(resolve:MOBIMATCH_BATCH_TEMP)%'
-        tags: 
+        tags:
             - { name: monolog.logger, channel: georouter }
 
     App\Geography\Service\GeoTools:
@@ -183,12 +191,12 @@ services:
                 displayVenue: '%env(resolve:DISPLAY_VENUE)%'
                 displayRelayPoint: '%env(resolve:DISPLAY_RELAY_POINT)%'
                 displaySeparator: '%env(resolve:DISPLAY_SEPARATOR)%'
-    
+
     # Image
     App\Image\Controller\:
         resource: '../src/Image/Controller'
         tags: ['controller.service_arguments']
-            
+
     App\Image\EntityListener\ImageListener:
         arguments: ['@App\Image\Service\ImageManager']
         tags:
@@ -204,8 +212,8 @@ services:
         tags: ['controller.service_arguments']
 
     App\Match\Service\GeoMatcher:
-        tags: 
-            - { name: monolog.logger, channel: geomatcher }    
+        tags:
+            - { name: monolog.logger, channel: geomatcher }
 
     App\Match\Service\MassImportManager:
         arguments:
@@ -218,12 +226,12 @@ services:
     App\Rdex\Controller\:
         resource: '../src/Rdex/Controller'
         tags: ['controller.service_arguments']
-    
+
     # Right
     App\Right\Controller\:
         resource: '../src/Right/Controller'
         tags: ['controller.service_arguments']
-    
+
     # User
     App\User\Controller\:
         resource: '../src/User/Controller'
@@ -235,4 +243,4 @@ services:
 
     'App\User\Filter\HomeAddressTerritoryFilter':
         # Uncomment only if autoconfiguration isn't enabled
-        #tags: [ 'api_platform.filter' ]    
+        #tags: [ 'api_platform.filter' ]

@@ -23,20 +23,42 @@
 
 namespace App\Communication\EventSubscriber;
 
+use App\Communication\Entity\Email;
 use App\Communication\Event\ContactEmailEvent;
+use App\Communication\Service\EmailManager;
 use App\Communication\Service\NotificationManager;
 use App\TranslatorTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+/**
+ * Subscribed to posted contact event
+ *
+ * Class ContactSubscriber
+ * @package App\Communication\EventSubscriber
+ */
 class ContactSubscriber implements EventSubscriberInterface
 {
     use TranslatorTrait;
 
+    /**
+     * @var NotificationManager
+     */
     private $notificationManager;
 
-    public function __construct(NotificationManager $notificationManager)
+    /**
+     * @var EmailManager
+     */
+    private $emailManager;
+    /**
+     * @var string
+     */
+    private $emailTemplatePath;
+
+    public function __construct(NotificationManager $notificationManager, EmailManager $emailManager, string $emailTemplatePath)
     {
         $this->notificationManager = $notificationManager;
+        $this->emailManager = $emailManager;
+        $this->emailTemplatePath = $emailTemplatePath;
     }
 
     public static function getSubscribedEvents()
@@ -48,10 +70,21 @@ class ContactSubscriber implements EventSubscriberInterface
 
     /**
      * Executed when a contact message is sent
+     *
+     * @param ContactEmailEvent $event
      */
     public function onContactSent(ContactEmailEvent $event)
     {
         $contact = $event->getContact();
-        // todo: send mail
+
+        $email = new Email();
+
+        // Je récupère le mail du destinataire
+        $email->setRecipientEmail($contact->getEmail());
+        $email->setSenderEmail($contact->getEmail());
+
+        $email->setObject("Nouvelle demande de contact");
+//        $email->setMessage("Test");
+        $this->emailManager->send($email, $this->emailTemplatePath . 'contact_email_posted', ['contact' => $contact]);
     }
 }
