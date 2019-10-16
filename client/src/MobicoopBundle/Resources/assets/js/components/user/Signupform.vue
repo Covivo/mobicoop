@@ -426,9 +426,9 @@ export default {
             'content-type': 'application/json'
           }
         })
-        .then(function (response) {
-          window.location.href = '/';
-          console.log(response);
+        .then(response=>{
+          window.location.href = this.$t('urlRedirectAfterSignUp');
+          //console.log(response);
         })
         .catch(function (error) {
           console.log(error);
