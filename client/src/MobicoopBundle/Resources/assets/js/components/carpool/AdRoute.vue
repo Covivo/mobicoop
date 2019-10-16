@@ -222,7 +222,7 @@
 
     <!-- Communities -->
     <v-row
-      v-if="communities.length > 0"
+      v-if="communities && communities.length > 0"
       align="center"
       justify="center"
       class="mt-2"
@@ -235,9 +235,9 @@
           :items="communities"
           outlined
           chips
-          :label="$t('communities')"
+          :label="$t('communities.label')"
           item-text="name"
-          item-value="iri"
+          item-value="id"
           multiple
           @change="emitEvent"
         >
@@ -323,10 +323,6 @@ export default {
       type: Object,
       default: null
     },
-    communities: {
-      type: Array,
-      default: null
-    },
     initOrigin: {
       type: Object,
       default: null
@@ -335,8 +331,8 @@ export default {
       type: Object,
       default: null
     },
-    community: {
-      type: Object,
+    communityIds: {
+      type: Array,
       default: null
     }
   },
@@ -364,7 +360,8 @@ export default {
       ],
       avoidMotorway: false,
       direction: null,
-      selectedCommunities: this.community ? [this.community.iri] : null,
+      selectedCommunities: this.communityIds,
+      communities: null
     };
   },
   watch: {
@@ -379,6 +376,7 @@ export default {
   },
   mounted(){
     this.getRoute();
+    this.getCommunities();
   },
   methods: {
     originSelected: function(address) {
@@ -446,12 +444,23 @@ export default {
       this.getRoute();
     },
     removeCommunity(item) {
-      const index = this.selectedCommunities.indexOf(item.iri);
+      const index = this.selectedCommunities.indexOf(item.id);
       if (index >= 0) {
         this.selectedCommunities.splice(index, 1);
         this.emitEvent();
       }
     },
+    getCommunities() {
+      axios 
+        .get(this.$t('communities.route', {id: this.user.id}), {
+          headers:{
+            'content-type': 'application/json'
+          }
+        })
+        .then(res => {
+          this.communities = res.data;
+        });
+    }
   }
 };
 </script>

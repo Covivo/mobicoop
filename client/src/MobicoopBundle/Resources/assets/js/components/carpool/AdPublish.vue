@@ -151,8 +151,7 @@
                       :user="user"
                       :init-origin="origin"
                       :init-destination="destination"
-                      :communities="communities"
-                      :community="community"
+                      :community-ids="communityIds"
                       @change="routeChanged"
                     />
                   </v-col>
@@ -535,10 +534,6 @@ export default {
       type: Object,
       default: null
     },
-    communities: {
-      type: Array,
-      default: null
-    },
     defaultPriceKm: {
       type: Number,
       default: 0.06
@@ -563,8 +558,8 @@ export default {
       type: String,
       default: ""
     },
-    community: {
-      type: Object,
+    communityIds: {
+      type: Array,
       default: null
     },
     initOrigin: {
