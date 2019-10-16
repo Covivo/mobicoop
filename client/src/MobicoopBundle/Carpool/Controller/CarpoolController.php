@@ -49,7 +49,7 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
-    public function carpoolAdPost(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
+    public function carpoolAdPost(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager, ?string $first)
     {
         $proposal = new Proposal();
         $poster = $userManager->getLoggedUser();
@@ -74,7 +74,8 @@ class CarpoolController extends AbstractController
                 'destination'=>null,
                 'regular'=>null,
                 'date'=>null,
-                'time'=>null
+                'time'=>null,
+                'firstAd' => (!is_null($first))
             ]
         );
     }

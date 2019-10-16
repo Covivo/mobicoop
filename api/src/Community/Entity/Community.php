@@ -91,7 +91,11 @@ use App\Community\Controller\JoinAction;
  *              }
  *          }
  *      },
- *      itemOperations={"get","put","delete"}
+ *      itemOperations={
+ *          "get",
+ *          "put",
+ *          "delete"
+ *      }
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "name", "description", "createdDate"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})

@@ -173,4 +173,26 @@ class CommunityManager
         }
         return $this->communityRepository->findBy(['name'=>$name]);
     }
+
+    /**
+     * Check if a user is a member of a community
+     *
+     * @param Community $community
+     * @return bool
+     */
+    public function isRegistered(int $communityId, int $userId)
+    {
+        return $this->communityRepository->isRegisteredById($communityId, $userId);
+    }
+
+    /**
+     * Return a community
+     *
+     * @param integer $communityId
+     * @return Community|null
+     */
+    public function get(int $communityId)
+    {
+        return $this->communityRepository->find($communityId);
+    }
 }

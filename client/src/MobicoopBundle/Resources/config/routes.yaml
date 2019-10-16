@@ -153,8 +153,8 @@ user_message_update_ask:
 # post an ad
 carpool_ad_post:
     path:
-        fr: /covoiturage/annonce/poster
-        en: /carpool/ad/post
+        fr: /covoiturage/annonce/poster/{first?}
+        en: /carpool/ad/post/{first?}
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPost
 
 # post an ad from a search 

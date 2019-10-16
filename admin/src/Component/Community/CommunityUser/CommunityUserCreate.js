@@ -1,10 +1,9 @@
 import React from 'react';
 import { 
-    Create, Edit,
+    Create,
     SimpleForm, 
     required,
-    ReferenceInput, SelectInput,
-    ReferenceField, FunctionField, TextField
+    ReferenceInput, SelectInput
 } from 'react-admin';
 import { parse } from "query-string";
 
@@ -17,7 +16,6 @@ const choices = [
     { id: 2, name: 'Refusé' },
 ];
 
-// Create
 export const CommunityUserCreate = (props) => {
     const { community: community_string } = parse(props.location.search);
     const community = community_string ? parseInt(community_string, 10) : '';
@@ -44,30 +42,5 @@ export const CommunityUserCreate = (props) => {
             <SelectInput label="Statut" source="status" choices={choices} defaultValue={1} validate={required()}/>
         </SimpleForm>
     </Create>
-    );
-}
-
-// Edit
-export const CommunityUserEdit = (props) => {
-    
-    const redirect = `/communities/`;
-
-    return (
-    <Edit { ...props } title="Communautés > éditer un membre">
-        <SimpleForm
-            redirect={redirect}
-        >
-            <ReferenceInput label="Administrateur" source="admin" reference="users">
-                <SelectInput optionText={userOptionRenderer}/>
-            </ReferenceInput>
-            <ReferenceField label="Membre" source="user" reference="users" linkType="" >
-                <FunctionField render={userOptionRenderer} />
-            </ReferenceField>
-            <ReferenceField label="Communauté" source="community" reference="communities" linkType="" >
-                <TextField source="name"/>
-            </ReferenceField>
-            <SelectInput label="Statut" source="status" choices={choices} />
-        </SimpleForm>
-    </Edit>
     );
 }

@@ -21,7 +21,21 @@
           </h3>
         </v-col>
       </v-row>
-
+      <v-row
+        v-if="firstAd"
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          md="8"
+          xl="6"
+        >
+          <v-alert type="info">
+            <p>{{ $t("messageFirstAd.signUpDone", {'givenName':user.givenName}) }}.</p>
+            <p>{{ $t("messageFirstAd.alert") }}</p>
+          </v-alert>
+        </v-col>
+      </v-row>
       <!-- Stepper -->
       <v-row 
         justify="center"
@@ -582,7 +596,10 @@ export default {
       type: String,
       default: null
     },
-
+    firstAd: {
+      type: Boolean,
+      default: false
+    }
 
   },
   data() {
