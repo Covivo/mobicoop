@@ -66,13 +66,9 @@ class CarpoolController extends AbstractController
 
         $this->denyAccessUnlessGranted('create_ad', $proposal);
 
-        // get the communities available for the user
-        $communities = $communityManager->getAvailableUserCommunities($poster)->getMember();
-        
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
             [
-                'communities'=>$communities,
                 'communityIds'=>null,
                 'origin'=>null,
                 'destination'=>null,
