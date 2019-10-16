@@ -36,6 +36,8 @@
       "button": {
         "send": "Envoyer"
       }
-    }
+    },
+    "success": "Votre message a été envoyé avec succès.",
+    "error" : "Une erreur est survenue."
   }
 }

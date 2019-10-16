@@ -158,25 +158,27 @@ export default {
             if (response.data && response.data.message) {
               self.alert = {
                 type: "success",
-                message: response.data.message
+                message: self.$t(response.data.message)
               };
             }
           })
           .catch(function (error) {
             console.error(error.response);
+            let messages = "";
             if (error.response.data && error.response.data.errors) {
-              let messages = "";
               error.response.data.errors.forEach(error => {
                 messages += self.$t(error) + "<br>"
               });
-              self.alert = {
-                type: "error",
-                message: messages
-              };
+            } else if (error.response.data && error.response.data.message) {
+              messages = self.$t(error.response.data.message);
             }
+            self.alert = {
+              type: "error",
+              message: messages
+            };
           }).finally(function () {
             self.loading = false;
-            if (self.alert.message) {
+            if (self.alert.message.length > 0) {
               self.alert.show = true;
             }
           })

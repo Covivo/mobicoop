@@ -90,7 +90,7 @@ class ContactController extends AbstractController
                 );
             }
             return new JsonResponse(
-                ["message" => "error.contact.post"],
+                ["message" => "error"],
                 \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
             );
         }
