@@ -32,10 +32,11 @@
         "required": "Le message est requis"
       }
     },
-    "ui": {
-      "button": {
-        "send": "Envoyer"
-      }
+      "buttons": {
+        "send": {
+          "label" : "Envoyer",
+          "route": "contact/send"
+        }
     },
     "success": "Votre message a été envoyé avec succès.",
     "error" : "Une erreur est survenue."

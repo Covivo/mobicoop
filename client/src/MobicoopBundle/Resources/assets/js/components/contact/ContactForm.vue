@@ -87,7 +87,7 @@
                 rounded
                 @click="validate"
               >
-                {{ $t('ui.button.send') }}
+                {{ $t('buttons.send.label') }}
               </v-btn>
             </v-container>
           </v-form>
@@ -146,7 +146,7 @@ export default {
       this.resetAlert();
       if (this.$refs.form.validate()) {
         this.loading = true;
-        axios.post(`/contact/send`, {
+        axios.post(this.$t('buttons.send.route'), {
           email: this.form.email,
           givenName: this.form.givenName,
           familyName: this.form.familyName,

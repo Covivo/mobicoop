@@ -47,6 +47,9 @@ class ContactManager
     public function sendContactEmail(Contact $contact)
     {
         $response = $this->dataProvider->post($contact);
-        return $response->getValue();
+        if ($response->getCode() == 201) {
+            return $response->getValue();
+        }
+        return null;
     }
 }
