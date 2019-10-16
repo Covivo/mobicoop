@@ -1,8 +1,18 @@
 {
     "fr": {
-        
+        "buttons" : {
+            "contact" : {
+                "route" : "/contact",
+                "label" : "Nous contacter"
+            }
+        }
     },
     "en": {
-        
+        "buttons" : {
+            "contact" : {
+                "route" : "/contact",
+                "label" : "Contact us"
+            }
+        }
     }
 }

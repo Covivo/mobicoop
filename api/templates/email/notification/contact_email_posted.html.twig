@@ -1,0 +1,17 @@
+{% extends '/email/notification/base.html.twig' %}
+{% block body %}
+    <p>
+        {{ "Bonjour vous avez une nouvelle demande de contact," | trans }}
+    </p>
+
+    <ul>
+        <li>{{ "Nom :" | trans }} {{ context.contact.familyName ? context.contact.familyName : "Non renseigné" | trans }}</li>
+        <li>{{ "Prénom :" | trans }} {{ context.contact.givenName ? context.contact.givenName : "Non renseigné" | trans }}</li>
+        <li>{{ "Email :" | trans }} {{ context.contact.email }}</li>
+        <li>{{ "Demande :" | trans }} {{ context.contact.demand ? context.contact.demand : "Non renseigné" | trans }}</li>
+        <li>{{ "Message :" | trans }} {{ context.contact.message }}</li>
+    </ul>
+
+    {{ "Merci" | trans }}
+
+{% endblock %}

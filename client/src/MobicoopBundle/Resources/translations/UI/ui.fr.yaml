@@ -3,17 +3,17 @@ button:
     submit: 'Envoyer'
     delete: 'Supprimer'
     connexion: 'Se connecter'
-    
+
 # menus
 menu:
     signup: 'Inscription'
-    login: 'Connexion' 
+    login: 'Connexion'
     account: 'Mon compte'
     profile: 'Mon profil'
     messages: 'Messages'
     ad_create: 'Publier une annonce'
     logout: 'Déconnexion'
-    
+
 # pages
 user:
     signup:
@@ -51,3 +51,5 @@ carpool:
     ad_create:
         title: 'Publier une annonce'
         h1: 'Publier une annonce'
+contact:
+    title: "Nous contacter"
