@@ -385,6 +385,8 @@ class UserController extends AbstractController
                 return new Response(json_encode("error"));
             }
         }
+
+        return new Response();
     }
 
 

@@ -30,7 +30,6 @@
         ref="form"
         v-model="valid"
         lazy-validation
-        action="/utilisateur/mot-de-passe/recuperation"
         method="POST"
       >
         <v-row>
@@ -108,7 +107,7 @@ export default {
       if (this.$refs.form.validate()) {
         this.loading = true;
         
-        axios.post('/user/password/reset/update/'+this.token,
+        axios.post(this.$t('urlUpdatePassword', {'token':this.token}),
           {
             password:this.pwd
           },{
@@ -120,6 +119,7 @@ export default {
             //console.log(response.data);
             if(response.data.id !== undefined){
               this.snackbarText = this.$t("snackBar.ok");
+              window.location.href = "/";
             }
             else{
               this.snackbarText = this.$t("snackBar.error");
