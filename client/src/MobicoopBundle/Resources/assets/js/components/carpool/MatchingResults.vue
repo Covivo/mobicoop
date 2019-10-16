@@ -127,7 +127,7 @@ export default {
         "time": this.time,
         "regular": this.regular,
         "userId": this.user ? this.user.id : null,
-        "communityId": this.community.id
+        "communityId": this.communityId
       }
     })
       .then((response) => {

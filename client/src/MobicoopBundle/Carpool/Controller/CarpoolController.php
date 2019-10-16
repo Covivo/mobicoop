@@ -73,7 +73,7 @@ class CarpoolController extends AbstractController
             '@Mobicoop/carpool/publish.html.twig',
             [
                 'communities'=>$communities,
-                'community'=>null,
+                'communityIds'=>null,
                 'origin'=>null,
                 'destination'=>null,
                 'regular'=>null,
@@ -87,26 +87,16 @@ class CarpoolController extends AbstractController
      * Create a carpooling ad from a search component (home, community...)
      * (POST)
      */
-    public function carpoolAdPostFromSearch(UserManager $userManager, Request $request, CommunityManager $communityManager)
+    public function carpoolAdPostFromSearch(Request $request)
     {
         $proposal = new Proposal();
-        $poster = $userManager->getLoggedUser();
 
         $this->denyAccessUnlessGranted('create_ad', $proposal);
-
-        // get the communities available for the user
-        $communities = $communityManager->getAvailableUserCommunities($poster)->getMember();
         
-        //get user's community
-        if (!is_null($request->request->get('communityId'))) {
-            $community = $communityManager->getCommunity($request->request->get('communityId'));
-        }
-
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
             [
-                'communities'=>$communities,
-                'community'=>(isset($community))?$community:null,
+                'communityIds'=>$request->request->get('communityId') ? [(int)$request->request->get('communityId')] : null,
                 'origin'=>$request->request->get('origin'),
                 'destination'=>$request->request->get('destination'),
                 'regular'=>$request->request->get('regular'),

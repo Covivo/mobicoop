@@ -22,7 +22,10 @@
             "label": "Etape 4"
         },
         "avoidMotorway": "Eviter l'autoroute",
-        "communities": "Publier l'annonce dans ces communautés",
+        "communities": {
+            "label": "Publier l'annonce dans ces communautés",
+            "route": "/communautes/utilisateur/{id}"
+        },
         "distance": "Distance"
     }
 }
