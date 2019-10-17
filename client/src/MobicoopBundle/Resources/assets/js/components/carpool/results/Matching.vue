@@ -50,6 +50,7 @@
         :date="date"
         :regular="regular"
         :matching="matching"
+        @close="carpoolDialog = false"
       />
     </v-dialog>
   </v-content>

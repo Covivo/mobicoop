@@ -5,7 +5,9 @@
     <v-timeline-item 
       v-for="waypoint in waypoints"
       :key="waypoint.id"
-      small
+      :color="waypoint.requester ? 'primary' : 'secondary'"
+      :icon="waypoint.icon"
+      fill-dot
     >
       <v-row dense>
         <v-col 

@@ -72,7 +72,7 @@
           class="min-width-no-flex"
         >
           <v-btn
-            color="success"
+            color="secondary"
             small
             dark
             depressed
@@ -85,7 +85,7 @@
             {{ carpooler.telephone }}
           </v-btn>
           <v-btn
-            color="success"
+            color="secondary"
             small
             depressed
             fab
@@ -99,7 +99,7 @@
 
           <v-btn
             :disabled="!contactAvailable"
-            color="success"
+            color="secondary"
             small
             depressed
             fab
@@ -122,7 +122,7 @@
         <v-btn
           :disabled="!contactAvailable"
           rounded
-          color="success"
+          color="secondary"
           large
           @click="emitEvent"
         >

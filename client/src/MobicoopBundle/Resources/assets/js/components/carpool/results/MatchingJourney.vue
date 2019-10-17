@@ -1,8 +1,21 @@
 <template>
   <v-card>
-    <v-card-title class="headline">
-      {{ $t('detailTitle') }}
-    </v-card-title>
+    <v-toolbar
+      color="primary"
+    >
+      <v-toolbar-title>
+        {{ $t('detailTitle') }}
+      </v-toolbar-title>
+      
+      <v-spacer />
+
+      <v-btn 
+        icon
+        @click="$emit('close')"
+      >
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
+    </v-toolbar>
 
     <v-card-text>
       <!-- Date / seats / price -->
@@ -144,6 +157,7 @@
       </v-row>
     </v-card-text>
 
+    <!-- Action buttons -->
     <v-card-actions>
       <div class="flex-grow-1" />
 
@@ -248,8 +262,14 @@ export default {
         return moment.utc(this.driver ? this.lMatching.offer.criteria.fromDate : this.lMatching.request.criteria.fromDate).format(this.$t("ui.i18n.date.format.fullDate"))
       }
       if (this.proposal.criteria.frequency == 2) {
-        // punctual search && regular result
-        return moment.utc(this.date).format(this.$t("ui.i18n.date.format.fullDate"))        
+        // punctual search && regular result => first matching date
+        let searchDate = this.lDate ? this.lDate : new Date();
+        if (moment.utc(searchDate).isSameOrAfter(this.proposal.criteria.fromDate)) {
+          // the search date is >= fromDate of the proposal => the search date is ok
+          return moment.utc(searchDate).format(this.$t("ui.i18n.date.format.fullDate"));
+        }
+        // the fromDate is after the search date, we take fromDate
+        return moment.utc(this.proposal.criteria.fromDate).format(this.$t("ui.i18n.date.format.fullDate"));
       }
       return this.proposal.criteria.fromDate
         ? moment.utc(this.proposal.criteria.fromDate).format(this.$t("ui.i18n.date.format.fullDate"))
@@ -344,15 +364,22 @@ export default {
       let thisOrigin = this.origin;
       let thisDestination = this.destination;
       let order = this.driver ? this.lMatching.offer.filters.order : this.lMatching.request.filters.order;
+      let destinationId = order.length-1;
       order.forEach(function (waypoint, index) {
         waypoints.push({
           id: index,
+          // requester is a boolean, 
+          // it is set to true if the waypoint is a waypoint created by the requester (the person who make the request)
+          requester: 
+            isDriver ? 
+              (waypoint.candidate == 1 ? false : true) :
+              (waypoint.candidate == 1 ? true : false),
           address: 
             isDriver ? 
               (waypoint.candidate == 1 ? waypoint.address : (waypoint.position == '0' ? thisOrigin : thisDestination)) :
               (waypoint.candidate == 1 ? (waypoint.position == '0' ? thisOrigin : thisDestination) : waypoint.address),
           duration: waypoint.duration,
-          level: "primary"
+          icon: (waypoint.candidate == 1 ? (waypoint.position == '0' ? "mdi-home" : (index == destinationId ? "mdi-flag-checkered" : "mdi-debug-step-into")) : (waypoint.position == '0' ? "mdi-human-greeting" : "mdi-flag"))
         });
       });
       return waypoints;
