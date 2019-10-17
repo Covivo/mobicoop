@@ -94,7 +94,7 @@ export default {
             {
               idMessage:item.idMessage,
               idRecipient:item.idRecipient,
-              name:item.name
+              name:this.name(item.givenName,item.familyName)
             }
           )
         }
@@ -125,6 +125,9 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
+    },
+    name(givenName, familyName) {
+      return givenName + " " + familyName.substr(0, 1).toUpperCase() + ".";
     }
   }
 }

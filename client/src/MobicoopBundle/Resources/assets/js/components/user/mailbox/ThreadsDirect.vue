@@ -91,7 +91,7 @@ export default {
             {
               idMessage:item.idMessage,
               idRecipient:item.idRecipient,
-              name:item.name
+              name:this.name(item.givenName,item.familyName)
             }
           )
         }
@@ -104,7 +104,6 @@ export default {
       this.SkeletonHidden = false;
       axios.get(this.$t("urlGet"))
         .then(response => {
-          //console.error(response.data.threads);
           this.SkeletonHidden = true;
           this.messages = response.data.threads;
           // I'm pushing the new "virtual" thread
@@ -123,6 +122,9 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
+    },
+    name(givenName, familyName) {
+      return givenName + " " + familyName.substr(0, 1).toUpperCase() + ".";
     }
   }
 }
