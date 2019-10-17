@@ -55,14 +55,15 @@ export default {
       type: Number,
       default: null
     },
+    loading: {
+      type: Boolean,
+      default: null
+    }
   },
   data(){
     return{
       textToSend:"",
-      loading: false
     }
-  },
-  mounted(){
   },
   methods:{
     emit(message){
@@ -73,9 +74,6 @@ export default {
           textToSend:this.textToSend
         });
       this.textToSend = "";
-    },
-    updateLoading(val){
-      this.loading = val;
     }
   }
 }

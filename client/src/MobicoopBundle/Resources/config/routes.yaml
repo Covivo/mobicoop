@@ -104,6 +104,13 @@ user_message_list:
         en: /user/messages
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::mailBox
 
+user_message_list_new_thread_direct:
+    methods: [POST]
+    path:
+        fr: /utilisateur/messages/nouveau
+        en: /user/messages/new
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::mailBox
+
 user_message_direct_threads_list:
     path:
         fr: /utilisateur/messages/direct

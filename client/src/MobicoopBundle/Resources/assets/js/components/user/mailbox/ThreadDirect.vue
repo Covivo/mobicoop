@@ -1,12 +1,15 @@
 <template>
   <v-content>
-    <v-container class="window-scroll">
+    <v-container class="window-scroll px-0">
       <v-card
         class="mx-auto mt-2 pt-1 pb-1"
         :class="selected ? 'primary' : ''"
+        outlined
+        tile
+        style="border-style:none;"
         @click="click()"
       >
-        <v-row>
+        <v-row class="ma-0">
           <v-col class="col-3 text-center ma-0 pa-0">
             <v-avatar>
               <!-- For now, we are not supporting the avatar. We show an icon instead -->
@@ -92,9 +95,9 @@ export default {
     click(){
       this.emit();
     },
-    toggleSelected(){
-      this.selected = !this.selected;
-    },
+    // toggleSelected(){
+    //   this.selected = !this.selected;
+    // },
     emit(){
       this.$emit("toggleSelected",{idMessage:this.idMessage});
       this.$emit("idMessageForTimeLine",

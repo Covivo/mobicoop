@@ -8,7 +8,11 @@
 {% endblock %}
 
 {% block main %}
-    <Messages :id-user="{{ idUser }}"/>
+      <Messages 
+        :id-user="{{ idUser }}"
+        :id-thread-default="{{ (idThreadDefault) ? idThreadDefault : 'null' }}"
+        :new-thread="{{ newThread|json_encode }}"
+      />
 {% endblock %}
 
 {% block javascripts %}
