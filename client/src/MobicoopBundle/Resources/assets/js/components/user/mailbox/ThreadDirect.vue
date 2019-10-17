@@ -92,9 +92,9 @@ export default {
     click(){
       this.emit();
     },
-    toggleSelected(){
-      this.selected = !this.selected;
-    },
+    // toggleSelected(){
+    //   this.selected = !this.selected;
+    // },
     emit(){
       this.$emit("toggleSelected",{idMessage:this.idMessage});
       this.$emit("idMessageForTimeLine",

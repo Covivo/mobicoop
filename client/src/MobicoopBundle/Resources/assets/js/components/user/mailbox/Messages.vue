@@ -69,20 +69,24 @@
           <v-tabs-items v-model="modelTabs">
             <v-tab-item value="tab-cm">
               <threads-carpool
-                ref="threadsCarpool"
                 :new-thread="newThreadCarpool"
                 :id-thread-default="idThreadDefault"
+                :id-message-to-select="idMessage"
+                :refresh-threads="this.refreshThreadsCarpool"
                 @idMessageForTimeLine="updateDetails"
                 @toggleSelected="refreshSelected"
+                @refreshThreadsCarpoolCompleted="refreshThreadsCarpoolCompleted"
               />
             </v-tab-item>
             <v-tab-item value="tab-dm">
               <threads-direct
-                ref="threadsDirect"
                 :new-thread="newThreadDirect"
                 :id-thread-default="idThreadDefault"
+                :id-message-to-select="idMessage"
+                :refresh-threads="this.refreshThreadsCarpool"
                 @idMessageForTimeLine="updateDetails"
                 @toggleSelected="refreshSelected"
+                @refreshThreadsDirectCompleted="refreshThreadsDirectCompleted"
               />
             </v-tab-item>
           </v-tabs-items>
@@ -93,10 +97,11 @@
           <v-row>
             <v-col cols="12">
               <thread-details
-                ref="threadDetails"
                 :id-message="idMessage"
                 :id-user="idUser"
+                :refresh="refreshDetails"
                 @updateAskHistory="updateAskHistory"
+                @refreshCompleted="refreshDetailsCompleted"
               />
             </v-col>
           </v-row>
@@ -109,6 +114,7 @@
                 ref="typeText"
                 :id-thread-message="idMessage"
                 :id-recipient="idRecipient"
+                :loading="loadingTypeText"
                 @sendInternalMessage="sendInternalMessage"
               />
             </v-col>
@@ -172,7 +178,11 @@ export default {
       currentIdAskHistory:null,
       recipientName:"",
       newThreadDirect:null,
-      newThreadCarpool:null
+      newThreadCarpool:null,
+      loadingTypeText:false,
+      refreshDetails:false,
+      refreshThreadsDirect:false,
+      refreshThreadsCarpool:false
     };
   },
   watch: {
@@ -190,7 +200,7 @@ export default {
       this.recipientName = data.name;
     },
     sendInternalMessage(data){
-      this.$refs.typeText.updateLoading(true);
+      this.loadingTypeText = true;
       let messageToSend = {
         idThreadMessage: data.idThreadMessage,
         text: data.textToSend,
@@ -198,16 +208,14 @@ export default {
         idAskHistory: this.currentIdAskHistory
       };
       axios.post(this.$t("urlSend"), messageToSend).then(res => {
-        //console.error(res);
         this.idMessage = (data.idThreadMessage!==-1) ? data.idThreadMessage : res.data.id ;
-        // Update the thread details
-        this.$refs.threadDetails.getCompleteThread();
-        this.$refs.typeText.updateLoading(false);
+        this.loadingTypeText = false;
         // Update the threads list
+        (this.currentIdAskHistory) ? this.refreshThreadsCarpool = true : this.refreshThreadsDirect = true;
         // We need to delete new thread data or we'll have two identical entries
+        this.refreshDetails = true;
         this.newThreadDirect = null;
         this.newThreadCarpool = null;
-        (res.data.askHistory) ? this.$refs.threadsCarpool.getThreads(this.idMessage) : this.$refs.threadsDirect.getThreads(this.idMessage)
         this.refreshSelected({'idMessage':this.idMessage});
       });
     },
@@ -215,8 +223,16 @@ export default {
       this.currentIdAskHistory = data.currentAskHistory;
     },
     refreshSelected(data){
-      if(this.$refs.threadsDirect !== undefined){this.$refs.threadsDirect.refreshSelected(data.idMessage);}
-      if(this.$refs.threadsCarpool !== undefined){this.$refs.threadsCarpool.refreshSelected(data.idMessage)};
+      this.idMessage = data.idMessage;
+    },
+    refreshDetailsCompleted(){
+      this.refreshDetails = false;
+    },
+    refreshThreadsDirectCompleted(){
+      this.refreshThreadsDirect = false;
+    },
+    refreshThreadsCarpoolCompleted(){
+      this.refreshThreadsCarpool = false;
     }
   }
 };

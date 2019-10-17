@@ -45,6 +45,14 @@ export default {
       type:Object,
       default:null
     },
+    idMessageToSelect:{
+      type: Number,
+      default: null
+    },
+    refreshThreads: {
+      type: Boolean,
+      default: false
+    }
   },
   data(){
     return{
@@ -54,6 +62,14 @@ export default {
       type: 'list-item-avatar-three-line',
       types: [],
       SkeletonHidden: false
+    }
+  },
+  watch: {
+    idMessageToSelect(){
+      (this.idMessageToSelect) ? this.refreshSelected(this.idMessageToSelect) : '';
+    },
+    refreshThreads(){
+      (this.refreshThreads) ? this.getThreads(this.idMessageToSelect) : '';
     }
   },
   mounted(){
@@ -102,6 +118,7 @@ export default {
             });
           }
           (idMessageSelected) ? this.refreshSelected(idMessageSelected) : '';
+          this.$emit("refreshThreadsDirectCompleted");
         })
         .catch(function (error) {
           console.log(error);

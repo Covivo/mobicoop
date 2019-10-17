@@ -87,6 +87,10 @@ export default {
     iconRecipient:{ // Not used for now
       type: String,
       default:null
+    },
+    refresh:{
+      type: Boolean,
+      default:false
     }
   },
   data(){
@@ -105,6 +109,9 @@ export default {
   watch:{
     idMessage(){
       this.getCompleteThread();
+    },
+    refresh(){
+      (this.refresh) ? this.getCompleteThread() : '';
     }
   },
   methods: {
@@ -162,6 +169,7 @@ export default {
     },
     emit(){
       this.$emit("updateAskHistory",{currentAskHistory:this.currentAskHistory});
+      this.$emit("refreshCompleted");
     }
   }
 }
