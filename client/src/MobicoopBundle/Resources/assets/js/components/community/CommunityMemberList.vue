@@ -71,6 +71,10 @@ export default {
       type: Object,
       default: null
     },
+    refresh: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
@@ -84,7 +88,11 @@ export default {
       users: [],
     }
   },
-  
+  watch: {
+    refresh(){
+      (this.refresh) ? this.getCommunityMemberList() : ''
+    }
+  },
   mounted() {
     this.getCommunityMemberList();
   },
@@ -99,6 +107,7 @@ export default {
         })
         .then(res => {
           this.users = res.data;
+          this.$emit("refreshed");
         });
     },
     contactItem(item){

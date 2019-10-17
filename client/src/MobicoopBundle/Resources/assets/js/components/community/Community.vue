@@ -163,9 +163,10 @@
               cols="8"
             >
               <community-member-list
-                ref="memberList"
                 :community="community"
+                :refresh="refreshMemberList"
                 @contact="contact"
+                @refreshed="membersListRefreshed"
               />
             </v-col>
             <!-- last 3 users -->
@@ -173,8 +174,9 @@
               cols="4"
             >
               <community-last-users
-                ref="lastUsers"
+                :refresh="refreshLastUsers"
                 :community="community"
+                @refreshed="lastUsersRefreshed"
               />
             </v-col>
           </v-row>
@@ -298,6 +300,8 @@ export default {
       isLogged: false,
       loadingMap: false,
       domain: true,
+      refreshMemberList: false,
+      refreshLastUsers: false,
       params: { 'communityId' : this.community.id },
 
     }
@@ -356,8 +360,8 @@ export default {
           this.errorUpdate = res.data.state;
           this.askToJoin = true;
           this.snackbar = true;
-          this.$refs.memberList.getCommunityMemberList();
-          this.$refs.lastUsers.getCommunityLastUsers();
+          this.refreshMemberList = true;
+          this.refreshLastUsers = true;
           this.getCommunityUser();
           this.loading = false;
         });
@@ -453,6 +457,12 @@ export default {
       }
       document.body.appendChild(form);
       form.submit();      
+    },
+    membersListRefreshed(){
+      this.refreshMemberList = false;
+    },
+    lastUsersRefreshed(){
+      this.refreshLastUsers = false;
     }
 
   }
