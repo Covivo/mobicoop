@@ -3,31 +3,28 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import colorTheme from '@themes/mobicoop.js'
-import '@mdi/font/css/materialdesignicons.css'
+import '@mdi/font/scss/materialdesignicons.scss'
 
 import Vuetify, {
   // general
-  VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VAlert, VRow, VCol,
+  VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VRow, VCol, VForm, VChip, VAlert, VTextarea, VTextField, VSelect, VAutocomplete, VTooltip, VSwitch, VMenu, VDatePicker, VIcon,
   // header
   VToolbar, VToolbarTitle, VBtn, VImg,
   // footer
-  VFooter, VChip, VCardText,
-  // content
-  VForm, VTextField, VCard, VCardActions, VSnackbar, VIcon
+  VFooter, VCardText
 } from 'vuetify/lib'
 
 Vue.use(Vuetify, {
   components: {
     // general
-    VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VAlert, VRow, VCol,
+    VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VRow, VCol, VForm, VChip, VAlert, VTextarea, VTextField, VSelect, VAutocomplete, VTooltip, VSwitch, VMenu, VDatePicker, VIcon,
     // header
     VToolbar, VToolbarTitle, VBtn, VImg,
     // footer
-    VFooter, VChip, VCardText,
-    // content
-    VForm, VTextField, VCard, VCardActions, VSnackbar, VIcon
+    VFooter, VCardText
   }
 })
+Vue.use(Vuetify)
 Vue.use(VueI18n)
 
 const i18n = new VueI18n({
