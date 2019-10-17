@@ -23,4 +23,3 @@ twig:
         communityAvatarVersion: '%env(resolve:COMMUNITY_AVATAR_VERSION)%'
         urlAltCommunityAvatar: '%env(resolve:URL_ALT_COMMUNITY_AVATAR)%'
         dataComponents: '%env(resolve:DATA_COMPONENTS)%'
-        footerLogosFile: '%env(resolve:FOOTER_LOGOS_FILE)%'

@@ -16,7 +16,7 @@
           :href="item.link"
         >
           <v-img
-            width="size"
+            :width="size"
             :src="path+item.name"
             :alt="item.alt"
           />
@@ -34,7 +34,7 @@ export default {
       default: null
     },
     items: {
-      type: Array,
+      type: Object,
       default: null
     },
     size: {
@@ -42,11 +42,6 @@ export default {
       default: null
     },
   },  
-  data() {
-    return {
-      items: []
-    };
-  },
 }
 
 </script>
