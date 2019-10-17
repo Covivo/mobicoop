@@ -2,7 +2,7 @@
 
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
-import colorTheme from '@themes/mobicoop.js'
+import colorTheme from '@themes/theme.js'
 import '@mdi/font/scss/materialdesignicons.scss'
 
 import Vuetify, {
