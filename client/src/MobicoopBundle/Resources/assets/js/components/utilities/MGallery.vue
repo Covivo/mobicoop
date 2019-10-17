@@ -16,8 +16,8 @@
           :href="item.link"
         >
           <v-img
-            width="50"
-            :src="item.src"
+            width="size"
+            :src="path+item.name"
             :alt="item.alt"
           />
         </a>
@@ -27,26 +27,26 @@
 </template>
 <script>
 
-import Logos from "@componentsData/base/MFooter/Logos.json"
-
 export default {
-
+  props: {
+    path: {
+      type: String,
+      default: null
+    },
+    items: {
+      type: Array,
+      default: null
+    },
+    size: {
+      type: Number,
+      default: null
+    },
+  },  
   data() {
     return {
       items: []
     };
   },
-  mounted() {
-    this.getLogos();
-  },
-  methods:{
-    getLogos() {
-      for (let Logo in Logos)
-      {
-        this.items.push(Logos[Logo]);
-      }
-    }
-  }
 }
 
 </script>
