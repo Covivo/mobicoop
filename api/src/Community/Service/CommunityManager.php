@@ -177,8 +177,9 @@ class CommunityManager
     /**
      * Check if a user is a member of a community
      *
-     * @param Community $community
-     * @return bool
+     * @param integer $communityId
+     * @param integer $userId
+     * @return boolean
      */
     public function isRegistered(int $communityId, int $userId)
     {
@@ -194,5 +195,20 @@ class CommunityManager
     public function get(int $communityId)
     {
         return $this->communityRepository->find($communityId);
+    }
+
+    /**
+     * Get the membership status of a user for a community
+     *
+     * @param Community $community
+     * @param int $userId
+     * @return array
+     */
+    public function getMembership(Community $community, int $userId)
+    {
+        return [
+            "member" => $this->isRegistered($community->getId(), $userId),
+            "creator" => $community->getUser()->getId() === $userId
+        ];
     }
 }

@@ -160,6 +160,12 @@ class CommunityUser
      * @Groups("write")
      */
     private $password;
+
+    /**
+     * @var boolean If the user is also the creator of the community.
+     * @Groups("read")
+     */
+    private $creator;
     
     public function getId(): ?int
     {
@@ -281,6 +287,18 @@ class CommunityUser
     {
         $this->password = $password;
 
+        return $this;
+    }
+
+    public function isCreator(): ?bool
+    {
+        return $this->creator ? true : false;
+    }
+    
+    public function setCreator(?bool $isCreator): self
+    {
+        $this->creator = $isCreator ? true : false;
+        
         return $this;
     }
 
