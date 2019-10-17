@@ -59,12 +59,21 @@ export default {
     community: {
       type: Object,
       default: null
+    },
+    refresh: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     return { 
       lastUsers: null,
       loading: false
+    }
+  },
+  watch: {
+    refresh(){
+      (this.refresh) ? this.getCommunityLastUsers() : ''
     }
   },
   mounted() {
@@ -82,6 +91,7 @@ export default {
         .then(res => {
           this.lastUsers = res.data;
           this.loading = false;
+          this.$emit("refreshed");
         });
     },
   }

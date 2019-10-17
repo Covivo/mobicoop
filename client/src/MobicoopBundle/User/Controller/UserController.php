@@ -434,8 +434,8 @@ class UserController extends AbstractController
 
         if ($request->isMethod('POST')) {
             $newThread = [
-                "carpool" => $request->request->get('carpool'),
-                "idRecipient" => $request->request->get('idRecipient'),
+                "carpool" => (int)$request->request->get('carpool'),
+                "idRecipient" => (int)$request->request->get('idRecipient'),
                 "familyName" => $request->request->get('familyName'),
                 "givenName" => $request->request->get('givenName')
             ];

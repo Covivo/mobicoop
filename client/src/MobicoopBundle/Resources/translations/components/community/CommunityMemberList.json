@@ -7,7 +7,21 @@
         "all": "Tous",  
         "colTitle": {
             "familyName": "Nom",
-            "givenName": "Prénom"
+            "givenName": "Prénom",
+            "actions": "Actions"
+        }
+    }
+  },
+  "en": { 
+    "title": "Members list",
+    "table": {
+        "search" : "Search",
+        "lineNumber": "Rows per page",
+        "all": "All",  
+        "colTitle": {
+            "familyName": "Name",
+            "givenName": "First name",
+            "actions": "Actions"
         }
     }
   }
