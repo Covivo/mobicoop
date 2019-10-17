@@ -28,6 +28,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\User\Entity\User;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -61,6 +62,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *      itemOperations={"get","put","delete"}
  * )
  * @ApiFilter(NumericFilter::class, properties={"user.id","community.id","status"})
+ * @ApiFilter(SearchFilter::class, properties={"community":"exact","user":"exact"})
  * @ApiFilter(OrderFilter::class, properties={"acceptedDate"}, arguments={"orderParameterName"="order"})
  */
 class CommunityUser
@@ -160,6 +162,12 @@ class CommunityUser
      * @Groups("write")
      */
     private $password;
+
+    /**
+     * @var boolean If the user is also the creator of the community.
+     * @Groups("read")
+     */
+    private $creator;
     
     public function getId(): ?int
     {
@@ -281,6 +289,18 @@ class CommunityUser
     {
         $this->password = $password;
 
+        return $this;
+    }
+
+    public function isCreator(): ?bool
+    {
+        return $this->creator ? true : false;
+    }
+    
+    public function setCreator(?bool $isCreator): self
+    {
+        $this->creator = $isCreator ? true : false;
+        
         return $this;
     }
 

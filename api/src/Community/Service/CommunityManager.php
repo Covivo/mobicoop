@@ -177,8 +177,9 @@ class CommunityManager
     /**
      * Check if a user is a member of a community
      *
-     * @param Community $community
-     * @return bool
+     * @param integer $communityId
+     * @param integer $userId
+     * @return boolean
      */
     public function isRegistered(int $communityId, int $userId)
     {
