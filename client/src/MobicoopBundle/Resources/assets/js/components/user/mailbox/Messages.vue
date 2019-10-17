@@ -5,18 +5,6 @@
       grid-list-md
       fluid
     >
-      <v-row
-        justify="center"
-      >
-        <v-col
-          cols="12"
-          md="8"
-          xl="6"
-          align="center"
-        >
-          <h1>{{ $t('title') }}</h1>
-        </v-col>
-      </v-row>
       <v-row id="headGridMessages">
         <v-col class="col-3 pt-5 pb-4 pl-2 secondary white--text font-weight-bold headline">
           <mail-box-header>{{ $t("headers.messages") }}</mail-box-header>
