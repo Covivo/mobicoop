@@ -196,19 +196,4 @@ class CommunityManager
     {
         return $this->communityRepository->find($communityId);
     }
-
-    /**
-     * Get the membership status of a user for a community
-     *
-     * @param Community $community
-     * @param int $userId
-     * @return array
-     */
-    public function getMembership(Community $community, int $userId)
-    {
-        return [
-            "member" => $this->isRegistered($community->getId(), $userId),
-            "creator" => $community->getUser()->getId() === $userId
-        ];
-    }
 }
