@@ -424,14 +424,28 @@ class UserController extends AbstractController
     /**
      * User mailbox
      */
-    public function mailBox(UserManager $userManager, InternalMessageManager $internalMessageManager, ?int $idRecipientDirect, ?int $idRecipientCarpool)
+    public function mailBox(UserManager $userManager, Request $request)
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
+
+        $newThread = null;
+        $idThreadDefault = null;
+
+        if ($request->isMethod('POST')) {
+            $newThread = [
+                "carpool" => $request->request->get('carpool'),
+                "idRecipient" => $request->request->get('idRecipient'),
+                "familyName" => $request->request->get('familyName'),
+                "givenName" => $request->request->get('givenName')
+            ];
+            $idThreadDefault = -1; // To preselect the new thread. Id is always -1 because it doesn't really exist yet
+        }
+
         return $this->render('@Mobicoop/user/messages.html.twig', [
             "idUser"=>$user->getId(),
-            "idRecipientDirect" => $idRecipientDirect,
-            "idRecipientCarpool" => $idRecipientCarpool
+            "idThreadDefault"=>$idThreadDefault,
+            "newThread" => $newThread
         ]);
     }
 

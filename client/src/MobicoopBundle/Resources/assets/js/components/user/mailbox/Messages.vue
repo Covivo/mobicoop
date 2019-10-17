@@ -70,7 +70,8 @@
             <v-tab-item value="tab-cm">
               <threads-carpool
                 ref="threadsCarpool"
-                :id-recipient="newIdRecipientCarpool"
+                :new-thread="newThreadCarpool"
+                :id-thread-default="idThreadDefault"
                 @idMessageForTimeLine="updateDetails"
                 @toggleSelected="refreshSelected"
               />
@@ -78,7 +79,8 @@
             <v-tab-item value="tab-dm">
               <threads-direct
                 ref="threadsDirect"
-                :id-recipient="newIdRecipientDirect"
+                :new-thread="newThreadDirect"
+                :id-thread-default="idThreadDefault"
                 @idMessageForTimeLine="updateDetails"
                 @toggleSelected="refreshSelected"
               />
@@ -153,12 +155,12 @@ export default {
       type: Number,
       default:null
     },
-    newIdRecipientDirect:{
-      type:Number,
+    idThreadDefault:{
+      type: Number,
       default:null
     },
-    newIdRecipientCarpool:{
-      type:Number,
+    newThread:{
+      type:Object,
       default:null
     },
   },
@@ -168,12 +170,18 @@ export default {
       idMessage:null,
       idRecipient:null,
       currentIdAskHistory:null,
-      recipientName:""
+      recipientName:"",
+      newThreadDirect:null,
+      newThreadCarpool:null
     };
   },
   watch: {
   },
   mounted() {
+    // If there is a new thread we give it to te right component
+    if(this.newThread){
+      (this.newThread.carpool) ? this.newThreadCarpool = this.newThread : this.newThreadDirect = this.newThread;
+    }
   },
   methods: {
     updateDetails(data){
@@ -196,6 +204,9 @@ export default {
         this.$refs.threadDetails.getCompleteThread();
         this.$refs.typeText.updateLoading(false);
         // Update the threads list
+        // We need to delete new thread data or we'll have two identical entries
+        this.newThreadDirect = null;
+        this.newThreadCarpool = null;
         (res.data.askHistory) ? this.$refs.threadsCarpool.getThreads(this.idMessage) : this.$refs.threadsDirect.getThreads(this.idMessage)
         this.refreshSelected({'idMessage':this.idMessage});
       });

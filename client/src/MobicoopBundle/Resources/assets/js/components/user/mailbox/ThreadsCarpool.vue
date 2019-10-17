@@ -40,8 +40,12 @@ export default {
     ThreadCarpool
   },
   props: {
-    idRecipient:{
-      type:Number,
+    idThreadDefault:{
+      type: Number,
+      default:null
+    },
+    newThread:{
+      type:Object,
       default:null
     },
   },
@@ -56,7 +60,7 @@ export default {
     }
   },
   mounted(){
-    this.getThreads();
+    this.getThreads(this.idThreadDefault);
   },
   methods:{
     emit(data){
@@ -69,6 +73,14 @@ export default {
       this.messages.forEach((item, index) => {
         if(item.idMessage == idMessage){
           this.$set(item, 'selected', true);
+          // After the select we need to refresh the details
+          this.emit(
+            {
+              idMessage:item.idMessage,
+              idRecipient:item.idRecipient,
+              name:item.name
+            }
+          )
         }
         else{
           this.$set(item, 'selected', false);
@@ -82,16 +94,16 @@ export default {
           this.SkeletonHidden = true;
           this.messages = response.data.threads;
           // I'm pushing the new "virtual" thread
-          // if(this.newThead){
-          //   response.data.threads.push({
-          //     date:moment().format(),
-          //     familyName:this.newThead.familyName,
-          //     givenName:this.newThead.givenName,
-          //     idMessage:-1,
-          //     idRecipient:this.newThead.idRecipient
-          //   });
-          // }
-          this.refreshSelected(idMessageSelected);
+          if(this.newThread){
+            response.data.threads.push({
+              date:moment().format(),
+              familyName:this.newThread.familyName,
+              givenName:this.newThread.givenName,
+              idMessage:-1,
+              idRecipient:this.newThread.idRecipient
+            });
+          }
+          (idMessageSelected) ? this.refreshSelected(idMessageSelected) : '';
         })
         .catch(function (error) {
           console.log(error);

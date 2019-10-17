@@ -8,17 +8,11 @@
 {% endblock %}
 
 {% block main %}
-    {% if idRecipientDirect %}
       <Messages 
         :id-user="{{ idUser }}"
-        :new-id-recipient-direct="{{ idRecipientDirect }}"
+        :id-thread-default="{{ idThreadDefault }}"
+        :new-thread="{{ newThread|json_encode }}"
       />
-    {% else %}
-      <Messages 
-        :id-user="{{ idUser }}"
-        :new-id-recipient-carpool="{{ idRecipientCarpool }}"
-      />
-    {% endif %}
 {% endblock %}
 
 {% block javascripts %}
