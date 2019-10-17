@@ -79,6 +79,7 @@ export default {
       headers: [
         { text: this.$t('table.colTitle.familyName'), value: 'familyName' },
         { text: this.$t('table.colTitle.givenName'), value: 'givenName' },
+        { text: this.$t('table.colTitle.actions'), value: 'action', sortable: false },
       ],
       users: [],
     }
@@ -99,6 +100,9 @@ export default {
         .then(res => {
           this.users = res.data;
         });
+    },
+    contactItem(item){
+      this.$emit("contact",item);
     }
   }
 }

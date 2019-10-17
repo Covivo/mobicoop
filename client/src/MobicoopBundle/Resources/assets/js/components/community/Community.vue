@@ -165,6 +165,7 @@
               <community-member-list
                 ref="memberList"
                 :community="community"
+                @contact="contact"
               />
             </v-col>
             <!-- last 3 users -->
@@ -428,7 +429,31 @@ export default {
       }
         
       return point;      
-    }     
+    },
+    contact: function(data){
+      const form = document.createElement('form');
+      form.method = 'post';
+      form.action = this.$t("buttons.contact.route");
+      
+      const params = {
+        carpool:0,
+        idRecipient:data.id,
+        familyName:data.familyName,
+        givenName:data.givenName
+      }
+      
+      for (const key in params) {
+        if (params.hasOwnProperty(key)) {
+          const hiddenField = document.createElement('input');
+          hiddenField.type = 'hidden';
+          hiddenField.name = key;
+          hiddenField.value = params[key];
+          form.appendChild(hiddenField);
+        }
+      }
+      document.body.appendChild(form);
+      form.submit();      
+    }
 
   }
 }
