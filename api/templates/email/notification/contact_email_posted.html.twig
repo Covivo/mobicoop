@@ -1,0 +1,17 @@
+{% extends '/email/notification/base.html.twig' %}
+{% block body %}
+    <p>
+        {{ newContactAsk | trans }}
+    </p>
+
+    <ul>
+        <li>{{ name | trans }} {{ context.contact.familyName ? context.contact.familyName : notMentioned | trans }}</li>
+        <li>{{ firstname | trans }} {{ context.contact.givenName ? context.contact.givenName : notMentioned | trans }}</li>
+        <li>{{ email | trans }} {{ context.contact.email }}</li>
+        <li>{{ ask | trans }} {{ context.contact.demand ? context.contact.demand : notMentioned | trans }}</li>
+        <li>{{ message | trans }} {{ context.contact.message }}</li>
+    </ul>
+
+    {{ thankYou | trans }}
+
+{% endblock %}
