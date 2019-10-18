@@ -1,3 +1,5 @@
+// Only import vue js components you need on twig files
+
 // BASE
 import MHeader from '@components/base/MHeader'
 import MFooter from '@components/base/MFooter'
