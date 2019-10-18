@@ -268,6 +268,12 @@ class Community
      */
     private $communitySecurities;
     
+    /**
+     * @var boolean|null If the current user asking is member of the community
+     * @Groups({"read"})
+     */
+    private $isMember;
+
     public function __construct($id=null)
     {
         $this->id = $id;
@@ -516,6 +522,17 @@ class Community
         return $this;
     }
     
+    public function isIsMember(): ?bool
+    {
+        return $this->isMember ? true : false;
+    }
+    
+    public function setIsMember(?bool $isMember): self
+    {
+        $this->isMember = $isMember ? true : false;
+        
+        return $this;
+    }
     
     // DOCTRINE EVENTS
     
