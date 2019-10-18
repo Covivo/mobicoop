@@ -60,7 +60,7 @@
               <v-stepper-step
                 editable
                 :step="1"
-                color="success"
+                color="primary"
               >
                 {{ $t('stepper.header.search_journey') }}
               </v-stepper-step>
@@ -70,7 +70,7 @@
               <v-stepper-step
                 editable
                 :step="2"
-                color="success"
+                color="primary"
               >
                 {{ $t('stepper.header.planification') }}
               </v-stepper-step>
@@ -80,7 +80,7 @@
               <v-stepper-step
                 editable
                 :step="3"
-                color="success"
+                color="primary"
               >
                 {{ $t('stepper.header.map') }}
               </v-stepper-step>
@@ -91,7 +91,7 @@
                 v-if="driver"
                 editable
                 :step="4"
-                color="success"
+                color="primary"
               >
                 {{ $t('stepper.header.passengers') }}
               </v-stepper-step>
@@ -102,7 +102,7 @@
                 v-if="driver"
                 editable
                 :step="5"
-                color="success"
+                color="primary"
               >
                 {{ $t('stepper.header.participation') }}
               </v-stepper-step>
@@ -112,7 +112,7 @@
               <v-stepper-step
                 editable
                 :step="driver ? 6 : 4"
-                color="success"
+                color="primary"
               >
                 {{ $t('stepper.header.message') }}
               </v-stepper-step>
@@ -120,7 +120,7 @@
 
               <!-- Step 7 : summary -->
               <v-stepper-step
-                color="success"
+                color="primary"
                 editable
                 :step="driver ? 7 : 5"
               >
@@ -237,7 +237,7 @@
                       inset
                       hide-details
                       class="mt-0 mb-1"
-                      color="success"
+                      color="primary"
                     />
                   </v-col>
                   <v-col
@@ -277,7 +277,7 @@
                       inset
                       hide-details
                       class="mt-0 mb-1"
-                      color="success"
+                      color="primary"
                     />
                   </v-col>
                   <v-col
@@ -317,7 +317,7 @@
                       inset
                       hide-details
                       class="mt-0 mb-1"
-                      color="success"
+                      color="primary"
                     />
                   </v-col>
                   <v-col
@@ -462,7 +462,7 @@
           v-if="step > 1"
           rounded
           outlined
-          color="success" 
+          color="primary" 
           align-center
           @click="--step"
         >
@@ -473,7 +473,7 @@
           v-if="validNext"
           :disabled="!validNext"
           rounded
-          color="success"
+          color="primary"
           align-center
           style="margin-left: 30px;"
           @click="step++"
@@ -491,7 +491,7 @@
                 :disabled="!valid || loading"
                 :loading="loading"
                 rounded
-                color="success"
+                color="secondary"
                 style="margin-left: 30px;"
                 align-center
                 @click="postAd"

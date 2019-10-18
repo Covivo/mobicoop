@@ -213,7 +213,7 @@
           v-model="avoidMotorway"
           class="mt-0"
           :label="$t('avoidMotorway')"
-          color="success"
+          color="primary"
           hide-details
           @change="emitEvent"
         />

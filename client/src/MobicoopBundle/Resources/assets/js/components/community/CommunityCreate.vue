@@ -100,7 +100,7 @@
             <v-col cols="6">
               <v-btn
                 rounded
-                color="success"
+                color="primary"
                 :loading="loading"
                 @click="createCommunity"
               >

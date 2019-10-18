@@ -10,7 +10,7 @@
       hide-no-data
       clearable
       item-text="selectedDisplayedLabel"
-      color="success"
+      color="primary"
       return-object
       no-filter
       persistent-hint

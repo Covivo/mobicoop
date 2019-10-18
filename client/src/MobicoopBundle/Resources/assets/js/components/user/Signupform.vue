@@ -81,7 +81,7 @@
               ref="button"
               rounded
               class="my-13"
-              color="success"
+              color="primary"
               :disabled="!step1"
               @click="$vuetify.goTo('#step2', options)"
             >
@@ -120,7 +120,7 @@
                 ref="button"
                 rounded
                 class="my-13 mr-12"
-                color="success"
+                color="primary"
                 :disabled="!step1"
                 @click="$vuetify.goTo('#step2', options)"
               >
@@ -130,7 +130,7 @@
                 ref="button"
                 rounded
                 class="my-13"
-                color="success"
+                color="primary"
                 :disabled="!step2"
                 @click="$vuetify.goTo('#step3', options)"
               >
@@ -165,7 +165,7 @@
                 ref="button"
                 rounded
                 class="my-13 mr-12"
-                color="success"
+                color="primary"
                 :disabled="!step2"
                 @click="$vuetify.goTo('#step3', options)"
               >
@@ -175,7 +175,7 @@
                 ref="button"
                 rounded
                 class="my-13"
-                color="success"
+                color="primary"
                 :disabled="!step3"
                 @click="$vuetify.goTo('#step4', options)"
               >
@@ -208,7 +208,7 @@
                 ref="button"
                 rounded
                 class="my-13 mr-12"
-                color="success"
+                color="primary"
                 :disabled="!step3"
                 @click="$vuetify.goTo('#step4', options)"
               >
@@ -218,7 +218,7 @@
                 ref="button"
                 rounded
                 class="my-13"
-                color="success"
+                color="primary"
                 :disabled="!step4"
                 @click="$vuetify.goTo('#step5', options)"
               >
@@ -246,7 +246,7 @@
             <v-checkbox
               v-model="form.validation"
               class="check"
-              color="success"
+              color="primary"
               :rules="form.checkboxRules"
               required
               :disabled="!step4"
@@ -265,7 +265,7 @@
               </template>
             </v-checkbox>
             <v-btn
-              color="success"
+              color="primary"
               rounded
               class="mr-4 mb-100 mt-12"
               :disabled="!step5 || loading"

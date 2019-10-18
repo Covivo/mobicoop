@@ -142,7 +142,8 @@
                 >
                   <v-btn
                     color="primary"
-                    @click="carpoolDialog = false"
+                    :loading="contactLoading"
+                    @click="contact"
                   >
                     <v-icon>
                       mdi-email
@@ -163,7 +164,7 @@
 
       <v-btn
         v-if="driver ^ passenger"
-        color="success"
+        color="secondary"
         @click="carpoolDialog = false"
       >
         {{ $t('carpool') }}
@@ -171,7 +172,7 @@
 
       <v-btn
         v-if="driver && passenger"
-        color="success"
+        color="secondary"
         @click="carpoolDialog = false"
       >
         {{ $t('carpoolAsDriver') }}
@@ -179,7 +180,7 @@
 
       <v-btn
         v-if="driver && passenger"
-        color="success"
+        color="secondary"
         @click="carpoolDialog = false"
       >
         {{ $t('carpoolAsPassenger') }}
@@ -241,7 +242,8 @@ export default {
       lMatching: this.matching,
       lDate: this.date,
       lUser: this.user,
-      lRegular: this.regular
+      lRegular: this.regular,
+      contactLoading: false
     }
   },
   computed: {
@@ -384,12 +386,22 @@ export default {
       });
       return waypoints;
     },
+    contact() {
+      this.contactLoading = true;
+      this.$emit('contact', {
+        proposal: this.proposal,
+        date: this.lDate,
+        time: this.getCarpoolTime(),
+        driver: this.driver,
+        passenger: this.passenger
+      });
+    },
 
 
-    /* the following is not used for now but is to keep for further use !!! 
+    // the following is not used for now but is to keep for further use !!! 
 
     // this methods gives the date of the carpool
-    getCarpoolDate(params) {
+    /*getCarpoolDate(params) {
       // if the search is regular, it's the selected date
       if (this.lRegular) return this.lDate;
       // if the search is punctual
@@ -400,25 +412,25 @@ export default {
       // TODO : it's the date of the first matching date if it's a regular matching proposal
       // for now we return the selected date...
       return this.date;
-    },
+    },*/
     // this methods gives the time of the carpool
-    getCarpoolTime(params) {
+    getCarpoolTime() {
       // if the search is regular, the time is null
       if (this.lRegular) return null;
       // the search is punctual
       if (this.driver && !this.passenger) {
         // if the requester is passenger only, we have to set its departure time as the pickup time 
         // the 'order' field is an array containing the ordered waypoints of the whole route (ACDB)
-        return this.getPickUpTime(1,params.proposal.criteria.fromTime,this.matching.offer.filters.order);
+        return this.getPickUpTime(1,this.proposal.criteria.fromTime,this.matching.offer.filters.order);
       } else if (this.passenger && !this.driver) {
         // if the requester is driver only, 
         // we set its departure time to the time where the pickup time of the current carpooler matches the carpooler departure time
         // the 'order' field is an array containing the ordered waypoints of the whole route (ACDB)
-        return this.getPickUpTime(2,params.proposal.criteria.fromTime,this.matching.request.filters.order);
+        return this.getPickUpTime(2,this.proposal.criteria.fromTime,this.matching.request.filters.order);
       } else {
         // if the requester can be driver or passenger, we choose a departure time that could satisfy both roles 
         // the 'order' field is an array containing the ordered waypoints of the whole route (ACDB)
-        return this.getPickUpTime(3,params.proposal.criteria.fromTime,this.matching.offer.filters.order);
+        return this.getPickUpTime(3,this.proposal.criteria.fromTime,this.matching.offer.filters.order);
       }
     },
     getPickUpTime(role,time,waypoints) {
@@ -443,9 +455,7 @@ export default {
         }
       }
       return null;
-    },
-    */
-
+    }
   }
 };
 </script>

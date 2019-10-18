@@ -107,7 +107,7 @@
             <!--Save Button-->
             <v-btn
               class="button saveButton"
-              color="success"
+              color="primary"
               rounded
               :disabled="!valid"
               :loading="loading"

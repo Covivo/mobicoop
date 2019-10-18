@@ -2,43 +2,43 @@
   <div>
     <v-chip
       small
-      :color="monActive ? 'success' : 'default'"
+      :color="monActive ? 'primary' : null"
     >
       {{ $t('ui.abbr.day.mon') }} 
     </v-chip>
     <v-chip
       small
-      :color="tueActive ? 'success' : 'default'"
+      :color="tueActive ? 'primary' : null"
     >
       {{ $t('ui.abbr.day.tue') }}
     </v-chip>
     <v-chip
       small
-      :color="wedActive ? 'success' : 'default'"
+      :color="wedActive ? 'primary' : null"
     >
       {{ $t('ui.abbr.day.wed') }} 
     </v-chip>
     <v-chip
       small
-      :color="thuActive ? 'success' : 'default'"
+      :color="thuActive ? 'primary' : null"
     >
       {{ $t('ui.abbr.day.thu') }}
     </v-chip>
     <v-chip
       small
-      :color="friActive ? 'success' : 'default'"
+      :color="friActive ? 'primary' : null"
     >
       {{ $t('ui.abbr.day.fri') }} 
     </v-chip>
     <v-chip
       small
-      :color="satActive ? 'success' : 'default'"
+      :color="satActive ? 'primary' : null"
     >
       {{ $t('ui.abbr.day.sat') }}
     </v-chip>
     <v-chip
       small
-      :color="sunActive ? 'success' : 'default'"
+      :color="sunActive ? 'primary' : null"
     >
       {{ $t('ui.abbr.day.sun') }}
     </v-chip>

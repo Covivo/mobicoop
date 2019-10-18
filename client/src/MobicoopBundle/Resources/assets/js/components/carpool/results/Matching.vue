@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <div>
     <v-container fluid>
       <v-row
         justify="center"
@@ -51,13 +51,14 @@
         :regular="regular"
         :matching="matching"
         @close="carpoolDialog = false"
+        @contact="contact"
       />
     </v-dialog>
-  </v-content>
+  </div>
 </template>
 <script>
 
-// import axios from "axios";
+import axios from "axios";
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/carpool/results/Matching.json";
@@ -123,48 +124,48 @@ export default {
   methods :{
     carpool(params) {
       this.matching = params.matching;
-
       // open the dialog
       this.carpoolDialog = true;
-
-      // axios.post(this.$t("contactUrl"), {
-      //   "proposalId":params.proposal.id,
-      //   "origin": this.origin,
-      //   "destination": this.destination,
-      //   "date": params.date,
-      //   "time": params.time,
-      //   "priceKm": params.proposal.criteria.priceKm,
-      //   "driver": params.driver,
-      //   "passenger": params.passenger,
-      //   "regular": this.regular
-      // },
-      // {
-      //   headers:{
-      //     'content-type': 'application/json'
-      //   }
-      // })
-      //   .then((response) => {
-      //     if(response.data=="ok"){
-      //       //this.emitSnackbar('snackBar.success','success')
-      //       window.location = "/utilisateur/messages";
-      //     }
-      //     else{
-      //       //this.emitSnackbar('snackBar.error','error')
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //     //this.emitSnackbar('snackBar.error','error')
-      //   })
-      //   .finally(() => {
-      //     //this.loading = false;
-      //   })
     },
     // TODO : REMOVE WHEN START CODING FILTER COMPONENT
     remove (item) {
       this.chips.splice(this.chips.indexOf(item), 1)
       this.chips = [...this.chips]
     },
+    contact(params) {
+      axios.post(this.$t("contactUrl"), {
+        "proposalId":params.proposal.id,
+        "origin": this.origin,
+        "destination": this.destination,
+        "date": params.date,
+        "time": params.time,
+        "priceKm": params.proposal.criteria.priceKm,
+        "driver": params.driver,
+        "passenger": params.passenger,
+        "regular": this.regular
+      },
+      {
+        headers:{
+          'content-type': 'application/json'
+        }
+      })
+        .then((response) => {
+          if(response.data=="ok"){
+            //this.emitSnackbar('snackBar.success','success')
+            //window.location = "/utilisateur/messages";
+          }
+          else{
+            //this.emitSnackbar('snackBar.error','error')
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          //this.emitSnackbar('snackBar.error','error')
+        })
+        .finally(() => {
+          this.carpoolDialog = false;
+        })
+    }
   }
 };
 </script>

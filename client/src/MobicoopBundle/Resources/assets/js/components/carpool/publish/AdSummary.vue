@@ -119,7 +119,7 @@
                 dense
               >
                 <v-timeline-item 
-                  color="success"
+                  color="primary"
                   small
                 >
                   <v-row dense>
@@ -148,7 +148,7 @@
                 </v-timeline-item>
 
                 <v-timeline-item 
-                  color="success"
+                  color="primary"
                   small
                 >
                   <v-row dense>

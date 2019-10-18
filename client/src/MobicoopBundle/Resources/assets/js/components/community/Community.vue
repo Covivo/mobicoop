@@ -68,7 +68,7 @@
               <!-- button if member is accepted -->
               <div v-else-if="isAccepted">
                 <v-btn
-                  color="success"
+                  color="primary"
                   rounded
                   @click="publish"
                 >
@@ -88,7 +88,7 @@
                       v-on="on"
                     >
                       <v-btn
-                        color="success"
+                        color="primary"
                         rounded
                         disabled
                       >
@@ -115,7 +115,7 @@
                       v-on="on"
                     >
                       <v-btn
-                        color="success"
+                        color="primary"
                         rounded
                         :loading="loading || (checkValidation && isLogged) "
                         :disabled="!isLogged || checkValidation"

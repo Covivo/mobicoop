@@ -114,7 +114,7 @@
             v-model="returnTrip"
             class="mt-0"
             :label="$t('returnTrip.label')"
-            color="success"
+            color="primary"
             hide-details
             @change="change"
           />
@@ -237,43 +237,43 @@
               <v-checkbox
                 v-model="item.mon"
                 label="L"
-                color="success"
+                color="primary"
                 @change="change"
               />
               <v-checkbox
                 v-model="item.tue"
                 label="Ma"
-                color="success"
+                color="primary"
                 @change="change"
               />
               <v-checkbox
                 v-model="item.wed"
                 label="Me"
-                color="success"
+                color="primary"
                 @change="change"
               />
               <v-checkbox
                 v-model="item.thu"
                 label="J"
-                color="success"
+                color="primary"
                 @change="change"
               />
               <v-checkbox
                 v-model="item.fri"
                 label="V"
-                color="success"
+                color="primary"
                 @change="change"
               />
               <v-checkbox
                 v-model="item.sat"
                 label="S"
-                color="success"
+                color="primary"
                 @change="change"
               />
               <v-checkbox
                 v-model="item.sun"
                 label="D"
-                color="success"
+                color="primary"
                 @change="change"
               />
             </v-row>

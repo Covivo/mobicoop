@@ -194,6 +194,8 @@ class CarpoolController extends AbstractController
      */
     public function carpoolContact(Request $request, ProposalManager $proposalManager, UserManager $userManager)
     {
+        return $this->json("ok");
+        
         $params = json_decode($request->getContent(), true);
         $data = [
             "proposalId" => $params['proposalId'],
