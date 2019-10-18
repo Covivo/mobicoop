@@ -88,7 +88,23 @@ use App\Community\Controller\JoinAction;
  *                      }
  *                  }
  *              }
- *          }
+ *          },
+ *          "isMember"={
+ *              "method"="GET",
+ *              "path"="/communities/isMember",
+ *              "normalization_context"={"groups"={"read"}},
+ *              "swagger_context" = {
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "userId",
+ *                          "in" = "query",
+ *                          "type" = "number",
+ *                          "format" = "integer",
+ *                          "description" = "The id of the user for which we want the communities that he is already a member"
+ *                      }
+ *                  }
+ *              }
+ *          },
  *      },
  *      itemOperations={
  *          "get",

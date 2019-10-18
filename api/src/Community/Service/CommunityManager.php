@@ -141,6 +141,20 @@ class CommunityManager
     }
 
     /**
+     * Get communities where user is already an accepted member
+     *
+     * @param integer $userId The user id
+     * @return void
+     */
+    public function getCommunitiesWhereUserIsMember(int $userId)
+    {
+        if (!$user = $this->userRepository->find($userId)) {
+            return [];
+        }
+        return $this->communityRepository->findCommunitiesWhereUserIsMember($user);
+    }
+
+    /**
      * Check the credentials against a security file
      *
      * @param CommunitySecurity $security
