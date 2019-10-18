@@ -55,7 +55,19 @@ use App\Community\Controller\JoinAction;
  *          "pagination_client_items_per_page"=true
  *      },
  *      collectionOperations={
- *          "get",
+ *          "get"={
+  *              "swagger_context" = {
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "userId",
+ *                          "in" = "query",
+ *                          "type" = "number",
+ *                          "format" = "integer",
+ *                          "description" = "Check if this userId is already an accepted member"
+ *                      }
+ *                  }
+ *              }
+*           },
  *          "post",
  *          "available"={
  *              "method"="GET",

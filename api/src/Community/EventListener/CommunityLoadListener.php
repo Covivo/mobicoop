@@ -24,6 +24,7 @@
 namespace App\Community\EventListener;
 
 use App\Community\Entity\Community;
+use App\Community\Entity\CommunityUser;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -47,7 +48,9 @@ class CommunityLoadListener
             if ($community instanceof Community) {
                 $communityUsers = $community->getCommunityUsers();
                 foreach ($communityUsers as $communityUser) {
-                    if ($request->get("userId") == $communityUser->getUser()->getId()) {
+                    if ($request->get("userId") == $communityUser->getUser()->getId() &&
+                        $communityUser->getStatus() == CommunityUser::STATUS_ACCEPTED
+                    ) {
                         $community->setIsMember(true);
                     }
                 }
