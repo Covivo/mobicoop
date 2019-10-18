@@ -24,7 +24,9 @@
                         {% block main %}{% endblock %}
                     </div>
                 </main>
-                <m-footer></m-footer>
+                {% block footer %}
+                    <m-footer></m-footer>
+                {% endblock %}
             </v-app>
         </div>
     </body>

@@ -22,3 +22,4 @@ twig:
         communityAvatarSize: '%env(resolve:COMMUNITY_AVATAR_SIZE)%'
         communityAvatarVersion: '%env(resolve:COMMUNITY_AVATAR_VERSION)%'
         urlAltCommunityAvatar: '%env(resolve:URL_ALT_COMMUNITY_AVATAR)%'
+        dataComponents: '%env(resolve:DATA_COMPONENTS)%'
