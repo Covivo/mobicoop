@@ -67,7 +67,6 @@
 
 import moment from "moment";
 import {merge} from "lodash";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/home/HomeSearch.json";
 import TranslationsClient from "@clientTranslations/components/home/HomeSearch.json";
 
@@ -76,7 +75,6 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
   },
   computed: {
     // creation of the url to call

@@ -122,7 +122,6 @@
 </template>
 <script>
 import axios from "axios";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/mailbox/Messages.json";
 import MailBoxHeader from '@components/user/mailbox/MailBoxHeader'
 import ThreadsDirect from '@components/user/mailbox/ThreadsDirect'
@@ -134,7 +133,6 @@ import TypeText from '@components/user/mailbox/TypeText'
 export default {
   i18n: {
     messages: Translations,
-    sharedMessages: CommonTranslations
   },
   components: {
     MailBoxHeader,

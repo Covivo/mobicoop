@@ -151,7 +151,6 @@
 <script>
 import { merge } from "lodash";
 import moment from "moment";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/carpool/MatchingJourney.json";
 import TranslationsClient from "@clientTranslations/components/carpool/MatchingJourney.json";
 import VJourney from "../utilities/VJourney";
@@ -163,7 +162,6 @@ export default {
   },
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
   },
   props: {
     origin: {

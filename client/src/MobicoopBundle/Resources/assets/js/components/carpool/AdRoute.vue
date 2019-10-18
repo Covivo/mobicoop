@@ -294,7 +294,6 @@
 <script>
 import { merge } from "lodash";
 import axios from "axios";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/carpool/AdRoute.json";
 import TranslationsClient from "@clientTranslations/components/carpool/AdRoute.json";
 
@@ -305,7 +304,6 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
   },
   components: {
     GeoComplete

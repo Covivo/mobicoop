@@ -36,7 +36,6 @@
 
 <script>
 import { merge } from "lodash";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/carpool/MatchingFilter.json";
 import TranslationsClient from "@clientTranslations/components/carpool/MatchingFilter.json";
 
@@ -44,7 +43,6 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
   },
   props: {
 

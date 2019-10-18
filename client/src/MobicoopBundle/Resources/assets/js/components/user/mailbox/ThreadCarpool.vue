@@ -70,13 +70,11 @@
 </template>
 <script>
 import moment from "moment";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/mailbox/ThreadCarpool.json";
 
 export default {
   i18n: {
     messages: Translations,
-    sharedMessages: CommonTranslations
   },
   props: {
     avatar: {

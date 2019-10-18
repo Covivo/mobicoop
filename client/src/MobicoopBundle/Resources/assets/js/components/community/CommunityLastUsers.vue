@@ -44,7 +44,6 @@
 
 import axios from "axios";
 import { merge } from "lodash";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/community/CommunityLastUsers.json";
 import TranslationsClient from "@clientTranslations/components/community/CommunityLastUsers.json";
 
@@ -53,7 +52,6 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
   },
   props:{
     community: {

@@ -212,7 +212,6 @@
 
 import axios from "axios";
 import { merge } from "lodash";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/community/Community.json";
 import TranslationsClient from "@clientTranslations/components/community/Community.json";
 import CommunityMemberList from "@components/community/CommunityMemberList";
@@ -230,7 +229,6 @@ export default {
   },
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
   },
   props:{
     user: {

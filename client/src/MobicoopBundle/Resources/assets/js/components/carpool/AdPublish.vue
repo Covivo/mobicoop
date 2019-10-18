@@ -509,7 +509,6 @@
 
 <script>
 import { merge } from "lodash";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/carpool/AdPublish.json";
 import TranslationsClient from "@clientTranslations/components/carpool/AdPublish.json";
 
@@ -526,7 +525,6 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
   },
   components: {
     SearchJourney,
