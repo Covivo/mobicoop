@@ -17,6 +17,7 @@ twig:
         searchRegular: '%env(bool:CARPOOL_SEARCH_REGULAR)%'
         searchPunctualDate: '%env(bool:CARPOOL_PUNCTUAL_DATE_OPTIONAL)%'
         adRegular: '%env(bool:CARPOOL_AD_REGULAR)%'
+        distinguishRegular: '%env(bool:CARPOOL_DISTINGUISH_REGULAR)%'
         urlTiles: '%env(resolve:URL_TILES)%'
         attributionCopyright: '%env(resolve:ATTRIBUTION_COPYRIGHTS)%'
         communityAvatarSize: '%env(resolve:COMMUNITY_AVATAR_SIZE)%'

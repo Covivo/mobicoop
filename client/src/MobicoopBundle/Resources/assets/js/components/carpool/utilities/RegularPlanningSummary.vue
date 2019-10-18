@@ -131,48 +131,15 @@
         cols="5"
         class="text-right"
       >
-        <v-chip
-          small
-          :color="monActive ? 'success' : 'default'"
-        >
-          {{ $t('ui.abbr.day.mon') }} 
-        </v-chip>
-        <v-chip
-          small
-          :color="tueActive ? 'success' : 'default'"
-        >
-          {{ $t('ui.abbr.day.tue') }}
-        </v-chip>
-        <v-chip
-          small
-          :color="wedActive ? 'success' : 'default'"
-        >
-          {{ $t('ui.abbr.day.wed') }} 
-        </v-chip>
-        <v-chip
-          small
-          :color="thuActive ? 'success' : 'default'"
-        >
-          {{ $t('ui.abbr.day.thu') }}
-        </v-chip>
-        <v-chip
-          small
-          :color="friActive ? 'success' : 'default'"
-        >
-          {{ $t('ui.abbr.day.fri') }} 
-        </v-chip>
-        <v-chip
-          small
-          :color="satActive ? 'success' : 'default'"
-        >
-          {{ $t('ui.abbr.day.sat') }}
-        </v-chip>
-        <v-chip
-          small
-          :color="sunActive ? 'success' : 'default'"
-        >
-          {{ $t('ui.abbr.day.sun') }}
-        </v-chip>
+        <regular-days-summary 
+          :mon-active="monActive"
+          :tue-active="tueActive"
+          :wed-active="wedActive"
+          :thu-active="thuActive"
+          :fri-active="friActive"
+          :sat-active="satActive"
+          :sun-active="sunActive"
+        />
       </v-col>
     </v-row>
   </div>
@@ -182,11 +149,15 @@
 import { merge } from "lodash";
 import moment from "moment";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/utilities/DaysSummary.json";
-import TranslationsClient from "@clientTranslations/components/utilities/DaysSummary.json";
+import Translations from "@translations/components/carpool/utilities/RegularPlanningSummary.json";
+import TranslationsClient from "@clientTranslations/components/carpool/utilities/RegularPlanningSummary.json";
+import RegularDaysSummary from "@components/carpool/utilities/RegularDaysSummary";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
+  components: {
+    RegularDaysSummary
+  },
   i18n: {
     messages: TranslationsMerged,
     sharedMessages: CommonTranslations

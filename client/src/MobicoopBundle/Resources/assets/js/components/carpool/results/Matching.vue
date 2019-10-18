@@ -29,6 +29,7 @@
             :date="date"
             :time="time"
             :regular="regular"
+            :distinguish-regular="distinguishRegular"
             :user="user"
             :community-id="communityId"
             @carpool="carpool"
@@ -49,6 +50,7 @@
         :date="date"
         :regular="regular"
         :matching="matching"
+        @close="carpoolDialog = false"
       />
     </v-dialog>
   </v-content>
@@ -58,12 +60,12 @@
 // import axios from "axios";
 import { merge } from "lodash";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/carpool/Matching.json";
-import TranslationsClient from "@clientTranslations/components/carpool/Matching.json";
-import MatchingHeader from "./MatchingHeader";
-import MatchingFilter from "./MatchingFilter";
-import MatchingResults from "./MatchingResults";
-import MatchingJourney from "./MatchingJourney";
+import Translations from "@translations/components/carpool/results/Matching.json";
+import TranslationsClient from "@clientTranslations/components/carpool/results/Matching.json";
+import MatchingHeader from "@components/carpool/results/MatchingHeader";
+import MatchingFilter from "@components/carpool/results/MatchingFilter";
+import MatchingResults from "@components/carpool/results/MatchingResults";
+import MatchingJourney from "@components/carpool/results/MatchingJourney";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
@@ -105,6 +107,10 @@ export default {
     communityId: {
       type: Number,
       default: null
+    },
+    distinguishRegular: {
+      type: Boolean,
+      default: false
     }
   },
   data : function() {

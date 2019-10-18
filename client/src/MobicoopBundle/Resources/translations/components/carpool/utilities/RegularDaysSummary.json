@@ -1,0 +1,20 @@
+{
+    "fr": {
+        "mon": "L",
+        "tue": "M",
+        "wed": "Me",
+        "thu": "J",
+        "fri": "V",
+        "sat": "S",
+        "sun": "D"
+    },
+    "en": {
+        "mon": "M",
+        "tue": "Tu",
+        "wed": "W",
+        "thu": "T",
+        "fri": "F",
+        "sat": "S",
+        "sun": "Su"
+    }
+}

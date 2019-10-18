@@ -2,7 +2,7 @@
 
 import { Vue, vuetify, i18n } from '@js/config/carpool/publish'
 
-import AdPublish from '@components/carpool/AdPublish'
+import AdPublish from '@components/carpool/publish/AdPublish'
 import MHeader from '@components/base/MHeader'
 import MFooter from '@components/base/MFooter'
 

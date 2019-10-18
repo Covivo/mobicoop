@@ -55,9 +55,9 @@
 import { merge } from "lodash";
 import moment from "moment";
 import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/carpool/MatchingHeader.json";
-import TranslationsClient from "@clientTranslations/components/carpool/MatchingHeader.json";
-import RouteSummary from "../utilities/RouteSummary"
+import Translations from "@translations/components/carpool/results/MatchingHeader.json";
+import TranslationsClient from "@clientTranslations/components/carpool/results/MatchingHeader.json";
+import RouteSummary from "@components/carpool/utilities/RouteSummary"
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
