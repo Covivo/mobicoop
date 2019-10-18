@@ -16,9 +16,12 @@
           :href="item.link"
         >
           <v-img
-            :width="size"
+            :max-height="maxHeight"
             :src="path+item.name"
             :alt="item.alt"
+            :width="item.width"
+            :height="item.height"
+            contain
           />
         </a>
       </v-col>
@@ -37,7 +40,7 @@ export default {
       type: Object,
       default: null
     },
-    size: {
+    maxHeight: {
       type: Number,
       default: null
     },
