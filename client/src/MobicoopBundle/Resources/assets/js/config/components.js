@@ -29,7 +29,7 @@ import Messages from '@components/user/mailbox/Messages'
 import PasswordRecovery from '@components/user/PasswordRecovery'
 import PasswordRecoveryUpdate from '@components/user/PasswordRecoveryUpdate'
 import Profile from '@components/user/Profile'
-import SignupForm from '@components/user/Signupform'
+import Signupform from '@components/user/Signupform'
 import SignupValidation from '@components/user/SignupValidation'
 import UpdateProfile from '@components/user/UpdateProfile'
 
@@ -54,7 +54,7 @@ export default {
   PasswordRecovery,
   PasswordRecoveryUpdate,
   Profile,
-  SignupForm,
+  Signupform,
   SignupValidation,
   UpdateProfile
 }

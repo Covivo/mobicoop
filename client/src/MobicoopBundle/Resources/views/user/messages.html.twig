@@ -4,7 +4,7 @@
   {% trans from 'ui' %}user.messages.title{% endtrans %}
 {% endblock %}
 {% block stylesheets %}
-  {{ encore_entry_link_tags("#{assets_prefix ?? ''}user/messages") }}
+  {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}user/messages") }}#}
 {% endblock %}
 
 {% block main %}
@@ -13,8 +13,4 @@
         :id-thread-default="{{ (idThreadDefault) ? idThreadDefault : 'null' }}"
         :new-thread="{{ newThread|json_encode }}"
       />
-{% endblock %}
-
-{% block javascripts %}
-  {{ encore_entry_script_tags("#{assets_prefix ?? ''}user/messages") }}
 {% endblock %}

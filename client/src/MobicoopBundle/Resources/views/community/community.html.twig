@@ -4,7 +4,7 @@
 {% block title %}Communauté
 {% endblock %}
 {% block stylesheets %}
-    {{ encore_entry_link_tags("#{assets_prefix ?? ''}community/community") }}
+    {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}community/community") }}#}
 {% endblock %}
 {% block main %}
 {% if community.secured and communityUser == null %}
@@ -26,7 +26,4 @@
     ></community>
 {% endif %}
 
-{% endblock %}
-{% block javascripts %}
-    {{ encore_entry_script_tags("#{assets_prefix ?? ''}community/community") }}
 {% endblock %}

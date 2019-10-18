@@ -4,7 +4,7 @@
   {% trans from 'ui' %}user.profile.title{% endtrans %}
 {% endblock %}
 {% block stylesheets %}
-  {{ encore_entry_link_tags("#{assets_prefix ?? ''}user/profile") }}
+  {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}user/profile") }}#}
 {% endblock %}
 
 {% block main %}
@@ -16,8 +16,4 @@
             age-max="{{ ageMax }}"
 			></Profile>
 
-{% endblock %}
-
-{% block javascripts %}
-  {{ encore_entry_script_tags("#{assets_prefix ?? ''}user/profile") }}
 {% endblock %}

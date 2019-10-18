@@ -4,7 +4,7 @@
   {% trans from 'ui' %}user.signup.title{% endtrans %}
 {% endblock %}
 {% block stylesheets %}
-  {{ encore_entry_link_tags("#{assets_prefix ?? ''}user/signup") }}
+  {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}user/signup") }}#}
 {% endblock %}
 {% block main %}
         {% if error %}
@@ -18,7 +18,4 @@
                     sent-token="{{ csrf_token('user-signup') }}"
             ></Signupform>
 
-{% endblock %}
-{% block javascripts %}
-  {{ encore_entry_script_tags("#{assets_prefix ?? ''}user/signup") }}
 {% endblock %}

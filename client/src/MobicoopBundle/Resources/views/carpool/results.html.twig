@@ -2,7 +2,7 @@
 
 {% block title %}Résultats{% endblock %}
 {% block stylesheets %}
-    {{ encore_entry_link_tags("#{assets_prefix ?? ''}carpool/results") }}
+    {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}carpool/results") }}#}
 {% endblock %}
 {% block main %}
 
@@ -17,7 +17,4 @@
     />
 
 
-{% endblock %}
-{% block javascripts %}
-    {{ encore_entry_script_tags("#{assets_prefix ?? ''}carpool/results") }}
 {% endblock %}
