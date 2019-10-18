@@ -119,11 +119,14 @@ class CommunityController extends AbstractController
     /**
      * Get all communities.
      */
-    public function communityList(CommunityManager $communityManager)
+    public function communityList(CommunityManager $communityManager, UserManager $userManager)
     {
         $this->denyAccessUnlessGranted('list', new Community());
+
+        $user = $userManager->getLoggedUser();
+
         return $this->render('@Mobicoop/community/communities.html.twig', [
-            'communities' => $communityManager->getCommunities(),
+            'communities' => ($user) ? $communityManager->getCommunities($user->getId()) : $communityManager->getCommunities(),
         ]);
     }
 

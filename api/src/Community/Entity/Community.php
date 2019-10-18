@@ -534,7 +534,7 @@ class Community
         return $this;
     }
     
-    public function isIsMember(): ?bool
+    public function getIsMember(): ?bool
     {
         return $this->isMember ? true : false;
     }

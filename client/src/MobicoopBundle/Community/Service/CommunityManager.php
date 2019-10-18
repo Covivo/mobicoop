@@ -65,12 +65,17 @@ class CommunityManager
 
     /**
     * Get all communities
-    * @return array|null The communities found or null if not found.
+    * @param int|null $userId   The id of the user you want to know if he is already an accepted member of the community
+    * @return array|null        The communities found or null if not found.
     *
     */
-    public function getCommunities()
+    public function getCommunities(?int $userId=null)
     {
-        $response = $this->dataProvider->getCollection();
+        $params = null;
+        if ($userId!==null) {
+            $params['userId'] = $userId;
+        }
+        $response = $this->dataProvider->getCollection($params);
         if ($response->getCode() >=200 && $response->getCode() <= 300) {
             return $response->getValue()->getMember();
         }
