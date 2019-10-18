@@ -2,7 +2,7 @@
 
 import { Vue, vuetify, i18n } from '@js/config/home/home'
 
-import HomeSearch from '@components/home/HomeSearch'
+import Home from '@components/home/Home'
 import MHeader from '@components/base/MHeader'
 import MFooter from '@components/base/MFooter'
 
@@ -11,7 +11,7 @@ new Vue({
   el: '#app',
   vuetify,
   components: {
-    HomeSearch,
+    Home,
     MHeader,
     MFooter
   }
