@@ -71,6 +71,10 @@ export default {
       type: Object,
       default: null
     },
+    refresh: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
@@ -79,11 +83,16 @@ export default {
       headers: [
         { text: this.$t('table.colTitle.familyName'), value: 'familyName' },
         { text: this.$t('table.colTitle.givenName'), value: 'givenName' },
+        { text: this.$t('table.colTitle.actions'), value: 'action', sortable: false },
       ],
       users: [],
     }
   },
-  
+  watch: {
+    refresh(){
+      (this.refresh) ? this.getCommunityMemberList() : ''
+    }
+  },
   mounted() {
     this.getCommunityMemberList();
   },
@@ -98,7 +107,11 @@ export default {
         })
         .then(res => {
           this.users = res.data;
+          this.$emit("refreshed");
         });
+    },
+    contactItem(item){
+      this.$emit("contact",item);
     }
   }
 }
