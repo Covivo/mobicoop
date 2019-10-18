@@ -200,7 +200,7 @@
         align="center"
         justify="center"
       >
-        <home-search
+        <search
           :geo-search-url="geodata.geocompleteuri"
           :user="user"
           :params="params"
@@ -220,7 +220,7 @@ import Translations from "@translations/components/community/Community.json";
 import TranslationsClient from "@clientTranslations/components/community/Community.json";
 import CommunityMemberList from "@components/community/CommunityMemberList";
 import CommunityInfos from "@components/community/CommunityInfos";
-import HomeSearch from "@components/home/HomeSearch";
+import Search from "@components/carpool/search/Search";
 import CommunityLastUsers from "@components/community/CommunityLastUsers";
 import MMap from "@components/utilities/MMap"
 import L from "leaflet";
@@ -229,7 +229,7 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components: {
-    CommunityMemberList, CommunityInfos, HomeSearch, MMap, CommunityLastUsers
+    CommunityMemberList, CommunityInfos, Search, MMap, CommunityLastUsers
   },
   i18n: {
     messages: TranslationsMerged,
