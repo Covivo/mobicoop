@@ -256,14 +256,25 @@ community_join:
 
 # get a community user (AJAX)
 community_user:
+    methods: [POST]
     path:
-        fr: /community-user/{id}
-        en: /community-user/{id}
+        fr: /community-user
+        en: /community-user
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityUser
     requirements:
         id: '\d+'
 
-# get the last community users (AJAX)
+# check if a user is an accepted member of a community (AJAX)
+community_user_is_member:
+    methods: [POST]
+    path:
+        fr: /community/isMember
+        en: /community/isMember
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::isMember
+    requirements:
+        id: '\d+'
+
+        # get the last community users (AJAX)
 community_last_users:
     path:
         fr: /community-last-users/{id}

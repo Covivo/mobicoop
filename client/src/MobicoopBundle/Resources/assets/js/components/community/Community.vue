@@ -328,11 +328,7 @@ export default {
     getCommunityUser() {
       this.checkValidation = true;
       axios 
-        .get('/community-user/'+this.community.id, {
-          headers:{
-            'content-type': 'application/json'
-          }
-        })
+        .post(this.$t('urlCommunityUser'),{communityId:this.community.id, userId:this.user.id})
         .then(res => {
           if (res.data.length > 0) {
             this.isAccepted = res.data[0].status == 1;
