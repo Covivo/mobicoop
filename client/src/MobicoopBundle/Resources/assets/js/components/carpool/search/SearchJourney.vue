@@ -1,193 +1,192 @@
 <template>
-  <v-content>
-    <v-container
-      fluid
+  <v-container
+    fluid
+  >
+    <v-form
+      ref="form"
+      v-model="valid"
     >
-      <v-form
-        ref="form"
-        v-model="valid"
+      <!--Role-->
+      <v-row
+        v-if="displayRoles"
+        align="center"
+        justify="center"
+        dense
       >
-        <!--Role-->
-        <v-row
-          v-if="displayRoles"
-          align="center"
-          justify="center"
-          dense
+        <v-col
+          cols="12"
         >
-          <v-col
-            cols="12"
+          <v-row
+            align="center"
+            justify="space-around"
+            dense
           >
-            <v-row
-              align="center"
-              justify="space-around"
-              dense
+            <v-radio-group
+              v-model="role"
+              row
+              @change="roleChanged"
             >
-              <v-radio-group
-                v-model="role"
-                row
-                @change="roleChanged"
+              <v-radio
+                :value="1"
+                :label="$t('radio.driver.label')"
+                color="primary"
+              />
+              <v-radio
+                :value="2"
+                :label="$t('radio.passenger.label')"
+                color="primary"
+              />
+              <v-radio
+                :value="3"
+                :label="$t('radio.both.label')"
+                color="primary"
+              />
+            </v-radio-group>
+          </v-row>
+        </v-col>
+      </v-row>
+
+      <!-- Geocompletes -->
+      <v-row
+        align="center"
+        dense
+      >
+        <v-col
+          cols="5"
+        >
+          <GeoComplete
+            :url="geoSearchUrl"
+            :label="labelOrigin"
+            :token="user ? user.geoToken : ''"
+            required
+            :required-error="requiredErrorOrigin"
+            :init-address="customInitOrigin"
+            @address-selected="originSelected"
+          />
+        </v-col>
+        <v-col
+          cols="2"
+          class="text-center"
+        >
+          <v-tooltip 
+            color="info"
+            right
+          >
+            <template v-slot:activator="{ on }">
+              <v-btn
+                text
+                icon
+                @click="swap"
               >
-                <v-radio
-                  :value="1"
-                  :label="$t('radio.driver.label')"
-                  color="primary"
-                />
-                <v-radio
-                  :value="2"
-                  :label="$t('radio.passenger.label')"
-                  color="primary"
-                />
-                <v-radio
-                  :value="3"
-                  :label="$t('radio.both.label')"
-                  color="primary"
-                />
-              </v-radio-group>
-            </v-row>
-          </v-col>
-        </v-row>
-
-        <!-- Geocompletes -->
-        <v-row
-          align="center"
-          dense
+                <v-icon>mdi-swap-horizontal</v-icon>
+              </v-btn>
+            </template>
+            <span>{{ $t('swap.help') }}</span>
+          </v-tooltip>
+        </v-col>
+        <v-col 
+          cols="5"
         >
-          <v-col
-            cols="5"
-          >
-            <GeoComplete
-              :url="geoSearchUrl"
-              :label="labelOrigin"
-              :token="user ? user.geoToken : ''"
-              required
-              :required-error="requiredErrorOrigin"
-              :init-address="customInitOrigin"
-              @address-selected="originSelected"
-            />
-          </v-col>
-          <v-col
-            cols="2"
-          >
-            <v-tooltip 
-              color="info"
-              right
-            >
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  text
-                  icon
-                  @click="swap"
-                >
-                  <v-icon>mdi-swap-horizontal</v-icon>
-                </v-btn>
-              </template>
-              <span>{{ $t('swap.help') }}</span>
-            </v-tooltip>
-          </v-col>
-          <v-col 
-            cols="5"
-          >
-            <GeoComplete
-              :url="geoSearchUrl"
-              :label="labelDestination"
-              :token="user ? user.geoToken : ''"
-              required
-              :required-error="requiredErrorDestination"
-              :init-address="customInitDestination"
-              @address-selected="destinationSelected"
-            />
-          </v-col>
-        </v-row>
+          <GeoComplete
+            :url="geoSearchUrl"
+            :label="labelDestination"
+            :token="user ? user.geoToken : ''"
+            required
+            :required-error="requiredErrorDestination"
+            :init-address="customInitDestination"
+            @address-selected="destinationSelected"
+          />
+        </v-col>
+      </v-row>
 
-        <!-- Frequency switch -->
-        <v-row
-          align="center"
-          no-gutters
+      <!-- Frequency switch -->
+      <v-row
+        align="center"
+        no-gutters
+      >
+        <v-col
+          cols="3"
+          align="left"
         >
-          <v-col
-            cols="3"
-            align="left"
+          {{ $t('switch.regular.label') }}
+        </v-col>
+        <v-col
+          cols="1"
+        >
+          <v-switch
+            v-model="regular"
+            inset
+            hide-details
+            class="mt-0"
+            color="primary"
+            @change="switched"
+          />
+        </v-col>
+        <v-col
+          cols="1"
+          align="left"
+        >
+          <v-tooltip
+            color="info"
+            right
           >
-            {{ $t('switch.regular.label') }}
-          </v-col>
-          <v-col
-            cols="1"
-          >
-            <v-switch
-              v-model="regular"
-              inset
-              hide-details
-              class="mt-0"
-              color="primary"
-              @change="switched"
-            />
-          </v-col>
-          <v-col
-            cols="1"
-            align="left"
-          >
-            <v-tooltip
-              color="info"
-              right
-            >
-              <template v-slot:activator="{ on }">
-                <v-icon v-on="on">
-                  mdi-help-circle-outline
-                </v-icon>
-              </template>
-              <span>{{ $t('switch.regular.help') }}</span>
-            </v-tooltip>
-          </v-col>
-        </v-row>
+            <template v-slot:activator="{ on }">
+              <v-icon v-on="on">
+                mdi-help-circle-outline
+              </v-icon>
+            </template>
+            <span>{{ $t('switch.regular.help') }}</span>
+          </v-tooltip>
+        </v-col>
+      </v-row>
 
-        <!-- Datepicker -->
-        <v-row
-          align="center"
+      <!-- Datepicker -->
+      <v-row
+        align="center"
+      >
+        <v-col
+          cols="5"
         >
-          <v-col
-            cols="5"
+          <v-menu
+            v-model="menu"
+            :close-on-content-click="false"
+            full-width
+            offset-y
+            min-width="290px"
           >
-            <v-menu
-              v-model="menu"
-              :close-on-content-click="false"
-              full-width
-              offset-y
-              min-width="290px"
-            >
-              <!-- Here we use a little trick to display error message, 
+            <!-- Here we use a little trick to display error message, 
               as validation rules on a readonly component works only after update of the value...
               If we just click in and out the error message does not appear.
               We use a combination of error, error-messages and blur -->
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  v-show="regular ? false : true"
-                  :value="computedDateFormat"
-                  clearable
-                  :label="$t('outwardDate.label')"
-                  readonly
-                  :disabled="regular"
-                  :error="!date && regular && outwardDateClicked"
-                  :error-messages="checkOutwardDate"
-                  v-on="on"
-                  @click:clear="clearDate"
-                  @blur="outwardDateBlur"
-                />
-              </template>
-              <v-date-picker
-                v-model="date"
-                header-color="primary"
-                color="secondary"
-                :locale="locale"
-                no-title
-                @input="menu=false"
-                @change="dateChanged"
+            <template v-slot:activator="{ on }">
+              <v-text-field
+                v-show="regular ? false : true"
+                :value="computedDateFormat"
+                clearable
+                :label="$t('outwardDate.label')"
+                readonly
+                :disabled="regular"
+                :error="!date && regular && outwardDateClicked"
+                :error-messages="checkOutwardDate"
+                v-on="on"
+                @click:clear="clearDate"
+                @blur="outwardDateBlur"
               />
-            </v-menu>
-          </v-col>
-        </v-row>
-      </v-form>
-    </v-container>
-  </v-content>
+            </template>
+            <v-date-picker
+              v-model="date"
+              header-color="primary"
+              color="secondary"
+              :locale="locale"
+              no-title
+              @input="menu=false"
+              @change="dateChanged"
+            />
+          </v-menu>
+        </v-col>
+      </v-row>
+    </v-form>
+  </v-container>
 </template>
 
 <script>

@@ -217,6 +217,15 @@ class Proposal
     private $comment;
 
     /**
+     * @var boolean Private proposal.
+     * A private proposal can't be the found in the result of a search.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write","thread"})
+     */
+    private $private;
+
+    /**
      * @var \DateTimeInterface Creation date of the proposal.
      *
      * @ORM\Column(type="datetime")
@@ -394,6 +403,18 @@ class Proposal
     {
         $this->comment = $comment;
         
+        return $this;
+    }
+
+    public function isPrivate(): bool
+    {
+        return $this->private ? true : false;
+    }
+
+    public function setPrivate(?bool $private): self
+    {
+        $this->private = $private;
+
         return $this;
     }
 

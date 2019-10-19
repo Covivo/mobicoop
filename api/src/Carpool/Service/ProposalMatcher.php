@@ -75,6 +75,29 @@ class ProposalMatcher
         $this->proposalRepository = $proposalRepository;
         $this->geoMatcher = $geoMatcher;
     }
+
+    /**
+     * Create Matching proposal entities for a proposal.
+     *
+     * @param Proposal $proposal    The proposal for which we want the matchings
+     * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
+     * @return Proposal The proposal with the matchings
+     */
+    public function createMatchingsForProposal(Proposal $proposal, bool $excludeProposalUser=true)
+    {
+        // we search the matchings
+        $matchings = $this->findMatchingProposals($proposal, $excludeProposalUser);
+        
+        // we assign the matchings to the proposal
+        foreach ($matchings as $matching) {
+            if ($matching->getProposalOffer() === $proposal) {
+                $proposal->addMatchingOffer($matching);
+            } else {
+                $proposal->addMatchingRequest($matching);
+            }
+        }
+        return $proposal;
+    }
     
     /**
      * Find matching proposals for a proposal.
@@ -214,7 +237,7 @@ class ProposalMatcher
                 }
             }
         }
-        //exit;
+        
         // if we use times, we check if the pickup times match
         if (
             ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $proposal->getCriteria()->getFromTime()) ||
@@ -802,28 +825,5 @@ class ProposalMatcher
             $return['sunMaxPickupTime'] = $sunMaxPickupTime;
         }
         return $return;
-    }
-    
-    /**
-     * Create Matching proposal entities for a proposal.
-     *
-     * @param Proposal $proposal    The proposal for which we want the matchings
-     * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
-     * @return Proposal The proposal with the matchings
-     */
-    public function createMatchingsForProposal(Proposal $proposal, bool $excludeProposalUser=true)
-    {
-        // we search the matchings
-        $matchings = $this->findMatchingProposals($proposal, $excludeProposalUser);
-        
-        // we assign the matchings to the proposal
-        foreach ($matchings as $matching) {
-            if ($matching->getProposalOffer() === $proposal) {
-                $proposal->addMatchingOffer($matching);
-            } else {
-                $proposal->addMatchingRequest($matching);
-            }
-        }
-        return $proposal;
     }
 }

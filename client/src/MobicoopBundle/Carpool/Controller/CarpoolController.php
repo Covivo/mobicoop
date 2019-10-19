@@ -66,18 +66,7 @@ class CarpoolController extends AbstractController
 
         $this->denyAccessUnlessGranted('create_ad', $proposal);
 
-        return $this->render(
-            '@Mobicoop/carpool/publish.html.twig',
-            [
-                'communityIds'=>null,
-                'origin'=>null,
-                'destination'=>null,
-                'regular'=>null,
-                'date'=>null,
-                'time'=>null,
-                'firstAd' => (!is_null($first))
-            ]
-        );
+        return $this->render('@Mobicoop/carpool/publish.html.twig');
     }
 
     /**
@@ -194,25 +183,30 @@ class CarpoolController extends AbstractController
      */
     public function carpoolContact(Request $request, ProposalManager $proposalManager, UserManager $userManager)
     {
-        return $this->json("ok");
-        
         $params = json_decode($request->getContent(), true);
+
+        // if the proposal search is set, it means the contact is made after an ad matching
+        if (isset($params['proposalSearch'])) {
+            // create the ask and return the result
+        }
+        
+        // the contact is made after a search, we have to create the ad from the search
         $data = [
+            "private" => true,
             "proposalId" => $params['proposalId'],
             "origin"=>$params['origin'],
             "destination"=>$params['destination'],
             "outwardDate" => $params['date'] ? $params['date'] : (new \Datetime())->format('Y-m-d'),
             "outwardTime" => $params['time'],
-            "seats" => 1,
+            "seats" => isset($params['seats']) ? $params['seats'] : 1,
             "driver" => $params['driver'],
             "passenger" => $params['passenger'],
             "priceKm" => $params['priceKm'],
             "regular" => $params['regular'],
             "waypoints" => []
         ];
-
-        $proposal = $proposalManager->createProposalFromResult($data, $userManager->getLoggedUser());
-        if ($proposal!==null) {
+        $proposal = $proposalManager->createProposalFromAd($data, $userManager->getLoggedUser());
+        if (!is_null($proposal)) {
             return $this->json("ok");
         } else {
             return $this->json("error");

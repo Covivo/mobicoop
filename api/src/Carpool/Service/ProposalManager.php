@@ -97,193 +97,6 @@ class ProposalManager
     }
 
     /**
-     * Prepare a proposal for persist.
-     * Used when posting a proposal to populate default values like proposal validity.
-     *
-     * @param Proposal $proposal
-     * @return void
-     */
-    public function prepareProposal(Proposal $proposal): Proposal
-    {
-        if (is_null($proposal->getCriteria()->getAnyRouteAsPassenger())) {
-            $proposal->getCriteria()->setAnyRouteAsPassenger($this->params['defaultAnyRouteAsPassenger']);
-        }
-        if (is_null($proposal->getCriteria()->isStrictDate())) {
-            $proposal->getCriteria()->setStrictDate($this->params['defaultStrictDate']);
-        }
-        if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
-            if (is_null($proposal->getCriteria()->isStrictPunctual())) {
-                $proposal->getCriteria()->setStrictPunctual($this->params['defaultStrictPunctual']);
-            }
-            if (is_null($proposal->getCriteria()->getMarginDuration())) {
-                $proposal->setMarginDuration($this->params['defaultMarginTime']);
-            }
-        } else {
-            if (is_null($proposal->getCriteria()->isStrictRegular())) {
-                $proposal->getCriteria()->setStrictRegular($this->params['defaultStrictRegular']);
-            }
-            if (is_null($proposal->getCriteria()->getMonMarginDuration())) {
-                $proposal->getCriteria()->setMonMarginDuration($this->params['defaultMarginTime']);
-            }
-            if (is_null($proposal->getCriteria()->getTueMarginDuration())) {
-                $proposal->getCriteria()->setTueMarginDuration($this->params['defaultMarginTime']);
-            }
-            if (is_null($proposal->getCriteria()->getWedMarginDuration())) {
-                $proposal->getCriteria()->setWedMarginDuration($this->params['defaultMarginTime']);
-            }
-            if (is_null($proposal->getCriteria()->getThuMarginDuration())) {
-                $proposal->getCriteria()->setThuMarginDuration($this->params['defaultMarginTime']);
-            }
-            if (is_null($proposal->getCriteria()->getFriMarginDuration())) {
-                $proposal->getCriteria()->setFriMarginDuration($this->params['defaultMarginTime']);
-            }
-            if (is_null($proposal->getCriteria()->getSatMarginDuration())) {
-                $proposal->getCriteria()->setSatMarginDuration($this->params['defaultMarginTime']);
-            }
-            if (is_null($proposal->getCriteria()->getSunMarginDuration())) {
-                $proposal->getCriteria()->setSunMarginDuration($this->params['defaultMarginTime']);
-            }
-            $endDate = clone $proposal->getCriteria()->getFromDate();
-            $endDate->add(new \DateInterval('P' . $this->params['defaultRegularLifeTime'] . 'Y'));
-            $proposal->getCriteria()->setToDate($endDate);
-        }
-        return $this->createProposal($proposal);
-    }
-    
-    /**
-     * Create a proposal.
-     *
-     * @param Proposal  $proposal               The proposal to create
-     * @param boolean   $persist                If we persist the proposal in the database (false for a simple search)
-     * @param bool      $excludeProposalUser    Exclude the matching proposals made by the proposal user
-     * @return Proposal The created proposal
-     */
-    public function createProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true)
-    {
-        $date = new \DateTime("UTC");
-        $this->logger->info('Proposal creation | Start ' . $date->format("Ymd H:i:s.u"));
-                
-        // calculation of the min and max times
-        // we calculate the min and max times only if the time is set (it could be not set for a simple search)
-        if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $proposal->getCriteria()->getFromTime()) {
-            list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getFromTime(), $proposal->getCriteria()->getMarginDuration());
-            $proposal->getCriteria()->setMinTime($minTime);
-            $proposal->getCriteria()->setMaxTime($maxTime);
-        } else {
-            if ($proposal->getCriteria()->isMonCheck() && $proposal->getCriteria()->getMonTime()) {
-                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getMonTime(), $proposal->getCriteria()->getMonMarginDuration());
-                $proposal->getCriteria()->setMonMinTime($minTime);
-                $proposal->getCriteria()->setMonMaxTime($maxTime);
-            }
-            if ($proposal->getCriteria()->isTueCheck() && $proposal->getCriteria()->getTueTime()) {
-                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getTueTime(), $proposal->getCriteria()->getTueMarginDuration());
-                $proposal->getCriteria()->setTueMinTime($minTime);
-                $proposal->getCriteria()->setTueMaxTime($maxTime);
-            }
-            if ($proposal->getCriteria()->isWedCheck() && $proposal->getCriteria()->getWedTime()) {
-                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getWedTime(), $proposal->getCriteria()->getWedMarginDuration());
-                $proposal->getCriteria()->setWedMinTime($minTime);
-                $proposal->getCriteria()->setWedMaxTime($maxTime);
-            }
-            if ($proposal->getCriteria()->isThuCheck() && $proposal->getCriteria()->getThuTime()) {
-                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getThuTime(), $proposal->getCriteria()->getThuMarginDuration());
-                $proposal->getCriteria()->setThuMinTime($minTime);
-                $proposal->getCriteria()->setThuMaxTime($maxTime);
-            }
-            if ($proposal->getCriteria()->isFriCheck() && $proposal->getCriteria()->getFriTime()) {
-                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getFriTime(), $proposal->getCriteria()->getFriMarginDuration());
-                $proposal->getCriteria()->setFriMinTime($minTime);
-                $proposal->getCriteria()->setFriMaxTime($maxTime);
-            }
-            if ($proposal->getCriteria()->isSatCheck() && $proposal->getCriteria()->getSatTime()) {
-                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getSatTime(), $proposal->getCriteria()->getSatMarginDuration());
-                $proposal->getCriteria()->setSatMinTime($minTime);
-                $proposal->getCriteria()->setSatMaxTime($maxTime);
-            }
-            if ($proposal->getCriteria()->isSunCheck() && $proposal->getCriteria()->getSunTime()) {
-                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getSunTime(), $proposal->getCriteria()->getSunMarginDuration());
-                $proposal->getCriteria()->setSunMinTime($minTime);
-                $proposal->getCriteria()->setSunMaxTime($maxTime);
-            }
-        }
-        
-        // creation of the directions
-        $addresses = [];
-        foreach ($proposal->getWaypoints() as $waypoint) {
-            $addresses[] = $waypoint->getAddress();
-        }
-        if ($routes = $this->geoRouter->getRoutes($addresses)) {
-            // for now we only keep the first route !
-            // if we ever want alternative routes we should pass the route as parameter of this method
-            // (problem : the route has no id, we should pass the whole route to check which route is chosen by the user...
-            //      => we would have to think of a way to simplify...)
-            $direction = $routes[0];
-            // creation of the crossed zones
-            $direction = $this->zoneManager->createZonesForDirection($direction);
-            if ($proposal->getCriteria()->isDriver()) {
-                $proposal->getCriteria()->setDirectionDriver($direction);
-            }
-            if ($proposal->getCriteria()->isPassenger()) {
-                $proposal->getCriteria()->setDirectionPassenger($direction);
-            }
-        }
-        
-        // matching analyze
-        $this->logger->info('Proposal creation | Start matching ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
-        $this->logger->info('Proposal creation | End matching ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        
-        if ($persist) {
-            // TODO : here we should remove the previously matched proposal if they already exist
-            $this->entityManager->persist($proposal);
-            $this->logger->info('Proposal creation | End persist ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        }
-        
-        $end = new \DateTime("UTC");
-        $this->logger->info('Proposal creation | Total duration ' . ($end->diff($date))->format("%s.%f seconds"));
-        
-        $matchingsOffers = $proposal->getMatchingOffers();
-        $matchingsRequest = $proposal->getMatchingRequests();
-        $matchings=[];
-        while (($item = array_shift($matchingsOffers)) !== null && array_push($matchings, $item));
-        while (($item = array_shift($matchingsRequest)) !== null && array_push($matchings, $item));
-        if ($persist) {
-            foreach ($matchings as $matching) {
-
-                // If there is a already matched proposal we need to find the right matching and create the Ask
-                if ($proposal->getMatchedProposal()!==null) {
-                    if ($proposal->getMatchedProposal()->getId() === $matching->getProposalOffer()->getId() ||
-                        $proposal->getMatchedProposal()->getId() === $matching->getProposalRequest()->getId()
-                    ) {
-                        $this->askManager->createAskFromMatchedProposal($proposal, $matching);
-                    }
-                }
-
-                // dispatch en event
-                // maybe send a unique event for all matchings ?
-                $event = new MatchingNewEvent($matching);
-                $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
-            }
-            // dispatch en event
-            $event = new ProposalPostedEvent($proposal);
-            $this->eventDispatcher->dispatch(ProposalPostedEvent::NAME, $event);
-        }
-        return $proposal;
-    }
-    
-    /**
-     * Get the matchings for the given proposal.
-     * Used for simple search.
-     *
-     * @param Proposal $proposal The proposal for which we search the matchings
-     * @return Proposal             The posted proposal with its matchings
-     */
-    public function getMatchings(Proposal $proposal)
-    {
-        return $this->createProposal($proposal, false, true);
-    }
-    
-    /**
      * Create a proposal for a simple search.
      *
      * @param float $originLatitude             The latitude of the origin point
@@ -421,9 +234,184 @@ class ProposalManager
             }
         }
 
-        return $this->getMatchings($proposal);
+        // Get the matchings for the given proposal.
+        return $this->createProposal($proposal, false, true);
     }
-    
+
+    /**
+     * Create a proposal.
+     *
+     * @param Proposal  $proposal               The proposal to create
+     * @param boolean   $persist                If we persist the proposal in the database (false for a simple search)
+     * @param bool      $excludeProposalUser    Exclude the matching proposals made by the proposal user
+     * @return Proposal The created proposal
+     */
+    public function createProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true)
+    {
+        $date = new \DateTime("UTC");
+        $this->logger->info('Proposal creation | Start ' . $date->format("Ymd H:i:s.u"));
+                
+        // calculation of the min and max times
+        // we calculate the min and max times only if the time is set (it could be not set for a simple search)
+        if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL && $proposal->getCriteria()->getFromTime()) {
+            list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getFromTime(), $proposal->getCriteria()->getMarginDuration());
+            $proposal->getCriteria()->setMinTime($minTime);
+            $proposal->getCriteria()->setMaxTime($maxTime);
+        } else {
+            if ($proposal->getCriteria()->isMonCheck() && $proposal->getCriteria()->getMonTime()) {
+                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getMonTime(), $proposal->getCriteria()->getMonMarginDuration());
+                $proposal->getCriteria()->setMonMinTime($minTime);
+                $proposal->getCriteria()->setMonMaxTime($maxTime);
+            }
+            if ($proposal->getCriteria()->isTueCheck() && $proposal->getCriteria()->getTueTime()) {
+                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getTueTime(), $proposal->getCriteria()->getTueMarginDuration());
+                $proposal->getCriteria()->setTueMinTime($minTime);
+                $proposal->getCriteria()->setTueMaxTime($maxTime);
+            }
+            if ($proposal->getCriteria()->isWedCheck() && $proposal->getCriteria()->getWedTime()) {
+                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getWedTime(), $proposal->getCriteria()->getWedMarginDuration());
+                $proposal->getCriteria()->setWedMinTime($minTime);
+                $proposal->getCriteria()->setWedMaxTime($maxTime);
+            }
+            if ($proposal->getCriteria()->isThuCheck() && $proposal->getCriteria()->getThuTime()) {
+                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getThuTime(), $proposal->getCriteria()->getThuMarginDuration());
+                $proposal->getCriteria()->setThuMinTime($minTime);
+                $proposal->getCriteria()->setThuMaxTime($maxTime);
+            }
+            if ($proposal->getCriteria()->isFriCheck() && $proposal->getCriteria()->getFriTime()) {
+                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getFriTime(), $proposal->getCriteria()->getFriMarginDuration());
+                $proposal->getCriteria()->setFriMinTime($minTime);
+                $proposal->getCriteria()->setFriMaxTime($maxTime);
+            }
+            if ($proposal->getCriteria()->isSatCheck() && $proposal->getCriteria()->getSatTime()) {
+                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getSatTime(), $proposal->getCriteria()->getSatMarginDuration());
+                $proposal->getCriteria()->setSatMinTime($minTime);
+                $proposal->getCriteria()->setSatMaxTime($maxTime);
+            }
+            if ($proposal->getCriteria()->isSunCheck() && $proposal->getCriteria()->getSunTime()) {
+                list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getSunTime(), $proposal->getCriteria()->getSunMarginDuration());
+                $proposal->getCriteria()->setSunMinTime($minTime);
+                $proposal->getCriteria()->setSunMaxTime($maxTime);
+            }
+        }
+        
+        // creation of the directions
+        $addresses = [];
+        foreach ($proposal->getWaypoints() as $waypoint) {
+            $addresses[] = $waypoint->getAddress();
+        }
+        if ($routes = $this->geoRouter->getRoutes($addresses)) {
+            // for now we only keep the first route !
+            // if we ever want alternative routes we should pass the route as parameter of this method
+            // (problem : the route has no id, we should pass the whole route to check which route is chosen by the user...
+            //      => we would have to think of a way to simplify...)
+            $direction = $routes[0];
+            // creation of the crossed zones
+            $direction = $this->zoneManager->createZonesForDirection($direction);
+            if ($proposal->getCriteria()->isDriver()) {
+                $proposal->getCriteria()->setDirectionDriver($direction);
+            }
+            if ($proposal->getCriteria()->isPassenger()) {
+                $proposal->getCriteria()->setDirectionPassenger($direction);
+            }
+        }
+        
+        // matching analyze
+        $this->logger->info('Proposal creation | Start matching ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $proposal = $this->proposalMatcher->createMatchingsForProposal($proposal, $excludeProposalUser);
+        $this->logger->info('Proposal creation | End matching ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        
+        if ($persist) {
+            // TODO : here we should remove the previously matched proposal if they already exist
+            $this->entityManager->persist($proposal);
+            $this->logger->info('Proposal creation | End persist ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        }
+        
+        $end = new \DateTime("UTC");
+        $this->logger->info('Proposal creation | Total duration ' . ($end->diff($date))->format("%s.%f seconds"));
+        
+        $matchingsOffers = $proposal->getMatchingOffers();
+        $matchingsRequest = $proposal->getMatchingRequests();
+        $matchings=[];
+        while (($item = array_shift($matchingsOffers)) !== null && array_push($matchings, $item));
+        while (($item = array_shift($matchingsRequest)) !== null && array_push($matchings, $item));
+        if ($persist) {
+            foreach ($matchings as $matching) {
+
+                // If there is a already matched proposal we need to find the right matching and create the Ask
+                if ($proposal->getMatchedProposal()!==null) {
+                    if ($proposal->getMatchedProposal()->getId() === $matching->getProposalOffer()->getId() ||
+                        $proposal->getMatchedProposal()->getId() === $matching->getProposalRequest()->getId()
+                    ) {
+                        $this->askManager->createAskFromMatchedProposal($proposal, $matching);
+                    }
+                }
+
+                // dispatch en event
+                // maybe send a unique event for all matchings ?
+                $event = new MatchingNewEvent($matching);
+                $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
+            }
+            // dispatch en event
+            $event = new ProposalPostedEvent($proposal);
+            $this->eventDispatcher->dispatch(ProposalPostedEvent::NAME, $event);
+        }
+        return $proposal;
+    }
+
+    /**
+     * Prepare a proposal for persist.
+     * Used when posting a proposal to populate default values like proposal validity.
+     *
+     * @param Proposal $proposal
+     * @return void
+     */
+    public function prepareProposal(Proposal $proposal): Proposal
+    {
+        if (is_null($proposal->getCriteria()->getAnyRouteAsPassenger())) {
+            $proposal->getCriteria()->setAnyRouteAsPassenger($this->params['defaultAnyRouteAsPassenger']);
+        }
+        if (is_null($proposal->getCriteria()->isStrictDate())) {
+            $proposal->getCriteria()->setStrictDate($this->params['defaultStrictDate']);
+        }
+        if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+            if (is_null($proposal->getCriteria()->isStrictPunctual())) {
+                $proposal->getCriteria()->setStrictPunctual($this->params['defaultStrictPunctual']);
+            }
+            if (is_null($proposal->getCriteria()->getMarginDuration())) {
+                $proposal->setMarginDuration($this->params['defaultMarginTime']);
+            }
+        } else {
+            if (is_null($proposal->getCriteria()->isStrictRegular())) {
+                $proposal->getCriteria()->setStrictRegular($this->params['defaultStrictRegular']);
+            }
+            if (is_null($proposal->getCriteria()->getMonMarginDuration())) {
+                $proposal->getCriteria()->setMonMarginDuration($this->params['defaultMarginTime']);
+            }
+            if (is_null($proposal->getCriteria()->getTueMarginDuration())) {
+                $proposal->getCriteria()->setTueMarginDuration($this->params['defaultMarginTime']);
+            }
+            if (is_null($proposal->getCriteria()->getWedMarginDuration())) {
+                $proposal->getCriteria()->setWedMarginDuration($this->params['defaultMarginTime']);
+            }
+            if (is_null($proposal->getCriteria()->getThuMarginDuration())) {
+                $proposal->getCriteria()->setThuMarginDuration($this->params['defaultMarginTime']);
+            }
+            if (is_null($proposal->getCriteria()->getFriMarginDuration())) {
+                $proposal->getCriteria()->setFriMarginDuration($this->params['defaultMarginTime']);
+            }
+            if (is_null($proposal->getCriteria()->getSatMarginDuration())) {
+                $proposal->getCriteria()->setSatMarginDuration($this->params['defaultMarginTime']);
+            }
+            if (is_null($proposal->getCriteria()->getSunMarginDuration())) {
+                $proposal->getCriteria()->setSunMarginDuration($this->params['defaultMarginTime']);
+            }
+            $endDate = clone $proposal->getCriteria()->getFromDate();
+            $endDate->add(new \DateInterval('P' . $this->params['defaultRegularLifeTime'] . 'Y'));
+            $proposal->getCriteria()->setToDate($endDate);
+        }
+        return $this->createProposal($proposal);
+    }
     
     /**
      * Updates directions without zones (so by extension, updates the related proposals, that's why it's in this file...)

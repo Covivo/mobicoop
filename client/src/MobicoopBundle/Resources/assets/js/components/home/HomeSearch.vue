@@ -121,7 +121,7 @@ export default {
   },
   computed: {
     searchUnavailable() {
-      return (!this.origin || !this.destination || (!this.dataRegular && !this.date && !this.punctualDateOptional) || this.loadingSearch || this.loadingPublish)
+      return (!this.origin || !this.destination || (!this.dataRegular && !this.date && !this.punctualDateOptional))
     },
     dateFormated() {
       moment.locale(this.locale);

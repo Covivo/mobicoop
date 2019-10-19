@@ -564,6 +564,22 @@ class Criteria
     private $solidaryExclusive;
 
     /**
+     * @var boolean Avoid motorway.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write","thread"})
+     */
+    private $avoidMotorway;
+
+    /**
+     * @var boolean Avoid toll.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write","thread"})
+     */
+    private $avoidToll;
+
+    /**
      * @var Car|null The car used in the journey.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\Car")
@@ -1403,6 +1419,30 @@ class Criteria
     public function setSolidaryExclusive(?bool $isSolidaryExclusive): self
     {
         $this->solidaryExclusive = $isSolidaryExclusive;
+        
+        return $this;
+    }
+
+    public function avoidMotorway(): ?bool
+    {
+        return $this->avoidMotorway;
+    }
+    
+    public function setAvoidMotorway(?bool $avoidMotorway): self
+    {
+        $this->avoidMotorway = $avoidMotorway;
+        
+        return $this;
+    }
+
+    public function avoidToll(): ?bool
+    {
+        return $this->avoidToll;
+    }
+    
+    public function setAvoidToll(?bool $avoidToll): self
+    {
+        $this->avoidToll = $avoidToll;
         
         return $this;
     }

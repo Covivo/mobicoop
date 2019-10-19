@@ -15,12 +15,12 @@
     :default-margin-time="{{ marginTime }}"
     :url-tiles="{{ urlTiles|json_encode }}"
     :attribution-copyright="{{ attributionCopyright|json_encode }}"
-    :community-ids="{{ communityIds|json_encode }}"
-    :init-origin = "{{ origin ? origin : "null" }}"
-    :init-destination = "{{ destination ? destination : "null" }}"
-    init-date = "{{ date }}"
-    init-time = "{{ time }}"
-    :init-regular = "{{ regular ? 'true' : 'false' }}"
+    :community-ids="{{ communityIds is defined ? communityIds|json_encode : 'null' }}"
+    :init-origin = "{{ origin is defined ? origin : 'null' }}"
+    :init-destination = "{{ destination is defined ? destination : 'null' }}"
+    init-date = "{{ date is defined ? date : 'null' }}"
+    init-time = "{{ time is defined ? time : 'null' }}"
+    :init-regular = "{{ regular is defined ? (regular ? 'true' : 'false') : 'false' }}"
     :first-ad = "{{ firstAd is defined ? (firstAd ? 'true' : 'false') : 'false' }}"
   />
 

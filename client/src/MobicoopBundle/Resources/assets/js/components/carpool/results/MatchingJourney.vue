@@ -446,11 +446,11 @@ export default {
       for (let waypoint of waypoints) {
         if (waypoint.candidate == 2 && waypoint.position == '0') {
           if (role == 1) {
-            return moment.utc(time).add(waypoint.duration,'seconds').format(this.$t("ui.i18n.time.format.hourMinute"));
+            return moment.utc(time).add(waypoint.duration,'seconds').format('HH:mm');
           } else if (role == 2) {
-            return moment.utc(time).subtract(waypoint.duration,'seconds').format(this.$t("ui.i18n.time.format.hourMinute"));
+            return moment.utc(time).subtract(waypoint.duration,'seconds').format('HH:mm');
           } else {
-            return moment.utc(time).subtract((waypoint.duration)/2,'seconds').format(this.$t("ui.i18n.time.format.hourMinute"));
+            return moment.utc(time).subtract((waypoint.duration)/2,'seconds').format('HH:mm');
           }
         }
       }

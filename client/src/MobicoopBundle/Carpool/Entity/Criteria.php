@@ -327,6 +327,18 @@ class Criteria
      * @Groups({"post","put"})
      */
     private $solidaryExclusive;
+
+    /**
+     * @var boolean Avoid motorway.
+     * @Groups({"post","put"})
+     */
+    private $avoidMotorway;
+
+    /**
+     * @var boolean Avoid toll.
+     * @Groups({"post","put"})
+     */
+    private $avoidToll;
     
     /**
      * @var Car|null The car used in the journey.
@@ -853,6 +865,30 @@ class Criteria
     public function setSolidaryExclusive(?bool $isSolidaryExclusive): self
     {
         $this->solidaryExclusive = $isSolidaryExclusive;
+        
+        return $this;
+    }
+
+    public function avoidMotorway(): ?bool
+    {
+        return $this->avoidMotorway;
+    }
+    
+    public function setAvoidMotorway(?bool $avoidMotorway): self
+    {
+        $this->avoidMotorway = $avoidMotorway;
+        
+        return $this;
+    }
+
+    public function avoidToll(): ?bool
+    {
+        return $this->avoidToll;
+    }
+    
+    public function setAvoidToll(?bool $avoidToll): self
+    {
+        $this->avoidToll = $avoidToll;
         
         return $this;
     }

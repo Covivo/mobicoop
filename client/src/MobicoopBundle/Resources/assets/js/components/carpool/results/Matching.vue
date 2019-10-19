@@ -152,7 +152,7 @@ export default {
         .then((response) => {
           if(response.data=="ok"){
             //this.emitSnackbar('snackBar.success','success')
-            //window.location = "/utilisateur/messages";
+            window.location = "/utilisateur/messages";
           }
           else{
             //this.emitSnackbar('snackBar.error','error')

@@ -93,6 +93,13 @@ class Proposal implements ResourceInterface, \JsonSerializable
     private $comment;
 
     /**
+     * @var boolean Private proposal.
+     * A private proposal can't be the found in the result of a search.
+     * @Groups({"post","put"})
+     */
+    private $private;
+
+    /**
      * @var Waypoint[] The waypoints of the proposal.
      * @Groups({"post","put"})
      *
@@ -207,6 +214,18 @@ class Proposal implements ResourceInterface, \JsonSerializable
     {
         $this->comment = $comment;
         
+        return $this;
+    }
+
+    public function isPrivate(): bool
+    {
+        return $this->private ? true : false;
+    }
+
+    public function setPrivate(?bool $private): self
+    {
+        $this->private = $private;
+
         return $this;
     }
     
