@@ -92,6 +92,16 @@ class CarpoolController extends AbstractController
         );
     }
 
+    /**
+     * Ad results.
+     * (POST)
+     */
+    public function carpoolAdResult(Request $request)
+    {
+        return $this->render('@Mobicoop/carpool/results.html.twig', [
+            'proposalId' => $request->request->get('proposalId')
+        ]);
+    }
 
     /**
      * Simple search results.

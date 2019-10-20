@@ -7,11 +7,12 @@
 {% block main %}
 
     <matching
-        :origin = "{{ origin }}"
-        :destination = "{{ destination }}"
-        date = "{{ date }}"
-        time = "{{ time }}"
-        :community-id = "{{ communityId ? communityId : "null" }}"
+        :proposal-id = "{{ proposalId is defined ? (proposalId ? proposalId : 'null') : 'null' }}"
+        :origin = "{{ origin is defined ? origin : 'null' }}"
+        :destination = "{{ destination is defined ? destination : 'null' }}"
+        date = "{{ date is defined ? date : '' }}"
+        time = "{{ time is defined ? time : '' }}"
+        :community-id = "{{ communityId is defined ? (communityId ? communityID : 'null') : 'null' }}"
         :user="{{ app.user|json_encode }}"
         {{ regular ? 'regular' : '' }}
         {{ distinguishRegular ? 'distinguish-regular' : '' }}

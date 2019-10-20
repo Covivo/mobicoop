@@ -81,6 +81,11 @@ export default {
     sharedMessages: CommonTranslations
   },
   props: {
+    // proposal Id if Matching results after an ad post
+    proposalId: {
+      type: Number,
+      default: null
+    },
     origin: {
       type: Object,
       default: null
@@ -118,8 +123,28 @@ export default {
     return {
       locale: this.$i18n.locale,
       carpoolDialog: false,
-      matching: null
+      proposal: null,
+      matching: null,
+      lOrigin: null,
+      lDestination: null,
+      lDate: null, 
+      lTime: null,
+      lRegular: false,
+      lCommunityId : null
     };
+  },
+  created() {
+    if (this.proposalId) {
+      this.loading = true;
+      axios.get(this.$t("proposalUrl",{id: Number(this.proposalId)}))
+        .then((response) => {
+          this.loading = false;
+          this.proposal = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   },
   methods :{
     carpool(params) {
@@ -133,7 +158,7 @@ export default {
       this.chips = [...this.chips]
     },
     contact(params) {
-      axios.post(this.$t("contactUrl"), {
+      let postParams = {
         "proposalId":params.proposal.id,
         "origin": this.origin,
         "destination": this.destination,
@@ -143,12 +168,16 @@ export default {
         "driver": params.driver,
         "passenger": params.passenger,
         "regular": this.regular
-      },
-      {
-        headers:{
-          'content-type': 'application/json'
-        }
-      })
+      };
+      if (this.proposalId) {
+        postParams.proposalSearch = this.proposalId;
+      }
+      axios.post(this.$t("contactUrl"), postParams,
+        {
+          headers:{
+            'content-type': 'application/json'
+          }
+        })
         .then((response) => {
           if(response.data=="ok"){
             //this.emitSnackbar('snackBar.success','success')

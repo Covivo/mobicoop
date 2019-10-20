@@ -201,7 +201,7 @@
     </v-row>
 
     <!-- Avoid motorway -->
-    <v-row
+    <!-- <v-row
       align="center"
       justify="center"
       dense
@@ -218,7 +218,7 @@
           @change="emitEvent"
         />
       </v-col>
-    </v-row>
+    </v-row> -->
 
     <!-- Communities -->
     <v-row

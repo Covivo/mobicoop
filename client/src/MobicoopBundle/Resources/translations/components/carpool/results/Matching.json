@@ -1,5 +1,6 @@
 {
   "fr":{
+    "proposalUrl": "/covoiturage/annonce/{id}/detail",
     "contactUrl": "/covoiturage/contact",
     "snackBar": {
       "success": "La prise de contact a bien été envoyée",
@@ -7,6 +8,7 @@
     }
   },
   "en":{
+    "proposalUrl": "/carpool/ad/{id}/detail",
     "contactUrl": "/carpool/contact",
     "snackBar": {
       "success": "Contact has been successfuly established",
