@@ -165,6 +165,7 @@
               <community-member-list
                 :community="community"
                 :refresh="refreshMemberList"
+                :hidden="(!isAccepted && community.membersHidden)"
                 @contact="contact"
                 @refreshed="membersListRefreshed"
               />
@@ -176,6 +177,7 @@
               <community-last-users
                 :refresh="refreshLastUsers"
                 :community="community"
+                :hidden="(!isAccepted && community.membersHidden)"
                 @refreshed="lastUsersRefreshed"
               />
             </v-col>
@@ -331,11 +333,7 @@ export default {
     getCommunityUser() {
       this.checkValidation = true;
       axios 
-        .get('/community-user/'+this.community.id, {
-          headers:{
-            'content-type': 'application/json'
-          }
-        })
+        .post(this.$t('urlCommunityUser'),{communityId:this.community.id, userId:this.user.id})
         .then(res => {
           if (res.data.length > 0) {
             this.isAccepted = res.data[0].status == 1;
@@ -405,10 +403,14 @@ export default {
           if (this.community.address) {
             this.pointsToMap.push(this.buildPoint(this.community.address.latitude,this.community.address.longitude,this.community.name));
           }
-          // add all the waypoints of the community to display on the map
-          res.data.forEach((waypoint, index) => {
-            this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
-          });
+          
+          // add all the waypoints of the community to display on the map :
+          // if the user is already accepted or if the doesn't hide members or proposals to non members.
+          if(this.isAccepted || (!this.community.membersHidden && !this.community.proposalsHidden) ){
+            res.data.forEach((waypoint, index) => {
+              this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+            });
+          }
           this.loadingMap = false;
           setTimeout(this.$refs.mmap.redrawMap(),600);
           

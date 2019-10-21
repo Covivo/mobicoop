@@ -10,7 +10,9 @@
             "givenName": "Prénom",
             "actions": "Actions"
         }
-    }
+    },
+    "hidden": "La liste n'est visible que par les membres de la communauté"
+
   },
   "en": { 
     "title": "Members list",
@@ -23,6 +25,7 @@
             "givenName": "First name",
             "actions": "Actions"
         }
-    }
+    },
+    "hidden": "The list is only visible for the community's members"
   }
 }
