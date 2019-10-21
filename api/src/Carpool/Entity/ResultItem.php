@@ -23,7 +23,6 @@
 
 namespace App\Carpool\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -52,16 +51,22 @@ class ResultItem
     private $id;
 
     /**
-     * @var Proposal The matching proposal.
+     * @var int The matching proposal id.
      * @Groups("results")
      */
-    private $proposal;
+    private $proposalId;
 
     /**
-     * @var \DateTimeInterface The computed date and time for a punctual journey for the person who search / post.
+     * @var \DateTimeInterface The computed date for a punctual journey for the person who search / post.
      * @Groups("results")
      */
     private $date;
+
+    /**
+     * @var \DateTimeInterface The computed time for a punctual journey for the person who search / post.
+     * @Groups("results")
+     */
+    private $time;
 
     /**
      * @var Address The origin address (the origin of the carpooler who search or post).
@@ -89,7 +94,7 @@ class ResultItem
     private $destinationLast;
 
     /**
-     * @var ArrayCollection The waypoints of the journey.
+     * @var array The waypoints of the journey.
      * @Groups("results")
      */
     private $waypoints;
@@ -181,7 +186,7 @@ class ResultItem
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
-        $this->waypoints = new ArrayCollection();
+        $this->waypoints = [];
     }
 
     public function getId(): ?int
@@ -189,14 +194,14 @@ class ResultItem
         return $this->id;
     }
 
-    public function getProposal(): ?Proposal
+    public function getProposalId(): ?int
     {
-        return $this->proposal;
+        return $this->proposalId;
     }
     
-    public function setProposal(?Proposal $proposal): self
+    public function setProposalId(?int $proposalId): self
     {
-        $this->proposal = $proposal;
+        $this->proposalId = $proposalId;
         
         return $this;
     }
@@ -209,6 +214,18 @@ class ResultItem
     public function setDate(\DateTimeInterface $date): self
     {
         $this->date = $date;
+
+        return $this;
+    }
+
+    public function getTime(): ?\DateTimeInterface
+    {
+        return $this->time;
+    }
+
+    public function setTime(\DateTimeInterface $time): self
+    {
+        $this->time = $time;
 
         return $this;
     }
@@ -263,7 +280,7 @@ class ResultItem
 
     public function getWaypoints()
     {
-        return $this->waypoints->getValues();
+        return $this->waypoints;
     }
 
     public function setWaypoints($waypoints): self
