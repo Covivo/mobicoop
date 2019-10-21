@@ -25,6 +25,7 @@ namespace App\Carpool\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Geography\Entity\Address;
 
@@ -46,127 +47,134 @@ class ResultItem
     
     /**
      * @var int The id of this result item.
+     * @ApiProperty(identifier=true)
      */
     private $id;
 
     /**
+     * @var Proposal The matching proposal.
+     * @Groups("results")
+     */
+    private $proposal;
+
+    /**
      * @var \DateTimeInterface The computed date and time for a punctual journey for the person who search / post.
-     * @Groups("read")
+     * @Groups("results")
      */
     private $date;
 
     /**
      * @var Address The origin address (the origin of the carpooler who search or post).
-     * @Groups("read")
+     * @Groups("results")
      */
     private $origin;
 
     /**
      * @var boolean True if the origin is the first waypoint of the journey.
-     * @Groups("read")
+     * @Groups("results")
      */
 
     private $originFirst;
 
     /**
      * @var Address The destination address (the destination of the carpooler who search or post).
-     * @Groups("read")
+     * @Groups("results")
      */
     private $destination;
 
     /**
      * @var boolean True if the destination is the last point of the journey.
-     * @Groups("read")
+     * @Groups("results")
      */
     private $destinationLast;
 
     /**
      * @var ArrayCollection The waypoints of the journey.
-     * @Groups("read")
+     * @Groups("results")
      */
     private $waypoints;
 
     /**
      * @var boolean|null The journey is available on mondays (if regular).
-     * @Groups("read")
+     * @Groups("results")
      */
     private $monCheck;
 
     /**
      * @var boolean|null The journey is available on tuesdays (if regular).
-     * @Groups("read")
+     * @Groups("results")
      */
     private $tueCheck;
 
     /**
      * @var boolean|null The journey is available on wednesdays (if regular).
-     * @Groups("read")
+     * @Groups("results")
      */
     private $wedCheck;
 
     /**
      * @var boolean|null The journey is available on thursdays (if regular).
-     * @Groups("read")
+     * @Groups("results")
      */
     private $thuCheck;
 
     /**
      * @var boolean|null The journey is available on fridays (if regular).
-     * @Groups("read")
+     * @Groups("results")
      */
     private $friCheck;
 
     /**
      * @var boolean|null The journey is available on saturdays (if regular).
-     * @Groups("read")
+     * @Groups("results")
      */
     private $satCheck;
 
     /**
      * @var boolean|null The journey is available on sundays (if regular).
-     * @Groups("read")
+     * @Groups("results")
      */
     private $sunCheck;
 
     /**
      * @var \DateTimeInterface|null Mondays computed starting time (if regular).
-     * @Groups("read")
+     * @Groups("results")
      */
     private $monTime;
 
     /**
      * @var \DateTimeInterface|null Tuesdays computed starting time (if regular).
-     * @Groups("read")
+     * @Groups("results")
      */
     private $tueTime;
 
     /**
      * @var \DateTimeInterface|null Wednesdays computed starting time (if regular).
-     * @Groups("read")
+     * @Groups("results")
      */
     private $wedTime;
 
     /**
      * @var \DateTimeInterface|null Thursdays computed starting time (if regular).
-     * @Groups("read")
+     * @Groups("results")
      */
     private $thuTime;
 
     /**
      * @var \DateTimeInterface|null Fridays computed starting time (if regular).
-     * @Groups("read")
+     * @Groups("results")
      */
     private $friTime;
 
     /**
      * @var \DateTimeInterface|null Saturdays computed starting time (if regular).
-     * @Groups("read")
+     * @Groups("results")
      */
     private $satTime;
 
     /**
      * @var \DateTimeInterface|null Sundays computed starting time (if regular).
-     * @Groups("read")
+     * @Groups("results")
      */
     private $sunTime;
 
@@ -179,6 +187,18 @@ class ResultItem
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getProposal(): ?Proposal
+    {
+        return $this->proposal;
+    }
+    
+    public function setProposal(?Proposal $proposal): self
+    {
+        $this->proposal = $proposal;
+        
+        return $this;
     }
 
     public function getDate(): ?\DateTimeInterface

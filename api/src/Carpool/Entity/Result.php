@@ -24,6 +24,7 @@
 namespace App\Carpool\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\User\Entity\User;
 
@@ -45,30 +46,31 @@ class Result
     
     /**
      * @var int The id of this result.
+     * @ApiProperty(identifier=true)
      */
     private $id;
 
     /**
      * @var ResultRole|null The result with the carpooler as driver and the person who search / post as a passenger.
-     * @Groups("read")
+     * @Groups("results")
      */
     private $resultDriver;
 
     /**
      * @var ResultRole|null The result with the carpooler as passenger and the person who search / post as a driver.
-     * @Groups("read")
+     * @Groups("results")
      */
     private $resultPassenger;
 
     /**
      * @var User The carpooler found.
-     * @Groups("read")
+     * @Groups("results")
      */
     private $carpooler;
 
     /**
      * @var int The frequency of the result (1 = punctual / 2 = regular).
-     * @Groups("read")
+     * @Groups("results")
      */
     private $frequency;
 

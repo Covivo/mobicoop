@@ -24,6 +24,7 @@
 namespace App\Carpool\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -44,30 +45,31 @@ class ResultRole
     
     /**
      * @var int The id of this result role.
+     * @ApiProperty(identifier=true)
      */
     private $id;
 
     /**
      * @var ResultItem The result item for the outward.
-     * @Groups("read")
+     * @Groups("results")
      */
     private $outward;
 
     /**
      * @var ResultItem|null The result item for the return trip.
-     * @Groups("read")
+     * @Groups("results")
      */
     private $return;
 
     /**
      * @var int The number of places offered / requested.
-     * @Groups("read")
+     * @Groups("results")
      */
     private $seats;
 
     /**
      * @var string The computed price for the common distance carpooled.
-     * @Groups("read")
+     * @Groups("results")
      */
     private $price;
 

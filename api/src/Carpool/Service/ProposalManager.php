@@ -27,6 +27,9 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Proposal;
+use App\Carpool\Entity\Result;
+use App\Carpool\Entity\ResultItem;
+use App\Carpool\Entity\ResultRole;
 use App\Carpool\Entity\Waypoint;
 use App\Carpool\Event\MatchingNewEvent;
 use App\Carpool\Event\ProposalPostedEvent;
@@ -356,6 +359,10 @@ class ProposalManager
             $event = new ProposalPostedEvent($proposal);
             $this->eventDispatcher->dispatch(ProposalPostedEvent::NAME, $event);
         }
+
+        // we treat the matchings to return the results
+        $proposal->setResults($this->createResults($proposal));
+
         return $proposal;
     }
 
@@ -411,6 +418,56 @@ class ProposalManager
             $proposal->getCriteria()->setToDate($endDate);
         }
         return $this->createProposal($proposal);
+    }
+
+    // Create user-friendly results from the matchings of a proposal
+    private function createResults(Proposal $proposal)
+    {
+        $results = [];
+        // we group the matchings by matching proposalId
+        $matchings = [];
+        // we search the matchings as an offer
+        foreach ($proposal->getMatchingOffers() as $offer) {
+            $matchings[$offer->getProposalRequest()->getId()]['request'] = $offer;
+        }
+        // we search the matchings as a request
+        foreach ($proposal->getMatchingRequests() as $request) {
+            $matchings[$request->getProposalOffer()->getId()]['offer'] = $request;
+        }
+        // we iterate through the matchings to create the results
+        foreach ($matchings as $proposalId => $matching) {
+            $result = new Result();
+            if (isset($matching['request'])) {
+                if (is_null($result->getFrequency())) {
+                    $result->setFrequency($matching['request']->getCriteria()->getFrequency());
+                }
+                if (is_null($result->getCarpooler())) {
+                    $result->setCarpooler($matching['request']->getProposalRequest()->getUser());
+                }
+                $resultRole = new ResultRole();
+                $resultRole->setSeats(1);
+                $resultItem = new ResultItem();
+                $resultItem->setProposal($matching['request']->getProposalRequest());
+                $resultRole->setOutward($resultItem);
+                $result->setResultDriver($resultRole);
+            }
+            if (isset($matching['offer'])) {
+                if (is_null($result->getFrequency())) {
+                    $result->setFrequency($matching['offer']->getCriteria()->getFrequency());
+                }
+                if (is_null($result->getCarpooler())) {
+                    $result->setCarpooler($matching['offer']->getProposalOffer()->getUser());
+                }
+                $resultRole = new ResultRole();
+                $resultRole->setSeats(1);
+                $resultItem = new ResultItem();
+                $resultItem->setProposal($matching['offer']->getProposalOffer());
+                $resultRole->setOutward($resultItem);
+                $result->setResultPassenger($resultRole);
+            }
+            $results[] = $result;
+        }
+        return $results;
     }
     
     /**

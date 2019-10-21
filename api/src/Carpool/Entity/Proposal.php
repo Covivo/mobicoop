@@ -349,6 +349,13 @@ class Proposal
      * @Groups({"read","write"})
      */
     private $matchedProposal;
+
+    /**
+     * @var ArrayCollection|null The carpool results for the proposal.
+     * Results are taken from the matchings, but returned in a more user-friendly way.
+     * @Groups("results")
+     */
+    private $results;
         
     public function __construct($id=null)
     {
@@ -363,6 +370,7 @@ class Proposal
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
         $this->notifieds = new ArrayCollection();
+        $this->results = new ArrayCollection();
     }
     
     public function __clone()
@@ -693,6 +701,18 @@ class Proposal
     public function setMatchedProposal(?Proposal $matchedProposal): self
     {
         $this->matchedProposal = $matchedProposal;
+
+        return $this;
+    }
+
+    public function getResults()
+    {
+        return $this->results;
+    }
+
+    public function setResults($results)
+    {
+        $this->results = $results;
 
         return $this;
     }
