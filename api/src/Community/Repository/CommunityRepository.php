@@ -88,19 +88,6 @@ class CommunityRepository
     }
 
     /**
-     * Find all the communities where the user is already a member
-     */
-    public function findCommunitiesWhereUserIsMember(User $user)
-    {
-        return $this->repository->createQueryBuilder('c')
-        ->leftJoin('c.communityUsers', 'cu')
-        ->where("(cu.user = :user AND cu.status = :status)")
-        ->setParameter('user', $user)
-        ->setParameter('status', CommunityUser::STATUS_ACCEPTED)
-        ->getQuery()->getResult();
-    }
-
-    /**
      * Find communities where the given user is registered
      *
      * @param User $user
