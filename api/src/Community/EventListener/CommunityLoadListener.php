@@ -52,6 +52,7 @@ class CommunityLoadListener
                         $communityUser->getStatus() == CommunityUser::STATUS_ACCEPTED
                     ) {
                         $community->setMember(true);
+                        break;
                     }
                 }
             }
