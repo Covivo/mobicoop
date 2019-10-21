@@ -4,6 +4,10 @@
             "contact" : {
                 "route" : "/contact",
                 "label" : "Nous contacter"
+            },
+            "solidary" : {
+                "route" : "/solidarite",
+                "label" : "Besoin d'un coup de pouce ?"
             }
         }
     },
@@ -12,6 +16,10 @@
             "contact" : {
                 "route" : "/contact",
                 "label" : "Contact us"
+            },
+            "solidary" : {
+                "route" : "/solidarity",
+                "label" : ""
             }
         }
     }

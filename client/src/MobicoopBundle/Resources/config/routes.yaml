@@ -360,3 +360,20 @@ contact_send:
         fr: /contact/send
         en: /contact/send
     controller: Mobicoop\Bundle\MobicoopBundle\Communication\Controller\ContactController:sendContact
+
+####################
+# solidarity routes #
+####################
+
+# display solidarity ask page
+solidary:
+    path:
+        fr: /solidarite
+        en: /solidary
+    controller: Mobicoop\Bundle\MobicoopBundle\Solidary\Controller\SolidaryController:showSolidary
+
+solidary_ask:
+    path:
+        fr: /solidarite/demande
+        en: /solidary/ask
+#    controller: Mobicoop\Bundle\MobicoopBundle\Communication\Controller\ContactController:sendContact

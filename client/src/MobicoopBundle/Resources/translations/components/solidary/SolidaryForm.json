@@ -1,0 +1,18 @@
+{
+  "fr": {
+    "ui": {
+      "buttons": {
+        "validate": "Valider",
+        "cancel": "Annuler"
+      }
+    },
+    "yearsOfBirth": {
+      "label": "Année de naissance",
+      "placeholder": "Année de naissance"
+    },
+    "hasRSA": {
+      "label": "Bénéficiaire du RSA",
+      "placeholder": "Bénéficière du RSA"
+    }
+  }
+}

@@ -31,6 +31,9 @@ import Signupform from '@components/user/Signupform'
 import SignupValidation from '@components/user/SignupValidation'
 import UpdateProfile from '@components/user/UpdateProfile'
 
+// SOLIDARITY
+import Solidary from '@components/solidary/Solidary'
+
 export default {
   MHeader,
   MFooter,
@@ -50,5 +53,6 @@ export default {
   Profile,
   Signupform,
   SignupValidation,
-  UpdateProfile
+  UpdateProfile,
+  Solidary
 }

@@ -68,6 +68,14 @@
         <v-btn
           text
           rounded
+          :href="$t('buttons.solidary.route')"
+          class="text-none"
+        >
+          {{ $t('buttons.solidary.label') }}
+        </v-btn>
+        <v-btn
+          text
+          rounded
           :href="$t('buttons.contact.route')"
           class="text-none"
         >
