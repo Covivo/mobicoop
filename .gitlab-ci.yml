@@ -57,6 +57,7 @@ branch_features:   # name of the job
       - dev
       - test
       - master
+      - 0.9.1-next
     variables:
       - $CI_COMMIT_MESSAGE =~ /skip/    # job not executed when commit message contains this expression
   cache:
