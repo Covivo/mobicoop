@@ -452,7 +452,7 @@ class ProposalManager
                 if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                     // the search/ad proposal is punctual
                     // we have to calculate the date and time of the carpool
-                    // date : 
+                    // date :
                     // - if the matching proposal is also punctual, it's the date of the matching proposal (as the date of the matching proposal could be the same or after the date of the search/ad)
                     // - if the matching proposal is regular, it's the date of the search/ad (as the matching proposal "matches", it means that the date is valid => the date is in the range of the regular matching proposal)
                     if ($matching['request']->getProposalRequest()->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
@@ -477,7 +477,7 @@ class ProposalManager
                                 $pickupDuration = (int)round($value['duration']);
                                 break;
                             }
-                        }                                
+                        }
                         if ($pickupDuration) {
                             $fromTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
                         }
@@ -593,9 +593,8 @@ class ProposalManager
                 $outward->setWaypoints($matching['request']->getFilters()['order']);
                 $resultDriver->setOutward($outward);
 
-                // return 
+                // return
                 if (!is_null($matching['request']->getProposalRequest()->getProposalLinked())) {
-
                 }
 
                 // seats
@@ -616,7 +615,7 @@ class ProposalManager
                 $resultPassenger = new ResultRole();
                 // outward
 
-                // return 
+                // return
 
                 // seats
 
