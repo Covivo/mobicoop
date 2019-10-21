@@ -294,8 +294,8 @@
 <script>
 import { merge } from "lodash";
 import axios from "axios";
-import Translations from "@translations/components/carpool/AdRoute.json";
-import TranslationsClient from "@clientTranslations/components/carpool/AdRoute.json";
+import Translations from "@translations/components/carpool/publish/AdRoute.json";
+import TranslationsClient from "@clientTranslations/components/carpool/publish/AdRoute.json";
 
 import GeoComplete from "@components/utilities/GeoComplete";
 

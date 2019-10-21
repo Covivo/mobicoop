@@ -163,8 +163,10 @@
               cols="8"
             >
               <community-member-list
-                ref="memberList"
                 :community="community"
+                :refresh="refreshMemberList"
+                @contact="contact"
+                @refreshed="membersListRefreshed"
               />
             </v-col>
             <!-- last 3 users -->
@@ -172,8 +174,9 @@
               cols="4"
             >
               <community-last-users
-                ref="lastUsers"
+                :refresh="refreshLastUsers"
                 :community="community"
+                @refreshed="lastUsersRefreshed"
               />
             </v-col>
           </v-row>
@@ -197,7 +200,7 @@
         align="center"
         justify="center"
       >
-        <home-search
+        <search
           :geo-search-url="geodata.geocompleteuri"
           :user="user"
           :params="params"
@@ -216,7 +219,7 @@ import Translations from "@translations/components/community/Community.json";
 import TranslationsClient from "@clientTranslations/components/community/Community.json";
 import CommunityMemberList from "@components/community/CommunityMemberList";
 import CommunityInfos from "@components/community/CommunityInfos";
-import HomeSearch from "@components/home/HomeSearch";
+import Search from "@components/carpool/search/Search";
 import CommunityLastUsers from "@components/community/CommunityLastUsers";
 import MMap from "@components/utilities/MMap"
 import L from "leaflet";
@@ -225,7 +228,7 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components: {
-    CommunityMemberList, CommunityInfos, HomeSearch, MMap, CommunityLastUsers
+    CommunityMemberList, CommunityInfos, Search, MMap, CommunityLastUsers
   },
   i18n: {
     messages: TranslationsMerged,
@@ -295,6 +298,8 @@ export default {
       isLogged: false,
       loadingMap: false,
       domain: true,
+      refreshMemberList: false,
+      refreshLastUsers: false,
       params: { 'communityId' : this.community.id },
 
     }
@@ -353,8 +358,8 @@ export default {
           this.errorUpdate = res.data.state;
           this.askToJoin = true;
           this.snackbar = true;
-          this.$refs.memberList.getCommunityMemberList();
-          this.$refs.lastUsers.getCommunityLastUsers();
+          this.refreshMemberList = true;
+          this.refreshLastUsers = true;
           this.getCommunityUser();
           this.loading = false;
         });
@@ -426,7 +431,37 @@ export default {
       }
         
       return point;      
-    }     
+    },
+    contact: function(data){
+      const form = document.createElement('form');
+      form.method = 'post';
+      form.action = this.$t("buttons.contact.route");
+      
+      const params = {
+        carpool:0,
+        idRecipient:data.id,
+        familyName:data.familyName,
+        givenName:data.givenName
+      }
+      
+      for (const key in params) {
+        if (params.hasOwnProperty(key)) {
+          const hiddenField = document.createElement('input');
+          hiddenField.type = 'hidden';
+          hiddenField.name = key;
+          hiddenField.value = params[key];
+          form.appendChild(hiddenField);
+        }
+      }
+      document.body.appendChild(form);
+      form.submit();      
+    },
+    membersListRefreshed(){
+      this.refreshMemberList = false;
+    },
+    lastUsersRefreshed(){
+      this.refreshLastUsers = false;
+    }
 
   }
 }

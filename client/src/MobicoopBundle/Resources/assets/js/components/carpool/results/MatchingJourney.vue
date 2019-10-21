@@ -1,8 +1,21 @@
 <template>
   <v-card>
-    <v-card-title class="headline">
-      {{ $t('detailTitle') }}
-    </v-card-title>
+    <v-toolbar
+      color="primary"
+    >
+      <v-toolbar-title>
+        {{ $t('detailTitle') }}
+      </v-toolbar-title>
+      
+      <v-spacer />
+
+      <v-btn 
+        icon
+        @click="$emit('close')"
+      >
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
+    </v-toolbar>
 
     <v-card-text>
       <!-- Date / seats / price -->
@@ -13,7 +26,7 @@
         <!-- Date -->
         <v-col
           v-if="!lRegular"
-          cols="4"
+          cols="5"
           class="title text-center"
         >
           {{ computedDate }}
@@ -21,15 +34,23 @@
 
         <v-col
           v-else
-          cols="4"
+          cols="5"
           class="title text-center"
         >
-          TODO
+          <regular-days-summary 
+            :mon-active="monActive"
+            :tue-active="tueActive"
+            :wed-active="wedActive"
+            :thu-active="thuActive"
+            :fri-active="friActive"
+            :sat-active="satActive"
+            :sun-active="sunActive"
+          />
         </v-col>
 
         <!-- Seats -->
         <v-col
-          cols="4"
+          cols="3"
           class="title text-center"
         >
           {{ $tc('places', proposal.criteria.seats, { seats: proposal.criteria.seats }) }}
@@ -46,17 +67,35 @@
 
       <!-- Route / carpooler -->
       <v-row
-        align="start"
+        align="center"
         dense
       > 
         <!-- Route -->
         <v-col
           cols="8"
         >
-          <v-journey
-            :time="computedTime"
-            :waypoints="waypoints"
-          />
+          <v-row>
+            <v-col>
+              <v-journey
+                :time="computedTime"
+                :waypoints="waypoints"
+              />
+            </v-col>
+          </v-row>
+          <v-row 
+            v-if="proposal.comment"
+          >
+            <v-col>
+              <v-card
+                outlined
+                class="mx-auto"
+              > 
+                <v-card-text class="pre-formatted">
+                  {{ proposal.comment }}
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
         </v-col>
 
         <!-- Carpooler -->
@@ -118,6 +157,7 @@
       </v-row>
     </v-card-text>
 
+    <!-- Action buttons -->
     <v-card-actions>
       <div class="flex-grow-1" />
 
@@ -151,14 +191,16 @@
 <script>
 import { merge } from "lodash";
 import moment from "moment";
-import Translations from "@translations/components/carpool/MatchingJourney.json";
-import TranslationsClient from "@clientTranslations/components/carpool/MatchingJourney.json";
-import VJourney from "../utilities/VJourney";
+import Translations from "@translations/components/carpool/results/MatchingJourney.json";
+import TranslationsClient from "@clientTranslations/components/carpool/results/MatchingJourney.json";
+import VJourney from "@components/carpool/utilities/VJourney";
+import RegularDaysSummary from "@components/carpool/utilities/RegularDaysSummary";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   components: {
-    VJourney
+    VJourney,
+    RegularDaysSummary
   },
   i18n: {
     messages: TranslationsMerged,
@@ -214,7 +256,18 @@ export default {
     },
     computedDate() {
       if (this.lRegular) {
+        // regular search => fromDate
         return moment.utc(this.driver ? this.lMatching.offer.criteria.fromDate : this.lMatching.request.criteria.fromDate).format(this.$t("ui.i18n.date.format.fullDate"))
+      }
+      if (this.proposal.criteria.frequency == 2) {
+        // punctual search && regular result => first matching date
+        let searchDate = this.lDate ? this.lDate : new Date();
+        if (moment.utc(searchDate).isSameOrAfter(this.proposal.criteria.fromDate)) {
+          // the search date is >= fromDate of the proposal => the search date is ok
+          return moment.utc(searchDate).format(this.$t("ui.i18n.date.format.fullDate"));
+        }
+        // the fromDate is after the search date, we take fromDate
+        return moment.utc(this.proposal.criteria.fromDate).format(this.$t("ui.i18n.date.format.fullDate"));
       }
       return this.proposal.criteria.fromDate
         ? moment.utc(this.proposal.criteria.fromDate).format(this.$t("ui.i18n.date.format.fullDate"))
@@ -225,6 +278,9 @@ export default {
     },
     computedTime() {
       if (this.proposal.criteria.frequency == 2) {
+        if (this.lRegular) {
+          return null;
+        }
         // we have to search the week day and display the time
         const dayOfWeek = moment.utc(this.proposal.criteria.fromDate).format('d');
         switch (dayOfWeek) {
@@ -256,7 +312,28 @@ export default {
     }, 
     waypoints() {
       return this.computeWaypoints();
-    }
+    },
+    monActive() {
+      return (this.proposal.criteria.monCheck || (this.proposal.proposalLinked && this.proposal.proposalLinked.criteria.moncheck));
+    },
+    tueActive() {
+      return  (this.proposal.criteria.tueCheck || (this.proposal.proposalLinked && this.proposal.proposalLinked.criteria.tueCheck));
+    },
+    wedActive() {
+      return  (this.proposal.criteria.wedCheck || (this.proposal.proposalLinked && this.proposal.proposalLinked.criteria.wedCheck));
+    },
+    thuActive() {
+      return  (this.proposal.criteria.thuCheck || (this.proposal.proposalLinked && this.proposal.proposalLinked.criteria.thuCheck));
+    },
+    friActive() {
+      return  (this.proposal.criteria.friCheck || (this.proposal.proposalLinked && this.proposal.proposalLinked.criteria.friCheck));
+    },
+    satActive() {
+      return  (this.proposal.criteria.satCheck || (this.proposal.proposalLinked && this.proposal.proposalLinked.criteria.satCheck));
+    },
+    sunActive() {
+      return  (this.proposal.criteria.sunCheck || (this.proposal.proposalLinked && this.proposal.proposalLinked.criteria.sunCheck));
+    },
   },
   watch: {
     origin(val) {
@@ -285,19 +362,30 @@ export default {
       let thisOrigin = this.origin;
       let thisDestination = this.destination;
       let order = this.driver ? this.lMatching.offer.filters.order : this.lMatching.request.filters.order;
+      let destinationId = order.length-1;
       order.forEach(function (waypoint, index) {
         waypoints.push({
           id: index,
+          // requester is a boolean, 
+          // it is set to true if the waypoint is a waypoint created by the requester (the person who make the request)
+          requester: 
+            isDriver ? 
+              (waypoint.candidate == 1 ? false : true) :
+              (waypoint.candidate == 1 ? true : false),
           address: 
             isDriver ? 
               (waypoint.candidate == 1 ? waypoint.address : (waypoint.position == '0' ? thisOrigin : thisDestination)) :
               (waypoint.candidate == 1 ? (waypoint.position == '0' ? thisOrigin : thisDestination) : waypoint.address),
           duration: waypoint.duration,
-          level: "primary"
+          icon: (waypoint.candidate == 1 ? (waypoint.position == '0' ? "mdi-home" : (index == destinationId ? "mdi-flag-checkered" : "mdi-debug-step-into")) : (waypoint.position == '0' ? "mdi-human-greeting" : "mdi-flag"))
         });
       });
       return waypoints;
     },
+
+
+    /* the following is not used for now but is to keep for further use !!! 
+
     // this methods gives the date of the carpool
     getCarpoolDate(params) {
       // if the search is regular, it's the selected date
@@ -354,6 +442,8 @@ export default {
       }
       return null;
     },
+    */
+
   }
 };
 </script>

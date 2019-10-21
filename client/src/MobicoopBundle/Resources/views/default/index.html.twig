@@ -10,7 +10,7 @@
 
 {% block main %}
 
-    <home-search
+    <home
         geo-search-url="{{ geoCompleteUri }}" 
         :user="{{app.user|json_encode}}"
         {{ searchRegular ? 'regular' : '' }}

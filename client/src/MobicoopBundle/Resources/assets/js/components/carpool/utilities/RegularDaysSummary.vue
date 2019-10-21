@@ -1,0 +1,96 @@
+<template>
+  <div>
+    <v-chip
+      small
+      :color="monActive ? 'success' : 'default'"
+    >
+      {{ $t('ui.abbr.day.mon') }} 
+    </v-chip>
+    <v-chip
+      small
+      :color="tueActive ? 'success' : 'default'"
+    >
+      {{ $t('ui.abbr.day.tue') }}
+    </v-chip>
+    <v-chip
+      small
+      :color="wedActive ? 'success' : 'default'"
+    >
+      {{ $t('ui.abbr.day.wed') }} 
+    </v-chip>
+    <v-chip
+      small
+      :color="thuActive ? 'success' : 'default'"
+    >
+      {{ $t('ui.abbr.day.thu') }}
+    </v-chip>
+    <v-chip
+      small
+      :color="friActive ? 'success' : 'default'"
+    >
+      {{ $t('ui.abbr.day.fri') }} 
+    </v-chip>
+    <v-chip
+      small
+      :color="satActive ? 'success' : 'default'"
+    >
+      {{ $t('ui.abbr.day.sat') }}
+    </v-chip>
+    <v-chip
+      small
+      :color="sunActive ? 'success' : 'default'"
+    >
+      {{ $t('ui.abbr.day.sun') }}
+    </v-chip>
+  </div>
+</template>
+
+<script>
+import { merge } from "lodash";
+import CommonTranslations from "@translations/translations.json";
+import Translations from "@translations/components/carpool/utilities/RegularDaysSummary.json";
+import TranslationsClient from "@clientTranslations/components/carpool/utilities/RegularDaysSummary.json";
+
+let TranslationsMerged = merge(Translations, TranslationsClient);
+export default {
+  i18n: {
+    messages: TranslationsMerged,
+    sharedMessages: CommonTranslations
+  },
+  props: {
+    monActive: {
+      type: Boolean,
+      default: false
+    },
+    tueActive: {
+      type: Boolean,
+      default: false
+    },
+    wedActive: {
+      type: Boolean,
+      default: false
+    },
+    thuActive: {
+      type: Boolean,
+      default: false
+    },
+    friActive: {
+      type: Boolean,
+      default: false
+    },
+    satActive: {
+      type: Boolean,
+      default: false
+    },
+    sunActive: {
+      type: Boolean,
+      default: false
+    },
+  },
+  data() {
+    return {
+      locale: this.$i18n.locale,
+    };
+  }
+};
+</script>

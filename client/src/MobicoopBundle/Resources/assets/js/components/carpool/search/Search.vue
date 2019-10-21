@@ -4,20 +4,6 @@
       grid-list-md
       text-xs-center
     >
-      <!-- Title and subtitle -->
-      <v-row
-        align="center"
-        class="mt-5"
-        justify="center"
-      >
-        <v-col
-          cols="6"
-        >
-          <h1>{{ $t('title') }}</h1>
-          <h3 v-html="$t('subtitle')" />
-        </v-col>
-      </v-row>
-
       <v-row
         justify="center"
       >
@@ -76,9 +62,9 @@
 <script>
 import moment from "moment";
 import {merge} from "lodash";
-import Translations from "@translations/components/home/HomeSearch.json";
-import TranslationsClient from "@clientTranslations/components/home/HomeSearch.json";
-import SearchJourney from "@components/carpool/SearchJourney";
+import Translations from "@translations/components/carpool/search/Search.json";
+import TranslationsClient from "@clientTranslations/components/carpool/search/Search.json";
+import SearchJourney from "@components/carpool/search/SearchJourney";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 

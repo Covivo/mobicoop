@@ -374,8 +374,8 @@
 <script>
 import moment from "moment";
 import { merge } from "lodash";
-import Translations from "@translations/components/carpool/AdSummary.json";
-import TranslationsClient from "@clientTranslations/components/carpool/AdSummary.json";
+import Translations from "@translations/components/carpool/publish/AdSummary.json";
+import TranslationsClient from "@clientTranslations/components/carpool/publish/AdSummary.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 

@@ -509,14 +509,14 @@
 
 <script>
 import { merge } from "lodash";
-import Translations from "@translations/components/carpool/AdPublish.json";
-import TranslationsClient from "@clientTranslations/components/carpool/AdPublish.json";
+import Translations from "@translations/components/carpool/publish/AdPublish.json";
+import TranslationsClient from "@clientTranslations/components/carpool/publish/AdPublish.json";
 
 import axios from "axios";
-import SearchJourney from "@components/carpool/SearchJourney";
-import AdPlanification from "@components/carpool/AdPlanification";
-import AdRoute from "@components/carpool/AdRoute";
-import AdSummary from "@components/carpool/AdSummary";
+import SearchJourney from "@components/carpool/search/SearchJourney";
+import AdPlanification from "@components/carpool/publish/AdPlanification";
+import AdRoute from "@components/carpool/publish/AdRoute";
+import AdSummary from "@components/carpool/publish/AdSummary";
 import MMap from '@components/utilities/MMap'
 import L from "leaflet";
 

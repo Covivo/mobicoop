@@ -79,8 +79,8 @@
 
 <script>
 import { merge } from "lodash";
-import Translations from "@translations/components/utilities/RouteSummary.json";
-import TranslationsClient from "@clientTranslations/components/utilities/RouteSummary.json";
+import Translations from "@translations/components/carpool/utilities/RouteSummary.json";
+import TranslationsClient from "@clientTranslations/components/carpool/utilities/RouteSummary.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {

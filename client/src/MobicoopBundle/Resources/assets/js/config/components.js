@@ -13,10 +13,6 @@ import Contact from '@components/contact/Contact'
 // CARPOOL
 import AdPublish from '@components/carpool/AdPublish'
 import Matching from '@components/carpool/Matching'
-import MatchingHeader from '@components/carpool/MatchingHeader'
-import MatchingFilter from '@components/carpool/MatchingFilter'
-import MatchingResults from '@components/carpool/MatchingResults'
-import MatchingResult from '@components/carpool/MatchingResult'
 
 // COMMUNITY
 import CommunityList from "@components/community/CommunityList";
@@ -42,10 +38,6 @@ export default {
   Contact,
   AdPublish,
   Matching,
-  MatchingHeader,
-  MatchingFilter,
-  MatchingResults,
-  MatchingResult,
   CommunityList,
   CommunityHelp,
   Community,

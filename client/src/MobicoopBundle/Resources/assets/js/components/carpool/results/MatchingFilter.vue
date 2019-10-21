@@ -36,8 +36,8 @@
 
 <script>
 import { merge } from "lodash";
-import Translations from "@translations/components/carpool/MatchingFilter.json";
-import TranslationsClient from "@clientTranslations/components/carpool/MatchingFilter.json";
+import Translations from "@translations/components/carpool/results/MatchingFilter.json";
+import TranslationsClient from "@clientTranslations/components/carpool/results/MatchingFilter.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {

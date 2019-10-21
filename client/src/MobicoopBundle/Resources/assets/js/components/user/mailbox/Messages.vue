@@ -176,7 +176,15 @@ export default {
   mounted() {
     // If there is a new thread we give it to te right component
     if(this.newThread){
-      (this.newThread.carpool) ? this.newThreadCarpool = this.newThread : this.newThreadDirect = this.newThread;
+      if(this.newThread.carpool){
+        this.newThreadCarpool = this.newThread
+        this.modelTabs="tab-cm";
+      }
+      else{
+        this.newThreadDirect = this.newThread;
+        this.modelTabs="tab-dm";
+      }
+      
     }
   },
   methods: {
