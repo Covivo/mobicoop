@@ -134,7 +134,7 @@ test_deploy:
     name: test
     url: https://test.mobicoop.io
   only:
-    - master
+    - 0.9.1-next
   # variables:
   #   APP_ENV: test   # /!\ important : symfony env variable /!\
   before_script:
