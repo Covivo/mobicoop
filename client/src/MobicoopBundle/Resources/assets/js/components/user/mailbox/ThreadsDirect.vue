@@ -25,13 +25,11 @@
 <script>
 import axios from "axios";
 import moment from "moment";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/mailbox/ThreadsDirect.json";
 import ThreadDirect from '@components/user/mailbox/ThreadDirect'
 export default {
   i18n: {
     messages: Translations,
-    sharedMessages: CommonTranslations
   },
   components:{
     ThreadDirect

@@ -76,14 +76,11 @@
 
 <script>
 
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/community/CommunitySecuredSignIn.json";
-
 
 export default {
   i18n: {
     messages: Translations,
-    sharedMessages: CommonTranslations
   },
   props:{
     communityId: {

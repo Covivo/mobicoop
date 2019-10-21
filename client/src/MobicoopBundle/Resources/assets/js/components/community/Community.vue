@@ -165,6 +165,7 @@
               <community-member-list
                 :community="community"
                 :refresh="refreshMemberList"
+                :hidden="(!isAccepted && community.membersHidden)"
                 @contact="contact"
                 @refreshed="membersListRefreshed"
               />
@@ -176,6 +177,7 @@
               <community-last-users
                 :refresh="refreshLastUsers"
                 :community="community"
+                :hidden="(!isAccepted && community.membersHidden)"
                 @refreshed="lastUsersRefreshed"
               />
             </v-col>
@@ -200,7 +202,7 @@
         align="center"
         justify="center"
       >
-        <home-search
+        <search
           :geo-search-url="geodata.geocompleteuri"
           :user="user"
           :params="params"
@@ -215,12 +217,11 @@
 
 import axios from "axios";
 import { merge } from "lodash";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/community/Community.json";
 import TranslationsClient from "@clientTranslations/components/community/Community.json";
 import CommunityMemberList from "@components/community/CommunityMemberList";
 import CommunityInfos from "@components/community/CommunityInfos";
-import HomeSearch from "@components/home/HomeSearch";
+import Search from "@components/carpool/search/Search";
 import CommunityLastUsers from "@components/community/CommunityLastUsers";
 import MMap from "@components/utilities/MMap"
 import L from "leaflet";
@@ -229,11 +230,10 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   components: {
-    CommunityMemberList, CommunityInfos, HomeSearch, MMap, CommunityLastUsers
+    CommunityMemberList, CommunityInfos, Search, MMap, CommunityLastUsers
   },
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
   },
   props:{
     user: {
@@ -333,11 +333,7 @@ export default {
     getCommunityUser() {
       this.checkValidation = true;
       axios 
-        .get('/community-user/'+this.community.id, {
-          headers:{
-            'content-type': 'application/json'
-          }
-        })
+        .post(this.$t('urlCommunityUser'),{communityId:this.community.id, userId:this.user.id})
         .then(res => {
           if (res.data.length > 0) {
             this.isAccepted = res.data[0].status == 1;
@@ -407,10 +403,14 @@ export default {
           if (this.community.address) {
             this.pointsToMap.push(this.buildPoint(this.community.address.latitude,this.community.address.longitude,this.community.name));
           }
-          // add all the waypoints of the community to display on the map
-          res.data.forEach((waypoint, index) => {
-            this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
-          });
+          
+          // add all the waypoints of the community to display on the map :
+          // if the user is already accepted or if the doesn't hide members or proposals to non members.
+          if(this.isAccepted || (!this.community.membersHidden && !this.community.proposalsHidden) ){
+            res.data.forEach((waypoint, index) => {
+              this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+            });
+          }
           this.loadingMap = false;
           setTimeout(this.$refs.mmap.redrawMap(),600);
           

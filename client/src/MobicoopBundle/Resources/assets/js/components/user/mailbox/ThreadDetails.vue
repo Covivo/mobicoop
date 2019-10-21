@@ -63,13 +63,11 @@
 <script>
 import axios from "axios";
 import moment from "moment";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/mailbox/ThreadDetails.json";
 
 export default {
   i18n: {
     messages: Translations,
-    sharedMessages: CommonTranslations
   },
   props: {
     idMessage: {

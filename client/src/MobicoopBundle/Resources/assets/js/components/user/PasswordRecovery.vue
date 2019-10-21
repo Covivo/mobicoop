@@ -65,13 +65,11 @@
 </template>
 <script>
 import axios from "axios";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/PasswordRecovery.json";
 
 export default {
   i18n: {
     messages: Translations,
-    sharedMessages: CommonTranslations
   },
   props: {
   },

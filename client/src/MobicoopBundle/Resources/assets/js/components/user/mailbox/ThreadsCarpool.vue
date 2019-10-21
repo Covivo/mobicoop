@@ -28,13 +28,11 @@
 <script>
 import axios from "axios";
 import moment from "moment";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/mailbox/ThreadsCarpool.json";
 import ThreadCarpool from '@components/user/mailbox/ThreadCarpool'
 export default {
   i18n: {
     messages: Translations,
-    sharedMessages: CommonTranslations
   },
   components:{
     ThreadCarpool

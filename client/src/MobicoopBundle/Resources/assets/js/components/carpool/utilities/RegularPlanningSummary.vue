@@ -148,7 +148,6 @@
 <script>
 import { merge } from "lodash";
 import moment from "moment";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/carpool/utilities/RegularPlanningSummary.json";
 import TranslationsClient from "@clientTranslations/components/carpool/utilities/RegularPlanningSummary.json";
 import RegularDaysSummary from "@components/carpool/utilities/RegularDaysSummary";
@@ -160,7 +159,6 @@ export default {
   },
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
   },
   props: {
     proposal: {

@@ -60,7 +60,6 @@
 
 import axios from "axios";
 import { merge } from "lodash";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/carpool/results/Matching.json";
 import TranslationsClient from "@clientTranslations/components/carpool/results/Matching.json";
 import MatchingHeader from "@components/carpool/results/MatchingHeader";
@@ -78,7 +77,6 @@ export default {
   },
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
   },
   props: {
     // proposal Id if Matching results after an ad post

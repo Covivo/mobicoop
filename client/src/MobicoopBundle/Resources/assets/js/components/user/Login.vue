@@ -75,16 +75,16 @@
 </template>
 <script>
 import { merge } from "lodash";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/Login.json";
 import TranslationsClient from "@clientTranslations/components/user/Login.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
+
 export default {
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
   },
+  name: "Login",
   props: {
     errormessage: {
       type: Object,

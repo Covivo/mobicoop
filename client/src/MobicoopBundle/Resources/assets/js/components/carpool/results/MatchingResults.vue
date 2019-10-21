@@ -61,7 +61,6 @@
 <script>
 import axios from "axios";
 import { merge } from "lodash";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/carpool/results/MatchingResults.json";
 import TranslationsClient from "@clientTranslations/components/carpool/results/MatchingResults.json";
 import MatchingResult from "@components/carpool/results/MatchingResult";
@@ -73,7 +72,6 @@ export default {
   },
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
   },
   props: {
     origin: {

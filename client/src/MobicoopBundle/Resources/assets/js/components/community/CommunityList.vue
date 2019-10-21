@@ -94,20 +94,7 @@
                   </v-col>
                   <v-col cols="6">
                     <v-card-title>
-                      <div v-if="item.membersHidden || item.proposalsHidden">
-                        <v-tooltip
-                          top
-                          color="info"
-                        >
-                          <template v-slot:activator="{ on }">
-                            <h4 v-on="on">
-                              {{ item.name }}
-                            </h4>
-                          </template>
-                          <span>{{ $t('protected') }}</span>
-                        </v-tooltip>
-                      </div>
-                      <div v-else>
+                      <div>
                         <h4>
                           <a :href="linkToCommunityShow(item)">{{ item.name }}</a>
                         </h4>
@@ -127,53 +114,15 @@
                     class="text-center"
                   >
                     <div
-                      v-if="!item.membersHidden && !item.proposalsHidden && !item.isSecured"
                       class="my-2"
                     >
-                      <v-tooltip
-                        left
-                        color="info"
+                      <v-btn
+                        color="primary"
+                        rounded
+                        :href="linkToCommunityShow(item)"
                       >
-                        <template v-slot:activator="{ on }">
-                          <div
-                            v-on="on"
-                          >
-                            <v-btn
-                              color="primary"
-                              rounded
-                              disabled
-                              @click="test"
-                            >
-                              {{ $t('seeAds') }}
-                            </v-btn>
-                          </div>
-                        </template>
-                        <span>{{ $t('ui.infos.notAvailableYet') }}</span>
-                      </v-tooltip>
-                    </div>
-                    <div
-                      v-if="!item.membersHidden && !item.proposalsHidden && !item.isSecured"
-                      class="my-2"
-                    >
-                      <v-tooltip
-                        left
-                        color="info"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <div
-                            v-on="on"
-                          >
-                            <v-btn
-                              color="primary"
-                              rounded
-                              disabled
-                            >
-                              {{ $t('join') }}
-                            </v-btn>
-                          </div>
-                        </template>
-                        <span>{{ $t('ui.infos.notAvailableYet') }}</span>
-                      </v-tooltip>
+                        {{ $t('communityDetails') }}
+                      </v-btn>
                     </div>
                   </v-col>
                 </v-row>
@@ -189,7 +138,6 @@
 <script>
 
 import { merge } from "lodash";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/community/CommunityList.json";
 import TranslationsClient from "@clientTranslations/components/community/CommunityList.json";
 
@@ -198,7 +146,6 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
   },
   props:{
     communities: {
@@ -230,15 +177,8 @@ export default {
   },
 
   methods:{
-    linkToCommunityJoin: function (item) {
-      return '/join-community/'+item.id;
-    },
     linkToCommunityShow: function (item) {
       return this.$t('routes.community', {id:item.id});
-    },
-    test() {
-      console.error(this.communities)
-      return 1;
     }
   }
 }

@@ -27,6 +27,7 @@
       </v-row>
     </v-card-title>
     <v-data-table
+      v-if="!hidden"
       :headers="headers"
       :items="users"
       :search="search"
@@ -48,6 +49,9 @@
         </v-tooltip>
       </template>
     </v-data-table>
+    <v-card-text v-else>
+      {{ $t('hidden') }}
+    </v-card-text>
   </v-card>
 </template>
 
@@ -55,7 +59,6 @@
 
 import axios from "axios";
 import { merge } from "lodash";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/community/CommunityMemberList.json";
 import TranslationsClient from "@clientTranslations/components/community/CommunityMemberList.json";
 
@@ -64,7 +67,6 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
   },
   props:{
     community: {
@@ -72,6 +74,10 @@ export default {
       default: null
     },
     refresh: {
+      type: Boolean,
+      default: false
+    },
+    hidden: {
       type: Boolean,
       default: false
     }

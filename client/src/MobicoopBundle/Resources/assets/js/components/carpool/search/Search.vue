@@ -1,84 +1,76 @@
 <template>
-  <v-container
-    grid-list-md
-    text-xs-center
-  >
-    <!-- Title and subtitle -->
-    <v-row
-      align="center"
-      class="mt-5"
-      justify="center"
+  <v-content color="secondary">
+    <v-container
+      grid-list-md
+      text-xs-center
     >
-      <v-col
-        cols="6"
+      <v-row
+        justify="center"
       >
-        <h1>{{ $t('title') }}</h1>
-        <h3 v-html="$t('subtitle')" />
-      </v-col>
-    </v-row>
-
-    <v-row
-      justify="center"
-    >
-      <v-col
-        cols="6"
-      >
-        <!--SearchJourney-->
-        <search-journey
-          :geo-search-url="geoSearchUrl"
-          :user="user"
-          :init-regular="dataRegular"
-          :punctual-date-optional="punctualDateOptional"
-          @change="searchChanged"
-        />
-      </v-col>
-    </v-row>
-
-    <!-- Buttons -->
-    <v-row
-      justify="center"
-    >
-      <v-col
-        cols="6"
-        class="text-right"
-      >
-        <v-btn
-          outlined
-          :disabled="searchUnavailable || !logged"
-          rounded
-          :loading="loadingPublish"
-          @click="publish"
+        <v-col
+          cols="6"
         >
-          {{ $t('buttons.publish.label') }}
-        </v-btn>
-        <v-btn
-          :disabled="searchUnavailable"
-          :loading="loadingSearch"
-          color="secondary"
-          rounded
-          @click="search"
+          <!--SearchJourney-->
+          <search-journey
+            :geo-search-url="geoSearchUrl"
+            :user="user"
+            :init-regular="dataRegular"
+            :punctual-date-optional="punctualDateOptional"
+            @change="searchChanged"
+          />
+        </v-col>
+      </v-row>
+
+      <!-- Buttons -->
+      <v-row
+        class="mt-5"
+        align="center"
+        justify="center"
+      >
+        <v-col
+          cols="3"
+          offset="2"
         >
-          {{ $t('buttons.search.label') }}
-        </v-btn>
-      </v-col>
-    </v-row>
-  </v-container>
+          <v-btn
+            outlined
+            :disabled="searchUnavailable || !logged"
+            rounded
+            :loading="loadingPublish"
+            @click="publish"
+          >
+            {{ $t('buttons.publish.label') }}
+          </v-btn>
+        </v-col>
+        <v-col 
+          cols="3"
+        >
+          <v-btn
+            :disabled="searchUnavailable"
+            :loading="loadingSearch"
+            color="success"
+            rounded
+            @click="search"
+          >
+            {{ $t('buttons.search.label') }}
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-content>
 </template>
 
 <script>
 import moment from "moment";
 import {merge} from "lodash";
-import CommonTranslations from "@translations/translations.json";
-import Translations from "@translations/components/home/HomeSearch.json";
-import TranslationsClient from "@clientTranslations/components/home/HomeSearch.json";
+import Translations from "@translations/components/carpool/search/Search.json";
+import TranslationsClient from "@clientTranslations/components/carpool/search/Search.json";
 import SearchJourney from "@components/carpool/search/SearchJourney";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   i18n: {
-    messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
+    messages: TranslationsMerged
   },
   components: {
     SearchJourney
@@ -121,7 +113,7 @@ export default {
   },
   computed: {
     searchUnavailable() {
-      return (!this.origin || !this.destination || (!this.dataRegular && !this.date && !this.punctualDateOptional))
+      return (!this.origin || !this.destination || (!this.dataRegular && !this.date && !this.punctualDateOptional) || this.loadingSearch || this.loadingPublish)
     },
     dateFormated() {
       moment.locale(this.locale);

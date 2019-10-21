@@ -169,6 +169,10 @@ class Community implements ResourceInterface, \JsonSerializable
      */
     private $private;
 
+    /**
+     * @var boolean|null If the current user asking is member of the community
+     */
+    private $member;
 
     public function __construct($id=null)
     {
@@ -444,6 +448,18 @@ class Community implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function isMember(): ?bool
+    {
+        return $this->member ? true : false;
+    }
+    
+    public function setMember(?bool $member): self
+    {
+        $this->member = $member ? true : false;
+        
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return
@@ -460,6 +476,7 @@ class Community implements ResourceInterface, \JsonSerializable
             'isSecured'         => $this->isSecured(),
             'validationType'    => $this->getValidationType(),
             'domain'            => $this->getDomain(),
+            'isMember'          => $this->isMember(),
         ];
     }
 }
