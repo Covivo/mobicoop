@@ -7,13 +7,9 @@ toUseTheService: "à utiliser le service ! Partagez vos trajets et trouvez votre
 # CARPOOL_MATCHING_NEW
 
 newCarpoolAdMatchingYourCommute : "Une nouvelle annonce de covoiturage correspondant à votre trajet "
-justPublished : "vient d'être publiée."
 seeYouIn: "Rendez-vous dans" 
 myAds: "Mes annonces "
 toConsultCorrespondingAdsAndMakeContact: "pour consulter les annonces correspondantes et prendre contact."
-
-# CARPOOL_PROPOSAL_POSTED
-
 
 # COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
 
@@ -36,7 +32,6 @@ notMentioned: "Non renseigné"
 # DRIVER_CARPOOL_ASK_ACCEPTED_REGULAR
 
 summaryCarpools: "Voici le récapitulatif de vos covoiturages."
-phoneNumber: "Le numéro de téléphone de "
 isThe: "est le"
 carpoolDistance: "Trajet régulier Distance covoiturée"
 driverDetour: "Détour conducteur"
@@ -59,195 +54,43 @@ indicativePrice: "Prix indicatif"
 
 # DRIVER_CARPOOL_ASK_ACCEPTED
 
-summaryCarpools: "Voici le récapitulatif de vos covoiturages."
-phoneNumber: "Le numéro de téléphone de "
-isThe: "est le"
-carpoolDistance: "Trajet ocasionnel Distance covoiturée"
-driverDetour: "Détour conducteur"
-supported:  "Prise en charge à "
-the: "le"
 hour: "à"
-depositedAt: "Déposé à "
-passengerComment: "Commentaire du passager"
-reservedPlaces: "ContacterPlaces réservées"
-indicativePrice: "Prix indicatif"
 
 # DRIVER_CARPOOL_ASK_POSTED_REGULAR
 
 yourAsk: "vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous."
 replyViaEmail: "Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de"
-clickHere: "en cliquant ici"
-carpoolDistance: "Trajet régulier Distance covoiturée"
-driverDetour: "Détour conducteur"
-supported:  "Prise en charge à "
-depositedAt: "Déposé à "
-appointmentHour: "Heures de RDV"
-monday: "Lundi"
-tuesday: "Mardi"
-wednesday: "Mercredi"
-thusday: "Jeudi"
-friday: "Vendredi"
-saturday: "Samedi"
-sunday: "Dimanche"
-the: "Le"
-from: "du"
-to: "au"
-passengerComment: "Commentaire du passager"
-reservedPlaces: "ContacterPlaces réservées"
-indicativePrice: "Prix indicatif"
-
-# DRIVER_CARPOOL_ASK_POSTED
-
-yourAsk: "vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous."
-replyViaEmail: "Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de"
-clickHere: "en cliquant ici"
-carpoolDistance: "Trajet occasionel Distance covoiturée"
-driverDetour: "Détour conducteur"
-supported:  "Prise en charge à "
-depositedAt: "Déposé à "
-passengerComment: "Commentaire du passager"
-reservedPlaces: "ContacterPlaces réservées"
-indicativePrice: "Prix indicatif"
 
 # DRIVER_CARPOOL_ASK_REFUSED_REGULAR
 
 notBeAbleToCarpoolWithYou: "ne pourra pas covoiturer avec vous vers"
 followingDays: "les jours suivants"
-from: "du"
-to: "au"
 hisMessage: "Voici son message :"
 
 # DRIVER_CARPOOL_ASK_REFUSED
 
-notBeAbleToCarpoolWithYouFor: "ne pourra pas covoiturer avec vous pour le trajet du"
 towards: "en direction de "
-hisMessage: "Voici son message :"
 
 # DRIVER_CARPOOL_MATCHING_NEW_REGULAR
 
-newCarpoolAdMatchingYourCommute : "Une nouvelle annonce de covoiturage correspondant à votre trajet "
 justPublished : "vient d'être publiée."
-seeYouIn: "Rendez-vous dans" 
-myAds: "Mes annonces "
-toConsultCorrespondingAdsAndMakeContact: "pour consulter les annonces correspondantes et prendre contact."
 
 # DRIVER_CARPOOL_MATCHING_NEW
 
-newCarpoolAdMatchingYourCommute : "Une nouvelle annonce de covoiturage correspondant à votre trajet "
-justPublished : "vient d'être publiée."
-seeYouIn: "Rendez-vous dans" 
-myAds: "Mes annonces "
-toConsultCorrespondingAdsAndMakeContact: "pour consulter les annonces correspondantes et prendre contact."
 
 # PASSENGER_CARPOOL_ASK_ACCEPTED_REGULAR
 
-summaryCarpools: "Voici le récapitulatif de vos covoiturages."
 phoneNumber: "Le numéro de téléphone de "
-isThe: "est le"
-carpoolDistance: "Trajet régulier Distance covoiturée"
-driverDetour: "Détour conducteur"
-supported:  "Prise en charge à "
-depositedAt: "Déposé à "
-appointmentHour: "Heures de RDV"
-monday: "Lundi"
-tuesday: "Mardi"
-wednesday: "Mercredi"
-thusday: "Jeudi"
-friday: "Vendredi"
-saturday: "Samedi"
-sunday: "Dimanche"
-the: "Le"
-from: "du"
-to: "au"
 driverComment: "Commentaire du conducteur"
-reservedPlaces: "ContacterPlaces réservées"
-indicativePrice: "Prix indicatif"
 
 # PASSENGER_CARPOOL_ASK_ACCEPTED
 
-summaryCarpools: "Voici le récapitulatif de vos covoiturages."
-phoneNumber: "Le numéro de téléphone de "
-isThe: "est le"
 ocassionalCarpoolDistance: "Trajet ocasionnel Distance covoiturée"
-driverDetour: "Détour conducteur"
-supported:  "Prise en charge à "
-depositedAt: "Déposé à "
-the: "le "
 at: "à"
-driverComment: "Commentaire du conducteur"
-reservedPlaces: "ContacterPlaces réservées"
-indicativePrice: "Prix indicatif"
-
-# PASSENGER_CARPOOL_ASK_POSTED_REGULAR
-
-yourAsk: "vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous."
-replyViaEmail: "Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de"
-clickHere: "en cliquant ici"
-carpoolDistance: "Trajet régulier Distance covoiturée"
-driverDetour: "Détour conducteur"
-supported:  "Prise en charge à "
-depositedAt: "Déposé à "
-appointmentHour: "Heures de RDV"
-monday: "Lundi"
-tuesday: "Mardi"
-wednesday: "Mercredi"
-thusday: "Jeudi"
-friday: "Vendredi"
-saturday: "Samedi"
-sunday: "Dimanche"
-the: "Le"
-from: "du"
-to: "au"
-driverComment: "Commentaire du conducteur"
-reservedPlaces: "ContacterPlaces réservées"
-indicativePrice: "Prix indicatif"
-
-# PASSENGER_CARPOOL_ASK_POSTED
-
-yourAsk: "vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous."
-replyViaEmail: "Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de"
-clickHere: "en cliquant ici"
-carpoolDistance: "Trajet occasionel Distance covoiturée"
-driverDetour: "Détour conducteur"
-supported:  "Prise en charge à "
-depositedAt: "Déposé à "
-driverComment: "Commentaire du conducteur"
-reservedPlaces: "ContacterPlaces réservées"
-indicativePrice: "Prix indicatif"
-
-# PASSENGER_CARPOOL_ASK_REFUSED_REGULAR
-
-notBeAbleToCarpoolWithYou: "ne pourra pas covoiturer avec vous vers"
-followingDays: "les jours suivants"
-from: "du"
-to: "au"
-hisMessage: "Voici son message :"
-
-# PASSENGER_CARPOOL_ASK_REFUSED
-
-notBeAbleToCarpoolWithYouFor: "ne pourra pas covoiturer avec vous pour le trajet du"
-towards: "en direction de "
-hisMessage: "Voici son message :"
 
 # PASSENGER_CARPOOL_ASK_UPDATED_REGULAR
 
 # PASSENGER_CARPOOL_ASK_UPDATED
-
-# PASSENGER_CARPOOL_MATCHING_NEW_REGULAR
-
-newCarpoolAdMatchingYourCommute : "Une nouvelle annonce de covoiturage correspondant à votre trajet "
-justPublished : "vient d'être publiée."
-seeYouIn: "Rendez-vous dans" 
-myAds: "Mes annonces "
-toConsultCorrespondingAdsAndMakeContact: "pour consulter les annonces correspondantes et prendre contact."
-
-# PASSENGER_CARPOOL_MATCHING_NEW
-
-newCarpoolAdMatchingYourCommute : "Une nouvelle annonce de covoiturage correspondant à votre trajet "
-justPublished : "vient d'être publiée."
-seeYouIn: "Rendez-vous dans" 
-myAds: "Mes annonces "
-toConsultCorrespondingAdsAndMakeContact: "pour consulter les annonces correspondantes et prendre contact."
 
 # USER_PASSWORD_CHANGE_ASKED
 
