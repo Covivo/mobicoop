@@ -1,16 +1,16 @@
 # CARPOOL_AD_RENEWAL
 
-beCarefulFewDaysAnnouncementNotValid: Attention dans quelques jours vos trajets enregistrés ne seront plus valables sur votre profil et ne seront donc plus visibles par les autres covoitureurs.
-nowYouAreMore: Vous êtes maintenant plus de
-toUseTheService: à utiliser le service ! Partagez vos trajets et trouvez votre bonheur !
+beCarefulFewDaysAnnouncementNotValid: "Attention dans quelques jours vos trajets enregistrés ne seront plus valables sur votre profil et ne seront donc plus visibles par les autres covoitureurs."
+nowYouAreMore: "Vous êtes maintenant plus de"
+toUseTheService: "à utiliser le service ! Partagez vos trajets et trouvez votre bonheur !"
 
 # CARPOOL_MATCHING_NEW
 
-newCarpoolAdMatchingYourCommute : Une nouvelle annonce de covoiturage correspondant à votre trajet 
-justPublished : vient d'être publiée.
-seeYouIn: Rendez-vous dans 
-myAds: Mes annonces 
-toConsultCorrespondingAdsAndMakeContact: pour consulter les annonces correspondantes et prendre contact.
+newCarpoolAdMatchingYourCommute : "Une nouvelle annonce de covoiturage correspondant à votre trajet "
+justPublished : "vient d'être publiée."
+seeYouIn: "Rendez-vous dans" 
+myAds: "Mes annonces "
+toConsultCorrespondingAdsAndMakeContact: "pour consulter les annonces correspondantes et prendre contact."
 
 # CARPOOL_PROPOSAL_POSTED
 
@@ -18,13 +18,13 @@ toConsultCorrespondingAdsAndMakeContact: pour consulter les annonces corresponda
 # COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
 
 sendYouMessage: "vous a envoyé un message :"
-canAnswerViaEmailFrom: Vous pouvez répondre à ce message via la messagerie de 
-clickHere: en cliquant ici 
-getProblem: Si ce mail comporte un message ne respectant pas la charte, n'hésitez pas à nous contacter.
+canAnswerViaEmailFrom: "Vous pouvez répondre à ce message via la messagerie de "
+clickHere: "en cliquant ici" 
+getProblem: "Si ce mail comporte un message ne respectant pas la charte, n'hésitez pas à nous contacter."
 
 # CONTACT_EMAIL_POSTED
 
-newContactAsk: Bonjour vous avez une nouvelle demande de contact,
+newContactAsk: "Bonjour vous avez une nouvelle demande de contact,"
 name: "Nom : "
 firstname: "Prénom : "
 email: "Email :"
@@ -35,72 +35,228 @@ notMentioned: "Non renseigné"
 
 # DRIVER_CARPOOL_ASK_ACCEPTED_REGULAR
 
+summaryCarpools: "Voici le récapitulatif de vos covoiturages."
+phoneNumber: "Le numéro de téléphone de "
+isThe: "est le"
+carpoolDistance: "Trajet régulier Distance covoiturée"
+driverDetour: "Détour conducteur"
+supported:  "Prise en charge à "
+depositedAt: "Déposé à "
+appointmentHour: "Heures de RDV"
+monday: "Lundi"
+tuesday: "Mardi"
+wednesday: "Mercredi"
+thusday: "Jeudi"
+friday: "Vendredi"
+saturday: "Samedi"
+sunday: "Dimanche"
+the: "Le"
+from: "du"
+to: "au"
+passengerComment: "Commentaire du passager"
+reservedPlaces: "ContacterPlaces réservées"
+indicativePrice: "Prix indicatif"
 
 # DRIVER_CARPOOL_ASK_ACCEPTED
 
+summaryCarpools: "Voici le récapitulatif de vos covoiturages."
+phoneNumber: "Le numéro de téléphone de "
+isThe: "est le"
+carpoolDistance: "Trajet ocasionnel Distance covoiturée"
+driverDetour: "Détour conducteur"
+supported:  "Prise en charge à "
+the: "le"
+hour: "à"
+depositedAt: "Déposé à "
+passengerComment: "Commentaire du passager"
+reservedPlaces: "ContacterPlaces réservées"
+indicativePrice: "Prix indicatif"
 
 # DRIVER_CARPOOL_ASK_POSTED_REGULAR
 
+yourAsk: "vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous."
+replyViaEmail: "Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de"
+clickHere: "en cliquant ici"
+carpoolDistance: "Trajet régulier Distance covoiturée"
+driverDetour: "Détour conducteur"
+supported:  "Prise en charge à "
+depositedAt: "Déposé à "
+appointmentHour: "Heures de RDV"
+monday: "Lundi"
+tuesday: "Mardi"
+wednesday: "Mercredi"
+thusday: "Jeudi"
+friday: "Vendredi"
+saturday: "Samedi"
+sunday: "Dimanche"
+the: "Le"
+from: "du"
+to: "au"
+passengerComment: "Commentaire du passager"
+reservedPlaces: "ContacterPlaces réservées"
+indicativePrice: "Prix indicatif"
 
 # DRIVER_CARPOOL_ASK_POSTED
 
+yourAsk: "vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous."
+replyViaEmail: "Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de"
+clickHere: "en cliquant ici"
+carpoolDistance: "Trajet occasionel Distance covoiturée"
+driverDetour: "Détour conducteur"
+supported:  "Prise en charge à "
+depositedAt: "Déposé à "
+passengerComment: "Commentaire du passager"
+reservedPlaces: "ContacterPlaces réservées"
+indicativePrice: "Prix indicatif"
 
 # DRIVER_CARPOOL_ASK_REFUSED_REGULAR
 
+notBeAbleToCarpoolWithYou: "ne pourra pas covoiturer avec vous vers"
+followingDays: "les jours suivants"
+from: "du"
+to: "au"
+hisMessage: "Voici son message :"
 
 # DRIVER_CARPOOL_ASK_REFUSED
 
+notBeAbleToCarpoolWithYouFor: "ne pourra pas covoiturer avec vous pour le trajet du"
+towards: "en direction de "
+hisMessage: "Voici son message :"
 
-newAUne nouvelle annonce de covoiturage correspondant à votre trajet
-'ne pourra pas covoiturer avec vous vers': 'ne pourra pas covoiturer avec vous vers'
-'les jours suivants': 'les jours suivants'
-du: du
-au: au
-'Voici son message': 'Voici son message'
-'Pensez à renouveler votre annonce de covoiturage': 'Pensez à renouveler votre annonce de covoiturage'
-'Nouvelle(s) annonce(s) de covoiturage': 'Nouvelle(s) annonce(s) de covoiturage'
-'Modification de votre profil': 'Modification de votre profil'
-'Confirmation de re-initialisation de mot de passe': 'Confirmation de re-initialisation de mot de passe'
-'Demande de covoiturage': 'Demande de covoiturage'
-'Proposition de covoiturage déclinée': 'Proposition de covoiturage déclinée'
-'Votre inscription': 'Votre inscription'
-'Récapitulatif covoiturage': 'Récapitulatif covoiturage'
-'vous contacte': 'vous contacte'
-'Avis de re-initialisation de mot de passe': 'Avis de re-initialisation de mot de passe'
-'Une nouvelle annonce de covoiturage correspondant à votre trajet': 'Une nouvelle annonce de covoiturage correspondant à votre trajet'
-'vient d''être publiée.': 'vient d''être publiée.'
-'Rendez-vous dans': 'Rendez-vous dans'
-'Mes annonces': 'Mes annonces'
-'pour consulter les annonces correspondantes et prendre contact': 'pour consulter les annonces correspondantes et prendre contact'
-'ne pourra pas covoiturer avec vous pour le trajet du': 'ne pourra pas covoiturer avec vous pour le trajet du'
-'en direction de': 'en direction de'
-'Voici son message :': 'Voici son message :'
-'Attention dans quelques jours vos trajets enregistrés ne seront plus valables sur votre profil et ne seront donc plus visibles par les autres covoitureurs.': 'Attention dans quelques jours vos trajets enregistrés ne seront plus valables sur votre profil et ne seront donc plus visibles par les autres covoitureurs.'
-'Vous êtes maintenant plus de': 'Vous êtes maintenant plus de'
-'à utiliser le service ! Partagez vos trajets et trouvez votre bonheur !': 'à utiliser le service ! Partagez vos trajets et trouvez votre bonheur !'
-'Voici le récapitulatif de vos covoiturages.': 'Voici le récapitulatif de vos covoiturages.'
-'Le numéro de téléphone de': 'Le numéro de téléphone de'
-'est le': 'est le'
-'Trajet régulier Distance covoiturée': 'Trajet régulier Distance covoiturée'
-'Détour conducteur': 'Détour conducteur'
-'Prise en charge à': 'Prise en charge à'
-'Dépose à': 'Dépose à'
-'Heures de RDV': 'Heures de RDV'
-Lundi: Lundi
-Mardi: Mardi
-Mercredi: Mercredi
-Jeudi: Jeudi
-Vendredi: Vendredi
-Samedi: Samedi
-Dimanche: Dimanche
-Le: Le
-Du: Du
-'Commentaire du passager': 'Commentaire du passager'
-'ContacterPlaces réservées': 'ContacterPlaces réservées'
-'Prix indicatif': 'Prix indicatif'
-'vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous.': 'vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous.'
-'Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de': 'Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de'
-'en cliquant ici': 'en cliquant ici'
+# DRIVER_CARPOOL_MATCHING_NEW_REGULAR
+
+newCarpoolAdMatchingYourCommute : "Une nouvelle annonce de covoiturage correspondant à votre trajet "
+justPublished : "vient d'être publiée."
+seeYouIn: "Rendez-vous dans" 
+myAds: "Mes annonces "
+toConsultCorrespondingAdsAndMakeContact: "pour consulter les annonces correspondantes et prendre contact."
+
+# DRIVER_CARPOOL_MATCHING_NEW
+
+newCarpoolAdMatchingYourCommute : "Une nouvelle annonce de covoiturage correspondant à votre trajet "
+justPublished : "vient d'être publiée."
+seeYouIn: "Rendez-vous dans" 
+myAds: "Mes annonces "
+toConsultCorrespondingAdsAndMakeContact: "pour consulter les annonces correspondantes et prendre contact."
+
+# PASSENGER_CARPOOL_ASK_ACCEPTED_REGULAR
+
+summaryCarpools: "Voici le récapitulatif de vos covoiturages."
+phoneNumber: "Le numéro de téléphone de "
+isThe: "est le"
+carpoolDistance: "Trajet régulier Distance covoiturée"
+driverDetour: "Détour conducteur"
+supported:  "Prise en charge à "
+depositedAt: "Déposé à "
+appointmentHour: "Heures de RDV"
+monday: "Lundi"
+tuesday: "Mardi"
+wednesday: "Mercredi"
+thusday: "Jeudi"
+friday: "Vendredi"
+saturday: "Samedi"
+sunday: "Dimanche"
+the: "Le"
+from: "du"
+to: "au"
+driverComment: "Commentaire du conducteur"
+reservedPlaces: "ContacterPlaces réservées"
+indicativePrice: "Prix indicatif"
+
+# PASSENGER_CARPOOL_ASK_ACCEPTED
+
+summaryCarpools: "Voici le récapitulatif de vos covoiturages."
+phoneNumber: "Le numéro de téléphone de "
+isThe: "est le"
+ocassionalCarpoolDistance: "Trajet ocasionnel Distance covoiturée"
+driverDetour: "Détour conducteur"
+supported:  "Prise en charge à "
+depositedAt: "Déposé à "
+the: "le "
+at: "à"
+driverComment: "Commentaire du conducteur"
+reservedPlaces: "ContacterPlaces réservées"
+indicativePrice: "Prix indicatif"
+
+# PASSENGER_CARPOOL_ASK_POSTED_REGULAR
+
+yourAsk: "vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous."
+replyViaEmail: "Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de"
+clickHere: "en cliquant ici"
+carpoolDistance: "Trajet régulier Distance covoiturée"
+driverDetour: "Détour conducteur"
+supported:  "Prise en charge à "
+depositedAt: "Déposé à "
+appointmentHour: "Heures de RDV"
+monday: "Lundi"
+tuesday: "Mardi"
+wednesday: "Mercredi"
+thusday: "Jeudi"
+friday: "Vendredi"
+saturday: "Samedi"
+sunday: "Dimanche"
+the: "Le"
+from: "du"
+to: "au"
+driverComment: "Commentaire du conducteur"
+reservedPlaces: "ContacterPlaces réservées"
+indicativePrice: "Prix indicatif"
+
+# PASSENGER_CARPOOL_ASK_POSTED
+
+yourAsk: "vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous."
+replyViaEmail: "Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de"
+clickHere: "en cliquant ici"
+carpoolDistance: "Trajet occasionel Distance covoiturée"
+driverDetour: "Détour conducteur"
+supported:  "Prise en charge à "
+depositedAt: "Déposé à "
+driverComment: "Commentaire du conducteur"
+reservedPlaces: "ContacterPlaces réservées"
+indicativePrice: "Prix indicatif"
+
+# PASSENGER_CARPOOL_ASK_REFUSED_REGULAR
+
+notBeAbleToCarpoolWithYou: "ne pourra pas covoiturer avec vous vers"
+followingDays: "les jours suivants"
+from: "du"
+to: "au"
+hisMessage: "Voici son message :"
+
+# PASSENGER_CARPOOL_ASK_REFUSED
+
+notBeAbleToCarpoolWithYouFor: "ne pourra pas covoiturer avec vous pour le trajet du"
+towards: "en direction de "
+hisMessage: "Voici son message :"
+
+# PASSENGER_CARPOOL_ASK_UPDATED_REGULAR
+
+# PASSENGER_CARPOOL_ASK_UPDATED
+
+# PASSENGER_CARPOOL_MATCHING_NEW_REGULAR
+
+newCarpoolAdMatchingYourCommute : "Une nouvelle annonce de covoiturage correspondant à votre trajet "
+justPublished : "vient d'être publiée."
+seeYouIn: "Rendez-vous dans" 
+myAds: "Mes annonces "
+toConsultCorrespondingAdsAndMakeContact: "pour consulter les annonces correspondantes et prendre contact."
+
+# PASSENGER_CARPOOL_MATCHING_NEW
+
+newCarpoolAdMatchingYourCommute : "Une nouvelle annonce de covoiturage correspondant à votre trajet "
+justPublished : "vient d'être publiée."
+seeYouIn: "Rendez-vous dans" 
+myAds: "Mes annonces "
+toConsultCorrespondingAdsAndMakeContact: "pour consulter les annonces correspondantes et prendre contact."
+
+# USER_PASSWORD_CHANGE_ASKED
+
+# USER_PASSWORD_CHANGED
+
+# USER_REGISTERED
+
+# USER_UPDATED_SELF
+
 urlMailBox: 'utilisateur/messages'
 'Trajet occasionelle Distance covoiturée': 'Trajet occasionelle Distance covoiturée'
 'La modification suivante de votre profil est confirmée': 'La modification suivante de votre profil est confirmée'
