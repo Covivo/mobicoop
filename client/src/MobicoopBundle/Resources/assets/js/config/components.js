@@ -5,14 +5,14 @@ import MHeader from '@components/base/MHeader'
 import MFooter from '@components/base/MFooter'
 
 // HOME
-import HomeSearch from '@components/home/HomeSearch'
+import Home from '@components/home/Home'
 
 // CONTACT
 import Contact from '@components/contact/Contact'
 
 // CARPOOL
-import AdPublish from '@components/carpool/AdPublish'
-import Matching from '@components/carpool/Matching'
+import AdPublish from '@components/carpool/publish/AdPublish'
+import Matching from '@components/carpool/results/Matching'
 
 // COMMUNITY
 import CommunityList from "@components/community/CommunityList";
@@ -34,7 +34,7 @@ import UpdateProfile from '@components/user/UpdateProfile'
 export default {
   MHeader,
   MFooter,
-  HomeSearch,
+  Home,
   Contact,
   AdPublish,
   Matching,
