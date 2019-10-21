@@ -62,7 +62,6 @@
 <script>
 import moment from "moment";
 import {merge} from "lodash";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/carpool/search/Search.json";
 import TranslationsClient from "@clientTranslations/components/carpool/search/Search.json";
 import SearchJourney from "@components/carpool/search/SearchJourney";
@@ -71,8 +70,7 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
   i18n: {
-    messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
+    messages: TranslationsMerged
   },
   components: {
     SearchJourney

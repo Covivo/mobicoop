@@ -480,7 +480,6 @@
 import moment from "moment";
 import axios from "axios";
 import { merge } from "lodash";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/Messages.json";
 import TranslationsClient from "@clientTranslations/components/user/Messages.json";
 import MBtn from '@components/utilities/MBtn'
@@ -490,7 +489,6 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
   },
   components: {
     MBtn,

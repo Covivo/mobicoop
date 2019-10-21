@@ -69,7 +69,7 @@
 import { merge } from "lodash";
 import Translations from "@translations/components/base/MHeader.json";
 import TranslationsClient from "@clientTranslations/components/base/MHeader.json";
-import Accessibility from "../utilities/Accessibility";
+import Accessibility from "@components/utilities/Accessibility";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 

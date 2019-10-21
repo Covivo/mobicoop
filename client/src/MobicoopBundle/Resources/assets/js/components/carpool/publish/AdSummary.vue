@@ -374,7 +374,6 @@
 <script>
 import moment from "moment";
 import { merge } from "lodash";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/carpool/publish/AdSummary.json";
 import TranslationsClient from "@clientTranslations/components/carpool/publish/AdSummary.json";
 
@@ -383,7 +382,6 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
   },
   components: {
   },

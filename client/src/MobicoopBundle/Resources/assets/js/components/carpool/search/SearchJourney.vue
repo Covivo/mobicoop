@@ -195,7 +195,6 @@ import moment from "moment";
 import GeoComplete from "@components/utilities/GeoComplete";
 
 import { merge } from "lodash";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/carpool/search/SearchJourney.json";
 import TranslationsClient from "@clientTranslations/components/carpool/search/SearchJourney.json";
 
@@ -204,7 +203,6 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
   },
   components: {
     GeoComplete
