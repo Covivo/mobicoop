@@ -10,7 +10,8 @@
     "linePerPage":"Nombre de lignes par page",
     "seeAds":"Voir les annonces",
     "join":"Rejoindre la communauté",
-    "protected": "Cette communauté n'est visible que par ses membres"
+    "protected": "Cette communauté n'est visible que par ses membres",
+    "communityDetails":"Détails de la communauté"
   },
   "en": {
     "communitiesAvailable":"Communities available",
@@ -19,6 +20,7 @@
     "all":"All",
     "linePerPage":"Nomber of line per page",
     "seeAds":"See the ads",
-    "join":"Join the community"
+    "join":"Join the community",
+    "communityDetails":"Community details"
   }
 }

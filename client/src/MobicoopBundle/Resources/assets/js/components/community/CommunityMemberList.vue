@@ -27,6 +27,7 @@
       </v-row>
     </v-card-title>
     <v-data-table
+      v-if="!hidden"
       :headers="headers"
       :items="users"
       :search="search"
@@ -48,6 +49,9 @@
         </v-tooltip>
       </template>
     </v-data-table>
+    <v-card-text v-else>
+      {{ $t('hidden') }}
+    </v-card-text>
   </v-card>
 </template>
 
@@ -70,6 +74,10 @@ export default {
       default: null
     },
     refresh: {
+      type: Boolean,
+      default: false
+    },
+    hidden: {
       type: Boolean,
       default: false
     }

@@ -30,7 +30,8 @@
     },
     "title": {
       "searchCarpool" : "Chercher un trajet dans la communauté"
-    }
+    },
+    "urlCommunityUser":"/community-user"
   },
   "en": {
     "buttons": {
@@ -63,6 +64,7 @@
     },
     "title": {
       "searchCarpool" : "Search a journey in the community"
-    }
+    },
+    "urlCommunityUser":"/community-user"
   }
 }

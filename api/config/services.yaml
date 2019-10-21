@@ -66,6 +66,12 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postLoad }
 
+    # Community User Load Listener
+    mobicoop.community.community_load_listener:
+        class: App\Community\EventListener\CommunityLoadListener
+        arguments: ['@request_stack']
+        tags:
+            - { name: doctrine.event_listener, event: postLoad }
 
     # CONTROLLERS AND SERVICES
 
