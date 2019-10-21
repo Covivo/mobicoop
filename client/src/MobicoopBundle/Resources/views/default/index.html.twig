@@ -15,28 +15,11 @@
         :user="{{app.user|json_encode}}"
         {{ searchRegular ? 'regular' : '' }}
         {{ searchPunctualDate ? 'punctual-date-optional' : '' }}
-        
+        :community-display="{{homeCommunityDisplay}}"
+        :event-display="{{homeEventDisplay}}"
+        :solidary-display="{{homeSolidaryDisplay}}"
     />
 
-    <div class="container text-xs-center grid-list-md">
-        <div class="row grey lighten-5" style="height: 300px;">
-            <div class="col col-4">
-                <div class="ma-3 pa-6 v-card v-card--outlined v-sheet v-sheet--tile theme--light">
-                    <a class="lien" href="{{ path('community_list') }}">Rejoindre une communauté</a>
-                </div>
-            </div>
-            <div class="col col-4">
-                <div class="ma-3 pa-6 v-card v-card--outlined v-sheet v-sheet--tile theme--light">
-                    <a class="lien" href="/events">Les evenements</a>
-                </div>
-            </div>
-            <div class="col col-4">
-                <div class="ma-3 pa-6 v-card v-card--outlined v-sheet v-sheet--tile theme--light">
-                    <a class="lien" href="/solidarite">Besoin d'un coup de pouce?</a>
-                </div>
-            </div>
-        </div>
-    </div>
 {% endblock %}
 
 {% block javascripts %}

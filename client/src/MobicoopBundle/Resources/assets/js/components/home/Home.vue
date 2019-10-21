@@ -23,6 +23,19 @@
         :regular="regular"
         :punctual-date-optional="punctualDateOptional"
       />
+      <v-row
+        align="center"
+        class="mt-5"
+        justify="center"
+      >
+        <v-col cols="6">
+          <home-content 
+            :community-display="communityDisplay"
+            :event-display="eventDisplay"
+            :solidary-display="solidaryDisplay"
+          />
+        </v-col>
+      </v-row>
     </v-container>
   </v-content>
 </template>
@@ -33,6 +46,7 @@ import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/home/Home.json";
 import TranslationsClient from "@clientTranslations/components/home/Home.json";
 import Search from "@components/carpool/search/Search";
+import HomeContent from "@components/home/HomeContent";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -42,7 +56,8 @@ export default {
     sharedMessages: CommonTranslations
   },
   components: {
-    Search
+    Search,
+    HomeContent
   },
   props: {
     geoSearchUrl: {
@@ -58,6 +73,18 @@ export default {
       default: false
     }, 
     punctualDateOptional: {
+      type: Boolean,
+      default: false
+    },
+    solidaryDisplay: {
+      type: Boolean,
+      default: false
+    },
+    eventDisplay: {
+      type: Boolean,
+      default: false
+    },
+    communityDisplay: {
       type: Boolean,
       default: false
     },

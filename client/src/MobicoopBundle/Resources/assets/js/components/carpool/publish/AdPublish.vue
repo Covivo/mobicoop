@@ -22,6 +22,38 @@
         </v-col>
       </v-row>
       <v-row
+        v-if="solidary"
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          md="8"
+          xl="6"
+        >
+          <v-alert type="info">
+            <p>{{ $t("messageSolidaryAd.message") }}</p>
+          </v-alert>
+        </v-col>
+      </v-row>
+      <v-row
+        v-if="solidaryAd"
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          md="8"
+          xl="6"
+          class="text-center"
+        >
+          <v-switch
+            v-model="solidary"
+            color="secondary"
+            inset
+            :label="solidary ? this.$t('messageSolidaryAd.switch.activated') : this.$t('messageSolidaryAd.switch.deactivated')"
+          />
+        </v-col>
+      </v-row>
+      <v-row
         v-if="firstAd"
         justify="center"
       >
@@ -133,6 +165,7 @@
               <!-- Step 1 : search journey -->
               <v-stepper-content step="1">
                 <search-journey
+                  :solidary-ad="solidary"
                   display-roles
                   :geo-search-url="geoSearchUrl"
                   :user="user"
@@ -599,7 +632,12 @@ export default {
     firstAd: {
       type: Boolean,
       default: false
-    }
+    },
+    solidaryAd: {
+      type: Boolean,
+      default: false
+    },
+   
 
   },
   data() {
@@ -638,7 +676,9 @@ export default {
       strictRegular: null,      // not used yet
       strictPunctual: null,     // not used yet
       useTime: null,            // not used yet
-      anyRouteAsPassenger: null // not used yet
+      anyRouteAsPassenger: null, // not used yet
+      solidary: this.solidaryAd
+      
     }
   },
   computed: {
@@ -790,7 +830,8 @@ export default {
         driver: this.driver,
         passenger: this.passenger,
         origin: this.origin,
-        destination: this.destination
+        destination: this.destination,
+        solidary: this.solidary
       };
       if (this.userDelegated) postObject.userDelegated = this.userDelegated;
       if (this.validWaypoints) postObject.waypoints = this.validWaypoints;
