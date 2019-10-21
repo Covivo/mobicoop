@@ -51,7 +51,7 @@ class CommunityLoadListener
                     if ($request->get("userId") == $communityUser->getUser()->getId() &&
                         $communityUser->getStatus() == CommunityUser::STATUS_ACCEPTED
                     ) {
-                        $community->setIsMember(true);
+                        $community->setMember(true);
                     }
                 }
             }
