@@ -111,8 +111,8 @@ urlEmailValidation: 'utilisateur/inscription/validation/'
 theModificationIsConfirmed: "La modification suivante de votre profil est confirmée"
 
 urlMailBox: 'utilisateur/messages'
-The requested page couldn't be located:
-  Checkout for any URL misspelling or: 'messages'
+TheRequestedPageCouldn'tBeLocated:
+CheckoutForAnyURLMisspellingOr: 'messages'
 
 
   ######      SMS      ######
@@ -164,4 +164,4 @@ refusedAskRegular: "décline le covoiturage régulier de "
 
 # DRIVER_CARPOOL_ASK_REFUSED
 
-refusedAskRegular: "décline le covoiturage de " 
+refusedAsk: "décline le covoiturage de " 
