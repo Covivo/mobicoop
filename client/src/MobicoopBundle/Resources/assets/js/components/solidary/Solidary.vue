@@ -38,8 +38,8 @@
 
 <script>
 import {merge} from "lodash";
-import Translations from "@translations/components/solidary/Solidary.json";
-import TranslationsClient from "@clientTranslations/components/solidary/Solidary.json";
+import Translations from "@translations/components/solidary/Solidary.js";
+import TranslationsClient from "@clientTranslations/components/solidary/Solidary.js";
 import SolidaryForm from './SolidaryForm'
 
 let TranslationsMerged = merge(Translations, TranslationsClient);

@@ -30,6 +30,7 @@
         align="center"
       >
         <!--SearchJourney-->
+        
         <search-journey
           :geo-search-url="geoSearchUrl"
           :user="user"
@@ -39,61 +40,64 @@
         />
       </v-col>
     </v-row>
-    <v-row
-      justify="center"
-    >
-      <v-col
-        cols="6"
-        sm="4"
-        md="3"
+    
+    <!--Structure and subject-->
+    <v-container>
+      <v-row
+        justify="center"
       >
-        <v-select
-          v-model="form.structure"
-          :items="structures"
-          item-text="name"
-          item-value="id"
-          :label="$t('structure.placeholder') + ' *'"
-        />
-      </v-col>
-      <v-col
-        cols="6"
-        sm="4"
-        md="3"
-      >
-        <v-text-field
-          :disabled="!isOtherStructureActive"
-          :label="$t('other.label')"
-        />
-      </v-col>
-    </v-row>
-    <v-row
-      justify="center"
-    >
-      <v-col
-        cols="6"
-        sm="4"
-        md="3"
-      >
-        <v-select
-          v-model="form.subject"
-          :items="subjects"
-          item-text="label"
-          item-value="id"
-          :label="$t('object.placeholder') + ' *'"
-        />
-      </v-col>
-      <v-col
-        cols="6"
-        sm="4"
-        md="3"
-      >
-        <v-text-field
-          :disabled="!isOtherSubjectActive"
-          :label="$t('other.label')"
-        />
-      </v-col>
-    </v-row>
-      
+        <v-col
+          cols="6"
+          sm="4"
+          md="3"
+        >
+          <v-select
+            v-model="form.structure"
+            :items="structures"
+            item-text="name"
+            item-value="id"
+            :label="$t('structure.placeholder') + ' *'"
+          />
+        </v-col>
+        <v-col
+          cols="6"
+          sm="4"
+          md="3"
+        >
+          <v-text-field
+            :disabled="!isOtherStructureActive"
+            :label="$t('other.label')"
+          />
+        </v-col>
+        
+        <v-col
+          cols="6"
+          sm="4"
+          md="3"
+        >
+          <v-select
+            v-model="form.subject"
+            :items="subjects"
+            item-text="label"
+            item-value="id"
+            :label="$t('subject.placeholder') + ' *'"
+          />
+        </v-col>
+        <v-col
+          cols="6"
+          sm="4"
+          md="3"
+        >
+          <v-text-field
+            :disabled="!isOtherSubjectActive"
+            :label="$t('other.label')"
+          />
+        </v-col>
+      </v-row>
+    </v-container>
+    
+    <!--user data-->
+    
     <v-row
       justify="center"
     >
@@ -115,8 +119,10 @@
                 cols="12"
               >
                 <v-select
-                  :items="form.civilityItems"
-                  :label="$t('models.user.civility.placeholder') + ' *'"
+                  :items="form.genderItems"
+                  item-text="genderItem"
+                  item-value="genderValue"
+                  :label="$t('models.user.gender.placeholder') + ' *'"
                 />
               </v-col>
               <v-col
@@ -216,8 +222,8 @@
 <script>
 import {merge, find} from "lodash";
 import moment from "moment";
-import Translations from "@translations/components/solidary/SolidaryForm.json";
-import TranslationsClient from "@clientTranslations/components/solidary/SolidaryForm.json";
+import Translations from "@translations/components/solidary/SolidaryForm.js";
+import TranslationsClient from "@clientTranslations/components/solidary/SolidaryForm.js";
 import SearchJourney from "@components/carpool/search/SearchJourney";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
@@ -269,8 +275,15 @@ export default {
       form: {
         structure: null,
         subject: null,
-        civility: "",
-        civilityItems: [],
+        gender: null,
+        genderRules: [
+          v => !!v || this.$t("models.user.gender.errors.required"),
+        ],
+        genderItems: [
+          { genderItem: this.$t('models.user.gender.values.female'), genderValue: '1' },
+          { genderItem: this.$t('models.user.gender.values.male'), genderValue: '2' },
+          { genderItem: this.$t('models.user.gender.values.other'), genderValue: '3' },
+        ],
         givenName: "",
         familyName: "",
         email: "",
