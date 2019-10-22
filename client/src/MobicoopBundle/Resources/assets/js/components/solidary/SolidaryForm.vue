@@ -33,7 +33,7 @@
         <search-journey
           :geo-search-url="geoSearchUrl"
           :user="user"
-          :init-regular="dataRegular"
+          :init-regular="regular"
           :punctual-date-optional="punctualDateOptional"
           @change="searchChanged"
         />
@@ -48,7 +48,10 @@
         md="3"
       >
         <v-select
-          :items="form.structureitems"
+          v-model="form.structure"
+          :items="structures"
+          item-text="name"
+          item-value="id"
           :label="$t('structure.placeholder') + ' *'"
         />
       </v-col>
@@ -58,6 +61,7 @@
         md="3"
       >
         <v-text-field
+          :disabled="!isOtherStructureActive"
           :label="$t('other.label')"
         />
       </v-col>
@@ -71,7 +75,10 @@
         md="3"
       >
         <v-select
-          :items="form.objectItems"
+          v-model="form.subject"
+          :items="subjects"
+          item-text="label"
+          item-value="id"
           :label="$t('object.placeholder') + ' *'"
         />
       </v-col>
@@ -81,6 +88,7 @@
         md="3"
       >
         <v-text-field
+          :disabled="!isOtherSubjectActive"
           :label="$t('other.label')"
         />
       </v-col>
@@ -206,7 +214,7 @@
 </template>
 
 <script>
-import {merge} from "lodash";
+import {merge, find} from "lodash";
 import moment from "moment";
 import Translations from "@translations/components/solidary/SolidaryForm.json";
 import TranslationsClient from "@clientTranslations/components/solidary/SolidaryForm.json";
@@ -239,6 +247,14 @@ export default {
       type: Boolean,
       default: false
     },
+    structures: {
+      type: Array,
+      default: null
+    },
+    subjects: {
+      type: Array,
+      default: null
+    }
   },
   data () {
     return {
@@ -252,9 +268,7 @@ export default {
       // todo: faire un fichier de fonction pour les rules
       form: {
         structure: null,
-        structureItems: [],
-        object: null,
-        objectItems: [],
+        subject: null,
         civility: "",
         civilityItems: [],
         givenName: "",
@@ -277,6 +291,13 @@ export default {
   computed: {
     getYearOfBirth() {
       return this.form.yearsOfBirth ? moment(this.form.yearsOfBirth).format('YYYY') : null
+    },
+    // todo: trouver une meilleure solution, modifier en utilisant un slug ?
+    isOtherStructureActive() {
+      return this.form.structure ? find(this.structures, {id: this.form.structure}).name === "Autre" : false;
+    },
+    isOtherSubjectActive() {
+      return this.form.subject ? find(this.subjects, {id: this.form.subject}).label === "Autre" : false;
     }
   },
   watch: {
@@ -289,6 +310,9 @@ export default {
       this.$refs.menu.save(date);
       this.$refs.picker.activePicker = 'YEAR';
       this.menu = false;
+    },
+    searchChanged(data) {
+      console.log(data);
     }
   }
 }

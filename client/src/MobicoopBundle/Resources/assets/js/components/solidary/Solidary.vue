@@ -27,8 +27,10 @@
       <solidary-form
         :geo-search-url="geoSearchUrl"
         :user="user"
-        :init-regular="dataRegular"
+        :regular="regular"
         :punctual-date-optional="punctualDateOptional"
+        :structures="structures"
+        :subjects="subjects"
       />
     </v-container>
   </v-content>
@@ -67,11 +69,11 @@ export default {
       default: false
     },
     structures: {
-      type: Object,
+      type: Array,
       default: null
     },
     subjects: {
-      type: Object,
+      type: Array,
       default: null
     }
   },
