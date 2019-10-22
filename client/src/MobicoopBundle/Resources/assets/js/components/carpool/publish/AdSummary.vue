@@ -63,12 +63,12 @@
         
           <!-- price -->
           <v-col
-            v-if="displayInfo"
+            v-if="displayInfo && !solidary"
             cols="3"
             offset="1"
             align="right"
           >
-            <h2>{{ solidary ? 0 : price }} €</h2>
+            <h2>{{ price }} €</h2>
           </v-col>
         </v-row>
 
