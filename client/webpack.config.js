@@ -1,13 +1,13 @@
 const Encore = require('@symfony/webpack-encore');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const path = require('path');
-const read = require('fs-readdir-recursive');
+// const read = require('fs-readdir-recursive');
 const _ = require('lodash');
 // ⚙️ UNCOMMENT below if you are using a client platform  ⚙️ //
 // const fs = require('fs');
 
-let files = read('./assets/js/page');
-let filesBundle = read('./src/MobicoopBundle/Resources/assets/js/page');
+// let files = read('./assets/js/page');
+// let filesBundle = read('./src/MobicoopBundle/Resources/assets/js/page');
 // ⚙️ UNCOMMENT below if you are using a client platform  ⚙️ //
 // let bundleRealPath = fs.realpathSync(__dirname + '/src/MobicoopBundle');
 // let bundleNodeModules = path.resolve(bundleRealPath + '../../../node_modules');
@@ -23,6 +23,7 @@ Encore
   .splitEntryChunks()
   .enableVersioning(Encore.isProduction())
   .enableVueLoader()
+  .enableSingleRuntimeChunk()
   .addLoader({
     test: /\.s(c|a)ss$/,
     use: [
@@ -80,15 +81,15 @@ if (!Encore.isProduction()) {
     })
 }
 
-// Add base assets
-for (let file of files) {
-  Encore.addEntry(file.split('.js')[0], `./assets/js/page/${file}`)
-}
-
-// Add bundle assets
-for (let file of filesBundle) {
-  Encore.addEntry(`bundle_${file.split('.js')[0]}`, `./src/MobicoopBundle/Resources/assets/js/page/${file}`)
-}
+// // Add base assets
+// for (let file of files) {
+//   Encore.addEntry(file.split('.js')[0], `./assets/js/page/${file}`)
+// }
+//
+// // Add bundle assets
+// for (let file of filesBundle) {
+//   Encore.addEntry(`bundle_${file.split('.js')[0]}`, `./src/MobicoopBundle/Resources/assets/js/page/${file}`)
+// }
 
 let encoreConfig = Encore.getWebpackConfig();
 encoreConfig.watchOptions = {

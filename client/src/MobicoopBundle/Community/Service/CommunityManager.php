@@ -65,12 +65,17 @@ class CommunityManager
 
     /**
     * Get all communities
-    * @return array|null The communities found or null if not found.
+    * @param int|null $userId   The id of the user you want to know if he is already an accepted member of the community
+    * @return array|null        The communities found or null if not found.
     *
     */
-    public function getCommunities()
+    public function getCommunities(?int $userId=null)
     {
-        $response = $this->dataProvider->getCollection();
+        $params = null;
+        if ($userId!==null) {
+            $params['userId'] = $userId;
+        }
+        $response = $this->dataProvider->getCollection($params);
         if ($response->getCode() >=200 && $response->getCode() <= 300) {
             return $response->getValue()->getMember();
         }
@@ -136,14 +141,19 @@ class CommunityManager
     }
 
     /**
-     * Get one community
-     *
-     * @return Community|null
+     * Get the community_user of a user for a community
+     * @param int $communityId  Id of the community
+     * @param int $userId       Id of the User to test
      */
     public function getCommunityUser(int $communityId, int $userId)
     {
+        $params = [
+            "community" => $communityId,
+            "user" => $userId
+        ];
+
         $this->dataProvider->setClass(CommunityUser::class);
-        $response = $this->dataProvider->getCollection(['community.id'=>$communityId, 'user.id'=>$userId]);
+        $response = $this->dataProvider->getCollection(['community'=>$communityId, 'user'=>$userId]);
         return $response->getValue()->getMember();
     }
 
@@ -173,5 +183,25 @@ class CommunityManager
             return true;
         }
         return false;
+    }
+
+    /**
+     * Check if a User has a certain status in a community
+     * @param int $communityId  Id of the community
+     * @param int $userId       Id of the User to test
+     * @param int|null $status       Status to test
+     */
+    public function checkStatus(int $communityId, int $userId, ?int $status = null)
+    {
+        $params = [
+            "community" => $communityId,
+            "user" => $userId
+        ];
+
+        (!is_null($status)) ? $params['status'] = $status : '';
+
+        $this->dataProvider->setClass(CommunityUser::class);
+        $response = $this->dataProvider->getCollection($params);
+        return $response->getValue()->getMember();
     }
 }

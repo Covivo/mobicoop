@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block stylesheets %}
-  {{ encore_entry_link_tags("#{assets_prefix ?? ''}article/article") }}
+  {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}article/article") }}#}
 {% endblock %}
 
 {% block main %}
@@ -31,6 +31,3 @@
   </div>
 {% endblock %}
 
-{% block javascripts %}
-  {{ encore_entry_script_tags("#{assets_prefix ?? ''}article/article") }}
-{% endblock %}

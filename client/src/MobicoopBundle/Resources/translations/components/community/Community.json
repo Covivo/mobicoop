@@ -12,6 +12,9 @@
       "join": {
         "label": "Rejoindre la communauté",
         "route": "/communaute/{id}/rejoindre"
+      },
+      "contact":{
+        "route":"/utilisateur/messages/nouveau"
       }
     },
     "tooltips": {
@@ -27,6 +30,41 @@
     },
     "title": {
       "searchCarpool" : "Chercher un trajet dans la communauté"
-    }
+    },
+    "urlCommunityUser":"/community-user"
+  },
+  "en": {
+    "buttons": {
+      "publish": {
+          "label": "Publish an ad",
+          "route": "carpool/search/post"
+      },
+      "search": {
+        "label": "Search",
+        "route": ""
+      },
+      "join": {
+        "label": "Join the community",
+        "route": "/community/{id}/join"
+      },
+      "contact":{
+        "route":"/user/messages/new"
+      }
+    },
+    "tooltips": {
+      "connected": "You have to be connected",
+      "validation": "Pending validation",
+      "domain": "You email address must be in the domain:"
+    },
+    "snackbar": {
+      "joinCommunity": {
+        "textOk": "Your application has been send to the community manager. You will be notified by email.",
+        "textError": "We reached a technical difficulty. Please try again."
+      }
+    },
+    "title": {
+      "searchCarpool" : "Search a journey in the community"
+    },
+    "urlCommunityUser":"/community-user"
   }
 }

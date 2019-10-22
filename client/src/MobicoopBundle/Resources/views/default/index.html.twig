@@ -5,12 +5,12 @@
 {% endblock %}
 
 {% block stylesheets %}
-    {{ encore_entry_link_tags("#{assets_prefix ?? ''}home/home") }}
+    {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}home/home") }}#}
 {% endblock %}
 
 {% block main %}
 
-    <home-search
+    <home
         geo-search-url="{{ geoCompleteUri }}" 
         :user="{{app.user|json_encode}}"
         {{ searchRegular ? 'regular' : '' }}
@@ -39,6 +39,3 @@
     </div>
 {% endblock %}
 
-{% block javascripts %}
-    {{ encore_entry_script_tags("#{assets_prefix ?? ''}home/home") }}
-{% endblock %}

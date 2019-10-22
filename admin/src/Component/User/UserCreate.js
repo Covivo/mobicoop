@@ -1,4 +1,6 @@
 import React from 'react';
+import isAuthorized from '../Utilities/authorization';
+
 //import bcrypt from 'bcryptjs';
 
 import { 
@@ -34,6 +36,10 @@ export const UserCreate = (props) => (
             <FormTab label="Adresses">
 
             </FormTab>
+            {isAuthorized("permission_manage") && 
+            <FormTab label="Droits">
+                
+            </FormTab>}
         </TabbedForm>
 </Create>
 );

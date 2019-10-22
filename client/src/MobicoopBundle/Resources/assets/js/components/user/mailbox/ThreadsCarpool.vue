@@ -27,18 +27,33 @@
 </template>
 <script>
 import axios from "axios";
-import CommonTranslations from "@translations/translations.json";
+import moment from "moment";
 import Translations from "@translations/components/user/mailbox/ThreadsCarpool.json";
 import ThreadCarpool from '@components/user/mailbox/ThreadCarpool'
 export default {
   i18n: {
     messages: Translations,
-    sharedMessages: CommonTranslations
   },
   components:{
     ThreadCarpool
   },
   props: {
+    idThreadDefault:{
+      type: Number,
+      default:null
+    },
+    newThread:{
+      type:Object,
+      default:null
+    },
+    idMessageToSelect:{
+      type: Number,
+      default: null
+    },
+    refreshThreads: {
+      type: Boolean,
+      default: false
+    }
   },
   data(){
     return{
@@ -50,17 +65,16 @@ export default {
       SkeletonHidden: false
     }
   },
+  watch: {
+    idMessageToSelect(){
+      (this.idMessageToSelect) ? this.refreshSelected(this.idMessageToSelect) : '';
+    },
+    refreshThreads(){
+      (this.refreshThreads) ? this.getThreads(this.idMessageToSelect) : '';
+    }
+  },
   mounted(){
-    this.SkeletonHidden = false;
-    axios.get(this.$t("urlGet"))
-      .then(response => {
-        //console.error(response.data.threads);
-        this.SkeletonHidden = true;
-        this.messages = response.data.threads;
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    this.getThreads(this.idThreadDefault);
   },
   methods:{
     emit(data){
@@ -72,12 +86,46 @@ export default {
     refreshSelected(idMessage){
       this.messages.forEach((item, index) => {
         if(item.idMessage == idMessage){
-          item.selected = true;
+          this.$set(item, 'selected', true);
+          // After the select we need to refresh the details
+          this.emit(
+            {
+              idMessage:item.idMessage,
+              idRecipient:item.idRecipient,
+              name:this.name(item.givenName,item.familyName)
+            }
+          )
         }
         else{
-          item.selected = false;
+          this.$set(item, 'selected', false);
         }
       })
+    },
+    getThreads(idMessageSelected=null){
+      this.SkeletonHidden = false;
+      axios.get(this.$t("urlGet"))
+        .then(response => {
+          this.SkeletonHidden = true;
+          this.messages = response.data.threads;
+          // I'm pushing the new "virtual" thread
+          if(this.newThread){
+            response.data.threads.push({
+              date:moment().format(),
+              familyName:this.newThread.familyName,
+              givenName:this.newThread.givenName,
+              idMessage:-1,
+              idRecipient:this.newThread.idRecipient
+            });
+          }
+          (idMessageSelected) ? this.refreshSelected(idMessageSelected) : '';
+          this.$emit("refreshThreadsCarpoolCompleted");
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    name(givenName, familyName) {
+      return givenName + " " + familyName.substr(0, 1).toUpperCase() + ".";
     }
   }
 }

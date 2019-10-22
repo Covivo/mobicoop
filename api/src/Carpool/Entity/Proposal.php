@@ -212,7 +212,7 @@ class Proposal
     /**
      * @var string A comment about the proposal.
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"read","write","threads","thread"})
+     * @Groups({"read","write","results","threads","thread"})
      */
     private $comment;
 

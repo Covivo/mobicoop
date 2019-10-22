@@ -119,11 +119,14 @@ class CommunityController extends AbstractController
     /**
      * Get all communities.
      */
-    public function communityList(CommunityManager $communityManager)
+    public function communityList(CommunityManager $communityManager, UserManager $userManager)
     {
         $this->denyAccessUnlessGranted('list', new Community());
+
+        $user = $userManager->getLoggedUser();
+
         return $this->render('@Mobicoop/community/communities.html.twig', [
-            'communities' => $communityManager->getCommunities(),
+            'communities' => ($user) ? $communityManager->getCommunities($user->getId()) : $communityManager->getCommunities(),
         ]);
     }
 
@@ -197,29 +200,24 @@ class CommunityController extends AbstractController
     }
 
     /**
-     * Get last three users
+     * Get the communityUser of a User
      *
-     * @param int $id
      * @param CommunityManager $communityManager
      * @param UserManager $userManager
-     * @return void
+     * @return Response
      */
-    public function communityUser(int $id, CommunityManager $communityManager, UserManager $userManager)
+    public function communityUser(CommunityManager $communityManager, Request $request)
     {
-        if ($userManager->getLoggedUser()) {
-            $communityUser = $communityManager->getCommunityUser($id, $userManager->getLoggedUser()->getId());
-            $reponseofmanager= $this->handleManagerReturnValue($communityUser);
-            if (!empty($reponseofmanager)) {
-                return $reponseofmanager;
-            }
-            return $this->json($communityUser);
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            return new Response(json_encode($communityManager->getCommunityUser($data['communityId'], $data['userId'], 1)));
         }
         
         return new Response;
     }
 
     /**
-     * Undocumented function
+     * Get last three users
      *
      * @param [type] $id
      * @param CommunityManager $communityManager
@@ -303,6 +301,19 @@ class CommunityController extends AbstractController
             $communities = $communityManager->getAvailableUserCommunities($user)->getMember();
             return new Response(json_encode($communities));
         };
+
+        return new Response();
+    }
+    
+    /**
+     * Check if a user is an accepted member of a community (AJAX)
+     */
+    public function isMember(CommunityManager $communityManager, Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            return new Response(json_encode($communityManager->checkStatus($data['communityId'], $data['userId'], 1)));
+        }
 
         return new Response();
     }

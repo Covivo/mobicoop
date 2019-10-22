@@ -2,7 +2,7 @@
 
 {% block title %}Résultats{% endblock %}
 {% block stylesheets %}
-    {{ encore_entry_link_tags("#{assets_prefix ?? ''}carpool/results") }}
+    {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}carpool/results") }}#}
 {% endblock %}
 {% block main %}
 
@@ -11,13 +11,11 @@
         :destination = "{{ destination }}"
         date = "{{ date }}"
         time = "{{ time }}"
-        :community-id = "{{ communityId }}"
+        :community-id = "{{ communityId ? communityId : "null" }}"
         :user="{{ app.user|json_encode }}"
         {{ regular ? 'regular' : '' }}
+        {{ distinguishRegular ? 'distinguish-regular' : '' }}
     />
 
 
-{% endblock %}
-{% block javascripts %}
-    {{ encore_entry_script_tags("#{assets_prefix ?? ''}carpool/results") }}
 {% endblock %}

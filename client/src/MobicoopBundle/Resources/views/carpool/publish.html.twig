@@ -4,7 +4,7 @@
   {% trans from 'ui' %}carpool.ad_create.title{% endtrans %}
 {% endblock %}
 {% block stylesheets %}
-  {{ encore_entry_link_tags("#{assets_prefix ?? ''}carpool/publish") }}
+  {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}carpool/publish") }}#}
 {% endblock %}
 {% block main %}
 
@@ -23,9 +23,5 @@
     :init-regular = "{{ regular ? 'true' : 'false' }}"
     :first-ad = "{{ firstAd ? 'true' : 'false' }}"
   />
-
-{% endblock %}
-{% block javascripts %}
-  {{ encore_entry_script_tags("#{assets_prefix ?? ''}carpool/publish") }}
 
 {% endblock %}

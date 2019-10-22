@@ -60,6 +60,20 @@
           {{ version }}
         </v-chip> by Mobicoop team. The source code is licensed AGPL3. The website content is licensed AGPL3 too
       </v-flex>
+      <v-flex
+        py-4
+        text-center
+        xs12
+      >
+        <v-btn
+          text
+          rounded
+          :href="$t('buttons.contact.route')"
+          class="text-none"
+        >
+          {{ $t('buttons.contact.label') }}
+        </v-btn>
+      </v-flex>
     </v-layout>
   </v-footer>
 </template>

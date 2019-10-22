@@ -30,7 +30,6 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Image\Entity\Image;
 use App\User\Entity\User;
@@ -56,7 +55,19 @@ use App\Community\Controller\JoinAction;
  *          "pagination_client_items_per_page"=true
  *      },
  *      collectionOperations={
- *          "get",
+ *          "get"={
+  *              "swagger_context" = {
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "userId",
+ *                          "in" = "query",
+ *                          "type" = "number",
+ *                          "format" = "integer",
+ *                          "description" = "Check if this userId is already an accepted member"
+ *                      }
+ *                  }
+ *              }
+*           },
  *          "post",
  *          "available"={
  *              "method"="GET",
@@ -253,6 +264,12 @@ class Community
      */
     private $communitySecurities;
     
+    /**
+     * @var boolean|null If the current user asking is member of the community
+     * @Groups({"read"})
+     */
+    private $member;
+
     public function __construct($id=null)
     {
         $this->id = $id;
@@ -501,6 +518,17 @@ class Community
         return $this;
     }
     
+    public function isMember(): ?bool
+    {
+        return $this->member ? true : false;
+    }
+    
+    public function setMember(?bool $member): self
+    {
+        $this->member = $member ? true : false;
+        
+        return $this;
+    }
     
     // DOCTRINE EVENTS
     

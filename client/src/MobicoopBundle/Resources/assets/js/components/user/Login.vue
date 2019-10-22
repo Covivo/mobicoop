@@ -62,6 +62,13 @@
             {{ $t('ui.button.connection') }}
           </v-btn>
         </v-form>
+        <facebook-login
+          class="button"
+          app-id="960627727637932"
+          @login="getUserData"
+          @logout="onLogout"
+          @get-initial-status="getUserData"
+        />
         <v-card-text>
           <a
             :href="$t('urlRecovery')"
@@ -75,15 +82,18 @@
 </template>
 <script>
 import { merge } from "lodash";
-import CommonTranslations from "@translations/translations.json";
 import Translations from "@translations/components/user/Login.json";
 import TranslationsClient from "@clientTranslations/components/user/Login.json";
-
+import facebookLogin from 'facebook-login-vuejs';
 let TranslationsMerged = merge(Translations, TranslationsClient);
+
 export default {
   i18n: {
     messages: TranslationsMerged,
-    sharedMessages: CommonTranslations
+  },
+  name: "Login",
+  components : {
+    facebookLogin
   },
   props: {
     errormessage: {
@@ -122,6 +132,28 @@ export default {
         this.errorDisplay = this.$t("errorCredentials");
         this.loading = false;
       }
+    },
+    getUseData() {
+      this.FB.api('/me', 'GET', {fields: 'id,name,email' },
+        userInformation => {
+          console.warn("get data from fb", userInformation)
+          this.personalID = userInformation.id;
+          this.email = userInformation.email;
+          this.name = userInformation.name;
+        }
+      )
+    },
+    sdkLoaded(payload) {
+      this.isConnected = payload.isConnected
+      this.FB = payload.FB
+      if (this.isConnected) this.getUserData()
+    },
+    onLogIn() {
+      this.isConnected = true
+      this.getUserData()
+    },
+    onLogOut() {
+      this.isConnected = false;
     }
   }
 };

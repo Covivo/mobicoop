@@ -1,0 +1,122 @@
+<template>
+  <div>
+    <!--Route row-->
+    <v-row
+      align="center"
+      dense
+    >
+      <v-col
+        cols="10"
+      >
+        <route-summary
+          :origin="computedOrigin"
+          :destination="computedDestination"
+          :regular="regular"
+          :type="1"
+        />
+      </v-col>
+
+      <!-- Modify icon -->
+      <v-col
+        cols="2"
+        class="text-right"
+      >
+        <v-btn
+          color="primary"
+          fab
+          small
+          depressed
+        >
+          <v-icon
+            @click="buttonAlert('en cours de développement',$event);"
+          >
+            mdi-lead-pencil
+          </v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
+
+    <!-- date row-->
+    <v-row
+      dense
+    >
+      <v-col
+        cols="5"
+        align="left"
+        class="ml-4 mt-0 subtitle-1 font-weight-bold"
+      >
+        {{ computedDateFormat }}
+      </v-col>
+    </v-row>
+  </div>
+</template>
+
+<script>
+import { merge } from "lodash";
+import moment from "moment";
+import Translations from "@translations/components/carpool/results/MatchingHeader.json";
+import TranslationsClient from "@clientTranslations/components/carpool/results/MatchingHeader.json";
+import RouteSummary from "@components/carpool/utilities/RouteSummary"
+
+let TranslationsMerged = merge(Translations, TranslationsClient);
+export default {
+  components: {
+    RouteSummary
+  },
+  i18n: {
+    messages: TranslationsMerged,
+  },
+  props: {
+    origin: {
+      type: Object,
+      default: null
+    },
+    destination: {
+      type: Object,
+      default: null
+    },
+    date: {
+      type: String,
+      default: null
+    },
+    time: {
+      type: String,
+      default: null
+    },
+    regular: {
+      type: Boolean,
+      default: false
+    },
+  },
+  data() {
+    return {
+      locale: this.$i18n.locale,
+    };
+  },
+  computed: {
+    computedDateFormat() {
+      moment.locale(this.locale);
+      return this.date
+        ? moment(this.date).format(this.$t("ui.i18n.date.format.fullDate"))
+        : "";
+    },
+    computedOrigin() {
+      return {
+        streetAddress: this.origin.streetAddress,
+        addressLocality: this.origin.addressLocality
+      }
+    },
+    computedDestination() {
+      return {
+        streetAddress: this.destination.streetAddress,
+        addressLocality: this.destination.addressLocality
+      }
+    },
+  },
+  methods: {
+    buttonAlert(msg, e) {
+      alert(msg);
+    },
+  }
+};
+</script>

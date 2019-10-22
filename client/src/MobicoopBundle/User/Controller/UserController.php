@@ -385,6 +385,8 @@ class UserController extends AbstractController
                 return new Response(json_encode("error"));
             }
         }
+
+        return new Response();
     }
 
 
@@ -422,12 +424,29 @@ class UserController extends AbstractController
     /**
      * User mailbox
      */
-    public function mailBox(UserManager $userManager, InternalMessageManager $internalMessageManager)
+    public function mailBox(UserManager $userManager, Request $request)
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
 
-        return $this->render('@Mobicoop/user/messages.html.twig', ["idUser"=>$user->getId()]);
+        $newThread = null;
+        $idThreadDefault = null;
+
+        if ($request->isMethod('POST')) {
+            $newThread = [
+                "carpool" => (int)$request->request->get('carpool'),
+                "idRecipient" => (int)$request->request->get('idRecipient'),
+                "familyName" => $request->request->get('familyName'),
+                "givenName" => $request->request->get('givenName')
+            ];
+            $idThreadDefault = -1; // To preselect the new thread. Id is always -1 because it doesn't really exist yet
+        }
+
+        return $this->render('@Mobicoop/user/messages.html.twig', [
+            "idUser"=>$user->getId(),
+            "idThreadDefault"=>$idThreadDefault,
+            "newThread" => $newThread
+        ]);
     }
 
     /*************** NEW VERSION */
@@ -654,7 +673,7 @@ class UserController extends AbstractController
 
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            $idThreadMessage = $data['idThreadMessage'];
+            $idThreadMessage = ($data['idThreadMessage']==-1) ? null : $data['idThreadMessage'];
             $text = $data['text'];
             $idRecipient = $data['idRecipient'];
             $idAskHistory = $data['idAskHistory'];

@@ -4,7 +4,7 @@
   {% trans from 'ui' %}user.signupValidation.title{% endtrans %}
 {% endblock %}
 {% block stylesheets %}
-  {{ encore_entry_link_tags("#{assets_prefix ?? ''}user/signup") }}
+  {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}user/signup") }}#}
 {% endblock %}
 {% block main %}
 
@@ -12,7 +12,4 @@
   url-token="{{ urlToken }}"
   error="{{ error }}" />
 
-{% endblock %}
-{% block javascripts %}
-  {{ encore_entry_script_tags("#{assets_prefix ?? ''}user/signupValidation") }}
 {% endblock %}

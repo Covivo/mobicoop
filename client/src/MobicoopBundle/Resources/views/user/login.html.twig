@@ -4,15 +4,11 @@
   {% trans from 'ui' %}user.login.title{% endtrans %}
 {% endblock %}
 {% block stylesheets %}
-  {{ encore_entry_link_tags("#{assets_prefix ?? ''}user/login") }}
+  {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}user/login") }}#}
 {% endblock %}
 
 {% block main %}
             <login
                 :errormessage="{{ {'value': errorMessage}|json_encode(1) }}">
             </login>
-{% endblock %}
-
-{% block javascripts %}
-  {{ encore_entry_script_tags("#{assets_prefix ?? ''}user/login") }}
 {% endblock %}
