@@ -52,10 +52,6 @@ passengerComment: "Commentaire du passager"
 reservedPlaces: "ContacterPlaces réservées"
 indicativePrice: "Prix indicatif"
 
-# DRIVER_CARPOOL_ASK_ACCEPTED
-
-hour: "à"
-
 # DRIVER_CARPOOL_ASK_POSTED_REGULAR
 
 yourAsk: "vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous."
@@ -94,41 +90,29 @@ at: "à"
 
 # USER_PASSWORD_CHANGE_ASKED
 
+askNewPassword: "Vous avez demandé un nouveau mot de passe."
+clickHereToChangePassword: "Veuillez cliquer sur ce lien pour changer votre mot de passe :"
+linkChangePassword: "Lien de changement de mot de passe"
+urlUpdatePassword: 'utilisateur/mot-de-passe/reset/update/'
+
 # USER_PASSWORD_CHANGED
+
+yourPassword: "Votre mot de passe"
+successfullyChanged: "a bien été changé."
+thanksForUse: "Merci d’utiliser"
 
 # USER_REGISTERED
 
+yourInscription: "Votre inscription au service"
+wellTakenIntoAccount: "est bien prise en compte"
+clickHereToConfirm: "Veuillez cliquer sur ce lien pour confirmer votre email"
+orUseTheValidationCode: "Ou utilisez le code de validation directement sur le site"
+urlEmailValidation: 'utilisateur/inscription/validation/'
+
 # USER_UPDATED_SELF
 
+theModificationIsConfirmed: "La modification suivante de votre profil est confirmée"
+
 urlMailBox: 'utilisateur/messages'
-'Trajet occasionelle Distance covoiturée': 'Trajet occasionelle Distance covoiturée'
-'La modification suivante de votre profil est confirmée': 'La modification suivante de votre profil est confirmée'
-'Vous pouvez répondre à ce message via la messagerie de': 'Vous pouvez répondre à ce message via la messagerie de'
-'Si ce mail comporte un message ne respectant pas la charte, n''hésitez pas à nous contacter.': 'Si ce mail comporte un message ne respectant pas la charte, n''hésitez pas à nous contacter.'
-"Une\n                                                                        question ?": "Une\n                                                                        question ?"
-'Formulaire de contact': 'Formulaire de contact'
-'Foire Aux Questions': 'Foire Aux Questions'
-Cliquez-ici: Cliquez-ici
-'pour gérer vos alertes email.': 'pour gérer vos alertes email.'
-'Covoiturage en attente de validation': 'Covoiturage en attente de validation'
-'Nous sommes content de vous rendre service.': 'Nous sommes content de vous rendre service.'
-'Nous vous notifions par ce message que votre annonce a été posté avec succes!': 'Nous vous notifions par ce message que votre annonce a été posté avec succes!'
-Merci: Merci
-'Vous avez demandé un nouveau mot de passe.': 'Vous avez demandé un nouveau mot de passe.'
-'Veuillez cliquer sur ce lien pour changer votre mot de passe :': 'Veuillez cliquer sur ce lien pour changer votre mot de passe :'
-'Lien de changement de mot de passe': 'Lien de changement de mot de passe'
-urlUpdatePassword: 'utilisateur/mot-de-passe/reset/update/'
-Merci!: Merci!
-'Votre mot de passe': 'Votre mot de passe'
-'a bien été changé.': 'a bien été changé.'
-'Merci d’utiliser': 'Merci d’utiliser'
-'Votre inscription au service': 'Votre inscription au service'
-'est bien prise en compte': 'est bien prise en compte'
-'Veuillez cliquer sur ce lien pour confirmer votre email': 'Veuillez cliquer sur ce lien pour confirmer votre email'
-'Ou utilisez le code de validation directement sur le site': 'Ou utilisez le code de validation directement sur le site'
-'Vous avez un message': 'Vous avez un message'
-Bonjour: Bonjour
-'A très bientôt sur': 'A très bientôt sur'
 The requested page couldn't be located:
   Checkout for any URL misspelling or: 'messages'
-urlEmailValidation: 'utilisateur/inscription/validation/'
