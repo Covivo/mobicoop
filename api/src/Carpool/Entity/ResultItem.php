@@ -183,6 +183,97 @@ class ResultItem
      */
     private $sunTime;
 
+    /**
+     * @var boolean|null Multiple times are used for the days.
+     * @Groups("results")
+     */
+    private $multipleTimes;
+
+    /**
+     * @var string The price by km asked by the driver.
+     * @Groups("results")
+     */
+    private $priceKm;
+
+    /**
+     * @var string The original price asked by the driver for his trip.
+     * @Groups("results")
+     */
+    private $originalPrice;
+
+    /**
+     * @var string The computed price for the common distance carpooled.
+     * @Groups("results")
+     */
+    private $computedPrice;
+
+    /**
+     * @var int The original distance in metres.
+     * @Groups("results")
+     */
+    private $originalDistance;
+    
+    /**
+     * @var int The accepted detour distance in metres.
+     * @Groups("results")
+     */
+    private $acceptedDetourDistance;
+    
+    /**
+     * @var int The new distance in metres.
+     * @Groups("results")
+     */
+    private $newDistance;
+    
+    /**
+     * @var int The detour distance in metres.
+     * @Groups("results")
+     */
+    private $detourDistance;
+    
+    /**
+     * @var int The detour distance in percentage of the original distance.
+     * @Groups("results")
+     */
+    private $detourDistancePercent;
+    
+    /**
+     * @var int The original duration in seconds.
+     * @Groups("results")
+     */
+    private $originalDuration;
+    
+    /**
+     * @var int The accepted detour duration in seconds.
+     * @Groups("results")
+     */
+    private $acceptedDetourDuration;
+    
+    /**
+     * @var int The new duration in seconds.
+     * @Groups("results")
+     */
+    private $newDuration;
+    
+    /**
+     * @var int The detour duration in seconds.
+     * @Groups("results")
+     */
+    
+    private $detourDuration;
+
+    /**
+     * @var int The detour duration in percent of the original duration.
+     * @Groups("results")
+     */
+    private $detourDurationPercent;
+    
+    /**
+     * @var int The common distance in metres.
+     * @Groups("results")
+     */
+    private $commonDistance;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -475,6 +566,202 @@ class ResultItem
     {
         $this->sunTime = $sunTime;
         
+        return $this;
+    }
+
+    public function hasMultipleTimes(): ?bool
+    {
+        return $this->multipleTimes;
+    }
+
+    public function setMultipleTimes(): self
+    {
+        $time = [];
+        if ($this->isMonCheck()) {
+            $time[$this->getMonTime()->format('His')] = 1;
+        }
+        if ($this->isTueCheck()) {
+            $time[$this->getTueTime()->format('His')] = 1;
+        }
+        if ($this->isWedCheck()) {
+            $time[$this->getWedTime()->format('His')] = 1;
+        }
+        if ($this->isThuCheck()) {
+            $time[$this->getThuTime()->format('His')] = 1;
+        }
+        if ($this->isFriCheck()) {
+            $time[$this->getFriTime()->format('His')] = 1;
+        }
+        if ($this->isSatCheck()) {
+            $time[$this->getSatTime()->format('His')] = 1;
+        }
+        if ($this->isSunCheck()) {
+            $time[$this->getSunTime()->format('His')] = 1;
+        }
+        $this->multipleTimes = (count($time) > 1);
+
+        return $this;
+    }
+
+    public function getPriceKm(): ?string
+    {
+        return $this->priceKm;
+    }
+    
+    public function setPriceKm(?string $priceKm)
+    {
+        $this->priceKm = $priceKm;
+    }
+
+    public function getOriginalPrice(): ?string
+    {
+        return $this->originalPrice;
+    }
+    
+    public function setOriginalPrice(?string $originalPrice)
+    {
+        $this->originalPrice = $originalPrice;
+    }
+
+    public function getComputedPrice(): ?string
+    {
+        return $this->computedPrice;
+    }
+    
+    public function setComputedPrice(?string $computedPrice)
+    {
+        $this->computedPrice = $computedPrice;
+    }
+
+    public function getOriginalDistance(): ?int
+    {
+        return $this->originalDistance;
+    }
+
+    public function setOriginalDistance(int $originalDistance): self
+    {
+        $this->originalDistance = $originalDistance;
+
+        return $this;
+    }
+
+    public function getAcceptedDetourDistance(): ?int
+    {
+        return $this->acceptedDetourDistance;
+    }
+
+    public function setAcceptedDetourDistance(int $acceptedDetourDistance): self
+    {
+        $this->acceptedDetourDistance = $acceptedDetourDistance;
+
+        return $this;
+    }
+
+    public function getNewDistance(): ?int
+    {
+        return $this->newDistance;
+    }
+
+    public function setNewDistance(int $newDistance): self
+    {
+        $this->newDistance = $newDistance;
+
+        return $this;
+    }
+
+    public function getDetourDistance(): ?int
+    {
+        return $this->detourDistance;
+    }
+
+    public function setDetourDistance(int $detourDistance): self
+    {
+        $this->detourDistance = $detourDistance;
+
+        return $this;
+    }
+
+    public function getDetourDistancePercent(): ?int
+    {
+        return $this->detourDistancePercent;
+    }
+
+    public function setDetourDistancePercent(int $detourDistancePercent): self
+    {
+        $this->detourDistancePercent = $detourDistancePercent;
+
+        return $this;
+    }
+
+    public function getOriginalDuration(): ?int
+    {
+        return $this->originalDuration;
+    }
+
+    public function setOriginalDuration(int $originalDuration): self
+    {
+        $this->originalDuration = $originalDuration;
+
+        return $this;
+    }
+
+    public function getAcceptedDetourDuration(): ?int
+    {
+        return $this->acceptedDetourDuration;
+    }
+
+    public function setAcceptedDetourDuration(int $acceptedDetourDuration): self
+    {
+        $this->acceptedDetourDuration = $acceptedDetourDuration;
+
+        return $this;
+    }
+
+    public function getNewDuration(): ?int
+    {
+        return $this->newDuration;
+    }
+
+    public function setNewDuration(int $newDuration): self
+    {
+        $this->newDuration = $newDuration;
+
+        return $this;
+    }
+
+    public function getDetourDuration(): ?int
+    {
+        return $this->detourDuration;
+    }
+
+    public function setDetourDuration(int $detourDuration): self
+    {
+        $this->detourDuration = $detourDuration;
+
+        return $this;
+    }
+
+    public function getDetourDurationPercent(): ?int
+    {
+        return $this->detourDurationPercent;
+    }
+
+    public function setDetourDurationPercent(int $detourDurationPercent): self
+    {
+        $this->detourDurationPercent = $detourDurationPercent;
+
+        return $this;
+    }
+
+    public function getCommonDistance(): ?int
+    {
+        return $this->commonDistance;
+    }
+
+    public function setCommonDistance(int $commonDistance): self
+    {
+        $this->commonDistance = $commonDistance;
+
         return $this;
     }
 }

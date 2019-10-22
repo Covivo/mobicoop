@@ -67,12 +67,6 @@ class ResultRole
      */
     private $seats;
 
-    /**
-     * @var string The computed price for the common distance carpooled.
-     * @Groups("results")
-     */
-    private $price;
-
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -117,15 +111,5 @@ class ResultRole
         $this->seats = $seats;
 
         return $this;
-    }
-
-    public function getPrice(): ?string
-    {
-        return $this->price;
-    }
-    
-    public function setPrice(?string $price)
-    {
-        $this->price = $price;
     }
 }
