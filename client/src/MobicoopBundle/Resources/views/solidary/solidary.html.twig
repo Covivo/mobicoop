@@ -10,5 +10,7 @@
             :user="{{app.user|json_encode}}"
             {{ searchRegular ? 'regular' : '' }}
             {{ searchPunctualDate ? 'punctual-date-optional' : '' }}
+            :structures="{{ structures|json_encode }}"
+            :subjects="{{ subjects|json_encode }}"
     ></solidary>
 {% endblock %}

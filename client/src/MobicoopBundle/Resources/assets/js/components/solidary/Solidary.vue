@@ -66,6 +66,14 @@ export default {
       type: Boolean,
       default: false
     },
+    structures: {
+      type: Object,
+      default: null
+    },
+    subjects: {
+      type: Object,
+      default: null
+    }
   },
 }
 </script>

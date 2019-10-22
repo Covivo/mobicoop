@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -21,34 +22,38 @@
  **************************/
 
 
-namespace Mobicoop\Bundle\MobicoopBundle\Solidary\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\Solidary\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Solidary\Service\StructureManager;
-use Mobicoop\Bundle\MobicoopBundle\Solidary\Service\SubjectManager;
-use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Solidary\Entity\Subject;
 
-class SolidaryController extends AbstractController
+class SubjectManager
 {
-    use HydraControllerTrait;
+    private $dataProvider;
 
     /**
+     * Constructor.
      *
-     * @param StructureManager $structureManager
-     * @param SubjectManager $subjectManager
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @param DataProvider $dataProvider
+     * @throws \ReflectionException
      */
-    public function index(StructureManager $structureManager, SubjectManager $subjectManager)
+    public function __construct(DataProvider $dataProvider)
     {
-        $structures = $structureManager->getStructures();
-        $subjects = $subjectManager->getSubjects();
-        
-        return $this->render(
-            '@Mobicoop/solidary/solidary.html.twig',
-            [
-                "subjects" => $subjects,
-                "structures" => $structures
-            ]
-        );
+        $this->dataProvider = $dataProvider;
+        $this->dataProvider->setClass(Subject::class);
+    }
+
+    /**
+     * Get all subjects
+     *
+     * @return array|null        The subjects found or null if not found.
+     */
+    public function getSubjects()
+    {
+        $response = $this->dataProvider->getCollection();
+        if ($response->getCode() >=200 && $response->getCode() <= 300) {
+            return $response->getValue()->getMember();
+        }
+        return $response->getValue();
     }
 }

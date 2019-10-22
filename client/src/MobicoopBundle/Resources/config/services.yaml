@@ -122,3 +122,10 @@ services:
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\Communication\Service\:
         resource: '@MobicoopBundle/Communication/Service/*'
+
+    # Solidary
+    Mobicoop\Bundle\MobicoopBundle\Solidary\Controller\:
+        resource: '@MobicoopBundle/Solidary/Controller/*'
+        tags: ['controller.service_arguments']
+    Mobicoop\Bundle\MobicoopBundle\Solidary\Service\:
+        resource: '@MobicoopBundle/Solidary/Service/*'

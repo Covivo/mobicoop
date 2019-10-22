@@ -370,7 +370,7 @@ solidary:
     path:
         fr: /solidarite
         en: /solidary
-    controller: Mobicoop\Bundle\MobicoopBundle\Solidary\Controller\SolidaryController:showSolidary
+    controller: Mobicoop\Bundle\MobicoopBundle\Solidary\Controller\SolidaryController:index
 
 solidary_ask:
     path:

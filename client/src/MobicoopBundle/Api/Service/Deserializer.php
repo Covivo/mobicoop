@@ -24,6 +24,8 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Api\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Contact;
+use Mobicoop\Bundle\MobicoopBundle\Solidary\Entity\Structure;
+use Mobicoop\Bundle\MobicoopBundle\Solidary\Entity\Subject;
 use TypeError;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
@@ -164,6 +166,10 @@ class Deserializer
                 break;
             case Contact::class:
                 return self::deserializeContact($data);
+            case Subject::class:
+                return self::deserializeSubject($data);
+            case Structure::class:
+                return self::deserializeStructure($data);
             default:
                 break;
         }
@@ -816,6 +822,22 @@ class Deserializer
         return $contact;
     }
 
+    private function deserializeSubject(array $data) : ?Subject
+    {
+        $contact = new Subject();
+        $contact = self::autoSet($contact, $data);
+
+        return $contact;
+    }
+
+    private function deserializeStructure(array $data) : ?Structure
+    {
+        $contact = new Structure();
+        $contact = self::autoSet($contact, $data);
+
+        return $contact;
+    }
+    
     private function autoSet($object, $data)
     {
         $phpDocExtractor = new PhpDocExtractor();
