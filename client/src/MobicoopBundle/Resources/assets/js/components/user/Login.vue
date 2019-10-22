@@ -13,11 +13,11 @@
         <h1>{{ $t('title') }}</h1>
       </v-col>
     </v-row>
-    <v-layout
-      justify-center
-      text-center
+    <v-row
+      justify="center"
+      class="text-center"
     >
-      <v-flex xs4>
+      <v-col class="col-4">
         <v-alert
           v-if="errorDisplay!==''"
           type="error"
@@ -62,13 +62,6 @@
             {{ $t('ui.button.connection') }}
           </v-btn>
         </v-form>
-        <facebook-login
-          class="button"
-          app-id="960627727637932"
-          @login="getUserData"
-          @logout="onLogout"
-          @get-initial-status="getUserData"
-        />
         <v-card-text>
           <a
             :href="$t('urlRecovery')"
@@ -76,15 +69,27 @@
             {{ $t('textRecovery') }}
           </a>
         </v-card-text>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
+    <v-row
+      v-if="showFacebookLogin"
+      justify="center"
+      class="text-center"
+    >
+      <v-col class="col-4">
+        <m-facebook-auth
+          :app-id="facebookLoginAppId"
+          @errorFacebookConnect="treatErrorMessage({'value':'errorFacebookConnect'})"
+        />
+      </v-col>
+    </v-row>
   </v-content>
 </template>
 <script>
 import { merge } from "lodash";
 import Translations from "@translations/components/user/Login.json";
 import TranslationsClient from "@clientTranslations/components/user/Login.json";
-import facebookLogin from 'facebook-login-vuejs';
+import MFacebookAuth from '@components/user/MFacebookAuth';
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
@@ -93,13 +98,21 @@ export default {
   },
   name: "Login",
   components : {
-    facebookLogin
+    MFacebookAuth
   },
   props: {
     errormessage: {
       type: Object,
       default: null
     },
+    showFacebookLogin: {
+      type: Boolean,
+      default: false
+    },
+    facebookLoginAppId: {
+      type: String,
+      default: null
+    }
   },
   data() {
     return {
@@ -132,29 +145,11 @@ export default {
         this.errorDisplay = this.$t("errorCredentials");
         this.loading = false;
       }
+      else if(errorMessage.value ==="errorFacebookConnect"){
+        this.errorDisplay = this.$t("errorCredentialsFacebook");
+        this.loading = false;
+      }
     },
-    getUseData() {
-      this.FB.api('/me', 'GET', {fields: 'id,name,email' },
-        userInformation => {
-          console.warn("get data from fb", userInformation)
-          this.personalID = userInformation.id;
-          this.email = userInformation.email;
-          this.name = userInformation.name;
-        }
-      )
-    },
-    sdkLoaded(payload) {
-      this.isConnected = payload.isConnected
-      this.FB = payload.FB
-      if (this.isConnected) this.getUserData()
-    },
-    onLogIn() {
-      this.isConnected = true
-      this.getUserData()
-    },
-    onLogOut() {
-      this.isConnected = false;
-    }
   }
 };
 </script>

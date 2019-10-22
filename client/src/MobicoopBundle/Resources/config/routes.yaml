@@ -152,8 +152,23 @@ user_message_update_ask:
         en: /user/messages/updateAsk
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageUpdateAsk
 
+# Connection by facebook (POST)
+user_facebook_connect:
+    methods: [POST]
+    path:
+        fr: /utilisateur/facebook/connexion
+        en: /user/facebook/connect
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userFacebookConnect
 
-##################
+# Sign up by facebook (POST)
+user_facebook_signup:
+    methods: [POST]
+    path:
+        fr: /utilisateur/facebook/inscription
+        en: /user/facebook/signup
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userFacebookSignUp
+
+    ##################
 # carpool routes #
 ##################
 

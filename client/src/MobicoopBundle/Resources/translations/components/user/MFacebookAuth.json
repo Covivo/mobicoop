@@ -1,0 +1,14 @@
+{
+    "fr":{
+        "urlFacebookConnect":"/utilisateur/facebook/connexion",
+        "urlFacebookSignup":"/utilisateur/facebook/inscription",
+        "signup":"Inscription par facebook",
+        "connection":"Connexion par facebook"
+    },
+    "en":{
+        "urlFacebookConnect":"/utilisateur/facebook/connect",
+        "urlFacebookSignup":"/utilisateur/facebook/signup",
+        "signup":"Sign up by facebook",
+        "connection":"Log in by facebook"
+    }
+}
