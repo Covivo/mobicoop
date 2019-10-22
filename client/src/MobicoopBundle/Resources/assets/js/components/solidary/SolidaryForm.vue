@@ -307,15 +307,15 @@ export default {
         givenName: this.user && this.user.givenName ? this.user.givenName : "",
         familyName: this.user && this.user.familyName ? this.user.familyName : "",
         email: this.user && this.user.email ? this.user.email : "",
-        phoneNumber: this.user && this.user.phoneNumber ? this.user.phoneNumber : null,
-        yearOfBirth: null,
+        phoneNumber: this.user && this.user.telephone ? this.user.telephone : null,
+        yearOfBirth: this.user && this.user.birthYear ? moment(this.user.birthYear.toString()).format("YYYY-MM-DD") : null,
         hasRSA: false,
         search: null
       },
       genderItems: [
-        { genderItem: this.$t('models.user.gender.values.female'), genderValue: '1' },
-        { genderItem: this.$t('models.user.gender.values.male'), genderValue: '2' },
-        { genderItem: this.$t('models.user.gender.values.other'), genderValue: '3' },
+        { genderItem: this.$t('models.user.gender.values.female'), genderValue: 1 },
+        { genderItem: this.$t('models.user.gender.values.male'), genderValue: 2 },
+        { genderItem: this.$t('models.user.gender.values.other'), genderValue: 3 },
       ],
       rules: {
         genderRules: [
