@@ -21,34 +21,38 @@
  *    LICENSE
  **************************/
 
+namespace App\Solidary\Controller;
 
-namespace Mobicoop\Bundle\MobicoopBundle\Solidary\Service;
+use App\Solidary\Entity\Solidary;
+use App\Solidary\Service\SolidaryManager;
+use App\TranslatorTrait;
 
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
-use Mobicoop\Bundle\MobicoopBundle\Solidary\Entity\Solidary;
-
-class SolidaryManager
+class SolidaryProposalPost
 {
-    private $dataProvider;
+    use TranslatorTrait;
 
     /**
-     * Constructor.
-     *
-     * @param DataProvider $dataProvider
-     * @throws \ReflectionException
+     * @var SolidaryManager
      */
-    public function __construct(DataProvider $dataProvider)
+    private $solidaryManager;
+
+    public function __construct(SolidaryManager $solidaryManager)
     {
-        $this->dataProvider = $dataProvider;
-        $this->dataProvider->setClass(Solidary::class);
+        $this->solidaryManager = $solidaryManager;
     }
 
-    public function createSolidary(Solidary $solidary)
+    /**
+     * This method is invoked when a new ask is posted.
+     *
+     * @param Solidary $data
+     * @return Solidary
+     */
+    public function __invoke(Solidary $data): Solidary
     {
-        $response = $this->dataProvider->post($solidary);
-        if ($response->getCode() == 201) {
-            return $response->getValue();
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad Solidary id is provided"));
         }
-        return null;
+        $data = $this->solidaryManager->createSolidary($data);
+        return $data;
     }
 }

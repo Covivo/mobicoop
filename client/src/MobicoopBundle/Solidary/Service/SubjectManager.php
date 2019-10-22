@@ -26,21 +26,28 @@ namespace Mobicoop\Bundle\MobicoopBundle\Solidary\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Solidary\Entity\Subject;
+use Psr\Log\LoggerInterface;
 
 class SubjectManager
 {
     private $dataProvider;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     /**
      * Constructor.
      *
      * @param DataProvider $dataProvider
+     * @param LoggerInterface $logger
      * @throws \ReflectionException
      */
-    public function __construct(DataProvider $dataProvider)
+    public function __construct(DataProvider $dataProvider, LoggerInterface $logger)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Subject::class);
+        $this->logger = $logger;
     }
 
     /**
@@ -55,5 +62,23 @@ class SubjectManager
             return $response->getValue()->getMember();
         }
         return $response->getValue();
+    }
+
+    /**
+     * Get a subject by its id
+     *
+     * @param int $id
+     * @return array|null|object
+     */
+    public function getSubject(int $id)
+    {
+        $response = $this->dataProvider->getItem($id);
+        if ($response->getCode() == 200) {
+            $subject = $response->getValue();
+            $this->logger->info('Subject | Is found');
+            return $subject;
+        }
+        $this->logger->error('Subject | is Not found');
+        return null;
     }
 }

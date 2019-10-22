@@ -26,21 +26,28 @@ namespace Mobicoop\Bundle\MobicoopBundle\Solidary\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Solidary\Entity\Structure;
+use Psr\Log\LoggerInterface;
 
 class StructureManager
 {
     private $dataProvider;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     /**
      * Constructor.
      *
      * @param DataProvider $dataProvider
+     * @param LoggerInterface $logger
      * @throws \ReflectionException
      */
-    public function __construct(DataProvider $dataProvider)
+    public function __construct(DataProvider $dataProvider, LoggerInterface $logger)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Structure::class);
+        $this->logger = $logger;
     }
 
     /**
@@ -54,5 +61,23 @@ class StructureManager
             return $response->getValue()->getMember();
         }
         return $response->getValue();
+    }
+
+    /**
+     * Get a structure by its id
+     *
+     * @param int $id
+     * @return array|null|object
+     */
+    public function getStructure(int $id)
+    {
+        $response = $this->dataProvider->getItem($id);
+        if ($response->getCode() == 200) {
+            $structure = $response->getValue();
+            $this->logger->info('User | Is found');
+            return $structure;
+        }
+        $this->logger->error('User | is Not found');
+        return null;
     }
 }

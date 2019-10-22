@@ -27,9 +27,17 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class Solidary implements ResourceInterface
 {
+    const ASKED = 0;
+    const REFUSED = 1;
+    const PENDING = 2;
+    const LOOKINGFORSOLUTION = 3;
+    const FOLLOWUP = 4;
+    const CLOSED = 5;
+    
     /**
      * @var int The id of this solidary record.
      */
@@ -61,7 +69,6 @@ class Solidary implements ResourceInterface
     /**
      * @var string Structure of the solidary record.
      *
-     * @Assert\NotBlank
      * @Groups({"get","post"})
      */
     private $structure;
@@ -69,7 +76,6 @@ class Solidary implements ResourceInterface
     /**
      * @var string Subject of the solidary record.
      *
-     * @Assert\NotBlank
      * @Groups({"get","post"})
      */
     private $subject;

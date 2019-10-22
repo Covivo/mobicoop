@@ -23,21 +23,37 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Solidary\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Solidary\Entity\Solidary;
 use Mobicoop\Bundle\MobicoopBundle\Solidary\Service\SolidaryManager;
 use Mobicoop\Bundle\MobicoopBundle\Solidary\Service\StructureManager;
 use Mobicoop\Bundle\MobicoopBundle\Solidary\Service\SubjectManager;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class SolidaryController extends AbstractController
 {
     use HydraControllerTrait;
 
+    private $encoder;
+
     /**
-     *
+     * Constructor
+     * @param UserPasswordEncoderInterface $encoder
+     */
+    public function __construct(UserPasswordEncoderInterface $encoder)
+    {
+        $this->encoder = $encoder;
+    }
+    
+    /**
      * @param StructureManager $structureManager
      * @param SubjectManager $subjectManager
      * @return \Symfony\Component\HttpFoundation\Response
@@ -56,15 +72,120 @@ class SolidaryController extends AbstractController
         );
     }
 
-    public function solidaryCreate(Request $request, SolidaryManager $solidaryManager, UserManager $userManager)
-    {
+    /**
+     * Handle post request from solidary form
+     *
+     * @param Request $request
+     * @param SolidaryManager $solidaryManager
+     * @param UserManager $userManager
+     * @param TranslatorInterface $translator
+     * @param StructureManager $structureManager
+     * @param SubjectManager $subjectManager
+     *
+     * @param ProposalManager $proposalManager
+     * @return JsonResponse
+     */
+    public function solidaryCreate(
+        Request $request,
+        SolidaryManager $solidaryManager,
+        UserManager $userManager,
+        TranslatorInterface $translator,
+        StructureManager $structureManager,
+        SubjectManager $subjectManager,
+        ProposalManager $proposalManager
+    ) {
         $solidary = new Solidary();
 
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
+            $datetime = new \DateTime();
             
-            dump($data);
+            // todo: move in manager ?
+            // get or create the user
+            if (!empty($userManager->getLoggedUser())) {
+                $user = new User($userManager->getLoggedUser()->getId());
+            } else {
+                $user = new User();
+                $address = new Address();
+                
+                // add home address to user if it exists
+                if (isset($data['address'])) {
+                    $address->setAddressCountry($data['address']['addressCountry']);
+                    $address->setAddressLocality($data['address']['addressLocality']);
+                    $address->setCountryCode($data['address']['countryCode']);
+                    $address->setCounty($data['address']['county']);
+                    $address->setLatitude($data['address']['latitude']);
+                    $address->setLocalAdmin($data['address']['localAdmin']);
+                    $address->setLongitude($data['address']['longitude']);
+                    $address->setMacroCounty($data['address']['macroCounty']);
+                    $address->setMacroRegion($data['address']['macroRegion']);
+                    $address->setName($translator->trans('homeAddress', [], 'signup'));
+                    $address->setPostalCode($data['address']['postalCode']);
+                    $address->setRegion($data['address']['region']);
+                    $address->setStreet($data['address']['street']);
+                    $address->setStreetAddress($data['address']['streetAddress']);
+                    $address->setSubLocality($data['address']['subLocality']);
+                    $address->setHome(true);
+                }
+                $user->addAddress($address);
+                
+                // pass front info into user form
+                $user->setEmail($data['email']);
+                $user->setTelephone($data['phoneNumber']);
+                $user->setPassword($data['password']);
+                $user->setGivenName($data['givenName']);
+                $user->setFamilyName($data['familyName']);
+                $user->setGender($data['gender']);
+                $user->setBirthYear($data['yearOfBirth']);
+
+                // Create token to valid inscription
+                $time = $datetime->getTimestamp();
+                // For safety, we strip the slashes because this token can be passed in url
+                $pwdToken = str_replace("/", "", $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt()));
+                $user->setValidatedDateToken($pwdToken);
+                // create user in database
+                $user = $userManager->createUser($user);
+            }
+
+            if (is_null($user)) {
+                return new JsonResponse(
+                    ["errors" => 'user.errors.required'],
+                    \Symfony\Component\HttpFoundation\Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+            }
+            
+            //todo: create proposal from current data
+//            dump($proposalManager->createProposalFromResult($data["search"], $user));
             die;
+            
+            $solidary->setUser($user);
+            $solidary->setCreatedDate($datetime);
+            $solidary->setUpdatedDate($datetime);
+            $solidary->setStatus(Solidary::ASKED);
+            $solidary->setAssisted(!empty($data["structure"]));
+            if (!empty($data["structure"])) {
+                $solidary->setStructure($structureManager->getStructure($data["structure"]));
+            }
+            if (!empty($data["subject"])) {
+                $solidary->setSubject($subjectManager->getSubject($data["subject"]));
+            }
+
+            if ($response = $solidaryManager->createSolidary($solidary)) {
+                return new JsonResponse(
+                    ["message" => "success"],
+                    \Symfony\Component\HttpFoundation\Response::HTTP_ACCEPTED
+                );
+            }
+            return new JsonResponse(
+                ["message" => "error"],
+                \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
+            );
         }
+
+        // todo: custom error and ok messages
+        return new JsonResponse(
+            ["message" => "error"],
+            \Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN
+        );
     }
 }
