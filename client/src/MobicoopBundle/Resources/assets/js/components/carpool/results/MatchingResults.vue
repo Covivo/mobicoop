@@ -1,61 +1,7 @@
 <template>
-  <v-content>
-    <!--loading overlay-->
-    <v-overlay 
-      :value="loading"
-      absolute
-    >
-      <v-progress-circular
-        indeterminate
-      />
-    </v-overlay>
-
-    <v-container fluid>
-      <!-- Number of matchings -->
-      <v-row 
-        justify="center"
-        align="center"
-      >
-        <v-col
-          v-if="!loading"
-          cols="12"
-          align="left"
-        >
-          {{ $tc('matchingNumber', numberOfMatchings, { number: numberOfMatchings }) }}
-        </v-col>
-
-        <v-col
-          v-else
-          cols="12"
-          align="left"
-        >
-          {{ $t('search') }}
-        </v-col>
-      </v-row>
-
-      <!-- Matching results -->
-      <v-row 
-        v-for="(matching,index) in matchings"
-        :key="index"
-        justify="center"
-      >
-        <v-col
-          cols="12"
-          align="left"
-        >    
-          <!-- Matching result -->
-          <matching-result
-            :matching="matching"
-            :user="user"
-            :regular="regular"
-            :distinguish-regular="distinguishRegular"
-            :date="date"
-            @carpool="carpool"
-          />
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-content>
+  <div>
+    <v-container fluid />
+  </div>
 </template>
 
 <script>

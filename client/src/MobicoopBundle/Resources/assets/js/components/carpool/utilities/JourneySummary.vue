@@ -6,7 +6,7 @@
     >
       <!-- Time -->
       <v-col
-        v-if="proposal.criteria.frequency==1 || !regular"
+        v-if="!regular"
         cols="3"
       >
         <v-list-item two-line>
@@ -35,7 +35,7 @@
       <v-col
         cols="2"
       >
-        {{ $tc('places', proposal.criteria.seats, { seats: proposal.criteria.seats }) }}
+        {{ $tc('places', result.seats, { seats: result.seats }) }}
       </v-col>
       <!-- Price -->
       <v-col
@@ -64,38 +64,25 @@ export default {
     messages: TranslationsMerged,
   },
   props: {
-    matching: {
+    result: {
       type: Object,
-      default: null
-    },
-    user: {
-      type:Object,
       default: null
     },
     regular: {
       type: Boolean,
       default: false
     },
-    date: {
-      type: String,
+    user: {
+      type:Object,
       default: null
     }
   },
   data() {
     return {
-      locale: this.$i18n.locale,
-      proposal: this.matching.offer ? this.matching.offer.proposalOffer : this.matching.request.proposalRequest
+      locale: this.$i18n.locale
     };
   },
   computed: {
-    driver() {
-      // the matching user is driver if he has an offer
-      return this.matching.offer ? true : false
-    },
-    passenger() {
-      // the matching user is driver if he has a request
-      return this.matching.request ? true : false
-    },
     computedOrigin() {
       return {
         streetAddress: this.proposal.waypoints[0].address.streetAddress,
@@ -109,33 +96,7 @@ export default {
       }
     },
     computedTime() {
-      if (this.proposal.criteria.frequency == 2) {
-        // we have to search the week day and display the time
-        const dayOfWeek = moment.utc(this.date).format('d');
-        switch (dayOfWeek) {
-        case '0' : 
-          return moment.utc(this.proposal.criteria.sunTime).format(this.$t("ui.i18n.time.format.hourMinute"));
-        case '1' : 
-          return moment.utc(this.proposal.criteria.monTime).format(this.$t("ui.i18n.time.format.hourMinute"));
-        case '2' : 
-          return moment.utc(this.proposal.criteria.tueTime).format(this.$t("ui.i18n.time.format.hourMinute"));
-        case '3' : 
-          return moment.utc(this.proposal.criteria.wedTime).format(this.$t("ui.i18n.time.format.hourMinute"));
-        case '4' : 
-          return moment.utc(this.proposal.criteria.thuTime).format(this.$t("ui.i18n.time.format.hourMinute"));
-        case '5' : 
-          return moment.utc(this.proposal.criteria.friTime).format(this.$t("ui.i18n.time.format.hourMinute"));
-        case '6' : 
-          return moment.utc(this.proposal.criteria.satTime).format(this.$t("ui.i18n.time.format.hourMinute"));
-        default:
-          return '';
-        }
-      } else {
-        return this.proposal.criteria.fromTime
-          ? moment.utc(this.proposal.criteria.fromTime).format(this.$t("ui.i18n.time.format.hourMinute"))
-          : ""; 
-      }
-      
+      return moment.utc(this.result.time).format(this.$t("ui.i18n.time.format.hourMinute"));      
     },
     computedDate() {
       if (this.proposal.criteria.frequency == 2) {

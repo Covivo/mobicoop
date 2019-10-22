@@ -172,16 +172,17 @@ class CarpoolController extends AbstractController
             }
         }
         if ($proposalResult) {
-            // we search the matchings as an offer
-            foreach ($proposalResult->getMatchingOffers() as $offer) {
-                $matchings[$offer->getProposalRequest()->getId()]['request'] = $offer;
-            }
-            // we search the matchings as a request
-            foreach ($proposalResult->getMatchingRequests() as $request) {
-                //if (!array_key_exists($request->getProposalOffer()->getId(), $matchings)) {
-                $matchings[$request->getProposalOffer()->getId()]['offer'] = $request;
-                //}
-            }
+            // // we search the matchings as an offer
+            // foreach ($proposalResult->getMatchingOffers() as $offer) {
+            //     $matchings[$offer->getProposalRequest()->getId()]['request'] = $offer;
+            // }
+            // // we search the matchings as a request
+            // foreach ($proposalResult->getMatchingRequests() as $request) {
+            //     //if (!array_key_exists($request->getProposalOffer()->getId(), $matchings)) {
+            //     $matchings[$request->getProposalOffer()->getId()]['offer'] = $request;
+            //     //}
+            // }
+            $matchings = $proposalResult->getResults();
         }
 
         return $this->json($matchings);

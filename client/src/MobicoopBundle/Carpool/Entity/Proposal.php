@@ -148,6 +148,11 @@ class Proposal implements ResourceInterface, \JsonSerializable
      */
     private $matchedProposal;
 
+    /**
+     * @var array The matching results of a proposal in a user-friendly format.
+     */
+    private $results;
+
     public function __construct($id=null)
     {
         if ($id) {
@@ -468,6 +473,18 @@ class Proposal implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getResults()
+    {
+        return $this->results;
+    }
+
+    public function setResults($results)
+    {
+        $this->results = $results;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -480,7 +497,8 @@ class Proposal implements ResourceInterface, \JsonSerializable
             'user'              => $this->getUser(),
             'criteria'          => $this->getCriteria(),
             'type'              => $this->getType(),
-            'waypoints'         => $this->getWaypoints()
+            'waypoints'         => $this->getWaypoints(),
+            'results'           => $this->getResults()
         ];
     }
 }

@@ -102,10 +102,8 @@ class ProposalManager
     /**
      * Create a proposal for a simple search.
      *
-     * @param float $originLatitude             The latitude of the origin point
-     * @param float $originLongitude            The longitude of the origin point
-     * @param float $destinationLatitude        The latitude of the destination point
-     * @param float $destinationLongitude       The longitude of the destination point
+     * @param Address $origin                   The origin
+     * @param Address $destination              The destination
      * @param integer $frequency                The frequency of the trip (1=punctual, 2=regular)
      * @param \Datetime|null $date              The date and time of the trip
      * @param boolean|null $useTime             True to use the time part of the date, false to ignore the time part
@@ -122,10 +120,8 @@ class ProposalManager
      * @return void
      */
     public function searchMatchings(
-        float $originLatitude,
-        float $originLongitude,
-        float $destinationLatitude,
-        float $destinationLongitude,
+        Address $origin,
+        Address $destination,
         int $frequency,
         ?\Datetime $date = null,
         ?bool $useTime = null,
@@ -209,18 +205,12 @@ class ProposalManager
         }
         
         $waypointOrigin = new Waypoint();
-        $originAddress = new Address();
-        $originAddress->setLatitude((string)$originLatitude);
-        $originAddress->setLongitude((string)$originLongitude);
-        $waypointOrigin->setAddress($originAddress);
+        $waypointOrigin->setAddress($origin);
         $waypointOrigin->setPosition(0);
         $waypointOrigin->setDestination(false);
         
         $waypointDestination = new Waypoint();
-        $destinationAddress = new Address();
-        $destinationAddress->setLatitude((string)$destinationLatitude);
-        $destinationAddress->setLongitude((string)$destinationLongitude);
-        $waypointDestination->setAddress($destinationAddress);
+        $waypointDestination->setAddress($destination);
         $waypointDestination->setPosition(1);
         $waypointDestination->setDestination(true);
         
@@ -455,6 +445,9 @@ class ProposalManager
                 // the carpooler can be passenger
                 if (is_null($result->getFrequency())) {
                     $result->setFrequency($matching['request']->getCriteria()->getFrequency());
+                }
+                if (is_null($result->getFrequencyResult())) {
+                    $result->setFrequencyResult($matching['request']->getProposalRequest()->getCriteria()->getFrequency());
                 }
                 if (is_null($result->getCarpooler())) {
                     $result->setCarpooler($matching['request']->getProposalRequest()->getUser());
@@ -746,6 +739,9 @@ class ProposalManager
                 // the carpooler can be driver
                 if (is_null($result->getFrequency())) {
                     $result->setFrequency($matching['offer']->getCriteria()->getFrequency());
+                }
+                if (is_null($result->getFrequencyResult())) {
+                    $result->setFrequencyResult($matching['offer']->getProposalOffer()->getCriteria()->getFrequency());
                 }
                 if (is_null($result->getCarpooler())) {
                     $result->setCarpooler($matching['offer']->getProposalOffer()->getUser());

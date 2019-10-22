@@ -21,73 +21,76 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-use App\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 
 /**
  * Carpooling : result resource for a search / ad post.
- *
- * @ApiResource(
- *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
- *      },
- *      collectionOperations={"get"},
- *      itemOperations={"get"}
- * )
  */
-class Result
+class Result implements ResourceInterface, \JsonSerializable
 {
-    const DEFAULT_ID = 999999999999;
-    
     /**
      * @var int The id of this result.
-     * @ApiProperty(identifier=true)
      */
     private $id;
 
     /**
+     * @var string|null The iri of this result.
+     */
+    private $iri;
+
+    /**
      * @var ResultRole|null The result with the carpooler as driver and the person who search / post as a passenger.
-     * @Groups("results")
      */
     private $resultDriver;
 
     /**
      * @var ResultRole|null The result with the carpooler as passenger and the person who search / post as a driver.
-     * @Groups("results")
      */
     private $resultPassenger;
 
     /**
      * @var User The carpooler found.
-     * @Groups("results")
      */
     private $carpooler;
 
     /**
      * @var int The frequency of the search/ad (1 = punctual / 2 = regular).
-     * @Groups("results")
      */
     private $frequency;
 
     /**
      * @var int The frequency of the matching proposal result (1 = punctual / 2 = regular).
-     * @Groups("results")
      */
     private $frequencyResult;
 
-    public function __construct()
+    public function __construct($id=null)
     {
-        $this->id = self::DEFAULT_ID;
+        if ($id) {
+            $this->setId($id);
+            $this->setIri("/results/".$id);
+        }
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+    
+    public function setId(int $id)
+    {
+        $this->id = $id;
+    }
+    
+    public function getIri()
+    {
+        return $this->iri;
+    }
+    
+    public function setIri($iri)
+    {
+        $this->iri = $iri;
     }
 
     public function getResultDriver(): ?ResultRole
@@ -148,5 +151,19 @@ class Result
         $this->frequencyResult = $frequencyResult;
 
         return $this;
+    }
+
+    // If you want more info you just have to add it to the jsonSerialize function
+    public function jsonSerialize()
+    {
+        return
+        [
+            'id'                => $this->getId(),
+            'resultDriver'      => $this->getResultdriver(),
+            'resultPassenger'   => $this->getResultPassenger(),
+            'carpooler'         => $this->getCarpooler(),
+            'frequency'         => $this->getFrequency(),
+            'frequencyResult'   => $this->getFrequencyResult()
+        ];
     }
 }

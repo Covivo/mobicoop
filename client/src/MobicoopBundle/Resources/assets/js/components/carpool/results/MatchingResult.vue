@@ -14,17 +14,17 @@
           align="center"
         >
           <v-icon
-            v-if="driver"
+            v-if="result.resultDriver"
             color="primary"
-            :size="!passenger ? '75' : '40'"
+            :size="!result.resultPassenger ? '75' : '40'"
           >
             mdi-car
           </v-icon>
 
           <v-icon
-            v-if="passenger"
+            v-if="result.resultPassenger"
             color="primary"
-            :size="!driver ? '75' : '40'"
+            :size="!result.resultDriver ? '75' : '40'"
           >
             mdi-walk
           </v-icon>
@@ -37,17 +37,16 @@
           <!-- Regular : summary of days -->
           <regular-planning-summary
             v-if="showRegularSummary"
-            :proposal="driver ? matching.offer.proposalOffer : matching.request.proposalRequest"
+            :result="result.resultDriver ? result.resultDriver : result.resultPassenger"
           />
 
           <v-divider v-if="showRegularSummary" />
 
           <!-- Journey summary : date, time, summary of route, seats, price -->
           <journey-summary
-            :matching="matching"
-            :regular="regular"
+            :regular="result.frequency == 2"
+            :result="result.resultDriver ? result.resultDriver : result.resultPassenger"
             :user="user"
-            :date="driver ? matching.offer.criteria.fromDate : matching.request.criteria.fromDate"
           />
 
           <v-divider />
@@ -55,9 +54,7 @@
           <!-- Carpooler detail -->
           <carpooler-summary
             :user="user"
-            :carpooler="driver ? matching.offer.proposalOffer.user : matching.request.proposalRequest.user"
-            :proposal="driver ? matching.offer.proposalOffer : matching.request.proposalRequest"
-            :matching="matching"
+            :carpooler="result.carpooler"
             @carpool="carpool"
           />
         </v-col>
@@ -85,21 +82,13 @@ export default {
     messages: TranslationsMerged,
   },
   props: {
-    matching: {
+    result: {
       type:Object,
       default: null
     },
     user: {
       type:Object,
       default: null
-    },
-    date: {
-      type: String,
-      default: null
-    },
-    regular: {
-      type: Boolean,
-      default: false
     },
     // show regular journeys results as regular journeys in case of punctual search
     // if not, the regular journey will be displayed as a punctual journey
@@ -115,28 +104,13 @@ export default {
   },
   computed: {
     showRegularSummary() {
-      if (!this.regular && !this.distinguishRegular) return false;
-      if (this.driver) {
-        if (this.matching.offer.proposalOffer.criteria.frequency == 2) return true;
-      }
-      if (this.passenger) {
-        if (this.matching.request.proposalRequest.criteria.frequency == 2) return true;
-      }
-      return false;
-    },
-    driver() {
-      // the matching user is driver if he has an offer
-      return this.matching.offer ? true : false
-    },
-    passenger() {
-      // the matching user is driver if he has a request
-      return this.matching.request ? true : false
+      return (this.result.frequency == 2 && this.distinguishRegular);
     }
   },
   methods :{
     carpool() {
       this.$emit("carpool", {
-        matching: this.matching
+        //matching: this.matching
       });
     },
 
