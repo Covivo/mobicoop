@@ -60,11 +60,14 @@
             "alert":"Maintenant, pour être alerté de nouvelles annonces correspondant à votre trajet le plus fréquent, publier sans attendre votre première annonce de trajet régulier afin de pouvoir covoiturer rapidement."
         },
         "messageSolidaryAd": {
-            "message": "Cette annonce est une annonce de covoiturage solidaire exclusif. Elle ne sera visible que par les opérateurs solidaires pour vous mettre en relation avec un demandeur solidaire. Si vous cliquer sur le switch, votre annonce deviendra une annonce ordinaire visible à la fois par les autres covoitureurs et les opérateurs solidaires.",
+            "message": " Cette annonce sera une annonce de covoiturage solidaire exclusif, si vous maintenez l'option ci-dessous. Elle ne sera visible alors que par les opérateurs solidaires pour vous mettre en relation avec un demandeur solidaire. Si vous décochez cette option, votre annonce deviendra une annonce ordinaire visible à la fois par les autres covoitureurs et les opérateurs solidaires.",
             "switch": {
-                "activated": "Trajet solidaire activé",
-                "deactivated": "Trajet solidaire désactivé"
+                "label": "Annonce de covoiturage solidaire exclusif"
             }
+        },
+        "route": {
+            "publish": "covoiturage/annonce/poster",
+            "search": "covoiturage/annonce/{id}/resultats"
         }
     }
 }

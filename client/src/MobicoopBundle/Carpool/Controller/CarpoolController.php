@@ -87,17 +87,6 @@ class CarpoolController extends AbstractController
     {
         $proposal = new Proposal();
         $poster = $userManager->getLoggedUser();
-
-        if ($request->isMethod('POST')) {
-            $data = json_decode($request->getContent(), true);
-            if ($poster && isset($data['userDelegated']) && $data['userDelegated'] != $poster->getId()) {
-                $this->denyAccessUnlessGranted('post_delegate', $proposal);
-            } else {
-                $this->denyAccessUnlessGranted('post', $proposal);
-            }
-            return $this->json(['result'=>$proposalManager->createProposalFromAd($data, $poster)]);
-        }
-
         $this->denyAccessUnlessGranted('create_ad', $proposal);
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
@@ -121,17 +110,6 @@ class CarpoolController extends AbstractController
     {
         $proposal = new Proposal();
         $poster = $userManager->getLoggedUser();
-
-        if ($request->isMethod('POST')) {
-            $data = json_decode($request->getContent(), true);
-            if ($poster && isset($data['userDelegated']) && $data['userDelegated'] != $poster->getId()) {
-                $this->denyAccessUnlessGranted('post_delegate', $proposal);
-            } else {
-                $this->denyAccessUnlessGranted('post', $proposal);
-            }
-            return $this->json(['result'=>$proposalManager->createProposalFromAd($data, $poster)]);
-        }
-
         $this->denyAccessUnlessGranted('create_ad', $proposal);
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',

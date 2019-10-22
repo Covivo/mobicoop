@@ -22,7 +22,7 @@
         </v-col>
       </v-row>
       <v-row
-        v-if="solidary"
+        v-if="solidaryAd"
         justify="center"
       >
         <v-col
@@ -43,13 +43,13 @@
           cols="12"
           md="8"
           xl="6"
-          class="text-center"
+          class="d-flex justify-center"
         >
           <v-switch
             v-model="solidary"
             color="secondary"
             inset
-            :label="solidary ? this.$t('messageSolidaryAd.switch.activated') : this.$t('messageSolidaryAd.switch.deactivated')"
+            :label="this.$t('messageSolidaryAd.switch.label')"
           />
         </v-col>
       </v-row>
@@ -131,7 +131,7 @@
 
               <!-- Step 5 : participation (if driver) -->
               <v-stepper-step
-                v-if="driver"
+                v-if="driver && !solidary"
                 editable
                 :step="5"
                 color="success"
@@ -374,7 +374,7 @@
 
               <!-- Step 5 : participation (if driver) -->
               <v-stepper-content
-                v-if="driver"
+                v-if="driver && !solidary"
                 step="5"
               >
                 <v-row
@@ -463,6 +463,7 @@
                         :user="user"
                         :origin="origin"
                         :destination="destination"
+                        :solidary="solidary"
                       />
                     </v-col>
                   </v-row>
@@ -584,10 +585,6 @@ export default {
     defaultPriceKm: {
       type: Number,
       default: 0.06
-    },
-    publishUrl: {
-      type: String,
-      default: 'covoiturage/annonce/poster'
     },
     resultsUrl: {
       type: String,
@@ -733,7 +730,7 @@ export default {
       return true;
     },
     urlToCall() {
-      return `${this.baseUrl}/${this.publishUrl}`;
+      return `${this.baseUrl}/${this.$t('route.publish')}`;
     },
   },
   watch: {
@@ -848,8 +845,8 @@ export default {
       if (this.luggage) postObject.luggage = this.luggage;
       if (this.bike) postObject.bike = this.bike;
       if (this.backSeats) postObject.backSeats = this.backSeats;
-      if (this.price) postObject.price = this.price;
-      if (this.pricePerKm) postObject.priceKm = this.pricePerKm;
+      if (this.price) postObject.price = this.solidary ? 0 : this.price;
+      if (this.pricePerKm) postObject.priceKm = this.solidary ? 0 : this.pricePerKm;
       if (this.message) postObject.message = this.message;
       // the following parameters are not used yet but we keep them here for possible future use
       if (this.regularLifetime) postObject.regularLifetime = this.regularLifetime;

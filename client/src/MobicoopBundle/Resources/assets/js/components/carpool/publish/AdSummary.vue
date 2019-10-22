@@ -68,7 +68,7 @@
             offset="1"
             align="right"
           >
-            <h2>{{ price }} €</h2>
+            <h2>{{ solidary ? 0 : price }} €</h2>
           </v-col>
         </v-row>
 
@@ -456,7 +456,11 @@ export default {
     displayInfo: {
       type: Boolean,
       default: true
-    }
+    },
+    solidary: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {

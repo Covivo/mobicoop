@@ -2,7 +2,7 @@
   <v-card
     :class="textColor"
     :color="backgroundColor"
-    :height="200"
+    :height="height"
   >
     <v-card-title
       class="body-1 justify-center"
@@ -95,6 +95,10 @@ export default {
       type: String,
       default: "#"
     },
+    height: {
+      type: Number,
+      default: 200
+    }
   },
   data() {
     return {

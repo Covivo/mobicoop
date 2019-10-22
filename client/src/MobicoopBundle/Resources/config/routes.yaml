@@ -160,7 +160,7 @@ user_message_update_ask:
 # post an ad
 carpool_ad_post:
     path:
-        fr: /covoiturage/annonce/poster/
+        fr: /covoiturage/annonce/poster
         en: /carpool/ad/post/
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPost
 
@@ -303,6 +303,7 @@ community_proposals:
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityProposals
     requirements:
         id: '\d+'
+        
 # get all available communities for the logged user (AJAX)
 community_user_available:
     path:
