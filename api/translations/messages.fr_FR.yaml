@@ -113,3 +113,56 @@ theModificationIsConfirmed: "La modification suivante de votre profil est confir
 urlMailBox: 'utilisateur/messages'
 The requested page couldn't be located:
   Checkout for any URL misspelling or: 'messages'
+
+
+  ######      SMS      ######
+
+  # CARPOOL_AD_RENEWAL
+
+inFewDays: "Dans quelques jours,  vos annonces de covoiturage ne seront plus valides."
+renewYourAdsOn: "Renouvelez votre annonce sur "
+
+# CARPOOL_ASK_ACCEPTED
+
+
+# CARPOOL_ASK_POSTED
+
+# CARPOOL_ASK_REFUSED
+
+# CARPOOL_MATCHING_NEW
+
+newAdPublished: "Une nouvelle annonce a été publiée pour votre trajet "
+appointmentIn: ". Rdv dans Mes annonces."
+at: "à"
+
+# CARPOOL_INTERNAL_MESSAGE_RECEIVED
+
+newMessage: "Vous avez reçu un nouveau message de "
+lookYourMessaging: "Voir sur votre messagerie "
+
+# DRIVER_CARPOOL_ASK_ACCEPTED_REGULAR
+
+carpoolAskAcceptedRegular: "Covoiturage régulier confirmé avec"
+between: "entre"
+and: "et"
+
+# DRIVER_CARPOOL_ASK_ACCEPTED
+
+carpoolAskAccepted: "Covoiturage confirmé avec "
+
+# DRIVER_CARPOOL_ASK_POSTED_REGULAR
+
+askYouCarpoolRegular: "vous propose un covoiturage régulier de "
+findTheProposalIn: "Retrouvez la proposition dans « Mes Messages »."
+
+# DRIVER_CARPOOL_ASK_POSTED
+
+askYouCarpool: "vous propose un covoiturage de "
+
+# DRIVER_CARPOOL_ASK_REFUSED_REGULAR
+
+refusedAskRegular: "décline le covoiturage régulier de " 
+
+# DRIVER_CARPOOL_ASK_REFUSED
+
+refusedAskRegular: "décline le covoiturage de " 
