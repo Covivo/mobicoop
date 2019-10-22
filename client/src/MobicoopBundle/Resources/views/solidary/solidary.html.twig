@@ -5,5 +5,10 @@
 {% endblock %}
 
 {% block main %}
-    <solidary :user="{{app.user|json_encode}}"></solidary>
+    <solidary 
+            geo-search-url="{{ geoCompleteUri }}"
+            :user="{{app.user|json_encode}}"
+            {{ searchRegular ? 'regular' : '' }}
+            {{ searchPunctualDate ? 'punctual-date-optional' : '' }}
+    ></solidary>
 {% endblock %}

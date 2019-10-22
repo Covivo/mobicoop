@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container>
     <v-row
       justify="center"
     >
@@ -19,8 +19,72 @@
         </v-alert>
       </v-col>
     </v-row>
-    <!--todo: faire un searchSolidary component-->
-    <Search />
+
+    <v-row
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        sm="8"
+        md="6"
+        align="center"
+      >
+        <!--SearchJourney-->
+        <search-journey
+          :geo-search-url="geoSearchUrl"
+          :user="user"
+          :init-regular="dataRegular"
+          :punctual-date-optional="punctualDateOptional"
+          @change="searchChanged"
+        />
+      </v-col>
+    </v-row>
+    <v-row
+      justify="center"
+    >
+      <v-col
+        cols="6"
+        sm="4"
+        md="3"
+      >
+        <v-select
+          :items="form.structureitems"
+          :label="$t('structure.placeholder') + ' *'"
+        />
+      </v-col>
+      <v-col
+        cols="6"
+        sm="4"
+        md="3"
+      >
+        <v-text-field
+          :label="$t('other.label')"
+        />
+      </v-col>
+    </v-row>
+    <v-row
+      justify="center"
+    >
+      <v-col
+        cols="6"
+        sm="4"
+        md="3"
+      >
+        <v-select
+          :items="form.objectItems"
+          :label="$t('object.placeholder') + ' *'"
+        />
+      </v-col>
+      <v-col
+        cols="6"
+        sm="4"
+        md="3"
+      >
+        <v-text-field
+          :label="$t('other.label')"
+        />
+      </v-col>
+    </v-row>
       
     <v-row
       justify="center"
@@ -146,7 +210,7 @@ import {merge} from "lodash";
 import moment from "moment";
 import Translations from "@translations/components/solidary/SolidaryForm.json";
 import TranslationsClient from "@clientTranslations/components/solidary/SolidaryForm.json";
-import Search from "@components/carpool/search/Search.vue";
+import SearchJourney from "@components/carpool/search/SearchJourney";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -154,9 +218,27 @@ export default {
   i18n: {
     messages: TranslationsMerged
   },
-  name: "SolidarityForm",
+  name: "SolidaryForm",
   components: {
-    Search
+    SearchJourney
+  },
+  props: {
+    geoSearchUrl: {
+      type: String,
+      default: ""
+    },
+    user: {
+      type: Object,
+      default: null
+    },
+    regular: {
+      type: Boolean,
+      default: false
+    },
+    punctualDateOptional: {
+      type: Boolean,
+      default: false
+    },
   },
   data () {
     return {
@@ -167,8 +249,12 @@ export default {
         message: ""
       },
       pickerActive: false,
-      // todo: faire une fichier de fonction pour les rules
+      // todo: faire un fichier de fonction pour les rules
       form: {
+        structure: null,
+        structureItems: [],
+        object: null,
+        objectItems: [],
         civility: "",
         civilityItems: [],
         givenName: "",
@@ -181,7 +267,6 @@ export default {
         phoneNumer: null,
         yearsOfBirth: null,
         hasRSA: false,
-        
       },
       years: {
         max: moment().format(),

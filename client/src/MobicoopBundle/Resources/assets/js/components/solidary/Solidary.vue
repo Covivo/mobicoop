@@ -21,7 +21,15 @@
           <p>{{ $t('introduction2') }}</p>
         </v-col>
       </v-row>
-      <solidary-form />
+      
+      <!--solidary-form-->
+      
+      <solidary-form
+        :geo-search-url="geoSearchUrl"
+        :user="user"
+        :init-regular="dataRegular"
+        :punctual-date-optional="punctualDateOptional"
+      />
     </v-container>
   </v-content>
 </template>
@@ -40,7 +48,25 @@ export default {
   name: "Solidarity",
   components: {
     SolidaryForm
-  }
+  },
+  props: {
+    geoSearchUrl: {
+      type: String,
+      default: ""
+    },
+    user: {
+      type: Object,
+      default: null
+    },
+    regular: {
+      type: Boolean,
+      default: false
+    },
+    punctualDateOptional: {
+      type: Boolean,
+      default: false
+    },
+  },
 }
 </script>
 
