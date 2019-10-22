@@ -2,11 +2,16 @@ export default {
   fr: {
     ui: {
       buttons: {
-        validate: "Valider",
-        cancel: "Annuler"
+        validate: {
+          label: "Valider",
+          route: "/solidarite/demande"
+        },
+        cancel: {
+          label: "Annuler"
+        }
       }
     },
-    yearsOfBirth: {
+    yearOfBirth: {
       label: "Année de naissance",
       placeholder: "Année de naissance"
     },
@@ -25,6 +30,39 @@ export default {
     other: {
       label: "Autre",
       placeholder: "Autre"
+    }
+  },
+  en: {
+    ui: {
+      buttons: {
+        validate: {
+          label: "Validate",
+          route: "/solidary/ask"
+        },
+        cancel: {
+          label: "Cancel"
+        }
+      }
+    },
+    yearOfBirth: {
+      label: "Year of birth",
+      placeholder: "Year of birth"
+    },
+    hasRSA: {
+      label: "",
+      placeholder: ""
+    },
+    subject: {
+      label: "",
+      placeholder: ""
+    },
+    structure: {
+      label: "",
+      placeholder: ""
+    },
+    other: {
+      label: "Other",
+      placeholder: "Other"
     }
   }
 }

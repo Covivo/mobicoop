@@ -376,4 +376,4 @@ solidary_ask:
     path:
         fr: /solidarite/demande
         en: /solidary/ask
-#    controller: Mobicoop\Bundle\MobicoopBundle\Communication\Controller\ContactController:sendContact
+    controller: Mobicoop\Bundle\MobicoopBundle\Solidary\Controller\SolidaryController:solidaryCreate

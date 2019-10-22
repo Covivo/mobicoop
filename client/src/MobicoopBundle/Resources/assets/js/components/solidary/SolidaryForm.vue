@@ -42,59 +42,62 @@
     </v-row>
     
     <!--Structure and subject-->
-    <v-container>
-      <v-row
-        justify="center"
+    <v-row
+      justify="center"
+    >
+      <v-col
+        cols="6"
+        sm="4"
+        md="3"
       >
-        <v-col
-          cols="6"
-          sm="4"
-          md="3"
-        >
-          <v-select
-            v-model="form.structure"
-            :items="structures"
-            item-text="name"
-            item-value="id"
-            :label="$t('structure.placeholder') + ' *'"
-          />
-        </v-col>
-        <v-col
-          cols="6"
-          sm="4"
-          md="3"
-        >
-          <v-text-field
-            :disabled="!isOtherStructureActive"
-            :label="$t('other.label')"
-          />
-        </v-col>
-        
-        <v-col
-          cols="6"
-          sm="4"
-          md="3"
-        >
-          <v-select
-            v-model="form.subject"
-            :items="subjects"
-            item-text="label"
-            item-value="id"
-            :label="$t('subject.placeholder') + ' *'"
-          />
-        </v-col>
-        <v-col
-          cols="6"
-          sm="4"
-          md="3"
-        >
-          <v-text-field
-            :disabled="!isOtherSubjectActive"
-            :label="$t('other.label')"
-          />
-        </v-col>
-      </v-row>
-    </v-container>
+        <v-select
+          v-model="form.structure"
+          :items="structures"
+          item-text="name"
+          item-value="id"
+          :label="$t('structure.placeholder')"
+        />
+      </v-col>
+      <v-col
+        cols="6"
+        sm="4"
+        md="3"
+      >
+        <v-text-field
+          v-model="form.otherStructure"
+          :disabled="!isOtherStructureActive"
+          :label="$t('other.label')"
+        />
+      </v-col>
+    </v-row>
+    <v-row
+      justify="center"
+    >
+      <v-col
+        cols="6"
+        sm="4"
+        md="3"
+      >
+        <v-select
+          v-model="form.subject"
+          :items="subjects"
+          item-text="label"
+          item-value="id"
+          :label="$t('subject.placeholder')"
+        />
+      </v-col>
+      <v-col
+        cols="6"
+        sm="4"
+        md="3"
+      >
+        <v-text-field
+          v-model="form.otherSubject"
+          :disabled="!isOtherSubjectActive"
+          :label="$t('other.label')"
+        />
+      </v-col>
+    </v-row>
     
     <!--user data-->
     
@@ -111,7 +114,6 @@
           id="formSolidary"
           ref="form"
           v-model="valid"
-          lazy-validation
         >
           <v-container>
             <v-row>
@@ -119,7 +121,9 @@
                 cols="12"
               >
                 <v-select
-                  :items="form.genderItems"
+                  v-model="form.gender"
+                  :items="genderItems"
+                  :rules="rules.genderRules"
                   item-text="genderItem"
                   item-value="genderValue"
                   :label="$t('models.user.gender.placeholder') + ' *'"
@@ -129,7 +133,9 @@
                 cols="12"
               >
                 <v-text-field
+                  v-model="form.familyName"
                   :label="$t('models.user.familyName.placeholder') + ' *'"
+                  :rules="rules.familyNameRules"
                   name="lastName"
                 />
               </v-col>
@@ -137,7 +143,9 @@
                 cols="12"
               >
                 <v-text-field
+                  v-model="form.givenName"
                   :label="$t('models.user.givenName.placeholder') + ' *'"
+                  :rules="rules.givenNameRules"
                   name="firstName"
                 />
               </v-col>
@@ -155,14 +163,15 @@
                 >
                   <template v-slot:activator="{ on }">
                     <v-text-field
-                      v-model="getYearOfBirth"
-                      :label="$t('yearsOfBirth.placeholder') + ' *'"
+                      v-model="yearOfBirth"
+                      :label="$t('yearOfBirth.placeholder') + ' *'"
+                      :rules="rules.yearsOfBirthRules"
                       v-on="on"
                     />
                   </template>
                   <v-date-picker
                     ref="picker"
-                    v-model="form.yearsOfBirth"
+                    v-model="form.yearOfBirth"
                     no-title
                     reactive
                     :max="years.max"
@@ -180,9 +189,9 @@
                     <v-btn
                       text
                       color="primary"
-                      @click="$refs.menu.save(form.yearsOfBirth)"
+                      @click="$refs.menu.save(form.yearOfBirth)"
                     >
-                      {{ $t('ui.buttons.validate') }}
+                      {{ $t('ui.buttons.validate.label') }}
                     </v-btn>
                   </v-date-picker>
                 </v-menu>
@@ -191,7 +200,9 @@
                 cols="12"
               >
                 <v-text-field
+                  v-model="form.email"
                   :label="$t('models.user.email.placeholder') + ' *'"
+                  :rules="rules.emailRules"
                   name="email"
                 />
               </v-col>
@@ -199,7 +210,9 @@
                 cols="12"
               >
                 <v-text-field
+                  v-model="form.phoneNumber"
                   :label="$t('models.user.phone.placeholder') + ' *'"
+                  :rules="rules.phoneNumberRules"
                   name="phone"
                 />
               </v-col>
@@ -208,10 +221,23 @@
               >
                 <v-switch
                   v-model="form.hasRSA"
+                  color="primary"
+                  inset
                   :label="$t('hasRSA.placeholder')"
                 />
               </v-col>
             </v-row>
+            
+            <!--submission-->
+            <v-btn
+              :disabled="!isValid"
+              :loading="loading"
+              color="success"
+              rounded
+              @click="validate"
+            >
+              {{ $t('ui.buttons.validate.label') }}
+            </v-btn>
           </v-container>
         </v-form>
       </v-col>
@@ -221,6 +247,7 @@
 
 <script>
 import {merge, find} from "lodash";
+import axios from "axios";
 import moment from "moment";
 import Translations from "@translations/components/solidary/SolidaryForm.js";
 import TranslationsClient from "@clientTranslations/components/solidary/SolidaryForm.js";
@@ -232,7 +259,6 @@ export default {
   i18n: {
     messages: TranslationsMerged
   },
-  name: "SolidaryForm",
   components: {
     SearchJourney
   },
@@ -264,6 +290,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
       valid: false,
       alert: {
         type: "success",
@@ -271,29 +298,46 @@ export default {
         message: ""
       },
       pickerActive: false,
-      // todo: faire un fichier de fonction pour les rules
       form: {
         structure: null,
+        otherStructure: "",
         subject: null,
-        gender: null,
+        otherSubject: "",
+        gender: this.user && this.user.gender ? this.user.gender : null,
+        givenName: this.user && this.user.givenName ? this.user.givenName : "",
+        familyName: this.user && this.user.familyName ? this.user.familyName : "",
+        email: this.user && this.user.email ? this.user.email : "",
+        phoneNumber: this.user && this.user.phoneNumber ? this.user.phoneNumber : null,
+        yearOfBirth: null,
+        hasRSA: false,
+        search: null
+      },
+      genderItems: [
+        { genderItem: this.$t('models.user.gender.values.female'), genderValue: '1' },
+        { genderItem: this.$t('models.user.gender.values.male'), genderValue: '2' },
+        { genderItem: this.$t('models.user.gender.values.other'), genderValue: '3' },
+      ],
+      rules: {
         genderRules: [
           v => !!v || this.$t("models.user.gender.errors.required"),
         ],
-        genderItems: [
-          { genderItem: this.$t('models.user.gender.values.female'), genderValue: '1' },
-          { genderItem: this.$t('models.user.gender.values.male'), genderValue: '2' },
-          { genderItem: this.$t('models.user.gender.values.other'), genderValue: '3' },
+        givenNameRules: [
+          v => !!v || this.$t("models.user.givenName.errors.required"),
         ],
-        givenName: "",
-        familyName: "",
-        email: "",
+        familyNameRules: [
+          v => !!v || this.$t("models.user.familyName.errors.required"),
+        ],
+        phoneNumberRules: [
+          v => !!v || this.$t("models.user.phone.errors.required"),
+          v => (/^((\+)33|0)[1-9](\d{2}){4}$/).test(v) || this.$t("models.user.phone.errors.valid")
+        ],
         emailRules: [
-          v => !!v || this.$t("email.errors.required"),
-          v => /.+@.+/.test(v) || this.$t("email.errors.valid")
+          v => !!v || this.$t("models.user.email.errors.required"),
+          v => /.+@.+/.test(v) || this.$t("models.user.email.errors.valid")
         ],
-        phoneNumer: null,
-        yearsOfBirth: null,
-        hasRSA: false,
+        yearsOfBirthRules: [
+          v => !!v || this.$t("yearOfBirth.errors.required"),
+        ],
       },
       years: {
         max: moment().format(),
@@ -302,8 +346,21 @@ export default {
     }
   },
   computed: {
-    getYearOfBirth() {
-      return this.form.yearsOfBirth ? moment(this.form.yearsOfBirth).format('YYYY') : null
+    // we can't get only year from v-datepicker so we have to create custom getter and setter 
+    // to handle what we want in case user wants to type for the year
+    // no autocompletion from typing
+    yearOfBirth: {
+      get () {
+        return this.form.yearOfBirth && moment(this.form.yearOfBirth, "YYYY-MM-DD", true).isValid() ? 
+          moment(this.form.yearOfBirth).format('YYYY') : null
+      },
+      set (value) {
+        value && moment(value, "YYYY", true).isValid() ?
+          this.form.yearOfBirth = moment(value).format("YYYY-MM-DD") : null;
+      }
+    },
+    isValid () {
+      return this.valid && (this.form.search && this.form.search.origin && this.form.search.destination)
     },
     // todo: trouver une meilleure solution, modifier en utilisant un slug ?
     isOtherStructureActive() {
@@ -325,7 +382,51 @@ export default {
       this.menu = false;
     },
     searchChanged(data) {
-      console.log(data);
+      this.form.search = data
+    },
+    validate() {
+      const self = this;
+      this.resetAlert();
+      if (this.$refs.form.validate()) {
+        this.loading = true;
+        axios.post(this.$t('ui.buttons.validate.route'), this.form)
+          .then(function (response) {
+            console.log(response.data);
+            if (response.data && response.data.message) {
+              self.alert = {
+                type: "success",
+                message: self.$t(response.data.message)
+              };
+            }
+          })
+          .catch(function (error) {
+            console.error(error.response);
+            let messages = "";
+            if (error.response.data && error.response.data.errors) {
+              error.response.data.errors.forEach(error => {
+                messages += self.$t(error) + "<br>"
+              });
+            } else if (error.response.data && error.response.data.message) {
+              messages = self.$t(error.response.data.message);
+            }
+            self.alert = {
+              type: "error",
+              message: messages
+            };
+          }).finally(function () {
+            self.loading = false;
+            if (self.alert.message.length > 0) {
+              self.alert.show = true;
+            }
+          })
+      }
+    },
+    resetAlert() {
+      this.alert = {
+        type: "success",
+        message: "",
+        show: false
+      }
     }
   }
 }

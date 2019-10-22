@@ -23,10 +23,14 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Solidary\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\Solidary\Entity\Solidary;
+use Mobicoop\Bundle\MobicoopBundle\Solidary\Service\SolidaryManager;
 use Mobicoop\Bundle\MobicoopBundle\Solidary\Service\StructureManager;
 use Mobicoop\Bundle\MobicoopBundle\Solidary\Service\SubjectManager;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
+use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 
 class SolidaryController extends AbstractController
 {
@@ -50,5 +54,17 @@ class SolidaryController extends AbstractController
                 "structures" => $structures
             ]
         );
+    }
+
+    public function solidaryCreate(Request $request, SolidaryManager $solidaryManager, UserManager $userManager)
+    {
+        $solidary = new Solidary();
+
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            
+            dump($data);
+            die;
+        }
     }
 }

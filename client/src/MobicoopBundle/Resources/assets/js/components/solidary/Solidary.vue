@@ -47,7 +47,6 @@ export default {
   i18n: {
     messages: TranslationsMerged
   },
-  name: "Solidarity",
   components: {
     SolidaryForm
   },
