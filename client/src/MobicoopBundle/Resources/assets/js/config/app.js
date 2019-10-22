@@ -5,24 +5,50 @@ import VueI18n from 'vue-i18n'
 import colorTheme from '@themes/theme.js'
 import CommonTranslations from "@translations/translations.js";
 import '@mdi/font/scss/materialdesignicons.scss'
+import {LMap, LTileLayer, LMarker, LTooltip, LIcon, LPolyline} from 'vue2-leaflet' 
+
+import { Icon }  from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+
+
+//***  this part resolve an issue where the markers would not appear
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
+import iconUrl from 'leaflet/dist/images/marker-icon.png'
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
+delete Icon.Default.prototype._getIconUrl;
+Icon.Default.mergeOptions({
+  iconRetinaUrl: iconRetinaUrl,
+  iconUrl: iconUrl,
+  shadowUrl: shadowUrl
+});
+//*********/
+
 
 import Vuetify, {
   // general
   VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VRow, VCol, VForm, VChip, VAlert, VTextarea, VTextField, VSelect, VAutocomplete, VTooltip, VSwitch, VMenu, VDatePicker, VIcon,
+  VTabs, VTabsItems, VTab, VTabItem, VCheckbox, VAvatar, VCard, VCardTitle, VCardActions, VDivider, VList, VListItem, VListItemContent, VListItemTitle, VListItemSubtitle,
+  VSkeletonLoader, VSnackbar, VDataIterator, VOverlay, VDialog,
+  VFileInput, VProgressCircular, VDataTable, VListItemGroup, VListItemAvatar, VStepper, VStepperHeader, VStepperStep, VStepperItems, VStepperContent, VRadioGroup, VRadio, VTimeline, VTimelineItem,
   // header
   VToolbar, VToolbarTitle, VBtn, VImg,
   // footer
-  VFooter, VCardText
+  VFooter, VCardText,
 } from 'vuetify/lib'
 
 Vue.use(Vuetify, {
   components: {
     // general
     VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VRow, VCol, VForm, VChip, VAlert, VTextarea, VTextField, VSelect, VAutocomplete, VTooltip, VSwitch, VMenu, VDatePicker, VIcon,
+    VTabs, VTabsItems, VTab, VTabItem, VCheckbox, VAvatar, VCard, VCardTitle, VCardActions, VDivider, VList, VListItem, VListItemContent, VListItemTitle, VListItemSubtitle,
+    VSkeletonLoader, VSnackbar, VDataIterator, VOverlay, VDialog,
+    VFileInput, VProgressCircular, VDataTable, VListItemGroup, VListItemAvatar, VStepper, VStepperHeader, VStepperStep, VStepperItems, VStepperContent, VRadioGroup, VRadio, VTimeline, VTimelineItem,
     // header
     VToolbar, VToolbarTitle, VBtn, VImg,
     // footer
-    VFooter, VCardText
+    VFooter, VCardText,
+    //Vue2Leaflet
+    LMap, LTileLayer, LMarker, LTooltip, LIcon, LPolyline,
   }
 })
 

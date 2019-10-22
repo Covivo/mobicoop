@@ -78,6 +78,26 @@
                     name="message"
                   />
                 </v-col>
+
+                <!-- Honey pot -->
+                <!-- use of HTML input to have access to required attribute -->
+                <!-- use of website name is arbitrary and can be changed -->
+                <v-col
+                  cols="12"
+                  class="noney"
+                >
+                  <label for="website">{{ $t('website.label') }}</label>
+                  <input
+                    id="website"
+                    v-model="form.website"
+                    type="text"
+                    name="website"
+                    :placeholder="$t('website.placeholder')"
+                    tabindex="-1"
+                    required
+                  >
+                </v-col>
+                <!-- /Honey pot -->
               </v-row>
 
               <v-btn
@@ -131,7 +151,8 @@ export default {
         message: null,
         messageRules: [
           v => !!v || this.$t("message.errors.required"),
-        ]
+        ],
+        website: "", // honey pot data
       },
       alert: {
         type: "success",
@@ -151,7 +172,8 @@ export default {
           givenName: this.form.givenName,
           familyName: this.form.familyName,
           demand: this.form.demand,
-          message: this.form.message
+          message: this.form.message,
+          website: this.form.website // honey pot data
         })
           .then(function (response) {
             console.log(response.data);
@@ -195,6 +217,14 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 
+  /* Honey pot */
+  /* no display none / opacity 0 or visibility hidden to avoid bot from checking it */
+  .noney {
+    position: absolute;
+    top: -1500px;
+    left: 0;
+  }
+  
 </style>
