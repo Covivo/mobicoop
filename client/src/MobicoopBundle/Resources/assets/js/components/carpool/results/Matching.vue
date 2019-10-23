@@ -69,7 +69,7 @@
                 :result="result"
                 :user="user"
                 :distinguish-regular="distinguishRegular"
-                @carpool="carpool"
+                @carpool="carpool(result)"
               />
             </v-col>
           </v-row>
@@ -83,12 +83,7 @@
       max-width="800"
     >
       <matching-journey
-        :origin="origin"
-        :destination="destination"
-        :user="user"
-        :date="date"
-        :regular="regular"
-        :matching="matching"
+        :result="result"
         @close="carpoolDialog = false"
         @contact="contact"
       />
@@ -161,13 +156,7 @@ export default {
       locale: this.$i18n.locale,
       carpoolDialog: false,
       proposal: null,
-      matching: null,
-      lOrigin: null,
-      lDestination: null,
-      lDate: null, 
-      lTime: null,
-      lRegular: false,
-      lCommunityId : null,
+      result: null,
       loading : true,
       results: null
     };
@@ -217,8 +206,8 @@ export default {
     }
   },
   methods :{
-    carpool(params) {
-      this.matching = params.matching;
+    carpool(result) {
+      this.result = result;
       // open the dialog
       this.carpoolDialog = true;
     },

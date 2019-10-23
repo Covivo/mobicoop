@@ -660,6 +660,7 @@ class ProposalManager
                     $waypoints[$key] = [
                         'id' => $key,
                         'person' => $waypoint['candidate'] == 1 ? 'requester' : 'carpooler',
+                        'role' => $waypoint['candidate'] == 1 ? 'driver' : 'passenger',
                         'time' =>  $curTime,
                         'address' => $waypoint['address'],
                         'type' => $waypoint['position'] == '0' ? 'origin' :
@@ -955,6 +956,7 @@ class ProposalManager
                     $waypoints[$key] = [
                         'id' => $key,
                         'person' => $waypoint['candidate'] == 2 ? 'requester' : 'carpooler',
+                        'role' => $waypoint['candidate'] == 1 ? 'driver' : 'passenger',
                         'time' =>  $curTime,
                         'address' => $waypoint['address'],
                         'type' => $waypoint['position'] == '0' ? 'origin' :

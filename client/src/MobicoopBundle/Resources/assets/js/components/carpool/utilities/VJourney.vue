@@ -5,8 +5,8 @@
     <v-timeline-item 
       v-for="waypoint in waypoints"
       :key="waypoint.id"
-      :color="waypoint.requester ? 'primary' : 'secondary'"
-      :icon="waypoint.icon"
+      :color="waypoint.person == 'requester' ? 'primary' : 'secondary'"
+      :icon="getIcon(waypoint.type,waypoint.role)"
       fill-dot
     >
       <v-row dense>
@@ -14,7 +14,7 @@
           v-if="time"
           cols="2"
         >
-          <strong>{{ getTime(waypoint.duration) }}</strong>
+          <strong>{{ formatTime(waypoint.time) }}</strong>
         </v-col>
         <v-col 
           :cols="time ? '10' : '12'"
@@ -42,8 +42,8 @@ export default {
   },
   props: {
     time: {
-      type: String,
-      default: null
+      type: Boolean,
+      default: false
     },
     waypoints: {
       type: Array,
@@ -55,9 +55,22 @@ export default {
       locale: this.$i18n.locale,
     };
   },
+  //icon:
+        
   methods: {
-    getTime(duration) {
-      return moment.utc(this.time,"HH:mm").add(duration,'seconds').format(this.$t("ui.i18n.time.format.hourMinute")); 
+    getIcon(type,role) {
+      if (role == 'driver') {
+        if (type == 'origin') return 'mdi-home';
+        if (type == 'destination') return 'mdi-flag-checkered';
+        if (type == 'step') return 'mdi-debug-step-into';
+      } else {
+        if (type == 'origin') return 'mdi-human-greeting';
+        if (type == 'destination') return 'mdi-flag';
+        if (type == 'step') return 'mdi-debug-step-into';
+      }
+    },
+    formatTime(time) {
+      return moment.utc(time,"HH:mm").format(this.$t("ui.i18n.time.format.hourMinute")); 
     }
   }
 };
