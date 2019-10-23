@@ -96,6 +96,14 @@ export default {
       type: Object,
       default: null
     },
+    originFirst: {
+      type: Boolean,
+      default: false
+    },
+    destinationLast: {
+      type: Boolean,
+      default: false
+    },
     type: {
       type: Number,
       default: 1

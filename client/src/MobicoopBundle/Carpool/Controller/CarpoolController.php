@@ -122,40 +122,34 @@ class CarpoolController extends AbstractController
 
     /**
      * Matching Search
-     * (AJAX)
+     * (AJAX POST)
      */
     public function carpoolSearchMatching(Request $request, ProposalManager $proposalManager)
     {
-        $origin_latitude = $request->query->get('origin_latitude');
-        $origin_longitude = $request->query->get('origin_longitude');
-        $destination_latitude = $request->query->get('destination_latitude');
-        $destination_longitude = $request->query->get('destination_longitude');
-        if ($request->query->get('date')) {
-            $date = \Datetime::createFromFormat("Y-m-d", $request->query->get('date'));
+        $params = json_decode($request->getContent(), true);
+        if ($params['date'] && $params['date'] != '') {
+            $date = \Datetime::createFromFormat("Y-m-d", $params['date']);
         } else {
             $date = new \DateTime();
         }
         //$time = \Datetime::createFromFormat("H:i", $request->query->get('time'));
-        $frequency = $request->query->get('regular')=="true" ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL;
-        $regularLifeTime = $request->query->get('regularLifeTime');
-        $strictDate = $request->query->get('strictDate');
-        $useTime = $request->query->get('useTime');
-        $strictPunctual = $request->query->get('strictPunctual');
-        $strictRegular = $request->query->get('strictRegular');
-        $role = $request->query->get('role', Criteria::ROLE_BOTH);
-        $userId = $request->query->get('userId');
-        $communityId = $request->query->get('communityId');
+        $frequency = isset($params['regular']) ? ($params['regular'] ? Criteria::FREQUENCY_REGULAR : Criteria::FREQUENCY_PUNCTUAL) : Criteria::FREQUENCY_PUNCTUAL;
+        $regularLifeTime = isset($params['regularLifeTime']) ? $params['regularLifeTime'] : null;
+        $strictDate = isset($params['strictDate']) ? $params['strictDate'] : null;
+        $useTime = isset($params['useTime']) ? $params['useTime'] : null;
+        $strictPunctual = isset($params['strictPunctual']) ? $params['strictPunctual'] : null;
+        $strictRegular = isset($params['strictRegular']) ? $params['strictRegular'] : null;
+        $role = isset($params['role']) ? $params['role'] : Criteria::ROLE_BOTH;
+        $userId = isset($params['userId']) ? $params['userId'] : null;
+        $communityId = isset($params['communityId']) ? $params['communityId'] : null;
 
-        // we have to merge matching proposals that concern both driver and passenger into a single matching
         $matchings = [];
         $proposalResult = null;
 
         // we post to the special collection /proposals/search, that will return only one virtual proposal (with its matchings)
         if ($proposalResults = $proposalManager->getMatchingsForSearch(
-            $origin_latitude,
-            $origin_longitude,
-            $destination_latitude,
-            $destination_longitude,
+            $params['origin'],
+            $params['destination'],
             $date,
             $frequency,
             $regularLifeTime,
@@ -172,16 +166,6 @@ class CarpoolController extends AbstractController
             }
         }
         if ($proposalResult) {
-            // // we search the matchings as an offer
-            // foreach ($proposalResult->getMatchingOffers() as $offer) {
-            //     $matchings[$offer->getProposalRequest()->getId()]['request'] = $offer;
-            // }
-            // // we search the matchings as a request
-            // foreach ($proposalResult->getMatchingRequests() as $request) {
-            //     //if (!array_key_exists($request->getProposalOffer()->getId(), $matchings)) {
-            //     $matchings[$request->getProposalOffer()->getId()]['offer'] = $request;
-            //     //}
-            // }
             $matchings = $proposalResult->getResults();
         }
 

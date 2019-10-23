@@ -197,8 +197,9 @@ carpool_search_result:
         en: /carpool/search
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResult
 
-# search matching (AJAX)
+# search matching (AJAX POST)
 carpool_search_matching:
+    methods: [POST]
     path:
         fr: /covoiturage/recherche/matching
         en: /carpool/search/matching

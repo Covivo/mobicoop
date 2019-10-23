@@ -192,19 +192,21 @@ export default {
     } else {
       // otherwise we send a proposal search
       this.loading = true;
-      axios.get(this.$t("matchingUrl"), {
-        params: {
-          "origin_latitude": Number(this.origin.latitude),
-          "origin_longitude": Number(this.origin.longitude),
-          "destination_latitude": Number(this.destination.latitude),
-          "destination_longitude": Number(this.destination.longitude),
-          "date": this.date,
-          "time": this.time,
-          "regular": this.regular,
-          "userId": this.user ? this.user.id : null,
-          "communityId": this.communityId
-        }
-      })
+      let postParams = {
+        "origin": this.origin,
+        "destination": this.destination,
+        "date": this.date,
+        "time": this.time,
+        "regular": this.regular,
+        "userId": this.user ? this.user.id : null,
+        "communityId": this.communityId
+      };
+      axios.post(this.$t("matchingUrl"), postParams,
+        {
+          headers:{
+            'content-type': 'application/json'
+          }
+        })
         .then((response) => {
           this.loading = false;
           this.results = response.data;

@@ -4,9 +4,9 @@
       align="center"
       dense
     >
-      <!-- Time -->
+      <!-- Date and time -->
       <v-col
-        v-if="!regular"
+        v-if="date"
         cols="3"
       >
         <v-list-item two-line>
@@ -22,27 +22,29 @@
       </v-col>
       <!-- Route -->
       <v-col
-        :cols="regular ? '9' : '6'"
+        :cols="!date ? '9' : '6'"
       >
         <route-summary
-          :origin="computedOrigin"
-          :destination="computedDestination"
+          :origin="origin"
+          :origin-first="originFirst"
+          :destination="destination"
+          :destination-last="destinationLast"
           :type="2"
-          :regular="regular"
+          :regular="!date"
         />
       </v-col>
       <!-- Seats -->
       <v-col
         cols="2"
       >
-        {{ $tc('places', result.seats, { seats: result.seats }) }}
+        {{ $tc('places', seats, { seats: seats }) }}
       </v-col>
       <!-- Price -->
       <v-col
         cols="1"
         class="title"
       >
-        {{ computedPrice ? computedPrice +'€' : '' }}
+        {{ price ? price +'€' : '' }}
       </v-col>
     </v-row>
   </div>
@@ -64,18 +66,38 @@ export default {
     messages: TranslationsMerged,
   },
   props: {
-    result: {
+    origin: {
       type: Object,
       default: null
     },
-    regular: {
+    destination: {
+      type: Object,
+      default: null
+    },
+    originFirst: {
       type: Boolean,
       default: false
     },
-    user: {
-      type:Object,
+    destinationLast: {
+      type: Boolean,
+      default: false
+    },
+    date: {
+      type: String,
       default: null
-    }
+    }, 
+    time: {
+      type: String,
+      default: null
+    }, 
+    price: {
+      type: String,
+      default: null
+    },  
+    seats: {
+      type: Number,
+      default: null
+    },  
   },
   data() {
     return {
@@ -83,31 +105,11 @@ export default {
     };
   },
   computed: {
-    computedOrigin() {
-      return {
-        streetAddress: this.proposal.waypoints[0].address.streetAddress,
-        addressLocality: this.proposal.waypoints[0].address.addressLocality
-      }
-    },
-    computedDestination() {
-      return {
-        streetAddress: this.proposal.waypoints[this.proposal.waypoints.length-1].address.streetAddress,
-        addressLocality: this.proposal.waypoints[this.proposal.waypoints.length-1].address.addressLocality,
-      }
-    },
     computedTime() {
-      return moment.utc(this.result.time).format(this.$t("ui.i18n.time.format.hourMinute"));      
+      return moment.utc(this.time).format(this.$t("ui.i18n.time.format.hourMinute"));      
     },
     computedDate() {
-      if (this.proposal.criteria.frequency == 2) {
-        return moment.utc(this.driver ? this.matching.offer.criteria.fromDate : this.matching.request.criteria.fromDate).format(this.$t("ui.i18n.date.format.shortDate"))
-      }
-      return this.proposal.criteria.fromDate
-        ? moment.utc(this.proposal.criteria.fromDate).format(this.$t("ui.i18n.date.format.shortDate"))
-        : ""; 
-    },
-    computedPrice() {
-      return this.driver ? Math.round((this.matching.offer.proposalOffer.criteria.priceKm*this.matching.offer.proposalRequest.criteria.directionPassenger.distance/1000)*100)/100 : null
+      return moment.utc(this.date).format(this.$t("ui.i18n.date.format.shortDate"))
     }
   },
   methods: {

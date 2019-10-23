@@ -14,17 +14,17 @@
           align="center"
         >
           <v-icon
-            v-if="result.resultDriver"
+            v-if="result.resultPassenger"
             color="primary"
-            :size="!result.resultPassenger ? '75' : '40'"
+            :size="!result.resultDriver ? '75' : '40'"
           >
             mdi-car
           </v-icon>
 
           <v-icon
-            v-if="result.resultPassenger"
+            v-if="result.resultDriver"
             color="primary"
-            :size="!result.resultDriver ? '75' : '40'"
+            :size="!result.resultPassenger ? '75' : '40'"
           >
             mdi-walk
           </v-icon>
@@ -37,23 +37,36 @@
           <!-- Regular : summary of days -->
           <regular-planning-summary
             v-if="showRegularSummary"
-            :result="result.resultDriver ? result.resultDriver : result.resultPassenger"
+            :mon-active="result.monCheck"
+            :tue-active="result.tueCheck"
+            :wed-active="result.wedCheck"
+            :thu-active="result.thuCheck"
+            :fri-active="result.friCheck"
+            :sat-active="result.satCheck"
+            :sun-active="result.sunCheck"
+            :outward-time="result.outwardTime"
+            :return-time="result.returnTime"
+            :return-trip="result.return"
           />
 
           <v-divider v-if="showRegularSummary" />
 
           <!-- Journey summary : date, time, summary of route, seats, price -->
           <journey-summary
-            :regular="result.frequency == 2"
-            :result="result.resultDriver ? result.resultDriver : result.resultPassenger"
-            :user="user"
+            :origin="result.origin"
+            :origin-first="result.originFirst"
+            :destination="result.destination"
+            :destination-last="result.destinationLast"
+            :date="result.date"
+            :time="result.time"
+            :seats="result.seats"
+            :price="result.price"
           />
 
           <v-divider />
 
           <!-- Carpooler detail -->
           <carpooler-summary
-            :user="user"
             :carpooler="result.carpooler"
             @carpool="carpool"
           />
@@ -104,7 +117,7 @@ export default {
   },
   computed: {
     showRegularSummary() {
-      return (this.result.frequency == 2 && this.distinguishRegular);
+      return (this.result.frequency == 2 || (this.distinguishRegular && this.result.frequencyResult == 2));
     }
   },
   methods :{

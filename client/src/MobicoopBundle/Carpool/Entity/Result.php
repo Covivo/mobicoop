@@ -65,6 +65,27 @@ class Result implements ResourceInterface, \JsonSerializable
      */
     private $frequencyResult;
 
+    /**
+     * @var Address The origin address to display for the result.
+     */
+    private $origin;
+
+    /**
+     * @var Address The destination address to display for the result.
+     */
+    private $destination;
+
+    /**
+     * @var \DateTimeInterface|null The date to display for the result.
+     */
+    private $date;
+
+    /**
+     * @var \DateTimeInterface|null The time to display for the result.
+     */
+    private $time;
+
+
     public function __construct($id=null)
     {
         if ($id) {
@@ -153,6 +174,54 @@ class Result implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getOrigin(): ?Address
+    {
+        return $this->origin;
+    }
+
+    public function setOrigin(?Address $origin): self
+    {
+        $this->origin = $origin;
+
+        return $this;
+    }
+
+    public function getDestination(): ?Address
+    {
+        return $this->destination;
+    }
+
+    public function setDestination(?Address $destination): self
+    {
+        $this->destination = $destination;
+
+        return $this;
+    }
+    
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+
+    public function setDate(\DateTimeInterface $date): self
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
+    public function getTime(): ?\DateTimeInterface
+    {
+        return $this->time;
+    }
+
+    public function setTime(\DateTimeInterface $time): self
+    {
+        $this->time = $time;
+
+        return $this;
+    }
+
     // If you want more info you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -163,7 +232,11 @@ class Result implements ResourceInterface, \JsonSerializable
             'resultPassenger'   => $this->getResultPassenger(),
             'carpooler'         => $this->getCarpooler(),
             'frequency'         => $this->getFrequency(),
-            'frequencyResult'   => $this->getFrequencyResult()
+            'frequencyResult'   => $this->getFrequencyResult(),
+            'origin'            => $this->getOrigin(),
+            'destination'       => $this->getDestination(),
+            'date'              => $this->getDate(),
+            'time'              => $this->getTime()
         ];
     }
 }

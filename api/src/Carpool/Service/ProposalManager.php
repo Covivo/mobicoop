@@ -642,7 +642,7 @@ class ProposalManager
                     'requester' => 0,
                     'carpooler' => 0
                 ];
-                // first pass to get the maximum position fo reach candidate
+                // first pass to get the maximum position fo each candidate
                 foreach ($matching['request']->getFilters()['order'] as $key=>$waypoint) {
                     if ($waypoint['candidate'] == 1 && (int)$waypoint['position']>$steps['requester']) {
                         $steps['requester'] = (int)$waypoint['position'];
@@ -668,6 +668,12 @@ class ProposalManager
                                 ((int)$waypoint['position'] == $steps['carpooler'] ? 'destination' : 'step')
                             )
                     ];
+                    // origin and destination guess
+                    if ($waypoint['candidate'] == 2 && $waypoint['position'] == '0') {
+                        $outward->setOrigin($waypoint['address']);
+                    } elseif ($waypoint['candidate'] == 2 && (int)$waypoint['position'] == $steps['carpooler']) {
+                        $outward->setDestination($waypoint['address']);
+                    }
                 }
                 $outward->setWaypoints($waypoints);
                 
@@ -801,20 +807,20 @@ class ProposalManager
                                 break;
                             }
                         }
-                        // we search the pickup duration
-                        $filters = $matching['offer']->getFilters();
-                        $pickupDuration = null;
-                        foreach ($filters['order'] as $value) {
-                            if ($value['candidate'] == 2 && $value['position'] == 0) {
-                                $pickupDuration = (int)round($value['duration']);
-                                break;
-                            }
-                        }
-                        if ($pickupDuration) {
-                            $fromTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
-                        }
-                        $outward->setTime($fromTime);
                     }
+                    // we search the pickup duration
+                    $filters = $matching['offer']->getFilters();
+                    $pickupDuration = null;
+                    foreach ($filters['order'] as $value) {
+                        if ($value['candidate'] == 2 && $value['position'] == 0) {
+                            $pickupDuration = (int)round($value['duration']);
+                            break;
+                        }
+                    }
+                    if ($pickupDuration) {
+                        $fromTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
+                    }
+                    $outward->setTime($fromTime);
                 } else {
                     // the search or ad is regular => no date
                     // we have to find common days (if it's a search the common days should be the carpooler days)
@@ -874,49 +880,49 @@ class ProposalManager
                         if ($matching['offer']->getProposalOffer()->getCriteria()->isMonCheck()) {
                             $monTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getMonTime();
                             if ($pickupDuration) {
-                                $monTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                                $monTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
                             $outward->setMonTime($monTime);
                         }
                         if ($matching['offer']->getProposalOffer()->getCriteria()->isTueCheck()) {
                             $tueTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getTueTime();
                             if ($pickupDuration) {
-                                $tueTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                                $tueTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
                             $outward->setTueTime($tueTime);
                         }
                         if ($matching['offer']->getProposalOffer()->getCriteria()->isWedCheck()) {
                             $wedTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getWedTime();
                             if ($pickupDuration) {
-                                $wedTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                                $wedTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
                             $outward->setWedTime($wedTime);
                         }
                         if ($matching['offer']->getProposalOffer()->getCriteria()->isThuCheck()) {
                             $thuTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getThuTime();
                             if ($pickupDuration) {
-                                $thuTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                                $thuTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
                             $outward->setThuTime($thuTime);
                         }
                         if ($matching['offer']->getProposalOffer()->getCriteria()->isFriCheck()) {
                             $friTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getFriTime();
                             if ($pickupDuration) {
-                                $friTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                                $friTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
                             $outward->setFriTime($friTime);
                         }
                         if ($matching['offer']->getProposalOffer()->getCriteria()->isSatCheck()) {
                             $satTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getSatTime();
                             if ($pickupDuration) {
-                                $satTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                                $satTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
                             $outward->setSatTime($satTime);
                         }
                         if ($matching['offer']->getProposalOffer()->getCriteria()->isSunCheck()) {
                             $sunTime = clone $matching['offer']->getProposalOffer()->getCriteria()->getSunTime();
                             if ($pickupDuration) {
-                                $sunTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                                $sunTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
                             }
                             $outward->setSunTime($sunTime);
                         }
@@ -957,6 +963,12 @@ class ProposalManager
                                 ((int)$waypoint['position'] == $steps['carpooler'] ? 'destination' : 'step')
                             )
                     ];
+                    // origin and destination guess
+                    if ($waypoint['candidate'] == 1 && $waypoint['position'] == '0') {
+                        $outward->setOrigin($waypoint['address']);
+                    } elseif ($waypoint['candidate'] == 1 && (int)$waypoint['position'] == $steps['carpooler']) {
+                        $outward->setDestination($waypoint['address']);
+                    }
                 }
                 $outward->setWaypoints($waypoints);
                 
@@ -1021,6 +1033,184 @@ class ProposalManager
 
                 $result->setResultPassenger($resultPassenger);
             }
+
+            /**********************************************************************
+             * global origin / destination / date / time / seats / price / return *
+             **********************************************************************/
+            
+            // the following are used to display the summarized information about the result
+
+            // origin / destination
+            // we display the origin and destination of the passenger for his outward trip
+            // if the carpooler can be driver and passenger, we choose to consider him as driver as he's the first to publish
+            // we also set the originFirst and destinationLast to indicate if the driver origin / destination are different than the passenger ones
+
+            // we first get the origin and destination of the requester
+            $requesterOrigin = null;
+            $requesterDestination = null;
+            foreach ($proposal->getWaypoints() as $waypoint) {
+                if ($waypoint->getPosition() == 0) {
+                    $requesterOrigin = $waypoint->getAddress();
+                }
+                if ($waypoint->isDestination()) {
+                    $requesterDestination = $waypoint->getAddress();
+                }
+            }
+            if ($result->getResultDriver() && !$result->getResultPassenger()) {
+                // the carpooler is passenger only, we use his origin and destination
+                $result->setOrigin($result->getResultDriver()->getOutward()->getOrigin());
+                $result->setDestination($result->getResultDriver()->getOutward()->getDestination());
+                // we check if his origin and destination are first and last of the whole journey
+                // we use the gps coordinates
+                $result->setOriginFirst(false);
+                if ($result->getOrigin()->getLatitude() == $requesterOrigin->getLatitude() && $result->getOrigin()->getLongitude() == $requesterOrigin->getLongitude()) {
+                    $result->setOriginFirst(true);
+                }
+                $result->setDestinationLast(false);
+                if ($result->getDestination()->getLatitude() == $requesterDestination->getLatitude() && $result->getDestination()->getLongitude() == $requesterDestination->getLongitude()) {
+                    $result->setDestinationLast(true);
+                }
+            } else {
+                // the carpooler can be driver, we use the requester origin and destination
+                $result->setOrigin($requesterOrigin);
+                $result->setDestination($requesterDestination);
+                // we check if his origin and destination are first and last of the whole journey
+                // we use the gps coordinates
+                $result->setOriginFirst(false);
+                if ($result->getOrigin()->getLatitude() == $result->getResultPassenger()->getOutward()->getOrigin()->getLatitude() && $result->getOrigin()->getLongitude() == $result->getResultPassenger()->getOutward()->getOrigin()->getLongitude()) {
+                    $result->setOriginFirst(true);
+                }
+                $result->setDestinationLast(false);
+                if ($result->getDestination()->getLatitude() == $result->getResultPassenger()->getOutward()->getDestination()->getLatitude() && $result->getDestination()->getLongitude() == $result->getResultPassenger()->getOutward()->getDestination()->getLongitude()) {
+                    $result->setDestinationLast(true);
+                }
+            }
+
+            // date / time / seats / price
+            // if the request is regular, there is no date
+            // otherwise we display the date of the matching proposal computed before depending on if the carpooler can be driver and/or passenger
+            if ($result->getResultDriver() && !$result->getResultPassenger()) {
+                // the carpooler is passenger only
+                if ($result->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                    $result->setDate($result->getResultDriver()->getOutward()->getDate());
+                    $result->setTime($result->getResultDriver()->getOutward()->getTime());
+                }
+                $result->setPrice($result->getResultDriver()->getOutward()->getComputedPrice());
+                $result->setSeats($result->getResultDriver()->getSeats());
+            } else {
+                // the carpooler is driver or passenger
+                if ($result->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                    $result->setDate($result->getResultPassenger()->getOutward()->getDate());
+                    $result->setTime($result->getResultPassenger()->getOutward()->getTime());
+                }
+                $result->setPrice($result->getResultPassenger()->getOutward()->getComputedPrice());
+                $result->setSeats($result->getResultPassenger()->getSeats());
+            }
+            // regular days and times
+            if ($result->getFrequencyResult() == Criteria::FREQUENCY_REGULAR) {
+                if ($result->getResultDriver() && !$result->getResultPassenger()) {
+                    // the carpooler is passenger only
+                    $result->setMonCheck($result->getResultDriver()->getOutward()->isMonCheck() || ($result->getResultDriver()->getReturn() && $result->getResultDriver()->getReturn()->isMonCheck()));
+                    $result->setTueCheck($result->getResultDriver()->getOutward()->isTueCheck() || ($result->getResultDriver()->getReturn() && $result->getResultDriver()->getReturn()->isTueCheck()));
+                    $result->setWedCheck($result->getResultDriver()->getOutward()->isWedCheck() || ($result->getResultDriver()->getReturn() && $result->getResultDriver()->getReturn()->isWedCheck()));
+                    $result->setThuCheck($result->getResultDriver()->getOutward()->isThuCheck() || ($result->getResultDriver()->getReturn() && $result->getResultDriver()->getReturn()->isThuCheck()));
+                    $result->setFriCheck($result->getResultDriver()->getOutward()->isFriCheck() || ($result->getResultDriver()->getReturn() && $result->getResultDriver()->getReturn()->isFriCheck()));
+                    $result->setSatCheck($result->getResultDriver()->getOutward()->isSatCheck() || ($result->getResultDriver()->getReturn() && $result->getResultDriver()->getReturn()->isSatCheck()));
+                    $result->setSunCheck($result->getResultDriver()->getOutward()->isSunCheck() || ($result->getResultDriver()->getReturn() && $result->getResultDriver()->getReturn()->isSunCheck()));
+                    if (!$result->getResultDriver()->getOutward()->hasMultipleTimes()) {
+                        if ($result->getResultDriver()->getOutward()->getMonTime()) {
+                            $result->setOutwardTime($result->getResultDriver()->getOutward()->getMonTime());
+                        } elseif ($result->getResultDriver()->getOutward()->getTueTime()) {
+                            $result->setOutwardTime($result->getResultDriver()->getOutward()->getTueTime());
+                        } elseif ($result->getResultDriver()->getOutward()->getWedTime()) {
+                            $result->setOutwardTime($result->getResultDriver()->getOutward()->getWedTime());
+                        } elseif ($result->getResultDriver()->getOutward()->getThuTime()) {
+                            $result->setOutwardTime($result->getResultDriver()->getOutward()->getThuTime());
+                        } elseif ($result->getResultDriver()->getOutward()->getFriTime()) {
+                            $result->setOutwardTime($result->getResultDriver()->getOutward()->getFriTime());
+                        } elseif ($result->getResultDriver()->getOutward()->getSatTime()) {
+                            $result->setOutwardTime($result->getResultDriver()->getOutward()->getSatTime());
+                        } elseif ($result->getResultDriver()->getOutward()->getSunTime()) {
+                            $result->setOutwardTime($result->getResultDriver()->getOutward()->getSunTime());
+                        }
+                        if ($result->getResultDriver()->getReturn() && !$result->getResultDriver()->getReturn()->hasMultipleTimes()) {
+                            if ($result->getResultDriver()->getReturn()->getMonTime()) {
+                                $result->setReturnTime($result->getResultDriver()->getReturn()->getMonTime());
+                            } elseif ($result->getResultDriver()->getReturn()->getTueTime()) {
+                                $result->setReturnTime($result->getResultDriver()->getReturn()->getTueTime());
+                            } elseif ($result->getResultDriver()->getReturn()->getWedTime()) {
+                                $result->setReturnTime($result->getResultDriver()->getReturn()->getWedTime());
+                            } elseif ($result->getResultDriver()->getReturn()->getThuTime()) {
+                                $result->setReturnTime($result->getResultDriver()->getReturn()->getThuTime());
+                            } elseif ($result->getResultDriver()->getReturn()->getFriTime()) {
+                                $result->setReturnTime($result->getResultDriver()->getReturn()->getFriTime());
+                            } elseif ($result->getResultDriver()->getReturn()->getSatTime()) {
+                                $result->setReturnTime($result->getResultDriver()->getReturn()->getSatTime());
+                            } elseif ($result->getResultDriver()->getReturn()->getSunTime()) {
+                                $result->setReturnTime($result->getResultDriver()->getReturn()->getSunTime());
+                            }
+                        }
+                    }
+                } else {
+                    // the carpooler is driver or passenger
+                    $result->setMonCheck($result->getResultPassenger()->getOutward()->isMonCheck() || ($result->getResultPassenger()->getReturn() && $result->getResultPassenger()->getReturn()->isMonCheck()));
+                    $result->setTueCheck($result->getResultPassenger()->getOutward()->isTueCheck() || ($result->getResultPassenger()->getReturn() && $result->getResultPassenger()->getReturn()->isTueCheck()));
+                    $result->setWedCheck($result->getResultPassenger()->getOutward()->isWedCheck() || ($result->getResultPassenger()->getReturn() && $result->getResultPassenger()->getReturn()->isWedCheck()));
+                    $result->setThuCheck($result->getResultPassenger()->getOutward()->isThuCheck() || ($result->getResultPassenger()->getReturn() && $result->getResultPassenger()->getReturn()->isThuCheck()));
+                    $result->setFriCheck($result->getResultPassenger()->getOutward()->isFriCheck() || ($result->getResultPassenger()->getReturn() && $result->getResultPassenger()->getReturn()->isFriCheck()));
+                    $result->setSatCheck($result->getResultPassenger()->getOutward()->isSatCheck() || ($result->getResultPassenger()->getReturn() && $result->getResultPassenger()->getReturn()->isSatCheck()));
+                    $result->setSunCheck($result->getResultPassenger()->getOutward()->isSunCheck() || ($result->getResultPassenger()->getReturn() && $result->getResultPassenger()->getReturn()->isSunCheck()));
+                    if (!$result->getResultPassenger()->getOutward()->hasMultipleTimes()) {
+                        if ($result->getResultPassenger()->getOutward()->getMonTime()) {
+                            $result->setOutwardTime($result->getResultPassenger()->getOutward()->getMonTime());
+                        } elseif ($result->getResultPassenger()->getOutward()->getTueTime()) {
+                            $result->setOutwardTime($result->getResultPassenger()->getOutward()->getTueTime());
+                        } elseif ($result->getResultPassenger()->getOutward()->getWedTime()) {
+                            $result->setOutwardTime($result->getResultPassenger()->getOutward()->getWedTime());
+                        } elseif ($result->getResultPassenger()->getOutward()->getThuTime()) {
+                            $result->setOutwardTime($result->getResultPassenger()->getOutward()->getThuTime());
+                        } elseif ($result->getResultPassenger()->getOutward()->getFriTime()) {
+                            $result->setOutwardTime($result->getResultPassenger()->getOutward()->getFriTime());
+                        } elseif ($result->getResultPassenger()->getOutward()->getSatTime()) {
+                            $result->setOutwardTime($result->getResultPassenger()->getOutward()->getSatTime());
+                        } elseif ($result->getResultPassenger()->getOutward()->getSunTime()) {
+                            $result->setOutwardTime($result->getResultPassenger()->getOutward()->getSunTime());
+                        }
+                        if ($result->getResultPassenger()->getReturn() && !$result->getResultPassenger()->getReturn()->hasMultipleTimes()) {
+                            if ($result->getResultPassenger()->getReturn()->getMonTime()) {
+                                $result->setReturnTime($result->getResultPassenger()->getReturn()->getMonTime());
+                            } elseif ($result->getResultPassenger()->getReturn()->getTueTime()) {
+                                $result->setReturnTime($result->getResultPassenger()->getReturn()->getTueTime());
+                            } elseif ($result->getResultPassenger()->getReturn()->getWedTime()) {
+                                $result->setReturnTime($result->getResultPassenger()->getReturn()->getWedTime());
+                            } elseif ($result->getResultPassenger()->getReturn()->getThuTime()) {
+                                $result->setReturnTime($result->getResultPassenger()->getReturn()->getThuTime());
+                            } elseif ($result->getResultPassenger()->getReturn()->getFriTime()) {
+                                $result->setReturnTime($result->getResultPassenger()->getReturn()->getFriTime());
+                            } elseif ($result->getResultPassenger()->getReturn()->getSatTime()) {
+                                $result->setReturnTime($result->getResultPassenger()->getReturn()->getSatTime());
+                            } elseif ($result->getResultPassenger()->getReturn()->getSunTime()) {
+                                $result->setReturnTime($result->getResultPassenger()->getReturn()->getSunTime());
+                            }
+                        }
+                    }
+                }
+            }
+
+            // return trip ?
+            $result->setReturn(false);
+            if ($result->getResultDriver() && !$result->getResultPassenger()) {
+                // the carpooler is passenger only
+                if (!is_null($result->getResultDriver()->getReturn())) {
+                    $result->setReturn(true);
+                }
+            } else {
+                // the carpooler is driver or passenger
+                if (!is_null($result->getResultPassenger()->getReturn())) {
+                    $result->setReturn(true);
+                }
+            }
+
             $results[] = $result;
         }
         return $results;

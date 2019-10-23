@@ -57,10 +57,8 @@ class ProposalManager
     /**
      * Get all matchings for a search.
      *
-     * @param float $origin_latitude        The origin latitude
-     * @param float $origin_longitude       The origin longitude
-     * @param float $destination_latitude   The destination latitude
-     * @param float $destination_longitude  The destination longitude
+     * @param array $origin               The origin address
+     * @param array $destination          The destination address
      * @param \Datetime $date               The date and time in a Datetime object
      * @param int $frequency                The frequency of the trip
      * @param integer $regularLifeTime      The lifetime of a regular trip in years
@@ -75,10 +73,8 @@ class ProposalManager
      * @return array|null The matchings found or null if not found.
      */
     public function getMatchingsForSearch(
-        float $origin_latitude,
-        float $origin_longitude,
-        float $destination_latitude,
-        float $destination_longitude,
+        array $origin,
+        array $destination,
         \Datetime $date,
         int $frequency,
         ?int $regularLifeTime = null,
@@ -93,10 +89,8 @@ class ProposalManager
     ) {
         // we set the params
         $params = [
-            "origin_latitude" => $origin_latitude,
-            "origin_longitude" => $origin_longitude,
-            "destination_latitude" => $destination_latitude,
-            "destination_longitude" => $destination_longitude,
+            "origin" => $origin,
+            "destination" => $destination,
             "date" => $date->format('Y-m-d\TH:i:s\Z'),
             "frequency" => $frequency
         ];

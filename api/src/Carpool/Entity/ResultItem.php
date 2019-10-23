@@ -75,23 +75,10 @@ class ResultItem
     private $origin;
 
     /**
-     * @var boolean True if the origin is the first waypoint of the journey.
-     * @Groups("results")
-     */
-
-    private $originFirst;
-
-    /**
      * @var Address The destination address (the destination of the carpooler who search or post).
      * @Groups("results")
      */
     private $destination;
-
-    /**
-     * @var boolean True if the destination is the last point of the journey.
-     * @Groups("results")
-     */
-    private $destinationLast;
 
     /**
      * @var array The waypoints of the journey.
@@ -333,18 +320,6 @@ class ResultItem
         return $this;
     }
 
-    public function isOriginFirst(): ?bool
-    {
-        return $this->originFirst;
-    }
-    
-    public function setOriginFirst(bool $isOriginFirst): self
-    {
-        $this->originFirst = $isOriginFirst;
-        
-        return $this;
-    }
-
     public function getDestination(): ?Address
     {
         return $this->destination;
@@ -354,18 +329,6 @@ class ResultItem
     {
         $this->destination = $destination;
 
-        return $this;
-    }
-
-    public function isDestinationLast(): ?bool
-    {
-        return $this->destinationLast;
-    }
-    
-    public function setDestinationLast(bool $isDestinationLast): self
-    {
-        $this->destinationLast = $isDestinationLast;
-        
         return $this;
     }
 
