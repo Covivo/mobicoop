@@ -117,6 +117,7 @@ CheckoutForAnyURLMisspellingOr: 'messages'
 
   ######      SMS      ######
 
+
   # CARPOOL_AD_RENEWAL
 
 inFewDays: "Dans quelques jours,  vos annonces de covoiturage ne seront plus valides."
@@ -164,4 +165,16 @@ refusedAskRegular: "décline le covoiturage régulier de "
 
 # DRIVER_CARPOOL_ASK_REFUSED
 
-refusedAsk: "décline le covoiturage de " 
+refusedAsk: "décline le covoiturage de "
+
+# DRIVER_CARPOOL_ASK_UPDATED_REGULAR
+
+# DRIVER_CARPOOL_ASK_UPDATED
+
+# DRIVER_CARPOOL_MATCHING_NEW_REGULAR
+
+newMatching: "Une nouvelle annonce a été publiée pour votre trajet "
+
+# PASSENGER_CARPOOL_ASK_UPDATED_REGULAR
+
+# PASSENGER_CARPOOL_ASK_UPDATED
