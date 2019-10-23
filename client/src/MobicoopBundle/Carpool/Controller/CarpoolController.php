@@ -49,7 +49,7 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
-    public function carpoolAdPost(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager, ?string $first)
+    public function carpoolAdPost(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
     {
         $proposal = new Proposal();
         $poster = $userManager->getLoggedUser();
@@ -65,7 +65,6 @@ class CarpoolController extends AbstractController
         }
 
         $this->denyAccessUnlessGranted('create_ad', $proposal);
-
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
             [
@@ -75,7 +74,54 @@ class CarpoolController extends AbstractController
                 'regular'=>null,
                 'date'=>null,
                 'time'=>null,
-                'firstAd' => (!is_null($first))
+                'firstAd'=>null,
+                'solidaryAd'=>null,
+            ]
+        );
+    }
+
+    /**
+     * Create the first carpooling ad.
+     */
+    public function carpoolFirstAdPost(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
+    {
+        $proposal = new Proposal();
+        $poster = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('create_ad', $proposal);
+        return $this->render(
+            '@Mobicoop/carpool/publish.html.twig',
+            [
+                'communityIds'=>null,
+                'origin'=>null,
+                'destination'=>null,
+                'regular'=>null,
+                'date'=>null,
+                'time'=>null,
+                'firstAd'=>true,
+                'solidaryAd'=>null,
+            ]
+        );
+    }
+
+    /**
+    * Create a solidary carpooling ad.
+    */
+    public function carpoolSolidaryAdPost(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
+    {
+        $proposal = new Proposal();
+        $poster = $userManager->getLoggedUser();
+        $this->denyAccessUnlessGranted('create_ad', $proposal);
+        return $this->render(
+            '@Mobicoop/carpool/publish.html.twig',
+            [
+                'communityIds'=>null,
+                'origin'=>null,
+                'destination'=>null,
+                'regular'=>null,
+                'date'=>null,
+                'time'=>null,
+                'firstAd'=>null,
+                'solidaryAd'=>true,
             ]
         );
     }

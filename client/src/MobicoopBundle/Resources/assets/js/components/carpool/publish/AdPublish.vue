@@ -22,6 +22,38 @@
         </v-col>
       </v-row>
       <v-row
+        v-if="solidaryAd"
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          md="8"
+          xl="6"
+        >
+          <v-alert type="info">
+            <p>{{ $t("messageSolidaryAd.message") }}</p>
+          </v-alert>
+        </v-col>
+      </v-row>
+      <v-row
+        v-if="solidaryAd"
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          md="8"
+          xl="6"
+          class="d-flex justify-center"
+        >
+          <v-switch
+            v-model="solidary"
+            color="secondary"
+            inset
+            :label="this.$t('messageSolidaryAd.switch.label')"
+          />
+        </v-col>
+      </v-row>
+      <v-row
         v-if="firstAd"
         justify="center"
       >
@@ -99,7 +131,7 @@
 
               <!-- Step 5 : participation (if driver) -->
               <v-stepper-step
-                v-if="driver"
+                v-if="driver && !solidary"
                 editable
                 :step="5"
                 color="success"
@@ -133,6 +165,7 @@
               <!-- Step 1 : search journey -->
               <v-stepper-content step="1">
                 <search-journey
+                  :solidary-ad="solidary"
                   display-roles
                   :geo-search-url="geoSearchUrl"
                   :user="user"
@@ -341,7 +374,7 @@
 
               <!-- Step 5 : participation (if driver) -->
               <v-stepper-content
-                v-if="driver"
+                v-if="driver && !solidary"
                 step="5"
               >
                 <v-row
@@ -430,6 +463,7 @@
                         :user="user"
                         :origin="origin"
                         :destination="destination"
+                        :solidary="solidary"
                       />
                     </v-col>
                   </v-row>
@@ -550,10 +584,6 @@ export default {
       type: Number,
       default: 0.06
     },
-    publishUrl: {
-      type: String,
-      default: 'covoiturage/annonce/poster'
-    },
     resultsUrl: {
       type: String,
       default: 'covoiturage/annonce/{id}/resultats'
@@ -597,7 +627,12 @@ export default {
     firstAd: {
       type: Boolean,
       default: false
-    }
+    },
+    solidaryAd: {
+      type: Boolean,
+      default: false
+    },
+   
 
   },
   data() {
@@ -636,7 +671,9 @@ export default {
       strictRegular: null,      // not used yet
       strictPunctual: null,     // not used yet
       useTime: null,            // not used yet
-      anyRouteAsPassenger: null // not used yet
+      anyRouteAsPassenger: null, // not used yet
+      solidary: this.solidaryAd
+      
     }
   },
   computed: {
@@ -691,7 +728,7 @@ export default {
       return true;
     },
     urlToCall() {
-      return `${this.baseUrl}/${this.publishUrl}`;
+      return `${this.baseUrl}/${this.$t('route.publish')}`;
     },
   },
   watch: {
@@ -788,7 +825,8 @@ export default {
         driver: this.driver,
         passenger: this.passenger,
         origin: this.origin,
-        destination: this.destination
+        destination: this.destination,
+        solidary: this.solidary
       };
       if (this.userDelegated) postObject.userDelegated = this.userDelegated;
       if (this.validWaypoints) postObject.waypoints = this.validWaypoints;
@@ -805,8 +843,8 @@ export default {
       if (this.luggage) postObject.luggage = this.luggage;
       if (this.bike) postObject.bike = this.bike;
       if (this.backSeats) postObject.backSeats = this.backSeats;
-      if (this.price) postObject.price = this.price;
-      if (this.pricePerKm) postObject.priceKm = this.pricePerKm;
+      if (this.price) postObject.price = this.solidary ? 0 : this.price;
+      if (this.pricePerKm) postObject.priceKm = this.solidary ? 0 : this.pricePerKm;
       if (this.message) postObject.message = this.message;
       // the following parameters are not used yet but we keep them here for possible future use
       if (this.regularLifetime) postObject.regularLifetime = this.regularLifetime;

@@ -167,9 +167,23 @@ user_facebook_connect:
 # post an ad
 carpool_ad_post:
     path:
-        fr: /covoiturage/annonce/poster/{first?}
-        en: /carpool/ad/post/{first?}
+        fr: /covoiturage/annonce/poster
+        en: /carpool/ad/post/
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPost
+
+# post a first ad
+carpool_first_ad_post:
+    path:
+        fr: /covoiturage/annonce/poster/premiere
+        en: /carpool/ad/post/first
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolFirstAdPost       
+
+# post a solidary ad
+carpool_solidary_ad_post:
+    path:
+        fr: /covoiturage/annonce/poster/solidaire
+        en: /carpool/ad/post/solidary
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSolidaryAdPost    
 
 # post an ad from a search
 carpool_ad_post_search:
@@ -307,6 +321,7 @@ community_proposals:
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityProposals
     requirements:
         id: '\d+'
+        
 # get all available communities for the logged user (AJAX)
 community_user_available:
     path:
