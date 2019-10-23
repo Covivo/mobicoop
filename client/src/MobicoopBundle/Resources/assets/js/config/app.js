@@ -3,7 +3,7 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import colorTheme from '@themes/theme.js'
-import CommonTranslations from "@translations/translations.js";
+import CommonTranslations from "@translations/translations.js"
 import '@mdi/font/scss/materialdesignicons.scss'
 import {LMap, LTileLayer, LMarker, LTooltip, LIcon, LPolyline} from 'vue2-leaflet' 
 
