@@ -47,7 +47,7 @@
         >
           <v-switch
             v-model="solidary"
-            color="secondary"
+            color="success"
             inset
             :label="this.$t('messageSolidaryAd.switch.label')"
           />
