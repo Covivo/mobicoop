@@ -17,9 +17,22 @@ const _ = require('lodash');
 Encore
   .setOutputPath('public/build/')
   .setPublicPath('/build')
+  /*
+   * ENTRY CONFIG
+   *
+   * Add 1 entry for each "page" of your app
+   * (including one that's included on every page - e.g. "app")
+   *
+   * Each entry will result in one JavaScript file (e.g. app.js)
+   * and one CSS file (e.g. app.css) if you JavaScript imports CSS.
+   */
   .addEntry('bundle_app', './src/MobicoopBundle/Resources/assets/js/app.js')
+  // scss only entries
+  // add as much entry as you want css different file
+  .addStyleEntry('bundle_main', './src/MobicoopBundle/Resources/assets/css/main.scss')
   // ⚙️ UNCOMMENT below if you are client platform ⚙️ //
   // .addEntry('app', './assets/js/app.js')
+  // .addStyleEntry('main', './assets/css/main.scss')
   .splitEntryChunks()
   .enableVersioning(Encore.isProduction())
   .enableVueLoader()
