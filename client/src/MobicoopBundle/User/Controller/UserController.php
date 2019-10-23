@@ -49,6 +49,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskHistoryManager;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
@@ -63,14 +64,18 @@ class UserController extends AbstractController
     use HydraControllerTrait;
 
     private $encoder;
+    private $facebook_show;
+    private $facebook_appid;
 
     /**
      * Constructor
      * @param UserPasswordEncoderInterface $encoder
      */
-    public function __construct(UserPasswordEncoderInterface $encoder)
+    public function __construct(UserPasswordEncoderInterface $encoder, $facebook_show, $facebook_appid)
     {
         $this->encoder = $encoder;
+        $this->facebook_show = $facebook_show;
+        $this->facebook_appid = $facebook_appid;
     }
 
     /***********
@@ -90,10 +95,12 @@ class UserController extends AbstractController
         if (!is_null($error)) {
             $errorMessage = $error->getMessage();
         }
-
+        
         return $this->render('@Mobicoop/user/login.html.twig', [
-            "errorMessage"=>$errorMessage
-            ]);
+            "errorMessage"=>$errorMessage,
+            "facebook_show"=>($this->facebook_show==="true") ? true : false,
+            "facebook_appid"=>$this->facebook_appid,
+        ]);
     }
 
     /**
@@ -139,6 +146,10 @@ class UserController extends AbstractController
             $user->setGender($data['gender']);
             $user->setBirthYear($data['birthYear']);
 
+            if (!is_null($data['idFacebook'])) {
+                $user->setFacebookId($data['idFacebook']);
+            }
+
             // Create token to valid inscription
             $datetime = new DateTime();
             $time = $datetime->getTimestamp();
@@ -154,8 +165,10 @@ class UserController extends AbstractController
         }
  
         return $this->render('@Mobicoop/user/signup.html.twig', [
-                'error' => $error
-            ]);
+                'error' => $error,
+                "facebook_show"=>($this->facebook_show==="true") ? true : false,
+                "facebook_appid"=>$this->facebook_appid,
+        ]);
     }
 
     /**
@@ -180,7 +193,7 @@ class UserController extends AbstractController
                         $token = new UsernamePasswordToken($userFound, null, 'main', $userFound->getRoles());
                         $this->get('security.token_storage')->setToken($token);
                         $this->get('session')->set('_security_main', serialize($token));
-                        return $this->redirectToRoute('carpool_ad_post', ['first'=>'1']);
+                        return $this->redirectToRoute('carpool_first_ad_post');
                     }
                 }
             } else {
@@ -757,5 +770,31 @@ class UserController extends AbstractController
         }
 
         return new Response(json_encode("Not a post"));
+    }
+
+    /**
+     * Connect a user by his facebook credentials
+     * AJAX
+     */
+    public function userFacebookConnect(UserManager $userManager, Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            
+            // We get the user by his email
+            $user = $userManager->findByEmail($data["email"]);
+            if ($user->getFacebookId()===$data["personalID"]) {
+                // Same Facebook ID in BDD that the one from the front component. We log the user.
+                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                $this->get('security.token_storage')->setToken($token);
+                $this->get('session')->set('_security_main', serialize($token));
+
+                return new JsonResponse($user->getFacebookId());
+            } else {
+                return new JsonResponse("");
+            }
+        }
+
+        return new JsonResponse("");
     }
 }

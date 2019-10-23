@@ -24,6 +24,7 @@
             <v-radio-group
               v-model="role"
               row
+              :disabled="solidaryAd"
               @change="roleChanged"
             >
               <v-radio
@@ -45,7 +46,7 @@
           </v-row>
         </v-col>
       </v-row>
-
+     
       <!-- Geocompletes -->
       <v-row
         align="center"
@@ -238,6 +239,10 @@ export default {
     punctualDateOptional: {
       type: Boolean,
       default: false
+    },
+    solidaryAd: {
+      type: Boolean,
+      default: false
     }    
   },
   data() {
@@ -246,7 +251,7 @@ export default {
       outwardDateClicked: false,
       menu: false,
       regular: this.initRegular,
-      role: 3,
+      role: this.solidaryAd ? 1 : 3,
       passenger: true,
       driver: true,
       labelOrigin: this.$t("origin.label"),

@@ -7,7 +7,6 @@
   {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}carpool/publish") }}#}
 {% endblock %}
 {% block main %}
-
   <ad-publish 
     geo-search-url="{{ geoCompleteUri }}" 
     :user="{{app.user|json_encode}}" 
@@ -16,12 +15,13 @@
     :url-tiles="{{ urlTiles|json_encode }}"
     :attribution-copyright="{{ attributionCopyright|json_encode }}"
     :community-ids="{{ communityIds is defined ? communityIds|json_encode : 'null' }}"
-    :init-origin = "{{ origin is defined ? origin : 'null' }}"
+    :init-origin = "{{ origin is defined ? "origin" : 'null' }}"
     :init-destination = "{{ destination is defined ? destination : 'null' }}"
     init-date = "{{ date is defined ? date : '' }}"
     init-time = "{{ time is defined ? time : '' }}"
     :init-regular = "{{ regular is defined ? (regular ? 'true' : 'false') : 'false' }}"
     :first-ad = "{{ firstAd is defined ? (firstAd ? 'true' : 'false') : 'false' }}"
+    :solidary-ad = "{{ solidaryAd is defined ? (solidaryAd ? 'true' : 'false') : 'false' }}"    
   />
 
 {% endblock %}

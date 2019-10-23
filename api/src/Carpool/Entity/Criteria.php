@@ -1413,7 +1413,7 @@ class Criteria
 
     public function isSolidaryExclusive(): ?bool
     {
-        return $this->solidary;
+        return $this->solidaryExclusive;
     }
     
     public function setSolidaryExclusive(?bool $isSolidaryExclusive): self

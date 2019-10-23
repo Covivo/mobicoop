@@ -65,6 +65,15 @@ class ContactController extends AbstractController
             if (!empty($reponseofmanager)) {
                 return $reponseofmanager;
             }
+            
+            if (!empty($data["website"])) {
+                return new JsonResponse(
+                    ["message" => "error"],
+                    \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
+                );
+            }
+            
+            dump($data["website"]);
 
             $errors = [];
 

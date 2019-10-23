@@ -13,11 +13,11 @@
         <h1>{{ $t('title') }}</h1>
       </v-col>
     </v-row>
-    <v-layout
-      justify-center
-      text-center
+    <v-row
+      justify="center"
+      class="text-center"
     >
-      <v-flex xs4>
+      <v-col class="col-4">
         <v-alert
           v-if="errorDisplay!==''"
           type="error"
@@ -69,15 +69,27 @@
             {{ $t('textRecovery') }}
           </a>
         </v-card-text>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
+    <v-row
+      v-if="showFacebookLogin"
+      justify="center"
+      class="text-center"
+    >
+      <v-col class="col-4">
+        <m-facebook-auth
+          :app-id="facebookLoginAppId"
+          @errorFacebookConnect="treatErrorMessage({'value':'errorFacebookConnect'})"
+        />
+      </v-col>
+    </v-row>
   </v-content>
 </template>
 <script>
 import { merge } from "lodash";
 import Translations from "@translations/components/user/Login.json";
 import TranslationsClient from "@clientTranslations/components/user/Login.json";
-
+import MFacebookAuth from '@components/user/MFacebookAuth';
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
 export default {
@@ -85,11 +97,22 @@ export default {
     messages: TranslationsMerged,
   },
   name: "Login",
+  components : {
+    MFacebookAuth
+  },
   props: {
     errormessage: {
       type: Object,
       default: null
     },
+    showFacebookLogin: {
+      type: Boolean,
+      default: false
+    },
+    facebookLoginAppId: {
+      type: String,
+      default: null
+    }
   },
   data() {
     return {
@@ -122,7 +145,11 @@ export default {
         this.errorDisplay = this.$t("errorCredentials");
         this.loading = false;
       }
-    }
+      else if(errorMessage.value ==="errorFacebookConnect"){
+        this.errorDisplay = this.$t("errorCredentialsFacebook");
+        this.loading = false;
+      }
+    },
   }
 };
 </script>

@@ -49,7 +49,7 @@ class CarpoolController extends AbstractController
     /**
      * Create a carpooling ad.
      */
-    public function carpoolAdPost(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager, ?string $first)
+    public function carpoolAdPost(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
     {
         $proposal = new Proposal();
         $poster = $userManager->getLoggedUser();
@@ -65,8 +65,32 @@ class CarpoolController extends AbstractController
         }
 
         $this->denyAccessUnlessGranted('create_ad', $proposal);
-
         return $this->render('@Mobicoop/carpool/publish.html.twig');
+    }
+
+    /**
+     * Create the first carpooling ad.
+     */
+    public function carpoolFirstAdPost(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
+    {
+        $proposal = new Proposal();
+        $this->denyAccessUnlessGranted('create_ad', $proposal);
+        return $this->render('@Mobicoop/carpool/publish.html.twig');
+    }
+        
+    /**
+    * Create a solidary carpooling ad.
+    */
+    public function carpoolSolidaryAdPost(ProposalManager $proposalManager, UserManager $userManager, Request $request, CommunityManager $communityManager)
+    {
+        $proposal = new Proposal();
+        $this->denyAccessUnlessGranted('create_ad', $proposal);
+        return $this->render(
+            '@Mobicoop/carpool/publish.html.twig',
+            [
+                'solidaryAd'=>true,
+            ]
+        );
     }
 
     /**
