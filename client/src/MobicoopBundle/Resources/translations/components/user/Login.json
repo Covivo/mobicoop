@@ -2,12 +2,14 @@
     "fr":{
         "title":"Connexion",
         "errorCredentials":"Nom d'utilisateur ou mot de passe incorrect.",
+        "errorCredentialsFacebook":"Erreur dans la connexion via Facebook",
         "urlRecovery":"/utilisateur/mot-de-passe/recuperation",
         "textRecovery":"Mot de passe oublié ?"
     },
     "en":{
         "title":"Connexion",
         "errorCredentials":"Bad username or password.",
+        "errorCredentialsFacebook":"Error in connection by Facebook",
         "urlRecovery":"Forgot password ?"
     }
 }

@@ -110,6 +110,9 @@ services:
     # User
     Mobicoop\Bundle\MobicoopBundle\User\Controller\:
         resource: '@MobicoopBundle/User/Controller/*'
+        arguments:
+            $facebook_show: '%env(resolve:FACEBOOK_SHOW)%'
+            $facebook_appid: '%env(resolve:FACEBOOK_APPID)%'
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\User\Service\:
         resource: '@MobicoopBundle/User/Service/*'

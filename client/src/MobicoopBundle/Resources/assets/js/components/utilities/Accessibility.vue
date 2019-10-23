@@ -10,7 +10,7 @@
 import { merge } from "lodash";
 import Translations from "@translations/components/utilities/Accessibility.json";
 import TranslationsClient from "@clientTranslations/components/utilities/Accessibility.json";
-import '@css/page/home/accessconfig.css';
+import '@css/page/home/accessconfig.scss';
 import '@js/config/accessconfig.js';
 let TranslationsMerged = merge(Translations, TranslationsClient);
 

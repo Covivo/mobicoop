@@ -250,6 +250,12 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      */
     private $language= 'fr_FR';
         
+    /**
+     * @var string|null Facebook ID of the user
+     * @Groups({"post"})
+     */
+    private $facebookId;
+
     public function __construct($id=null, $status=null)
     {
         if ($id) {
@@ -730,6 +736,17 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
         
+    public function getFacebookId(): ?string
+    {
+        return $this->facebookId;
+    }
+
+    public function setFacebookId(?string $facebookId): self
+    {
+        $this->facebookId = $facebookId;
+        return $this;
+    }
+
     /**
      * get the native language of the client.
      *

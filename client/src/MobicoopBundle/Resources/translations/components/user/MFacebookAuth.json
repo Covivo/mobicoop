@@ -1,0 +1,16 @@
+{
+    "fr":{
+        "urlFacebookConnect":"/utilisateur/facebook/connexion",
+        "signup":"Inscription par facebook",
+        "connection":"Connexion par facebook",
+        "fillPublicInfos":"Le formulaire a été pré rempli avec les informations publiques de votre profil Facebook.",
+        "fillRemainingFields":"Merci de compléter les champs obligatoires restants."
+    },
+    "en":{
+        "urlFacebookConnect":"/utilisateur/facebook/connect",
+        "signup":"Sign up by facebook",
+        "connection":"Log in by facebook",
+        "fillPublicInfos":"The form has been filled by your public data from Facebook.",
+        "fillRemainingFields":"Please fill the remaining mandatory fields."
+    }
+}

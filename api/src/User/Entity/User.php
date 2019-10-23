@@ -541,6 +541,14 @@ class User implements UserInterface, EquatableInterface
      */
     private $permissions;
 
+    /**
+     * @var string|null Facebook ID of the user
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $facebookId;
+
     public function __construct($status = null)
     {
         $this->addresses = new ArrayCollection();
@@ -1390,6 +1398,17 @@ class User implements UserInterface, EquatableInterface
     {
         $this->threads = $threads;
 
+        return $this;
+    }
+
+    public function getFacebookId(): ?string
+    {
+        return $this->facebookId;
+    }
+
+    public function setFacebookId(?string $facebookId): self
+    {
+        $this->facebookId = $facebookId;
         return $this;
     }
 
