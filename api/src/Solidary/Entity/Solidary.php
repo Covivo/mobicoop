@@ -75,60 +75,60 @@ class Solidary
      */
     private $assisted;
 
-    /**
-     * @var string Structure of the solidary record.
-     *
-     * @Assert\NotBlank
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
-     */
-    private $structure;
-
-    /**
-     * @var string Subject of the solidary record.
-     *
-     * @Assert\NotBlank
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
-     */
-    private $subject;
-
-    /**
-     * @var Proposal The proposal.
-     *
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
-     * @MaxDepth(1)
-     */
-    private $proposal;
-        
-    /**
-     * @var User The user related with the solidary record.
-     *
-     * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="solidaries")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read"})
-     * @MaxDepth(1)
-     */
-    private $user;
-
-    /**
-     * @var \DateTimeInterface Creation date of the solidary record.
-     *
-     * @ORM\Column(type="datetime")
-     * @Groups("read")
-     */
-    private $createdDate;
-
-    /**
-     * @var \DateTimeInterface Updated date of the solidary record.
-     *
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("read")
-     */
-    private $updatedDate;
+//    /**
+//     * @var string Structure of the solidary record.
+//     *
+//     * @Assert\NotBlank
+//     * @ORM\Column(type="string", length=255)
+//     * @Groups({"read","write"})
+//     */
+//    private $structure;
+//
+//    /**
+//     * @var string Subject of the solidary record.
+//     *
+//     * @Assert\NotBlank
+//     * @ORM\Column(type="string", length=255)
+//     * @Groups({"read","write"})
+//     */
+//    private $subject;
+//
+//    /**
+//     * @var Proposal The proposal.
+//     *
+//     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
+//     * @ORM\JoinColumn(nullable=false)
+//     * @Groups({"read","write"})
+//     * @MaxDepth(1)
+//     */
+//    private $proposal;
+//
+//    /**
+//     * @var User The user related with the solidary record.
+//     *
+//     * @Assert\NotBlank
+//     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="solidaries")
+//     * @ORM\JoinColumn(nullable=false)
+//     * @Groups({"read"})
+//     * @MaxDepth(1)
+//     */
+//    private $user;
+//
+//    /**
+//     * @var \DateTimeInterface Creation date of the solidary record.
+//     *
+//     * @ORM\Column(type="datetime")
+//     * @Groups("read")
+//     */
+//    private $createdDate;
+//
+//    /**
+//     * @var \DateTimeInterface Updated date of the solidary record.
+//     *
+//     * @ORM\Column(type="datetime", nullable=true)
+//     * @Groups("read")
+//     */
+//    private $updatedDate;
 
     public function getId(): int
     {

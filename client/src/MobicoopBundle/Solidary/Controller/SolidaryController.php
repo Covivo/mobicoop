@@ -23,6 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Solidary\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Solidary\Entity\Solidary;
@@ -99,7 +100,7 @@ class SolidaryController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             $datetime = new \DateTime();
-            
+            $proposal = new Proposal();
             // todo: move in manager ?
             // get or create the user
             if (!empty($userManager->getLoggedUser())) {
@@ -129,14 +130,17 @@ class SolidaryController extends AbstractController
                 }
                 $user->addAddress($address);
                 
+                // todo: doesn't work because we need password
+                $year = new \DateTime($data['yearOfBirth']);
+//                $year->format('Y');
                 // pass front info into user form
                 $user->setEmail($data['email']);
                 $user->setTelephone($data['phoneNumber']);
-                $user->setPassword($data['password']);
+                $user->setPassword('password');
                 $user->setGivenName($data['givenName']);
                 $user->setFamilyName($data['familyName']);
                 $user->setGender($data['gender']);
-                $user->setBirthYear($data['yearOfBirth']);
+                $user->setBirthYear((int) $year->format('Y'));
 
                 // Create token to valid inscription
                 $time = $datetime->getTimestamp();
@@ -156,7 +160,10 @@ class SolidaryController extends AbstractController
             
             //todo: create proposal from current data
 //            dump($proposalManager->createProposalFromResult($data["search"], $user));
-            die;
+            $solidary->setProposal($proposalManager->createSolidaryProposalFromData($data["search"], $user));
+//            $proposal
+            
+//            die;
             
             $solidary->setUser($user);
             $solidary->setCreatedDate($datetime);
@@ -164,12 +171,13 @@ class SolidaryController extends AbstractController
             $solidary->setStatus(Solidary::ASKED);
             $solidary->setAssisted(!empty($data["structure"]));
             if (!empty($data["structure"])) {
-                $solidary->setStructure($structureManager->getStructure($data["structure"]));
+                $solidary->setStructure($structureManager->getStructure($data["structure"])->getName());
             }
             if (!empty($data["subject"])) {
-                $solidary->setSubject($subjectManager->getSubject($data["subject"]));
+                $solidary->setSubject($subjectManager->getSubject($data["subject"])->getLabel());
             }
 
+//            var_dump($solidary);die;
             if ($response = $solidaryManager->createSolidary($solidary)) {
                 return new JsonResponse(
                     ["message" => "success"],
@@ -177,7 +185,7 @@ class SolidaryController extends AbstractController
                 );
             }
             return new JsonResponse(
-                ["message" => "error"],
+                ["message" => "error create"],
                 \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
             );
         }

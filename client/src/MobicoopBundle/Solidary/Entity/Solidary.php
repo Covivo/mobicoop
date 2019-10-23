@@ -59,55 +59,55 @@ class Solidary implements ResourceInterface
      */
     private $status;
 
-    /**
-     * @var bool Social assist.
-     *
-     * @Groups({"get","post"})
-     */
-    private $assisted;
-
-    /**
-     * @var string Structure of the solidary record.
-     *
-     * @Groups({"get","post"})
-     */
-    private $structure;
-
-    /**
-     * @var string Subject of the solidary record.
-     *
-     * @Groups({"get","post"})
-     */
-    private $subject;
-
-    /**
-     * @var Proposal The proposal.
-     *
-     * @Groups({"get","post"})
-     */
-    private $proposal;
-
-    /**
-     * @var User The user related with the solidary record.
-     *
-     * @Assert\NotBlank
-     * @Groups({"get"})
-     */
-    private $user;
-
-    /**
-     * @var \DateTimeInterface Creation date of the solidary record.
-     *
-     * @Groups("get")
-     */
-    private $createdDate;
-
-    /**
-     * @var \DateTimeInterface Updated date of the solidary record.
-     *
-     * @Groups("get")
-     */
-    private $updatedDate;
+//    /**
+//     * @var bool Social assist.
+//     *
+//     * @Groups({"get","post"})
+//     */
+//    private $assisted;
+//
+//    /**
+//     * @var string Structure of the solidary record.
+//     *
+//     * @Groups({"get","post"})
+//     */
+//    private $structure;
+//
+//    /**
+//     * @var string Subject of the solidary record.
+//     *
+//     * @Groups({"get","post"})
+//     */
+//    private $subject;
+//
+//    /**
+//     * @var Proposal The proposal.
+//     *
+//     * @Groups({"get","post"})
+//     */
+//    private $proposal;
+//
+//    /**
+//     * @var User The user related with the solidary record.
+//     *
+//     * @Assert\NotBlank
+//     * @Groups({"get"})
+//     */
+//    private $user;
+//
+//    /**
+//     * @var \DateTimeInterface Creation date of the solidary record.
+//     *
+//     * @Groups("get")
+//     */
+//    private $createdDate;
+//
+//    /**
+//     * @var \DateTimeInterface Updated date of the solidary record.
+//     *
+//     * @Groups("get")
+//     */
+//    private $updatedDate;
 
     public function getId(): int
     {

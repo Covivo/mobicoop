@@ -180,7 +180,7 @@ class UserController extends AbstractController
                         $token = new UsernamePasswordToken($userFound, null, 'main', $userFound->getRoles());
                         $this->get('security.token_storage')->setToken($token);
                         $this->get('session')->set('_security_main', serialize($token));
-                        return $this->redirectToRoute('carpool_ad_post', ['first'=>'1']);
+                        return $this->redirectToRoute('carpool_first_ad_post');
                     }
                 }
             } else {
