@@ -1,5 +1,12 @@
 <template>
   <v-content>
+    <v-alert
+      v-model="showInfos"
+      type="info"
+    >
+      <p>{{ $t("fillPublicInfos") }}</p>
+      <p>{{ $t("fillRemainingFields") }}</p>
+    </v-alert>
     <facebook-login
       v-if="appId && showButton"
       class="button"
@@ -37,6 +44,7 @@ export default {
   },
   data() {
     return {
+      showInfos: false,
       email: "",
       isConnected: false,
       name: '',
@@ -55,38 +63,43 @@ export default {
   methods: {
     getUserData() {
       this.showButton = false;
-      this.FB.api('/me', 'GET', {fields: 'id,name,email' },
+      this.FB.api('/me', 'GET', {fields: 'id,name,first_name,middle_name,last_name,picture,email' },
         userInformation => {
-          this.personalID = userInformation.id;
-          this.email = userInformation.email;
-          this.name = userInformation.name;
 
+          if(this.signUp){
+            // On a sign up we fill the sign up form
+            this.emitForSignUp(userInformation);
+            this.showInfos = true;
+          }
+          else{
 
-          let urlAjax = (this.signUp) ? this.$t('urlFacebookSignup') : this.$t('urlFacebookConnect')
+            this.personalID = userInformation.id;
+            this.email = userInformation.email;
+            this.name = userInformation.name;
 
-          axios.post(urlAjax,
-            {
-              email:this.email,
-              personalID:this.personalID,
-            },{
-              headers:{
-                'content-type': 'application/json'
-              }
-            })
-            .then(response => {
-              if(response.data !== ""){
-                window.location = "/";
-              }
-              else{
+            axios.post(this.$t('urlFacebookConnect'),
+              {
+                email:this.email,
+                personalID:this.personalID,
+              },{
+                headers:{
+                  'content-type': 'application/json'
+                }
+              })
+              .then(response => {
+                if(response.data !== ""){
+                  window.location = "/";
+                }
+                else{
+                  this.emitError();
+                }
+              })
+              .catch(function (error) {
+                console.log(error);
                 this.emitError();
-              }
-            })
-            .catch(function (error) {
-              console.log(error);
-              this.emitError();
-            });
+              });
 
-
+          }
         }
       )
     },
@@ -104,6 +117,9 @@ export default {
     },
     emitError(){
       this.$emit("errorFacebookConnect");
+    },
+    emitForSignUp(userInformation){
+      this.$emit("fillForm",userInformation);
     }
   }
 };

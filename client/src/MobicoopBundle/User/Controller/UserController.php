@@ -146,6 +146,10 @@ class UserController extends AbstractController
             $user->setGender($data['gender']);
             $user->setBirthYear($data['birthYear']);
 
+            if (!is_null($data['idFacebook'])) {
+                $user->setFacebookId($data['idFacebook']);
+            }
+
             // Create token to valid inscription
             $datetime = new DateTime();
             $time = $datetime->getTimestamp();
@@ -161,8 +165,10 @@ class UserController extends AbstractController
         }
  
         return $this->render('@Mobicoop/user/signup.html.twig', [
-                'error' => $error
-            ]);
+                'error' => $error,
+                "facebook_show"=>($this->facebook_show==="true") ? true : false,
+                "facebook_appid"=>$this->facebook_appid,
+        ]);
     }
 
     /**
@@ -767,7 +773,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * Return a User by his email
+     * Connect a user by his facebook credentials
      * AJAX
      */
     public function userFacebookConnect(UserManager $userManager, Request $request)

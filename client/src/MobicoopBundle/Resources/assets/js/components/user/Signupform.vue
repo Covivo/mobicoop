@@ -39,6 +39,19 @@
         </v-col>
       </v-row>
       <v-row
+        v-if="showFacebookSignUp"
+        justify="center"
+        class="text-center"
+      >
+        <v-col class="col-4">
+          <m-facebook-auth
+            :app-id="facebookLoginAppId"
+            :sign-up="true"
+            @fillForm="fillForm"
+          />
+        </v-col>
+      </v-row>
+      <v-row
         justify="center"
         align="center"
       >
@@ -288,6 +301,7 @@ import GeoComplete from "@js/components/utilities/GeoComplete";
 import { merge } from "lodash";
 import Translations from "@translations/components/user/SignUp.json";
 import TranslationsClient from "@clientTranslations/components/user/SignUp.json";
+import MFacebookAuth from '@components/user/MFacebookAuth';
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
@@ -296,6 +310,7 @@ export default {
   },
   components: {
     GeoComplete,
+    MFacebookAuth
   },
   props: {
     geoSearchUrl: {
@@ -311,6 +326,14 @@ export default {
       default: null
     },
     ageMax: {
+      type: String,
+      default: null
+    },
+    showFacebookSignUp: {
+      type: Boolean,
+      default: false
+    },
+    facebookLoginAppId: {
       type: String,
       default: null
     }
@@ -378,7 +401,8 @@ export default {
         homeAddress:null,
         checkboxRules: [
           v => !!v || this.$t("ui.pages.signup.chart.errors.required")
-        ]
+        ],
+        idFacebook:null
       }
     };
   },
@@ -418,7 +442,8 @@ export default {
           familyName:this.form.familyName,
           gender:this.form.gender,
           birthYear:this.form.birthYear,
-          address:this.form.homeAddress
+          address:this.form.homeAddress,
+          idFacebook:this.form.idFacebook
         },{
           headers:{
             'content-type': 'application/json'
@@ -442,6 +467,12 @@ export default {
         return true;
       }
     },
+    fillForm(data){
+      this.form.email = data.email;
+      this.form.givenName = data.first_name;
+      this.form.familyName = data.last_name;
+      this.form.idFacebook = data.id;
+    }
   }
 
 };
