@@ -6,37 +6,37 @@ toUseTheService: "à utiliser le service ! Partagez vos trajets et trouvez votre
 
 # CARPOOL_MATCHING_NEW
 
-newCarpoolAdMatchingYourCommute : "Une nouvelle annonce de covoiturage correspondant à votre trajet "
+newCarpoolAdMatchingYourCommute : "Une nouvelle annonce de covoiturage correspondant à votre trajet"
 seeYouIn: "Rendez-vous dans" 
-myAds: "Mes annonces "
-toConsultCorrespondingAdsAndMakeContact: "pour consulter les annonces correspondantes et prendre contact."
+myAds: "Mes annonces"
+toConsultCorrespondingAdsAndMakeContact: "pour consulter les annonces correspondantes et prendre contact"
 
 # COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
 
 sendYouMessage: "vous a envoyé un message :"
-canAnswerViaEmailFrom: "Vous pouvez répondre à ce message via la messagerie de "
+canAnswerViaEmailFrom: "Vous pouvez répondre à ce message via la messagerie de"
 clickHere: "en cliquant ici" 
-getProblem: "Si ce mail comporte un message ne respectant pas la charte, n'hésitez pas à nous contacter."
+getProblem: "Si ce mail comporte un message ne respectant pas la charte, n'hésitez pas à nous contacter"
 
 # CONTACT_EMAIL_POSTED
 
-newContactAsk: "Bonjour vous avez une nouvelle demande de contact,"
-name: "Nom : "
-firstname: "Prénom : "
-email: "Email :"
-ask: "Demande :"
-message: "Message :"
+newContactAsk: "Bonjour vous avez une nouvelle demande de contact"
+name: "Nom"
+firstname: "Prénom"
+email: "Email"
+ask: "Demande"
+message: "Message"
 thankYou: "Merci"
 notMentioned: "Non renseigné"
 
 # DRIVER_CARPOOL_ASK_ACCEPTED_REGULAR
 
-summaryCarpools: "Voici le récapitulatif de vos covoiturages."
+summaryCarpools: "Voici le récapitulatif de vos covoiturages"
 isThe: "est le"
 carpoolDistance: "Trajet régulier Distance covoiturée"
 driverDetour: "Détour conducteur"
-supported:  "Prise en charge à "
-depositedAt: "Déposé à "
+supported:  "Prise en charge à"
+depositedAt: "Déposé à"
 appointmentHour: "Heures de RDV"
 monday: "Lundi"
 tuesday: "Mardi"
@@ -54,26 +54,26 @@ indicativePrice: "Prix indicatif"
 
 # DRIVER_CARPOOL_ASK_POSTED_REGULAR
 
-yourAsk: "vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous."
+yourAsk: "vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous"
 replyViaEmail: "Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de"
 
 # DRIVER_CARPOOL_ASK_REFUSED_REGULAR
 
 notBeAbleToCarpoolWithYou: "ne pourra pas covoiturer avec vous vers"
 followingDays: "les jours suivants"
-hisMessage: "Voici son message :"
+hisMessage: "Voici son message"
 
 # DRIVER_CARPOOL_ASK_REFUSED
 
-towards: "en direction de "
+towards: "en direction de"
 
 # DRIVER_CARPOOL_MATCHING_NEW_REGULAR
 
-justPublished : "vient d'être publiée."
+justPublished : "vient d'être publiée"
 
 # PASSENGER_CARPOOL_ASK_ACCEPTED_REGULAR
 
-phoneNumber: "Le numéro de téléphone de "
+phoneNumber: "Le numéro de téléphone de"
 driverComment: "Commentaire du conducteur"
 
 # PASSENGER_CARPOOL_ASK_ACCEPTED
@@ -87,15 +87,15 @@ at: "à"
 
 # USER_PASSWORD_CHANGE_ASKED
 
-askNewPassword: "Vous avez demandé un nouveau mot de passe."
-clickHereToChangePassword: "Veuillez cliquer sur ce lien pour changer votre mot de passe :"
+askNewPassword: "Vous avez demandé un nouveau mot de passe"
+clickHereToChangePassword: "Veuillez cliquer sur ce lien pour changer votre mot de passe"
 linkChangePassword: "Lien de changement de mot de passe"
 urlUpdatePassword: 'utilisateur/mot-de-passe/reset/update/'
 
 # USER_PASSWORD_CHANGED
 
 yourPassword: "Votre mot de passe"
-successfullyChanged: "a bien été changé."
+successfullyChanged: "a bien été changé"
 thanksForUse: "Merci d’utiliser"
 
 # USER_REGISTERED
@@ -120,8 +120,8 @@ CheckoutForAnyURLMisspellingOr: 'messages'
 
   # CARPOOL_AD_RENEWAL
 
-inFewDays: "Dans quelques jours,  vos annonces de covoiturage ne seront plus valides."
-renewYourAdsOn: "Renouvelez votre annonce sur "
+inFewDays: "Dans quelques jours,  vos annonces de covoiturage ne seront plus valides"
+renewYourAdsOn: "Renouvelez votre annonce sur"
 
 # CARPOOL_ASK_ACCEPTED
 
@@ -132,13 +132,13 @@ renewYourAdsOn: "Renouvelez votre annonce sur "
 
 # CARPOOL_MATCHING_NEW
 
-newAdPublished: "Une nouvelle annonce a été publiée pour votre trajet "
-appointmentIn: ". Rdv dans Mes annonces."
+newAdPublished: "Une nouvelle annonce a été publiée pour votre trajet"
+appointmentIn: "Rdv dans Mes annonces"
 
 # CARPOOL_INTERNAL_MESSAGE_RECEIVED
 
-newMessage: "Vous avez reçu un nouveau message de "
-lookYourMessaging: "Voir sur votre messagerie "
+newMessage: "Vous avez reçu un nouveau message de"
+lookYourMessaging: "Voir sur votre messagerie"
 
 # DRIVER_CARPOOL_ASK_ACCEPTED_REGULAR
 
@@ -148,24 +148,24 @@ and: "et"
 
 # DRIVER_CARPOOL_ASK_ACCEPTED
 
-carpoolAskAccepted: "Covoiturage confirmé avec "
+carpoolAskAccepted: "Covoiturage confirmé avec"
 
 # DRIVER_CARPOOL_ASK_POSTED_REGULAR
 
-askYouCarpoolRegular: "vous propose un covoiturage régulier de "
-findTheProposalIn: "Retrouvez la proposition dans « Mes Messages »."
+askYouCarpoolRegular: "vous propose un covoiturage régulier de"
+findTheProposalIn: "Retrouvez la proposition dans « Mes Messages »"
 
 # DRIVER_CARPOOL_ASK_POSTED
 
-askYouCarpool: "vous propose un covoiturage de "
+askYouCarpool: "vous propose un covoiturage de"
 
 # DRIVER_CARPOOL_ASK_REFUSED_REGULAR
 
-refusedAskRegular: "décline le covoiturage régulier de " 
+refusedAskRegular: "décline le covoiturage régulier de" 
 
 # DRIVER_CARPOOL_ASK_REFUSED
 
-refusedAsk: "décline le covoiturage de "
+refusedAsk: "décline le covoiturage de"
 
 # DRIVER_CARPOOL_ASK_UPDATED_REGULAR
 
@@ -173,7 +173,7 @@ refusedAsk: "décline le covoiturage de "
 
 # DRIVER_CARPOOL_MATCHING_NEW_REGULAR
 
-newMatching: "Une nouvelle annonce a été publiée pour votre trajet "
+newMatching: "Une nouvelle annonce a été publiée pour votre trajet"
 
 # PASSENGER_CARPOOL_ASK_UPDATED_REGULAR
 

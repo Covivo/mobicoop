@@ -1,6 +1,6 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-<p>@PrenomOuPseudo {{ sendYouMessage |trans }}</p>
-    <p>{{  canAnswerViaEmailFrom |trans }}{{ api_env('EMAILS_PLATFORM_NAME') }} {{ clickHere |trans }} {{ api_env('EMAILS_PLATFORM_URL') }}{{ "urlMailBox"|trans }}</p>.
-    <p>{{ getProblem |trans }}</p>
+<p>@PrenomOuPseudo {{ "sendYouMessage" |trans }}</p>
+    <p>{{  "canAnswerViaEmailFrom" |trans }}{{ api_env('EMAILS_PLATFORM_NAME') }} {{ "clickHere" |trans }} {{ api_env('EMAILS_PLATFORM_URL') }}{{ "urlMailBox"|trans }}</p>.
+    <p>{{ "getProblem" |trans }}</p>
 {% endblock %}

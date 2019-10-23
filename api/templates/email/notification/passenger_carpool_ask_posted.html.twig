@@ -1,15 +1,15 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-   <p>@PrenomOuPseudoExpediteur {{ yourAsk |trans }}</p>
+   <p>@PrenomOuPseudoExpediteur {{ "yourAsk"|trans }}.</p>
 
-    <p>{{ replyViaEMail |trans }} {{ api_env('EMAILS_PLATFORM_NAME') }} {{ clickHere |trans}} @URLdelapagedemessageriecorrespondante.</p>
+    <p>{{ "replyViaEMail"|trans }} {{ api_env('EMAILS_PLATFORM_NAME') }} {{ "clickHere"|trans}} @URLdelapagedemessageriecorrespondante.</p>
 
-    <p>{{ ocassionalCarpoolDistance|trans}} @DistancePassager km</p>
-    <p>{{ driverDetour |trans}}  @TempsDetourMinutes  /  @DistanceDetour  km</p>
-    <p>{{ supported |trans }} @AdressePEC</p>
-    <p>{{ the |trans}}  @DateDebut  {{ hour |trans}}  @DateDebut </p>
-    <p>{{ depositedAt |trans }} @AdresseDepose</p>
-    <p>{{ driverComment |trans}} :  @CommentairesDemande</p>
-    <p>{{ reservedPlaces |trans}} @NbPassagers</p>
-    <p>{{ indicativePrice |trans}}  @GainConducteur @Monnaie</p>
+    <p>{{ "ocassionalCarpoolDistance"|trans}} @DistancePassager km.</p>
+    <p>{{ "driverDetour"|trans}}  @TempsDetourMinutes / @DistanceDetour km.</p>
+    <p>{{ "supported"|trans }} @AdressePEC.</p>
+    <p>{{ "the"|trans}}  @DateDebut  {{ "hour"|trans}}  @DateDebut.</p>
+    <p>{{ "depositedAt"|trans }} @AdresseDepose.</p>
+    <p>{{ "driverComment"|trans}} : @CommentairesDemande.</p>
+    <p>{{ "reservedPlaces"|trans}} @NbPassagers.</p>
+    <p>{{ "indicativePrice"|trans}}  @GainConducteur @Monnaie.</p>
 {% endblock %}

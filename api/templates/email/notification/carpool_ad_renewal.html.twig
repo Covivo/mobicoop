@@ -1,6 +1,6 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    <p>{{ beCarefulFewDaysAnnouncementNotValid|trans }}</p>
+    <p>{{ "beCarefulFewDaysAnnouncementNotValid"|trans }}.</p>
 
-    <p>{{ nowYouAreMore| trans }} @NbInscrits  {{ toUseTheService|trans}}</p>
+    <p>{{ "nowYouAreMore"|trans }} @NbInscrits  {{ "toUseTheService"|trans}}.</p>
 {% endblock %}
