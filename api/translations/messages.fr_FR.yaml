@@ -113,7 +113,6 @@ urlEmailValidation: 'utilisateur/inscription/validation/'
 theModificationIsConfirmed: "La modification suivante de votre profil est confirmée"
 
 urlMailBox: 'utilisateur/messages'
-TheRequestedPageCouldn'tBeLocated:
 CheckoutForAnyURLMisspellingOr: 'messages'
 
 
