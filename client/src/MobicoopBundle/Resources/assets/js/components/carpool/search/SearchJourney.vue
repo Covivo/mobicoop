@@ -60,6 +60,7 @@
             :label="labelOrigin"
             :token="user ? user.geoToken : ''"
             required
+            :show-required="showRequired"
             :required-error="requiredErrorOrigin"
             :init-address="customInitOrigin"
             @address-selected="originSelected"
