@@ -51,6 +51,7 @@
           :user="user"
           :init-regular="regular"
           :punctual-date-optional="punctualDateOptional"
+          :show-required="true"
           @change="searchChanged"
         />
       </v-col>

@@ -61,6 +61,7 @@
               :label="labelOrigin"
               :token="user ? user.geoToken : ''"
               required
+              :show-required="showRequired"
               :required-error="requiredErrorOrigin"
               :init-address="customInitOrigin"
               @address-selected="originSelected"
@@ -93,6 +94,7 @@
               :label="labelDestination"
               :token="user ? user.geoToken : ''"
               required
+              :show-required="showRequired"
               :required-error="requiredErrorDestination"
               :init-address="customInitDestination"
               @address-selected="destinationSelected"
@@ -164,7 +166,7 @@
                   v-show="regular ? false : true"
                   :value="computedDateFormat"
                   clearable
-                  :label="$t('outwardDate.label')"
+                  :label="$t('outwardDate.label') + (showRequired ? ' *' : '')"
                   readonly
                   :disabled="regular"
                   :error="!date && regular && outwardDateClicked"
@@ -244,7 +246,11 @@ export default {
     solidaryAd: {
       type: Boolean,
       default: false
-    }    
+    },
+    showRequired: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
