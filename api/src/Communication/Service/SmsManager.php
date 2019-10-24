@@ -26,6 +26,7 @@ namespace App\Communication\Service;
 use App\Communication\Entity\Sms;
 use App\DataProvider\Entity\SmsEnvoiProvider;
 use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Sms sending service via SmsEnvoi
@@ -38,6 +39,7 @@ class SmsManager
     private $templatePath;
     private $logger;
     private $smsProvider;
+    private $translator;
   
     /**
      * SmsManager constructor.
@@ -47,11 +49,12 @@ class SmsManager
      * @param SmsProvider $smsProvider
      * @param string $templatePath
      */
-    public function __construct(\Twig_Environment $templating, LoggerInterface $logger, string $templatePath, string $smsProvider, string $username, string $password, string $sender)
+    public function __construct(\Twig_Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $templatePath, string $smsProvider, string $username, string $password, string $sender)
     {
         $this->templating = $templating;
         $this->templatePath = $templatePath;
         $this->logger = $logger;
+        $this->translator = $translator;
 
         switch ($smsProvider) {
             case 'smsEnvoi':  $this->smsProvider = new SmsEnvoiProvider($username, $password, $sender);break;
@@ -66,8 +69,10 @@ class SmsManager
      * @param array $context optional array of parameters that can be included in the template
      * @return string
      */
-    public function send(Sms $sms, $template, $context=[])
+    public function send(Sms $sms, $template, $context=[], $lang="fr_FR")
     {
+        $sessionLocale= $this->translator->getLocale();
+        $this->translator->setLocale($lang);
         $sms->setMessage(
             $this->templating->render(
                 $this->templatePath.$template.'.html.twig',
@@ -78,6 +83,8 @@ class SmsManager
             ),
             'text/html'
         );
+        $this->translator->setLocale($sessionLocale);
+
         // to do send sms via smsEnvoi
         $this->smsProvider->postCollection($sms);
 

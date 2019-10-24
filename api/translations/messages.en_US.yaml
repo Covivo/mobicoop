@@ -1,115 +1,181 @@
-'ne pourra pas covoiturer avec vous vers': 'ne pourra pas covoiturer avec vous vers'
-'les jours suivants': 'les jours suivants'
-du: du
-au: au
-'Voici son message': 'Voici son message'
-'Pensez à renouveler votre annonce de covoiturage': 'Pensez à renouveler votre annonce de covoiturage'
-'Nouvelle(s) annonce(s) de covoiturage': 'Nouvelle(s) annonce(s) de covoiturage'
-'Modification de votre profil': 'Modification de votre profil'
-'Confirmation de re-initialisation de mot de passe': 'Confirmation de re-initialisation de mot de passe'
-'Demande de covoiturage': 'Demande de covoiturage'
-'Proposition de covoiturage déclinée': 'Proposition de covoiturage déclinée'
-'Votre inscription': 'Votre inscription'
-'Récapitulatif covoiturage': 'Récapitulatif covoiturage'
-'vous contacte': 'vous contacte'
-'Avis de re-initialisation de mot de passe': 'You have requested to modify your password'
-'Une nouvelle annonce de covoiturage correspondant à votre trajet': 'Une nouvelle annonce de covoiturage correspondant à votre trajet'
-'vient d''être publiée.': 'vient d''être publiée.'
-'Rendez-vous dans': 'Rendez-vous dans'
-'Mes annonces': 'Mes annonces'
-'pour consulter les annonces correspondantes et prendre contact': 'pour consulter les annonces correspondantes et prendre contact'
-'ne pourra pas covoiturer avec vous pour le trajet du': 'ne pourra pas covoiturer avec vous pour le trajet du'
-'en direction de': 'en direction de'
-'Voici son message :': 'Voici son message :'
-'Attention dans quelques jours vos trajets enregistrés ne seront plus valables sur votre profil et ne seront donc plus visibles par les autres covoitureurs.': 'Attention dans quelques jours vos trajets enregistrés ne seront plus valables sur votre profil et ne seront donc plus visibles par les autres covoitureurs.'
-'Vous êtes maintenant plus de': 'Vous êtes maintenant plus de'
-'à utiliser le service ! Partagez vos trajets et trouvez votre bonheur !': 'à utiliser le service ! Partagez vos trajets et trouvez votre bonheur !'
-'Voici le récapitulatif de vos covoiturages.': 'Voici le récapitulatif de vos covoiturages.'
-'Le numéro de téléphone de': 'Le numéro de téléphone de'
-'est le': 'est le'
-'Trajet régulier Distance covoiturée': 'Trajet régulier Distance covoiturée'
-'Détour conducteur': 'Détour conducteur'
-'Prise en charge à': 'Prise en charge à'
-'Dépose à': 'Dépose à'
-'Heures de RDV': 'Heures de RDV'
-Lundi: Lundi
-Mardi: Mardi
-Mercredi: Mercredi
-Jeudi: Jeudi
-Vendredi: Vendredi
-Samedi: Samedi
-Dimanche: Dimanche
-Le: Le
-Du: Du
-'Commentaire du passager': 'Commentaire du passager'
-'ContacterPlaces réservées': 'ContacterPlaces réservées'
-'Prix indicatif': 'Prix indicatif'
-'vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous.': 'vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous.'
-'Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de': 'Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de'
-'en cliquant ici': 'en cliquant ici'
-urlMailBox: 'user/messages'
-'Trajet occasionelle Distance covoiturée': 'Trajet occasionelle Distance covoiturée'
-'La modification suivante de votre profil est confirmée': 'La modification suivante de votre profil est confirmée'
-'Vous pouvez répondre à ce message via la messagerie de': 'Vous pouvez répondre à ce message via la messagerie de'
-'Si ce mail comporte un message ne respectant pas la charte, n''hésitez pas à nous contacter.': 'Si ce mail comporte un message ne respectant pas la charte, n''hésitez pas à nous contacter.'
-"Une\n                                                                        question ?": 'Do you have a question?'
-'Formulaire de contact': 'Contact form'
-'Foire Aux Questions': 'Frequently asked Questions'
-Cliquez-ici: 'Click here'
-'pour gérer vos alertes email.': 'To manage your email'
-'Votre mot de passe': 'Your password'
-'a bien été changé.': 'has recently been changed.'
-'Merci d’utiliser': 'Thanks to use our service'
-'Vous avez demandé un nouveau mot de passe.': 'You have recently asked a password update.'
-'Veuillez cliquer sur ce lien pour changer votre mot de passe :': 'Please, click here to change your password :'
-'Lien de changement de mot de passe': 'Password changing link'
-urlUpdatePassword: 'user/password/reset/'
-Merci!: 'Thank you!'
-'Votre inscription au service': 'Your subscription'
-'est bien prise en compte': 'have been fufilled'
-'Veuillez cliquer sur ce lien pour confirmer votre email': 'Please click here to confirm your email.'
-'Ou utilisez le code de validation directement sur le site': 'Or use directly the website validation code'
-'Vous avez un message': 'You have received a message'
-Bonjour: Dear
-'A très bientôt sur': 'See you next on'
-'Nous sommes content de vous rendre service.': 'It is really nice to work for you.'
-'Nous vous notifions par ce message que votre annonce a été posté avec succes!': 'We want to notify you that your proposal was posted'
-Merci: 'Thank you'
-'Covoiturage en attente de validation': 'Covoiturage en attente de validation'
-bad Paragraph id is provided: 'messages'
-bad Section id is provided: 'messages'
-bad Ask id is provided: 'messages'
-Unrecognized parameter :%name%: 'messages'
-bad User id is provided: 'messages'
-bad RdexJourney id is provided: 'messages'
-bad request id is provided: 'messages'
-bad Mass id is provided: 'messages'
-bad Territory id is provided: 'messages'
-bad community  id is provided: 'messages'
-bad proposal id is provided: 'messages'
-Class %class% not found: 'messages'
-Une erreur est survenue!: 'messages'
-Contexte: 'messages'
-ID: 'messages'
-Type: 'messages'
-Titre: 'messages'
-Description: 'messages'
-Namespace: 'messages'
-Nom de Classe: 'messages'
-Nom complet de la Classe: 'messages'
-Fonction: 'messages'
-Fichier: 'messages'
-ligne: 'messages'
-arguments: 'messages'
-Valeur: 'messages'
-Arguments: 'messages'
-Page non trouvé: 'messages'
-La page recherché est introuvable, vérifier l'url ou: 'messages'
-revenez à la page d'acceuil: 'messages'
-Revenez à la page d'acceuil: 'messages'
-le serveur a retourné: 'messages'
-Quelque chose est cassé: 'messages'
-S'il vous plaît laissez-nous savoir ce que vous faisiez lorsque cette erreur s'est produite: 'messages'
-Nous allons le réparer dès que possible: 'messages'
-Désolé pour tout inconvénient causé: 'messages'
-urlEmailValidation: 'user/signup/validation/'
+# CARPOOL_AD_RENEWAL
+
+beCarefulFewDaysAnnouncementNotValid: "Attention dans quelques jours vos trajets enregistrés ne seront plus valables sur votre profil et ne seront donc plus visibles par les autres covoitureurs"
+nowYouAreMore: "Vous êtes maintenant plus de"
+toUseTheService: "à utiliser le service ! Partagez vos trajets et trouvez votre bonheur"
+
+# CARPOOL_MATCHING_NEW
+
+newCarpoolAdMatchingYourCommute : "Une nouvelle annonce de covoiturage correspondant à votre trajet"
+seeYouIn: "Rendez-vous dans" 
+myAds: "Mes annonces"
+toConsultCorrespondingAdsAndMakeContact: "pour consulter les annonces correspondantes et prendre contact"
+
+# CARPOOL_PROPOSAL_POSTED
+
+# COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
+
+sendYouMessage: "vous a envoyé un message"
+canAnswerViaEmailFrom: "Vous pouvez répondre à ce message via la messagerie de"
+clickHere: "en cliquant ici" 
+getProblem: "Si ce mail comporte un message ne respectant pas la charte, n'hésitez pas à nous contacter"
+
+# CONTACT_EMAIL_POSTED
+
+newContactAsk: "Bonjour vous avez une nouvelle demande de contact"
+name: "Nom"
+firstname: "Prénom"
+email: "Email"
+ask: "Demande"
+message: "Message"
+thankYou: "Merci"
+notMentioned: "Non renseigné"
+
+# DRIVER_CARPOOL_ASK_ACCEPTED_REGULAR
+
+summaryCarpools: "Voici le récapitulatif de vos covoiturages"
+isThe: "est le"
+carpoolDistance: "Trajet régulier Distance covoiturée"
+driverDetour: "Détour conducteur"
+supported:  "Prise en charge à"
+depositedAt: "Déposé à"
+appointmentHour: "Heures de RDV"
+monday: "Lundi"
+tuesday: "Mardi"
+wednesday: "Mercredi"
+thusday: "Jeudi"
+friday: "Vendredi"
+saturday: "Samedi"
+sunday: "Dimanche"
+the: "Le"
+from: "du"
+to: "au"
+passengerComment: "Commentaire du passager"
+reservedPlaces: "ContacterPlaces réservées"
+indicativePrice: "Prix indicatif"
+
+# DRIVER_CARPOOL_ASK_POSTED_REGULAR
+
+yourAsk: "vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous"
+replyViaEmail: "Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de"
+
+# DRIVER_CARPOOL_ASK_REFUSED_REGULAR
+
+notBeAbleToCarpoolWithYou: "ne pourra pas covoiturer avec vous vers"
+followingDays: "les jours suivants"
+hisMessage: "Voici son message"
+
+# DRIVER_CARPOOL_ASK_REFUSED
+
+towards: "en direction de"
+
+# DRIVER_CARPOOL_MATCHING_NEW_REGULAR
+
+justPublished : "vient d'être publiée"
+
+# PASSENGER_CARPOOL_ASK_ACCEPTED_REGULAR
+
+phoneNumber: "Le numéro de téléphone de"
+driverComment: "Commentaire du conducteur"
+
+# PASSENGER_CARPOOL_ASK_ACCEPTED
+
+ocassionalCarpoolDistance: "Trajet ocasionnel Distance covoiturée"
+at: "à"
+
+# PASSENGER_CARPOOL_ASK_UPDATED_REGULAR
+
+# PASSENGER_CARPOOL_ASK_UPDATED
+
+# USER_PASSWORD_CHANGE_ASKED
+
+askNewPassword: "Vous avez demandé un nouveau mot de passe"
+clickHereToChangePassword: "Veuillez cliquer sur ce lien pour changer votre mot de passe"
+linkChangePassword: "Lien de changement de mot de passe"
+urlUpdatePassword: 'utilisateur/mot-de-passe/reset/update/'
+
+# USER_PASSWORD_CHANGED
+
+yourPassword: "Votre mot de passe"
+successfullyChanged: "a bien été changé"
+thanksForUse: "Merci d’utiliser"
+
+# USER_REGISTERED
+
+yourInscription: "Votre inscription au service"
+wellTakenIntoAccount: "est bien prise en compte"
+clickHereToConfirm: "Veuillez cliquer sur ce lien pour confirmer votre email"
+orUseTheValidationCode: "Ou utilisez le code de validation directement sur le site"
+urlEmailValidation: 'utilisateur/inscription/validation/'
+
+# USER_UPDATED_SELF
+
+theModificationIsConfirmed: "La modification suivante de votre profil est confirmée"
+
+urlMailBox: 'utilisateur/messages'
+CheckoutForAnyURLMisspellingOr: 'messages'
+
+
+  ######      SMS      ######
+
+
+  # CARPOOL_AD_RENEWAL
+
+inFewDays: "Dans quelques jours,  vos annonces de covoiturage ne seront plus valides"
+renewYourAdsOn: "Renouvelez votre annonce sur"
+
+# CARPOOL_ASK_ACCEPTED
+
+
+# CARPOOL_ASK_POSTED
+
+# CARPOOL_ASK_REFUSED
+
+# CARPOOL_MATCHING_NEW
+
+newAdPublished: "Une nouvelle annonce a été publiée pour votre trajet"
+appointmentIn: "Rdv dans Mes annonces"
+
+# CARPOOL_INTERNAL_MESSAGE_RECEIVED
+
+newMessage: "Vous avez reçu un nouveau message de"
+lookYourMessaging: "Voir sur votre messagerie"
+
+# DRIVER_CARPOOL_ASK_ACCEPTED_REGULAR
+
+carpoolAskAcceptedRegular: "Covoiturage régulier confirmé avec"
+between: "entre"
+and: "et"
+
+# DRIVER_CARPOOL_ASK_ACCEPTED
+
+carpoolAskAccepted: "Covoiturage confirmé avec"
+
+# DRIVER_CARPOOL_ASK_POSTED_REGULAR
+
+askYouCarpoolRegular: "vous propose un covoiturage régulier de"
+findTheProposalIn: "Retrouvez la proposition dans « Mes Messages »"
+
+# DRIVER_CARPOOL_ASK_POSTED
+
+askYouCarpool: "vous propose un covoiturage de"
+
+# DRIVER_CARPOOL_ASK_REFUSED_REGULAR
+
+refusedAskRegular: "décline le covoiturage régulier de" 
+
+# DRIVER_CARPOOL_ASK_REFUSED
+
+refusedAsk: "décline le covoiturage de"
+
+# DRIVER_CARPOOL_ASK_UPDATED_REGULAR
+
+# DRIVER_CARPOOL_ASK_UPDATED
+
+# DRIVER_CARPOOL_MATCHING_NEW_REGULAR
+
+newMatching: "Une nouvelle annonce a été publiée pour votre trajet"
+
+# PASSENGER_CARPOOL_ASK_UPDATED_REGULAR
+
+# PASSENGER_CARPOOL_ASK_UPDATED
