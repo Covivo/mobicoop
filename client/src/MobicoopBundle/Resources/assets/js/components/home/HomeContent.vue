@@ -4,7 +4,7 @@
   >
     <v-col
       v-if="communityDisplay"
-      class="xs-12 md-4 lg-3 xl-2"
+      class="xs-12 md-4 lg-3 xl-2 d-flex justify-center"
     >
       <m-card
         background-color="secondary"
@@ -19,7 +19,7 @@
     </v-col>
     <v-col
       v-if="eventDisplay"
-      class="xs-12 md-4 lg-3 xl-2"
+      class="xs-12 md-4 lg-3 xl-2 d-flex justify-center"
     >
       <m-card
         background-color="secondary"
@@ -34,7 +34,7 @@
     </v-col>
     <v-col
       v-if="solidaryDisplay"
-      class="xs-12 md-4 lg-3 xl-2"
+      class="xs-12 md-4 lg-3 xl-2 d-flex justify-center"
     >
       <m-card
         background-color="secondary"

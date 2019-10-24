@@ -3,6 +3,7 @@
     :class="textColor"
     :color="backgroundColor"
     :height="height"
+    :max-width="280"
   >
     <v-card-title
       class="body-1 justify-center"
