@@ -38,18 +38,10 @@ Encore
   .enableVueLoader()
   .enableSingleRuntimeChunk()
   .addLoader({
-    test: /\.s(c|a)ss$/,
+    test: /\.sc|ass$/,
     use: [
       'vue-style-loader',
-      // ⚙️ COMMENT below if you are using a client platform  ⚙️ //
       'css-loader',
-      // ⚙️ UNCOMMENT below if you are using a client platform  ⚙️ //
-      // {
-      //   loader: 'css-loader',
-      //   options: {
-      //     url: false
-      //   }
-      // },
       {
         loader: 'sass-loader',
         options: {

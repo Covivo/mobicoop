@@ -1,6 +1,6 @@
 @charset "UTF-8";
 
-// todo: régler les warning css
+/* stylelint-disable */
 
 /*! AccessConfig | Access42 | accessconfig.a11y.fr */
 
@@ -61,7 +61,6 @@
   }
 }
 
-
 /**
  * AccessConfig main title
  */
@@ -73,7 +72,6 @@
   /* Access42 colors */
   color: #0B1B34;
 }
-
 
 /**
  * Improved .sr-only
@@ -107,10 +105,26 @@
   white-space: normal !important;
 }
 
-
 /**
  * AccessConfig close button
  */
+#a42-ac-close:hover,
+#a42-ac-close:focus,
+#a42-ac-close:active {
+  opacity: 0.6;
+  background-color: transparent !important;
+}
+#a42-ac-close::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  display: block;
+  margin-left: -0.75rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: url('data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtMjQgNC4yLTQuMS00LjFoLS4xbC03LjggNy43LTcuOC03LjhoLS4xbC00LjEgNC4xIDcuOSA3LjktNy45IDcuOCA0LjEgNC4yaC4xbDcuOC03LjggNy44IDcuN2MwIC4xIDAgLjEuMSAwbDQuMS00LjEtNy44LTcuOHoiIGZpbGw9IiMzMTQ4NmUiLz48L3N2Zz4=') no-repeat 50% 50%;
+}
 #a42-ac-close {
   position: absolute;
   top: 1.5rem;
@@ -124,24 +138,6 @@
 #a42-ac #a42-ac-close {
   overflow: hidden;
 }
-#a42-ac-close::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  display: block;
-  margin-left: -0.75rem;
-  width: 1.5rem;
-  height: 1.5rem;
-  background: url('data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtMjQgNC4yLTQuMS00LjFoLS4xbC03LjggNy43LTcuOC03LjhoLS4xbC00LjEgNC4xIDcuOSA3LjktNy45IDcuOCA0LjEgNC4yaC4xbDcuOC03LjggNy44IDcuN2MwIC4xIDAgLjEuMSAwbDQuMS00LjEtNy44LTcuOHoiIGZpbGw9IiMzMTQ4NmUiLz48L3N2Zz4=') no-repeat 50% 50%;
-}
-#a42-ac-close:hover,
-#a42-ac-close:focus,
-#a42-ac-close:active {
-  opacity: 0.6;
-  background-color: transparent !important;
-}
-
 
 /**
  * AccessConfig forms
@@ -343,7 +339,6 @@
   cursor: not-allowed;
 }
 
-
 /**
  *****************************
  * When AccessConfig is active
@@ -352,7 +347,6 @@
 body.a42-ac-active {
   overflow: hidden;
 }
-
 
 /**
  ***************************
@@ -378,7 +372,6 @@ body.a42-ac-active {
 .a42-ac-high-contrast .a42-ac-overlay {
   background-color: rgba(32, 33, 41, 0.8) !important;
 }
-
 
 /**
  ******************************************
@@ -452,7 +445,6 @@ body.a42-ac-active {
 .a42-ac-inv-contrast input[type='range']::-webkit-slider-runnable-track {
   height: 0.313em;
 }
-
 
 /**
  * Enforced contrast (.a42-ac-high-contrast)
@@ -548,7 +540,6 @@ body.a42-ac-active {
   border: 0.15em solid white !important;
 }
 
-
 /**
  * Inverted contrast (.a42-ac-inv-contrast)
  */
@@ -642,7 +633,6 @@ body.a42-ac-active {
   border: 0.15em solid #FF0 !important;
 }
 
-
 /**
  * Dyslexia font 
  */
@@ -659,7 +649,6 @@ body.a42-ac-dys-font * {
   font-family: 'opendys' !important;
 }
 
-
 /**
  * Dyslexia line-spacing 
  */
@@ -668,7 +657,6 @@ body.a42-ac-dys-font * {
   line-height: 1.5 !important;
 }
 
-
 /**
  * Dyslexia justification 
  */
@@ -676,7 +664,6 @@ body.a42-ac-dys-font * {
 .a42-ac-cancel-justification * {
   text-align: left !important;
 }
-
 
 /**
  * Replace images by their alternatives 

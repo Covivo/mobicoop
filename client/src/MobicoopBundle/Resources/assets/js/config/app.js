@@ -3,7 +3,7 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import colorTheme from '@themes/theme.js'
-import CommonTranslations from "@translations/translations.js";
+import CommonTranslations from "@translations/translations.js"
 import '@mdi/font/scss/materialdesignicons.scss'
 import {LMap, LTileLayer, LMarker, LTooltip, LIcon, LPolyline} from 'vue2-leaflet' 
 
@@ -30,6 +30,7 @@ import Vuetify, {
   VTabs, VTabsItems, VTab, VTabItem, VCheckbox, VAvatar, VCard, VCardTitle, VCardActions, VDivider, VList, VListItem, VListItemContent, VListItemTitle, VListItemSubtitle,
   VSkeletonLoader, VSnackbar, VDataIterator, VOverlay, VDialog,
   VFileInput, VProgressCircular, VDataTable, VListItemGroup, VListItemAvatar, VStepper, VStepperHeader, VStepperStep, VStepperItems, VStepperContent, VRadioGroup, VRadio, VTimeline, VTimelineItem,
+  VTimePicker,
   // header
   VToolbar, VToolbarTitle, VBtn, VImg,
   // footer
@@ -43,6 +44,7 @@ Vue.use(Vuetify, {
     VTabs, VTabsItems, VTab, VTabItem, VCheckbox, VAvatar, VCard, VCardTitle, VCardActions, VDivider, VList, VListItem, VListItemContent, VListItemTitle, VListItemSubtitle,
     VSkeletonLoader, VSnackbar, VDataIterator, VOverlay, VDialog,
     VFileInput, VProgressCircular, VDataTable, VListItemGroup, VListItemAvatar, VStepper, VStepperHeader, VStepperStep, VStepperItems, VStepperContent, VRadioGroup, VRadio, VTimeline, VTimelineItem,
+    VTimePicker,  
     // header
     VToolbar, VToolbarTitle, VBtn, VImg,
     // footer
