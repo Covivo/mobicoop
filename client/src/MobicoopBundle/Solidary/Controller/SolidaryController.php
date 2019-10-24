@@ -100,7 +100,6 @@ class SolidaryController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             $datetime = new \DateTime();
-            $proposal = new Proposal();
             // todo: move in manager ?
             // get or create the user
             if (!empty($userManager->getLoggedUser())) {
@@ -132,23 +131,13 @@ class SolidaryController extends AbstractController
                 
                 // todo: doesn't work because we need password
                 $year = new \DateTime($data['yearOfBirth']);
-//                $year->format('Y');
-                // pass front info into user form
                 $user->setEmail($data['email']);
                 $user->setTelephone($data['phoneNumber']);
-                $user->setPassword('password');
+                $user->setPassword('password'); //todo: update
                 $user->setGivenName($data['givenName']);
                 $user->setFamilyName($data['familyName']);
                 $user->setGender($data['gender']);
                 $user->setBirthYear((int) $year->format('Y'));
-
-                // Create token to valid inscription
-                $time = $datetime->getTimestamp();
-                // For safety, we strip the slashes because this token can be passed in url
-                $pwdToken = str_replace("/", "", $this->encoder->encodePassword($user, $user->getEmail() . rand() . $time . rand() . $user->getSalt()));
-                $user->setValidatedDateToken($pwdToken);
-                // create user in database
-                $user = $userManager->createUser($user);
             }
 
             if (is_null($user)) {
@@ -158,13 +147,8 @@ class SolidaryController extends AbstractController
                 );
             }
             
-            //todo: create proposal from current data
-//            dump($proposalManager->createProposalFromResult($data["search"], $user));
             $solidary->setProposal($proposalManager->createSolidaryProposalFromData($data["search"], $user));
-//            $proposal
-            
-//            die;
-            
+
             $solidary->setUser($user);
             $solidary->setCreatedDate($datetime);
             $solidary->setUpdatedDate($datetime);
@@ -177,13 +161,13 @@ class SolidaryController extends AbstractController
                 $solidary->setSubject($subjectManager->getSubject($data["subject"])->getLabel());
             }
 
-//            var_dump($solidary);die;
-            if ($response = $solidaryManager->createSolidary($solidary)) {
-                return new JsonResponse(
-                    ["message" => "success"],
-                    \Symfony\Component\HttpFoundation\Response::HTTP_ACCEPTED
-                );
-            }
+            // todo: activate
+//            if ($response = $solidaryManager->createSolidary($solidary)) {
+            return new JsonResponse(
+                ["message" => "success"],
+                \Symfony\Component\HttpFoundation\Response::HTTP_ACCEPTED
+            );
+//            }
             return new JsonResponse(
                 ["message" => "error create"],
                 \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST

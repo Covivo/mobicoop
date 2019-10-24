@@ -52,7 +52,6 @@ class SolidaryProposalPost
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad Solidary id is provided"));
         }
-//        dump($data);die;
 //        $data = $this->solidaryManager->createSolidary($data);
         return $data;
     }

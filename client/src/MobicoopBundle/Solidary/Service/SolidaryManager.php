@@ -45,9 +45,9 @@ class SolidaryManager
 
     public function createSolidary(Solidary $solidary)
     {
+//        dump($solidary);die;
         $response = $this->dataProvider->post($solidary);
-        dump($response);
-        die;
+        
         if ($response->getCode() == 201) {
             return $response->getValue();
         }

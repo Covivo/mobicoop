@@ -1,39 +1,37 @@
 <template>
-  <v-content>
-    <v-container>
-      <v-row
-        justify="center"
+  <v-container>
+    <v-row
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        md="8"
+        xl="6"
+        align="center"
       >
-        <v-col
-          cols="12"
-          md="8"
-          xl="6"
-          align="center"
-        >
-          <h1>{{ $t('title') }}</h1>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col
-          cols="12"
-        >
-          <p>{{ $t('introduction1') }}</p>
-          <p>{{ $t('introduction2') }}</p>
-        </v-col>
-      </v-row>
+        <h1>{{ $t('title') }}</h1>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col
+        cols="12"
+      >
+        <p>{{ $t('introduction1') }}</p>
+        <p>{{ $t('introduction2') }}</p>
+      </v-col>
+    </v-row>
       
-      <!--solidary-form-->
+    <!--solidary-form-->
       
-      <solidary-form
-        :geo-search-url="geoSearchUrl"
-        :user="user"
-        :regular="regular"
-        :punctual-date-optional="punctualDateOptional"
-        :structures="structures"
-        :subjects="subjects"
-      />
-    </v-container>
-  </v-content>
+    <solidary-form
+      :geo-search-url="geoSearchUrl"
+      :user="user"
+      :regular="regular"
+      :punctual-date-optional="punctualDateOptional"
+      :structures="structures"
+      :subjects="subjects"
+    />
+  </v-container>
 </template>
 
 <script>

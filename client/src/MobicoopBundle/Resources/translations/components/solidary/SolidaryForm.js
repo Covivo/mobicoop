@@ -30,7 +30,8 @@ export default {
     other: {
       label: "Autre",
       placeholder: "Autre"
-    }
+    },
+    success: "Votre demande de coup de pouce a bien été envoyée !"
   },
   en: {
     ui: {

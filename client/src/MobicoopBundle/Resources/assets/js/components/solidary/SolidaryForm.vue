@@ -9,14 +9,29 @@
         md="4"
         align="center"
       >
-        <v-alert
-          dismissible
-          :value="alert.show"
-          :type="alert.type"
+        <!--<v-alert-->
+        <!--dismissible-->
+        <!--:value="alert.show"-->
+        <!--:type="alert.type"-->
+        <!--&gt;-->
+        <!--&lt;!&ndash;Use of span and v-html to handle multiple lines errors if needed&ndash;&gt;-->
+        <!--<span v-html="alert.message" />-->
+        <!--</v-alert>-->
+
+        <v-snackbar
+          v-model="alert.show"
+          :color="(alert.type === 'error')?'error':'primary'"
+          top
         >
-          <!--Use of span and v-html to handle multiple lines errors if needed-->
-          <span v-html="alert.message" />
-        </v-alert>
+          {{ alert.message }}
+          <v-btn
+            color="white"
+            text
+            @click="alert.show = false"
+          >
+            <v-icon>mdi-close-circle-outline</v-icon>
+          </v-btn>
+        </v-snackbar>
       </v-col>
     </v-row>
 
@@ -115,130 +130,129 @@
           ref="form"
           v-model="valid"
         >
-          <v-container>
-            <v-row>
-              <v-col
-                cols="12"
-              >
-                <v-select
-                  v-model="form.gender"
-                  :items="genderItems"
-                  :rules="rules.genderRules"
-                  item-text="genderItem"
-                  item-value="genderValue"
-                  :label="$t('models.user.gender.placeholder') + ' *'"
-                />
-              </v-col>
-              <v-col
-                cols="12"
-              >
-                <v-text-field
-                  v-model="form.familyName"
-                  :label="$t('models.user.familyName.placeholder') + ' *'"
-                  :rules="rules.familyNameRules"
-                  name="lastName"
-                />
-              </v-col>
-              <v-col
-                cols="12"
-              >
-                <v-text-field
-                  v-model="form.givenName"
-                  :label="$t('models.user.givenName.placeholder') + ' *'"
-                  :rules="rules.givenNameRules"
-                  name="firstName"
-                />
-              </v-col>
-              
-              <v-col
-                cols="12"
-              >
-                <v-menu
-                  ref="menu"
-                  v-model="pickerActive"
-                  :close-on-content-click="false"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="290px"
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-text-field
-                      v-model="yearOfBirth"
-                      :label="$t('yearOfBirth.placeholder') + ' *'"
-                      :rules="rules.yearsOfBirthRules"
-                      v-on="on"
-                    />
-                  </template>
-                  <v-date-picker
-                    ref="picker"
-                    v-model="form.yearOfBirth"
-                    no-title
-                    reactive
-                    :max="years.max"
-                    :min="years.min"
-                    @input="save"
-                  >
-                    <v-spacer />
-                    <v-btn
-                      text
-                      color="primary"
-                      @click="menu = false"
-                    >
-                      {{ $t('ui.buttons.cancel') }}
-                    </v-btn>
-                    <v-btn
-                      text
-                      color="primary"
-                      @click="$refs.menu.save(form.yearOfBirth)"
-                    >
-                      {{ $t('ui.buttons.validate.label') }}
-                    </v-btn>
-                  </v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-col
-                cols="12"
-              >
-                <v-text-field
-                  v-model="form.email"
-                  :label="$t('models.user.email.placeholder') + ' *'"
-                  :rules="rules.emailRules"
-                  name="email"
-                />
-              </v-col>
-              <v-col
-                cols="12"
-              >
-                <v-text-field
-                  v-model="form.phoneNumber"
-                  :label="$t('models.user.phone.placeholder') + ' *'"
-                  :rules="rules.phoneNumberRules"
-                  name="phone"
-                />
-              </v-col>
-              <v-col
-                cols="12"
-              >
-                <v-switch
-                  v-model="form.hasRSA"
-                  color="primary"
-                  inset
-                  :label="$t('hasRSA.placeholder')"
-                />
-              </v-col>
-            </v-row>
-            
-            <!--submission-->
-            <v-btn
-              :disabled="!isValid"
-              :loading="loading"
-              color="success"
-              rounded
-              @click="validate"
+          <!--<v-container>-->
+          <v-row>
+            <v-col
+              cols="12"
             >
-              {{ $t('ui.buttons.validate.label') }}
-            </v-btn>
-          </v-container>
+              <v-select
+                v-model="form.gender"
+                :items="genderItems"
+                :rules="rules.genderRules"
+                item-text="genderItem"
+                item-value="genderValue"
+                :label="$t('models.user.gender.placeholder') + ' *'"
+              />
+            </v-col>
+            <v-col
+              cols="12"
+            >
+              <v-text-field
+                v-model="form.familyName"
+                :label="$t('models.user.familyName.placeholder') + ' *'"
+                :rules="rules.familyNameRules"
+                name="lastName"
+              />
+            </v-col>
+            <v-col
+              cols="12"
+            >
+              <v-text-field
+                v-model="form.givenName"
+                :label="$t('models.user.givenName.placeholder') + ' *'"
+                :rules="rules.givenNameRules"
+                name="firstName"
+              />
+            </v-col>
+              
+            <v-col
+              cols="12"
+            >
+              <v-menu
+                ref="menu"
+                v-model="pickerActive"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                offset-y
+                min-width="290px"
+              >
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-model="yearOfBirth"
+                    :label="$t('yearOfBirth.placeholder') + ' *'"
+                    :rules="rules.yearsOfBirthRules"
+                    v-on="on"
+                  />
+                </template>
+                <v-date-picker
+                  ref="picker"
+                  v-model="form.yearOfBirth"
+                  no-title
+                  reactive
+                  :max="years.max"
+                  :min="years.min"
+                  @input="save"
+                >
+                  <v-spacer />
+                  <v-btn
+                    text
+                    color="primary"
+                    @click="menu = false"
+                  >
+                    {{ $t('ui.buttons.cancel.label') }}
+                  </v-btn>
+                  <v-btn
+                    text
+                    color="primary"
+                    @click="$refs.menu.save(form.yearOfBirth)"
+                  >
+                    {{ $t('ui.buttons.validate.label') }}
+                  </v-btn>
+                </v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col
+              cols="12"
+            >
+              <v-text-field
+                v-model="form.email"
+                :label="$t('models.user.email.placeholder') + ' *'"
+                :rules="rules.emailRules"
+                name="email"
+              />
+            </v-col>
+            <v-col
+              cols="12"
+            >
+              <v-text-field
+                v-model="form.phoneNumber"
+                :label="$t('models.user.phone.placeholder') + ' *'"
+                :rules="rules.phoneNumberRules"
+                name="phone"
+              />
+            </v-col>
+            <v-col
+              cols="12"
+            >
+              <v-switch
+                v-model="form.hasRSA"
+                color="primary"
+                inset
+                :label="$t('hasRSA.placeholder')"
+              />
+            </v-col>
+          </v-row>
+            
+          <!--submission-->
+          <v-btn
+            :disabled="!isValid"
+            :loading="loading"
+            color="success"
+            rounded
+            @click="validate"
+          >
+            {{ $t('ui.buttons.validate.label') }}
+          </v-btn>
         </v-form>
       </v-col>
     </v-row>
@@ -360,7 +374,7 @@ export default {
       }
     },
     isValid () {
-      return this.valid && (this.form.search && this.form.search.origin && this.form.search.destination)
+      return this.valid && (this.form.search && this.form.search.origin && this.form.search.destination && this.form.search.date)
     },
     // todo: trouver une meilleure solution, modifier en utilisant un slug ?
     isOtherStructureActive() {
