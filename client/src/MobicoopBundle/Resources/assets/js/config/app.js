@@ -8,8 +8,6 @@ import '@mdi/font/scss/materialdesignicons.scss'
 import {LMap, LTileLayer, LMarker, LTooltip, LIcon, LPolyline} from 'vue2-leaflet' 
 
 import { Icon }  from 'leaflet'
-import 'leaflet/dist/leaflet.css'
-
 
 //***  this part resolve an issue where the markers would not appear
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
