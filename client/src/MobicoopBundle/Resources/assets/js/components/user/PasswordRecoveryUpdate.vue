@@ -52,7 +52,7 @@
             />
             <v-btn
               :loading="loading"
-              color="success"
+              color="primary"
               type="submit"
               rounded
               @click="validate"

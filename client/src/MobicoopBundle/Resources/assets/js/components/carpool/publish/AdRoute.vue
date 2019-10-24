@@ -201,7 +201,7 @@
     </v-row>
 
     <!-- Avoid motorway -->
-    <v-row
+    <!-- <v-row
       align="center"
       justify="center"
       dense
@@ -213,12 +213,12 @@
           v-model="avoidMotorway"
           class="mt-0"
           :label="$t('avoidMotorway')"
-          color="success"
+          color="primary"
           hide-details
           @change="emitEvent"
         />
       </v-col>
-    </v-row>
+    </v-row> -->
 
     <!-- Communities -->
     <v-row

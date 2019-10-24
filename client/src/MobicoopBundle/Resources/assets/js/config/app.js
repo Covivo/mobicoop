@@ -24,7 +24,7 @@ Icon.Default.mergeOptions({
 
 import Vuetify, {
   // general
-  VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VRow, VCol, VForm, VChip, VAlert, VTextarea, VTextField, VSelect, VAutocomplete, VTooltip, VSwitch, VMenu, VDatePicker, VIcon,
+  VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VRow, VCol, VForm, VChip, VAlert, VTextarea, VTextField, VSelect, VAutocomplete, VTooltip, VSwitch, VMenu, VDatePicker, VTimePicker, VIcon,
   VTabs, VTabsItems, VTab, VTabItem, VCheckbox, VAvatar, VCard, VCardTitle, VCardActions, VDivider, VList, VListItem, VListItemContent, VListItemTitle, VListItemSubtitle,
   VSkeletonLoader, VSnackbar, VDataIterator, VOverlay, VDialog,
   VFileInput, VProgressCircular, VDataTable, VListItemGroup, VListItemAvatar, VStepper, VStepperHeader, VStepperStep, VStepperItems, VStepperContent, VRadioGroup, VRadio, VTimeline, VTimelineItem,
@@ -38,7 +38,7 @@ import Vuetify, {
 Vue.use(Vuetify, {
   components: {
     // general
-    VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VRow, VCol, VForm, VChip, VAlert, VTextarea, VTextField, VSelect, VAutocomplete, VTooltip, VSwitch, VMenu, VDatePicker, VIcon,
+    VApp, VContainer, VFlex, VLayout, VContent, VSpacer, VRow, VCol, VForm, VChip, VAlert, VTextarea, VTextField, VSelect, VAutocomplete, VTooltip, VSwitch, VMenu, VDatePicker, VTimePicker, VIcon,
     VTabs, VTabsItems, VTab, VTabItem, VCheckbox, VAvatar, VCard, VCardTitle, VCardActions, VDivider, VList, VListItem, VListItemContent, VListItemTitle, VListItemSubtitle,
     VSkeletonLoader, VSnackbar, VDataIterator, VOverlay, VDialog,
     VFileInput, VProgressCircular, VDataTable, VListItemGroup, VListItemAvatar, VStepper, VStepperHeader, VStepperStep, VStepperItems, VStepperContent, VRadioGroup, VRadio, VTimeline, VTimelineItem,

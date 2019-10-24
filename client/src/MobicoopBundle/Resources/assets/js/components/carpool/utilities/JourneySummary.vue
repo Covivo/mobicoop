@@ -4,9 +4,9 @@
       align="center"
       dense
     >
-      <!-- Time -->
+      <!-- Date and time -->
       <v-col
-        v-if="proposal.criteria.frequency==1 || !regular"
+        v-if="date"
         cols="3"
       >
         <v-list-item two-line>
@@ -22,27 +22,29 @@
       </v-col>
       <!-- Route -->
       <v-col
-        :cols="regular ? '9' : '6'"
+        :cols="!date ? '9' : '6'"
       >
         <route-summary
-          :origin="computedOrigin"
-          :destination="computedDestination"
+          :origin="origin"
+          :origin-first="originFirst"
+          :destination="destination"
+          :destination-last="destinationLast"
           :type="2"
-          :regular="regular"
+          :regular="!date"
         />
       </v-col>
       <!-- Seats -->
       <v-col
         cols="2"
       >
-        {{ $tc('places', proposal.criteria.seats, { seats: proposal.criteria.seats }) }}
+        {{ $tc('places', seats, { seats: seats }) }}
       </v-col>
       <!-- Price -->
       <v-col
         cols="1"
         class="title"
       >
-        {{ computedPrice ? computedPrice +'€' : '' }}
+        {{ price ? price +'€' : '' }}
       </v-col>
     </v-row>
   </div>
@@ -64,89 +66,50 @@ export default {
     messages: TranslationsMerged,
   },
   props: {
-    matching: {
+    origin: {
       type: Object,
       default: null
     },
-    user: {
-      type:Object,
+    destination: {
+      type: Object,
       default: null
     },
-    regular: {
+    originFirst: {
+      type: Boolean,
+      default: false
+    },
+    destinationLast: {
       type: Boolean,
       default: false
     },
     date: {
       type: String,
       default: null
-    }
+    }, 
+    time: {
+      type: String,
+      default: null
+    }, 
+    price: {
+      type: String,
+      default: null
+    },  
+    seats: {
+      type: Number,
+      default: null
+    },  
   },
   data() {
     return {
-      locale: this.$i18n.locale,
-      proposal: this.matching.offer ? this.matching.offer.proposalOffer : this.matching.request.proposalRequest
+      locale: this.$i18n.locale
     };
   },
   computed: {
-    driver() {
-      // the matching user is driver if he has an offer
-      return this.matching.offer ? true : false
-    },
-    passenger() {
-      // the matching user is driver if he has a request
-      return this.matching.request ? true : false
-    },
-    computedOrigin() {
-      return {
-        streetAddress: this.proposal.waypoints[0].address.streetAddress,
-        addressLocality: this.proposal.waypoints[0].address.addressLocality
-      }
-    },
-    computedDestination() {
-      return {
-        streetAddress: this.proposal.waypoints[this.proposal.waypoints.length-1].address.streetAddress,
-        addressLocality: this.proposal.waypoints[this.proposal.waypoints.length-1].address.addressLocality,
-      }
-    },
     computedTime() {
-      if (this.proposal.criteria.frequency == 2) {
-        // we have to search the week day and display the time
-        const dayOfWeek = moment.utc(this.date).format('d');
-        switch (dayOfWeek) {
-        case '0' : 
-          return moment.utc(this.proposal.criteria.sunTime).format(this.$t("ui.i18n.time.format.hourMinute"));
-        case '1' : 
-          return moment.utc(this.proposal.criteria.monTime).format(this.$t("ui.i18n.time.format.hourMinute"));
-        case '2' : 
-          return moment.utc(this.proposal.criteria.tueTime).format(this.$t("ui.i18n.time.format.hourMinute"));
-        case '3' : 
-          return moment.utc(this.proposal.criteria.wedTime).format(this.$t("ui.i18n.time.format.hourMinute"));
-        case '4' : 
-          return moment.utc(this.proposal.criteria.thuTime).format(this.$t("ui.i18n.time.format.hourMinute"));
-        case '5' : 
-          return moment.utc(this.proposal.criteria.friTime).format(this.$t("ui.i18n.time.format.hourMinute"));
-        case '6' : 
-          return moment.utc(this.proposal.criteria.satTime).format(this.$t("ui.i18n.time.format.hourMinute"));
-        default:
-          return '';
-        }
-      } else {
-        return this.proposal.criteria.fromTime
-          ? moment.utc(this.proposal.criteria.fromTime).format(this.$t("ui.i18n.time.format.hourMinute"))
-          : ""; 
-      }
-      
+      return moment.utc(this.time).format(this.$t("ui.i18n.time.format.hourMinute"));      
     },
     computedDate() {
-      if (this.proposal.criteria.frequency == 2) {
-        return moment.utc(this.driver ? this.matching.offer.criteria.fromDate : this.matching.request.criteria.fromDate).format(this.$t("ui.i18n.date.format.shortDate"))
-      }
-      return this.proposal.criteria.fromDate
-        ? moment.utc(this.proposal.criteria.fromDate).format(this.$t("ui.i18n.date.format.shortDate"))
-        : ""; 
-    },
-    computedPrice() {
-      return this.driver ? Math.round((this.matching.offer.proposalOffer.criteria.priceKm*this.matching.offer.proposalRequest.criteria.directionPassenger.distance/1000)*100)/100 : null
+      return moment.utc(this.date).format(this.$t("ui.i18n.date.format.shortDate"))
     }
   },
   methods: {

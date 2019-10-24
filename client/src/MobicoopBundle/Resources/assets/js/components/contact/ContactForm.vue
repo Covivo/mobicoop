@@ -103,7 +103,7 @@
               <v-btn
                 :disabled="!valid"
                 :loading="loading"
-                color="success"
+                color="primary"
                 rounded
                 @click="validate"
               >

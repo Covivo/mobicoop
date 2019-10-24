@@ -53,71 +53,12 @@ class ProposalManager
         $this->userManager = $userManager;
         $this->marginTime = $marginTime;
     }
-    
-    /**
-     * Create a proposal
-     *
-     * @param Proposal $proposal The proposal to create
-     *
-     * @return Proposal|null The proposal created or null if error.
-     */
-    public function createProposal(Proposal $proposal)
-    {
-        $response = $this->dataProvider->post($proposal);
-        if ($response->getCode() == 201) {
-            return $response->getValue();
-        }
-        return null;
-    }
-    
-    /**
-     * Get all proposals for a user
-     *
-     * @return array|null The proposals found or null if not found.
-     */
-    public function getProposals(User $user)
-    {
-        // we will make the request on the User instead of the Proposal
-        $this->dataProvider->setClass(User::class);
-        $response = $this->dataProvider->getSubCollection($user->getId(), Proposal::class);
-        return $response->getValue();
-    }
-    
-    /**
-     * Get a proposal for a user
-     *
-     * @param int $id
-     * @return Proposal|null The proposal found or null if not found.
-     */
-    public function getProposal(int $id)
-    {
-        $response = $this->dataProvider->getItem($id);
-        return $response->getValue();
-    }
-    
-    /**
-     * Get all matchings for a user proposal
-     *
-     * @return array|null The matchings found or null if not found.
-     */
-    public function getMatchings(Proposal $proposal)
-    {
-        // we will make the request on the Matching instead of the Proposal
-        if ($proposal->getProposalType() == Proposal::PROPOSAL_TYPE_OFFER) {
-            $response = $this->dataProvider->getSubCollection($proposal->getId(), Matching::class, "matching_requests");
-        } else {
-            $response = $this->dataProvider->getSubCollection($proposal->getId(), Matching::class, "matching_offers");
-        }
-        return $response->getValue();
-    }
 
     /**
      * Get all matchings for a search.
      *
-     * @param float $origin_latitude        The origin latitude
-     * @param float $origin_longitude       The origin longitude
-     * @param float $destination_latitude   The destination latitude
-     * @param float $destination_longitude  The destination longitude
+     * @param array $origin               The origin address
+     * @param array $destination          The destination address
      * @param \Datetime $date               The date and time in a Datetime object
      * @param int $frequency                The frequency of the trip
      * @param integer $regularLifeTime      The lifetime of a regular trip in years
@@ -132,10 +73,8 @@ class ProposalManager
      * @return array|null The matchings found or null if not found.
      */
     public function getMatchingsForSearch(
-        float $origin_latitude,
-        float $origin_longitude,
-        float $destination_latitude,
-        float $destination_longitude,
+        array $origin,
+        array $destination,
         \Datetime $date,
         int $frequency,
         ?int $regularLifeTime = null,
@@ -150,10 +89,8 @@ class ProposalManager
     ) {
         // we set the params
         $params = [
-            "origin_latitude" => $origin_latitude,
-            "origin_longitude" => $origin_longitude,
-            "destination_latitude" => $destination_latitude,
-            "destination_longitude" => $destination_longitude,
+            "origin" => $origin,
+            "destination" => $destination,
             "date" => $date->format('Y-m-d\TH:i:s\Z'),
             "frequency" => $frequency
         ];
@@ -191,22 +128,6 @@ class ProposalManager
     }
     
     /**
-     * Delete a proposal
-     *
-     * @param int $id The id of the proposal to delete
-     *
-     * @return boolean The result of the deletion.
-     */
-    public function deleteProposal(int $id)
-    {
-        $response = $this->dataProvider->delete($id);
-        if ($response->getCode() == 204) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Create a proposal from an ad
      *
      * @param array $ad The data posted by the user
@@ -228,6 +149,10 @@ class ProposalManager
         } else {
             $proposal->setUser($poster);
         }
+        // we check if the proposal is private
+        if (isset($ad['private']) && $ad['private']) {
+            $proposal->setPrivate(true);
+        }
         // we set the type to one way, we'll check later if it's a return trip
         $proposal->setType(Proposal::TYPE_ONE_WAY);
         if (isset($ad['message'])) {
@@ -243,7 +168,9 @@ class ProposalManager
         $criteria->setPassenger($ad['passenger']);
         $criteria->setPriceKm($ad['priceKm']);
         $criteria->setSeats($ad['seats']);
-        $criteria->setSolidaryExclusive($ad['solidary']);
+        if (isset($ad['solidary'])) {
+            $criteria->setSolidaryExclusive($ad['solidary']);
+        }
         if (isset($ad['price'])) {
             $criteria->setPrice($ad['price']);
         }
@@ -646,16 +573,79 @@ class ProposalManager
         return $proposalOutward;
     }
 
+
+    
+
     /**
-     * Create a proposal from a search result
+     * Create a proposal
      *
-     * @param array $ad The data posted by the user (the search)
-     * @param User $poster The poster of the ad
-     * @return Proposal
+     * @param Proposal $proposal The proposal to create
+     *
+     * @return Proposal|null The proposal created or null if error.
      */
-    public function createProposalFromResult(array $ad, User $poster)
+    public function createProposal(Proposal $proposal)
     {
-        // First we need to create a real proposal from the search
-        return $this->createProposalFromAd($ad, $poster);
+        $response = $this->dataProvider->post($proposal);
+        if ($response->getCode() == 201) {
+            return $response->getValue();
+        }
+        return null;
+    }
+    
+    /**
+     * Get all proposals for a user
+     *
+     * @return array|null The proposals found or null if not found.
+     */
+    public function getProposals(User $user)
+    {
+        // we will make the request on the User instead of the Proposal
+        $this->dataProvider->setClass(User::class);
+        $response = $this->dataProvider->getSubCollection($user->getId(), Proposal::class);
+        return $response->getValue();
+    }
+    
+    /**
+     * Get a proposal for a user
+     *
+     * @param int $id
+     * @return Proposal|null The proposal found or null if not found.
+     */
+    public function getProposal(int $id)
+    {
+        $response = $this->dataProvider->getItem($id);
+        return $response->getValue();
+    }
+    
+    /**
+     * Get all matchings for a user proposal
+     *
+     * @return array|null The matchings found or null if not found.
+     */
+    public function getMatchings(Proposal $proposal)
+    {
+        // we will make the request on the Matching instead of the Proposal
+        if ($proposal->getProposalType() == Proposal::PROPOSAL_TYPE_OFFER) {
+            $response = $this->dataProvider->getSubCollection($proposal->getId(), Matching::class, "matching_requests");
+        } else {
+            $response = $this->dataProvider->getSubCollection($proposal->getId(), Matching::class, "matching_offers");
+        }
+        return $response->getValue();
+    }
+
+    /**
+     * Delete a proposal
+     *
+     * @param int $id The id of the proposal to delete
+     *
+     * @return boolean The result of the deletion.
+     */
+    public function deleteProposal(int $id)
+    {
+        $response = $this->dataProvider->delete($id);
+        if ($response->getCode() == 204) {
+            return true;
+        }
+        return false;
     }
 }

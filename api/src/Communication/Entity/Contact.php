@@ -38,7 +38,11 @@ use App\Communication\Controller\ContactMessage;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}},
  *     },
+ *     itemOperations={
+ *          "get"
+ *     },
  *     collectionOperations={
+ *          "get",
  *          "post"={
  *              "method"="POST",
  *              "path"="/contacts",

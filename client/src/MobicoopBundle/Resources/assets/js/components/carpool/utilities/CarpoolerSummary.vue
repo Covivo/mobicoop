@@ -98,7 +98,6 @@
           </v-btn>
 
           <v-btn
-            :disabled="!contactAvailable"
             color="secondary"
             small
             depressed
@@ -120,7 +119,6 @@
         class="text-right"
       >
         <v-btn
-          :disabled="!contactAvailable"
           rounded
           color="secondary"
           large
@@ -151,10 +149,6 @@ export default {
       type: Object,
       default: null
     },
-    user: {
-      type: Object,
-      default: null
-    },
     carpooler: {
       type: Object,
       default: null
@@ -169,10 +163,7 @@ export default {
   },
   computed: {
     age (){
-      return moment().diff(moment([this.carpooler.birthYear]),'years')+' '+this.$t("birthYears")
-    },
-    contactAvailable () {
-      return this.user ? this.user.id != this.carpooler.id : false;
+      return moment().diff(moment([this.carpooler.birthDate]),'years')+' '+this.$t("birthYears")
     }
   },
   methods: {
