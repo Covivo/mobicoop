@@ -258,3 +258,8 @@ services:
     'App\User\Filter\HomeAddressTerritoryFilter':
         # Uncomment only if autoconfiguration isn't enabled
         #tags: [ 'api_platform.filter' ]
+
+    # Solidary
+    App\Solidary\Controller\:
+        resource: '../src/Solidary/Controller'
+        tags: ['controller.service_arguments']

@@ -61,6 +61,10 @@ export default {
     },
     models: {
       user: {
+        civility: {
+          label: "Civilité",
+          placeholder: "Civilité"
+        },
         givenName: {
           label: "Prénom",
           placeholder: "Prénom",

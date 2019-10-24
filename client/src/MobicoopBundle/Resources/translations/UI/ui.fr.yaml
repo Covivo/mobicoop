@@ -53,3 +53,6 @@ carpool:
         h1: 'Publier une annonce'
 contact:
     title: "Nous contacter"
+
+solidary:
+    title: "Faire une demande solidaire"

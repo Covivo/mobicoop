@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,93 +21,69 @@
  *    LICENSE
  **************************/
 
-namespace App\Solidary\Entity;
+namespace Mobicoop\Bundle\MobicoopBundle\Solidary\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Carpool\Entity\Proposal;
-use App\User\Entity\User;
-use App\Solidary\Controller\SolidaryProposalPost;
 
-/**
- * A solidary record.
- *
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks
- * @ApiResource(
- *      attributes={
- *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
- *      },
- *      collectionOperations={
- *     "get",
- *     "post"={
- *              "method"="POST",
- *              "path"="/solidaries",
- *              "controller"=SolidaryProposalPost::class,
- *          },
- *     },
- *      itemOperations={"get","put","delete"}
- * )
- */
-class Solidary
+class Solidary implements ResourceInterface
 {
+    const ASKED = 0;
+    const REFUSED = 1;
+    const PENDING = 2;
+    const LOOKINGFORSOLUTION = 3;
+    const FOLLOWUP = 4;
+    const CLOSED = 5;
+    
     /**
-     * @var int $id The id of this solidary record.
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @var int The id of this solidary record.
      */
     private $id;
 
     /**
+     * @var string|null The iri of this solidary record.
+     *
+     * @Groups({"get","post"})
+     */
+    private $iri;
+    
+    /**
      * @var int Ask status (0 = asked; 1 = refused; 2 = pending, 3 = looking for solution; 4 = follow up; 5 = closed).
      *
      * @Assert\NotBlank
-     * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
+
+     * @Groups({"get","post"})
      */
     private $status;
 
     /**
      * @var bool Social assist.
      *
-     * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"get","post"})
      */
     private $assisted;
 
     /**
      * @var string Structure of the solidary record.
      *
-     * @Assert\NotBlank
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"get","post"})
      */
     private $structure;
 
     /**
      * @var string Subject of the solidary record.
      *
-     * @Assert\NotBlank
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"get","post"})
      */
     private $subject;
 
     /**
      * @var Proposal The proposal.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read","write"})
-     * @MaxDepth(1)
+     * @Groups({"get","post"})
      */
     private $proposal;
 
@@ -115,32 +91,45 @@ class Solidary
      * @var User The user related with the solidary record.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="solidaries")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"read", "write"})
-     * @MaxDepth(1)
+     * @Groups({"get", "post"})
      */
     private $user;
 
     /**
      * @var \DateTimeInterface Creation date of the solidary record.
      *
-     * @ORM\Column(type="datetime")
-     * @Groups("read")
+     * @Groups("get")
      */
     private $createdDate;
 
     /**
      * @var \DateTimeInterface Updated date of the solidary record.
      *
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Groups("read")
+     * @Groups("get")
      */
     private $updatedDate;
 
     public function getId(): int
     {
         return $this->id;
+    }
+    
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+        
+        return $this;
+    }
+
+    public function getIri(): ?string
+    {
+        return $this->iri;
+    }
+
+    public function setIri(?string $iri): Solidary
+    {
+        $this->iri = $iri;
+        return $this;
     }
 
     public function getStatus(): ?int
@@ -159,11 +148,11 @@ class Solidary
     {
         return $this->assisted;
     }
-    
+
     public function setAssisted(bool $isAssisted): self
     {
         $this->assisted = $isAssisted;
-        
+
         return $this;
     }
 
@@ -195,14 +184,14 @@ class Solidary
     {
         return $this->proposal;
     }
-    
+
     public function setProposal(?Proposal $proposal): self
     {
         $this->proposal = $proposal;
-        
+
         return $this;
     }
-    
+
     public function getUser(): ?User
     {
         return $this->user;
@@ -211,7 +200,7 @@ class Solidary
     public function setUser(?User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
 
@@ -237,27 +226,5 @@ class Solidary
         $this->updatedDate = $updatedDate;
 
         return $this;
-    }
-
-    // DOCTRINE EVENTS
-
-    /**
-     * Creation date.
-     *
-     * @ORM\PrePersist
-     */
-    public function setAutoCreatedDate()
-    {
-        $this->setCreatedDate(new \Datetime());
-    }
-
-    /**
-     * Update date.
-     *
-     * @ORM\PreUpdate
-     */
-    public function setAutoUpdatedDate()
-    {
-        $this->setUpdatedDate(new \Datetime());
     }
 }

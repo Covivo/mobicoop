@@ -44,7 +44,7 @@
         :card-text-button="this.$t('solidary.button.label')"
         card-text-color-button="secondary--text"
         card-color-button="white"
-        :href-button="this.$t('event.button.route')"
+        :href-button="this.$t('solidary.button.route')"
         :card-text-button-two="this.$t('solidary.button2.label')"
         card-text-color-button-two="secondary--text"
         card-color-button-two="white"
@@ -56,7 +56,6 @@
 <script>
 import MCard from '@js/components/utilities/MCard'
 import Translations from "@translations/components/home/HomeContent.json";
-
 
 export default {
   i18n: {

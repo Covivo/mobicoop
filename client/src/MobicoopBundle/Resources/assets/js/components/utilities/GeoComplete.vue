@@ -4,7 +4,7 @@
       v-model="address"
       :loading="isLoading"
       :items="items"
-      :label="label"
+      :label="label + (showRequired ? ' *' : '')"
       :hint="hint"
       :search-input.sync="search"
       hide-no-data
@@ -85,6 +85,10 @@ export default {
     },
     hint: defaultString,
     required: Boolean,
+    showRequired: {
+      type: Boolean,
+      default: false
+    },
     requiredError: defaultString,
     name: defaultString,
     initAddress: {
