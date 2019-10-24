@@ -79,7 +79,7 @@
       <v-col class="col-4">
         <m-facebook-auth
           :app-id="facebookLoginAppId"
-          @errorFacebookConnect="treatErrorMessage({'value':'errorFacebookConnect'})"
+          @errorFacebookConnect="errorFB"
         />
       </v-col>
     </v-row>
@@ -132,7 +132,7 @@ export default {
     };
   },
   mounted() {
-    this.treatErrorMessage(this.errormessage);
+    if(this.errormessage.value !== "") this.treatErrorMessage(this.errormessage);
   },
   methods: {
     validate() {
@@ -140,13 +140,16 @@ export default {
         this.loading = true;
       }
     },
+    errorFB(data){
+      this.treatErrorMessage({'value':data})
+    },
     treatErrorMessage(errorMessage) {
       if (errorMessage.value === "Bad credentials.") {
         this.errorDisplay = this.$t("errorCredentials");
         this.loading = false;
       }
-      else if(errorMessage.value ==="errorFacebookConnect"){
-        this.errorDisplay = this.$t("errorCredentialsFacebook");
+      else{
+        this.errorDisplay = this.$t(errorMessage.value);
         this.loading = false;
       }
     },

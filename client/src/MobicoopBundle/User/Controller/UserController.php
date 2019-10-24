@@ -783,7 +783,7 @@ class UserController extends AbstractController
             
             // We get the user by his email
             $user = $userManager->findByEmail($data["email"]);
-            if ($user->getFacebookId()===$data["personalID"]) {
+            if ($user && $user->getFacebookId()===$data["personalID"]) {
                 // Same Facebook ID in BDD that the one from the front component. We log the user.
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                 $this->get('security.token_storage')->setToken($token);
@@ -791,10 +791,10 @@ class UserController extends AbstractController
 
                 return new JsonResponse($user->getFacebookId());
             } else {
-                return new JsonResponse("");
+                return new JsonResponse(['error'=>'userFBNotFound']);
             }
         }
 
-        return new JsonResponse("");
+        return new JsonResponse(['error'=>'errorCredentialsFacebook']);
     }
 }
