@@ -49,7 +49,7 @@ export default {
       isConnected: false,
       name: '',
       personalID: '',
-      FB: undefined,
+      payloadFB: undefined,
       showButton:true
     };
   },
@@ -63,7 +63,7 @@ export default {
   methods: {
     getUserData() {
       this.showButton = false;
-      this.FB.api('/me', 'GET', {fields: 'id,name,first_name,middle_name,last_name,picture,email' },
+      this.payloadFB.FB.api('/me', 'GET', {fields: 'id,name,first_name,middle_name,last_name,picture,email' },
         userInformation => {
 
           if(this.signUp){
@@ -87,11 +87,11 @@ export default {
                 }
               })
               .then(response => {
-                if(response.data !== ""){
+                if(response.data.error === undefined){
                   window.location = "/";
                 }
                 else{
-                  this.emitError();
+                  this.emitError(response.data.error);
                 }
               })
               .catch(function (error) {
@@ -104,19 +104,16 @@ export default {
       )
     },
     sdkLoaded(payload) {
-      this.isConnected = payload.isConnected
-      this.FB = payload.FB
-      if (this.isConnected) this.getUserData()
+      this.payloadFB = payload;
     },
     onLogIn() {
-      this.isConnected = true
       this.getUserData()
     },
     onLogOut() {
       this.isConnected = false;
     },
-    emitError(){
-      this.$emit("errorFacebookConnect");
+    emitError(error){
+      this.$emit("errorFacebookConnect",error);
     },
     emitForSignUp(userInformation){
       this.$emit("fillForm",userInformation);

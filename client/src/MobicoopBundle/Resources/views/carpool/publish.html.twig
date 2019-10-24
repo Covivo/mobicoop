@@ -12,6 +12,7 @@
     :user="{{app.user|json_encode}}" 
     :default-price-km="{{ priceKm }}"
     :default-margin-time="{{ marginTime }}"
+    :map-provider="{{ mapProvider|json_encode }}"
     :url-tiles="{{ urlTiles|json_encode }}"
     :attribution-copyright="{{ attributionCopyright|json_encode }}"
     :community-ids="{{ communityIds|json_encode }}"
@@ -20,8 +21,8 @@
     init-date = "{{ date }}"
     init-time = "{{ time }}"
     :init-regular = "{{ regular ? 'true' : 'false' }}"
-    :first-ad = "{{ firstAd ? 'true' : 'false' }}"
-    :solidary-ad = "{{ solidaryAd ? 'true' : 'false' }}"
+    :first-ad = "{{ firstAd is defined and firstAd is not null and firstAd ? 'true' : 'false' }}"
+    :solidary-ad = "{{ solidaryAd is defined and solidaryAd is not null and solidaryAd ? 'true' : 'false' }}"
   />
 
 {% endblock %}

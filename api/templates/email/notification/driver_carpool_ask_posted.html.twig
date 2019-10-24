@@ -1,16 +1,15 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    @PrenomOuPseudoExpediteur {{ "vous a envoyé a fait une demande formelle pour le covoiturage ci-dessous."|trans }}
+   <p>@PrenomOuPseudoExpediteur {{ "yourAsk"|trans }}.</p>
 
-    {{ "Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de"|trans }} {{ api_env('EMAILS_PLATFORM_NAME') }} {{ "en cliquant ici"|trans}} @URLdelapagedemessageriecorrespondante.
+    <p>{{ "replyViaEMail"|trans }} {{ api_env('EMAILS_PLATFORM_NAME') }} {{ "clickHere"|trans}} @URLdelapagedemessageriecorrespondante.</p>
 
-    {{ "Trajet occasionelle Distance covoiturée"|trans}} @DistancePassager km
-{{ "Détour conducteur"| trans}} @TempsDetourMinutes / @DistanceDetour km
-{{ "Prise en charge à"|trans}} @AdressePEC
-    {{ "Dépose à "|trans }} @AdresseDepose
-    {{ "Heures de RDV"|trans}} {{ "Lundi"|trans}}  {{ "Mardi"|trans}}  {{ "Mercredi"|trans}}  {{ "Jeudi"|trans}}  {{ "Vendredi"|trans}}  {{ "Samedi"|trans}}  {{ "Dimanche"|trans}} .
-    {{ "Le" |trans}}  @DateDebut  {{ "Du" |trans}}  @DateDebut  {{ "au" |trans}}  @DateFin
-    {{ "Commentaire du passager" |trans}} :  @CommentairesDemande
-    {{ "ContacterPlaces réservées" |trans}} @NbPassagers
-    {{ "Prix indicatif" |trans}}  @GainConducteur @Monnaie
+    <p>{{ "ocassionalCarpoolDistancee"|trans}} @DistancePassager km.</p>
+    <p>{{ "driverDetour"|trans}} @TempsDetourMinutes / @DistanceDetour km.</p>
+    <p>{{ "supported"|trans }} @AdressePEC.</p>
+    <p>{{ "the"|trans}} @DateDebut {{ "hour"|trans}} @DateDebut.</p>
+    <p>{{ "depositedAt"|trans }} @AdresseDepose.</p>
+    <p>{{ "passengerComment"|trans}} : @CommentairesDemande.</p>
+    <p>{{ "reservedPlaces"|trans}} @NbPassagers.</p>
+    <p>{{ "indicativePrice"|trans}} @GainConducteur @Monnaie.</p>
 {% endblock %}
