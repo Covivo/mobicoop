@@ -46,6 +46,11 @@ class ResultItem implements ResourceInterface, \JsonSerializable
     private $proposalId;
 
     /**
+     * @var int The matching id if it has already been persisted.
+     */
+    private $matchingId;
+
+    /**
      * @var \DateTimeInterface The computed date for a punctual journey for the person who search / post.
      */
     private $date;
@@ -61,20 +66,9 @@ class ResultItem implements ResourceInterface, \JsonSerializable
     private $origin;
 
     /**
-     * @var boolean True if the origin is the first waypoint of the journey.
-     */
-
-    private $originFirst;
-
-    /**
      * @var Address The destination address (the destination of the carpooler who search or post).
      */
     private $destination;
-
-    /**
-     * @var boolean True if the destination is the last point of the journey.
-     */
-    private $destinationLast;
 
     /**
      * @var array The waypoints of the journey.
@@ -267,6 +261,18 @@ class ResultItem implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getMatchingId(): ?int
+    {
+        return $this->matchingId;
+    }
+    
+    public function setMatchingId(?int $matchingId): self
+    {
+        $this->matchingId = $matchingId;
+        
+        return $this;
+    }
+
     public function getDate(): ?\DateTimeInterface
     {
         return $this->date;
@@ -303,18 +309,6 @@ class ResultItem implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
-    public function isOriginFirst(): ?bool
-    {
-        return $this->originFirst;
-    }
-    
-    public function setOriginFirst(bool $isOriginFirst): self
-    {
-        $this->originFirst = $isOriginFirst;
-        
-        return $this;
-    }
-
     public function getDestination(): ?Address
     {
         return $this->destination;
@@ -324,18 +318,6 @@ class ResultItem implements ResourceInterface, \JsonSerializable
     {
         $this->destination = $destination;
 
-        return $this;
-    }
-
-    public function isDestinationLast(): ?bool
-    {
-        return $this->destinationLast;
-    }
-    
-    public function setDestinationLast(bool $isDestinationLast): self
-    {
-        $this->destinationLast = $isDestinationLast;
-        
         return $this;
     }
 

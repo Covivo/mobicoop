@@ -70,7 +70,7 @@ export default {
       }
     },
     formatTime(time) {
-      return moment.utc(time,"HH:mm").format(this.$t("ui.i18n.time.format.hourMinute")); 
+      return moment.utc(time).format(this.$t("ui.i18n.time.format.hourMinute")); 
     }
   }
 };

@@ -168,7 +168,9 @@ class ProposalManager
         $criteria->setPassenger($ad['passenger']);
         $criteria->setPriceKm($ad['priceKm']);
         $criteria->setSeats($ad['seats']);
-        $criteria->setSolidaryExclusive($ad['solidary']);
+        if (isset($ad['solidary'])) {
+            $criteria->setSolidaryExclusive($ad['solidary']);
+        }
         if (isset($ad['price'])) {
             $criteria->setPrice($ad['price']);
         }

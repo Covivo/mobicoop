@@ -57,6 +57,12 @@ class ResultItem
     private $proposalId;
 
     /**
+     * @var int The matching id if it has already been persisted.
+     * @Groups("results")
+     */
+    private $matchingId;
+
+    /**
      * @var \DateTimeInterface The computed date for a punctual journey for the person who search / post.
      * @Groups("results")
      */
@@ -284,6 +290,18 @@ class ResultItem
         return $this;
     }
 
+    public function getMatchingId(): ?int
+    {
+        return $this->matchingId;
+    }
+    
+    public function setMatchingId(?int $matchingId): self
+    {
+        $this->matchingId = $matchingId;
+        
+        return $this;
+    }
+
     public function getDate(): ?\DateTimeInterface
     {
         return $this->date;
@@ -301,7 +319,7 @@ class ResultItem
         return $this->time;
     }
 
-    public function setTime(\DateTimeInterface $time): self
+    public function setTime(?\DateTimeInterface $time): self
     {
         $this->time = $time;
 

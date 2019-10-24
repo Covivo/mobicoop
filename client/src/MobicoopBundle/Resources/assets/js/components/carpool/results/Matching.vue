@@ -217,21 +217,10 @@ export default {
       this.chips = [...this.chips]
     },
     contact(params) {
-      let postParams = {
-        "proposalId":params.proposal.id,
-        "origin": this.origin,
-        "destination": this.destination,
-        "date": params.date,
-        "time": params.time,
-        "priceKm": params.proposal.criteria.priceKm,
-        "driver": params.driver,
-        "passenger": params.passenger,
-        "regular": this.regular
-      };
       if (this.proposalId) {
-        postParams.proposalSearch = this.proposalId;
+        params.proposalSearch = this.proposalId;
       }
-      axios.post(this.$t("contactUrl"), postParams,
+      axios.post(this.$t("contactUrl"), params,
         {
           headers:{
             'content-type': 'application/json'

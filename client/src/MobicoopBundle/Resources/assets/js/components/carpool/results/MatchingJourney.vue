@@ -77,7 +77,7 @@
           <v-row>
             <v-col>
               <v-journey
-                :time="!regular"
+                :time="lResult.time || lResult.outwardTime ? true : false"
                 :waypoints="waypoints"
               />
             </v-col>
@@ -234,7 +234,7 @@ export default {
       return null;
     },
     computedDate() {
-      if (this.lResult &&this.lResult.date) return moment.utc(this.lResult.date).format(this.$t("ui.i18n.date.format.shortDate"));
+      if (this.lResult && this.lResult.date) return moment.utc(this.lResult.date).format(this.$t("ui.i18n.date.format.fullDate"));
       return null;
     },
     age() {
@@ -252,13 +252,21 @@ export default {
   methods: {
     contact() {
       this.contactLoading = true;
-      this.$emit('contact', {
-        proposal: this.proposal,
-        date: this.lDate,
-        time: this.getCarpoolTime(),
-        driver: this.driver,
-        passenger: this.passenger
-      });
+      let params = {
+        "driver": this.lResult.resultDriver ? true : false,
+        "passenger": this.lResult.resultPassenger ? true : false,
+        "regular" : this.lResult.frequency == 2
+      };
+      // if the requester can be passenger, we take the informations from the resultPassenger outward item
+      if (this.lResult.resultPassenger) {
+        params.proposalId = this.lResult.resultPassenger.outward.proposalId;
+        params.origin = this.lResult.resultPassenger.outward.origin;
+        params.destination = this.lResult.resultPassenger.outward.destination;
+        params.date = this.lResult.resultPassenger.outward.date;
+        params.time = this.lResult.resultPassenger.outward.time;
+        params.priceKm = this.lResult.resultPassenger.outward.priceKm;
+      }
+      this.$emit('contact', params);
     },
   }
 };

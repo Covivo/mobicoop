@@ -91,7 +91,6 @@ class Result
      * @var boolean True if the origin is the first waypoint of the journey.
      * @Groups("results")
      */
-
     private $originFirst;
 
     /**
@@ -129,6 +128,12 @@ class Result
      * @Groups("results")
      */
     private $price;
+
+    /**
+     * @var string The comment to display.
+     * @Groups("results")
+     */
+    private $comment;
 
     /**
      * @var boolean|null The journey is available on mondays (if regular).
@@ -260,30 +265,6 @@ class Result
         return $this;
     }
 
-    public function getDate(): ?\DateTimeInterface
-    {
-        return $this->date;
-    }
-
-    public function setDate(?\DateTimeInterface $date): self
-    {
-        $this->date = $date;
-
-        return $this;
-    }
-
-    public function getTime(): ?\DateTimeInterface
-    {
-        return $this->time;
-    }
-
-    public function setTime(?\DateTimeInterface $time): self
-    {
-        $this->time = $time;
-
-        return $this;
-    }
-
     public function getOrigin(): ?Address
     {
         return $this->origin;
@@ -332,6 +313,30 @@ class Result
         return $this;
     }
 
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+
+    public function setDate(?\DateTimeInterface $date): self
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
+    public function getTime(): ?\DateTimeInterface
+    {
+        return $this->time;
+    }
+
+    public function setTime(?\DateTimeInterface $time): self
+    {
+        $this->time = $time;
+
+        return $this;
+    }
+
     public function getSeats(): ?int
     {
         return $this->seats;
@@ -352,6 +357,18 @@ class Result
     public function setPrice(?string $price)
     {
         $this->price = $price;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+    
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
+        
+        return $this;
     }
 
     public function isMonCheck(): ?bool
