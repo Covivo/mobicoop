@@ -1,5 +1,5 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
     <p>@PrenomOuPseudoConducteur {{ "notBeAbleToCarpoolWithYouFor"|trans }} @DateVoyage {{ "towards"|trans }} @AdresseDepose.</p>
-    <p>{{ "hisMessage"|trans }} @Commentaires </p>
+    <p>{{ "hisMessage"|trans }} : @Commentaires </p>
 {% endblock %}

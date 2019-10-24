@@ -1,8 +1,8 @@
 # CARPOOL_AD_RENEWAL
 
-beCarefulFewDaysAnnouncementNotValid: "Attention dans quelques jours vos trajets enregistrés ne seront plus valables sur votre profil et ne seront donc plus visibles par les autres covoitureurs."
+beCarefulFewDaysAnnouncementNotValid: "Attention dans quelques jours vos trajets enregistrés ne seront plus valables sur votre profil et ne seront donc plus visibles par les autres covoitureurs"
 nowYouAreMore: "Vous êtes maintenant plus de"
-toUseTheService: "à utiliser le service ! Partagez vos trajets et trouvez votre bonheur !"
+toUseTheService: "à utiliser le service ! Partagez vos trajets et trouvez votre bonheur"
 
 # CARPOOL_MATCHING_NEW
 
@@ -11,9 +11,11 @@ seeYouIn: "Rendez-vous dans"
 myAds: "Mes annonces"
 toConsultCorrespondingAdsAndMakeContact: "pour consulter les annonces correspondantes et prendre contact"
 
+# CARPOOL_PROPOSAL_POSTED
+
 # COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
 
-sendYouMessage: "vous a envoyé un message :"
+sendYouMessage: "vous a envoyé un message"
 canAnswerViaEmailFrom: "Vous pouvez répondre à ce message via la messagerie de"
 clickHere: "en cliquant ici" 
 getProblem: "Si ce mail comporte un message ne respectant pas la charte, n'hésitez pas à nous contacter"
