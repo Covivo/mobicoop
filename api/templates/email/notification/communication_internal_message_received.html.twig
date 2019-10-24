@@ -1,6 +1,6 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-<p> {{ context.user.givenName|ucfirst }} {{ context.user.familyName|ucfirst|truncate(1) }}. {{ "sendYouMessage" |trans }} :</p>
+<p> {{ context.user.givenName|capitalize }} {{ context.user.familyName|capitalize }} {{ "sendYouMessage" |trans }} :</p>
     <p>{{  "canAnswerViaEmailFrom" |trans }} {{ api_env('EMAILS_PLATFORM_NAME') }} {{ "clickHere" |trans }} {{ api_env('EMAILS_PLATFORM_URL') }}{{ "urlMailBox"|trans }}.</p>
     <p>{{ "getProblem" |trans }}.</p>
 {% endblock %}
