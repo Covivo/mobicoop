@@ -20,8 +20,8 @@
     init-date = "{{ date }}"
     init-time = "{{ time }}"
     :init-regular = "{{ regular ? 'true' : 'false' }}"
-    :first-ad = "{{ firstAd ? 'true' : 'false' }}"
-    :solidary-ad = "{{ solidaryAd ? 'true' : 'false' }}"
+    :first-ad = "{{ firstAd is defined and firstAd is not null and firstAd ? 'true' : 'false' }}"
+    :solidary-ad = "{{ solidaryAd is defined and solidaryAd is not null and solidaryAd ? 'true' : 'false' }}"
   />
 
 {% endblock %}
