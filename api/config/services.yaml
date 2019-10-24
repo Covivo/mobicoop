@@ -105,6 +105,7 @@ services:
                 defaultMarginTime: '%env(int:CARPOOL_MARGIN_TIME)%'
                 defaultRegularLifeTime: '%env(int:CARPOOL_REGULAR_LIFETIME)%'
                 defaultAnyRouteAsPassenger: '%env(bool:CARPOOL_ANY_ROUTE_PASSENGER)%'
+                defaultPriceKm: '%env(float:CARPOOL_PRICE)%'
         tags:
             - { name: monolog.logger, channel: carpool }
 

@@ -93,6 +93,13 @@ class Proposal implements ResourceInterface, \JsonSerializable
     private $comment;
 
     /**
+     * @var boolean Private proposal.
+     * A private proposal can't be the found in the result of a search.
+     * @Groups({"post","put"})
+     */
+    private $private;
+
+    /**
      * @var Waypoint[] The waypoints of the proposal.
      * @Groups({"post","put"})
      *
@@ -140,6 +147,11 @@ class Proposal implements ResourceInterface, \JsonSerializable
      * @Groups({"post","put"})
      */
     private $matchedProposal;
+
+    /**
+     * @var array The matching results of a proposal in a user-friendly format.
+     */
+    private $results;
 
     public function __construct($id=null)
     {
@@ -207,6 +219,18 @@ class Proposal implements ResourceInterface, \JsonSerializable
     {
         $this->comment = $comment;
         
+        return $this;
+    }
+
+    public function isPrivate(): bool
+    {
+        return $this->private ? true : false;
+    }
+
+    public function setPrivate(?bool $private): self
+    {
+        $this->private = $private;
+
         return $this;
     }
     
@@ -449,6 +473,18 @@ class Proposal implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getResults()
+    {
+        return $this->results;
+    }
+
+    public function setResults($results)
+    {
+        $this->results = $results;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -461,7 +497,8 @@ class Proposal implements ResourceInterface, \JsonSerializable
             'user'              => $this->getUser(),
             'criteria'          => $this->getCriteria(),
             'type'              => $this->getType(),
-            'waypoints'         => $this->getWaypoints()
+            'waypoints'         => $this->getWaypoints(),
+            'results'           => $this->getResults()
         ];
     }
 }

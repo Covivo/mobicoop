@@ -201,6 +201,15 @@ carpool_ad_result:
     requirements:
         id: '\d+'
 
+carpool_ad_detail:
+    path:
+        fr: /covoiturage/annonce/{id}/detail
+        en: /carpool/ad/{id}/detail
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdResult
+    requirements:
+        id: '\d+'
+
+
 # search results (POST)
 carpool_search_result:
     methods: [POST]
@@ -209,8 +218,9 @@ carpool_search_result:
         en: /carpool/search
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchResult
 
-# search matching (AJAX)
+# search matching (AJAX POST)
 carpool_search_matching:
+    methods: [POST]
     path:
         fr: /covoiturage/recherche/matching
         en: /carpool/search/matching

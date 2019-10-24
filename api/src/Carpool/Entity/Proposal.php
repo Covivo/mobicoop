@@ -217,6 +217,15 @@ class Proposal
     private $comment;
 
     /**
+     * @var boolean Private proposal.
+     * A private proposal can't be the found in the result of a search.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write","thread"})
+     */
+    private $private;
+
+    /**
      * @var \DateTimeInterface Creation date of the proposal.
      *
      * @ORM\Column(type="datetime")
@@ -340,6 +349,13 @@ class Proposal
      * @Groups({"read","write"})
      */
     private $matchedProposal;
+
+    /**
+     * @var ArrayCollection|null The carpool results for the proposal.
+     * Results are taken from the matchings, but returned in a more user-friendly way.
+     * @Groups("results")
+     */
+    private $results;
         
     public function __construct($id=null)
     {
@@ -354,6 +370,7 @@ class Proposal
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
         $this->notifieds = new ArrayCollection();
+        $this->results = new ArrayCollection();
     }
     
     public function __clone()
@@ -394,6 +411,18 @@ class Proposal
     {
         $this->comment = $comment;
         
+        return $this;
+    }
+
+    public function isPrivate(): bool
+    {
+        return $this->private ? true : false;
+    }
+
+    public function setPrivate(?bool $private): self
+    {
+        $this->private = $private;
+
         return $this;
     }
 
@@ -672,6 +701,18 @@ class Proposal
     public function setMatchedProposal(?Proposal $matchedProposal): self
     {
         $this->matchedProposal = $matchedProposal;
+
+        return $this;
+    }
+
+    public function getResults()
+    {
+        return $this->results;
+    }
+
+    public function setResults($results)
+    {
+        $this->results = $results;
 
         return $this;
     }

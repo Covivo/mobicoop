@@ -99,6 +99,9 @@ class ProposalRepository
             ->setParameter('userProposal', $proposal->getUser());
         }
 
+        // exclude private proposals
+        $query->andWhere('(p.private IS NULL or p.private = 0)');
+
         // COMMUNITIES
         // here we exclude the proposals that are posted in communities for which the user is not member
         $filterUserCommunities = "((co.proposalsHidden = 0 OR co.proposalsHidden is null)";

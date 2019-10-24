@@ -15,14 +15,14 @@
     :map-provider="{{ mapProvider|json_encode }}"
     :url-tiles="{{ urlTiles|json_encode }}"
     :attribution-copyright="{{ attributionCopyright|json_encode }}"
-    :community-ids="{{ communityIds|json_encode }}"
-    :init-origin = "{{ origin ? origin : "null" }}"
-    :init-destination = "{{ destination ? destination : "null" }}"
-    init-date = "{{ date }}"
-    init-time = "{{ time }}"
-    :init-regular = "{{ regular ? 'true' : 'false' }}"
-    :first-ad = "{{ firstAd is defined and firstAd is not null and firstAd ? 'true' : 'false' }}"
-    :solidary-ad = "{{ solidaryAd is defined and solidaryAd is not null and solidaryAd ? 'true' : 'false' }}"
+    :community-ids="{{ communityIds is defined ? communityIds|json_encode : 'null' }}"
+    :init-origin = "{{ origin is defined ? origin : 'null' }}"
+    :init-destination = "{{ destination is defined ? destination : 'null' }}"
+    init-date = "{{ date is defined ? date : '' }}"
+    init-time = "{{ time is defined ? time : '' }}"
+    :init-regular = "{{ regular is defined ? (regular ? 'true' : 'false') : 'false' }}"
+    :first-ad = "{{ firstAd is defined ? (firstAd ? 'true' : 'false') : 'false' }}"
+    :solidary-ad = "{{ solidaryAd is defined ? (solidaryAd ? 'true' : 'false') : 'false' }}"    
   />
 
 {% endblock %}

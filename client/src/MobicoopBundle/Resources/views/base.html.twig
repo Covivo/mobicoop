@@ -14,7 +14,6 @@
          {% endblock %}
     </head>
     <body>
-
         <div id="app">
             <v-app>
                 {% if app.user %}
@@ -22,11 +21,11 @@
                 {% else %}
                     <m-header></m-header>
                 {% endif %}
-                <main id="main" role="main">
-                    <div>
-                        {% block main %}{% endblock %}
-                    </div>
-                </main>
+
+                <v-content>
+                    {% block main %}{% endblock %}
+                </v-content>
+
                 {% block footer %}
                     <m-footer></m-footer>
                 {% endblock %}

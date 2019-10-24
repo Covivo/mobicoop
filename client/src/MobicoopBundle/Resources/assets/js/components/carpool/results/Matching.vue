@@ -1,5 +1,15 @@
 <template>
-  <v-content>
+  <div>
+    <!--loading overlay-->
+    <v-overlay 
+      :value="loading"
+      absolute
+    >
+      <v-progress-circular
+        indeterminate
+      />
+    </v-overlay>
+
     <v-container fluid>
       <v-row
         justify="center"
@@ -22,18 +32,47 @@
           <!-- Matching filter -->
           <matching-filter />
 
+          <!-- Number of matchings -->
+          <v-row 
+            justify="center"
+            align="center"
+          >
+            <v-col
+              v-if="!loading"
+              cols="12"
+              align="left"
+            >
+              {{ $tc('matchingNumber', numberOfResults, { number: numberOfResults }) }}
+            </v-col>
+
+            <v-col
+              v-else
+              cols="12"
+              align="left"
+            >
+              {{ $t('search') }}
+            </v-col>
+          </v-row>
+
           <!-- Matching results -->
-          <matching-results
-            :origin="origin"
-            :destination="destination"
-            :date="date"
-            :time="time"
-            :regular="regular"
-            :distinguish-regular="distinguishRegular"
-            :user="user"
-            :community-id="communityId"
-            @carpool="carpool"
-          />
+          <v-row 
+            v-for="(result,index) in results"
+            :key="index"
+            justify="center"
+          >
+            <v-col
+              cols="12"
+              align="left"
+            >    
+              <!-- Matching result -->
+              <matching-result
+                :result="result"
+                :user="user"
+                :distinguish-regular="distinguishRegular"
+                @carpool="carpool(result)"
+              />
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
     </v-container>
@@ -44,25 +83,22 @@
       max-width="800"
     >
       <matching-journey
-        :origin="origin"
-        :destination="destination"
-        :user="user"
-        :date="date"
-        :regular="regular"
-        :matching="matching"
+        :result="result"
         @close="carpoolDialog = false"
+        @contact="contact"
       />
     </v-dialog>
-  </v-content>
+  </div>
 </template>
 <script>
 
+import axios from "axios";
 import { merge } from "lodash";
 import Translations from "@translations/components/carpool/results/Matching.json";
 import TranslationsClient from "@clientTranslations/components/carpool/results/Matching.json";
 import MatchingHeader from "@components/carpool/results/MatchingHeader";
 import MatchingFilter from "@components/carpool/results/MatchingFilter";
-import MatchingResults from "@components/carpool/results/MatchingResults";
+import MatchingResult from "@components/carpool/results/MatchingResult";
 import MatchingJourney from "@components/carpool/results/MatchingJourney";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
@@ -70,13 +106,18 @@ export default {
   components: {
     MatchingHeader,
     MatchingFilter,
-    MatchingResults,
+    MatchingResult,
     MatchingJourney
   },
   i18n: {
     messages: TranslationsMerged,
   },
   props: {
+    // proposal Id if Matching results after an ad post
+    proposalId: {
+      type: Number,
+      default: null
+    },
     origin: {
       type: Object,
       default: null
@@ -114,54 +155,94 @@ export default {
     return {
       locale: this.$i18n.locale,
       carpoolDialog: false,
-      matching: null
+      proposal: null,
+      result: null,
+      loading : true,
+      results: null
     };
   },
+  computed: {
+    numberOfResults() {
+      return this.results ? Object.keys(this.results).length : 0 // ES5+
+    }
+  },
+  created() {
+    // if a proposalId is provided, we load the proposal results
+    if (this.proposalId) {
+      this.loading = true;
+      axios.get(this.$t("proposalUrl",{id: Number(this.proposalId)}))
+        .then((response) => {
+          this.loading = false;
+          this.proposal = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      // otherwise we send a proposal search
+      this.loading = true;
+      let postParams = {
+        "origin": this.origin,
+        "destination": this.destination,
+        "date": this.date,
+        "time": this.time,
+        "regular": this.regular,
+        "userId": this.user ? this.user.id : null,
+        "communityId": this.communityId
+      };
+      axios.post(this.$t("matchingUrl"), postParams,
+        {
+          headers:{
+            'content-type': 'application/json'
+          }
+        })
+        .then((response) => {
+          this.loading = false;
+          this.results = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  },
   methods :{
-    carpool(params) {
-      this.matching = params.matching;
-
+    carpool(result) {
+      this.result = result;
       // open the dialog
       this.carpoolDialog = true;
-
-      // axios.post(this.$t("contactUrl"), {
-      //   "proposalId":params.proposal.id,
-      //   "origin": this.origin,
-      //   "destination": this.destination,
-      //   "date": params.date,
-      //   "time": params.time,
-      //   "priceKm": params.proposal.criteria.priceKm,
-      //   "driver": params.driver,
-      //   "passenger": params.passenger,
-      //   "regular": this.regular
-      // },
-      // {
-      //   headers:{
-      //     'content-type': 'application/json'
-      //   }
-      // })
-      //   .then((response) => {
-      //     if(response.data=="ok"){
-      //       //this.emitSnackbar('snackBar.success','success')
-      //       window.location = "/utilisateur/messages";
-      //     }
-      //     else{
-      //       //this.emitSnackbar('snackBar.error','error')
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //     //this.emitSnackbar('snackBar.error','error')
-      //   })
-      //   .finally(() => {
-      //     //this.loading = false;
-      //   })
     },
     // TODO : REMOVE WHEN START CODING FILTER COMPONENT
     remove (item) {
       this.chips.splice(this.chips.indexOf(item), 1)
       this.chips = [...this.chips]
     },
+    contact(params) {
+      if (this.proposalId) {
+        params.proposalSearch = this.proposalId;
+      }
+      axios.post(this.$t("contactUrl"), params,
+        {
+          headers:{
+            'content-type': 'application/json'
+          }
+        })
+        .then((response) => {
+          if(response.data=="ok"){
+            //this.emitSnackbar('snackBar.success','success')
+            window.location = "/utilisateur/messages";
+          }
+          else{
+            //this.emitSnackbar('snackBar.error','error')
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          //this.emitSnackbar('snackBar.error','error')
+        })
+        .finally(() => {
+          this.carpoolDialog = false;
+        })
+    }
   }
 };
 </script>

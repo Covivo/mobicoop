@@ -28,6 +28,7 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use App\Carpool\Service\ProposalManager;
 use App\Carpool\Entity\Proposal;
+use App\Geography\Entity\Address;
 
 /**
  * Collection data provider for Matching simple search.
@@ -53,11 +54,133 @@ final class ProposalSimpleSearchCollectionDataProvider implements CollectionData
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
+        $origin = $this->request->get("origin");
+        $destination = $this->request->get("destination");
+        $originAddress = new Address();
+        $destinationAddress = new Address();
+        if (isset($origin['houseNumber'])) {
+            $originAddress->setHouseNumber($origin['houseNumber']);
+        }
+        if (isset($origin['street'])) {
+            $originAddress->setStreet($origin['street']);
+        }
+        if (isset($origin['streetAddress'])) {
+            $originAddress->setStreetAddress($origin['streetAddress']);
+        }
+        if (isset($origin['postalCode'])) {
+            $originAddress->setPostalCode($origin['postalCode']);
+        }
+        if (isset($origin['subLocality'])) {
+            $originAddress->setSubLocality($origin['subLocality']);
+        }
+        if (isset($origin['addressLocality'])) {
+            $originAddress->setAddressLocality($origin['addressLocality']);
+        }
+        if (isset($origin['localAdmin'])) {
+            $originAddress->setLocalAdmin($origin['localAdmin']);
+        }
+        if (isset($origin['county'])) {
+            $originAddress->setCounty($origin['county']);
+        }
+        if (isset($origin['macroCounty'])) {
+            $originAddress->setMacroCounty($origin['macroCounty']);
+        }
+        if (isset($origin['region'])) {
+            $originAddress->setRegion($origin['region']);
+        }
+        if (isset($origin['macroRegion'])) {
+            $originAddress->setMacroRegion($origin['macroRegion']);
+        }
+        if (isset($origin['addressCountry'])) {
+            $originAddress->setAddressCountry($origin['addressCountry']);
+        }
+        if (isset($origin['countryCode'])) {
+            $originAddress->setCountryCode($origin['countryCode']);
+        }
+        if (isset($origin['latitude'])) {
+            $originAddress->setLatitude($origin['latitude']);
+        }
+        if (isset($origin['longitude'])) {
+            $originAddress->setLongitude($origin['longitude']);
+        }
+        if (isset($origin['elevation'])) {
+            $originAddress->setElevation($origin['elevation']);
+        }
+        if (isset($origin['name'])) {
+            $originAddress->setName($origin['name']);
+        }
+        if (isset($origin['venue'])) {
+            $originAddress->setVenue($origin['venue']);
+        }
+        if (isset($origin['home'])) {
+            $originAddress->setHome($origin['home']);
+        }
+        if (isset($origin['displayLabel'])) {
+            $originAddress->setDisplayLabel($origin['displayLabel']);
+        }
+        if (isset($destination['houseNumber'])) {
+            $destinationAddress->setHouseNumber($destination['houseNumber']);
+        }
+        if (isset($destination['street'])) {
+            $destinationAddress->setStreet($destination['street']);
+        }
+        if (isset($destination['streetAddress'])) {
+            $destinationAddress->setStreetAddress($destination['streetAddress']);
+        }
+        if (isset($destination['postalCode'])) {
+            $destinationAddress->setPostalCode($destination['postalCode']);
+        }
+        if (isset($destination['subLocality'])) {
+            $destinationAddress->setSubLocality($destination['subLocality']);
+        }
+        if (isset($destination['addressLocality'])) {
+            $destinationAddress->setAddressLocality($destination['addressLocality']);
+        }
+        if (isset($destination['localAdmin'])) {
+            $destinationAddress->setLocalAdmin($destination['localAdmin']);
+        }
+        if (isset($destination['county'])) {
+            $destinationAddress->setCounty($destination['county']);
+        }
+        if (isset($destination['macroCounty'])) {
+            $destinationAddress->setMacroCounty($destination['macroCounty']);
+        }
+        if (isset($destination['region'])) {
+            $destinationAddress->setRegion($destination['region']);
+        }
+        if (isset($destination['macroRegion'])) {
+            $destinationAddress->setMacroRegion($destination['macroRegion']);
+        }
+        if (isset($destination['addressCountry'])) {
+            $destinationAddress->setAddressCountry($destination['addressCountry']);
+        }
+        if (isset($destination['countryCode'])) {
+            $destinationAddress->setCountryCode($destination['countryCode']);
+        }
+        if (isset($destination['latitude'])) {
+            $destinationAddress->setLatitude($destination['latitude']);
+        }
+        if (isset($destination['longitude'])) {
+            $destinationAddress->setLongitude($destination['longitude']);
+        }
+        if (isset($destination['elevation'])) {
+            $destinationAddress->setElevation($destination['elevation']);
+        }
+        if (isset($destination['name'])) {
+            $destinationAddress->setName($destination['name']);
+        }
+        if (isset($destination['venue'])) {
+            $destinationAddress->setVenue($destination['venue']);
+        }
+        if (isset($destination['home'])) {
+            $destinationAddress->setHome($destination['home']);
+        }
+        if (isset($destination['displayLabel'])) {
+            $destinationAddress->setDisplayLabel($destination['displayLabel']);
+        }
         return [$this->proposalManager->searchMatchings(
-            $this->request->get("origin_latitude"),
-            $this->request->get("origin_longitude"),
-            $this->request->get("destination_latitude"),
-            $this->request->get("destination_longitude"),
+            $originAddress,
+            $destinationAddress,
             $this->request->get("frequency"),
             \DateTime::createFromFormat(\DateTime::RFC3339, $this->request->get("date")),
             $this->request->get("useTime"),

@@ -23,13 +23,11 @@
 
       <!-- Buttons -->
       <v-row
-        class="mt-5"
-        align="center"
         justify="center"
       >
         <v-col
-          cols="3"
-          offset="2"
+          cols="6"
+          class="text-right"
         >
           <v-btn
             outlined
@@ -40,14 +38,10 @@
           >
             {{ $t('buttons.publish.label') }}
           </v-btn>
-        </v-col>
-        <v-col 
-          cols="3"
-        >
           <v-btn
             :disabled="searchUnavailable"
             :loading="loadingSearch"
-            color="success"
+            color="secondary"
             rounded
             @click="search"
           >
@@ -113,7 +107,7 @@ export default {
   },
   computed: {
     searchUnavailable() {
-      return (!this.origin || !this.destination || (!this.dataRegular && !this.date && !this.punctualDateOptional) || this.loadingSearch || this.loadingPublish)
+      return (!this.origin || !this.destination || (!this.dataRegular && !this.date && !this.punctualDateOptional))
     },
     dateFormated() {
       moment.locale(this.locale);

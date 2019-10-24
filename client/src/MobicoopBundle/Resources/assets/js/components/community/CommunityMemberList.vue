@@ -40,7 +40,7 @@
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-icon
-              color="success"
+              color="primary"
               @click="contactItem(item)"
             >
               mdi-email
