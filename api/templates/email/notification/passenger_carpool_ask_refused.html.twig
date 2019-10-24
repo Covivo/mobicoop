@@ -1,7 +1,5 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    @PrenomOuPseudoPassager  {{ "ne pourra pas covoiturer avec vous pour le trajet du"|trans }}  @DateVoyage  {{ "en direction de "|trans }} @AdresseDepose .
-    {{ "Voici son message :"|trans }}
-
-    @Commentaires
+    <p>@PrenomOuPseudoConducteur {{ "notBeAbleToCarpoolWithYouFor"|trans }} @DateVoyage {{ "towards"|trans }} @AdresseDepose.</p>
+    <p>{{ "hisMessage"|trans }} : @Commentaires </p>
 {% endblock %}

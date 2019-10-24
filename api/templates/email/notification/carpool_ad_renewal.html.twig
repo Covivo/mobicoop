@@ -1,6 +1,6 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    {{ "Attention dans quelques jours vos trajets enregistrés ne seront plus valables sur votre profil et ne seront donc plus visibles par les autres covoitureurs."|trans }}
+    <p>{{ "beCarefulFewDaysAnnouncementNotValid"|trans }}.</p>
 
-    {{ "Vous êtes maintenant plus de"| trans }} @NbInscrits  {{ "à utiliser le service ! Partagez vos trajets et trouvez votre bonheur !"|trans}}
+    <p>{{ "nowYouAreMore"|trans }} @NbInscrits  {{ "toUseTheService"|trans}} !</p>
 {% endblock %}
