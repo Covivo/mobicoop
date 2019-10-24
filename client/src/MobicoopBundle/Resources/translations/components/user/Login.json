@@ -3,6 +3,7 @@
         "title":"Connexion",
         "errorCredentials":"Nom d'utilisateur ou mot de passe incorrect.",
         "errorCredentialsFacebook":"Erreur dans la connexion via Facebook",
+        "userFBNotFound":"Cet utilisateur facebook n'est pas inscrit sur la plateforme",
         "urlRecovery":"/utilisateur/mot-de-passe/recuperation",
         "textRecovery":"Mot de passe oublié ?"
     },
@@ -10,6 +11,7 @@
         "title":"Connexion",
         "errorCredentials":"Bad username or password.",
         "errorCredentialsFacebook":"Error in connection by Facebook",
+        "userFBNotFound":"This facebook user is not registered on the platform",
         "urlRecovery":"Forgot password ?"
     }
 }
