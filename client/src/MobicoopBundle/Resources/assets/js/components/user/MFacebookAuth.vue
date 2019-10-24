@@ -49,7 +49,6 @@ export default {
       isConnected: false,
       name: '',
       personalID: '',
-      payloadFB: undefined,
       showButton:true
     };
   },
@@ -63,7 +62,7 @@ export default {
   methods: {
     getUserData() {
       this.showButton = false;
-      this.payloadFB.FB.api('/me', 'GET', {fields: 'id,name,first_name,middle_name,last_name,picture,email' },
+      this.FB.api('/me', 'GET', {fields: 'id,name,first_name,middle_name,last_name,picture,email' },
         userInformation => {
 
           if(this.signUp){
@@ -104,10 +103,12 @@ export default {
       )
     },
     sdkLoaded(payload) {
-      this.payloadFB = payload;
-      this.getUserData();
+      this.isConnected = payload.isConnected
+      this.FB = payload.FB
+      if (this.isConnected) this.getUserData()
     },
     onLogIn() {
+      this.isConnected = true
       this.getUserData()
     },
     onLogOut() {
