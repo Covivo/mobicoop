@@ -151,6 +151,9 @@
                 ref="mmap"
                 type-map="community"
                 :points="pointsToMap"
+                :provider="mapProvider"
+                :url-tiles="urlTiles"
+                :attribution-copyright="attributionCopyright"
               />
             </v-col>
           </v-row>
@@ -272,6 +275,18 @@ export default {
       type: Boolean,
       default: false
     },
+    mapProvider:{
+      type: String,
+      default: ""
+    },
+    urlTiles:{
+      type: String,
+      default: ""
+    },
+    attributionCopyright:{
+      type: String,
+      default: ""
+    },
   },
   data () {
     return {
@@ -331,17 +346,19 @@ export default {
       form.submit();
     },
     getCommunityUser() {
-      this.checkValidation = true;
-      axios 
-        .post(this.$t('urlCommunityUser'),{communityId:this.community.id, userId:this.user.id})
-        .then(res => {
-          if (res.data.length > 0) {
-            this.isAccepted = res.data[0].status == 1;
-            this.askToJoin = true
-          }
-          this.checkValidation = false;
-          
-        });
+      if(this.user){
+        this.checkValidation = true;
+        axios 
+          .post(this.$t('urlCommunityUser'),{communityId:this.community.id, userId:this.user.id})
+          .then(res => {
+            if (res.data.length > 0) {
+              this.isAccepted = res.data[0].status == 1;
+              this.askToJoin = true
+            }
+            this.checkValidation = false;
+            
+          });
+      }
     },
     joinCommunity() {
       this.loading = true;
