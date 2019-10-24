@@ -331,17 +331,19 @@ export default {
       form.submit();
     },
     getCommunityUser() {
-      this.checkValidation = true;
-      axios 
-        .post(this.$t('urlCommunityUser'),{communityId:this.community.id, userId:this.user.id})
-        .then(res => {
-          if (res.data.length > 0) {
-            this.isAccepted = res.data[0].status == 1;
-            this.askToJoin = true
-          }
-          this.checkValidation = false;
-          
-        });
+      if(this.user){
+        this.checkValidation = true;
+        axios 
+          .post(this.$t('urlCommunityUser'),{communityId:this.community.id, userId:this.user.id})
+          .then(res => {
+            if (res.data.length > 0) {
+              this.isAccepted = res.data[0].status == 1;
+              this.askToJoin = true
+            }
+            this.checkValidation = false;
+            
+          });
+      }
     },
     joinCommunity() {
       this.loading = true;
