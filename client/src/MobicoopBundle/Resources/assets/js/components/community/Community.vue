@@ -151,6 +151,9 @@
                 ref="mmap"
                 type-map="community"
                 :points="pointsToMap"
+                :provider="mapProvider"
+                :url-tiles="urlTiles"
+                :attribution-copyright="attributionCopyright"
               />
             </v-col>
           </v-row>
@@ -271,6 +274,18 @@ export default {
     punctualDateOptional: {
       type: Boolean,
       default: false
+    },
+    mapProvider:{
+      type: String,
+      default: ""
+    },
+    urlTiles:{
+      type: String,
+      default: ""
+    },
+    attributionCopyright:{
+      type: String,
+      default: ""
     },
   },
   data () {

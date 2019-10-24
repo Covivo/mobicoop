@@ -210,6 +210,7 @@
                       type-map="adSummary"
                       :points="pointsToMap"
                       :ways="directionWay"
+                      :provider="mapProvider"
                       :url-tiles="urlTiles"
                       :attribution-copyright="attributionCopyright"
                     />
@@ -474,6 +475,7 @@
                         type-map="adSummary"
                         :points="pointsToMap"
                         :ways="directionWay"
+                        :provider="mapProvider"
                         :url-tiles="urlTiles"
                         :attribution-copyright="attributionCopyright"
                       />
@@ -591,6 +593,10 @@ export default {
     defaultMarginTime: {
       type: Number,
       default: null
+    },
+    mapProvider:{
+      type: String,
+      default: ""
     },
     urlTiles:{
       type: String,
