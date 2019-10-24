@@ -105,6 +105,7 @@ export default {
     },
     sdkLoaded(payload) {
       this.payloadFB = payload;
+      this.getUserData();
     },
     onLogIn() {
       this.getUserData()

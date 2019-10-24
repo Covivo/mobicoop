@@ -782,14 +782,18 @@ class UserController extends AbstractController
             $data = json_decode($request->getContent(), true);
             
             // We get the user by his email
-            $user = $userManager->findByEmail($data["email"]);
-            if ($user && $user->getFacebookId()===$data["personalID"]) {
-                // Same Facebook ID in BDD that the one from the front component. We log the user.
-                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-                $this->get('security.token_storage')->setToken($token);
-                $this->get('session')->set('_security_main', serialize($token));
+            if (!empty($data["email"])) {
+                $user = $userManager->findByEmail($data["email"]);
+                if ($user && $user->getFacebookId()===$data["personalID"]) {
+                    // Same Facebook ID in BDD that the one from the front component. We log the user.
+                    $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                    $this->get('security.token_storage')->setToken($token);
+                    $this->get('session')->set('_security_main', serialize($token));
 
-                return new JsonResponse($user->getFacebookId());
+                    return new JsonResponse($user->getFacebookId());
+                } else {
+                    return new JsonResponse(['error'=>'userFBNotFound']);
+                }
             } else {
                 return new JsonResponse(['error'=>'userFBNotFound']);
             }
