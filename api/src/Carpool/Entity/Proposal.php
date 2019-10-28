@@ -51,7 +51,7 @@ use App\Communication\Entity\Notified;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"read","results"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
@@ -247,6 +247,7 @@ class Proposal
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", cascade={"persist", "remove"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","results","write"})
+     * @MaxDepth(1)
      */
     private $proposalLinked;
     
@@ -257,6 +258,7 @@ class Proposal
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposals")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","results","write"})
+     * @MaxDepth(1)
      */
     private $user;
 
@@ -265,6 +267,7 @@ class Proposal
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposalsDelegate")
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
     private $userDelegate;
 
@@ -274,7 +277,8 @@ class Proposal
      * @Assert\NotBlank
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups({"read","results","write"})
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
     private $waypoints;
     
@@ -283,6 +287,7 @@ class Proposal
      *
      * @ORM\ManyToMany(targetEntity="\App\Travel\Entity\TravelMode")
      * @Groups({"read","write"})
+     * @MaxDepth(1)
      */
     private $travelModes;
 
@@ -290,7 +295,8 @@ class Proposal
      * @var ArrayCollection|null The communities related to the proposal.
      *
      * @ORM\ManyToMany(targetEntity="\App\Community\Entity\Community", inversedBy="proposals")
-     * @Groups({"read","write"})
+     * @Groups({"read","results","write"})
+     * @MaxDepth(1)
      */
     private $communities;
 
@@ -298,7 +304,7 @@ class Proposal
      * @var ArrayCollection|null The matching of the proposal (if proposal is an offer).
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","results"})
+     * @Groups({"read"})
      * @MaxDepth(1)
      */
     private $matchingOffers;
@@ -307,7 +313,8 @@ class Proposal
      * @var ArrayCollection|null The matching of the proposal (if proposal is a request).
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"read","results"})
+     * @Groups({"read"})
+     * @MaxDepth(1)
      */
     private $matchingRequests;
 
