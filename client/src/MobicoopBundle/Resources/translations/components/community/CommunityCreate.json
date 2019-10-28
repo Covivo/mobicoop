@@ -9,28 +9,30 @@
     },
     "form": {
       "name": {
-        "label": "Nom de la communauté",
+        "label": "Nom de la communauté*",
         "required": "Le nom de la communauté est requis"
       },
       "description": {
-        "label": "Description courte de la communauté",
+        "label": "Description courte de la communauté*",
         "required": "La courte description de la communauté est requise"
       },
       "fullDescription": {
-        "label": "Description détaillée de la communauté",
+        "label": "Description détaillée de la communauté*",
         "required": "La description détaillée de la communauté est requise"
       },
       "avatar": {
-        "label": "Avatar de la communauté",
+        "label": "Avatar de la communauté*",
         "required": "L'avatar de la communauté est requis",
         "size": "Vous avez dépassé a taille maximale de l'avatar"
       },
       "address": {
-        "label": "Adresse de la communauté",
+        "label": "Adresse de la communauté*",
         "required": "L'adesse de la communauté est requise"
       },
       "domain": {
-        "label": "Restriction du domaine"
+        "label": "Restriction du domaine",
+        "tooltips": "Vous pouvez indiquer plusieurs noms de domaine séparés par un ;",
+        "error": "Veuillez renseigner un nom de domaine au bon format"
       }
     },
     "redirect": {
@@ -39,7 +41,8 @@
     "error": {
       "community" : {
         "name": "Cette communauté existe déjà veuillez utiliser un autre nom",
-        "create": "La création de la communauté a échoué"
+        "create": "La création de la communauté a échoué",
+        "required": "Tous les champs marqués d'une étoile sont requis"
       },
       "image": "L'image n'a pas été enregistrée"
     }
