@@ -65,6 +65,10 @@ class ProposalRepository
      * We can also filter with communities.
      * TODO : We also limit to the drivers that have enough seats left in their car for the passenger's needs.
      *
+     * We also filter solidary proposals :
+     * - a solidary exclusive proposal can only match with a solidary proposal
+     * - a solidary proposal can match with any proposal
+     *
      * It is a pre-filter, the idea is to limit the next step : the route calculations (that cannot be done directly in the model).
      * The fine time matching will be done during the route calculation process.
      *
@@ -101,6 +105,15 @@ class ProposalRepository
 
         // exclude private proposals
         $query->andWhere('(p.private IS NULL or p.private = 0)');
+
+        // SOLIDARY
+        if ($proposal->getCriteria()->isSolidaryExclusive()) {
+            // solidary exclusive proposal => can match only with solidary proposals
+            $query->andWhere('c.solidary = 1');
+        } elseif (!$proposal->getCriteria()->isSolidary()) {
+            // not a solidary proposal => solidary exclusive are excluded
+            $query->andWhere('(c.solidaryExclusive IS NULL or c.solidaryExclusive = 0)');
+        }
 
         // COMMUNITIES
         // here we exclude the proposals that are posted in communities for which the user is not member
