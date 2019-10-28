@@ -362,6 +362,14 @@ class User implements UserInterface, EquatableInterface
     private $chatFavorites;
 
     /**
+     * @var boolean|null The user accepts to receive news about the platform.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $newsSubscription;
+
+    /**
      * @var \DateTimeInterface Creation date of the user.
      *
      * @ORM\Column(type="datetime")
@@ -839,6 +847,18 @@ class User implements UserInterface, EquatableInterface
     public function setChatFavorites(string $chatFavorites): self
     {
         $this->chatFavorites = $chatFavorites;
+
+        return $this;
+    }
+
+    public function hasNewsSubscription(): ?bool
+    {
+        return $this->newsSubscription;
+    }
+
+    public function setNewsSubscription(?bool $newsSubscription): self
+    {
+        $this->newsSubscription = $newsSubscription;
 
         return $this;
     }

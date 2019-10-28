@@ -203,6 +203,13 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $chatFavorites;
 
     /**
+     * @var boolean|null The user accepts to receive news about the platform.
+     *
+     *@Groups({"post","put"})
+     */
+    private $newsSubscription;
+
+    /**
      * @var \DateTimeInterface Validation date of the user.
      *
      * @Groups({"post","put"})
@@ -535,6 +542,18 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     public function setChatFavorites(string $chatFavorites): self
     {
         $this->chatFavorites = $chatFavorites;
+
+        return $this;
+    }
+
+    public function hasNewsSubscription(): ?bool
+    {
+        return $this->newsSubscription;
+    }
+
+    public function setNewsSubscription(?bool $newsSubscription): self
+    {
+        $this->newsSubscription = $newsSubscription;
 
         return $this;
     }
