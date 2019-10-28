@@ -62,7 +62,7 @@
                       </v-btn>
                     </div>
                   </template>
-                  <span>{{ $t('tooltips.domain')+" "+community.domain.replace(/;/g, ", ") }}</span>
+                  <span>{{ $t('tooltips.domain')+" "+community.domain }}</span>
                 </v-tooltip>
               </div>
               <!-- button if member is accepted -->
