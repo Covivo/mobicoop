@@ -161,6 +161,48 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $anyRouteAsPassenger;
 
     /**
+     * @var int|null Smoking preferences.
+     * 0 = i don't smoke
+     * 1 = i don't smoke in car
+     * 2 = i smoke
+     *
+     * @Groups({"post","put"})
+     */
+    private $smoke;
+
+    /**
+     * @var boolean|null Music preferences.
+     * 0 = no music
+     * 1 = i listen to music or radio
+     *
+     * @Groups({"post","put"})
+     */
+    private $music;
+
+    /**
+     * @var string|null Music favorites.
+     *
+     * @Groups({"post","put"})
+     */
+    private $musicFavorites;
+
+    /**
+     * @var boolean|null Chat preferences.
+     * 0 = no chat
+     * 1 = chat
+     *
+     * @Groups({"post","put"})
+     */
+    private $chat;
+
+    /**
+     * @var string|null Chat favorite subjects.
+     *
+     * @Groups({"post","put"})
+     */
+    private $chatFavorites;
+
+    /**
      * @var \DateTimeInterface Validation date of the user.
      *
      * @Groups({"post","put"})
@@ -434,6 +476,66 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     {
         $this->anyRouteAsPassenger = $anyRouteAsPassenger;
         
+        return $this;
+    }
+
+    public function getSmoke(): int
+    {
+        return $this->smoke;
+    }
+
+    public function setSmoke(int $smoke): self
+    {
+        $this->smoke = $smoke;
+
+        return $this;
+    }
+
+    public function hasMusic(): ?bool
+    {
+        return $this->music;
+    }
+
+    public function setMusic(?bool $music): self
+    {
+        $this->music = $music;
+
+        return $this;
+    }
+
+    public function getMusicFavorites(): string
+    {
+        return $this->musicFavorites;
+    }
+
+    public function setMusicFavorites(string $musicFavorites): self
+    {
+        $this->musicFavorites = $musicFavorites;
+
+        return $this;
+    }
+
+    public function hasChat(): ?bool
+    {
+        return $this->chat;
+    }
+
+    public function setChat(?bool $chat): self
+    {
+        $this->chat = $chat;
+
+        return $this;
+    }
+
+    public function getChatFavorites(): string
+    {
+        return $this->chatFavorites;
+    }
+
+    public function setChatFavorites(string $chatFavorites): self
+    {
+        $this->chatFavorites = $chatFavorites;
+
         return $this;
     }
 

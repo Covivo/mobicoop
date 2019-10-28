@@ -315,6 +315,53 @@ class User implements UserInterface, EquatableInterface
     private $multiTransportMode;
 
     /**
+     * @var int|null Smoking preferences.
+     * 0 = i don't smoke
+     * 1 = i don't smoke in car
+     * 2 = i smoke
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $smoke;
+
+    /**
+     * @var boolean|null Music preferences.
+     * 0 = no music
+     * 1 = i listen to music or radio
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $music;
+
+    /**
+     * @var string|null Music favorites.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $musicFavorites;
+
+    /**
+     * @var boolean|null Chat preferences.
+     * 0 = no chat
+     * 1 = chat
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $chat;
+
+    /**
+     * @var string|null Chat favorite subjects.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $chatFavorites;
+
+    /**
      * @var \DateTimeInterface Creation date of the user.
      *
      * @ORM\Column(type="datetime")
@@ -732,6 +779,66 @@ class User implements UserInterface, EquatableInterface
     public function setMultiTransportMode(?bool $multiTransportMode): self
     {
         $this->multiTransportMode = $multiTransportMode;
+
+        return $this;
+    }
+
+    public function getSmoke(): int
+    {
+        return $this->smoke;
+    }
+
+    public function setSmoke(int $smoke): self
+    {
+        $this->smoke = $smoke;
+
+        return $this;
+    }
+
+    public function hasMusic(): ?bool
+    {
+        return $this->music;
+    }
+
+    public function setMusic(?bool $music): self
+    {
+        $this->music = $music;
+
+        return $this;
+    }
+
+    public function getMusicFavorites(): string
+    {
+        return $this->musicFavorites;
+    }
+
+    public function setMusicFavorites(string $musicFavorites): self
+    {
+        $this->musicFavorites = $musicFavorites;
+
+        return $this;
+    }
+
+    public function hasChat(): ?bool
+    {
+        return $this->chat;
+    }
+
+    public function setChat(?bool $chat): self
+    {
+        $this->chat = $chat;
+
+        return $this;
+    }
+
+    public function getChatFavorites(): string
+    {
+        return $this->chatFavorites;
+    }
+
+    public function setChatFavorites(string $chatFavorites): self
+    {
+        $this->chatFavorites = $chatFavorites;
 
         return $this;
     }
