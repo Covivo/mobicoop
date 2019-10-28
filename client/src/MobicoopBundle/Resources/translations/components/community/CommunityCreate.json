@@ -30,7 +30,10 @@
         "required": "L'adesse de la communauté est requise"
       },
       "domain": {
-        "label": "Restriction du domaine"
+        "label": "Restriction du domaine",
+        "tooltips": "Vous pouvez indiquer plusieurs noms de domaine séparés par un ;",
+        "error": "Veuillez renseigner un nom de domaine au bon format",
+        "add": "Ajouter un domaine"
       }
     },
     "redirect": {

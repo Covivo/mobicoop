@@ -77,14 +77,161 @@
               />
             </v-col>
           </v-row>
-          <v-row justify="center">
-            <v-col cols="3">
+          <!-- domain -->
+          <v-row
+            justify="center"
+            align="center"
+          >
+            <v-col :cols="domains[3].visible ? 3 : 2">
               <v-text-field
                 v-model="domain"
+                :rules="domainRules"
                 :label="$t('form.domain.label')"
               />
             </v-col>
+            
+            <v-col
+              v-show="!domains[3].visible"
+
+              cols="1"
+            >
+              <v-btn
+                text
+                icon
+                @click="addDomain"
+              >
+                <v-icon>
+                  mdi-plus-circle-outline
+                </v-icon>
+              </v-btn>
+              {{ $t('form.domain.add') }}
+            </v-col>
           </v-row>
+          <!-- add domains -->
+          
+          <v-row
+            v-show="domains[0].visible"
+            justify="center"
+            align="center"
+          >
+            <v-col
+              :cols="domains[1].visible ? 3 : 2"
+            >
+              <v-text-field
+                v-model="domains[0].domain"
+                :rules="domainRules"
+                :label="$t('form.domain.label')"
+              />
+            </v-col>
+
+            <v-col
+              v-show="!domains[1].visible"
+              cols="1"
+            >
+              <v-btn
+                text
+                icon
+                @click="removeDomain(0)"
+              >
+                <v-icon>
+                  mdi-close-circle-outline
+                </v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+
+          <v-row 
+            v-show="domains[1].visible"
+            justify="center"
+            align="center"
+          >
+            <v-col
+              :cols="domains[2].visible ? 3 : 2"
+            >
+              <v-text-field
+                v-model="domains[1].domain"
+                :rules="domainRules"
+                :label="$t('form.domain.label')"
+              />
+            </v-col>
+
+            <v-col
+              v-show="!domains[2].visible"
+              cols="1"
+            >
+              <v-btn
+                text
+                icon
+                @click="removeDomain(1)"
+              >
+                <v-icon>
+                  mdi-close-circle-outline
+                </v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+
+          <v-row
+            v-show="domains[2].visible"
+            justify="center"
+            align="center"
+          >
+            <v-col
+              :cols="domains[3].visible ? 3 : 2"
+            >
+              <v-text-field
+                v-model="domains[2].domain"
+                :rules="domainRules"
+                :label="$t('form.domain.label')"
+              />
+            </v-col>
+
+            <v-col
+              v-show="!domains[3].visible"
+              cols="1"
+            >
+              <v-btn
+                text
+                icon
+                @click="removeDomain(2)"
+              >
+                <v-icon>
+                  mdi-close-circle-outline
+                </v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+
+          <v-row
+            v-show="domains[3].visible"
+            justify="center"
+            align="center"
+          >
+            <v-col
+              cols="2"
+            >
+              <v-text-field
+                v-model="domains[3].domain"
+                :rules="domainRules"
+                :label="$t('form.domain.label')"
+              />
+            </v-col>
+
+            <v-col
+              cols="1"
+            >
+              <v-btn
+                text
+                icon
+                @click="removeDomain(3)"
+              >
+                <v-icon>
+                  mdi-close-circle-outline
+                </v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+         
           <v-row justify="center">
             <v-col cols="3">
               <v-file-input
@@ -172,11 +319,63 @@ export default {
       snackError: null,
       snackbar: false,
       domain: null,
+      domains: [
+        {
+          visible: false,
+          domain: null
+        },
+        {
+          visible: false,
+          domain: null
+        },
+        {
+          visible: false,
+          domain: null
+        },
+        {
+          visible: false,
+          domain: null
+        },
+      ],
+      domainRules: [
+        v => !v || /([\w+-]*\.[\w+]*$)/.test(v) || this.$t("form.domain.error")
+      ]
     }
   },
   methods: {
     addressSelected: function(address) {
       this.communityAddress = address;
+    },
+    addDomain() {
+      if (!this.domains[0].visible) {
+        this.domains[0].visible = true;
+      } else if (this.domains[0].visible && !this.domains[1].visible) {
+        this.domains[1].visible = true;
+      } else if (this.domains[0].visible && this.domains[1].visible && !this.domains[2].visible) {
+        this.domains[2].visible = true;
+      } else if (this.domains[0].visible && this.domains[1].visible && this.domains[2].visible && !this.domains[3].visible) {
+        this.domains[3].visible = true;
+      }
+    },
+    removeDomain(id) {
+      this.domains[id].visible = false;
+      this.domains[id].domain = null;
+    },
+    allDomains() {
+      let allDomain = this.domain
+      if (this.domains[0].domain && !this.domains[1].domain) {
+        allDomain = allDomain+';'+this.domains[0].domain;
+      } 
+      else if (this.domains[0].domain && this.domains[1].domain && !this.domains[2].domain) {
+        allDomain = allDomain+';'+this.domains[0].domain+';'+this.domains[1].domain;
+      }  
+      else if (this.domains[0].domain && this.domains[1].domain && this.domains[2].domain && !this.domains[3].domain ) {
+        allDomain = allDomain+';'+this.domains[0].domain+';'+this.domains[1].domain+';'+this.domains[2].domain;
+      }  
+      else if (this.domains[0].domain && this.domains[1].domain && this.domains[2].domain && this.domains[3].domain ) {
+        allDomain = allDomain+';'+this.domains[0].domain+';'+this.domains[1].domain+';'+this.domains[2].domain+';'+this.domains[3].domain;
+      }
+      return allDomain;
     },
     createCommunity() {
       this.loading = true;
@@ -186,8 +385,8 @@ export default {
       newCommunity.append("fullDescription", this.fullDescription);
       newCommunity.append("avatar", this.avatar);
       newCommunity.append("address", JSON.stringify(this.communityAddress));
-      if (this.domain) newCommunity.append("domain", this.domain);
-
+      if (this.domain) newCommunity.append("domain", this.allDomains());
+     
       axios 
         .post(this.$t('buttons.create.route'), newCommunity, {
           headers:{
@@ -203,6 +402,7 @@ export default {
           else window.location.href = this.$t('redirect.route');
         });
     },
+    
   }
 }
 </script>
