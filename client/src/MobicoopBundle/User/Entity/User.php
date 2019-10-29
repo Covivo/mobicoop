@@ -253,6 +253,13 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $asks;
 
     /**
+     * @var Image[]|null The images of the community.
+     *
+     * @Groups({"post","put"})
+     */
+    private $images;
+
+    /**
      * @var int|null The birth year of the user.
      */
     private $birthYear;
@@ -316,6 +323,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         $this->proposals = new ArrayCollection();
         $this->asks = new ArrayCollection();
         $this->masses = new ArrayCollection();
+        $this->images = new ArrayCollection();
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -705,6 +713,38 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
+    /**
+     *
+     * @return Collection|Image[]
+     */
+    public function getImages()
+    {
+        return $this->images->getValues();
+    }
+    
+    public function addImage(Image $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images[] = $image;
+            $image->setUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeImage(Image $image): self
+    {
+        if ($this->images->contains($image)) {
+            $this->images->removeElement($image);
+            // set the owning side to null (unless already changed)
+            if ($image->getUser() === $this) {
+                $image->setUser(null);
+            }
+        }
+        
+        return $this;
+    }
+
     public function getBirthYear(): ?int
     {
         return $this->birthDate ? (int)$this->birthDate->format('Y') : null;
@@ -903,6 +943,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'geoToken'      => $this->getGeoToken(),
             'birthYear'     => $this->getBirthYear(),
             'homeAddress'   => $this->getHomeAddress(),
+            'images'        => $this->getImages(),
         ];
     }
 }
