@@ -585,6 +585,13 @@ class User implements UserInterface, EquatableInterface
     private $solidaries;
 
     /**
+    * @var ArrayCollection|null A user may have many user notification preferences.
+    *
+    * @ORM\OneToMany(targetEntity="\App\User\Entity\UserNotification", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+    */
+    private $userNotifications;
+
+    /**
      * @var array|null The threads of the user
      * @Groups("threads")
      */
@@ -624,6 +631,7 @@ class User implements UserInterface, EquatableInterface
         $this->diaries = new ArrayCollection();
         $this->diariesAdmin = new ArrayCollection();
         $this->solidaries = new ArrayCollection();
+        $this->userNotifications = new ArrayCollection();
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -1406,6 +1414,34 @@ class User implements UserInterface, EquatableInterface
             // set the owning side to null (unless already changed)
             if ($solidary->getUser() === $this) {
                 $solidary->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getUserNotifications()
+    {
+        return $this->userNotifications->getValues();
+    }
+
+    public function addUserNotification(UserNotification $userNotification): self
+    {
+        if (!$this->userNotifications->contains($userNotification)) {
+            $this->userNotifications->add($userNotification);
+            $userNotification->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserNotification(UserNotification $userNotification): self
+    {
+        if ($this->userNotifications->contains($userNotification)) {
+            $this->userNotifications->removeElement($userNotification);
+            // set the owning side to null (unless already changed)
+            if ($userNotification->getUser() === $this) {
+                $userNotification->setUser(null);
             }
         }
 

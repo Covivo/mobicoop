@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,173 +21,125 @@
  *    LICENSE
  **************************/
 
-namespace App\Action\Entity;
+namespace App\User\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Communication\Entity\Notification;
 
 /**
- * An action that can be logged and / or trigger notifications.
+ * User notification preferences.
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
+ *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={"get"},
- *      itemOperations={"get"}
+ *      collectionOperations={"get","post"},
+ *      itemOperations={"get","put","delete"}
  * )
- * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
- * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
  */
-class Action
+class UserNotification
 {
-    
     /**
-     * @var int The id of this action.
+     * @var int $id The id of this user notification preference.
      *
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @ApiProperty(identifier=true)
      * @Groups("read")
      */
     private $id;
 
     /**
-     * @var string Name of the action.
+     * @var Notification The notification involved.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Notification")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"read","write"})
+     * @MaxDepth(1)
+     */
+    private $notification;
+        
+    /**
+     * @var User The user related with the notification.
      *
      * @Assert\NotBlank
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
-     */
-    private $name;
-
-    /**
-     * @var bool The action has to be logged in the log system.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
-     */
-    private $inLog;
-
-    /**
-     * @var bool The action has to be logged in the user action diary.
-     *
-     * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
-     */
-    private $inDiary;
-
-    /**
-     * @var int|null The progression in percent if the action can be related to a solidary record.
-     *
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
-     */
-    private $progression;
-
-    /**
-     * @var int Position number in user preferences.
-     *
-     * @ORM\Column(type="smallint")
-     * @Groups({"read","write"})
-     */
-    private $position;
-
-    /**
-     * @var \DateTimeInterface Creation date.
-     *
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="userNotifications")
+     * @ORM\JoinColumn(nullable=false)
      * @Groups({"read"})
+     * @MaxDepth(1)
+     */
+    private $user;
+
+    /**
+     * @var bool The status of the notification (active/inactive).
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $active;
+
+    /**
+     * @var \DateTimeInterface Creation date of the user notification.
+     *
+     * @ORM\Column(type="datetime")
+     * @Groups("read")
      */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface Updated date of the user notification.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read"})
+     * @Groups("read")
      */
     private $updatedDate;
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
-    
-    public function setId(int $id): self
+
+    public function getNotification(): Notification
     {
-        $this->id = $id;
+        return $this->notification;
+    }
+    
+    public function setNotification(?Notification $notification): self
+    {
+        $this->notification = $notification;
         
         return $this;
     }
     
-    public function getName(): ?string
+    public function getUser(): ?User
     {
-        return $this->name;
+        return $this->user;
     }
 
-    public function setName(string $name): self
+    public function setUser(?User $user): self
     {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function isInLog(): ?bool
-    {
-        return $this->inLog;
-    }
-    
-    public function setInLog(bool $isInLog): self
-    {
-        $this->inLog = $isInLog;
+        $this->user = $user;
         
         return $this;
     }
 
-    public function isInDiary(): ?bool
+    public function isActive(): ?bool
     {
-        return $this->inDiary;
+        return $this->active;
     }
     
-    public function setInDiary(bool $isIndiary): self
+    public function setActive(?bool $isActive): self
     {
-        $this->inDiary = $isIndiary;
+        $this->active = $isActive;
         
-        return $this;
-    }
-
-    public function getProgression(): ?int
-    {
-        return $this->progression;
-    }
-
-    public function setProgression(?int $progression): self
-    {
-        $this->progression = $progression;
-
-        return $this;
-    }
-
-    public function getPosition(): ?int
-    {
-        return $this->position;
-    }
-
-    public function setPosition(int $position): self
-    {
-        $this->position = $position;
-
         return $this;
     }
 
@@ -216,7 +168,7 @@ class Action
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *
