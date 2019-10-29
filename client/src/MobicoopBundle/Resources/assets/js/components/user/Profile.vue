@@ -40,6 +40,10 @@
             <v-tab-item>
               <MyProposals />
             </v-tab-item>
+            <v-tab>{{ $t("tabs.alerts") }}</v-tab>
+            <v-tab-item>
+              <Alerts />
+            </v-tab-item>
           </v-tabs>
         </v-flex>
       </v-layout>
@@ -50,6 +54,7 @@
 import UpdateProfile from "@components/user/UpdateProfile";
 import ChangePassword from "@components/user/ChangePassword";
 import MyProposals from "@components/user/MyProposals";
+import Alerts from "@components/user/Alerts";
 
 import { merge } from "lodash";
 import Translations from "@translations/components/user/Profile.json";
@@ -64,7 +69,8 @@ export default {
   components: {
     UpdateProfile,
     ChangePassword,
-    MyProposals
+    MyProposals,
+    Alerts
   },
   props: {
     user: {
