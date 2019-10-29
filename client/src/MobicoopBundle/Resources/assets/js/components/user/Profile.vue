@@ -42,7 +42,7 @@
             </v-tab-item>
             <v-tab>{{ $t("tabs.alerts") }}</v-tab>
             <v-tab-item>
-              <Alerts />
+              <Alerts :alerts="alerts" />
             </v-tab-item>
           </v-tabs>
         </v-flex>
@@ -92,7 +92,28 @@ export default {
   },
   data() {
     return {
-
+      alerts:{
+        "carpool_ask_posted":{
+          "sms":0,
+          "email":1,
+          "push":1
+        },
+        "carpool_ask_accepted":{
+          "sms":1,
+          "email":1,
+          "push":0
+        },
+        "carpool_ask_refused":{
+          "sms":1,
+          "email":1,
+          "push":0
+        },
+        "carpool_matching_new":{
+          "sms":1,
+          "email":1,
+          "push":0
+        },
+      }
     };
   }
 };

@@ -1,5 +1,20 @@
 {
     "fr": {
+        "alerts":{
+            "carpool_ask_posted":"Sollicitation pour un covoiturage",
+            "communication_internal_message_received":"Nouveau message dans la messagerie",
+            "carpool_matching_new":"Nouveaux covoiturages potentiels",
+            "carpool_ask_accepted":"Covoiturage accepté",
+            "carpool_ask_refused":"Covoiturage refusé",
+            "1":"Renouveller mes trajets en fin de validité",
+            "2":"Incitation à évaluer mon covoitureur",
+            "3":"Annulation d'un covoiturage"
+        },
+        "medium":{
+            "sms":"SMS",
+            "email":"Email",
+            "push":"Push"
+        }
     },    
     "en": {
     }    
