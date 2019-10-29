@@ -242,20 +242,24 @@ export default {
         this.checkForm();
       }
     },
+    
     checkForm () {
-      this.loading = true;
+      // this.loading = true;
+      let updateUser = new FormData();
+      updateUser.append("email", this.user.email);
+      updateUser.append("familyName", this.user.familyName);
+      updateUser.append("gender", this.user.gender);
+      updateUser.append("givenName", this.user.givenName);
+      updateUser.append("homeAddress", JSON.stringify(this.user.homeAddress));
+      updateUser.append("telephone", this.user.telephone);
+      updateUser.append("birthYear", this.user.birthYear);
+      updateUser.append("avatar", this.avatar);
+
       axios 
-        .post("/utilisateur/profil/modifier", {
-          email: this.user.email,
-          familyName: this.user.familyName,
-          gender: this.user.gender,
-          givenName: this.user.givenName,
-          homeAddress: this.homeAddress,
-          telephone: this.user.telephone,
-          birthYear: this.user.birthYear,
-        }, {
+        .post("/utilisateur/profil/modifier", updateUser, 
+          {
           headers:{
-            'content-type': 'application/json'
+            'content-type': 'multipart/form-data'
           }
         })
         .then(res => {

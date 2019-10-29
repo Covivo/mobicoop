@@ -68,6 +68,7 @@ class ImageManager
     {
         $response = $this->dataProvider->postMultiPart($image);
         if ($response->getCode() == 201) {
+            dump("lalal");
             return $response->getValue();
         }
         return null;

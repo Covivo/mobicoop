@@ -262,7 +262,6 @@ class Image
      */
     private $user;
 
-    
     /**
      * @var int|null The user id associated with the image.
      * @Groups({"write"})
