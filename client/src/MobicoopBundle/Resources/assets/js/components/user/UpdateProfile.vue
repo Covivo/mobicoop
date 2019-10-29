@@ -104,14 +104,34 @@
               @address-selected="homeAddressSelected"
             />
             <!--Upload Avatar-->
-           
-              <v-file-input
-               v-model="avatar"
-                :rules="avatarRules"
-                accept="image/png, image/jpeg, image/bmp"
-                :label="$t('avatar.label')"
-                prepend-icon="mdi-image"
-              />
+            <v-row>
+              <v-col cols="4">
+                <v-avatar
+                  color="grey lighten-3"
+                  size="225"
+                >
+                  <img
+                    v-if="user.images[0]"
+                    :src="user['images'][0]['versions'][avatarVersion]"
+                    alt="avatar"
+                  >
+                  <img
+                    v-else
+                    :src="this.urlAltAvatar"
+                    alt="avatar"
+                  >
+                </v-avatar>
+              </v-col>
+              <v-col>
+                <v-file-input
+                v-model="avatar"
+                  :rules="avatarRules"
+                  accept="image/png, image/jpeg, image/bmp"
+                  :label="$t('avatar.label')"
+                  prepend-icon="mdi-image"
+                />
+              </v-col>
+            </v-row>
             
             <!--Save Button-->
             <v-btn
@@ -150,6 +170,18 @@ export default {
     GeoComplete
   },
   props: {
+    avatarSize: {
+      type: String,
+      default: null
+    },
+    avatarVersion: {
+      type: String,
+      default: null
+    },
+    urlAltAvatar: {
+      type: String,
+      default: null
+    },
     geoSearchUrl: {
       type: String,
       default: null
@@ -166,10 +198,7 @@ export default {
       type: String,
       default: null
     },
-    avatarSize: {
-      type: String,
-      default: null
-    }
+  
   },
   data() {
     return {
