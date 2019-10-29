@@ -253,6 +253,11 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $asks;
 
     /**
+    * @var array|null User notification alert preferences.
+    */
+    private $alerts;
+
+    /**
      * @var int|null The birth year of the user.
      */
     private $birthYear;
@@ -290,6 +295,24 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      *  @Groups({"post","put"})
      */
     private $geoToken;
+
+    /**
+     * @var string|null Token for phone validation.
+     * @Groups({"post","put"})
+     */
+    private $phoneToken;
+
+    /**
+     * @var string|null iOS app ID.
+     * @Groups({"post","put"})
+     */
+    private $iosAppId;
+
+    /**
+     * @var string|null Android app ID.
+     * @Groups({"post","put"})
+     */
+    private $androidAppId;
  
     /**
      * Language de l'utilisateur.
@@ -316,6 +339,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         $this->proposals = new ArrayCollection();
         $this->asks = new ArrayCollection();
         $this->masses = new ArrayCollection();
+        $this->userNotifications = new ArrayCollection();
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -705,6 +729,18 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
+    public function getAlerts()
+    {
+        return $this->alerts;
+    }
+    
+    public function setAlerts(?array $alerts): self
+    {
+        $this->alerts = $alerts;
+
+        return $this;
+    }
+
     public function getBirthYear(): ?int
     {
         return $this->birthDate ? (int)$this->birthDate->format('Y') : null;
@@ -854,6 +890,39 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     public function setGeoToken(?string $geoToken)
     {
         $this->geoToken = $geoToken;
+        return $this;
+    }
+
+    public function getPhoneToken(): ?string
+    {
+        return $this->phoneToken;
+    }
+
+    public function setPhoneToken(?string $phoneToken): self
+    {
+        $this->phoneToken = $phoneToken;
+        return $this;
+    }
+
+    public function getIosAppId(): ?string
+    {
+        return $this->iosAppId;
+    }
+
+    public function setIosAppId(?string $iosAppId): self
+    {
+        $this->iosAppId = $iosAppId;
+        return $this;
+    }
+
+    public function getAndroidAppId(): ?string
+    {
+        return $this->androidAppId;
+    }
+
+    public function setAndroidAppId(?string $androidAppId): self
+    {
+        $this->androidAppId = $androidAppId;
         return $this;
     }
         
