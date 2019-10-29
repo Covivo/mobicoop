@@ -3,6 +3,10 @@
         "snackBar":{
             "profileUpdated":"Votre profil a bien été mis à jour!",
             "errorProfileUpdate": "Erreur, votre profil n'a pas été mis à jour."
+        },
+        "avatar": {
+            "label": "Avatar",
+            "size": "Vous avez dépassé a taille maximale de l'avatar"
         }
     }
 }

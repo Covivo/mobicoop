@@ -67,6 +67,9 @@ final class ImageForm extends AbstractType
         ->add('eventId', TextType::class, [
             'required' => false,
         ])
+        ->add('userId', TextType::class, [
+            'required' => false,
+        ])
         ->add('communityId', TextType::class, [
             'required' => false,
         ])

@@ -103,7 +103,16 @@
               :display-name-in-selected="false"
               @address-selected="homeAddressSelected"
             />
-
+            <!--Upload Avatar-->
+           
+              <v-file-input
+               v-model="avatar"
+                :rules="avatarRules"
+                accept="image/png, image/jpeg, image/bmp"
+                :label="$t('avatar.label')"
+                prepend-icon="mdi-image"
+              />
+            
             <!--Save Button-->
             <v-btn
               class="button saveButton"
@@ -156,6 +165,10 @@ export default {
     ageMax: {
       type: String,
       default: null
+    },
+    avatarSize: {
+      type: String,
+      default: null
     }
   },
   data() {
@@ -175,6 +188,10 @@ export default {
         { value: 1, gender: this.$t('models.user.gender.values.female')},
         { value: 2, gender: this.$t('models.user.gender.values.male')},
         { value: 3, gender: this.$t('models.user.gender.values.other')},
+      ],
+      avatar: null,
+      avatarRules: [
+        v => !v || v.size < this.avatarSize || this.$t("avatar.size")+" (Max "+(this.avatarSize/1000000)+"MB)"
       ],
     };
   },
