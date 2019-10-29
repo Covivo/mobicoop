@@ -486,12 +486,12 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
-    public function getSmoke(): int
+    public function getSmoke(): ?int
     {
         return $this->smoke;
     }
 
-    public function setSmoke(int $smoke): self
+    public function setSmoke(?int $smoke): self
     {
         $this->smoke = $smoke;
 
@@ -510,12 +510,12 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
-    public function getMusicFavorites(): string
+    public function getMusicFavorites(): ?string
     {
         return $this->musicFavorites;
     }
 
-    public function setMusicFavorites(string $musicFavorites): self
+    public function setMusicFavorites(?string $musicFavorites): self
     {
         $this->musicFavorites = $musicFavorites;
 
@@ -534,12 +534,12 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
-    public function getChatFavorites(): string
+    public function getChatFavorites(): ?string
     {
         return $this->chatFavorites;
     }
 
-    public function setChatFavorites(string $chatFavorites): self
+    public function setChatFavorites(?string $chatFavorites): self
     {
         $this->chatFavorites = $chatFavorites;
 
