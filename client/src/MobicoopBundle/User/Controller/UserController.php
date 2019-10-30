@@ -268,8 +268,7 @@ class UserController extends AbstractController
         }
         
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
-                'error' => $error,
-                'user' => $user,
+                'error' => $error
             ]);
     }
 
