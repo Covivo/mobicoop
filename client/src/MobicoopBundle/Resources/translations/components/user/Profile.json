@@ -6,7 +6,8 @@
         "tabs": {
             "myProfile": "Mon profil",
             "password": "Mot de passe",
-            "myProposals": "Mes annonces"
+            "myProposals": "Mes annonces",
+            "alerts": "Mes alertes"
         },
         "form":{
             "newPassword":"Nouveau mot de passe",
@@ -22,10 +23,26 @@
         }
     },    
     "en": {
+        "page": {
+            "title": "My profile"
+        },
         "tabs": {
             "myProfile": "My profile",
             "password": "Password",
-            "myProposals": "My proposals"
+            "myProposals": "My proposals",
+            "alerts": "My alerts"
+        },
+        "form":{
+            "newPassword":"New password",
+            "newPasswordRepeat":"New password (confirmation)",
+            "errors":{
+                "required":"Password is required",
+                "notIdentiquals":"Passwords are not identical"
+            }
+        },
+        "snackBar":{
+            "passwordUpdated":"Password updated",
+            "textSnackError":"Password update has failed"
         }
     }    
 }

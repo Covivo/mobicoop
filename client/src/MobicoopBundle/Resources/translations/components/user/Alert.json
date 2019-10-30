@@ -1,0 +1,38 @@
+{
+    "fr": {
+        "alerts":{
+            "carpool_ask_posted":"Sollicitation pour un covoiturage",
+            "communication_internal_message_received":"Nouveau message dans la messagerie",
+            "carpool_matching_new":"Nouveaux covoiturages potentiels",
+            "carpool_ask_accepted":"Covoiturage accepté",
+            "carpool_ask_refused":"Covoiturage refusé",
+            "carpool_ad_renewal":"Renouveller mes trajets en fin de validité",
+            "carpool_canceled":"Annulation d'un covoiturage",
+            "*******":"Incitation à évaluer mon covoitureur"
+        },
+        "medium":{
+            "media1":"Message",
+            "media2":"Email",
+            "media3":"SMS",
+            "media4":"Push"
+        }
+    },    
+    "en": {
+        "alerts":{
+            "carpool_ask_posted":"Carpool ask",
+            "communication_internal_message_received":"New message in the mailbox",
+            "carpool_matching_new":"New potential carpools",
+            "carpool_ask_accepted":"Carpool accepted",
+            "carpool_ask_refused":"Carpool refused",
+            "carpool_ad_renewal":"Renew my near outdated proposals",
+            "carpool_canceled":"Carpool cancelling",
+            "*******":"Leave an evaluation"
+        },
+        "medium":{
+            "media1":"Message",
+            "media2":"Email",
+            "media3":"SMS",
+            "media4":"Push"
+        }
+    }    
+}

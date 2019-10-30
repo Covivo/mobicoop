@@ -254,6 +254,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
 
     /**
     * @var array|null User notification alert preferences.
+    * @Groups({"put"})
     */
     private $alerts;
 

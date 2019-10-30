@@ -270,6 +270,7 @@ class UserController extends AbstractController
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
                 'error' => $error,
                 'user' => $user,
+                'alerts' => $userManager->getAlerts($user)['alerts']
             ]);
     }
 
@@ -800,5 +801,21 @@ class UserController extends AbstractController
         }
 
         return new JsonResponse(['error'=>'errorCredentialsFacebook']);
+    }
+
+    /**
+     * Update a user alert
+     * AJAX
+     */
+    public function updateAlert(UserManager $userManager, Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $user = $userManager->getLoggedUser();
+            $data = json_decode($request->getContent(), true);
+
+            $responseUpdate = $userManager->updateAlert($user, $data["id"], $data["active"]);
+            return new JsonResponse($responseUpdate);
+        }
+        return new JsonResponse(['error'=>'errorUpdateAlert']);
     }
 }
