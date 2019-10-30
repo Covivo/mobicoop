@@ -24,7 +24,6 @@
 namespace App\User\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -34,6 +33,7 @@ use App\Communication\Entity\Notification;
  * User notification preferences.
  *
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  */
 class UserNotification
 {
