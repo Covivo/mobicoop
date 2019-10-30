@@ -60,6 +60,12 @@ user_password_update:
         en: /user/password/update
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordUpdate
 
+user_carpool_settings_update:
+    path:
+        fr: /utilisateur/preferences-covoiturage/modifier
+        en: /user/carpool-settings/update
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCarpoolSettingsUpdate
+        
 # password forgotten : ask for a new password
 user_password_forgot:
     path:
