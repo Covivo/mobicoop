@@ -449,6 +449,14 @@ class User implements UserInterface, EquatableInterface
     private $phoneToken;
 
     /**
+     * @var \DateTimeInterface Validation date of the phone number.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $phoneValidatedDate;
+
+    /**
      * @var string|null iOS app ID.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
@@ -958,6 +966,18 @@ class User implements UserInterface, EquatableInterface
     public function setPhoneToken(?string $phoneToken): self
     {
         $this->phoneToken = $phoneToken;
+        return $this;
+    }
+
+    public function getPhoneValidatedDate(): ?\DateTimeInterface
+    {
+        return $this->phoneValidatedDate;
+    }
+
+    public function setPhoneValidatedDate(\DateTimeInterface $phoneValidatedDate): self
+    {
+        $this->phoneValidatedDate = $phoneValidatedDate;
+
         return $this;
     }
 
