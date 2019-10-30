@@ -9,8 +9,8 @@
         lg="4"
       >
         <Alert
-          :alert="index"
-          :medium="alert"
+          :alert="alert.action"
+          :medium="alert.alert"
         />
       </v-col>
     </v-row>

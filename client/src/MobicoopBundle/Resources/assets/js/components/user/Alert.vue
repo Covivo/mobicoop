@@ -16,11 +16,11 @@
           class="mb-1 text-center"
         >
           <v-col class="cols-9">
-            {{ $t("medium."+index) }}
+            {{ $t("medium.media"+media.medium) }}
           </v-col>
           <v-col class="cols-1">
             <v-switch
-              v-model="dataMedium[index]"
+              v-model="media.active"
               inset
               hide-details
               class="mt-0"

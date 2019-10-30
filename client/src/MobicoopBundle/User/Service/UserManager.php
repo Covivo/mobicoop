@@ -425,4 +425,18 @@ class UserManager
         }
         $this->logger->info('User Token Update | Fail');
     }
+
+    /**
+     * Get the alerts of a user
+     *
+     * @param User $user The user
+     *
+     * @return array The alerts.
+     */
+    public function getAlerts(User $user)
+    {
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSubCollection($user->getId(), 'alert', 'alerts');
+        return $response->getValue();
+    }
 }
