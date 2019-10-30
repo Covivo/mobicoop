@@ -34,16 +34,6 @@ use App\Communication\Entity\Notification;
  * User notification preferences.
  *
  * @ORM\Entity
- * @ORM\HasLifecycleCallbacks
- * @ApiResource(
- *      attributes={
- *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
- *      },
- *      collectionOperations={"get","post"},
- *      itemOperations={"get","put","delete"}
- * )
  */
 class UserNotification
 {
