@@ -10,15 +10,15 @@
         align="center"
       >
         <v-snackbar
-          v-model="alert.show"
-          :color="(alert.type === 'error')?'error':'primary'"
+          v-model="snackbar"
+          :color="(alert.type === 'error')?'error':'success'"
           top
         >
           {{ alert.message }}
           <v-btn
             color="white"
             text
-            @click="alert.show = false"
+            @click="snackbar = false"
           >
             <v-icon>mdi-close-circle-outline</v-icon>
           </v-btn>
@@ -46,6 +46,7 @@
                 :key="index"
                 :label="radio.label"
                 :value="radio.value"
+                color="primary"
               />
             </v-radio-group>
             <v-text-field
@@ -82,25 +83,34 @@ export default {
   i18n: {
     messages: MergedTranslations
   },
+  props: {
+    user: {
+      type: Object,
+      default: () => {}
+    }
+  },
   data () {
     return {
       loading: false,
+      snackbar: false,
       alert: {
         type: "success",
-        show: false,
         message: ""
       },
       form: {
         smoke: {
-          value: null
+          // returned value is integer
+          value: this.user && this.user.smoke ? this.user.smoke : null 
         },
         music: {
-          value: null,
-          favorite: ""
+          // returned value from bundle is boolean, so we have to check null, true or false to show correct value
+          value: !this.user || this.user.music === null ? null : this.user.music ? 1 : 0,
+          favorite: this.user && this.user.musicFavorites && this.user.musicFavorites.length > 0 ? this.user.musicFavorites : ""
         },
         chat: {
-          value: null,
-          favorite: ""
+          // returned value from bundle is boolean, so we have to check null, true or false to show correct value
+          value: !this.user || this.user.chat === null ? null : this.user.chat ? 1 : 0,
+          favorite: this.user && this.user.chatFavorites && this.user.chatFavorites.length > 0 ? this.user.chatFavorites : ""
         }
       }
     }
@@ -139,15 +149,14 @@ export default {
         }).finally(function () {
           self.loading = false;
           if (self.alert.message.length > 0) {
-            self.alert.show = true;
+            self.snackbar = true;
           }
         })
     },
     resetAlert() {
       this.alert = {
         type: "success",
-        message: "",
-        show: false
+        message: ""
       }
     }
   }

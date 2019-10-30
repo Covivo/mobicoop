@@ -42,7 +42,7 @@
             </v-tab-item>
             <v-tab>{{ $t("tabs.carpoolSettings") }}</v-tab>
             <v-tab-item>
-              <CarpoolSettings />
+              <CarpoolSettings :user="user" />
             </v-tab-item>
           </v-tabs>
         </v-flex>
