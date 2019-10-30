@@ -801,4 +801,52 @@ class UserController extends AbstractController
 
         return new JsonResponse(['error'=>'errorCredentialsFacebook']);
     }
+
+    /**
+     * User carpool settings update.
+     * Ajax
+     *
+     * @param UserManager $userManager
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function userCarpoolSettingsUpdate(UserManager $userManager, Request $request)
+    {
+        // we clone the logged user to avoid getting logged out in case of error in the form
+        $user = clone $userManager->getLoggedUser();
+        $reponseofmanager= $this->handleManagerReturnValue($user);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
+        $this->denyAccessUnlessGranted('update', $user);
+        
+        if ($request->isMethod('PUT')) {
+            $data = json_decode($request->getContent(), true);
+
+            $user->setSmoke((int)$data["smoke"]);
+            $user->setMusic((int)$data["music"]);
+            $user->setMusicFavorites($data["musicFavorites"]);
+            $user->setChat((int)$data["chat"]);
+            $user->setChatFavorites($data["chatFavorites"]);
+            
+            if ($response = $userManager->updateUser($user)) {
+                $reponseofmanager= $this->handleManagerReturnValue($response);
+                if (!empty($reponseofmanager)) {
+                    return $reponseofmanager;
+                }
+                return new JsonResponse(
+                    ['message'=>'success'],
+                    Response::HTTP_ACCEPTED
+                );
+            }
+            return new JsonResponse(
+                ["message" => "error"],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+        return new JsonResponse(
+            ['message'=>'error'],
+            Response::HTTP_METHOD_NOT_ALLOWED
+        );
+    }
 }

@@ -40,6 +40,10 @@
             <v-tab-item>
               <MyProposals />
             </v-tab-item>
+            <v-tab>{{ $t("tabs.carpoolSettings") }}</v-tab>
+            <v-tab-item>
+              <CarpoolSettings />
+            </v-tab-item>
           </v-tabs>
         </v-flex>
       </v-layout>
@@ -50,6 +54,7 @@
 import UpdateProfile from "@components/user/UpdateProfile";
 import ChangePassword from "@components/user/ChangePassword";
 import MyProposals from "@components/user/MyProposals";
+import CarpoolSettings from "@components/user/CarpoolSettings";
 
 import { merge } from "lodash";
 import Translations from "@translations/components/user/Profile.json";
@@ -64,7 +69,8 @@ export default {
   components: {
     UpdateProfile,
     ChangePassword,
-    MyProposals
+    MyProposals,
+    CarpoolSettings
   },
   props: {
     user: {

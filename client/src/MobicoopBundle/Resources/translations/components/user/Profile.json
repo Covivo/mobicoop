@@ -6,7 +6,8 @@
         "tabs": {
             "myProfile": "Mon profil",
             "password": "Mot de passe",
-            "myProposals": "Mes annonces"
+            "myProposals": "Mes annonces",
+            "carpoolSettings": "Mes préférences"
         },
         "form":{
             "newPassword":"Nouveau mot de passe",
@@ -25,7 +26,8 @@
         "tabs": {
             "myProfile": "My profile",
             "password": "Password",
-            "myProposals": "My proposals"
+            "myProposals": "My proposals",
+            "carpoolSettings": "My settings"
         }
     }    
 }
