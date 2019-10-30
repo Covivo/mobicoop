@@ -104,19 +104,26 @@
               @address-selected="homeAddressSelected"
             />
             <!--Upload Avatar-->
-            <v-row>
-              <v-col cols="4">
+            <v-row justify="center" v-if="user.images[0]">
+              <v-col cols="3">
                 <v-avatar
                   color="grey lighten-3"
                   size="225"
                 >
                   <img
-                    v-if="user.images[0]"
                     :src="user['images'][0]['versions'][avatarVersion]"
                     alt="avatar"
                   >
+                </v-avatar>
+              </v-col>
+            </v-row>
+            <v-row   v-else>
+              <v-col cols="3">
+                <v-avatar
+                  color="grey lighten-3"
+                  size="225"
+                >
                   <img
-                    v-else
                     :src="this.urlAltAvatar"
                     alt="avatar"
                   >
@@ -244,7 +251,7 @@ export default {
     },
     
     checkForm () {
-      // this.loading = true;
+      this.loading = true;
       let updateUser = new FormData();
       updateUser.append("email", this.user.email);
       updateUser.append("familyName", this.user.familyName);
@@ -264,7 +271,7 @@ export default {
         })
         .then(res => {
           this.errorUpdate = res.data.state;
-          this.loading = false;
+          document.location.reload(true);
           this.snackbar = true;
       });
     },

@@ -26,6 +26,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Entity;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
+use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
@@ -253,7 +254,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $asks;
 
     /**
-     * @var Image[]|null The images of the community.
+     * @var Image[]|null The images of the user.
      *
      * @Groups({"post","put"})
      */

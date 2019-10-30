@@ -193,6 +193,11 @@ class Deserializer
                 $user->addMass(self::deserializeMass($mass));
             }
         }
+        if (isset($data["images"])) {
+            foreach ($data["images"] as $image) {
+                $user->addImage(self::deserializeImage($image));
+            }
+        }
         return $user;
     }
 

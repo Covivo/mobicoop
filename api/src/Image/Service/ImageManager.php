@@ -143,6 +143,7 @@ class ImageManager
                     return $fileName;
                 }
                 break;
+            
             case Community::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for a community, the filename will be the sanitized name of the community and the position of the image in the set
@@ -150,13 +151,15 @@ class ImageManager
                     return $fileName;
                 }
                 break;
+
             case User::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for an user, the filename will be the sanitized name of the user and the position of the image in the set
-                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition())) {
+                if ($fileName = $this->fileManager->sanitize($this->generateRandomName() . " " . $image->getPosition())) {
                     return $fileName;
                 }
                 break;
+                
             default:
                 break;
         }
@@ -294,6 +297,19 @@ class ImageManager
             throw new FileNotWritableException('Cannot write to ' . $directory . $fileName);
         }
         fclose($file);
+    }
+
+    /**
+     * Generate random file name
+     *
+     * @param integer $int
+     * @return void
+     */
+    public function generateRandomName(int $int=15)
+    {
+        $randomName =  bin2hex(random_bytes($int));
+    
+        return $randomName;
     }
     
     /** TODO : create methods to :

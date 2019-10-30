@@ -270,18 +270,15 @@ class UserController extends AbstractController
                 $image = new Image();
                 $image->setUserFile($request->files->get('avatar'));
                 $image->setUserId($user->getId());
-                $image->setName($user->getFamilyName().".".$user->getGivenName()."avatar");
+                $image->setName($user->getFamilyName() . "-avatar");
                 
                 if ($image = $imageManager->createImage($image)) {
-                    dump("yep");
                     return new Response();
                 }
-                dump('oh no!!');
                 // return error if image post didnt't work
                 return new Response(json_encode('error.image'));
             }
         }
-        
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
                 'error' => $error,
                 'user' => $user,
