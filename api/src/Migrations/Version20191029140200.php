@@ -12,6 +12,7 @@ final class Version20191029140200 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {
+        $this->addSql('DELETE FROM `notified` WHERE `notification_id` >= 23 and `id` <= 82');
         $this->addSql('DELETE FROM `notification` WHERE `id` >= 23 and `id` <= 82');
         $this->addSql('DELETE FROM `action` WHERE `id` >= 12 and `id` <= 31');
     }
