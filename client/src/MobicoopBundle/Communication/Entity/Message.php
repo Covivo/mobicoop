@@ -34,7 +34,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 
 /**
- *  A community.
+ *  A message.
  */
 class Message implements ResourceInterface
 {

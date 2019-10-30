@@ -89,12 +89,28 @@ class Notification
     private $active;
 
     /**
-     * @var bool The default status of the notification (active/inactive).
+     * @var bool The default status of the notification (active/inactive) for each user.
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
-    private $activeDefault;
+    private $userActiveDefault;
+
+    /**
+     * @var bool The notification is editable by the user.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $userEditable;
+
+    /**
+     * @var int Position number in user preferences.
+     *
+     * @ORM\Column(type="smallint")
+     * @Groups({"read","write"})
+     */
+    private $position;
 
     /**
      * @var Action The action.
@@ -166,22 +182,46 @@ class Notification
         return $this->active;
     }
     
-    public function setActive(bool $isActive): self
+    public function setActive(?bool $isActive): self
     {
         $this->active = $isActive;
         
         return $this;
     }
 
-    public function isActiveDefault(): ?bool
+    public function isUserActiveDefault(): ?bool
     {
-        return $this->activeDefault;
+        return $this->userActiveDefault;
     }
     
-    public function setActiveDefault(bool $isActiveDefault): self
+    public function setUserActiveDefault(?bool $isUserActiveDefault): self
     {
-        $this->activeDefault = $isActiveDefault;
+        $this->userActiveDefault = $isUserActiveDefault;
         
+        return $this;
+    }
+
+    public function isUserEditable(): ?bool
+    {
+        return $this->userEditable;
+    }
+    
+    public function setUserEditable(?bool $isUserEditable): self
+    {
+        $this->userEditable = $isUserEditable;
+        
+        return $this;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(int $position): self
+    {
+        $this->position = $position;
+
         return $this;
     }
 
