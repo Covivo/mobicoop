@@ -4,7 +4,9 @@
       <v-col
         v-for="(alert, index) in alerts"
         :key="index"
-        class="col-4"
+        cols="12"
+        md="6"
+        lg="4"
       >
         <Alert
           :alert="index"

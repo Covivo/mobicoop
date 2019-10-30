@@ -2,7 +2,7 @@
   <v-card>
     <v-row no-gutters>
       <v-col class="cols-12">
-        <p class="mb-0">
+        <p class="mb-0 mt-2">
           {{ $t("alerts."+alert) }}
         </p>
       </v-col>
