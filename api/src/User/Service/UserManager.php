@@ -23,6 +23,7 @@
 
 namespace App\User\Service;
 
+use App\Communication\Entity\Medium;
 use App\User\Entity\User;
 use App\User\Event\UserPasswordChangeAskedEvent;
 use App\User\Event\UserPasswordChangedEvent;
@@ -288,6 +289,13 @@ class UserManager
         $actions = [];
         // first pass to get the actions
         foreach ($user->getUserNotifications() as $userNotification) {
+            if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS && is_null($user->getPhoneValidatedDate())) {
+                // check telephone for sms
+                continue;
+            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && is_null($user->getIosAppId()) && is_null($user->getAndroidAppId())) {
+                // check apps for push
+                continue;
+            }
             if (!in_array($userNotification->getNotification()->getAction()->getName(), $alerts)) {
                 $alerts[$userNotification->getNotification()->getAction()->getPosition()] = [
                     'action' => $userNotification->getNotification()->getAction()->getName(),
@@ -300,6 +308,13 @@ class UserManager
         // second pass to get the media
         $media = [];
         foreach ($user->getUserNotifications() as $userNotification) {
+            if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS && is_null($user->getPhoneValidatedDate())) {
+                // check telephone for sms
+                continue;
+            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && is_null($user->getIosAppId()) && is_null($user->getAndroidAppId())) {
+                // check apps for push
+                continue;
+            }
             $media[$userNotification->getNotification()->getAction()->getId()][$userNotification->getNotification()->getPosition()] = [
                 'medium' => $userNotification->getNotification()->getMedium()->getId(),
                 'id' => $userNotification->getId(),
@@ -334,6 +349,13 @@ class UserManager
             $userNotification = new UserNotification();
             $userNotification->setNotification($notification);
             $userNotification->setActive($notification->isUserActiveDefault());
+            if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS && is_null($user->getPhoneValidatedDate())) {
+                // check telephone for sms
+                $userNotification->setActive(false);
+            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && is_null($user->getIosAppId()) && is_null($user->getAndroidAppId())) {
+                // check apps for push
+                $userNotification->setActive(false);
+            }
             $user->addUserNotification($userNotification);
         }
         $this->entityManager->persist($user);
