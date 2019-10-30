@@ -225,7 +225,8 @@ class UserController extends AbstractController
            
         if ($request->isMethod('POST')) {
             $data = $request->request;
-          
+            $file = $request->files->get('avatar');
+            
             if (!$homeAddress) {
                 $homeAddress = new Address();
             }
@@ -266,23 +267,37 @@ class UserController extends AbstractController
             $user->setBirthYear($data->get('birthYear'));
             
             if ($user = $userManager->updateUser($user)) {
-                // Post avatar of the user
-                $image = new Image();
-                $image->setUserFile($request->files->get('avatar'));
-                $image->setUserId($user->getId());
-                $image->setName($user->getFamilyName() . "-avatar");
+                if ($file) {
+                    // Post avatar of the user
+                    $image = new Image();
+                    $image->setUserFile($file);
+                    $image->setUserId($user->getId());
                 
-                if ($image = $imageManager->createImage($image)) {
-                    return new Response();
+                    if ($image = $imageManager->createImage($image)) {
+                        return new Response();
+                    }
+                    // return error if image post didnt't work
+                    return new Response(json_encode('error.image'));
                 }
-                // return error if image post didnt't work
-                return new Response(json_encode('error.image'));
             }
         }
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
                 'error' => $error,
                 'user' => $user,
             ]);
+    }
+
+    /**
+     * User avatar delete.
+     * Ajax
+     */
+    public function userProfileAvatarDelete(ImageManager $imageManager, UserManager $userManager)
+    {
+        $user = clone $userManager->getLoggedUser();
+        $imageId = $user->getImages()[0]->getId();
+        $imageManager->deleteImage($imageId);
+
+        return new Response();
     }
 
     /**

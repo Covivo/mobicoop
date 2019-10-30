@@ -116,6 +116,11 @@
                   >
                 </v-avatar>
               </v-col>
+              <v-col cols="1" justify-self="center" align-self="center">
+                <v-icon @click="avatarDelete">
+                  mdi-delete
+                </v-icon>
+              </v-col>
             </v-row>
             <v-row   v-else>
               <v-col cols="3">
@@ -129,7 +134,7 @@
                   >
                 </v-avatar>
               </v-col>
-              <v-col>
+              <v-col align-self="center">
                 <v-file-input
                 v-model="avatar"
                   :rules="avatarRules"
@@ -263,7 +268,7 @@ export default {
       updateUser.append("avatar", this.avatar);
 
       axios 
-        .post("/utilisateur/profil/modifier", updateUser, 
+        .post(this.$t('route.update'), updateUser, 
           {
           headers:{
             'content-type': 'multipart/form-data'
@@ -275,6 +280,15 @@ export default {
           this.snackbar = true;
       });
     },
+
+    avatarDelete () {
+      axios
+        .get(this.$t('avatar.delete.route'))
+        .then(res => {
+          this.errorUpdate = res.data.state;
+          document.location.reload(true);
+        });
+    }
   }
 };
 </script>

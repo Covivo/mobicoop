@@ -53,6 +53,13 @@ user_profile_update:
         en: /user/profile/update
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileUpdate
 
+# delete avatar
+user_profile_image_delete:
+    path:
+        fr: /utilisateur/profil/avatar/supprimer
+        en: /user/profile/avatar/delete
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileAvatarDelete
+
 # password update
 user_password_update:
     path:

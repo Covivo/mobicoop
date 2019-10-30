@@ -6,7 +6,14 @@
         },
         "avatar": {
             "label": "Avatar",
-            "size": "Vous avez dépassé a taille maximale de l'avatar"
+            "size": "Vous avez dépassé la taille maximale de l'avatar",
+            "delete": {
+                "route": "/utilisateur/profil/avatar/supprimer"
+                } 
+        },
+        "route": {
+            "update": "/utilisateur/profil/modifier"
         }
+        
     }
 }
