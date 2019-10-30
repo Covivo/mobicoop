@@ -12,7 +12,7 @@ final class Version20191030111100 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {
-        $this->addSql('UPDATE `notification` SET name=\'carpool_proposal_canceled\' WHERE ID=12;');
+        $this->addSql('UPDATE `action` SET name=\'carpool_proposal_canceled\' WHERE ID=12;');
     }
     
     public function down(Schema $schema) : void
