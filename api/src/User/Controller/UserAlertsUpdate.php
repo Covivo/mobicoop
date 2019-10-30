@@ -24,27 +24,28 @@
 namespace App\User\Controller;
 
 use App\TranslatorTrait;
+use Symfony\Component\HttpFoundation\RequestStack;
 use App\User\Service\UserManager;
 use Symfony\Component\HttpFoundation\Response;
 use App\User\Entity\User;
 
 /**
- * Controller class for user alert preferences.
+ * Controller class for user alert preferences update.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class UserAlerts
+class UserAlertsUpdate
 {
     use TranslatorTrait;
     private $userManager;
-
+    
     public function __construct(UserManager $userManager)
     {
         $this->userManager = $userManager;
     }
 
     /**
-     * This method is invoked when the alert preferences for a user is asked.
+     * This method is invoked when the alert preferences are updated for a user.
      *
      * @param User $data
      * @return Response
@@ -55,7 +56,7 @@ class UserAlerts
             throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
         }
         // we search the alerts
-        $data = $this->userManager->getAlerts($data);
+        $data = $this->userManager->updateAlerts($data);
         return $data;
     }
 }
