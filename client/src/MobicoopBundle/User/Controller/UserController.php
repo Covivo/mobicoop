@@ -822,10 +822,10 @@ class UserController extends AbstractController
         if ($request->isMethod('PUT')) {
             $data = json_decode($request->getContent(), true);
 
-            $user->setSmoke((int)$data["smoke"]);
-            $user->setMusic((int)$data["music"]);
+            $user->setSmoke($data["smoke"]);
+            $user->setMusic($data["music"]);
             $user->setMusicFavorites($data["musicFavorites"]);
-            $user->setChat((int)$data["chat"]);
+            $user->setChat($data["chat"]);
             $user->setChatFavorites($data["chatFavorites"]);
             
             if ($response = $userManager->updateUser($user)) {
