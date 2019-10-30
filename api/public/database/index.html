@@ -88,6 +88,7 @@
 <li><a href="#log">log </a></li>
 <li><a href="#solidary_matching">solidary_matching </a></li>
 <li><a href="#diary">diary </a></li>
+<li><a href="#user_notification">user_notification </a></li>
 </ul>
 <a id="user"></a><table style="width:100%"><caption>Table: user </caption>
 <tr><td>Table Comments</td><td colspan="6">User table</td></tr>
@@ -125,6 +126,21 @@
 <tr><td>pwdTokenDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Date of password token generation modification</td></tr>
 <tr><td>geoToken</td><td>VARCHAR(100)</td><td>No</td><td>No</td><td>No</td><td></td><td>Token for geographical search authorization</td></tr>
 <tr><td>language</td><td>VARCHAR(10)</td><td>No</td><td>No</td><td>No</td><td></td><td>Language</td></tr>
+<tr><td>validatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>validatedDateToken</td><td>VARCHAR(45)</td><td>No</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>smoke</td><td>TINYINT</td><td>No</td><td>No</td><td>No</td><td></td><td>Smoking preference : 
+0 = i don't smoke
+1 = i don't smoke in car
+2 = i smoke</td></tr>
+<tr><td>music</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Music preferences : 
+0 = no music
+1 = i listen to music or radio</td></tr>
+<tr><td>musicFavorites</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Music favorites</td></tr>
+<tr><td>chat</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Chat preferences :
+0 = no chat
+1 = chat</td></tr>
+<tr><td>chatFavorites</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Chat favorite subjects</td></tr>
+<tr><td>newsSubscription</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>News subscription</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="proposal"></a><table style="width:100%"><caption>Table: proposal </caption>
 <tr><td>Table Comments</td><td colspan="6">Proposal table :
@@ -194,10 +210,10 @@ The user that creates the ask is either the driver or the passenger.</td></tr>
 <tr><td>idaskLinked</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>Linked ask if the user that responds proposes another ask</td></tr>
 <tr><td>iduserDelegate</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>User that create the ask for another user</td></tr>
 <tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Ask status : 
-1 : initiated
-2 : pending
-3 : accepted
-4 : declined</td></tr>
+0 : initiated
+1 : pending
+2 : accepted
+3 : declined</td></tr>
 <tr><td>type</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Ask type : 
 1 : one way trip
 2 : outward of a round trip
@@ -318,7 +334,8 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>maxDetourDistance</td><td>INT</td><td>No</td><td>No</td><td>No</td><td>5000</td><td>Maximum detour length (in metres) as a driver to accept a request proposal</td></tr>
 <tr><td>anyRouteAsPassenger</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td>1</td><td>The user accepts any route as a passenger from its origin to the destination</td></tr>
 <tr><td>multiTransportMode</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The user accepts other transportation modes</td></tr>
-<tr><td>kmPrice</td><td>DECIMAL(4,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Price per km</td></tr>
+<tr><td>priceKm</td><td>DECIMAL(4,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Price per km</td></tr>
+<tr><td>price</td><td>DECIMAL(4,2)</td><td>No</td><td>No</td><td>No</td><td></td><td>Total rounded price selected by the user</td></tr>
 <tr><td>luggage</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Big luggage accepted / asked.</td></tr>
 <tr><td>bike</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Bike accepted / asked.</td></tr>
 <tr><td>backSeats</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>2 passengers max on the back seats</td></tr>
@@ -940,9 +957,16 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>fullDescription</td><td>TEXT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>The full description</td></tr>
 <tr><td>membersHidden</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Members are only visible by the members of the community</td></tr>
 <tr><td>proposalsHidden</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Proposals are only visible by the members of the community</td></tr>
+<tr><td>domain</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Email domain restriction</td></tr>
+<tr><td>validationType</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Validation type:
+0 = auto
+1 = manual
+2 = domain
+</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
 <tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Creator of the community</td></tr>
+<tr><td>idaddress</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Address</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="community_user"></a><table style="width:100%"><caption>Table: community_user </caption>
 <tr><td>Table Comments</td><td colspan="6">A user can register to a community</td></tr>
@@ -1210,6 +1234,7 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>progression</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>The progression in percent if the action can be related to a solidary record</td></tr>
 <tr><td>createdDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
+<tr><td>position</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Display position in user preferences</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="notification"></a><table style="width:100%"><caption>Table: notification </caption>
 <tr><td>Table Comments</td><td colspan="6">A message sent by the system to a user on a given medium</td></tr>
@@ -1229,9 +1254,11 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>templateTitle</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Template file for the title</td></tr>
 <tr><td>templateBody</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td></td><td>Template file for the body</td></tr>
 <tr><td>active</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Status of the triggering (active/inactive)</td></tr>
-<tr><td>activeDefault</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Default status of the triggering (active/inactive)</td></tr>
-<tr><td>createdDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
+<tr><td>userActiveDefault</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Default status of the triggering (active/inactive) for users</td></tr>
+<tr><td>userEditable</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>The notification is editable by the user</td></tr>
+<tr><td>position</td><td>INT</td><td>No</td><td>No</td><td>No</td><td></td><td>Display position of the action for the medium in the user preferences</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 </table><a href="#home">Table List </a></br>
 <a id="notified"></a><table style="width:100%"><caption>Table: notified </caption>
 <tr><td>Table Comments</td><td colspan="6">A sent notification for a user</td></tr>
@@ -1278,10 +1305,10 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
 <tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Update date</td></tr>
 <tr><td>status</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Ask status : 
-1 : initiated
-2 : pending
-3 : accepted
-4 : declined</td></tr>
+0 : initiated
+1 : pending
+2 : accepted
+3 : declined</td></tr>
 <tr><td>type</td><td>TINYINT</td><td>Yes</td><td>No</td><td>No</td><td>1</td><td>Ask type : 
 1 : one way trip
 2 : outward of a round trip
@@ -1419,5 +1446,24 @@ A waypoint is created by a user who wants to travel by certain points.
 <tr><td>idadmin</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>The admin that makes the action</td></tr>
 <tr><td>idsolidary</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The solidary record related to the animation action</td></tr>
 <tr><td>idsolidaryMatching</td><td>INT</td><td>No</td><td>No</td><td>Yes</td><td></td><td>The matching saved related to the action</td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="user_notification"></a><table style="width:100%"><caption>Table: user_notification </caption>
+<tr><td>Table Comments</td><td colspan="6">Notification preferences for a user</td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>INT</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td>ID</td></tr>
+<tr><td>iduser</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>User</td></tr>
+<tr><td>idnotification</td><td>INT</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td>Notification</td></tr>
+<tr><td>active</td><td>TINYINT(1)</td><td>No</td><td>No</td><td>No</td><td></td><td>Active</td></tr>
+<tr><td>createdDate</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td>Creation date</td></tr>
+<tr><td>updatedDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td></td><td>Updated date</td></tr>
 </table><a href="#home">Table List </a></br>
 </body></html>
