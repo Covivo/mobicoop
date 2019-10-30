@@ -73,8 +73,6 @@ class ContactController extends AbstractController
                 );
             }
             
-            dump($data["website"]);
-
             $errors = [];
 
             // pass front info into contact form
