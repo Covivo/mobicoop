@@ -65,7 +65,6 @@ export default {
       }
       axios.post(this.$t("urlUpdate"), params)
         .then(res => {
-          console.error(res)
           if(res.data.error !== undefined){
             this.snackbarText = this.$t(res.data.error);
             this.snackbar = true;
