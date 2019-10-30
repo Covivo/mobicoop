@@ -439,4 +439,22 @@ class UserManager
         $response = $this->dataProvider->getSubCollection($user->getId(), 'alert', 'alerts');
         return $response->getValue();
     }
+
+    /**
+     * Update a user alert
+     *
+     * @param User $user
+     * @param int $alertId
+     * @param Boolean $active
+     * @return array|null|object
+     */
+    public function updateAlert(User $user, int $alertId, bool $active)
+    {
+        $response = $this->dataProvider->putSpecial($user, null, "alerts");
+        if ($response->getCode() == 200) {
+            return $response->getValue();
+        } else {
+            return $response->getValue();
+        }
+    }
 }

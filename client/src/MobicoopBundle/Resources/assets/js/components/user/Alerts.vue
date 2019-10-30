@@ -1,5 +1,18 @@
 <template>
   <div>
+    <v-snackbar
+      v-model="snackbar"
+      top
+    >
+      {{ snackbarText }}
+      <v-btn
+        color="error"
+        text
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
     <v-row>
       <v-col
         v-for="(alert, index) in alerts"
@@ -11,21 +24,57 @@
         <Alert
           :alert="alert.action"
           :medium="alert.alert"
+          @changeAlert="updateAlert"
         />
       </v-col>
     </v-row>
   </div>
 </template>
 <script>
+import axios from "axios";
+import { merge } from "lodash";
 import Alert from "@components/user/Alert";
+import Translations from "@translations/components/user/Alerts.json";
+import TranslationsClient from "@clientTranslations/components/user/Alerts.json";
+let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
+  i18n: {
+    messages: TranslationsMerged
+  },
   components:{
     Alert
   },
   props:{
     alerts:{
-      type:Object,
+      type:Array,
       default:null
+    }
+  },
+  data(){
+    return {
+      snackbar:false,
+      snackbarText:null
+    }
+  },
+  methods:{
+    updateAlert(data){
+      console.error(data);
+      let params = {
+        id:data.id,
+        active:data.active
+      }
+      axios.post(this.$t("urlUpdate"), params)
+        .then(res => {
+          console.error(res)
+          if(res.data.error !== undefined){
+            this.snackbarText = this.$t(res.data.error);
+            this.snackbar = true;
+          }
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+
     }
   }
 }

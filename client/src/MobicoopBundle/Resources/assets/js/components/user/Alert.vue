@@ -25,6 +25,7 @@
               hide-details
               class="mt-0"
               color="primary"
+              @change="emit(media.id,media.active)"
             />
           </v-col>
         </v-row>
@@ -48,13 +49,18 @@ export default {
       default:null
     },
     medium:{
-      type: Object,
+      type: Array,
       default:null
     }
   },
   data(){
     return{
       dataMedium:this.medium
+    }
+  },
+  methods:{
+    emit(id,active){
+      this.$emit("changeAlert",{id:id,active:active})
     }
   }
 }

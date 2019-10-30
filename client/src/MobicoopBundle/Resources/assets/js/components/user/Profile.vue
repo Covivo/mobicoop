@@ -90,7 +90,7 @@ export default {
       default: null
     },
     alerts: {
-      type: Object,
+      type: Array,
       default: null
     }
   }
