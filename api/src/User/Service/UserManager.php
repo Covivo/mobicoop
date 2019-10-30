@@ -97,6 +97,8 @@ class UserManager
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+        // creation of the alert preferences
+        $user = $this->createAlerts($user);
         // dispatch en event
         $event = new UserRegisteredEvent($user);
         $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);

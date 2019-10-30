@@ -30,6 +30,7 @@ use App\Carpool\Event\AskPostedEvent;
 use App\Carpool\Event\AskRefusedEvent;
 use App\Carpool\Event\AskUpdatedEvent;
 use App\Carpool\Event\MatchingNewEvent;
+use App\Carpool\Event\ProposalCanceledEvent;
 use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Repository\AskHistoryRepository;
 use App\Communication\Service\NotificationManager;
@@ -43,7 +44,6 @@ class CarpoolSubscriber implements EventSubscriberInterface
     
     private $notificationManager;
     private $askHistoryRepository;
-    const DYNAMIC_EVENT_NAMESPACE='App\Carpool\Event';
     
     public function __construct(NotificationManager $notificationManager, AskHistoryRepository $askHistoryRepository)
     {
@@ -60,6 +60,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
             MatchingNewEvent::NAME => 'onNewMatching',
             AdRenewalEvent::NAME => 'onAdRenewal',
             ProposalPostedEvent::NAME => 'onProposalPosted',
+            ProposalCanceledEvent::NAME => 'onProposalCanceled',
             AskUpdatedEvent::NAME => 'onAskUpdated'
         ];
     }
@@ -73,13 +74,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
      */
     public function onAskPosted(AskPostedEvent $event)
     {
-        $askType=($event->getAsk()->getMatching()->getProposalOffer()->getCriteria()->getFrequency()==1)?'Punctual':'Regular';
-        $askUser=($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $event->getAsk()->getId())?'Driver':'Passenger';
-        $class= self::DYNAMIC_EVENT_NAMESPACE.'\AskPosted'.$askUser.$askType.'Event';
-        if (!class_exists($class)) {
-            throw new ClassNotFoundException($this->translator->trans('Class %class% not found', ['%class%'=> $class]));
-        }
-        $this->notificationManager->notifies($class::NAME, $event->getAsk()->getMatching()->getProposalRequest()->getUser(), $event->getAsk()->getAskHistories()[0]);
+        // the recipient is the user that has not made the ask
+        $askRecipient = ($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $event->getAsk()->getId()) ? $event->getAsk()->getMatching()->getProposalOffer()->getUser() : $event->getAsk()->getMatching()->getProposalRequest()->getUser();
+        $this->notificationManager->notifies(AskPostedEvent::NAME, $askRecipient, $event->getAsk());
     }
     
     /**
@@ -93,13 +90,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
     {
         // we must notify the recipient of the ask, the message is related to the last accepted status of the ask history
         $lastAskHistory = $this->askHistoryRepository->findLastByAskAndstatus($event->getAsk(), Ask::STATUS_ACCEPTED);
-        $askType=($event->getAsk()->getMatching()->getProposalOffer()->getCriteria()->getFrequency()==1)?'Punctual':'Regular';
-        $askUser=($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $event->getAsk()->getId())?'Driver':'Passenger';
-        $class= self::DYNAMIC_EVENT_NAMESPACE.'\AskAccepted'.$askUser.$askType.'Event';
-        if (!class_exists($class)) {
-            throw new ClassNotFoundException($this->translator->trans('Class %class% not found', ['%class%'=> $class]));
-        }
-        $this->notificationManager->notifies($class::NAME, $event->getAsk()->getMatching()->getProposalRequest()->getUser(), $lastAskHistory);
+        // the recipient is the user that has made the ask
+        $askRecipient = ($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() == $event->getAsk()->getId()) ? $event->getAsk()->getMatching()->getProposalOffer()->getUser() : $event->getAsk()->getMatching()->getProposalRequest()->getUser();
+        $this->notificationManager->notifies(AskAcceptedEvent::NAME, $askRecipient, $lastAskHistory);
     }
     
     /**
@@ -113,13 +106,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
     {
         // we must notify the recipient of the ask, the message is related to the last refused status of the ask history
         $lastAskHistory = $this->askHistoryRepository->findLastByAskAndstatus($event->getAsk(), Ask::STATUS_DECLINED);
-        $askType=($event->getAsk()->getMatching()->getProposalOffer()->getCriteria()->getFrequency()==1)?'Punctual':'Regular';
-        $askUser=($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $event->getAsk()->getId())?'Driver':'Passenger';
-        $class= self::DYNAMIC_EVENT_NAMESPACE.'\AskRefused'.$askUser.$askType.'Event';
-        if (!class_exists($class)) {
-            throw new ClassNotFoundException($this->translator->trans('Class %class% not found', ['%class%'=> $class]));
-        }
-        $this->notificationManager->notifies($class::NAME, $event->getAsk()->getMatching()->getProposalRequest()->getUser(), $lastAskHistory);
+        // the recipient is the user that has made the ask
+        $askRecipient = ($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() == $event->getAsk()->getId()) ? $event->getAsk()->getMatching()->getProposalOffer()->getUser() : $event->getAsk()->getMatching()->getProposalRequest()->getUser();
+        $this->notificationManager->notifies(AskRefusedEvent::NAME, $askRecipient, $lastAskHistory);
     }
     
     /**
@@ -130,14 +119,11 @@ class CarpoolSubscriber implements EventSubscriberInterface
      */
     public function onAskUpdated(AskUpdatedEvent $event)
     {
+        // we must notify the recipient of the ask, the message is related to the last accepted status of the ask history
         $lastAskHistory = $this->askHistoryRepository->findLastByAskAndstatus($event->getAsk(), Ask::STATUS_PENDING);
-        $askType=($event->getAsk()->getMatching()->getProposalOffer()->getCriteria()->getFrequency()==1)?'Punctual':'Regular';
-        $askUser=($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $event->getAsk()->getId())?'Driver':'Passenger';
-        $class= self::DYNAMIC_EVENT_NAMESPACE.'\AskUpdated'.$askUser.$askType.'Event';
-        if (!class_exists($class)) {
-            throw new ClassNotFoundException($this->translator->trans('Class %class% not found', ['%class%'=> $class]));
-        }
-        $this->notificationManager->notifies($class::NAME, $event->getAsk()->getMatching()->getProposalRequest()->getUser(), $lastAskHistory);
+        // the recipient is the user that has made the last ask history
+        $askRecipient = ($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $lastAskHistory->getMessage()->getUser()->getId()) ? $event->getAsk()->getMatching()->getProposalOffer()->getUser() : $event->getAsk()->getMatching()->getProposalRequest()->getUser();
+        $this->notificationManager->notifies(AskUpdatedEvent::NAME, $askRecipient, $lastAskHistory);
     }
     
     /**
@@ -149,24 +135,29 @@ class CarpoolSubscriber implements EventSubscriberInterface
      */
     public function onNewMatching(MatchingNewEvent $event)
     {
-        $askType=($event->getMatching()->getProposalOffer()->getCriteria()->getFrequency()==1)?'Punctual':'Regular';
-        $askUser=($event->getMatching()->getProposalOffer()->getCreatedDate() < $event->getMatching()->getProposalRequest()->getCreatedDate())?'Driver':'Passenger';
-        $class= self::DYNAMIC_EVENT_NAMESPACE.'\MatchingNew'.$askUser.$askType.'Event';
-        if (!class_exists($class)) {
-            throw new ClassNotFoundException($this->translator->trans('Class %class% not found', ['%class%'=> $class]));
-        }
-        $proposalObject= ($askUser=='Driver')? $event->getMatching()->getProposalOffer()->getUser(): $event->getMatching()->getProposalRequest()->getUser();
-        $this->notificationManager->notifies($class::NAME, $proposalObject, $event->getMatching());
+        // the recipient is the user that is not the "sender" of the matching
+        $askRecipient = ($event->getMatching()->getProposalOffer()->getUser()->getId() != $event->getSender()->getId()) ? $event->getMatching()->getProposalOffer()->getUser() : $event->getMatching()->getProposalRequest()->getUser();
+        $this->notificationManager->notifies(MatchingNewEvent::NAME, $askRecipient, $event->getMatching());
     }
     
     /**
-     * Execute when proposal is posted.
+     * Execute when a proposal is posted.
      *
      * @param ProposalPostedEvent $event
      */
     public function onProposalPosted(ProposalPostedEvent $event)
     {
         $this->notificationManager->notifies(ProposalPostedEvent::NAME, $event->getProposal()->getUser(), $event->getProposal());
+    }
+
+    /**
+     * Execute when a proposal is canceled.
+     *
+     * @param ProposalPostedEvent $event
+     */
+    public function onProposalCanceled(ProposalCanceledEvent $event)
+    {
+        $this->notificationManager->notifies(ProposalCanceledEvent::NAME, $event->getProposal()->getUser(), $event->getProposal());
     }
     
     /**
