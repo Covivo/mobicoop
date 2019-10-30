@@ -38,6 +38,7 @@ use App\User\Event\UserRegisteredEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
+use App\User\Repository\UserNotificationRepository;
 use App\User\Entity\UserNotification;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\User\Event\UserUpdatedSelfEvent;
@@ -54,6 +55,7 @@ class UserManager
     private $communityRepository;
     private $messageRepository;
     private $notificationRepository;
+    private $userNotificationRepository;
     private $logger;
     private $eventDispatcher;
     private $encoder;
@@ -64,7 +66,7 @@ class UserManager
         * @param EntityManagerInterface $entityManager
         * @param LoggerInterface $logger
         */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -74,6 +76,7 @@ class UserManager
         $this->eventDispatcher = $dispatcher;
         $this->encoder = $encoder;
         $this->notificationRepository = $notificationRepository;
+        $this->userNotificationRepository = $userNotificationRepository;
     }
     
     /**
@@ -97,6 +100,8 @@ class UserManager
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+        // creation of the alert preferences
+        $user = $this->createAlerts($user);
         // dispatch en event
         $event = new UserRegisteredEvent($user);
         $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
@@ -334,5 +339,25 @@ class UserManager
         $this->entityManager->persist($user);
         $this->entityManager->flush();
         return $user;
+    }
+
+    /**
+     * Update user alerts
+     *
+     * @param User $user
+     * @return void
+     */
+    public function updateAlerts(User $user)
+    {
+        if (!is_null($user->getAlerts())) {
+            foreach ($user->getAlerts() as $id => $active) {
+                if ($userNotification = $this->userNotificationRepository->find($id)) {
+                    $userNotification->setActive($active);
+                    $this->entityManager->persist($userNotification);
+                }
+            }
+            $this->entityManager->flush();
+        }
+        return $this->getAlerts($user);
     }
 }

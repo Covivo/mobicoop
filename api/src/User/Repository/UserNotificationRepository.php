@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,9 +21,31 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Event;
+namespace App\User\Repository;
 
-class AskRefusedDriverPunctualEvent extends AskRefusedEvent
+use App\User\Entity\UserNotification;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+
+class UserNotificationRepository
 {
-    public const NAME = 'driver_'.AskRefusedEvent::NAME;
+    /**
+     * @var EntityRepository
+     */
+    private $repository;
+    
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->repository = $entityManager->getRepository(UserNotification::class);
+    }
+    
+    public function find(int $id): ?UserNotification
+    {
+        return $this->repository->find($id);
+    }
+
+    public function findOneBy(array $criteria): ?UserNotification
+    {
+        return $this->repository->findOneBy($criteria);
+    }
 }

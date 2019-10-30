@@ -52,6 +52,7 @@ use App\Communication\Entity\Recipient;
 use App\User\Controller\UserRegistration;
 use App\User\Controller\UserPermissions;
 use App\User\Controller\UserAlerts;
+use App\User\Controller\UserAlertsUpdate;
 use App\User\Controller\UserLogin;
 use App\User\Controller\UserThreads;
 use App\User\Controller\UserThreadsDirectMessages;
@@ -136,6 +137,13 @@ use App\Solidary\Entity\Solidary;
  *              "normalization_context"={"groups"={"alerts"}},
  *              "controller"=UserAlerts::class,
  *              "path"="/users/{id}/alerts",
+ *          },
+ *          "putAlerts"={
+ *              "method"="PUT",
+ *              "normalization_context"={"groups"={"alerts"}},
+ *              "denormalization_context"={"groups"={"alerts"}},
+ *              "path"="/users/{id}/alerts",
+ *              "controller"=UserAlertsUpdate::class,
  *          },
  *          "threads"={
  *              "method"="GET",
@@ -635,7 +643,7 @@ class User implements UserInterface, EquatableInterface
     private $permissions;
 
     /**
-     * @var array|null The permissions granted
+     * @var array|null The user alerts preferences
      * @Groups("alerts")
      */
     private $alerts;
@@ -1627,7 +1635,7 @@ class User implements UserInterface, EquatableInterface
         return $this->alerts;
     }
 
-    public function setAlerts(array $alerts): self
+    public function setAlerts(?array $alerts): self
     {
         $this->alerts = $alerts;
 
