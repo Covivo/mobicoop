@@ -40,6 +40,10 @@
             <v-tab-item>
               <MyProposals />
             </v-tab-item>
+            <v-tab>{{ $t("tabs.alerts") }}</v-tab>
+            <v-tab-item>
+              <Alerts :alerts="alerts" />
+            </v-tab-item>
             <v-tab>{{ $t("tabs.carpoolSettings") }}</v-tab>
             <v-tab-item>
               <CarpoolSettings :user="user" />
@@ -54,6 +58,7 @@
 import UpdateProfile from "@components/user/UpdateProfile";
 import ChangePassword from "@components/user/ChangePassword";
 import MyProposals from "@components/user/MyProposals";
+import Alerts from "@components/user/Alerts";
 import CarpoolSettings from "@components/user/CarpoolSettings";
 
 import { merge } from "lodash";
@@ -70,6 +75,7 @@ export default {
     UpdateProfile,
     ChangePassword,
     MyProposals,
+    Alerts,
     CarpoolSettings
   },
   props: {
@@ -88,12 +94,11 @@ export default {
     ageMax: {
       type: String,
       default: null
+    },
+    alerts: {
+      type: Array,
+      default: null
     }
-  },
-  data() {
-    return {
-
-    };
   }
-};
+}
 </script>

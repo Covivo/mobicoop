@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2018, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,35 +21,41 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Event;
+namespace App\User\Controller;
 
-use Symfony\Component\EventDispatcher\Event;
-use App\Carpool\Entity\Matching;
+use App\TranslatorTrait;
+use App\User\Service\UserManager;
+use Symfony\Component\HttpFoundation\Response;
 use App\User\Entity\User;
 
 /**
- * Event sent when a new matching is created.
+ * Controller class for user alert preferences.
+ *
+ * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
-class MatchingNewEvent extends Event
+class UserAlerts
 {
-    public const NAME = 'carpool_matching_new';
+    use TranslatorTrait;
+    private $userManager;
 
-    protected $matching;
-    protected $sender;
-
-    public function __construct(Matching $matching, User $user)
+    public function __construct(UserManager $userManager)
     {
-        $this->matching = $matching;
-        $this->sender = $user;
+        $this->userManager = $userManager;
     }
 
-    public function getMatching()
+    /**
+     * This method is invoked when the alert preferences for a user is asked.
+     *
+     * @param User $data
+     * @return Response
+     */
+    public function __invoke(User $data): ?User
     {
-        return $this->matching;
-    }
-
-    public function getSender()
-    {
-        return $this->sender;
+        if (is_null($data)) {
+            throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
+        }
+        // we search the alerts
+        $data = $this->userManager->getAlerts($data);
+        return $data;
     }
 }

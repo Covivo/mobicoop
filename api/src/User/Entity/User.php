@@ -51,6 +51,8 @@ use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
 use App\User\Controller\UserRegistration;
 use App\User\Controller\UserPermissions;
+use App\User\Controller\UserAlerts;
+use App\User\Controller\UserAlertsUpdate;
 use App\User\Controller\UserLogin;
 use App\User\Controller\UserThreads;
 use App\User\Controller\UserThreadsDirectMessages;
@@ -129,6 +131,19 @@ use App\Solidary\Entity\Solidary;
  *                      },
  *                  }
  *              }
+ *          },
+ *          "alerts"={
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"alerts"}},
+ *              "controller"=UserAlerts::class,
+ *              "path"="/users/{id}/alerts",
+ *          },
+ *          "putAlerts"={
+ *              "method"="PUT",
+ *              "normalization_context"={"groups"={"alerts"}},
+ *              "denormalization_context"={"groups"={"alerts"}},
+ *              "path"="/users/{id}/alerts",
+ *              "controller"=UserAlertsUpdate::class,
  *          },
  *          "threads"={
  *              "method"="GET",
@@ -426,6 +441,30 @@ class User implements UserInterface, EquatableInterface
     private $geoToken;
 
     /**
+     * @var string|null Token for phone validation.
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $phoneToken;
+
+    /**
+     * @var string|null iOS app ID.
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $iosAppId;
+
+    /**
+     * @var string|null Android app ID.
+     *
+     * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $androidAppId;
+
+    /**
      * @var string User language
      * @Groups({"read","write"})
      * @ORM\Column(name="language", type="string", length=10, nullable=true)
@@ -585,6 +624,13 @@ class User implements UserInterface, EquatableInterface
     private $solidaries;
 
     /**
+    * @var ArrayCollection|null A user may have many user notification preferences.
+    *
+    * @ORM\OneToMany(targetEntity="\App\User\Entity\UserNotification", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+    */
+    private $userNotifications;
+
+    /**
      * @var array|null The threads of the user
      * @Groups("threads")
      */
@@ -595,6 +641,12 @@ class User implements UserInterface, EquatableInterface
      * @Groups("permissions")
      */
     private $permissions;
+
+    /**
+     * @var array|null The user alerts preferences
+     * @Groups("alerts")
+     */
+    private $alerts;
 
     /**
      * @var string|null Facebook ID of the user
@@ -624,6 +676,7 @@ class User implements UserInterface, EquatableInterface
         $this->diaries = new ArrayCollection();
         $this->diariesAdmin = new ArrayCollection();
         $this->solidaries = new ArrayCollection();
+        $this->userNotifications = new ArrayCollection();
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -894,6 +947,39 @@ class User implements UserInterface, EquatableInterface
     public function setGeoToken(?string $geoToken): self
     {
         $this->geoToken = $geoToken;
+        return $this;
+    }
+
+    public function getPhoneToken(): ?string
+    {
+        return $this->phoneToken;
+    }
+
+    public function setPhoneToken(?string $phoneToken): self
+    {
+        $this->phoneToken = $phoneToken;
+        return $this;
+    }
+
+    public function getIosAppId(): ?string
+    {
+        return $this->iosAppId;
+    }
+
+    public function setIosAppId(?string $iosAppId): self
+    {
+        $this->iosAppId = $iosAppId;
+        return $this;
+    }
+
+    public function getAndroidAppId(): ?string
+    {
+        return $this->androidAppId;
+    }
+
+    public function setAndroidAppId(?string $androidAppId): self
+    {
+        $this->androidAppId = $androidAppId;
         return $this;
     }
 
@@ -1412,6 +1498,34 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getUserNotifications()
+    {
+        return $this->userNotifications->getValues();
+    }
+
+    public function addUserNotification(UserNotification $userNotification): self
+    {
+        if (!$this->userNotifications->contains($userNotification)) {
+            $this->userNotifications->add($userNotification);
+            $userNotification->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserNotification(UserNotification $userNotification): self
+    {
+        if ($this->userNotifications->contains($userNotification)) {
+            $this->userNotifications->removeElement($userNotification);
+            // set the owning side to null (unless already changed)
+            if ($userNotification->getUser() === $this) {
+                $userNotification->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
@@ -1512,6 +1626,18 @@ class User implements UserInterface, EquatableInterface
     public function setPermissions(array $permissions): self
     {
         $this->permissions = $permissions;
+
+        return $this;
+    }
+
+    public function getAlerts(): ?array
+    {
+        return $this->alerts;
+    }
+
+    public function setAlerts(?array $alerts): self
+    {
+        $this->alerts = $alerts;
 
         return $this;
     }
