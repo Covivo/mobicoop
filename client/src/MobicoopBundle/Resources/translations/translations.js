@@ -120,9 +120,9 @@ export default {
           errors: {
             required: "Le mot de passe est requis",
             min: "Le mot de passe doit comprendre 8 caractères min.",
-            minu: "Le mot de passe doit comprendre 1 minuscule.",
-            maj: "Le mot de passe doit comprendre 1 majuscule.",
-            numb : "Le mot de passe doit comprendre 1 chiffre.",
+            upper: "Le mot de passe doit comprendre 1 majuscule.",
+            lower: "Le mot de passe doit comprendre 1 minuscule.",
+            number : "Le mot de passe doit comprendre 1 chiffre.",
           }
         },
         passwordRepeat: {

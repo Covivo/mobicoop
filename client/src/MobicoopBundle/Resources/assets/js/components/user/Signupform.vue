@@ -83,7 +83,7 @@
             <v-text-field
               v-model="form.password"
               :append-icon="form.showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-              :rules="[form.passWordRules.required,form.passWordRules.min, form.passWordRules.verifyRegexMaj,form.passWordRules.verifyRegexMin,form.passWordRules.verifyRegexNumb]"
+              :rules="[form.passWordRules.required,form.passWordRules.min, form.passWordRules.checkUpper,form.passWordRules.checkLower,form.passWordRules.checkNumber]"
               :type="form.showPassword ? 'text' : 'password'"
               name="password"
               :label="$t('models.user.password.placeholder')+` *`"
@@ -398,19 +398,19 @@ export default {
         passWordRules: {
           required:  v => !!v || this.$t("models.user.password.errors.required"),
           min: v => v.length >= 8 || this.$t("models.user.password.errors.min"),
-          verifyRegexMaj : value => {
+          checkUpper : value => {
             const pattern = /^(?=.*[A-Z]).*$/
-            return pattern.test(value) || this.$t("models.user.password.errors.maj")
+            return pattern.test(value) || this.$t("models.user.password.errors.upper")
 
           },
-          verifyRegexMinu : value => {
+          checkLower : value => {
             const pattern = /^(?=.*[a-z]).*$/
-            return pattern.test(value) || this.$t("models.user.password.errors.minu")
+            return pattern.test(value) || this.$t("models.user.password.errors.lower")
 
           },
-          verifyRegexNumb : value => {
+          checkNumber : value => {
             const pattern = /^(?=.*[0-9]).*$/
-            return pattern.test(value) || this.$t("models.user.password.errors.numb")
+            return pattern.test(value) || this.$t("models.user.password.errors.number")
 
           },
         },

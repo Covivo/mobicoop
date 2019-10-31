@@ -32,7 +32,7 @@
               name="password"
               :label="$t('form.newPassword')"
               required
-              :rules="[passWordRules.required,passWordRules.min, passWordRules.verifyRegexMaj,passWordRules.verifyRegexMin,passWordRules.verifyRegexNumb]"
+              :rules="[passWordRules.required,passWordRules.min, passWordRules.checkUpper,passWordRules.checkLower,passWordRules.checkNumber]"
               @click:append="show1 = !show1"
             />
             <v-text-field
@@ -87,19 +87,19 @@ export default {
       passWordRules: {
         required:  v => !!v || this.$t("models.user.password.errors.required"),
         min: v => v.length >= 8 || this.$t("models.user.password.errors.min"),
-        verifyRegexMaj : value => {
+        checkUpper : value => {
           const pattern = /^(?=.*[A-Z]).*$/
-          return pattern.test(value) || this.$t("models.user.password.errors.maj")
+          return pattern.test(value) || this.$t("models.user.password.errors.upper")
 
         },
-        verifyRegexMinu : value => {
+        checkLower : value => {
           const pattern = /^(?=.*[a-z]).*$/
-          return pattern.test(value) || this.$t("models.user.password.errors.minu")
+          return pattern.test(value) || this.$t("models.user.password.errors.lower")
 
         },
-        verifyRegexNumb : value => {
+        checkNumber : value => {
           const pattern = /^(?=.*[0-9]).*$/
-          return pattern.test(value) || this.$t("models.user.password.errors.numb")
+          return pattern.test(value) || this.$t("models.user.password.errors.number")
 
         },
       },
