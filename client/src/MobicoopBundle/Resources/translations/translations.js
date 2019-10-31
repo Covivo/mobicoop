@@ -118,7 +118,11 @@ export default {
           label: "Mot de passe",
           placeholder: "Mot de passe",
           errors: {
-            required: "Le mot de passe est requis"
+            required: "Le mot de passe est requis",
+            min: "Le mot de passe doit comprendre 8 caractères min.",
+            upper: "Le mot de passe doit comprendre 1 majuscule.",
+            lower: "Le mot de passe doit comprendre 1 minuscule.",
+            number : "Le mot de passe doit comprendre 1 chiffre.",
           }
         },
         passwordRepeat: {
@@ -254,7 +258,11 @@ export default {
           label: "",
           placeholder: "",
           errors: {
-            required: ""
+            required: "",
+            min: "",
+            minu: "",
+            maj: "",
+            numb : "",
           }
         },
         passwordRepeat: {
