@@ -80,6 +80,9 @@ final class CreateImageAction
             if ($image->getOriginalName()) {
                 $originalName = $image->getOriginalName();
             }
+            if (is_null($image->getName())) {
+                $image->setName($image->getFileName());
+            }
         }
         
         if ($form->isSubmitted() && $form->isValid()) {

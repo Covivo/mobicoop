@@ -26,6 +26,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Entity;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
+use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
@@ -253,6 +254,13 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $asks;
 
     /**
+     * @var Image[]|null The images of the user.
+     *
+     * @Groups({"post","put"})
+     */
+    private $images;
+    
+    /**
     * @var array|null User notification alert preferences.
     * @Groups({"put"})
     */
@@ -340,6 +348,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         $this->proposals = new ArrayCollection();
         $this->asks = new ArrayCollection();
         $this->masses = new ArrayCollection();
+        $this->images = new ArrayCollection();
         $this->userNotifications = new ArrayCollection();
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
@@ -730,6 +739,39 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
+    /**
+     *
+     * @return Collection|Image[]
+     */
+    public function getImages()
+    {
+        return $this->images->getValues();
+    }
+    
+    public function addImage(Image $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images[] = $image;
+            $image->setUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeImage(Image $image): self
+    {
+        if ($this->images->contains($image)) {
+            $this->images->removeElement($image);
+            // set the owning side to null (unless already changed)
+            if ($image->getUser() === $this) {
+                $image->setUser(null);
+            }
+        }
+        
+        return $this;
+    }
+        
+        
     public function getAlerts()
     {
         return $this->alerts;
@@ -973,6 +1015,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'geoToken'       => $this->getGeoToken(),
             'birthYear'      => $this->getBirthYear(),
             'homeAddress'    => $this->getHomeAddress(),
+            'images'        => $this->getImages(),
             'smoke'          => $this->getSmoke(),
             'chat'           => $this->hasChat(),
             'chatFavorites'  => $this->getChatFavorites(),

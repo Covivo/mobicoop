@@ -22,7 +22,10 @@ vich_uploader:
         # mapping for user images (avatar)
         user:
             uri_prefix: /upload/users/images/
-            upload_destination: '%kernel.project_dir%/public/upload/users/images/'    
+            upload_destination: '%kernel.project_dir%/public/upload/users/images/' 
+            namer:
+                service: Vich\UploaderBundle\Naming\PropertyNamer
+                options: { property: 'fileName'}   
         
         # mapping for mass import files
         mass:

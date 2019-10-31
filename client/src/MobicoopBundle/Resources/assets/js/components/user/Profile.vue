@@ -30,6 +30,9 @@
                 :geo-search-url="geoSearchUrl"
                 :age-min="ageMin"
                 :age-max="ageMax"
+                :avatar-size="avatarSize"
+                :url-alt-avatar="urlAltAvatar"
+                :avatar-version="avatarVersion"
               />
             </v-tab-item>
             <v-tab>{{ $t("tabs.password") }}</v-tab>
@@ -95,7 +98,19 @@ export default {
       type: String,
       default: null
     },
-    alerts: {
+    avatarSize: {
+      type: String,
+      default: null
+    },
+    avatarVersion: {
+      type: String,
+      default: null
+    },
+    urlAltAvatar: {
+      type: String,
+      default: null
+    },
+     alerts: {
       type: Array,
       default: null
     }

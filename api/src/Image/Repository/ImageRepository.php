@@ -23,8 +23,10 @@
 
 namespace App\Image\Repository;
 
+use App\Community\Entity\Community;
 use App\Event\Entity\Event;
 use App\Image\Entity\Image;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
@@ -63,6 +65,14 @@ class ImageRepository
             case Event::class:
                 $query->andWhere('i.event = :event')
                 ->setParameter('event', $owner);
+                break;
+            case User::class:
+                $query->andWhere('i.user = :user')
+                ->setParameter('user', $owner);
+                break;
+            case Community::class:
+                $query->andWhere('i.community = :community')
+                ->setParameter('community', $owner);
                 break;
             default:
                 break;
