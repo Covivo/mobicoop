@@ -6,18 +6,25 @@
       >
         <v-col
           cols="12"
-          sm="6"
-          md="4"
+          sm="8"
+          md="6"
           align="center"
         >
-          <v-alert
-            dismissible
-            :value="alert.show"
-            :type="alert.type"
+          <v-snackbar
+            v-model="snackbar"
+            :color="(alert.type === 'error')?'error':'success'"
+            top
           >
             <!--Use of span and v-html to handle multiple lines errors if needed-->
             <span v-html="alert.message" />
-          </v-alert>
+            <v-btn
+              color="white"
+              text
+              @click="snackbar = false"
+            >
+              <v-icon>mdi-close-circle-outline</v-icon>
+            </v-btn>
+          </v-snackbar>
           <v-form
             id="formContact"
             ref="form"
@@ -165,6 +172,7 @@ export default {
   },
   data () {
     return {
+      snackbar: false,
       loading: false,
       valid: false,
       form:{
@@ -189,8 +197,7 @@ export default {
       },
       alert: {
         type: "success",
-        message: "",
-        show: false
+        message: ""
       }
     }
   },
@@ -235,7 +242,7 @@ export default {
           }).finally(function () {
             self.loading = false;
             if (self.alert.message.length > 0) {
-              self.alert.show = true;
+              self.snackbar = true;
             }
           })
       }
@@ -243,8 +250,7 @@ export default {
     resetAlert() {
       this.alert = {
         type: "success",
-        message: "",
-        show: false
+        message: ""
       }
     }
   }
