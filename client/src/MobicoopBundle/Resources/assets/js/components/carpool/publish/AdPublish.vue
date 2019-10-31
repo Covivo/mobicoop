@@ -399,6 +399,8 @@
                     suffix="€"
                     :hint="hintPricePerKm"
                     persistent-hint
+                    :color="colorPricePerKm"
+                    :class="colorPricePerKm + '--text'"
                   />
                 </v-col>
                   
@@ -407,6 +409,29 @@
                   align="left"
                 >
                   {{ $t('stepper.content.participation.passengers') }}
+                </v-col>
+              </v-row>
+              <v-row
+                v-if="pricePerKm >= 0.12"
+                justify="center"
+              >
+                <v-col cols="8">
+                  <v-card>
+                    <v-card-text>
+                      <p
+                        v-if="pricePerKm >= 0.12 && pricePerKm < 0.3"
+                        :class="colorPricePerKm + '--text'"
+                      >
+                        {{ $t('participation.mid') }}
+                      </p>
+                      <p
+                        v-else-if="pricePerKm >= 0.3"
+                        :class="colorPricePerKm + '--text'"
+                      >
+                        {{ $t('participation.high') }}
+                      </p>
+                    </v-card-text>
+                  </v-card>
                 </v-col>
               </v-row>
             </v-stepper-content>
@@ -736,6 +761,15 @@ export default {
     },
     pointEscapedPrice(){
       return this.price.replace(".",",");
+    },
+    colorPricePerKm(){
+      if (this.pricePerKm < 0.12) {
+        return "success";
+      } else if (this.pricePerKm >= 0.12 && this.pricePerKm < 0.3) {
+        return "warning";
+      } else {
+        return "error";
+      }
     }
   },
   watch: {
@@ -888,3 +922,5 @@ export default {
   }
 };
 </script>
+<style scoped lang="scss">
+</style>
