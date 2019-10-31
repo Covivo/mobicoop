@@ -1,6 +1,7 @@
 {
     "fr": {
-        "geoSearchUrl": ""
+        "geoSearchUrl": "",
+        "required": "Une adresse est requise"
     },
     "en": {
         "geoSearchUrl": ""

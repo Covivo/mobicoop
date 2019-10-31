@@ -4,7 +4,7 @@
       v-model="address"
       :loading="isLoading"
       :items="items"
-      :label="label + (showRequired ? ' *' : '')"
+      :label="label + (required ? ' *' : '')"
       :hint="hint"
       :search-input.sync="search"
       hide-no-data
@@ -84,12 +84,10 @@ export default {
       default: true
     },
     hint: defaultString,
-    required: Boolean,
-    showRequired: {
+    required:  {
       type: Boolean,
       default: false
     },
-    requiredError: defaultString,
     name: defaultString,
     initAddress: {
       type: Object,
@@ -114,7 +112,7 @@ export default {
     geoRules() {
       if (this.required) {
         return [
-          v => !!v || this.requiredError
+          v => !!v || this.$t('required')
         ];
       }
       return [];
