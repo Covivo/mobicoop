@@ -385,6 +385,13 @@ news:
         en: /news
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showNews
 
+# display data policy page
+data_policy:
+    path:
+        fr: /protection-donnees
+        en: /data-policy
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showDataPolicy
+
 ####################
 # geography routes #
 ####################
