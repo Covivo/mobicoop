@@ -9,8 +9,14 @@
         text
         v-on="on"
       >
-        <v-avatar>
-          <v-icon light>
+        <v-avatar class="mr-1">
+          <img
+            v-if="avatar"
+            :src="avatar"
+          >
+          <v-icon
+            v-else
+          >
             mdi-account-circle
           </v-icon>
         </v-avatar>
@@ -42,6 +48,12 @@ let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
     messages: TranslationsMerged
+  },
+  props: {
+    avatar:{
+      type: String,
+      default:null
+    }
   },
   data(){
     return {

@@ -1033,6 +1033,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'birthYear'      => $this->getBirthYear(),
             'homeAddress'    => $this->getHomeAddress(),
             'images'        => $this->getImages(),
+            'avatar'        => $this->getAvatar(),
             'smoke'          => $this->getSmoke(),
             'chat'           => $this->hasChat(),
             'chatFavorites'  => $this->getChatFavorites(),

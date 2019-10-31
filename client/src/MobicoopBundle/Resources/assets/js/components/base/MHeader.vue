@@ -24,7 +24,7 @@
           {{ $t('buttons.messages.label') }}
         </v-btn>
         <MHeaderCommunities />
-        <MHeaderProfile />
+        <MHeaderProfile :avatar="user.avatar" />
       </div>
       <div v-else>
         <v-btn
