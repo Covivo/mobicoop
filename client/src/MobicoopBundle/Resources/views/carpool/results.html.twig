@@ -14,7 +14,7 @@
         time = "{{ time is defined ? time : '' }}"
         :community-id = "{{ communityId is defined ? (communityId ? communityID : 'null') : 'null' }}"
         :user="{{ app.user|json_encode }}"
-        {{ regular ? 'regular' : '' }}
+        {{ regular is defined ? (regular == 'true' ? 'regular' : '') : '' }}
         {{ distinguishRegular ? 'distinguish-regular' : '' }}
         :carpooler-rate = "{{ carpoolerRate }}"
     />
