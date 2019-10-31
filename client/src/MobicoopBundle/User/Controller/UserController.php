@@ -51,6 +51,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskHistoryManager;
+use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -892,5 +893,23 @@ class UserController extends AbstractController
             ['message'=>'error'],
             Response::HTTP_METHOD_NOT_ALLOWED
         );
+    }
+
+    /**
+     * Get all communities of a user
+     * AJAX
+     */
+    public function userCommunities(Request $request, CommunityManager $communityManager)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            $communityUsers = $communityManager->getAllCommunityUser($data['userId']);
+            $communities = [];
+            foreach ($communityUsers as $communityUser) {
+                $communities[] = $communityUser->getCommunity();
+            }
+            return new JsonResponse($communities);
+        }
+        return new JsonResponse(['error'=>'errorUpdateAlert']);
     }
 }

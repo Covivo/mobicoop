@@ -14,7 +14,6 @@
         </a>
       </v-toolbar-title>
       <v-spacer />
-      <!-- Problem of placement of this componenent -->
       <!--<accessibility />-->
       <div v-if="user">
         <v-btn
@@ -58,7 +57,7 @@
 import { merge } from "lodash";
 import Translations from "@translations/components/base/MHeader.json";
 import TranslationsClient from "@clientTranslations/components/base/MHeader.json";
-import Accessibility from "@components/utilities/Accessibility";
+//import Accessibility from "@components/utilities/Accessibility";
 import MHeaderProfile from "@components/base/MHeaderProfile.vue";
 import MHeaderCommunities from "@components/base/MHeaderCommunities.vue";
 
@@ -69,7 +68,7 @@ export default {
     messages: TranslationsMerged
   },
   components: {
-    Accessibility,
+    //Accessibility,
     MHeaderProfile,
     MHeaderCommunities
   },

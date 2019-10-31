@@ -19,16 +19,22 @@
         :key="index"
       >
         <a
-          v-if="item.title"
-          :href="item.url"
-          :alt="item.title"
-        ><v-list-item-title>{{ item.title }}</v-list-item-title></a>
-        <v-divider v-else />
+          :href="$t('urlCommunityDetails',{id:item.id})"
+          :alt="item.name"
+        ><v-list-item-title>{{ item.name }}</v-list-item-title></a>
+      </v-list-item>
+      <v-divider v-if="items.length>0" />
+      <v-list-item>
+        <a
+          :href="$t('urlCommunityList')"
+          :alt="$t('availableCommunities')"
+        >{{ $t("availableCommunities") }}</a>
       </v-list-item>
     </v-list>
   </v-menu>
 </template>
 <script>
+import axios from "axios";
 import { merge } from "lodash";
 import Translations from "@translations/components/base/MHeaderCommunities.json";
 import TranslationsClient from "@clientTranslations/components/base/MHeaderCommunities.json";
@@ -40,14 +46,20 @@ export default {
   },
   data(){
     return {
-      items: [
-        { title: this.$t('myAds.label'), url: this.$t('myAds.route') },
-        { title: this.$t('myAcceptedCarpools.label'), url: this.$t('myAcceptedCarpools.route') },
-        { title: this.$t('myProfile.label'), url: this.$t('myProfile.route') },
-        {},
-        { title: this.$t('logOut.label'), url: this.$t('logOut.route') }
-      ],
+      items: []
     }
+  },
+  mounted(){
+    let params = {
+      'userId':1
+    }
+    axios.post(this.$t("getCommunities"), params)
+      .then(res => {
+        this.items = res.data;
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
   },
 }
 </script>

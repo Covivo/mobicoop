@@ -1,8 +1,16 @@
 {
     "fr": {
-        "title":"Mes communautés"
+        "title":"Mes communautés",
+        "getCommunities":"/utilisateur/communautes",
+        "availableCommunities":"Les communautés disponibles",
+        "urlCommunityList":"/communautes",
+        "urlCommunityDetails":"/communaute/{id}"
     },
     "en": {
-        "title":"My communities"
+        "title":"My communities",
+        "getCommunities":"/user/communities",
+        "availableCommunities":"Available communities",
+        "urlCommunityList":"/community",
+        "urlCommunityDetails":"/communaute/{id}"
     }
 }
