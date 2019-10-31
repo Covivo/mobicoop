@@ -305,7 +305,7 @@
                 cols="12"
               >
                 <v-card
-                  v-if="displayInfo"
+                  v-if="displayInfo && !regular"
                   outlined
                   class="mx-auto"
                 > 
