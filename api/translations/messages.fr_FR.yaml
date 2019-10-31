@@ -80,7 +80,7 @@ driverComment: "Commentaire du conducteur"
 
 # PASSENGER_CARPOOL_ASK_ACCEPTED
 
-ocassionalCarpoolDistance: "Trajet ocasionnel Distance covoiturée"
+occassionalCarpoolDistance: "Trajet occasionnel Distance covoiturée"
 at: "à"
 
 # PASSENGER_CARPOOL_ASK_UPDATED_REGULAR
@@ -116,7 +116,7 @@ urlMailBox: 'utilisateur/messages'
 CheckoutForAnyURLMisspellingOr: 'messages'
 
 
-  ######      SMS      ######
+######      SMS      ######
 
 
   # CARPOOL_AD_RENEWAL
@@ -179,3 +179,51 @@ newMatching: "Une nouvelle annonce a été publiée pour votre trajet"
 # PASSENGER_CARPOOL_ASK_UPDATED_REGULAR
 
 # PASSENGER_CARPOOL_ASK_UPDATED
+
+
+######      TITLE      ######
+
+# CARPOOL_AD_RENEWAL
+
+renewYourAd: "Pensez à renouveler votre annonce de covoiturage"
+
+# CARPOOL_ASK_ACCEPTED
+
+carpoolRecap: "Récapitulatif covoiturage"
+
+# CARPOOL_ASK_POSTED
+
+carpoolAsk: "Demande de covoiturage"
+
+# CARPOOL_ASK_REFUSED
+
+askRefused: "Proposition de covoiturage déclinée"
+
+# CARPOOL_ASK_UPDATED
+
+carpoolWaitingForValidation: "Covoiturage en attente de validation"
+
+# CARPOOL_MATCHING_NEW
+
+newCarpoolAd: "Nouvelle(s) annonce(s) de covoiturage"
+
+# CARPOOL_PROPOSAL_POSTED
+
+newAd: "Nouvelle(s) annonce(s) sur "
+
+# COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
+
+contactYou: "vous contacte"
+
+# USER_PASSWORD_CHANGED
+
+askPassoword: "Demande de re-initialisation de mot de passe"
+passwordChanged: "Confirmation de re-initialisation de mot de passe"
+
+# USER_REGISTERED
+
+yourInscription: "Votre inscription"
+
+# USER_UPDATED_SELF
+
+updatedSefl: "Modification de votre profil"
