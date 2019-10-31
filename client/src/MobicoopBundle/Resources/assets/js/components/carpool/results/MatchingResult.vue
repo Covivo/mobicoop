@@ -68,6 +68,7 @@
           <!-- Carpooler detail -->
           <carpooler-summary
             :carpooler="result.carpooler"
+            :carpooler-rate="carpoolerRate"
             @carpool="carpool"
           />
         </v-col>
@@ -108,7 +109,11 @@ export default {
     distinguishRegular: {
       type: Boolean,
       default: false
-    }
+    },
+    carpoolerRate: {
+      type: Boolean,
+      default: true
+    },
   },
   data : function() {
     return {
