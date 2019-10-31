@@ -83,7 +83,7 @@
             <v-text-field
               v-model="form.password"
               :append-icon="form.showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-              :rules="form.passwordRules"
+              :rules="[form.passWordRules.required,form.passWordRules.min, form.passWordRules.checkUpper,form.passWordRules.checkLower,form.passWordRules.checkNumber]"
               :type="form.showPassword ? 'text' : 'password'"
               name="password"
               :label="$t('models.user.password.placeholder')+` *`"
@@ -251,9 +251,10 @@
               name="homeAddress"
               :label="$t('models.user.homeTown.placeholder')"
               :url="geoSearchUrl"
-              :hint="$t('models.user.homeTown.hint')"
+              :hint="requiredHomeAddress ? $t('models.user.homeTown.required.hint') : $t('models.user.homeTown.hint')"
               persistent-hint
               :disabled="!step4"
+              :required="requiredHomeAddress"
               @address-selected="selectedGeo"
             />
             <v-checkbox
@@ -281,7 +282,7 @@
               color="primary"
               rounded
               class="mr-4 mb-100 mt-12"
-              :disabled="!step5 || loading"
+              :disabled="!step5 || loading || isDisable"
               :loading="loading"
               @click="validate"
             >
@@ -336,7 +337,11 @@ export default {
     facebookLoginAppId: {
       type: String,
       default: null
-    }
+    },
+    requiredHomeAddress:  {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {
@@ -351,6 +356,8 @@ export default {
       step4: true,
       step5: true,
 
+      // disable validation if homeAddress is empty and required
+      isDisable: this.requiredHomeAddress ? true : false,
 
       //scrolling data
       type: 'selector',
@@ -360,7 +367,7 @@ export default {
       easing: "easeOutQuad",
       container: "scroll-target",
 
-      form:{
+      form: {
         createToken: this.sentToken,
         email: null,
         emailRules: [
@@ -380,24 +387,40 @@ export default {
           v => !!v || this.$t("models.user.gender.errors.required"),
         ],
         genderItems: [
-          { genderItem: this.$t('models.user.gender.values.female'), genderValue: '1' },
-          { genderItem: this.$t('models.user.gender.values.male'), genderValue: '2' },
-          { genderItem: this.$t('models.user.gender.values.other'),genderValue: '3' },
+          {genderItem: this.$t('models.user.gender.values.female'), genderValue: '1'},
+          {genderItem: this.$t('models.user.gender.values.male'), genderValue: '2'},
+          {genderItem: this.$t('models.user.gender.values.other'), genderValue: '3'},
         ],
         birthYear: null,
         birthYearRules: [
           v => !!v || this.$t("models.user.birthYear.errors.required")
         ],
         telephone: null,
-        telephoneRules:  [
+        telephoneRules: [
           v => !!v || this.$t("models.user.phone.errors.required"),
           v => (/^((\+)33|0)[1-9](\d{2}){4}$/).test(v) || this.$t("models.user.phone.errors.valid")
         ],
         password: null,
         showPassword: false,
-        passwordRules: [
-          v => !!v || this.$t("models.user.password.errors.required")
-        ],
+        passWordRules: {
+          required:  v => !!v || this.$t("models.user.password.errors.required"),
+          min: v => v.length >= 8 || this.$t("models.user.password.errors.min"),
+          checkUpper : value => {
+            const pattern = /^(?=.*[A-Z]).*$/
+            return pattern.test(value) || this.$t("models.user.password.errors.upper")
+
+          },
+          checkLower : value => {
+            const pattern = /^(?=.*[a-z]).*$/
+            return pattern.test(value) || this.$t("models.user.password.errors.lower")
+
+          },
+          checkNumber : value => {
+            const pattern = /^(?=.*[0-9]).*$/
+            return pattern.test(value) || this.$t("models.user.password.errors.number")
+
+          },
+        },
         homeAddress:null,
         checkboxRules: [
           v => !!v || this.$t("ui.pages.signup.chart.errors.required")
@@ -430,6 +453,9 @@ export default {
   methods: {
     selectedGeo(address) {
       this.form.homeAddress = address;
+      if (this.requiredHomeAddress) {
+        this.isDisable = address ? false : true;
+      }
     },
     validate: function (e) {
       this.loading = true,
@@ -472,7 +498,8 @@ export default {
       this.form.givenName = data.first_name;
       this.form.familyName = data.last_name;
       this.form.idFacebook = data.id;
-    }
+    },
+    
   }
 
 };
