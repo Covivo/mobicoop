@@ -211,7 +211,7 @@ class Deserializer
 
         // We determine the avatar
         $images = $user->getImages();
-        if (isset($images[0])) {
+        if (count($images)>0 && count($images[0]->getVersions())>0 && isset($images[0]->getVersions()[$this->avatarVersion])) {
             $user->setAvatar($images[0]->getVersions()[$this->avatarVersion]);
         } else {
             $user->setAvatar($this->avatarDefault);
