@@ -22,7 +22,7 @@
           <!--Carpooler data-->
           <v-list-item-content>
             <v-list-item-title class="font-weight-bold">
-              {{ carpooler.givenName }} {{ carpooler.familyName.substr(0,1).toUpperCase()+"." }}
+              {{ carpooler.givenName }} {{ carpooler.shortFamilyName }}
             </v-list-item-title>
             <v-list-item-title>{{ age }} </v-list-item-title>
           </v-list-item-content>

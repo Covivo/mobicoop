@@ -658,6 +658,12 @@ class ProposalManager
                     if ($outward->hasMultipleTimes()) {
                         $outward->setTime(null);
                     }
+                    // fromDate is the max between the search date and the fromDate of the matching proposal
+                    $outward->setFromDate(max(
+                        $matching['request']->getProposalRequest()->getCriteria()->getFromDate(),
+                        $proposal->getCriteria()->getFromDate()
+                    ));
+                    $outward->setToDate($matching['request']->getProposalRequest()->getCriteria()->getToDate());
                 }
                 // waypoints of the outward
                 $waypoints = [];
@@ -758,6 +764,8 @@ class ProposalManager
                     $return->setSatTime($proposalLinked->getCriteria()->getSatTime());
                     $return->setSunTime($proposalLinked->getCriteria()->getSunTime());
                     $return->setMultipleTimes();
+                    $return->setFromDate($proposalLinked->getCriteria()->getFromDate());
+                    $return->setToDate($proposalLinked->getCriteria()->getToDate());
                     $resultDriver->setReturn($return);
                 }
 
@@ -992,6 +1000,12 @@ class ProposalManager
                         $outward->setTime(null);
                         $driverFromTime = null;
                     }
+                    // fromDate is the max between the search date and the fromDate of the matching proposal
+                    $outward->setFromDate(max(
+                        $matching['offer']->getProposalOffer()->getCriteria()->getFromDate(),
+                        $proposal->getCriteria()->getFromDate()
+                    ));
+                    $outward->setToDate($matching['offer']->getProposalOffer()->getCriteria()->getToDate());
                 }
                 // waypoints of the outward
                 $waypoints = [];
@@ -1092,6 +1106,8 @@ class ProposalManager
                     $return->setSatTime($proposalLinked->getCriteria()->getSatTime());
                     $return->setSunTime($proposalLinked->getCriteria()->getSunTime());
                     $return->setMultipleTimes();
+                    $return->setFromDate($proposalLinked->getCriteria()->getFromDate());
+                    $return->setToDate($proposalLinked->getCriteria()->getToDate());
                     $resultPassenger->setReturn($return);
                 }
 

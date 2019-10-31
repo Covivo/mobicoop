@@ -75,6 +75,18 @@ class ResultItem
     private $time;
 
     /**
+     * @var \DateTimeInterface The min date for a regular journey.
+     * @Groups("results")
+     */
+    private $fromDate;
+
+    /**
+     * @var \DateTimeInterface The max date for a regular journey.
+     * @Groups("results")
+     */
+    private $toDate;
+
+    /**
      * @var Address The origin address (the origin of the carpooler who search or post).
      * @Groups("results")
      */
@@ -322,6 +334,30 @@ class ResultItem
     public function setTime(?\DateTimeInterface $time): self
     {
         $this->time = $time;
+
+        return $this;
+    }
+
+    public function getFromDate(): ?\DateTimeInterface
+    {
+        return $this->fromDate;
+    }
+
+    public function setFromDate(\DateTimeInterface $fromDate): self
+    {
+        $this->fromDate = $fromDate;
+
+        return $this;
+    }
+
+    public function getToDate(): ?\DateTimeInterface
+    {
+        return $this->toDate;
+    }
+
+    public function setToDate(\DateTimeInterface $toDate): self
+    {
+        $this->toDate = $toDate;
 
         return $this;
     }

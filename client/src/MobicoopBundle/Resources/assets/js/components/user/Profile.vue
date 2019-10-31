@@ -110,7 +110,7 @@ export default {
       type: String,
       default: null
     },
-     alerts: {
+    alerts: {
       type: Array,
       default: null
     }

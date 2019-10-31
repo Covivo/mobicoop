@@ -6,7 +6,23 @@
     "carpoolAsDriver": "Covoiturer comme conducteur",
     "carpoolAsPassenger": "Covoiturer comme passager",
     "birthYears": "ans",
-    "contact": "Contacter"
+    "contact": "Contacter",
+    "outward": "Choisir l'aller",
+    "return": "Choisir le retour",
+    "previous": "Précédent",
+    "detail": "Détail",
+    "i18n": {
+      "date": {
+        "format": {
+          "fullDate": "ddd Do MMMM YYYY"
+        }
+      },
+      "time": {
+        "format": {
+          "hourMinute": "HH[h]mm"
+        }
+      }
+    }
   },
   "en": {
     "detailTitle": "Journey detail",
@@ -15,6 +31,22 @@
     "carpoolAsDriver": "Carpool as driver",
     "carpoolAsPassenger": "Carpool as passenger",
     "birthYears": "years",
-    "contact": "Contacter"
+    "contact": "Contact",
+    "outward": "Choose outward",
+    "return": "Choose return",
+    "previous": "Previous",
+    "detail": "Detail",
+    "i18n": {
+      "date": {
+        "format": {
+          "fullDate": "ddd Do MMMM YYYY"
+        }
+      },
+      "time": {
+        "format": {
+          "hourMinute": "HH[h]mm"
+        }
+      }
+    }
   }
 }
