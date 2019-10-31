@@ -1,6 +1,29 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-<p>{{ "Nous sommes content de vous rendre service."|trans }}</p>
-<p>{{ "Nous vous notifions par ce message que votre annonce a été posté avec succes!"|trans }}</p>
-<p>{{ "Merci"| trans }}!</p>
+    <p>@PrenomOuPseudoExpediteur {{ "yourAsk"|trans }}.</p>
+    <p>{{ "replyViaEMail"|trans }} {{ api_env('EMAILS_PLATFORM_NAME') }} {{ "clickHere"|trans}} @URLdelapagedemessageriecorrespondante.</p>
+    {# Driver/ Passenger regular #}
+    <p>{{ "carpoolDistance"|trans}} @DistancePassager km.</p>
+    {# #}
+    {# Driver/ Passenger occasionnal #}
+    <p>{{ "ocassionalCarpoolDistancee"|trans}} @DistancePassager km.</p>
+    {# #}
+    <p>{{ "driverDetour" |trans}}  @TempsDetourMinutes  /  @DistanceDetour  km.</p>
+    <p>{{ "supported"|trans }} @AdressePEC.</p>
+    {# Driver/ Passenger occasionnal #}
+    <p>{{ "the"|trans}} @DateDebut {{ "hour"|trans}} @DateDebut.</p>
+    {# #}
+    <p>{{ "depositedAt" |trans }} @AdresseDepose.</p>
+    {# Driver/ Passenger regular #}
+    <p>{{ "appointmentHour" |trans}} {{ "monday" |trans}} {{ "tuesday" |trans}} {{ "wednesday" |trans}} {{ "thusday" |trans}} {{ "friday" |trans}} {{ "saturday" |trans}} {{ "sunday" |trans}}.</p>
+    <p>{{ "the" |trans}}  @DateDebut  {{ "from" |trans}}  @DateDebut  {{ "to" |trans}} @DateFin.</p>
+    {# #}
+    {# Driver #}
+    <p>{{ "passengerComment" |trans}} :  @CommentairesDemande.</p>
+    {# #}
+    {# Passenger #}
+    <p>{{ "driverComment"|trans}} : @CommentairesDemande.</p>
+    {# #}
+    <p>{{ "reservedPlaces" |trans}} @NbPassagers.</p>
+    <p>{{ "indicativePrice" |trans}}  @GainConducteur @Monnaie.</p>
 {% endblock %}

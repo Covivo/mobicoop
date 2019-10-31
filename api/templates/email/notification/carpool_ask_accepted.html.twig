@@ -1,0 +1,37 @@
+{% extends '/email/notification/base.html.twig' %}
+{% block body %}
+        <p>{{ "summaryCarpools"|trans }}.</p>
+        <p>{{ "phoneNumber"|trans }} @PrenomOuPseudoPassager  {{ "isThe"|trans}} @PortablePassager
+        @PrenomOuPseudoPassager  @SexePassager  @AgePassager   @PortablePassager.</p>
+{#passager regulier #}
+        <p>{{ "phoneNumber"|trans }} @PrenomOuPseudoConducteur {{ "isThe"|trans}} @PortableConducteur
+        @PrenomOuPseudoConducteur @SexeConducteur @AgeConducteur  @PortableConducteur .</p>
+        <p>{{ "carpoolDistance"|trans}} @DistanceConducteur km. </p>
+{#  #}
+        <p>{{ "ocassionalCarpoolDistance"|trans}} @DistancePassager km.</p>
+        <p>{{ "driverDetour"|trans}}  @TempsDetourMinutes  /  @DistanceDetour  km.</p>
+        <p>{{ "supported"|trans }} @AdressePEC.</p>
+{#passager regulier #}
+        <p>{{ "depositedAt"|trans }} @AdresseDepose.</p>
+        <p>{{ "appointmentHour" |trans}} {{ "monday" |trans}}  {{ "tuesday" |trans}}  {{ "wednesday" |trans}}  {{ "thusday" |trans}}  {{ "friday" |trans}}  {{ "saturday" |trans}}  {{ "sunday" |trans}}.</p>
+        <p>{{ "the" |trans}}  @DateDebut  {{ "from" |trans}}  @DateDebut  {{ "to" |trans}} @DateFin.</p>
+        <p>{{ "driverComment"|trans}} : @CommentairesDemande.</p>
+        <p>{{ "reservedPlaces"|trans}} @NbPassagers.</p>
+        <p>{{ "indicativePrice"|trans}}  @GainConducteur @Monnaie.</p>
+{#  #}
+{#driver regulier #}
+        <p>{{ "appointmentHour" |trans}} {{ "monday" |trans}}  {{ "tuesday" |trans}}  {{ "wednesday" |trans}}  {{ "thusday" |trans}}  {{ "friday" |trans}}  {{ "saturday" |trans}}  {{ "sunday" |trans}}.</p>
+        <p>{{ "the" |trans}}  @DateDebut  {{ "from" |trans}}  @DateDebut  {{ "to" |trans}} @DateFin.</p>
+
+{#  #}
+{# driver occasional #}
+    <p>{{ "the"|trans}}  @DateDebut  {{ "at"|trans}}  @DateDebut.</p>
+{#  #}
+    <p>{{ "depositedAt"|trans }} @AdresseDepose.</p>
+    <p>{{ "passengerComment"|trans}} :  @CommentairesDemande.</p>
+{#passager occasionnel #}
+       <p>{{ "driverComment"|trans}}  @CommentairesDemande.</p>
+{#  #}
+    <p>{{ "reservedPlaces"|trans}} @NbPassagers.</p>
+    <p>{{ "indicativePrice"|trans}}  @GainConducteur @Monnaie.</p>
+{% endblock %}
