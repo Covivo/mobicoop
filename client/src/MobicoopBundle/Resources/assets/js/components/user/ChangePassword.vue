@@ -32,7 +32,7 @@
               name="password"
               :label="$t('form.newPassword')"
               required
-              :rules="passwordRules"
+              :rules="[passWordRules.required,passWordRules.min, passWordRules.checkUpper,passWordRules.checkLower,passWordRules.checkNumber]"
               @click:append="show1 = !show1"
             />
             <v-text-field
@@ -84,7 +84,25 @@ export default {
       errorUpdate: false,
       valid: true,
       password: "",
-      passwordRules: [v => !!v || this.$t("form.errors.required")],
+      passWordRules: {
+        required:  v => !!v || this.$t("models.user.password.errors.required"),
+        min: v => v.length >= 8 || this.$t("models.user.password.errors.min"),
+        checkUpper : value => {
+          const pattern = /^(?=.*[A-Z]).*$/
+          return pattern.test(value) || this.$t("models.user.password.errors.upper")
+
+        },
+        checkLower : value => {
+          const pattern = /^(?=.*[a-z]).*$/
+          return pattern.test(value) || this.$t("models.user.password.errors.lower")
+
+        },
+        checkNumber : value => {
+          const pattern = /^(?=.*[0-9]).*$/
+          return pattern.test(value) || this.$t("models.user.password.errors.number")
+
+        },
+      },
       passwordRepeat: "",
       passwordRepeatRules: [
         v => !!v || this.$t("form.errors.required"),

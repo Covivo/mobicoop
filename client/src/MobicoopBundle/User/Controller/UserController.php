@@ -69,16 +69,18 @@ class UserController extends AbstractController
     private $encoder;
     private $facebook_show;
     private $facebook_appid;
+    private $required_home_address;
 
     /**
      * Constructor
      * @param UserPasswordEncoderInterface $encoder
      */
-    public function __construct(UserPasswordEncoderInterface $encoder, $facebook_show, $facebook_appid)
+    public function __construct(UserPasswordEncoderInterface $encoder, $facebook_show, $facebook_appid, $required_home_address)
     {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
         $this->facebook_appid = $facebook_appid;
+        $this->required_home_address = $required_home_address;
     }
 
     /***********
@@ -171,6 +173,7 @@ class UserController extends AbstractController
                 'error' => $error,
                 "facebook_show"=>($this->facebook_show==="true") ? true : false,
                 "facebook_appid"=>$this->facebook_appid,
+                "required_home_address"=>($this->required_home_address==="true") ? true : false,
         ]);
     }
 
