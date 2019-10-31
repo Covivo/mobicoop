@@ -1,212 +1,476 @@
 <template>
-  <v-content>
-    <v-container fluid>
-      <!-- Title and subtitle -->
-      <v-row 
-        justify="center"
+  <v-container fluid>
+    <!-- Title and subtitle -->
+    <v-row 
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        md="8"
+        xl="6"
+        align="center"
       >
-        <v-col
-          cols="12"
-          md="8"
-          xl="6"
-          align="center"
-        >
-          <h1>{{ $t('title') }}</h1>
-          <h3 v-if="step==1">
-            {{ $t('subtitle') }}
-          </h3>
-          <!-- todo : remove this awful trick !! -->
-          <h3 v-else>
+        <h1>{{ $t('title') }}</h1>
+        <h3 v-if="step==1">
+          {{ $t('subtitle') }}
+        </h3>
+        <!-- todo : remove this awful trick !! -->
+        <h3 v-else>
             &nbsp;
-          </h3>
-        </v-col>
-      </v-row>
-      <v-row
-        v-if="solidaryAd"
-        justify="center"
+        </h3>
+      </v-col>
+    </v-row>
+    <v-row
+      v-if="solidaryAd"
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        md="8"
+        xl="6"
       >
-        <v-col
-          cols="12"
-          md="8"
-          xl="6"
-        >
-          <v-alert type="info">
-            <p>{{ $t("messageSolidaryAd.message") }}</p>
-          </v-alert>
-        </v-col>
-      </v-row>
-      <v-row
-        v-if="solidaryAd"
-        justify="center"
+        <v-alert type="info">
+          <p>{{ $t("messageSolidaryAd.message") }}</p>
+        </v-alert>
+      </v-col>
+    </v-row>
+    <v-row
+      v-if="solidaryAd"
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        md="8"
+        xl="6"
+        class="d-flex justify-center"
       >
-        <v-col
-          cols="12"
-          md="8"
-          xl="6"
-          class="d-flex justify-center"
-        >
-          <v-switch
-            v-model="solidary"
-            color="success"
-            inset
-            :label="this.$t('messageSolidaryAd.switch.label')"
-          />
-        </v-col>
-      </v-row>
-      <v-row
-        v-if="firstAd"
-        justify="center"
+        <v-switch
+          v-model="solidary"
+          color="success"
+          inset
+          :label="this.$t('messageSolidaryAd.switch.label')"
+        />
+      </v-col>
+    </v-row>
+    <v-row
+      v-if="firstAd"
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        md="8"
+        xl="6"
       >
-        <v-col
-          cols="12"
-          md="8"
-          xl="6"
-        >
-          <v-alert type="info">
-            <p>{{ $t("messageFirstAd.signUpDone", {'givenName':user.givenName}) }}.</p>
-            <p>{{ $t("messageFirstAd.alert") }}</p>
-          </v-alert>
-        </v-col>
-      </v-row>
-      <!-- Stepper -->
-      <v-row 
-        justify="center"
+        <v-alert type="info">
+          <p>{{ $t("messageFirstAd.signUpDone", {'givenName':user.givenName}) }}.</p>
+          <p>{{ $t("messageFirstAd.alert") }}</p>
+        </v-alert>
+      </v-col>
+    </v-row>
+    <!-- Stepper -->
+    <v-row 
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        md="8"
+        xl="6"
+        align="center"
       >
-        <v-col
-          cols="12"
-          md="8"
-          xl="6"
-          align="center"
+        <v-stepper
+          v-model="step"
+          alt-labels
+          class="elevation-0"
         >
-          <v-stepper
-            v-model="step"
-            alt-labels
+          <!-- Stepper Header -->
+          <v-stepper-header
+            v-show="step!==1"
             class="elevation-0"
           >
-            <!-- Stepper Header -->
-            <v-stepper-header
-              v-show="step!==1"
-              class="elevation-0"
+            <!-- Step 1 : search journey -->
+            <v-stepper-step
+              editable
+              :step="1"
+              color="primary"
             >
-              <!-- Step 1 : search journey -->
-              <v-stepper-step
-                editable
-                :step="1"
-                color="primary"
+              {{ $t('stepper.header.search_journey') }}
+            </v-stepper-step>
+            <v-divider />
+
+            <!-- Step 2 : planification -->
+            <v-stepper-step
+              editable
+              :step="2"
+              color="primary"
+            >
+              {{ $t('stepper.header.planification') }}
+            </v-stepper-step>
+            <v-divider />
+
+            <!-- Step 3 : map -->
+            <v-stepper-step
+              editable
+              :step="3"
+              color="primary"
+            >
+              {{ $t('stepper.header.map') }}
+            </v-stepper-step>
+            <v-divider />
+
+            <!-- Step 4 : passengers (if driver) -->
+            <v-stepper-step
+              v-if="driver"
+              editable
+              :step="4"
+              color="primary"
+            >
+              {{ $t('stepper.header.passengers') }}
+            </v-stepper-step>
+            <v-divider />
+
+            <!-- Step 5 : participation (if driver) -->
+            <v-stepper-step
+              v-if="driver && !solidary"
+              editable
+              :step="5"
+              color="primary"
+            >
+              {{ $t('stepper.header.participation') }}
+            </v-stepper-step>
+            <v-divider />
+
+            <!-- Step 6 : message -->
+            <v-stepper-step
+              editable
+              :step="driver ? 6 : 4"
+              color="primary"
+            >
+              {{ $t('stepper.header.message') }}
+            </v-stepper-step>
+            <v-divider />
+
+            <!-- Step 7 : summary -->
+            <v-stepper-step
+              color="primary"
+              editable
+              :step="driver ? 7 : 5"
+            >
+              {{ $t('stepper.header.summary') }}
+            </v-stepper-step>
+          </v-stepper-header>
+
+          <!-- Stepper Content -->
+          <v-stepper-items>
+            <!-- Step 1 : search journey -->
+            <v-stepper-content step="1">
+              <search-journey
+                :solidary-ad="solidary"
+                display-roles
+                :geo-search-url="geoSearchUrl"
+                :user="user"
+                :init-outward-date="outwardDate"
+                :init-origin="origin"
+                :init-destination="destination"
+                :init-regular="regular"
+                @change="searchChanged"
+              />
+            </v-stepper-content>
+
+            <!-- Step 2 : planification -->
+            <v-stepper-content step="2">
+              <ad-planification 
+                :init-outward-date="outwardDate"
+                :init-outward-time="outwardTime"
+                :regular="regular"
+                :default-margin-time="defaultMarginTime" 
+                @change="planificationChanged"
+              />
+            </v-stepper-content>
+
+            <!-- Step 3 : route -->
+            <v-stepper-content step="3">
+              <v-row>
+                <v-col cols="12">
+                  <ad-route 
+                    :geo-search-url="geoSearchUrl"
+                    :geo-route-url="geoRouteUrl"
+                    :user="user"
+                    :init-origin="origin"
+                    :init-destination="destination"
+                    :community-ids="communityIds"
+                    @change="routeChanged"
+                  />
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12">
+                  <m-map
+                    ref="mmapRoute"
+                    type-map="adSummary"
+                    :points="pointsToMap"
+                    :ways="directionWay"
+                    :provider="mapProvider"
+                    :url-tiles="urlTiles"
+                    :attribution-copyright="attributionCopyright"
+                  />
+                </v-col>
+              </v-row>
+            </v-stepper-content>
+
+            <!-- Step 4 : passengers (if driver) -->
+            <v-stepper-content
+              v-if="driver"
+              step="4"
+            >
+              <v-row
+                dense
+                align="center"
+                justify="center"
               >
-                {{ $t('stepper.header.search_journey') }}
-              </v-stepper-step>
-              <v-divider />
+                <v-col
+                  cols="3"
+                  align="right"
+                >
+                  {{ $t('stepper.content.passengers.seats.question') }}
+                </v-col>
 
-              <!-- Step 2 : planification -->
-              <v-stepper-step
-                editable
-                :step="2"
-                color="primary"
+                <v-col
+                  cols="1"
+                >
+                  <v-select
+                    v-model="seats"
+                    :items="[1,2,3,4]"
+                  />
+                </v-col>
+                  
+                <v-col
+                  cols="2"
+                  align="left"
+                >
+                  {{ $t('stepper.content.passengers.seats.passengers') }}
+                </v-col>
+              </v-row>
+
+              <v-row
+                align="center"
+                dense
               >
-                {{ $t('stepper.header.planification') }}
-              </v-stepper-step>
-              <v-divider />
+                <v-col
+                  cols="5"
+                  offset="3"
+                  align="left"
+                >
+                  {{ $t('stepper.content.passengers.luggage.label') }}
+                </v-col>
+                <v-col
+                  cols="1"
+                >
+                  <v-switch
+                    v-model="luggage"
+                    inset
+                    hide-details
+                    class="mt-0 mb-1"
+                    color="primary"
+                  />
+                </v-col>
+                <v-col
+                  cols="1"
+                  align="left"
+                >
+                  <v-tooltip
+                    right
+                    color="info"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on">
+                        mdi-help-circle-outline
+                      </v-icon>
+                    </template>
+                    <span>{{ $t('stepper.content.passengers.luggage.help') }}</span>
+                  </v-tooltip>
+                </v-col>
+              </v-row>
 
-              <!-- Step 3 : map -->
-              <v-stepper-step
-                editable
-                :step="3"
-                color="primary"
+              <v-row
+                align="center"
+                dense
               >
-                {{ $t('stepper.header.map') }}
-              </v-stepper-step>
-              <v-divider />
-
-              <!-- Step 4 : passengers (if driver) -->
-              <v-stepper-step
-                v-if="driver"
-                editable
-                :step="4"
-                color="primary"
+                <v-col
+                  cols="5"
+                  offset="3"
+                  align="left"
+                >
+                  {{ $t('stepper.content.passengers.bike.label') }}
+                </v-col>
+                <v-col
+                  cols="1"
+                >
+                  <v-switch
+                    v-model="bike"
+                    inset
+                    hide-details
+                    class="mt-0 mb-1"
+                    color="primary"
+                  />
+                </v-col>
+                <v-col
+                  cols="1"
+                  align="left"
+                >
+                  <v-tooltip
+                    right
+                    color="info"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on">
+                        mdi-help-circle-outline
+                      </v-icon>
+                    </template>
+                    <span>{{ $t('stepper.content.passengers.bike.help') }}</span>
+                  </v-tooltip>
+                </v-col>
+              </v-row>
+  
+              <v-row
+                align="center"
+                dense
               >
-                {{ $t('stepper.header.passengers') }}
-              </v-stepper-step>
-              <v-divider />
+                <v-col
+                  cols="5"
+                  offset="3"
+                  align="left"
+                >
+                  {{ $t('stepper.content.passengers.backSeats.label') }}
+                </v-col>
+                <v-col
+                  cols="1"
+                >
+                  <v-switch
+                    v-model="backSeats"
+                    inset
+                    hide-details
+                    class="mt-0 mb-1"
+                    color="primary"
+                  />
+                </v-col>
+                <v-col
+                  cols="1"
+                  align="left"
+                >
+                  <v-tooltip
+                    color="info"
+                    right
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on">
+                        mdi-help-circle-outline
+                      </v-icon>
+                    </template>
+                    <span>{{ $t('stepper.content.passengers.backSeats.help') }}</span>
+                  </v-tooltip>
+                </v-col>
+              </v-row>
+            </v-stepper-content>
 
-              <!-- Step 5 : participation (if driver) -->
-              <v-stepper-step
-                v-if="driver && !solidary"
-                editable
-                :step="5"
-                color="primary"
+            <!-- Step 5 : participation (if driver) -->
+            <v-stepper-content
+              v-if="driver && !solidary"
+              step="5"
+            >
+              <v-row
+                dense
+                align="center"
+                justify="center"
               >
-                {{ $t('stepper.header.participation') }}
-              </v-stepper-step>
-              <v-divider />
+                <v-col
+                  cols="3"
+                  align="right"
+                >
+                  {{ $t('stepper.content.participation.price') }}
+                </v-col>
 
-              <!-- Step 6 : message -->
-              <v-stepper-step
-                editable
-                :step="driver ? 6 : 4"
-                color="primary"
+                <v-col
+                  cols="2"
+                >
+                  <v-text-field 
+                    v-model="price"
+                    :disabled="distance<=0"
+                    type="number"
+                    suffix="€"
+                    :hint="hintPricePerKm"
+                    persistent-hint
+                  />
+                </v-col>
+                  
+                <v-col
+                  cols="2"
+                  align="left"
+                >
+                  {{ $t('stepper.content.participation.passengers') }}
+                </v-col>
+              </v-row>
+            </v-stepper-content>
+
+            <!-- Step 6 : message -->
+            <v-stepper-content
+              :step="driver ? 6 : 4"
+            >
+              <v-row
+                dense
+                align="center"
+                justify="center"
               >
-                {{ $t('stepper.header.message') }}
-              </v-stepper-step>
-              <v-divider />
+                <v-col
+                  cols="6"
+                >
+                  <p v-if="driver && passenger">
+                    {{ $t('stepper.content.message.title.both') }}
+                  </p>
+                  <p v-else-if="driver">
+                    {{ $t('stepper.content.message.title.driver') }}
+                  </p>
+                  <p v-else>
+                    {{ $t('stepper.content.message.title.passenger') }}
+                  </p>
+                  <v-textarea
+                    v-model="message"
+                    :label="$t('stepper.content.message.label')"
+                  />
+                </v-col>
+              </v-row>
+            </v-stepper-content>
 
-              <!-- Step 7 : summary -->
-              <v-stepper-step
-                color="primary"
-                editable
-                :step="driver ? 7 : 5"
-              >
-                {{ $t('stepper.header.summary') }}
-              </v-stepper-step>
-            </v-stepper-header>
-
-            <!-- Stepper Content -->
-            <v-stepper-items>
-              <!-- Step 1 : search journey -->
-              <v-stepper-content step="1">
-                <search-journey
-                  :solidary-ad="solidary"
-                  display-roles
-                  :geo-search-url="geoSearchUrl"
-                  :user="user"
-                  :init-outward-date="outwardDate"
-                  :init-origin="origin"
-                  :init-destination="destination"
-                  :init-regular="regular"
-                  @change="searchChanged"
-                />
-              </v-stepper-content>
-
-              <!-- Step 2 : planification -->
-              <v-stepper-content step="2">
-                <ad-planification 
-                  :init-outward-date="outwardDate"
-                  :init-outward-time="outwardTime"
-                  :regular="regular"
-                  :default-margin-time="defaultMarginTime" 
-                  @change="planificationChanged"
-                />
-              </v-stepper-content>
-
-              <!-- Step 3 : route -->
-              <v-stepper-content step="3">
+            <!-- Step 7 : summary -->
+            <v-stepper-content
+              :step="driver ? 7 : 5"
+            >
+              <v-container>
                 <v-row>
                   <v-col cols="12">
-                    <ad-route 
-                      :geo-search-url="geoSearchUrl"
-                      :geo-route-url="geoRouteUrl"
+                    <ad-summary 
+                      :driver="driver"
+                      :passenger="passenger"
+                      :regular="regular"
+                      :outward-date="outwardDate"
+                      :outward-time="outwardTime"
+                      :return-date="returnDate"
+                      :return-time="returnTime"
+                      :schedules="schedules"
+                      :seats="seats"
+                      :price="parseFloat(price)"
+                      :route="route"
+                      :message="message"
                       :user="user"
-                      :init-origin="origin"
-                      :init-destination="destination"
-                      :community-ids="communityIds"
-                      @change="routeChanged"
+                      :origin="origin"
+                      :destination="destination"
+                      :solidary="solidary"
                     />
                   </v-col>
                 </v-row>
                 <v-row>
                   <v-col cols="12">
                     <m-map
-                      ref="mmapRoute"
+                      ref="mmapSummary"
                       type-map="adSummary"
                       :points="pointsToMap"
                       :ways="directionWay"
@@ -216,331 +480,65 @@
                     />
                   </v-col>
                 </v-row>
-              </v-stepper-content>
+              </v-container>
+            </v-stepper-content>
+          </v-stepper-items>
+        </v-stepper>
+      </v-col>
+    </v-row>
+    <!-- </v-stepper-content> -->
 
-              <!-- Step 4 : passengers (if driver) -->
-              <v-stepper-content
-                v-if="driver"
-                step="4"
-              >
-                <v-row
-                  dense
-                  align="center"
-                  justify="center"
-                >
-                  <v-col
-                    cols="3"
-                    align="right"
-                  >
-                    {{ $t('stepper.content.passengers.seats.question') }}
-                  </v-col>
-
-                  <v-col
-                    cols="1"
-                  >
-                    <v-select
-                      v-model="seats"
-                      :items="[1,2,3,4]"
-                    />
-                  </v-col>
-                  
-                  <v-col
-                    cols="2"
-                    align="left"
-                  >
-                    {{ $t('stepper.content.passengers.seats.passengers') }}
-                  </v-col>
-                </v-row>
-
-                <v-row
-                  align="center"
-                  dense
-                >
-                  <v-col
-                    cols="5"
-                    offset="3"
-                    align="left"
-                  >
-                    {{ $t('stepper.content.passengers.luggage.label') }}
-                  </v-col>
-                  <v-col
-                    cols="1"
-                  >
-                    <v-switch
-                      v-model="luggage"
-                      inset
-                      hide-details
-                      class="mt-0 mb-1"
-                      color="primary"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="1"
-                    align="left"
-                  >
-                    <v-tooltip
-                      right
-                      color="info"
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-icon v-on="on">
-                          mdi-help-circle-outline
-                        </v-icon>
-                      </template>
-                      <span>{{ $t('stepper.content.passengers.luggage.help') }}</span>
-                    </v-tooltip>
-                  </v-col>
-                </v-row>
-
-                <v-row
-                  align="center"
-                  dense
-                >
-                  <v-col
-                    cols="5"
-                    offset="3"
-                    align="left"
-                  >
-                    {{ $t('stepper.content.passengers.bike.label') }}
-                  </v-col>
-                  <v-col
-                    cols="1"
-                  >
-                    <v-switch
-                      v-model="bike"
-                      inset
-                      hide-details
-                      class="mt-0 mb-1"
-                      color="primary"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="1"
-                    align="left"
-                  >
-                    <v-tooltip
-                      right
-                      color="info"
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-icon v-on="on">
-                          mdi-help-circle-outline
-                        </v-icon>
-                      </template>
-                      <span>{{ $t('stepper.content.passengers.bike.help') }}</span>
-                    </v-tooltip>
-                  </v-col>
-                </v-row>
-  
-                <v-row
-                  align="center"
-                  dense
-                >
-                  <v-col
-                    cols="5"
-                    offset="3"
-                    align="left"
-                  >
-                    {{ $t('stepper.content.passengers.backSeats.label') }}
-                  </v-col>
-                  <v-col
-                    cols="1"
-                  >
-                    <v-switch
-                      v-model="backSeats"
-                      inset
-                      hide-details
-                      class="mt-0 mb-1"
-                      color="primary"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="1"
-                    align="left"
-                  >
-                    <v-tooltip
-                      color="info"
-                      right
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-icon v-on="on">
-                          mdi-help-circle-outline
-                        </v-icon>
-                      </template>
-                      <span>{{ $t('stepper.content.passengers.backSeats.help') }}</span>
-                    </v-tooltip>
-                  </v-col>
-                </v-row>
-              </v-stepper-content>
-
-              <!-- Step 5 : participation (if driver) -->
-              <v-stepper-content
-                v-if="driver && !solidary"
-                step="5"
-              >
-                <v-row
-                  dense
-                  align="center"
-                  justify="center"
-                >
-                  <v-col
-                    cols="3"
-                    align="right"
-                  >
-                    {{ $t('stepper.content.participation.price') }}
-                  </v-col>
-
-                  <v-col
-                    cols="2"
-                  >
-                    <v-text-field 
-                      v-model="price"
-                      :disabled="distance<=0"
-                      type="number"
-                      suffix="€"
-                      :hint="hintPricePerKm"
-                      persistent-hint
-                    />
-                  </v-col>
-                  
-                  <v-col
-                    cols="2"
-                    align="left"
-                  >
-                    {{ $t('stepper.content.participation.passengers') }}
-                  </v-col>
-                </v-row>
-              </v-stepper-content>
-
-              <!-- Step 6 : message -->
-              <v-stepper-content
-                :step="driver ? 6 : 4"
-              >
-                <v-row
-                  dense
-                  align="center"
-                  justify="center"
-                >
-                  <v-col
-                    cols="6"
-                  >
-                    <p v-if="driver && passenger">
-                      {{ $t('stepper.content.message.title.both') }}
-                    </p>
-                    <p v-else-if="driver">
-                      {{ $t('stepper.content.message.title.driver') }}
-                    </p>
-                    <p v-else>
-                      {{ $t('stepper.content.message.title.passenger') }}
-                    </p>
-                    <v-textarea
-                      v-model="message"
-                      :label="$t('stepper.content.message.label')"
-                    />
-                  </v-col>
-                </v-row>
-              </v-stepper-content>
-
-              <!-- Step 7 : summary -->
-              <v-stepper-content
-                :step="driver ? 7 : 5"
-              >
-                <v-container>
-                  <v-row>
-                    <v-col cols="12">
-                      <ad-summary 
-                        :driver="driver"
-                        :passenger="passenger"
-                        :regular="regular"
-                        :outward-date="outwardDate"
-                        :outward-time="outwardTime"
-                        :return-date="returnDate"
-                        :return-time="returnTime"
-                        :schedules="schedules"
-                        :seats="seats"
-                        :price="parseFloat(price)"
-                        :route="route"
-                        :message="message"
-                        :user="user"
-                        :origin="origin"
-                        :destination="destination"
-                        :solidary="solidary"
-                      />
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col cols="12">
-                      <m-map
-                        ref="mmapSummary"
-                        type-map="adSummary"
-                        :points="pointsToMap"
-                        :ways="directionWay"
-                        :provider="mapProvider"
-                        :url-tiles="urlTiles"
-                        :attribution-copyright="attributionCopyright"
-                      />
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-stepper-content>
-            </v-stepper-items>
-          </v-stepper>
-        </v-col>
-      </v-row>
-      <!-- </v-stepper-content> -->
-
-      <!-- Buttons Previous and Next step -->
-      <v-layout
-        mt-5
-        justify-center
+    <!-- Buttons Previous and Next step -->
+    <v-layout
+      mt-5
+      justify-center
+    >
+      <v-btn
+        v-if="step > 1"
+        rounded
+        outlined
+        color="primary" 
+        align-center
+        @click="--step"
       >
-        <v-btn
-          v-if="step > 1"
-          rounded
-          outlined
-          color="primary" 
-          align-center
-          @click="--step"
-        >
-          {{ $t('stepper.buttons.previous') }}
-        </v-btn>
+        {{ $t('stepper.buttons.previous') }}
+      </v-btn>
 
-        <v-btn
-          v-if="validNext"
-          :disabled="!validNext"
-          rounded
-          color="primary"
-          align-center
-          style="margin-left: 30px;"
-          @click="step++"
-        >
-          {{ $t('stepper.buttons.next') }}
-        </v-btn>
+      <v-btn
+        v-if="validNext"
+        :disabled="!validNext"
+        rounded
+        color="primary"
+        align-center
+        style="margin-left: 30px;"
+        @click="step++"
+      >
+        {{ $t('stepper.buttons.next') }}
+      </v-btn>
 
-        <v-tooltip
-          v-if="valid"
-          bottom
-        >
-          <template v-slot:activator="{on}">
-            <div v-on="(!valid)?on:{}">
-              <v-btn
-                :disabled="!valid || loading"
-                :loading="loading"
-                rounded
-                color="secondary"
-                style="margin-left: 30px;"
-                align-center
-                @click="postAd"
-              >
-                {{ $t('stepper.buttons.publish_ad') }}
-              </v-btn>
-            </div>
-          </template>
-          <span>{{ $t('stepper.buttons.notValid') }}</span>
-        </v-tooltip>
-      </v-layout>
-    </v-container>
-  </v-content>
+      <v-tooltip
+        v-if="valid"
+        bottom
+      >
+        <template v-slot:activator="{on}">
+          <div v-on="(!valid)?on:{}">
+            <v-btn
+              :disabled="!valid || loading"
+              :loading="loading"
+              rounded
+              color="secondary"
+              style="margin-left: 30px;"
+              align-center
+              @click="postAd"
+            >
+              {{ $t('stepper.buttons.publish_ad') }}
+            </v-btn>
+          </div>
+        </template>
+        <span>{{ $t('stepper.buttons.notValid') }}</span>
+      </v-tooltip>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
