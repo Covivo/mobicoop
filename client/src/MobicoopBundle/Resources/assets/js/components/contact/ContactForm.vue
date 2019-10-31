@@ -79,6 +79,21 @@
                   />
                 </v-col>
 
+                <v-col
+                  cols="12"
+                >
+                  <v-checkbox
+                    v-model="form.consent"
+                    :rules="form.consentRules"
+                    :label="$t('consent.placeholder') + ` *`"
+                    color="success"
+                    name="consent"
+                  />
+                  <p class="text-left">
+                    {{ $t('consent.text') }}
+                  </p>
+                </v-col>
+
                 <!-- Honey pot -->
                 <!-- use of HTML input to have access to required attribute -->
                 <!-- use of website name is arbitrary and can be changed -->
@@ -109,6 +124,20 @@
               >
                 {{ $t('buttons.send.label') }}
               </v-btn>
+              
+              <v-row
+                class="mt-5"
+              >
+                <v-col cols="12">
+                  <p class="text-left">
+                    {{ $t('dataPolicy.text') }}&nbsp;
+                    <a
+                      :href="$t('dataPolicy.route')"
+                      target="_blank"
+                    >{{ $t('dataPolicy.link') }}</a>.
+                  </p>
+                </v-col>
+              </v-row>
             </v-container>
           </v-form>
         </v-col>
@@ -152,6 +181,10 @@ export default {
         messageRules: [
           v => !!v || this.$t("message.errors.required"),
         ],
+        consent: false,
+        consentRules: [
+          v => !!v || this.$t("consent.errors.required"),
+        ],
         website: "", // honey pot data
       },
       alert: {
@@ -173,6 +206,7 @@ export default {
           familyName: this.form.familyName,
           demand: this.form.demand,
           message: this.form.message,
+          consent: this.form.consent,
           website: this.form.website // honey pot data
         })
           .then(function (response) {

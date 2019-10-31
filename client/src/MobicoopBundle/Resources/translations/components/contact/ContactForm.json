@@ -13,7 +13,7 @@
       "placeholder": "Votre email",
       "errors": {
         "required": "L'adresse email est requise",
-        "valid": "L'adresse email doit être valide"
+        "valid": "L'adresse email doit être valide."
       }
     },
     "demand": {
@@ -29,7 +29,7 @@
       "label": "Votre message",
       "placeholder": "Votre message",
       "errors": {
-        "required": "Le message est requis"
+        "required": "Le message est requis."
       }
     },
       "buttons": {
@@ -38,7 +38,75 @@
           "route": "contact/send"
         }
     },
+    "consent": {
+      "label": "Données personnelles",
+      "placeholder": "Données personnelles",
+      "text": "En cochant cette case et en soumettant ce formulaire, j'accepte que mes données personnelles soient utilisées pour me recontacter dans le cadre de ma demande indiquée dans ce formulaire. Aucun autre traitement ne sera effectué avec mes informations.",
+      "errors": {
+        "required": "Votre consentement est requis."
+      }
+    },
+    "dataPolicy": {
+      "text": "Pour connaitre et exercer vos droits, notamment de retrait de votre consentement à l'utilisation de données collectées par ce formulaire, veuillez consulter",
+      "link": "notre politique de protection des données",
+      "route": "/cgu"
+    },
     "success": "Votre message a été envoyé avec succès.",
     "error" : "Une erreur est survenue."
+  },
+  "en": {
+    "lastName": {
+      "label": "Your last name",
+      "placeholder": "Your last name"
+    },
+    "firstName": {
+      "label": "Your first name",
+      "placeholder": "Your first name"
+    },
+    "email": {
+      "label": "Your email",
+      "placeholder": "Your email",
+      "errors": {
+        "required": "Email is required",
+        "valid": "Email must be valid"
+      }
+    },
+    "demand": {
+      "label": "Your demand",
+      "placeholder": "Your demand",
+      "items": [
+        "Information",
+        "Technical issue",
+        "Partnership"
+      ]
+    },
+    "message": {
+      "label": "Your message",
+      "placeholder": "Your message",
+      "errors": {
+        "required": "Message is required."
+      }
+    },
+    "buttons": {
+      "send": {
+        "label" : "send",
+        "route": "contact/send"
+      }
+    },
+    "consent": {
+      "label": "Personal data",
+      "placeholder": "Personal data",
+      "text": "En cochant cette case et en soumettant ce formulaire, j'accepte que mes données personnelles soient utilisées pour me recontacter dans le cadre de ma demande indiquée dans ce formulaire. Aucun autre traitement ne sera effectué avec mes informations.",
+      "errors": {
+        "required": "Your consent is required."
+      }
+    },
+    "dataPolicy": {
+      "text": "Pour connaitre et exercer vos droits, notamment de retrait de votre consentement à l'utilisation de données collectées par ce formulaire, veuillez consulter",
+      "link": "notre politique de protection des données",
+      "route": "/cgu"
+    },
+    "success": "Your message has been sent successfully",
+    "error" : "An error happened"
   }
 }
