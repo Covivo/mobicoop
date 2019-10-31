@@ -542,12 +542,6 @@ class User implements UserInterface, EquatableInterface
     private $images;
     
     /**
-     * @var String|null URL of the Avatar
-     * @Groups({"read","write"})
-     */
-    private $avatar;
-
-    /**
      * @var ArrayCollection|null A user may have many roles.
      *
      * @ORM\OneToMany(targetEntity="\App\Right\Entity\UserRole", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
@@ -1074,17 +1068,6 @@ class User implements UserInterface, EquatableInterface
             }
         }
 
-        return $this;
-    }
-
-    public function getAvatar(): ?string
-    {
-        return $this->avatar;
-    }
- 
-    public function setAvatar(?string $avatar): self
-    {
-        $this->avatar = $avatar;
         return $this;
     }
 

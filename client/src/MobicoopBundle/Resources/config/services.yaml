@@ -35,6 +35,10 @@ services:
     # Api
     Mobicoop\Bundle\MobicoopBundle\Api\Service\:
         resource: '@MobicoopBundle/Api/Service/*'
+    Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer:
+        arguments:
+            $avatarVersion: '%env(resolve:USER_AVATAR_VERSION)%'
+            $avatarDefault: '%env(resolve:URL_ALT_USER_AVATAR)%'
     Mobicoop\Bundle\MobicoopBundle\Api\Serializer\:
         resource: '@MobicoopBundle/Api/Serializer/*'
 
