@@ -23,10 +23,25 @@
 
 namespace App\Carpool\Event;
 
+use App\Carpool\Entity\Proposal;
+use Symfony\Component\EventDispatcher\Event;
+
 /**
- * Event sent when a new matching is created.
+ * Event sent when a proposal is canceled.
  */
-class MatchingNewPassengerRegularEvent extends MatchingNewEvent
+class ProposalCanceledEvent extends Event
 {
-    public const NAME = 'passenger_'.MatchingNewEvent::NAME.'_regular';
+    public const NAME = 'carpool_proposal_canceled';
+
+    protected $proposal;
+
+    public function __construct(Proposal $proposal)
+    {
+        $this->proposal = $proposal;
+    }
+
+    public function getProposal()
+    {
+        return $this->proposal;
+    }
 }

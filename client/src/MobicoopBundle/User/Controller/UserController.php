@@ -283,7 +283,7 @@ class UserController extends AbstractController
         }
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
                 'error' => $error,
-                'user' => $user,
+                'alerts' => $userManager->getAlerts($user)['alerts']
             ]);
     }
 
@@ -827,5 +827,69 @@ class UserController extends AbstractController
         }
 
         return new JsonResponse(['error'=>'errorCredentialsFacebook']);
+    }
+
+    /**
+     * Update a user alert
+     * AJAX
+     */
+    public function updateAlert(UserManager $userManager, Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $user = $userManager->getLoggedUser();
+            $data = json_decode($request->getContent(), true);
+
+            $responseUpdate = $userManager->updateAlert($user, $data["id"], $data["active"]);
+            return new JsonResponse($responseUpdate);
+        }
+        return new JsonResponse(['error'=>'errorUpdateAlert']);
+    }
+
+    /**
+     * User carpool settings update.
+     * Ajax
+     *
+     * @param UserManager $userManager
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function userCarpoolSettingsUpdate(UserManager $userManager, Request $request)
+    {
+        // we clone the logged user to avoid getting logged out in case of error in the form
+        $user = clone $userManager->getLoggedUser();
+        $reponseofmanager= $this->handleManagerReturnValue($user);
+        if (!empty($reponseofmanager)) {
+            return $reponseofmanager;
+        }
+        $this->denyAccessUnlessGranted('update', $user);
+        
+        if ($request->isMethod('PUT')) {
+            $data = json_decode($request->getContent(), true);
+
+            $user->setSmoke($data["smoke"]);
+            $user->setMusic($data["music"]);
+            $user->setMusicFavorites($data["musicFavorites"]);
+            $user->setChat($data["chat"]);
+            $user->setChatFavorites($data["chatFavorites"]);
+            
+            if ($response = $userManager->updateUser($user)) {
+                $reponseofmanager= $this->handleManagerReturnValue($response);
+                if (!empty($reponseofmanager)) {
+                    return $reponseofmanager;
+                }
+                return new JsonResponse(
+                    ['message'=>'success'],
+                    Response::HTTP_ACCEPTED
+                );
+            }
+            return new JsonResponse(
+                ["message" => "error"],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+        return new JsonResponse(
+            ['message'=>'error'],
+            Response::HTTP_METHOD_NOT_ALLOWED
+        );
     }
 }

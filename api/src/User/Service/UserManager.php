@@ -23,6 +23,7 @@
 
 namespace App\User\Service;
 
+use App\Communication\Entity\Medium;
 use App\User\Entity\User;
 use App\User\Event\UserPasswordChangeAskedEvent;
 use App\User\Event\UserPasswordChangedEvent;
@@ -38,6 +39,7 @@ use App\User\Event\UserRegisteredEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
+use App\User\Repository\UserNotificationRepository;
 use App\User\Entity\UserNotification;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\User\Event\UserUpdatedSelfEvent;
@@ -54,6 +56,7 @@ class UserManager
     private $communityRepository;
     private $messageRepository;
     private $notificationRepository;
+    private $userNotificationRepository;
     private $logger;
     private $eventDispatcher;
     private $encoder;
@@ -64,7 +67,7 @@ class UserManager
         * @param EntityManagerInterface $entityManager
         * @param LoggerInterface $logger
         */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher, RoleRepository $roleRepository, CommunityRepository $communityRepository, MessageRepository $messageRepository, UserPasswordEncoderInterface $encoder, NotificationRepository $notificationRepository, UserNotificationRepository $userNotificationRepository)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -74,6 +77,7 @@ class UserManager
         $this->eventDispatcher = $dispatcher;
         $this->encoder = $encoder;
         $this->notificationRepository = $notificationRepository;
+        $this->userNotificationRepository = $userNotificationRepository;
     }
     
     /**
@@ -97,6 +101,8 @@ class UserManager
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+        // creation of the alert preferences
+        $user = $this->createAlerts($user);
         // dispatch en event
         $event = new UserRegisteredEvent($user);
         $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
@@ -283,6 +289,13 @@ class UserManager
         $actions = [];
         // first pass to get the actions
         foreach ($user->getUserNotifications() as $userNotification) {
+            if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS && is_null($user->getPhoneValidatedDate())) {
+                // check telephone for sms
+                continue;
+            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && is_null($user->getIosAppId()) && is_null($user->getAndroidAppId())) {
+                // check apps for push
+                continue;
+            }
             if (!in_array($userNotification->getNotification()->getAction()->getName(), $alerts)) {
                 $alerts[$userNotification->getNotification()->getAction()->getPosition()] = [
                     'action' => $userNotification->getNotification()->getAction()->getName(),
@@ -295,6 +308,13 @@ class UserManager
         // second pass to get the media
         $media = [];
         foreach ($user->getUserNotifications() as $userNotification) {
+            if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS && is_null($user->getPhoneValidatedDate())) {
+                // check telephone for sms
+                continue;
+            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && is_null($user->getIosAppId()) && is_null($user->getAndroidAppId())) {
+                // check apps for push
+                continue;
+            }
             $media[$userNotification->getNotification()->getAction()->getId()][$userNotification->getNotification()->getPosition()] = [
                 'medium' => $userNotification->getNotification()->getMedium()->getId(),
                 'id' => $userNotification->getId(),
@@ -329,10 +349,37 @@ class UserManager
             $userNotification = new UserNotification();
             $userNotification->setNotification($notification);
             $userNotification->setActive($notification->isUserActiveDefault());
+            if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS && is_null($user->getPhoneValidatedDate())) {
+                // check telephone for sms
+                $userNotification->setActive(false);
+            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && is_null($user->getIosAppId()) && is_null($user->getAndroidAppId())) {
+                // check apps for push
+                $userNotification->setActive(false);
+            }
             $user->addUserNotification($userNotification);
         }
         $this->entityManager->persist($user);
         $this->entityManager->flush();
         return $user;
+    }
+
+    /**
+     * Update user alerts
+     *
+     * @param User $user
+     * @return void
+     */
+    public function updateAlerts(User $user)
+    {
+        if (!is_null($user->getAlerts())) {
+            foreach ($user->getAlerts() as $id => $active) {
+                if ($userNotification = $this->userNotificationRepository->find($id)) {
+                    $userNotification->setActive($active);
+                    $this->entityManager->persist($userNotification);
+                }
+            }
+            $this->entityManager->flush();
+        }
+        return $this->getAlerts($user);
     }
 }

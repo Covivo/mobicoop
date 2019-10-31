@@ -347,7 +347,7 @@ class ProposalManager
 
                 // dispatch en event
                 // maybe send a unique event for all matchings ?
-                $event = new MatchingNewEvent($matching);
+                $event = new MatchingNewEvent($matching, $proposal->getUser());
                 $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
             }
             // dispatch en event

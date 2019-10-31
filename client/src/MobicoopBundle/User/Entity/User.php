@@ -262,6 +262,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     
     /**
     * @var array|null User notification alert preferences.
+    * @Groups({"put"})
     */
     private $alerts;
 
@@ -1004,17 +1005,22 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     {
         return
         [
-            'id'            => $this->getId(),
-            'givenName'     => $this->getGivenName(),
-            'familyName'    => $this->getFamilyName(),
-            'gender'        => $this->getGender(),
-            'status'        => $this->getStatus(),
-            'email'         => $this->getEmail(),
-            'telephone'     => $this->getTelephone(),
-            'geoToken'      => $this->getGeoToken(),
-            'birthYear'     => $this->getBirthYear(),
-            'homeAddress'   => $this->getHomeAddress(),
+            'id'             => $this->getId(),
+            'givenName'      => $this->getGivenName(),
+            'familyName'     => $this->getFamilyName(),
+            'gender'         => $this->getGender(),
+            'status'         => $this->getStatus(),
+            'email'          => $this->getEmail(),
+            'telephone'      => $this->getTelephone(),
+            'geoToken'       => $this->getGeoToken(),
+            'birthYear'      => $this->getBirthYear(),
+            'homeAddress'    => $this->getHomeAddress(),
             'images'        => $this->getImages(),
+            'smoke'          => $this->getSmoke(),
+            'chat'           => $this->hasChat(),
+            'chatFavorites'  => $this->getChatFavorites(),
+            'music'          => $this->hasMusic(),
+            'musicFavorites' => $this->getMusicFavorites()
         ];
     }
 }

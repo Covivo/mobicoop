@@ -67,6 +67,12 @@ user_password_update:
         en: /user/password/update
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordUpdate
 
+user_carpool_settings_update:
+    path:
+        fr: /utilisateur/preferences-covoiturage/modifier
+        en: /user/carpool-settings/update
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCarpoolSettingsUpdate
+        
 # password forgotten : ask for a new password
 user_password_forgot:
     path:
@@ -97,7 +103,14 @@ user_password_reset:
         token: .*
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPasswordReset
 
-# proposal list
+user_update_alert:
+    methods: [POST]
+    path:
+        fr: /utilisateur/alerte/changement
+        en: /user/alert/update
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::updateAlert
+
+    # proposal list
 user_proposal_list:
     path:
         fr: /utilisateur/annonces

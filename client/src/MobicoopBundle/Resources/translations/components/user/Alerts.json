@@ -1,0 +1,10 @@
+{
+    "fr": {
+        "urlUpdate":"/utilisateur/alerte/changement",
+        "errorUpdateAlert":"Suite à un problème technique, le changement n'a pas pu être enregistré"
+    },    
+    "en": {
+        "urlUpdate":"/user/alert/update",
+        "errorUpdateAlert":"Due to a technical difficulty the update hasn't been processed."
+    }    
+}
