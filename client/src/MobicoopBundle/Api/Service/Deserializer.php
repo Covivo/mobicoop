@@ -89,7 +89,7 @@ class Deserializer
     private $avatarVersion;
     private $avatarDefault;
 
-    public function __construct(string $avatarVersion, string $avatarDefault)
+    public function __construct(string $avatarVersion=null, string $avatarDefault=null)
     {
         $this->avatarVersion = $avatarVersion;
         $this->avatarDefault = $avatarDefault;
