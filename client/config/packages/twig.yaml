@@ -32,4 +32,3 @@ twig:
         userAvatarVersion: '%env(resolve:USER_AVATAR_VERSION)%'
         urlAltUserAvatar: '%env(resolve:URL_ALT_USER_AVATAR)%'
         carpoolerRate: '%env(resolve:CARPOOLER_RATE)%'
-        requiredHomeAddress: '%env(resolve:REQUIRED_HOME_ADDRESS)%'
