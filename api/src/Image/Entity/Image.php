@@ -262,7 +262,6 @@ class Image
      */
     private $user;
 
-    
     /**
      * @var int|null The user id associated with the image.
      * @Groups({"write"})
@@ -333,7 +332,7 @@ class Image
         return $this->name;
     }
     
-    public function setName(string $name)
+    public function setName(?string $name)
     {
         $this->name = $name;
     }

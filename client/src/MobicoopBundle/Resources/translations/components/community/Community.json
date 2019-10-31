@@ -20,7 +20,7 @@
     "tooltips": {
       "connected": "Vous devez être connecté",
       "validation": "En attente de validation",
-      "domain": "Votre adresse email doit faire partie du domaine:"
+      "domain": "Votre adresse email doit faire partie d'un de ces domaines:"
     },
     "snackbar": {
       "joinCommunity": {

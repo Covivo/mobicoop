@@ -103,7 +103,48 @@
               :display-name-in-selected="false"
               @address-selected="homeAddressSelected"
             />
-
+            <!--Upload Avatar-->
+            <v-row justify="center" v-if="user.images[0]">
+              <v-col cols="3">
+                <v-avatar
+                  color="grey lighten-3"
+                  size="225"
+                >
+                  <img
+                    :src="user['images'][0]['versions'][avatarVersion]"
+                    alt="avatar"
+                  >
+                </v-avatar>
+              </v-col>
+              <v-col cols="1" justify-self="center" align-self="center">
+                <v-icon @click="avatarDelete">
+                  mdi-delete
+                </v-icon>
+              </v-col>
+            </v-row>
+            <v-row   v-else>
+              <v-col cols="3">
+                <v-avatar
+                  color="grey lighten-3"
+                  size="225"
+                >
+                  <img
+                    :src="this.urlAltAvatar"
+                    alt="avatar"
+                  >
+                </v-avatar>
+              </v-col>
+              <v-col align-self="center">
+                <v-file-input
+                v-model="avatar"
+                  :rules="avatarRules"
+                  accept="image/png, image/jpeg, image/bmp"
+                  :label="$t('avatar.label')"
+                  prepend-icon="mdi-image"
+                />
+              </v-col>
+            </v-row>
+            
             <!--Save Button-->
             <v-btn
               class="button saveButton"
@@ -141,6 +182,18 @@ export default {
     GeoComplete
   },
   props: {
+    avatarSize: {
+      type: String,
+      default: null
+    },
+    avatarVersion: {
+      type: String,
+      default: null
+    },
+    urlAltAvatar: {
+      type: String,
+      default: null
+    },
     geoSearchUrl: {
       type: String,
       default: null
@@ -156,7 +209,8 @@ export default {
     ageMax: {
       type: String,
       default: null
-    }
+    },
+  
   },
   data() {
     return {
@@ -175,6 +229,10 @@ export default {
         { value: 1, gender: this.$t('models.user.gender.values.female')},
         { value: 2, gender: this.$t('models.user.gender.values.male')},
         { value: 3, gender: this.$t('models.user.gender.values.other')},
+      ],
+      avatar: null,
+      avatarRules: [
+        v => !v || v.size < this.avatarSize || this.$t("avatar.size")+" (Max "+(this.avatarSize/1000000)+"MB)"
       ],
     };
   },
@@ -196,28 +254,41 @@ export default {
         this.checkForm();
       }
     },
+    
     checkForm () {
       this.loading = true;
+      let updateUser = new FormData();
+      updateUser.append("email", this.user.email);
+      updateUser.append("familyName", this.user.familyName);
+      updateUser.append("gender", this.user.gender);
+      updateUser.append("givenName", this.user.givenName);
+      updateUser.append("homeAddress", JSON.stringify(this.user.homeAddress));
+      updateUser.append("telephone", this.user.telephone);
+      updateUser.append("birthYear", this.user.birthYear);
+      updateUser.append("avatar", this.avatar);
+
       axios 
-        .post("/utilisateur/profil/modifier", {
-          email: this.user.email,
-          familyName: this.user.familyName,
-          gender: this.user.gender,
-          givenName: this.user.givenName,
-          homeAddress: this.homeAddress,
-          telephone: this.user.telephone,
-          birthYear: this.user.birthYear,
-        }, {
+        .post(this.$t('route.update'), updateUser, 
+          {
           headers:{
-            'content-type': 'application/json'
+            'content-type': 'multipart/form-data'
           }
         })
         .then(res => {
           this.errorUpdate = res.data.state;
-          this.loading = false;
+          document.location.reload(true);
           this.snackbar = true;
       });
     },
+
+    avatarDelete () {
+      axios
+        .get(this.$t('avatar.delete.route'))
+        .then(res => {
+          this.errorUpdate = res.data.state;
+          document.location.reload(true);
+        });
+    }
   }
 };
 </script>

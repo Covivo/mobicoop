@@ -79,10 +79,20 @@
           </v-row>
           <v-row justify="center">
             <v-col cols="3">
-              <v-text-field
-                v-model="domain"
-                :label="$t('form.domain.label')"
-              />
+              <v-tooltip
+                left
+                color="info"
+              >
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-model="domain"
+                    :rules="domainRules"
+                    :label="$t('form.domain.label')"
+                    v-on="on"
+                  />
+                </template>
+                <span>{{ $t('form.domain.tooltips') }}</span>
+              </v-tooltip>
             </v-col>
           </v-row>
           <v-row justify="center">
@@ -172,6 +182,9 @@ export default {
       snackError: null,
       snackbar: false,
       domain: null,
+      domainRules: [
+        v => !v || /([\w+-]*\.[\w+]*$)/.test(v) || this.$t("form.domain.error")
+      ]
     }
   },
   methods: {
@@ -180,28 +193,34 @@ export default {
     },
     createCommunity() {
       this.loading = true;
-      let newCommunity = new FormData();
-      newCommunity.append("name", this.name);
-      newCommunity.append("description", this.description);
-      newCommunity.append("fullDescription", this.fullDescription);
-      newCommunity.append("avatar", this.avatar);
-      newCommunity.append("address", JSON.stringify(this.communityAddress));
-      if (this.domain) newCommunity.append("domain", this.domain);
+      if (this.name && this.description && this.fullDescription && this.avatar && this.communityAddress) {
+        let newCommunity = new FormData();
+        newCommunity.append("name", this.name);
+        newCommunity.append("description", this.description);
+        newCommunity.append("fullDescription", this.fullDescription);
+        newCommunity.append("avatar", this.avatar);
+        newCommunity.append("address", JSON.stringify(this.communityAddress));
+        if (this.domain) newCommunity.append("domain", this.domain);
 
-      axios 
-        .post(this.$t('buttons.create.route'), newCommunity, {
-          headers:{
-            'content-type': 'multipart/form-data'
-          }
-        })
-        .then(res => {
-          if (res.data.includes('error')) {
-            this.snackError = this.$t(res.data)
-            this.snackbar = true;
-            this.loading = false;
-          }
-          else window.location.href = this.$t('redirect.route');
-        });
+        axios 
+          .post(this.$t('buttons.create.route'), newCommunity, {
+            headers:{
+              'content-type': 'multipart/form-data'
+            }
+          })
+          .then(res => {
+            if (res.data.includes('error')) {
+              this.snackError = this.$t(res.data)
+              this.snackbar = true;
+              this.loading = false;
+            }
+            else window.location.href = this.$t('redirect.route');
+          });
+      } else {
+        this.snackError = this.$t('error.community.required')
+        this.snackbar = true;
+        this.loading = false;
+      }    
     },
   }
 }

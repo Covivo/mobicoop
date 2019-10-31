@@ -458,7 +458,7 @@
                         :return-time="returnTime"
                         :schedules="schedules"
                         :seats="seats"
-                        :price="price"
+                        :price="parseFloat(price)"
                         :route="route"
                         :message="message"
                         :user="user"
@@ -736,10 +736,13 @@ export default {
     urlToCall() {
       return `${this.baseUrl}/${this.$t('route.publish')}`;
     },
+    pointEscapedPrice(){
+      return this.price.replace(".",",");
+    }
   },
   watch: {
     price() {
-      this.pricePerKm = (this.distance>0 ? Math.round(this.price / this.distance * 100)/100 : this.defaultPriceKm);
+      this.pricePerKm = (this.distance>0 ? Math.round(parseFloat(this.price) / this.distance * 100)/100 : this.defaultPriceKm);
     },
     distance() {
       this.price = Math.round(this.distance * this.pricePerKm * 100)/100;

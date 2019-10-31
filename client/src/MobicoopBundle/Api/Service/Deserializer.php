@@ -71,6 +71,7 @@ use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTStop;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Entity\PTTripPoint;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\UserNotification;
 
 /**
  * Custom deserializer service.
@@ -191,6 +192,11 @@ class Deserializer
         if (isset($data["masses"])) {
             foreach ($data["masses"] as $mass) {
                 $user->addMass(self::deserializeMass($mass));
+            }
+        }
+        if (isset($data["images"])) {
+            foreach ($data["images"] as $image) {
+                $user->addImage(self::deserializeImage($image));
             }
         }
         return $user;

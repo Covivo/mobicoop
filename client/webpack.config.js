@@ -26,6 +26,7 @@ Encore
    * Each entry will result in one JavaScript file (e.g. app.js)
    * and one CSS file (e.g. app.css) if you JavaScript imports CSS.
    */
+  // ⚙️ COMMENT below if you are using a client platform  ⚙️ //
   .addEntry('bundle_app', './src/MobicoopBundle/Resources/assets/js/app.js')
   // scss only entries
   // add as much entry as you want css different file

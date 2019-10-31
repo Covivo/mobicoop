@@ -26,6 +26,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Entity;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
+use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
@@ -161,6 +162,55 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $anyRouteAsPassenger;
 
     /**
+     * @var int|null Smoking preferences.
+     * 0 = i don't smoke
+     * 1 = i don't smoke in car
+     * 2 = i smoke
+     *
+     * @Groups({"post","put"})
+     */
+    private $smoke;
+
+    /**
+     * @var boolean|null Music preferences.
+     * 0 = no music
+     * 1 = i listen to music or radio
+     *
+     * @Groups({"post","put"})
+     */
+    private $music;
+
+    /**
+     * @var string|null Music favorites.
+     *
+     * @Groups({"post","put"})
+     */
+    private $musicFavorites;
+
+    /**
+     * @var boolean|null Chat preferences.
+     * 0 = no chat
+     * 1 = chat
+     *
+     * @Groups({"post","put"})
+     */
+    private $chat;
+
+    /**
+     * @var string|null Chat favorite subjects.
+     *
+     * @Groups({"post","put"})
+     */
+    private $chatFavorites;
+
+    /**
+     * @var boolean|null The user accepts to receive news about the platform.
+     *
+     *@Groups({"post","put"})
+     */
+    private $newsSubscription;
+
+    /**
      * @var \DateTimeInterface Validation date of the user.
      *
      * @Groups({"post","put"})
@@ -204,6 +254,19 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $asks;
 
     /**
+     * @var Image[]|null The images of the user.
+     *
+     * @Groups({"post","put"})
+     */
+    private $images;
+    
+    /**
+    * @var array|null User notification alert preferences.
+    * @Groups({"put"})
+    */
+    private $alerts;
+
+    /**
      * @var int|null The birth year of the user.
      */
     private $birthYear;
@@ -241,6 +304,24 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      *  @Groups({"post","put"})
      */
     private $geoToken;
+
+    /**
+     * @var string|null Token for phone validation.
+     * @Groups({"post","put"})
+     */
+    private $phoneToken;
+
+    /**
+     * @var string|null iOS app ID.
+     * @Groups({"post","put"})
+     */
+    private $iosAppId;
+
+    /**
+     * @var string|null Android app ID.
+     * @Groups({"post","put"})
+     */
+    private $androidAppId;
  
     /**
      * Language de l'utilisateur.
@@ -267,6 +348,8 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         $this->proposals = new ArrayCollection();
         $this->asks = new ArrayCollection();
         $this->masses = new ArrayCollection();
+        $this->images = new ArrayCollection();
+        $this->userNotifications = new ArrayCollection();
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -437,6 +520,78 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this;
     }
 
+    public function getSmoke(): ?int
+    {
+        return $this->smoke;
+    }
+
+    public function setSmoke(?int $smoke): self
+    {
+        $this->smoke = $smoke;
+
+        return $this;
+    }
+
+    public function hasMusic(): ?bool
+    {
+        return $this->music;
+    }
+
+    public function setMusic(?bool $music): self
+    {
+        $this->music = $music;
+
+        return $this;
+    }
+
+    public function getMusicFavorites(): ?string
+    {
+        return $this->musicFavorites;
+    }
+
+    public function setMusicFavorites(?string $musicFavorites): self
+    {
+        $this->musicFavorites = $musicFavorites;
+
+        return $this;
+    }
+
+    public function hasChat(): ?bool
+    {
+        return $this->chat;
+    }
+
+    public function setChat(?bool $chat): self
+    {
+        $this->chat = $chat;
+
+        return $this;
+    }
+
+    public function getChatFavorites(): ?string
+    {
+        return $this->chatFavorites;
+    }
+
+    public function setChatFavorites(?string $chatFavorites): self
+    {
+        $this->chatFavorites = $chatFavorites;
+
+        return $this;
+    }
+
+    public function hasNewsSubscription(): ?bool
+    {
+        return $this->newsSubscription;
+    }
+
+    public function setNewsSubscription(?bool $newsSubscription): self
+    {
+        $this->newsSubscription = $newsSubscription;
+
+        return $this;
+    }
+
     public function getValidatedDate(): ?\DateTimeInterface
     {
         return $this->validatedDate;
@@ -581,6 +736,51 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             }
         }
         
+        return $this;
+    }
+
+    /**
+     *
+     * @return Collection|Image[]
+     */
+    public function getImages()
+    {
+        return $this->images->getValues();
+    }
+    
+    public function addImage(Image $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images[] = $image;
+            $image->setUser($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeImage(Image $image): self
+    {
+        if ($this->images->contains($image)) {
+            $this->images->removeElement($image);
+            // set the owning side to null (unless already changed)
+            if ($image->getUser() === $this) {
+                $image->setUser(null);
+            }
+        }
+        
+        return $this;
+    }
+        
+        
+    public function getAlerts()
+    {
+        return $this->alerts;
+    }
+    
+    public function setAlerts(?array $alerts): self
+    {
+        $this->alerts = $alerts;
+
         return $this;
     }
 
@@ -735,6 +935,39 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         $this->geoToken = $geoToken;
         return $this;
     }
+
+    public function getPhoneToken(): ?string
+    {
+        return $this->phoneToken;
+    }
+
+    public function setPhoneToken(?string $phoneToken): self
+    {
+        $this->phoneToken = $phoneToken;
+        return $this;
+    }
+
+    public function getIosAppId(): ?string
+    {
+        return $this->iosAppId;
+    }
+
+    public function setIosAppId(?string $iosAppId): self
+    {
+        $this->iosAppId = $iosAppId;
+        return $this;
+    }
+
+    public function getAndroidAppId(): ?string
+    {
+        return $this->androidAppId;
+    }
+
+    public function setAndroidAppId(?string $androidAppId): self
+    {
+        $this->androidAppId = $androidAppId;
+        return $this;
+    }
         
     public function getFacebookId(): ?string
     {
@@ -772,16 +1005,22 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     {
         return
         [
-            'id'            => $this->getId(),
-            'givenName'     => $this->getGivenName(),
-            'familyName'    => $this->getFamilyName(),
-            'gender'        => $this->getGender(),
-            'status'        => $this->getStatus(),
-            'email'         => $this->getEmail(),
-            'telephone'     => $this->getTelephone(),
-            'geoToken'      => $this->getGeoToken(),
-            'birthYear'     => $this->getBirthYear(),
-            'homeAddress'   => $this->getHomeAddress(),
+            'id'             => $this->getId(),
+            'givenName'      => $this->getGivenName(),
+            'familyName'     => $this->getFamilyName(),
+            'gender'         => $this->getGender(),
+            'status'         => $this->getStatus(),
+            'email'          => $this->getEmail(),
+            'telephone'      => $this->getTelephone(),
+            'geoToken'       => $this->getGeoToken(),
+            'birthYear'      => $this->getBirthYear(),
+            'homeAddress'    => $this->getHomeAddress(),
+            'images'        => $this->getImages(),
+            'smoke'          => $this->getSmoke(),
+            'chat'           => $this->hasChat(),
+            'chatFavorites'  => $this->getChatFavorites(),
+            'music'          => $this->hasMusic(),
+            'musicFavorites' => $this->getMusicFavorites()
         ];
     }
 }

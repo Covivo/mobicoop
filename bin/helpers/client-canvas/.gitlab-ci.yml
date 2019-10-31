@@ -49,7 +49,7 @@ dev_deploy:
       - $CI_COMMIT_MESSAGE =~ /skipci/    # job not executed when commit message contains this expression
 
 #
-# Deployment for dev branch
+# Deployment for test branch
 #
 test_deploy:
   stage: deploy
@@ -57,12 +57,12 @@ test_deploy:
     name: test
     url: https://test.$$URL$$
   only:
-    - master
+    - test
   # variables:
   #   APP_ENV: test   # /!\ important : symfony env variable /!\
   before_script:
     - git clone https://gitlab.com/mobicoop/mobicoop-platform
-    - cd mobicoop-platform && git checkout master && npm install --unsafe-perm && npm run install-all-ci && cd ../src && ln -s ../mobicoop-platform/client/src/MobicoopBundle && cd ../
+    - cd mobicoop-platform && git checkout ${RELEASE_VERSION} && npm install --unsafe-perm && npm run install-all-ci && cd ../src && ln -s ../mobicoop-platform/client/src/MobicoopBundle && cd ../
     - npm install --unsafe-perm
     - npm run install-ci
   script:

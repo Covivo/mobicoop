@@ -29,6 +29,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 
 /**
  * An image.
@@ -149,6 +150,11 @@ class Image implements ResourceInterface, \JsonSerializable
     private $community;
     
     /**
+    * @var User|null The user associated with the image.
+    */
+    private $user;
+    
+    /**
      * @var array|null The versions of with the image.
      *
      */
@@ -179,6 +185,18 @@ class Image implements ResourceInterface, \JsonSerializable
     private $communityFile;
     
     /**
+    * @var File|null
+    * @Assert\Image(
+    *     minWidth = 200,
+    *     maxWidth = 4000,
+    *     minHeight = 200,
+    *     maxHeight = 4000
+    * )
+    * @Groups({"post","put"})
+    */
+    private $userFile;
+    
+    /**
      * @var int|null The event id associated with the image.
      * @Groups({"post","put"})
      */
@@ -189,6 +207,12 @@ class Image implements ResourceInterface, \JsonSerializable
      * @Groups({"post","put"})
      */
     private $communityId;
+
+    /**
+    * @var int|null The user id associated with the image.
+    * @Groups({"post","put"})
+    */
+    private $userId;
         
     public function __construct($id=null)
     {
@@ -397,6 +421,18 @@ class Image implements ResourceInterface, \JsonSerializable
         
         return $this;
     }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+    
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+        
+        return $this;
+    }
     
     public function getVersions(): ?array
     {
@@ -427,6 +463,16 @@ class Image implements ResourceInterface, \JsonSerializable
     {
         $this->communityFile = $communityFile;
     }
+
+    public function getUserFile(): ?File
+    {
+        return $this->userFile;
+    }
+    
+    public function setUserFile(?File $userFile)
+    {
+        $this->userFile = $userFile;
+    }
     
     public function getEventId(): ?int
     {
@@ -446,6 +492,16 @@ class Image implements ResourceInterface, \JsonSerializable
     public function setCommunityId($communityId)
     {
         $this->communityId = $communityId;
+    }
+
+    public function getUserId(): ?int
+    {
+        return $this->userId;
+    }
+    
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
     }
 
     public function jsonSerialize()
