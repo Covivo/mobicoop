@@ -14,7 +14,8 @@
         </a>
       </v-toolbar-title>
       <v-spacer />
-      <accessibility />
+      <!-- Problem of placement of this componenent -->
+      <!--<accessibility />-->
       <div v-if="user">
         <v-btn
           text
@@ -23,20 +24,8 @@
         >
           {{ $t('buttons.messages.label') }}
         </v-btn>
-        <v-btn
-          text
-          rounded
-          :href="$t('buttons.myProfile.route')"
-        >
-          {{ $t('buttons.myProfile.label') }}
-        </v-btn>
-        <v-btn
-          rounded
-          text
-          :href="$t('buttons.logOut.route')"
-        >
-          {{ $t('buttons.logOut.label') }}
-        </v-btn>
+        <MHeaderCommunities />
+        <MHeaderProfile />
       </div>
       <div v-else>
         <v-btn
@@ -70,6 +59,8 @@ import { merge } from "lodash";
 import Translations from "@translations/components/base/MHeader.json";
 import TranslationsClient from "@clientTranslations/components/base/MHeader.json";
 import Accessibility from "@components/utilities/Accessibility";
+import MHeaderProfile from "@components/base/MHeaderProfile.vue";
+import MHeaderCommunities from "@components/base/MHeaderCommunities.vue";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -78,7 +69,9 @@ export default {
     messages: TranslationsMerged
   },
   components: {
-    Accessibility
+    Accessibility,
+    MHeaderProfile,
+    MHeaderCommunities
   },
   props: {
     user: {
