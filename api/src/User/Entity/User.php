@@ -73,6 +73,7 @@ use App\User\Filter\ValidatedDateTokenFilter;
 use App\Communication\Entity\Notified;
 use App\Action\Entity\Log;
 use App\Solidary\Entity\Solidary;
+use App\User\EntityListener\UserListener;
 
 /**
  * A user.
@@ -540,6 +541,12 @@ class User implements UserInterface, EquatableInterface
      */
     private $images;
     
+    /**
+     * @var String|null URL of the Avatar
+     * @Groups({"read","write"})
+     */
+    private $avatar;
+
     /**
      * @var ArrayCollection|null A user may have many roles.
      *
@@ -1067,6 +1074,17 @@ class User implements UserInterface, EquatableInterface
             }
         }
 
+        return $this;
+    }
+
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+ 
+    public function setAvatar(?string $avatar): self
+    {
+        $this->avatar = $avatar;
         return $this;
     }
 
