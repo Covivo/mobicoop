@@ -82,7 +82,7 @@ thanksForUse: "Merci d’utiliser"
 
 # USER_REGISTERED
 
-yourInscription: "Votre inscription au service"
+yourInscriptionAt: "Votre inscription au service"
 wellTakenIntoAccount: "est bien prise en compte"
 clickHereToConfirm: "Veuillez cliquer sur ce lien pour confirmer votre email"
 orUseTheValidationCode: "Ou utilisez le code de validation directement sur le site"
