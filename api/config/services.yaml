@@ -73,16 +73,6 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postLoad }
 
-    # User load Listener
-    mobicoop.user.user_load_listener:
-        class: App\User\EventListener\UserLoadListener
-        arguments:
-            $params:
-                avatarVersion: '%env(string:USER_AVATAR_VERSION)%'        
-                avatarDefault: '%env(string:URL_ALT_USER_AVATAR)%'        
-        tags:
-            - { name: doctrine.event_listener, event: postLoad }
-
     # CONTROLLERS AND SERVICES
 
     # Article
