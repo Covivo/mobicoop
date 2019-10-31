@@ -28,7 +28,7 @@
                     },
                     "backSeats": {
                         "label": "Maximum 2 personnes à l'arrière",
-                        "help": "Cochez cette case si votre véhicule ne permet pas de transporter plus de 2 personnes sur les sièges arrières"
+                        "help": "Cochez cette case si vous garantissez que les passagers ne seront pas plus de 2 à l'arrière"
                     }
                 },
                 "participation": {
