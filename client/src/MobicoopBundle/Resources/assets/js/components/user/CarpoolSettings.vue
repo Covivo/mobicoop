@@ -100,7 +100,7 @@ export default {
       form: {
         smoke: {
           // returned value is integer
-          value: this.user && this.user.smoke ? this.user.smoke : null 
+          value: this.user && this.user.smoke !== null ? this.user.smoke : null 
         },
         music: {
           // returned value from bundle is boolean, so we have to check null, true or false to show correct value
