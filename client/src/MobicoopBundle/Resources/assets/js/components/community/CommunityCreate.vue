@@ -193,28 +193,34 @@ export default {
     },
     createCommunity() {
       this.loading = true;
-      let newCommunity = new FormData();
-      newCommunity.append("name", this.name);
-      newCommunity.append("description", this.description);
-      newCommunity.append("fullDescription", this.fullDescription);
-      newCommunity.append("avatar", this.avatar);
-      newCommunity.append("address", JSON.stringify(this.communityAddress));
-      if (this.domain) newCommunity.append("domain", this.domain);
+      if (this.name && this.description && this.fullDescription && this.avatar && this.communityAddress) {
+        let newCommunity = new FormData();
+        newCommunity.append("name", this.name);
+        newCommunity.append("description", this.description);
+        newCommunity.append("fullDescription", this.fullDescription);
+        newCommunity.append("avatar", this.avatar);
+        newCommunity.append("address", JSON.stringify(this.communityAddress));
+        if (this.domain) newCommunity.append("domain", this.domain);
 
-      axios 
-        .post(this.$t('buttons.create.route'), newCommunity, {
-          headers:{
-            'content-type': 'multipart/form-data'
-          }
-        })
-        .then(res => {
-          if (res.data.includes('error')) {
-            this.snackError = this.$t(res.data)
-            this.snackbar = true;
-            this.loading = false;
-          }
-          else window.location.href = this.$t('redirect.route');
-        });
+        axios 
+          .post(this.$t('buttons.create.route'), newCommunity, {
+            headers:{
+              'content-type': 'multipart/form-data'
+            }
+          })
+          .then(res => {
+            if (res.data.includes('error')) {
+              this.snackError = this.$t(res.data)
+              this.snackbar = true;
+              this.loading = false;
+            }
+            else window.location.href = this.$t('redirect.route');
+          });
+      } else {
+        this.snackError = this.$t('error.community.required')
+        this.snackbar = true;
+        this.loading = false;
+      }    
     },
   }
 }
