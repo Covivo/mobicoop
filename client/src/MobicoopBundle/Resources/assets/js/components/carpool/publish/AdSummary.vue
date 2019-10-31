@@ -20,6 +20,14 @@
             <h2
               v-if="!regular"
             >
+              <span
+                v-if="hasReturn"
+                class="secondary--text"
+              >
+                {{ $t('outward') }}
+                <v-icon color="secondary">mdi-arrow-right</v-icon>
+              </span>
+              
               {{ computedOutwardDateFormat }}
             </h2>
             <h2 v-else>
@@ -166,6 +174,77 @@
               </v-timeline>
             </v-row>
 
+            <!-- Return if not regular and has return -->
+            <v-row
+              v-if="hasReturn"
+              align="center"
+            >
+              <h2
+                v-if="!regular"
+              >
+                <span
+                  v-if="hasReturn"
+                  class="secondary--text"
+                >
+                  {{ $t('return') }}
+                  <v-icon color="secondary">mdi-arrow-left</v-icon>
+                </span>
+
+                {{ computedReturnDateFormat }}
+              </h2>
+              <v-timeline
+                dense
+              >
+                <v-timeline-item
+                  color="primary"
+                  small
+                >
+                  <v-row dense>
+                    <v-col
+                      v-if="!regular"
+                      :cols="displayInfo ? 6 : 10"
+                    >
+                      <strong>{{ computedReturnOutwardTimeFormat }}</strong>
+                    </v-col>
+                    <v-col :cols="displayInfo ? 6 : 12">
+                      <!-- return so we invert destination and origin-->
+                      {{ (route && route.destination) ? route.destination.addressLocality : null }}
+                    </v-col>
+                  </v-row>
+                </v-timeline-item>
+
+                <v-timeline-item
+                  v-for="waypoint in reversedActiveWaypoints"
+                  :key="waypoint.id"
+                  small
+                >
+                  <v-row dense>
+                    <v-col :cols="displayInfo ? 6 : 12">
+                      {{ waypoint.address.addressLocality }}
+                    </v-col>
+                  </v-row>
+                </v-timeline-item>
+
+                <v-timeline-item
+                  color="primary"
+                  small
+                >
+                  <v-row dense>
+                    <v-col
+                      v-if="!regular"
+                      :cols="displayInfo ? 6 : 10"
+                    >
+                      <strong>{{ computedReturnDestinationTime }}</strong>
+                    </v-col>
+                    <v-col :cols="displayInfo ? 6 : 12">
+                      <!-- return so we invert destination and origin-->
+                      {{ (route && route.origin) ? route.origin.addressLocality : null }}
+                    </v-col>
+                  </v-row>
+                </v-timeline-item>
+              </v-timeline>
+            </v-row>
+            
             <!-- Days if regular and there is more than one schedule -->
             <v-row
               v-if="regular && schedules!==null && schedules.length > 1"
@@ -294,7 +373,7 @@
                 </v-row>
               </v-col>
             </v-row>
-           
+
             <!-- Message -->
             <v-row
               v-else
@@ -308,7 +387,7 @@
                   v-if="displayInfo && !regular"
                   outlined
                   class="mx-auto"
-                > 
+                >
                   <v-card-text class="pre-formatted">
                     {{ message }}
                   </v-card-text>
@@ -491,9 +570,30 @@ export default {
       }
       return null;
     },
+    computedReturnOutwardTimeFormat() {
+      moment.locale(this.locale);
+      return (this.hasReturn)
+        ? moment(this.returnDate+' '+this.returnTime).format(this.$t("ui.i18n.time.format.hourMinute"))
+        : null;
+    },
+    computedReturnDestinationTime() {
+      moment.locale(this.locale);
+      if (this.route && this.route.direction && this.hasReturn) {
+        return moment(this.returnDate+' '+this.returnTime).add(this.route.direction.duration,'seconds').format(this.$t("ui.i18n.time.format.hourMinute"));
+      }
+      return null;
+    },
     activeWaypoints() {
       if (this.route && this.route.waypoints) {
         return this.route.waypoints.filter(function(waypoint) {
+          return waypoint.visible && waypoint.address;
+        });
+      }
+      return null;
+    },
+    reversedActiveWaypoints() {
+      if (this.route && this.route.waypoints) {
+        return this.reversedArray(this.route.waypoints).filter(function(waypoint) {
           return waypoint.visible && waypoint.address;
         });
       }
@@ -521,13 +621,20 @@ export default {
         }
       }
       return days;
+    },
+    hasReturn () {
+      return this.returnDate !== null && this.returnTime !== null;
     }
   },
   methods: {
     formatTime(time) {
       moment.locale(this.locale);
       return moment(moment(new Date()).format('Y-MM-DD')+' '+time).format(this.$t("ui.i18n.time.format.hourMinute"));
-    }
+    },
+    reversedArray(array) {
+      // slice to make a copy of array, then reverse the copy
+      return array.slice().reverse()
+    } 
   }
 };
 </script>
