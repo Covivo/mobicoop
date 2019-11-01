@@ -2,6 +2,14 @@
     "fr": {
         "outward": "Aller",
         "return": "Retour",
+        "mon": "Lundi",
+        "tue": "Mardi",
+        "wed": "Mercredi",
+        "thu": "Jeudi",
+        "fri": "Vendredi",
+        "sat": "Samedi",
+        "sun": "Dimanche",
+        "notSelected": "Jour non choisi",
         "i18n": {
             "date": {
               "format": {
@@ -16,6 +24,27 @@
         }
     },
     "en": {
-        
+      "outward": "Outward",
+      "return": "Return",
+      "mon": "Monday",
+      "tue": "Tuesday",
+      "wed": "Wednesday",
+      "thu": "Thursday",
+      "fri": "Friday",
+      "sat": "Saturday",
+      "sun": "Sunday",
+      "notSelected": "Day not selected",
+      "i18n": {
+          "date": {
+            "format": {
+              "fullDate": "ddd Do MMMM YYYY"
+            }
+          },
+          "time": {
+            "format": {
+              "hourMinute": "HH[h]mm"
+            }
+          }
+      }
     }
 }

@@ -741,7 +741,7 @@ class ProposalManager
                 }
                 $outward->setComputedPrice((string)(self::roundNearest((float)$matching['request']->getFilters()['commonDistance'] * (float)$outward->getPriceKm() / 1000)));
                 $resultDriver->setOutward($outward);
-
+                
                 // return trip, only for regular trip for now
                 if ($matching['request']->getProposalRequest()->getProposalLinked() && $proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && $matching['request']->getProposalRequest()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
                     $proposalLinked = $matching['request']->getProposalRequest()->getProposalLinked();
@@ -1170,13 +1170,15 @@ class ProposalManager
             }
 
             // date / time / seats / price
-            // if the request is regular, there is no date
+            // if the request is regular, there is no date, but we keep a start date
             // otherwise we display the date of the matching proposal computed before depending on if the carpooler can be driver and/or passenger
             if ($result->getResultDriver() && !$result->getResultPassenger()) {
                 // the carpooler is passenger only
                 if ($result->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                     $result->setDate($result->getResultDriver()->getOutward()->getDate());
                     $result->setTime($result->getResultDriver()->getOutward()->getTime());
+                } else {
+                    $result->setStartDate($result->getResultDriver()->getOutward()->getFromDate());
                 }
                 $result->setPrice($result->getResultDriver()->getOutward()->getComputedPrice());
                 $result->setSeats($result->getResultDriver()->getSeats());
@@ -1185,6 +1187,8 @@ class ProposalManager
                 if ($result->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                     $result->setDate($result->getResultPassenger()->getOutward()->getDate());
                     $result->setTime($result->getResultPassenger()->getOutward()->getTime());
+                } else {
+                    $result->setStartDate($result->getResultPassenger()->getOutward()->getFromDate());
                 }
                 $result->setPrice($result->getResultPassenger()->getOutward()->getComputedPrice());
                 $result->setSeats($result->getResultPassenger()->getSeats());

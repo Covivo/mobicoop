@@ -178,26 +178,25 @@
               cols="3"
             >
               <v-menu
-                v-model="startDate"
+                v-model="menuFromDate"
                 :close-on-content-click="false"
                 transition="scale-transition"
                 offset-y
-                full-width
                 min-width="290px"
               >
                 <template v-slot:activator="{ on }">
                   <v-text-field
-                    :value="computedStartDateFormat"
-                    :label="$t('fromdate')"
+                    :value="computedFromDate"
+                    :label="$t('fromDate')"
                     readonly
                     v-on="on"
                   />
                 </template>
                 <v-date-picker
-                  v-model="startDate"
+                  v-model="fromDate"
                   :locale="locale"
                   no-title
-                  @input="menuStartDate = false"
+                  @input="menuFromDate = false"
                   @change="change"
                 />
               </v-menu>
@@ -209,11 +208,12 @@
             >
               <v-slider
                 v-model="range"
-                :tick-labels="rangeLabels"
+                :tick-labels="$t('ranges')"
                 :max="3"
                 step="1"
                 ticks="always"
-                tick-size="4"
+                tick-size="8"
+                @change="change"
               />
             </v-col>
 
@@ -222,28 +222,26 @@
               cols="3"
             >
               <v-menu
-                v-model="endDate"
+                v-model="menuMaxDate"
                 :close-on-content-click="false"
                 transition="scale-transition"
                 offset-y
-                full-width
                 min-width="290px"
               >
                 <template v-slot:activator="{ on }">
                   <v-text-field
-                    :value="computedEndDateFormat"
-                    :label="$t('fromdate')"
+                    :value="computedMaxDate"
+                    :label="$t('maxDate')"
                     readonly
-                    clearable
+                    :disabled="range<3"
                     v-on="on"
-                    @click:clear="clearStartDate"
                   />
                 </template>
                 <v-date-picker
-                  v-model="startDate"
+                  v-model="maxDate"
                   :locale="locale"
                   no-title
-                  @input="menuStartDate = false"
+                  @input="menuMaxDate = false"
                   @change="change"
                 />
               </v-menu>
@@ -252,10 +250,17 @@
 
           <regular-ask 
             :type="1"
-            :days="computedDaysOutward"
+            :mon-time="outwardMonTime"
+            :tue-time="outwardTueTime"
+            :wed-time="outwardWedTime"
+            :thu-time="outwardThuTime"
+            :fri-time="outwardFriTime"
+            :sat-time="outwardSatTime"
+            :sun-time="outwardSunTime"
             :origin="lResult.origin"
             :destination="lResult.destination"
-            :from-date="computedFromDateOutward"
+            :from-date="fromDate"
+            :max-date="maxDate"
           />
         </v-stepper-content>
 
@@ -263,10 +268,17 @@
         <v-stepper-content step="3">
           <regular-ask
             :type="2"
-            :days="computedDaysReturn"
+            :mon-time="returnMonTime"
+            :tue-time="returnTueTime"
+            :wed-time="returnWedTime"
+            :thu-time="returnThuTime"
+            :fri-time="returnFriTime"
+            :sat-time="returnSatTime"
+            :sun-time="returnSunTime"
             :origin="lResult.destination"
             :destination="lResult.origin"
-            :from-date="lResult.resultPassenger.fromDate"
+            :from-date="fromDate"
+            :max-date="maxDate"
           />
         </v-stepper-content>
       </v-stepper-items>
@@ -374,17 +386,25 @@ export default {
       contactDisabled: false,
       carpoolDisabled: false,
       step:1,
-      startDate: null,
-      menuStartDate: false,
-      endDate: null,
-      menuEndDate: false,
+      fromDate: this.result.startDate ? this.result.startDate : null,
+      menuFromDate: false,
+      maxDate: this.result.startDate ? this.result.startDate : null,
+      menuMaxDate: false,
       range: 0,
-      rangeLabels: [
-        'Prochain',
-        '1 mois',
-        '3 mois',
-        'Date',
-      ],
+      outwardMonTime: null,
+      outwardTueTime: null,
+      outwardWedTime: null,
+      outwardThuTime: null,
+      outwardFriTime: null,
+      outwardSatTime: null,
+      outwardSunTime: null,
+      returnMonTime: null,
+      returnTueTime: null,
+      returnWedTime: null,
+      returnThuTime: null,
+      returnFriTime: null,
+      returnSatTime: null,
+      returnSunTime: null
     }
   },
   computed: {
@@ -405,22 +425,17 @@ export default {
       if (this.lResult && this.lResult.date) return moment.utc(this.lResult.date).format(this.$t("i18n.date.format.fullDate"));
       return null;
     },
-    computedDaysOutward() {
-      return {
-        "Lundi": "08:00",
-        "Mardi": "08:00",
-        "Mercredi": "08:30",
-        "Jeudi": "08:00",
-        "Vendredi": "08:00"
-      }
+    computedFromDate() {
+      moment.locale(this.locale);
+      return this.fromDate
+        ? moment(this.fromDate).format(this.$t("i18n.date.format.shortDate"))
+        : "";
     },
-    computedDaysReturn() {
-      return {
-        "Lundi": "18:00",
-        "Mardi": "18:00",
-        "Jeudi": "18:00",
-        "Vendredi": "17:00"
-      }
+    computedMaxDate() {
+      moment.locale(this.locale);
+      return this.maxDate
+        ? moment(this.maxDate).format(this.$t("i18n.date.format.shortDate"))
+        : "";
     },
     age() {
       return this.lResult ? moment().diff(moment([this.lResult.carpooler.birthDate]),'years')+' '+this.$t("birthYears") : ''
@@ -432,9 +447,42 @@ export default {
   watch: {
     result(val) {
       this.lResult = val;
+      this.fromDate = val.startDate ? val.startDate : null;
+      this.computeTimes();
     }
   },
+  mounted() {
+    this.computeTimes();
+  },
   methods: {
+    computeMaxDate() {
+      if (this.range==0) {
+        this.maxDate = this.fromDate;
+      } else if (this.range == 1) {
+        this.maxDate = moment(this.fromDate).add(1, 'M').toISOString();
+      } else if (this.range == 2) {
+        this.maxDate = moment(this.fromDate).add(3, 'M').toISOString();
+      }
+    },
+    computeTimes() {
+      if (this.lResult.frequency == 2 && this.lResult.resultPassenger && !this.lResult.resultDriver) {  
+        this.outwardMonTime = this.lResult.resultPassenger.outward.monTime ? moment.utc(this.lResult.resultPassenger.outward.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.outwardTueTime = this.lResult.resultPassenger.outward.tueTime ? moment.utc(this.lResult.resultPassenger.outward.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.outwardWedTime = this.lResult.resultPassenger.outward.wedTime ? moment.utc(this.lResult.resultPassenger.outward.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.outwardThuTime = this.lResult.resultPassenger.outward.thuTime ? moment.utc(this.lResult.resultPassenger.outward.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.outwardFriTime = this.lResult.resultPassenger.outward.friTime ? moment.utc(this.lResult.resultPassenger.outward.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.outwardSatTime = this.lResult.resultPassenger.outward.satTime ? moment.utc(this.lResult.resultPassenger.outward.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.outwardSunTime = this.lResult.resultPassenger.outward.sunTime ? moment.utc(this.lResult.resultPassenger.outward.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.returnMonTime = this.lResult.resultPassenger.return.monTime ? moment.utc(this.lResult.resultPassenger.return.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.returnTueTime = this.lResult.resultPassenger.return.tueTime ? moment.utc(this.lResult.resultPassenger.return.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.returnWedTime = this.lResult.resultPassenger.return.wedTime ? moment.utc(this.lResult.resultPassenger.return.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.returnThuTime = this.lResult.resultPassenger.return.thuTime ? moment.utc(this.lResult.resultPassenger.return.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.returnFriTime = this.lResult.resultPassenger.return.friTime ? moment.utc(this.lResult.resultPassenger.return.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.returnSatTime = this.lResult.resultPassenger.return.satTime ? moment.utc(this.lResult.resultPassenger.return.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.returnSunTime = this.lResult.resultPassenger.return.sunTime ? moment.utc(this.lResult.resultPassenger.return.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+      // } else if (this.lResult.frequency == 2 && this.lResult.resultDriver && !this.lResult.resultPassenger) {  
+      }
+    },
     contact() {
       this.contactLoading = true;
       this.carpoolDisabled = true;
@@ -479,6 +527,9 @@ export default {
 
       }
     },
+    change() {
+      this.computeMaxDate();
+    }
   }
 };
 </script>

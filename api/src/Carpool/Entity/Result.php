@@ -118,6 +118,12 @@ class Result
     private $time;
 
     /**
+     * @var \DateTimeInterface|null The possible start date if regular.
+     * @Groups("results")
+     */
+    private $startDate;
+
+    /**
      * @var int The number of places offered / requested to display.
      * @Groups("results")
      */
@@ -333,6 +339,18 @@ class Result
     public function setTime(?\DateTimeInterface $time): self
     {
         $this->time = $time;
+
+        return $this;
+    }
+
+    public function getStartDate(): ?\DateTimeInterface
+    {
+        return $this->startDate;
+    }
+
+    public function setStartDate(?\DateTimeInterface $startDate): self
+    {
+        $this->startDate = $startDate;
 
         return $this;
     }

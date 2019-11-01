@@ -11,10 +11,19 @@
     "return": "Choisir le retour",
     "previous": "Précédent",
     "detail": "Détail",
+    "fromDate": "A partir du",
+    "maxDate": "Jusqu'au",
+    "ranges": [
+      "1 semaine",
+      "1 mois",
+      "3 mois",
+      "Jusqu'au"
+    ],
     "i18n": {
       "date": {
         "format": {
-          "fullDate": "ddd Do MMMM YYYY"
+          "fullDate": "ddd Do MMMM YYYY",
+          "shortDate": "DD/MM/YYYY"
         }
       },
       "time": {
@@ -36,10 +45,13 @@
     "return": "Choose return",
     "previous": "Previous",
     "detail": "Detail",
+    "fromDate": "From",
+    "maxDate": "To",
     "i18n": {
       "date": {
         "format": {
-          "fullDate": "ddd Do MMMM YYYY"
+          "fullDate": "ddd Do MMMM YYYY",
+          "shortDate": "DD/MM/YYYY"
         }
       },
       "time": {
