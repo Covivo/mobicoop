@@ -240,6 +240,7 @@
                 <v-date-picker
                   v-model="maxDate"
                   :locale="locale"
+                  :min="fromDate"
                   no-title
                   @input="menuMaxDate = false"
                   @change="change"
@@ -261,6 +262,7 @@
             :destination="lResult.destination"
             :from-date="fromDate"
             :max-date="maxDate"
+            @change="changeOutward"
           />
         </v-stepper-content>
 
@@ -279,6 +281,7 @@
             :destination="lResult.origin"
             :from-date="fromDate"
             :max-date="maxDate"
+            @change="changeReturn"
           />
         </v-stepper-content>
       </v-stepper-items>
@@ -331,20 +334,29 @@
         {{ step == 2 ? $t('detail') : $t('outward') }}
       </v-btn>
 
-      <!-- Step 2 (regular outward) --> 
+      <!-- Step 2 (regular outward, return available) --> 
       <v-btn
-        v-if="step == 2"
+        v-if="step == 2 && lResult.return"
         color="secondary"
-        @click="lResult.return ? step = 3 : carpool(0)"
+        @click="step = 3"
       >
-        {{ lResult.return ? $t('return') : $t('carpool') }}
+        {{ $t('return') }}
+      </v-btn>
+
+      <!-- Step 2 (regular outward, no return) --> 
+      <v-btn
+        v-if="step == 2 && !lResult.return && this.outward.length>0"
+        color="secondary"
+        @click="driver ? carpool(1) : carpool(2)"
+      >
+        {{ $t('carpool') }}
       </v-btn>
 
       <!-- Step 3 (regular return) --> 
       <v-btn
-        v-if="step == 3"
+        v-if="step == 3 && (this.outward.length>0 || this.return.length>0)"
         color="secondary"
-        @click="carpool(0)"
+        @click="driver ? carpool(1) : carpool(2)"
       >
         {{ $t('carpool') }}
       </v-btn>
@@ -404,7 +416,9 @@ export default {
       returnThuTime: null,
       returnFriTime: null,
       returnSatTime: null,
-      returnSunTime: null
+      returnSunTime: null,
+      outward: [],
+      return: []
     }
   },
   computed: {
@@ -480,7 +494,21 @@ export default {
         this.returnFriTime = this.lResult.resultPassenger.return.friTime ? moment.utc(this.lResult.resultPassenger.return.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
         this.returnSatTime = this.lResult.resultPassenger.return.satTime ? moment.utc(this.lResult.resultPassenger.return.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
         this.returnSunTime = this.lResult.resultPassenger.return.sunTime ? moment.utc(this.lResult.resultPassenger.return.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-      // } else if (this.lResult.frequency == 2 && this.lResult.resultDriver && !this.lResult.resultPassenger) {  
+      } else if (this.lResult.frequency == 2 && this.lResult.resultDriver && !this.lResult.resultPassenger) {  
+        this.outwardMonTime = this.lResult.resultDriver.outward.monTime ? moment.utc(this.lResult.resultDriver.outward.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.outwardTueTime = this.lResult.resultDriver.outward.tueTime ? moment.utc(this.lResult.resultDriver.outward.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.outwardWedTime = this.lResult.resultDriver.outward.wedTime ? moment.utc(this.lResult.resultDriver.outward.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.outwardThuTime = this.lResult.resultDriver.outward.thuTime ? moment.utc(this.lResult.resultDriver.outward.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.outwardFriTime = this.lResult.resultDriver.outward.friTime ? moment.utc(this.lResult.resultDriver.outward.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.outwardSatTime = this.lResult.resultDriver.outward.satTime ? moment.utc(this.lResult.resultDriver.outward.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.outwardSunTime = this.lResult.resultDriver.outward.sunTime ? moment.utc(this.lResult.resultDriver.outward.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.returnMonTime = this.lResult.resultDriver.return.monTime ? moment.utc(this.lResult.resultDriver.return.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.returnTueTime = this.lResult.resultDriver.return.tueTime ? moment.utc(this.lResult.resultDriver.return.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.returnWedTime = this.lResult.resultDriver.return.wedTime ? moment.utc(this.lResult.resultDriver.return.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.returnThuTime = this.lResult.resultDriver.return.thuTime ? moment.utc(this.lResult.resultDriver.return.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.returnFriTime = this.lResult.resultDriver.return.friTime ? moment.utc(this.lResult.resultDriver.return.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.returnSatTime = this.lResult.resultDriver.return.satTime ? moment.utc(this.lResult.resultDriver.return.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        this.returnSunTime = this.lResult.resultDriver.return.sunTime ? moment.utc(this.lResult.resultDriver.return.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;  
       }
     },
     contact() {
@@ -503,33 +531,33 @@ export default {
       this.$emit('contact', params);
     },
     carpool(role) {
-      if (this.lResult.frequency == 1) {
-        // punctual => we send an event to the parent
-        this.carpoolLoading = true;
-        this.contactDisabled = true;
-        let params = {
-          "driver": this.lResult.resultDriver && role<2 ? true : false,
-          "passenger": this.lResult.resultPassenger && role != 1 ? true : false,
-          "regular" : this.lResult.frequency == 2
-        };
-        // if the requester can be passenger, we take the informations from the resultPassenger outward item
-        if (this.lResult.resultPassenger) {
-          params.proposalId = this.lResult.resultPassenger.outward.proposalId;
-          params.origin = this.lResult.resultPassenger.outward.origin;
-          params.destination = this.lResult.resultPassenger.outward.destination;
-          params.date = this.lResult.resultPassenger.outward.date;
-          params.time = this.lResult.resultPassenger.outward.time;
-          params.priceKm = this.lResult.resultPassenger.outward.priceKm;
-        }
-        this.$emit('carpool', params);
-      } else {
-        // regular => we display the stepper to select outward, return (if relevant) and date range
-
+      this.carpoolLoading = true;
+      this.contactDisabled = true;
+      let params = {
+        "driver": this.lResult.resultDriver && role<2 ? true : false,
+        "passenger": this.lResult.resultPassenger && role != 1 ? true : false,
+        "regular" : this.lResult.frequency == 2
+      };
+      // if the requester can be passenger, we take the informations from the resultPassenger outward item
+      if (this.lResult.resultPassenger) {
+        params.proposalId = this.lResult.resultPassenger.outward.proposalId;
+        params.origin = this.lResult.resultPassenger.outward.origin;
+        params.destination = this.lResult.resultPassenger.outward.destination;
+        params.date = this.lResult.resultPassenger.outward.date;
+        params.time = this.lResult.resultPassenger.outward.time;
+        params.priceKm = this.lResult.resultPassenger.outward.priceKm;
       }
+      this.$emit('carpool', params);
     },
     change() {
       this.computeMaxDate();
-    }
+    },
+    changeOutward(params) {
+      this.outward = params;
+    },
+    changeReturn(params) {
+      this.return = params;
+    },
   }
 };
 </script>

@@ -100,6 +100,52 @@ class ProposalMatcher
     }
     
     /**
+     * Get the return matching filters for a proposal.
+     * Used to compute the reverse direction of a matching.
+     *
+     * @param Matching  $matching   The matching
+     * @return array The matching return filters
+     */
+    public function getMatchingReturnFilters(Matching $matching)
+    {
+        $filters = [];
+        $candidateDriver = new Candidate();
+        $candidateDriver->setId($matching->getProposalOffer()->getUser()->getId());
+        $addresses = [];
+        foreach ($matching->getProposalOffer()->getWaypoints() as $waypoint) {
+            $addresses[] = $waypoint->getAddress();
+        }
+        $candidateDriver->setAddresses($addresses);
+        $candidatePassenger = new Candidate();
+        $candidatePassenger->setId($matching->getProposalRequest()->getUser()->getId());
+        $addressesCandidate = [];
+        foreach ($matching->getProposalRequest()->getWaypoints() as $waypoint) {
+            $addressesCandidate[] = $waypoint->getAddress();
+        }
+        $candidatePassenger->setAddresses($addressesCandidate);
+        if ($matches = $this->geoMatcher->forceMatch($candidateDriver, $candidatePassenger)) {
+            // many matches can be found for 2 candidates : if multiple routes satisfy the criteria
+            if (is_array($matches) && count($matches)>0) {
+                switch (self::MULTI_MATCHES_FOR_SAME_CANDIDATES) {
+                    case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST:
+                        usort($matches, self::build_sorter('newDuration'));
+                        $filters = $matches[0];
+                        break;
+                    case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_SHORTEST:
+                        usort($matches, self::build_sorter('newDistance'));
+                        $filters = $matches[0];
+                        break;
+                    default:
+                        $filters = $matches[0];
+                        break;
+                }
+            }
+        }
+          
+        return $filters;
+    }
+
+    /**
      * Find matching proposals for a proposal.
      * Returns an array of Matching objects.
      *
@@ -159,7 +205,7 @@ class ProposalMatcher
                                 $matching->setFilters($matches[0]);
                                 $matchings[] = $matching;
                                 break;
-                            case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST:
+                            case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_SHORTEST:
                                 usort($matches, self::build_sorter('newDistance'));
                                 $matching = new Matching();
                                 $matching->setProposalOffer($proposal);
@@ -215,7 +261,7 @@ class ProposalMatcher
                                 $matching->setFilters($matches[0]);
                                 $matchings[] = $matching;
                                 break;
-                            case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_FASTEST:
+                            case self::MULTI_MATCHES_FOR_SAME_CANDIDATES_SHORTEST:
                                 usort($matches, self::build_sorter('newDistance'));
                                 $matching = new Matching();
                                 $matching->setProposalOffer($proposalToMatch);
@@ -258,11 +304,11 @@ class ProposalMatcher
         foreach ($matchings as $matching) {
             
             // waypoints
-            foreach ($matching->getFilters()['order'] as $key=>$point) {
+            foreach ($matching->getFilters()['route'] as $key=>$point) {
                 $waypoint = new Waypoint();
                 $waypoint->setPosition($key);
                 $waypoint->setDestination(false);
-                if ($key == (count($matching->getFilters()['order'])-1)) {
+                if ($key == (count($matching->getFilters()['route'])-1)) {
                     $waypoint->setDestination(true);
                 }
                 $waypoint->setAddress(clone $point['address']);
@@ -429,7 +475,7 @@ class ProposalMatcher
             $pickupDuration = null;
             $pickupTimes = [];
             $filters = $matching->getFilters();
-            foreach ($filters['order'] as $value) {
+            foreach ($filters['route'] as $value) {
                 if ($value['candidate'] == 2 && $value['position'] == 0) {
                     $pickupDuration = (int)round($value['duration']);
                     break;

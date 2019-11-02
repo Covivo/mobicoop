@@ -1,6 +1,43 @@
 <template>
   <div>
     <v-container>
+      <!-- Direction -->
+      <v-row
+        dense
+        align="center"
+      >
+        <v-col
+          cols="3"
+          class="title"
+        >
+          {{ type == 1 ? $t('outward') : $t('return') }}
+        </v-col>
+        <v-col
+          cols="auto"
+        >
+          <v-chip>
+            {{ origin.addressLocality }}
+          </v-chip>
+        </v-col>
+        <v-col
+          cols="auto"
+        >
+          <v-icon
+            slot="prepend"
+          >
+            mdi-arrow-right
+          </v-icon>
+        </v-col>
+        <v-col
+          cols="auto"
+        >
+          <v-chip>
+            {{ destination.addressLocality }}
+          </v-chip>
+        </v-col>
+      </v-row>
+      <v-divider />
+
       <!-- Monday -->
       <v-row
         v-if="monTime"
@@ -9,7 +46,7 @@
       >
         <!-- First col : day and time -->
         <v-col
-          cols="4"
+          cols="3"
         >
           {{ $t('mon') }} {{ monTime }}
         </v-col>
@@ -23,11 +60,13 @@
             inset
             hide-details
             class="mt-1 mb-1"
+            @change="change"
           />
         </v-col>
         <!-- Third col : date ranges -->
         <v-col
-          cols="6"
+          cols="7"
+          :class="monCheck ? '' : 'font-italic'"
         >
           {{ monPeriod }}
         </v-col>
@@ -42,7 +81,7 @@
       >
         <!-- First col : day and time -->
         <v-col
-          cols="4"
+          cols="3"
         >
           {{ $t('tue') }} {{ tueTime }}
         </v-col>
@@ -56,11 +95,13 @@
             inset
             hide-details
             class="mt-1 mb-1"
+            @change="change"
           />
         </v-col>
         <!-- Third col : date ranges -->
         <v-col
-          cols="6"
+          cols="7"
+          :class="tueCheck ? '' : 'font-italic'"
         >
           {{ tuePeriod }}
         </v-col>
@@ -75,7 +116,7 @@
       >
         <!-- First col : day and time -->
         <v-col
-          cols="4"
+          cols="3"
         >
           {{ $t('wed') }} {{ wedTime }}
         </v-col>
@@ -89,11 +130,13 @@
             inset
             hide-details
             class="mt-1 mb-1"
+            @change="change"
           />
         </v-col>
         <!-- Third col : date ranges -->
         <v-col
-          cols="6"
+          cols="7"
+          :class="wedCheck ? '' : 'font-italic'"
         >
           {{ wedPeriod }}
         </v-col>
@@ -108,7 +151,7 @@
       >
         <!-- First col : day and time -->
         <v-col
-          cols="4"
+          cols="3"
         >
           {{ $t('thu') }} {{ thuTime }}
         </v-col>
@@ -122,11 +165,13 @@
             inset
             hide-details
             class="mt-1 mb-1"
+            @change="change"
           />
         </v-col>
         <!-- Third col : date ranges -->
         <v-col
-          cols="6"
+          cols="7"
+          :class="thuCheck ? '' : 'font-italic'"
         >
           {{ thuPeriod }}
         </v-col>
@@ -141,7 +186,7 @@
       >
         <!-- First col : day and time -->
         <v-col
-          cols="4"
+          cols="3"
         >
           {{ $t('fri') }} {{ friTime }}
         </v-col>
@@ -155,11 +200,13 @@
             inset
             hide-details
             class="mt-1 mb-1"
+            @change="change"
           />
         </v-col>
         <!-- Third col : date ranges -->
         <v-col
-          cols="6"
+          cols="7"
+          :class="friCheck ? '' : 'font-italic'"
         >
           {{ friPeriod }}
         </v-col>
@@ -174,7 +221,7 @@
       >
         <!-- First col : day and time -->
         <v-col
-          cols="4"
+          cols="3"
         >
           {{ $t('sat') }} {{ satTime }}
         </v-col>
@@ -188,11 +235,13 @@
             inset
             hide-details
             class="mt-1 mb-1"
+            @change="change"
           />
         </v-col>
         <!-- Third col : date ranges -->
         <v-col
-          cols="6"
+          cols="7"
+          :class="satCheck ? '' : 'font-italic'"
         >
           {{ satPeriod }}
         </v-col>
@@ -207,7 +256,7 @@
       >
         <!-- First col : day and time -->
         <v-col
-          cols="4"
+          cols="3"
         >
           {{ $t('sun') }} {{ sunTime }}
         </v-col>
@@ -221,11 +270,13 @@
             inset
             hide-details
             class="mt-1 mb-1"
+            @change="change"
           />
         </v-col>
         <!-- Third col : date ranges -->
         <v-col
-          cols="6"
+          cols="7"
+          :class="sunCheck ? '' : 'font-italic'"
         >
           {{ sunPeriod }}
         </v-col>
@@ -385,7 +436,7 @@ export default {
     },
     sunMin() {
       if (this.sunTime && this.sunCheck) {
-        return this.nextDay(0);
+        return this.nextDay(7);
       } 
       return null;
     },
@@ -427,9 +478,17 @@ export default {
     },
     sunMax() {
       if (this.sunTime && this.sunCheck) {
-        return this.lastDay(0);
+        return this.lastDay(7);
       } 
       return null;
+    }
+  },
+  watch: {
+    fromDate() {
+      this.change();
+    },
+    maxDate() {
+      this.change();
     }
   },
   methods: {
@@ -442,12 +501,72 @@ export default {
       }
     },
     lastDay(weekday) {
-      const dayToCheck = moment(this.maxDate).isoWeekday();
-      if (dayToCheck <= weekday) { 
-        return moment(this.maxDate).isoWeekday(weekday);
+      const dayToCheck = moment(this.maxDate).isoWeekday(weekday);
+      if (dayToCheck.isSameOrBefore(moment(this.maxDate))) { 
+        return dayToCheck;
       } else {
-        return moment(this.maxDate).subtract(1, 'weeks').isoWeekday(weekday);
+        return dayToCheck.subtract(1, 'weeks').isoWeekday(weekday);
       }
+    },
+    change() {
+      let params = [];
+      if (this.monCheck) {
+        params.push({
+          "day": "mon",
+          "time": this.monTime,
+          "min": this.monMin.toISOString(),
+          "max": this.monMax.isAfter(this.monMin) ? this.monMax.toISOString() : null
+        });
+      }
+      if (this.tueCheck) {
+        params.push({
+          "day": "tue",
+          "time": this.tueTime,
+          "min": this.tueMin.toISOString(),
+          "max": this.tueMax.isAfter(this.tueMin) ? this.tueMax.toISOString() : null
+        });
+      }
+      if (this.wedCheck) {
+        params.push({
+          "day": "wed",
+          "time": this.wedTime,
+          "min": this.wedMin.toISOString(),
+          "max": this.wedMax.isAfter(this.wedMin) ? this.wedMax.toISOString() : null
+        });
+      }
+      if (this.thuCheck) {
+        params.push({
+          "day": "thu",
+          "time": this.thuTime,
+          "min": this.thuMin.toISOString(),
+          "max": this.thuMax.isAfter(this.thuMin) ? this.thuMax.toISOString() : null
+        });
+      }
+      if (this.friCheck) {
+        params.push({
+          "day": "fri",
+          "time": this.friTime,
+          "min": this.friMin.toISOString(),
+          "max": this.friMax.isAfter(this.friMin) ? this.friMax.toISOString() : null
+        });
+      }
+      if (this.satCheck) {
+        params.push({
+          "day": "sat",
+          "time": this.satTime,
+          "min": this.satMin.toISOString(),
+          "max": this.satMax.isAfter(this.satMin) ? this.satMax.toISOString() : null
+        });
+      }
+      if (this.sunCheck) {
+        params.push({
+          "day": "sun",
+          "time": this.sunTime,
+          "min": this.sunMin.toISOString(),
+          "max": this.sunMax.isAfter(this.sunMin) ? this.sunMax.toISOString() : null
+        });
+      }
+      this.$emit('change', params);
     }
   }
 };
