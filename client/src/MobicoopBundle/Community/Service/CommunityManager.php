@@ -147,13 +147,19 @@ class CommunityManager
      */
     public function getCommunityUser(int $communityId, int $userId)
     {
-        $params = [
-            "community" => $communityId,
-            "user" => $userId
-        ];
-
         $this->dataProvider->setClass(CommunityUser::class);
         $response = $this->dataProvider->getCollection(['community'=>$communityId, 'user'=>$userId]);
+        return $response->getValue()->getMember();
+    }
+
+    /**
+     * Get all the community_user of a user
+     * @param int $userId       Id of the User to test
+     */
+    public function getAllCommunityUser(int $userId)
+    {
+        $this->dataProvider->setClass(CommunityUser::class);
+        $response = $this->dataProvider->getCollection(['user'=>$userId]);
         return $response->getValue()->getMember();
     }
 
