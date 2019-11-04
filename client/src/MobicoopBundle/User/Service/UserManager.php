@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
 use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
@@ -457,5 +458,59 @@ class UserManager
         } else {
             return $response->getValue();
         }
+    }
+
+    /**
+     * Get the proposals of an user
+     * 
+     * @param User $user
+     * @return array|object
+     * @throws \ReflectionException
+     */
+    public function getProposals(User $user) {
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSubCollection($user->getId(), 'proposal', 'proposals');
+        $proposals = $response->getValue();
+        
+        $proposalsSanitized = [];
+        
+        /** @var \App\Carpool\Entity\Proposal $proposal */
+        foreach ($proposals as $proposal) {
+            
+            $isAlreadyInArray = false;
+            
+            // check if proposal is already in array
+            foreach ($proposalsSanitized as $sanitized) {
+                if ($sanitized["outward"]["id"] === $proposal["id"] || $sanitized["return"]["id"] === $proposal["id"] ) {
+                    $isAlreadyInArray = true;
+                    break;
+                }
+            }
+            
+            if ($isAlreadyInArray) {
+                continue;
+            }
+            
+            // proposal is an outward
+            if ($proposal["type"] === Proposal::TYPE_OUTWARD && !is_null($proposal["proposalLinked"])) {
+                $proposalsSanitized[] = [
+                    'outward' => $proposal,
+                    'return' => $proposal["proposalLinked"]
+                ];
+                // proposal is a return
+            } else if ($proposal["type"] === Proposal::TYPE_RETURN && !is_null($proposal["proposalLinked"])) {
+                $proposalsSanitized[] = [
+                    'outward' => $proposal["proposalLinked"],
+                    'return' => $proposal
+                ];
+                // proposal is one way
+            } else {
+                $proposalsSanitized[] = [
+                    'outward' => $proposal
+                ];
+            }
+        }
+
+        return $proposalsSanitized;
     }
 }

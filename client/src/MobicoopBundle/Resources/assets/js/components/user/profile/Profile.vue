@@ -39,7 +39,7 @@
           </v-tab-item>
           <v-tab>{{ $t("tabs.myProposals") }}</v-tab>
           <v-tab-item>
-            <MyProposals />
+            <MyProposals :proposals="proposals" />
           </v-tab-item>
           <v-tab>{{ $t("tabs.alerts") }}</v-tab>
           <v-tab-item>
@@ -110,6 +110,10 @@ export default {
     alerts: {
       type: Array,
       default: null
+    },
+    proposals: {
+      type: Array,
+      default: () => []
     }
   }
 }

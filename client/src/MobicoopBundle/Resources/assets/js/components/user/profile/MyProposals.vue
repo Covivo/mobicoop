@@ -1,20 +1,38 @@
 <template>
-  <v-content>
-    <v-container
-      fluid     
-    >
-      <v-layout
-        justify-center
-        text-center
-      >
-        <v-flex xs10>
-          <v-alert type="info">
-            {{ $t("ui.infos.notAvailableYet") }}
-          </v-alert>
-        </v-flex>
-      </v-layout>
-    </v-container>
-  </v-content>
+  <v-container
+    fluid     
+  >
+    <v-row justify="center">
+      <v-col>
+        <v-tabs
+          centered
+          grow
+        >
+          <v-tab>{{ $t('proposals.ongoing') }}</v-tab>
+          <v-tab-item>
+            <v-container
+              fluid
+            >
+              <v-card
+                v-for="proposal in proposals"
+                :key="proposal.outward.id"
+              >
+                {{ proposal.outward.comment }}
+              </v-card>
+            </v-container>
+          </v-tab-item>
+          <v-tab>{{ $t('proposals.archived') }}</v-tab>
+          <v-tab-item>
+            <v-container
+              fluid
+            >
+              <p>annonces archivées</p>
+            </v-container>
+          </v-tab-item>
+        </v-tabs>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 <script>
 import { merge } from "lodash";
@@ -27,6 +45,10 @@ export default {
     messages: TranslationsMerged,
   },
   props: {
+    proposals: {
+      type: Array,
+      default: () => []
+    }
   },
   data(){
     return {
