@@ -24,7 +24,10 @@
           {{ $t('buttons.messages.label') }}
         </v-btn>
         <MHeaderCommunities />
-        <MHeaderProfile :avatar="user.avatar" />
+        <MHeaderProfile
+          :avatar="user.avatar"
+          :short-family-name="(user.shortFamilyName) ? user.shortFamilyName : '-'"
+        />
       </div>
       <div v-else>
         <v-btn

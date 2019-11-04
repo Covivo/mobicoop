@@ -9,7 +9,11 @@
         text
         v-on="on"
       >
-        <v-avatar class="mr-1">
+        <v-avatar
+          class="mr-1"
+          width="36px"
+          height="36px"
+        >
           <img
             v-if="avatar"
             :src="avatar"
@@ -20,7 +24,7 @@
             mdi-account-circle
           </v-icon>
         </v-avatar>
-        {{ $t('myProfile.label') }}
+        {{ shortFamilyName }}
         <v-icon>mdi-chevron-down</v-icon>
       </v-btn>
     </template>
@@ -53,6 +57,10 @@ export default {
     avatar:{
       type: String,
       default:null
+    },
+    shortFamilyName:{
+      type: String,
+      default:"Profil"
     }
   },
   data(){
