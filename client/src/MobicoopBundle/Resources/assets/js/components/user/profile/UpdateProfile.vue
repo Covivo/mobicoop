@@ -20,7 +20,7 @@
  **************************/
  
  <template>
-  <v-content>
+ <div>
     <!--SnackBar-->
     <v-snackbar
       v-model="snackbar"
@@ -36,7 +36,6 @@
       <v-icon>mdi-close-circle-outline</v-icon>
       </v-btn>
     </v-snackbar>
-    <v-container fluid>
       <v-row
         justify-center
         text-center
@@ -165,8 +164,7 @@
       <v-row>
         <ChangePassword />
       </v-row>
-    </v-container>
-  </v-content>
+ </div>
 </template>
 
 <script>

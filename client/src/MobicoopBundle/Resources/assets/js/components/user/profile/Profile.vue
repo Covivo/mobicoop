@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <div>
     <v-row
       justify="center"
     >
@@ -51,7 +51,7 @@
         </v-tabs>
       </v-col>
     </v-row>
-  </v-container>
+  </div>
 </template>
 <script>
 import UpdateProfile from "@components/user/profile/UpdateProfile";
