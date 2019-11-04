@@ -1,7 +1,10 @@
 <template>
-  <v-card>
+  <v-card
+    min-height="150px"
+    flat
+  >
     <v-row no-gutters>
-      <v-col class="cols-12">
+      <v-col class="cols-12 ma-2 text-center">
         <p class="mb-0 mt-2">
           {{ $t("alerts."+alert) }}
         </p>
@@ -35,8 +38,8 @@
 </template>
 <script>
 import { merge } from "lodash";
-import Translations from "@translations/components/user/Alert.json";
-import TranslationsClient from "@clientTranslations/components/user/Alert.json";
+import Translations from "@translations/components/user/profile/Alert.json";
+import TranslationsClient from "@clientTranslations/components/user/profile/Alert.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {

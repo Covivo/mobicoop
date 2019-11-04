@@ -33,9 +33,9 @@
 <script>
 import axios from "axios";
 import { merge } from "lodash";
-import Alert from "@components/user/Alert";
-import Translations from "@translations/components/user/Alerts.json";
-import TranslationsClient from "@clientTranslations/components/user/Alerts.json";
+import Alert from "@components/user/profile/Alert";
+import Translations from "@translations/components/user/profile/Alerts.json";
+import TranslationsClient from "@clientTranslations/components/user/profile/Alerts.json";
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {

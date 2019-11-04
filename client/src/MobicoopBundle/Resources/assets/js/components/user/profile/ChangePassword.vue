@@ -15,11 +15,11 @@
       </v-btn>
     </v-snackbar>
     <v-container fluid>
-      <v-layout
+      <v-row
         justify-center
         text-center
       >
-        <v-flex xs10>
+        <v-col class="text-center">
           <v-form
             ref="form"
             v-model="valid"
@@ -56,8 +56,8 @@
               {{ $t('ui.button.save') }}
             </v-btn>
           </v-form>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
   </v-content>
 </template>
@@ -65,8 +65,8 @@
 import axios from "axios";
 
 import { merge } from "lodash";
-import Translations from "@translations/components/user/Profile.json";
-import TranslationsClient from "@clientTranslations/components/user/Profile.json";
+import Translations from "@translations/components/user/profile/Profile.json";
+import TranslationsClient from "@clientTranslations/components/user/profile/Profile.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
