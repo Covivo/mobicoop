@@ -268,6 +268,8 @@ class UserController extends AbstractController
             $user->setFamilyName($data->get('familyName'));
             $user->setGender($data->get('gender'));
             $user->setBirthYear($data->get('birthYear'));
+            // cause we use FormData to post data
+            $user->setNewsSubscription($data->get('newsSubscription') === "true" ? true : false);
             
             if ($user = $userManager->updateUser($user)) {
                 if ($file) {

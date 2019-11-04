@@ -144,6 +144,29 @@
                 />
               </v-col>
             </v-row>
+
+              <v-row>
+                  <v-col cols="3">
+                      <v-switch
+                              v-model="newsSubscription"
+                              :label="$t('news.label')"
+                              inset
+                              color="primary"
+                      />
+
+                  </v-col>
+                  <v-col>
+                      <v-tooltip
+                              right
+                              color="info"
+                      >
+                          <template v-slot:activator="{ on }">
+                              <v-icon v-on="on">mdi-help-circle-outline</v-icon>
+                          </template>
+                          <span>{{$t('news.tooltip')}}</span>
+                      </v-tooltip>
+                  </v-col>
+              </v-row>
             
             <!--Save Button-->
             <v-btn
@@ -234,6 +257,7 @@ export default {
       avatarRules: [
         v => !v || v.size < this.avatarSize || this.$t("avatar.size")+" (Max "+(this.avatarSize/1000000)+"MB)"
       ],
+      newsSubscription: this.user && this.user.newsSubscription !== null ? this.user.newsSubscription : null
     };
   },
   computed : {
@@ -266,6 +290,7 @@ export default {
       updateUser.append("telephone", this.user.telephone);
       updateUser.append("birthYear", this.user.birthYear);
       updateUser.append("avatar", this.avatar);
+      updateUser.append("newsSubscription", this.newsSubscription);
 
       axios 
         .post(this.$t('route.update'), updateUser, 
@@ -276,8 +301,8 @@ export default {
         })
         .then(res => {
           this.errorUpdate = res.data.state;
-          document.location.reload(true);
           this.snackbar = true;
+          document.location.reload(true);
       });
     },
 
