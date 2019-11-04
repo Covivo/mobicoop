@@ -2,28 +2,26 @@
 {% block body %}
     <p>@PrenomOuPseudoExpediteur {{ "yourAsk"|trans }}.</p>
     <p>{{ "replyViaEMail"|trans }} {{ api_env('EMAILS_PLATFORM_NAME') }} {{ "clickHere"|trans}} @URLdelapagedemessageriecorrespondante.</p>
-    {# Driver/ Passenger regular #}
+    {% if Driver regular ||  Passenger regular %}
     <p>{{ "carpoolDistance"|trans}} @DistancePassager km.</p>
-    {# #}
-    {# Driver/ Passenger occasionnal #}
+    {% elseif Driver occasionnal || Passenger occasionnal %}
     <p>{{ "occassionalCarpoolDistancee"|trans}} @DistancePassager km.</p>
-    {# #}
+    {% endif %}
     <p>{{ "driverDetour" |trans}}  @TempsDetourMinutes  /  @DistanceDetour  km.</p>
     <p>{{ "supported"|trans }} @AdressePEC.</p>
-    {# Driver/ Passenger occasionnal #}
+    {% if Driver occasionnal || Passenger occasionnal %}
     <p>{{ "the"|trans}} @DateDebut {{ "hour"|trans}} @DateDebut.</p>
-    {# #}
+    {% endif %}
     <p>{{ "depositedAt" |trans }} @AdresseDepose.</p>
-    {# Driver/ Passenger regular #}
+    {% if Driver regular || Passenger regular %}
     <p>{{ "appointmentHour" |trans}} {{ "monday" |trans}} {{ "tuesday" |trans}} {{ "wednesday" |trans}} {{ "thusday" |trans}} {{ "friday" |trans}} {{ "saturday" |trans}} {{ "sunday" |trans}}.</p>
     <p>{{ "the" |trans}}  @DateDebut  {{ "from" |trans}}  @DateDebut  {{ "to" |trans}} @DateFin.</p>
-    {# #}
-    {# Driver #}
+    {% endif %}
+    {% if Driver %}
     <p>{{ "passengerComment" |trans}} :  @CommentairesDemande.</p>
-    {# #}
-    {# Passenger #}
+    {% elseif Passenger %}
     <p>{{ "driverComment"|trans}} : @CommentairesDemande.</p>
-    {# #}
+    {% endif %}
     <p>{{ "reservedPlaces" |trans}} @NbPassagers.</p>
     <p>{{ "indicativePrice" |trans}}  @GainConducteur @Monnaie.</p>
 {% endblock %}

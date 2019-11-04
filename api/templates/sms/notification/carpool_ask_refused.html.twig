@@ -1,12 +1,9 @@
-{# Driver regular #}
+{% if Driver regular %}
 @PrenomOuPseudoPassager {{ "refusedAskRegular"|trans }} @villePEC {{ "at"|trans }} @VilleDepose.
-{# #}
-{# Driver occasionnal #}
+{% elseif Driver occasionnal %}
 @PrenomOuPseudoPassager {{ "refusedAsk"|trans }} @villePEC {{ "at"|trans }} @VilleDepose {{ "the" |trans }} @DateVoyage {{ "at"|trans }} @HeurePEC.
-{# #}
-{# Passenger regular #}
+{% elseif Passenger regular %}
 @PrenomOuPseudoConducteur {{ "refusedAskRegular"|trans }} @villePEC {{ "at"|trans }} @VilleDepose.
-{# #}
-{# Passenger occasionnal #}
+{% elseif Passenger occasionnal %}
 @PrenomOuPseudoConducteur {{ "refusedAsk"|trans }} @villePEC {{ "at"|trans }} @VilleDepose {{ "the"|trans }} @DateVoyage {{ "at"|trans }} @HeurePEC.
-{# #}
+{% endif %}
