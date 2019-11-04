@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card :height="cardHeight">
     <v-row no-gutters>
       <v-col class="cols-12">
         <p class="mb-0 mt-2">
@@ -55,7 +55,8 @@ export default {
   },
   data(){
     return{
-      dataMedium:this.medium
+      dataMedium: this.medium,
+      cardHeight: '100%'
     }
   },
   methods:{

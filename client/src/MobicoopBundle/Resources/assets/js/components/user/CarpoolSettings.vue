@@ -32,7 +32,7 @@
         v-for="(item, itemIndex) in $t('items')"
         :key="itemIndex"
       >
-        <v-card>
+        <v-card :height="cardHeight">
           <v-card-title>
             {{ item.title }}
           </v-card-title>
@@ -93,6 +93,7 @@ export default {
     return {
       loading: false,
       snackbar: false,
+      cardHeight: '100%',
       alert: {
         type: "success",
         message: ""
