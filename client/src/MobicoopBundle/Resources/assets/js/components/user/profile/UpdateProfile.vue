@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2019, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -41,12 +41,54 @@
         justify-center
         text-center
       >
-        <v-col xs10>
+        <v-col class="text-center">
           <v-form
             ref="form"
             v-model="valid"
             lazy-validation
           >
+            <!--Upload Avatar-->
+            <v-row justify="center" v-if="user.images[0]">
+              <v-col cols="3">
+                <v-avatar
+                  color="grey lighten-3"
+                  size="225"
+                >
+                  <img
+                    :src="user['images'][0]['versions'][avatarVersion]"
+                    alt="avatar"
+                  >
+                </v-avatar>
+              </v-col>
+              <v-col cols="1" justify-self="center" align-self="center">
+                <v-icon @click="avatarDelete">
+                  mdi-delete
+                </v-icon>
+              </v-col>
+            </v-row>
+            <v-row v-else class="justify-center">
+              <v-col cols="12" class="text-center">
+                <v-avatar
+                  color="grey lighten-3"
+                  size="225"
+                >
+                  <img
+                    :src="this.urlAltAvatar"
+                    alt="avatar"
+                  >
+                </v-avatar>
+              </v-col>
+              <v-col cols="5" class="text-center">
+                <v-file-input
+                v-model="avatar"
+                  :rules="avatarRules"
+                  accept="image/png, image/jpeg, image/bmp"
+                  :label="$t('avatar.label')"
+                  prepend-icon="mdi-image"
+                />
+              </v-col>
+            </v-row>
+
               <!--Email-->
             <v-text-field
               v-model="user.email"
@@ -103,47 +145,6 @@
               :display-name-in-selected="false"
               @address-selected="homeAddressSelected"
             />
-            <!--Upload Avatar-->
-            <v-row justify="center" v-if="user.images[0]">
-              <v-col cols="3">
-                <v-avatar
-                  color="grey lighten-3"
-                  size="225"
-                >
-                  <img
-                    :src="user['images'][0]['versions'][avatarVersion]"
-                    alt="avatar"
-                  >
-                </v-avatar>
-              </v-col>
-              <v-col cols="1" justify-self="center" align-self="center">
-                <v-icon @click="avatarDelete">
-                  mdi-delete
-                </v-icon>
-              </v-col>
-            </v-row>
-            <v-row   v-else>
-              <v-col cols="3">
-                <v-avatar
-                  color="grey lighten-3"
-                  size="225"
-                >
-                  <img
-                    :src="this.urlAltAvatar"
-                    alt="avatar"
-                  >
-                </v-avatar>
-              </v-col>
-              <v-col align-self="center">
-                <v-file-input
-                v-model="avatar"
-                  :rules="avatarRules"
-                  accept="image/png, image/jpeg, image/bmp"
-                  :label="$t('avatar.label')"
-                  prepend-icon="mdi-image"
-                />
-              </v-col>
-            </v-row>
             
             <!--Save Button-->
             <v-btn
@@ -161,6 +162,9 @@
           </v-form>
         </v-col>
       </v-row>
+      <v-row>
+        <ChangePassword />
+      </v-row>
     </v-container>
   </v-content>
 </template>
@@ -168,6 +172,7 @@
 <script>
 import axios from "axios";
 import GeoComplete from "@js/components/utilities/GeoComplete";
+import ChangePassword from "@components/user/profile/ChangePassword";
 import { merge } from "lodash";
 import Translations from "@translations/components/user/profile/UpdateProfile.json";
 import TranslationsClient from "@clientTranslations/components/user/profile/UpdateProfile.json";
@@ -179,7 +184,8 @@ export default {
     messages: TranslationsMerged,
   },
   components: {
-    GeoComplete
+    GeoComplete,
+    ChangePassword
   },
   props: {
     avatarSize: {

@@ -1,17 +1,5 @@
 <template>
   <v-container fluid>
-    <v-row 
-      justify="center"
-    >
-      <v-col
-        cols="12"
-        md="8"
-        xl="6"
-        align="center"
-      >
-        <h1>{{ $t('page.title') }}</h1>
-      </v-col>
-    </v-row>
     <v-row
       justify="center"
     >
@@ -21,33 +9,44 @@
           color="secondary"
           vertical
         >
-          <v-tab>{{ $t("tabs.myProfile") }}</v-tab>
+          <v-tab class="text-left justify-start">
+            {{ $t("tabs.myProposals") }}
+          </v-tab>
+          <v-tab-item />
+          <v-tab class="text-left justify-start">
+            {{ $t("tabs.carpoolsAccepted") }}
+          </v-tab>
+          <v-tab-item />
+          <v-tab class="text-left justify-start">
+            {{ $t("tabs.myProfile") }}
+          </v-tab>
           <v-tab-item>
-            <UpdateProfile
-              :user="user"
-              :geo-search-url="geoSearchUrl"
-              :age-min="ageMin"
-              :age-max="ageMax"
-              :avatar-size="avatarSize"
-              :url-alt-avatar="urlAltAvatar"
-              :avatar-version="avatarVersion"
-            />
-          </v-tab-item>
-          <v-tab>{{ $t("tabs.password") }}</v-tab>
-          <v-tab-item>
-            <ChangePassword />
-          </v-tab-item>
-          <v-tab>{{ $t("tabs.myProposals") }}</v-tab>
-          <v-tab-item>
-            <MyProposals />
-          </v-tab-item>
-          <v-tab>{{ $t("tabs.alerts") }}</v-tab>
-          <v-tab-item>
-            <Alerts :alerts="alerts" />
-          </v-tab-item>
-          <v-tab>{{ $t("tabs.carpoolSettings") }}</v-tab>
-          <v-tab-item>
-            <CarpoolSettings :user="user" />
+            <v-tabs grow>
+              <v-tab>{{ $t("tabs.myAccount") }}</v-tab>
+              <v-tab-item>
+                <UpdateProfile
+                  :user="user"
+                  :geo-search-url="geoSearchUrl"
+                  :age-min="ageMin"
+                  :age-max="ageMax"
+                  :avatar-size="avatarSize"
+                  :url-alt-avatar="urlAltAvatar"
+                  :avatar-version="avatarVersion"
+                />
+              </v-tab-item>
+              <v-tab>{{ $t("tabs.myProposals") }}</v-tab>
+              <v-tab-item>
+                <MyProposals />
+              </v-tab-item>
+              <v-tab>{{ $t("tabs.alerts") }}</v-tab>
+              <v-tab-item>
+                <Alerts :alerts="alerts" />
+              </v-tab-item>
+              <v-tab>{{ $t("tabs.carpoolSettings") }}</v-tab>
+              <v-tab-item>
+                <CarpoolSettings :user="user" />
+              </v-tab-item>
+            </v-tabs>
           </v-tab-item>
         </v-tabs>
       </v-col>
@@ -56,7 +55,6 @@
 </template>
 <script>
 import UpdateProfile from "@components/user/profile/UpdateProfile";
-import ChangePassword from "@components/user/profile/ChangePassword";
 import MyProposals from "@components/user/profile/MyProposals";
 import Alerts from "@components/user/profile/Alerts";
 import CarpoolSettings from "@components/user/profile/CarpoolSettings";
@@ -73,7 +71,6 @@ export default {
   },
   components: {
     UpdateProfile,
-    ChangePassword,
     MyProposals,
     Alerts,
     CarpoolSettings
@@ -114,3 +111,8 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.v-tab{
+  text-transform: initial !important;
+}
+</style>
