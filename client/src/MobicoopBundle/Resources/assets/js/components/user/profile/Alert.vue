@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-row no-gutters>
-      <v-col class="cols-12">
+      <v-col class="cols-12 ma-2 text-center">
         <p class="mb-0 mt-2">
           {{ $t("alerts."+alert) }}
         </p>
