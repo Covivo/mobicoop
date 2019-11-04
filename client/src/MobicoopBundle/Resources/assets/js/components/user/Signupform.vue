@@ -204,14 +204,34 @@
             v-model="step4"
             :hidden="!step2"
           >
-            <v-select
-              v-model="form.birthYear"
-              :items="years"
-              :rules="form.birthYearRules"
-              :label="$t('models.user.birthYear.placeholder')+` *`"
-              required
-              :disabled="!step3"
-            />
+            <v-menu
+              ref="menu"
+              v-model="menu"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              offset-y
+              full-width
+              min-width="290px"
+            >
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-model="date"
+                  :label="$t('models.user.birthDay.placeholder')+` *`"
+                  readonly
+                  :rules="[ form.birthdayRules.checkIfAdult ]"
+                  required
+                  :disabled="!step3"
+                  v-on="on"
+                />
+              </template>
+              <v-date-picker
+                ref="picker"
+                v-model="date"
+                :max="new Date().toISOString().substr(0, 10)"
+                @change="save"
+              />
+            </v-menu>
+
             <v-row
               justify="center"
               align="center"
@@ -350,6 +370,8 @@ export default {
       step3: true,
       step4: true,
       step5: true,
+      menu : false,
+      date : null,
 
 
       //scrolling data
@@ -414,6 +436,18 @@ export default {
 
           },
         },
+        birthdayRules : {
+          checkIfAdult : value =>{
+            var d1 = new Date();
+            var d2 = new Date(value);
+
+            var diff =(d1.getTime() - d2.getTime()) / 1000;
+            diff /= (60 * 60 * 24);
+
+            var diffYears =  Math.abs(Math.floor(diff/365.24) ) ;
+            return diffYears >= 18 || this.$t("models.user.birthDay.errors.notadult")
+          }
+        },
         homeAddress:null,
         checkboxRules: [
           v => !!v || this.$t("ui.pages.signup.chart.errors.required")
@@ -439,6 +473,11 @@ export default {
       }
     }
   },
+  watch: {
+    menu (val) {
+      val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
+    },
+  },
   mounted: function () {
     //get scroll target
     this.container = document.getElementById ( "scroll-target" )
@@ -446,6 +485,9 @@ export default {
   methods: {
     selectedGeo(address) {
       this.form.homeAddress = address;
+    },
+    save (date) {
+      this.$refs.menu.save(date)
     },
     validate: function (e) {
       this.loading = true,
@@ -457,7 +499,7 @@ export default {
           givenName:this.form.givenName,
           familyName:this.form.familyName,
           gender:this.form.gender,
-          birthYear:this.form.birthYear,
+          birthDay:this.date,
           address:this.form.homeAddress,
           idFacebook:this.form.idFacebook
         },{
@@ -473,7 +515,6 @@ export default {
           console.log(error);
         });
     },
-
     isNumber: function(evt) {
       evt = (evt) ? evt : window.event;
       var charCode = (evt.which) ? evt.which : evt.keyCode;
@@ -488,7 +529,17 @@ export default {
       this.form.givenName = data.first_name;
       this.form.familyName = data.last_name;
       this.form.idFacebook = data.id;
-    }
+    },
+    checkAdult (value) {
+      var d1 = new Date();
+      var d2 = new Date(value);
+
+      var diff =(d1.getTime() - d2.getTime()) / 1000;
+      diff /= (60 * 60 * 24);
+
+      var diffYears =  Math.abs(Math.floor(diff/365.24) ) ;
+    },
+
   }
 
 };

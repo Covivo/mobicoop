@@ -138,7 +138,6 @@ class UserController extends AbstractController
             }
             $user->addAddress($address);
 
-
             // pass front info into user form
             $user->setEmail($data['email']);
             $user->setTelephone($data['telephone']);
@@ -146,7 +145,10 @@ class UserController extends AbstractController
             $user->setGivenName($data['givenName']);
             $user->setFamilyName($data['familyName']);
             $user->setGender($data['gender']);
-            $user->setBirthYear($data['birthYear']);
+            //$user->setBirthYear($data->get('birthYear')); Replace only year by full birthday
+            $user->setBirthDate(new DateTime($data['birthDay']));
+
+
 
             if (!is_null($data['idFacebook'])) {
                 $user->setFacebookId($data['idFacebook']);

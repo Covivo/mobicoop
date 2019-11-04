@@ -98,6 +98,14 @@ export default {
             required: "L'année de naissance est requise"
           }
         },
+        birthDay: {
+          label: "Date de naissance",
+          placeholder: "Date de naissance",
+          errors: {
+            required: "La date de naissance est requise",
+            notadult: "Vous devez avoir 18 ans pour vous isncrire sur la plateforme"
+          }
+        },
         email: {
           label: "Email",
           placeholder: "Email",
