@@ -31,6 +31,7 @@
               :avatar-size="avatarSize"
               :url-alt-avatar="urlAltAvatar"
               :avatar-version="avatarVersion"
+              :platform="platform"
             />
           </v-tab-item>
           <v-tab>{{ $t("tabs.password") }}</v-tab>
@@ -110,6 +111,10 @@ export default {
     alerts: {
       type: Array,
       default: null
+    },
+    platform: {
+      type: String,
+      default: ""
     }
   }
 }

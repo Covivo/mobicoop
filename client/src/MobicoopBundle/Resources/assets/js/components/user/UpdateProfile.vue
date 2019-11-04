@@ -137,7 +137,7 @@
                   size="225"
                 >
                   <img
-                    :src="this.urlAltAvatar"
+                    :src="urlAltAvatar"
                     alt="avatar"
                   >
                 </v-avatar>
@@ -154,18 +154,19 @@
             </v-row>
 
             <v-row>
-              <v-col cols="3">
+              <v-col>
                 <v-switch
                   v-model="newsSubscription"
-                  :label="$t('news.label')"
+                  :label="switchLabel"
                   inset
-                  color="secondary"
+                  color="primary"
                 />
               </v-col>
               <v-col>
                 <v-tooltip 
                   right
                   color="info"
+                  :max-width="'35%'"
                 >
                   <template v-slot:activator="{ on }">
                     <v-icon v-on="on">
@@ -242,7 +243,10 @@ export default {
       type: String,
       default: null
     },
-  
+    platform: {
+      type: String,
+      default: ""
+    }
   },
   data() {
     return {
@@ -276,7 +280,9 @@ export default {
       const ageMax = Number(this.ageMax);
       return Array.from({length: ageMax - ageMin}, (value, index) => (currentYear - ageMin) - index)
     },
-
+    switchLabel () {
+      return this.$t('news.label') + ' ' + this.platform;
+    }
   },
   methods: {
     homeAddressSelected(address){

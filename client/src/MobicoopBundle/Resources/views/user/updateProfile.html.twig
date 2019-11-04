@@ -18,6 +18,7 @@
 			url-alt-avatar="{{ urlAltUserAvatar }}"
         	avatar-version="{{ userAvatarVersion }}"
         	:alerts="{{ alerts|json_encode }}"
+			:platform="{{ app_name|json_encode }}"
 			></Profile>
 
 {% endblock %}
