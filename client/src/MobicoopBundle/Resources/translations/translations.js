@@ -144,6 +144,9 @@ export default {
           label: "Commune de résidence",
           placeholder: "Commune de résidence",
           hint: "Cette information n’est pas obligatoire, elle permet d’être tenu informé des animations territoriales liées à la mobilité et à votre plateforme près de chez vous.",
+          required: {
+            hint: "Information permettant de rattacher votre inscription à votre collectivité de référence, à des fins statistiques et d'animation."
+          },
           errors: {
             required: "La ville de résidence est requise"
           }

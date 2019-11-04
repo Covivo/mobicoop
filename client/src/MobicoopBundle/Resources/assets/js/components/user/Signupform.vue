@@ -271,9 +271,10 @@
               name="homeAddress"
               :label="$t('models.user.homeTown.placeholder')"
               :url="geoSearchUrl"
-              :hint="$t('models.user.homeTown.hint')"
+              :hint="requiredHomeAddress ? $t('models.user.homeTown.required.hint') : $t('models.user.homeTown.hint')"
               persistent-hint
               :disabled="!step4"
+              :required="requiredHomeAddress"
               @address-selected="selectedGeo"
             />
             <v-checkbox
@@ -301,7 +302,7 @@
               color="primary"
               rounded
               class="mr-4 mb-100 mt-12"
-              :disabled="!step5 || loading"
+              :disabled="!step5 || loading || isDisable"
               :loading="loading"
               @click="validate"
             >
@@ -356,7 +357,11 @@ export default {
     facebookLoginAppId: {
       type: String,
       default: null
-    }
+    },
+    requiredHomeAddress:  {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {
@@ -373,6 +378,8 @@ export default {
       menu : false,
       date : null,
 
+      // disable validation if homeAddress is empty and required
+      isDisable: this.requiredHomeAddress ? true : false,
 
       //scrolling data
       type: 'selector',
@@ -485,6 +492,9 @@ export default {
   methods: {
     selectedGeo(address) {
       this.form.homeAddress = address;
+      if (this.requiredHomeAddress) {
+        this.isDisable = address ? false : true;
+      }
     },
     save (date) {
       this.$refs.menu.save(date)
@@ -499,7 +509,7 @@ export default {
           givenName:this.form.givenName,
           familyName:this.form.familyName,
           gender:this.form.gender,
-          birthDay:this.date,
+          birthYear:this.form.birthYear,
           address:this.form.homeAddress,
           idFacebook:this.form.idFacebook
         },{
