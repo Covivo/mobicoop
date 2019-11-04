@@ -13,14 +13,15 @@
  *    GNU Affero General Public License for more details.
  *
  *    You should have received a copy of the GNU Affero General Public License
- *    along with this program.  If not, see <gnu.org/licenses>.
+ *    along with this program.  If not, see
+<gnu.org xmlns:v-slot="http://www.w3.org/1999/XSL/Transform"/>/licenses>.
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
  **************************/
  
- <template>
-  <v-content>
+<template>
+  <v-container>
     <!--SnackBar-->
     <v-snackbar
       v-model="snackbar"
@@ -33,7 +34,7 @@
         text
         @click="snackbar = false"
       >
-      <v-icon>mdi-close-circle-outline</v-icon>
+        <v-icon>mdi-close-circle-outline</v-icon>
       </v-btn>
     </v-snackbar>
     <v-container fluid>
@@ -47,7 +48,7 @@
             v-model="valid"
             lazy-validation
           >
-              <!--Email-->
+            <!--Email-->
             <v-text-field
               v-model="user.email"
               :label="$t('models.user.email.label')"
@@ -104,7 +105,10 @@
               @address-selected="homeAddressSelected"
             />
             <!--Upload Avatar-->
-            <v-row justify="center" v-if="user.images[0]">
+            <v-row
+              v-if="user.images[0]"
+              justify="center"
+            >
               <v-col cols="3">
                 <v-avatar
                   color="grey lighten-3"
@@ -116,13 +120,17 @@
                   >
                 </v-avatar>
               </v-col>
-              <v-col cols="1" justify-self="center" align-self="center">
+              <v-col
+                cols="1"
+                justify-self="center"
+                align-self="center"
+              >
                 <v-icon @click="avatarDelete">
                   mdi-delete
                 </v-icon>
               </v-col>
             </v-row>
-            <v-row   v-else>
+            <v-row v-else>
               <v-col cols="3">
                 <v-avatar
                   color="grey lighten-3"
@@ -136,7 +144,7 @@
               </v-col>
               <v-col align-self="center">
                 <v-file-input
-                v-model="avatar"
+                  v-model="avatar"
                   :rules="avatarRules"
                   accept="image/png, image/jpeg, image/bmp"
                   :label="$t('avatar.label')"
@@ -145,28 +153,29 @@
               </v-col>
             </v-row>
 
-              <v-row>
-                  <v-col cols="3">
-                      <v-switch
-                              v-model="newsSubscription"
-                              :label="$t('news.label')"
-                              inset
-                              color="primary"
-                      />
-
-                  </v-col>
-                  <v-col>
-                      <v-tooltip
-                              right
-                              color="info"
-                      >
-                          <template v-slot:activator="{ on }">
-                              <v-icon v-on="on">mdi-help-circle-outline</v-icon>
-                          </template>
-                          <span>{{$t('news.tooltip')}}</span>
-                      </v-tooltip>
-                  </v-col>
-              </v-row>
+            <v-row>
+              <v-col cols="3">
+                <v-switch
+                  v-model="newsSubscription"
+                  :label="$t('news.label')"
+                  inset
+                  color="secondary"
+                />
+              </v-col>
+              <v-col>
+                <v-tooltip 
+                  right
+                  color="info"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-icon v-on="on">
+                      mdi-help-circle-outline
+                    </v-icon>
+                  </template>
+                  <span>{{ $t('news.tooltip') }}</span>
+                </v-tooltip>
+              </v-col>
+            </v-row>
             
             <!--Save Button-->
             <v-btn
@@ -185,7 +194,7 @@
         </v-col>
       </v-row>
     </v-container>
-  </v-content>
+  </v-container>
 </template>
 
 <script>
@@ -295,15 +304,15 @@ export default {
       axios 
         .post(this.$t('route.update'), updateUser, 
           {
-          headers:{
-            'content-type': 'multipart/form-data'
-          }
-        })
+            headers:{
+              'content-type': 'multipart/form-data'
+            }
+          })
         .then(res => {
           this.errorUpdate = res.data.state;
           this.snackbar = true;
           document.location.reload(true);
-      });
+        });
     },
 
     avatarDelete () {
