@@ -18,8 +18,8 @@
 </template>
 <script>
 import { merge } from "lodash";
-import Translations from "@translations/components/user/Profile.json";
-import TranslationsClient from "@clientTranslations/components/user/Profile.json";
+import Translations from "@translations/components/user/profile/Profile.json";
+import TranslationsClient from "@clientTranslations/components/user/profile/Profile.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {

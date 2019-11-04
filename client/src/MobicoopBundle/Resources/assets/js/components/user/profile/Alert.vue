@@ -35,8 +35,8 @@
 </template>
 <script>
 import { merge } from "lodash";
-import Translations from "@translations/components/user/Alert.json";
-import TranslationsClient from "@clientTranslations/components/user/Alert.json";
+import Translations from "@translations/components/user/profile/Alert.json";
+import TranslationsClient from "@clientTranslations/components/user/profile/Alert.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {

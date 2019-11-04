@@ -74,8 +74,8 @@
 <script>
 import {merge} from "lodash";
 import axios from "axios";
-import Translations from "@translations/components/user/CarpoolSettings.js";
-import ClientTranslations from "@clientTranslations/components/user/CarpoolSettings.js";
+import Translations from "@translations/components/user/profile/CarpoolSettings.js";
+import ClientTranslations from "@clientTranslations/components/user/profile/CarpoolSettings.js";
 
 let MergedTranslations = merge(Translations, ClientTranslations);
 

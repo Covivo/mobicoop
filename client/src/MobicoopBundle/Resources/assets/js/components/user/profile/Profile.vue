@@ -19,7 +19,7 @@
         <v-tabs
           slider-color="secondary"
           color="secondary"
-          grow
+          vertical
         >
           <v-tab>{{ $t("tabs.myProfile") }}</v-tab>
           <v-tab-item>
@@ -55,15 +55,15 @@
   </v-container>
 </template>
 <script>
-import UpdateProfile from "@components/user/UpdateProfile";
-import ChangePassword from "@components/user/ChangePassword";
-import MyProposals from "@components/user/MyProposals";
-import Alerts from "@components/user/Alerts";
-import CarpoolSettings from "@components/user/CarpoolSettings";
+import UpdateProfile from "@components/user/profile/UpdateProfile";
+import ChangePassword from "@components/user/profile/ChangePassword";
+import MyProposals from "@components/user/profile/MyProposals";
+import Alerts from "@components/user/profile/Alerts";
+import CarpoolSettings from "@components/user/profile/CarpoolSettings";
 
 import { merge } from "lodash";
-import Translations from "@translations/components/user/Profile.json";
-import TranslationsClient from "@clientTranslations/components/user/Profile.json";
+import Translations from "@translations/components/user/profile/Profile.json";
+import TranslationsClient from "@clientTranslations/components/user/profile/Profile.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
