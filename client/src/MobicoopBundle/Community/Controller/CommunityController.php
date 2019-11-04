@@ -125,8 +125,36 @@ class CommunityController extends AbstractController
 
         $user = $userManager->getLoggedUser();
 
+        if ($user) {
+            // We get all the communities
+            $communities = $communityManager->getCommunities($user->getId());
+
+            // We get de communities of the user
+            $communityUsers = $communityManager->getAllCommunityUser($user->getId());
+            $communitiesUser = [];
+            $idCommunitiesUser = [];
+            foreach ($communityUsers as $communityUser) {
+                $communitiesUser[] = $communityUser->getCommunity();
+                $idCommunitiesUser[] = $communityUser->getCommunity()->getId();
+            }
+
+            // we delete those who the user is already in
+            foreach ($communities as $key => $community) {
+                if (in_array($community->getId(), $idCommunitiesUser)) {
+                    unset($communities[$key]);
+                }
+            }
+        } else {
+            $communitiesUser = [];
+            $communities = $communityManager->getCommunities();
+        }
+
+        dump($communities);
+        dump($communitiesUser);
+
         return $this->render('@Mobicoop/community/communities.html.twig', [
-            'communities' => ($user) ? $communityManager->getCommunities($user->getId()) : $communityManager->getCommunities(),
+            'communities' => $communities,
+            'communitiesUser' => $communitiesUser,
         ]);
     }
 

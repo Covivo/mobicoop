@@ -23,7 +23,7 @@
         >
           {{ $t('buttons.messages.label') }}
         </v-btn>
-        <MHeaderCommunities />
+        <MHeaderCommunities :user-id="user.id" />
         <MHeaderProfile
           :avatar="user.avatar"
           :short-family-name="(user.shortFamilyName) ? user.shortFamilyName : '-'"

@@ -44,6 +44,12 @@ export default {
   i18n: {
     messages: TranslationsMerged
   },
+  props:{
+    userId:{
+      type: Number,
+      default:0
+    }
+  },
   data(){
     return {
       items: []
@@ -51,7 +57,7 @@ export default {
   },
   mounted(){
     let params = {
-      'userId':1
+      'userId':this.userId
     }
     axios.post(this.$t("getCommunities"), params)
       .then(res => {
