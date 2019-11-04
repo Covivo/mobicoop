@@ -9,7 +9,7 @@
         "fri": "Vendredi",
         "sat": "Samedi",
         "sun": "Dimanche",
-        "notSelected": "Jour non choisi",
+        "notSelected": "Non covoituré",
         "i18n": {
             "date": {
               "format": {
@@ -33,7 +33,7 @@
       "fri": "Friday",
       "sat": "Saturday",
       "sun": "Sunday",
-      "notSelected": "Day not selected",
+      "notSelected": "No carpooling",
       "i18n": {
           "date": {
             "format": {

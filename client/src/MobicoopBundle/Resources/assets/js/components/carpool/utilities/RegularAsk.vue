@@ -7,19 +7,21 @@
         align="center"
       >
         <v-col
-          cols="3"
+          cols="2"
           class="title"
         >
           {{ type == 1 ? $t('outward') : $t('return') }}
         </v-col>
         <v-col
+          v-if="originDriver"
           cols="auto"
         >
           <v-chip>
-            {{ origin.addressLocality }}
+            {{ originDriver.addressLocality }}
           </v-chip>
         </v-col>
         <v-col
+          v-if="originDriver"
           cols="auto"
         >
           <v-icon
@@ -29,10 +31,47 @@
           </v-icon>
         </v-col>
         <v-col
+          v-if="originPassenger"
           cols="auto"
         >
           <v-chip>
-            {{ destination.addressLocality }}
+            {{ originPassenger.addressLocality }}
+          </v-chip>
+        </v-col>
+        <v-col
+          v-if="originPassenger"
+          cols="auto"
+        >
+          <v-icon
+            slot="prepend"
+          >
+            mdi-arrow-right
+          </v-icon>
+        </v-col>
+        <v-col
+          v-if="destinationPassenger"
+          cols="auto"
+        >
+          <v-chip>
+            {{ destinationPassenger.addressLocality }}
+          </v-chip>
+        </v-col>
+        <v-col
+          v-if="destinationDriver"
+          cols="auto"
+        >
+          <v-icon
+            slot="prepend"
+          >
+            mdi-arrow-right
+          </v-icon>
+        </v-col>
+        <v-col
+          v-if="destinationDriver"
+          cols="auto"
+        >
+          <v-chip>
+            {{ destinationDriver.addressLocality }}
           </v-chip>
         </v-col>
       </v-row>
@@ -302,11 +341,19 @@ export default {
       type: Number,
       default: 1
     },
-    origin: {
+    originDriver: {
       type: Object,
       default: null
     },
-    destination: {
+    destinationDriver: {
+      type: Object,
+      default: null
+    },
+    originPassenger: {
+      type: Object,
+      default: null
+    },
+    destinationPassenger: {
       type: Object,
       default: null
     },

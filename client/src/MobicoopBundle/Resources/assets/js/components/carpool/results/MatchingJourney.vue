@@ -209,7 +209,7 @@
               <v-slider
                 v-model="range"
                 :tick-labels="$t('ranges')"
-                :max="3"
+                max="3"
                 step="1"
                 ticks="always"
                 tick-size="8"
@@ -241,6 +241,7 @@
                   v-model="maxDate"
                   :locale="locale"
                   :min="fromDate"
+                  :max="limitDate ? limitDate : null"
                   no-title
                   @input="menuMaxDate = false"
                   @change="change"
@@ -258,8 +259,10 @@
             :fri-time="outwardFriTime"
             :sat-time="outwardSatTime"
             :sun-time="outwardSunTime"
-            :origin="lResult.origin"
-            :destination="lResult.destination"
+            :origin-driver="lResult.resultDriver ? lResult.originDriver : null"
+            :destination-driver="lResult.resultDriver ? lResult.destinationDriver : null"
+            :origin-passenger="lResult.originPassenger"
+            :destination-passenger="lResult.destinationPassenger"
             :from-date="fromDate"
             :max-date="maxDate"
             @change="changeOutward"
@@ -277,8 +280,10 @@
             :fri-time="returnFriTime"
             :sat-time="returnSatTime"
             :sun-time="returnSunTime"
-            :origin="lResult.destination"
-            :destination="lResult.origin"
+            :origin-driver="lResult.resultDriver ? lResult.destinationDriver : null"
+            :destination-driver="lResult.resultDriver ? lResult.originDriver : null"
+            :origin-passenger="lResult.destinationPassenger"
+            :destination-passenger="lResult.originPassenger"
             :from-date="fromDate"
             :max-date="maxDate"
             @change="changeReturn"
@@ -291,6 +296,7 @@
     <v-card-actions
       v-if="(driver ^ passenger) || (driver && passenger && lResult.frequency == 1)"
     >
+      <v-spacer />
       <!-- Carpool (driver xor passenger) -->
       <v-btn
         v-if="(driver ^ passenger) && step == 1"
@@ -331,7 +337,7 @@
         outlined
         @click="step--"
       >
-        {{ step == 2 ? $t('detail') : $t('outward') }}
+        {{ $t('previous') }}
       </v-btn>
 
       <!-- Step 2 (regular outward, return available) --> 
@@ -402,6 +408,7 @@ export default {
       menuFromDate: false,
       maxDate: this.result.startDate ? this.result.startDate : null,
       menuMaxDate: false,
+      limitDate: this.result.limitDate ? this.result.limitDate : null,
       range: 0,
       outwardMonTime: null,
       outwardTueTime: null,
@@ -462,6 +469,7 @@ export default {
     result(val) {
       this.lResult = val;
       this.fromDate = val.startDate ? val.startDate : null;
+      this.limitDate = val.limitDate ? val.limitDate : null;
       this.computeTimes();
     }
   },
@@ -480,35 +488,43 @@ export default {
     },
     computeTimes() {
       if (this.lResult.frequency == 2 && this.lResult.resultPassenger && !this.lResult.resultDriver) {  
-        this.outwardMonTime = this.lResult.resultPassenger.outward.monTime ? moment.utc(this.lResult.resultPassenger.outward.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.outwardTueTime = this.lResult.resultPassenger.outward.tueTime ? moment.utc(this.lResult.resultPassenger.outward.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.outwardWedTime = this.lResult.resultPassenger.outward.wedTime ? moment.utc(this.lResult.resultPassenger.outward.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.outwardThuTime = this.lResult.resultPassenger.outward.thuTime ? moment.utc(this.lResult.resultPassenger.outward.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.outwardFriTime = this.lResult.resultPassenger.outward.friTime ? moment.utc(this.lResult.resultPassenger.outward.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.outwardSatTime = this.lResult.resultPassenger.outward.satTime ? moment.utc(this.lResult.resultPassenger.outward.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.outwardSunTime = this.lResult.resultPassenger.outward.sunTime ? moment.utc(this.lResult.resultPassenger.outward.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.returnMonTime = this.lResult.resultPassenger.return.monTime ? moment.utc(this.lResult.resultPassenger.return.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.returnTueTime = this.lResult.resultPassenger.return.tueTime ? moment.utc(this.lResult.resultPassenger.return.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.returnWedTime = this.lResult.resultPassenger.return.wedTime ? moment.utc(this.lResult.resultPassenger.return.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.returnThuTime = this.lResult.resultPassenger.return.thuTime ? moment.utc(this.lResult.resultPassenger.return.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.returnFriTime = this.lResult.resultPassenger.return.friTime ? moment.utc(this.lResult.resultPassenger.return.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.returnSatTime = this.lResult.resultPassenger.return.satTime ? moment.utc(this.lResult.resultPassenger.return.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.returnSunTime = this.lResult.resultPassenger.return.sunTime ? moment.utc(this.lResult.resultPassenger.return.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        if (this.lResult.resultPassenger.outward) {
+          this.outwardMonTime = this.lResult.resultPassenger.outward.monTime ? moment.utc(this.lResult.resultPassenger.outward.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardTueTime = this.lResult.resultPassenger.outward.tueTime ? moment.utc(this.lResult.resultPassenger.outward.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardWedTime = this.lResult.resultPassenger.outward.wedTime ? moment.utc(this.lResult.resultPassenger.outward.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardThuTime = this.lResult.resultPassenger.outward.thuTime ? moment.utc(this.lResult.resultPassenger.outward.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardFriTime = this.lResult.resultPassenger.outward.friTime ? moment.utc(this.lResult.resultPassenger.outward.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardSatTime = this.lResult.resultPassenger.outward.satTime ? moment.utc(this.lResult.resultPassenger.outward.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardSunTime = this.lResult.resultPassenger.outward.sunTime ? moment.utc(this.lResult.resultPassenger.outward.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        }
+        if (this.lResult.resultPassenger.return) {
+          this.returnMonTime = this.lResult.resultPassenger.return.monTime ? moment.utc(this.lResult.resultPassenger.return.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnTueTime = this.lResult.resultPassenger.return.tueTime ? moment.utc(this.lResult.resultPassenger.return.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnWedTime = this.lResult.resultPassenger.return.wedTime ? moment.utc(this.lResult.resultPassenger.return.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnThuTime = this.lResult.resultPassenger.return.thuTime ? moment.utc(this.lResult.resultPassenger.return.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnFriTime = this.lResult.resultPassenger.return.friTime ? moment.utc(this.lResult.resultPassenger.return.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnSatTime = this.lResult.resultPassenger.return.satTime ? moment.utc(this.lResult.resultPassenger.return.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnSunTime = this.lResult.resultPassenger.return.sunTime ? moment.utc(this.lResult.resultPassenger.return.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        }
       } else if (this.lResult.frequency == 2 && this.lResult.resultDriver && !this.lResult.resultPassenger) {  
-        this.outwardMonTime = this.lResult.resultDriver.outward.monTime ? moment.utc(this.lResult.resultDriver.outward.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.outwardTueTime = this.lResult.resultDriver.outward.tueTime ? moment.utc(this.lResult.resultDriver.outward.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.outwardWedTime = this.lResult.resultDriver.outward.wedTime ? moment.utc(this.lResult.resultDriver.outward.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.outwardThuTime = this.lResult.resultDriver.outward.thuTime ? moment.utc(this.lResult.resultDriver.outward.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.outwardFriTime = this.lResult.resultDriver.outward.friTime ? moment.utc(this.lResult.resultDriver.outward.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.outwardSatTime = this.lResult.resultDriver.outward.satTime ? moment.utc(this.lResult.resultDriver.outward.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.outwardSunTime = this.lResult.resultDriver.outward.sunTime ? moment.utc(this.lResult.resultDriver.outward.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.returnMonTime = this.lResult.resultDriver.return.monTime ? moment.utc(this.lResult.resultDriver.return.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.returnTueTime = this.lResult.resultDriver.return.tueTime ? moment.utc(this.lResult.resultDriver.return.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.returnWedTime = this.lResult.resultDriver.return.wedTime ? moment.utc(this.lResult.resultDriver.return.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.returnThuTime = this.lResult.resultDriver.return.thuTime ? moment.utc(this.lResult.resultDriver.return.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.returnFriTime = this.lResult.resultDriver.return.friTime ? moment.utc(this.lResult.resultDriver.return.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.returnSatTime = this.lResult.resultDriver.return.satTime ? moment.utc(this.lResult.resultDriver.return.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-        this.returnSunTime = this.lResult.resultDriver.return.sunTime ? moment.utc(this.lResult.resultDriver.return.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;  
+        if (this.lResult.resultDriver.outward) {
+          this.outwardMonTime = this.lResult.resultDriver.outward.monTime ? moment.utc(this.lResult.resultDriver.outward.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardTueTime = this.lResult.resultDriver.outward.tueTime ? moment.utc(this.lResult.resultDriver.outward.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardWedTime = this.lResult.resultDriver.outward.wedTime ? moment.utc(this.lResult.resultDriver.outward.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardThuTime = this.lResult.resultDriver.outward.thuTime ? moment.utc(this.lResult.resultDriver.outward.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardFriTime = this.lResult.resultDriver.outward.friTime ? moment.utc(this.lResult.resultDriver.outward.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardSatTime = this.lResult.resultDriver.outward.satTime ? moment.utc(this.lResult.resultDriver.outward.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardSunTime = this.lResult.resultDriver.outward.sunTime ? moment.utc(this.lResult.resultDriver.outward.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+        }
+        if (this.lResult.resultDriver.return) {
+          this.returnMonTime = this.lResult.resultDriver.return.monTime ? moment.utc(this.lResult.resultDriver.return.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnTueTime = this.lResult.resultDriver.return.tueTime ? moment.utc(this.lResult.resultDriver.return.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnWedTime = this.lResult.resultDriver.return.wedTime ? moment.utc(this.lResult.resultDriver.return.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnThuTime = this.lResult.resultDriver.return.thuTime ? moment.utc(this.lResult.resultDriver.return.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnFriTime = this.lResult.resultDriver.return.friTime ? moment.utc(this.lResult.resultDriver.return.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnSatTime = this.lResult.resultDriver.return.satTime ? moment.utc(this.lResult.resultDriver.return.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnSunTime = this.lResult.resultDriver.return.sunTime ? moment.utc(this.lResult.resultDriver.return.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;  
+        }
       }
     },
     contact() {

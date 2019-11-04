@@ -106,6 +106,30 @@ class Result
     private $destinationLast;
 
     /**
+     * @var Address The origin address of the driver.
+     * @Groups("results")
+     */
+    private $originDriver;
+
+    /**
+     * @var Address The destination address of the driver.
+     * @Groups("results")
+     */
+    private $destinationDriver;
+
+    /**
+     * @var Address The origin address of the passenger.
+     * @Groups("results")
+     */
+    private $originPassenger;
+
+    /**
+     * @var Address The destination address of the passenger.
+     * @Groups("results")
+     */
+    private $destinationPassenger;
+
+    /**
      * @var \DateTimeInterface|null The date to display.
      * @Groups("results")
      */
@@ -316,6 +340,54 @@ class Result
     {
         $this->destinationLast = $isDestinationLast;
         
+        return $this;
+    }
+
+    public function getOriginDriver(): ?Address
+    {
+        return $this->originDriver;
+    }
+
+    public function setOriginDriver(?Address $originDriver): self
+    {
+        $this->originDriver = $originDriver;
+
+        return $this;
+    }
+
+    public function getDestinationDriver(): ?Address
+    {
+        return $this->destinationDriver;
+    }
+
+    public function setDestinationDriver(?Address $destinationDriver): self
+    {
+        $this->destinationDriver = $destinationDriver;
+
+        return $this;
+    }
+
+    public function getOriginPassenger(): ?Address
+    {
+        return $this->originPassenger;
+    }
+
+    public function setOriginPassenger(?Address $originPassenger): self
+    {
+        $this->originPassenger = $originPassenger;
+
+        return $this;
+    }
+
+    public function getDestinationPassenger(): ?Address
+    {
+        return $this->destinationPassenger;
+    }
+
+    public function setDestinationPassenger(?Address $destinationPassenger): self
+    {
+        $this->destinationPassenger = $destinationPassenger;
+
         return $this;
     }
 

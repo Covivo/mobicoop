@@ -372,19 +372,21 @@ class GeoMatcher
 
         // we add the zones to the direction
         $direction = $this->zoneManager->createZonesForDirection($routes[0]);
+
+        // /!\ detour can be empty has we "force" the match, all directions may not be computed /!\
         $result = [
             'route' => is_array($points) ? $this->generateRoute($points, $routes[0]->getDurations()) : null,
-            'originalDistance' => $candidate1->getDirection()->getDistance(),
+            'originalDistance' => !is_null($candidate1->getDirection()) ? $candidate1->getDirection()->getDistance() : null,
             'acceptedDetourDistance' => $candidate1->getMaxDetourDistance(),
             'newDistance' => $routes[0]->getDistance(),
-            'detourDistance' => ($routes[0]->getDistance()-$candidate1->getDirection()->getDistance()),
-            'detourDistancePercent' => round($routes[0]->getDistance()*100/$candidate1->getDirection()->getDistance()-100, 2),
-            'originalDuration' => $candidate1->getDirection()->getDuration(),
+            'detourDistance' => !is_null($candidate1->getDirection()) ? ($routes[0]->getDistance()-$candidate1->getDirection()->getDistance()) : null,
+            'detourDistancePercent' => !is_null($candidate1->getDirection()) ? round($routes[0]->getDistance()*100/$candidate1->getDirection()->getDistance()-100, 2) : null,
+            'originalDuration' => !is_null($candidate1->getDirection()) ? $candidate1->getDirection()->getDuration() : null,
             'acceptedDetourDuration' => $candidate1->getMaxDetourDuration(),
             'newDuration' => $routes[0]->getDuration(),
-            'detourDuration' => ($routes[0]->getDuration()-$candidate1->getDirection()->getDuration()),
-            'detourDurationPercent' => round($routes[0]->getDuration()*100/$candidate1->getDirection()->getDuration()-100, 2),
-            'commonDistance' => $candidate2->getDirection()->getDistance(),
+            'detourDuration' => !is_null($candidate1->getDirection()) ? ($routes[0]->getDuration()-$candidate1->getDirection()->getDuration()) : null,
+            'detourDurationPercent' => !is_null($candidate1->getDirection()) ? round($routes[0]->getDuration()*100/$candidate1->getDirection()->getDuration()-100, 2) : null,
+            'commonDistance' => !is_null($candidate2->getDirection()) ? $candidate2->getDirection()->getDistance() : null,
             'direction' => $direction,
             'id' => $candidate2->getId()
         ];
