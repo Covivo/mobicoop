@@ -3,26 +3,28 @@
     <v-row
       justify="center"
     >
-      <v-col cols="8">
+      <v-col cols="10">
         <v-tabs
           slider-color="secondary"
           color="secondary"
           vertical
         >
-          <v-tab class="text-left justify-start">
+          <v-tab class="text-left justify-start ml-2 mr-5 title">
             {{ $t("tabs.myProposals") }}
           </v-tab>
           <v-tab-item />
-          <v-tab class="text-left justify-start">
+          <v-tab class="text-left justify-start ml-2 mr-5 title">
             {{ $t("tabs.carpoolsAccepted") }}
           </v-tab>
           <v-tab-item />
-          <v-tab class="text-left justify-start">
+          <v-tab class="text-left justify-start ml-2 mr-5 title">
             {{ $t("tabs.myProfile") }}
           </v-tab>
           <v-tab-item>
             <v-tabs grow>
-              <v-tab>{{ $t("tabs.myAccount") }}</v-tab>
+              <v-tab class="subtitle-1">
+                {{ $t("tabs.myAccount") }}
+              </v-tab>
               <v-tab-item>
                 <UpdateProfile
                   :user="user"
@@ -34,15 +36,21 @@
                   :avatar-version="avatarVersion"
                 />
               </v-tab-item>
-              <v-tab>{{ $t("tabs.myProposals") }}</v-tab>
+              <v-tab class="subtitle-1">
+                {{ $t("tabs.myProposals") }}
+              </v-tab>
               <v-tab-item>
                 <MyProposals />
               </v-tab-item>
-              <v-tab>{{ $t("tabs.alerts") }}</v-tab>
+              <v-tab class="subtitle-1">
+                {{ $t("tabs.alerts") }}
+              </v-tab>
               <v-tab-item>
                 <Alerts :alerts="alerts" />
               </v-tab-item>
-              <v-tab>{{ $t("tabs.carpoolSettings") }}</v-tab>
+              <v-tab class="subtitle-1">
+                {{ $t("tabs.carpoolSettings") }}
+              </v-tab>
               <v-tab-item>
                 <CarpoolSettings :user="user" />
               </v-tab-item>

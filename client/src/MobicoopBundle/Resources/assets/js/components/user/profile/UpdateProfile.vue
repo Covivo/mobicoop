@@ -51,7 +51,7 @@
               <v-col cols="3">
                 <v-avatar
                   color="grey lighten-3"
-                  size="225"
+                  size="225px"
                 >
                   <img
                     :src="user['images'][0]['versions'][avatarVersion]"
@@ -69,7 +69,7 @@
               <v-col cols="12" class="text-center">
                 <v-avatar
                   color="grey lighten-3"
-                  size="225"
+                  size="225px"
                 >
                   <img
                     :src="this.urlAltAvatar"
@@ -86,6 +86,10 @@
                   prepend-icon="mdi-image"
                 />
               </v-col>
+            </v-row>
+
+            <v-row class="text-left title font-weight-bold">
+              <v-col>{{ $t('titles.personnalInfos') }}</v-col>
             </v-row>
 
               <!--Email-->
@@ -160,6 +164,9 @@
             </v-btn>
           </v-form>
         </v-col>
+      </v-row>
+      <v-row class="text-left title font-weight-bold">
+        <v-col>{{ $t('titles.password') }}</v-col>
       </v-row>
       <v-row>
         <ChangePassword />
