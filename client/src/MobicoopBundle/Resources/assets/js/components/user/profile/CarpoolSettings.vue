@@ -35,6 +35,7 @@
         <v-card
           :height="cardHeight"
           class="pa-2"
+          flat
         >
           <v-container fluid>
             <v-row no-gutters>
