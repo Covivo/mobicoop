@@ -4,3 +4,21 @@ body {
     background-color: $primary;
   }
 }
+// color hints based on input class
+.v-input {
+  &.success--text {
+    .v-messages {
+      color: var(--v-success-base);
+    }
+  }
+  &.error--text {
+    .v-messages {
+      color: var(--v-error-base);
+    }
+  }
+  &.warning--text {
+    .v-messages {
+      color: var(--v-warning-base);
+    }
+  }
+}
