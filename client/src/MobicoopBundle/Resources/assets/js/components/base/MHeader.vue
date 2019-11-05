@@ -26,7 +26,7 @@
         <MHeaderCommunities :user-id="user.id" />
         <MHeaderProfile
           :avatar="user.avatar"
-          :short-family-name="(user.shortFamilyName) ? user.shortFamilyName : '-'"
+          :short-family-name="(user.shortFamilyName) ? user.givenName+' '+user.shortFamilyName : '-'"
         />
       </div>
       <div v-else>

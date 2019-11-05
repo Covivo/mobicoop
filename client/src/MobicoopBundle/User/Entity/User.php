@@ -427,6 +427,13 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         return $this->shortFamilyName;
     }
         
+    public function setShortFamilyName(?string $shortFamilyName): self
+    {
+        $this->shortFamilyName = $shortFamilyName;
+        
+        return $this;
+    }
+
     public function getEmail(): ?string
     {
         return $this->email;
@@ -1035,6 +1042,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'id'             => $this->getId(),
             'givenName'      => $this->getGivenName(),
             'familyName'     => $this->getFamilyName(),
+            'shortFamilyName' => $this->getShortFamilyName(),
             'gender'         => $this->getGender(),
             'status'         => $this->getStatus(),
             'email'          => $this->getEmail(),
