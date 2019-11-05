@@ -140,6 +140,7 @@ export default {
     return{
       modelTabs:(this.tabDefault!="") ? this.tabDefault : "myProposals"
     }
+  }
 }
 </script>
 <style lang="scss" scoped>
