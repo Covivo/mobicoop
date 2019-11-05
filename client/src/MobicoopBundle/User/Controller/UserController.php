@@ -214,7 +214,7 @@ class UserController extends AbstractController
     /**
      * User profile update.
      */
-    public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator)
+    public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator, $tabDefault)
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
@@ -291,7 +291,8 @@ class UserController extends AbstractController
         }
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
                 'error' => $error,
-                'alerts' => $userManager->getAlerts($user)['alerts']
+                'alerts' => $userManager->getAlerts($user)['alerts'],
+                'tabDefault' => $tabDefault
             ]);
     }
 
