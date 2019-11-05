@@ -1,7 +1,6 @@
 <template>
   <v-card
     :height="cardHeight"
-    flat
   >
     <v-row no-gutters>
       <v-col class="cols-12 ma-2 text-center">
