@@ -1,14 +1,16 @@
 {
     "fr": {
         "page": {
-            "title": "Mon profil"
+            "title": "Profil"
         },
         "tabs": {
-            "myProfile": "Mon profil",
+            "myProfile": "Profil",
             "password": "Mot de passe",
             "myProposals": "Mes annonces",
             "carpoolSettings": "Mes préférences",
-            "alerts": "Mes alertes"
+            "alerts": "Mes alertes",
+            "carpoolsAccepted": "Covoiturages acceptés",
+            "myAccount":"Mon compte"
         },
         "form":{
             "newPassword":"Nouveau mot de passe",
@@ -25,14 +27,16 @@
     },    
     "en": {
         "page": {
-            "title": "My profile"
+            "title": "Profile"
         },
         "tabs": {
-            "myProfile": "My profile",
+            "myProfile": "Profile",
             "password": "Password",
             "myProposals": "My proposals",
             "carpoolSettings": "My settings",
-            "alerts": "My alerts"
+            "alerts": "My alerts",
+            "carpoolsAccepted": "Accepted carpools",
+            "myAccount":"My account"
         },
         "form":{
             "newPassword":"New password",

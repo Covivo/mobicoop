@@ -10,15 +10,15 @@
         >
           <v-tab>{{ $t('proposals.ongoing') }}</v-tab>
           <v-tab-item>
-            <v-container
-              fluid
-            >
-              <v-card
+            <v-container>
+              <v-row
                 v-for="proposal in proposals"
                 :key="proposal.outward.id"
               >
-                {{ proposal.outward.comment }}
-              </v-card>
+                <v-col cols="12">
+                  <Proposal :proposal="proposal" />
+                </v-col>
+              </v-row>
             </v-container>
           </v-tab-item>
           <v-tab>{{ $t('proposals.archived') }}</v-tab>
@@ -39,10 +39,15 @@ import { merge } from "lodash";
 import Translations from "@translations/components/user/profile/Profile.json";
 import TranslationsClient from "@clientTranslations/components/user/profile/Profile.json";
 
+import Proposal from "@components/user/profile/proposal/Proposal.vue";
+
 let TranslationsMerged = merge(Translations, TranslationsClient);
 export default {
   i18n: {
     messages: TranslationsMerged,
+  },
+  components: {
+    Proposal
   },
   props: {
     proposals: {

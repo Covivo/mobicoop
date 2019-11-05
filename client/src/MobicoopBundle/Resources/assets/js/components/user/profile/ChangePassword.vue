@@ -15,11 +15,11 @@
       </v-btn>
     </v-snackbar>
     <v-container fluid>
-      <v-layout
+      <v-row
         justify-center
         text-center
       >
-        <v-flex xs10>
+        <v-col class="text-center">
           <v-form
             ref="form"
             v-model="valid"
@@ -56,8 +56,8 @@
               {{ $t('ui.button.save') }}
             </v-btn>
           </v-form>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
   </v-content>
 </template>
@@ -86,7 +86,7 @@ export default {
       password: "",
       passWordRules: {
         required:  v => !!v || this.$t("models.user.password.errors.required"),
-        min: v => v.length >= 8 || this.$t("models.user.password.errors.min"),
+        min: v => (v && v.length >= 8 ) || this.$t("models.user.password.errors.min"),
         checkUpper : value => {
           const pattern = /^(?=.*[A-Z]).*$/
           return pattern.test(value) || this.$t("models.user.password.errors.upper")
