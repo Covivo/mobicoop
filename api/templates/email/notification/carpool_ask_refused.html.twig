@@ -1,5 +1,8 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
 <p>@PrenomOuPseudoPassager {{ "notBeAbleToCarpoolWithYou"|trans }} @AdresseDepose {{ "followingDays"|trans }} : @Jours {{ "from"|trans }} @DateDebut {{ "to"|trans }} @DateFin.</p>
+{% if  Driver occasionnal || Passenger occasionnal %}
+<p>@PrenomOuPseudoPassager {{ "notBeAbleToCarpoolWithYouFor"|trans }} @DateVoyage {{ "towards"|trans }} @AdresseDepose.</p>
+{% endif %}
 <p>{{ "hisMessage"|trans}} : @Commentaires.</p>
 {% endblock %}
