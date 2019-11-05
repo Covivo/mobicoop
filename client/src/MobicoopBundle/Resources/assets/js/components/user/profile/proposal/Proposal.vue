@@ -1,162 +1,160 @@
 <template>
-  <v-container>
-    <v-card>
-      <v-container class="py-0">
-        <v-row
-          class="primary darken-2"
+  <v-card>
+    <v-container class="py-0">
+      <v-row
+        class="primary darken-2"
+      >
+        <v-icon
+          v-if="isDriver"
+          class="accent darken-2 pa-1 px-3 white--text"
+        >
+          mdi-car
+        </v-icon>
+        <v-divider
+          v-if="isDriver && isPassenger"
+          vertical
+        />
+        <v-icon
+          v-if="isPassenger"
+          class="secondary darken-2 pa-1 px-3 white--text"
+        >
+          mdi-walk
+        </v-icon>
+        <v-spacer />
+        <v-btn
+          class="secondary my-1"
+          icon
         >
           <v-icon
-            v-if="isDriver"
-            class="accent darken-2 pa-1 px-3 white--text"
+            class="white--text"
           >
-            mdi-car
+            mdi-delete-outline
           </v-icon>
-          <v-divider
-            v-if="isDriver && isPassenger"
-            vertical
-          />
-          <v-icon
-            v-if="isPassenger"
-            class="secondary darken-2 pa-1 px-3 white--text"
-          >
-            mdi-walk
+        </v-btn>
+        <v-btn
+          class="secondary ma-1"
+          icon
+        >
+          <v-icon class="white--text">
+            mdi-pencil
           </v-icon>
-          <v-spacer />
-          <v-btn
-            class="secondary my-1"
-            icon
-          >
-            <v-icon
-              class="white--text"
-            >
-              mdi-delete-outline
+        </v-btn>
+        <v-btn
+          class="secondary my-1 mr-1"
+          icon
+        >
+          <v-icon class="white--text">
+            mdi-pause
+          </v-icon>
+        </v-btn>
+      </v-row>
+    </v-container>
+      
+    <v-card-text v-if="isRegular">
+      <v-container
+        fluid
+      >
+        <v-row>
+          <v-col cols="5">
+            <regular-days-summary
+              :mon-active="proposal.outward.criteria.monCheck"
+              :tue-active="proposal.outward.criteria.tueCheck"
+              :wed-active="proposal.outward.criteria.wedCheck"
+              :thu-active="proposal.outward.criteria.thuCheck"
+              :fri-active="proposal.outward.criteria.friCheck"
+              :sat-active="proposal.outward.criteria.satCheck"
+              :sun-active="proposal.outward.criteria.sunCheck"
+              :date-end-of-validity="proposal.outward.criteria.toDate"
+            />
+          </v-col>
+          <v-col>
+            <span class="accent--text text--darken-2 font-weight-bold">{{ $t('outward') }}</span>
+              
+            <v-icon class="accent--text text--darken-2 font-weight-bold">
+              mdi-arrow-right
             </v-icon>
-          </v-btn>
-          <v-btn
-            class="secondary ma-1"
-            icon
+              
+            <span class="primary--text text--darken-3 body-1">
+              {{ formatTime(proposal.outward.criteria.monTime) }}
+            </span>
+          </v-col>
+
+          <!-- Return -->
+          <v-col
+            v-if="hasReturn"
           >
-            <v-icon class="white--text">
-              mdi-pencil
+            <span class="accent--text text--darken-2 font-weight-bold">{{ $t('return') }}</span>
+
+            <v-icon class="accent--text text--darken-2 font-weight-bold">
+              mdi-arrow-left
             </v-icon>
-          </v-btn>
-          <v-btn
-            class="secondary my-1 mr-1"
-            icon
+
+            <span class="primary--text text--darken-3 body-1">
+              {{ formatTime(proposal.return.criteria.monTime) }}
+            </span>
+          </v-col>
+        </v-row>
+        <v-row justify="center">
+          <v-col
+            cols="12"
+            class="primary darken-4"
           >
-            <v-icon class="white--text">
-              mdi-pause
-            </v-icon>
-          </v-btn>
+            <v-container class="pa-0">
+              <v-row>
+                <v-col
+                  cols="6"
+                  class="py-0"
+                >
+                  <route-summary
+                    :origin="proposal.outward.waypoints[0].address"
+                    :destination="proposal.outward.waypoints[proposal.outward.waypoints.length - 1].address"
+                    :type="proposal.outward.criteria.frequency"
+                    :regular="isRegular"
+                    text-color-class="white--text"
+                    icon-color="accent"
+                  />
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-col>
         </v-row>
       </v-container>
+    </v-card-text>
       
-      <v-card-text v-if="isRegular">
-        <v-container
-          fluid
-        >
-          <v-row>
-            <v-col cols="5">
-              <regular-days-summary
-                :mon-active="proposal.outward.criteria.monCheck"
-                :tue-active="proposal.outward.criteria.tueCheck"
-                :wed-active="proposal.outward.criteria.wedCheck"
-                :thu-active="proposal.outward.criteria.thuCheck"
-                :fri-active="proposal.outward.criteria.friCheck"
-                :sat-active="proposal.outward.criteria.satCheck"
-                :sun-active="proposal.outward.criteria.sunCheck"
-                :date-end-of-validity="proposal.outward.criteria.toDate"
-              />
-            </v-col>
-            <v-col>
-              <span class="accent--text text--darken-2 font-weight-bold">{{ $t('outward') }}</span>
-              
-              <v-icon class="accent--text text--darken-2 font-weight-bold">
-                mdi-arrow-right
-              </v-icon>
-              
-              <span class="primary--text text--darken-3 body-1">
-                {{ formatTime(proposal.outward.criteria.monTime) }}
-              </span>
-            </v-col>
+    <v-card-text v-else>
+      non regular
+    </v-card-text>
 
-            <!-- Return -->
-            <v-col
-              v-if="hasReturn"
+    <v-divider />
+      
+    <v-card-actions class="py-0">
+      <v-container fluid>
+        <v-row>
+          <v-col cols="3">
+            {{ proposal.outward.criteria.seats }} places
+          </v-col>
+          <v-col cols="3">
+            {{ proposal.outward.criteria.price }} €
+          </v-col>
+          <v-col cols="6">
+            <v-btn
+              icon
             >
-              <span class="accent--text text--darken-2 font-weight-bold">{{ $t('return') }}</span>
-
-              <v-icon class="accent--text text--darken-2 font-weight-bold">
-                mdi-arrow-left
+              <v-icon class="primary--text">
+                mdi-email
               </v-icon>
-
-              <span class="primary--text text--darken-3 body-1">
-                {{ formatTime(proposal.return.criteria.monTime) }}
-              </span>
-            </v-col>
-          </v-row>
-          <v-row justify="center">
-            <v-col
-              cols="12"
-              class="primary darken-4"
+            </v-btn>
+            <v-btn
+              color="success"
+              rounded
             >
-              <v-container class="pa-0">
-                <v-row>
-                  <v-col
-                    cols="6"
-                    class="py-0"
-                  >
-                    <route-summary
-                      :origin="proposal.outward.waypoints[0].address"
-                      :destination="proposal.outward.waypoints[proposal.outward.waypoints.length - 1].address"
-                      :type="proposal.outward.criteria.frequency"
-                      :regular="isRegular"
-                      text-color-class="white--text"
-                      icon-color="accent"
-                    />
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-card-text>
-      
-      <v-card-text v-else>
-        non regular
-      </v-card-text>
-
-      <v-divider />
-      
-      <v-card-actions class="py-0">
-        <v-container fluid>
-          <v-row>
-            <v-col cols="3">
-              {{ proposal.outward.criteria.seats }} places
-            </v-col>
-            <v-col cols="3">
-              {{ proposal.outward.criteria.price }} €
-            </v-col>
-            <v-col cols="6">
-              <v-btn
-                icon
-              >
-                <v-icon class="primary--text">
-                  mdi-email
-                </v-icon>
-              </v-btn>
-              <v-btn
-                color="success"
-                rounded
-              >
-                {{ proposal.outward.matchingRequests.length }} covoitureurs potentiels
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-card-actions>
-    </v-card>
-  </v-container>
+              {{ proposal.outward.matchingRequests.length }} covoitureurs potentiels
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
