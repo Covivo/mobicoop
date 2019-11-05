@@ -19,8 +19,8 @@
  *    LICENSE
  **************************/
  
- <template>
- <div>
+<template>
+  <v-container>
     <!--SnackBar-->
     <v-snackbar
       v-model="snackbar"
@@ -33,145 +33,171 @@
         text
         @click="snackbar = false"
       >
-      <v-icon>mdi-close-circle-outline</v-icon>
+        <v-icon>mdi-close-circle-outline</v-icon>
       </v-btn>
     </v-snackbar>
-      <v-row
-        justify-center
-        text-center
-      >
-        <v-col class="text-center">
-          <v-form
-            ref="form"
-            v-model="valid"
-            lazy-validation
-          >
-            <!--Upload Avatar-->
-            <v-row justify="center" v-if="user.images[0]">
-              <v-col cols="3">
-                <v-avatar
-                  color="grey lighten-3"
-                  size="225px"
+    <v-row
+      justify-center
+      text-center
+    >
+      <v-col class="text-center">
+        <v-form
+          ref="form"
+          v-model="valid"
+          lazy-validation
+        >
+          <!--Upload Avatar-->
+          <v-row justify="center" v-if="user.images[0]">
+            <v-col cols="3">
+              <v-avatar
+                color="grey lighten-3"
+                size="225px"
+              >
+                <img
+                  :src="user['images'][0]['versions'][avatarVersion]"
+                  alt="avatar"
                 >
-                  <img
-                    :src="user['images'][0]['versions'][avatarVersion]"
-                    alt="avatar"
-                  >
-                </v-avatar>
-              </v-col>
-              <v-col cols="1" justify-self="center" align-self="center">
-                <v-icon @click="avatarDelete">
-                  mdi-delete
-                </v-icon>
-              </v-col>
-            </v-row>
-            <v-row v-else class="justify-center">
-              <v-col cols="12" class="text-center">
-                <v-avatar
-                  color="grey lighten-3"
-                  size="225px"
+              </v-avatar>
+            </v-col>
+            <v-col cols="1" justify-self="center" align-self="center">
+              <v-icon @click="avatarDelete">
+                mdi-delete
+              </v-icon>
+            </v-col>
+          </v-row>
+          <v-row v-else class="justify-center">
+            <v-col cols="12" class="text-center">
+              <v-avatar
+                color="grey lighten-3"
+                size="225px"
+              >
+                <img
+                  :src="this.urlAltAvatar"
+                  alt="avatar"
                 >
-                  <img
-                    :src="this.urlAltAvatar"
-                    alt="avatar"
-                  >
-                </v-avatar>
-              </v-col>
-              <v-col cols="5" class="text-center">
-                <v-file-input
+              </v-avatar>
+            </v-col>
+            <v-col cols="5" class="text-center">
+              <v-file-input
                 v-model="avatar"
-                  :rules="avatarRules"
-                  accept="image/png, image/jpeg, image/bmp"
-                  :label="$t('avatar.label')"
-                  prepend-icon="mdi-image"
-                />
-              </v-col>
-            </v-row>
+                :rules="avatarRules"
+                accept="image/png, image/jpeg, image/bmp"
+                :label="$t('avatar.label')"
+                prepend-icon="mdi-image"
+              />
+            </v-col>
+          </v-row>
 
-            <v-row class="text-left title font-weight-bold">
-              <v-col>{{ $t('titles.personnalInfos') }}</v-col>
-            </v-row>
+          <v-row class="text-left title font-weight-bold">
+            <v-col>{{ $t('titles.personnalInfos') }}</v-col>
+          </v-row>
 
-              <!--Email-->
-            <v-text-field
-              v-model="user.email"
-              :label="$t('models.user.email.label')"
-              type="email"
-              class="email"
-            />
+          <!--Email-->
+          <v-text-field
+            v-model="user.email"
+            :label="$t('models.user.email.label')"
+            type="email"
+            class="email"
+          />
 
-            <!--Telephone-->
-            <v-text-field
-              v-model="user.telephone"
-              :label="$t('models.user.phone.label')"
-              class="telephone"
-            />
+          <!--Telephone-->
+          <v-text-field
+            v-model="user.telephone"
+            :label="$t('models.user.phone.label')"
+            class="telephone"
+          />
 
-            <!--GivenName-->
-            <v-text-field
-              v-model="user.givenName"
-              :label="$t('models.user.givenName.label')" 
-              class="givenName"
-            />
+          <!--GivenName-->
+          <v-text-field
+            v-model="user.givenName"
+            :label="$t('models.user.givenName.label')"
+            class="givenName"
+          />
 
-            <!--FamilyName-->
-            <v-text-field
-              v-model="user.familyName"
-              :label="$t('models.user.familyName.label')" 
-              class="familyName"
-            />
+          <!--FamilyName-->
+          <v-text-field
+            v-model="user.familyName"
+            :label="$t('models.user.familyName.label')"
+            class="familyName"
+          />
 
-            <!--Gender-->
-            <v-select
-              v-model="user.gender"
-              :label="$t('models.user.gender.label')"
-              :items="genders"
-              item-text="gender"
-              item-value="value"
-            />
+          <!--Gender-->
+          <v-select
+            v-model="user.gender"
+            :label="$t('models.user.gender.label')"
+            :items="genders"
+            item-text="gender"
+            item-value="value"
+          />
 
-            <!--birthyear-->
-            <v-select
-              id="birthYear"
-              v-model="user.birthYear"
-              :items="years"
-              :label="$t('models.user.birthYear.label')"
-              class="birthYear"
-            />
+          <!--birthyear-->
+          <v-select
+            id="birthYear"
+            v-model="user.birthYear"
+            :items="years"
+            :label="$t('models.user.birthYear.label')"
+            class="birthYear"
+          />
 
-            <!--GeoComplete-->
-            <GeoComplete
-              :url="geoSearchUrl"
-              :label="$t('models.user.homeTown.label')"
-              :token="user ? user.geoToken : ''"
-              :init-address="user.homeAddress ? user.homeAddress : null"
-              :display-name-in-selected="false"
-              @address-selected="homeAddressSelected"
-            />
-            
-            <!--Save Button-->
-            <v-btn
-              class="button saveButton"
-              color="primary"
-              rounded
-              :disabled="!valid"
-              :loading="loading"
-              type="button"
-              :value="$t('ui.button.save')"
-              @click="validate"
-            >
-              {{ $t('ui.button.save') }}
-            </v-btn>
-          </v-form>
-        </v-col>
-      </v-row>
-      <v-row class="text-left title font-weight-bold">
-        <v-col>{{ $t('titles.password') }}</v-col>
-      </v-row>
-      <v-row>
-        <ChangePassword />
-      </v-row>
- </div>
+          <!--GeoComplete-->
+          <GeoComplete
+            :url="geoSearchUrl"
+            :label="$t('models.user.homeTown.label')"
+            :token="user ? user.geoToken : ''"
+            :init-address="user.homeAddress ? user.homeAddress : null"
+            :display-name-in-selected="false"
+            @address-selected="homeAddressSelected"
+          />
+
+          <!--NewsSubscription-->
+          <v-row>
+            <v-col>
+              <v-switch 
+                v-model="newsSubscription" 
+                :label="switchLabel" 
+                inset 
+                color="primary"
+              />
+            </v-col>
+            <v-col>
+              <v-tooltip 
+                right 
+                color="info" 
+                :max-width="'35%'"
+              >
+                <template v-slot:activator="{ on }">
+                  <v-icon v-on="on">
+                    mdi-help-circle-outline
+                  </v-icon>
+                </template>
+                <span>{{ $t('news.tooltip') }}</span>
+              </v-tooltip>
+            </v-col>
+          </v-row>
+
+          <!--Save Button-->
+          <v-btn
+            class="button saveButton"
+            color="primary"
+            rounded
+            :disabled="!valid"
+            :loading="loading"
+            type="button"
+            :value="$t('ui.button.save')"
+            @click="validate"
+          >
+            {{ $t('ui.button.save') }}
+          </v-btn>
+        </v-form>
+      </v-col>
+    </v-row>
+    <v-row class="text-left title font-weight-bold">
+      <v-col>{{ $t('titles.password') }}</v-col>
+    </v-row>
+    <v-row>
+      <ChangePassword />
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -221,7 +247,10 @@ export default {
       type: String,
       default: null
     },
-  
+    platform: {
+      type: String,
+      default: ""
+    }
   },
   data() {
     return {
@@ -245,6 +274,7 @@ export default {
       avatarRules: [
         v => !v || v.size < this.avatarSize || this.$t("avatar.size")+" (Max "+(this.avatarSize/1000000)+"MB)"
       ],
+      newsSubscription: this.user && this.user.newsSubscription !== null ? this.user.newsSubscription : null
     };
   },
   computed : {
@@ -254,7 +284,9 @@ export default {
       const ageMax = Number(this.ageMax);
       return Array.from({length: ageMax - ageMin}, (value, index) => (currentYear - ageMin) - index)
     },
-
+    switchLabel () {
+      return this.$t('news.label') + ' ' + this.platform;
+    }
   },
   methods: {
     homeAddressSelected(address){
@@ -277,19 +309,20 @@ export default {
       updateUser.append("telephone", this.user.telephone);
       updateUser.append("birthYear", this.user.birthYear);
       updateUser.append("avatar", this.avatar);
+      updateUser.append("newsSubscription", this.newsSubscription);
 
       axios 
         .post(this.$t('route.update'), updateUser, 
           {
-          headers:{
-            'content-type': 'multipart/form-data'
-          }
-        })
+            headers:{
+              'content-type': 'multipart/form-data'
+            }
+          })
         .then(res => {
           this.errorUpdate = res.data.state;
-          document.location.reload(true);
           this.snackbar = true;
-      });
+          document.location.reload(true);
+        });
     },
 
     avatarDelete () {
@@ -301,5 +334,5 @@ export default {
         });
     }
   }
-};
+}
 </script>

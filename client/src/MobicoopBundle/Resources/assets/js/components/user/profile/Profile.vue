@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <v-container>
     <v-row
       justify="center"
     >
-      <v-col cols="10">
+      <v-col cols="11">
         <v-tabs
           slider-color="secondary"
           color="secondary"
@@ -34,6 +34,7 @@
                   :avatar-size="avatarSize"
                   :url-alt-avatar="urlAltAvatar"
                   :avatar-version="avatarVersion"
+                  :platform="platform"
                 />
               </v-tab-item>
               <v-tab class="subtitle-1">
@@ -59,7 +60,7 @@
         </v-tabs>
       </v-col>
     </v-row>
-  </div>
+  </v-container>
 </template>
 <script>
 import UpdateProfile from "@components/user/profile/UpdateProfile";
@@ -115,6 +116,10 @@ export default {
     alerts: {
       type: Array,
       default: null
+    },
+    platform: {
+      type: String,
+      default: ""
     }
   }
 }

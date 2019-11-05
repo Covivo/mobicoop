@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <v-container>
     <v-snackbar
       v-model="snackbar"
       :color="(errorUpdate)?'error':'success'"
@@ -14,52 +14,50 @@
         <v-icon>mdi-close-circle-outline</v-icon>
       </v-btn>
     </v-snackbar>
-    <v-container fluid>
-      <v-row
-        justify-center
-        text-center
-      >
-        <v-col class="text-center">
-          <v-form
-            ref="form"
-            v-model="valid"
-            lazy-validation
+    <v-row
+      justify-center
+      text-center
+    >
+      <v-col class="text-center">
+        <v-form
+          ref="form"
+          v-model="valid"
+          lazy-validation
+        >
+          <v-text-field
+            v-model="password"
+            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="show1 ? 'text' : 'password'"
+            name="password"
+            :label="$t('form.newPassword')"
+            required
+            :rules="[passWordRules.required,passWordRules.min, passWordRules.checkUpper,passWordRules.checkLower,passWordRules.checkNumber]"
+            @click:append="show1 = !show1"
+          />
+          <v-text-field
+            v-model="passwordRepeat"
+            :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="show2 ? 'text' : 'password'"
+            name="passwordRepeat"
+            :label="$t('form.newPasswordRepeat')"
+            required
+            :rules="passwordRepeatRules"
+            @click:append="show2 = !show2"
+          />
+          <v-btn
+            :disabled="!valid"
+            :loading="loading"
+            color="primary"
+            type="button"
+            rounded
+            @click="validate"
           >
-            <v-text-field
-              v-model="password"
-              :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-              :type="show1 ? 'text' : 'password'"
-              name="password"
-              :label="$t('form.newPassword')"
-              required
-              :rules="[passWordRules.required,passWordRules.min, passWordRules.checkUpper,passWordRules.checkLower,passWordRules.checkNumber]"
-              @click:append="show1 = !show1"
-            />
-            <v-text-field
-              v-model="passwordRepeat"
-              :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
-              :type="show2 ? 'text' : 'password'"
-              name="passwordRepeat"
-              :label="$t('form.newPasswordRepeat')"
-              required
-              :rules="passwordRepeatRules"
-              @click:append="show2 = !show2"
-            />
-            <v-btn
-              :disabled="!valid"
-              :loading="loading"
-              color="primary"
-              type="button"
-              rounded
-              @click="validate"
-            >
-              {{ $t('ui.button.save') }}
-            </v-btn>
-          </v-form>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-content>
+            {{ $t('ui.button.save') }}
+          </v-btn>
+        </v-form>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 <script>
 import axios from "axios";

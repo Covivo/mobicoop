@@ -1,6 +1,6 @@
 <template>
   <v-card
-    min-height="150px"
+    :height="cardHeight"
     flat
   >
     <v-row no-gutters>
@@ -58,7 +58,8 @@ export default {
   },
   data(){
     return{
-      dataMedium:this.medium
+      dataMedium: this.medium,
+      cardHeight: '100%'
     }
   },
   methods:{
