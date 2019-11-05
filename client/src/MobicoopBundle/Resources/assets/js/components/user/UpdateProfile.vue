@@ -13,8 +13,7 @@
  *    GNU Affero General Public License for more details.
  *
  *    You should have received a copy of the GNU Affero General Public License
- *    along with this program.  If not, see
-<gnu.org xmlns:v-slot="http://www.w3.org/1999/XSL/Transform"/>/licenses>.
+ *    along with this program.  If not, see <gnu.org/licenses>.
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
