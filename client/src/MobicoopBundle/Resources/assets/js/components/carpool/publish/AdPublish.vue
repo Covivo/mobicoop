@@ -178,11 +178,11 @@
 
             <!-- Step 2 : planification -->
             <v-stepper-content step="2">
-              <ad-planification 
+              <ad-planification
                 :init-outward-date="outwardDate"
                 :init-outward-time="outwardTime"
                 :regular="regular"
-                :default-margin-time="defaultMarginTime" 
+                :default-margin-time="defaultMarginTime"
                 @change="planificationChanged"
               />
             </v-stepper-content>
@@ -191,7 +191,7 @@
             <v-stepper-content step="3">
               <v-row>
                 <v-col cols="12">
-                  <ad-route 
+                  <ad-route
                     :geo-search-url="geoSearchUrl"
                     :geo-route-url="geoRouteUrl"
                     :user="user"
@@ -239,7 +239,9 @@
                 >
                   <v-select
                     v-model="seats"
-                    :items="[1,2,3,4]"
+                    :items="numberSeats"
+                    item-text="text"
+                    item-value="value"
                   />
                 </v-col>
                   
@@ -678,7 +680,6 @@ export default {
       step:1,
       driver: true,
       passenger: true,
-      seats: 1,
       luggage: false,
       bike: false,
       backSeats: false,
@@ -701,9 +702,12 @@ export default {
       strictPunctual: null,     // not used yet
       useTime: null,            // not used yet
       anyRouteAsPassenger: null, // not used yet
-      solidary: this.solidaryAd
-      
+      solidary: this.solidaryAd,
+      numberSeats : [ "1","2","3","4"],
+      seats: "3",
     }
+
+
   },
   computed: {
    
