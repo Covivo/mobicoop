@@ -266,6 +266,11 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     private $images;
     
     /**
+     * @var String|null The images of the user.
+     */
+    private $avatar;
+
+    /**
     * @var array|null User notification alert preferences.
     * @Groups({"put"})
     */
@@ -782,6 +787,18 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     }
         
         
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+    
+    public function setAvatar(?string $avatar): self
+    {
+        $this->avatar = $avatar;
+        
+        return $this;
+    }
+
     public function getAlerts()
     {
         return $this->alerts;
@@ -1026,6 +1043,7 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
             'birthYear'      => $this->getBirthYear(),
             'homeAddress'    => $this->getHomeAddress(),
             'images'        => $this->getImages(),
+            'avatar'        => $this->getAvatar(),
             'smoke'          => $this->getSmoke(),
             'chat'           => $this->hasChat(),
             'chatFavorites'  => $this->getChatFavorites(),

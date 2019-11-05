@@ -73,6 +73,7 @@ use App\User\Filter\ValidatedDateTokenFilter;
 use App\Communication\Entity\Notified;
 use App\Action\Entity\Log;
 use App\Solidary\Entity\Solidary;
+use App\User\EntityListener\UserListener;
 
 /**
  * A user.

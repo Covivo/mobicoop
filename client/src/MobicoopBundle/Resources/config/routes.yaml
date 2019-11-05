@@ -180,6 +180,15 @@ user_facebook_connect:
         en: /user/facebook/connect
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userFacebookConnect
 
+# Connection by facebook (POST)
+user_communities:
+    methods: [POST]
+    path:
+        fr: /utilisateur/communautes
+        en: /user/communities
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCommunities
+
+    
 ##################
 # carpool routes #
 ##################
@@ -384,6 +393,13 @@ news:
         fr: /nouveautes
         en: /news
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showNews
+
+# display data policy page
+data_policy:
+    path:
+        fr: /protection-donnees
+        en: /data-policy
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showDataPolicy
 
 ####################
 # geography routes #

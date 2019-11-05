@@ -15,11 +15,11 @@
       </v-btn>
     </v-snackbar>
     <v-container fluid>
-      <v-layout
+      <v-row
         justify-center
         text-center
       >
-        <v-flex xs10>
+        <v-col class="text-center">
           <v-form
             ref="form"
             v-model="valid"
@@ -32,7 +32,7 @@
               name="password"
               :label="$t('form.newPassword')"
               required
-              :rules="passwordRules"
+              :rules="[passWordRules.required,passWordRules.min, passWordRules.checkUpper,passWordRules.checkLower,passWordRules.checkNumber]"
               @click:append="show1 = !show1"
             />
             <v-text-field
@@ -56,8 +56,8 @@
               {{ $t('ui.button.save') }}
             </v-btn>
           </v-form>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
   </v-content>
 </template>
@@ -65,8 +65,8 @@
 import axios from "axios";
 
 import { merge } from "lodash";
-import Translations from "@translations/components/user/Profile.json";
-import TranslationsClient from "@clientTranslations/components/user/Profile.json";
+import Translations from "@translations/components/user/profile/Profile.json";
+import TranslationsClient from "@clientTranslations/components/user/profile/Profile.json";
 
 let TranslationsMerged = merge(Translations, TranslationsClient);
 
@@ -84,7 +84,25 @@ export default {
       errorUpdate: false,
       valid: true,
       password: "",
-      passwordRules: [v => !!v || this.$t("form.errors.required")],
+      passWordRules: {
+        required:  v => !!v || this.$t("models.user.password.errors.required"),
+        min: v => (v && v.length >= 8 ) || this.$t("models.user.password.errors.min"),
+        checkUpper : value => {
+          const pattern = /^(?=.*[A-Z]).*$/
+          return pattern.test(value) || this.$t("models.user.password.errors.upper")
+
+        },
+        checkLower : value => {
+          const pattern = /^(?=.*[a-z]).*$/
+          return pattern.test(value) || this.$t("models.user.password.errors.lower")
+
+        },
+        checkNumber : value => {
+          const pattern = /^(?=.*[0-9]).*$/
+          return pattern.test(value) || this.$t("models.user.password.errors.number")
+
+        },
+      },
       passwordRepeat: "",
       passwordRepeatRules: [
         v => !!v || this.$t("form.errors.required"),

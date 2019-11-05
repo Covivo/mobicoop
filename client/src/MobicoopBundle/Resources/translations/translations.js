@@ -118,7 +118,11 @@ export default {
           label: "Mot de passe",
           placeholder: "Mot de passe",
           errors: {
-            required: "Le mot de passe est requis"
+            required: "Le mot de passe est requis",
+            min: "Le mot de passe doit comprendre 8 caractères min.",
+            upper: "Le mot de passe doit comprendre 1 majuscule.",
+            lower: "Le mot de passe doit comprendre 1 minuscule.",
+            number : "Le mot de passe doit comprendre 1 chiffre.",
           }
         },
         passwordRepeat: {
@@ -132,6 +136,9 @@ export default {
           label: "Commune de résidence",
           placeholder: "Commune de résidence",
           hint: "Cette information n’est pas obligatoire, elle permet d’être tenu informé des animations territoriales liées à la mobilité et à votre plateforme près de chez vous.",
+          required: {
+            hint: "Information permettant de rattacher votre inscription à votre collectivité de référence, à des fins statistiques et d'animation."
+          },
           errors: {
             required: "La ville de résidence est requise"
           }
@@ -254,7 +261,11 @@ export default {
           label: "",
           placeholder: "",
           errors: {
-            required: ""
+            required: "",
+            min: "",
+            minu: "",
+            maj: "",
+            numb : "",
           }
         },
         passwordRepeat: {

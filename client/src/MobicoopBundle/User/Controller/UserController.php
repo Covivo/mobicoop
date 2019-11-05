@@ -51,6 +51,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\AskHistory;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AskHistoryManager;
+use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -68,16 +69,18 @@ class UserController extends AbstractController
     private $encoder;
     private $facebook_show;
     private $facebook_appid;
+    private $required_home_address;
 
     /**
      * Constructor
      * @param UserPasswordEncoderInterface $encoder
      */
-    public function __construct(UserPasswordEncoderInterface $encoder, $facebook_show, $facebook_appid)
+    public function __construct(UserPasswordEncoderInterface $encoder, $facebook_show, $facebook_appid, $required_home_address)
     {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
         $this->facebook_appid = $facebook_appid;
+        $this->required_home_address = $required_home_address;
     }
 
     /***********
@@ -170,6 +173,7 @@ class UserController extends AbstractController
                 'error' => $error,
                 "facebook_show"=>($this->facebook_show==="true") ? true : false,
                 "facebook_appid"=>$this->facebook_appid,
+                "required_home_address"=>($this->required_home_address==="true") ? true : false,
         ]);
     }
 
@@ -892,5 +896,23 @@ class UserController extends AbstractController
             ['message'=>'error'],
             Response::HTTP_METHOD_NOT_ALLOWED
         );
+    }
+
+    /**
+     * Get all communities of a user
+     * AJAX
+     */
+    public function userCommunities(Request $request, CommunityManager $communityManager)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            $communityUsers = $communityManager->getAllCommunityUser($data['userId']);
+            $communities = [];
+            foreach ($communityUsers as $communityUser) {
+                $communities[] = $communityUser->getCommunity();
+            }
+            return new JsonResponse($communities);
+        }
+        return new JsonResponse(['error'=>'errorUpdateAlert']);
     }
 }

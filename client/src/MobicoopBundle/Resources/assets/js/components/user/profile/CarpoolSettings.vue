@@ -32,29 +32,40 @@
         v-for="(item, itemIndex) in $t('items')"
         :key="itemIndex"
       >
-        <v-card>
-          <v-card-title>
-            {{ item.title }}
-          </v-card-title>
-          <v-card-text>
-            <v-radio-group
-              v-model="$data['form'][item.key]['value']"
-              :mandatory="false"
-            >
-              <v-radio
-                v-for="(radio, index) in item.radios"
-                :key="index"
-                :label="radio.label"
-                :value="radio.value"
-                color="primary"
+        <v-card
+          min-height="300px"
+          class="pa-2"
+          flat
+        >
+          <v-row no-gutters>
+            <v-col class="cols-12 ma-2 text-center">
+              <p class="mb-0 mt-2">
+                {{ item.title }}
+              </p>
+            </v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col class="cols-12 text-left">
+              <v-radio-group
+                v-model="$data['form'][item.key]['value']"
+                :mandatory="false"
+              >
+                <v-radio
+                  v-for="(radio, index) in item.radios"
+                  :key="index"
+                  :label="radio.label"
+                  :value="radio.value"
+                  color="primary"
+                />
+              </v-radio-group>
+              <v-text-field
+                v-if="item.favorite"
+                v-model="$data['form'][item.key]['favorite']"
+                class="mt-0 pt-0"
+                :label="item.favorite.label"
               />
-            </v-radio-group>
-            <v-text-field
-              v-if="item.favorite"
-              v-model="$data['form'][item.key]['favorite']"
-              :label="item.favorite.label"
-            />
-          </v-card-text>
+            </v-col>
+          </v-row>
         </v-card>
       </v-col>
     </v-row>
@@ -74,8 +85,8 @@
 <script>
 import {merge} from "lodash";
 import axios from "axios";
-import Translations from "@translations/components/user/CarpoolSettings.js";
-import ClientTranslations from "@clientTranslations/components/user/CarpoolSettings.js";
+import Translations from "@translations/components/user/profile/CarpoolSettings.js";
+import ClientTranslations from "@clientTranslations/components/user/profile/CarpoolSettings.js";
 
 let MergedTranslations = merge(Translations, ClientTranslations);
 
@@ -100,7 +111,7 @@ export default {
       form: {
         smoke: {
           // returned value is integer
-          value: this.user && this.user.smoke ? this.user.smoke : null 
+          value: this.user && this.user.smoke !== null ? this.user.smoke : null 
         },
         music: {
           // returned value from bundle is boolean, so we have to check null, true or false to show correct value

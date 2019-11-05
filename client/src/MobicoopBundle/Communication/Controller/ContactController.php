@@ -73,6 +73,13 @@ class ContactController extends AbstractController
                 );
             }
             
+            if (empty($data["consent"]) || (!empty($data["consent"] && !$data["consent"]))) {
+                return new JsonResponse(
+                    ["message" => "consent.errors.required"],
+                    \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
+                );
+            }
+            
             $errors = [];
 
             // pass front info into contact form

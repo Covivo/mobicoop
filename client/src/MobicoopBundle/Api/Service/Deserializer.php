@@ -78,13 +78,22 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\UserNotification;
  * Used because deserialization of nested array of objects doesn't work yet...
  * Should be dumped when deserialization will work !
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
- *
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Deserializer
 {
     const DATETIME_FORMAT = \DateTime::ISO8601;
     const SETTER_PREFIX = "set";
+
+    private $avatarVersion;
+    private $avatarDefault;
+
+    public function __construct(string $avatarVersion=null, string $avatarDefault=null)
+    {
+        $this->avatarVersion = $avatarVersion;
+        $this->avatarDefault = $avatarDefault;
+    }
 
     /**
      * Deserialize an object.
@@ -199,6 +208,15 @@ class Deserializer
                 $user->addImage(self::deserializeImage($image));
             }
         }
+
+        // We determine the avatar
+        $images = $user->getImages();
+        if (count($images)>0 && count($images[0]->getVersions())>0 && isset($images[0]->getVersions()[$this->avatarVersion])) {
+            $user->setAvatar($images[0]->getVersions()[$this->avatarVersion]);
+        } else {
+            $user->setAvatar($this->avatarDefault);
+        }
+
         return $user;
     }
 

@@ -1,0 +1,44 @@
+{
+    "fr":{
+        "titles":{
+            "personnalInfos":"Informations personnelles",
+            "password":"Mot de passe"
+        },
+        "snackBar":{
+            "profileUpdated":"Votre profil a bien été mis à jour!",
+            "errorProfileUpdate": "Erreur, votre profil n'a pas été mis à jour."
+        },
+        "avatar": {
+            "label": "Avatar",
+            "size": "Vous avez dépassé la taille maximale de l'avatar",
+            "delete": {
+                "route": "/utilisateur/profil/avatar/supprimer"
+                } 
+        },
+        "route": {
+            "update": "/utilisateur/profil/modifier"
+        }
+        
+    },
+    "en":{
+        "titles":{
+            "personnalInfos":"Personnal Informations",
+            "password":"Password"
+        },
+        "snackBar":{
+            "profileUpdated":"Your profile has been updated",
+            "errorProfileUpdate": "Error, your profile hasn't been updated"
+        },
+        "avatar": {
+            "label": "Avatar",
+            "size": "The size of your avatar exceeds the maximum limit",
+            "delete": {
+                "route": "/user/profile/avatar/delete"
+                } 
+        },
+        "route": {
+            "update": "/user/profile/update"
+        }
+        
+    }
+}

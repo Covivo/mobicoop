@@ -31,6 +31,7 @@
 
       <!-- Carpooler rate -->
       <v-col
+        v-if="carpoolerRate"
         cols="1"
       >
         <v-tooltip bottom>
@@ -152,6 +153,10 @@ export default {
     carpooler: {
       type: Object,
       default: null
+    },
+    carpoolerRate: {
+      type: Boolean,
+      default: true
     },
   },
   data() {

@@ -69,6 +69,7 @@
                 :result="result"
                 :user="user"
                 :distinguish-regular="distinguishRegular"
+                :carpooler-rate="carpoolerRate"
                 @carpool="carpool(result)"
               />
             </v-col>
@@ -149,6 +150,10 @@ export default {
     distinguishRegular: {
       type: Boolean,
       default: false
+    },
+    carpoolerRate: {
+      type: Boolean,
+      default: true
     }
   },
   data : function() {
