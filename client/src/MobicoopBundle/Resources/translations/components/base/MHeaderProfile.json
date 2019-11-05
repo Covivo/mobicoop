@@ -2,15 +2,15 @@
     "fr": {
             "myAds": {
                 "label": "Mes annonces",
-                "route": "#"
+                "route": "/utilisateur/profil/modifier/myProposals"
             },
             "myAcceptedCarpools": {
                 "label": "Covoiturages acceptés",
-                "route": "#"
+                "route": "/utilisateur/profil/modifier/carpoolsAccepted"
             },
             "myProfile": {
                 "label": "Profil",
-                "route": "/utilisateur/profil/modifier"
+                "route": "/utilisateur/profil/modifier/myProfile"
             },
             "logOut": {
                 "label": "Déconnexion",

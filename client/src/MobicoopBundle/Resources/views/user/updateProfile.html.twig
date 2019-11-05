@@ -9,14 +9,15 @@
 {% block main %}
 
     		<Profile 
-			:user="{{app.user|json_encode}}"
-			geo-search-url="{{ geoCompleteUri }}"
- 			age-min="{{ ageMin }}"
-            age-max="{{ ageMax }}"
-			avatar-size="{{ userAvatarSize }}"
-			url-alt-avatar="{{ urlAltUserAvatar }}"
-        	avatar-version="{{ userAvatarVersion }}"
-        	:alerts="{{ alerts|json_encode }}"
-			></Profile>
+				:user="{{app.user|json_encode}}"
+				geo-search-url="{{ geoCompleteUri }}"
+				age-min="{{ ageMin }}"
+				age-max="{{ ageMax }}"
+				avatar-size="{{ userAvatarSize }}"
+				url-alt-avatar="{{ urlAltUserAvatar }}"
+				avatar-version="{{ userAvatarVersion }}"
+				:alerts="{{ alerts|json_encode }}"
+				tab-default="{{ tabDefault }}"
+			/>
 
 {% endblock %}

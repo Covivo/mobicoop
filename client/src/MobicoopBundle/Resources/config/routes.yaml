@@ -49,8 +49,8 @@ user_sign_up_validation:
 # profile update
 user_profile_update:
     path:
-        fr: /utilisateur/profil/modifier
-        en: /user/profile/update
+        fr: /utilisateur/profil/modifier/{tabDefault?}
+        en: /user/profile/update/{tabDefault?}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileUpdate
 
 # delete avatar

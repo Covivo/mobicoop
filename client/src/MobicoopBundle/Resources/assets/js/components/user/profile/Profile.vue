@@ -5,22 +5,32 @@
     >
       <v-col cols="10">
         <v-tabs
+          v-model="modelTabs"
           slider-color="secondary"
           color="secondary"
           vertical
         >
-          <v-tab class="text-left justify-start ml-2 mr-5 title">
+          <v-tab
+            class="text-left justify-start ml-2 mr-5 title"
+            href="#myProposals"
+          >
             {{ $t("tabs.myProposals") }}
           </v-tab>
-          <v-tab-item />
-          <v-tab class="text-left justify-start ml-2 mr-5 title">
+          <v-tab-item value="myProposals" />
+          <v-tab
+            class="text-left justify-start ml-2 mr-5 title"
+            href="#carpoolsAccepted"
+          >
             {{ $t("tabs.carpoolsAccepted") }}
           </v-tab>
-          <v-tab-item />
-          <v-tab class="text-left justify-start ml-2 mr-5 title">
+          <v-tab-item value="carpoolsAccepted" />
+          <v-tab
+            class="text-left justify-start ml-2 mr-5 title"
+            href="#myProfile"
+          >
             {{ $t("tabs.myProfile") }}
           </v-tab>
-          <v-tab-item>
+          <v-tab-item value="myProfile">
             <v-tabs grow>
               <v-tab class="subtitle-1">
                 {{ $t("tabs.myAccount") }}
@@ -115,6 +125,15 @@ export default {
     alerts: {
       type: Array,
       default: null
+    },
+    tabDefault: {
+      type: String,
+      default: null
+    }
+  },
+  data(){
+    return{
+      modelTabs:(this.tabDefault!="") ? this.tabDefault : "myProposals",
     }
   }
 }
