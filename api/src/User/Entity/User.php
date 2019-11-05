@@ -243,6 +243,13 @@ class User implements UserInterface, EquatableInterface
     private $familyName;
 
     /**
+     * @var string|null The shorten family name of the user.
+     *
+     * @Groups({"read","results","write", "threads", "thread"})
+     */
+    private $shortFamilyName;
+
+    /**
      * @var string The email of the user.
      *
      * @Assert\NotBlank
@@ -732,6 +739,11 @@ class User implements UserInterface, EquatableInterface
         $this->familyName = $familyName;
 
         return $this;
+    }
+
+    public function getShortFamilyName(): ?string
+    {
+        return strtoupper($this->familyName[0]) . ".";
     }
 
     public function getEmail(): string
