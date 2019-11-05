@@ -32,29 +32,44 @@
         v-for="(item, itemIndex) in $t('items')"
         :key="itemIndex"
       >
-        <v-card :height="cardHeight">
-          <v-card-title>
-            {{ item.title }}
-          </v-card-title>
-          <v-card-text>
-            <v-radio-group
-              v-model="$data['form'][item.key]['value']"
-              :mandatory="false"
-            >
-              <v-radio
-                v-for="(radio, index) in item.radios"
-                :key="index"
-                :label="radio.label"
-                :value="radio.value"
-                color="primary"
-              />
-            </v-radio-group>
-            <v-text-field
-              v-if="item.favorite"
-              v-model="$data['form'][item.key]['favorite']"
-              :label="item.favorite.label"
-            />
-          </v-card-text>
+        <v-card
+          :height="cardHeight"
+          class="pa-2"
+          flat
+        >
+          <v-container fluid>
+            <v-row no-gutters>
+              <v-col class="cols-12 ma-2 text-center">
+                <p class="mb-0 mt-2">
+                  {{ item.title }}
+                </p>
+              </v-col>
+            </v-row>
+            <v-row no-gutters>
+              <v-col class="cols-12 text-left">
+                <v-card-text>
+                  <v-radio-group
+                    v-model="$data['form'][item.key]['value']"
+                    :mandatory="false"
+                  >
+                    <v-radio
+                      v-for="(radio, index) in item.radios"
+                      :key="index"
+                      :label="radio.label"
+                      :value="radio.value"
+                      color="primary"
+                    />
+                  </v-radio-group>
+                  <v-text-field
+                    v-if="item.favorite"
+                    v-model="$data['form'][item.key]['favorite']"
+                    class="mt-0 pt-0"
+                    :label="item.favorite.label"
+                  />
+                </v-card-text>
+              </v-col>
+            </v-row>
+          </v-container>
         </v-card>
       </v-col>
     </v-row>
@@ -74,8 +89,8 @@
 <script>
 import {merge} from "lodash";
 import axios from "axios";
-import Translations from "@translations/components/user/CarpoolSettings.js";
-import ClientTranslations from "@clientTranslations/components/user/CarpoolSettings.js";
+import Translations from "@translations/components/user/profile/CarpoolSettings.js";
+import ClientTranslations from "@clientTranslations/components/user/profile/CarpoolSettings.js";
 
 let MergedTranslations = merge(Translations, ClientTranslations);
 

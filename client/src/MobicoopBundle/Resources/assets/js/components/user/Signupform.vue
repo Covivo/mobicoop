@@ -404,7 +404,7 @@ export default {
         showPassword: false,
         passWordRules: {
           required:  v => !!v || this.$t("models.user.password.errors.required"),
-          min: v => v.length >= 8 || this.$t("models.user.password.errors.min"),
+          min: v => (v && v.length >= 8 ) || this.$t("models.user.password.errors.min"),
           checkUpper : value => {
             const pattern = /^(?=.*[A-Z]).*$/
             return pattern.test(value) || this.$t("models.user.password.errors.upper")

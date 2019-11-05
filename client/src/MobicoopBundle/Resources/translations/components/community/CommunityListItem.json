@@ -1,0 +1,18 @@
+{
+  "fr": {
+    "routes": {
+      "community": "/communaute/{id}"
+    },
+    "communityDetails":"Détails de la communauté",
+    "join":"Rejoindre la communauté",
+    "protected": "Cette communauté n'est visible que par ses membres"
+  },
+  "en": {
+    "routes": {
+        "community": "/communaute/{id}"
+      }
+    },
+    "communityDetails":"Community details",
+    "join":"Join the community",
+    "protected": "This community is only visible by its members"
+}

@@ -111,6 +111,12 @@ class Matching
     private $criteria;
 
     /**
+     * @var Matching|null Linked matching for a round trip (return or outward journey).
+     * Not persisted : used only to get the return trip information.
+     */
+    private $matchingLinked;
+
+    /**
      * @var ArrayCollection The asks made for this matching.
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="matching", cascade={"remove"}, orphanRemoval=true)
@@ -213,6 +219,24 @@ class Matching
     {
         $this->criteria = $criteria;
 
+        return $this;
+    }
+
+    public function getMatchingLinked(): ?self
+    {
+        return $this->matchingLinked;
+    }
+    
+    public function setMatchingLinked(?self $matchingLinked): self
+    {
+        $this->matchingLinked = $matchingLinked;
+        
+        // set (or unset) the owning side of the relation if necessary
+        $newMatchingLinked = $matchingLinked === null ? null : $this;
+        if ($newMatchingLinked !== $matchingLinked->getMatchingLinked()) {
+            $matchingLinked->setMatchingLinked($newMatchingLinked);
+        }
+        
         return $this;
     }
 

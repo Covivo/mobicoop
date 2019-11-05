@@ -91,7 +91,12 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      * @Groups({"post","put"})
      */
     private $familyName;
-    
+
+    /**
+     * @var string|null The shorten family name of the user.
+     */
+    private $shortFamilyName;
+
     /**
      * @var string The email of the user.
      *
@@ -416,7 +421,12 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         
         return $this;
     }
-    
+
+    public function getShortFamilyName(): ?string
+    {
+        return $this->shortFamilyName;
+    }
+        
     public function getEmail(): ?string
     {
         return $this->email;
@@ -1022,22 +1032,23 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
     {
         return
         [
-            'id'               => $this->getId(),
-            'givenName'        => $this->getGivenName(),
-            'familyName'       => $this->getFamilyName(),
-            'gender'           => $this->getGender(),
-            'status'           => $this->getStatus(),
-            'email'            => $this->getEmail(),
-            'telephone'        => $this->getTelephone(),
-            'geoToken'         => $this->getGeoToken(),
-            'birthYear'        => $this->getBirthYear(),
-            'homeAddress'      => $this->getHomeAddress(),
-            'images'           => $this->getImages(),
-            'smoke'            => $this->getSmoke(),
-            'chat'             => $this->hasChat(),
-            'chatFavorites'    => $this->getChatFavorites(),
-            'music'            => $this->hasMusic(),
-            'musicFavorites'   => $this->getMusicFavorites(),
+            'id'             => $this->getId(),
+            'givenName'      => $this->getGivenName(),
+            'familyName'     => $this->getFamilyName(),
+            'gender'         => $this->getGender(),
+            'status'         => $this->getStatus(),
+            'email'          => $this->getEmail(),
+            'telephone'      => $this->getTelephone(),
+            'geoToken'       => $this->getGeoToken(),
+            'birthYear'      => $this->getBirthYear(),
+            'homeAddress'    => $this->getHomeAddress(),
+            'images'        => $this->getImages(),
+            'avatar'        => $this->getAvatar(),
+            'smoke'          => $this->getSmoke(),
+            'chat'           => $this->hasChat(),
+            'chatFavorites'  => $this->getChatFavorites(),
+            'music'          => $this->hasMusic(),
+            'musicFavorites' => $this->getMusicFavorites(),
             'newsSubscription' => $this->hasNewsSubscription()
         ];
     }
