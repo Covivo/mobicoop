@@ -1,6 +1,6 @@
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    <p>@PrenomOuPseudoExpediteur {{ "yourAsk"|trans }}.</p>
+    <p>{{ askHistory.ask.user.givenName }} {{ "yourAsk"|trans }}.</p>
     <p>{{ "replyViaEMail"|trans }} {{ api_env('EMAILS_PLATFORM_NAME') }} {{ "clickHere"|trans}} @URLdelapagedemessageriecorrespondante.</p>
     {% if Driver regular ||  Passenger regular %}
     <p>{{ "carpoolDistance"|trans}} @DistancePassager km.</p>
