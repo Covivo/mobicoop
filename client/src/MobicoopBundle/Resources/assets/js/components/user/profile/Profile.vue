@@ -12,7 +12,9 @@
           <v-tab class="text-left justify-start ml-2 mr-5 title">
             {{ $t("tabs.myProposals") }}
           </v-tab>
-          <v-tab-item />
+          <v-tab-item>
+            <MyProposals :proposals="proposals" />
+          </v-tab-item>
           <v-tab class="text-left justify-start ml-2 mr-5 title">
             {{ $t("tabs.carpoolsAccepted") }}
           </v-tab>
@@ -35,12 +37,6 @@
                   :url-alt-avatar="urlAltAvatar"
                   :avatar-version="avatarVersion"
                 />
-              </v-tab-item>
-              <v-tab class="subtitle-1">
-                {{ $t("tabs.myProposals") }}
-              </v-tab>
-              <v-tab-item>
-                <MyProposals :proposals="proposals" />
               </v-tab-item>
               <v-tab class="subtitle-1">
                 {{ $t("tabs.alerts") }}
