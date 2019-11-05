@@ -106,6 +106,30 @@ class Result
     private $destinationLast;
 
     /**
+     * @var Address The origin address of the driver.
+     * @Groups("results")
+     */
+    private $originDriver;
+
+    /**
+     * @var Address The destination address of the driver.
+     * @Groups("results")
+     */
+    private $destinationDriver;
+
+    /**
+     * @var Address The origin address of the passenger.
+     * @Groups("results")
+     */
+    private $originPassenger;
+
+    /**
+     * @var Address The destination address of the passenger.
+     * @Groups("results")
+     */
+    private $destinationPassenger;
+
+    /**
      * @var \DateTimeInterface|null The date to display.
      * @Groups("results")
      */
@@ -116,6 +140,18 @@ class Result
      * @Groups("results")
      */
     private $time;
+
+    /**
+     * @var \DateTimeInterface|null The possible start date if regular.
+     * @Groups("results")
+     */
+    private $startDate;
+
+    /**
+     * @var \DateTimeInterface|null The possible end date if regular.
+     * @Groups("results")
+     */
+    private $toDate;
 
     /**
      * @var int The number of places offered / requested to display.
@@ -313,6 +349,54 @@ class Result
         return $this;
     }
 
+    public function getOriginDriver(): ?Address
+    {
+        return $this->originDriver;
+    }
+
+    public function setOriginDriver(?Address $originDriver): self
+    {
+        $this->originDriver = $originDriver;
+
+        return $this;
+    }
+
+    public function getDestinationDriver(): ?Address
+    {
+        return $this->destinationDriver;
+    }
+
+    public function setDestinationDriver(?Address $destinationDriver): self
+    {
+        $this->destinationDriver = $destinationDriver;
+
+        return $this;
+    }
+
+    public function getOriginPassenger(): ?Address
+    {
+        return $this->originPassenger;
+    }
+
+    public function setOriginPassenger(?Address $originPassenger): self
+    {
+        $this->originPassenger = $originPassenger;
+
+        return $this;
+    }
+
+    public function getDestinationPassenger(): ?Address
+    {
+        return $this->destinationPassenger;
+    }
+
+    public function setDestinationPassenger(?Address $destinationPassenger): self
+    {
+        $this->destinationPassenger = $destinationPassenger;
+
+        return $this;
+    }
+
     public function getDate(): ?\DateTimeInterface
     {
         return $this->date;
@@ -333,6 +417,30 @@ class Result
     public function setTime(?\DateTimeInterface $time): self
     {
         $this->time = $time;
+
+        return $this;
+    }
+
+    public function getStartDate(): ?\DateTimeInterface
+    {
+        return $this->startDate;
+    }
+
+    public function setStartDate(?\DateTimeInterface $startDate): self
+    {
+        $this->startDate = $startDate;
+
+        return $this;
+    }
+
+    public function getToDate(): ?\DateTimeInterface
+    {
+        return $this->toDate;
+    }
+
+    public function setToDate(?\DateTimeInterface $toDate): self
+    {
+        $this->toDate = $toDate;
 
         return $this;
     }

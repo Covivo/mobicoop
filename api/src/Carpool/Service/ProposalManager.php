@@ -329,10 +329,10 @@ class ProposalManager
         $this->logger->info('Proposal creation | Total duration ' . ($end->diff($date))->format("%s.%f seconds"));
         
         $matchingsOffers = $proposal->getMatchingOffers();
-        $matchingsRequest = $proposal->getMatchingRequests();
+        $matchingsRequests = $proposal->getMatchingRequests();
         $matchings=[];
         while (($item = array_shift($matchingsOffers)) !== null && array_push($matchings, $item));
-        while (($item = array_shift($matchingsRequest)) !== null && array_push($matchings, $item));
+        while (($item = array_shift($matchingsRequests)) !== null && array_push($matchings, $item));
         if ($persist) {
             foreach ($matchings as $matching) {
 
@@ -520,7 +520,7 @@ class ProposalManager
                         // we search the pickup duration
                         $filters = $matching['request']->getFilters();
                         $pickupDuration = null;
-                        foreach ($filters['order'] as $value) {
+                        foreach ($filters['route'] as $value) {
                             if ($value['candidate'] == 2 && $value['position'] == 0) {
                                 $pickupDuration = (int)round($value['duration']);
                                 break;
@@ -590,7 +590,7 @@ class ProposalManager
                         // even if we don't use them, maybe we'll need them in the future
                         $filters = $matching['request']->getFilters();
                         $pickupDuration = null;
-                        foreach ($filters['order'] as $value) {
+                        foreach ($filters['route'] as $value) {
                             if ($value['candidate'] == 2 && $value['position'] == 0) {
                                 $pickupDuration = (int)round($value['duration']);
                                 break;
@@ -658,6 +658,12 @@ class ProposalManager
                     if ($outward->hasMultipleTimes()) {
                         $outward->setTime(null);
                     }
+                    // fromDate is the max between the search date and the fromDate of the matching proposal
+                    $outward->setFromDate(max(
+                        $matching['request']->getProposalRequest()->getCriteria()->getFromDate(),
+                        $proposal->getCriteria()->getFromDate()
+                    ));
+                    $outward->setToDate($matching['request']->getProposalRequest()->getCriteria()->getToDate());
                 }
                 // waypoints of the outward
                 $waypoints = [];
@@ -668,7 +674,7 @@ class ProposalManager
                     'carpooler' => 0
                 ];
                 // first pass to get the maximum position fo each candidate
-                foreach ($matching['request']->getFilters()['order'] as $key=>$waypoint) {
+                foreach ($matching['request']->getFilters()['route'] as $key=>$waypoint) {
                     if ($waypoint['candidate'] == 1 && (int)$waypoint['position']>$steps['requester']) {
                         $steps['requester'] = (int)$waypoint['position'];
                     } elseif ($waypoint['candidate'] == 2 && (int)$waypoint['position']>$steps['carpooler']) {
@@ -676,7 +682,7 @@ class ProposalManager
                     }
                 }
                 // second pass to fill the waypoints array
-                foreach ($matching['request']->getFilters()['order'] as $key=>$waypoint) {
+                foreach ($matching['request']->getFilters()['route'] as $key=>$waypoint) {
                     $curTime = null;
                     if ($time) {
                         $curTime = clone $time;
@@ -699,8 +705,14 @@ class ProposalManager
                     // origin and destination guess
                     if ($waypoint['candidate'] == 2 && $waypoint['position'] == '0') {
                         $outward->setOrigin($waypoint['address']);
+                        $outward->setOriginPassenger($waypoint['address']);
                     } elseif ($waypoint['candidate'] == 2 && (int)$waypoint['position'] == $steps['carpooler']) {
                         $outward->setDestination($waypoint['address']);
+                        $outward->setDestinationPassenger($waypoint['address']);
+                    } elseif ($waypoint['candidate'] == 1 && $waypoint['position'] == '0') {
+                        $outward->setOriginDriver($waypoint['address']);
+                    } elseif ($waypoint['candidate'] == 1 && (int)$waypoint['position'] == $steps['requester']) {
+                        $outward->setDestinationDriver($waypoint['address']);
                     }
                 }
                 $outward->setWaypoints($waypoints);
@@ -735,11 +747,12 @@ class ProposalManager
                 }
                 $outward->setComputedPrice((string)(self::roundNearest((float)$matching['request']->getFilters()['commonDistance'] * (float)$outward->getPriceKm() / 1000)));
                 $resultDriver->setOutward($outward);
-
+                
                 // return trip, only for regular trip for now
                 if ($matching['request']->getProposalRequest()->getProposalLinked() && $proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && $matching['request']->getProposalRequest()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
                     $proposalLinked = $matching['request']->getProposalRequest()->getProposalLinked();
-
+                    $matchingLinked = $matching['request']->getMatchingLinked();
+                    
                     // /!\ we only treat the return days /!\
                     $return = new ResultItem();
                     // we use the carpooler days as we don't have a matching here
@@ -750,14 +763,201 @@ class ProposalManager
                     $return->setFriCheck($proposalLinked->getCriteria()->isFriCheck());
                     $return->setSatCheck($proposalLinked->getCriteria()->isSatCheck());
                     $return->setSunCheck($proposalLinked->getCriteria()->isSunCheck());
-                    $return->setMonTime($proposalLinked->getCriteria()->getMonTime());
-                    $return->setTueTime($proposalLinked->getCriteria()->getTueTime());
-                    $return->setWedTime($proposalLinked->getCriteria()->getWedTime());
-                    $return->setThuTime($proposalLinked->getCriteria()->getThuTime());
-                    $return->setFriTime($proposalLinked->getCriteria()->getFriTime());
-                    $return->setSatTime($proposalLinked->getCriteria()->getSatTime());
-                    $return->setSunTime($proposalLinked->getCriteria()->getSunTime());
+                    // $return->setMonTime($proposalLinked->getCriteria()->getMonTime());
+                    // $return->setTueTime($proposalLinked->getCriteria()->getTueTime());
+                    // $return->setWedTime($proposalLinked->getCriteria()->getWedTime());
+                    // $return->setThuTime($proposalLinked->getCriteria()->getThuTime());
+                    // $return->setFriTime($proposalLinked->getCriteria()->getFriTime());
+                    // $return->setSatTime($proposalLinked->getCriteria()->getSatTime());
+                    // $return->setSunTime($proposalLinked->getCriteria()->getSunTime());
+                    // $return->setMultipleTimes();
+                    $return->setFromDate($proposalLinked->getCriteria()->getFromDate());
+                    $return->setToDate($proposalLinked->getCriteria()->getToDate());
+
+                    if ($matchingLinked) {
+                        // we calculate the starting time so that the driver will get the carpooler on the carpooler time
+                        // even if we don't use them, maybe we'll need them in the future
+                        $filters = $matchingLinked->getFilters();
+                        $pickupDuration = null;
+                        foreach ($filters['route'] as $value) {
+                            if ($value['candidate'] == 2 && $value['position'] == 0) {
+                                $pickupDuration = (int)round($value['duration']);
+                                break;
+                            }
+                        }
+                        // we init the time to the one of the carpooler
+                        if ($proposalLinked->getCriteria()->isMonCheck()) {
+                            $monTime = clone $proposalLinked->getCriteria()->getMonTime();
+                            if ($pickupDuration) {
+                                $monTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                            }
+                            $return->setMonTime($monTime);
+                            $return->setTime($monTime);
+                        }
+                        if ($proposalLinked->getCriteria()->isTueCheck()) {
+                            $tueTime = clone $proposalLinked->getCriteria()->getTueTime();
+                            if ($pickupDuration) {
+                                $tueTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                            }
+                            $return->setTueTime($tueTime);
+                            $return->setTime($tueTime);
+                        }
+                        if ($proposalLinked->getCriteria()->isWedCheck()) {
+                            $wedTime = clone $proposalLinked->getCriteria()->getWedTime();
+                            if ($pickupDuration) {
+                                $wedTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                            }
+                            $return->setWedTime($wedTime);
+                            $return->setTime($wedTime);
+                        }
+                        if ($proposalLinked->getCriteria()->isThuCheck()) {
+                            $thuTime = clone $proposalLinked->getCriteria()->getThuTime();
+                            if ($pickupDuration) {
+                                $thuTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                            }
+                            $return->setThuTime($thuTime);
+                            $return->setTime($thuTime);
+                        }
+                        if ($proposalLinked->getCriteria()->isFriCheck()) {
+                            $friTime = clone $proposalLinked->getCriteria()->getFriTime();
+                            if ($pickupDuration) {
+                                $friTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                            }
+                            $return->setFriTime($friTime);
+                            $return->setTime($friTime);
+                        }
+                        if ($proposalLinked->getCriteria()->isSatCheck()) {
+                            $satTime = clone $proposalLinked->getCriteria()->getSatTime();
+                            if ($pickupDuration) {
+                                $satTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                            }
+                            $return->setSatTime($satTime);
+                            $return->setTime($satTime);
+                        }
+                        if ($proposalLinked->getCriteria()->isSunCheck()) {
+                            $sunTime = clone $proposalLinked->getCriteria()->getSunTime();
+                            if ($pickupDuration) {
+                                $sunTime->sub(new \DateInterval('PT' . $pickupDuration . 'S'));
+                            }
+                            $return->setSunTime($sunTime);
+                            $return->setTime($sunTime);
+                        }
+                        // fromDate is the max between the search date and the fromDate of the matching proposal
+                        $return->setFromDate(max(
+                            $matchingLinked->getProposalRequest()->getCriteria()->getFromDate(),
+                            $proposal->getCriteria()->getFromDate()
+                        ));
+                        $return->setToDate($matchingLinked->getProposalRequest()->getCriteria()->getToDate());
+                    
+                        // waypoints of the return
+                        $waypoints = [];
+                        $time = $return->getTime() ? clone $return->getTime() : null;
+                        // we will have to compute the number of steps for each candidate
+                        $steps = [
+                            'requester' => 0,
+                            'carpooler' => 0
+                        ];
+                        // first pass to get the maximum position for each candidate
+                        foreach ($matchingLinked->getFilters()['route'] as $key=>$waypoint) {
+                            if ($waypoint['candidate'] == 1 && (int)$waypoint['position']>$steps['requester']) {
+                                $steps['requester'] = (int)$waypoint['position'];
+                            } elseif ($waypoint['candidate'] == 2 && (int)$waypoint['position']>$steps['carpooler']) {
+                                $steps['carpooler'] = (int)$waypoint['position'];
+                            }
+                        }
+                        // second pass to fill the waypoints array
+                        foreach ($matchingLinked->getFilters()['route'] as $key=>$waypoint) {
+                            $curTime = null;
+                            if ($time) {
+                                $curTime = clone $time;
+                            }
+                            if ($curTime) {
+                                $curTime->add(new \DateInterval('PT' . (int)round($waypoint['duration']) . 'S'));
+                            }
+                            $waypoints[$key] = [
+                                'id' => $key,
+                                'person' => $waypoint['candidate'] == 1 ? 'requester' : 'carpooler',
+                                'role' => $waypoint['candidate'] == 1 ? 'driver' : 'passenger',
+                                'time' =>  $curTime,
+                                'address' => $waypoint['address'],
+                                'type' => $waypoint['position'] == '0' ? 'origin' :
+                                    (
+                                        ($waypoint['candidate'] == 1) ? ((int)$waypoint['position'] == $steps['requester'] ? 'destination' : 'step') :
+                                        ((int)$waypoint['position'] == $steps['carpooler'] ? 'destination' : 'step')
+                                    )
+                            ];
+                            // origin and destination guess
+                            if ($waypoint['candidate'] == 2 && $waypoint['position'] == '0') {
+                                $return->setOrigin($waypoint['address']);
+                                $return->setOriginPassenger($waypoint['address']);
+                            } elseif ($waypoint['candidate'] == 2 && (int)$waypoint['position'] == $steps['carpooler']) {
+                                $return->setDestination($waypoint['address']);
+                                $return->setDestinationPassenger($waypoint['address']);
+                            } elseif ($waypoint['candidate'] == 1 && $waypoint['position'] == '0') {
+                                $return->setOriginDriver($waypoint['address']);
+                            } elseif ($waypoint['candidate'] == 1 && (int)$waypoint['position'] == $steps['requester']) {
+                                $return->setDestinationDriver($waypoint['address']);
+                            }
+                        }
+                        $return->setWaypoints($waypoints);
+                        
+                        // statistics
+                        if ($matchingLinked->getFilters()['originalDistance']) {
+                            $return->setOriginalDistance($matchingLinked->getFilters()['originalDistance']);
+                        }
+                        if ($matchingLinked->getFilters()['acceptedDetourDistance']) {
+                            $return->setAcceptedDetourDistance($matchingLinked->getFilters()['acceptedDetourDistance']);
+                        }
+                        if ($matchingLinked->getFilters()['newDistance']) {
+                            $return->setNewDistance($matchingLinked->getFilters()['newDistance']);
+                        }
+                        if ($matchingLinked->getFilters()['detourDistance']) {
+                            $return->setDetourDistance($matchingLinked->getFilters()['detourDistance']);
+                        }
+                        if ($matchingLinked->getFilters()['detourDistancePercent']) {
+                            $return->setDetourDistancePercent($matchingLinked->getFilters()['detourDistancePercent']);
+                        }
+                        if ($matchingLinked->getFilters()['originalDuration']) {
+                            $return->setOriginalDuration($matchingLinked->getFilters()['originalDuration']);
+                        }
+                        if ($matchingLinked->getFilters()['acceptedDetourDuration']) {
+                            $return->setAcceptedDetourDuration($matchingLinked->getFilters()['acceptedDetourDuration']);
+                        }
+                        if ($matchingLinked->getFilters()['newDuration']) {
+                            $return->setNewDuration($matchingLinked->getFilters()['newDuration']);
+                        }
+                        if ($matchingLinked->getFilters()['detourDuration']) {
+                            $return->setDetourDuration($matchingLinked->getFilters()['detourDuration']);
+                        }
+                        if ($matchingLinked->getFilters()['detourDurationPercent']) {
+                            $return->setDetourDurationPercent($matchingLinked->getFilters()['detourDurationPercent']);
+                        }
+                        if ($matchingLinked->getFilters()['commonDistance']) {
+                            $return->setCommonDistance($matchingLinked->getFilters()['commonDistance']);
+                        }
+
+                        // price
+                        // if the requester price per km is set we use it
+                        if ($proposal->getCriteria()->getPriceKm()) {
+                            $return->setPriceKm($proposal->getCriteria()->getPriceKm());
+                        } else {
+                            // otherwise we use the common price
+                            $return->setPriceKm($this->params['defaultPriceKm']);
+                        }
+                        // if the requester price is set we use it
+                        if ($proposal->getCriteria()->getPrice()) {
+                            $return->setOriginalPrice($proposal->getCriteria()->getPrice());
+                        } else {
+                            // otherwise we use the common price
+                            $return->setOriginalPrice((string)(self::roundNearest((float)$matchingLinked->getFilters()['originalDistance'] * (float)$this->params['defaultPriceKm'] / 1000)));
+                        }
+                        $return->setComputedPrice((string)(self::roundNearest((float)$matchingLinked->getFilters()['commonDistance'] * (float)$outward->getPriceKm() / 1000)));
+                    }
                     $return->setMultipleTimes();
+                    if ($return->hasMultipleTimes()) {
+                        $return->setTime(null);
+                    }
+
                     $resultDriver->setReturn($return);
                 }
 
@@ -846,7 +1046,7 @@ class ProposalManager
                     // we search the pickup duration
                     $filters = $matching['offer']->getFilters();
                     $pickupDuration = null;
-                    foreach ($filters['order'] as $value) {
+                    foreach ($filters['route'] as $value) {
                         if ($value['candidate'] == 2 && $value['position'] == 0) {
                             $pickupDuration = (int)round($value['duration']);
                             break;
@@ -916,7 +1116,7 @@ class ProposalManager
                         // even if we don't use them, maybe we'll need them in the future
                         $filters = $matching['offer']->getFilters();
                         $pickupDuration = null;
-                        foreach ($filters['order'] as $value) {
+                        foreach ($filters['route'] as $value) {
                             if ($value['candidate'] == 2 && $value['position'] == 0) {
                                 $pickupDuration = (int)round($value['duration']);
                                 break;
@@ -992,6 +1192,12 @@ class ProposalManager
                         $outward->setTime(null);
                         $driverFromTime = null;
                     }
+                    // fromDate is the max between the search date and the fromDate of the matching proposal
+                    $outward->setFromDate(max(
+                        $matching['offer']->getProposalOffer()->getCriteria()->getFromDate(),
+                        $proposal->getCriteria()->getFromDate()
+                    ));
+                    $outward->setToDate($matching['offer']->getProposalOffer()->getCriteria()->getToDate());
                 }
                 // waypoints of the outward
                 $waypoints = [];
@@ -1002,7 +1208,7 @@ class ProposalManager
                     'carpooler' => 0
                 ];
                 // first pass to get the maximum position fo each candidate
-                foreach ($matching['offer']->getFilters()['order'] as $key=>$waypoint) {
+                foreach ($matching['offer']->getFilters()['route'] as $key=>$waypoint) {
                     if ($waypoint['candidate'] == 2 && (int)$waypoint['position']>$steps['requester']) {
                         $steps['requester'] = (int)$waypoint['position'];
                     } elseif ($waypoint['candidate'] == 1 && (int)$waypoint['position']>$steps['carpooler']) {
@@ -1010,7 +1216,7 @@ class ProposalManager
                     }
                 }
                 // second pass to fill the waypoints array
-                foreach ($matching['offer']->getFilters()['order'] as $key=>$waypoint) {
+                foreach ($matching['offer']->getFilters()['route'] as $key=>$waypoint) {
                     $curTime = null;
                     if ($time) {
                         $curTime = clone $time;
@@ -1033,8 +1239,14 @@ class ProposalManager
                     // origin and destination guess
                     if ($waypoint['candidate'] == 1 && $waypoint['position'] == '0') {
                         $outward->setOrigin($waypoint['address']);
+                        $outward->setOriginDriver($waypoint['address']);
                     } elseif ($waypoint['candidate'] == 1 && (int)$waypoint['position'] == $steps['carpooler']) {
                         $outward->setDestination($waypoint['address']);
+                        $outward->setDestinationDriver($waypoint['address']);
+                    } elseif ($waypoint['candidate'] == 2 && $waypoint['position'] == '0') {
+                        $outward->setOriginPassenger($waypoint['address']);
+                    } elseif ($waypoint['candidate'] == 2 && (int)$waypoint['position'] == $steps['requester']) {
+                        $outward->setDestinationPassenger($waypoint['address']);
                     }
                 }
                 $outward->setWaypoints($waypoints);
@@ -1073,6 +1285,7 @@ class ProposalManager
                 // return trip, only for regular trip for now
                 if ($matching['offer']->getProposalOffer()->getProposalLinked() && $proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && $matching['offer']->getProposalOffer()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
                     $proposalLinked = $matching['offer']->getProposalOffer()->getProposalLinked();
+                    $matchingLinked = $matching['offer']->getMatchingLinked();
 
                     // /!\ we only treat the return days /!\
                     $return = new ResultItem();
@@ -1084,20 +1297,213 @@ class ProposalManager
                     $return->setFriCheck($proposalLinked->getCriteria()->isFriCheck());
                     $return->setSatCheck($proposalLinked->getCriteria()->isSatCheck());
                     $return->setSunCheck($proposalLinked->getCriteria()->isSunCheck());
-                    $return->setMonTime($proposalLinked->getCriteria()->getMonTime());
-                    $return->setTueTime($proposalLinked->getCriteria()->getTueTime());
-                    $return->setWedTime($proposalLinked->getCriteria()->getWedTime());
-                    $return->setThuTime($proposalLinked->getCriteria()->getThuTime());
-                    $return->setFriTime($proposalLinked->getCriteria()->getFriTime());
-                    $return->setSatTime($proposalLinked->getCriteria()->getSatTime());
-                    $return->setSunTime($proposalLinked->getCriteria()->getSunTime());
+                    // $return->setMonTime($proposalLinked->getCriteria()->getMonTime());
+                    // $return->setTueTime($proposalLinked->getCriteria()->getTueTime());
+                    // $return->setWedTime($proposalLinked->getCriteria()->getWedTime());
+                    // $return->setThuTime($proposalLinked->getCriteria()->getThuTime());
+                    // $return->setFriTime($proposalLinked->getCriteria()->getFriTime());
+                    // $return->setSatTime($proposalLinked->getCriteria()->getSatTime());
+                    // $return->setSunTime($proposalLinked->getCriteria()->getSunTime());
+                    // $return->setMultipleTimes();
+                    $return->setFromDate($proposalLinked->getCriteria()->getFromDate());
+                    $return->setToDate($proposalLinked->getCriteria()->getToDate());
+                    
+                    if ($matchingLinked) {
+                        // we calculate the starting time so that the driver will get the carpooler on the carpooler time
+                        // even if we don't use them, maybe we'll need them in the future
+                        $filters = $matchingLinked->getFilters();
+                        $pickupDuration = null;
+                        foreach ($filters['route'] as $value) {
+                            if ($value['candidate'] == 2 && $value['position'] == 0) {
+                                $pickupDuration = (int)round($value['duration']);
+                                break;
+                            }
+                        }
+                        // we init the time to the one of the carpooler
+                        if ($proposalLinked->getCriteria()->isMonCheck()) {
+                            $monTime = clone $proposalLinked->getCriteria()->getMonTime();
+                            $driverFromTime = clone $monTime;
+                            if ($pickupDuration) {
+                                $monTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
+                            }
+                            $return->setMonTime($monTime);
+                            $return->setTime($monTime);
+                        }
+                        if ($proposalLinked->getCriteria()->isTueCheck()) {
+                            $tueTime = clone $proposalLinked->getCriteria()->getTueTime();
+                            $driverFromTime = clone $tueTime;
+                            if ($pickupDuration) {
+                                $tueTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
+                            }
+                            $return->setTueTime($tueTime);
+                            $return->setTime($tueTime);
+                        }
+                        if ($proposalLinked->getCriteria()->isWedCheck()) {
+                            $wedTime = clone $proposalLinked->getCriteria()->getWedTime();
+                            $driverFromTime = clone $wedTime;
+                            if ($pickupDuration) {
+                                $wedTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
+                            }
+                            $return->setWedTime($wedTime);
+                            $return->setTime($wedTime);
+                        }
+                        if ($proposalLinked->getCriteria()->isThuCheck()) {
+                            $thuTime = clone $proposalLinked->getCriteria()->getThuTime();
+                            $driverFromTime = clone $thuTime;
+                            if ($pickupDuration) {
+                                $thuTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
+                            }
+                            $return->setThuTime($thuTime);
+                            $return->setTime($thuTime);
+                        }
+                        if ($proposalLinked->getCriteria()->isFriCheck()) {
+                            $friTime = clone $proposalLinked->getCriteria()->getFriTime();
+                            $driverFromTime = clone $friTime;
+                            if ($pickupDuration) {
+                                $friTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
+                            }
+                            $return->setFriTime($friTime);
+                            $return->setTime($friTime);
+                        }
+                        if ($proposalLinked->getCriteria()->isSatCheck()) {
+                            $satTime = clone $proposalLinked->getCriteria()->getSatTime();
+                            $driverFromTime = clone $satTime;
+                            if ($pickupDuration) {
+                                $satTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
+                            }
+                            $return->setSatTime($satTime);
+                            $return->setTime($satTime);
+                        }
+                        if ($proposalLinked->getCriteria()->isSunCheck()) {
+                            $sunTime = clone $proposalLinked->getCriteria()->getSunTime();
+                            $driverFromTime = clone $sunTime;
+                            if ($pickupDuration) {
+                                $sunTime->add(new \DateInterval('PT' . $pickupDuration . 'S'));
+                            }
+                            $return->setSunTime($sunTime);
+                            $return->setTime($sunTime);
+                        }
+                        // fromDate is the max between the search date and the fromDate of the matching proposal
+                        $return->setFromDate(max(
+                            $matchingLinked->getProposalOffer()->getCriteria()->getFromDate(),
+                            $proposal->getCriteria()->getFromDate()
+                        ));
+                        $return->setToDate($matchingLinked->getProposalOffer()->getCriteria()->getToDate());
+                        
+                        // waypoints of the return
+                        $waypoints = [];
+                        $time = $driverFromTime ? clone $driverFromTime : null;
+                        // we will have to compute the number of steps for each candidate
+                        $steps = [
+                            'requester' => 0,
+                            'carpooler' => 0
+                        ];
+                        // first pass to get the maximum position for each candidate
+                        foreach ($matchingLinked->getFilters()['route'] as $key=>$waypoint) {
+                            if ($waypoint['candidate'] == 2 && (int)$waypoint['position']>$steps['requester']) {
+                                $steps['requester'] = (int)$waypoint['position'];
+                            } elseif ($waypoint['candidate'] == 1 && (int)$waypoint['position']>$steps['carpooler']) {
+                                $steps['carpooler'] = (int)$waypoint['position'];
+                            }
+                        }
+                        // second pass to fill the waypoints array
+                        foreach ($matchingLinked->getFilters()['route'] as $key=>$waypoint) {
+                            $curTime = null;
+                            if ($time) {
+                                $curTime = clone $time;
+                            }
+                            if ($curTime) {
+                                $curTime->add(new \DateInterval('PT' . (int)round($waypoint['duration']) . 'S'));
+                            }
+                            $waypoints[$key] = [
+                                'id' => $key,
+                                'person' => $waypoint['candidate'] == 2 ? 'requester' : 'carpooler',
+                                'role' => $waypoint['candidate'] == 1 ? 'driver' : 'passenger',
+                                'time' =>  $curTime,
+                                'address' => $waypoint['address'],
+                                'type' => $waypoint['position'] == '0' ? 'origin' :
+                                    (
+                                        ($waypoint['candidate'] == 2) ? ((int)$waypoint['position'] == $steps['requester'] ? 'destination' : 'step') :
+                                        ((int)$waypoint['position'] == $steps['carpooler'] ? 'destination' : 'step')
+                                    )
+                            ];
+                            // origin and destination guess
+                            if ($waypoint['candidate'] == 1 && $waypoint['position'] == '0') {
+                                $return->setOrigin($waypoint['address']);
+                                $return->setOriginDriver($waypoint['address']);
+                            } elseif ($waypoint['candidate'] == 1 && (int)$waypoint['position'] == $steps['carpooler']) {
+                                $return->setDestination($waypoint['address']);
+                                $return->setDestinationDriver($waypoint['address']);
+                            } elseif ($waypoint['candidate'] == 2 && $waypoint['position'] == '0') {
+                                $return->setOriginPassenger($waypoint['address']);
+                            } elseif ($waypoint['candidate'] == 2 && (int)$waypoint['position'] == $steps['requester']) {
+                                $return->setDestinationPassenger($waypoint['address']);
+                            }
+                        }
+                        $return->setWaypoints($waypoints);
+                        
+                        // statistics
+                        if ($matchingLinked->getFilters()['originalDistance']) {
+                            $return->setOriginalDistance($matchingLinked->getFilters()['originalDistance']);
+                        }
+                        if ($matchingLinked->getFilters()['acceptedDetourDistance']) {
+                            $return->setAcceptedDetourDistance($matchingLinked->getFilters()['acceptedDetourDistance']);
+                        }
+                        if ($matchingLinked->getFilters()['newDistance']) {
+                            $return->setNewDistance($matchingLinked->getFilters()['newDistance']);
+                        }
+                        if ($matchingLinked->getFilters()['detourDistance']) {
+                            $return->setDetourDistance($matchingLinked->getFilters()['detourDistance']);
+                        }
+                        if ($matchingLinked->getFilters()['detourDistancePercent']) {
+                            $return->setDetourDistancePercent($matchingLinked->getFilters()['detourDistancePercent']);
+                        }
+                        if ($matchingLinked->getFilters()['originalDuration']) {
+                            $return->setOriginalDuration($matchingLinked->getFilters()['originalDuration']);
+                        }
+                        if ($matchingLinked->getFilters()['acceptedDetourDuration']) {
+                            $return->setAcceptedDetourDuration($matchingLinked->getFilters()['acceptedDetourDuration']);
+                        }
+                        if ($matchingLinked->getFilters()['newDuration']) {
+                            $return->setNewDuration($matchingLinked->getFilters()['newDuration']);
+                        }
+                        if ($matchingLinked->getFilters()['detourDuration']) {
+                            $return->setDetourDuration($matchingLinked->getFilters()['detourDuration']);
+                        }
+                        if ($matchingLinked->getFilters()['detourDurationPercent']) {
+                            $return->setDetourDurationPercent($matchingLinked->getFilters()['detourDurationPercent']);
+                        }
+                        if ($matchingLinked->getFilters()['commonDistance']) {
+                            $return->setCommonDistance($matchingLinked->getFilters()['commonDistance']);
+                        }
+
+                        // price
+                        // if the carpooler price per km is set we use it
+                        if ($matchingLinked->getProposalOffer()->getCriteria()->getPriceKm()) {
+                            $return->setPriceKm($matchingLinked->getProposalOffer()->getCriteria()->getPriceKm());
+                        } else {
+                            // otherwise we use the common price
+                            $return->setPriceKm($this->params['defaultPriceKm']);
+                        }
+                        // if the carpooler price is set we use it
+                        if ($matchingLinked->getProposalOffer()->getCriteria()->getPrice()) {
+                            $return->setOriginalPrice($matchingLinked->getProposalOffer()->getCriteria()->getPrice());
+                        } else {
+                            // otherwise we use the common price
+                            $return->setOriginalPrice((string)(self::roundNearest((float)$matchingLinked->getFilters()['originalDistance'] * (float)$this->params['defaultPriceKm'] / 1000)));
+                        }
+                        $return->setComputedPrice((string)(self::roundNearest((float)$matchingLinked->getFilters()['commonDistance'] * (float)$outward->getPriceKm() / 1000)));
+                    }
                     $return->setMultipleTimes();
+                    if ($return->hasMultipleTimes()) {
+                        $return->setTime(null);
+                    }
+                    
                     $resultPassenger->setReturn($return);
                 }
 
                 // seats
                 $resultPassenger->setSeats($matching['offer']->getProposalOffer()->getCriteria()->getSeats() ? $matching['offer']->getProposalOffer()->getCriteria()->getSeats() : 1);
-
                 $result->setResultPassenger($resultPassenger);
             }
 
@@ -1137,6 +1543,11 @@ class ProposalManager
                 if ($result->getDestination()->getLatitude() == $requesterDestination->getLatitude() && $result->getDestination()->getLongitude() == $requesterDestination->getLongitude()) {
                     $result->setDestinationLast(true);
                 }
+                // driver and passenger origin/destination
+                $result->setOriginDriver($result->getResultDriver()->getOutward()->getOriginDriver());
+                $result->setDestinationDriver($result->getResultDriver()->getOutward()->getDestinationDriver());
+                $result->setOriginPassenger($result->getResultDriver()->getOutward()->getOriginPassenger());
+                $result->setDestinationPassenger($result->getResultDriver()->getOutward()->getDestinationPassenger());
             } else {
                 // the carpooler can be driver, we use the requester origin and destination
                 $result->setOrigin($requesterOrigin);
@@ -1151,16 +1562,24 @@ class ProposalManager
                 if ($result->getDestination()->getLatitude() == $result->getResultPassenger()->getOutward()->getDestination()->getLatitude() && $result->getDestination()->getLongitude() == $result->getResultPassenger()->getOutward()->getDestination()->getLongitude()) {
                     $result->setDestinationLast(true);
                 }
+                // driver and passenger origin/destination
+                $result->setOriginDriver($result->getResultPassenger()->getOutward()->getOriginDriver());
+                $result->setDestinationDriver($result->getResultPassenger()->getOutward()->getDestinationDriver());
+                $result->setOriginPassenger($result->getResultPassenger()->getOutward()->getOriginPassenger());
+                $result->setDestinationPassenger($result->getResultPassenger()->getOutward()->getDestinationPassenger());
             }
 
             // date / time / seats / price
-            // if the request is regular, there is no date
+            // if the request is regular, there is no date, but we keep a start date
             // otherwise we display the date of the matching proposal computed before depending on if the carpooler can be driver and/or passenger
             if ($result->getResultDriver() && !$result->getResultPassenger()) {
                 // the carpooler is passenger only
                 if ($result->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                     $result->setDate($result->getResultDriver()->getOutward()->getDate());
                     $result->setTime($result->getResultDriver()->getOutward()->getTime());
+                } else {
+                    $result->setStartDate($result->getResultDriver()->getOutward()->getFromDate());
+                    $result->setToDate($result->getResultDriver()->getOutward()->getToDate());
                 }
                 $result->setPrice($result->getResultDriver()->getOutward()->getComputedPrice());
                 $result->setSeats($result->getResultDriver()->getSeats());
@@ -1169,6 +1588,9 @@ class ProposalManager
                 if ($result->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                     $result->setDate($result->getResultPassenger()->getOutward()->getDate());
                     $result->setTime($result->getResultPassenger()->getOutward()->getTime());
+                } else {
+                    $result->setStartDate($result->getResultPassenger()->getOutward()->getFromDate());
+                    $result->setToDate($result->getResultPassenger()->getOutward()->getToDate());
                 }
                 $result->setPrice($result->getResultPassenger()->getOutward()->getComputedPrice());
                 $result->setSeats($result->getResultPassenger()->getSeats());
@@ -1200,22 +1622,22 @@ class ProposalManager
                         } elseif ($result->getResultDriver()->getOutward()->getSunTime()) {
                             $result->setOutwardTime($result->getResultDriver()->getOutward()->getSunTime());
                         }
-                        if ($result->getResultDriver()->getReturn() && !$result->getResultDriver()->getReturn()->hasMultipleTimes()) {
-                            if ($result->getResultDriver()->getReturn()->getMonTime()) {
-                                $result->setReturnTime($result->getResultDriver()->getReturn()->getMonTime());
-                            } elseif ($result->getResultDriver()->getReturn()->getTueTime()) {
-                                $result->setReturnTime($result->getResultDriver()->getReturn()->getTueTime());
-                            } elseif ($result->getResultDriver()->getReturn()->getWedTime()) {
-                                $result->setReturnTime($result->getResultDriver()->getReturn()->getWedTime());
-                            } elseif ($result->getResultDriver()->getReturn()->getThuTime()) {
-                                $result->setReturnTime($result->getResultDriver()->getReturn()->getThuTime());
-                            } elseif ($result->getResultDriver()->getReturn()->getFriTime()) {
-                                $result->setReturnTime($result->getResultDriver()->getReturn()->getFriTime());
-                            } elseif ($result->getResultDriver()->getReturn()->getSatTime()) {
-                                $result->setReturnTime($result->getResultDriver()->getReturn()->getSatTime());
-                            } elseif ($result->getResultDriver()->getReturn()->getSunTime()) {
-                                $result->setReturnTime($result->getResultDriver()->getReturn()->getSunTime());
-                            }
+                    }
+                    if ($result->getResultDriver()->getReturn() && !$result->getResultDriver()->getReturn()->hasMultipleTimes()) {
+                        if ($result->getResultDriver()->getReturn()->getMonTime()) {
+                            $result->setReturnTime($result->getResultDriver()->getReturn()->getMonTime());
+                        } elseif ($result->getResultDriver()->getReturn()->getTueTime()) {
+                            $result->setReturnTime($result->getResultDriver()->getReturn()->getTueTime());
+                        } elseif ($result->getResultDriver()->getReturn()->getWedTime()) {
+                            $result->setReturnTime($result->getResultDriver()->getReturn()->getWedTime());
+                        } elseif ($result->getResultDriver()->getReturn()->getThuTime()) {
+                            $result->setReturnTime($result->getResultDriver()->getReturn()->getThuTime());
+                        } elseif ($result->getResultDriver()->getReturn()->getFriTime()) {
+                            $result->setReturnTime($result->getResultDriver()->getReturn()->getFriTime());
+                        } elseif ($result->getResultDriver()->getReturn()->getSatTime()) {
+                            $result->setReturnTime($result->getResultDriver()->getReturn()->getSatTime());
+                        } elseif ($result->getResultDriver()->getReturn()->getSunTime()) {
+                            $result->setReturnTime($result->getResultDriver()->getReturn()->getSunTime());
                         }
                     }
                 } else {
@@ -1243,22 +1665,22 @@ class ProposalManager
                         } elseif ($result->getResultPassenger()->getOutward()->getSunTime()) {
                             $result->setOutwardTime($result->getResultPassenger()->getOutward()->getSunTime());
                         }
-                        if ($result->getResultPassenger()->getReturn() && !$result->getResultPassenger()->getReturn()->hasMultipleTimes()) {
-                            if ($result->getResultPassenger()->getReturn()->getMonTime()) {
-                                $result->setReturnTime($result->getResultPassenger()->getReturn()->getMonTime());
-                            } elseif ($result->getResultPassenger()->getReturn()->getTueTime()) {
-                                $result->setReturnTime($result->getResultPassenger()->getReturn()->getTueTime());
-                            } elseif ($result->getResultPassenger()->getReturn()->getWedTime()) {
-                                $result->setReturnTime($result->getResultPassenger()->getReturn()->getWedTime());
-                            } elseif ($result->getResultPassenger()->getReturn()->getThuTime()) {
-                                $result->setReturnTime($result->getResultPassenger()->getReturn()->getThuTime());
-                            } elseif ($result->getResultPassenger()->getReturn()->getFriTime()) {
-                                $result->setReturnTime($result->getResultPassenger()->getReturn()->getFriTime());
-                            } elseif ($result->getResultPassenger()->getReturn()->getSatTime()) {
-                                $result->setReturnTime($result->getResultPassenger()->getReturn()->getSatTime());
-                            } elseif ($result->getResultPassenger()->getReturn()->getSunTime()) {
-                                $result->setReturnTime($result->getResultPassenger()->getReturn()->getSunTime());
-                            }
+                    }
+                    if ($result->getResultPassenger()->getReturn() && !$result->getResultPassenger()->getReturn()->hasMultipleTimes()) {
+                        if ($result->getResultPassenger()->getReturn()->getMonTime()) {
+                            $result->setReturnTime($result->getResultPassenger()->getReturn()->getMonTime());
+                        } elseif ($result->getResultPassenger()->getReturn()->getTueTime()) {
+                            $result->setReturnTime($result->getResultPassenger()->getReturn()->getTueTime());
+                        } elseif ($result->getResultPassenger()->getReturn()->getWedTime()) {
+                            $result->setReturnTime($result->getResultPassenger()->getReturn()->getWedTime());
+                        } elseif ($result->getResultPassenger()->getReturn()->getThuTime()) {
+                            $result->setReturnTime($result->getResultPassenger()->getReturn()->getThuTime());
+                        } elseif ($result->getResultPassenger()->getReturn()->getFriTime()) {
+                            $result->setReturnTime($result->getResultPassenger()->getReturn()->getFriTime());
+                        } elseif ($result->getResultPassenger()->getReturn()->getSatTime()) {
+                            $result->setReturnTime($result->getResultPassenger()->getReturn()->getSatTime());
+                        } elseif ($result->getResultPassenger()->getReturn()->getSunTime()) {
+                            $result->setReturnTime($result->getResultPassenger()->getReturn()->getSunTime());
                         }
                     }
                 }

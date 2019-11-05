@@ -91,7 +91,12 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
      * @Groups({"post","put"})
      */
     private $familyName;
-    
+
+    /**
+     * @var string|null The shorten family name of the user.
+     */
+    private $shortFamilyName;
+
     /**
      * @var string The email of the user.
      *
@@ -416,7 +421,12 @@ class User implements ResourceInterface, UserInterface, EquatableInterface, \Jso
         
         return $this;
     }
-    
+
+    public function getShortFamilyName(): ?string
+    {
+        return $this->shortFamilyName;
+    }
+        
     public function getEmail(): ?string
     {
         return $this->email;
