@@ -226,6 +226,15 @@ class Proposal
     private $private;
 
     /**
+     * @var boolean Pause proposal.
+     * A paused proposal can't be the found in the result of a search, and can be unpaused at any moment.
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write","thread"})
+     */
+    private $paused;
+
+    /**
      * @var \DateTimeInterface Creation date of the proposal.
      *
      * @ORM\Column(type="datetime")
@@ -358,6 +367,12 @@ class Proposal
     private $matchedProposal;
 
     /**
+     * @var boolean Create a formal ask after posting the proposal.
+     * @Groups({"read","write"})
+     */
+    private $formalAsk;
+
+    /**
      * @var ArrayCollection|null The carpool results for the proposal.
      * Results are taken from the matchings, but returned in a more user-friendly way.
      * @Groups("results")
@@ -429,6 +444,18 @@ class Proposal
     public function setPrivate(?bool $private): self
     {
         $this->private = $private;
+
+        return $this;
+    }
+
+    public function isPaused(): bool
+    {
+        return $this->paused ? true : false;
+    }
+
+    public function setPaused(?bool $paused): self
+    {
+        $this->paused = $paused;
 
         return $this;
     }
@@ -708,6 +735,18 @@ class Proposal
     public function setMatchedProposal(?Proposal $matchedProposal): self
     {
         $this->matchedProposal = $matchedProposal;
+
+        return $this;
+    }
+
+    public function hasFormalAsk(): bool
+    {
+        return $this->formalAsk ? true : false;
+    }
+
+    public function setFormalAsk(?bool $formalAsk): self
+    {
+        $this->formalAsk = $formalAsk;
 
         return $this;
     }

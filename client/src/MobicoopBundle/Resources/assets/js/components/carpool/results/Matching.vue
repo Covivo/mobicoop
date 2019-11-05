@@ -87,6 +87,7 @@
         :result="result"
         @close="carpoolDialog = false"
         @contact="contact"
+        @carpool="launchCarpool"
       />
     </v-dialog>
   </div>
@@ -243,6 +244,31 @@ export default {
         .catch((error) => {
           console.log(error);
           //this.emitSnackbar('snackBar.error','error')
+        })
+        .finally(() => {
+          this.carpoolDialog = false;
+        })
+    },
+    launchCarpool(params) {
+      if (this.proposalId) {
+        params.proposalSearch = this.proposalId;
+      }
+      axios.post(this.$t("carpoolUrl"), params,
+        {
+          headers:{
+            'content-type': 'application/json'
+          }
+        })
+        .then((response) => {
+          if(response.data=="ok"){
+            window.location = "/utilisateur/messages";
+          }
+          else{
+            console.log(response);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
         })
         .finally(() => {
           this.carpoolDialog = false;

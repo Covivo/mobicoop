@@ -100,6 +100,13 @@ class Proposal implements ResourceInterface, \JsonSerializable
     private $private;
 
     /**
+     * @var boolean Paused proposal.
+     * A paused proposal can't be the found in the result of a search, and can be unpaused at any moment.
+     * @Groups({"post","put"})
+     */
+    private $paused;
+
+    /**
      * @var Waypoint[] The waypoints of the proposal.
      * @Groups({"post","put"})
      *
@@ -147,6 +154,12 @@ class Proposal implements ResourceInterface, \JsonSerializable
      * @Groups({"post","put"})
      */
     private $matchedProposal;
+
+    /**
+     * @var boolean Create a formal ask after posting the proposal.
+     * @Groups({"post","put"})
+     */
+    private $formalAsk;
 
     /**
      * @var array The matching results of a proposal in a user-friendly format.
@@ -230,6 +243,18 @@ class Proposal implements ResourceInterface, \JsonSerializable
     public function setPrivate(?bool $private): self
     {
         $this->private = $private;
+
+        return $this;
+    }
+
+    public function isPaused(): bool
+    {
+        return $this->paused ? true : false;
+    }
+
+    public function setPaused(?bool $paused): self
+    {
+        $this->paused = $paused;
 
         return $this;
     }
@@ -469,6 +494,18 @@ class Proposal implements ResourceInterface, \JsonSerializable
     public function setMatchedProposal(?Proposal $matchedProposal): self
     {
         $this->matchedProposal = $matchedProposal;
+
+        return $this;
+    }
+
+    public function hasFormalAsk(): bool
+    {
+        return $this->formalAsk ? true : false;
+    }
+
+    public function setFormalAsk(?bool $formalAsk): self
+    {
+        $this->formalAsk = $formalAsk;
 
         return $this;
     }

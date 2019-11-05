@@ -305,9 +305,9 @@
         color="secondary"
         :disabled="carpoolDisabled"
         :loading="carpoolLoading"
-        @click="lResult.frequency == 1 ? carpool(0) : step = 2"
+        @click="lResult.frequency == 1 ? (driver ? carpool(1) : carpool(2)) : step = 2"
       >
-        {{ $t('outward') }}
+        {{ lResult.frequency == 1 ? $t('carpool') : $t('outward') }}
       </v-btn>
 
       <!-- Carpool (driver) --> 
@@ -555,18 +555,30 @@ export default {
       this.carpoolLoading = true;
       this.contactDisabled = true;
       let params = {
-        "driver": this.lResult.resultDriver && role<2 ? true : false,
-        "passenger": this.lResult.resultPassenger && role != 1 ? true : false,
+        "driver": role==1,
+        "passenger": role==2,
         "regular" : this.lResult.frequency == 2
       };
-      // if the requester can be passenger, we take the informations from the resultPassenger outward item
-      if (this.lResult.resultPassenger) {
+      if (role == 1) {
+        // the requester is driver
+        params.proposalId = this.lResult.resultDriver.outward.proposalId;
+        params.origin = this.lResult.resultDriver.outward.origin;
+        params.destination = this.lResult.resultDriver.outward.destination;
+        params.date = this.lResult.resultDriver.outward.date;
+        params.time = this.lResult.resultDriver.outward.time;
+        params.priceKm = this.lResult.resultDriver.outward.priceKm;
+        params.originalPrice = this.lResult.resultDriver.outward.originalPrice;
+        params.computedPrice = this.lResult.resultDriver.outward.computedPrice;
+      } else {
+        // the requester is passenger
         params.proposalId = this.lResult.resultPassenger.outward.proposalId;
         params.origin = this.lResult.resultPassenger.outward.origin;
         params.destination = this.lResult.resultPassenger.outward.destination;
         params.date = this.lResult.resultPassenger.outward.date;
         params.time = this.lResult.resultPassenger.outward.time;
         params.priceKm = this.lResult.resultPassenger.outward.priceKm;
+        params.originalPrice = this.lResult.resultPassenger.outward.originalPrice;
+        params.computedPrice = this.lResult.resultPassenger.outward.computedPrice;
       }
       this.$emit('carpool', params);
     },

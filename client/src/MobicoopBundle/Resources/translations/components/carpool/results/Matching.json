@@ -2,6 +2,7 @@
   "fr":{
     "proposalUrl": "/covoiturage/annonce/{id}/detail",
     "matchingUrl": "/covoiturage/recherche/matching",
+    "carpoolUrl": "/covoiturage/demande",
     "contactUrl": "/covoiturage/contact",
     "search": "Recherche en cours...",
     "matchingNumber": "Aucune annonce en covoiturage trouvée... | {number} annonce en covoiturage trouvée | {number} annonces en covoiturage trouvées",
@@ -13,6 +14,7 @@
   "en":{
     "proposalUrl": "/carpool/ad/{id}/detail",
     "matchingUrl": "/carpool/search/matching",
+    "carpoolUrl": "/carpool/ask",
     "contactUrl": "/carpool/contact",
     "search": "Searching...",
     "matchingNumber": "No carpooling ad found... | {number} carpooling ad found | {number} carpooling ads found",

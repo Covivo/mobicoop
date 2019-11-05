@@ -36,6 +36,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 
 /**
  * Controller class for carpooling related actions.
@@ -198,7 +199,7 @@ class CarpoolController extends AbstractController
 
     /**
      * Initiate contact from carpool results
-     * POST
+     * (AJAX POST)
      */
     public function carpoolContact(Request $request, ProposalManager $proposalManager, UserManager $userManager)
     {
@@ -209,8 +210,46 @@ class CarpoolController extends AbstractController
             // create the ask and return the result
         }
         
-        // the contact is made after a search, we have to create the ad from the search
+        if (!is_null($this->createProposalFromParams($proposalManager, $userManager->getLoggedUser(), $params))) {
+            return $this->json("ok");
+        } else {
+            return $this->json("error");
+        }
+    }
+
+    /**
+     * Formal ask from carpool results
+     * (AJAX POST)
+     */
+    public function carpoolAsk(Request $request, ProposalManager $proposalManager, UserManager $userManager)
+    {
+        $params = json_decode($request->getContent(), true);
+
+        // if the proposal search is set, it means the ask is made after an ad matching
+        if (isset($params['proposalSearch'])) {
+            // create the ask and return the result
+        }
+                
+        if (!is_null($this->createProposalFromParams($proposalManager, $userManager->getLoggedUser(), $params, true))) {
+            return $this->json("ok");
+        } else {
+            return $this->json("error");
+        }
+    }
+
+    /**
+     * Create a proposal from params
+     *
+     * @param ProposalManager $proposalManager
+     * @param User $user
+     * @param array $params     The params
+     * @param bool $formalAsk   True if we have to create a formal ask
+     * @return void
+     */
+    private function createProposalFromParams(ProposalManager $proposalManager, User $user, array $params, bool $formalAsk=false)
+    {
         $data = [
+            "formalAsk" => $formalAsk,
             "private" => true,
             "proposalId" => $params['proposalId'],
             "origin"=>$params['origin'],
@@ -221,17 +260,13 @@ class CarpoolController extends AbstractController
             "driver" => $params['driver'],
             "passenger" => $params['passenger'],
             "priceKm" => $params['priceKm'],
+            "originalPrice" => isset($params['originalPrice']) ? $params['originalPrice'] : null,
+            "computedPrice" => isset($params['computedPrice']) ? $params['computedPrice'] : null,
             "regular" => $params['regular'],
             "waypoints" => []
         ];
-        $proposal = $proposalManager->createProposalFromAd($data, $userManager->getLoggedUser());
-        if (!is_null($proposal)) {
-            return $this->json("ok");
-        } else {
-            return $this->json("error");
-        }
+        return $proposalManager->createProposalFromAd($data, $user->getLoggedUser());
     }
-
 
 
     /**

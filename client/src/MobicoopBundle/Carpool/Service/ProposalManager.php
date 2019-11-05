@@ -187,9 +187,6 @@ class ProposalManager
             // regular
             $criteria->setFrequency(Criteria::FREQUENCY_REGULAR);
             $criteria->setFromDate(new \Datetime());
-            // $toDate = new \Datetime();
-            // $toDate->add(new \DateInterval("P".Proposal::PROPOSAL_VALIDITY."Y"));
-            // $criteria->setToDate($toDate);
             foreach ($ad['schedules'] as $schedule) {
                 if ($schedule['outwardTime'] != '') {
                     if ($schedule['mon']) {
@@ -437,6 +434,10 @@ class ProposalManager
         if (isset($ad['proposalId'])) {
             // There' a proposalId : we know that is a match
             $proposal->setMatchedProposal(new Proposal($ad['proposalId']));
+        }
+
+        if (isset($ad['formalAsk'])) {
+            $proposal->setFormalAsk($ad['formalAsk']);
         }
 
         // creation of the outward proposal
