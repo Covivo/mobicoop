@@ -6,7 +6,8 @@
         "thu": "J",
         "fri": "V",
         "sat": "S",
-        "sun": "D"
+        "sun": "D",
+        "dateValid": "Valide jusqu'au"
     },
     "en": {
         "mon": "M",
@@ -15,6 +16,7 @@
         "thu": "T",
         "fri": "F",
         "sat": "S",
-        "sun": "Su"
+        "sun": "Su",
+        "dateValid": "Valid until the"
     }
 }

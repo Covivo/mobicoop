@@ -38,7 +38,8 @@ export default {
             fullDate: "ddd Do MMMM YYYY",
             fullNumericDate: "YMMDDHHmmss",
             shortDate: "ddd DD/MM",
-            urlDate: "YMMDD"
+            urlDate: "YMMDD",
+            shortCompleteDate: "DD/MM/YYYY"
           }
         },
         time: {

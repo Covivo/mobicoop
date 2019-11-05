@@ -287,8 +287,9 @@ export default {
         })
         .then(res => {
           this.errorUpdate = res.data.state;
-          document.location.reload(true);
+          // document.location.reload(true);
           this.snackbar = true;
+          this.loading = false;
       });
     },
 

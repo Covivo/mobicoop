@@ -42,10 +42,17 @@
     >
       {{ $t('ui.abbr.day.sun') }}
     </v-chip>
+    <p
+      v-if="dateEndOfValidity"
+      class="font-italic mt-1"
+    >
+      {{ $t('dateValid') }}&nbsp;{{ formattedDateEndOfValidity }}
+    </p>
   </div>
 </template>
 
 <script>
+import moment from "moment";
 import { merge } from "lodash";
 import Translations from "@translations/components/carpool/utilities/RegularDaysSummary.json";
 import TranslationsClient from "@clientTranslations/components/carpool/utilities/RegularDaysSummary.json";
@@ -84,11 +91,25 @@ export default {
       type: Boolean,
       default: false
     },
+    dateEndOfValidity: {
+      type: String,
+      default: null
+    }
   },
   data() {
     return {
       locale: this.$i18n.locale,
     };
+  },
+  computed: {
+    formattedDateEndOfValidity () {
+      moment.locale(this.locale);
+      return this.dateEndOfValidity
+        ? moment(this.dateEndOfValidity).format(this.$t("ui.i18n.date.format.shortCompleteDate"))
+        : "";
+    }
   }
 };
 </script>
+<style scoped lang="scss">
+</style>
