@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-container>
     <v-snackbar
       v-model="snackbar"
       top
@@ -28,7 +28,7 @@
         />
       </v-col>
     </v-row>
-  </div>
+  </v-container>
 </template>
 <script>
 import axios from "axios";

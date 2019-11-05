@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <v-container>
     <v-row
       justify="center"
     >
-      <v-col cols="10">
+      <v-col cols="11">
         <v-tabs
           v-model="modelTabs"
           slider-color="secondary"
@@ -44,6 +44,7 @@
                   :avatar-size="avatarSize"
                   :url-alt-avatar="urlAltAvatar"
                   :avatar-version="avatarVersion"
+                  :platform="platform"
                 />
               </v-tab-item>
               <v-tab class="subtitle-1">
@@ -69,7 +70,7 @@
         </v-tabs>
       </v-col>
     </v-row>
-  </div>
+  </v-container>
 </template>
 <script>
 import UpdateProfile from "@components/user/profile/UpdateProfile";
@@ -126,6 +127,10 @@ export default {
       type: Array,
       default: null
     },
+    platform: {
+      type: String,
+      default: ""
+    },
     tabDefault: {
       type: String,
       default: null
@@ -133,9 +138,8 @@ export default {
   },
   data(){
     return{
-      modelTabs:(this.tabDefault!="") ? this.tabDefault : "myProposals",
+      modelTabs:(this.tabDefault!="") ? this.tabDefault : "myProposals"
     }
-  }
 }
 </script>
 <style lang="scss" scoped>
