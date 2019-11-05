@@ -148,6 +148,12 @@ class Result
     private $startDate;
 
     /**
+     * @var \DateTimeInterface|null The possible end date if regular.
+     * @Groups("results")
+     */
+    private $toDate;
+
+    /**
      * @var int The number of places offered / requested to display.
      * @Groups("results")
      */
@@ -423,6 +429,18 @@ class Result
     public function setStartDate(?\DateTimeInterface $startDate): self
     {
         $this->startDate = $startDate;
+
+        return $this;
+    }
+
+    public function getToDate(): ?\DateTimeInterface
+    {
+        return $this->toDate;
+    }
+
+    public function setToDate(?\DateTimeInterface $toDate): self
+    {
+        $this->toDate = $toDate;
 
         return $this;
     }

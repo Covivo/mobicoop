@@ -195,6 +195,8 @@
                 <v-date-picker
                   v-model="fromDate"
                   :locale="locale"
+                  :min="today"
+                  :max="toDate ? toDate : null"
                   no-title
                   @input="menuFromDate = false"
                   @change="change"
@@ -241,7 +243,7 @@
                   v-model="maxDate"
                   :locale="locale"
                   :min="fromDate"
-                  :max="limitDate ? limitDate : null"
+                  :max="toDate ? toDate : null"
                   no-title
                   @input="menuMaxDate = false"
                   @change="change"
@@ -351,7 +353,7 @@
 
       <!-- Step 2 (regular outward, no return) --> 
       <v-btn
-        v-if="step == 2 && !lResult.return && this.outward.length>0"
+        v-if="step == 2 && !lResult.return && outwardTrip.length>0"
         color="secondary"
         @click="driver ? carpool(1) : carpool(2)"
       >
@@ -360,7 +362,7 @@
 
       <!-- Step 3 (regular return) --> 
       <v-btn
-        v-if="step == 3 && (this.outward.length>0 || this.return.length>0)"
+        v-if="step == 3 && (outwardTrip.length > 0 || returnTrip.length>0)"
         color="secondary"
         @click="driver ? carpool(1) : carpool(2)"
       >
@@ -408,7 +410,7 @@ export default {
       menuFromDate: false,
       maxDate: this.result.startDate ? this.result.startDate : null,
       menuMaxDate: false,
-      limitDate: this.result.limitDate ? this.result.limitDate : null,
+      toDate: this.result.toDate ? this.result.toDate : null,
       range: 0,
       outwardMonTime: null,
       outwardTueTime: null,
@@ -424,11 +426,14 @@ export default {
       returnFriTime: null,
       returnSatTime: null,
       returnSunTime: null,
-      outward: [],
-      return: []
+      outwardTrip: [],
+      returnTrip: []
     }
   },
   computed: {
+    today() {
+      return moment().toISOString();
+    },
     driver() {
       return this.lResult && this.lResult.resultDriver ? true : false;
     },
@@ -469,7 +474,7 @@ export default {
     result(val) {
       this.lResult = val;
       this.fromDate = val.startDate ? val.startDate : null;
-      this.limitDate = val.limitDate ? val.limitDate : null;
+      this.toDate = val.toDate ? val.toDate : null;
       this.computeTimes();
     }
   },
@@ -478,12 +483,12 @@ export default {
   },
   methods: {
     computeMaxDate() {
-      if (this.range==0) {
-        this.maxDate = this.fromDate;
-      } else if (this.range == 1) {
+      if (this.range == 1) {
         this.maxDate = moment(this.fromDate).add(1, 'M').toISOString();
       } else if (this.range == 2) {
         this.maxDate = moment(this.fromDate).add(3, 'M').toISOString();
+      } else if (moment(this.maxDate).isBefore(moment(this.fromDate))) {
+        this.maxDate = this.fromDate;
       }
     },
     computeTimes() {
@@ -569,10 +574,10 @@ export default {
       this.computeMaxDate();
     },
     changeOutward(params) {
-      this.outward = params;
+      this.outwardTrip = params;
     },
     changeReturn(params) {
-      this.return = params;
+      this.returnTrip = params;
     },
   }
 };

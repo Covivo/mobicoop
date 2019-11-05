@@ -1579,6 +1579,7 @@ class ProposalManager
                     $result->setTime($result->getResultDriver()->getOutward()->getTime());
                 } else {
                     $result->setStartDate($result->getResultDriver()->getOutward()->getFromDate());
+                    $result->setToDate($result->getResultDriver()->getOutward()->getToDate());
                 }
                 $result->setPrice($result->getResultDriver()->getOutward()->getComputedPrice());
                 $result->setSeats($result->getResultDriver()->getSeats());
@@ -1589,6 +1590,7 @@ class ProposalManager
                     $result->setTime($result->getResultPassenger()->getOutward()->getTime());
                 } else {
                     $result->setStartDate($result->getResultPassenger()->getOutward()->getFromDate());
+                    $result->setToDate($result->getResultPassenger()->getOutward()->getToDate());
                 }
                 $result->setPrice($result->getResultPassenger()->getOutward()->getComputedPrice());
                 $result->setSeats($result->getResultPassenger()->getSeats());
