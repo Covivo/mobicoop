@@ -60,7 +60,7 @@
 </template>
 <script>
 import UpdateProfile from "@components/user/profile/UpdateProfile";
-import MyProposals from "@components/user/profile/MyProposals";
+import MyProposals from "@components/user/profile/proposal/MyProposals";
 import Alerts from "@components/user/profile/Alerts";
 import CarpoolSettings from "@components/user/profile/CarpoolSettings";
 

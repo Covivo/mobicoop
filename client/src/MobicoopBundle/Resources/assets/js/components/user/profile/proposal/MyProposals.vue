@@ -36,8 +36,8 @@
 </template>
 <script>
 import { merge } from "lodash";
-import Translations from "@translations/components/user/profile/Profile.json";
-import TranslationsClient from "@clientTranslations/components/user/profile/Profile.json";
+import Translations from "@translations/components/user/profile/proposal/MyProposals.js";
+import TranslationsClient from "@clientTranslations/components/user/profile/proposal/MyProposals.js";
 
 import Proposal from "@components/user/profile/proposal/Proposal.vue";
 
