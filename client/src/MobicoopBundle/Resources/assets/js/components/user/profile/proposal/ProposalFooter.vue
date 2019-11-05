@@ -5,7 +5,7 @@
         <span v-if="seats && seats > 0">{{ seats }}&nbsp;{{ seats > 1 ? $t('seat.plural') : $t('seat.singular') }}</span>
       </v-col>
       <v-col cols="3">
-        <span v-if="price && price > 0">{{ price }} €</span>
+        <span v-if="price && price > '0'">{{ price }} €</span>
       </v-col>
       <v-col cols="6">
         <v-btn
@@ -42,7 +42,7 @@ export default {
       default: null
     },
     price: {
-      type: Number,
+      type: String,
       default: null
     },
     carpoolRequests: {
