@@ -29,7 +29,10 @@
                 :key="proposal.outward.id"
               >
                 <v-col cols="12">
-                  <Proposal :proposal="proposal" />
+                  <Proposal
+                    :proposal="proposal"
+                    :is-archived="true"
+                  />
                 </v-col>
               </v-row>
             </v-container>

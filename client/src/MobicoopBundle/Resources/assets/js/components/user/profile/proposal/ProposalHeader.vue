@@ -22,6 +22,7 @@
       <v-spacer />
       <v-btn
         class="secondary my-1"
+        :class="isArchived ? 'mr-1' : ''"
         icon
       >
         <v-icon
@@ -31,6 +32,7 @@
         </v-icon>
       </v-btn>
       <v-btn
+        v-if="!isArchived"
         class="secondary ma-1"
         icon
       >
@@ -39,7 +41,7 @@
         </v-icon>
       </v-btn>
       <v-btn
-        v-if="isPausable"
+        v-if="isPausable && !isArchived"
         class="secondary my-1 mr-1"
         icon
       >
@@ -65,6 +67,10 @@ export default {
     isPausable: {
       type: Boolean,
       default: true
+    },
+    isArchived: {
+      type: Boolean,
+      default: false
     }
   }
 }

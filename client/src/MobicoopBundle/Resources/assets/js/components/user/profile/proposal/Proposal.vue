@@ -4,6 +4,7 @@
       :is-driver="isDriver"
       :is-passenger="isPassenger"
       :is-pausable="isRegular"
+      :is-archived="isArchived"
     />
     
     <v-card-text v-if="isRegular">
@@ -46,6 +47,10 @@ export default {
     proposal: {
       type: Object,
       default: () => {}
+    },
+    isArchived: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
