@@ -1,6 +1,7 @@
 <template>
   <v-container
     fluid
+    class="pa-0"
   >
     <v-row>
       <v-col cols="5">
@@ -16,20 +17,21 @@
         />
       </v-col>
       
-      <v-col>
+      <v-col class="py-0">
         <schedules
           :outward-times="outwardTimes"
           :return-times="returnTimes"
-          :show-return="hasReturn"
+          :is-return="hasReturn"
+          :is-regular="isRegular"
         />
       </v-col>
     </v-row>
     <v-row justify="center">
       <v-col
         cols="12"
-        class="primary darken-4"
+        class="py-0"
       >
-        <v-container class="pa-0">
+        <v-container class="primary darken-4">
           <v-row>
             <v-col
               cols="6"

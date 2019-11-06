@@ -10,7 +10,7 @@
     </v-card-text>
       
     <v-card-text v-else>
-      <proposal-content-punctual />
+      <proposal-content-punctual :proposal="proposal" />
     </v-card-text>
 
     <v-divider />

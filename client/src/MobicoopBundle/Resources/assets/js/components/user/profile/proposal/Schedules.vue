@@ -1,73 +1,140 @@
 <template>
-  <v-container>
-    <!--multiple times slot for outward and return-->
-    <v-col
-      v-if="!hasSameReturnTimes && !hasSameOutwardTimes"
-      align="right"
-    >
-      <span class="accent--text text--darken-2 font-weight-bold body-1">{{ $t('outward') }}</span>
-
-      <v-icon class="accent--text text--darken-2 font-weight-bold">
-        mdi-arrow-left-right
-      </v-icon>
-
-      <span class="accent--text text--darken-2 font-weight-bold body-1">{{ $t('return') }}</span>
-
-      <p
-        class="font-italic mt-1 primary--text text--darken-3"
+  <v-container
+    fluid
+    class="pa-0"
+  >
+    <v-row>
+      <v-col
+        v-if="isRegular && !hasSameReturnTimes && !hasSameOutwardTimes"
+        align="right"
       >
-        {{ $t('multipleTimesSlots') }}
-      </p>
-    </v-col>
-    <v-col v-else>
-      <v-row>
-        <!--Outward-->
-        <v-col>
-          <span class="accent--text text--darken-2 font-weight-bold body-1">{{ $t('outward') }}</span>
+        <span class="accent--text text--darken-2 font-weight-bold body-1">{{ $t('outward') }}</span>
 
-          <v-icon class="accent--text text--darken-2 font-weight-bold">
-            mdi-arrow-right
-          </v-icon>
+        <v-icon class="accent--text text--darken-2 font-weight-bold">
+          mdi-arrow-left-right
+        </v-icon>
 
-          <span
-            v-if="hasSameOutwardTimes"
-            class="primary--text text--darken-3 body-1"
-          >
-            {{ formatTime(outwardTimes[0]) }}
-          </span>
-          <span
-            v-else
-            class="primary--text text--darken-3 body-1"
-          >
-            {{ $t('multipleTimesSlots') }}
-          </span>
-        </v-col>
+        <span class="accent--text text--darken-2 font-weight-bold body-1">{{ $t('return') }}</span>
 
-        <!-- Return -->
-        <v-col
-          v-if="showReturn"
+        <p
+          class="font-italic mt-1 primary--text text--darken-3"
         >
-          <span class="accent--text text--darken-2 font-weight-bold body-1">{{ $t('return') }}</span>
+          {{ $t('multipleTimesSlots') }}
+        </p>
+      </v-col>
+      
+      <v-col v-else>
+        <v-container
+          fluid
+          class="pa-0"
+        >
+          <v-row>
+            <!--Outward-->
+            <v-col
+              v-if="isOutward"
+              class="py-0"
+              :align="isRegular ? 'right' : 'left'"
+            >
+              <span class="accent--text text--darken-2 font-weight-bold body-1">{{ $t('outward') }}</span>
 
-          <v-icon class="accent--text text--darken-2 font-weight-bold">
-            mdi-arrow-left
-          </v-icon>
+              <v-icon class="accent--text text--darken-2 font-weight-bold">
+                mdi-arrow-right
+              </v-icon>
 
-          <span
-            v-if="hasSameReturnTimes"
-            class="primary--text text--darken-3 body-1"
-          >
-            {{ formatTime(returnTimes[0]) }}
-          </span>
-          <span
-            v-else
-            class="primary--text text--darken-3 body-1"
-          >
-            {{ $t('multipleTimesSlots') }}
-          </span>
-        </v-col>
-      </v-row>
-    </v-col>
+              <span
+                v-if="hasSameOutwardTimes"
+                class="primary--text text--darken-3 body-1"
+              >
+                {{ formatTime(outwardTimes[0]) }}
+              </span>
+              <span
+                v-else
+                class="primary--text text--darken-3 body-1"
+              >
+                {{ $t('multipleTimesSlots') }}
+              </span>
+            </v-col>
+
+            <!--Return-->
+            <v-col
+              v-if="isReturn"
+              class="py-0"
+              :align="isRegular ? 'right' : 'left'"
+            >
+              <span class="accent--text text--darken-2 font-weight-bold body-1">{{ $t('return') }}</span>
+
+              <v-icon class="accent--text text--darken-2 font-weight-bold">
+                mdi-arrow-left
+              </v-icon>
+
+              <span
+                v-if="hasSameReturnTimes"
+                class="primary--text text--darken-3 body-1"
+              >
+                {{ formatTime(returnTimes[0]) }}
+              </span>
+              <span
+                v-else
+                class="primary--text text--darken-3 body-1"
+              >
+                {{ $t('multipleTimesSlots') }}
+              </span>
+              <!--multiple times slot for outward and return-->
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-col>
+    </v-row>
+      
+    <!--<v-col v-else>-->
+    <!--<v-row>-->
+    <!--&lt;!&ndash;Outward&ndash;&gt;-->
+    <!--&lt;!&ndash;<v-col>&ndash;&gt;-->
+    <!--&lt;!&ndash;<span class="accent&#45;&#45;text text&#45;&#45;darken-2 font-weight-bold body-1">{{ $t('outward') }}</span>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<v-icon class="accent&#45;&#45;text text&#45;&#45;darken-2 font-weight-bold">&ndash;&gt;-->
+    <!--&lt;!&ndash;mdi-arrow-right&ndash;&gt;-->
+    <!--&lt;!&ndash;</v-icon>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<span&ndash;&gt;-->
+    <!--&lt;!&ndash;v-if="hasSameOutwardTimes"&ndash;&gt;-->
+    <!--&lt;!&ndash;class="primary&#45;&#45;text text&#45;&#45;darken-3 body-1"&ndash;&gt;-->
+    <!--&lt;!&ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;{{ formatTime(outwardTimes[0]) }}&ndash;&gt;-->
+    <!--&lt;!&ndash;</span>&ndash;&gt;-->
+    <!--&lt;!&ndash;<span&ndash;&gt;-->
+    <!--&lt;!&ndash;v-else&ndash;&gt;-->
+    <!--&lt;!&ndash;class="primary&#45;&#45;text text&#45;&#45;darken-3 body-1"&ndash;&gt;-->
+    <!--&lt;!&ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;{{ $t('multipleTimesSlots') }}&ndash;&gt;-->
+    <!--&lt;!&ndash;</span>&ndash;&gt;-->
+    <!--&lt;!&ndash;</v-col>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;&lt;!&ndash; Return &ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<v-col&ndash;&gt;-->
+    <!--&lt;!&ndash;v-if="isReturn"&ndash;&gt;-->
+    <!--&lt;!&ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;<span class="accent&#45;&#45;text text&#45;&#45;darken-2 font-weight-bold body-1">{{ $t('return') }}</span>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<v-icon class="accent&#45;&#45;text text&#45;&#45;darken-2 font-weight-bold">&ndash;&gt;-->
+    <!--&lt;!&ndash;mdi-arrow-left&ndash;&gt;-->
+    <!--&lt;!&ndash;</v-icon>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<span&ndash;&gt;-->
+    <!--&lt;!&ndash;v-if="hasSameReturnTimes"&ndash;&gt;-->
+    <!--&lt;!&ndash;class="primary&#45;&#45;text text&#45;&#45;darken-3 body-1"&ndash;&gt;-->
+    <!--&lt;!&ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;{{ formatTime(returnTimes[0]) }}&ndash;&gt;-->
+    <!--&lt;!&ndash;</span>&ndash;&gt;-->
+    <!--&lt;!&ndash;<span&ndash;&gt;-->
+    <!--&lt;!&ndash;v-else&ndash;&gt;-->
+    <!--&lt;!&ndash;class="primary&#45;&#45;text text&#45;&#45;darken-3 body-1"&ndash;&gt;-->
+    <!--&lt;!&ndash;&gt;&ndash;&gt;-->
+    <!--&lt;!&ndash;{{ $t('multipleTimesSlots') }}&ndash;&gt;-->
+    <!--&lt;!&ndash;</span>&ndash;&gt;-->
+    <!--&lt;!&ndash;</v-col>&ndash;&gt;-->
+    <!--</v-row>-->
+    <!--</v-col>-->
   </v-container>
 </template>
 
@@ -92,10 +159,22 @@ export default {
       type: Array,
       default: () => []
     },
-    showReturn: {
+    isRegular: {
       type: Boolean,
       default: false
-    }
+    },
+    isOutward: {
+      type: Boolean,
+      default: true
+    },
+    isReturn: {
+      type: Boolean,
+      default: false
+    },
+    dateTimeFormat: {
+      type: String,
+      default: "ui.i18n.time.format.hourMinute"
+    } 
   },
   computed: {
     hasSameOutwardTimes () {
@@ -131,7 +210,7 @@ export default {
   },
   methods: {
     formatTime(time) {
-      return moment(time).format(this.$t("ui.i18n.time.format.hourMinute"));
+      return moment(time).format(this.$t(this.dateTimeFormat));
     }
   }
 }
