@@ -140,7 +140,7 @@ class Image
      * @var string The final file name of the image.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"read","results","write"})
      */
     private $fileName;
     
@@ -264,7 +264,7 @@ class Image
 
     /**
      * @var int|null The user id associated with the image.
-     * @Groups({"write"})
+     * @Groups({"write","results"})
      */
     private $userId;
 
@@ -308,7 +308,7 @@ class Image
 
     /**
      * @var array|null The versions of with the image.
-     * @Groups({"read"})
+     * @Groups({"read", "results"})
      */
     private $versions;
         

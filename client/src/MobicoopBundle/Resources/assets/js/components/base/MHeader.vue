@@ -25,7 +25,7 @@
         </v-btn>
         <MHeaderCommunities :user-id="user.id" />
         <MHeaderProfile
-          :avatar="user.avatar"
+          :avatar="user.avatars[0]"
           :short-family-name="(user.shortFamilyName) ? user.givenName+' '+user.shortFamilyName : '-'"
         />
       </div>
